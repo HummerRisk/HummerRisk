@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.hummerrisk.base.mapper.ext.ExtRuleTypeMapper">
+
+    <select id="selectByExample" resultType="map">
+        SELECT
+        DISTINCT(t.resource_type) as name
+        FROM rule_type t
+        GROUP BY t.resource_type
+    </select>
+
+    <select id="getResourceTypesById" resultType="java.lang.String">
+        SELECT DISTINCT(resource_type)
+        FROM rule_type
+        WHERE rule_id = #{ruleId}
+        limit 1
+    </select>
+
+</mapper>

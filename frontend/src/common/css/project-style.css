@@ -1,0 +1,26 @@
+.code-mirror {
+  font-size: 13px;
+  line-height: 150%;
+}
+
+.el-table .warning-row {
+  background-color: oldlace !important;
+}
+
+.el-table .success-row {
+  background-color: #f0f9eb !important;
+}
+
+.text-click {
+  cursor: pointer;
+  text-decoration: underline;
+  text-align: center;
+}
+
+.md-primary {
+  color: rgb(0, 74, 113);
+}
+
+.color-red {
+  color: red;
+}

@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.hummerrisk.base.mapper.ext.ExtVulnMapper">
+
+    <resultMap id="TargetMap" type="io.hummerrisk.commons.utils.DashboardTarget"
+               extends="io.hummerrisk.base.mapper.RuleMapper.BaseResultMap">
+        <result column="ratio" jdbcType="VARCHAR" property="ratio"/>
+        <result column="reSum" jdbcType="VARCHAR" property="reSum"/>
+        <result column="ruSum" jdbcType="VARCHAR" property="ruSum"/>
+        <result column="tagName" jdbcType="VARCHAR" property="tagName"/>
+    </resultMap>
+
+    <select id="target" parameterType="java.util.Map" resultMap="TargetMap">
+        SELECT
+        t.*,
+        t3.tag_name AS tagName,
+        IFNULL((
+        SELECT
+        sum( t1.return_sum )
+        FROM
+        resource t1
+        LEFT JOIN resource_rule t2 ON t1.id = t2.resource_id
+        WHERE
+        t2.rule_id = t.id
+        ), 0) as ruSum,
+        IFNULL((
+        SELECT
+        sum( t1.resources_sum )
+        FROM
+        resource t1
+        LEFT JOIN resource_rule t2 ON t1.id = t2.resource_id
+        WHERE
+        t2.rule_id = t.id
+        ), 0) as reSum,
+        IFNULL(concat(truncate('100%'-
+        IFNULL(
+        (SELECT
+        sum( t1.return_sum )
+        FROM
+        resource t1
+        LEFT JOIN resource_rule t2 ON t1.id = t2.resource_id
+        WHERE
+        t2.rule_id = t.id
+        ), 0) / IFNULL((
+        SELECT
+        sum( t1.resources_sum )
+        FROM
+        resource t1
+        LEFT JOIN resource_rule t2 ON t1.id = t2.resource_id
+        WHERE
+        t2.rule_id = t.id
+        ), 1)
+        *100, 2),'%'), '100.00%') AS ratio
+        FROM rule t
+        LEFT JOIN rule_tag_mapping t2 ON t.id = t2.rule_id
+        LEFT JOIN rule_tag t3 ON t2.tag_key = t3.tag_key
+        LEFT JOIN cloud_account t4 ON t.plugin_id = t4.plugin_id
+        <where>
+            t.id in (select rule_id from resource_rule)
+            AND t4.`status` = 'VALID'
+            <if test="severity != null">
+                AND t.severity = #{severity}
+            </if>
+            <if test="tagKey != null">
+                AND t2.tag_key = #{tagKey}
+            </if>
+            <if test="accountId != null">
+                AND t4.id = #{accountId}
+            </if>
+            AND (SELECT SUM( t1.return_sum ) FROM resource t1 LEFT JOIN resource_rule t2 ON t1.id = t2.resource_id WHERE t2.rule_id = t.id) != 0
+        </where>
+        ORDER BY CONVERT(ratio, signed), ruSum desc
+    </select>
+
+    <select id="severityList" resultType="java.util.Map">
+       SELECT
+            t.severity,
+            IFNULL( sum(t.return_sum), 0 ) AS returnSum,
+            IFNULL( sum(t.resources_sum), 0 ) AS resourcesSum
+        FROM
+            resource t
+        GROUP BY t.severity
+    </select>
+
+    <select id="overall" resultType="io.hummerrisk.commons.utils.ChartData">
+        SELECT
+            IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,
+            IFNULL( sum( t4.resources_sum ), 0 ) AS yAxis2,
+            t.tag_name AS groupName,
+            t.tag_name AS xAxis
+        FROM
+            rule_tag t
+            LEFT JOIN rule_tag_mapping t1 ON t.tag_key = t1.tag_key
+            LEFT JOIN rule t2 ON t1.rule_id = t2.id
+            LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
+            LEFT JOIN resource t4 ON t3.resource_id = t4.id
+        GROUP BY
+            t.tag_key
+        HAVING
+            t.tag_key IN ( 'cost', 'safety', 'tagging' ) UNION ALL
+        SELECT
+            IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,
+            IFNULL( sum( t4.resources_sum ), 0 ) AS yAxis2,
+            '其他' AS groupName,
+            'other' AS xAxis
+        FROM
+            rule_tag t
+            LEFT JOIN rule_tag_mapping t1 ON t.tag_key = t1.tag_key
+            LEFT JOIN rule t2 ON t1.rule_id = t2.id
+            LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
+            LEFT JOIN resource t4 ON t3.resource_id = t4.id
+        WHERE
+            t.tag_key NOT IN ( 'cost', 'safety', 'tagging' )
+    </select>
+
+    <select id="ruleGroup" resultType="io.hummerrisk.commons.utils.ChartData">
+        SELECT
+            IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,
+            IFNULL( sum( t4.resources_sum ), 0 ) AS yAxis2,
+            t.name AS groupName,
+            t.name AS xAxis
+        FROM
+            rule_group t
+            LEFT JOIN rule_group_mapping t1 ON t.id = t1.group_id
+            LEFT JOIN rule t2 ON t1.rule_id = t2.id
+            LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
+            LEFT JOIN resource t4 ON t3.resource_id = t4.id
+        GROUP BY
+            t.name
+        ORDER BY
+            yAxis desc
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <select id="report" resultType="io.hummerrisk.commons.utils.ChartData">
+        SELECT
+            IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,
+            IFNULL( sum( t4.resources_sum ), 0 ) AS yAxis2,
+            t.item_sort_first_level AS groupName,
+            t.item_sort_first_level AS xAxis
+        FROM
+            rule_inspection_report t
+            LEFT JOIN rule_inspection_report_mapping t1 ON t.id = t1.report_id
+            LEFT JOIN rule t2 ON t1.rule_id = t2.id
+            LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
+            LEFT JOIN resource t4 ON t3.resource_id = t4.id
+        GROUP BY
+            t.item_sort_first_level
+        HAVING
+            yAxis != 0
+        ORDER BY
+            yAxis desc
+    </select>
+
+    <select id="ruleList" resultType="io.hummerrisk.commons.utils.ChartData">
+        SELECT
+            IFNULL( sum( t2.return_sum ), 0 ) AS yAxis,
+            IFNULL( sum( t2.resources_sum ), 0 ) AS yAxis2,
+            t.name AS groupName,
+            (select sum(resources_sum) from resource) AS xAxis
+        FROM
+            rule t
+            LEFT JOIN resource_rule t1 ON t.id = t1.rule_id
+            LEFT JOIN resource t2 ON t1.resource_id = t2.id
+        GROUP BY
+            t.id, t.name
+        ORDER BY
+            yAxis desc
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <select id="accountList" resultType="io.hummerrisk.commons.utils.ChartData">
+        SELECT
+            IFNULL( sum( t1.return_sum ), 0 ) AS yAxis,
+            IFNULL( sum( t1.resources_sum ), 0 ) AS yAxis2,
+            t.name AS groupName,
+            IFNULL( (SELECT scan_score FROM scan_history tt WHERE tt.account_id = t.id ORDER BY tt.create_time DESC limit 1), 100) AS xAxis
+        FROM
+            cloud_account t
+            LEFT JOIN resource t1 ON t1.account_id = t.id
+        GROUP BY
+            t.id
+        HAVING
+            yAxis != 0
+        ORDER BY
+            yAxis desc
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <select id="regionsList" resultType="io.hummerrisk.commons.utils.ChartData">
+        SELECT
+            IFNULL( sum(t2.return_sum), 0 ) AS yAxis,
+            IFNULL( sum(t2.resources_sum), 0 ) AS yAxis2,
+            t.region_name AS groupName,
+            t.region_id AS xAxis
+        FROM
+            task_item t
+            LEFT JOIN task_item_resource t1 ON t.id = t1.task_item_id
+            LEFT JOIN resource t2 ON t2.id = t1.resource_id
+        <where>
+            <if test="accountId != null">
+                AND t.account_id = #{accountId}
+            </if>
+        </where>
+        GROUP BY
+            t.region_id,t.region_name
+        HAVING
+            yAxis != 0
+        ORDER BY
+            yAxis desc
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <select id="totalPolicy" resultType="java.util.Map">
+        SELECT
+            IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,
+            IFNULL( sum( t4.resources_sum ), 0 ) AS yAxis2,
+            concat(truncate(IFNULL(sum( t4.resources_sum ), 0) / (select IFNULL(sum(resources_sum), 1) from resource)*100,2),'%') as everyTotalPecent,
+            (select count(tag_name) from rule_tag) AS critical,
+            t.tag_name AS groupName,
+            t.tag_key AS xAxis,
+            (select IFNULL( sum( return_sum ), 0 ) from resource) AS returnTotal,
+            (select IFNULL( sum( resources_sum ), 0 ) from resource) AS resourceTotal
+        FROM
+            rule_tag t
+            LEFT JOIN rule_tag_mapping t1 ON t.tag_key = t1.tag_key
+            LEFT JOIN rule t2 ON t1.rule_id = t2.id
+            LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
+            LEFT JOIN resource t4 ON t3.resource_id = t4.id
+        GROUP BY
+            t.tag_key
+        HAVING
+            t.tag_key IN ( 'cost', 'safety', 'tagging' )
+		UNION ALL
+        SELECT
+            IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,
+            IFNULL( sum( t4.resources_sum ), 0 ) AS yAxis2,
+            concat(truncate(IFNULL(sum( t4.resources_sum ), 0)/(select IFNULL(sum(resources_sum), 1) from resource)*100,2),'%') as everyTotalPecent,
+            (select count(tag_name) from rule_tag) AS critical,
+            '其他' AS groupName,
+            'other' AS xAxis,
+            (select IFNULL( sum( return_sum ), 0 ) from resource) AS returnTotal,
+            (select IFNULL( sum( resources_sum ), 0 ) from resource) AS resourceTotal
+        FROM
+            rule_tag t
+            LEFT JOIN rule_tag_mapping t1 ON t.tag_key = t1.tag_key
+            LEFT JOIN rule t2 ON t1.rule_id = t2.id
+            LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
+            LEFT JOIN resource t4 ON t3.resource_id = t4.id
+        WHERE
+            t.tag_key NOT IN ( 'cost', 'safety', 'tagging' )
+    </select>
+
+    <select id="history" resultType="io.hummerrisk.dto.ScanHistoryDTO">
+        SELECT
+            t.id,
+            t.account_id as accountId,
+            t.create_time as createTime,
+            t.`operator`,
+            t.resources_sum as resourcesSum,
+            t.return_sum as returnSum,
+            t.scan_score as scanScore,
+            t.output,
+            t1.name as accountName,
+            t1.plugin_id as pluginId,
+            t1.plugin_name as pluginName,
+            t1.plugin_icon as pluginIcon
+        FROM
+            scan_history t
+            LEFT JOIN cloud_account t1 ON t.account_id = t1.id
+        <where>
+            <if test="accountId != null">
+                AND t.account_id = #{accountId}
+            </if>
+            <if test="pluginId != null">
+                AND t1.plugin_id = #{pluginId}
+            </if>
+            AND t1.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin')
+        </where>
+        ORDER BY
+            t.create_time desc
+    </select>
+
+</mapper>
