@@ -11,7 +11,7 @@
             </div>
           </el-col>
           <el-col :span="11">
-            <el-image class="logo" :src="require('@/assets/logo-red.png')" @click="goDashboard"/>
+            <el-image class="logo" :src="require('@/assets/img/logo/logo-red.png')" @click="goDashboard"/>
           </el-col>
 
           <el-col :span="12" class="align-right">
@@ -115,7 +115,7 @@ export default {
     height: 37px;
     background-repeat: no-repeat;
     background-position: 50% center;
-    background-image: url("../assets/logo-red.png");
+    background-image: url("../assets/img/logo/logo-red.png");
     cursor : pointer;
   }
 

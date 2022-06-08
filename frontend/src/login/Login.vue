@@ -256,7 +256,7 @@ import {DEFAULT_LANGUAGE} from "../common/js/constants";
   }
 
   .image {
-    background: url(../assets/info.jpg);
+    background: url(../assets/logo/info.jpg);
     background-size:cover;
     height: 560px;
   }
