@@ -1,7 +1,7 @@
 <template>
   <div id="menu-bar">
     <el-row type="flex">
-      <el-col :span="12">
+      <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
           <el-menu-item :index="'/rule/rule'">
             {{ $t("rule.cloud_rule") }}
@@ -28,7 +28,6 @@
           </el-menu-item>
         </el-menu>
       </el-col>
-      <el-col :span="12"/>
     </el-row>
   </div>
 

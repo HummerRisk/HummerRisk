@@ -18,7 +18,6 @@
 
         </el-menu>
       </el-col>
-      <el-col :span="12"/>
     </el-row>
   </div>
 

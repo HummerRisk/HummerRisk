@@ -291,7 +291,7 @@ export default {
   created() {
   },
   mounted() {
-    this.timer = setInterval(this.getStatus,5000);
+    this.timer = setInterval(this.search,5000);
     this.init();
     this.location = window.location.href.split("#")[0];
   },

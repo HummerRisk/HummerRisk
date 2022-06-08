@@ -74,14 +74,14 @@ public class TaskController {
     }
 
     @PostMapping("manual/list/{goPage}/{pageSize}")
-    public Pager<List<Task>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> param) {
+    public Pager<List<Task>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> param) throws Exception {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         param.put("type", "manual");
         return PageUtils.setPageInfo(page, taskService.selectManualTasks(param));
     }
 
     @PostMapping("manual/Alllist")
-    public List<Task> getAllManualTasks(@RequestBody Map<String, Object> param) {
+    public List<Task> getAllManualTasks(@RequestBody Map<String, Object> param) throws Exception {
         param.put("type", "manual");
         return taskService.selectManualTasks(param);
     }
