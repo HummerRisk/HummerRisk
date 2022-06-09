@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://hummerrisk.com">
-        <img src="./frontend/src/assets/logo-dark.png" alt="HummerRisk" width="300"/>
+        <img src="./frontend/src/assets/img/logo/logo-dark.png" alt="HummerRisk" width="300"/>
     </a>
 </p>
 <h3 align="center">
