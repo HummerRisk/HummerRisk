@@ -17,14 +17,19 @@
 </p>
 <hr/>
 
-HummerRisk 是开源的云原生安全合规检测平台，基于 Cloud Custodian、Prowler、Nuclei、 Xray 和 Dependency Check 等扫描引擎，实现对主流公(私)有云资源的安全合规扫描、网络漏洞扫描、虚拟机安全扫描、软件依赖检查的扫描。
+## 什么是HummerRisk
 
-**功能优势**
+HummerRisk 是开源的安全合规检测平台，全面支持云原生，实现对主流公(私)有云资源的安全合规扫描、网络漏洞扫描、虚拟机安全扫描、软件依赖扫描、容器镜像扫描，支持 Cloud Custodian、Prowler、Nuclei、 Xray 和 Dependency Check 等多种扫描引擎，全面满足日常的安全合规检测需要。
 
-HummerRisk 遵循 GPL v3 开源协议，使用 SpringBoot/Vue 进行开发，界面美观、用户体验好。
 
-**技术优势**
 
+**技术优势**  
+*开源开放：HummerRisk 遵循 GPL v3 开源协议  
+*极致体验：可视化的的规则管理和扫描过程，界面美观、用户体验好  
+*支持全面：覆盖云时代安全合规检查的主流需求  
+*规则丰富：如 CIS 规则，等保2.0 规则，OWASP 漏洞规则，PCI 规则等  
+*灵活扩展：可扩展架构，便于扩充模块和引擎  
+*云原生支持：基于容器进行构建和部署
 
 ## 快速开始
 
@@ -41,13 +46,17 @@ curl -sSL https://github.com/hummerrisk/hummerrisk/releases/latest/download/quic
 
 > [帮助文档](https://docs.hummerrisk.com/)
 
+## 微信群
+
+<img src="https://hummerrisk-1312321453.cos.ap-beijing.myqcloud.com/contact_me_qr.png" width="156" height="156" alt="">
+
 ## 安全说明
 
 如果您在使用过程中发现任何安全问题，请通过以下方式直接联系我们：
 
 - 邮箱：support@hummercloud.com
 
-## 致谢
+## 技术栈
 
 - [Vue](https://vuejs.org/)：使用了 Vue.js 作为前端技术栈
 - [Spring Boot](https://www.tutorialspoint.com/spring_boot/spring_boot_introduction.htm)：使用了 Spring Boot 作为后端技术栈
@@ -57,7 +66,7 @@ curl -sSL https://github.com/hummerrisk/hummerrisk/releases/latest/download/quic
 - [Nuclei](https://nuclei.projectdiscovery.io/)：使用了 Nuclei 作为漏洞扫描引擎
 - [Xray](https://xray.cool/)：使用了 Xray 作为漏洞检测引擎
 - [Dependency Check](https://jeremylong.github.io/DependencyCheck/)：使用了 Dependency Check 作为软件依赖检查引擎
-- [Element](https://element.eleme.cn/#/)：感谢 Element 提供的优秀组件库
+- [Element](https://element.eleme.cn/#/)：使用 Element 提供的优秀组件库
 
 ## License & Copyright
 
