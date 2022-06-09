@@ -3,12 +3,9 @@
     <el-row type="flex">
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
+
           <el-menu-item :index="'/dashboard/dashboard'">
             {{ $t("dashboard.overview") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/dashboard/history'">
-            {{ $t("dashboard.history") }}
           </el-menu-item>
 
           <el-menu-item :index="'/dashboard/active'">

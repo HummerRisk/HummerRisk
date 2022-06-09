@@ -389,7 +389,7 @@ export default {
   },
   dashboard: {
     dashboard: '首頁',
-    overview: '雲資源概覽',
+    overview: '總覽',
     i18n_opt_unit: "單位：個",
     i18n_opt_total: "總量",
     i18n_compliance_ratio: "合規比例",
@@ -413,7 +413,7 @@ export default {
     i18n_cost: '費用',
     i18n_tagging: '標籤',
     i18n_other: '其他',
-    history: '雲資源歷史記錄',
+    history: '歷史記錄',
     rule_detail: '不合規規則',
     cloud_account_statistics: '雲賬號統計',
     regions_statistics: '區域統計',
@@ -732,6 +732,8 @@ export default {
     qztype_details: '定時任務詳情',
     qztype_triggerId: '定時任務ID',
     account_setting: '雲端掃描',
+    overview: '雲資源概覽',
+    history: '雲資源歷史記錄',
   },
   server: {
     server_setting: '虛機掃描',

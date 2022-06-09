@@ -3,12 +3,21 @@
     <el-row type="flex">
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
+
+          <el-menu-item :index="'/account/dashboard'">
+            {{ $t("account.overview") }}
+          </el-menu-item>
+
           <el-menu-item :index="'/account/cloudaccount'">
             {{ $t("account.cloud_account_setting") }}
           </el-menu-item>
 
           <el-menu-item :index="'/account/quartztask'">
             {{ $t("account.quartz_task") }}
+          </el-menu-item>
+
+          <el-menu-item :index="'/account/history'">
+            {{ $t("account.history") }}
           </el-menu-item>
 
           <el-menu-item :index="'/account/accountoverview'">

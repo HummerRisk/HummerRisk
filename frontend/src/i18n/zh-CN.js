@@ -389,7 +389,7 @@ export default {
   },
   dashboard: {
     dashboard: '首页',
-    overview: '云资源概览',
+    overview: '总览',
     i18n_opt_unit: "单位：个",
     i18n_opt_total: "总量",
     i18n_compliance_ratio: "合规比例",
@@ -732,6 +732,8 @@ export default {
     qztype_details: '定时任务详情',
     qztype_triggerId: '定时任务ID',
     account_setting: '云端扫描',
+    overview: '云资源概览',
+    history: '云资源历史记录',
   },
   server: {
     server_setting: '虚机扫描',

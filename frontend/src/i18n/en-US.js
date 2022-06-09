@@ -389,7 +389,7 @@ export default {
   },
   dashboard: {
     dashboard:'Homepage',
-    overview:'Overview of cloud resources',
+    overview:'Overview',
     i18n_opt_unit: "Unit: Unit",
     i18n_opt_total: "Total",
     i18n_compliance_ratio: "Compliance Ratio",
@@ -413,7 +413,7 @@ export default {
     i18n_cost:'cost',
     i18n_tagging:'Tagging',
     i18n_other:'Other',
-    history:'Cloud resource history',
+    history:'History',
     rule_detail:'Non-compliant rules',
     cloud_account_statistics:'Cloud account statistics',
     regions_statistics:'Region Statistics',
@@ -732,6 +732,8 @@ export default {
     qztype_details:'Timing task details',
     qztype_triggerId:'Timing task ID',
     account_setting: 'Cloud scan',
+    overview: 'Cloud resource overview',
+    history: 'Cloud resource history',
   },
   server: {
     server_setting: 'Virtual machine scan',

@@ -10,7 +10,7 @@
 import HistoryList from "./HistoryList";
 /* eslint-disable */
   export default {
-    name: "ScenarioList",
+    name: "ScenarioHisList",
     components: {
       HistoryList
     },

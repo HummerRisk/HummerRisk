@@ -15,6 +15,10 @@
             {{ $t("server.server_rule") }}
           </el-menu-item>
 
+          <el-menu-item :index="'/package/rule'">
+            {{ $t("package.package_rule") }}
+          </el-menu-item>
+
           <el-menu-item :index="'/rule/ruletag'">
             {{ $t("rule.rule_tag") }}
           </el-menu-item>

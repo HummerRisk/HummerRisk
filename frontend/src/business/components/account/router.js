@@ -27,5 +27,15 @@ export default {
       name: 'quartztask',
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/QuartzTask'),
     },
+    {
+      path: "dashboard",
+      name: "dashboard",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/Dashboard"),
+    },
+    {
+      path: "history",
+      name: "history",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/History"),
+    },
   ]
 }

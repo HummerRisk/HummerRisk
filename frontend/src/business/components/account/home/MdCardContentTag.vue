@@ -73,7 +73,7 @@
 <script>
 /* eslint-disable */
   export default {
-    name: "MdCardContentOverall",
+    name: "MdCardContentTag",
     components: {
     },
     data() {

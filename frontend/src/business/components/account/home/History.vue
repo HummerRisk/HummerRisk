@@ -23,7 +23,7 @@
 <script>
 
 import ScenarioModule from "../.././common/components/ScenarioModule";
-import ScenarioList from "./ScenarioList";
+import ScenarioHistList from "./ScenarioHistList";
 import Container from "../.././common/components/Container";
 import AsideContainer from "../.././common/components/AsideContainer";
 import MainContainer from "../.././common/components/MainContainer";
@@ -35,7 +35,7 @@ import MainContainer from "../.././common/components/MainContainer";
       AsideContainer,
       MainContainer,
       ScenarioModule,
-      ScenarioList,
+      ScenarioHistList,
     },
     data() {
       return {
