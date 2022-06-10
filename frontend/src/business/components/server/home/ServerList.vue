@@ -7,9 +7,7 @@
                            @create="create" :createTip="$t('server.server_create')"
                            @scan="scan" :scanTip="$t('server.one_scan')"
                            @validate="validate" :runTip="$t('server.one_validate')"
-                           @download="download" :downloadTip="$t('server.one_download')"
-                           @upload="upload" :uploadTip="$t('server.one_upload')"
-                           :show-run="true" :show-scan="true" :show-create="true" :show-download="true" :show-upload="true"/>
+                           :show-run="true" :show-scan="true" :show-create="true"/>
 
         </template>
 

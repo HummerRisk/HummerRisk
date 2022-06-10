@@ -23,10 +23,10 @@
                       type="success" :content="scanTip" @click="scan"/>
         <table-button v-if="showRun" icon="el-icon-check"
                       type="primary" :content="runTip" @click="validate"/>
-        <table-button v-if="showDownload" icon="el-icon-download"
-                      type="danger" :content="downloadTip" @click="download"/>
-          <table-button v-if="showUpload" slot="trigger" icon="el-icon-upload2"
-                        type="info" :content="uploadTip" @click="upload"/>
+<!--        <table-button v-if="showDownload" icon="el-icon-download"-->
+<!--                      type="danger" :content="downloadTip" @click="download"/>-->
+<!--        <table-button v-if="showUpload" slot="trigger" icon="el-icon-upload2"-->
+<!--                      type="info" :content="uploadTip" @click="upload"/>-->
         </el-upload>
         <slot name="button"></slot>
       </span>

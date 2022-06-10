@@ -24,7 +24,6 @@
         <el-row type="flex">
 
           <el-col :span="12" class="image">
-            <div></div>
           </el-col>
 
           <el-col :span="12">
@@ -175,14 +174,14 @@ import {DEFAULT_LANGUAGE} from "../common/js/constants";
     min-width: 800px;
     max-width: 1440px;
     height: 560px;
-    background-color: #fff;
+    /*background-color: #fff;*/
     margin: auto;
     position: absolute;
     top: 15%;
     buttom: 15%;
     left: 10%;
     right: 10%;
-    box-shadow:#6f7180 0px 0px 10px;
+    box-shadow: #6f7180 0px 0px 10px;
   }
 
   .logo {
@@ -234,8 +233,8 @@ import {DEFAULT_LANGUAGE} from "../common/js/constants";
   .btn > .submit {
     width: 100%;
     border-radius: 0;
-    border-color: #df913c;
-    background-color: #df913c;
+    border-color: #935e3a;
+    background-color: #935e3a;
   }
 
   .btn > .submit:hover {
@@ -256,9 +255,17 @@ import {DEFAULT_LANGUAGE} from "../common/js/constants";
   }
 
   .image {
-    background: url(../assets/info.jpg);
+    background: url(../assets/login-img.jpg);
     background-size:cover;
     height: 560px;
+    boxder:10px solid #ccc;
+  }
+
+  .left-logo {
+    margin-top: 40%;
+    font-size: 32px;
+    letter-spacing: 0;
+    text-align: center;
   }
 
 </style>
@@ -285,7 +292,10 @@ import {DEFAULT_LANGUAGE} from "../common/js/constants";
   }
 
   .login-background {
-    background: linear-gradient(-180deg, #df913c 0%, #ffffff 100%);
+    /*background: linear-gradient(-180deg, #df913c 0%, #ffffff 100%);*/
+    background-image: url(../assets/background.png);
+    background-size: contain;
+    background-color: #171d2c;
     width: 100%;
     height: 100%; /**宽高100%是为了图片铺满屏幕 */
     z-index: -1;

@@ -279,7 +279,6 @@ export default {
       });
     },
     handleResult(item) {
-      console.log(this.location, item.returnHtml)
       window.open(this.location + item.returnHtml, 'target');
     },
   },
