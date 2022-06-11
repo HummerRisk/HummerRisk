@@ -1,19 +1,22 @@
-FROM registry.cn-beijing.aliyuncs.com/hummercloud/nuclei:v1.0.0 as nuclei-env
+WORKDIR /opt/hummerrisk
 
-FROM registry.cn-beijing.aliyuncs.com/hummercloud/prowler:v1.0.0 as prowler-env
-
-FROM registry.cn-beijing.aliyuncs.com/hummercloud/custodian:v1.0.0
-
-ARG HR_VERSION=dev
-
-RUN apk add --no-cache bind-tools ca-certificates && \
-    apk --update --no-cache add python3 bash curl jq file coreutils py3-pip && \
-    pip3 install --upgrade pip && \
-    pip install awscli boto3 detect-secrets
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/nuclei:v0.1 as nuclei-env
 
 COPY --from=nuclei-env /usr/local/bin/nuclei /usr/local/bin/nuclei
 
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/prowler:v0.1 as prowler-env
+
 COPY --from=prowler-env /prowler /prowler
+
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/dependency-check:v0.1 as dependency-env
+
+COPY --from=dependency-env /usr/share/dependency-check/bin/dependency-check.sh /usr/share/dependency-check/bin/dependency-check.sh
+
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/xray:v0.1 as xray-env
+
+COPY --from=xray-env /opt/hummerrisk/xray/ /opt/hummerrisk/xray/
+
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/custodian:v0.1 as custodian-env
 
 RUN mkdir -p /opt/apps
 
