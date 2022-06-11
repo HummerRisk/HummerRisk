@@ -17,7 +17,9 @@ COPY --from=prowler-env /prowler /prowler
 
 RUN mkdir -p /opt/apps
 
-COPY backend/target/backend-1.0.jar /opt/apps
+COPY --from=custodian-env backend/target/backend-1.0.jar /opt/apps
+
+ARG HR_VERSION=dev
 
 ENV JAVA_APP_JAR=/opt/apps/backend-1.0.jar
 
