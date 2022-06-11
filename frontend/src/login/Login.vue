@@ -295,7 +295,7 @@ import {DEFAULT_LANGUAGE} from "../common/js/constants";
     /*background: linear-gradient(-180deg, #df913c 0%, #ffffff 100%);*/
     background-image: url(../assets/background.png);
     background-size: contain;
-    background-color: #171d2c;
+    background-color: #334071;
     width: 100%;
     height: 100%; /**宽高100%是为了图片铺满屏幕 */
     z-index: -1;
