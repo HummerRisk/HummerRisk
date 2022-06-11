@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://hummerrisk.com">
+    <a href="https://docs.hummerrisk.com">
         <img src="./frontend/src/assets/img/logo/logo-dark.png" alt="HummerRisk" width="300"/>
     </a>
 </p>
@@ -17,19 +17,18 @@
 </p>
 <hr/>
 
-## 什么是HummerRisk
+## 什么是 HummerRisk
 
-HummerRisk 是开源的安全合规检测平台，全面支持云原生，实现对主流公(私)有云资源的安全合规扫描、网络漏洞扫描、虚拟机安全扫描、软件依赖扫描、容器镜像扫描，支持 Cloud Custodian、Prowler、Nuclei、 Xray 和 Dependency Check 等多种扫描引擎，全面满足日常的安全合规检测需要。
-
-
+> HummerRisk 是开源的安全合规检测平台，全面支持云原生，实现对主流公(私)有云资源的安全合规扫描、网络漏洞扫描、虚拟机安全扫描、软件依赖扫描、容器镜像扫描，支持 Cloud Custodian、Prowler、Nuclei、 Xray 和 Dependency Check 等多种扫描引擎，全面满足日常的安全合规检测需要。
 
 **技术优势**  
-*开源开放：HummerRisk 遵循 GPL v3 开源协议  
-*极致体验：可视化的的规则管理和扫描过程，界面美观、用户体验好  
-*支持全面：覆盖云时代安全合规检查的主流需求  
-*规则丰富：如 CIS 规则，等保2.0 规则，OWASP 漏洞规则，PCI 规则等  
-*灵活扩展：可扩展架构，便于扩充模块和引擎  
-*云原生支持：基于容器进行构建和部署
+
+- [x] 开源开放：HummerRisk 遵循 GPL v3 开源协议;
+- [x] 极致体验：可视化的的规则管理和扫描过程，界面美观、用户体验好;
+- [x] 支持全面：覆盖云时代安全合规检查的主流需求;
+- [x] 规则丰富：如 CIS 规则，等保2.0 规则，OWASP 漏洞规则，PCI 规则等;  
+- [ ] 灵活扩展：可扩展架构，便于扩充模块和引擎;
+- [ ] 云原生支持：基于容器进行构建和部署;
 
 ## 快速开始
 
@@ -49,6 +48,8 @@ curl -sSL https://github.com/hummerrisk/hummerrisk/releases/latest/download/quic
 ## 微信群
 
 <img src="https://hummerrisk-1312321453.cos.ap-beijing.myqcloud.com/contact_me_qr.png" width="156" height="156" alt="">
+
+## 公众号
 
 ## 安全说明
 
