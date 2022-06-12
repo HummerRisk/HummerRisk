@@ -280,7 +280,7 @@ public class PackageService {
                     String s2 = !aPackage.getPath().isEmpty()?aPackage.getPath().split("/")[aPackage.getPath().split("/").length-1]:"";
                     String fileFolder = PackageConstants.DEFAULT_BASE_DIR + s1 + "/";
                     String returnJson = !aPackage.getPath().isEmpty()?ReadFileUtils.readJsonFile(fileFolder, s2.replace(suffix, "json")):"";
-                    String returnHtml = !aPackage.getPath().isEmpty()?aPackage.getPath().replace(suffix, "html"):"";
+                    String returnHtml = "files/" + (!aPackage.getPath().isEmpty()?aPackage.getPath().replace(suffix, "html"):"");
                     String log = ReadFileUtils.readToBuffer(fileFolder + fileName.replace(suffix, "log"));
                     result.setReturnLog(log);
                     result.setResources(resources);
@@ -311,6 +311,20 @@ public class PackageService {
         PackageRuleDTO dto = BeanUtils.copyBean(new PackageRuleDTO(), rule);
 
         deletePackageResult(id);
+
+        BeanUtils.copyBean(result, aPackage);
+        result.setId(UUIDUtil.newUUID());
+        result.setPackageId(id);
+        result.setApplyUser(SessionUtils.getUserId());
+        result.setCreateTime(System.currentTimeMillis());
+        result.setUpdateTime(System.currentTimeMillis());
+        result.setRuleId(dto.getId());
+        result.setRuleName(dto.getName());
+        result.setRuleDesc(dto.getDescription());
+        result.setResultStatus(TaskConstants.TASK_STATUS.APPROVED.toString());
+        result.setSeverity(dto.getSeverity());
+        result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
+        packageResultMapper.insertSelective(result);
         try {
             String script = rule.getScript();
             JSONArray jsonArray = JSON.parseArray(rule.getParameter());
@@ -329,7 +343,7 @@ public class PackageService {
             String s2 = !aPackage.getPath().isEmpty()?aPackage.getPath().split("/")[aPackage.getPath().split("/").length-1]:"";
             String fileFolder = PackageConstants.DEFAULT_BASE_DIR + s1 + "/";
             String returnJson = !aPackage.getPath().isEmpty()?ReadFileUtils.readJsonFile(fileFolder, s2.replace(suffix, "json")):"";
-            String returnHtml = !aPackage.getPath().isEmpty()?aPackage.getPath().replace(suffix, "html"):"";
+            String returnHtml = "files/" + (!aPackage.getPath().isEmpty()?aPackage.getPath().replace(suffix, "html"):"");
             String log = ReadFileUtils.readToBuffer(fileFolder + fileName.replace(suffix, "log"));
             result.setReturnLog(log);
             result.setResources(resources);

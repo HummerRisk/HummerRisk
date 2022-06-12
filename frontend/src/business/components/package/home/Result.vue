@@ -48,12 +48,12 @@
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
-        <el-table-column prop="updateTime" min-width="20%" :label="$t('package.last_modified')" sortable>
+        <el-table-column prop="updateTime" min-width="15%" :label="$t('package.last_modified')" sortable>
           <template v-slot:default="scope">
             <span><i class="el-icon-time"></i> {{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="10%" :label="$t('commons.operating')">
+        <el-table-column min-width="15%" :label="$t('commons.operating')">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
@@ -256,7 +256,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get("/package/restart/" + item.id, response => {
+            this.$get("/package/reScan/" + item.id, response => {
               if (response.success) {
                 this.search();
               }
@@ -279,6 +279,7 @@ export default {
       });
     },
     handleResult(item) {
+      console.log(item.returnHtml);
       window.open(this.location + item.returnHtml, 'target');
     },
   },
