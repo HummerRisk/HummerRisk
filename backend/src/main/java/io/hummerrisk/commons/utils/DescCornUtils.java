@@ -169,10 +169,4 @@ public class DescCornUtils {
         desc(s, sBuffer, "年");
     }
 
-    // 测试方法
-//    public static void main(String[] args) {
-//        String CRON_EXPRESSION = "0 0 2 ? 3 TUE#2 *";
-//        System.out.println(descCorn(CRON_EXPRESSION));
-//    }
-
 }

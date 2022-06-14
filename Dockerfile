@@ -28,7 +28,7 @@ ENV AB_OFF=true
 
 ENV HR_VERSION=${HR_VERSION}
 
-ENV JAVA_OPTIONS="-Dfile.encoding=utf-8 -Djava.awt.headless=true"
+ENV JAVA_OPTIONS="-Dfile.encoding=utf-8 -Djava.awt.headless=true -Xss5m -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:+ExitOnOutOfMemoryError"
 
 HEALTHCHECK --interval=15s --timeout=5s --retries=20 --start-period=30s CMD curl -f 127.0.0.1:8088
 

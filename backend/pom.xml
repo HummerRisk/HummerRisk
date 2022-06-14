@@ -53,10 +53,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
             <exclusions>
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -851,6 +847,10 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>junit</groupId>
                     <artifactId>junit</artifactId>
                 </exclusion>
@@ -1050,7 +1050,9 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <addResources>true</addResources>
+                    <!-- 指定该Main Class为全局的唯一入口 -->
+                    <mainClass>io.hummerrisk.Application</mainClass>
+                    <includeSystemScope>true</includeSystemScope>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
