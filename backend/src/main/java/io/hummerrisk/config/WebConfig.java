@@ -33,6 +33,8 @@ public class WebConfig extends WebMvcConfigurationSupport {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         //过滤swagger
+        registry.addResourceHandler("/**").addResourceLocations("classpath:/resources/");
+        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
         registry.addResourceHandler("/files/**")
                 .addResourceLocations("file:" + "/opt/hummerrisk/file/");
 
