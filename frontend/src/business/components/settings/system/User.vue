@@ -370,9 +370,11 @@ import RolesTag from "../../common/components/RolesTag";
         this.editPasswordVisible =  false;
         this.createVisible =  false;
         this.updateVisible =  false;
-        this.$refs['phoneForm'].clearValidate(); // 清除phone的验证
-        this.$refs['emailForm'].clearValidate();
-        this.$refs['nameForm'].clearValidate();
+        this.$nextTick(()=>{
+          this.$refs['phoneForm'].clearValidate(); // 清除phone的验证
+          this.$refs['emailForm'].clearValidate();
+          this.$refs['nameForm'].clearValidate();
+        });
       },
       changeSwitch(row) {
         this.$post('/user/special/update_status', row, () => {
