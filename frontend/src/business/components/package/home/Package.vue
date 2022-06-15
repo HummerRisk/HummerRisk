@@ -11,7 +11,7 @@
       <el-row :gutter="20" class="el-row-body">
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" v-for="(data, index) in tableData"
                 :key="index" class="el-col" style="margin: 10px 0 5px 0;">
-          <el-card :body-style="{ padding: '0px' }">
+          <el-card :body-style="{ padding: '0' }">
             <el-image style="width: 100%; height: 220px;"
                       :src="data.pluginIcon==='package.png'?require(`@/assets/img/platform/${data.pluginIcon}`):`${location}${data.pluginIcon}`"
                       :fit="'fill'">

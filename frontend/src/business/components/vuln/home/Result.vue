@@ -203,7 +203,6 @@ import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/DialogFooter";
 import CenterChart from "../../common/components/CenterChart";
 import ResultLog from "./ResultLog";
-import {ACCOUNT_ID} from "@/common/js/constants";
 
 /* eslint-disable */
 export default {

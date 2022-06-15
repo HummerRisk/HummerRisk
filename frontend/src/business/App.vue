@@ -47,7 +47,7 @@ import HrView from "./components/common/router/HrView";
 import HrUser from "./components/common/head/HeaderUser";
 import Help from "./components/common/head/Help";
 import HrLanguageSwitch from "./components/common/head/LanguageSwitch";
-import {saveLocalStorage} from "../common/js/utils";
+import {saveLocalStorage} from "@/common/js/utils";
 import Notification from "@/business/components/common/head/Notification";
 
 export default {

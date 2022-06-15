@@ -2,7 +2,7 @@
   <el-card class="box-card" shadow="always">
     <el-row>
       <el-col :span="8">
-        <el-card :body-style="{ padding: '0px' }" style="text-align: center">
+        <el-card :body-style="{ padding: '0' }" style="text-align: center">
           <el-button class="md-button-dashboard bg-purple-dark" @click="goResource('count', 'all')">
             <I class="md-primary">
               {{ $t('dashboard.i18n_cost') }}
@@ -18,7 +18,7 @@
         </el-card>
       </el-col>
       <el-col :span="8">
-        <el-card :body-style="{ padding: '0px' }" style="text-align: center">
+        <el-card :body-style="{ padding: '0' }" style="text-align: center">
           <el-button class="md-button-dashboard bg-purple-dark" @click="goResource('count', 'all')">
             <I class="md-primary">
               {{ $t('dashboard.i18n_security') }}
@@ -36,7 +36,7 @@
     </el-row>
     <el-row>
       <el-col :span="8">
-        <el-card :body-style="{ padding: '0px' }" style="text-align: center">
+        <el-card :body-style="{ padding: '0' }" style="text-align: center">
           <el-button class="md-button-dashboard bg-purple-dark" @click="goResource('count', 'all')">
             <I class="md-primary">
               {{ $t('dashboard.i18n_tagging') }}
@@ -52,7 +52,7 @@
         </el-card>
       </el-col>
       <el-col :span="8">
-        <el-card :body-style="{ padding: '0px' }" style="text-align: center">
+        <el-card :body-style="{ padding: '0' }" style="text-align: center">
           <el-button class="md-button-dashboard bg-purple-dark" @click="goResource('count', 'all')">
             <I class="md-primary">
               {{ $t('dashboard.i18n_other') }}

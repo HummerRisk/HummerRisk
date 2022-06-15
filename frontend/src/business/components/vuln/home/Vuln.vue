@@ -188,7 +188,7 @@ import {VULN_CONFIGS} from "../../common/components/search/search-components";
 import ProxyDialogFooter from "../head/ProxyDialogFooter";
 import ProxyDialogCreateFooter from "../head/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
-import {ACCOUNT_ID, ACCOUNT_NAME} from "../../../../common/js/constants";
+import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 
 /* eslint-disable */
 export default {

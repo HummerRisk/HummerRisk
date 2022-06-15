@@ -72,7 +72,7 @@
 
 <script>
 import DialogFooter from "../../common/components/DialogFooter";
-import {getCurrentUser} from "../../../../common/js/utils";
+import {getCurrentUser} from "@/common/js/utils";
 import TableOperatorButton from "../../common/components/TableOperatorButton";
 import TableHeader from "../../common/components/TableHeader";
 /* eslint-disable */

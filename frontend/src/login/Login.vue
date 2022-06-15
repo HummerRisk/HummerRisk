@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="login-background">
     <vue-particles
       id="particles-js"
-      class="login-background"
+      class=""
       color="#409EFF"
       :particleOpacity="0.7"
       :particlesNumber="60"
@@ -67,8 +67,8 @@
 </template>
 
 <script>
-import {saveLocalStorage} from '../common/js/utils';
-import {DEFAULT_LANGUAGE} from "../common/js/constants";
+import {saveLocalStorage} from '@/common/js/utils';
+import {DEFAULT_LANGUAGE} from "@/common/js/constants";
 
 /* eslint-disable */
   export default {
@@ -171,21 +171,16 @@ import {DEFAULT_LANGUAGE} from "../common/js/constants";
 <style scoped>
   .container {
     width: 80%;
-    min-width: 800px;
+    min-width: 900px;
     max-width: 1440px;
     height: 560px;
     /*background-color: #fff;*/
     margin: auto;
     position: absolute;
-    top: 15%;
-    buttom: 15%;
+    top: 17%;
     left: 10%;
     right: 10%;
-    box-shadow: #6f7180 0px 0px 10px;
-  }
-
-  .logo {
-    margin: 30px 30px 0;
+    box-shadow: #6f7180 0 0 10px;
   }
 
   .title {
@@ -193,14 +188,6 @@ import {DEFAULT_LANGUAGE} from "../common/js/constants";
     font-size: 32px;
     letter-spacing: 0;
     text-align: center;
-  }
-
-  .title > #s1 {
-    color: #999999;
-  }
-
-  .title > #s2 {
-    color: #151515;
   }
 
   .border {
@@ -258,19 +245,11 @@ import {DEFAULT_LANGUAGE} from "../common/js/constants";
     background: url(../assets/login-img.jpg);
     background-size:cover;
     height: 560px;
-    boxder:10px solid #ccc;
-  }
-
-  .left-logo {
-    margin-top: 40%;
-    font-size: 32px;
-    letter-spacing: 0;
-    text-align: center;
   }
 
 </style>
 
-<style>
+<style scoped>
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Neue Haas Grotesk Text Pro", "Arial Nova", "Segoe UI", "Helvetica Neue", ".PingFang SC", "PingFang SC", "Source Han Sans SC", "Noto Sans CJK SC", "Source Han Sans CN", "Noto Sans SC", "Source Han Sans TC", "Noto Sans CJK TC", "Hiragino Sans GB", sans-serif;
     font-size: 14px;
@@ -300,6 +279,10 @@ import {DEFAULT_LANGUAGE} from "../common/js/constants";
     height: 100%; /**宽高100%是为了图片铺满屏幕 */
     z-index: -1;
     position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
+
 </style>
 

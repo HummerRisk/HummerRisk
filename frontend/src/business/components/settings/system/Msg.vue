@@ -165,8 +165,8 @@ export default {
   color: #fff;
   background-color: #0a7be0;
   border-color: #0a7be0;
-  -webkit-box-shadow: 0px 0 0 0 #0a7be0;
-  box-shadow: 0px 0 0 0 #0a7be0;
+  -webkit-box-shadow: 0 0 0 0 #0a7be0;
+  box-shadow: 0 0 0 0 #0a7be0;
 }
 .de-msg-a:hover {
     text-decoration: underline !important;

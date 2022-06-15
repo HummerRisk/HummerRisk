@@ -102,7 +102,7 @@ import ScanHeader from "../head/ScanHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/DialogFooter";
-import {ACCOUNT_ID, ACCOUNT_NAME} from "../../../../common/js/constants";
+import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 import {_sort} from "@/common/js/utils";
 
 /* eslint-disable */
