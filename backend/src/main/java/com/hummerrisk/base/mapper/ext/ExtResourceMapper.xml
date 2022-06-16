@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummerrisk.base.mapper.ext.ExtResourceMapper">
+    <resultMap id="BaseResultMap" type="com.hummerrisk.dto.ResourceDTO"
+               extends="com.hummerrisk.base.mapper.ResourceItemMapper.ResultMapWithBLOBs">
+        <result column="taskId" jdbcType="VARCHAR" property="taskId"/>
+        <result column="taskName" jdbcType="VARCHAR" property="taskName"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="applyUser" jdbcType="VARCHAR" property="applyUser"/>
+        <result column="ruleId" jdbcType="VARCHAR" property="ruleId"/>
+        <result column="ruleName" jdbcType="VARCHAR" property="ruleName"/>
+        <result column="accountName" jdbcType="VARCHAR" property="accountName"/>
+        <association property="resourceWithBLOBs" column="resource_id" select="getResourceList">
+        </association>
+    </resultMap>
+
+    <resultMap id="ResultMap" type="com.hummerrisk.dto.SourceDTO"
+               extends="com.hummerrisk.base.mapper.AccountMapper.BaseResultMap">
+        <result column="userName" jdbcType="VARCHAR" property="userName"/>
+        <result column="returnSum" jdbcType="VARCHAR" property="returnSum"/>
+        <result column="resourcesSum" jdbcType="VARCHAR" property="resourcesSum"/>
+        <result column="scanScore" jdbcType="VARCHAR" property="scanScore"/>
+        <result column="resultStatus" jdbcType="VARCHAR" property="resultStatus"/>
+    </resultMap>
+
+    <select id="source" parameterType="java.lang.String" resultMap="ResultMap">
+        SELECT
+        t.*,
+        u.name as userName,
+        IFNULL((
+        SELECT
+        sum( tt.return_sum )
+        FROM
+        task tt
+        WHERE
+        tt.account_id = t.id
+        ), 0) as returnSum,
+        IFNULL((
+        SELECT
+        sum( tt.resources_sum )
+        FROM
+        task tt
+        WHERE
+        tt.account_id = t.id
+        ), 0) as resourcesSum,
+        IFNULL((select t1.scan_score FROM scan_history t1 WHERE t.id = t1.account_id ORDER BY t1.create_time DESC limit 1), 100) AS scanScore,
+        CASE
+        WHEN 'APPROVED' IN (SELECT t2.status FROM task t2 WHERE t.id = t2.account_id) THEN 'APPROVED'
+        WHEN 'PROCESSING' IN (SELECT t2.status FROM task t2 WHERE t.id = t2.account_id) THEN 'PROCESSING'
+        WHEN 'ERROR' IN (SELECT t2.status FROM task t2 WHERE t.id = t2.account_id) THEN 'ERROR'
+        WHEN 'WARNING' IN (SELECT t2.status FROM task t2 WHERE t.id = t2.account_id) THEN 'WARNING'
+        WHEN 'FINISHED' IN (SELECT t2.status FROM task t2 WHERE t.id = t2.account_id) THEN 'FINISHED'
+        ELSE 'UNDEFINED'
+        END AS resultStatus
+        FROM cloud_account t
+        LEFT JOIN user u on t.creator = u.id
+        <where>
+            <if test="accountId != null">
+                AND t.id = #{accountId}
+            </if>
+        </where>
+        ORDER BY t.create_time DESC
+    </select>
+
+    <select id="getTaskList" resultType="com.hummerrisk.base.domain.Task" parameterType="java.lang.String">
+        SELECT t.*
+        FROM task t
+        WHERE t.account_id = #{id}
+    </select>
+
+    <select id="getResourceList" resultType="com.hummerrisk.base.domain.ResourceWithBLOBs" parameterType="java.lang.String">
+        SELECT t.*
+        FROM resource t
+        WHERE t.id = #{resource_id}
+    </select>
+
+    <select id="getComplianceResult" parameterType="com.hummerrisk.controller.request.resource.ResourceRequest" resultMap="BaseResultMap">
+        SELECT
+        t4.task_name as taskName,
+        t4.type,
+        t4.id as taskId,
+        t4.apply_user as applyUser,
+        t5.rule_id as ruleId,
+        t6.name as ruleName,
+        t7.name as accountName,
+        t.*
+        FROM resource_item t
+        LEFT JOIN resource t1 ON t1.id = t.resource_id
+        LEFT JOIN task_item_resource t2 ON t1.id = t2.resource_id
+        LEFT JOIN task_item t3 ON t3.id = t2.task_item_id
+        LEFT JOIN task t4 ON t3.task_id = t4.id
+        LEFT JOIN resource_rule t5 ON t1.id = t5.resource_id
+        LEFT JOIN rule t6 ON t5.rule_id = t6.id
+        LEFT JOIN cloud_account t7 ON t.account_id = t7.id
+        <where>
+            <if test="taskId != null">
+                AND t4.id like CONCAT('%',#{taskId},'%')
+            </if>
+            <if test="taskName != null">
+                AND t4.task_name like CONCAT('%',#{taskName},'%')
+            </if>
+            <if test="severity != null">
+                AND t.severity = #{severity}
+            </if>
+            <if test="tagKey != null">
+                AND t5.rule_id in (select tt.rule_id from rule_tag_mapping tt where tt.tag_key = #{tagKey})
+            </if>
+            <if test="pluginName != null">
+                AND t.plugin_name = #{pluginName}
+            </if>
+            <if test="resourceName != null">
+                AND t.resource_name like CONCAT('%',#{resourceName},'%')
+            </if>
+            <if test="resourceStatus != null">
+                AND t.resource_status = #{resourceStatus}
+            </if>
+            <if test="resourceType != null">
+                AND t.resource_type = #{resourceType}
+            </if>
+            <if test="ruleId != null">
+                AND t5.rule_id = #{ruleId}
+            </if>
+            <if test="ruleName != null">
+                AND t6.name like CONCAT('%',#{ruleName},'%')
+            </if>
+            <if test="ruleName != null">
+                AND t6.name like CONCAT('%',#{ruleName},'%')
+            </if>
+            <if test="name != null">
+                AND t.hummer_id like CONCAT('%',#{name},'%')
+            </if>
+        </where>
+        <if test="sort == null">
+            ORDER BY t.create_time DESC
+        </if>
+    </select>
+
+    <select id="resultPercent" resultType="java.lang.String">
+        select IFNULL(sum( t.return_sum ), 0)/IFNULL(sum( t.resources_sum ), 1)
+        from task t
+        join cloud_account t1 on t.account_id = t1.id
+        <where>
+            <if test="severity != null">
+                AND t.severity = #{severity}
+            </if>
+            <if test="accountId != null">
+                AND t.account_id = #{accountId}
+            </if>
+            <if test="taskId != null">
+                AND t.id = #{taskId}
+            </if>
+        </where>
+    </select>
+
+    <select id="sumReturnSum" resultType="java.lang.String">
+        select IFNULL(sum( t.return_sum ), 0)
+        from task t
+        join cloud_account t1 on t.account_id = t1.id
+        <where>
+            <if test="accountId != null">
+                AND t.account_id = #{accountId}
+            </if>
+        </where>
+    </select>
+
+    <select id="sumResourcesSum" resultType="java.lang.String">
+        select IFNULL(sum( t.resources_sum ), 0)
+        from task t
+        join cloud_account t1 on t.account_id = t1.id
+        <where>
+            <if test="accountId != null">
+                AND t.account_id = #{accountId}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="ReportListResultMap" type="com.hummerrisk.dto.ReportDTO"
+               extends="com.hummerrisk.base.mapper.RuleInspectionReportMapper.BaseResultMap">
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <collection property="taskList" ofType="com.hummerrisk.base.domain.Task" javaType="list" select="getReportTaskList" column="id">
+            <id column="id" jdbcType="VARCHAR" property="id" />
+            <result column="status" jdbcType="VARCHAR" property="status" />
+            <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+            <result column="create_time" jdbcType="BIGINT" property="createTime" />
+            <result column="description" jdbcType="VARCHAR" property="description" />
+            <result column="task_name" jdbcType="VARCHAR" property="taskName" />
+            <result column="cron" jdbcType="VARCHAR" property="cron" />
+            <result column="trigger_id" jdbcType="VARCHAR" property="triggerId" />
+            <result column="prev_fire_time" jdbcType="BIGINT" property="prevFireTime" />
+            <result column="last_fire_time" jdbcType="BIGINT" property="lastFireTime" />
+            <result column="type" jdbcType="VARCHAR" property="type" />
+            <result column="severity" jdbcType="VARCHAR" property="severity" />
+            <result column="rule_tags" jdbcType="VARCHAR" property="ruleTags" />
+            <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+            <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+            <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+            <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+            <result column="resource_types" jdbcType="VARCHAR" property="resourceTypes" />
+            <result column="resources_sum" jdbcType="BIGINT" property="resourcesSum" />
+            <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+            <result column="cron_desc" jdbcType="VARCHAR" property="cronDesc" />
+            <result column="scan_type" jdbcType="VARCHAR" property="scanType" />
+        </collection>
+    </resultMap>
+
+    <select id="reportList" parameterType="com.hummerrisk.controller.request.resource.ResourceRequest" resultMap="ReportListResultMap">
+        SELECT
+            t.*,
+            CASE
+            WHEN
+            (
+            SELECT count(t5.id)
+            FROM rule_inspection_report_mapping t1
+            JOIN rule t2 ON t1.rule_id = t2.id
+            JOIN resource_rule t3 ON t2.id = t3.rule_id
+            JOIN resource t4 ON t4.id = t3.resource_id
+            JOIN resource_item t5 ON t4.id = t5.resource_id
+            WHERE t1.report_id = t.id
+            AND t4.account_id = #{accountId}
+            AND t1.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = #{groupId})
+            ) > 0 THEN 'risky'
+            ELSE 'risk_free'
+            END AS status
+        FROM rule_inspection_report t
+        <where>
+            <if test="project != null">
+                AND t.project like CONCAT('%',#{project},'%')
+            </if>
+            <if test="itemSortFirstLevel != null">
+                AND t.item_sort_first_level = #{itemSortFirstLevel}
+            </if>
+            <if test="itemSortSecondLevel != null">
+                AND t.item_sort_second_level = #{itemSortSecondLevel}
+            </if>
+            <if test="name != null">
+                AND t.project like CONCAT('%',#{name},'%')
+            </if>
+        </where>
+        ORDER BY FIELD(status, 'risky','risk_free'), t.id
+    </select>
+
+    <select id="getReportTaskList" resultType="com.hummerrisk.base.domain.Task" parameterType="java.lang.String">
+        SELECT DISTINCT t.*
+        FROM task t
+        JOIN task_item t1 on t.id = t1.task_id
+        JOIN rule_inspection_report_mapping t2 on t2.rule_id = t1.rule_id
+        JOIN rule_inspection_report t3 on t3.id = t2.report_id
+        where t3.id = #{id}
+    </select>
+
+    <select id="reportIso" resultType="java.util.Map" parameterType="java.lang.String">
+        SELECT
+            (
+            SELECT
+                count( DISTINCT t.id )
+            FROM
+                rule_inspection_report t
+                LEFT JOIN rule_inspection_report_mapping t1 ON t1.report_id = t.id
+                LEFT JOIN task_item t2 ON t2.rule_id = t1.rule_id
+                LEFT JOIN task t3 ON t3.id = t2.task_id
+                LEFT JOIN rule_group_mapping t4 ON t3.rule_id = t4.rule_id
+            WHERE
+                t3.account_id = #{accountId}
+            AND t3.return_sum > 0
+            AND t3.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = #{groupId})
+            )
+            AS riskyRegulation,
+
+            (
+                SELECT count( DISTINCT t.id ) FROM rule_inspection_report t
+            ) AS totalRegulation,
+
+            (
+                SELECT
+                    sum( t.return_sum )
+                FROM
+                    task t
+                WHERE
+                    t.account_id = #{accountId}
+                AND t.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = #{groupId})
+            )
+            AS returnSum,
+
+            (
+                SELECT
+                    sum( t.resources_sum )
+                FROM
+                    task t
+                WHERE
+                    t.account_id = #{accountId}
+                AND t.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = #{groupId})
+            )
+            AS resourcesSum
+    </select>
+
+    <select id="groups" resultType="java.util.Map">
+        SELECT
+            t.id,
+            t.name,
+            t.description,
+            t.level,
+            t.plugin_id as pluginId,
+            t.flag,
+            CASE
+            WHEN
+            (
+            SELECT count(t5.id) FROM rule_group_mapping t1
+            JOIN rule t2 ON t1.rule_id = t2.id
+            JOIN resource_rule t3 ON t2.id = t3.rule_id
+            JOIN resource t4 ON t4.id = t3.resource_id
+            JOIN resource_item t5 ON t4.id = t5.resource_id
+            WHERE t1.group_id = t.id
+            AND t4.account_id = #{accountId}
+            ) > 0 THEN 'risky'
+            ELSE 'risk_free'
+            END AS status,
+            (select create_time from task where account_id = #{accountId} order by create_time desc limit 1) as createTime,
+            '暂无合规报告' as state
+        FROM rule_group t
+        left join cloud_account t1 on t.plugin_id = t1.plugin_id
+        WHERE t1.id = #{accountId}
+        AND t.id IN (SELECT group_id FROM rule_group_mapping)
+    </select>
+
+    <select id="searchExportData" resultType="com.hummerrisk.dto.ExportDTO" parameterType="java.lang.String">
+        SELECT
+            DISTINCT t.hummer_id as hummerId,
+            t.region_id as regionId,
+            t.region_name as regionName,
+            t1.resource_name as resourceName,
+            t.resource_type as resourceType,
+            t.severity,
+            t3.name as ruleName,
+            t3.description as ruleDescription,
+            IFNULL(t5.project, '暂无') as project,
+            IFNULL(t5.item_sort_first_level, '暂无') as firstLevel,
+            IFNULL(t5.item_sort_second_level, '暂无') as secondLevel,
+            IFNULL(t5.improvement, '暂无') as improvement
+        FROM resource_item t
+        JOIN resource t1 on t.resource_id = t1.id
+        JOIN resource_rule t2 on t.resource_id = t2.resource_id
+        JOIN rule t3 on t2.rule_id = t3.id
+        LEFT JOIN rule_inspection_report_mapping t4 on t3.id = t4.rule_id
+        LEFT JOIN rule_inspection_report t5 on t4.report_id = t5.id
+        WHERE t.account_id in
+        <foreach collection='accountIds' item='accountId' open='(' separator=',' close=')'>
+            #{accountId}
+        </foreach>
+        ORDER BY t.resource_type, t1.resource_name, t.region_id, t.hummer_id
+    </select>
+
+    <select id="resource" resultType="com.hummerrisk.base.domain.ResourceWithBLOBs" parameterType="com.hummerrisk.base.domain.TaskItem">
+        SELECT t.*
+        FROM resource t
+        left join task_item_resource t1 on t.id = t1.resource_id
+        left join task_item t2 on t1.task_item_id = t2.id
+        <where>
+            <if test="taskId != null">
+                AND t1.task_id = #{taskId}
+            </if>
+            <if test="id != null">
+                AND t1.task_item_id = #{id}
+            </if>
+            <if test="accountId != null">
+                AND t.account_id = #{accountId}
+            </if>
+            <if test="regionId != null">
+                AND t.region_id = #{regionId}
+            </if>
+            <if test="ruleId != null">
+                AND t2.rule_id = #{ruleId}
+            </if>
+        </where>
+        ORDER BY t.create_time desc
+        limit 1
+    </select>
+</mapper>

@@ -5,7 +5,7 @@
 
     <parent>
         <artifactId>hummerrisk</artifactId>
-        <groupId>io.hummerrisk</groupId>
+        <groupId>com.hummerrisk</groupId>
         <version>1.0</version>
     </parent>
 
@@ -1051,7 +1051,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <!-- 指定该Main Class为全局的唯一入口 -->
-                    <mainClass>io.hummerrisk.Application</mainClass>
+                    <mainClass>com.hummerrisk.Application</mainClass>
                     <includeSystemScope>true</includeSystemScope>
                     <excludes>
                         <exclude>

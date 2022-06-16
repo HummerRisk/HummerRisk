@@ -1,5 +1,5 @@
-import io.hummerrisk.commons.constants.TaskConstants;
-import io.hummerrisk.commons.utils.LogUtil;
+import com.hummerrisk.commons.constants.TaskConstants;
+import com.hummerrisk.commons.utils.LogUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 

@@ -151,14 +151,14 @@
 		<appender-ref ref="console" />
 	</root>
 
-	<logger name="io.hummerrisk" additivity="false">
+	<logger name="com.hummerrisk" additivity="false">
 		<level value="${logger.level:INFO}"/>
 		<appender-ref ref="infoAsyncAppender"/>
 		<appender-ref ref="warnAsyncAppender"/>
 		<appender-ref ref="errorAsyncAppender"/>
 	</logger>
 
-	<logger name="io.hummerrisk.Application" additivity="false" level="${logger.level:INFO}">
+	<logger name="com.hummerrisk.Application" additivity="false" level="${logger.level:INFO}">
 		<appender-ref ref="infoAsyncAppender"/>
 	</logger>
 

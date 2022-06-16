@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummerrisk.base.mapper.ext.ExtRuleMapper">
+
+    <resultMap id="BaseResultMap" type="com.hummerrisk.dto.RuleDTO"
+               extends="com.hummerrisk.base.mapper.RuleMapper.BaseResultMap">
+        <result column="plugin_icon" property="pluginIcon" jdbcType="VARCHAR"/>
+        <collection property="tags" javaType="list" ofType="string">
+            <result column="tag_key"/>
+        </collection>
+    </resultMap>
+
+    <select id="getTagsOfRule" resultMap="com.hummerrisk.base.mapper.RuleTagMapper.BaseResultMap">
+        SELECT *
+        FROM rule_tag
+        WHERE tag_key IN
+        (SELECT tag_key FROM rule_tag_mapping WHERE rule_id = #{ruleId})
+    </select>
+
+    <resultMap id="BaseResultMap2" type="com.hummerrisk.dto.RuleDTO"
+               extends="com.hummerrisk.base.mapper.RuleMapper.BaseResultMap">
+        <result column="isSaveParam" property="isSaveParam" jdbcType="BOOLEAN"/>
+        <result column="tagKey" property="tagKey" jdbcType="VARCHAR"/>
+        <collection property="tags" javaType="list" ofType="string" select="getTags" column="id">
+            <result column="tagKey" jdbcType="VARCHAR" property="tagKey"/>
+        </collection>
+        <collection property="types" javaType="list" ofType="string" select="getTypes" column="id">
+            <result column="resourceType" jdbcType="VARCHAR" property="resourceType"/>
+        </collection>
+        <collection property="ruleSets" javaType="list" ofType="Integer" select="getRuleGroups" column="id">
+            <result column="groupId" jdbcType="VARCHAR" property="groupId"/>
+        </collection>
+        <collection property="inspectionSeports" javaType="list" ofType="Integer" select="getInspectionSeports" column="id">
+            <result column="reportId" jdbcType="VARCHAR" property="reportId"/>
+        </collection>
+    </resultMap>
+
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.name != null'>
+            and t.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test='${condition}.severity != null'>
+            and t.severity
+            <include refid="condition">
+                <property name="object" value="${condition}.severity"/>
+            </include>
+        </if>
+        <if test='${condition}.pluginId != null'>
+            and t.plugin_id
+            <include refid="condition">
+                <property name="object" value="${condition}.pluginId"/>
+            </include>
+        </if>
+        <if test='${condition}.ruleTag != null and ${condition}.ruleTag.value != "all"'>
+            and #{${condition}.ruleTag.value}
+            <choose>
+                <when test='${condition}.ruleTag.operator == "in"'>
+                    in (select tag_key from rule_tag_mapping where rule_id = t.id)
+                </when>
+                <when test='${condition}.ruleTag.operator == "not in"'>
+                    not in (select tag_key from rule_tag_mapping where rule_id = t.id)
+                </when>
+            </choose>
+        </if>
+        <if test='${condition}.resourceType != null'>
+            and #{${condition}.resourceType.value}
+            <choose>
+                <when test='${condition}.resourceType.operator == "in"'>
+                    in (select resource_type from rule_type where rule_id = t.id)
+                </when>
+                <when test='${condition}.resourceType.operator == "not in"'>
+                    not in (select resource_type from rule_type where rule_id = t.id)
+                </when>
+            </choose>
+        </if>
+        <if test='${condition}.group != null'>
+            and #{${condition}.group.value}
+            <choose>
+                <when test='${condition}.group.operator == "in"'>
+                    in (select group_id from rule_group_mapping where rule_id = t.id)
+                </when>
+                <when test='${condition}.groupId.operator == "not in"'>
+                    not in (select group_id from rule_group_mapping where rule_id = t.id)
+                </when>
+            </choose>
+        </if>
+        <if test='${condition}.regulation != null'>
+            and #{${condition}.regulation.value}
+            <choose>
+                <when test='${condition}.regulation.operator == "in"'>
+                    in (select report_id from rule_inspection_report_mapping where rule_id = t.id)
+                </when>
+                <when test='${condition}.regulation.operator == "not in"'>
+                    not in (select report_id from rule_inspection_report_mapping where rule_id = t.id)
+                </when>
+            </choose>
+        </if>
+    </sql>
+
+    <select id="cloudList" parameterType="com.hummerrisk.controller.request.rule.CreateRuleRequest"
+            resultMap="BaseResultMap2">
+        SELECT
+        t.*,
+        (select tag_key from rule_tag_mapping where rule_id = t.id limit 1) as tagKey
+        FROM rule t
+        <where>
+            <if test="id != null">
+                AND t.id = #{id}
+            </if>
+            <if test="name != null">
+                AND t.name like CONCAT('%',#{name},'%')
+            </if>
+            <if test="pluginId != null">
+                AND t.plugin_id = #{pluginId}
+            </if>
+            <if test="combine != null">
+                <include refid="combine">
+                    <property name="condition" value="combine"/>
+                </include>
+            </if>
+            and t.plugin_id in (select plugin_id from cloud_account ca where ca.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin'))
+        </where>
+        ORDER BY t.last_modified desc
+    </select>
+
+    <select id="vulnList" parameterType="com.hummerrisk.controller.request.rule.CreateRuleRequest"
+            resultMap="BaseResultMap2">
+        SELECT
+        t.*,
+        (select tag_key from rule_tag_mapping where rule_id = t.id limit 1) as tagKey
+        FROM rule t
+        <where>
+            <if test="id != null">
+                AND t.id = #{id}
+            </if>
+            <if test="name != null">
+                AND t.name like CONCAT('%',#{name},'%')
+            </if>
+            <if test="pluginId != null">
+                AND t.plugin_id = #{pluginId}
+            </if>
+            <if test="combine != null">
+                <include refid="combine">
+                    <property name="condition" value="combine"/>
+                </include>
+            </if>
+            and t.plugin_id in (select plugin_id from cloud_account ca where ca.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin'))
+        </where>
+        ORDER BY t.last_modified desc
+    </select>
+
+    <select id="getTags" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT t.tag_key as tagKey
+        FROM rule_tag t
+        WHERE tag_key IN
+        (SELECT tag_key FROM rule_tag_mapping WHERE rule_id = #{id})
+    </select>
+
+    <select id="getTypes" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT distinct(t.resource_type) as resourceType
+        FROM rule_type t
+        WHERE rule_id = #{id}
+    </select>
+
+    <select id="getRuleGroups" resultType="java.lang.Integer" parameterType="java.lang.String">
+        SELECT t.id as groupId
+        FROM rule_group t
+        WHERE t.id IN
+        (SELECT group_id FROM rule_group_mapping WHERE rule_id = #{id})
+    </select>
+
+    <select id="getInspectionSeports" resultType="java.lang.Integer" parameterType="java.lang.String">
+        SELECT t.id as reportId
+        FROM rule_inspection_report t
+        WHERE t.id IN
+        (SELECT report_id FROM rule_inspection_report_mapping WHERE rule_id = #{id})
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="com.hummerrisk.base.mapper.ext.ExtRuleMapper.BaseResultMap2">
+        SELECT
+            t.id,
+            t.name,
+            t.status,
+            t.severity,
+            t.description,
+            t.script,
+            IFNULL (t1.`parameter`, t.`parameter`) as parameter,
+            CASE WHEN t1.`parameter` IS NOT NULL
+            THEN true
+            ELSE false
+            END AS isSaveParam,
+            t.plugin_id as plugin_id,
+            t.plugin_name as plugin_name,
+            t.plugin_icon as plugin_icon,
+            t.last_modified as last_modified,
+            t.scan_type as scan_type,
+            t1.regions
+        FROM rule t
+        LEFT JOIN rule_account_parameter t1 ON t.id = t1.rule_id AND t1.account_id = #{accountId}
+        WHERE t.id = #{ruleId}
+    </select>
+
+</mapper>

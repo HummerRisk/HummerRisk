@@ -48,16 +48,16 @@
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
         <!-- 模型对象 -->
-        <javaModelGenerator targetPackage="io.hummerrisk.base.domain" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="com.hummerrisk.base.domain" targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
         <!-- XML映射文件 -->
-        <sqlMapGenerator targetPackage="io.hummerrisk.base.mapper" targetProject="src/main/java">
+        <sqlMapGenerator targetPackage="com.hummerrisk.base.mapper" targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
         <!-- 接口 -->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="io.hummerrisk.base.mapper"
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.hummerrisk.base.mapper"
                              targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
