@@ -115,7 +115,7 @@ export default {
     height: 37px;
     background-repeat: no-repeat;
     background-position: 50% center;
-    background-image: url("../assets/img/logo/logo-red.png");
+    background-image: url("../assets/img/logo/logo-light.png");
     cursor : pointer;
   }
 

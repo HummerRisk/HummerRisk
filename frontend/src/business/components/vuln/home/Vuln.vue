@@ -329,7 +329,7 @@ export default {
         this.$warning(this.$t('account.please_choose_account'));
         return;
       }
-      this.$alert(this.$t('account.one_validate') + this.$t('account.cloud_account') + " ？", '', {
+      this.$alert(this.$t('account.one_validate') + this.$t('vuln.vuln_setting') + " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {

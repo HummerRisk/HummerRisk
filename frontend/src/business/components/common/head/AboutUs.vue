@@ -45,7 +45,7 @@
     data() {
       return {
         dialogVisible: false,
-        githubUrl: 'https://github.com/hummerrisk/hummerrisk',
+        githubUrl: 'https://github.com/HummerRisk/HummerRisk',
         websiteUrl: 'https://docs.hummerrisk.com',
         version: 'v1.0.0',
       }

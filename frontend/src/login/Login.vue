@@ -249,7 +249,7 @@ import {DEFAULT_LANGUAGE} from "@/common/js/constants";
 
 </style>
 
-<style scoped>
+<style>
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Neue Haas Grotesk Text Pro", "Arial Nova", "Segoe UI", "Helvetica Neue", ".PingFang SC", "PingFang SC", "Source Han Sans SC", "Noto Sans CJK SC", "Source Han Sans CN", "Noto Sans SC", "Source Han Sans TC", "Noto Sans CJK TC", "Hiragino Sans GB", sans-serif;
     font-size: 14px;
@@ -277,6 +277,7 @@ import {DEFAULT_LANGUAGE} from "@/common/js/constants";
     background-color: #334071;
     width: 100%;
     height: 100%; /**宽高100%是为了图片铺满屏幕 */
+    min-height: 760px;
     z-index: -1;
     position: absolute;
     display: flex;

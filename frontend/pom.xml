@@ -6,7 +6,7 @@
 
   <parent>
     <artifactId>hummerrisk</artifactId>
-    <groupId>io.hummerrisk</groupId>
+    <groupId>com.hummerrisk</groupId>
     <version>1.0</version>
   </parent>
 
