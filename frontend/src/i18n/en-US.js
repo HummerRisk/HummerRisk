@@ -849,7 +849,7 @@ export default {
     name: 'Vulnerability scan configuration name',
     platform: 'Vulnerability Scanning Engine',
     status: 'status',
-    add: 'Add',
+    add: 'Add multiple',
     delete_this_vuln: 'Delete this missed scan configuration',
     please_choose_vuln: 'Please choose the missed scan target',
   },

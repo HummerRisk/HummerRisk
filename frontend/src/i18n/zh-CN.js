@@ -849,7 +849,7 @@ export default {
     name: '漏扫配置名称',
     platform: '漏洞扫描引擎',
     status: '状态',
-    add: '新增',
+    add: '新增多个',
     delete_this_vuln: '删除此漏扫配置',
     please_choose_vuln: '请选择漏扫目标',
   },

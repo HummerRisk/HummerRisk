@@ -66,7 +66,7 @@
                  :destroy-on-close="true">
         <div v-for="(form, index) in addAccountForm" :key="index">
           <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" :ref="'addAccountForm' + index">
-              <el-form-item :label="$t('account.name') + '(' + (index + 1) + ')'" ref="name" prop="name">
+              <el-form-item :label="$t('account.name')" ref="name" prop="name">
                 <el-input v-model="form.name" autocomplete="off" :placeholder="$t('account.input_name')"/>
               </el-form-item>
               <el-form-item :label="$t('account.cloud_platform')" :rules="{required: true, message: $t('account.cloud_platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
@@ -122,7 +122,7 @@
                 <el-button type="danger" icon="el-icon-delete" plain size="small" @click="deleteAccount(addAccountForm, form)">{{ $t('commons.delete') }}</el-button>
               </el-form-item>
           </el-form>
-          <el-divider><i class="el-icon-cloudy"></i></el-divider>
+          <el-divider><i class="el-icon-cloudy"> {{ (index + 1) }}</i></el-divider>
         </div>
         <div>
           <el-drawer
