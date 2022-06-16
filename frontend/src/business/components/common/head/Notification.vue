@@ -43,10 +43,10 @@ export default {
     this.timer && clearInterval(this.timer)
   },
   created() {
-    // 每30s定时刷新拉取消息
+    // 每60s定时刷新拉取消息
     this.timer = setInterval(() => {
       this.queryCount();
-    }, 30000);
+    }, 60000);
   },
   methods: {
     setColor(e) {
@@ -57,7 +57,7 @@ export default {
       }
     },
     queryCount() {
-      this.$post('/webmsg/unReadCount', {}, response => {
+      this.$post('/webmsg/unReadCount', null, response => {
         this.count = response.data;
       });
     },

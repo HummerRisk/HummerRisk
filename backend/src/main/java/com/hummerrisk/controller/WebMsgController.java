@@ -32,7 +32,7 @@ public class WebMsgController {
 
     @ApiOperation("查询未读数量")
     @PostMapping("/unReadCount")
-    public Long unReadCount(@RequestBody Map<String, String> request) {
+    public Long unReadCount() {
         return webMsgService.queryCount();
     }
 
