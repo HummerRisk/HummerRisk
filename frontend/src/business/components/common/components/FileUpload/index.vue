@@ -98,7 +98,7 @@ export default {
     },
     handleRemove(file, fileList) {
       this.param.url = file.path;
-      this.$post(this.url + "/" + this.param.id, this.param, response => {
+      this.$post(this.url + "/" + this.param.id, this.param, () => {
         this.$message({
           message: this.$t("commons.delete_success"),
           duration: 1000
@@ -121,6 +121,7 @@ export default {
             message: this.$t("commons.save_success"),
             duration: 1000
           });
+          this.$refs.upload.clearFiles(); //上传成功之后清除历史记录
         } else {
           this.percentage = 99;
           this.$message({

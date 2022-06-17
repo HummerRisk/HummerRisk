@@ -22,7 +22,9 @@
             <div style="padding: 14px;">
               <span>{{ data.name }}</span>
               <el-button size="medium" type="primary" class="round" round>{{ data.size }}</el-button>
-              <span class="button time">{{ data.packageName }}</span>
+              <span class="button time">
+                <span v-bind:class="{true: 'color-red', false: ''}[!data.packageName]">{{ data.packageName?data.packageName:'No package' }}</span>
+              </span>
               <div class="bottom clearfix">
                 <time class="time">{{ data.updateTime | timestampFormatDate }} | {{ data.userName }}{{ $t('dashboard.i18n_create') }}</time>
                 <el-dropdown class="button" @command="(command)=>{handleCommand(command, data)}">
@@ -87,7 +89,7 @@
         @cancel="createVisible = false"
         :show-pre="preVisible" @preStep="pre()"
         :show-next="nextVisible" @nextStep="next('add')"
-        :show-confirm="confirmVisible" @confirm="createVisible = false"/>
+        :show-confirm="confirmVisible" @confirm="handleClose"/>
     </el-drawer>
     <!--Create package-->
 
@@ -134,7 +136,7 @@
         @cancel="updateVisible = false"
         :show-pre="preVisible" @preStep="pre()"
         :show-next="nextVisible" @nextStep="next('edit')"
-        :show-confirm="confirmVisible" @confirm="updateVisible = false"/>
+        :show-confirm="confirmVisible" @confirm="handleClose"/>
     </el-drawer>
     <!--Uodate package-->
 
@@ -251,6 +253,10 @@ export default {
       }
     },
     scan(data) {
+      if(!data.path) {
+        this.$warning(this.$t('package.no_package'));
+        return;
+      }
       this.$alert(this.$t('package.one_scan') + this.$t('package.package_rule') + " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
@@ -270,7 +276,7 @@ export default {
       });
     },
     delete(data) {
-      this.$get('/package/deletePackage/' + data.id, response => {
+      this.$get('/package/deletePackage/' + data.id, () => {
         this.search();
       });
     },
@@ -296,7 +302,6 @@ export default {
       this.updateVisible =  false;
       this.search();
     },
-    handleChange() {},
     next(type) {
       if (this.active === 1) {
         if(type==='add') {

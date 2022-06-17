@@ -830,6 +830,7 @@ export default {
     result_resources: '掃描過程',
     result_log: '掃描結果日誌',
     result_json: '掃描結果JSON',
+    no_package: '沒有軟件包，請上傳完軟件包之後掃描',
   },
   vuln: {
     vuln_setting: '漏洞掃描',

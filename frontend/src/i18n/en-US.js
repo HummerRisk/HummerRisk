@@ -830,6 +830,7 @@ export default {
     result_resources: 'Scan process',
     result_log: 'Scan result log',
     result_json: 'Scan result JSON',
+    no_package: 'No package, please scan after uploading the package',
   },
   vuln: {
     vuln_setting: 'Vulnerability Scan',

@@ -93,7 +93,7 @@ public class PackageService {
 
     public Package uploadImg(MultipartFile file, Package request) throws Exception {
         String filePath = upload(file, PackageConstants.DEFAULT_BASE_DIR);
-        request.setPluginIcon(filePath);
+        request.setPluginIcon("files/" + filePath);
         request.setUpdateTime(System.currentTimeMillis());
         request.setStatus("VALID");
         packageMapper.updateByPrimaryKeySelective(request);
@@ -265,73 +265,18 @@ public class PackageService {
                 packageResultMapper.insertSelective(result);
 
                 savePackageResultLog(result.getId(), Translator.get("i18n_start_package_result"), "", true);
-
-                try {
-                    String script = dto.getScript();
-                    JSONArray jsonArray = JSON.parseArray(dto.getParameter());
-                    for (Object o : jsonArray) {
-                        JSONObject jsonObject = (JSONObject) o;
-                        String key = "${{" + jsonObject.getString("key") + "}}";
-                        if (script.contains(key)) {
-                            script = script.replace(key, jsonObject.getString("defaultValue"));
-                        }
-                    }
-                    String resources = execute(aPackage, dto, "json");
-                    execute(aPackage, dto, "html");
-                    String fileName = !aPackage.getPath().isEmpty()?aPackage.getPath().split("/")[aPackage.getPath().split("/").length-1]:"";
-                    String suffix = StringUtils.isNotBlank(fileName)?fileName.split("\\.")[fileName.split("\\.").length-1]:"";
-                    String s1 = !aPackage.getPath().isEmpty()?aPackage.getPath().split("/")[0]:"";
-                    String s2 = !aPackage.getPath().isEmpty()?aPackage.getPath().split("/")[aPackage.getPath().split("/").length-1]:"";
-                    String fileFolder = PackageConstants.DEFAULT_BASE_DIR + s1 + "/";
-                    String returnJson = !aPackage.getPath().isEmpty()? ReadFileUtils.readJsonFile(fileFolder, s2.replace(suffix, "json")):"";
-                    String returnHtml = "files/" + (!aPackage.getPath().isEmpty()?aPackage.getPath().replace(suffix, "html"):"");
-                    String log = ReadFileUtils.readToBuffer(fileFolder + fileName.replace(suffix, "log"));
-                    result.setReturnLog(log);
-                    result.setResources(resources);
-                    result.setReturnJson(returnJson);
-                    result.setReturnHtml(returnHtml);
-                    result.setUpdateTime(System.currentTimeMillis());
-                    result.setResultStatus(TaskConstants.TASK_STATUS.FINISHED.toString());
-                    packageResultMapper.updateByPrimaryKeySelective(result);
-
-                    savePackageResultLog(result.getId(), Translator.get("i18n_end_package_result"), "", true);
-                } catch (Exception e) {
-                    LogUtil.error(e.getMessage());
-                    result.setUpdateTime(System.currentTimeMillis());
-                    result.setResultStatus(TaskConstants.TASK_STATUS.ERROR.toString());
-                    packageResultMapper.updateByPrimaryKeySelective(result);
-                    savePackageResultLog(result.getId(), Translator.get("i18n_operation_ex") + ": " + e.getMessage(), e.getMessage(), false);
-                    throw new HRException(e.getMessage());
-                }
             }
         }
     }
 
-    public void reScan(String id) throws Exception {
-        PackageResultWithBLOBs result = packageResultMapper.selectByPrimaryKey(id);
-        PackageRule rule = packageRuleMapper.selectByPrimaryKey(result.getRuleId());
-        savePackageResultLog(result.getId(), Translator.get("i18n_restart_package_result"), "", true);
-        Package aPackage = packageMapper.selectByPrimaryKey(result.getPackageId());
-        PackageRuleDTO dto = BeanUtils.copyBean(new PackageRuleDTO(), rule);
-
-        deletePackageResult(id);
-
-        BeanUtils.copyBean(result, aPackage);
-        result.setId(UUIDUtil.newUUID());
-        result.setPackageId(id);
-        result.setApplyUser(SessionUtils.getUserId());
-        result.setCreateTime(System.currentTimeMillis());
-        result.setUpdateTime(System.currentTimeMillis());
-        result.setRuleId(dto.getId());
-        result.setRuleName(dto.getName());
-        result.setRuleDesc(dto.getDescription());
-        result.setResultStatus(TaskConstants.TASK_STATUS.APPROVED.toString());
-        result.setSeverity(dto.getSeverity());
-        result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
-        packageResultMapper.insertSelective(result);
+    public void createScan (PackageResultWithBLOBs result) {
         try {
-            String script = rule.getScript();
-            JSONArray jsonArray = JSON.parseArray(rule.getParameter());
+            PackageRuleRequest request = new PackageRuleRequest();
+            request.setId(result.getRuleId());
+            PackageRuleDTO dto = ruleList(request).get(0);
+            Package aPackage = packageMapper.selectByPrimaryKey(result.getPackageId());
+            String script = dto.getScript();
+            JSONArray jsonArray = JSON.parseArray(dto.getParameter());
             for (Object o : jsonArray) {
                 JSONObject jsonObject = (JSONObject) o;
                 String key = "${{" + jsonObject.getString("key") + "}}";
@@ -346,7 +291,7 @@ public class PackageService {
             String s1 = !aPackage.getPath().isEmpty()?aPackage.getPath().split("/")[0]:"";
             String s2 = !aPackage.getPath().isEmpty()?aPackage.getPath().split("/")[aPackage.getPath().split("/").length-1]:"";
             String fileFolder = PackageConstants.DEFAULT_BASE_DIR + s1 + "/";
-            String returnJson = !aPackage.getPath().isEmpty()?ReadFileUtils.readJsonFile(fileFolder, s2.replace(suffix, "json")):"";
+            String returnJson = !aPackage.getPath().isEmpty()? ReadFileUtils.readJsonFile(fileFolder, s2.replace(suffix, "json")):"";
             String returnHtml = "files/" + (!aPackage.getPath().isEmpty()?aPackage.getPath().replace(suffix, "html"):"");
             String log = ReadFileUtils.readToBuffer(fileFolder + fileName.replace(suffix, "log"));
             result.setReturnLog(log);
@@ -366,6 +311,31 @@ public class PackageService {
             savePackageResultLog(result.getId(), Translator.get("i18n_operation_ex") + ": " + e.getMessage(), e.getMessage(), false);
             throw new HRException(e.getMessage());
         }
+    }
+
+    public void reScan(String id) throws Exception {
+        PackageResultWithBLOBs result = packageResultMapper.selectByPrimaryKey(id);
+        PackageRule rule = packageRuleMapper.selectByPrimaryKey(result.getRuleId());
+        Package aPackage = packageMapper.selectByPrimaryKey(result.getPackageId());
+        PackageRuleDTO dto = BeanUtils.copyBean(new PackageRuleDTO(), rule);
+
+        deletePackageResult(id);
+
+        BeanUtils.copyBean(result, aPackage);
+        result.setId(UUIDUtil.newUUID());
+        result.setPackageId(id);
+        result.setApplyUser(SessionUtils.getUserId());
+        result.setCreateTime(System.currentTimeMillis());
+        result.setUpdateTime(System.currentTimeMillis());
+        result.setRuleId(dto.getId());
+        result.setRuleName(dto.getName());
+        result.setRuleDesc(dto.getDescription());
+        result.setResultStatus(TaskConstants.TASK_STATUS.APPROVED.toString());
+        result.setSeverity(dto.getSeverity());
+        result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
+        packageResultMapper.insertSelective(result);
+
+        savePackageResultLog(result.getId(), Translator.get("i18n_restart_package_result"), "", true);
     }
 
     public void deletePackageResult(String id) throws Exception {

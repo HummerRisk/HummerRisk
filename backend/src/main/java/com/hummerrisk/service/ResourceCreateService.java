@@ -5,15 +5,12 @@ import com.hummer.quartz.anno.QuartzScheduled;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtScanHistoryMapper;
-import com.hummerrisk.commons.constants.TaskConstants;
-import com.hummerrisk.commons.utils.*;
-import com.hummerrisk.dto.ResourceDTO;
-import com.hummerrisk.base.domain.*;
-import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.commons.constants.CloudAccountConstants;
 import com.hummerrisk.commons.constants.CommandEnum;
+import com.hummerrisk.commons.constants.TaskConstants;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.resource.ResourceRequest;
+import com.hummerrisk.dto.ResourceDTO;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -66,9 +63,14 @@ public class ResourceCreateService {
     private ScanTaskHistoryMapper scanTaskHistoryMapper;
     @Resource
     private XrayService xrayService;
+    @Resource
+    private PackageService packageService;
+    @Resource
+    private PackageResultMapper packageResultMapper;
 
     @QuartzScheduled(cron = "${cron.expression.local}")
     public void handleTasks() {
+        //云资源扫描、漏洞扫描
         final TaskExample taskExample = new TaskExample();
         TaskExample.Criteria criteria = taskExample.createCriteria();
         criteria.andStatusEqualTo(TaskConstants.TASK_STATUS.APPROVED.toString());
@@ -104,9 +106,47 @@ public class ResourceCreateService {
             AccountExample accountExample = new AccountExample();
             accountExample.createCriteria().andStatusEqualTo(CloudAccountConstants.Status.VALID.name());
             List<AccountWithBLOBs> accountList = accountMapper.selectByExampleWithBLOBs(accountExample);
-
             accountList.forEach(account -> orderService.insertScanHistory(account));
         }
+
+        //软件包扫描
+        final PackageResultExample packageExample = new PackageResultExample();
+        PackageResultExample.Criteria pc = packageExample.createCriteria();
+        pc.andResultStatusEqualTo(TaskConstants.TASK_STATUS.APPROVED.toString());
+        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
+            pc.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+        }
+        packageExample.setOrderByClause("create_time limit 10");
+        List<PackageResultWithBLOBs> packageResults = packageResultMapper.selectByExampleWithBLOBs(packageExample);
+        if (CollectionUtils.isNotEmpty(packageResults)) {
+            packageResults.forEach(packageResult -> {
+                final PackageResultWithBLOBs packageToBeProceed;
+                try {
+                    packageToBeProceed = BeanUtils.copyBean(new PackageResultWithBLOBs(), packageResult);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                if (processingGroupIdMap.get(packageToBeProceed.getId()) != null) {
+                    return;
+                }
+                processingGroupIdMap.put(packageToBeProceed.getId(), packageToBeProceed.getId());
+                commonThreadPool.addTask(() -> {
+                    try {
+                        packageService.createScan(packageToBeProceed);
+                    } catch (Exception e) {
+                        LogUtil.error(e);
+                    } finally {
+                        processingGroupIdMap.remove(packageToBeProceed.getId());
+                    }
+                });
+            });
+        }
+        //虚拟机扫描
+
+        //镜像扫描
+
+        //网络扫描
+
     }
 
     public void handleTask(Task task) throws Exception {

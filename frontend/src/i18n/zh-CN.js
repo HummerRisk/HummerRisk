@@ -830,6 +830,7 @@ export default {
     result_resources: '扫描过程',
     result_log: '扫描结果日志',
     result_json: '扫描结果JSON',
+    no_package: '没有软件包，请上传完软件包之后扫描',
   },
   vuln: {
     vuln_setting: '漏洞扫描',
