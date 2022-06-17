@@ -129,44 +129,19 @@ public class ServerService {
 
                     saveServerResultLog(result.getId(), Translator.get("i18n_start_server_result"), "", true);
 
-                    try {
-                        String script = dto.getScript();
-                        JSONArray jsonArray = JSON.parseArray(dto.getParameter());
-                        for (Object o : jsonArray) {
-                            JSONObject jsonObject = (JSONObject) o;
-                            String key = "${{" + jsonObject.getString("key") + "}}";
-                            if (script.contains(key)) {
-                                script = script.replace(key, jsonObject.getString("defaultValue"));
-                            }
-                        }
-                        String returnLog = execute(server.getIp(), server.getUserName(), server.getPassword(), script);
-                        result.setReturnLog(returnLog);
-                        result.setUpdateTime(System.currentTimeMillis());
-                        result.setResultStatus(TaskConstants.TASK_STATUS.FINISHED.toString());
-                        serverResultMapper.updateByPrimaryKeySelective(result);
-
-                        saveServerResultLog(result.getId(), Translator.get("i18n_end_server_result"), returnLog, true);
-                    } catch (Exception e) {
-                        LogUtil.error(e.getMessage());
-                        result.setUpdateTime(System.currentTimeMillis());
-                        result.setResultStatus(TaskConstants.TASK_STATUS.ERROR.toString());
-                        serverResultMapper.updateByPrimaryKeySelective(result);
-                        saveServerResultLog(result.getId(), Translator.get("i18n_operation_ex") + ": " + e.getMessage(), e.getMessage(), false);
-                        throw new HRException(e.getMessage());
-                    }
                 }
             }
         return true;
     }
 
-    public void rescan(String id) {
-        ServerResult result = serverResultMapper.selectByPrimaryKey(id);
-        ServerRule rule = serverRuleMapper.selectByPrimaryKey(result.getRuleId());
-        saveServerResultLog(result.getId(), Translator.get("i18n_restart_server_result"), "", true);
-
+    public void createScan(ServerResult result) {
+        ServerRuleRequest request = new ServerRuleRequest();
+        request.setId(result.getRuleId());
+        ServerRuleDTO dto = ruleList(request).get(0);
+        Server server = serverMapper.selectByPrimaryKey(result.getServerId());
         try {
-            String script = rule.getScript();
-            JSONArray jsonArray = JSON.parseArray(rule.getParameter());
+            String script = dto.getScript();
+            JSONArray jsonArray = JSON.parseArray(dto.getParameter());
             for (Object o : jsonArray) {
                 JSONObject jsonObject = (JSONObject) o;
                 String key = "${{" + jsonObject.getString("key") + "}}";
@@ -174,7 +149,7 @@ public class ServerService {
                     script = script.replace(key, jsonObject.getString("defaultValue"));
                 }
             }
-            String returnLog = execute(result.getIp(), result.getUserName(), result.getPassword(), script);
+            String returnLog = execute(server.getIp(), server.getUserName(), server.getPassword(), script);
             result.setReturnLog(returnLog);
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(TaskConstants.TASK_STATUS.FINISHED.toString());
@@ -189,6 +164,14 @@ public class ServerService {
             saveServerResultLog(result.getId(), Translator.get("i18n_operation_ex") + ": " + e.getMessage(), e.getMessage(), false);
             throw new HRException(e.getMessage());
         }
+    }
+
+    public void rescan(String id) {
+        ServerResult result = serverResultMapper.selectByPrimaryKey(id);
+        saveServerResultLog(result.getId(), Translator.get("i18n_restart_server_result"), "", true);
+        result.setUpdateTime(System.currentTimeMillis());
+        result.setResultStatus(TaskConstants.TASK_STATUS.APPROVED.toString());
+        serverResultMapper.updateByPrimaryKeySelective(result);
     }
 
     public void deleteServerResult(String id) {

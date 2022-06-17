@@ -93,7 +93,7 @@
     </el-drawer>
     <!--Create package-->
 
-    <!--Uodate package-->
+    <!--Update package-->
     <el-drawer class="rtl" :title="$t('package.update')" :visible.sync="updateVisible" size="50%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-form :model="editPackageForm" label-position="right" label-width="150px" size="small" :rules="rule" ref="editForm">
@@ -138,7 +138,7 @@
         :show-next="nextVisible" @nextStep="next('edit')"
         :show-confirm="confirmVisible" @confirm="handleClose"/>
     </el-drawer>
-    <!--Uodate package-->
+    <!--Update package-->
 
   </main-container>
 </template>

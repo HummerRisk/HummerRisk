@@ -67,6 +67,10 @@ public class ResourceCreateService {
     private PackageService packageService;
     @Resource
     private PackageResultMapper packageResultMapper;
+    @Resource
+    private ServerService serverService;
+    @Resource
+    private ServerResultMapper serverResultMapper;
 
     @QuartzScheduled(cron = "${cron.expression.local}")
     public void handleTasks() {
@@ -141,7 +145,39 @@ public class ResourceCreateService {
                 });
             });
         }
+
         //虚拟机扫描
+        final ServerResultExample serverExample = new ServerResultExample();
+        ServerResultExample.Criteria s = serverExample.createCriteria();
+        s.andResultStatusEqualTo(TaskConstants.TASK_STATUS.APPROVED.toString());
+        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
+            pc.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+        }
+        serverExample.setOrderByClause("create_time limit 10");
+        List<ServerResult> serverResultList = serverResultMapper.selectByExample(serverExample);
+        if (CollectionUtils.isNotEmpty(serverResultList)) {
+            serverResultList.forEach(serverResult -> {
+                final ServerResult serverToBeProceed;
+                try {
+                    serverToBeProceed = BeanUtils.copyBean(new ServerResult(), serverResult);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                if (processingGroupIdMap.get(serverToBeProceed.getId()) != null) {
+                    return;
+                }
+                processingGroupIdMap.put(serverToBeProceed.getId(), serverToBeProceed.getId());
+                commonThreadPool.addTask(() -> {
+                    try {
+                        serverService.createScan(serverToBeProceed);
+                    } catch (Exception e) {
+                        LogUtil.error(e);
+                    } finally {
+                        processingGroupIdMap.remove(serverToBeProceed.getId());
+                    }
+                });
+            });
+        }
 
         //镜像扫描
 

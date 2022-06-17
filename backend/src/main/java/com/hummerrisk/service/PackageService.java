@@ -230,12 +230,14 @@ public class PackageService {
         BeanUtils.copyBean(record, request);
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
+        OperationLogService.log(SessionUtils.getUser(), record.getId(), record.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.UPDATE, "修改软件包规则");
         return packageRuleMapper.updateByPrimaryKeySelective(record);
     }
 
     public void deletePackageRule(String id) throws Exception {
         deleteRuleTag(null, id);
         packageRuleMapper.deleteByPrimaryKey(id);
+        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.PACKAGE.name(), ResourceOperation.DELETE, "删除软件包规则");
     }
 
     public int changeStatus(PackageRule rule) throws Exception {
@@ -265,6 +267,7 @@ public class PackageService {
                 packageResultMapper.insertSelective(result);
 
                 savePackageResultLog(result.getId(), Translator.get("i18n_start_package_result"), "", true);
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "开始软件包扫描");
             }
         }
     }
@@ -336,6 +339,9 @@ public class PackageService {
         packageResultMapper.insertSelective(result);
 
         savePackageResultLog(result.getId(), Translator.get("i18n_restart_package_result"), "", true);
+
+        OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "重新开始软件包扫描");
+
     }
 
     public void deletePackageResult(String id) throws Exception {

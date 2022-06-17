@@ -76,7 +76,7 @@
                 <span class="grid-content-log-span"> {{ logForm.ruleName }}/{{ logForm.name }}</span>
                 <span class="grid-content-log-span">
                   <img :src="require(`@/assets/img/platform/package.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ logForm.packageName }}:{{ logForm.name }}
+                 &nbsp;&nbsp; {{ logForm.packageName }}
                 </span>
                 <span class="grid-content-status-span" v-if="logForm.resultStatus === 'APPROVED'" style="color: #579df8">
                   <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...

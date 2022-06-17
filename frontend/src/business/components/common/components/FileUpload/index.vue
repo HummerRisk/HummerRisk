@@ -121,7 +121,7 @@ export default {
             message: this.$t("commons.save_success"),
             duration: 1000
           });
-          this.$refs.upload.clearFiles(); //上传成功之后清除历史记录
+          // this.$refs.pluginIcon.clearFiles(); //上传成功之后清除历史记录
         } else {
           this.percentage = 99;
           this.$message({

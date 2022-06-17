@@ -3,7 +3,7 @@
     <!--文件上传入口-->
     <!-- 上传组件 -->
     <el-upload action drag :auto-upload="true" :on-change="handleChange" :http-request="submit" list-type="picture" :on-progress="uploadProcess"
-               :before-upload="beforeUpload" :on-exceed="handleExceed" :on-remove="handleRemove" ref="pluginIcon" :file-list="fileList" :limit="1">
+               :before-upload="beforeUpload" :on-exceed="handleExceed" :on-remove="handleRemove" ref="pluginPath" :file-list="fileList" :limit="1">
       <i class="el-icon-upload"></i>
       <div class="el-upload__text">{{ $t('package.upload_text1') }}<em>{{ $t('package.upload_text2') }}</em></div>
       <div class="el-upload__tip" slot="tip">{{ $t('package.upload_tip', ['10M']) }}</div>
@@ -108,7 +108,7 @@ export default {
             message: this.$t("commons.save_success"),
             duration: 1000
           });
-          this.$refs.upload.clearFiles(); //上传成功之后清除历史记录
+          // this.$refs.pluginPath.clearFiles(); //上传成功之后清除历史记录
         } else {
           this.percentage = 99;
           this.$message({
