@@ -58,6 +58,7 @@
             <if test="accountId != null">
                 AND t.id = #{accountId}
             </if>
+            and t.plugin_id in (select plugin_id from cloud_account ca where ca.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin'))
         </where>
         ORDER BY t.create_time DESC
     </select>

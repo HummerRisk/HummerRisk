@@ -2,6 +2,7 @@ package com.hummerrisk.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.hummerrisk.base.domain.Task;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.request.account.CloudAccountRequest;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "漏洞扫描配置")
 @RestController
@@ -37,5 +39,13 @@ public class VulnController {
     public Pager<List<RuleDTO>> vulnRuleList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CreateRuleRequest rule) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, vulnService.vulnList(rule));
+    }
+
+    @ApiOperation(value = "漏洞结果列表")
+    @PostMapping("manual/list/{goPage}/{pageSize}")
+    public Pager<List<Task>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> param) throws Exception {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        param.put("type", "manual");
+        return PageUtils.setPageInfo(page, vulnService.selectManualTasks(param));
     }
 }

@@ -42,7 +42,7 @@ public enum Lang {
         if (StringUtils.startsWithIgnoreCase(lang, "en")) {
             return en_US;
         }
-        return null;
+        return zh_CN;
     }
 
 }

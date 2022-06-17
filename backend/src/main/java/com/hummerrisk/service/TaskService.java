@@ -309,6 +309,10 @@ public class TaskService {
             if (params.get("resourceType") != null && StringUtils.isNotEmpty(params.get("resourceType").toString())) {
                 criteria.andResourceTypesLike("%" + params.get("resourceType").toString() + "%");
             }
+            List<String> values = new ArrayList<>();
+            values.add("hummer-nuclei-plugin");
+            values.add("hummer-xray-plugin");
+            criteria.andPluginIdNotIn(values);
             example.setOrderByClause("FIELD(`status`, 'PROCESSING', 'APPROVED', 'FINISHED', 'WARNING', 'ERROR'), return_sum desc, create_time desc, FIELD(`severity`, 'HighRisk', 'MediumRisk', 'LowRisk')");
             return taskMapper.selectByExample(example);
         } catch (Exception e) {

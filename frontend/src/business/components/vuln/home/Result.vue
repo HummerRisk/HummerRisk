@@ -307,7 +307,7 @@ export default {
       this.init();
     },
     async search () {
-      let url = "/task/manual/list/" + this.currentPage + "/" + this.pageSize;
+      let url = "/vuln/manual/list/" + this.currentPage + "/" + this.pageSize;
       this.result = await this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
