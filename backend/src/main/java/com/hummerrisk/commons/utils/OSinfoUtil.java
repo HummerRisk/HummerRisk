@@ -25,7 +25,7 @@ public class OSinfoUtil {
     }
 
     public static boolean isMacOSX(){
-        return OS.contains("mac") && OS.contains("os") && !OS.contains("x");
+        return OS.contains("mac") && OS.contains("os") && OS.contains("x");
     }
 
     public static boolean isWindows(){

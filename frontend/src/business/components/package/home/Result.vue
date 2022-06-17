@@ -73,7 +73,7 @@
           <el-row>
             <el-col :span="24">
               <div class="grid-content bg-purple-light">
-                <span class="grid-content-log-span"> {{ logForm.ruleName }}/{{ logForm.name }}</span>
+                <span class="grid-content-log-span"> {{ logForm.ruleName }} | {{ logForm.name }}</span>
                 <span class="grid-content-log-span">
                   <img :src="require(`@/assets/img/platform/package.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ logForm.packageName }}
