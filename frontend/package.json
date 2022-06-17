@@ -24,7 +24,7 @@
     "highlight.js": "^11.2.0",
     "js-base64": "^3.4.4",
     "json-bigint": "^1.0.0",
-    "less-loader": "^5.0.0",
+    "less-loader": "^3.0.0",
     "md5": "^2.3.0",
     "mockjs": "^1.1.0",
     "sha.js": "^2.4.11",
