@@ -26,7 +26,7 @@ import RuleList from "./RuleList";
 import Compliance from "./Compliance";
 /* eslint-disable */
   export default {
-    name: "dashboard",
+    name: "CloudDashboard",
     components: {
       MainContainer,
       AccountList,

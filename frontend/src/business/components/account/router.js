@@ -28,8 +28,8 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/QuartzTask'),
     },
     {
-      path: "dashboard",
-      name: "dashboard",
+      path: "clouddashboard",
+      name: "cloudDashboard",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/Dashboard"),
     },
     {

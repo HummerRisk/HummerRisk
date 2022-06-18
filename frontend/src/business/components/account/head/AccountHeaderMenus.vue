@@ -4,7 +4,7 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
-          <el-menu-item :index="'/account/dashboard'">
+          <el-menu-item :index="'/account/clouddashboard'">
             {{ $t("account.overview") }}
           </el-menu-item>
 

@@ -16,21 +16,21 @@
                 @filter-change="filter">
         <el-table-column type="index" min-width="2%"/>
         <el-table-column v-slot:default="scope" :label="$t('resource.i18n_task_type')" min-width="15%" show-overflow-tooltip>
-                <span>
-                  <template v-for="tag in tagSelect">
-                    <span :key="tag.value" v-if="scope.row.ruleTags">
-                      <span :key="tag.tagKey" v-if="scope.row.ruleTags.indexOf(tag.tagKey) > -1"> {{ tag.tagName }}</span>
-                    </span>
-                  </template>
-                  <span v-if="!!scope.row.resourceTypes && scope.row.resourceTypes.indexOf('.')===-1"> {{ scope.row.resourceTypes }}</span>
-                  <span v-if="!!scope.row.resourceTypes && scope.row.resourceTypes.indexOf('.')>-1">
-                    <template v-for="type in resourceTypes" >
-                      <span :key="type.value" v-if="scope.row.resourceTypes">
-                        <span :key="type.value" v-if="scope.row.resourceTypes.indexOf(type.value) > -1"> [{{ type.value }}]</span>
-                      </span>
-                    </template>
-                  </span>
+          <span>
+            <template v-for="tag in tagSelect">
+              <span :key="tag.value" v-if="scope.row.ruleTags">
+                <span :key="tag.tagKey" v-if="scope.row.ruleTags.indexOf(tag.tagKey) > -1"> {{ tag.tagName }}</span>
+              </span>
+            </template>
+            <span v-if="!!scope.row.resourceTypes && scope.row.resourceTypes.indexOf('.')===-1"> {{ scope.row.resourceTypes }}</span>
+            <span v-if="!!scope.row.resourceTypes && scope.row.resourceTypes.indexOf('.')>-1">
+              <template v-for="type in resourceTypes" >
+                <span :key="type.value" v-if="scope.row.resourceTypes">
+                  <span :key="type.value" v-if="scope.row.resourceTypes.indexOf(type.value) > -1"> [{{ type.value }}]</span>
                 </span>
+              </template>
+            </span>
+          </span>
         </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="18%" show-overflow-tooltip>
           <el-link type="primary" class="md-primary text-click" @click="showTaskDetail(scope.row)">

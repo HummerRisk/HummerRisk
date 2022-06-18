@@ -614,6 +614,7 @@ export default {
               }
               this.$success(this.$t('account.i18n_hr_create_success'));
             });
+            this.scanVisible = false;
             this.$router.push({
               path: '/vuln/result',
             }).catch(error => error);
