@@ -68,6 +68,7 @@
                 AND t4.id = #{accountId}
             </if>
             AND (SELECT SUM( t1.return_sum ) FROM resource t1 LEFT JOIN resource_rule t2 ON t1.id = t2.resource_id WHERE t2.rule_id = t.id) != 0
+            AND t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin')
         </where>
         ORDER BY CONVERT(ratio, signed), ruSum desc
     </select>
@@ -79,6 +80,7 @@
             IFNULL( sum(t.resources_sum), 0 ) AS resourcesSum
         FROM
             resource t
+        WHERE t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin')
         GROUP BY t.severity
     </select>
 
@@ -94,10 +96,12 @@
             LEFT JOIN rule t2 ON t1.rule_id = t2.id
             LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
             LEFT JOIN resource t4 ON t3.resource_id = t4.id
+        WHERE t2.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin')
         GROUP BY
             t.tag_key
         HAVING
-            t.tag_key IN ( 'cost', 'safety', 'tagging' ) UNION ALL
+            t.tag_key IN ( 'cost', 'safety', 'tagging' )
+        UNION ALL
         SELECT
             IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,
             IFNULL( sum( t4.resources_sum ), 0 ) AS yAxis2,
@@ -111,6 +115,7 @@
             LEFT JOIN resource t4 ON t3.resource_id = t4.id
         WHERE
             t.tag_key NOT IN ( 'cost', 'safety', 'tagging' )
+            AND t2.plugin_id NOT IN ('hummer-nuclei-plugin', 'hummer-xray-plugin')
     </select>
 
     <select id="ruleGroup" resultType="com.hummerrisk.commons.utils.ChartData">
@@ -125,6 +130,7 @@
             LEFT JOIN rule t2 ON t1.rule_id = t2.id
             LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
             LEFT JOIN resource t4 ON t3.resource_id = t4.id
+        WHERE t2.plugin_id NOT IN ('hummer-nuclei-plugin', 'hummer-xray-plugin')
         GROUP BY
             t.name
         ORDER BY
@@ -146,6 +152,7 @@
             LEFT JOIN rule t2 ON t1.rule_id = t2.id
             LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
             LEFT JOIN resource t4 ON t3.resource_id = t4.id
+        WHERE t2.plugin_id NOT IN ('hummer-nuclei-plugin', 'hummer-xray-plugin')
         GROUP BY
             t.item_sort_first_level
         HAVING
@@ -164,6 +171,7 @@
             rule t
             LEFT JOIN resource_rule t1 ON t.id = t1.rule_id
             LEFT JOIN resource t2 ON t1.resource_id = t2.id
+        WHERE t.plugin_id NOT IN ('hummer-nuclei-plugin', 'hummer-xray-plugin')
         GROUP BY
             t.id, t.name
         ORDER BY
@@ -182,6 +190,7 @@
         FROM
             cloud_account t
             LEFT JOIN resource t1 ON t1.account_id = t.id
+        WHERE t.plugin_id NOT IN ('hummer-nuclei-plugin', 'hummer-xray-plugin')
         GROUP BY
             t.id
         HAVING
@@ -206,6 +215,7 @@
         <where>
             <if test="accountId != null">
                 AND t.account_id = #{accountId}
+                AND t.plugin_id NOT IN ('hummer-nuclei-plugin', 'hummer-xray-plugin')
             </if>
         </where>
         GROUP BY
@@ -235,6 +245,7 @@
             LEFT JOIN rule t2 ON t1.rule_id = t2.id
             LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
             LEFT JOIN resource t4 ON t3.resource_id = t4.id
+        WHERE t2.plugin_id NOT IN ('hummer-nuclei-plugin', 'hummer-xray-plugin')
         GROUP BY
             t.tag_key
         HAVING
@@ -257,6 +268,7 @@
             LEFT JOIN resource t4 ON t3.resource_id = t4.id
         WHERE
             t.tag_key NOT IN ( 'cost', 'safety', 'tagging' )
+            AND t2.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin')
     </select>
 
     <select id="history" resultType="com.hummerrisk.dto.ScanHistoryDTO">
@@ -283,10 +295,10 @@
             <if test="pluginId != null">
                 AND t1.plugin_id = #{pluginId}
             </if>
-            AND t1.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin')
+            AND t1.plugin_id NOT IN ('hummer-nuclei-plugin', 'hummer-xray-plugin')
         </where>
         ORDER BY
-            t.create_time desc
+            t.create_time DESC
     </select>
 
 </mapper>
