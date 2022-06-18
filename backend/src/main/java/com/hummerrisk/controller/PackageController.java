@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.util.List;
 
-@Api(tags = "软件包配置")
+@Api(tags = "软件包管理")
 @RestController
 @RequestMapping(value = "package")
 public class PackageController {
@@ -30,7 +30,7 @@ public class PackageController {
     @Resource
     private PackageService packageService;
 
-    @ApiOperation(value = "软件包配置列表")
+    @ApiOperation(value = "软件包列表")
     @PostMapping("packageList/{goPage}/{pageSize}")
     public Pager<List<PackageDTO>> packageList(
             @PathVariable int goPage, @PathVariable int pageSize, @RequestBody PackageRequest request) {

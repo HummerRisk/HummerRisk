@@ -1,7 +1,7 @@
 
 CREATE TABLE IF NOT EXISTS `package` (
     `id`                         varchar(50)         NOT NULL COMMENT 'ID',
-    `name`                       varchar(128)        DEFAULT NULL COMMENT '软件包配置名称(别名)',
+    `name`                       varchar(128)        DEFAULT NULL COMMENT '软件包名称(别名)',
     `package_name`               varchar(128)        DEFAULT NULL COMMENT '软件包名称',
     `plugin_icon`                varchar(256)        DEFAULT 'package.png' COMMENT '图标地址',
     `status`                     varchar(10)         DEFAULT 'VALID' COMMENT '软件包上传状态',
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `package_result`
 (
     `id`                         varchar(50)         NOT NULL,
     `package_id`                 varchar(50)         DEFAULT NULL COMMENT 'packageID',
-    `name`                       varchar(128)        DEFAULT NULL COMMENT '软件包配置名称(别名)',
+    `name`                       varchar(128)        DEFAULT NULL COMMENT '软件包名称(别名)',
     `package_name`               varchar(128)        DEFAULT NULL COMMENT '软件包名称',
     `size`                       varchar(128)        DEFAULT '0M' COMMENT '软件包大小',
     `plugin_icon`                varchar(256)        DEFAULT 'package.png' COMMENT '图标地址',

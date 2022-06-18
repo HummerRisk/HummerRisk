@@ -279,7 +279,10 @@ export default {
       });
     },
     handleResult(item) {
-      console.log(item.returnHtml);
+      if(item.resultStatus === "APPROVED") {
+        this.$warning(this.$t('package.result_still_run'));
+        return;
+      }
       window.open(this.location + item.returnHtml, 'target');
     },
   },
