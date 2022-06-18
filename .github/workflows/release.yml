@@ -19,14 +19,14 @@ jobs:
         env:
           RELEASE_VERSION: ${{github.ref}}
         run: |
-          git clone https://github.com/hummerrisk/hummerrisk-installer.git --depth=1
-          cd hummerrisk-installer
+          git clone https://github.com/HummerRisk/installer.git --depth=1
+          cd installer
           rm -rf hudson.* .travis.yml .git .github
           chmod +x hrctl.sh
           cd ..
           version=`echo ${RELEASE_VERSION##*/}`
           filename=hummerrisk-installer-$version
-          mv hummerrisk-installer $filename
+          mv installer $filename
           echo $version > $filename/config_init/conf/version
           sed -i "s@VERSION=.*@VERSION=${version}@g" $filename/static.env
           sed -i "s@Version=.*@Version=${version}@g" $filename/quick_start.sh
