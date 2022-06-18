@@ -23,7 +23,7 @@
 
 <img src="https://hummerrisk-1312321453.cos.ap-beijing.myqcloud.com/architecture.png" alt="">
 
-**技术优势**  
+## 技术优势
 
 - [x] 开源开放：HummerRisk 遵循 GPL v3 开源协议;
 - [x] 极致体验：可视化的的规则管理和扫描过程，界面美观、用户体验好;
@@ -45,7 +45,7 @@ curl -sSL https://github.com/hummerrisk/hummerrisk/releases/latest/download/quic
 
 ## 帮助文档
 
-> [帮助文档](https://docs.hummerrisk.com/)
+> [帮助文档](https://hummerrisk-docs-1312321453.cos-website.ap-beijing.myqcloud.com/)
 
 ## 微信群
 
