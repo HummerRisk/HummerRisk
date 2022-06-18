@@ -96,10 +96,10 @@ public class ReadFileUtils {
             is.close();
         } catch (FileNotFoundException e) {
             LogUtil.error("File not found!" + e.getMessage());
-            throw new FileNotFoundException("File not found:" + filePath);
+            return "File not found!" + e.getMessage();
         } catch (IOException e) {
             LogUtil.error(e.getMessage());
-            throw new FileNotFoundException(e.getMessage());
+            return e.getMessage();
         }
         return sb.toString();
     }
@@ -126,8 +126,8 @@ public class ReadFileUtils {
             }
             return sb.toString();
         } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+            LogUtil.error(e.getMessage());
+            return e.getMessage();
         } finally {
             if (is != null) {
                 try {
