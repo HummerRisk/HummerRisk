@@ -48,7 +48,7 @@ jobs:
               1.  准备一台不小于 4 核 8 G 内存的 64位 Linux (建议首选 CentOS 7 以上) 主机；
               2.  以 root 用户执行如下命令一键安装 HummerRisk。
             ```sh
-              curl -sSL https://github.com/hummerrisk/hummerrisk/releases/latest/download/quick_start.sh | bash
+              curl -sSL https://github.com/HummerRisk/HummerRisk/releases/latest/download/quick_start.sh | bash
             ```
             如果您已经部署旧版本，可通过如下命令一键升级至最新版本:
             ```sh

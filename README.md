@@ -40,7 +40,7 @@
 2.  以 root 用户执行如下命令一键安装 HummerRisk。
 
 ```sh
-curl -sSL https://github.com/hummerrisk/hummerrisk/releases/latest/download/quick_start.sh | sh
+curl -sSL https://github.com/HummerRisk/HummerRisk/releases/latest/download/quick_start.sh | sh
 ```
 
 ## 帮助文档
