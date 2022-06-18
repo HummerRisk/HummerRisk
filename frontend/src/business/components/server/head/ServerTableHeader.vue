@@ -8,15 +8,6 @@
     </el-row>
     <el-row type="flex" justify="space-between" align="middle">
       <span class="operate-button">
-        <el-upload
-          class="upload"
-          ref="upload"
-          :show-file-list="false"
-          action=""
-          :multiple="false"
-          accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-          :on-change="importExcel"
-          :limit="1">
         <table-button  v-if="showCreate" icon="el-icon-circle-plus-outline"
                        :content="createTip" @click="create"/>
         <table-button v-if="showScan" icon="el-icon-video-play"
@@ -27,7 +18,6 @@
 <!--                      type="danger" :content="downloadTip" @click="download"/>-->
 <!--        <table-button v-if="showUpload" slot="trigger" icon="el-icon-upload2"-->
 <!--                      type="info" :content="uploadTip" @click="upload"/>-->
-        </el-upload>
         <slot name="button"></slot>
       </span>
       <span>

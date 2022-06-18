@@ -103,7 +103,7 @@ public class ServerService {
 
     public Boolean scan(String id) throws Exception{
             ServerRequest request = new ServerRequest();
-            request.setId(id);
+            request.setId(id);//serverId
             Server server = getServerList(request).get(0);
             if(StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.VALID.name())) {
                 deleteServerResult(id);
@@ -176,7 +176,7 @@ public class ServerService {
 
     public void deleteServerResult(String id) {
         ServerResultExample example = new ServerResultExample();
-        example.createCriteria().andIdEqualTo(id);
+        example.createCriteria().andServerIdEqualTo(id);//serverId
         List<ServerResult> list = serverResultMapper.selectByExample(example);
 
         for (ServerResult result : list) {
