@@ -856,14 +856,6 @@ export default {
     delete_this_vuln: '删除此漏扫配置',
     please_choose_vuln: '请选择漏扫目标',
   },
-  network: {
-    network_setting: '网络扫描',
-    network_settings_list: '网络安全设置列表',
-    network_rule: '网络安全扫描规则',
-    network_rule_list: '漏洞扫描规则列表',
-    network_result: '网络安全扫描结果',
-    network_result_list: '网络安全扫描结果列表',
-  },
   task: {
     task_setting: '任务编排',
     task_settings_list: '任务编排设置列表',

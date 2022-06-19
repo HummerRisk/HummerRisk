@@ -102,8 +102,9 @@ import {_filter, _sort} from "@/common/js/utils";
           }
         ],
         platforms: [
-          {text: this.$t('account.xray'), value: 'hummer-xray-plugin'},
-          {text: this.$t('account.nuclei'), value: 'hummer-nuclei-plugin'}
+          {text: 'Xray', value: 'hummer-xray-plugin'},
+          {text: 'Nuclei', value: 'hummer-nuclei-plugin'},
+          {text: 'Tsunami', value: 'hummer-tsunami-plugin'},
         ],
         string2Key: "",
         string2PrettyFormat: "",

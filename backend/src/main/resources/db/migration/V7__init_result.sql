@@ -108,6 +108,7 @@ CREATE TABLE IF NOT EXISTS `resource`
     `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
     `resource_command`           longtext            DEFAULT NULL COMMENT 'policy(无actions)',
     `resource_command_action`    longtext            DEFAULT NULL COMMENT 'policy(有actions)',
+    `return_html`                varchar(255)        DEFAULT ''   COMMENT 'return html地址',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 

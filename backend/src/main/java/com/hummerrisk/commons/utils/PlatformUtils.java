@@ -41,6 +41,7 @@ import com.hummerrisk.proxy.azure.AzureCredential;
 import com.hummerrisk.proxy.huoshan.HuoshanCredential;
 import com.hummerrisk.proxy.k8s.K8sCredential;
 import com.hummerrisk.proxy.openstack.OpenStackCredential;
+import com.hummerrisk.proxy.tsunami.TsunamiCredential;
 import com.qingcloud.sdk.config.EnvContext;
 import com.qingcloud.sdk.service.InstanceService;
 import com.qiniu.util.Auth;
@@ -120,20 +121,21 @@ public class PlatformUtils {
     //漏洞扫描插件
     public final static String nuclei = "hummer-nuclei-plugin";
     public final static String xray = "hummer-xray-plugin";
+    public final static String tsunami = "hummer-tsunami-plugin";
     //虚拟机插件
     public final static String server = "hummer-server-plugin";
 
     /**
      * 支持的插件
      * 云平台插件： aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud
-     * 漏洞扫描插件：xray, nuclei
+     * 漏洞扫描插件：xray, nuclei, tsunami
      */
     public final static List<String> getPlugin() {
-        return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, nuclei, xray);
+        return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, nuclei, xray, tsunami);
     }
 
     /**
-     * 支持云平台插件
+     * 是否支持云平台插件
      */
     public static boolean isSupportCloudAccount(String source) {
         // 云平台插件
@@ -146,9 +148,16 @@ public class PlatformUtils {
     /**
      * 支持漏洞扫描插件
      */
+    public final static List<String> getVulnPlugin() {
+        return Arrays.asList(nuclei, xray, tsunami);
+    }
+
+    /**
+     * 是否支持漏洞扫描插件
+     */
     public static boolean isSupportVuln(String source) {
         // 漏洞扫描插件
-        List<String> tempList = Arrays.asList(xray, nuclei);
+        List<String> tempList = Arrays.asList(xray, nuclei, tsunami);
 
         // 利用list的包含方法,进行判断
         return tempList.contains(source);
@@ -370,6 +379,8 @@ public class PlatformUtils {
                     xray = "xray_windows_amd64";
                 }
                 return proxy + TaskConstants.XRAY_RESULT_FILE_PATH + xray + " webscan --plugins " + (StringUtils.isNotEmpty(fileName) ? fileName : "xss") + " --url-file " + dirPath + "/urls.txt  --json-output " + dirPath + "/" + TaskConstants.XRAY_RUN_RESULT_FILE;
+            case tsunami:
+                return "";
         }
         switch (behavior) {
             case "run":
@@ -472,6 +483,11 @@ public class PlatformUtils {
                 map.put("type", xray);
                 XrayCredential xrayCredential = new Gson().fromJson(account.getCredential(), XrayCredential.class);
                 map.put("xrayCredential", xrayCredential.getTargetAddress());
+                break;
+            case tsunami:
+                map.put("type", tsunami);
+                TsunamiCredential tsunamiCredential = new Gson().fromJson(account.getCredential(), TsunamiCredential.class);
+                map.put("ip", tsunamiCredential.getIp());
                 break;
             case huoshan:
                 map.put("type", huoshan);
@@ -750,8 +766,22 @@ public class PlatformUtils {
                     }
                     break;
                 case nuclei:
+                    JSONObject nucleiJsonObject = new JSONObject();
+                    nucleiJsonObject.put("regionId", "ALL");
+                    nucleiJsonObject.put("regionName", "Nuclei 漏洞扫描");
+                    if (!jsonArray.contains(nucleiJsonObject)) jsonArray.add(nucleiJsonObject);
                     break;
                 case xray:
+                    JSONObject xrayJsonObject = new JSONObject();
+                    xrayJsonObject.put("regionId", "ALL");
+                    xrayJsonObject.put("regionName", "Xray 漏洞检测");
+                    if (!jsonArray.contains(xrayJsonObject)) jsonArray.add(xrayJsonObject);
+                    break;
+                case tsunami:
+                    JSONObject tsunamiJsonObject = new JSONObject();
+                    tsunamiJsonObject.put("regionId", "ALL");
+                    tsunamiJsonObject.put("regionName", "Tsunami 网络安全扫描");
+                    if (!jsonArray.contains(tsunamiJsonObject)) jsonArray.add(tsunamiJsonObject);
                     break;
                 case huoshan:
                     try {
@@ -951,6 +981,8 @@ public class PlatformUtils {
                 return true;
             case xray:
                 return true;
+            case tsunami:
+                return true;
             case huoshan:
                 IIamService iamService = IamServiceImpl.getInstance();
                 HuoshanCredential huoshanCredential = new Gson().fromJson(account.getCredential(), HuoshanCredential.class);
@@ -1076,6 +1108,9 @@ public class PlatformUtils {
             case xray:
                 strCn = strEn;
                 break;
+            case tsunami:
+                strCn = strEn;
+                break;
             case huoshan:
                 strCn = strEn;
                 break;
@@ -1188,6 +1223,8 @@ public class PlatformUtils {
             case nuclei:
                 break;
             case xray:
+                break;
+            case tsunami:
                 break;
             case huoshan:
                 break;

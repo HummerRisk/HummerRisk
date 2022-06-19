@@ -131,7 +131,7 @@
             <if test="request.status != null and request.status != ''">
                 and t.status = #{request.status}
             </if>
-            and t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin')
+            and t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
         </where>
         order by t.update_time desc
     </select>
@@ -163,7 +163,7 @@
             <if test="request.status != null and request.status != ''">
                 and t.status = #{request.status}
             </if>
-            and t.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin')
+            and t.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
         </where>
         order by t.update_time desc
     </select>

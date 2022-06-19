@@ -47,10 +47,7 @@ public class PluginService {
         PluginExample example = new PluginExample();
         example.setOrderByClause("update_time");
         PluginExample.Criteria criteria = example.createCriteria();
-        List<String> values = new ArrayList<>();
-        values.add(PlatformUtils.nuclei);
-        values.add(PlatformUtils.xray);
-        criteria.andIdNotIn(values);
+        criteria.andIdNotIn(PlatformUtils.getVulnPlugin());
         return pluginMapper.selectByExample(example);
     }
 
@@ -58,10 +55,7 @@ public class PluginService {
         PluginExample example = new PluginExample();
         example.setOrderByClause("update_time");
         PluginExample.Criteria criteria = example.createCriteria();
-        List<String> values = new ArrayList<>();
-        values.add(PlatformUtils.nuclei);
-        values.add(PlatformUtils.xray);
-        criteria.andIdIn(values);
+        criteria.andIdIn(PlatformUtils.getVulnPlugin());
         return pluginMapper.selectByExample(example);
     }
 

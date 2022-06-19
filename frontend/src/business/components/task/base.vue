@@ -15,11 +15,11 @@
 import TaskHeaderMenus from "./head/TaskHeaderMenus";
 
 export default {
-    name: "network",
+    name: "task",
     components: {TaskHeaderMenus},
     data() {
       return {
-        baseUrl: "network"
+        baseUrl: "task"
       }
     }
   }

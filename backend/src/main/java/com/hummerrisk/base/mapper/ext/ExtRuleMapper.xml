@@ -162,7 +162,7 @@
                     <property name="condition" value="combine"/>
                 </include>
             </if>
-            and t.plugin_id in (select plugin_id from cloud_account ca where ca.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin'))
+            and t.plugin_id in (select plugin_id from cloud_account ca where ca.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin'))
         </where>
         ORDER BY t.last_modified desc
     </select>
@@ -188,7 +188,7 @@
                     <property name="condition" value="combine"/>
                 </include>
             </if>
-            and t.plugin_id in (select plugin_id from cloud_account ca where ca.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin'))
+            and t.plugin_id in (select plugin_id from cloud_account ca where ca.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin'))
         </where>
         ORDER BY t.last_modified desc
     </select>

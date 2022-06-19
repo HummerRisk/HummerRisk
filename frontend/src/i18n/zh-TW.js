@@ -856,14 +856,6 @@ export default {
     delete_this_vuln: '刪除此漏掃配置',
     please_choose_vuln: '請選擇漏掃目標',
   },
-  network: {
-    network_setting: '網絡掃描',
-    network_settings_list: '網絡安全設置列表',
-    network_rule: '網絡安全掃描規則',
-    network_rule_list: '漏洞掃描規則列表',
-    network_result: '網絡安全掃描結果',
-    network_result_list: '網絡安全掃描結果列表',
-  },
   task: {
     task_setting: '任務編排',
     task_settings_list: '任務編排設置列表',

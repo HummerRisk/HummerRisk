@@ -5,6 +5,7 @@ import com.hummerrisk.base.domain.TaskExample;
 import com.hummerrisk.base.mapper.TaskMapper;
 import com.hummerrisk.base.mapper.ext.ExtAccountMapper;
 import com.hummerrisk.base.mapper.ext.ExtRuleMapper;
+import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.controller.request.account.CloudAccountRequest;
 import com.hummerrisk.controller.request.rule.CreateRuleRequest;
 import com.hummerrisk.dto.AccountDTO;
@@ -72,10 +73,7 @@ public class VulnService {
             if (params.get("resourceType") != null && StringUtils.isNotEmpty(params.get("resourceType").toString())) {
                 criteria.andResourceTypesLike("%" + params.get("resourceType").toString() + "%");
             }
-            List<String> values = new ArrayList<>();
-            values.add("hummer-nuclei-plugin");
-            values.add("hummer-xray-plugin");
-            criteria.andPluginIdIn(values);
+            criteria.andPluginIdIn(PlatformUtils.getVulnPlugin());
             example.setOrderByClause("FIELD(`status`, 'PROCESSING', 'APPROVED', 'FINISHED', 'WARNING', 'ERROR'), return_sum desc, create_time desc, FIELD(`severity`, 'HighRisk', 'MediumRisk', 'LowRisk')");
             return taskMapper.selectByExample(example);
         } catch (Exception e) {

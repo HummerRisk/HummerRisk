@@ -433,7 +433,7 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
           {id: 'Http', value: "Http"},
           {id: 'Https', value: "Https"},
         ],
-        iamStrategyNotSupport: ['hummer-openstack-plugin', 'hummer-vsphere-plugin', 'hummer-nuclei-plugin', 'hummer-server-plugin'],
+        iamStrategyNotSupport: ['hummer-openstack-plugin', 'hummer-vsphere-plugin', 'hummer-nuclei-plugin', 'hummer-server-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin'],
       }
     },
 

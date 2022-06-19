@@ -22,6 +22,7 @@
 > HummerRisk 是开源的安全合规检测平台，全面支持云原生，实现对主流公(私)有云资源的安全合规扫描、网络漏洞扫描、虚拟机安全扫描、软件依赖扫描、容器镜像扫描，支持 Cloud Custodian、Prowler、Nuclei、 Xray 和 Dependency Check 等多种扫描引擎，全面满足日常的安全合规检测需要。
 
 ![架构](https://hummerrisk-1312321453.cos.ap-beijing.myqcloud.com/architecture.jpg)
+
 ## 技术优势
 
 - [x] 开源开放：HummerRisk 遵循 GPL v3 开源协议;

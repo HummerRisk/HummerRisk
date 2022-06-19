@@ -1563,3 +1563,7 @@ INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('4
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('4aba704c-f0b0-4562-aaf9-290abd07bfb0', '124');
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('733bfbc4-a96e-4bb1-91cc-9e2899fe4f41', '125');
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('733bfbc4-a96e-4bb1-91cc-9e2899fe4f41', '124');
+
+INSERT INTO `plugin` ( `id`, `name`, `icon`, `update_time`, `scan_type`) values ('hummer-tsunami-plugin', 'Tsunami', 'tsunami.png', concat(unix_timestamp(now()), '001'), 'tsunami');
+
+INSERT INTO `cloud_account` (`id`, `name`, `credential`, `plugin_id`, `plugin_name`, `plugin_icon`, `status`, `create_time`, `update_time`, `creator`, `regions`, `proxy_id`) VALUES ('6953e0fd-57f3-4ca8-915f-e8b97725fcd7', 'Tsunami 网络安全扫描', '{\"description\":\"功能强大的通用网络安全扫描工具,可以帮助广大安全研究人员以高可信度的方式检测和扫描高危严重漏洞。\",\"ip\":\"127.0.0.1\"}', 'hummer-tsunami-plugin', 'Tsunami', 'tsunami.png', 'VALID', concat(unix_timestamp(now()), '001'), concat(unix_timestamp(now()), '001'), 'admin', '[{"regionId":"ALL","regionName":"Tsunami 网络安全扫描"}]', 0);
