@@ -767,7 +767,7 @@ export default {
     one_validate: '一鍵校驗',
     server_rule: '虛擬機掃描規則',
     server_result: '虛擬機掃描結果',
-    servers_setting: '虛擬機配置',
+    servers_setting: '虛擬機管理',
     rule_list: '虛擬機規則列表',
     create_rule: '創建虛擬機規則',
     rule_name: '規則名稱',

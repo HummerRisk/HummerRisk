@@ -17,7 +17,7 @@
         <shiro.version>1.5.1</shiro.version>
         <java.version>1.8</java.version>
         <graalvm.version>20.1.0</graalvm.version>
-        <knife4j.version>2.0.5</knife4j.version>
+        <knife4j.version>2.0.9</knife4j.version>
         <skipAntRunForJenkins>false</skipAntRunForJenkins>
     </properties>
 
@@ -247,12 +247,16 @@
             <version>1.0.51</version>
             <exclusions>
                 <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-                <exclusion>
                     <artifactId>commons-lang3</artifactId>
                     <groupId>org.apache.commons</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>swagger-models</artifactId>
+                    <groupId>io.swagger</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -262,21 +266,15 @@
             <version>${knife4j.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>io.swagger</groupId>
                     <artifactId>swagger-models</artifactId>
+                    <groupId>io.swagger</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-models</artifactId>
-            <version>1.6.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>1.6.6</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -901,6 +899,10 @@
                 <exclusion>
                     <artifactId>slf4j-reload4j</artifactId>
                     <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-lang3</artifactId>
+                    <groupId>org.apache.commons</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

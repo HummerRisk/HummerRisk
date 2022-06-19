@@ -18,7 +18,7 @@ import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger.web.*;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 
 import static springfox.documentation.schema.AlternateTypeRules.newRule;
 
-@EnableSwagger2
+@EnableSwagger2WebMvc
 @Configuration
 @EnableKnife4j
 @Import(BeanValidatorPluginsConfiguration.class)

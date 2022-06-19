@@ -78,7 +78,7 @@ public class ServerService {
 
     public boolean validate(String id) {
         Server server = serverMapper.selectByPrimaryKey(id);
-        //检验虚拟机配置的有效性
+        //检验虚拟机的有效性
         boolean valid = validateAccount(server);
         if (valid) {
             server.setStatus(CloudAccountConstants.Status.VALID.name());

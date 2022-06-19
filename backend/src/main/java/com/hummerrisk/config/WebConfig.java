@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 @Configuration
-public class WebConfig extends WebMvcConfigurationSupport {
+public class WebConfig extends WebMvcConfigurationSupport  {
 
     @Bean
     public RestTemplate restTemplate() {
@@ -31,12 +31,14 @@ public class WebConfig extends WebMvcConfigurationSupport {
      * @param registry
      */
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    public void addResourceHandlers (ResourceHandlerRegistry registry) {
         //过滤swagger
+        registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.addResourceHandler("/files/**").addResourceLocations("file:" + "/opt/hummerrisk/file/");//用于前端访问服务器文件
         registry.addResourceHandler("/**").addResourceLocations("classpath:/resources/");
         registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
-        registry.addResourceHandler("/files/**")
-                .addResourceLocations("file:" + "/opt/hummerrisk/file/");
 
         super.addResourceHandlers(registry);
 

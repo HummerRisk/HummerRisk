@@ -58,13 +58,13 @@ public class PackageController {
 
     @ApiOperation(value = "上传图片")
     @PostMapping(value = "uploadImg", consumes = {"multipart/form-data"})
-    public Package uploadImg(@RequestPart(value = "file", required = false) MultipartFile file, @RequestPart("request") Package request) throws Exception {
+    public Package uploadImg(@RequestPart(value = "file", required = true) MultipartFile file, @RequestPart("request") Package request) throws Exception {
         return packageService.uploadImg(file, request);
     }
 
     @ApiOperation(value = "上传软件包")
     @PostMapping(value = "uploadPackage", consumes = {"multipart/form-data"})
-    public Package uploadPackage(@RequestPart(value = "file", required = false) MultipartFile file, @RequestPart("request") Package request) throws Exception {
+    public Package uploadPackage(@RequestPart(value = "file", required = true) MultipartFile file, @RequestPart("request") Package request) throws Exception {
         return packageService.uploadPackage(file, request);
     }
 

@@ -767,7 +767,7 @@ export default {
     one_validate: 'One-key validation',
     server_rule: 'Virtual machine scan rule',
     server_result: 'Virtual machine scan result',
-    servers_setting: 'Virtual machine configuration',
+    servers_setting: 'Virtual machine management',
     rule_list: 'Virtual machine rule list',
     create_rule: 'Create a virtual machine rule',
     rule_name: 'Rule name',

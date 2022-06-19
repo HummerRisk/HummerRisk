@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
 
-@Api(tags = "虚拟机配置")
+@Api(tags = "虚拟机管理")
 @RestController
 @RequestMapping(value = "server")
 public class ServerController {
@@ -43,13 +43,13 @@ public class ServerController {
         return PageUtils.setPageInfo(page, serverService.getServerList(server));
     }
 
-    @ApiOperation(value = "批量校验虚拟机配置")
+    @ApiOperation(value = "批量校验虚拟机连通性")
     @PostMapping("validate")
     public Boolean validate(@RequestBody List<String> selectIds) {
         return serverService.validate(selectIds);
     }
 
-    @ApiOperation(value = "校验虚拟机配置")
+    @ApiOperation(value = "校验虚拟机配置连通性")
     @PostMapping("validate/{id}")
     public Boolean validate(@PathVariable String id) {
         return serverService.validate(id);

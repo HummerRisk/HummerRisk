@@ -767,7 +767,7 @@ export default {
     one_validate: '一键校验',
     server_rule: '虚拟机扫描规则',
     server_result: '虚拟机扫描结果',
-    servers_setting: '虚拟机配置',
+    servers_setting: '虚拟机管理',
     rule_list: '虚拟机规则列表',
     create_rule: '创建虚拟机规则',
     rule_name: '规则名称',
