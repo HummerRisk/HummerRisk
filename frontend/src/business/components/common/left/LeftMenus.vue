@@ -10,11 +10,11 @@
              :collapse="collapse"
              router>
 
-      <el-menu-item index="/dashboard" v-permission="['admin']">
+      <el-menu-item index="/dashboard" onselectstart="return false" v-permission="['admin']">
         <i class="el-icon-pie-chart"></i>
         <span slot="title">{{ $t('dashboard.dashboard') }}</span>
       </el-menu-item>
-      <el-menu-item index="/rule" v-permission="['admin']">
+      <el-menu-item index="/rule" onselectstart="return false" v-permission="['admin']">
         <i class="el-icon-discount"></i>
         <span slot="title">{{ $t('rule.rule') }}</span>
       </el-menu-item>
@@ -30,6 +30,10 @@
         <i class="el-icon-crop"></i>
         <span slot="title">{{ $t('vuln.vuln_setting') }}</span>
       </el-menu-item>
+      <el-menu-item index="/network" onselectstart="return false" v-permission="['admin']">
+        <i class="el-icon-connection"></i>
+        <span slot="title">{{ $t('network.network_setting') }}</span>
+      </el-menu-item>
       <el-menu-item index="/server" onselectstart="return false" v-permission="['admin']">
         <i class="el-icon-monitor"></i>
         <span slot="title">{{ $t('server.server_setting') }}</span>
@@ -42,7 +46,11 @@
         <i class="el-icon-folder-opened"></i>
         <span slot="title">{{ $t('package.package_scan') }}</span>
       </el-menu-item>
-      <el-menu-item index="/setting" onselectstart="return false">
+      <el-menu-item index="/task" onselectstart="return false" v-permission="['admin']">
+        <i class="el-icon-s-operation"></i>
+        <span slot="title">{{ $t('task.task_setting') }}</span>
+      </el-menu-item>
+      <el-menu-item index="/setting" onselectstart="return false" v-permission="['admin']">
         <i class="el-icon-setting"></i>
         <span slot="title">{{ $t('commons.system_setting') }}</span>
       </el-menu-item>

@@ -440,6 +440,7 @@ export default {
     search_by_name: '按操作者名稱搜索',
     expand_all: '展開全部',
     online_comparison: '在線對比',
+    analysis: '分析',
   },
   rule: {
     rule: '掃描規則',
@@ -854,6 +855,19 @@ export default {
     add: '新增多個',
     delete_this_vuln: '刪除此漏掃配置',
     please_choose_vuln: '請選擇漏掃目標',
+  },
+  network: {
+    network_setting: '網絡掃描',
+    network_settings_list: '網絡安全設置列表',
+    network_rule: '網絡安全掃描規則',
+    network_rule_list: '漏洞掃描規則列表',
+    network_result: '網絡安全掃描結果',
+    network_result_list: '網絡安全掃描結果列表',
+  },
+  task: {
+    task_setting: '任務編排',
+    task_settings_list: '任務編排設置列表',
+    task_overview: '編排分析',
   },
   proxy: {
     create: '創建代理',

@@ -11,6 +11,8 @@ import Vuln from "@/business/components/vuln/router";
 import Rule from "@/business/components/rule/router";
 import Resource from "@/business/components/resource/router";
 import Dashboard from "@/business/components/dashboard/router";
+import Network from "@/business/components/network/router";
+import Task from "@/business/components/task/router";
 
 Vue.use(VueRouter);
 /* eslint-disable */
@@ -29,8 +31,10 @@ const router = new VueRouter({
     Image,
     Package,
     Vuln,
+    Network,
     Rule,
     Resource,
+    Task,
     Dashboard
   ]
 });

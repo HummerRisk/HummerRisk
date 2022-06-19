@@ -13,6 +13,11 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/dashboard/home/Dashboard"),
     },
     {
+      path: "analysis",
+      name: "analysis",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/dashboard/home/Analysis"),
+    },
+    {
       path: "active",
       name: "active",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/dashboard/home/Active"),

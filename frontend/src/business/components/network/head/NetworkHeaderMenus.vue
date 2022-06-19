@@ -4,17 +4,18 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
-          <el-menu-item :index="'/dashboard/dashboard'">
-            {{ $t("dashboard.overview") }}
+          <el-menu-item :index="'/network/network'">
+            {{ $t("network.network_setting") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/dashboard/analysis'">
-            {{ $t("dashboard.analysis") }}
+          <el-menu-item :index="'/network/rule'">
+            {{ $t("network.network_rule") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/dashboard/active'">
-            {{ $t("dashboard.active") }}
+          <el-menu-item :index="'/network/result'">
+            {{ $t("network.network_result") }}
           </el-menu-item>
+
         </el-menu>
       </el-col>
     </el-row>
@@ -29,7 +30,6 @@ export default {
   components: {},
   data() {
     return {
-      path: '',
       isRouterAlive: true,
     }
   },

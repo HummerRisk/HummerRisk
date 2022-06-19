@@ -440,6 +440,7 @@ export default {
     search_by_name:'Search by operator name',
     expand_all:'Expand all',
     online_comparison:'Online comparison',
+    analysis: 'Analysis',
   },
   rule: {
     rule:'Scan Rule',
@@ -854,6 +855,19 @@ export default {
     add: 'Add multiple',
     delete_this_vuln: 'Delete this missed scan configuration',
     please_choose_vuln: 'Please choose the missed scan target',
+  },
+  network: {
+    network_setting: 'Network scan',
+    network_settings_list: 'Network security settings list',
+    network_rule: 'Network Security Scanning Rule',
+    network_rule_list: 'Vulnerability scanning rule list',
+    network_result: 'Network security scan result',
+    network_result_list: 'Network security scan result list',
+  },
+  task: {
+    task_setting: 'Task arrangement',
+    task_settings_list: 'Task scheduling settings list',
+    task_overview: 'Organization analysis',
   },
   proxy: {
     create:'Create an agent',
