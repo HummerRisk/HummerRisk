@@ -7,8 +7,6 @@ public class PackageDTO extends Package {
 
     private String userName;
 
-    private boolean isProxy;
-
     private String proxyIp;
 
     private String proxyPort;
@@ -23,14 +21,6 @@ public class PackageDTO extends Package {
 
     public void setUserName(String userName) {
         this.userName = userName;
-    }
-
-    public boolean getIsProxy() {
-        return isProxy;
-    }
-
-    public void setIsProxy(boolean isProxy) {
-        this.isProxy = isProxy;
     }
 
     public String getProxyIp() {

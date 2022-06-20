@@ -61,6 +61,8 @@ public class ServerService {
     private ServerResultMapper serverResultMapper;
     @Resource
     private ServerResultLogMapper serverResultLogMapper;
+    @Resource
+    private ProxyMapper proxyMapper;
 
     public boolean validate(List<String> ids) {
         ids.forEach(id -> {
@@ -149,7 +151,11 @@ public class ServerService {
                     script = script.replace(key, jsonObject.getString("defaultValue"));
                 }
             }
-            String returnLog = execute(server.getIp(), server.getUserName(), server.getPassword(), script);
+            Proxy proxy = new Proxy();
+            if(server.getIsProxy()) {
+                proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
+            }
+            String returnLog = execute(server.getIp(), server.getUserName(), server.getPassword(), script, proxy);
             result.setReturnLog(returnLog);
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(TaskConstants.TASK_STATUS.FINISHED.toString());
@@ -208,7 +214,11 @@ public class ServerService {
 
     private boolean validateAccount(Server server) {
         try {
-            return login(server.getIp(), server.getUserName(), server.getPassword());
+            Proxy proxy = new Proxy();
+            if(server.getIsProxy()) {
+                proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
+            }
+            return login(server.getIp(), server.getUserName(), server.getPassword(), proxy);
         } catch (Exception e) {
             LogUtil.error(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), e.getMessage()), e);
             return false;
@@ -259,7 +269,15 @@ public class ServerService {
         server.setCreator(SessionUtils.getUserId());
         server.setCreateTime(System.currentTimeMillis());
         server.setUpdateTime(System.currentTimeMillis());
-        server.setStatus(login(server.getIp(), server.getUserName(), server.getPassword())?CloudAccountConstants.Status.VALID.name():CloudAccountConstants.Status.INVALID.name());
+        Proxy proxy = new Proxy();
+        if(server.getIsProxy()) {
+            proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
+        }
+        server.setStatus(
+                login(server.getIp(), server.getUserName(),
+                        server.getPassword(), proxy)?
+                        CloudAccountConstants.Status.VALID.name():
+                        CloudAccountConstants.Status.INVALID.name());
 
         OperationLogService.log(SessionUtils.getUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "创建虚拟机");
         return serverMapper.insertSelective(server);
@@ -267,7 +285,15 @@ public class ServerService {
 
     public int editServer(Server server) throws Exception {
         server.setUpdateTime(System.currentTimeMillis());
-        server.setStatus(login(server.getIp(), server.getUserName(), server.getPassword())?CloudAccountConstants.Status.VALID.name():CloudAccountConstants.Status.INVALID.name());
+        Proxy proxy = new Proxy();
+        if(server.getIsProxy()) {
+            proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
+        }
+        server.setStatus(
+                login(server.getIp(), server.getUserName(),
+                        server.getPassword(), proxy)?
+                        CloudAccountConstants.Status.VALID.name():
+                        CloudAccountConstants.Status.INVALID.name());
 
         OperationLogService.log(SessionUtils.getUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "更新虚拟机");
         return serverMapper.updateByPrimaryKeySelective(server);
@@ -278,18 +304,18 @@ public class ServerService {
         OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "删除虚拟机");
     }
 
-    public boolean login(String sshIp, String sshUsername, String sshPassword) throws Exception {
+    public boolean login(String sshIp, String sshUsername, String sshPassword, Proxy proxy) throws Exception {
         try {
-            SshUtil.login(sshIp, sshUsername, sshPassword);
+            SshUtil.login(sshIp, sshUsername, sshPassword, proxy);
         }catch (Exception e) {
             return false;
         }
         return true;
     }
 
-    public String execute(String sshIp, String sshUsername, String sshPassword, String cmd) throws Exception {
+    public String execute(String sshIp, String sshUsername, String sshPassword, String cmd, Proxy proxy) throws Exception {
         try {
-            return SshUtil.execute(SshUtil.login(sshIp, sshUsername, sshPassword), cmd);
+            return SshUtil.execute(SshUtil.login(sshIp, sshUsername, sshPassword, proxy), cmd);
         }catch (Exception e) {
             return "";
         }

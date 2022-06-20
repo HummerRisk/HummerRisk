@@ -197,7 +197,7 @@ public class NoticeCreateService {
         LogUtil.debug("开始添加站内消息！" + messageOrder.getAccountName());
         WebMsg msg = new WebMsg();
         msg.setStatus(false);
-        msg.setType("检测结果");
+        msg.setType("云资源检测结果");
         msg.setCreateTime(System.currentTimeMillis());
         msg.setContent("云资源安全合规检测结果【" + messageOrder.getAccountName() + "】" +  messageOrder.getStatus() + "【 不合规资源/资源总数】" + returnSum  + "/" + resourcesSum);
         webMsgMapper.insertSelective(msg);

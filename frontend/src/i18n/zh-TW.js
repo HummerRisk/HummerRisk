@@ -855,6 +855,7 @@ export default {
     add: '新增多個',
     delete_this_vuln: '刪除此漏洞檢測配置',
     please_choose_vuln: '請選擇漏洞檢測目標',
+    back_vuln: '返回漏洞檢測列表',
   },
   oss: {
     oss_setting: '對象存儲',

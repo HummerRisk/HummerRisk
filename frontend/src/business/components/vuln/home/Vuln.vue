@@ -406,7 +406,7 @@ export default {
     //调参漏洞检测信息对应的规则
     handleScan(params) {
       this.$router.push({
-        path: '/account/accountscan/' + params.id,
+        path: '/vuln/vlunscan/' + params.id,
       }).catch(error => error);
     },
     //查询插件

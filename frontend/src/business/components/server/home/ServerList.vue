@@ -52,7 +52,7 @@
 
       <!--Create server-->
       <el-drawer class="rtl" :title="$t('server.server_create')" :visible.sync="createVisible" size="70%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" max-height="550">
         <div style="margin: 10px;">
           <el-row>
             <el-col :span="10">
@@ -98,6 +98,22 @@
               </el-table>
             </el-col>
           </el-row>
+          <el-form :model="proxyForm" label-position="right" label-width="150px" size="small" ref="accountForm">
+            <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-switch v-model="proxyForm.isProxy"></el-switch>
+            </el-form-item>
+            <el-form-item v-if="proxyForm.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-select style="width: 100%;" v-model="proxyForm.proxyId" :placeholder="$t('commons.proxy')">
+                <el-option
+                  v-for="item in proxys"
+                  :key="item.id"
+                  :label="item.proxyIp"
+                  :value="item.id">
+                  &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
         </div>
         <div style="margin: 10px;">
           <dialog-footer
@@ -132,6 +148,20 @@
           </el-form-item>
           <el-form-item :label="$t('commons.password')" ref="password" prop="password">
             <el-input type="password" v-model="form.password" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
+          </el-form-item>
+          <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-switch v-model="form.isProxy"></el-switch>
+          </el-form-item>
+          <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+              <el-option
+                v-for="item in proxys"
+                :key="item.id"
+                :label="item.proxyIp"
+                :value="item.id">
+                &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-form>
         <dialog-footer
@@ -218,6 +248,8 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
         ],
         groupId: 'd691se79-2e8c-1s54-bbe6-491sd29e91fe',
         groups: [],
+        proxyForm: {isProxy: false, proxyId: 0},
+        proxys: [],
       }
     },
     props: {
@@ -235,9 +267,16 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
         this.servers = [];
         this.createVisible = true;
       },
+      //查询代理
+      activeProxy() {
+        let url = "/proxy/list/all";
+        this.result = this.$get(url, response => {
+          this.proxys = response.data;
+        });
+      },
       download() {},
       upload() {},
-      //校验云账号
+      //校验虚拟机ssh连接
       validate() {
         if (this.selectIds.size === 0) {
           this.$warning(this.$t('server.please_choose_server'));
@@ -394,6 +433,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
         server.password = '';
         server.groupId = this.groupId;
         this.servers.push(server);
+        this.proxyForm = {isProxy: false, proxyId: 0};
       },
       deleteRowServer(index, data) { //删除
         this.servers.splice(index, 1);
@@ -403,6 +443,13 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
           if(!server.name || !server.ip || !server.userName || !server.password || !server.groupId) {
             this.$warning('value will not be null');
           } else {
+            if (this.proxyForm.isProxy) {
+              server.isProxy = true;
+              server.proxyId = this.proxyForm.proxyId;
+            } else {
+              server.isProxy = false;
+              server.proxyId = null;
+            }
             this.result = this.$post('/server/addServer', server, response => {
               this.createVisible = false;
               this.search();
@@ -411,6 +458,9 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
         }
       },
       editServer(server) {
+        if (!server.isProxy) {
+          server.proxyId = null;
+        }
         this.result = this.$post('/server/editServer', server, response => {
           this.updateVisible = false;
           this.search();
@@ -419,6 +469,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
     },
     created() {
       this.init();
+      this.activeProxy();
     }
 
   }

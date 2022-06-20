@@ -3,11 +3,7 @@ package com.hummerrisk.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.domain.Package;
-import com.hummerrisk.base.mapper.*;
-import com.hummerrisk.commons.constants.*;
-import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtPackageMapper;
@@ -59,6 +55,8 @@ public class PackageService {
     private ExtPackageResultMapper extPackageResultMapper;
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private ProxyMapper proxyMapper;
 
     public List<PackageDTO> packageList(PackageRequest request) {
         return extPackageMapper.packageList(request);
@@ -395,23 +393,51 @@ public class PackageService {
 
     public String execute(Package aPackage, PackageRuleDTO dto, String outType) throws Exception {
         try {
+            Proxy proxy;
+            String _proxy = "";
+            if(aPackage.getIsProxy()) {
+                proxy = proxyMapper.selectByPrimaryKey(aPackage.getProxyId());
+                String proxyType = proxy.getProxyType();
+                String proxyIp = proxy.getProxyIp();
+                String proxyPort = proxy.getProxyPort();
+                String proxyName = proxy.getProxyName();
+                String proxyPassword = proxy.getProxyPassword();
+                if (StringUtils.isNotEmpty(proxyType)) {
+                    if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Http.toString())) {
+                        if (StringUtils.isNotEmpty(proxyName)) {
+                            _proxy = "export http_proxy=http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        } else {
+                            _proxy = "export http_proxy=http://" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        }
+                    } else if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Https.toString())) {
+                        if (StringUtils.isNotEmpty(proxyName)) {
+                            _proxy = "export https_proxy=http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        } else {
+                            _proxy = "export https_proxy=http://" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        }
+                    }
+                } else {
+                    _proxy = "unset http_proxy;" + "\n" +
+                            "unset https_proxy;" + "\n";
+                }
+            }
             String fileName = !aPackage.getPath().isEmpty()?aPackage.getPath().split("/")[aPackage.getPath().split("/").length-1]:"";
             String suffix = StringUtils.isNotBlank(fileName)?fileName.split("\\.")[fileName.split("\\.").length-1]:"";
             String path = PackageConstants.DEFAULT_BASE_DIR + aPackage.getPath();//jar包路径，项目外
             String command = PackageConstants.DEPENDENCY_CHECK + PackageConstants.PROJECT + aPackage.getName() + " " +
                     PackageConstants.SCAN + path + " ";
             if (StringUtils.equalsIgnoreCase(outType, "json")) {
-                command =  command +
+                command =  _proxy + command +
                         PackageConstants.FORMAT + PackageConstants.JSON + " " +
                         PackageConstants.OUT + path.replace(suffix, "json") + " " + PackageConstants.LOG + path.replace(suffix, "log");
             } else if (StringUtils.equalsIgnoreCase(outType, "html")) {
-                command = command +
+                command = _proxy + command +
                         PackageConstants.FORMAT + PackageConstants.HTML + " " +
                         PackageConstants.OUT + path.replace(suffix, "html");
             }
             String resultStr = CommandUtils.commonExecCmdWithResult(command, PackageConstants.DEFAULT_BASE_DIR);
             return resultStr;
-        }catch (Exception e) {
+        } catch (Exception e) {
             return "";
         }
     }

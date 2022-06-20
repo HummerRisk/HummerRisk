@@ -3,12 +3,12 @@
       <el-card class="table-card" v-loading="result.loading">
         <template v-slot:header>
           <scan-header  :condition.sync="condition"
-                        :title="$t('rule.rule_list')"
+                        :title="$t('vuln.vuln_rule_list')"
                         @save="save" :saveTip="$t('account.save_settings')"
                         @create="create" :createTip="$t('account.start_batch')"
                         @setting="setting" :settingTip="$t('account.quick_settings')"
                         @clean="clean" :cleanTip="$t('account.clean_settings')"
-                        @back="back" :backTip="$t('account.back_account')"
+                        @back="back" :backTip="$t('vuln.back_vuln')"
                         :show-save="true" :show-create="true" :show-setting="true" :show-clean="true"/>
 
         </template>
@@ -24,7 +24,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('account.regions')" min-width="15%" show-overflow-tooltip>
+          <el-table-column :label="$t('vuln.vuln_settings')" min-width="15%" show-overflow-tooltip>
             <template v-slot:default="scope">
               <el-select v-model="scope.row.regions" multiple collapse-tags filterable :placeholder="$t('account.please_choose_region')" :clearable="true" style="width: 100%;">
                 <el-checkbox v-model="scope.row.checkAll" @change="selectOnChangeAll(scope.row.checkAll, scope.row)">{{ $t('account.i18n_sync_all') }}</el-checkbox>
@@ -38,7 +38,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column min-width="40%" :label="$t('rule.middleware_parameter')" show-overflow-tooltip>
+          <el-table-column min-width="45%" :label="$t('rule.middleware_parameter')" show-overflow-tooltip>
             <template v-slot:default="scope">
               <div v-if="scope.row.parameter.length > 0">
                 <span layout-gt-sm="row" class="hve-sp" :key="index" v-for="(p, index) in scope.row.parameter">
@@ -49,12 +49,7 @@
               <div v-else-if="scope.row.parameter.length == 0" class="tp-el-inp"> N/A </div>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('rule.resource_type')" min-width="10%" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <span v-for="(resourceType, index) in scope.row.types" :key="index">[{{ resourceType }}] </span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('account.save_param')" min-width="10%" show-overflow-tooltip>
+          <el-table-column :label="$t('account.save_param')" min-width="15%" show-overflow-tooltip>
             <template v-slot:default="scope">
               <el-button plain size="mini" type="primary" v-if="scope.row.saveParam">
                 {{ $t('account.is_save_param_yes') }}
@@ -334,7 +329,7 @@ import {_sort} from "@/common/js/utils";
       },
       back () {
         this.$router.push({
-          path: '/account/cloudaccount',
+          path: '/vuln/vuln',
         }).catch(error => error);
       },
       selectOnChangeAll (checkAll, item) {

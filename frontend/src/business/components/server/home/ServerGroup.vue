@@ -177,7 +177,7 @@ import DialogFooter from "../../common/components/DialogFooter";
       enableTrash() {
         this.condition.trashEnable = true;
       },
-      //保存云账号
+      //保存虚拟机分组
       saveGroup(item, type){
         if (type === 'add') {
           this.$post("server/addServerGroup", item,response => {

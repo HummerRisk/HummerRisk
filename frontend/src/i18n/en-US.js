@@ -855,6 +855,7 @@ export default {
     add: 'Add multiple',
     delete_this_vuln: 'Delete this vulnerability detection configuration',
     please_choose_vuln: 'Please choose a vulnerability detection target',
+    back_vuln: 'Return the vulnerability detection list',
   },
   oss: {
     oss_setting: 'Object storage',

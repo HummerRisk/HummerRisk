@@ -63,6 +63,20 @@
             <el-form-item :label="$t('package.name')" ref="name" prop="name">
               <el-input v-model="addPackageForm.name" autocomplete="off" :placeholder="$t('package.name')"/>
             </el-form-item>
+            <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-switch v-model="addPackageForm.isProxy"></el-switch>
+            </el-form-item>
+            <el-form-item v-if="addPackageForm.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-select style="width: 100%;" v-model="addPackageForm.proxyId" :placeholder="$t('commons.proxy')">
+                <el-option
+                  v-for="item in proxys"
+                  :key="item.id"
+                  :label="item.proxyIp"
+                  :value="item.id">
+                  &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
+                </el-option>
+              </el-select>
+            </el-form-item>
           </div>
         </div>
         <div v-if="active == 2">
@@ -110,6 +124,20 @@
             <el-form-item :label="$t('package.name')" ref="name" prop="name">
               <el-input v-model="editPackageForm.name" autocomplete="off" :placeholder="$t('package.name')"/>
             </el-form-item>
+            <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-switch v-model="editPackageForm.isProxy"></el-switch>
+            </el-form-item>
+            <el-form-item v-if="editPackageForm.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-select style="width: 100%;" v-model="editPackageForm.proxyId" :placeholder="$t('commons.proxy')">
+                <el-option
+                  v-for="item in proxys"
+                  :key="item.id"
+                  :label="item.proxyIp"
+                  :value="item.id">
+                  &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
+                </el-option>
+              </el-select>
+            </el-form-item>
           </div>
         </div>
         <div v-if="active == 2">
@@ -136,7 +164,7 @@
         @cancel="updateVisible = false"
         :show-pre="preVisible" @preStep="pre()"
         :show-next="nextVisible" @nextStep="next('edit')"
-        :show-confirm="confirmVisible" @confirm="handleClose"/>
+        :show-confirm="confirmVisible" @confirm="save(editPackageForm, 'edit')"/>
     </el-drawer>
     <!--Update package-->
 
@@ -205,6 +233,7 @@ export default {
       nextVisible: true,
       confirmVisible: false,
       location: "",
+      proxys: [],
     }
   },
   methods: {
@@ -228,8 +257,16 @@ export default {
         this.result = this.$post('/package/editPackage', this.editPackageForm, response => {
           let data = response.data;
           this.editPackageForm = data;
+          this.handleClose();
         });
       }
+    },
+    //查询代理
+    activeProxy() {
+      let url = "/proxy/list/all";
+      this.result = this.$get(url, response => {
+        this.proxys = response.data;
+      });
     },
     handleCommand(command, data) {
       switch (command) {
@@ -337,6 +374,7 @@ export default {
 },
   created() {
     this.search();
+    this.activeProxy();
     this.location = window.location.href.split("#")[0];
   }
 }

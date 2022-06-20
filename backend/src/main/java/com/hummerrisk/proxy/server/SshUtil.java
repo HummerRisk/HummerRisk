@@ -1,8 +1,10 @@
 package com.hummerrisk.proxy.server;
 
 import ch.ethz.ssh2.Connection;
+import ch.ethz.ssh2.HTTPProxyData;
 import ch.ethz.ssh2.Session;
 import ch.ethz.ssh2.StreamGobbler;
+import com.hummerrisk.base.domain.Proxy;
 import com.hummerrisk.commons.utils.LogUtil;
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,12 +24,18 @@ public class SshUtil {
      * 登录主机
      * @return 登录成功返回true，否则返回false
      */
-    public static Connection login(String sshIp, String sshUsername, String sshPassword) throws Exception {
+    public static Connection login(String sshIp, String sshUsername, String sshPassword, Proxy proxy) throws Exception {
         boolean isAuthenticated = false;
         Connection conn = null;
         long startTime = Calendar.getInstance().getTimeInMillis();
         try {
-            conn = new Connection(sshIp);
+            if(proxy != null) {
+                HTTPProxyData httpProxyData = new HTTPProxyData(proxy.getProxyIp(), Integer.valueOf(proxy.getProxyPort()), proxy.getProxyName(), proxy.getProxyPassword());
+                conn = new Connection(sshIp, 22, httpProxyData);
+            } else {
+                conn = new Connection(sshIp);
+            }
+
             conn.connect(); // 连接主机
 
             isAuthenticated = conn.authenticateWithPassword(sshUsername, sshPassword); // 认证

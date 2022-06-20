@@ -10,7 +10,7 @@ public class Mysql {
         Connection root = null;
         try {
             String pid = "";
-            root = SshUtil.login(sshIp, sshUsername, sshPassword);//通过ssh连接到服务器
+            root = SshUtil.login(sshIp, sshUsername, sshPassword, null);//通过ssh连接到服务器
             String execute = SshUtil.execute(root, "netstat -ntpl|grep mysql");//执行命令
 
             //以下是我业务逻辑 可忽略

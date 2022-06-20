@@ -11,8 +11,6 @@ public class ServerDTO extends Server {
 
     private String groupName;
 
-    private boolean isProxy;
-
     private String proxyIp;
 
     private String proxyPort;
@@ -20,14 +18,6 @@ public class ServerDTO extends Server {
     private String proxyName;
 
     private String proxyPassword;
-
-    public boolean getIsProxy() {
-        return isProxy;
-    }
-
-    public void setIsProxy(boolean isProxy) {
-        this.isProxy = isProxy;
-    }
 
     public String getProxyIp() {
         return proxyIp;
@@ -59,14 +49,6 @@ public class ServerDTO extends Server {
 
     public void setProxyPassword(String proxyPassword) {
         this.proxyPassword = proxyPassword;
-    }
-
-    public boolean isProxy() {
-        return isProxy;
-    }
-
-    public void setProxy(boolean proxy) {
-        isProxy = proxy;
     }
 
     public String getUser() {

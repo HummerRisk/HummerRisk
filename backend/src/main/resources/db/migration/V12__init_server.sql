@@ -23,6 +23,8 @@ CREATE TABLE IF NOT EXISTS server (
     `port`                       varchar(128)        DEFAULT '22' COMMENT 'Port',
     `user_name`                  varchar(128)        DEFAULT 'root' COMMENT 'UserName',
     `password`                   varchar(256)        COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'Password',
+    `is_proxy`                   tinyint(1)          DEFAULT 0 COMMENT '是否启用代理',
+    `proxy_id`                   int(11)             DEFAULT NULL COMMENT '代理ID',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
