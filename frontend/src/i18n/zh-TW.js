@@ -791,7 +791,7 @@ export default {
   package: {
     package_setting: '軟件包管理',
     package_setting_list: '軟件包列表',
-    package_scan: '軟件包掃描',
+    package_scan: '軟件掃描',
     package_rule: '軟件包掃描規則',
     package_result: '軟件包掃描結果',
     create: '創建軟件包',
@@ -855,6 +855,12 @@ export default {
     add: '新增多個',
     delete_this_vuln: '刪除此漏掃配置',
     please_choose_vuln: '請選擇漏掃目標',
+  },
+  oss: {
+    oss_setting: '對象存儲',
+    oss_overview: '對象存儲概覽',
+    oss_bucket: '存儲桶列表',
+    oss_order: '存儲桶操作',
   },
   task: {
     task_setting: '任務編排',

@@ -164,7 +164,7 @@ public class NoticeCreateService {
 
         String successContext = "success";
         String failedContext = "failed";
-        String subject = "安全合规扫描结果";
+        String subject = "云资源安全合规扫描结果";
         String event = NoticeConstants.Event.EXECUTE_SUCCESSFUL;
 
         List<Task> tasks = extTaskMapper.getTopTasksForEmail(messageOrder);
@@ -199,7 +199,7 @@ public class NoticeCreateService {
         msg.setStatus(false);
         msg.setType("扫描结果");
         msg.setCreateTime(System.currentTimeMillis());
-        msg.setContent("安全合规扫描结果【" + messageOrder.getAccountName() + "】" +  messageOrder.getStatus() + "【 不合规资源/资源总数】" + returnSum  + "/" + resourcesSum);
+        msg.setContent("云资源安全合规扫描结果【" + messageOrder.getAccountName() + "】" +  messageOrder.getStatus() + "【 不合规资源/资源总数】" + returnSum  + "/" + resourcesSum);
         webMsgMapper.insertSelective(msg);
         LogUtil.debug("结束添加站内消息！" + messageOrder.getAccountName());
     }

@@ -11,7 +11,7 @@
     </aside-container>
 
     <main-container>
-      <scenario-list
+      <scenario-hist-list
         :select-node-ids="selectNodeIds"
         :referenced="true"
         :trash-enable="false"

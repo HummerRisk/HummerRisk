@@ -856,6 +856,12 @@ export default {
     delete_this_vuln: 'Delete this missed scan configuration',
     please_choose_vuln: 'Please choose the missed scan target',
   },
+  oss: {
+    oss_setting: 'Object storage',
+    oss_overview: 'Object storage overview',
+    oss_bucket: 'Bucket list',
+    oss_order: 'Bucket operations',
+  },
   task: {
     task_setting: 'Task arrangement',
     task_settings_list: 'Task scheduling settings list',

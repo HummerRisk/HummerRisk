@@ -791,7 +791,7 @@ export default {
   package: {
     package_setting: '软件包管理',
     package_setting_list: '软件包列表',
-    package_scan: '软件包扫描',
+    package_scan: '软件扫描',
     package_rule: '软件包扫描规则',
     package_result: '软件包扫描结果',
     create: '创建软件包',
@@ -855,6 +855,12 @@ export default {
     add: '新增多个',
     delete_this_vuln: '删除此漏扫配置',
     please_choose_vuln: '请选择漏扫目标',
+  },
+  oss: {
+    oss_setting: '对象存储',
+    oss_overview: '对象存储概览',
+    oss_bucket: '存储桶列表',
+    oss_order: '存储桶操作',
   },
   task: {
     task_setting: '任务编排',

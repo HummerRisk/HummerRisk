@@ -15,7 +15,7 @@
         <span slot="title">{{ $t('dashboard.dashboard') }}</span>
       </el-menu-item>
       <el-menu-item index="/rule" onselectstart="return false" v-permission="['admin']">
-        <i class="el-icon-discount"></i>
+        <i class="el-icon-collection"></i>
         <span slot="title">{{ $t('rule.rule') }}</span>
       </el-menu-item>
       <el-menu-item index="/resource" onselectstart="return false" v-permission="['admin']">
@@ -35,12 +35,16 @@
         <span slot="title">{{ $t('server.server_setting') }}</span>
       </el-menu-item>
       <el-menu-item index="/image" onselectstart="return false" v-permission="['admin']">
-        <i class="el-icon-film"></i>
+        <i class="el-icon-picture-outline-round"></i>
         <span slot="title">{{ $t('image.image_scan') }}</span>
       </el-menu-item>
       <el-menu-item index="/package" onselectstart="return false" v-permission="['admin']">
-        <i class="el-icon-folder-opened"></i>
+        <i class="el-icon-box"></i>
         <span slot="title">{{ $t('package.package_scan') }}</span>
+      </el-menu-item>
+      <el-menu-item index="/oss" onselectstart="return false" v-permission="['admin']">
+        <i class="el-icon-folder-opened"></i>
+        <span slot="title">{{ $t('oss.oss_setting') }}</span>
       </el-menu-item>
       <el-menu-item index="/task" onselectstart="return false" v-permission="['admin']">
         <i class="el-icon-s-operation"></i>
