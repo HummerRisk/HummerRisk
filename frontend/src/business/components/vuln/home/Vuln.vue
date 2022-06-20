@@ -12,7 +12,7 @@
       </template>
 
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                :row-class-name="tableRowClassName"
+                :row-class-name="tableRowClassName" max-height="550"
                 @filter-change="filter" @select-all="select" @select="select">
         <el-table-column type="selection" min-width="5%">
         </el-table-column>
@@ -47,7 +47,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
-        <el-table-column min-width="17%" :label="$t('commons.operating')">
+        <el-table-column min-width="17%" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>

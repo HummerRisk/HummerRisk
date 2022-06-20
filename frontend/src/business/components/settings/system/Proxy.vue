@@ -7,7 +7,7 @@
                          :create-tip="$t('proxy.create')" :title="$t('commons.proxy')"/>
       </template>
 
-      <el-table border class="adjust-table" :data="tableData" style="width: 100%" :row-class-name="tableRowClassName">
+      <el-table border class="adjust-table" :data="tableData" style="width: 100%" max-height="550" :row-class-name="tableRowClassName">
         <el-table-column type="index" min-width="5%"/>
         <el-table-column prop="proxyType" :label="$t('commons.proxy_type')" min-width="10%"/>
         <el-table-column prop="proxyIp" label="Proxy IP" min-width="15%"/>
@@ -23,7 +23,7 @@
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('commons.operating')" min-width="15%">
+        <el-table-column :label="$t('commons.operating')" fixed="right" min-width="15%">
           <template v-slot:default="scope">
             <table-operator @editClick="edit(scope.row)" @deleteClick="del(scope.row)">
               <template v-slot:behind>

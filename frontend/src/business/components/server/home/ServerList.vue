@@ -12,7 +12,7 @@
         </template>
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                  :row-class-name="tableRowClassName"
+                  :row-class-name="tableRowClassName" max-height="675"
                   @filter-change="filter" @select-all="select" @select="select">
           <el-table-column type="selection" min-width="3%"/>
           <el-table-column type="index" min-width="3%"/>
@@ -41,7 +41,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="user" :label="$t('account.creator')" min-width="10%" show-overflow-tooltip/>
-          <el-table-column min-width="14%" :label="$t('commons.operating')">
+          <el-table-column min-width="14%" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
@@ -65,7 +65,7 @@
         <div>
           <el-row>
             <el-col :span="24">
-              <el-table :data="servers" class="tb-edit" border :cell-style="rowClass" :header-cell-style="headClass">
+              <el-table :data="servers" class="tb-edit" height="538" border :cell-style="rowClass" :header-cell-style="headClass">
                 <el-table-column :label="$t('server.server_name')" min-width="20%" prop="serverName">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.name"></el-input>
@@ -86,7 +86,7 @@
                     <el-input v-model="scope.row.password"></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('commons.operating')" min-width="20%" prop="result">
+                <el-table-column :label="$t('commons.operating')" fixed="right" min-width="20%" prop="result">
                   <template v-slot:default="scope">
                     <el-button type="primary" size="mini" @click="handleAddServerModel(scope.$index, scope.row)">
                       {{ $t('commons.add') }}

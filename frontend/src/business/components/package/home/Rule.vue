@@ -19,7 +19,7 @@
       </template>
 
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                @filter-change="filter">
+                @filter-change="filter" max-height="675">
         <!-- 展开 start -->
         <el-table-column type="expand" min-width="1%">
           <template slot-scope="props">
@@ -64,7 +64,7 @@
             <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="10%" :label="$t('commons.operating')">
+        <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>

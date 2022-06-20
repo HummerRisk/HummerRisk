@@ -7,7 +7,7 @@
                       :title="$t('dashboard.active_list')"/>
       </template>
 
-      <el-table border :data="tableData"
+      <el-table border :data="tableData" max-height="550"
                 class="adjust-table table-content"
                 @sort-change="sort"
                 :row-class-name="tableRowClassName"
@@ -15,7 +15,7 @@
         <el-table-column type="index" min-width="5%"/>
         <el-table-column prop="resourceUserName" :label="$t('dashboard.resource_user_name')" min-width="15%" show-overflow-tooltip></el-table-column>
         <el-table-column prop="resourceUserId" :label="$t('dashboard.resource_user_id')" min-width="10%" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('commons.operating')" min-width="10%" show-overflow-tooltip>
+        <el-table-column :label="$t('commons.operating')" fixed="right" min-width="10%" show-overflow-tooltip>
           <template v-slot:default="scope">
             {{ $t(scope.row.operation) }}
           </template>

@@ -8,7 +8,7 @@
       </template>
 
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                @filter-change="filter">
+                @filter-change="filter" max-height="675">
         <!-- 展开 start -->
         <el-table-column type="expand" min-width="1%">
           <template slot-scope="props">
@@ -53,7 +53,7 @@
             <span><i class="el-icon-time"></i> {{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('commons.operating')">
+        <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
@@ -91,7 +91,7 @@
             </el-col>
           </el-row>
         </div>
-        <el-table :show-header="false" :data="logData" class="adjust-table table-content">
+        <el-table :show-header="false" :data="logData" class="adjust-table table-content" height="538">
           <el-table-column>
             <template v-slot:default="scope">
               <div class="bg-purple-div">

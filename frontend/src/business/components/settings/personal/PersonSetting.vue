@@ -10,7 +10,7 @@
       </template>
 
       <!--Personal information menu-->
-      <el-table border class="adjust-table" :data="tableData" style="width: 100%">
+      <el-table border class="adjust-table" :data="tableData" style="width: 100%" max-height="550">
         <el-table-column prop="id" label="ID" min-width="15%"/>
         <el-table-column prop="name" :label="$t('commons.username')" min-width="15%"/>
         <el-table-column prop="email" :label="$t('commons.email')" min-width="20%"/>
@@ -20,7 +20,7 @@
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('commons.operating')" min-width="15%">
+        <el-table-column :label="$t('commons.operating')" fixed="right" min-width="15%">
           <template v-slot:default="scope">
             <table-operator-button :tip="$t('member.edit_information')" icon="el-icon-edit"
                                       type="primary" @exec="edit(scope.row)"/>

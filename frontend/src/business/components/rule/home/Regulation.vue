@@ -8,7 +8,7 @@
         </template>
 
         <el-table :border="true" :stripe="true" :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                  @filter-change="filter" @select-all="select" @select="select">
+                  @filter-change="filter" @select-all="select" @select="select" max-height="600">
           <el-table-column type="index" min-width="5%"/>
           <el-table-column prop="itemSortFirstLevel" :label="$t('resource.security_level')" min-width="13%" show-overflow-tooltip></el-table-column>
           <el-table-column prop="itemSortSecondLevel" :label="$t('resource.control_point')" min-width="12%" show-overflow-tooltip></el-table-column>
@@ -20,7 +20,7 @@
               </span>
             </el-tooltip>
           </el-table-column>
-          <el-table-column min-width="10%" :label="$t('commons.operating')">
+          <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
@@ -53,7 +53,7 @@
       <el-drawer class="rtl" :title="$t('rule.rule_list')" :visible.sync="listVisible" size="80%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-table border :data="ruleForm" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                  @filter-change="filter" @select-all="select" @select="select">
+                  @filter-change="filter" @select-all="select" @select="select" height="538">
           <el-table-column type="index" min-width="4%"/>
           <el-table-column prop="name" :label="$t('rule.rule_name')" min-width="18%" show-overflow-tooltip></el-table-column>
           <el-table-column :label="$t('rule.resource_type')" min-width="10%" show-overflow-tooltip>

@@ -17,7 +17,7 @@
 
     <el-row>
       <el-col :span="24">
-        <el-table :data="resourceTask" class="tb-edit" border :cell-style="rowClass" :header-cell-style="headClass">
+        <el-table :data="resourceTask" class="tb-edit" border max-height="550" :cell-style="rowClass" :header-cell-style="headClass">
           <el-table-column :label="$t('schedule.event')" min-width="15%" prop="events">
             <template slot-scope="scope">
               <el-select v-model="scope.row.event" :placeholder="$t('system_parameter_setting.message.select_events')"
@@ -42,7 +42,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('commons.operating')" min-width="25%" prop="result">
+          <el-table-column :label="$t('commons.operating')" fixed="right" min-width="25%" prop="result">
             <template v-slot:default="scope">
               <el-button type="primary" size="mini" v-if="scope.row.isSet" @click="handleAddTask(scope.$index,scope.row)">
                 {{ $t('commons.add') }}

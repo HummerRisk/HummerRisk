@@ -8,7 +8,7 @@
                            :show-create="true"/>
         </template>
 
-        <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
+        <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" max-height="550" :row-class-name="tableRowClassName">
           <el-table-column type="index" min-width="3%"/>
           <el-table-column prop="name" :label="$t('account.task_input_name')" min-width="10%" show-overflow-tooltip></el-table-column>
           <el-table-column prop="qzType" :label="$t('account.choose_qztype')" min-width="9%" show-overflow-tooltip>
@@ -50,7 +50,7 @@
               <span><i class="el-icon-time"></i> {{ scope.row.createTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column min-width="11%" :label="$t('commons.operating')">
+          <el-table-column min-width="11%" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators v-if="scope.row.status === 'PAUSE'" :buttons="buttons1" :row="scope.row"/>
               <table-operators v-if="scope.row.status != 'PAUSE'" :buttons="buttons2" :row="scope.row"/>
@@ -228,7 +228,7 @@
                 <el-divider></el-divider>
 
                 <el-row class="el-form-item-dev" v-for="dto in detailForm.quartzTaskRelationDtos" :key="dto.id">
-                  <el-table :show-header="true" :data="dto.taskList" class="adjust-table table-content">
+                  <el-table :show-header="true" :data="dto.taskList" class="adjust-table table-content" height="538">
                     <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="20%">
                         {{ scope.row.taskName }}
                     </el-table-column>

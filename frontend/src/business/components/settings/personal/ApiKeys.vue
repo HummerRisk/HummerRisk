@@ -15,7 +15,7 @@
         </div>
       </template>
 
-      <el-table border class="adjust-table" :data="tableData" style="width: 100%">
+      <el-table border class="adjust-table" :data="tableData" style="width: 100%" max-height="550">
         <el-table-column prop="accessKey" label="Access Key" min-width="20%">
           <template v-slot:default="scope">
             <div class="variable-combine">
@@ -49,7 +49,7 @@
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('commons.operating')" min-width="20%">
+        <el-table-column :label="$t('commons.operating')" fixed="right" min-width="20%">
           <template v-slot:default="scope">
             <table-operator-button :tip="$t('commons.delete')" icon="el-icon-delete"
                                       type="danger" @exec="deleteApiKey(scope.row)"/>
