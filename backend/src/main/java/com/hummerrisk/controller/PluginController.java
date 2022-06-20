@@ -33,7 +33,7 @@ public class PluginController {
         return pluginService.getVulnPlugin();
     }
 
-    @ApiOperation(value = "扫描引擎类型过滤插件")
+    @ApiOperation(value = "检测引擎类型过滤插件")
     @GetMapping("scan/{scanType}")
     public List<Plugin> getPlugins(@PathVariable String scanType) {
         return pluginService.getAllPlugin(scanType);

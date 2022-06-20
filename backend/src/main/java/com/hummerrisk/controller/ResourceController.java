@@ -79,25 +79,25 @@ public class ResourceController {
         return resourceService.operatingResource(id, "fix");
     }
 
-    @ApiOperation(value = "重新扫描")
+    @ApiOperation(value = "重新检测")
     @GetMapping("restart/{id}")
     public ResourceWithBLOBs restartResource(@PathVariable String id) throws Exception {
         return resourceService.operatingResource(id, "restart");
     }
 
-    @ApiOperation(value = "扫描日志")
+    @ApiOperation(value = "检测日志")
     @GetMapping(value = "log/resourceId/{resourceId}")
     public List<ResourceLogDTO> getResourceLog(@PathVariable String resourceId) {
         return resourceService.getResourceLog(resourceId);
     }
 
-    @ApiOperation(value = "导出扫描报告")
+    @ApiOperation(value = "导出检测报告")
     @PostMapping("export")
     public ResponseEntity<byte[]> exportReport(@RequestBody ExcelExportRequest request) throws Exception {
         byte[] bytes = resourceService.export(request);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", "不合规资源扫描报告.xlsx");
+        headers.setContentDispositionFormData("attachment", "不合规资源检测报告.xlsx");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .headers(headers)
@@ -114,7 +114,7 @@ public class ResourceController {
         }
     }
 
-    @ApiOperation(value = "删除扫描记录")
+    @ApiOperation(value = "删除检测记录")
     @GetMapping("account/delete/{id}")
     public void deleteResourceByAccountId(@PathVariable String id) throws Exception {
         resourceService.deleteResourceByAccountId(id);

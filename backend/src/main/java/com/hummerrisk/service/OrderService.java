@@ -181,7 +181,7 @@ public class OrderService {
             }
         }
         //向首页活动添加操作信息
-        OperationLogService.log(SessionUtils.getUser(), taskId, task.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.CREATE, "创建扫描任务");
+        OperationLogService.log(SessionUtils.getUser(), taskId, task.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.CREATE, "创建检测任务");
         return task;
     }
 
@@ -637,7 +637,7 @@ public class OrderService {
             ScanTaskHistory history = new ScanTaskHistory();
             history.setScanId(scanId);
             history.setTaskId(task.getId());
-            history.setOperation("新增历史合规扫描");
+            history.setOperation("新增历史合规检测");
             scanTaskHistoryMapper.insertSelective(history);
         }
     }
@@ -668,7 +668,7 @@ public class OrderService {
             history.setResourcesSum(task.getResourcesSum()!=null?task.getResourcesSum():0);
             history.setReturnSum(task.getReturnSum()!=null?task.getReturnSum():0);
             history.setScanScore(calculateScore(accountMapper.selectByPrimaryKey(task.getAccountId()), task));
-            history.setOperation("修改历史合规扫描");
+            history.setOperation("修改历史合规检测");
             history.setOutput(jsonArray.toJSONString());
             scanTaskHistoryMapper.updateByExampleSelective(history, example);
         }catch (Exception e){

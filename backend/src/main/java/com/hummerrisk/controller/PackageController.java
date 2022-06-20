@@ -74,7 +74,7 @@ public class PackageController {
         packageService.deleteImg(id, p);
     }
 
-    @ApiOperation(value = "扫描软件包规则")
+    @ApiOperation(value = "检测软件包规则")
     @PostMapping("uploadPackage/{id}")
     public void deletePackage(@PathVariable String id, @RequestBody PackageRequest p) throws Exception {
         packageService.deleteFile(id, p);
@@ -111,32 +111,32 @@ public class PackageController {
         return packageService.changeStatus(rule);
     }
 
-    @ApiOperation(value = "扫描软件包规则")
+    @ApiOperation(value = "检测软件包规则")
     @GetMapping("scan/{id}")
     public void scan(@PathVariable String id) throws Exception {
         packageService.scan(id);
     }
 
-    @ApiOperation(value = "重新扫描软件包规则")
+    @ApiOperation(value = "重新检测软件包规则")
     @GetMapping("reScan/{id}")
     public void reScan(@PathVariable String id) throws Exception {
         packageService.reScan(id);
     }
 
-    @ApiOperation(value = "软件包扫描结果列表")
+    @ApiOperation(value = "软件包检测结果列表")
     @PostMapping(value = "resultList/{goPage}/{pageSize}")
     public Pager<List<PackageResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody PackageResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, packageService.resultList(request));
     }
 
-    @ApiOperation(value = "软件包扫描日志")
+    @ApiOperation(value = "软件包检测日志")
     @GetMapping(value = "log/{resultId}")
     public List<PackageResultLog> getPackageResultLog(@PathVariable String resultId) {
         return packageService.getPackageResultLog(resultId);
     }
 
-    @ApiOperation(value = "删除软件包扫描记录")
+    @ApiOperation(value = "删除软件包检测记录")
     @GetMapping("deletePackageResult/{id}")
     public void deletePackageResult(@PathVariable String id) throws Exception {
         packageService.deletePackageResult(id);

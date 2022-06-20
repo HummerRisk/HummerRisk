@@ -145,7 +145,7 @@
     </el-drawer>
     <!--Update vuln-->
 
-    <!-- 一键扫描选择规则组 -->
+    <!-- 一键检测选择规则组 -->
     <el-dialog :close-on-click-modal="false"
                :modal-append-to-body="false"
                :title="$t('account.scan_group_quick')"
@@ -170,7 +170,7 @@
         @cancel="scanVisible = false"
         @confirm="scanGroup()"/>
     </el-dialog>
-    <!-- 一键扫描选择扫描组 -->
+    <!-- 一键检测选择检测组 -->
 
   </main-container>
 </template>
@@ -294,10 +294,10 @@ export default {
       checkAll: false,
       //选中的规则组的acccount/id集合
       checkedGroups: [],
-      //漏扫信息规则组list分组
+      //漏洞检测信息规则组list分组
       accountGroups: [],
       isIndeterminate: true,
-      //漏扫信息规则组拼接可用类型： [acccount/id]
+      //漏洞检测信息规则组拼接可用类型： [acccount/id]
       groupsSelect: [],
       proxyType: [
         {id: 'Http', value: "Http"},
@@ -323,7 +323,7 @@ export default {
     innerDrawerProxyClose() {
       this.innerDrawerProxy = false;
     },
-    //校验漏洞扫描账号
+    //校验漏洞检测账号
     validate() {
       if (this.selectIds.size === 0) {
         this.$warning(this.$t('account.please_choose_account'));
@@ -403,7 +403,7 @@ export default {
     handleCopy(test) {
       this.$refs.apiCopy.open(test);
     },
-    //调参漏扫信息对应的规则
+    //调参漏洞检测信息对应的规则
     handleScan(params) {
       this.$router.push({
         path: '/account/accountscan/' + params.id,
@@ -439,7 +439,7 @@ export default {
     filterStatus(value, row) {
       return row.status === value;
     },
-    //新增漏扫信息选择插件查询漏扫信息信息
+    //新增漏洞检测信息/选择插件查询漏洞检测信息
     async changePluginForAdd (form){
       let url = "/plugin/";
       this.result = await this.$get(url + form.pluginId, response => {
@@ -452,7 +452,7 @@ export default {
         }
       });
     },
-    //编辑漏扫信息选择插件查询漏扫信息
+    //编辑漏洞检测信息/选择插件查询漏洞检测信息
     async changePlugin (pluginId, type){
       let url = "/plugin/";
       this.result = await this.$get(url + pluginId, response => {
@@ -476,7 +476,7 @@ export default {
         }
       });
     },
-    //保存漏扫信息
+    //保存漏洞检测信息
     saveAccount(addAccountForm, type){
       for (let item of addAccountForm) {
         if (!item.tmpList.length) {
@@ -506,7 +506,7 @@ export default {
         }
       }
     },
-    //编辑漏扫信息
+    //编辑漏洞检测信息
     editAccount(item, type){
       if (!this.tmpList.length) {
         this.$error(this.$t('account.i18n_account_cloud_plugin_param'));

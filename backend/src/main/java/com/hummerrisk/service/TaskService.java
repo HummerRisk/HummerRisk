@@ -257,7 +257,7 @@ public class TaskService {
      * 检查返回值是否正常返回
      *
      * @param resultStr 需要检查的结果
-     * @param type      扫描类型
+     * @param type      检测类型
      */
     public void checkResultStr(String resultStr, String type) {
         if (type.equals(ScanTypeConstants.nuclei.name())) {

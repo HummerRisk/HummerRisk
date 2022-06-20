@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `package_result`
     `rule_id`                    varchar(50)         DEFAULT NULL COMMENT '软件包规则ID',
     `rule_name`                  varchar(50)         DEFAULT NULL COMMENT '软件包规则名称',
     `rule_desc`                  varchar(50)         DEFAULT NULL COMMENT '软件包规则描述',
-    `result_status`              varchar(45)         DEFAULT NULL COMMENT '扫描状态',
+    `result_status`              varchar(45)         DEFAULT NULL COMMENT '检测状态',
     `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
     `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `package_result`
 
 CREATE TABLE IF NOT EXISTS `package_result_log` (
     `id`                           int(11)             NOT NULL AUTO_INCREMENT,
-    `result_id`                    varchar(50)         DEFAULT NULL COMMENT '扫描结果ID',
+    `result_id`                    varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
     `operation`                    varchar(255)        DEFAULT NULL COMMENT '操作内容',

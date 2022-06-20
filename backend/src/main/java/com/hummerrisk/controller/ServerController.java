@@ -55,7 +55,7 @@ public class ServerController {
         return serverService.validate(id);
     }
 
-    @ApiOperation(value = "一键扫描虚拟机规则")
+    @ApiOperation(value = "一键检测虚拟机规则")
     @PostMapping("scan")
     public Boolean scan(@RequestBody List<String> selectIds) {
         return serverService.scan(selectIds);
@@ -129,26 +129,26 @@ public class ServerController {
         return serverService.changeStatus(rule);
     }
 
-    @ApiOperation(value = "虚拟机扫描结果列表")
+    @ApiOperation(value = "虚拟机检测结果列表")
     @PostMapping(value = "resultList/{goPage}/{pageSize}")
     public Pager<List<ServerResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, serverService.resultList(request));
     }
 
-    @ApiOperation(value = "虚拟机扫描日志")
+    @ApiOperation(value = "虚拟机检测日志")
     @GetMapping(value = "log/{resultId}")
     public List<ServerResultLog> getServerResultLog(@PathVariable String resultId) {
         return serverService.getServerResultLog(resultId);
     }
 
-    @ApiOperation(value = "重新扫描虚拟机规则")
+    @ApiOperation(value = "重新检测虚拟机规则")
     @GetMapping("restart/{id}")
     public void restartResource(@PathVariable String id) throws Exception {
         serverService.rescan(id);
     }
 
-    @ApiOperation(value = "删除虚拟机扫描记录")
+    @ApiOperation(value = "删除虚拟机检测记录")
     @GetMapping("deleteServerResult/{id}")
     public void deleteServerResult(@PathVariable String id) throws Exception {
         serverService.deleteServerResult(id);

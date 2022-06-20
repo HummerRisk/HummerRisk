@@ -152,7 +152,7 @@ import HrChart from "@/business/components/common/chart/HrChart";
             }
           },
             {
-            name: '扫描结果',
+            name: '检测结果',
             type: 'gauge',
             radius: '120%',
             min: 0,
@@ -160,7 +160,7 @@ import HrChart from "@/business/components/common/chart/HrChart";
             center: ['50%', '75%'],
             data: [{
               value: 0.8912,
-              name: '扫描结果'
+              name: '检测结果'
             }],
             splitNumber: 12, //刻度数量
             startAngle: 180,

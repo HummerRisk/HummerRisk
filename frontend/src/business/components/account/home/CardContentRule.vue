@@ -1,7 +1,7 @@
 <template>
   <el-card class="box-card" shadow="always">
     <el-tabs type="border-card" @tab-click="changeTab">
-      <!-- 扫描规则 start-->
+      <!-- 检测规则 start-->
       <el-tab-pane :label="$t('history.rule')">
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                   @filter-change="filter" @select-all="select" @select="select" max-height="675">
@@ -37,7 +37,7 @@
         </el-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-tab-pane>
-      <!-- 扫描规则 end-->
+      <!-- 检测规则 end-->
       <!-- 规则组别 start-->
       <el-tab-pane :label="$t('history.rule_set')">
         <el-table border :data="groupData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
@@ -132,7 +132,7 @@
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="tagTotal"/>
       </el-tab-pane>
       <!-- 规则标签 end-->
-      <!-- 扫描区域 start-->
+      <!-- 检测区域 start-->
       <el-tab-pane :label="$t('history.regions')">
         <el-table border :data="regionsData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                   @filter-change="filter" @select-all="select" @select="select" height="538">
@@ -163,8 +163,8 @@
         </el-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="regionsTotal"/>
       </el-tab-pane>
-      <!-- 扫描区域 end-->
-      <!-- 扫描资源 start-->
+      <!-- 检测区域 end-->
+      <!-- 检测资源 start-->
       <el-tab-pane :label="$t('history.scan_resources')">
         <el-table border :data="resourceData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                   @filter-change="filter" @select-all="select" @select="select" height="538">
@@ -194,7 +194,7 @@
         </el-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="resourceTotal"/>
       </el-tab-pane>
-      <!-- 扫描资源 end-->
+      <!-- 检测资源 end-->
     </el-tabs>
     <!--View rule-->
     <el-drawer class="rtl" :title="$t('rule.rule_detail')" :visible.sync="ruleVisible" size="70%" :before-close="handleClose" :direction="direction"

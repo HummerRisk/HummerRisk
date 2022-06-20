@@ -118,7 +118,7 @@ public class PlatformUtils {
     public final static String qiniu = "hummer-qiniu-plugin";
     public final static String qingcloud = "hummer-qingcloud-plugin";
     public final static String ucloud = "hummer-ucloud-plugin";
-    //漏洞扫描插件
+    //漏洞检测插件
     public final static String nuclei = "hummer-nuclei-plugin";
     public final static String xray = "hummer-xray-plugin";
     public final static String tsunami = "hummer-tsunami-plugin";
@@ -128,7 +128,7 @@ public class PlatformUtils {
     /**
      * 支持的插件
      * 云平台插件： aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud
-     * 漏洞扫描插件：xray, nuclei, tsunami
+     * 漏洞检测插件：xray, nuclei, tsunami
      */
     public final static List<String> getPlugin() {
         return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, nuclei, xray, tsunami);
@@ -146,17 +146,17 @@ public class PlatformUtils {
     }
 
     /**
-     * 支持漏洞扫描插件
+     * 支持漏洞检测插件
      */
     public final static List<String> getVulnPlugin() {
         return Arrays.asList(nuclei, xray, tsunami);
     }
 
     /**
-     * 是否支持漏洞扫描插件
+     * 是否支持漏洞检测插件
      */
     public static boolean isSupportVuln(String source) {
-        // 漏洞扫描插件
+        // 漏洞检测插件
         List<String> tempList = Arrays.asList(xray, nuclei, tsunami);
 
         // 利用list的包含方法,进行判断
@@ -768,7 +768,7 @@ public class PlatformUtils {
                 case nuclei:
                     JSONObject nucleiJsonObject = new JSONObject();
                     nucleiJsonObject.put("regionId", "ALL");
-                    nucleiJsonObject.put("regionName", "Nuclei 漏洞扫描");
+                    nucleiJsonObject.put("regionName", "Nuclei 漏洞检测");
                     if (!jsonArray.contains(nucleiJsonObject)) jsonArray.add(nucleiJsonObject);
                     break;
                 case xray:
@@ -780,7 +780,7 @@ public class PlatformUtils {
                 case tsunami:
                     JSONObject tsunamiJsonObject = new JSONObject();
                     tsunamiJsonObject.put("regionId", "ALL");
-                    tsunamiJsonObject.put("regionName", "Tsunami 网络安全扫描");
+                    tsunamiJsonObject.put("regionName", "Tsunami 网络安全检测");
                     if (!jsonArray.contains(tsunamiJsonObject)) jsonArray.add(tsunamiJsonObject);
                     break;
                 case huoshan:

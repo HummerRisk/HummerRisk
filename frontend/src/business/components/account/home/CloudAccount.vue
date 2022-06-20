@@ -272,7 +272,7 @@
       </el-drawer>
       <!--Update account-->
 
-      <!-- 一键扫描选择规则组 -->
+      <!-- 一键检测选择规则组 -->
       <el-dialog :close-on-click-modal="false"
                  :modal-append-to-body="false"
                  :title="$t('account.scan_group_quick')"
@@ -297,7 +297,7 @@
           @cancel="scanVisible = false"
           @confirm="scanGroup()"/>
       </el-dialog>
-      <!-- 一键扫描选择扫描组 -->
+      <!-- 一键检测选择检测组 -->
 
     </main-container>
 </template>

@@ -267,7 +267,7 @@ public class PackageService {
                 packageResultMapper.insertSelective(result);
 
                 savePackageResultLog(result.getId(), Translator.get("i18n_start_package_result"), "", true);
-                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "开始软件包扫描");
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "开始软件包检测");
             }
         }
     }
@@ -340,7 +340,7 @@ public class PackageService {
 
         savePackageResultLog(result.getId(), Translator.get("i18n_restart_package_result"), "", true);
 
-        OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "重新开始软件包扫描");
+        OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "重新开始软件包检测");
 
     }
 

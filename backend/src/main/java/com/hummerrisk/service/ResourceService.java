@@ -154,7 +154,7 @@ public class ResourceService {
             taskItemResource.setResourceId(resourceWithBLOBs.getId());
             insertTaskItemResource(taskItemResource);
 
-            //计算sum资源总数与扫描的资源数到task
+            //计算sum资源总数与检测的资源数到task
             int resourceSum = extTaskMapper.getResourceSum(task.getId());
             int returnSum = extTaskMapper.getReturnSum(task.getId());
             task.setResourcesSum((long) resourceSum);
@@ -326,7 +326,7 @@ public class ResourceService {
                 resourceWithBLOBs.setResourceStatus(ResourceConstants.RESOURCE_STATUS.NotNeedFix.name());
             }
             resourceMapper.updateByPrimaryKeySelective(resourceWithBLOBs);
-            taskService.syncTaskSum();//资源（扫描结果）数量变化的话要更新任务表的数据
+            taskService.syncTaskSum();//资源（检测结果）数量变化的话要更新任务表的数据
         } catch (Exception e) {
             resourceWithBLOBs.setResourceStatus(ResourceConstants.RESOURCE_STATUS.Error.name());
             resourceMapper.updateByPrimaryKeySelective(resourceWithBLOBs);
@@ -574,7 +574,7 @@ public class ResourceService {
             }};
         }).collect(Collectors.toList());
         OperationLogService.log(SessionUtils.getUser(), request.getAccountIds().get(0), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "导出合规报告");
-        return ExcelExportUtils.exportExcelData("不合规资源扫描报告", request.getColumns().stream().map(ExcelExportRequest.Column::getValue).collect(Collectors.toList()), data);
+        return ExcelExportUtils.exportExcelData("不合规资源检测报告", request.getColumns().stream().map(ExcelExportRequest.Column::getValue).collect(Collectors.toList()), data);
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
@@ -627,7 +627,7 @@ public class ResourceService {
             quartzTaskMapper.deleteByPrimaryKey(quartzTaskRelation.getQuartzTaskId());
         }
 
-        OperationLogService.log(SessionUtils.getUser(), accountId, "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.DELETE, "删除扫描结果");
+        OperationLogService.log(SessionUtils.getUser(), accountId, "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.DELETE, "删除检测结果");
 
     }
 

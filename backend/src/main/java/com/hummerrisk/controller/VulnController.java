@@ -18,7 +18,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
-@Api(tags = "漏洞扫描配置")
+@Api(tags = "漏洞检测配置")
 @RestController
 @RequestMapping(value = "vuln")
 public class VulnController {

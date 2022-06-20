@@ -120,7 +120,7 @@ export default {
         '<body>\n' +
         '  <div>\n' +
         '    <div style="text-align: left">\n' +
-        '        <p>尊敬的用户, 您好, 您的安全合规扫描结果如下:</p>\n' +
+        '        <p>尊敬的用户, 您好, 您的安全合规检测结果如下:</p>\n' +
         '    </div>\n' +
         '    <div style="text-align: left;">\n' +
         '        <p style="margin-left: 10px;">不合规资源总数/资源总数 : #{returnSum}/#{resourcesSum}</p>\n' +
@@ -156,7 +156,7 @@ export default {
         '  </div>\n' +
         '</body>\n' +
         '</html>',
-      textContent:  '尊敬的用户, 您好, 您的安全合规扫描结果如下:\n' +
+      textContent:  '尊敬的用户, 您好, 您的安全合规检测结果如下:\n' +
                     '\n' +
                     '不合规资源总数/资源总数 : #{returnSum}/#{resourcesSum}\n' +
                     '\n' +

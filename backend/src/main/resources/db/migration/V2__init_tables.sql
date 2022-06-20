@@ -100,8 +100,8 @@ CREATE TABLE IF NOT EXISTS message_order (
 CREATE TABLE IF NOT EXISTS message_order_item (
     `id`                        int(10)             NOT NULL AUTO_INCREMENT,
     `message_order_id`          varchar(64)         DEFAULT NULL COMMENT '消息订单ID',
-    `task_id`                   varchar(64)         DEFAULT NULL COMMENT '扫描任务ID',
-    `task_name`                 varchar(64)         DEFAULT NULL COMMENT '扫描任务名称',
+    `task_id`                   varchar(64)         DEFAULT NULL COMMENT '检测任务ID',
+    `task_name`                 varchar(64)         DEFAULT NULL COMMENT '检测任务名称',
     `status`                    varchar(64)         DEFAULT NULL COMMENT '消息通知状态',
     `create_time`               bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `send_time`                 bigint(13)          DEFAULT NULL COMMENT '发送消息通知时间',

@@ -131,7 +131,7 @@ public class ProwlerService {
             }
         }
         //向首页活动添加操作信息
-        OperationLogService.log(SessionUtils.getUser(), taskId, task.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.CREATE, "创建扫描任务");
+        OperationLogService.log(SessionUtils.getUser(), taskId, task.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.CREATE, "创建检测任务");
         return task;
     }
 
@@ -332,7 +332,7 @@ public class ProwlerService {
             taskItemResource.setResourceId(resourceWithBLOBs.getId());
             insertTaskItemResource(taskItemResource);
 
-            //计算sum资源总数与扫描的资源数到task
+            //计算sum资源总数与检测的资源数到task
             int resourceSum = extTaskMapper.getResourceSum(task.getId());
             int returnSum = extTaskMapper.getReturnSum(task.getId());
             task.setResourcesSum((long) resourceSum);

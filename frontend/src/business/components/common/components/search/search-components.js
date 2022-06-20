@@ -105,7 +105,7 @@ export const PLUGIN_NAME = {
   }
 }
 
-//漏洞扫描插件
+//漏洞检测插件
 export const VULN_PLUGIN_NAME = {
   key: "pluginId",
   name: 'TableSearchSelect',

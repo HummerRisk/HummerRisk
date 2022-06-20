@@ -74,7 +74,7 @@ public class ResourceCreateService {
 
     @QuartzScheduled(cron = "${cron.expression.local}")
     public void handleTasks() {
-        //云资源扫描、漏洞扫描
+        //云资源检测、漏洞检测
         final TaskExample taskExample = new TaskExample();
         TaskExample.Criteria criteria = taskExample.createCriteria();
         criteria.andStatusEqualTo(TaskConstants.TASK_STATUS.APPROVED.toString());
@@ -113,7 +113,7 @@ public class ResourceCreateService {
             accountList.forEach(account -> orderService.insertScanHistory(account));
         }
 
-        //软件包扫描
+        //软件包检测
         final PackageResultExample packageExample = new PackageResultExample();
         PackageResultExample.Criteria pc = packageExample.createCriteria();
         pc.andResultStatusEqualTo(TaskConstants.TASK_STATUS.APPROVED.toString());
@@ -146,7 +146,7 @@ public class ResourceCreateService {
             });
         }
 
-        //虚拟机扫描
+        //虚拟机检测
         final ServerResultExample serverExample = new ServerResultExample();
         ServerResultExample.Criteria s = serverExample.createCriteria();
         s.andResultStatusEqualTo(TaskConstants.TASK_STATUS.APPROVED.toString());
@@ -179,9 +179,9 @@ public class ResourceCreateService {
             });
         }
 
-        //镜像扫描
+        //镜像检测
 
-        //网络扫描
+        //网络检测
 
     }
 

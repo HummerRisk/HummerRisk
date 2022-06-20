@@ -19,14 +19,14 @@
 
 ## 什么是 HummerRisk
 
-> HummerRisk 是开源的安全合规检测平台，全面支持云原生，实现对主流公(私)有云资源的安全合规扫描、网络漏洞扫描、虚拟机安全扫描、软件依赖扫描、容器镜像扫描，支持 Cloud Custodian、Prowler、Nuclei、 Xray 和 Dependency Check 等多种扫描引擎，全面满足日常的安全合规检测需要。
+> HummerRisk 是开源的安全合规检测平台，全面支持云原生，实现对主流公(私)有云资源的安全合规检测、网络漏洞检测、虚拟机安全检测、软件依赖检测、容器镜像检测，支持 Cloud Custodian、Prowler、Nuclei、 Xray 和 Dependency Check 等多种检测引擎，全面满足日常的安全合规检测需要。
 
 ![架构](https://hummerrisk-1312321453.cos.ap-beijing.myqcloud.com/architecture.jpg)
 
 ## 技术优势
 
 - [x] 开源开放：HummerRisk 遵循 GPL v3 开源协议;
-- [x] 极致体验：可视化的的规则管理和扫描过程，界面美观、用户体验好;
+- [x] 极致体验：可视化的的规则管理和检测过程，界面美观、用户体验好;
 - [x] 支持全面：覆盖云时代安全合规检查的主流需求;
 - [x] 规则丰富：如 CIS 规则，等保2.0 规则，OWASP 漏洞规则，PCI 规则等;  
 - [x] 灵活扩展：可扩展架构，便于扩充模块和引擎;
@@ -66,9 +66,9 @@ curl -sSL https://github.com/HummerRisk/HummerRisk/releases/latest/download/quic
 - [Vue](https://vuejs.org/)：使用了 Vue.js 作为前端技术栈
 - [Spring Boot](https://www.tutorialspoint.com/spring_boot/spring_boot_introduction.htm)：使用了 Spring Boot 作为后端技术栈
 - [MySQL](https://www.mysql.com/)：使用了 MySQL 作为数据库引擎
-- [Cloud Custodian](https://cloudcustodian.io/)：使用了 Cloud Custodian 作为云平台扫描引擎
-- [Prowler](https://prowler.pro/)：使用了 Prowler 作为 AWS 扫描引擎
-- [Nuclei](https://nuclei.projectdiscovery.io/)：使用了 Nuclei 作为漏洞扫描引擎
+- [Cloud Custodian](https://cloudcustodian.io/)：使用了 Cloud Custodian 作为云平台检测引擎
+- [Prowler](https://prowler.pro/)：使用了 Prowler 作为 AWS 检测引擎
+- [Nuclei](https://nuclei.projectdiscovery.io/)：使用了 Nuclei 作为漏洞检测引擎
 - [Xray](https://xray.cool/)：使用了 Xray 作为漏洞检测引擎
 - [Dependency Check](https://jeremylong.github.io/DependencyCheck/)：使用了 Dependency Check 作为软件依赖检查引擎
 - [Element](https://element.eleme.cn/#/)：使用 Element 提供的优秀组件库

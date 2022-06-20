@@ -160,7 +160,7 @@ public class RuleController {
         return ruleService.changeStatus(rule);
     }
 
-    @ApiOperation(value = "批量重新扫描")
+    @ApiOperation(value = "批量重新检测")
     @GetMapping("reScans/{accountId}")
     public void reScans(@PathVariable String accountId) {
         ruleService.reScans(accountId);
@@ -172,13 +172,13 @@ public class RuleController {
         ruleService.reScan(taskId, accountId);
     }
 
-    @ApiOperation(value = "批量扫描")
+    @ApiOperation(value = "批量检测")
     @PostMapping("scan")
     public void scan(@RequestPart(value = "scanCheckedGroups") List<String> scanCheckedGroups) {
         ruleService.scan(scanCheckedGroups);
     }
 
-    @ApiOperation(value = "历史扫描")
+    @ApiOperation(value = "历史检测")
     @GetMapping("insertScanHistory/{accountId}")
     public void insertScanHistory(@PathVariable String accountId) {
         ruleService.insertScanHistory(accountId);
