@@ -33,6 +33,11 @@ export default {
       meta: {system: true, title: "webmsg.web_msg"}
     },
     {
+      path: "system",
+      component: () => import("@/business/components/settings/system/System"),
+      meta: {system: true, title: "system.system"}
+    },
+    {
       path: "personsetting",
       component: () => import(/* webpackChunkName: "setting" */ "@/business/components/settings/personal/PersonSetting"),
       meta: {person: true, title: "commons.personal_setting"}

@@ -961,6 +961,9 @@ export default {
     unread_msg: '未读消息',
     read_msg: '已读消息',
   },
+  system: {
+    system: '系统参数',
+  },
   '阿里云': '阿里云',
   '腾讯云': '腾讯云',
   '华为云': '华为云',

@@ -33,6 +33,7 @@ public class WebConfig extends WebMvcConfigurationSupport  {
     @Override
     public void addResourceHandlers (ResourceHandlerRegistry registry) {
         //过滤swagger
+        registry.addResourceHandler("/sigar").addResourceLocations("classpath:/sigar/");
         registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");

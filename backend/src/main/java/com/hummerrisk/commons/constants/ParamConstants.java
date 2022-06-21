@@ -32,7 +32,8 @@ public interface ParamConstants {
         WECHAT("wechat"),
         DINGDING("dingding"),
         MESSAGE("message"),
-        REGISTRY("registry");
+        REGISTRY("registry"),
+        SYSTEM("system");
 
         private String value;
 

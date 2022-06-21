@@ -33,6 +33,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author harris
@@ -47,6 +48,9 @@ public class SystemParameterService {
 
     @Resource
     private Environment env;
+
+    @Resource
+    private SysListener sysListener;
 
     public String getSystemLanguage() {
         String result = StringUtils.EMPTY;
@@ -257,7 +261,6 @@ public class SystemParameterService {
     }
 
     public String getVersion() {
-        //return System.getenv("HR_VERSION");
         return env.getProperty("HR_VERSION");
     }
 
@@ -357,5 +360,26 @@ public class SystemParameterService {
             return null;
         }
         return param.getParamValue();
+    }
+
+    public void updateSystem() throws Exception {
+        ConcurrentHashMap<String, String> maps = sysListener.getMaps();
+        maps.forEach((key,value)-> {
+            if (!value.isEmpty()) {
+                SystemParameterExample example = new SystemParameterExample();
+                example.createCriteria().andParamKeyEqualTo(key);
+                SystemParameter parameter = new SystemParameter();
+                parameter.setParamKey(key);
+                parameter.setParamValue(value);
+                parameter.setType(ParamConstants.Classify.SYSTEM.getValue());
+                parameter.setSort(1);
+                if (systemParameterMapper.countByExample(example) > 0) {
+                    systemParameterMapper.updateByPrimaryKey(parameter);
+                } else {
+                    systemParameterMapper.insertSelective(parameter);
+                }
+                example.clear();
+            }
+        });
     }
 }

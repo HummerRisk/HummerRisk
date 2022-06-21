@@ -101,4 +101,18 @@ public class SystemParameterController {
         systemParameterService.editMessage(systemParameter);
     }
 
+    @ApiOperation(value = "刷新系统参数信息")
+    @GetMapping("/updateSystem")
+    @RequiresRoles(value = {RoleConstants.ADMIN})
+    public void updateSystem() throws Exception {
+        systemParameterService.updateSystem();
+    }
+
+    @ApiOperation(value = "查询系统参数信息")
+    @GetMapping("/searchSystem")
+    @RequiresRoles(value = {RoleConstants.ADMIN})
+    public List<SystemParameter> searchSystem() throws Exception {
+        return systemParameterService.info(ParamConstants.Classify.SYSTEM.getValue());
+    }
+
 }
