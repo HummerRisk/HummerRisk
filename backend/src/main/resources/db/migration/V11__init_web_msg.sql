@@ -10,6 +10,7 @@ CREATE TABLE `web_msg` (
   `create_time` bigint(13) DEFAULT NULL COMMENT '发送时间',
   `read_time` bigint(13) DEFAULT NULL COMMENT '读取时间',
   `content` varchar(512) DEFAULT NULL COMMENT '消息内容',
+  `scan_type` varchar(32) DEFAULT 'CLOUD' COMMENT '检测类型',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `inx_msg_status` (`status`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='消息通知表';

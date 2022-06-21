@@ -6,24 +6,22 @@ import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtServerMapper;
-import com.hummerrisk.base.mapper.ext.ExtServerRuleMapper;
-import com.hummerrisk.commons.utils.BeanUtils;
-import com.hummerrisk.commons.utils.SessionUtils;
-import com.hummerrisk.dto.ServerDTO;
-import com.hummerrisk.dto.ServerResultDTO;
-import com.hummerrisk.base.domain.*;
-import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtServerResultMapper;
+import com.hummerrisk.base.mapper.ext.ExtServerRuleMapper;
 import com.hummerrisk.commons.constants.CloudAccountConstants;
 import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.constants.TaskConstants;
 import com.hummerrisk.commons.exception.HRException;
+import com.hummerrisk.commons.utils.BeanUtils;
 import com.hummerrisk.commons.utils.LogUtil;
+import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.commons.utils.UUIDUtil;
 import com.hummerrisk.controller.request.server.ServerRequest;
 import com.hummerrisk.controller.request.server.ServerResultRequest;
 import com.hummerrisk.controller.request.server.ServerRuleRequest;
+import com.hummerrisk.dto.ServerDTO;
+import com.hummerrisk.dto.ServerResultDTO;
 import com.hummerrisk.dto.ServerRuleDTO;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.proxy.server.SshUtil;
@@ -63,6 +61,8 @@ public class ServerService {
     private ServerResultLogMapper serverResultLogMapper;
     @Resource
     private ProxyMapper proxyMapper;
+    @Resource
+    private NoticeService noticeService;
 
     public boolean validate(List<String> ids) {
         ids.forEach(id -> {
@@ -152,7 +152,7 @@ public class ServerService {
                 }
             }
             Proxy proxy = new Proxy();
-            if(server.getIsProxy()) {
+            if(server.getIsProxy()!=null && server.getIsProxy()) {
                 proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
             }
             String returnLog = execute(server.getIp(), server.getUserName(), server.getPassword(), script, proxy);
@@ -161,6 +161,7 @@ public class ServerService {
             result.setResultStatus(TaskConstants.TASK_STATUS.FINISHED.toString());
             serverResultMapper.updateByPrimaryKeySelective(result);
 
+            noticeService.createServerMessageOrder(result);
             saveServerResultLog(result.getId(), Translator.get("i18n_end_server_result"), returnLog, true);
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
@@ -215,7 +216,7 @@ public class ServerService {
     private boolean validateAccount(Server server) {
         try {
             Proxy proxy = new Proxy();
-            if(server.getIsProxy()) {
+            if(server.getIsProxy()!=null && server.getIsProxy()) {
                 proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
             }
             return login(server.getIp(), server.getUserName(), server.getPassword(), proxy);
@@ -270,7 +271,7 @@ public class ServerService {
         server.setCreateTime(System.currentTimeMillis());
         server.setUpdateTime(System.currentTimeMillis());
         Proxy proxy = new Proxy();
-        if(server.getIsProxy()) {
+        if(server.getIsProxy()!=null && server.getIsProxy()) {
             proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
         }
         server.setStatus(
@@ -286,7 +287,7 @@ public class ServerService {
     public int editServer(Server server) throws Exception {
         server.setUpdateTime(System.currentTimeMillis());
         Proxy proxy = new Proxy();
-        if(server.getIsProxy()) {
+        if(server.getIsProxy()!=null && server.getIsProxy()) {
             proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
         }
         server.setStatus(

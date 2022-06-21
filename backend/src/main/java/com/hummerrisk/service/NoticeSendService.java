@@ -2,7 +2,6 @@ package com.hummerrisk.service;
 
 import com.hummerrisk.commons.constants.NoticeConstants;
 import com.hummerrisk.message.*;
-import com.hummerrisk.message.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 

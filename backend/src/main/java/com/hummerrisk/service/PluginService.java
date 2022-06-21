@@ -1,9 +1,9 @@
 package com.hummerrisk.service;
 
-import com.hummerrisk.commons.constants.ScanTypeConstants;
 import com.hummerrisk.base.domain.Plugin;
 import com.hummerrisk.base.domain.PluginExample;
 import com.hummerrisk.base.mapper.PluginMapper;
+import com.hummerrisk.commons.constants.ScanTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.commons.utils.PlatformUtils;
@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

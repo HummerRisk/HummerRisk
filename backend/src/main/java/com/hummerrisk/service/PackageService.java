@@ -57,6 +57,8 @@ public class PackageService {
     private UserMapper userMapper;
     @Resource
     private ProxyMapper proxyMapper;
+    @Resource
+    private NoticeService noticeService;
 
     public List<PackageDTO> packageList(PackageRequest request) {
         return extPackageMapper.packageList(request);
@@ -303,6 +305,7 @@ public class PackageService {
             result.setResultStatus(TaskConstants.TASK_STATUS.FINISHED.toString());
             packageResultMapper.updateByPrimaryKeySelective(result);
 
+            noticeService.createPackageMessageOrder(result);
             savePackageResultLog(result.getId(), Translator.get("i18n_end_package_result"), "", true);
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
@@ -395,7 +398,7 @@ public class PackageService {
         try {
             Proxy proxy;
             String _proxy = "";
-            if(aPackage.getIsProxy()) {
+            if(aPackage.getIsProxy()!=null && aPackage.getIsProxy()) {
                 proxy = proxyMapper.selectByPrimaryKey(aPackage.getProxyId());
                 String proxyType = proxy.getProxyType();
                 String proxyIp = proxy.getProxyIp();

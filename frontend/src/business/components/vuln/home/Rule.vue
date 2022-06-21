@@ -489,6 +489,7 @@ export default {
       scanTypes: [
         {id: 'nuclei', name: 'Nuclei'},
         {id: 'xray', name: 'XRay'},
+        {id: 'tsunami', name: 'Tsunami'},
       ],
     }
   },

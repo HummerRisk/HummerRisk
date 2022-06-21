@@ -2,10 +2,10 @@ package com.hummerrisk.service;
 
 
 import com.hummerrisk.base.domain.WebMsg;
+import com.hummerrisk.base.domain.WebMsgExample;
 import com.hummerrisk.base.mapper.WebMsgMapper;
 import com.hummerrisk.base.mapper.ext.ExtWebMsgMapper;
 import com.hummerrisk.commons.utils.SessionUtils;
-import com.hummerrisk.base.domain.WebMsgExample;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

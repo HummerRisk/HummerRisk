@@ -11,10 +11,6 @@ import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.dto.QuartzTaskDTO;
-import com.hummerrisk.base.domain.*;
-import com.hummerrisk.base.mapper.*;
-import com.hummerrisk.commons.constants.*;
-import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -28,7 +24,6 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.alibaba.fastjson.JSON.toJSONString;
 

@@ -3,10 +3,11 @@ package com.hummerrisk.service;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.MessageOrderItemMapper;
 import com.hummerrisk.base.mapper.MessageOrderMapper;
-import com.hummerrisk.commons.constants.NoticeConstants;
-import com.hummerrisk.commons.exception.HRException;
-import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.MessageTaskMapper;
+import com.hummerrisk.commons.constants.NoticeConstants;
+import com.hummerrisk.commons.constants.ScanConstants;
+import com.hummerrisk.commons.exception.HRException;
+import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.commons.utils.UUIDUtil;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.message.MessageDetail;
@@ -151,6 +152,12 @@ public class NoticeService {
         messageOrder.setAccountName(account.getName());
         messageOrder.setCreateTime(System.currentTimeMillis());
         messageOrder.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
+
+        if (PlatformUtils.isSupportVuln(account.getPluginId())) {
+            messageOrder.setScanType(ScanConstants.SCAN_TYPE.VULN.name());
+        } else {
+            messageOrder.setScanType(ScanConstants.SCAN_TYPE.CLOUD.name());
+        }
         messageOrderMapper.insertSelective(messageOrder);
         return uuid;
     }
@@ -176,6 +183,66 @@ public class NoticeService {
         messageOrderItem.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
         messageOrderItemMapper.updateByPrimaryKeySelective(messageOrderItem);
     }
+
+    public void createServerMessageOrder (ServerResult result) {
+        MessageOrder messageOrder = new MessageOrder();
+        String uuid = UUIDUtil.newUUID();
+        messageOrder.setId(uuid);
+        messageOrder.setAccountId(result.getServerId());
+        messageOrder.setAccountName(result.getServerName());
+        messageOrder.setCreateTime(System.currentTimeMillis());
+        messageOrder.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
+        messageOrder.setScanType(ScanConstants.SCAN_TYPE.SERVER.name());
+        messageOrderMapper.insertSelective(messageOrder);
+
+        MessageOrderItem messageOrderItem = new MessageOrderItem();
+        messageOrderItem.setMessageOrderId(uuid);
+        messageOrderItem.setTaskId(result.getId());
+        messageOrderItem.setTaskName(result.getServerName());
+        messageOrderItem.setCreateTime(System.currentTimeMillis());
+        messageOrderItem.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
+        messageOrderItemMapper.insertSelective(messageOrderItem);
+    }
+
+    public void createPackageMessageOrder (PackageResultWithBLOBs result) {
+        MessageOrder messageOrder = new MessageOrder();
+        String uuid = UUIDUtil.newUUID();
+        messageOrder.setId(uuid);
+        messageOrder.setAccountId(result.getPackageId());
+        messageOrder.setAccountName(result.getPackageName());
+        messageOrder.setCreateTime(System.currentTimeMillis());
+        messageOrder.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
+        messageOrder.setScanType(ScanConstants.SCAN_TYPE.PACKAGE.name());
+        messageOrderMapper.insertSelective(messageOrder);
+
+        MessageOrderItem messageOrderItem = new MessageOrderItem();
+        messageOrderItem.setMessageOrderId(uuid);
+        messageOrderItem.setTaskId(result.getId());
+        messageOrderItem.setTaskName(result.getName());
+        messageOrderItem.setCreateTime(System.currentTimeMillis());
+        messageOrderItem.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
+        messageOrderItemMapper.insertSelective(messageOrderItem);
+    }
+
+//    public void createImageMessageOrder (Image image) {
+//        MessageOrder messageOrder = new MessageOrder();
+//        String uuid = UUIDUtil.newUUID();
+//        messageOrder.setId(uuid);
+//        messageOrder.setAccountId(image.getId());
+//        messageOrder.setAccountName(image.getName());
+//        messageOrder.setCreateTime(System.currentTimeMillis());
+//        messageOrder.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
+//        messageOrder.setScanType(ScanConstants.SCAN_TYPE.IMAGE.name());
+//        messageOrderMapper.insertSelective(messageOrder);
+//
+//        MessageOrderItem messageOrderItem = new MessageOrderItem();
+//        messageOrderItem.setMessageOrderId(uuid);
+//        messageOrderItem.setTaskId(image.getId());
+//        messageOrderItem.setTaskName(image.getName());
+//        messageOrderItem.setCreateTime(System.currentTimeMillis());
+//        messageOrderItem.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
+//        messageOrderItemMapper.insertSelective(messageOrderItem);
+//    }
 
 
 }

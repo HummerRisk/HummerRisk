@@ -1,20 +1,18 @@
 package com.hummerrisk.service;
 
 import com.hummer.quartz.anno.QuartzScheduled;
+import com.hummerrisk.base.domain.Package;
 import com.hummerrisk.base.domain.*;
-import com.hummerrisk.base.mapper.MessageOrderMapper;
-import com.hummerrisk.base.mapper.WebMsgMapper;
+import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtTaskMapper;
 import com.hummerrisk.commons.constants.NoticeConstants;
+import com.hummerrisk.commons.constants.ScanConstants;
 import com.hummerrisk.commons.constants.TaskConstants;
 import com.hummerrisk.commons.utils.BeanUtils;
 import com.hummerrisk.commons.utils.CommonBeanFactory;
 import com.hummerrisk.commons.utils.CommonThreadPool;
-import com.hummerrisk.message.NoticeModel;
-import com.hummerrisk.base.domain.*;
-import com.hummerrisk.base.mapper.MessageOrderItemMapper;
-import com.hummerrisk.base.mapper.TaskMapper;
 import com.hummerrisk.commons.utils.LogUtil;
+import com.hummerrisk.message.NoticeModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -47,6 +45,20 @@ public class NoticeCreateService {
     private ExtTaskMapper extTaskMapper;
     @Resource
     private WebMsgMapper webMsgMapper;
+    @Resource
+    private AccountMapper accountMapper;
+    @Resource
+    private PackageService packageService;
+    @Resource
+    private PackageResultMapper packageResultMapper;
+    @Resource
+    private ServerService serverService;
+    @Resource
+    private ServerResultMapper serverResultMapper;
+    @Resource
+    private ServerMapper serverMapper;
+    @Resource
+    private PackageMapper packageMapper;
 
     @QuartzScheduled(cron = "${cron.expression.notice}")
     public void handleTasks() {
@@ -83,6 +95,7 @@ public class NoticeCreateService {
                 });
             });
         }
+
     }
 
     public void handleMessageOrder(MessageOrder messageOrder) {
@@ -132,21 +145,50 @@ public class NoticeCreateService {
 
     private boolean handleMessageOrderItem(MessageOrderItem item) {
         try {
-            Task task = taskMapper.selectByPrimaryKey(item.getTaskId());
+            MessageOrder messageOrder = messageOrderMapper.selectByPrimaryKey(item.getMessageOrderId());
+            String scanType = messageOrder.getScanType();
 
-            if (task == null) {
-                return false;
-            } else {
-                if (StringUtils.equalsIgnoreCase(task.getStatus(), TaskConstants.TASK_STATUS.FINISHED.name())
-                || StringUtils.equalsIgnoreCase(task.getStatus(), TaskConstants.TASK_STATUS.WARNING.name())
-                || StringUtils.equalsIgnoreCase(task.getStatus(), TaskConstants.TASK_STATUS.ERROR.name())) {
+            if (StringUtils.equals(ScanConstants.SCAN_TYPE.CLOUD.name(), scanType) || StringUtils.equals(ScanConstants.SCAN_TYPE.VULN.name(), scanType)) {
+                Task task = taskMapper.selectByPrimaryKey(item.getTaskId());
+                if (task == null) {
+                    return false;
+                } else {
+                    if (StringUtils.equalsIgnoreCase(task.getStatus(), TaskConstants.TASK_STATUS.FINISHED.name())
+                            || StringUtils.equalsIgnoreCase(task.getStatus(), TaskConstants.TASK_STATUS.WARNING.name())
+                            || StringUtils.equalsIgnoreCase(task.getStatus(), TaskConstants.TASK_STATUS.ERROR.name())) {
+                        item.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
+                        item.setSendTime(System.currentTimeMillis());
+                        messageOrderItemMapper.updateByPrimaryKeySelective(item);
+                    } else {
+                        handleMessageOrderItem(item);
+                    }
+                }
+            } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), scanType)) {
+                ServerResult serverResult = serverResultMapper.selectByPrimaryKey(item.getTaskId());
+                if (StringUtils.equalsIgnoreCase(serverResult.getResultStatus(), TaskConstants.TASK_STATUS.FINISHED.name())
+                        || StringUtils.equalsIgnoreCase(serverResult.getResultStatus(), TaskConstants.TASK_STATUS.WARNING.name())
+                        || StringUtils.equalsIgnoreCase(serverResult.getResultStatus(), TaskConstants.TASK_STATUS.ERROR.name())) {
                     item.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
                     item.setSendTime(System.currentTimeMillis());
                     messageOrderItemMapper.updateByPrimaryKeySelective(item);
                 } else {
                     handleMessageOrderItem(item);
                 }
+            } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.PACKAGE.name(), scanType)) {
+                PackageResult packageResult = packageResultMapper.selectByPrimaryKey(item.getTaskId());
+                if (StringUtils.equalsIgnoreCase(packageResult.getResultStatus(), TaskConstants.TASK_STATUS.FINISHED.name())
+                        || StringUtils.equalsIgnoreCase(packageResult.getResultStatus(), TaskConstants.TASK_STATUS.WARNING.name())
+                        || StringUtils.equalsIgnoreCase(packageResult.getResultStatus(), TaskConstants.TASK_STATUS.ERROR.name())) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
+                } else {
+                    handleMessageOrderItem(item);
+                }
+            } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), scanType)) {
+
             }
+
             return true;
         } catch (Exception e) {
             item.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
@@ -176,8 +218,27 @@ public class NoticeCreateService {
             }
         }
 
-        int returnSum = extTaskMapper.getReturnSumForEmail(messageOrder);
-        int resourcesSum = extTaskMapper.getResourcesSumForEmail(messageOrder);
+        int returnSum = 0;
+        int resourcesSum = 0;
+        String details = "";
+
+        if (StringUtils.equals(ScanConstants.SCAN_TYPE.CLOUD.name(), messageOrder.getScanType())) {
+            subject = "云资源安全合规检测结果";
+            returnSum = extTaskMapper.getReturnSumForEmail(messageOrder);
+            resourcesSum = extTaskMapper.getResourcesSumForEmail(messageOrder);
+            details =  "【 不合规资源/资源总数】" + returnSum  + "/" + resourcesSum;
+        } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.VULN.name(), messageOrder.getScanType())) {
+            subject = "安全合规漏洞检测结果";
+            returnSum = extTaskMapper.getReturnSumForEmail(messageOrder);
+            resourcesSum = extTaskMapper.getResourcesSumForEmail(messageOrder);
+            details =  "【 不合规资源/资源总数】" + returnSum  + "/" + resourcesSum;
+        } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), messageOrder.getScanType())) {
+            subject = "虚拟机安全合规检测结果";
+        } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.PACKAGE.name(), messageOrder.getScanType())) {
+            subject = "软件包安全合规检测结果";
+        } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), messageOrder.getScanType())) {
+            subject = "镜像安全合规检测结果";
+        }
 
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("resources", tasks);
@@ -197,9 +258,10 @@ public class NoticeCreateService {
         LogUtil.debug("开始添加站内消息！" + messageOrder.getAccountName());
         WebMsg msg = new WebMsg();
         msg.setStatus(false);
-        msg.setType("云资源检测结果");
+        msg.setType(subject);
         msg.setCreateTime(System.currentTimeMillis());
-        msg.setContent("云资源安全合规检测结果【" + messageOrder.getAccountName() + "】" +  messageOrder.getStatus() + "【 不合规资源/资源总数】" + returnSum  + "/" + resourcesSum);
+        msg.setContent(subject + "【" + messageOrder.getAccountName() + "】" +  messageOrder.getStatus() + details);
+        msg.setScanType(messageOrder.getScanType());
         webMsgMapper.insertSelective(msg);
         LogUtil.debug("结束添加站内消息！" + messageOrder.getAccountName());
     }

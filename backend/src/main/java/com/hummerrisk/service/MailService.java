@@ -1,8 +1,8 @@
 package com.hummerrisk.service;
 
 import com.hummerrisk.base.domain.MailAttachmentInfo;
-import com.hummerrisk.base.mapper.SystemParameterMapper;
 import com.hummerrisk.base.domain.SystemParameter;
+import com.hummerrisk.base.mapper.SystemParameterMapper;
 import com.hummerrisk.commons.constants.ParamConstants;
 import com.hummerrisk.commons.utils.EncryptUtils;
 import com.hummerrisk.commons.utils.LogUtil;

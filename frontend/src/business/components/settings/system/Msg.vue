@@ -15,7 +15,7 @@
               @select-all="select" @select="select">
       <el-table-column type="selection" min-width="5%">
       </el-table-column>
-      <el-table-column prop="content" :label="$t('webmsg.content')">
+      <el-table-column prop="content" :label="$t('webmsg.content')" min-width="55%">
         <template slot-scope="scope">
           <span style="display: flex;flex: 1;">
             <span>
@@ -29,13 +29,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="createTime" sortable="custom" :label="$t('webmsg.sned_time')" width="180">
+      <el-table-column prop="createTime" sortable="custom" :label="$t('webmsg.sned_time')" min-width="20%">
         <template slot-scope="scope">
           <span>{{ scope.row.createTime | timestampFormatDate }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="type" sortable="custom" :label="$t('webmsg.type')" width="140">
+      <el-table-column prop="type" sortable="custom" :label="$t('webmsg.type')" min-width="20%">
         <template slot-scope="scope">
           <span>{{ scope.row.type }}</span>
         </template>

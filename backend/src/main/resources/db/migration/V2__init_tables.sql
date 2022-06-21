@@ -94,6 +94,7 @@ CREATE TABLE IF NOT EXISTS message_order (
     `status`                    varchar(64)         DEFAULT NULL COMMENT '消息通知状态',
     `create_time`               bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `send_time`                 bigint(13)          DEFAULT NULL COMMENT '发送消息通知时间',
+    `scan_type`                 varchar(32)         DEFAULT 'CLOUD' COMMENT '检测类型',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
