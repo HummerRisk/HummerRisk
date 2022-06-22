@@ -4,6 +4,10 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
+          <el-menu-item :index="'/image/imageRepo'">
+            {{ $t("image.image_repo") }}
+          </el-menu-item>
+
           <el-menu-item :index="'/image/image'">
             {{ $t("image.image_setting") }}
           </el-menu-item>

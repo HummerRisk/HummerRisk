@@ -8,6 +8,11 @@ export default {
   },
   children: [
     {
+      path: "imageRepo",
+      name: "imageRepo",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/ImageRepo'),
+    },
+    {
       path: "image",
       name: "image",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/Image'),

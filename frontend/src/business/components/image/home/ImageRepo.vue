@@ -10,9 +10,9 @@
       <el-table border class="adjust-table" :data="tableData" style="width: 100%" @sort-change="sort" @filter-change="filter"
                 max-height="550" :row-class-name="tableRowClassName">
         <el-table-column type="index" min-width="3%"/>
-        <el-table-column prop="name" :label="$t('image.image_repo_name')" min-width="10%"/>
-        <el-table-column prop="repo" :label="$t('image.image_repo_url')" min-width="10%"/>
-        <el-table-column prop="userName" :label="$t('image.image_repo_user_name')" min-width="10%"/>
+        <el-table-column prop="name" :label="$t('image.image_repo_name')" min-width="15%"/>
+        <el-table-column prop="repo" :label="$t('image.image_repo_url')" min-width="15%"/>
+        <el-table-column prop="userName" :label="$t('image.image_repo_user_name')" min-width="12%"/>
         <el-table-column prop="status" min-width="10%" :label="$t('image.image_repo_status')"
                          column-key="status"
                          :filters="statusFilters"
@@ -31,10 +31,9 @@
             <span><i class="el-icon-time"></i> {{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('commons.operating')" fixed="right" min-width="15%">
+        <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
-            <table-operator @editClick="edit(scope.row)" @deleteClick="del(scope.row)">
-            </table-operator>
+            <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
         </el-table-column>
       </el-table>
@@ -43,41 +42,63 @@
     </el-card>
 
     <!--Create imageRepo-->
-    <el-drawer class="rtl" :title="$t('image.create')" :visible.sync="createVisible" size="70%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('image.create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true" max-height="550">
-      <el-form :model="proxyForm" label-position="right" label-width="150px" size="small" ref="accountForm">
-        <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-switch v-model="proxyForm.isProxy"></el-switch>
+      <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
+        <el-form-item :label="$t('image.image_repo_name')" ref="name" prop="name">
+          <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_repo_name')"/>
         </el-form-item>
-        <el-form-item v-if="proxyForm.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="proxyForm.proxyId" :placeholder="$t('commons.proxy')">
-            <el-option
-              v-for="item in proxys"
-              :key="item.id"
-              :label="item.proxyIp"
-              :value="item.id">
-              &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
-            </el-option>
-          </el-select>
+        <el-form-item :label="$t('image.image_repo_url')" ref="repo" prop="repo">
+          <el-input v-model="form.repo" autocomplete="off" :placeholder="$t('image.image_repo_url')"/>
+        </el-form-item>
+        <el-form-item :label="$t('image.image_repo_user_name')" ref="userName" prop="userName">
+          <el-input v-model="form.userName" autocomplete="off" :placeholder="$t('image.image_repo_user_name')"/>
+        </el-form-item>
+        <el-form-item :label="$t('image.image_repo_password')" ref="password" prop="password">
+          <el-input v-model="form.password" autocomplete="off" :placeholder="$t('image.image_repo_password')" show-password/>
         </el-form-item>
       </el-form>
       <div style="margin: 10px;">
         <dialog-footer
           @cancel="createVisible = false"
-          @confirm="saveServer(servers)"/>
+          @confirm="saveRepo('form')"/>
       </div>
     </el-drawer>
     <!--Create imageRepo-->
+
+    <!--Update imageRepo-->
+    <el-drawer class="rtl" :title="$t('image.update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true" max-height="550">
+      <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
+        <el-form-item :label="$t('image.image_repo_name')" ref="name" prop="name">
+          <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_repo_name')"/>
+        </el-form-item>
+        <el-form-item :label="$t('image.image_repo_url')" ref="repo" prop="repo">
+          <el-input v-model="form.repo" autocomplete="off" :placeholder="$t('image.image_repo_url')"/>
+        </el-form-item>
+        <el-form-item :label="$t('image.image_repo_user_name')" ref="userName" prop="userName">
+          <el-input v-model="form.userName" autocomplete="off" :placeholder="$t('image.image_repo_user_name')"/>
+        </el-form-item>
+        <el-form-item :label="$t('image.image_repo_password')" ref="password" prop="password">
+          <el-input v-model="form.password" autocomplete="off" :placeholder="$t('image.image_repo_password')" show-password/>
+        </el-form-item>
+      </el-form>
+      <div style="margin: 10px;">
+        <dialog-footer
+          @cancel="updateVisible = false"
+          @confirm="editRepo('form')"/>
+      </div>
+    </el-drawer>
+    <!--Update imageRepo-->
 
   </div>
 </template>
 
 <script>
-import TablePagination from "../../common/pagination/TablePagination";
-import TableHeader from "../../common/components/TableHeader";
-import TableOperator from "../../common/components/TableOperator";
-import DialogFooter from "../../common/components/DialogFooter";
-import TableOperatorButton from "../../common/components/TableOperatorButton";
+import TablePagination from "@/business/components/common/pagination/TablePagination";
+import TableHeader from "@/business/components/common/components/TableHeader";
+import TableOperators from "@/business/components/common/components/TableOperators";
+import DialogFooter from "@/business/components/common/components/DialogFooter";
 import ImageStatus from "../head/ImageStatus";
 import {_filter, _sort} from "@/common/js/utils";
 /* eslint-disable */
@@ -86,10 +107,9 @@ export default {
   components: {
     TablePagination,
     TableHeader,
-    TableOperator,
     DialogFooter,
-    TableOperatorButton,
     ImageStatus,
+    TableOperators,
   },
   data() {
     return {
@@ -136,13 +156,7 @@ export default {
         {text: this.$t('server.VALID'), value: 'VALID'},
         {text: this.$t('server.DELETE'), value: 'DELETE'}
       ],
-      proxyForm: {isProxy: false, proxyId: 0},
-      proxys: [],
     }
-  },
-  activated() {
-    this.search();
-    this.activeProxy();
   },
   methods: {
     create() {
@@ -176,13 +190,6 @@ export default {
       this.createVisible =  false;
       this.updateVisible =  false;
     },
-    //查询代理
-    activeProxy() {
-      let url = "/proxy/list/all";
-      this.result = this.$get(url, response => {
-        this.proxys = response.data;
-      });
-    },
     buildPagePath(path) {
       return path + "/" + this.currentPage + "/" + this.pageSize;
     },
@@ -195,8 +202,34 @@ export default {
         return '';
       }
     },
+    editRepo(form) {
+      this.$refs[form].validate(valid => {
+        if (valid) {
+          this.result = this.$post(this.updatePath, this.form, () => {
+            this.$success(this.$t('commons.save_success'));
+            this.search();
+            this.updateVisible = false;
+          });
+        } else {
+          return false;
+        }
+      });
+    },
+    saveRepo(form) {
+      this.$refs[form].validate(valid => {
+        if (valid) {
+          this.result = this.$post(this.createPath, this.form, () => {
+            this.$success(this.$t('commons.save_success'));
+            this.search();
+            this.createVisible = false;
+          });
+        } else {
+          return false;
+        }
+      });
+    },
     handleDelete(obj) {
-      this.$alert(this.$t('image.delete_confirm') + obj.name + " ？", '', {
+      this.$alert(this.$t('workspace.delete_confirm') + obj.name + " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
@@ -208,6 +241,9 @@ export default {
         }
       });
     },
+  },
+  created() {
+    this.search();
   }
 }
 </script>

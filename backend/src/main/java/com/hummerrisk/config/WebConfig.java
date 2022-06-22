@@ -38,6 +38,7 @@ public class WebConfig extends WebMvcConfigurationSupport  {
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
         registry.addResourceHandler("/files/**").addResourceLocations("file:" + "/opt/hummerrisk/file/");//用于前端访问服务器文件
+        registry.addResourceHandler("/images/**").addResourceLocations("file:" + "/opt/hummerrisk/image/");//用于前端访问服务器文件
         registry.addResourceHandler("/**").addResourceLocations("classpath:/resources/");
         registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
 
