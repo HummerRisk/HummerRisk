@@ -2,11 +2,12 @@ package com.hummerrisk.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.hummerrisk.base.domain.Image;
 import com.hummerrisk.base.domain.ImageRepo;
-import com.hummerrisk.base.domain.Package;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.request.image.ImageRepoRequest;
+import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.service.ImageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -49,6 +50,19 @@ public class ImageController {
         imageService.deleteImageRepo(id);
     }
 
+    @ApiOperation(value = "查询所有镜像仓库")
+    @GetMapping("allImageRepos")
+    public List<ImageRepo> allImageRepos() {
+        return imageService.imageRepoList(null);
+    }
+
+    @ApiOperation(value = "镜像列表")
+    @PostMapping("imageList/{goPage}/{pageSize}")
+    public Pager<List<Image>> imageList(
+            @PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, imageService.imageList(request));
+    }
 
 
 }

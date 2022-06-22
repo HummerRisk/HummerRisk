@@ -4,7 +4,7 @@
     <el-card class="table-card">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search" @create="create"
-                      :create-tip="$t('image.create')" :title="$t('image.image_repo_list')"/>
+                      :create-tip="$t('image.repo_create')" :title="$t('image.image_repo_list')"/>
       </template>
 
       <el-table border class="adjust-table" :data="tableData" style="width: 100%" @sort-change="sort" @filter-change="filter"
@@ -26,7 +26,7 @@
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="updateTime" :label="$t('account.update_time')" min-width="15%" sortable>
+        <el-table-column prop="updateTime" :label="$t('commons.update_time')" min-width="15%" sortable>
           <template v-slot:default="scope">
             <span><i class="el-icon-time"></i> {{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
@@ -42,7 +42,7 @@
     </el-card>
 
     <!--Create imageRepo-->
-    <el-drawer class="rtl" :title="$t('image.create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('image.repo_create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true" max-height="550">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
         <el-form-item :label="$t('image.image_repo_name')" ref="name" prop="name">
@@ -67,7 +67,7 @@
     <!--Create imageRepo-->
 
     <!--Update imageRepo-->
-    <el-drawer class="rtl" :title="$t('image.update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('image.repo_update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true" max-height="550">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
         <el-form-item :label="$t('image.image_repo_name')" ref="name" prop="name">

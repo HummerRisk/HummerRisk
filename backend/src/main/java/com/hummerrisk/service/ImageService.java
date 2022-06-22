@@ -1,15 +1,18 @@
 package com.hummerrisk.service;
 
+import com.hummerrisk.base.domain.Image;
 import com.hummerrisk.base.domain.ImageRepo;
 import com.hummerrisk.base.domain.Package;
 import com.hummerrisk.base.mapper.ImageMapper;
 import com.hummerrisk.base.mapper.ImageRepoMapper;
+import com.hummerrisk.base.mapper.ext.ExtImageMapper;
 import com.hummerrisk.base.mapper.ext.ExtImageRepoMapper;
 import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.commons.utils.UUIDUtil;
 import com.hummerrisk.controller.request.image.ImageRepoRequest;
+import com.hummerrisk.controller.request.image.ImageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +32,8 @@ public class ImageService {
     private ImageMapper imageMapper;
     @Resource
     private ImageRepoMapper imageRepoMapper;
+    @Resource
+    private ExtImageMapper extImageMapper;
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
@@ -59,6 +64,10 @@ public class ImageService {
     public void deleteImageRepo(String id) throws Exception {
         imageRepoMapper.deleteByPrimaryKey(id);
         OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "删除镜像仓库");
+    }
+
+    public List<Image> imageList(ImageRequest request) {
+        return extImageMapper.imageList(request);
     }
 
 

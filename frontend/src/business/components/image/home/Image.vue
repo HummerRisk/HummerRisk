@@ -4,70 +4,92 @@
     <el-card class="table-card">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search" @create="create"
-                      :create-tip="$t('image.create')" :title="$t('image.image_repo_list')"/>
+                      :create-tip="$t('image.create')" :title="$t('image.image_list')"/>
       </template>
 
-      <el-table border class="adjust-table" :data="tableData" style="width: 100%" @sort-change="sort" @filter-change="filter"
-                max-height="550" :row-class-name="tableRowClassName">
-        <el-table-column type="index" min-width="3%"/>
-        <el-table-column prop="name" :label="$t('image.image_repo_name')" min-width="10%"/>
-        <el-table-column prop="repo" :label="$t('image.image_repo_url')" min-width="10%"/>
-        <el-table-column prop="userName" :label="$t('image.image_repo_user_name')" min-width="10%"/>
-        <el-table-column prop="status" min-width="10%" :label="$t('image.image_repo_status')"
-                         column-key="status"
-                         :filters="statusFilters"
-                         :filter-method="filterStatus">
-          <template v-slot:default="{row}">
-            <image-status :row="row"/>
-          </template>
-        </el-table-column>
-        <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="15%" sortable>
-          <template v-slot:default="scope">
-            <span>{{ scope.row.createTime | timestampFormatDate }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="updateTime" :label="$t('account.update_time')" min-width="15%" sortable>
-          <template v-slot:default="scope">
-            <span><i class="el-icon-time"></i> {{ scope.row.updateTime | timestampFormatDate }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('commons.operating')" fixed="right" min-width="15%">
-          <template v-slot:default="scope">
-            <table-operator @editClick="edit(scope.row)" @deleteClick="del(scope.row)">
-            </table-operator>
-          </template>
-        </el-table-column>
-      </el-table>
+      <el-card class="table-card el-row-card" :body-style="{ padding: '0' }" :key="index" v-for="(data, index) in tableData">
+        <el-row style="margin: 2%;">
+          <el-col :span="3">
+            <el-image style="width: 100px; height: 100px;"
+                      :src="data.pluginIcon==='docker.png'?require(`@/assets/img/platform/${data.pluginIcon}`):`${location}${data.pluginIcon}`"
+                      :fit="'fill'">
+              <div slot="error" class="image-slot">
+                <i class="el-icon-picture-outline"></i>
+              </div>
+            </el-image>
+          </el-col>
+          <el-col :span="1">
+            <div class="split"></div>
+          </el-col>
+          <el-col :span="20">
+            <el-row>
+              <el-col :span="20" class="cl-ver-col">
+                <el-row class="cl-mid-row">
+                  <el-col :span="3" class="cl-span-col">{{ $t('image.image_name') }}</el-col>
+                  <el-col :span="3" class="cl-span-col">{{ $t('image.image_status') }}</el-col>
+                  <el-col :span="5" class="cl-span-col">{{ $t('image.image_url') }}</el-col>
+                  <el-col :span="3" class="cl-span-col">{{ $t('image.image_size') }}</el-col>
+                  <el-col :span="5" class="cl-span-col">{{ $t('image.image_repo_name') }}</el-col>
+                  <el-col :span="5" class="cl-span-col">{{ $t('commons.update_time') }}</el-col>
+                </el-row>
+                <el-row class="cl-mid-row">
+                  <el-col :span="3" class="cl-data-col">{{ data.name }}</el-col>
+                  <el-col :span="3" class="cl-data-col">
+                    <el-tag size="mini" type="warning" v-if="data.status === 'DELETE'">
+                      {{ $t('server.DELETE') }}
+                    </el-tag>
+                    <el-tag size="mini" type="success" v-else-if="data.status === 'VALID'">
+                      {{ $t('server.VALID') }}
+                    </el-tag>
+                    <el-tag size="mini" type="danger" v-else-if="data.status === 'INVALID'">
+                      {{ $t('server.INVALID') }}
+                    </el-tag>
+                  </el-col>
+                  <el-col :span="5" class="cl-data-col">
+                    {{ data.type==='image'?(data.imageUrl + ':' + data.imageTag):data.path }}
+                  </el-col>
+                  <el-col :span="3" class="cl-data-col">{{ data.size }}</el-col>
+                  <el-col :span="5" class="cl-data-col">{{ data.image_repo_name?data.image_repo_name:$t('image.no_image_repo') }}</el-col>
+                  <el-col :span="5" class="cl-data-col">{{ data.updateTime | timestampFormatDate }}</el-col>
+                </el-row>
+              </el-col>
+              <el-col :span="4" class="cl-ver-col">
+                <el-row class="cl-btn-mid-row">
+                  <el-col :span="8" class="cl-btn-col">
+                    <el-button @click="handleScan(data)" circle icon="el-icon-s-promotion" size="mini">
+                    </el-button>
+                  </el-col>
+                  <el-col :span="8" class="cl-btn-col">
+                    <el-button @click="handleEdit(data)" circle icon="el-icon-edit" size="mini">
+                    </el-button>
+                  </el-col>
+                  <el-col :span="8" class="cl-btn-col">
+                    <el-button @click="handleDelete(data)" circle icon="el-icon-delete" size="mini" type="danger">
+                    </el-button>
+                  </el-col>
+                </el-row>
+                <el-row class="cl-btn-mid-row">
+                  <el-col :span="8" class="cl-btn-data-col">
+                    {{ $t('account.scan') }}
+                  </el-col>
+                  <el-col :span="8" class="cl-btn-data-col">
+                    {{ $t('commons.edit') }}
+                  </el-col>
+                  <el-col :span="8" class="cl-btn-data-col">
+                    {{ $t('commons.delete') }}
+                  </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+          </el-col>
+        </el-row>
+      </el-card>
 
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
-    <!--Create imageRepo-->
-    <el-drawer class="rtl" :title="$t('image.create')" :visible.sync="createVisible" size="70%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true" max-height="550">
-      <el-form :model="proxyForm" label-position="right" label-width="150px" size="small" ref="accountForm">
-        <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-switch v-model="proxyForm.isProxy"></el-switch>
-        </el-form-item>
-        <el-form-item v-if="proxyForm.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="proxyForm.proxyId" :placeholder="$t('commons.proxy')">
-            <el-option
-              v-for="item in proxys"
-              :key="item.id"
-              :label="item.proxyIp"
-              :value="item.id">
-              &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <div style="margin: 10px;">
-        <dialog-footer
-          @cancel="createVisible = false"
-          @confirm="saveServer(servers)"/>
-      </div>
-    </el-drawer>
-    <!--Create imageRepo-->
+    <!--Create image-->
+    <!--Create image-->
 
   </div>
 </template>
@@ -75,28 +97,28 @@
 <script>
 import TablePagination from "../../common/pagination/TablePagination";
 import TableHeader from "../../common/components/TableHeader";
-import TableOperator from "../../common/components/TableOperator";
+import TableOperators from "../../common/components/TableOperators";
 import DialogFooter from "../../common/components/DialogFooter";
 import TableOperatorButton from "../../common/components/TableOperatorButton";
 import ImageStatus from "../head/ImageStatus";
 import {_filter, _sort} from "@/common/js/utils";
 /* eslint-disable */
 export default {
-  name: "ImageRepo",
+  name: "imageSetting",
   components: {
     TablePagination,
     TableHeader,
-    TableOperator,
+    TableOperators,
     DialogFooter,
     TableOperatorButton,
     ImageStatus,
   },
   data() {
     return {
-      queryPath: '/image/imageRepoList/',
-      deletePath: '/image/deleteImageRepo/',
-      createPath: '/image/addImageRepo/',
-      updatePath: '/image/editImageRepo/',
+      queryPath: '/image/imageList/',
+      deletePath: '/image/deleteimage/',
+      createPath: '/image/addimage/',
+      updatePath: '/image/editimage/',
       result: {},
       createVisible: false,
       updateVisible: false,
@@ -124,6 +146,9 @@ export default {
       },
       buttons: [
         {
+          tip: this.$t('account.scan'), icon: "el-icon-s-promotion", type: "",
+          exec: this.handleScan
+        }, {
           tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
           exec: this.handleEdit
         }, {
@@ -138,11 +163,13 @@ export default {
       ],
       proxyForm: {isProxy: false, proxyId: 0},
       proxys: [],
+      location: "",
     }
   },
-  activated() {
+  created() {
     this.search();
     this.activeProxy();
+    this.location = window.location.href.split("#")[0];
   },
   methods: {
     create() {
@@ -159,6 +186,9 @@ export default {
     },
     filterStatus(value, row) {
       return row.status === value;
+    },
+    handleScan(item) {
+
     },
     handleEdit(row) {
       this.updateVisible = true;
@@ -227,4 +257,35 @@ export default {
   width: 80%;
 }
 /deep/ :focus{outline:0;}
+.el-row-card {
+  padding: 0 20px 0 20px;
+  margin: 2%;
+}
+.split {
+  height: 120px;
+  border-left: 1px solid #D8DBE1;
+}
+.cl-ver-col {
+  vertical-align: middle;
+  margin-top: 2%;
+}
+.cl-mid-row {
+  margin: 1%;
+}
+.cl-btn-mid-row {
+  margin: 2%;
+}
+.cl-span-col {
+  margin: 1% 0;
+}
+.cl-btn-col {
+  margin: 3% 0;
+}
+.cl-data-col {
+  color: #888;
+  font-size: 10px;
+}
+.cl-btn-data-col {
+  color: #77aff9;
+}
 </style>
