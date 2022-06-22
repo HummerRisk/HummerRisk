@@ -40,8 +40,8 @@ public class SysListener {
             maps.put("system.userDomain", "计算机域名:    " + userDomain);
             maps.put("system.ip", "本地ip地址:    " + ip);
             maps.put("system.hostName", "本地主机名:    " + addr.getHostName());
-            maps.put("system.totalMemory", "JVM可以使用的总内存:    " + r.totalMemory());
-            maps.put("system.freeMemory", "JVM可以使用的剩余内存:    " + r.freeMemory());
+            maps.put("system.totalMemory", "JVM可以使用的总内存:    " + changeFlowFormat(r.totalMemory()));
+            maps.put("system.freeMemory", "JVM可以使用的剩余内存:    " + changeFlowFormat(r.freeMemory()));
             maps.put("system.availableProcessors", "JVM可以使用的处理器个数:    " + r.availableProcessors());
             maps.put("system.java.version", "Java的运行环境版本：    " + props.getProperty("java.version"));
             maps.put("system.java.vendor", "Java的运行环境供应商：    " + props.getProperty("java.vendor"));
@@ -79,18 +79,18 @@ public class SysListener {
             Sigar sigar = SigarUtil.getInstance();
             Mem mem = sigar.getMem();
             // 内存总量
-            maps.put("system.memTotal", "内存总量:    " + mem.getTotal() / 1024L + "K av");
+            maps.put("system.memTotal", "内存总量:    " + changeFlowFormat(mem.getTotal()) + " av");
             // 当前内存使用量
-            maps.put("system.memUsed", "当前内存使用量:    " + mem.getUsed() / 1024L + "K used");
+            maps.put("system.memUsed", "当前内存使用量:    " + changeFlowFormat(mem.getUsed()) + " used");
             // 当前内存剩余量
-            maps.put("system.menFree", "当前内存剩余量:    " + mem.getFree() / 1024L + "K free");
+            maps.put("system.menFree", "当前内存剩余量:    " + changeFlowFormat(mem.getFree()) + " free");
             Swap swap = sigar.getSwap();
             // 交换区总量
-            maps.put("system.swapTotal", "交换区总量:    " + swap.getTotal() / 1024L + "K av");
+            maps.put("system.swapTotal", "交换区总量:    " + changeFlowFormat(swap.getTotal()) + " av");
             // 当前交换区使用量
-            maps.put("system.swapUsed", "当前交换区使用量:    " + swap.getUsed() / 1024L + "K used");
+            maps.put("system.swapUsed", "当前交换区使用量:    " + changeFlowFormat(swap.getUsed()) + " used");
             // 当前交换区剩余量
-            maps.put("system.swapFree", "当前交换区剩余量:    " + swap.getFree() / 1024L + "K free");
+            maps.put("system.swapFree", "当前交换区剩余量:    " + changeFlowFormat(swap.getFree()) + " free");
         } catch (SigarException e) {
             e.printStackTrace();
         }
@@ -258,13 +258,13 @@ public class SysListener {
 
     public static ConcurrentHashMap<String, String> getMaps () throws Exception {
         try {
-            property();
             memory();
             readRAM();
             readDisk();
             cpuUsage();
             getDiskUsage();
             memoryUsage();
+            property();
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
@@ -538,6 +538,42 @@ public class SysListener {
                 LogUtil.error(e2.getMessage());
             }
         }
+    }
+
+    /**
+     * 转换格式为xxGBxxMBxxKB
+     */
+    public static String changeFlowFormat(long flows) {
+        flows = flows / 1024;//默认是1024KB
+        if (flows > 0 && flows < 1024) {//小于1M
+            return flows + "KB";
+        } else if (flows >= 1024 && flows < 1048576) {//大于1M小于1G
+            int changeM = (int) Math.floor(flows / 1024);//整M数
+            int surplusM = (int) Math.floor(flows % 1024);//除M后的余数
+            if (surplusM > 0) {//余数大于0KB
+                return changeM + 1 + "MB";
+            } else {//整M，没有余数
+                return changeM + "MB";
+            }
+        } else if (flows >= 1048576) {//大于1G
+            int changeG = (int) Math.floor(flows / 1048576);//整G数
+            int surplusG = (int) Math.floor(flows % 1048576);//除G后的余数
+            if (surplusG >= 1024) {//余数大于大于1M
+                int changeM = (int) Math.floor(surplusG / 1024);
+                int surplusM = (int) Math.floor(surplusG % 1024);
+                if (surplusM > 0) {//余数大于0KB
+                    return changeG + 1 + "GB";
+                } else {//整M，没有余数
+                    return changeG + 1 + "GB";
+                }
+            } else if (surplusG < 1024 && surplusG > 0) {//余数小于1M，大于0K
+                int surplusM = (int) Math.floor(surplusG % 1024);
+                return changeG + 1 + "GB";
+            } else {
+                return changeG + "GB";
+            }
+        }
+        return "暂无数据";
     }
 }
 

@@ -963,6 +963,7 @@ export default {
   },
   system: {
     system: '系统参数',
+    update: '手动更新',
   },
   '阿里云': '阿里云',
   '腾讯云': '腾讯云',

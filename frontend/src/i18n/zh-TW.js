@@ -961,6 +961,10 @@ export default {
     unread_msg: '未讀消息',
     read_msg: '已讀消息',
   },
+  system: {
+    system: '系統參數',
+    update: '手動更新',
+  },
   '阿里云': '阿里雲',
   '腾讯云': '騰訊雲',
   '华为云': '華為雲',

@@ -4,6 +4,7 @@ import com.hummer.quartz.anno.QuartzScheduled;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.service.AccountService;
 import com.hummerrisk.service.RuleService;
+import com.hummerrisk.service.SystemParameterService;
 import com.hummerrisk.service.TaskService;
 import org.quartz.*;
 
@@ -23,6 +24,8 @@ public abstract class ScheduleJob implements Job {
     private AccountService accountService;
     @Resource
     private RuleService ruleService;
+    @Resource
+    private SystemParameterService systemParameterService;
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -54,6 +57,11 @@ public abstract class ScheduleJob implements Job {
     @QuartzScheduled(cron = "${cron.history.sync}")
     public void SyncScan() {
         ruleService.syncScanHistory();
+    }
+
+    @QuartzScheduled(cron = "${cron.system.sync}")
+    public void SyncSystem() throws Exception {
+        systemParameterService.updateSystem();
     }
 
 }

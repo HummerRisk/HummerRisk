@@ -961,6 +961,10 @@ export default {
     unread_msg: 'Unread message',
     read_msg: 'read messages',
   },
+  system: {
+    system: 'System parameters',
+    update: 'Manual update',
+  },
   '阿里云': 'Aliyun',
   '腾讯云': 'Tencent',
   '华为云': 'Huawei',
