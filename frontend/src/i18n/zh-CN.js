@@ -802,8 +802,20 @@ export default {
     image_status: '镜像状态',
     image_size: '镜像大小',
     image_type: '镜像类型',
+    image_u: '镜像 | image:tag',
+    image_tar: '镜像包 | .tar',
     image_url: '镜像地址',
     no_image_repo: '没有绑定镜像仓库',
+    is_image_icon : '是否上传图片',
+    is_select_repo: '是否从镜像仓库获取镜像',
+    plugin_icon : '镜像图标',
+    image_repository_tag : 'REPOSITORY:TAG',
+    image_support:
+      'docker:yourrepo/yourimage:tag          使用来自 Docker daemon的镜像\n' +
+      'podman:yourrepo/yourimage:tag          使用来自 Podman daemon的镜像\n' +
+      'docker-archive:path/to/yourimage.tar   使用磁盘中的从“docker save”创建的存档 tar 压缩包\n' +
+      'oci-archive:path/to/yourimage.tar      使用磁盘中的用于 OCI 存档（来自 Skopeo 或其他）tar 压缩包\n' +
+      'registry:yourrepo/yourimage:tag        直接从镜像仓库中提取镜像（不需要容器运行时）',
     image_scan: '镜像检测',
     image_rule: '镜像检测规则',
     image_result: '镜像检测结果',

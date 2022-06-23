@@ -230,7 +230,7 @@
         <dependency>
             <groupId>com.hummer</groupId>
             <artifactId>quartz-spring-boot-starter</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
         </dependency>
 
         <!-- LDAP Module -->
@@ -1192,7 +1192,7 @@
         <repository>
             <id>hummer</id>
             <name>Hummer</name>
-            <url>http://81.70.253.80:8081/repository/maven-public/</url>
+            <url>https://registry.hummercloud.com/repository/maven-public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>

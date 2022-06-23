@@ -89,6 +89,54 @@
     </el-card>
 
     <!--Create image-->
+    <el-drawer class="rtl" :title="$t('image.create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true" max-height="550">
+      <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
+        <el-form-item :label="$t('image.image_name')" ref="name" prop="name">
+          <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_name')"/>
+        </el-form-item>
+        <el-form-item :label="$t('commons.remark')" ref="type" prop="type">
+          <el-popover placement="right-end" :title="$t('image.image_type')" width="800" trigger="click">
+            <hr-code-edit :read-only="true" height="200px" :data.sync="content" :modes="modes" :mode="'html'"/>
+            <el-button icon="el-icon-warning" plain size="mini" slot="reference">
+              {{ $t('image.image_type') }}
+            </el-button>
+          </el-popover>
+        </el-form-item>
+        <el-form-item :label="$t('image.image_type')" ref="type" prop="type">
+          <el-radio v-model="form.type" label="image">{{ $t('image.image_u') }}</el-radio>
+          <el-radio v-model="form.type" label="tar">{{ $t('image.image_tar') }}</el-radio>
+        </el-form-item>
+        <el-form-item :label="$t('image.is_select_repo')" :rules="{required: true, message: $t('image.image_repo') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-switch v-model="form.isImageRepo"></el-switch>
+        </el-form-item>
+        <el-form-item :label="$t('image.is_select_repo')" :rules="{required: true, message: $t('image.image_repo') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-input v-model="form.repo" autocomplete="off" :placeholder="$t('image.image_repo_url')"/>
+        </el-form-item>
+        <el-form-item :label="$t('image.is_image_icon')" :rules="{required: true, message: $t('image.plugin_icon') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-switch v-model="form.isImageIcon"></el-switch>
+        </el-form-item>
+        <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-switch v-model="form.isProxy"></el-switch>
+        </el-form-item>
+        <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+            <el-option
+              v-for="item in proxys"
+              :key="item.id"
+              :label="item.proxyIp"
+              :value="item.id">
+              &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div style="margin: 10px;">
+        <dialog-footer
+          @cancel="createVisible = false"
+          @confirm="save('form')"/>
+      </div>
+    </el-drawer>
     <!--Create image-->
 
   </div>
@@ -102,6 +150,7 @@ import DialogFooter from "../../common/components/DialogFooter";
 import TableOperatorButton from "../../common/components/TableOperatorButton";
 import ImageStatus from "../head/ImageStatus";
 import {_filter, _sort} from "@/common/js/utils";
+import HrCodeEdit from "@/business/components/common/components/HrCodeEdit";
 /* eslint-disable */
 export default {
   name: "imageSetting",
@@ -112,6 +161,7 @@ export default {
     DialogFooter,
     TableOperatorButton,
     ImageStatus,
+    HrCodeEdit,
   },
   data() {
     return {
@@ -164,6 +214,8 @@ export default {
       proxyForm: {isProxy: false, proxyId: 0},
       proxys: [],
       location: "",
+      modes: ['text', 'html'],
+      content: this.$t('image.image_support'),
     }
   },
   created() {
@@ -173,7 +225,7 @@ export default {
   },
   methods: {
     create() {
-      this.form = {};
+      this.form = {type: 'image'};
       this.createVisible = true;
     },
     sort(column) {
@@ -189,6 +241,19 @@ export default {
     },
     handleScan(item) {
 
+    },
+    save(form) {
+      this.$refs[form].validate(valid => {
+        if (valid) {
+          this.result = this.$post(this.createPath, this.form, () => {
+            this.$success(this.$t('commons.save_success'));
+            this.search();
+            this.createVisible = false;
+          });
+        } else {
+          return false;
+        }
+      });
     },
     handleEdit(row) {
       this.updateVisible = true;
@@ -279,7 +344,7 @@ export default {
   margin: 1% 0;
 }
 .cl-btn-col {
-  margin: 3% 0;
+  margin: 4% 0;
 }
 .cl-data-col {
   color: #888;
