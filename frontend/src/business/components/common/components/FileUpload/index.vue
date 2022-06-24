@@ -3,7 +3,7 @@
     <!--文件上传入口-->
     <!-- 上传组件 -->
     <el-upload action drag :auto-upload="true" :on-change="handleChange" :http-request="submit" :on-progress="uploadProcess"
-               :before-upload="beforeUpload" :on-exceed="handleExceed" :on-remove="handleRemove" ref="pluginIcon" :file-list="fileList" :limit="1">
+               :before-upload="beforeUpload" :on-exceed="handleExceed" :on-remove="handleRemove" ref="path" :file-list="fileList" :limit="1">
       <i class="el-icon-upload"></i>
       <div class="el-upload__text">{{ $t('package.upload_text1') }}<em>{{ $t('package.upload_text2') }}</em></div>
       <div class="el-upload__tip" slot="tip">{{ $t('package.upload_tip2', ['500M']) }}</div>
@@ -76,12 +76,12 @@ export default {
         }
 
         const isTypeOk = this.fileType.some((type) => {
-          if (file.type.indexOf(type) > -1) return true;
+          if (file.type?file.type.indexOf(type):file.name.indexOf(type) > -1) return true;
           if (fileExtension && fileExtension.indexOf(type) > -1) return true;
           return false;
         });
         if (!isTypeOk) {
-          this.$message.error(this.$t('common.file_type_warn') + this.fileType.join("/") + this.$t('common.file_type_warn2'));
+          this.$message.error(this.$t('common.adv_search.file_type_warn') + this.fileType.join("/") + this.$t('common.adv_search.file_type_warn2'));
           return false;
         }
       }
@@ -121,7 +121,6 @@ export default {
             message: this.$t("commons.save_success"),
             duration: 1000
           });
-          // this.$refs.pluginIcon.clearFiles(); //上传成功之后清除历史记录
         } else {
           this.percentage = 99;
           this.$message({

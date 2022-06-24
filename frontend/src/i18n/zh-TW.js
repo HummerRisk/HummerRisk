@@ -805,9 +805,11 @@ export default {
     image_u: '鏡像 | Image:tag',
     image_tar: '鏡像包 | .tar',
     image_url: '鏡像地址',
+    image_tag: '鏡像標籤',
+    image_url_tag: '鏡像地址:標籤',
     no_image_repo: '沒有綁定鏡像倉庫',
-    is_image_icon : '是否上傳圖片',
-    is_select_repo: '是否從鏡像倉庫獲取鏡像',
+    is_image_icon : '是否上傳鏡像圖片',
+    is_select_repo: '非綁定鏡像',
     plugin_icon : '鏡像圖標',
     image_repository_tag : 'REPOSITORY:TAG',
     image_support:
@@ -819,6 +821,7 @@ export default {
     image_scan: '鏡像檢測',
     image_rule: '鏡像檢測規則',
     image_result: '鏡像檢測結果',
+    upload_tip2: '大小不超過 {0} 的鏡像包',
   },
   package: {
     package_setting: '軟件包管理',

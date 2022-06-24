@@ -804,10 +804,12 @@ export default {
     image_type: 'Image type',
     image_u: 'Image | Image:tag',
     image_tar: 'Image package | .tar',
-    image_url: 'Mirror URL',
+    image_url: 'Image address',
+    image_tag: 'Image tag',
+    image_url_tag: 'Image address: tag',
     no_image_repo: 'No image repository bound',
-    is_image_icon : 'Whether to upload an image',
-    is_select_repo: 'Whether to get the mirror from the mirror warehouse',
+    is_image_icon : 'Whether to upload an image icon',
+    is_select_repo: 'Unbound image',
     plugin_icon : 'Mirror icon',
     image_repository_tag : 'REPOSITORY:TAG',
     image_support:
@@ -819,6 +821,7 @@ export default {
     image_scan: 'Image detection',
     image_rule: 'Image detection rule',
     image_result: 'Image detection result',
+    upload_tip2: 'Image package whose size does not exceed {0}',
   },
   package: {
     package_setting: 'Package Management',

@@ -805,9 +805,11 @@ export default {
     image_u: '镜像 | image:tag',
     image_tar: '镜像包 | .tar',
     image_url: '镜像地址',
+    image_tag: '镜像标签',
+    image_url_tag: '镜像地址:标签',
     no_image_repo: '没有绑定镜像仓库',
-    is_image_icon : '是否上传图片',
-    is_select_repo: '是否从镜像仓库获取镜像',
+    is_image_icon : '是否上传镜像图片',
+    is_select_repo: '是否绑定镜像仓库',
     plugin_icon : '镜像图标',
     image_repository_tag : 'REPOSITORY:TAG',
     image_support:
@@ -819,6 +821,7 @@ export default {
     image_scan: '镜像检测',
     image_rule: '镜像检测规则',
     image_result: '镜像检测结果',
+    upload_tip2: '大小不超过 {0} 的镜像包',
   },
   package: {
     package_setting: '软件包管理',

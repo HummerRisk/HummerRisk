@@ -63,12 +63,12 @@ export default {
         }
 
         const isTypeOk = this.fileType.some((type) => {
-          if (file.type.indexOf(type) > -1) return true;
+          if (file.type?file.type.indexOf(type):file.name.indexOf(type) > -1) return true;
           if (fileExtension && fileExtension.indexOf(type) > -1) return true;
           return false;
         });
         if (!isTypeOk) {
-          this.$message.error(this.$t('common.file_type_warn') + this.fileType.join("/") + this.$t('common.file_type_warn2'));
+          this.$message.error(this.$t('common.adv_search.file_type_warn') + this.fileType.join("/") + this.$t('common.adv_search.file_type_warn2'));
           return false;
         }
       }

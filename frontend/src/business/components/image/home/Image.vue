@@ -91,30 +91,23 @@
     <!--Create image-->
     <el-drawer class="rtl" :title="$t('image.create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true" max-height="550">
-      <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
+      <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form" :rules="rule">
         <el-form-item :label="$t('image.image_name')" ref="name" prop="name">
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_name')"/>
-        </el-form-item>
-        <el-form-item :label="$t('commons.remark')" ref="type" prop="type">
-          <el-popover placement="right-end" :title="$t('image.image_type')" width="800" trigger="click">
-            <hr-code-edit :read-only="true" height="200px" :data.sync="content" :modes="modes" :mode="'html'"/>
-            <el-button icon="el-icon-warning" plain size="mini" slot="reference">
-              {{ $t('image.image_type') }}
-            </el-button>
-          </el-popover>
-        </el-form-item>
-        <el-form-item :label="$t('image.image_type')" ref="type" prop="type">
-          <el-radio v-model="form.type" label="image">{{ $t('image.image_u') }}</el-radio>
-          <el-radio v-model="form.type" label="tar">{{ $t('image.image_tar') }}</el-radio>
         </el-form-item>
         <el-form-item :label="$t('image.is_select_repo')" :rules="{required: true, message: $t('image.image_repo') + $t('commons.cannot_be_empty'), trigger: 'change'}">
           <el-switch v-model="form.isImageRepo"></el-switch>
         </el-form-item>
-        <el-form-item :label="$t('image.is_select_repo')" :rules="{required: true, message: $t('image.image_repo') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-input v-model="form.repo" autocomplete="off" :placeholder="$t('image.image_repo_url')"/>
-        </el-form-item>
-        <el-form-item :label="$t('image.is_image_icon')" :rules="{required: true, message: $t('image.plugin_icon') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-switch v-model="form.isImageIcon"></el-switch>
+        <el-form-item v-if="form.isImageRepo" :label="$t('image.image_repo')" :rules="{required: true, message: $t('image.image_repo') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-select style="width: 100%;" v-model="form.repo" :placeholder="$t('image.image_repo_url')">
+            <el-option
+              v-for="item in repos"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+              &nbsp;&nbsp; {{ item.name + ':' + item.repo }}
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
           <el-switch v-model="form.isProxy"></el-switch>
@@ -130,6 +123,32 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item :label="$t('image.is_image_icon')">
+          <el-switch v-model="form.isImageIcon"></el-switch>
+        </el-form-item>
+        <el-form-item v-if="form.isImageIcon" :label="$t('image.plugin_icon')">
+          <image-upload v-on:appendImg="appendImg" v-model="form.pluginIcon" :param="form.pluginIcon"/>
+        </el-form-item>
+        <el-form-item :label="$t('commons.remark')" ref="type" prop="type">
+          <el-popover placement="right-end" :title="$t('image.image_type')" width="800" trigger="click">
+            <hr-code-edit :read-only="true" height="200px" :data.sync="content" :modes="modes" :mode="'html'"/>
+            <el-button icon="el-icon-warning" plain size="mini" slot="reference">
+              {{ $t('image.image_type') }}
+            </el-button>
+          </el-popover>
+        </el-form-item>
+        <el-form-item :label="$t('image.image_type')" ref="type" prop="type">
+          <el-radio v-model="form.type" label="image">{{ $t('image.image_u') }}</el-radio>
+          <el-radio v-model="form.type" label="tar">{{ $t('image.image_tar') }}</el-radio>
+        </el-form-item>
+        <el-form-item v-if="form.type==='image'" :label="$t('image.image_url_tag')" ref="type" prop="type">
+          <el-input class="input-inline-i" v-model="form.imageUrl" autocomplete="off" :placeholder="$t('image.image_url')"/>
+          {{ ' : ' }}
+          <el-input class="input-inline-t" v-model="form.imageTag" autocomplete="off" :placeholder="$t('image.image_tag')"/>
+        </el-form-item>
+        <el-form-item v-if="form.type==='tar'" :label="$t('image.image_url')" ref="type" prop="type">
+          <image-tar-upload v-on:appendTar="appendTar" v-model="form.path" :param="form.path"/>
+        </el-form-item>
       </el-form>
       <div style="margin: 10px;">
         <dialog-footer
@@ -138,6 +157,76 @@
       </div>
     </el-drawer>
     <!--Create image-->
+
+    <!--Update image-->
+    <el-drawer class="rtl" :title="$t('image.update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true" max-height="550">
+      <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form" :rules="rule">
+        <el-form-item :label="$t('image.image_name')" ref="name" prop="name">
+          <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_name')"/>
+        </el-form-item>
+        <el-form-item :label="$t('image.is_select_repo')" :rules="{required: true, message: $t('image.image_repo') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-switch v-model="form.isImageRepo"></el-switch>
+        </el-form-item>
+        <el-form-item v-if="form.isImageRepo" :label="$t('image.image_repo')" :rules="{required: true, message: $t('image.image_repo') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-select style="width: 100%;" v-model="form.repo" :placeholder="$t('image.image_repo_url')">
+            <el-option
+              v-for="item in repos"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+              &nbsp;&nbsp; {{ item.name + ':' + item.repo }}
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-switch v-model="form.isProxy"></el-switch>
+        </el-form-item>
+        <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+            <el-option
+              v-for="item in proxys"
+              :key="item.id"
+              :label="item.proxyIp"
+              :value="item.id">
+              &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="$t('image.is_image_icon')">
+          <el-switch v-model="form.isImageIcon"></el-switch>
+        </el-form-item>
+        <el-form-item v-if="form.isImageIcon" :label="$t('image.plugin_icon')">
+          <image-upload v-on:appendImg="appendImg" v-model="form.pluginIcon" :param="form.pluginIcon"/>
+        </el-form-item>
+        <el-form-item :label="$t('commons.remark')" ref="type" prop="type">
+          <el-popover placement="right-end" :title="$t('image.image_type')" width="800" trigger="click">
+            <hr-code-edit :read-only="true" height="200px" :data.sync="content" :modes="modes" :mode="'html'"/>
+            <el-button icon="el-icon-warning" plain size="mini" slot="reference">
+              {{ $t('image.image_type') }}
+            </el-button>
+          </el-popover>
+        </el-form-item>
+        <el-form-item :label="$t('image.image_type')" ref="type" prop="type">
+          <el-radio v-model="form.type" label="image">{{ $t('image.image_u') }}</el-radio>
+          <el-radio v-model="form.type" label="tar">{{ $t('image.image_tar') }}</el-radio>
+        </el-form-item>
+        <el-form-item v-if="form.type==='image'" :label="$t('image.image_url_tag')" ref="type" prop="type">
+          <el-input class="input-inline-i" v-model="form.imageUrl" autocomplete="off" :placeholder="$t('image.image_url')"/>
+          {{ ' : ' }}
+          <el-input class="input-inline-t" v-model="form.imageTag" autocomplete="off" :placeholder="$t('image.image_tag')"/>
+        </el-form-item>
+        <el-form-item v-if="form.type==='tar'" :label="$t('image.image_url')" ref="type" prop="type">
+          <image-tar-upload v-on:appendTar="appendTar" v-model="form.path" :param="form.path"/>
+        </el-form-item>
+      </el-form>
+      <div style="margin: 10px;">
+        <dialog-footer
+          @cancel="updateVisible = false"
+          @confirm="update('form')"/>
+      </div>
+    </el-drawer>
+    <!--Update image-->
 
   </div>
 </template>
@@ -151,6 +240,9 @@ import TableOperatorButton from "../../common/components/TableOperatorButton";
 import ImageStatus from "../head/ImageStatus";
 import {_filter, _sort} from "@/common/js/utils";
 import HrCodeEdit from "@/business/components/common/components/HrCodeEdit";
+import ImageUpload from "../head/ImageUpload";
+import ImageTarUpload from "../head/ImageTarUpload";
+
 /* eslint-disable */
 export default {
   name: "imageSetting",
@@ -162,13 +254,15 @@ export default {
     TableOperatorButton,
     ImageStatus,
     HrCodeEdit,
+    ImageUpload,
+    ImageTarUpload,
   },
   data() {
     return {
       queryPath: '/image/imageList/',
-      deletePath: '/image/deleteimage/',
-      createPath: '/image/addimage/',
-      updatePath: '/image/editimage/',
+      deletePath: '/image/deleteImage/',
+      createPath: '/image/addImage',
+      updatePath: '/image/editImage',
       result: {},
       createVisible: false,
       updateVisible: false,
@@ -213,14 +307,18 @@ export default {
       ],
       proxyForm: {isProxy: false, proxyId: 0},
       proxys: [],
+      repos: [],
       location: "",
       modes: ['text', 'html'],
       content: this.$t('image.image_support'),
+      iconFile: Object,
+      tarFile: Object,
     }
   },
   created() {
     this.search();
     this.activeProxy();
+    this.activeRepo();
     this.location = window.location.href.split("#")[0];
   },
   methods: {
@@ -245,7 +343,23 @@ export default {
     save(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
-          this.result = this.$post(this.createPath, this.form, () => {
+          let formData = new FormData();
+          if (this.iconFile) {
+            formData.append("iconFile", this.iconFile);
+          }
+          if (this.tarFile) {
+            formData.append("tarFile", this.tarFile);
+          }
+          formData.append("request", new Blob([JSON.stringify(this.form)], {type: "application/json"}));
+          let axiosRequestConfig = {
+            method: "POST",
+            url: this.createPath,
+            data: formData,
+            headers: {
+              "Content-Type": 'multipart/form-data'
+            }
+          };
+          this.result = this.$request(axiosRequestConfig, () => {
             this.$success(this.$t('commons.save_success'));
             this.search();
             this.createVisible = false;
@@ -255,9 +369,41 @@ export default {
         }
       });
     },
+    update(form) {
+      this.$refs[form].validate(valid => {
+        if (valid) {
+          let formData = new FormData();
+          if (this.iconFile) {
+            formData.append("iconFile", this.iconFile);
+          }
+          if (this.tarFile) {
+            formData.append("tarFile", this.tarFile);
+          }
+          formData.append("request", new Blob([JSON.stringify(this.form)], {type: "application/json"}));
+          let axiosRequestConfig = {
+            method: "POST",
+            url: this.updatePath,
+            data: formData,
+            headers: {
+              "Content-Type": 'multipart/form-data'
+            }
+          };
+          this.result = this.$request(axiosRequestConfig, () => {
+            this.$success(this.$t('commons.save_success'));
+            this.search();
+            this.updateVisible = false;
+          });
+        } else {
+          return false;
+        }
+      });
+    },
     handleEdit(row) {
       this.updateVisible = true;
       this.form = row;
+      if(this.form.repo) this.form.isImageRepo = true;
+      if(this.form.proxyId) this.form.isProxy = true;
+      if(this.form.pluginIcon !== 'docker.png') this.form.isImageIcon = true;
     },
     search() {
       this.result = this.$post(this.buildPagePath(this.queryPath), this.condition, response => {
@@ -278,6 +424,13 @@ export default {
         this.proxys = response.data;
       });
     },
+    //查询仓库
+    activeRepo() {
+      let url = "/image/allImageRepos";
+      this.result = this.$get(url, response => {
+        this.repos = response.data;
+      });
+    },
     buildPagePath(path) {
       return path + "/" + this.currentPage + "/" + this.pageSize;
     },
@@ -291,7 +444,7 @@ export default {
       }
     },
     handleDelete(obj) {
-      this.$alert(this.$t('image.delete_confirm') + obj.name + " ？", '', {
+      this.$alert(this.$t('workspace.delete_confirm') + obj.name + " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
@@ -302,6 +455,12 @@ export default {
           }
         }
       });
+    },
+    appendImg(file) {
+      this.iconFile = file;
+    },
+    appendTar(file) {
+      this.tarFile = file;
     },
   }
 }
@@ -352,5 +511,21 @@ export default {
 }
 .cl-btn-data-col {
   color: #77aff9;
+}
+
+.input-inline-i{
+  display:inline;
+}
+
+.input-inline-i >>> .el-input__inner {
+  width: 68%;
+}
+
+.input-inline-t{
+  display:inline;
+}
+
+.input-inline-t >>> .el-input__inner {
+  width: 30%;
 }
 </style>

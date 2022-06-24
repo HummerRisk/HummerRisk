@@ -12,6 +12,7 @@ import com.hummerrisk.service.ImageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -53,7 +54,7 @@ public class ImageController {
     @ApiOperation(value = "查询所有镜像仓库")
     @GetMapping("allImageRepos")
     public List<ImageRepo> allImageRepos() {
-        return imageService.imageRepoList(null);
+        return imageService.allImageRepos();
     }
 
     @ApiOperation(value = "镜像列表")
@@ -62,6 +63,28 @@ public class ImageController {
             @PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, imageService.imageList(request));
+    }
+
+    @ApiOperation(value = "添加镜像")
+    @PostMapping(value = "addImage", consumes = {"multipart/form-data"})
+    public Image addImage(@RequestPart(value = "iconFile", required = false) MultipartFile iconFile,
+                          @RequestPart(value = "tarFile", required = false) MultipartFile tarFile,
+                          @RequestPart("request") Image request) throws Exception {
+        return imageService.addImage(iconFile, tarFile, request);
+    }
+
+    @ApiOperation(value = "修改镜像")
+    @PostMapping(value = "updateImage", consumes = {"multipart/form-data"})
+    public Image updateImage(@RequestPart(value = "iconFile", required = false) MultipartFile iconFile,
+                          @RequestPart(value = "tarFile", required = false) MultipartFile tarFile,
+                          @RequestPart("request") Image request) throws Exception {
+        return imageService.updateImage(iconFile, tarFile, request);
+    }
+
+    @ApiOperation(value = "删除镜像")
+    @GetMapping("deleteImage/{id}")
+    public void deleteImage(@PathVariable String id) throws Exception {
+        imageService.deleteImage(id);
     }
 
 

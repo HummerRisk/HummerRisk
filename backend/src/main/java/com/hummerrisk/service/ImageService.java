@@ -2,22 +2,30 @@ package com.hummerrisk.service;
 
 import com.hummerrisk.base.domain.Image;
 import com.hummerrisk.base.domain.ImageRepo;
+import com.hummerrisk.base.domain.ImageRepoExample;
 import com.hummerrisk.base.domain.Package;
 import com.hummerrisk.base.mapper.ImageMapper;
 import com.hummerrisk.base.mapper.ImageRepoMapper;
 import com.hummerrisk.base.mapper.ext.ExtImageMapper;
 import com.hummerrisk.base.mapper.ext.ExtImageRepoMapper;
+import com.hummerrisk.commons.constants.PackageConstants;
 import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
+import com.hummerrisk.commons.utils.FileUploadUtils;
 import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.commons.utils.UUIDUtil;
 import com.hummerrisk.controller.request.image.ImageRepoRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.List;
+
+import static com.hummerrisk.service.SysListener.changeFlowFormat;
 
 /**
  * @author harris
@@ -37,6 +45,12 @@ public class ImageService {
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
+    }
+
+    public List<ImageRepo> allImageRepos() {
+        ImageRepoExample example = new ImageRepoExample();
+        example.setOrderByClause("update_time desc");
+        return imageRepoMapper.selectByExample(example);
     }
 
     public ImageRepo addImageRepo(ImageRepo imageRepo) throws Exception {
@@ -68,6 +82,88 @@ public class ImageService {
 
     public List<Image> imageList(ImageRequest request) {
         return extImageMapper.imageList(request);
+    }
+
+    public Image addImage(MultipartFile iconFile, MultipartFile tarFile, Image request) throws Exception {
+
+        try {
+            String id = UUIDUtil.newUUID();
+            request.setId(id);
+            request.setStatus("VALID");
+            request.setCreateTime(System.currentTimeMillis());
+            request.setUpdateTime(System.currentTimeMillis());
+            request.setCreator(SessionUtils.getUserId());
+            if (iconFile != null) {
+                String iconFilePath = upload(iconFile, PackageConstants.DEFAULT_BASE_DIR);
+                request.setPluginIcon(iconFilePath);
+            }
+            if (tarFile != null) {
+                String tarFilePath = upload(tarFile, PackageConstants.DEFAULT_BASE_DIR);
+                request.setPath(tarFilePath);
+                request.setSize(changeFlowFormat(tarFile.getSize()));
+            }
+
+            imageMapper.insertSelective(request);
+
+            OperationLogService.log(SessionUtils.getUser(), request.getId(), request.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "创建镜像");
+
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+        return request;
+    }
+
+    public Image updateImage(MultipartFile iconFile, MultipartFile tarFile, Image request) throws Exception {
+
+        try {
+            request.setStatus("VALID");
+            request.setUpdateTime(System.currentTimeMillis());
+            request.setCreator(SessionUtils.getUserId());
+            if (iconFile != null) {
+                String iconFilePath = upload(iconFile, PackageConstants.DEFAULT_BASE_DIR);
+                request.setPluginIcon(iconFilePath);
+            }
+            if (tarFile != null) {
+                String tarFilePath = upload(tarFile, PackageConstants.DEFAULT_BASE_DIR);
+                request.setPath(tarFilePath);
+            }
+
+            imageMapper.updateByPrimaryKeySelective(request);
+
+            OperationLogService.log(SessionUtils.getUser(), request.getId(), request.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "修改镜像");
+
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+        return request;
+    }
+
+    public void deleteImage(String id) throws Exception {
+        imageMapper.deleteByPrimaryKey(id);
+        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "删除镜像");
+    }
+
+    /**
+     * 以默认配置进行文件上传
+     *
+     * @param file 上传的文件
+     * @return 文件名称
+     * @throws Exception
+     */
+    public static final String upload(MultipartFile file, String dir) throws IOException
+    {
+        try
+        {
+            String fileName = file.getOriginalFilename();
+            String extension = StringUtils.isNotBlank(fileName)?fileName.split("\\.")[fileName.split("\\.").length-1]:"";
+            //png、html等小文件存放路径，页面需要显示，项目内目录
+            //jar包等大文件存放路径，项目外目录
+            return FileUploadUtils.upload(dir, file, "." + extension);
+        }
+        catch (Exception e)
+        {
+            throw new IOException(e.getMessage(), e);
+        }
     }
 
 
