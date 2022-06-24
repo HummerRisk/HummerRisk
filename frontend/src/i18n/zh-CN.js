@@ -822,6 +822,9 @@ export default {
     image_rule: '镜像检测规则',
     image_result: '镜像检测结果',
     upload_tip2: '大小不超过 {0} 的镜像包',
+    rule_list: '镜像检测规则列表',
+    create_rule: '创建镜像检测规则',
+    update_rule: '修改镜像检测规则',
   },
   package: {
     package_setting: '软件包管理',

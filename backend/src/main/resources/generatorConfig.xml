@@ -108,6 +108,7 @@
 <!--        <table tableName="package_result_log" domainObjectName="PackageResultLog"/>-->
 <!--        <table tableName="image_repo" domainObjectName="ImageRepo"/>-->
 <!--        <table tableName="image" domainObjectName="Image"/>-->
+<!--        <table tableName="image_rule" domainObjectName="ImageRule"/>-->
 
     </context>
 </generatorConfiguration>

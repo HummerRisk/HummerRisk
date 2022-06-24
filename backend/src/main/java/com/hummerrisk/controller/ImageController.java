@@ -4,10 +4,13 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.Image;
 import com.hummerrisk.base.domain.ImageRepo;
+import com.hummerrisk.base.domain.ImageRule;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.request.image.ImageRepoRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
+import com.hummerrisk.controller.request.image.ImageRuleRequest;
+import com.hummerrisk.dto.ImageRuleDTO;
 import com.hummerrisk.service.ImageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -87,5 +90,34 @@ public class ImageController {
         imageService.deleteImage(id);
     }
 
+    @ApiOperation(value = "镜像检测规则列表")
+    @PostMapping(value = "ruleList/{goPage}/{pageSize}")
+    public Pager<List<ImageRuleDTO>> ruleList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageRuleRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, imageService.ruleList(request));
+    }
 
+    @ApiOperation(value = "添加镜像检测规则")
+    @PostMapping(value = "addImageRule")
+    public int addImageRule(@RequestBody ImageRuleRequest request) throws Exception {
+        return imageService.addImageRule(request);
+    }
+
+    @ApiOperation(value = "修改镜像检测规则")
+    @PostMapping(value = "updateImageRule")
+    public int updateImageRule(@RequestBody ImageRuleRequest request) throws Exception {
+        return imageService.updateImageRule(request);
+    }
+
+    @ApiOperation(value = "删除镜像检测规则")
+    @GetMapping(value = "deleteImageRule/{id}")
+    public void deleteImageRule(@PathVariable String id) throws Exception  {
+        imageService.deleteImageRule(id);
+    }
+
+    @ApiOperation(value = "镜像检测规则启用")
+    @PostMapping(value = "changeStatus")
+    public int changeStatus(@RequestBody ImageRule rule) throws Exception {
+        return imageService.changeStatus(rule);
+    }
 }

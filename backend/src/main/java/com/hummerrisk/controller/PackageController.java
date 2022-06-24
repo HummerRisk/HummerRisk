@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.Package;
 import com.hummerrisk.base.domain.PackageResultLog;
+import com.hummerrisk.base.domain.PackageRule;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.request.packageSetting.PackageRequest;
@@ -11,9 +12,8 @@ import com.hummerrisk.controller.request.packageSetting.PackageResultRequest;
 import com.hummerrisk.controller.request.packageSetting.PackageRuleRequest;
 import com.hummerrisk.dto.PackageDTO;
 import com.hummerrisk.dto.PackageResultDTO;
-import com.hummerrisk.service.PackageService;
-import com.hummerrisk.base.domain.PackageRule;
 import com.hummerrisk.dto.PackageRuleDTO;
+import com.hummerrisk.service.PackageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -74,7 +74,7 @@ public class PackageController {
         packageService.deleteImg(id, p);
     }
 
-    @ApiOperation(value = "检测软件包规则")
+    @ApiOperation(value = "删除软件包")
     @PostMapping("uploadPackage/{id}")
     public void deletePackage(@PathVariable String id, @RequestBody PackageRequest p) throws Exception {
         packageService.deleteFile(id, p);

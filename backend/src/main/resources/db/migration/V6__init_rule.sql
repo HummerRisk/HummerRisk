@@ -95,6 +95,7 @@ INSERT INTO rule_tag (tag_key, tag_name, _index, flag) VALUES ('safety', '安全
 INSERT INTO rule_tag (tag_key, tag_name, _index, flag) VALUES ('cost', '费用', 2, 1);
 INSERT INTO rule_tag (tag_key, tag_name, _index, flag) VALUES ('tagging', '标签', 3, 1);
 INSERT INTO rule_tag (tag_key, tag_name, _index, flag) VALUES ('server', '实例', 4, 1);
+INSERT INTO rule_tag (tag_key, tag_name, _index, flag) VALUES ('image', '镜像', 5, 1);
 
 INSERT INTO rule_group (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Aliyun 等保预检', '等保合规检查（全称为等级保护合规检查）为您提供了全面覆盖通信网络、区域边界、计算环境和管理中心的网络安全检查。', '等保三级', 'hummer-aliyun-plugin', 1);
 SELECT @groupId1 := LAST_INSERT_ID();

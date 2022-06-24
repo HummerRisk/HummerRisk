@@ -31,4 +31,19 @@ CREATE TABLE IF NOT EXISTS `image` (
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
+CREATE TABLE IF NOT EXISTS `image_rule` (
+    `id`                         varchar(50)         NOT NULL COMMENT 'ID',
+    `name`                       varchar(50)         DEFAULT NULL UNIQUE COMMENT '规则名称',
+    `status`                     tinyint(1)          DEFAULT 1 COMMENT '规则状态(启用1，停用0)',
+    `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
+    `description`                varchar(255)        DEFAULT NULL COMMENT '`描述',
+    `script`                     mediumtext          DEFAULT NULL COMMENT '脚本',
+    `parameter`                  varchar(1024)       DEFAULT NULL COMMENT '参数',
+    `last_modified`              bigint(14)          DEFAULT NULL COMMENT '上次更新时间',
+    `flag`                       tinyint(1)          NOT NULL DEFAULT 0 COMMENT '是否内置',
+    PRIMARY KEY (`id`),
+    KEY `IDX_NAME` (`name`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
+INSERT INTO `image_rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `last_modified`, `flag`) VALUES ('3095fa07-78f5-4d8d-8751-76a961bb8c21', '镜像检测', 1, 'HighRisk', '容器镜像和文件系统的漏洞检测', '扫描容器镜像或文件系统的内容以查找已知漏洞。\n查找主要操作系统包的漏洞：\n  Alpine\n  Amazon Linux\n  BusyBox\n  CentOS\n  Debian\n  Distroless\n  Oracle Linux\n  Red Hat (RHEL)\n  Ubuntu\n查找特定语言包的漏洞：\n  Ruby (Gems)\n  Java (JAR, WAR, EAR, JPI, HPI)\n  JavaScript (NPM, Yarn)\n  Python (Egg, Wheel, Poetry, requirements.txt/setup.py files)\n  Dotnet (deps.json)\n  Golang (go.mod)\n  PHP (composer.json)\n支持 Docker 和 OCI 镜像格式。\n使用 SBOM 证明。', '[]', concat(unix_timestamp(now()), '001'), 1);
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('3095fa07-78f5-4d8d-8751-76a961bb8c21', 'image');

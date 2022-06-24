@@ -1,21 +1,21 @@
 package com.hummerrisk.service;
 
-import com.hummerrisk.base.domain.Image;
-import com.hummerrisk.base.domain.ImageRepo;
-import com.hummerrisk.base.domain.ImageRepoExample;
-import com.hummerrisk.base.domain.Package;
-import com.hummerrisk.base.mapper.ImageMapper;
-import com.hummerrisk.base.mapper.ImageRepoMapper;
+import com.hummerrisk.base.domain.*;
+import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtImageMapper;
 import com.hummerrisk.base.mapper.ext.ExtImageRepoMapper;
+import com.hummerrisk.base.mapper.ext.ExtImageRuleMapper;
 import com.hummerrisk.commons.constants.PackageConstants;
 import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
+import com.hummerrisk.commons.utils.BeanUtils;
 import com.hummerrisk.commons.utils.FileUploadUtils;
 import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.commons.utils.UUIDUtil;
 import com.hummerrisk.controller.request.image.ImageRepoRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
+import com.hummerrisk.controller.request.image.ImageRuleRequest;
+import com.hummerrisk.dto.ImageRuleDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +42,14 @@ public class ImageService {
     private ImageRepoMapper imageRepoMapper;
     @Resource
     private ExtImageMapper extImageMapper;
+    @Resource
+    private ExtImageRuleMapper extImageRuleMapper;
+    @Resource
+    private ImageRuleMapper imageRuleMapper;
+    @Resource
+    private RuleTagMappingMapper ruleTagMappingMapper;
+    @Resource
+    private RuleTagMapper ruleTagMapper;
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
@@ -164,6 +172,63 @@ public class ImageService {
         {
             throw new IOException(e.getMessage(), e);
         }
+    }
+
+    public List<ImageRuleDTO> ruleList(ImageRuleRequest request) {
+        return extImageRuleMapper.ruleList(request);
+    }
+
+    public int addImageRule(ImageRuleRequest request) throws Exception {
+        ImageRule record = new ImageRule();
+        BeanUtils.copyBean(record, request);
+        record.setId(UUIDUtil.newUUID());
+        record.setLastModified(System.currentTimeMillis());
+        saveRuleTagMapping(record.getId(), request.getTagKey());
+        OperationLogService.log(SessionUtils.getUser(), record.getId(), record.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "创建镜像检测规则");
+        return imageRuleMapper.insertSelective(record);
+    }
+
+    public void saveRuleTagMapping(String ruleId, String tagKey) {
+        deleteRuleTag(null, ruleId);
+        if (StringUtils.isNotEmpty(tagKey)) {
+            RuleTagMapping sfRulesTagMapping = new RuleTagMapping();
+            sfRulesTagMapping.setRuleId(ruleId);
+            sfRulesTagMapping.setTagKey(tagKey);
+            ruleTagMappingMapper.insert(sfRulesTagMapping);
+        }
+    }
+
+    public void deleteRuleTag(String tagkey, String ruleId) {
+        if (StringUtils.isNotBlank(tagkey)) {
+            ruleTagMapper.deleteByPrimaryKey(tagkey);
+            RuleTagExample ruleTagExample = new RuleTagExample();
+            ruleTagExample.createCriteria().andTagKeyEqualTo(tagkey);
+            ruleTagMapper.deleteByExample(ruleTagExample);
+        }
+        if (StringUtils.isNotBlank(ruleId)) {
+            RuleTagMappingExample ruleTagMappingExample = new RuleTagMappingExample();
+            ruleTagMappingExample.createCriteria().andRuleIdEqualTo(ruleId);
+            ruleTagMappingMapper.deleteByExample(ruleTagMappingExample);
+        }
+    }
+
+    public int updateImageRule(ImageRuleRequest request) throws Exception {
+        ImageRule record = new ImageRule();
+        BeanUtils.copyBean(record, request);
+        record.setLastModified(System.currentTimeMillis());
+        saveRuleTagMapping(record.getId(), request.getTagKey());
+        OperationLogService.log(SessionUtils.getUser(), record.getId(), record.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "修改镜像检测规则");
+        return imageRuleMapper.updateByPrimaryKeySelective(record);
+    }
+
+    public void deleteImageRule(String id) throws Exception {
+        deleteRuleTag(null, id);
+        imageRuleMapper.deleteByPrimaryKey(id);
+        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "删除镜像检测规则");
+    }
+
+    public int changeStatus(ImageRule rule) throws Exception {
+        return imageRuleMapper.updateByPrimaryKeySelective(rule);
     }
 
 

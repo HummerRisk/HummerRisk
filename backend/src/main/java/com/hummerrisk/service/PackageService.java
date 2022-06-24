@@ -198,6 +198,7 @@ public class PackageService {
         record.setId(UUIDUtil.newUUID());
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
+        OperationLogService.log(SessionUtils.getUser(), record.getId(), record.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "创建软件包规则");
         return packageRuleMapper.insertSelective(record);
     }
 
