@@ -21,7 +21,7 @@
 
 > HummerRisk 是开源的安全合规检测平台，全面支持云原生，实现对主流公(私)有云资源的安全合规检测、网络漏洞检测、虚拟机安全检测、软件依赖检测、容器镜像检测，支持 Cloud Custodian、Prowler、Nuclei、 Xray 和 Dependency Check 等多种检测引擎，全面满足日常的安全合规检测需要。
 
-![架构](https://hummerrisk-1312321453.cos.ap-beijing.myqcloud.com/architecture.jpg)
+![架构](http://company.hummercloud.com/architecture.jpg)
 
 ## 技术优势
 
@@ -45,15 +45,15 @@ curl -sSL https://github.com/HummerRisk/HummerRisk/releases/latest/download/quic
 
 ## 帮助文档
 
-> [帮助文档](https://hummerrisk-docs-1312321453.cos-website.ap-beijing.myqcloud.com/)
+> [帮助文档](https://docs.hummercloud.com)
 
 ## 微信群
 
-<img src="https://hummerrisk-1312321453.cos.ap-beijing.myqcloud.com/contact_me_qr.png" width="156" height="156" alt="">
+<img src="http://company.hummercloud.com/contact_me_qr.png" width="156" height="156" alt="">
 
 ## 公众号
 
-<img src="https://hummerrisk-1312321453.cos.ap-beijing.myqcloud.com/qrcode_gongzhonghao.jpeg" width="156" height="156" alt="">
+<img src="http://company.hummercloud.com/qrcode_gongzhonghao.jpeg" width="156" height="156" alt="">
 
 ## 安全说明
 
