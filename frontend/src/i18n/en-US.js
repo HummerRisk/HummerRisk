@@ -822,6 +822,9 @@ export default {
     image_rule: 'Image detection rule',
     image_result: 'Image detection result',
     upload_tip2: 'Image package whose size does not exceed {0}',
+    rule_list: 'Mirror detection rule list',
+    create_rule: 'Create a mirror detection rule',
+    update_rule: 'Modify the mirror detection rule',
   },
   package: {
     package_setting: 'Package Management',
@@ -891,6 +894,7 @@ export default {
     delete_this_vuln: 'Delete this vulnerability detection configuration',
     please_choose_vuln: 'Please choose a vulnerability detection target',
     back_vuln: 'Return the vulnerability detection list',
+    history: 'Vulnerability detection history',
   },
   oss: {
     oss_setting: 'Object storage',

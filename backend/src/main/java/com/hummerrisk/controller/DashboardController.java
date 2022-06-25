@@ -49,11 +49,18 @@ public class DashboardController {
         return dashboardService.totalPolicy(params);
     }
 
-    @ApiOperation(value = "历史记录")
+    @ApiOperation(value = "云资源历史记录")
     @PostMapping("history/{goPage}/{pageSize}")
     public Pager<List<ScanHistoryDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, dashboardService.history(params));
+    }
+
+    @ApiOperation(value = "漏洞检测历史记录")
+    @PostMapping("vuln/history/{goPage}/{pageSize}")
+    public Pager<List<ScanHistoryDTO>> vulnHistory(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, dashboardService.vulnHistory(params));
     }
 
 

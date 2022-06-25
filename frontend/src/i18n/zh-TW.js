@@ -822,6 +822,9 @@ export default {
     image_rule: '鏡像檢測規則',
     image_result: '鏡像檢測結果',
     upload_tip2: '大小不超過 {0} 的鏡像包',
+    rule_list: '鏡像檢測規則列表',
+    create_rule: '創建鏡像檢測規則',
+    update_rule: '修改鏡像檢測規則',
   },
   package: {
     package_setting: '軟件包管理',
@@ -891,6 +894,7 @@ export default {
     delete_this_vuln: '刪除此漏洞檢測配置',
     please_choose_vuln: '請選擇漏洞檢測目標',
     back_vuln: '返回漏洞檢測列表',
+    history: '漏洞檢測歷史記錄',
   },
   oss: {
     oss_setting: '對象存儲',

@@ -64,6 +64,14 @@ public class DashboardService {
         return historyList;
     }
 
+    public List<ScanHistoryDTO> vulnHistory(Map<String, Object> params) {
+        List<ScanHistoryDTO> historyList = extVulnMapper.vulnHistory(params);
+        for (ScanHistoryDTO scanHistory : historyList) {
+            scanHistory.setOutput(toJSONString2(scanHistory.getOutput()!=null?scanHistory.getOutput():"[]"));
+        }
+        return historyList;
+    }
+
     public String toJSONString2(String jsonString) {
         String res = JSON.parse(jsonString).toString();
         JSONArray jsonArray = parseArray(res);

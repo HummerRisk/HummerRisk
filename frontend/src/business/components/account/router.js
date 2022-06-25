@@ -8,9 +8,9 @@ export default {
   },
   children: [
     {
-      path: 'accountoverview',
-      name: 'accountoverview',
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/AccountOverview'),
+      path: "clouddashboard",
+      name: "cloudDashboard",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/Dashboard"),
     },
     {
       path: "cloudaccount",
@@ -28,14 +28,14 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/QuartzTask'),
     },
     {
-      path: "clouddashboard",
-      name: "cloudDashboard",
-      component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/Dashboard"),
-    },
-    {
       path: "history",
       name: "history",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/History"),
+    },
+    {
+      path: 'accountoverview',
+      name: 'accountoverview',
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/AccountOverview'),
     },
   ]
 }

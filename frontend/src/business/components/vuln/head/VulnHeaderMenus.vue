@@ -16,6 +16,10 @@
             {{ $t("vuln.vuln_result") }}
           </el-menu-item>
 
+          <el-menu-item :index="'/vuln/history'">
+            {{ $t("vuln.history") }}
+          </el-menu-item>
+
         </el-menu>
       </el-col>
       <el-col :span="12"/>

@@ -15,49 +15,15 @@
       ref="nodeTree">
 
       <template v-slot:header>
-        <el-input class="module-input" :placeholder="$t('account.search')" v-model="condition.filterText"
+        <el-input class="module-input" :placeholder="$t('vuln.vuln_setting')" v-model="condition.filterText"
                   size="small">
           <template v-slot:append>
-            <el-button icon="el-icon-folder-add" @click="addScenario"/>
+            <el-button icon="el-icon-folder-add"/>
           </template>
         </el-input>
       </template>
 
     </node-tree>
-
-    <!--Create account-->
-    <el-drawer class="rtl" :title="$t('account.create')" :visible.sync="createVisible" size="50%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
-      <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="createAccountForm">
-        <el-form-item :label="$t('account.name')" ref="name" prop="name">
-          <el-input v-model="form.name" autocomplete="off" :placeholder="$t('account.input_name')"/>
-        </el-form-item>
-        <el-form-item :label="$t('account.cloud_platform')" :rules="{required: true, message: $t('account.cloud_platform'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePlugin(form.pluginId)">
-            <el-option
-              v-for="item in plugins"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-              <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-              &nbsp;&nbsp; {{ $t(item.name) }}
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <div v-for="(tmp, index) in tmpList" :key="index">
-          <el-form-item v-if="tmp.inputType === 'password'" :label="tmp.label" style="margin-bottom: 29px">
-            <el-input :type="tmp.inputType" v-model="tmp.input" autocomplete="new-password" show-password :placeholder="tmp.description"/>
-          </el-form-item>
-          <el-form-item v-if="tmp.inputType != 'password' && tmp.inputType != 'boolean'" :label="tmp.label">
-            <el-input :type="tmp.inputType" v-model="tmp.input" autocomplete="off" :placeholder="tmp.description"/>
-          </el-form-item>
-        </div>
-      </el-form>
-      <dialog-footer
-        @cancel="createVisible = false"
-        @confirm="saveAccount(form, 'add')"/>
-    </el-drawer>
-    <!--Create account-->
 
   </div>
 
@@ -137,14 +103,14 @@ import DialogFooter from "../../common/components/DialogFooter";
     methods: {
       //查询插件
       activePlugin() {
-        let url = "/plugin/all";
+        let url = "/plugin/vuln";
         this.result = this.$get(url, response => {
           let data = response.data;
           this.plugins =  data;
         });
       },
       list() {
-        let url = "/account/allList";
+        let url = "/account/vulnList";
         this.result = this.$get(url, response => {
           if (response.data != undefined && response.data != null) {
             this.data = response.data;
@@ -179,65 +145,8 @@ import DialogFooter from "../../common/components/DialogFooter";
       refresh() {
         this.$emit("refreshTable");
       },
-      addScenario() {
-        this.form = {};
-        this.createVisible = true;
-      },
       enableTrash() {
         this.condition.trashEnable = true;
-      },
-      //选择插件查询云账号信息
-      async changePlugin (pluginId, type){
-        let url = "/plugin/";
-        this.result = await this.$get(url + pluginId, response => {
-          let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
-          this.tmpList = fromJson.data;
-          if (type === 'edit') {
-            let credentials = typeof(this.item.credential) === 'string'?JSON.parse(this.item.credential):this.item.credential;
-            for (let tmp of this.tmpList) {
-              if (credentials[tmp.name] === undefined) {
-                tmp.input = tmp.defaultValue?tmp.defaultValue:"";
-              } else {
-                tmp.input = credentials[tmp.name];
-              }
-            }
-          } else {
-            for (let tmp of this.tmpList) {
-              if (tmp.defaultValue !== undefined) {
-                tmp.input = tmp.defaultValue;
-              }
-            }
-          }
-        });
-      },
-      //保存云账号
-      saveAccount(item, type){
-        if (!this.tmpList.length) {
-          this.$error(this.$t('account.i18n_account_cloud_plugin_param'));
-          return;
-        }
-        let data = {}, key = {};
-        for (let tmp of this.tmpList) {
-          key[tmp.name] = tmp.input;
-        }
-        data["credential"] = JSON.stringify(key);
-        data["name"] = item.name;
-        data["pluginId"] = item.pluginId;
-
-        if (type === 'add') {
-          this.$post("account/add", data,response => {
-            if (response.success) {
-              this.$success(this.$t('account.i18n_hr_create_success'));
-              this.handleClose();
-              this.list();
-            } else {
-              this.$error(response.message);
-            }
-          });
-        }
-      },
-      handleClose() {
-        this.createVisible = false;
       },
     }
   }

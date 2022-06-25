@@ -58,6 +58,10 @@ public class AccountService {
         return extAccountMapper.getCloudAccountList(request);
     }
 
+    public List<AccountDTO> vulnList(CloudAccountRequest request) {
+        return extAccountMapper.getVulnList(request);
+    }
+
     public AccountWithBLOBs getAccount(String id) {
        return accountMapper.selectByPrimaryKey(id);
     }

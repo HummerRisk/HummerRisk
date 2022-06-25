@@ -32,5 +32,15 @@ export default {
       name: "vlunscan",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/vuln/home/VulnScan'),
     },
+    {
+      path: "history",
+      name: "history",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/vuln/home/History"),
+    },
+    {
+      path: 'accountoverview',
+      name: 'accountoverview',
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/AccountOverview'),
+    },
   ]
 }

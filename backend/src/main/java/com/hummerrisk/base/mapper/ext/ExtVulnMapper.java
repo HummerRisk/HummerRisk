@@ -32,4 +32,7 @@ public interface ExtVulnMapper {
     List<DashboardTarget> target(Map<String, Object> params);
 
     List<ScanHistoryDTO> history(Map<String, Object> params);
+
+    List<ScanHistoryDTO> vulnHistory(Map<String, Object> params);
+
 }

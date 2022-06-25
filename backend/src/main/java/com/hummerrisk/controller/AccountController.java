@@ -46,6 +46,14 @@ public class AccountController {
         return accountService.getCloudAccountList(request);
     }
 
+    @ApiOperation(value = "所有漏洞检测")
+    @GetMapping("vulnList")
+    public List<AccountDTO> vulnList() {
+        CloudAccountRequest request = new CloudAccountRequest();
+        request.setStatus(CloudAccountConstants.Status.VALID.name());
+        return accountService.vulnList(request);
+    }
+
     @ApiOperation(value = "云账号详情")
     @GetMapping("getAccount/{id}")
     public AccountWithBLOBs getAccount(@PathVariable String id) {
