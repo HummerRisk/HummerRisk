@@ -12,19 +12,19 @@
             {{ $t("resource.cloud_statistics") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/vuln/result'">
+          <el-menu-item :index="'/resource/vulnResult'">
             {{ $t("vuln.vuln_result") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/server/result'">
+          <el-menu-item :index="'/resource/serverResult'">
             {{ $t("server.server_result") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/image/result'">
+          <el-menu-item :index="'/resource/imageResult'">
             {{ $t("image.image_result") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/package/result'">
+          <el-menu-item :index="'/resource/packageResult'">
             {{ $t("package.package_result") }}
           </el-menu-item>
 

@@ -46,9 +46,9 @@
         <i class="el-icon-folder-opened"></i>
         <span slot="title">{{ $t('oss.oss_setting') }}</span>
       </el-menu-item>
-      <el-menu-item index="/cloud/task" onselectstart="return false" v-permission="['admin']">
+      <el-menu-item index="/task" onselectstart="return false" v-permission="['admin']">
         <i class="el-icon-s-operation"></i>
-        <span slot="title">{{ $t('cloudTask.task_setting') }}</span>
+        <span slot="title">{{ $t('task.task_setting') }}</span>
       </el-menu-item>
       <el-menu-item index="/setting" onselectstart="return false" v-permission="['admin']">
         <i class="el-icon-setting"></i>

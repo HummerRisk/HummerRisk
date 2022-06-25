@@ -22,5 +22,25 @@ export default {
       name: "resultdetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/resource/home/ResultDetails"),
     },
+    {
+      path: "vulnResult",
+      name: "vulnResult",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/vuln/home/Result'),
+    },
+    {
+      path: "serverResult",
+      name: "serverResult",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Result'),
+    },
+    {
+      path: "imageResult",
+      name: "imageResult",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/Result'),
+    },
+    {
+      path: "packageResult",
+      name: "packageResult",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/package/home/Result'),
+    },
   ]
 }

@@ -7,15 +7,19 @@
             {{ $t("rule.cloud_rule") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/vuln/rule'">
+          <el-menu-item :index="'/rule/vulnRule'">
             {{ $t("vuln.vuln_rule") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/server/rule'">
+          <el-menu-item :index="'/rule/serverRule'">
             {{ $t("server.server_rule") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/package/rule'">
+          <el-menu-item :index="'/rule/imageRule'">
+            {{ $t("image.image_rule") }}
+          </el-menu-item>
+
+          <el-menu-item :index="'/rule/packageRule'">
             {{ $t("package.package_rule") }}
           </el-menu-item>
 
