@@ -1,7 +1,7 @@
 package com.hummerrisk.server;
 
-import com.hummerrisk.service.SysListener;
 import com.hummerrisk.proxy.server.SshUtil;
+import com.hummerrisk.service.SysListener;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;

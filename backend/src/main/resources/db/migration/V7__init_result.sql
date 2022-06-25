@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `task` (
+CREATE TABLE IF NOT EXISTS `cloud_task` (
     `id`                            varchar(50)           NOT NULL COMMENT '任务ID',
     `status`                        varchar(20)           DEFAULT NULL COMMENT '状态',
     `apply_user`                    varchar(50)           DEFAULT NULL COMMENT '申请人',
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `task` (
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 
-CREATE TABLE IF NOT EXISTS `task_item` (
+CREATE TABLE IF NOT EXISTS `cloud_task_item` (
     `id`                           varchar(50)         NOT NULL,
     `task_id`                      varchar(50)         DEFAULT NULL COMMENT '任务ID',
     `rule_id`                      varchar(50)         DEFAULT NULL COMMENT '规则ID',
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `task_item` (
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 
-CREATE TABLE IF NOT EXISTS `task_item_log` (
+CREATE TABLE IF NOT EXISTS `cloud_task_item_log` (
     `id`                           int(11)             NOT NULL AUTO_INCREMENT,
     `task_item_id`                 varchar(50)         DEFAULT NULL COMMENT '任务项ID',
     `resource_id`                  varchar(50)         DEFAULT NULL COMMENT '资源ID',
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `task_item_log` (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
 
-CREATE TABLE IF NOT EXISTS `task_item_resource`
+CREATE TABLE IF NOT EXISTS `cloud_task_item_resource`
 (
     `id`                          int(11)             NOT NULL AUTO_INCREMENT,
     `task_id`                     varchar(50)         DEFAULT NULL COMMENT '任务ID',

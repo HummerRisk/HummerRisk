@@ -33,15 +33,42 @@ import com.huaweicloud.sdk.iam.v3.IamClient;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneListProjectsRequest;
 import com.huaweicloud.sdk.iam.v3.model.ProjectResult;
 import com.huaweicloud.sdk.iam.v3.model.ShowCredential;
+import com.hummerrisk.base.domain.AccountWithBLOBs;
+import com.hummerrisk.base.domain.Proxy;
 import com.hummerrisk.commons.constants.*;
+import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.exception.PluginException;
+import com.hummerrisk.i18n.Translator;
+import com.hummerrisk.proxy.Request;
 import com.hummerrisk.proxy.aliyun.AliyunCredential;
 import com.hummerrisk.proxy.aliyun.AliyunRequest;
+import com.hummerrisk.proxy.aws.AWSCredential;
+import com.hummerrisk.proxy.aws.AWSRequest;
+import com.hummerrisk.proxy.azure.AzureBaseRequest;
+import com.hummerrisk.proxy.azure.AzureClient;
 import com.hummerrisk.proxy.azure.AzureCredential;
+import com.hummerrisk.proxy.baidu.BaiduCredential;
+import com.hummerrisk.proxy.gcp.GcpBaseRequest;
+import com.hummerrisk.proxy.gcp.GcpClient;
+import com.hummerrisk.proxy.gcp.GcpCredential;
+import com.hummerrisk.proxy.huawei.ClientUtil;
+import com.hummerrisk.proxy.huawei.HuaweiCloudCredential;
 import com.hummerrisk.proxy.huoshan.HuoshanCredential;
 import com.hummerrisk.proxy.k8s.K8sCredential;
+import com.hummerrisk.proxy.nuclei.NucleiCredential;
 import com.hummerrisk.proxy.openstack.OpenStackCredential;
+import com.hummerrisk.proxy.openstack.OpenStackRequest;
+import com.hummerrisk.proxy.openstack.OpenStackUtils;
+import com.hummerrisk.proxy.qingcloud.QingCloudCredential;
+import com.hummerrisk.proxy.qiniu.QiniuCredential;
+import com.hummerrisk.proxy.tencent.QCloudBaseRequest;
 import com.hummerrisk.proxy.tsunami.TsunamiCredential;
+import com.hummerrisk.proxy.ucloud.UCloudCredential;
+import com.hummerrisk.proxy.vsphere.VsphereBaseRequest;
+import com.hummerrisk.proxy.vsphere.VsphereClient;
+import com.hummerrisk.proxy.vsphere.VsphereCredential;
+import com.hummerrisk.proxy.vsphere.VsphereRegion;
+import com.hummerrisk.proxy.xray.XrayCredential;
 import com.qingcloud.sdk.config.EnvContext;
 import com.qingcloud.sdk.service.InstanceService;
 import com.qiniu.util.Auth;
@@ -55,34 +82,6 @@ import com.volcengine.service.cdn.CDNService;
 import com.volcengine.service.cdn.impl.CDNServiceImpl;
 import com.volcengine.service.iam.IIamService;
 import com.volcengine.service.iam.impl.IamServiceImpl;
-import com.hummerrisk.base.domain.AccountWithBLOBs;
-import com.hummerrisk.base.domain.Proxy;
-import com.hummerrisk.commons.constants.*;
-import com.hummerrisk.commons.exception.HRException;
-import com.hummerrisk.i18n.Translator;
-import com.hummerrisk.proxy.Request;
-import com.hummerrisk.proxy.aws.AWSCredential;
-import com.hummerrisk.proxy.aws.AWSRequest;
-import com.hummerrisk.proxy.azure.AzureBaseRequest;
-import com.hummerrisk.proxy.azure.AzureClient;
-import com.hummerrisk.proxy.baidu.BaiduCredential;
-import com.hummerrisk.proxy.gcp.GcpBaseRequest;
-import com.hummerrisk.proxy.gcp.GcpClient;
-import com.hummerrisk.proxy.gcp.GcpCredential;
-import com.hummerrisk.proxy.huawei.ClientUtil;
-import com.hummerrisk.proxy.huawei.HuaweiCloudCredential;
-import com.hummerrisk.proxy.nuclei.NucleiCredential;
-import com.hummerrisk.proxy.openstack.OpenStackRequest;
-import com.hummerrisk.proxy.openstack.OpenStackUtils;
-import com.hummerrisk.proxy.qingcloud.QingCloudCredential;
-import com.hummerrisk.proxy.qiniu.QiniuCredential;
-import com.hummerrisk.proxy.tencent.QCloudBaseRequest;
-import com.hummerrisk.proxy.ucloud.UCloudCredential;
-import com.hummerrisk.proxy.vsphere.VsphereBaseRequest;
-import com.hummerrisk.proxy.vsphere.VsphereClient;
-import com.hummerrisk.proxy.vsphere.VsphereCredential;
-import com.hummerrisk.proxy.vsphere.VsphereRegion;
-import com.hummerrisk.proxy.xray.XrayCredential;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.Configuration;
 import org.apache.commons.collections.CollectionUtils;
@@ -213,15 +212,15 @@ public class PlatformUtils {
                     String defaultCredentials = "[default]" + "\n"
                             + "aws_access_key_id=" + awsAccessKey + "\n"
                             + "aws_secret_access_key=" + awsSecretKey + "\n";
-                    CommandUtils.saveAsFile(defaultConfig, TaskConstants.PROWLER_CONFIG_FILE_PATH, "config");
-                    CommandUtils.saveAsFile(defaultCredentials, TaskConstants.PROWLER_CONFIG_FILE_PATH, "credentials");
-                    String config = ReadFileUtils.readToBuffer(TaskConstants.PROWLER_CONFIG_FILE_PATH + "/config");
-                    String credentials = ReadFileUtils.readToBuffer(TaskConstants.PROWLER_CONFIG_FILE_PATH + "/credentials");
+                    CommandUtils.saveAsFile(defaultConfig, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "config");
+                    CommandUtils.saveAsFile(defaultCredentials, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "credentials");
+                    String config = ReadFileUtils.readToBuffer(CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/config");
+                    String credentials = ReadFileUtils.readToBuffer(CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/credentials");
                     if (!config.contains(region)) {
-                        CommandUtils.commonExecCmdWithResult("echo -e '" + defaultConfig + "' >> " + TaskConstants.PROWLER_CONFIG_FILE_PATH + "/config", TaskConstants.PROWLER_CONFIG_FILE_PATH);
+                        CommandUtils.commonExecCmdWithResult("echo -e '" + defaultConfig + "' >> " + CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/config", CloudTaskConstants.PROWLER_CONFIG_FILE_PATH);
                     }
                     if (!credentials.contains(awsAccessKey) && !credentials.contains(awsSecretKey)) {
-                        CommandUtils.commonExecCmdWithResult("echo -e '" + defaultCredentials + "' >> " + TaskConstants.PROWLER_CONFIG_FILE_PATH + "/credentials", TaskConstants.PROWLER_CONFIG_FILE_PATH);
+                        CommandUtils.commonExecCmdWithResult("echo -e '" + defaultCredentials + "' >> " + CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/credentials", CloudTaskConstants.PROWLER_CONFIG_FILE_PATH);
                     }
                     return proxy + "./prowler -g " + (StringUtils.isNotEmpty(fileName) ? fileName : "group1") + " -f " + region + " -s -M text > result.txt";
                 }
@@ -378,7 +377,7 @@ public class PlatformUtils {
                 } else if (StringUtils.equalsIgnoreCase(osInfo, EPlatform.Windows.toString())) {
                     xray = "xray_windows_amd64";
                 }
-                return proxy + TaskConstants.XRAY_RESULT_FILE_PATH + xray + " webscan --plugins " + (StringUtils.isNotEmpty(fileName) ? fileName : "xss") + " --url-file " + dirPath + "/urls.txt  --json-output " + dirPath + "/" + TaskConstants.XRAY_RUN_RESULT_FILE;
+                return proxy + CloudTaskConstants.XRAY_RESULT_FILE_PATH + xray + " webscan --plugins " + (StringUtils.isNotEmpty(fileName) ? fileName : "xss") + " --url-file " + dirPath + "/urls.txt  --json-output " + dirPath + "/" + CloudTaskConstants.XRAY_RUN_RESULT_FILE;
             case tsunami:
                 return "";
         }

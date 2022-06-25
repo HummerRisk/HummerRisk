@@ -17,7 +17,6 @@ import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.exception.PluginException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.proxy.Request;
-import com.hummerrisk.commons.utils.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 

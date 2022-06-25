@@ -1,7 +1,7 @@
 package com.hummerrisk.dto;
 
-import com.hummerrisk.base.domain.Task;
 import com.hummerrisk.base.domain.Account;
+import com.hummerrisk.base.domain.CloudTask;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public class SourceDTO extends Account {
 
     private String resourcesSum;
 
-    private List<Task> taskList;
+    private List<CloudTask> cloudTaskList;
 
     private String userName;
 
@@ -36,12 +36,12 @@ public class SourceDTO extends Account {
         this.resourcesSum = resourcesSum;
     }
 
-    public List<Task> getTaskList() {
-        return taskList;
+    public List<CloudTask> getTaskList() {
+        return cloudTaskList;
     }
 
-    public void setTaskList(List<Task> taskList) {
-        this.taskList = taskList;
+    public void setTaskList(List<CloudTask> cloudTaskList) {
+        this.cloudTaskList = cloudTaskList;
     }
 
     public String getUserName() {

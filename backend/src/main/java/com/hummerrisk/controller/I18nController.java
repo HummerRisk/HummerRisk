@@ -2,11 +2,11 @@ package com.hummerrisk.controller;
 
 
 import com.hummerrisk.commons.constants.I18nConstants;
-import com.hummerrisk.i18n.Lang;
-import com.hummerrisk.service.UserService;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.LogUtil;
+import com.hummerrisk.i18n.Lang;
 import com.hummerrisk.i18n.Translator;
+import com.hummerrisk.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

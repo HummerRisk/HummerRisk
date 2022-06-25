@@ -1,8 +1,8 @@
 package com.hummerrisk.service;
 
-import com.hummerrisk.base.domain.Task;
-import com.hummerrisk.base.domain.TaskExample;
-import com.hummerrisk.base.mapper.TaskMapper;
+import com.hummerrisk.base.domain.CloudTask;
+import com.hummerrisk.base.domain.CloudTaskExample;
+import com.hummerrisk.base.mapper.CloudTaskMapper;
 import com.hummerrisk.base.mapper.ext.ExtAccountMapper;
 import com.hummerrisk.base.mapper.ext.ExtRuleMapper;
 import com.hummerrisk.commons.utils.PlatformUtils;
@@ -30,7 +30,7 @@ public class VulnService {
     @Resource
     private ExtRuleMapper extRuleMapper;
     @Resource
-    private TaskMapper taskMapper;
+    private CloudTaskMapper cloudTaskMapper;
 
     public List<AccountDTO> getVulnList(CloudAccountRequest request) {
         return extAccountMapper.getVulnList(request);
@@ -40,11 +40,11 @@ public class VulnService {
         return extRuleMapper.vulnList(ruleRequest);
     }
 
-    public List<Task> selectManualTasks(Map<String, Object> params) throws Exception {
+    public List<CloudTask> selectManualTasks(Map<String, Object> params) throws Exception {
 
         try {
-            TaskExample example = new TaskExample();
-            TaskExample.Criteria criteria = example.createCriteria();
+            CloudTaskExample example = new CloudTaskExample();
+            CloudTaskExample.Criteria criteria = example.createCriteria();
             if (params.get("name") != null && StringUtils.isNotEmpty(params.get("name").toString())) {
                 criteria.andTaskNameLike("%" + params.get("name").toString() + "%");
             }
@@ -74,7 +74,7 @@ public class VulnService {
             }
             criteria.andPluginIdIn(PlatformUtils.getVulnPlugin());
             example.setOrderByClause("FIELD(`status`, 'PROCESSING', 'APPROVED', 'FINISHED', 'WARNING', 'ERROR'), return_sum desc, create_time desc, FIELD(`severity`, 'HighRisk', 'MediumRisk', 'LowRisk')");
-            return taskMapper.selectByExample(example);
+            return cloudTaskMapper.selectByExample(example);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

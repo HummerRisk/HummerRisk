@@ -168,11 +168,11 @@ public class NoticeService {
         messageOrderMapper.updateByPrimaryKeySelective(messageOrder);
     }
 
-    public void createMessageOrderItem (String messageOrderId, Task task) {
+    public void createMessageOrderItem (String messageOrderId, CloudTask cloudTask) {
         MessageOrderItem messageOrderItem = new MessageOrderItem();
         messageOrderItem.setMessageOrderId(messageOrderId);
-        messageOrderItem.setTaskId(task.getId());
-        messageOrderItem.setTaskName(task.getTaskName());
+        messageOrderItem.setTaskId(cloudTask.getId());
+        messageOrderItem.setTaskName(cloudTask.getTaskName());
         messageOrderItem.setCreateTime(System.currentTimeMillis());
         messageOrderItem.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
         messageOrderItemMapper.insertSelective(messageOrderItem);

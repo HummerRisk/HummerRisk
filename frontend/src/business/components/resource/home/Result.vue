@@ -448,7 +448,7 @@ import {ACCOUNT_ID} from "@/common/js/constants";
           this.source = response.data;
         });
 
-        let url = "/task/manual/list/" + this.currentPage + "/" + this.pageSize;
+        let url = "/cloud/task/manual/list/" + this.currentPage + "/" + this.pageSize;
         //在这里实现事件
         this.condition.accountId = this.accountId;
         this.result = await this.$post(url, this.condition, response => {
@@ -501,7 +501,7 @@ import {ACCOUNT_ID} from "@/common/js/constants";
           this.source.scanScore = data.scanScore;
           this.source.returnSum = data.returnSum;
           this.source.resourcesSum = data.resourcesSum;
-          let url = "/task/manual/list/" + this.currentPage + "/" + this.pageSize;
+          let url = "/cloud/task/manual/list/" + this.currentPage + "/" + this.pageSize;
           this.condition.accountId = this.accountId;
           //在这里实现事件
           this.$post(url, this.condition, response => {
@@ -537,11 +537,11 @@ import {ACCOUNT_ID} from "@/common/js/constants";
           return '';
         }
       },
-      showTaskLog (task) {
-        let showLogTaskId = task.id;
+      showTaskLog (cloudTask) {
+        let showLogTaskId = cloudTask.id;
         let url = "";
         if (showLogTaskId) {
-          url = "/task/log/taskId/";
+          url = "/cloud/task/log/taskId/";
         }
         this.logForm.taskItemLogDTOs = [];
         this.logForm.showLogTaskId = showLogTaskId;
@@ -552,7 +552,7 @@ import {ACCOUNT_ID} from "@/common/js/constants";
       },
       showTaskDetail(item) {
         this.detailForm = {};
-        this.$get("/task/detail/" + item.id, response => {
+        this.$get("/cloud/task/detail/" + item.id, response => {
           if (response.success) {
             this.detailForm = response.data;
             this.detailVisible = true;

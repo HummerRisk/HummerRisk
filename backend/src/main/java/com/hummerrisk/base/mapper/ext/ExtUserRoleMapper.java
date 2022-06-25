@@ -4,8 +4,8 @@ import com.hummerrisk.base.domain.Role;
 import com.hummerrisk.base.domain.User;
 import com.hummerrisk.controller.request.member.QueryMemberRequest;
 import com.hummerrisk.controller.request.organization.QueryOrgMemberRequest;
-import com.hummerrisk.dto.UserRoleHelpDTO;
 import com.hummerrisk.dto.OrganizationMemberDTO;
+import com.hummerrisk.dto.UserRoleHelpDTO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

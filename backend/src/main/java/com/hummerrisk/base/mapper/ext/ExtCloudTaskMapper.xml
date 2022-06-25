@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.hummerrisk.base.mapper.ext.ExtTaskMapper">
+<mapper namespace="com.hummerrisk.base.mapper.ext.ExtCloudTaskMapper">
     <resultMap id="ExtResultMap" type="com.hummerrisk.dto.TaskDTO"
-               extends="com.hummerrisk.base.mapper.TaskMapper.BaseResultMap">
+               extends="com.hummerrisk.base.mapper.CloudTaskMapper.BaseResultMap">
             <result column="count" property="count"/>
             <result column="custom_data" property="customData"/>
             <result column="details" property="details"/>
@@ -12,77 +12,77 @@
 
     <select id="getTaskDetail" resultMap="ExtResultMap" parameterType="java.lang.String">
         SELECT
-          task.*,
-          task_item.custom_data              AS custom_data,
-          task_item.details                  AS details,
-          task_item.rule_id                  AS rule_id,
-          task_item.create_time              AS task_item_create_time
-       FROM task JOIN task_item ON task.id = task_item.task_id
-       WHERE task.id = #{taskId}
+          cloud_task.*,
+          cloud_task_item.custom_data              AS custom_data,
+          cloud_task_item.details                  AS details,
+          cloud_task_item.rule_id                  AS rule_id,
+          cloud_task_item.create_time              AS task_item_create_time
+       FROM cloud_task JOIN cloud_task_item ON cloud_task.id = cloud_task_item.task_id
+       WHERE cloud_task.id = #{taskId}
        limit 1
     </select>
 
 
-    <select id="searchTask" parameterType="com.hummerrisk.controller.request.task.TaskSearchRequest" resultMap="ExtResultMap">
+    <select id="searchTask" parameterType="com.hummerrisk.controller.request.cloudTask.CloudTaskSearchRequest" resultMap="ExtResultMap">
         SELECT *
-        FROM task
+        FROM cloud_task
         <if test="applyUser != null">
-            LEFT JOIN user ON task.apply_user = user.id
+            LEFT JOIN user ON cloud_task.apply_user = user.id
         </if>
         <where>
             <if test="id != null">
-                AND task.id like #{id}
+                AND cloud_task.id like #{id}
             </if>
             <if test="status != null">
-                AND task.status = #{status}
+                AND cloud_task.status = #{status}
             </if>
             <if test="applyUser != null">
                 AND user.name LIKE #{applyUser}
             </if>
             <if test="processId != null">
-                AND task.process_id = #{processId}
+                AND cloud_task.process_id = #{processId}
             </if>
             <if test="type != null">
-                AND task.type = #{type}
+                AND cloud_task.type = #{type}
             </if>
         </where>
-        TASK BY task.create_time desc
+        Order BY cloud_task.create_time desc
     </select>
 
     <select id="getTaskExtendInfo" resultMap="ExtResultMap">
-        SELECT task.*, COUNT(task_item_resource.resource_id) as count
-        FROM task
-        LEFT JOIN task_item_resource ON task_item_resource.task_id = task.id
-        WHERE task.id = #{taskId}
-        GROUP BY task.id
+        SELECT cloud_task.*, COUNT(task_item_resource.resource_id) as count
+        FROM cloud_task
+        LEFT JOIN cloud_task_item_resource ON task_item_resource.task_id = cloud_task.id
+        WHERE cloud_task.id = #{taskId}
+        GROUP BY cloud_task.id
     </select>
 
     <select id="getResourceSum" resultType="java.lang.Integer">
         SELECT IFNULL(sum(IFNULL(t3.resources_sum, 0)), 0)
-        FROM task t
-        LEFT JOIN task_item t1 ON t.id = t1.task_id
-        LEFT JOIN task_item_resource t2  ON t1.id = t2.task_item_id
+        FROM cloud_task t
+        LEFT JOIN cloud_task_item t1 ON t.id = t1.task_id
+        LEFT JOIN cloud_task_item_resource t2  ON t1.id = t2.task_item_id
         LEFT JOIN resource t3  ON t2.resource_id = t3.id
         WHERE t.id = #{taskId}
     </select>
 
     <select id="getReturnSum" resultType="java.lang.Integer">
         SELECT IFNULL(sum(IFNULL(t3.return_sum, 0)), 0)
-        FROM task t
-        LEFT JOIN task_item t1 ON t.id = t1.task_id
-        LEFT JOIN task_item_resource t2  ON t1.id = t2.task_item_id
+        FROM cloud_task t
+        LEFT JOIN cloud_task_item t1 ON t.id = t1.task_id
+        LEFT JOIN cloud_task_item_resource t2  ON t1.id = t2.task_item_id
         LEFT JOIN resource t3  ON t2.resource_id = t3.id
         WHERE t.id = #{taskId}
     </select>
 
     <resultMap id="BaseResultMap" type="com.hummerrisk.dto.TaskDTO"
-               extends="com.hummerrisk.base.mapper.TaskMapper.BaseResultMap">
+               extends="com.hummerrisk.base.mapper.CloudTaskMapper.BaseResultMap">
         <result column="account_name" property="accountName"/>
     </resultMap>
 
     <select id="getTopTasksForEmail" resultMap="BaseResultMap" parameterType="com.hummerrisk.base.domain.MessageOrder">
         SELECT t.*, t3.name as account_name
-        FROM task t
+        FROM cloud_task t
         JOIN message_order_item t1 ON t.id = t1.task_id
         JOIN message_order t2 ON t1.message_order_id = t2.id
         JOIN cloud_account t3 ON t2.account_id = t3.id
@@ -92,7 +92,7 @@
 
     <select id="getReturnSumForEmail" resultType="java.lang.Integer" parameterType="com.hummerrisk.base.domain.MessageOrder">
         SELECT IFNULL(sum(IFNULL(t.return_sum, 0)), 0)
-        FROM task t
+        FROM cloud_task t
         JOIN message_order_item t1 ON t.id = t1.task_id
         JOIN message_order t2 ON t1.message_order_id = t2.id
         WHERE t2.id = #{id}
@@ -100,7 +100,7 @@
 
     <select id="getResourcesSumForEmail" resultType="java.lang.Integer" parameterType="com.hummerrisk.base.domain.MessageOrder">
         SELECT IFNULL(sum(IFNULL(t.resources_sum, 0)), 0)
-        FROM task t
+        FROM cloud_task t
         JOIN message_order_item t1 ON t.id = t1.task_id
         JOIN message_order t2 ON t1.message_order_id = t2.id
         WHERE t2.id = #{id}

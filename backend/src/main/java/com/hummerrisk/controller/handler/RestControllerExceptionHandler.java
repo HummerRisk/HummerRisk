@@ -1,8 +1,8 @@
 package com.hummerrisk.controller.handler;
 
 
-import com.hummerrisk.controller.ResultHolder;
 import com.hummerrisk.commons.exception.HRException;
+import com.hummerrisk.controller.ResultHolder;
 import org.apache.shiro.ShiroException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;

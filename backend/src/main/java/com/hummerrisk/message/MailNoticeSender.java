@@ -1,7 +1,7 @@
 package com.hummerrisk.message;
 
-import com.hummerrisk.service.MailService;
 import com.hummerrisk.commons.utils.LogUtil;
+import com.hummerrisk.service.MailService;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;

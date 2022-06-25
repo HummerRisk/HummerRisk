@@ -31,7 +31,7 @@
         SELECT
         sum( tt.return_sum )
         FROM
-        task tt
+        cloud_task tt
         WHERE
         tt.account_id = t.id
         ), 0) as returnSum,
@@ -39,17 +39,17 @@
         SELECT
         sum( tt.resources_sum )
         FROM
-        task tt
+        cloud_task tt
         WHERE
         tt.account_id = t.id
         ), 0) as resourcesSum,
         IFNULL((select t1.scan_score FROM scan_history t1 WHERE t.id = t1.account_id ORDER BY t1.create_time DESC limit 1), 100) AS scanScore,
         CASE
-        WHEN 'APPROVED' IN (SELECT t2.status FROM task t2 WHERE t.id = t2.account_id) THEN 'APPROVED'
-        WHEN 'PROCESSING' IN (SELECT t2.status FROM task t2 WHERE t.id = t2.account_id) THEN 'PROCESSING'
-        WHEN 'ERROR' IN (SELECT t2.status FROM task t2 WHERE t.id = t2.account_id) THEN 'ERROR'
-        WHEN 'WARNING' IN (SELECT t2.status FROM task t2 WHERE t.id = t2.account_id) THEN 'WARNING'
-        WHEN 'FINISHED' IN (SELECT t2.status FROM task t2 WHERE t.id = t2.account_id) THEN 'FINISHED'
+        WHEN 'APPROVED' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'APPROVED'
+        WHEN 'PROCESSING' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'PROCESSING'
+        WHEN 'ERROR' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'ERROR'
+        WHEN 'WARNING' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'WARNING'
+        WHEN 'FINISHED' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'FINISHED'
         ELSE 'UNDEFINED'
         END AS resultStatus
         FROM cloud_account t
@@ -63,9 +63,9 @@
         ORDER BY t.create_time DESC
     </select>
 
-    <select id="getTaskList" resultType="com.hummerrisk.base.domain.Task" parameterType="java.lang.String">
+    <select id="getTaskList" resultType="com.hummerrisk.base.domain.CloudTask" parameterType="java.lang.String">
         SELECT t.*
-        FROM task t
+        FROM cloud_task t
         WHERE t.account_id = #{id}
     </select>
 
@@ -87,9 +87,9 @@
         t.*
         FROM resource_item t
         LEFT JOIN resource t1 ON t1.id = t.resource_id
-        LEFT JOIN task_item_resource t2 ON t1.id = t2.resource_id
-        LEFT JOIN task_item t3 ON t3.id = t2.task_item_id
-        LEFT JOIN task t4 ON t3.task_id = t4.id
+        LEFT JOIN cloud_task_item_resource t2 ON t1.id = t2.resource_id
+        LEFT JOIN cloud_task_item t3 ON t3.id = t2.task_item_id
+        LEFT JOIN cloud_task t4 ON t3.task_id = t4.id
         LEFT JOIN resource_rule t5 ON t1.id = t5.resource_id
         LEFT JOIN rule t6 ON t5.rule_id = t6.id
         LEFT JOIN cloud_account t7 ON t.account_id = t7.id
@@ -138,7 +138,7 @@
 
     <select id="resultPercent" resultType="java.lang.String">
         select IFNULL(sum( t.return_sum ), 0)/IFNULL(sum( t.resources_sum ), 1)
-        from task t
+        from cloud_task t
         join cloud_account t1 on t.account_id = t1.id
         <where>
             <if test="severity != null">
@@ -155,7 +155,7 @@
 
     <select id="sumReturnSum" resultType="java.lang.String">
         select IFNULL(sum( t.return_sum ), 0)
-        from task t
+        from cloud_task t
         join cloud_account t1 on t.account_id = t1.id
         <where>
             <if test="accountId != null">
@@ -166,7 +166,7 @@
 
     <select id="sumResourcesSum" resultType="java.lang.String">
         select IFNULL(sum( t.resources_sum ), 0)
-        from task t
+        from cloud_task t
         join cloud_account t1 on t.account_id = t1.id
         <where>
             <if test="accountId != null">
@@ -178,7 +178,7 @@
     <resultMap id="ReportListResultMap" type="com.hummerrisk.dto.ReportDTO"
                extends="com.hummerrisk.base.mapper.RuleInspectionReportMapper.BaseResultMap">
         <result column="status" jdbcType="VARCHAR" property="status"/>
-        <collection property="taskList" ofType="com.hummerrisk.base.domain.Task" javaType="list" select="getReportTaskList" column="id">
+        <collection property="cloudTaskList" ofType="com.hummerrisk.base.domain.CloudTask" javaType="list" select="getReportTaskList" column="id">
             <id column="id" jdbcType="VARCHAR" property="id" />
             <result column="status" jdbcType="VARCHAR" property="status" />
             <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
@@ -240,10 +240,10 @@
         ORDER BY FIELD(status, 'risky','risk_free'), t.id
     </select>
 
-    <select id="getReportTaskList" resultType="com.hummerrisk.base.domain.Task" parameterType="java.lang.String">
+    <select id="getReportTaskList" resultType="com.hummerrisk.base.domain.CloudTask" parameterType="java.lang.String">
         SELECT DISTINCT t.*
-        FROM task t
-        JOIN task_item t1 on t.id = t1.task_id
+        FROM cloud_task t
+        JOIN cloud_task_item t1 on t.id = t1.task_id
         JOIN rule_inspection_report_mapping t2 on t2.rule_id = t1.rule_id
         JOIN rule_inspection_report t3 on t3.id = t2.report_id
         where t3.id = #{id}
@@ -257,8 +257,8 @@
             FROM
                 rule_inspection_report t
                 LEFT JOIN rule_inspection_report_mapping t1 ON t1.report_id = t.id
-                LEFT JOIN task_item t2 ON t2.rule_id = t1.rule_id
-                LEFT JOIN task t3 ON t3.id = t2.task_id
+                LEFT JOIN cloud_task_item t2 ON t2.rule_id = t1.rule_id
+                LEFT JOIN cloud_task t3 ON t3.id = t2.task_id
                 LEFT JOIN rule_group_mapping t4 ON t3.rule_id = t4.rule_id
             WHERE
                 t3.account_id = #{accountId}
@@ -275,7 +275,7 @@
                 SELECT
                     sum( t.return_sum )
                 FROM
-                    task t
+                    cloud_task t
                 WHERE
                     t.account_id = #{accountId}
                 AND t.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = #{groupId})
@@ -286,7 +286,7 @@
                 SELECT
                     sum( t.resources_sum )
                 FROM
-                    task t
+                    cloud_task t
                 WHERE
                     t.account_id = #{accountId}
                 AND t.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = #{groupId})
@@ -315,7 +315,7 @@
             ) > 0 THEN 'risky'
             ELSE 'risk_free'
             END AS status,
-            (select create_time from task where account_id = #{accountId} order by create_time desc limit 1) as createTime,
+            (select create_time from cloud_task where account_id = #{accountId} order by create_time desc limit 1) as createTime,
             '暂无合规报告' as state
         FROM rule_group t
         left join cloud_account t1 on t.plugin_id = t1.plugin_id
@@ -350,11 +350,11 @@
         ORDER BY t.resource_type, t1.resource_name, t.region_id, t.hummer_id
     </select>
 
-    <select id="resource" resultType="com.hummerrisk.base.domain.ResourceWithBLOBs" parameterType="com.hummerrisk.base.domain.TaskItem">
+    <select id="resource" resultType="com.hummerrisk.base.domain.ResourceWithBLOBs" parameterType="com.hummerrisk.base.domain.CloudTaskItem">
         SELECT t.*
         FROM resource t
-        left join task_item_resource t1 on t.id = t1.resource_id
-        left join task_item t2 on t1.task_item_id = t2.id
+        left join cloud_task_item_resource t1 on t.id = t1.resource_id
+        left join cloud_task_item t2 on t1.task_item_id = t2.id
         <where>
             <if test="taskId != null">
                 AND t1.task_id = #{taskId}

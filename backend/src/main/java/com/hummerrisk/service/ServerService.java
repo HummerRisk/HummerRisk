@@ -9,9 +9,9 @@ import com.hummerrisk.base.mapper.ext.ExtServerMapper;
 import com.hummerrisk.base.mapper.ext.ExtServerResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtServerRuleMapper;
 import com.hummerrisk.commons.constants.CloudAccountConstants;
+import com.hummerrisk.commons.constants.CloudTaskConstants;
 import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
-import com.hummerrisk.commons.constants.TaskConstants;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.BeanUtils;
 import com.hummerrisk.commons.utils.LogUtil;
@@ -125,7 +125,7 @@ public class ServerService {
                     result.setRuleId(dto.getId());
                     result.setRuleName(dto.getName());
                     result.setRuleDesc(dto.getDescription());
-                    result.setResultStatus(TaskConstants.TASK_STATUS.APPROVED.toString());
+                    result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
                     result.setSeverity(dto.getSeverity());
                     serverResultMapper.insertSelective(result);
 
@@ -158,7 +158,7 @@ public class ServerService {
             String returnLog = execute(server.getIp(), server.getUserName(), server.getPassword(), script, proxy);
             result.setReturnLog(returnLog);
             result.setUpdateTime(System.currentTimeMillis());
-            result.setResultStatus(TaskConstants.TASK_STATUS.FINISHED.toString());
+            result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
             serverResultMapper.updateByPrimaryKeySelective(result);
 
             noticeService.createServerMessageOrder(result);
@@ -166,7 +166,7 @@ public class ServerService {
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
-            result.setResultStatus(TaskConstants.TASK_STATUS.ERROR.toString());
+            result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             serverResultMapper.updateByPrimaryKeySelective(result);
             saveServerResultLog(result.getId(), Translator.get("i18n_operation_ex") + ": " + e.getMessage(), e.getMessage(), false);
             throw new HRException(e.getMessage());
@@ -177,7 +177,7 @@ public class ServerService {
         ServerResult result = serverResultMapper.selectByPrimaryKey(id);
         saveServerResultLog(result.getId(), Translator.get("i18n_restart_server_result"), "", true);
         result.setUpdateTime(System.currentTimeMillis());
-        result.setResultStatus(TaskConstants.TASK_STATUS.APPROVED.toString());
+        result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         serverResultMapper.updateByPrimaryKeySelective(result);
     }
 

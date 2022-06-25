@@ -262,7 +262,7 @@ public class PackageService {
                 result.setRuleId(dto.getId());
                 result.setRuleName(dto.getName());
                 result.setRuleDesc(dto.getDescription());
-                result.setResultStatus(TaskConstants.TASK_STATUS.APPROVED.toString());
+                result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
                 result.setSeverity(dto.getSeverity());
                 result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
                 packageResultMapper.insertSelective(result);
@@ -303,7 +303,7 @@ public class PackageService {
             result.setReturnJson(returnJson);
             result.setReturnHtml(returnHtml);
             result.setUpdateTime(System.currentTimeMillis());
-            result.setResultStatus(TaskConstants.TASK_STATUS.FINISHED.toString());
+            result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
             packageResultMapper.updateByPrimaryKeySelective(result);
 
             noticeService.createPackageMessageOrder(result);
@@ -311,7 +311,7 @@ public class PackageService {
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
-            result.setResultStatus(TaskConstants.TASK_STATUS.ERROR.toString());
+            result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             packageResultMapper.updateByPrimaryKeySelective(result);
             savePackageResultLog(result.getId(), Translator.get("i18n_operation_ex") + ": " + e.getMessage(), e.getMessage(), false);
             throw new HRException(e.getMessage());
@@ -335,7 +335,7 @@ public class PackageService {
         result.setRuleId(dto.getId());
         result.setRuleName(dto.getName());
         result.setRuleDesc(dto.getDescription());
-        result.setResultStatus(TaskConstants.TASK_STATUS.APPROVED.toString());
+        result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         result.setSeverity(dto.getSeverity());
         result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
         packageResultMapper.insertSelective(result);

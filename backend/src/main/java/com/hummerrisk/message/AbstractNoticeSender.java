@@ -1,9 +1,9 @@
 package com.hummerrisk.message;
 
-import com.hummerrisk.commons.constants.NoticeConstants;
-import com.hummerrisk.service.UserService;
 import com.hummerrisk.base.domain.UserDetail;
+import com.hummerrisk.commons.constants.NoticeConstants;
 import com.hummerrisk.commons.utils.LogUtil;
+import com.hummerrisk.service.UserService;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RegExUtils;

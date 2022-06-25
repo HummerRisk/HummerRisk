@@ -6,12 +6,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.hummer.quartz.service.QuartzManageService;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
+import com.hummerrisk.base.mapper.ext.ExtCloudTaskMapper;
 import com.hummerrisk.base.mapper.ext.ExtResourceMapper;
-import com.hummerrisk.base.mapper.ext.ExtTaskMapper;
+import com.hummerrisk.commons.constants.CloudTaskConstants;
 import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.constants.ScanTypeConstants;
-import com.hummerrisk.commons.constants.TaskConstants;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.dto.QuartzTaskDTO;
@@ -43,17 +43,17 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     @Resource @Lazy
-    private TaskMapper taskMapper;
+    private CloudTaskMapper cloudTaskMapper;
     @Resource @Lazy
-    private TaskItemMapper taskItemMapper;
+    private CloudTaskItemMapper cloudTaskItemMapper;
     @Resource @Lazy
-    private ExtTaskMapper extTaskMapper;
+    private ExtCloudTaskMapper extCloudTaskMapper;
     @Resource @Lazy
-    private TaskItemLogMapper taskItemLogMapper;
+    private CloudTaskItemLogMapper cloudTaskItemLogMapper;
     @Resource @Lazy
     private CommonThreadPool commonThreadPool;
     @Resource @Lazy
-    private TaskItemResourceMapper taskItemResourceMapper;
+    private CloudTaskItemResourceMapper cloudTaskItemResourceMapper;
     @Resource @Lazy
     private ResourceMapper resourceMapper;
     @Resource @Lazy
@@ -81,9 +81,9 @@ public class OrderService {
     @Resource @Lazy
     private CloudAccountQuartzTaskRelaLogMapper quartzTaskRelaLogMapper;
 
-    public Task createTask(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId) throws Exception {
-        Task task = createTaskOrder(quartzTaskDTO, status, messageOrderId);
-        String taskId = task.getId();
+    public CloudTask createTask(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId) throws Exception {
+        CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, messageOrderId);
+        String taskId = cloudTask.getId();
 
         String script = quartzTaskDTO.getScript();
         JSONArray jsonArray = JSON.parseArray(quartzTaskDTO.getParameter());
@@ -95,27 +95,27 @@ public class OrderService {
             }
         }
 
-        this.deleteTaskItems(task.getId());
+        this.deleteTaskItems(cloudTask.getId());
         List<String> resourceTypes = new ArrayList();
         for (SelectTag selectTag : quartzTaskDTO.getSelectTags()) {
             for (String regionId : selectTag.getRegions()) {
-                TaskItemWithBLOBs taskItemWithBLOBs = new TaskItemWithBLOBs();
+                CloudTaskItemWithBLOBs taskItemWithBLOBs = new CloudTaskItemWithBLOBs();
                 String uuid = UUIDUtil.newUUID();
                 taskItemWithBLOBs.setId(uuid);
-                taskItemWithBLOBs.setTaskId(task.getId());
+                taskItemWithBLOBs.setTaskId(cloudTask.getId());
                 taskItemWithBLOBs.setRuleId(quartzTaskDTO.getId());
                 taskItemWithBLOBs.setCustomData(script);
-                taskItemWithBLOBs.setStatus(TaskConstants.TASK_STATUS.UNCHECKED.name());
+                taskItemWithBLOBs.setStatus(CloudTaskConstants.TASK_STATUS.UNCHECKED.name());
                 taskItemWithBLOBs.setSeverity(quartzTaskDTO.getSeverity());
-                taskItemWithBLOBs.setCreateTime(task.getCreateTime());
+                taskItemWithBLOBs.setCreateTime(cloudTask.getCreateTime());
                 taskItemWithBLOBs.setAccountId(selectTag.getAccountId());
                 AccountWithBLOBs account = accountMapper.selectByPrimaryKey(selectTag.getAccountId());
                 taskItemWithBLOBs.setAccountUrl(account.getPluginIcon());
                 taskItemWithBLOBs.setAccountLabel(account.getName());
                 taskItemWithBLOBs.setRegionId(regionId);
-                taskItemWithBLOBs.setRegionName(PlatformUtils.tranforRegionId2RegionName(regionId, task.getPluginId()));
-                taskItemWithBLOBs.setTags(task.getRuleTags());
-                taskItemMapper.insertSelective(taskItemWithBLOBs);
+                taskItemWithBLOBs.setRegionName(PlatformUtils.tranforRegionId2RegionName(regionId, cloudTask.getPluginId()));
+                taskItemWithBLOBs.setTags(cloudTask.getRuleTags());
+                cloudTaskItemMapper.insertSelective(taskItemWithBLOBs);
 
                 final String finalScript = script;
                 commonThreadPool.addTask(() -> {
@@ -123,7 +123,7 @@ public class OrderService {
                     String dirPath = "";
                     try {
                         LogUtil.info(" ::: Generate policy.yml file start ::: ");
-                        dirPath = CommandUtils.saveAsFile(finalScript, TaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + regionId, "policy.yml");
+                        dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + regionId, "policy.yml");
                         LogUtil.info(" ::: Generate policy.yml file end ::: " + dirPath);
                     } catch (Exception e) {
                         LogUtil.error("[{}] Generate policy.yml file，and custodian run failed:{}", taskId + "/" + regionId, e.getMessage());
@@ -145,7 +145,7 @@ public class OrderService {
                                 continue;
                             }
 
-                            TaskItemResourceWithBLOBs taskItemResource = new TaskItemResourceWithBLOBs();
+                            CloudTaskItemResourceWithBLOBs taskItemResource = new CloudTaskItemResourceWithBLOBs();
                             taskItemResource.setTaskId(taskId);
                             taskItemResource.setTaskItemId(taskItemWithBLOBs.getId());
                             taskItemResource.setDirName(dirName);
@@ -161,7 +161,7 @@ public class OrderService {
                             m.remove("actions");
                             paramMap.put("policies", Collections.singletonList(m));
                             taskItemResource.setResourceCommand(yaml.dump(paramMap));
-                            taskItemResourceMapper.insertSelective(taskItemResource);
+                            cloudTaskItemResourceMapper.insertSelective(taskItemResource);
 
                             resourceTypes.add(resourceType);
                         }
@@ -169,93 +169,93 @@ public class OrderService {
                         map.put("policies", list);
                         sc = yaml.dump(map);
                         taskItemWithBLOBs.setDetails(sc);
-                        taskItemMapper.updateByPrimaryKeySelective(taskItemWithBLOBs);
+                        cloudTaskItemMapper.updateByPrimaryKeySelective(taskItemWithBLOBs);
 
-                        task.setResourceTypes(new HashSet<>(resourceTypes).toString());
-                        taskMapper.updateByPrimaryKeySelective(task);
+                        cloudTask.setResourceTypes(new HashSet<>(resourceTypes).toString());
+                        cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
                     }
                 });
             }
         }
         //向首页活动添加操作信息
-        OperationLogService.log(SessionUtils.getUser(), taskId, task.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.CREATE, "创建检测任务");
-        return task;
+        OperationLogService.log(SessionUtils.getUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.CREATE, "创建检测任务");
+        return cloudTask;
     }
 
     private void deleteTaskItems (String taskId) {
-        TaskItemExample taskItemExample = new TaskItemExample();
-        taskItemExample.createCriteria().andTaskIdEqualTo(taskId);
-        List<TaskItem> taskItems = taskItemMapper.selectByExample(taskItemExample);
+        CloudTaskItemExample cloudTaskItemExample = new CloudTaskItemExample();
+        cloudTaskItemExample.createCriteria().andTaskIdEqualTo(taskId);
+        List<CloudTaskItem> cloudTaskItems = cloudTaskItemMapper.selectByExample(cloudTaskItemExample);
 
-        for (TaskItem taskItem : taskItems) {
-            TaskItemLogExample taskItemLogExample = new TaskItemLogExample();
-            taskItemLogExample.createCriteria().andTaskItemIdEqualTo(taskItem.getId());
-            taskItemLogMapper.deleteByExample(taskItemLogExample);
+        for (CloudTaskItem cloudTaskItem : cloudTaskItems) {
+            CloudTaskItemLogExample cloudTaskItemLogExample = new CloudTaskItemLogExample();
+            cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(cloudTaskItem.getId());
+            cloudTaskItemLogMapper.deleteByExample(cloudTaskItemLogExample);
 
-            TaskItemResourceExample taskItemResourceExample = new TaskItemResourceExample();
-            taskItemResourceExample.createCriteria().andTaskItemIdEqualTo(taskItem.getId());
-            List<TaskItemResource> taskItemResources = taskItemResourceMapper.selectByExample(taskItemResourceExample);
-            for (TaskItemResource taskItemResource : taskItemResources) {
-                resourceMapper.deleteByPrimaryKey(taskItemResource.getResourceId());
-                resourceRuleMapper.deleteByPrimaryKey(taskItemResource.getResourceId());
+            CloudTaskItemResourceExample cloudTaskItemResourceExample = new CloudTaskItemResourceExample();
+            cloudTaskItemResourceExample.createCriteria().andTaskItemIdEqualTo(cloudTaskItem.getId());
+            List<CloudTaskItemResource> cloudTaskItemResources = cloudTaskItemResourceMapper.selectByExample(cloudTaskItemResourceExample);
+            for (CloudTaskItemResource cloudTaskItemResource : cloudTaskItemResources) {
+                resourceMapper.deleteByPrimaryKey(cloudTaskItemResource.getResourceId());
+                resourceRuleMapper.deleteByPrimaryKey(cloudTaskItemResource.getResourceId());
             }
-            taskItemResourceMapper.deleteByExample(taskItemResourceExample);
+            cloudTaskItemResourceMapper.deleteByExample(cloudTaskItemResourceExample);
         }
-        taskItemMapper.deleteByExample(taskItemExample);
+        cloudTaskItemMapper.deleteByExample(cloudTaskItemExample);
     }
 
-    private Task createTaskOrder(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId) throws Exception {
-        Task task = new Task();
-        task.setTaskName(quartzTaskDTO.getTaskName() != null ?quartzTaskDTO.getTaskName():quartzTaskDTO.getName());
-        task.setRuleId(quartzTaskDTO.getId());
-        task.setSeverity(quartzTaskDTO.getSeverity());
-        task.setType(quartzTaskDTO.getType());
-        task.setPluginId(quartzTaskDTO.getPluginId());
-        task.setPluginIcon(quartzTaskDTO.getPluginIcon());
-        task.setPluginName(quartzTaskDTO.getPluginName());
-        task.setRuleTags(quartzTaskDTO.getTags().toString());
-        task.setDescription(quartzTaskDTO.getDescription());
-        task.setAccountId(quartzTaskDTO.getAccountId());
-        task.setApplyUser(Objects.requireNonNull(SessionUtils.getUser()).getId());
-        task.setStatus(status);
-        task.setScanType(ScanTypeConstants.custodian.name());
+    private CloudTask createTaskOrder(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId) throws Exception {
+        CloudTask cloudTask = new CloudTask();
+        cloudTask.setTaskName(quartzTaskDTO.getTaskName() != null ?quartzTaskDTO.getTaskName():quartzTaskDTO.getName());
+        cloudTask.setRuleId(quartzTaskDTO.getId());
+        cloudTask.setSeverity(quartzTaskDTO.getSeverity());
+        cloudTask.setType(quartzTaskDTO.getType());
+        cloudTask.setPluginId(quartzTaskDTO.getPluginId());
+        cloudTask.setPluginIcon(quartzTaskDTO.getPluginIcon());
+        cloudTask.setPluginName(quartzTaskDTO.getPluginName());
+        cloudTask.setRuleTags(quartzTaskDTO.getTags().toString());
+        cloudTask.setDescription(quartzTaskDTO.getDescription());
+        cloudTask.setAccountId(quartzTaskDTO.getAccountId());
+        cloudTask.setApplyUser(Objects.requireNonNull(SessionUtils.getUser()).getId());
+        cloudTask.setStatus(status);
+        cloudTask.setScanType(ScanTypeConstants.custodian.name());
         if (quartzTaskDTO.getCron() != null){
-            task.setCron(quartzTaskDTO.getCron());
-            task.setCronDesc(DescCornUtils.descCorn(quartzTaskDTO.getCron()));
+            cloudTask.setCron(quartzTaskDTO.getCron());
+            cloudTask.setCronDesc(DescCornUtils.descCorn(quartzTaskDTO.getCron()));
         }
 
-        TaskExample example = new TaskExample();
-        TaskExample.Criteria criteria = example.createCriteria();
+        CloudTaskExample example = new CloudTaskExample();
+        CloudTaskExample.Criteria criteria = example.createCriteria();
         criteria.andAccountIdEqualTo(quartzTaskDTO.getAccountId()).andTaskNameEqualTo(quartzTaskDTO.getTaskName());
-        List<Task> queryTasks = taskMapper.selectByExample(example);
-        if (!queryTasks.isEmpty()) {
-            task.setId(queryTasks.get(0).getId());
-            task.setCreateTime(System.currentTimeMillis());
-            taskMapper.updateByPrimaryKeySelective(task);
+        List<CloudTask> queryCloudTasks = cloudTaskMapper.selectByExample(example);
+        if (!queryCloudTasks.isEmpty()) {
+            cloudTask.setId(queryCloudTasks.get(0).getId());
+            cloudTask.setCreateTime(System.currentTimeMillis());
+            cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
         } else {
-            String taskId = IDGenerator.newBusinessId(TaskConstants.TASK_ID_PREFIX, SessionUtils.getUser().getId());
-            task.setId(taskId);
-            task.setCreateTime(System.currentTimeMillis());
-            taskMapper.insertSelective(task);
+            String taskId = IDGenerator.newBusinessId(CloudTaskConstants.TASK_ID_PREFIX, SessionUtils.getUser().getId());
+            cloudTask.setId(taskId);
+            cloudTask.setCreateTime(System.currentTimeMillis());
+            cloudTaskMapper.insertSelective(cloudTask);
         }
 
         if (StringUtils.isNotEmpty(messageOrderId)) {
-            noticeService.createMessageOrderItem(messageOrderId, task);
+            noticeService.createMessageOrderItem(messageOrderId, cloudTask);
         }
 
-        return task;
+        return cloudTask;
     }
 
     public TaskDTO getTaskDetail(String taskId) {
-        return extTaskMapper.getTaskDetail(taskId);
+        return extCloudTaskMapper.getTaskDetail(taskId);
     }
 
     public TaskDTO getTaskExtendInfo(String taskId) {
-        return extTaskMapper.getTaskExtendInfo(taskId);
+        return extCloudTaskMapper.getTaskExtendInfo(taskId);
     }
 
     void saveTaskItemLog(String taskItemId, String resourcePrimaryKey, String operation, String output, boolean success) {
-        TaskItemLog taskItemLog = new TaskItemLog();
+        CloudTaskItemLog cloudTaskItemLog = new CloudTaskItemLog();
         String operator = "system";
         try {
             if (SessionUtils.getUser() != null) {
@@ -264,53 +264,53 @@ public class OrderService {
         } catch (Exception e) {
             //防止单元测试无session
         }
-        taskItemLog.setOperator(operator);
-        taskItemLog.setCreateTime(System.currentTimeMillis());
-        taskItemLog.setTaskItemId(StringUtils.isBlank(taskItemId) ? StringUtils.EMPTY : taskItemId);
-        taskItemLog.setResourceId(resourcePrimaryKey);
-        taskItemLog.setOperation(operation);
-        taskItemLog.setOutput(output);
-        taskItemLog.setResult(success);
-        taskItemLogMapper.insert(taskItemLog);
+        cloudTaskItemLog.setOperator(operator);
+        cloudTaskItemLog.setCreateTime(System.currentTimeMillis());
+        cloudTaskItemLog.setTaskItemId(StringUtils.isBlank(taskItemId) ? StringUtils.EMPTY : taskItemId);
+        cloudTaskItemLog.setResourceId(resourcePrimaryKey);
+        cloudTaskItemLog.setOperation(operation);
+        cloudTaskItemLog.setOutput(output);
+        cloudTaskItemLog.setResult(success);
+        cloudTaskItemLogMapper.insert(cloudTaskItemLog);
     }
 
     int updateTaskStatus(String taskId, String oldStatus, String newStatus) {
-        TaskExample example = new TaskExample();
-        TaskExample.Criteria criteria = example.createCriteria();
+        CloudTaskExample example = new CloudTaskExample();
+        CloudTaskExample.Criteria criteria = example.createCriteria();
         criteria.andIdEqualTo(taskId);
         if (StringUtils.isNotBlank(oldStatus)) {
             criteria.andStatusEqualTo(oldStatus);
         }
-        Task task = new Task();
-        task.setStatus(newStatus);
-        return taskMapper.updateByExampleSelective(task, example);
+        CloudTask cloudTask = new CloudTask();
+        cloudTask.setStatus(newStatus);
+        return cloudTaskMapper.updateByExampleSelective(cloudTask, example);
     }
 
-    void updateTaskItemStatus(String taskItemId, TaskConstants.TASK_STATUS status) {
-        TaskItemWithBLOBs taskItem = new TaskItemWithBLOBs();
+    void updateTaskItemStatus(String taskItemId, CloudTaskConstants.TASK_STATUS status) {
+        CloudTaskItemWithBLOBs taskItem = new CloudTaskItemWithBLOBs();
         taskItem.setId(taskItemId);
         taskItem.setStatus(status.name());
-        taskItemMapper.updateByPrimaryKeySelective(taskItem);
+        cloudTaskItemMapper.updateByPrimaryKeySelective(taskItem);
     }
 
     public void updateTaskStatus(String id, String status) {
-        Task task = new Task();
-        task.setId(id);
-        task.setStatus(status);
-        taskMapper.updateByPrimaryKeySelective(task);
+        CloudTask cloudTask = new CloudTask();
+        cloudTask.setId(id);
+        cloudTask.setStatus(status);
+        cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
     }
 
-    public List<Task> listAll() {
-        return taskMapper.selectByExample(null);
+    public List<CloudTask> listAll() {
+        return cloudTaskMapper.selectByExample(null);
     }
 
     public List<TaskItemLogDTO> getQuartzLogByTask(String taskId) {
         List<TaskItemLogDTO> result = new ArrayList<>();
         try {
-            TaskItemExample taskItemExample = new TaskItemExample();
-            taskItemExample.createCriteria().andTaskIdEqualTo(taskId);
-            List<TaskItemWithBLOBs> taskItems = taskItemMapper.selectByExampleWithBLOBs(taskItemExample);
-            for (TaskItemWithBLOBs taskItem : taskItems) {
+            CloudTaskItemExample cloudTaskItemExample = new CloudTaskItemExample();
+            cloudTaskItemExample.createCriteria().andTaskIdEqualTo(taskId);
+            List<CloudTaskItemWithBLOBs> taskItems = cloudTaskItemMapper.selectByExampleWithBLOBs(cloudTaskItemExample);
+            for (CloudTaskItemWithBLOBs taskItem : taskItems) {
                 TaskItemLogDTO taskItemLogDTO = new TaskItemLogDTO();
                 taskItem.setDetails(null);
                 taskItem.setCustomData(null);
@@ -327,15 +327,15 @@ public class OrderService {
         return result;
     }
 
-    public TaskItemWithBLOBs taskItemWithBLOBs(String taskItemId) {
-        return taskItemMapper.selectByPrimaryKey(taskItemId);
+    public CloudTaskItemWithBLOBs taskItemWithBLOBs(String taskItemId) {
+        return cloudTaskItemMapper.selectByPrimaryKey(taskItemId);
     }
 
-    public List<TaskItemLog> getQuartzLogByTaskItemId(TaskItemWithBLOBs taskItemWithBLOBs) {
-        TaskItemLogExample taskItemLogExample = new TaskItemLogExample();
-        taskItemLogExample.createCriteria().andTaskItemIdEqualTo(taskItemWithBLOBs.getId());
-        taskItemLogExample.setOrderByClause("create_time desc");
-        return taskItemLogMapper.selectByExampleWithBLOBs(taskItemLogExample);
+    public List<CloudTaskItemLog> getQuartzLogByTaskItemId(CloudTaskItemWithBLOBs taskItemWithBLOBs) {
+        CloudTaskItemLogExample cloudTaskItemLogExample = new CloudTaskItemLogExample();
+        cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(taskItemWithBLOBs.getId());
+        cloudTaskItemLogExample.setOrderByClause("create_time desc");
+        return cloudTaskItemLogMapper.selectByExampleWithBLOBs(cloudTaskItemLogExample);
     }
 
     public List<CloudAccountQuartzTaskRelaLog> getQuartzLogsById(String qzTaskId) {
@@ -348,11 +348,11 @@ public class OrderService {
     public List<TaskItemLogDTO> getTaskItemLogByTaskId(String taskId) {
         List<TaskItemLogDTO> result = new ArrayList<>();
         try {
-            TaskItemExample taskItemExample = new TaskItemExample();
-            taskItemExample.createCriteria().andTaskIdEqualTo(taskId);
-            List<TaskItem> taskItems = taskItemMapper.selectByExample(taskItemExample);
-            for (TaskItem taskItem : taskItems) {
-                result.addAll(getTaskItemLogByTaskItemId(taskItem.getId()));
+            CloudTaskItemExample cloudTaskItemExample = new CloudTaskItemExample();
+            cloudTaskItemExample.createCriteria().andTaskIdEqualTo(taskId);
+            List<CloudTaskItem> cloudTaskItems = cloudTaskItemMapper.selectByExample(cloudTaskItemExample);
+            for (CloudTaskItem cloudTaskItem : cloudTaskItems) {
+                result.addAll(getTaskItemLogByTaskItemId(cloudTaskItem.getId()));
             }
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
@@ -364,7 +364,7 @@ public class OrderService {
     private List<TaskItemLogDTO> getTaskItemLogByTaskItemId(String taskItemId) {
         List<TaskItemLogDTO> result = new ArrayList<>();
         try {
-            TaskItemWithBLOBs taskItem = taskItemMapper.selectByPrimaryKey(taskItemId);
+            CloudTaskItemWithBLOBs taskItem = cloudTaskItemMapper.selectByPrimaryKey(taskItemId);
             if (taskItem != null) {
                 TaskItemLogDTO taskItemLogDTO = new TaskItemLogDTO();
                 taskItem.setDetails(null);
@@ -373,10 +373,10 @@ public class OrderService {
                 Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getRuleId());
                 rule.setScript(null);//没有用到暂时置空，以防止翻译总报错warn
                 taskItemLogDTO.setRule(rule);
-                TaskItemLogExample taskItemLogExample = new TaskItemLogExample();
-                taskItemLogExample.createCriteria().andTaskItemIdEqualTo(taskItem.getId());
-                taskItemLogExample.setOrderByClause("create_time");
-                taskItemLogDTO.setTaskItemLogList(taskItemLogMapper.selectByExampleWithBLOBs(taskItemLogExample));
+                CloudTaskItemLogExample cloudTaskItemLogExample = new CloudTaskItemLogExample();
+                cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(taskItem.getId());
+                cloudTaskItemLogExample.setOrderByClause("create_time");
+                taskItemLogDTO.setTaskItemLogList(cloudTaskItemLogMapper.selectByExampleWithBLOBs(cloudTaskItemLogExample));
                 result.add(taskItemLogDTO);
             }
         } catch (Exception e) {
@@ -387,25 +387,25 @@ public class OrderService {
 
     public TaskCopyDTO copy(String taskId) {
         TaskCopyDTO taskCopyDTO = new TaskCopyDTO();
-        TaskItemExample example = new TaskItemExample();
+        CloudTaskItemExample example = new CloudTaskItemExample();
         example.createCriteria().andTaskIdEqualTo(taskId);
-        List<TaskItem> taskItemList = taskItemMapper.selectByExample(example);
-        taskCopyDTO.setTaskItemList(taskItemList);
-        taskCopyDTO.setRule(ruleMapper.selectByPrimaryKey(taskItemList.get(0).getRuleId()));
+        List<CloudTaskItem> cloudTaskItemList = cloudTaskItemMapper.selectByExample(example);
+        taskCopyDTO.setTaskItemList(cloudTaskItemList);
+        taskCopyDTO.setRule(ruleMapper.selectByPrimaryKey(cloudTaskItemList.get(0).getRuleId()));
         RuleTagMappingExample ruleTagMappingExample = new RuleTagMappingExample();
-        ruleTagMappingExample.createCriteria().andRuleIdEqualTo(taskItemList.get(0).getRuleId());
+        ruleTagMappingExample.createCriteria().andRuleIdEqualTo(cloudTaskItemList.get(0).getRuleId());
         List<RuleTagMapping> ruleTagMappings = ruleTagMappingMapper.selectByExample(ruleTagMappingExample);
         taskCopyDTO.setRuleTagMappingList(ruleTagMappings.stream().map(RuleTagMapping::getTagKey).collect(Collectors.toList()));
         Set<String> set = new HashSet<>();
         List<SelectTag> selectTagList = new LinkedList<>();
-        taskItemList.stream().forEach(item -> {
+        cloudTaskItemList.stream().forEach(item -> {
             set.add(item.getAccountId());
         });
         Objects.requireNonNull(set).forEach(str -> {
             SelectTag selectTag = new SelectTag();
             selectTag.setAccountId(str);
             List<String> regions = new LinkedList<>();
-            taskItemList.forEach(taskItem -> {
+            cloudTaskItemList.forEach(taskItem -> {
                 if (StringUtils.equals(taskItem.getAccountId(), str)) {
                     regions.add(taskItem.getRegionId());
                 }
@@ -419,24 +419,24 @@ public class OrderService {
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
     public void retry(String taskId) {
-        Task task = taskMapper.selectByPrimaryKey(taskId);
-        if (task == null) {
+        CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskId);
+        if (cloudTask == null) {
             HRException.throwException(Translator.get("i18n_ex_task_not_found") + taskId);
         }
         try {
-            TaskItemExample taskItemExample = new TaskItemExample();
-            taskItemExample.createCriteria().andTaskIdEqualTo(task.getId());
-            List<TaskItemWithBLOBs> items = taskItemMapper.selectByExampleWithBLOBs(taskItemExample);
-            for (TaskItemWithBLOBs item : items) {
-                if ((StringUtils.equals(task.getType(), TaskConstants.Type.CREATE.toString()))) {
+            CloudTaskItemExample cloudTaskItemExample = new CloudTaskItemExample();
+            cloudTaskItemExample.createCriteria().andTaskIdEqualTo(cloudTask.getId());
+            List<CloudTaskItemWithBLOBs> items = cloudTaskItemMapper.selectByExampleWithBLOBs(cloudTaskItemExample);
+            for (CloudTaskItemWithBLOBs item : items) {
+                if ((StringUtils.equals(cloudTask.getType(), CloudTaskConstants.Type.CREATE.toString()))) {
                     HashSet<String> resourceIdSet2BeReleased = new HashSet<>();
 
                     //先找到异常的资源
-                    if (item.getStatus().equals(TaskConstants.TASK_STATUS.ERROR.name())) {
-                        TaskItemLogExample taskItemLogExample = new TaskItemLogExample();
-                        taskItemLogExample.createCriteria().andTaskItemIdEqualTo(item.getId()).andResourceIdIsNotNull().andResultEqualTo(false);
-                        List<TaskItemLog> taskItemLogs = taskItemLogMapper.selectByExample(taskItemLogExample);
-                        resourceIdSet2BeReleased.addAll(taskItemLogs.stream().map(TaskItemLog::getResourceId).collect(Collectors.toList()));
+                    if (item.getStatus().equals(CloudTaskConstants.TASK_STATUS.ERROR.name())) {
+                        CloudTaskItemLogExample cloudTaskItemLogExample = new CloudTaskItemLogExample();
+                        cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(item.getId()).andResourceIdIsNotNull().andResultEqualTo(false);
+                        List<CloudTaskItemLog> cloudTaskItemLogs = cloudTaskItemLogMapper.selectByExample(cloudTaskItemLogExample);
+                        resourceIdSet2BeReleased.addAll(cloudTaskItemLogs.stream().map(CloudTaskItemLog::getResourceId).collect(Collectors.toList()));
                     }
 
                     //释放资源
@@ -446,26 +446,26 @@ public class OrderService {
                         }
                         String newTaskItemId = item.getId() + "-retry";
                         //删除task_item_resource表相关记录，否则任务重试完成后重试之前的资源还会和任务有关联
-                        TaskItemResourceExample taskItemResourceExample = new TaskItemResourceExample();
-                        taskItemResourceExample.createCriteria().andTaskIdEqualTo(task.getId()).andTaskItemIdEqualTo(item.getId());
-                        taskItemResourceMapper.deleteByExample(taskItemResourceExample);
+                        CloudTaskItemResourceExample cloudTaskItemResourceExample = new CloudTaskItemResourceExample();
+                        cloudTaskItemResourceExample.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andTaskItemIdEqualTo(item.getId());
+                        cloudTaskItemResourceMapper.deleteByExample(cloudTaskItemResourceExample);
                         //清除日志关联
-                        TaskItemLogExample taskItemLogExample = new TaskItemLogExample();
-                        taskItemLogExample.createCriteria().andTaskItemIdEqualTo(item.getId()).andResourceIdEqualTo(resourceId);
-                        TaskItemLog taskItemLog = new TaskItemLog();
-                        taskItemLog.setTaskItemId(newTaskItemId);
-                        taskItemLogMapper.updateByExampleSelective(taskItemLog, taskItemLogExample);
+                        CloudTaskItemLogExample cloudTaskItemLogExample = new CloudTaskItemLogExample();
+                        cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(item.getId()).andResourceIdEqualTo(resourceId);
+                        CloudTaskItemLog cloudTaskItemLog = new CloudTaskItemLog();
+                        cloudTaskItemLog.setTaskItemId(newTaskItemId);
+                        cloudTaskItemLogMapper.updateByExampleSelective(cloudTaskItemLog, cloudTaskItemLogExample);
                     }
 
                     if (item.getCount() > Optional.ofNullable(this.getResourceByTaskItemId(item.getId())).orElse(new ArrayList<>()).size()) {
                         saveTaskItemLog(item.getId(), null, Translator.get("i18n_retry_create_resource"), "", true);
-                        item.setStatus(TaskConstants.TASK_STATUS.UNCHECKED.name());
+                        item.setStatus(CloudTaskConstants.TASK_STATUS.UNCHECKED.name());
                     } else {
-                        item.setStatus(TaskConstants.TASK_STATUS.FINISHED.name());
+                        item.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());
                     }
                 } else {
-                    if (item.getStatus().equals(TaskConstants.TASK_STATUS.ERROR.name())) {
-                        item.setStatus(TaskConstants.TASK_STATUS.UNCHECKED.name());
+                    if (item.getStatus().equals(CloudTaskConstants.TASK_STATUS.ERROR.name())) {
+                        item.setStatus(CloudTaskConstants.TASK_STATUS.UNCHECKED.name());
                     }
                 }
                 //查询规则，如果规则有变动，按最新变动的规则执行
@@ -486,7 +486,7 @@ public class OrderService {
                             String sc = "";
                             String dirPath = "";
                             try {
-                                dirPath = CommandUtils.saveAsFile(finalScript, TaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + item.getRegion(), "policy.yml");
+                                dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + item.getRegion(), "policy.yml");
                             } catch (Exception e) {
                                 LogUtil.error("[{}] Generate policy.yml file，and custodian run failed:{}", taskId + "/" + item.getRegion(), e.getMessage());
                             }
@@ -502,7 +502,7 @@ public class OrderService {
                                 for (Map m : list) {
                                     String dirName = m.get("name").toString();
                                     String resourceType = m.get("resource").toString();
-                                    TaskItemResourceWithBLOBs taskItemResource = new TaskItemResourceWithBLOBs();
+                                    CloudTaskItemResourceWithBLOBs taskItemResource = new CloudTaskItemResourceWithBLOBs();
                                     taskItemResource.setTaskId(taskId);
                                     taskItemResource.setTaskItemId(item.getId());
                                     taskItemResource.setDirName(dirName);
@@ -518,7 +518,7 @@ public class OrderService {
                                     m.remove("actions");
                                     paramMap.put("policies", Arrays.asList(m));
                                     taskItemResource.setResourceCommand(yaml.dump(paramMap));
-                                    taskItemResourceMapper.updateByPrimaryKeySelective(taskItemResource);
+                                    cloudTaskItemResourceMapper.updateByPrimaryKeySelective(taskItemResource);
 
                                     resourceTypes.add(resourceType);
                                 }
@@ -530,36 +530,36 @@ public class OrderService {
                         });
                     }*/
 
-                taskItemMapper.updateByPrimaryKey(item);
+                cloudTaskItemMapper.updateByPrimaryKey(item);
             }
 
-            updateTaskStatus(task.getId(), task.getStatus(), TaskConstants.TASK_STATUS.APPROVED.name());
+            updateTaskStatus(cloudTask.getId(), cloudTask.getStatus(), CloudTaskConstants.TASK_STATUS.APPROVED.name());
         } catch (Exception e) {
-            LogUtil.error("Failed to retry, TaskId: " + task.getId(), e);
+            LogUtil.error("Failed to retry, TaskId: " + cloudTask.getId(), e);
             throw e;
         }
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
     public void getCronDesc(String taskId) throws Exception {
-        Task task = taskMapper.selectByPrimaryKey(taskId);
-        if (task == null) {
+        CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskId);
+        if (cloudTask == null) {
             HRException.throwException(Translator.get("i18n_ex_task_not_found") + taskId);
         }
-        String cronDesc = DescCornUtils.descCorn(task.getCron());
-        task.setCronDesc(cronDesc);
-        taskMapper.updateByPrimaryKeySelective(task);
+        String cronDesc = DescCornUtils.descCorn(cloudTask.getCron());
+        cloudTask.setCronDesc(cronDesc);
+        cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
     }
 
     public List<ResourceWithBLOBs> getResourceByTaskItemId(String taskItemId) {
         List<ResourceWithBLOBs> list = new LinkedList<>();
-        TaskItemResourceExample example = new TaskItemResourceExample();
+        CloudTaskItemResourceExample example = new CloudTaskItemResourceExample();
         example.createCriteria().andTaskItemIdEqualTo(taskItemId);
-        List<TaskItemResource> taskItemResources = taskItemResourceMapper.selectByExample(example);
-        if (CollectionUtils.size(taskItemResources) != 1) {
+        List<CloudTaskItemResource> cloudTaskItemResources = cloudTaskItemResourceMapper.selectByExample(example);
+        if (CollectionUtils.size(cloudTaskItemResources) != 1) {
             return null;
         }
-        for (TaskItemResource itemResource : taskItemResources) {
+        for (CloudTaskItemResource itemResource : cloudTaskItemResources) {
             ResourceWithBLOBs resourceWithBLOBs = resourceMapper.selectByPrimaryKey(itemResource.getResourceId());
             list.add(resourceWithBLOBs);
         }
@@ -571,19 +571,19 @@ public class OrderService {
      * @param account
      * @return
      */
-    public Integer calculateScore (Account account, Task task) {
-        Double highResultPercent = Double.valueOf(extResourceMapper.resultPercent(account.getId(), "HighRisk", task==null?null:task.getId())!=null?extResourceMapper.resultPercent(account.getId(), "HighRisk", task==null?null:task.getId()):"0.0");
-        Double mediumlResultPercent = Double.valueOf(extResourceMapper.resultPercent(account.getId(), "MediumRisk", task==null?null:task.getId())!=null?extResourceMapper.resultPercent(account.getId(), "MediumRisk", task==null?null:task.getId()): "0.0");
-        Double lowResultPercent = Double.valueOf(extResourceMapper.resultPercent(account.getId(), "LowRisk", task==null?null:task.getId())!=null?extResourceMapper.resultPercent(account.getId(), "LowRisk", task==null?null:task.getId()):"0.0");
+    public Integer calculateScore (Account account, CloudTask cloudTask) {
+        Double highResultPercent = Double.valueOf(extResourceMapper.resultPercent(account.getId(), "HighRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercent(account.getId(), "HighRisk", cloudTask ==null?null: cloudTask.getId()):"0.0");
+        Double mediumlResultPercent = Double.valueOf(extResourceMapper.resultPercent(account.getId(), "MediumRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercent(account.getId(), "MediumRisk", cloudTask ==null?null: cloudTask.getId()): "0.0");
+        Double lowResultPercent = Double.valueOf(extResourceMapper.resultPercent(account.getId(), "LowRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercent(account.getId(), "LowRisk", cloudTask ==null?null: cloudTask.getId()):"0.0");
 
-        TaskExample example = new TaskExample();
-        TaskExample.Criteria criteria = example.createCriteria();
+        CloudTaskExample example = new CloudTaskExample();
+        CloudTaskExample.Criteria criteria = example.createCriteria();
         criteria.andAccountIdEqualTo(account.getId()).andSeverityEqualTo("HighRisk");
-        long high = taskMapper.countByExample(example);
+        long high = cloudTaskMapper.countByExample(example);
         criteria.andSeverityEqualTo("MediumRisk");
-        long mediuml = taskMapper.countByExample(example);
+        long mediuml = cloudTaskMapper.countByExample(example);
         criteria.andSeverityEqualTo("LowRisk");
-        long low = taskMapper.countByExample(example);
+        long low = cloudTaskMapper.countByExample(example);
 
         long sum = 5 * high + 3 * mediuml + 2 * low;
         return 100 - (int) Math.ceil(highResultPercent * (5 * high / (sum == 0 ? 1 : sum) ) * 100 + mediumlResultPercent * (3 * mediuml / (sum == 0 ? 1 : sum) ) * 100 + lowResultPercent * (2 * low / (sum == 0 ? 1 : sum) ) * 100);
@@ -624,26 +624,26 @@ public class OrderService {
         return scanHistoryMapper.insertSelective(history);
     }
 
-    public void insertTaskHistory (Task task, Integer scanId) throws Exception {
+    public void insertTaskHistory (CloudTask cloudTask, Integer scanId) throws Exception {
         ScanTaskHistoryExample example = new ScanTaskHistoryExample();
-        example.createCriteria().andTaskIdEqualTo(task.getId()).andScanIdEqualTo(scanId);
+        example.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andScanIdEqualTo(scanId);
         List<ScanTaskHistory> list = scanTaskHistoryMapper.selectByExample(example);
         if (list.size() > 0) {
-            updateTaskHistory(task, example);
+            updateTaskHistory(cloudTask, example);
         } else {
             ScanTaskHistory history = new ScanTaskHistory();
             history.setScanId(scanId);
-            history.setTaskId(task.getId());
+            history.setTaskId(cloudTask.getId());
             history.setOperation("新增历史合规检测");
             scanTaskHistoryMapper.insertSelective(history);
         }
     }
 
-    public void updateTaskHistory (Task task, ScanTaskHistoryExample example) throws Exception {
+    public void updateTaskHistory (CloudTask cloudTask, ScanTaskHistoryExample example) throws Exception {
         try{
-            TaskItemResourceExample taskItemResourceExample = new TaskItemResourceExample();
-            taskItemResourceExample.createCriteria().andTaskIdEqualTo(task.getId());
-            List<TaskItemResourceWithBLOBs> taskItemResources = taskItemResourceMapper.selectByExampleWithBLOBs(taskItemResourceExample);
+            CloudTaskItemResourceExample cloudTaskItemResourceExample = new CloudTaskItemResourceExample();
+            cloudTaskItemResourceExample.createCriteria().andTaskIdEqualTo(cloudTask.getId());
+            List<CloudTaskItemResourceWithBLOBs> taskItemResources = cloudTaskItemResourceMapper.selectByExampleWithBLOBs(cloudTaskItemResourceExample);
             JSONArray jsonArray = new JSONArray();
             taskItemResources.forEach(item ->{
                 ResourceWithBLOBs resource = resourceMapper.selectByPrimaryKey(item.getResourceId());
@@ -662,9 +662,9 @@ public class OrderService {
                 }
             });
             ScanTaskHistory history = new ScanTaskHistory();
-            history.setResourcesSum(task.getResourcesSum()!=null?task.getResourcesSum():0);
-            history.setReturnSum(task.getReturnSum()!=null?task.getReturnSum():0);
-            history.setScanScore(calculateScore(accountMapper.selectByPrimaryKey(task.getAccountId()), task));
+            history.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
+            history.setReturnSum(cloudTask.getReturnSum()!=null? cloudTask.getReturnSum():0);
+            history.setScanScore(calculateScore(accountMapper.selectByPrimaryKey(cloudTask.getAccountId()), cloudTask));
             history.setOperation("修改历史合规检测");
             history.setOutput(jsonArray.toJSONString());
             scanTaskHistoryMapper.updateByExampleSelective(history, example);
@@ -687,7 +687,7 @@ public class OrderService {
         try {
             CloudAccountQuartzTask quartzTask = quartzTaskMapper.selectByPrimaryKey(quartzTaskId);
             if (quartzTask != null) {
-                quartzTask.setStatus(TaskConstants.TASK_STATUS.RUNNING.name());
+                quartzTask.setStatus(CloudTaskConstants.TASK_STATUS.RUNNING.name());
                 Trigger trigger = quartzManageService.getTrigger(new TriggerKey(quartzTask.getTriggerId()));
                 quartzTask.setLastFireTime(trigger.getNextFireTime().getTime());
                 if (trigger.getPreviousFireTime() != null)
@@ -700,11 +700,11 @@ public class OrderService {
                 for (CloudAccountQuartzTaskRelation quartzTaskRelation : list) {
                     JSONArray jsonArray = JSON.parseArray(quartzTaskRelation.getTaskIds());
                     for (Object o : jsonArray) {
-                        Task task = taskMapper.selectByPrimaryKey(o.toString());
-                        task.setStatus(TaskConstants.TASK_STATUS.APPROVED.name());
-                        task.setLastFireTime(quartzTask.getLastFireTime());
-                        task.setPrevFireTime(quartzTask.getPrevFireTime());
-                        taskMapper.updateByPrimaryKeySelective(task);
+                        CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(o.toString());
+                        cloudTask.setStatus(CloudTaskConstants.TASK_STATUS.APPROVED.name());
+                        cloudTask.setLastFireTime(quartzTask.getLastFireTime());
+                        cloudTask.setPrevFireTime(quartzTask.getPrevFireTime());
+                        cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
                     }
                     CloudAccountQuartzTaskRelaLog quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLog();
                     quartzTaskRelaLog.setCreateTime(System.currentTimeMillis());

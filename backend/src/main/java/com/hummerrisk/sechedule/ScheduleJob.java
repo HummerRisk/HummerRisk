@@ -5,7 +5,7 @@ import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.service.AccountService;
 import com.hummerrisk.service.RuleService;
 import com.hummerrisk.service.SystemParameterService;
-import com.hummerrisk.service.TaskService;
+import com.hummerrisk.service.CloudTaskService;
 import org.quartz.*;
 
 import javax.annotation.Resource;
@@ -19,7 +19,7 @@ public abstract class ScheduleJob implements Job {
     protected String expression;
 
     @Resource
-    private TaskService taskService;
+    private CloudTaskService cloudTaskService;
     @Resource
     private AccountService accountService;
     @Resource
@@ -50,7 +50,7 @@ public abstract class ScheduleJob implements Job {
 
     @QuartzScheduled(cron = "${cron.taskSum.sync}")
     public void SyncTaskSum() {
-        taskService.syncTaskSum();
+        cloudTaskService.syncTaskSum();
     }
 
     //每天留一条整体检测记录

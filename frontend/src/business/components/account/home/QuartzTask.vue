@@ -154,7 +154,7 @@
       <!--Quartz Task log-->
       <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="70%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <quartz-task-log :row="logForm"></quartz-task-log>
+        <quartz-cloudTask-log :row="logForm"></quartz-cloudTask-log>
         <template v-slot:footer>
           <dialog-footer
             @cancel="logVisible = false"
@@ -228,7 +228,7 @@
                 <el-divider></el-divider>
 
                 <el-row class="el-form-item-dev" v-for="dto in detailForm.quartzTaskRelationDtos" :key="dto.id">
-                  <el-table :show-header="true" :data="dto.taskList" class="adjust-table table-content" height="538">
+                  <el-table :show-header="true" :data="dto.cloudTaskList" class="adjust-table table-content" height="538">
                     <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="20%">
                         {{ scope.row.taskName }}
                     </el-table-column>
@@ -410,7 +410,7 @@ import QuartzTaskLog from "@/business/components/account/home/QuartzTaskLog";
     methods: {
       //查询列表
       search() {
-        let url = "/task/quartz/list/" + this.currentPage + "/" + this.pageSize;
+        let url = "/cloud/task/quartz/list/" + this.currentPage + "/" + this.pageSize;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;
@@ -481,7 +481,7 @@ import QuartzTaskLog from "@/business/components/account/home/QuartzTaskLog";
             return;
           }
         }
-        this.result = this.$post("/task/quartz/create", this.form, response => {
+        this.result = this.$post("/cloud/task/quartz/create", this.form, response => {
           this.createVisible =  false;
           this.search();
         });
@@ -558,7 +558,7 @@ import QuartzTaskLog from "@/business/components/account/home/QuartzTaskLog";
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get("/task/quartz/delete/" + obj.id, () => {
+              this.result = this.$get("/cloud/task/quartz/delete/" + obj.id, () => {
                 this.$success(this.$t('commons.delete_success'));
                 this.search();
               });
@@ -572,19 +572,19 @@ import QuartzTaskLog from "@/business/components/account/home/QuartzTaskLog";
         }).catch(error => error);
       },
       handleResume(obj){
-        this.result = this.$get("/task/quartz/resume/" + obj.id, () => {
+        this.result = this.$get("/cloud/task/quartz/resume/" + obj.id, () => {
           this.$success(this.$t('account.resume_success'));
           this.search();
         });
       },
       handlePause(obj){
-        this.result = this.$get("/task/quartz/pause/" + obj.id, () => {
+        this.result = this.$get("/cloud/task/quartz/pause/" + obj.id, () => {
           this.$success(this.$t('account.pause_success'));
           this.search();
         });
       },
       showTaskLog (obj) {
-        let url = "/task/quartz/rela/log/";
+        let url = "/cloud/task/quartz/rela/log/";
         this.$post(url + obj.id + "/" + this.goLogPage + "/" + this.pageLogSize, {},response => {
           let data = response.data;
           this.logTotal = data.itemCount;
@@ -595,7 +595,7 @@ import QuartzTaskLog from "@/business/components/account/home/QuartzTaskLog";
         });
       },
       showAccount(row) {
-        let url = "/task/show/account/" + row.id;
+        let url = "/cloud/task/show/account/" + row.id;
         this.$get(url,response => {
           this.detailForm = response.data;
           this.detailVisible=true;

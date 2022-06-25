@@ -228,7 +228,7 @@ export default {
       }
     },
     addTask(data) {
-      this.result = this.$post("/notice/save/message/task", data, () => {
+      this.result = this.$post("/notice/save/message/cloudTask", data, () => {
         this.initForm();
         this.$success(this.$t('commons.save_success'));
       })

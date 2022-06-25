@@ -2,10 +2,10 @@ package com.hummerrisk.controller;
 
 import com.hummerrisk.commons.constants.SsoMode;
 import com.hummerrisk.commons.constants.UserSource;
-import com.hummerrisk.commons.utils.SessionUtils;
-import com.hummerrisk.service.UserService;
 import com.hummerrisk.commons.user.SessionUser;
+import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.controller.request.LoginRequest;
+import com.hummerrisk.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.context.i18n.LocaleContextHolder;

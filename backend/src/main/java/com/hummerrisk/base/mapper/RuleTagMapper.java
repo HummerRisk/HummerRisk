@@ -1,7 +1,7 @@
 package com.hummerrisk.base.mapper;
 
-import com.hummerrisk.base.domain.RuleTagExample;
 import com.hummerrisk.base.domain.RuleTag;
+import com.hummerrisk.base.domain.RuleTagExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -1,8 +1,8 @@
 package com.hummerrisk.dto;
 
+import com.hummerrisk.base.domain.Role;
 import com.hummerrisk.base.domain.User;
 import com.hummerrisk.base.domain.UserRole;
-import com.hummerrisk.base.domain.Role;
 
 import java.util.ArrayList;
 import java.util.List;

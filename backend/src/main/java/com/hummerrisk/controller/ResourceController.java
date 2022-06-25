@@ -2,6 +2,7 @@ package com.hummerrisk.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.hummerrisk.base.domain.CloudTaskItem;
 import com.hummerrisk.base.domain.ResourceWithBLOBs;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
@@ -10,8 +11,6 @@ import com.hummerrisk.controller.request.resource.JsonRequest;
 import com.hummerrisk.controller.request.resource.ResourceRequest;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.service.ResourceService;
-import com.hummerrisk.base.domain.TaskItem;
-import com.hummerrisk.dto.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpHeaders;
@@ -134,7 +133,7 @@ public class ResourceController {
 
     @ApiOperation(value = "资源日志")
     @PostMapping("resourceLog")
-    public ResourceWithBLOBs resource(@RequestBody TaskItem taskItem) {
-        return resourceService.resource(taskItem);
+    public ResourceWithBLOBs resource(@RequestBody CloudTaskItem cloudTaskItem) {
+        return resourceService.resource(cloudTaskItem);
     }
 }

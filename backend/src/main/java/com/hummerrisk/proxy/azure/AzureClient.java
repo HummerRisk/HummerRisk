@@ -1,5 +1,6 @@
 package com.hummerrisk.proxy.azure;
 
+import com.hummerrisk.base.domain.Proxy;
 import com.microsoft.azure.AzureEnvironment;
 import com.microsoft.azure.PagedList;
 import com.microsoft.azure.credentials.ApplicationTokenCredentials;
@@ -7,7 +8,6 @@ import com.microsoft.azure.management.Azure;
 import com.microsoft.azure.management.resources.Location;
 import com.microsoft.azure.management.resources.Subscription;
 import com.microsoft.azure.management.resources.fluentcore.arm.Region;
-import com.hummerrisk.base.domain.Proxy;
 import okhttp3.JavaNetAuthenticator;
 import org.apache.ibatis.plugin.PluginException;
 

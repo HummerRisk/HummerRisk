@@ -2,7 +2,7 @@ package com.hummerrisk.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummerrisk.base.domain.Task;
+import com.hummerrisk.base.domain.CloudTask;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.request.account.CloudAccountRequest;
@@ -43,7 +43,7 @@ public class VulnController {
 
     @ApiOperation(value = "漏洞结果列表")
     @PostMapping("manual/list/{goPage}/{pageSize}")
-    public Pager<List<Task>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> param) throws Exception {
+    public Pager<List<CloudTask>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> param) throws Exception {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         param.put("type", "manual");
         return PageUtils.setPageInfo(page, vulnService.selectManualTasks(param));

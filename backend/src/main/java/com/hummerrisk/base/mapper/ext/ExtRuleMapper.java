@@ -1,7 +1,7 @@
 package com.hummerrisk.base.mapper.ext;
 
-import com.hummerrisk.controller.request.rule.CreateRuleRequest;
 import com.hummerrisk.base.domain.RuleTag;
+import com.hummerrisk.controller.request.rule.CreateRuleRequest;
 import com.hummerrisk.dto.RuleDTO;
 import org.apache.ibatis.annotations.Param;
 

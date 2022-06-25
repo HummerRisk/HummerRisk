@@ -53,7 +53,7 @@ import TablePagination from "@/business/components/common/pagination/TablePagina
         }
       },
       search(){
-        let url = "/task/quartz/rela/log/";
+        let url = "/cloud/task/quartz/rela/log/";
         this.$post(url + this.row.id + "/" + this.currentPage + "/" + this.pageSize, {},response => {
           let data = response.data;
           this.row.total = data.itemCount;

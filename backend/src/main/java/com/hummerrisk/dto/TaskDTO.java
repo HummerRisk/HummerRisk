@@ -1,12 +1,12 @@
 package com.hummerrisk.dto;
 
 
-import com.hummerrisk.base.domain.Task;
+import com.hummerrisk.base.domain.CloudTask;
 
 /**
  * @author harris
  */
-public class TaskDTO extends Task {
+public class TaskDTO extends CloudTask {
     private String customData;
     private String details;
     private Integer count;

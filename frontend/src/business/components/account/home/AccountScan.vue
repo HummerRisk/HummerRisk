@@ -229,7 +229,7 @@ import {_sort} from "@/common/js/utils";
           } else {
             param.parameter = JSON.stringify(param.parameter);
           }
-          this.$post('/task/manual/create', param, response => {
+          this.$post('/cloud/task/manual/create', param, response => {
             flag++;
             if (flag == this.ruleList.length) {
               this.$success(this.$t("resource.i18n_create_manual_task_success"));

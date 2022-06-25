@@ -1,8 +1,8 @@
 package com.hummerrisk.dto;
 
 
+import com.hummerrisk.base.domain.CloudTaskItem;
 import com.hummerrisk.base.domain.Rule;
-import com.hummerrisk.base.domain.TaskItem;
 import com.hummerrisk.commons.utils.SelectTag;
 
 import java.util.LinkedList;
@@ -12,17 +12,17 @@ import java.util.List;
  * @author harris
  */
 public class TaskCopyDTO {
-    private List<TaskItem> taskItemList;
+    private List<CloudTaskItem> cloudTaskItemList;
     private Rule rule;
     private List<String> ruleTagMappingList;
     private List<SelectTag> SelectTags = new LinkedList<>();
 
-    public List<TaskItem> getTaskItemList() {
-        return taskItemList;
+    public List<CloudTaskItem> getTaskItemList() {
+        return cloudTaskItemList;
     }
 
-    public void setTaskItemList(List<TaskItem> taskItemList) {
-        this.taskItemList = taskItemList;
+    public void setTaskItemList(List<CloudTaskItem> cloudTaskItemList) {
+        this.cloudTaskItemList = cloudTaskItemList;
     }
 
     public Rule getRule() {

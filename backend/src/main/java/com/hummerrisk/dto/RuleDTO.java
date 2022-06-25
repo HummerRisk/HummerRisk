@@ -1,10 +1,10 @@
 package com.hummerrisk.dto;
 
+import com.hummerrisk.base.domain.Rule;
+import com.hummerrisk.base.domain.RuleTag;
 import com.hummerrisk.base.mapper.ext.ExtRuleMapper;
 import com.hummerrisk.commons.utils.BeanUtils;
 import com.hummerrisk.commons.utils.CommonBeanFactory;
-import com.hummerrisk.base.domain.Rule;
-import com.hummerrisk.base.domain.RuleTag;
 import com.hummerrisk.commons.utils.SelectTag;
 
 import java.util.ArrayList;

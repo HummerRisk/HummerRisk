@@ -1,8 +1,8 @@
-package com.hummerrisk.controller.request.task;
+package com.hummerrisk.controller.request.cloudTask;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class TaskSearchRequest {
+public class CloudTaskSearchRequest {
     @ApiModelProperty("申请人")
     private String applyUser;
     @ApiModelProperty("任务号")

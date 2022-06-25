@@ -1,9 +1,9 @@
 package com.hummerrisk.config;
 
-import com.hummerrisk.security.ApiKeyFilter;
-import com.hummerrisk.security.realm.ShiroDBRealm;
 import com.hummerrisk.commons.utils.ShiroUtils;
+import com.hummerrisk.security.ApiKeyFilter;
 import com.hummerrisk.security.UserModularRealmAuthenticator;
+import com.hummerrisk.security.realm.ShiroDBRealm;
 import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;

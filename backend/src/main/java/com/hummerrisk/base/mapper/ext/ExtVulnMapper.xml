@@ -209,8 +209,8 @@
             t.region_name AS groupName,
             t.region_id AS xAxis
         FROM
-            task_item t
-            LEFT JOIN task_item_resource t1 ON t.id = t1.task_item_id
+            cloud_task_item t
+            LEFT JOIN cloud_task_item_resource t1 ON t.id = t1.task_item_id
             LEFT JOIN resource t2 ON t2.id = t1.resource_id
         <where>
             <if test="accountId != null">

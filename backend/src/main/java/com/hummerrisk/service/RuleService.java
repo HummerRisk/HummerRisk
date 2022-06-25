@@ -56,7 +56,7 @@ public class RuleService {
     @Resource @Lazy
     private ExtRuleTypeMapper extRuleTypeMapper;
     @Resource @Lazy
-    private TaskService taskService;
+    private CloudTaskService cloudTaskService;
     @Resource @Lazy
     private ResourceRuleMapper resourceRuleMapper;
     @Resource @Lazy
@@ -80,7 +80,7 @@ public class RuleService {
     @Resource @Lazy
     private ExtRuleGroupMapper extRuleGroupMapper;
     @Resource @Lazy
-    private TaskItemMapper taskItemMapper;
+    private CloudTaskItemMapper cloudTaskItemMapper;
     @Resource @Lazy
     private NoticeService noticeService;
 
@@ -105,7 +105,7 @@ public class RuleService {
     public Rule saveRules(CreateRuleRequest ruleRequest) {
         try {
             if (StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.custodian.toString())) {
-                taskService.validateYaml(BeanUtils.copyBean(new QuartzTaskDTO(), ruleRequest));
+                cloudTaskService.validateYaml(BeanUtils.copyBean(new QuartzTaskDTO(), ruleRequest));
             }
             if (StringUtils.isBlank(ruleRequest.getId())) {
                 ruleRequest.setId(UUIDUtil.newUUID());
@@ -205,7 +205,7 @@ public class RuleService {
     public Rule copyRule(CreateRuleRequest ruleRequest) {
         try {
             if (StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.custodian.toString())) {
-                taskService.validateYaml(BeanUtils.copyBean(new QuartzTaskDTO(), ruleRequest));
+                cloudTaskService.validateYaml(BeanUtils.copyBean(new QuartzTaskDTO(), ruleRequest));
             }
             ruleRequest.setLastModified(System.currentTimeMillis());
             ruleRequest.setId(UUIDUtil.newUUID());
@@ -268,11 +268,11 @@ public class RuleService {
 
     public Object runRules(RuleDTO ruleDTO) {
         try {
-            taskService.validateYaml(BeanUtils.copyBean(new QuartzTaskDTO(), ruleDTO));
+            cloudTaskService.validateYaml(BeanUtils.copyBean(new QuartzTaskDTO(), ruleDTO));
             QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
             BeanUtils.copyBean(quartzTaskDTO, ruleDTO);
             quartzTaskDTO.setType("manual");
-            return taskService.saveManualTask(quartzTaskDTO, null);
+            return cloudTaskService.saveManualTask(quartzTaskDTO, null);
         } catch (Exception e) {
             throw new HRException(e.getMessage());
         }
@@ -282,7 +282,7 @@ public class RuleService {
         QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
         BeanUtils.copyBean(quartzTaskDTO, ruleDTO);
         //validate && dryrun
-        return taskService.dryRun(quartzTaskDTO);
+        return cloudTaskService.dryRun(quartzTaskDTO);
     }
 
     public void deleteRule(String id) {
@@ -370,9 +370,9 @@ public class RuleService {
     }
 
     public RuleDTO getRuleByTaskId(String taskId) throws Exception {
-        TaskItemExample taskItemExample = new TaskItemExample();
-        taskItemExample.createCriteria().andTaskIdEqualTo(taskId);
-        String id = taskItemMapper.selectByExample(taskItemExample).get(0).getRuleId();
+        CloudTaskItemExample cloudTaskItemExample = new CloudTaskItemExample();
+        cloudTaskItemExample.createCriteria().andTaskIdEqualTo(taskId);
+        String id = cloudTaskItemMapper.selectByExample(cloudTaskItemExample).get(0).getRuleId();
 
         RuleDTO ruleDTO = new RuleDTO();
         Rule rule = ruleMapper.selectByPrimaryKey(id);
@@ -526,11 +526,11 @@ public class RuleService {
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
     public void reScan(String taskId, String accountId) throws Exception {
-        TaskItemExample example = new TaskItemExample();
+        CloudTaskItemExample example = new CloudTaskItemExample();
         example.createCriteria().andTaskIdEqualTo(taskId);
-        List<TaskItem> taskItems = taskItemMapper.selectByExample(example);
+        List<CloudTaskItem> cloudTaskItems = cloudTaskItemMapper.selectByExample(example);
         AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
-        RuleDTO rule = getRuleDtoById(taskItems.get(0).getRuleId(), accountId);
+        RuleDTO rule = getRuleDtoById(cloudTaskItems.get(0).getRuleId(), accountId);
         if (!rule.getStatus()) HRException.throwException(Translator.get("i18n_disabled_rules_not_scanning"));
         Integer scanId = orderService.insertScanHistory(account);
         this.dealTask(rule, account, scanId, null);
@@ -593,8 +593,8 @@ public class RuleService {
                 quartzTaskDTO.setType("manual");
                 quartzTaskDTO.setAccountId(account.getId());
                 quartzTaskDTO.setTaskName(rule.getName());
-                Task task = taskService.saveManualTask(quartzTaskDTO, messageOrderId);
-                orderService.insertTaskHistory(task, scanId);
+                CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, messageOrderId);
+                orderService.insertTaskHistory(cloudTask, scanId);
             } else {
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
                 HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
@@ -659,8 +659,8 @@ public class RuleService {
                                     quartzTaskDTO.setType("manual");
                                     quartzTaskDTO.setAccountId(account.getId());
                                     quartzTaskDTO.setTaskName(rule.getName());
-                                    Task task = taskService.saveManualTask(quartzTaskDTO, null);
-                                    orderService.insertTaskHistory(task, scanId);
+                                    CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, null);
+                                    orderService.insertTaskHistory(cloudTask, scanId);
                                 } catch (java.lang.Exception e) {
                                     LogUtil.error(e);
                                 }

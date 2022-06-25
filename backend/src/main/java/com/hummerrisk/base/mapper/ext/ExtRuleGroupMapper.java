@@ -1,8 +1,8 @@
 package com.hummerrisk.base.mapper.ext;
 
+import com.hummerrisk.controller.request.rule.RuleGroupRequest;
 import com.hummerrisk.dto.RuleDTO;
 import com.hummerrisk.dto.RuleGroupDTO;
-import com.hummerrisk.controller.request.rule.RuleGroupRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

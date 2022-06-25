@@ -1,8 +1,8 @@
 package com.hummerrisk.security;
 
-import com.hummerrisk.commons.utils.CommonBeanFactory;
 import com.hummerrisk.base.domain.UserKey;
 import com.hummerrisk.commons.utils.CodingUtil;
+import com.hummerrisk.commons.utils.CommonBeanFactory;
 import com.hummerrisk.service.UserKeyService;
 import org.apache.commons.lang3.StringUtils;
 

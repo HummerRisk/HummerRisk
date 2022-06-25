@@ -1,7 +1,7 @@
 package com.hummerrisk.message;
 
-import com.hummerrisk.service.WechatService;
 import com.hummerrisk.commons.utils.LogUtil;
+import com.hummerrisk.service.WechatService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 

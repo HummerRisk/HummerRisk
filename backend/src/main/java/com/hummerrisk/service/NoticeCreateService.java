@@ -1,13 +1,12 @@
 package com.hummerrisk.service;
 
 import com.hummer.quartz.anno.QuartzScheduled;
-import com.hummerrisk.base.domain.Package;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
-import com.hummerrisk.base.mapper.ext.ExtTaskMapper;
+import com.hummerrisk.base.mapper.ext.ExtCloudTaskMapper;
+import com.hummerrisk.commons.constants.CloudTaskConstants;
 import com.hummerrisk.commons.constants.NoticeConstants;
 import com.hummerrisk.commons.constants.ScanConstants;
-import com.hummerrisk.commons.constants.TaskConstants;
 import com.hummerrisk.commons.utils.BeanUtils;
 import com.hummerrisk.commons.utils.CommonBeanFactory;
 import com.hummerrisk.commons.utils.CommonThreadPool;
@@ -34,7 +33,7 @@ public class NoticeCreateService {
     // 只有一个任务在处理，防止超配
     private static ConcurrentHashMap<String, String> processingGroupIdMap = new ConcurrentHashMap<>();
     @Resource
-    private TaskMapper taskMapper;
+    private CloudTaskMapper cloudTaskMapper;
     @Resource
     private CommonThreadPool commonThreadPool;
     @Resource
@@ -42,7 +41,7 @@ public class NoticeCreateService {
     @Resource
     private MessageOrderItemMapper messageOrderItemMapper;
     @Resource
-    private ExtTaskMapper extTaskMapper;
+    private ExtCloudTaskMapper extCloudTaskMapper;
     @Resource
     private WebMsgMapper webMsgMapper;
     @Resource
@@ -149,13 +148,13 @@ public class NoticeCreateService {
             String scanType = messageOrder.getScanType();
 
             if (StringUtils.equals(ScanConstants.SCAN_TYPE.CLOUD.name(), scanType) || StringUtils.equals(ScanConstants.SCAN_TYPE.VULN.name(), scanType)) {
-                Task task = taskMapper.selectByPrimaryKey(item.getTaskId());
-                if (task == null) {
+                CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(item.getTaskId());
+                if (cloudTask == null) {
                     return false;
                 } else {
-                    if (StringUtils.equalsIgnoreCase(task.getStatus(), TaskConstants.TASK_STATUS.FINISHED.name())
-                            || StringUtils.equalsIgnoreCase(task.getStatus(), TaskConstants.TASK_STATUS.WARNING.name())
-                            || StringUtils.equalsIgnoreCase(task.getStatus(), TaskConstants.TASK_STATUS.ERROR.name())) {
+                    if (StringUtils.equalsIgnoreCase(cloudTask.getStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
+                            || StringUtils.equalsIgnoreCase(cloudTask.getStatus(), CloudTaskConstants.TASK_STATUS.WARNING.name())
+                            || StringUtils.equalsIgnoreCase(cloudTask.getStatus(), CloudTaskConstants.TASK_STATUS.ERROR.name())) {
                         item.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
                         item.setSendTime(System.currentTimeMillis());
                         messageOrderItemMapper.updateByPrimaryKeySelective(item);
@@ -165,9 +164,9 @@ public class NoticeCreateService {
                 }
             } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), scanType)) {
                 ServerResult serverResult = serverResultMapper.selectByPrimaryKey(item.getTaskId());
-                if (StringUtils.equalsIgnoreCase(serverResult.getResultStatus(), TaskConstants.TASK_STATUS.FINISHED.name())
-                        || StringUtils.equalsIgnoreCase(serverResult.getResultStatus(), TaskConstants.TASK_STATUS.WARNING.name())
-                        || StringUtils.equalsIgnoreCase(serverResult.getResultStatus(), TaskConstants.TASK_STATUS.ERROR.name())) {
+                if (StringUtils.equalsIgnoreCase(serverResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
+                        || StringUtils.equalsIgnoreCase(serverResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.WARNING.name())
+                        || StringUtils.equalsIgnoreCase(serverResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.ERROR.name())) {
                     item.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
                     item.setSendTime(System.currentTimeMillis());
                     messageOrderItemMapper.updateByPrimaryKeySelective(item);
@@ -176,9 +175,9 @@ public class NoticeCreateService {
                 }
             } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.PACKAGE.name(), scanType)) {
                 PackageResult packageResult = packageResultMapper.selectByPrimaryKey(item.getTaskId());
-                if (StringUtils.equalsIgnoreCase(packageResult.getResultStatus(), TaskConstants.TASK_STATUS.FINISHED.name())
-                        || StringUtils.equalsIgnoreCase(packageResult.getResultStatus(), TaskConstants.TASK_STATUS.WARNING.name())
-                        || StringUtils.equalsIgnoreCase(packageResult.getResultStatus(), TaskConstants.TASK_STATUS.ERROR.name())) {
+                if (StringUtils.equalsIgnoreCase(packageResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
+                        || StringUtils.equalsIgnoreCase(packageResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.WARNING.name())
+                        || StringUtils.equalsIgnoreCase(packageResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.ERROR.name())) {
                     item.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
                     item.setSendTime(System.currentTimeMillis());
                     messageOrderItemMapper.updateByPrimaryKeySelective(item);
@@ -209,10 +208,10 @@ public class NoticeCreateService {
         String subject = "云资源安全合规检测结果";
         String event = NoticeConstants.Event.EXECUTE_SUCCESSFUL;
 
-        List<Task> tasks = extTaskMapper.getTopTasksForEmail(messageOrder);
+        List<CloudTask> cloudTasks = extCloudTaskMapper.getTopTasksForEmail(messageOrder);
 
-        for (Task task : tasks) {
-            if (task.getReturnSum() == null) {
+        for (CloudTask cloudTask : cloudTasks) {
+            if (cloudTask.getReturnSum() == null) {
                 sendTask(messageOrder);
                 return;
             }
@@ -224,13 +223,13 @@ public class NoticeCreateService {
 
         if (StringUtils.equals(ScanConstants.SCAN_TYPE.CLOUD.name(), messageOrder.getScanType())) {
             subject = "云资源安全合规检测结果";
-            returnSum = extTaskMapper.getReturnSumForEmail(messageOrder);
-            resourcesSum = extTaskMapper.getResourcesSumForEmail(messageOrder);
+            returnSum = extCloudTaskMapper.getReturnSumForEmail(messageOrder);
+            resourcesSum = extCloudTaskMapper.getResourcesSumForEmail(messageOrder);
             details =  "【 不合规资源/资源总数】" + returnSum  + "/" + resourcesSum;
         } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.VULN.name(), messageOrder.getScanType())) {
             subject = "安全合规漏洞检测结果";
-            returnSum = extTaskMapper.getReturnSumForEmail(messageOrder);
-            resourcesSum = extTaskMapper.getResourcesSumForEmail(messageOrder);
+            returnSum = extCloudTaskMapper.getReturnSumForEmail(messageOrder);
+            resourcesSum = extCloudTaskMapper.getResourcesSumForEmail(messageOrder);
             details =  "【 不合规资源/资源总数】" + returnSum  + "/" + resourcesSum;
         } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), messageOrder.getScanType())) {
             subject = "虚拟机安全合规检测结果";
@@ -241,7 +240,7 @@ public class NoticeCreateService {
         }
 
         Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("resources", tasks);
+        paramMap.put("resources", cloudTasks);
         paramMap.put("returnSum", returnSum);
         paramMap.put("resourcesSum", resourcesSum);
         NoticeModel noticeModel = NoticeModel.builder()

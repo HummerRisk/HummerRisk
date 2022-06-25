@@ -1,8 +1,8 @@
 package com.hummerrisk.proxy.azure;
 
 import com.google.gson.Gson;
-import com.hummerrisk.commons.exception.PluginException;
 import com.hummerrisk.base.domain.Proxy;
+import com.hummerrisk.commons.exception.PluginException;
 import com.hummerrisk.proxy.Request;
 
 public class AzureBaseRequest extends Request {

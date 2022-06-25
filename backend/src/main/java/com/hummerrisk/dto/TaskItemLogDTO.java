@@ -1,31 +1,31 @@
 package com.hummerrisk.dto;
 
 
+import com.hummerrisk.base.domain.CloudTaskItem;
+import com.hummerrisk.base.domain.CloudTaskItemLog;
 import com.hummerrisk.base.domain.Rule;
-import com.hummerrisk.base.domain.TaskItem;
-import com.hummerrisk.base.domain.TaskItemLog;
 
 import java.util.List;
 
 public class TaskItemLogDTO {
-    private TaskItem taskItem;
-    private List<TaskItemLog> taskItemLogList;
+    private CloudTaskItem cloudTaskItem;
+    private List<CloudTaskItemLog> cloudTaskItemLogList;
     private Rule rule;
 
-    public TaskItem getTaskItem() {
-        return taskItem;
+    public CloudTaskItem getTaskItem() {
+        return cloudTaskItem;
     }
 
-    public void setTaskItem(TaskItem taskItem) {
-        this.taskItem = taskItem;
+    public void setTaskItem(CloudTaskItem cloudTaskItem) {
+        this.cloudTaskItem = cloudTaskItem;
     }
 
-    public List<TaskItemLog> getTaskItemLogList() {
-        return taskItemLogList;
+    public List<CloudTaskItemLog> getTaskItemLogList() {
+        return cloudTaskItemLogList;
     }
 
-    public void setTaskItemLogList(List<TaskItemLog> taskItemLogList) {
-        this.taskItemLogList = taskItemLogList;
+    public void setTaskItemLogList(List<CloudTaskItemLog> cloudTaskItemLogList) {
+        this.cloudTaskItemLogList = cloudTaskItemLogList;
     }
 
     public Rule getRule() {

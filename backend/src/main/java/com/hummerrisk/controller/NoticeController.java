@@ -1,7 +1,7 @@
 package com.hummerrisk.controller;
 
-import com.hummerrisk.service.NoticeService;
 import com.hummerrisk.message.MessageDetail;
+import com.hummerrisk.service.NoticeService;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 

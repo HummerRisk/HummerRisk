@@ -13,9 +13,9 @@ import java.util.concurrent.*;
  * <p>
  * 添加到spring配置文件
  * <br><br>&lt;bean id="commonThreadPool" class="com.zwzx.common.thread.CommonThreadPool"&gt;
- * <br>&lt;property name="corePoolSize" value="${task.threadPool.corePoolSize}" /&gt;
- * <br>&lt;property name="maxQueueSize" value="${task.threadPool.maxQueueSize}" /&gt;
- * <br>&lt;property name="keepAliveSeconds" value="${task.threadPool.keepAliveSeconds}" /&gt;
+ * <br>&lt;property name="corePoolSize" value="${cloudTask.threadPool.corePoolSize}" /&gt;
+ * <br>&lt;property name="maxQueueSize" value="${cloudTask.threadPool.maxQueueSize}" /&gt;
+ * <br>&lt;property name="keepAliveSeconds" value="${cloudTask.threadPool.keepAliveSeconds}" /&gt;
  * <br>&lt;/bean&gt;
  *
  * @author harris
@@ -87,9 +87,9 @@ public class CommonThreadPool {
                 Future future = executorService.submit(task);
                 future.get(timeOut, timeUnit); // 此行会阻塞，直到任务执行完或超时
             } catch (TimeoutException timeoutException) {
-                LogUtil.getLogger().error("timeout to execute task", timeoutException);
+                LogUtil.getLogger().error("timeout to execute cloudTask", timeoutException);
             } catch (Exception exception) {
-                LogUtil.getLogger().error("failed to execute task", exception);
+                LogUtil.getLogger().error("failed to execute cloudTask", exception);
             } finally {
                 if (!executorService.isShutdown()) {
                     executorService.shutdown();

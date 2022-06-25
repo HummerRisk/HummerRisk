@@ -1,12 +1,12 @@
 package com.hummerrisk.base.mapper.ext;
 
 
-import com.hummerrisk.dto.ResourceDTO;
+import com.hummerrisk.base.domain.CloudTaskItem;
 import com.hummerrisk.base.domain.ResourceWithBLOBs;
-import com.hummerrisk.base.domain.TaskItem;
 import com.hummerrisk.controller.request.resource.ResourceRequest;
 import com.hummerrisk.dto.ExportDTO;
 import com.hummerrisk.dto.ReportDTO;
+import com.hummerrisk.dto.ResourceDTO;
 import com.hummerrisk.dto.SourceDTO;
 import org.apache.ibatis.annotations.Param;
 
@@ -36,6 +36,6 @@ public interface ExtResourceMapper {
 
     List<ExportDTO> searchExportData(ResourceRequest resourceRequest, @Param("accountIds") List<String> accountIds);
 
-    ResourceWithBLOBs resource(TaskItem taskItem);
+    ResourceWithBLOBs resource(CloudTaskItem cloudTaskItem);
 
 }

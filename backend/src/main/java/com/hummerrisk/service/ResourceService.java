@@ -7,9 +7,9 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.hummer.quartz.service.QuartzManageService;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
+import com.hummerrisk.base.mapper.ext.ExtCloudTaskMapper;
 import com.hummerrisk.base.mapper.ext.ExtResourceMapper;
 import com.hummerrisk.base.mapper.ext.ExtScanHistoryMapper;
-import com.hummerrisk.base.mapper.ext.ExtTaskMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
@@ -55,19 +55,19 @@ public class ResourceService {
     @Resource @Lazy
     private ResourceRuleMapper resourceRuleMapper;
     @Resource @Lazy
-    private TaskItemMapper taskItemMapper;
+    private CloudTaskItemMapper cloudTaskItemMapper;
     @Resource @Lazy
-    private TaskItemResourceMapper taskItemResourceMapper;
+    private CloudTaskItemResourceMapper cloudTaskItemResourceMapper;
     @Resource @Lazy
-    private TaskMapper taskMapper;
+    private CloudTaskMapper cloudTaskMapper;
     @Resource @Lazy
     private AccountMapper accountMapper;
     @Resource @Lazy
-    private ExtTaskMapper extTaskMapper;
+    private ExtCloudTaskMapper extCloudTaskMapper;
     @Resource @Lazy
-    private TaskItemLogMapper taskItemLogMapper;
+    private CloudTaskItemLogMapper cloudTaskItemLogMapper;
     @Resource @Lazy
-    private TaskService taskService;
+    private CloudTaskService cloudTaskService;
     @Resource @Lazy
     private OrderService orderService;
     @Resource @Lazy
@@ -118,7 +118,7 @@ public class ResourceService {
         return extResourceMapper.getComplianceResult(resourceRequest);
     }
 
-    public ResourceWithBLOBs saveResource(ResourceWithBLOBs resourceWithBLOBs, TaskItemWithBLOBs taskItem, Task task, TaskItemResourceWithBLOBs taskItemResource) {
+    public ResourceWithBLOBs saveResource(ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemWithBLOBs taskItem, CloudTask cloudTask, CloudTaskItemResourceWithBLOBs taskItemResource) {
         try {
             //保存创建的资源
             long now = System.currentTimeMillis();
@@ -138,7 +138,7 @@ public class ResourceService {
             ResourceRule resourceRule = new ResourceRule();
             resourceRule.setResourceId(resourceWithBLOBs.getId());
             resourceRule.setRuleId(taskItem.getRuleId());
-            resourceRule.setApplyUser(task.getApplyUser());
+            resourceRule.setApplyUser(cloudTask.getApplyUser());
             if (resourceRuleMapper.selectByPrimaryKey(resourceWithBLOBs.getId()) != null) {
                 resourceRuleMapper.updateByPrimaryKeySelective(resourceRule);
             } else {
@@ -150,11 +150,11 @@ public class ResourceService {
             insertTaskItemResource(taskItemResource);
 
             //计算sum资源总数与检测的资源数到task
-            int resourceSum = extTaskMapper.getResourceSum(task.getId());
-            int returnSum = extTaskMapper.getReturnSum(task.getId());
-            task.setResourcesSum((long) resourceSum);
-            task.setReturnSum((long) returnSum);
-            taskMapper.updateByPrimaryKeySelective(task);
+            int resourceSum = extCloudTaskMapper.getResourceSum(cloudTask.getId());
+            int returnSum = extCloudTaskMapper.getReturnSum(cloudTask.getId());
+            cloudTask.setResourcesSum((long) resourceSum);
+            cloudTask.setReturnSum((long) returnSum);
+            cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
@@ -229,7 +229,7 @@ public class ResourceService {
             String uuid = resourceWithBLOBs.getId() != null ? resourceWithBLOBs.getId() : UUIDUtil.newUUID();
             String resultFile = ResourceConstants.QUERY_ALL_RESOURCE.replace("{resource_name}", resourceWithBLOBs.getDirName());
             resultFile = resultFile.replace("{resource_type}", resourceWithBLOBs.getResourceType());
-            dirPath = CommandUtils.saveAsFile(resultFile, TaskConstants.RESULT_FILE_PATH_PREFIX + uuid, "policy.yml");
+            dirPath = CommandUtils.saveAsFile(resultFile, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + uuid, "policy.yml");
             LogUtil.info(resourceWithBLOBs.getResourceType() + " ::: count resource sum ::: start");
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(resourceWithBLOBs.getAccountId());
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, resourceWithBLOBs.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
@@ -238,7 +238,7 @@ public class ResourceService {
             if (LogUtil.getLogger().isDebugEnabled()) {
                 LogUtil.getLogger().debug("resource created: {}", resultStr);
             }
-            String resources = ReadFileUtils.readJsonFile(dirPath + "/" + resourceWithBLOBs.getDirName() + "/", TaskConstants.RESOURCES_RESULT_FILE);
+            String resources = ReadFileUtils.readJsonFile(dirPath + "/" + resourceWithBLOBs.getDirName() + "/", CloudTaskConstants.RESOURCES_RESULT_FILE);
             JSONArray jsonArray = parseArray(resources);
             if ((long) jsonArray.size() < resourceWithBLOBs.getReturnSum()) {
                 resourceWithBLOBs.setResourcesSum(resourceWithBLOBs.getReturnSum());
@@ -255,11 +255,11 @@ public class ResourceService {
         return resourceWithBLOBs;
     }
 
-    private void insertTaskItemResource(TaskItemResourceWithBLOBs taskItemResource) {
+    private void insertTaskItemResource(CloudTaskItemResourceWithBLOBs taskItemResource) {
         if (taskItemResource.getId() != null) {
-            taskItemResourceMapper.updateByPrimaryKeySelective(taskItemResource);
+            cloudTaskItemResourceMapper.updateByPrimaryKeySelective(taskItemResource);
         } else {
-            taskItemResourceMapper.insertSelective(taskItemResource);
+            cloudTaskItemResourceMapper.insertSelective(taskItemResource);
         }
     }
 
@@ -270,14 +270,14 @@ public class ResourceService {
         resource.setResources(toJSONString2(resource.getResources()));
 
         BeanUtils.copyBean(dto, resource);
-        TaskItemResourceExample example = new TaskItemResourceExample();
+        CloudTaskItemResourceExample example = new CloudTaskItemResourceExample();
         example.createCriteria().andResourceIdEqualTo(id);
-        List<TaskItemResource> taskItemResources = taskItemResourceMapper.selectByExample(example);
+        List<CloudTaskItemResource> cloudTaskItemResources = cloudTaskItemResourceMapper.selectByExample(example);
 
-        TaskItemWithBLOBs taskItemWithBLOBs = taskItemMapper.selectByPrimaryKey(taskItemResources.get(0).getTaskItemId());
-        Task task = taskMapper.selectByPrimaryKey(taskItemWithBLOBs.getTaskId());
+        CloudTaskItemWithBLOBs taskItemWithBLOBs = cloudTaskItemMapper.selectByPrimaryKey(cloudTaskItemResources.get(0).getTaskItemId());
+        CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskItemWithBLOBs.getTaskId());
         TaskDTO taskDTO = new TaskDTO();
-        BeanUtils.copyBean(taskDTO, task);
+        BeanUtils.copyBean(taskDTO, cloudTask);
         dto.setTaskDTO(taskDTO);
         dto.setCustomData(taskItemWithBLOBs.getCustomData());
 
@@ -299,11 +299,11 @@ public class ResourceService {
     }
 
     public List<String> getResourceIdsByTaskItemId(String taskItemId) {
-        TaskItemResourceExample taskItemResourceExample = new TaskItemResourceExample();
-        taskItemResourceExample.createCriteria().andTaskItemIdEqualTo(taskItemId);
-        return taskItemResourceMapper.selectByExample(taskItemResourceExample)
+        CloudTaskItemResourceExample cloudTaskItemResourceExample = new CloudTaskItemResourceExample();
+        cloudTaskItemResourceExample.createCriteria().andTaskItemIdEqualTo(taskItemId);
+        return cloudTaskItemResourceMapper.selectByExample(cloudTaskItemResourceExample)
                 .stream()
-                .map(TaskItemResource::getResourceId)
+                .map(CloudTaskItemResource::getResourceId)
                 .collect(Collectors.toList());
     }
 
@@ -321,7 +321,7 @@ public class ResourceService {
                 resourceWithBLOBs.setResourceStatus(ResourceConstants.RESOURCE_STATUS.NotNeedFix.name());
             }
             resourceMapper.updateByPrimaryKeySelective(resourceWithBLOBs);
-            taskService.syncTaskSum();//资源（检测结果）数量变化的话要更新任务表的数据
+            cloudTaskService.syncTaskSum();//资源（检测结果）数量变化的话要更新任务表的数据
         } catch (Exception e) {
             resourceWithBLOBs.setResourceStatus(ResourceConstants.RESOURCE_STATUS.Error.name());
             resourceMapper.updateByPrimaryKeySelective(resourceWithBLOBs);
@@ -346,25 +346,25 @@ public class ResourceService {
             example.createCriteria().andPluginNameEqualTo(resourceWithBLOBs.getPluginName()).andStatusEqualTo("VALID");
             String region = resourceWithBLOBs.getRegionId();
 
-            TaskItemResourceExample taskItemResourceExample = new TaskItemResourceExample();
-            taskItemResourceExample.createCriteria().andResourceIdEqualTo(resourceWithBLOBs.getId());
-            TaskItemResource taskItemResource = taskItemResourceMapper.selectByExample(taskItemResourceExample).get(0);
-            TaskItemWithBLOBs taskItem = taskItemMapper.selectByPrimaryKey(taskItemResource.getTaskItemId());
+            CloudTaskItemResourceExample cloudTaskItemResourceExample = new CloudTaskItemResourceExample();
+            cloudTaskItemResourceExample.createCriteria().andResourceIdEqualTo(resourceWithBLOBs.getId());
+            CloudTaskItemResource cloudTaskItemResource = cloudTaskItemResourceMapper.selectByExample(cloudTaskItemResourceExample).get(0);
+            CloudTaskItemWithBLOBs taskItem = cloudTaskItemMapper.selectByPrimaryKey(cloudTaskItemResource.getTaskItemId());
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(resourceWithBLOBs.getAccountId());
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, region, proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
 
             orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), Translator.get("i18n_operation_begin") + ": " + operation, StringUtils.EMPTY, true);
 
-            Task task = taskMapper.selectByPrimaryKey(taskItem.getTaskId());
-            switch (task.getScanType()) {
+            CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskItem.getTaskId());
+            switch (cloudTask.getScanType()) {
                 case "custodian":
-                    createCustodianResource(finalScript, resourceWithBLOBs, map, taskItem, taskItemResource, operation);
+                    createCustodianResource(finalScript, resourceWithBLOBs, map, taskItem, cloudTaskItemResource, operation);
                     break;
                 case "nuclei":
                     createNucleiResource(resourceWithBLOBs, taskItem, operation);
                     break;
                 case "prowler":
-                    createProwlerResource(resourceWithBLOBs, taskItem, task, operation);
+                    createProwlerResource(resourceWithBLOBs, taskItem, cloudTask, operation);
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: scantype");
@@ -377,18 +377,18 @@ public class ResourceService {
     }
 
     private void createCustodianResource (String finalScript, ResourceWithBLOBs resourceWithBLOBs, Map<String, String> map,
-                                          TaskItemWithBLOBs taskItem, TaskItemResource taskItemResource, String operation) {
+                                          CloudTaskItemWithBLOBs taskItem, CloudTaskItemResource cloudTaskItemResource, String operation) {
         try {
-            String dirPath = CommandUtils.saveAsFile(finalScript, TaskConstants.RESULT_FILE_PATH_PREFIX + resourceWithBLOBs.getId(), "policy.yml");
+            String dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + resourceWithBLOBs.getId(), "policy.yml");
             String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, "policy.yml", map);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
             if (!resultStr.isEmpty() && !resultStr.contains("INFO")) {
                 HRException.throwException(Translator.get("i18n_compliance_rule_error") + ": " + resultStr);
             }
             CommandUtils.commonExecCmdWithResult(command, dirPath);//第一次执行action会修复资源，但是会返回修复之前的数据回来。所以此处再执行一次
-            String custodianRun = ReadFileUtils.readJsonFile(dirPath + "/" + taskItemResource.getDirName() + "/", TaskConstants.CUSTODIAN_RUN_RESULT_FILE);
-            String metadata = ReadFileUtils.readJsonFile(dirPath + "/" + taskItemResource.getDirName() + "/", TaskConstants.METADATA_RESULT_FILE);
-            String resources = ReadFileUtils.readJsonFile(dirPath + "/" + taskItemResource.getDirName() + "/", TaskConstants.RESOURCES_RESULT_FILE);
+            String custodianRun = ReadFileUtils.readJsonFile(dirPath + "/" + cloudTaskItemResource.getDirName() + "/", CloudTaskConstants.CUSTODIAN_RUN_RESULT_FILE);
+            String metadata = ReadFileUtils.readJsonFile(dirPath + "/" + cloudTaskItemResource.getDirName() + "/", CloudTaskConstants.METADATA_RESULT_FILE);
+            String resources = ReadFileUtils.readJsonFile(dirPath + "/" + cloudTaskItemResource.getDirName() + "/", CloudTaskConstants.RESOURCES_RESULT_FILE);
 
             resourceWithBLOBs.setCustodianRunLog(custodianRun);
             resourceWithBLOBs.setMetadata(metadata);
@@ -406,9 +406,9 @@ public class ResourceService {
         }
     }
 
-    private void createNucleiResource (ResourceWithBLOBs resourceWithBLOBs, TaskItemWithBLOBs taskItem, String operation) {
+    private void createNucleiResource (ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemWithBLOBs taskItem, String operation) {
         try {
-            String dirPath = TaskConstants.RESULT_FILE_PATH_PREFIX + taskItem.getTaskId() + "/" + taskItem.getRegionId();
+            String dirPath = CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskItem.getTaskId() + "/" + taskItem.getRegionId();
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
             String command = PlatformUtils.fixedCommand(CommandEnum.nuclei.getCommand(), CommandEnum.run.getCommand(), dirPath, "nuclei.yml", map);
@@ -421,7 +421,7 @@ public class ResourceService {
 
             String nucleiRun = resultStr;
             String metadata = resultStr;
-            String resources = ReadFileUtils.readToBuffer(dirPath + "/" + TaskConstants.NUCLEI_RUN_RESULT_FILE);
+            String resources = ReadFileUtils.readToBuffer(dirPath + "/" + CloudTaskConstants.NUCLEI_RUN_RESULT_FILE);
 
             resourceWithBLOBs.setCustodianRunLog(nucleiRun);
             resourceWithBLOBs.setMetadata(metadata);
@@ -443,19 +443,19 @@ public class ResourceService {
     }
 
     private void createProwlerResource (ResourceWithBLOBs resourceWithBLOBs,
-                                          TaskItemWithBLOBs taskItem, Task task, String operation) {
+                                        CloudTaskItemWithBLOBs taskItem, CloudTask cloudTask, String operation) {
         try {
-            String dirPath = TaskConstants.PROWLER_RESULT_FILE_PATH;
-            String fileName = task.getResourceTypes().replace("[", "").replace("]", "");
+            String dirPath = CloudTaskConstants.PROWLER_RESULT_FILE_PATH;
+            String fileName = cloudTask.getResourceTypes().replace("[", "").replace("]", "");
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
             String command = PlatformUtils.fixedCommand(CommandEnum.prowler.getCommand(), CommandEnum.run.getCommand(), dirPath, fileName, map);
             LogUtil.info(taskItem.getTaskId() + " {}[command]: " + command);
             CommandUtils.commonExecCmdWithResult(command, dirPath);
 
-            String prowlerRun = ReadFileUtils.readToBuffer(dirPath + "/" + TaskConstants.PROWLER_RUN_RESULT_FILE);
+            String prowlerRun = ReadFileUtils.readToBuffer(dirPath + "/" + CloudTaskConstants.PROWLER_RUN_RESULT_FILE);
             String metadata = taskItem.getCustomData();
-            String resources = ReadFileUtils.readToBuffer(dirPath + "/" + TaskConstants.PROWLER_RUN_RESULT_FILE);
+            String resources = ReadFileUtils.readToBuffer(dirPath + "/" + CloudTaskConstants.PROWLER_RUN_RESULT_FILE);
 
             resourceWithBLOBs.setCustodianRunLog(prowlerRun);
             resourceWithBLOBs.setMetadata(metadata);
@@ -481,10 +481,10 @@ public class ResourceService {
     public List<ResourceLogDTO> getResourceLog(String resourceId) {
         List<ResourceLogDTO> result = new ArrayList<>();
         try {
-            TaskItemResourceExample taskItemResourceExample = new TaskItemResourceExample();
-            taskItemResourceExample.createCriteria().andResourceIdEqualTo(resourceId);
-            TaskItemResource taskItemResource = taskItemResourceMapper.selectByExample(taskItemResourceExample).get(0);
-            TaskItemWithBLOBs taskItem = taskItemMapper.selectByPrimaryKey(taskItemResource.getTaskItemId());
+            CloudTaskItemResourceExample cloudTaskItemResourceExample = new CloudTaskItemResourceExample();
+            cloudTaskItemResourceExample.createCriteria().andResourceIdEqualTo(resourceId);
+            CloudTaskItemResource cloudTaskItemResource = cloudTaskItemResourceMapper.selectByExample(cloudTaskItemResourceExample).get(0);
+            CloudTaskItemWithBLOBs taskItem = cloudTaskItemMapper.selectByPrimaryKey(cloudTaskItemResource.getTaskItemId());
             taskItem.setDetails(null);
             taskItem.setCustomData(null);
             ResourceLogDTO resourceLogDTO = new ResourceLogDTO();
@@ -492,10 +492,10 @@ public class ResourceService {
             Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getRuleId());
             rule.setScript(null);//没有用到暂时置空，以防止翻译总报错warn
             resourceLogDTO.setRule(rule);
-            TaskItemLogExample taskItemLogExample = new TaskItemLogExample();
-            taskItemLogExample.createCriteria().andTaskItemIdEqualTo(taskItem.getId()).andResourceIdEqualTo(resourceId);
-            taskItemLogExample.setOrderByClause("create_time");
-            resourceLogDTO.setTaskItemLogList(taskItemLogMapper.selectByExampleWithBLOBs(taskItemLogExample));
+            CloudTaskItemLogExample cloudTaskItemLogExample = new CloudTaskItemLogExample();
+            cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(taskItem.getId()).andResourceIdEqualTo(resourceId);
+            cloudTaskItemLogExample.setOrderByClause("create_time");
+            resourceLogDTO.setTaskItemLogList(cloudTaskItemLogMapper.selectByExampleWithBLOBs(cloudTaskItemLogExample));
             resourceLogDTO.setResource(resourceMapper.selectByPrimaryKey(resourceId));
             result.add(resourceLogDTO);
         } catch (Exception e) {
@@ -574,11 +574,11 @@ public class ResourceService {
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
     public void deleteResourceByAccountId (String accountId) throws Exception {
-        TaskExample example = new TaskExample();
+        CloudTaskExample example = new CloudTaskExample();
         example.createCriteria().andAccountIdEqualTo(accountId);
-        List<Task> tasks = taskMapper.selectByExample(example);
-        tasks.forEach(task -> {
-            taskService.deleteManualTask(task.getId());
+        List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(example);
+        cloudTasks.forEach(task -> {
+            cloudTaskService.deleteManualTask(task.getId());
             ScanTaskHistoryExample scanTaskHistoryExample = new ScanTaskHistoryExample();
             scanTaskHistoryExample.createCriteria().andTaskIdEqualTo(task.getId());
             scanTaskHistoryMapper.deleteByExample(scanTaskHistoryExample);
@@ -634,8 +634,8 @@ public class ResourceService {
         return extResourceMapper.groups(params);
     }
 
-    public ResourceWithBLOBs resource(TaskItem taskItem) {
-        ResourceWithBLOBs resource = extResourceMapper.resource(taskItem);
+    public ResourceWithBLOBs resource(CloudTaskItem cloudTaskItem) {
+        ResourceWithBLOBs resource = extResourceMapper.resource(cloudTaskItem);
         try{
             if (!StringUtils.equalsIgnoreCase(resource.getPluginId(), PlatformUtils.nuclei)) {
                 resource.setMetadata(toJSONString(resource.getMetadata()));

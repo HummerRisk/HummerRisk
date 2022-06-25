@@ -369,11 +369,11 @@ export default {
         return '';
       }
     },
-    showTaskLog (task) {
-      let showLogTaskId = task.id;
+    showTaskLog (cloudTask) {
+      let showLogTaskId = cloudTask.id;
       let url = "";
       if (showLogTaskId) {
-        url = "/task/log/taskId/";
+        url = "/cloudTask/log/taskId/";
       }
       this.logForm.taskItemLogDTOs = [];
       this.logForm.showLogTaskId = showLogTaskId;
@@ -384,7 +384,7 @@ export default {
     },
     showTaskDetail(item) {
       this.detailForm = {};
-      this.$get("/task/detail/" + item.id, response => {
+      this.$get("/cloudTask/detail/" + item.id, response => {
         if (response.success) {
           this.detailForm = response.data;
           this.detailVisible = true;

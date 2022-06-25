@@ -6,8 +6,8 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.RegionUtils;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.google.gson.Gson;
-import com.hummerrisk.proxy.Request;
 import com.hummerrisk.base.domain.Proxy;
+import com.hummerrisk.proxy.Request;
 
 public class AWSRequest extends Request {
 	private AWSCredential awsCredential;

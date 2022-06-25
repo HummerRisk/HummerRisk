@@ -2,14 +2,11 @@ package com.hummerrisk.service;
 
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.commons.utils.SigarUtil;
-import com.hummerrisk.proxy.server.Server;
 import org.hyperic.sigar.*;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;

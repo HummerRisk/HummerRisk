@@ -3,7 +3,7 @@ package com.hummerrisk.commons.constants;
 /**
  * @author harris
  */
-public class TaskConstants {
+public class CloudTaskConstants {
 
     public enum TASK_STATUS {
         DRAFT, UNCHECKED, APPROVED, FINISHED, TERMINATED, CANCELED, REJECTED, PROCESSING, ERROR, WARNING, RUNNING, PENDING, PAUSE

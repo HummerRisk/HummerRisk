@@ -1,4 +1,4 @@
-import com.hummerrisk.commons.constants.TaskConstants;
+import com.hummerrisk.commons.constants.CloudTaskConstants;
 import com.hummerrisk.commons.utils.LogUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -76,7 +76,7 @@ public class APITest {
     @org.junit.Test
     public void test3 () throws Exception {
         try {
-            File file = new File(TaskConstants.PROWLER_RESULT_FILE_PATH + "/" + TaskConstants.PROWLER_RUN_RESULT_FILE);
+            File file = new File(CloudTaskConstants.PROWLER_RESULT_FILE_PATH + "/" + CloudTaskConstants.PROWLER_RUN_RESULT_FILE);
             if (file.isFile() && file.exists()) { // 判断文件是否存在
                 InputStreamReader read = new InputStreamReader(
                         new FileInputStream(file), "UTF-8");// 考虑到编码格式

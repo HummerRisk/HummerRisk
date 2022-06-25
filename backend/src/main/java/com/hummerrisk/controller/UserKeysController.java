@@ -1,9 +1,9 @@
 package com.hummerrisk.controller;
 
+import com.hummerrisk.base.domain.UserKey;
 import com.hummerrisk.commons.constants.RoleConstants;
 import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.security.ApiKeyHandler;
-import com.hummerrisk.base.domain.UserKey;
 import com.hummerrisk.service.UserKeyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

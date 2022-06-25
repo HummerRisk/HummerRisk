@@ -1,7 +1,7 @@
 package com.hummerrisk.base.mapper;
 
-import com.hummerrisk.base.domain.CloudAccountQuartzTaskRelaLogExample;
 import com.hummerrisk.base.domain.CloudAccountQuartzTaskRelaLog;
+import com.hummerrisk.base.domain.CloudAccountQuartzTaskRelaLogExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

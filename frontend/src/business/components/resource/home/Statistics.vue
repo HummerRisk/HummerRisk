@@ -145,7 +145,7 @@
             <el-col :span="8"><span style="color: #909090;">{{ $t('resource.i18n_detail') }} <i class="el-icon-question"></i></span></el-col>
             <el-col :span="16">
               <span>
-                <el-table :data="detailForm.taskList" style="width: 100%" height="538">
+                <el-table :data="detailForm.cloudTaskList" style="width: 100%" height="538">
                     <el-table-column :label="$t('rule.rule_name')" min-width="75%">
                       <template slot-scope="scope">
                         <span v-if="!!scope.row.returnSum && scope.row.returnSum>0"><i class="el-icon-warning-outline" style="color: red"></i> {{ scope.row.taskName }}</span>

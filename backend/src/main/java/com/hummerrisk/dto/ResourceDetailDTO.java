@@ -1,7 +1,7 @@
 package com.hummerrisk.dto;
 
-import com.hummerrisk.base.domain.ResourceWithBLOBs;
 import com.hummerrisk.base.domain.ResourceItem;
+import com.hummerrisk.base.domain.ResourceWithBLOBs;
 
 /**
  * @author harris

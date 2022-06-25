@@ -1,7 +1,7 @@
 package com.hummerrisk.dto;
 
+import com.hummerrisk.base.domain.CloudTask;
 import com.hummerrisk.base.domain.RuleInspectionReport;
-import com.hummerrisk.base.domain.Task;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ public class ReportDTO extends RuleInspectionReport {
 
     private String Status;
 
-    private List<Task> taskList;
+    private List<CloudTask> cloudTaskList;
 
     public String getStatus() {
         return Status;
@@ -20,11 +20,11 @@ public class ReportDTO extends RuleInspectionReport {
         Status = status;
     }
 
-    public List<Task> getTaskList() {
-        return taskList;
+    public List<CloudTask> getTaskList() {
+        return cloudTaskList;
     }
 
-    public void setTaskList(List<Task> taskList) {
-        this.taskList = taskList;
+    public void setTaskList(List<CloudTask> cloudTaskList) {
+        this.cloudTaskList = cloudTaskList;
     }
 }
