@@ -912,11 +912,13 @@ export default {
     oss_overview: 'Object storage overview',
     oss_bucket: 'Bucket list',
     oss_order: 'Bucket operations',
+    oss_account: 'Object storage account',
   },
   task: {
     task_setting: 'Task arrangement',
     task_settings_list: 'Task scheduling settings list',
-    task_overview: 'Organization analysis',
+    task_overview: 'Data analysis',
+    task_quartz: 'Scheduled task',
   },
   proxy: {
     create:'Create an agent',

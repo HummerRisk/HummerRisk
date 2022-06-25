@@ -912,11 +912,13 @@ export default {
     oss_overview: '對象存儲概覽',
     oss_bucket: '存儲桶列表',
     oss_order: '存儲桶操作',
+    oss_account: '對象存儲賬號',
   },
   task: {
     task_setting: '任務編排',
     task_settings_list: '任務編排設置列表',
-    task_overview: '編排分析',
+    task_overview: '數據分析',
+    task_quartz: '定時任務',
   },
   proxy: {
     create: '創建代理',

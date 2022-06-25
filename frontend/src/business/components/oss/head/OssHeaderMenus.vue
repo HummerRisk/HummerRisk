@@ -8,6 +8,10 @@
             {{ $t("oss.oss_overview") }}
           </el-menu-item>
 
+          <el-menu-item :index="'/oss/account'">
+            {{ $t("oss.oss_account") }}
+          </el-menu-item>
+
           <el-menu-item :index="'/oss/bucket'">
             {{ $t("oss.oss_bucket") }}
           </el-menu-item>

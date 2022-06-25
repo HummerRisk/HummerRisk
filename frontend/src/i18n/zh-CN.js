@@ -912,11 +912,13 @@ export default {
     oss_overview: '对象存储概览',
     oss_bucket: '存储桶列表',
     oss_order: '存储桶操作',
+    oss_account: '对象存储账号',
   },
   task: {
     task_setting: '任务编排',
     task_settings_list: '任务编排设置列表',
-    task_overview: '编排分析',
+    task_overview: '数据分析',
+    task_quartz: '定时任务',
   },
   proxy: {
     create: '创建代理',

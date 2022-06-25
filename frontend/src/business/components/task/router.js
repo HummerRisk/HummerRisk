@@ -13,9 +13,14 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/task/home/Task'),
     },
     {
-      path: "taskOverview",
-      name: "taskOverview",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/task/home/TaskOverview'),
+      path: "quartz",
+      name: "quartz",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/task/home/Task'),
+    },
+    {
+      path: "overview",
+      name: "overview",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/task/home/Overview'),
     },
   ]
 }
