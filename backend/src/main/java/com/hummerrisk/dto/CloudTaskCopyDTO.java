@@ -11,17 +11,17 @@ import java.util.List;
 /**
  * @author harris
  */
-public class TaskCopyDTO {
+public class CloudTaskCopyDTO {
     private List<CloudTaskItem> cloudTaskItemList;
     private Rule rule;
     private List<String> ruleTagMappingList;
     private List<SelectTag> SelectTags = new LinkedList<>();
 
-    public List<CloudTaskItem> getTaskItemList() {
+    public List<CloudTaskItem> getCloudTaskItemList() {
         return cloudTaskItemList;
     }
 
-    public void setTaskItemList(List<CloudTaskItem> cloudTaskItemList) {
+    public void setCloudTaskItemList(List<CloudTaskItem> cloudTaskItemList) {
         this.cloudTaskItemList = cloudTaskItemList;
     }
 

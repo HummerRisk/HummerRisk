@@ -383,7 +383,7 @@ import {ACCOUNT_ID} from "@/common/js/constants";
         ],
         logVisible: false,
         detailVisible: false,
-        logForm: {taskItemLogDTOs: []},
+        logForm: {cloudTaskItemLogDTOs: []},
         detailForm: {},
         rule: {
           pluginId: [
@@ -543,10 +543,10 @@ import {ACCOUNT_ID} from "@/common/js/constants";
         if (showLogTaskId) {
           url = "/cloud/task/log/taskId/";
         }
-        this.logForm.taskItemLogDTOs = [];
+        this.logForm.cloudTaskItemLogDTOs = [];
         this.logForm.showLogTaskId = showLogTaskId;
         this.$get(url + showLogTaskId, response => {
-          this.logForm.taskItemLogDTOs = response.data;
+          this.logForm.cloudTaskItemLogDTOs = response.data;
           this.logVisible = true;
         });
       },

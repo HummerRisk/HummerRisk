@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummerrisk.base.mapper.ext.ExtCloudTaskMapper">
-    <resultMap id="ExtResultMap" type="com.hummerrisk.dto.TaskDTO"
+    <resultMap id="ExtResultMap" type="com.hummerrisk.dto.CloudTaskDTO"
                extends="com.hummerrisk.base.mapper.CloudTaskMapper.BaseResultMap">
             <result column="count" property="count"/>
             <result column="custom_data" property="customData"/>
@@ -75,7 +75,7 @@
         WHERE t.id = #{taskId}
     </select>
 
-    <resultMap id="BaseResultMap" type="com.hummerrisk.dto.TaskDTO"
+    <resultMap id="BaseResultMap" type="com.hummerrisk.dto.CloudTaskDTO"
                extends="com.hummerrisk.base.mapper.CloudTaskMapper.BaseResultMap">
         <result column="account_name" property="accountName"/>
     </resultMap>

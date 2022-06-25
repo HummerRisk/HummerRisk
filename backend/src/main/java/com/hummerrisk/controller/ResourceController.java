@@ -86,7 +86,7 @@ public class ResourceController {
 
     @ApiOperation(value = "检测日志")
     @GetMapping(value = "log/resourceId/{resourceId}")
-    public List<ResourceLogDTO> getResourceLog(@PathVariable String resourceId) {
+    public List<ResourceLogDTOCloud> getResourceLog(@PathVariable String resourceId) {
         return resourceService.getResourceLog(resourceId);
     }
 

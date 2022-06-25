@@ -26,22 +26,22 @@ public class CloudTaskController {
     private OrderService orderService;
 
     @GetMapping(value = "detail/{taskId}")
-    public TaskDTO getTaskDetail(@PathVariable String taskId) {
+    public CloudTaskDTO getTaskDetail(@PathVariable String taskId) {
         return orderService.getTaskDetail(taskId);
     }
 
     @GetMapping(value = "copy/{taskId}")
-    public TaskCopyDTO copy(@PathVariable String taskId) {
+    public CloudTaskCopyDTO copy(@PathVariable String taskId) {
         return orderService.copy(taskId);
     }
 
     @GetMapping(value = "log/taskId/{taskId}")
-    public List<TaskItemLogDTO> getTaskItemLogByTask(@PathVariable String taskId) {
+    public List<CloudTaskItemLogDTO> getTaskItemLogByTask(@PathVariable String taskId) {
         return orderService.getTaskItemLogByTaskId(taskId);
     }
 
     @GetMapping(value = "quartz/log/taskId/{taskId}")
-    public List<TaskItemLogDTO> getQuartzLogByTask(@PathVariable String taskId) {
+    public List<CloudTaskItemLogDTO> getQuartzLogByTask(@PathVariable String taskId) {
         return orderService.getQuartzLogByTask(taskId);
     }
 
@@ -59,7 +59,7 @@ public class CloudTaskController {
     }
 
     @GetMapping(value = "extendinfo/{taskId}")
-    public TaskDTO getTaskExtendInfo(@PathVariable String taskId) {
+    public CloudTaskDTO getTaskExtendInfo(@PathVariable String taskId) {
         return orderService.getTaskExtendInfo(taskId);
     }
 

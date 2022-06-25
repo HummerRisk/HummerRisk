@@ -276,9 +276,9 @@ public class ResourceService {
 
         CloudTaskItemWithBLOBs taskItemWithBLOBs = cloudTaskItemMapper.selectByPrimaryKey(cloudTaskItemResources.get(0).getTaskItemId());
         CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskItemWithBLOBs.getTaskId());
-        TaskDTO taskDTO = new TaskDTO();
-        BeanUtils.copyBean(taskDTO, cloudTask);
-        dto.setTaskDTO(taskDTO);
+        CloudTaskDTO cloudTaskDTO = new CloudTaskDTO();
+        BeanUtils.copyBean(cloudTaskDTO, cloudTask);
+        dto.setCloudTaskDTO(cloudTaskDTO);
         dto.setCustomData(taskItemWithBLOBs.getCustomData());
 
         return dto;
@@ -478,8 +478,8 @@ public class ResourceService {
     }
 
 
-    public List<ResourceLogDTO> getResourceLog(String resourceId) {
-        List<ResourceLogDTO> result = new ArrayList<>();
+    public List<ResourceLogDTOCloud> getResourceLog(String resourceId) {
+        List<ResourceLogDTOCloud> result = new ArrayList<>();
         try {
             CloudTaskItemResourceExample cloudTaskItemResourceExample = new CloudTaskItemResourceExample();
             cloudTaskItemResourceExample.createCriteria().andResourceIdEqualTo(resourceId);
@@ -487,15 +487,15 @@ public class ResourceService {
             CloudTaskItemWithBLOBs taskItem = cloudTaskItemMapper.selectByPrimaryKey(cloudTaskItemResource.getTaskItemId());
             taskItem.setDetails(null);
             taskItem.setCustomData(null);
-            ResourceLogDTO resourceLogDTO = new ResourceLogDTO();
-            resourceLogDTO.setTaskItem(taskItem);
+            ResourceLogDTOCloud resourceLogDTO = new ResourceLogDTOCloud();
+            resourceLogDTO.setCloudTaskItem(taskItem);
             Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getRuleId());
             rule.setScript(null);//没有用到暂时置空，以防止翻译总报错warn
             resourceLogDTO.setRule(rule);
             CloudTaskItemLogExample cloudTaskItemLogExample = new CloudTaskItemLogExample();
             cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(taskItem.getId()).andResourceIdEqualTo(resourceId);
             cloudTaskItemLogExample.setOrderByClause("create_time");
-            resourceLogDTO.setTaskItemLogList(cloudTaskItemLogMapper.selectByExampleWithBLOBs(cloudTaskItemLogExample));
+            resourceLogDTO.setCloudTaskItemLogList(cloudTaskItemLogMapper.selectByExampleWithBLOBs(cloudTaskItemLogExample));
             resourceLogDTO.setResource(resourceMapper.selectByPrimaryKey(resourceId));
             result.add(resourceLogDTO);
         } catch (Exception e) {

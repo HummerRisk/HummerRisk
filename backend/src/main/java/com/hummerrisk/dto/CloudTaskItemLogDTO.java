@@ -7,24 +7,24 @@ import com.hummerrisk.base.domain.Rule;
 
 import java.util.List;
 
-public class TaskItemLogDTO {
+public class CloudTaskItemLogDTO {
     private CloudTaskItem cloudTaskItem;
     private List<CloudTaskItemLog> cloudTaskItemLogList;
     private Rule rule;
 
-    public CloudTaskItem getTaskItem() {
+    public CloudTaskItem getCloudTaskItem() {
         return cloudTaskItem;
     }
 
-    public void setTaskItem(CloudTaskItem cloudTaskItem) {
+    public void setCloudTaskItem(CloudTaskItem cloudTaskItem) {
         this.cloudTaskItem = cloudTaskItem;
     }
 
-    public List<CloudTaskItemLog> getTaskItemLogList() {
+    public List<CloudTaskItemLog> getCloudTaskItemLogList() {
         return cloudTaskItemLogList;
     }
 
-    public void setTaskItemLogList(List<CloudTaskItemLog> cloudTaskItemLogList) {
+    public void setCloudTaskItemLogList(List<CloudTaskItemLog> cloudTaskItemLogList) {
         this.cloudTaskItemLogList = cloudTaskItemLogList;
     }
 

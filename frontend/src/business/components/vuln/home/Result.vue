@@ -262,7 +262,7 @@ export default {
       ],
       logVisible: false,
       detailVisible: false,
-      logForm: {taskItemLogDTOs: []},
+      logForm: {cloudTaskItemLogDTOs: []},
       detailForm: {},
       rule: {
         pluginId: [
@@ -375,10 +375,10 @@ export default {
       if (showLogTaskId) {
         url = "/cloudTask/log/taskId/";
       }
-      this.logForm.taskItemLogDTOs = [];
+      this.logForm.cloudTaskItemLogDTOs = [];
       this.logForm.showLogTaskId = showLogTaskId;
       this.$get(url + showLogTaskId, response => {
-        this.logForm.taskItemLogDTOs = response.data;
+        this.logForm.cloudTaskItemLogDTOs = response.data;
         this.logVisible = true;
       });
     },

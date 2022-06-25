@@ -11,15 +11,8 @@ public class CloudTaskRequest {
     private CloudTask cloudTask;
     private String taskId;
     private String remarks;
-    private List<CloudTaskItemWithBLOBs> taskItemWithBLOBsList;
+    private List<CloudTaskItemWithBLOBs> cloudTaskItemWithBLOBsList;
 
-    public CloudTask getTask() {
-        return cloudTask;
-    }
-
-    public void setTask(CloudTask cloudTask) {
-        this.cloudTask = cloudTask;
-    }
 
     public String getTaskId() {
         return taskId;
@@ -37,11 +30,19 @@ public class CloudTaskRequest {
         this.remarks = remarks;
     }
 
-    public List<CloudTaskItemWithBLOBs> getTaskItems() {
-        return taskItemWithBLOBsList;
+    public CloudTask getCloudTask() {
+        return cloudTask;
     }
 
-    public void setTaskItems(List<CloudTaskItemWithBLOBs> taskItemWithBLOBsList) {
-        this.taskItemWithBLOBsList = taskItemWithBLOBsList;
+    public void setCloudTask(CloudTask cloudTask) {
+        this.cloudTask = cloudTask;
+    }
+
+    public List<CloudTaskItemWithBLOBs> getCloudTaskItemWithBLOBsList() {
+        return cloudTaskItemWithBLOBsList;
+    }
+
+    public void setCloudTaskItemWithBLOBsList(List<CloudTaskItemWithBLOBs> cloudTaskItemWithBLOBsList) {
+        this.cloudTaskItemWithBLOBsList = cloudTaskItemWithBLOBsList;
     }
 }

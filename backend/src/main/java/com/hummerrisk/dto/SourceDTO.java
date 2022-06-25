@@ -36,14 +36,6 @@ public class SourceDTO extends Account {
         this.resourcesSum = resourcesSum;
     }
 
-    public List<CloudTask> getTaskList() {
-        return cloudTaskList;
-    }
-
-    public void setTaskList(List<CloudTask> cloudTaskList) {
-        this.cloudTaskList = cloudTaskList;
-    }
-
     public String getUserName() {
         return userName;
     }
@@ -66,5 +58,13 @@ public class SourceDTO extends Account {
 
     public void setResultStatus(String resultStatus) {
         this.resultStatus = resultStatus;
+    }
+
+    public List<CloudTask> getCloudTaskList() {
+        return cloudTaskList;
+    }
+
+    public void setCloudTaskList(List<CloudTask> cloudTaskList) {
+        this.cloudTaskList = cloudTaskList;
     }
 }

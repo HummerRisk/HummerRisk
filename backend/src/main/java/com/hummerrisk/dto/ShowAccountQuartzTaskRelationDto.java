@@ -6,13 +6,13 @@ import java.util.List;
 
 public class ShowAccountQuartzTaskRelationDto extends CloudAccountQuartzTaskRelation {
 
-    private List<TaskDTO> taskList;
+    private List<CloudTaskDTO> cloudTaskDTOList;
 
-    public List<TaskDTO> getTaskList() {
-        return taskList;
+    public List<CloudTaskDTO> getCloudTaskDTOList() {
+        return cloudTaskDTOList;
     }
 
-    public void setTaskList(List<TaskDTO> taskList) {
-        this.taskList = taskList;
+    public void setCloudTaskDTOList(List<CloudTaskDTO> cloudTaskDTOList) {
+        this.cloudTaskDTOList = cloudTaskDTOList;
     }
 }

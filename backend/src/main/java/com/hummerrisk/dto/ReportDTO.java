@@ -20,11 +20,11 @@ public class ReportDTO extends RuleInspectionReport {
         Status = status;
     }
 
-    public List<CloudTask> getTaskList() {
+    public List<CloudTask> getCloudTaskList() {
         return cloudTaskList;
     }
 
-    public void setTaskList(List<CloudTask> cloudTaskList) {
+    public void setCloudTaskList(List<CloudTask> cloudTaskList) {
         this.cloudTaskList = cloudTaskList;
     }
 }

@@ -1,6 +1,6 @@
 <template>
   <el-col>
-    <cloudTask-header-menus/>
+    <task-header-menus/>
     <div>
       <transition>
         <keep-alive>
@@ -15,11 +15,11 @@
 import TaskHeaderMenus from "./head/TaskHeaderMenus";
 
 export default {
-    name: "cloudTask",
+    name: "Task",
     components: {TaskHeaderMenus},
     data() {
       return {
-        baseUrl: "cloudTask"
+        baseUrl: "Task"
       }
     }
   }

@@ -1,10 +1,10 @@
 <template>
   <div>
-    <el-row class="el-form-item-dev" v-if="row.taskItemLogDTOs.length == 0">
+    <el-row class="el-form-item-dev" v-if="row.cloudTaskItemLogDTOs.length == 0">
       <span>{{ $t('resource.i18n_no_data') }}<br></span>
     </el-row>
-    <el-row class="el-form-item-dev" v-if="row.taskItemLogDTOs.length > 0">
-      <el-table :show-header="false" :data="row.taskItemLogDTOs" class="adjust-table table-content">
+    <el-row class="el-form-item-dev" v-if="row.cloudTaskItemLogDTOs.length > 0">
+      <el-table :show-header="false" :data="row.cloudTaskItemLogDTOs" class="adjust-table table-content">
         <el-table-column>
           <template v-slot:default="scope">
             <div>
@@ -110,20 +110,20 @@
     activated() {
     },
     props: {
-      row: {taskItemLogDTOs: []},
+      row: {cloudTaskItemLogDTOs: []},
     },
     methods: {
       init() {
       },
       getStatus () {
-        if (this.checkStatus(this.row.taskItemLogDTOs)) {
+        if (this.checkStatus(this.row.cloudTaskItemLogDTOs)) {
           return;
         }
         let showLogTaskId = this.row.showLogTaskId;
         let url = "/cloud/task/log/taskId/";
         this.$get(url + showLogTaskId, response => {
           for (let obj of response.data) {
-            for (let item of this.row.taskItemLogDTOs) {
+            for (let item of this.row.cloudTaskItemLogDTOs) {
               if (obj.cloudTaskItem.id === item.cloudTaskItem.id) {
                 item.cloudTaskItem.status = obj.cloudTaskItem.status;
                 item.cloudTaskItemLogList = obj.cloudTaskItemLogList;
@@ -133,9 +133,9 @@
         });
       },
       //是否是结束状态，返回false代表都在运行中，true代表已结束
-      checkStatus (taskItemLogDTOs) {
+      checkStatus (cloudTaskItemLogDTOs) {
         let sum = 0;
-        for (let row of taskItemLogDTOs) {
+        for (let row of cloudTaskItemLogDTOs) {
           if (row.cloudTaskItem.status != 'ERROR' && row.cloudTaskItem.status != 'FINISHED' && row.cloudTaskItem.status != 'WARNING') {
             sum++;
           }

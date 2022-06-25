@@ -1,8 +1,8 @@
 /* eslint-disable */
 export default {
-  name: "CloudTask",
-  path: "/cloud/task",
-  redirect: "/cloud/task/task",
+  name: "task",
+  path: "/task",
+  redirect: "/task/task",
   components: {
     content: () => import(/* webpackChunkName: "setting" */ '@/business/components/task/base')
   },

@@ -623,14 +623,14 @@ public class CloudTaskService {
                 BeanUtils.copyBean(dto, rela);
 
                 JSONArray jsonArray = JSONArray.parseArray(rela.getTaskIds());
-                List<TaskDTO> taskList = new ArrayList<>();
+                List<CloudTaskDTO> taskList = new ArrayList<>();
                 for (Object obj : jsonArray) {
                     CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(obj.toString());
-                    TaskDTO t = BeanUtils.copyBean(new TaskDTO(), cloudTask);
+                    CloudTaskDTO t = BeanUtils.copyBean(new CloudTaskDTO(), cloudTask);
                     t.setAccountName(accountMapper.selectByPrimaryKey(cloudTask.getAccountId()).getName());
                     taskList.add(t);
                 }
-                dto.setTaskList(taskList);
+                dto.setCloudTaskDTOList(taskList);
 
                 quartzTaskRelationDtos.add(dto);
             }

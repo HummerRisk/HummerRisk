@@ -3,7 +3,7 @@ package com.hummerrisk.dto;
 
 import com.hummerrisk.base.domain.Resource;
 
-public class ResourceLogDTO extends TaskItemLogDTO{
+public class ResourceLogDTOCloud extends CloudTaskItemLogDTO {
 
     private Resource resource;
 

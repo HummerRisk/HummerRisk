@@ -6,7 +6,7 @@ import com.hummerrisk.base.domain.CloudTask;
 /**
  * @author harris
  */
-public class TaskDTO extends CloudTask {
+public class CloudTaskDTO extends CloudTask {
     private String customData;
     private String details;
     private Integer count;

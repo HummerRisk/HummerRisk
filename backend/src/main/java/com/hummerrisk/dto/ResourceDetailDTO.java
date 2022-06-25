@@ -9,7 +9,7 @@ import com.hummerrisk.base.domain.ResourceWithBLOBs;
 public class ResourceDetailDTO extends ResourceItem {
 
     private String customData;
-    private TaskDTO taskDTO;
+    private CloudTaskDTO cloudTaskDTO;
     private ResourceWithBLOBs resourceWithBLOBs;
 
     public String getCustomData() {
@@ -20,12 +20,13 @@ public class ResourceDetailDTO extends ResourceItem {
         this.customData = customData;
     }
 
-    public TaskDTO getTaskDTO() {
-        return taskDTO;
+
+    public CloudTaskDTO getCloudTaskDTO() {
+        return cloudTaskDTO;
     }
 
-    public void setTaskDTO(TaskDTO taskDTO) {
-        this.taskDTO = taskDTO;
+    public void setCloudTaskDTO(CloudTaskDTO cloudTaskDTO) {
+        this.cloudTaskDTO = cloudTaskDTO;
     }
 
     public ResourceWithBLOBs getResourceWithBLOBs() {

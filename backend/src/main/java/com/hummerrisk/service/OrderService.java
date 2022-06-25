@@ -15,9 +15,9 @@ import com.hummerrisk.commons.constants.ScanTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.dto.QuartzTaskDTO;
-import com.hummerrisk.dto.TaskCopyDTO;
-import com.hummerrisk.dto.TaskDTO;
-import com.hummerrisk.dto.TaskItemLogDTO;
+import com.hummerrisk.dto.CloudTaskCopyDTO;
+import com.hummerrisk.dto.CloudTaskDTO;
+import com.hummerrisk.dto.CloudTaskItemLogDTO;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -246,11 +246,11 @@ public class OrderService {
         return cloudTask;
     }
 
-    public TaskDTO getTaskDetail(String taskId) {
+    public CloudTaskDTO getTaskDetail(String taskId) {
         return extCloudTaskMapper.getTaskDetail(taskId);
     }
 
-    public TaskDTO getTaskExtendInfo(String taskId) {
+    public CloudTaskDTO getTaskExtendInfo(String taskId) {
         return extCloudTaskMapper.getTaskExtendInfo(taskId);
     }
 
@@ -304,21 +304,21 @@ public class OrderService {
         return cloudTaskMapper.selectByExample(null);
     }
 
-    public List<TaskItemLogDTO> getQuartzLogByTask(String taskId) {
-        List<TaskItemLogDTO> result = new ArrayList<>();
+    public List<CloudTaskItemLogDTO> getQuartzLogByTask(String taskId) {
+        List<CloudTaskItemLogDTO> result = new ArrayList<>();
         try {
             CloudTaskItemExample cloudTaskItemExample = new CloudTaskItemExample();
             cloudTaskItemExample.createCriteria().andTaskIdEqualTo(taskId);
             List<CloudTaskItemWithBLOBs> taskItems = cloudTaskItemMapper.selectByExampleWithBLOBs(cloudTaskItemExample);
             for (CloudTaskItemWithBLOBs taskItem : taskItems) {
-                TaskItemLogDTO taskItemLogDTO = new TaskItemLogDTO();
+                CloudTaskItemLogDTO cloudTaskItemLogDTO = new CloudTaskItemLogDTO();
                 taskItem.setDetails(null);
                 taskItem.setCustomData(null);
-                taskItemLogDTO.setTaskItem(taskItem);
+                cloudTaskItemLogDTO.setCloudTaskItem(taskItem);
                 Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getRuleId());
                 rule.setScript(null);//没有用到暂时置空，以防止翻译总报错warn
-                taskItemLogDTO.setRule(rule);
-                result.add(taskItemLogDTO);
+                cloudTaskItemLogDTO.setRule(rule);
+                result.add(cloudTaskItemLogDTO);
             }
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
@@ -345,8 +345,8 @@ public class OrderService {
         return quartzTaskRelaLogMapper.selectByExampleWithBLOBs(example);
     }
 
-    public List<TaskItemLogDTO> getTaskItemLogByTaskId(String taskId) {
-        List<TaskItemLogDTO> result = new ArrayList<>();
+    public List<CloudTaskItemLogDTO> getTaskItemLogByTaskId(String taskId) {
+        List<CloudTaskItemLogDTO> result = new ArrayList<>();
         try {
             CloudTaskItemExample cloudTaskItemExample = new CloudTaskItemExample();
             cloudTaskItemExample.createCriteria().andTaskIdEqualTo(taskId);
@@ -361,23 +361,23 @@ public class OrderService {
         return result;
     }
 
-    private List<TaskItemLogDTO> getTaskItemLogByTaskItemId(String taskItemId) {
-        List<TaskItemLogDTO> result = new ArrayList<>();
+    private List<CloudTaskItemLogDTO> getTaskItemLogByTaskItemId(String taskItemId) {
+        List<CloudTaskItemLogDTO> result = new ArrayList<>();
         try {
             CloudTaskItemWithBLOBs taskItem = cloudTaskItemMapper.selectByPrimaryKey(taskItemId);
             if (taskItem != null) {
-                TaskItemLogDTO taskItemLogDTO = new TaskItemLogDTO();
+                CloudTaskItemLogDTO cloudTaskItemLogDTO = new CloudTaskItemLogDTO();
                 taskItem.setDetails(null);
                 taskItem.setCustomData(null);
-                taskItemLogDTO.setTaskItem(taskItem);
+                cloudTaskItemLogDTO.setCloudTaskItem(taskItem);
                 Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getRuleId());
                 rule.setScript(null);//没有用到暂时置空，以防止翻译总报错warn
-                taskItemLogDTO.setRule(rule);
+                cloudTaskItemLogDTO.setRule(rule);
                 CloudTaskItemLogExample cloudTaskItemLogExample = new CloudTaskItemLogExample();
                 cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(taskItem.getId());
                 cloudTaskItemLogExample.setOrderByClause("create_time");
-                taskItemLogDTO.setTaskItemLogList(cloudTaskItemLogMapper.selectByExampleWithBLOBs(cloudTaskItemLogExample));
-                result.add(taskItemLogDTO);
+                cloudTaskItemLogDTO.setCloudTaskItemLogList(cloudTaskItemLogMapper.selectByExampleWithBLOBs(cloudTaskItemLogExample));
+                result.add(cloudTaskItemLogDTO);
             }
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
@@ -385,17 +385,17 @@ public class OrderService {
         return result;
     }
 
-    public TaskCopyDTO copy(String taskId) {
-        TaskCopyDTO taskCopyDTO = new TaskCopyDTO();
+    public CloudTaskCopyDTO copy(String taskId) {
+        CloudTaskCopyDTO cloudTaskCopyDTO = new CloudTaskCopyDTO();
         CloudTaskItemExample example = new CloudTaskItemExample();
         example.createCriteria().andTaskIdEqualTo(taskId);
         List<CloudTaskItem> cloudTaskItemList = cloudTaskItemMapper.selectByExample(example);
-        taskCopyDTO.setTaskItemList(cloudTaskItemList);
-        taskCopyDTO.setRule(ruleMapper.selectByPrimaryKey(cloudTaskItemList.get(0).getRuleId()));
+        cloudTaskCopyDTO.setCloudTaskItemList(cloudTaskItemList);
+        cloudTaskCopyDTO.setRule(ruleMapper.selectByPrimaryKey(cloudTaskItemList.get(0).getRuleId()));
         RuleTagMappingExample ruleTagMappingExample = new RuleTagMappingExample();
         ruleTagMappingExample.createCriteria().andRuleIdEqualTo(cloudTaskItemList.get(0).getRuleId());
         List<RuleTagMapping> ruleTagMappings = ruleTagMappingMapper.selectByExample(ruleTagMappingExample);
-        taskCopyDTO.setRuleTagMappingList(ruleTagMappings.stream().map(RuleTagMapping::getTagKey).collect(Collectors.toList()));
+        cloudTaskCopyDTO.setRuleTagMappingList(ruleTagMappings.stream().map(RuleTagMapping::getTagKey).collect(Collectors.toList()));
         Set<String> set = new HashSet<>();
         List<SelectTag> selectTagList = new LinkedList<>();
         cloudTaskItemList.stream().forEach(item -> {
@@ -413,8 +413,8 @@ public class OrderService {
             selectTag.setRegions(regions);
             selectTagList.add(selectTag);
         });
-        taskCopyDTO.setSelectTags(selectTagList);
-        return taskCopyDTO;
+        cloudTaskCopyDTO.setSelectTags(selectTagList);
+        return cloudTaskCopyDTO;
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
