@@ -380,6 +380,12 @@ public class ServerService {
         return extServerResultMapper.resultList(request);
     }
 
+    public ServerResultDTO getServerResult(String resultId) {
+        ServerResultRequest request = new ServerResultRequest();
+        request.setId(resultId);
+        return extServerResultMapper.resultList(request).get(0);
+    }
+
     public List<ServerResultLog> getServerResultLog(String resultId) {
         ServerResultLogExample example = new ServerResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);

@@ -211,6 +211,32 @@ export default {
         this.tableData = data.listObject;
       });
     },
+    getStatus () {
+      if (this.checkStatus(this.tableData)) {
+        this.search();
+        return;
+      } else {
+        for (let data of this.tableData) {
+          let url = "/package/getPackageResult/";
+          this.$get(url + data.id, response => {
+            let result = response.data;
+            if (data.resultStatus !== result.resultStatus) {
+              data.resultStatus = result.resultStatus;
+            }
+          });
+        }
+      }
+    },
+    //是否是结束状态，返回false代表都在运行中，true代表已结束
+    checkStatus (tableData) {
+      let sum = 0;
+      for (let row of tableData) {
+        if (row.status != 'ERROR' && row.status != 'FINISHED' && row.status != 'WARNING') {
+          sum++;
+        }
+      }
+      return sum == 0;
+    },
     severityOptionsFnc () {
       this.severityOptions = [
         {key: '低风险', value: "LowRisk"},
@@ -294,7 +320,7 @@ export default {
   created() {
   },
   mounted() {
-    this.timer = setInterval(this.search,5000);
+    this.timer = setInterval(this.getStatus,5000);
     this.init();
     this.location = window.location.href.split("#")[0];
   },

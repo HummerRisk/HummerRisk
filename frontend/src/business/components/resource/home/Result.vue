@@ -485,7 +485,6 @@ import {ACCOUNT_ID} from "@/common/js/constants";
       init() {
         this.initSelect();
         this.search();
-        this.getStatus();
       },
       getStatus () {
         if (this.checkStatus(this.tableData)) {

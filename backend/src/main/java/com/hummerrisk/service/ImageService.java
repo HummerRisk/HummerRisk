@@ -265,6 +265,15 @@ public class ImageService {
         return list;
     }
 
+    public ImageResultDTO getImageResult(String resultId) {
+        ImageResultRequest request = new ImageResultRequest();
+        request.setId(resultId);
+        ImageResultDTO imageResultDTO = extImageResultMapper.resultList(request).get(0);
+        imageResultDTO.setGrypeJson(accountService.toJSONString(imageResultDTO.getGrypeJson()!=null?imageResultDTO.getGrypeJson():"{}"));
+        imageResultDTO.setSyftJson(accountService.toJSONString(imageResultDTO.getSyftJson()!=null?imageResultDTO.getSyftJson():"{}"));
+        return imageResultDTO;
+    }
+
     public List<ImageResultLog> getImageResultLog(String resultId) {
         ImageResultLogExample example = new ImageResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);

@@ -136,6 +136,12 @@ public class ServerController {
         return PageUtils.setPageInfo(page, serverService.resultList(request));
     }
 
+    @ApiOperation(value = "虚拟机检测结果")
+    @GetMapping(value = "getServerResult/{resultId}")
+    public ServerResultDTO getServerResult(@PathVariable String resultId) {
+        return serverService.getServerResult(resultId);
+    }
+
     @ApiOperation(value = "虚拟机检测日志")
     @GetMapping(value = "log/{resultId}")
     public List<ServerResultLog> getServerResultLog(@PathVariable String resultId) {

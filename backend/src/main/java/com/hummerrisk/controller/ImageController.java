@@ -142,6 +142,12 @@ public class ImageController {
         return PageUtils.setPageInfo(page, imageService.resultList(request));
     }
 
+    @ApiOperation(value = "镜像检测结果")
+    @GetMapping(value = "getImageResult/{resultId}")
+    public ImageResultDTO getImageResult(@PathVariable String resultId) {
+        return imageService.getImageResult(resultId);
+    }
+
     @ApiOperation(value = "镜像检测日志")
     @GetMapping(value = "log/{resultId}")
     public List<ImageResultLog> getPackageResultLog(@PathVariable String resultId) {

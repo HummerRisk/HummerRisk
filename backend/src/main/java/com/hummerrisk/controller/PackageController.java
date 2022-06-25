@@ -130,6 +130,12 @@ public class PackageController {
         return PageUtils.setPageInfo(page, packageService.resultList(request));
     }
 
+    @ApiOperation(value = "软件包检测结果")
+    @GetMapping(value = "getPackageResult/{resultId}")
+    public PackageResultDTO getPackageResult(@PathVariable String resultId) {
+        return packageService.getPackageResult(resultId);
+    }
+
     @ApiOperation(value = "软件包检测日志")
     @GetMapping(value = "log/{resultId}")
     public List<PackageResultLog> getPackageResultLog(@PathVariable String resultId) {

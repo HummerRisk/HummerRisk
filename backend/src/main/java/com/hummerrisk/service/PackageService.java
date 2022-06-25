@@ -456,6 +456,14 @@ public class PackageService {
         return list;
     }
 
+    public PackageResultDTO getPackageResult(String resultId) {
+        PackageResultRequest request = new PackageResultRequest();
+        request.setId(resultId);
+        PackageResultDTO packageResultDTO = extPackageResultMapper.resultList(request).get(0);
+        packageResultDTO.setReturnJson(accountService.toJSONString(packageResultDTO.getReturnJson()!=null?packageResultDTO.getReturnJson():"{}"));
+        return packageResultDTO;
+    }
+
     public List<PackageResultLog> getPackageResultLog(String resultId) {
         PackageResultLogExample example = new PackageResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);

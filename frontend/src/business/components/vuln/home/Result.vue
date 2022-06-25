@@ -342,12 +342,27 @@ export default {
     init() {
       this.initSelect();
       this.search();
-      this.getStatus();
     },
     getStatus () {
       if (this.checkStatus(this.tableData)) {
         this.search();
         return;
+      } else {
+        let url = "/cloud/task/manual/list/" + this.currentPage + "/" + this.pageSize;
+        this.condition.accountId = this.accountId;
+        //在这里实现事件
+        this.$post(url, this.condition, response => {
+          for (let data of response.data.listObject) {
+            for (let item of this.tableData) {
+              if (data.id == item.id) {
+                item.status = data.status;
+                item.resourceTypes = data.resourceTypes;
+                item.returnSum = data.returnSum;
+                item.resourcesSum = data.resourcesSum;
+              }
+            }
+          }
+        });
       }
     },
     //是否是结束状态，返回false代表都在运行中，true代表已结束
