@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import ScenarioModule from "../.././common/components/ScenarioModule";
+import ScenarioModule from "./ScenarioModule";
 import ScenarioList from "./ScenarioList";
 import Container from "../.././common/components/Container";
 import AsideContainer from "../.././common/components/AsideContainer";

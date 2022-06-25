@@ -38,9 +38,9 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/vuln/home/History"),
     },
     {
-      path: 'accountoverview',
-      name: 'accountoverview',
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/AccountOverview'),
+      path: 'vlunOverview',
+      name: 'vlunOverview',
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/vuln/home/VulnOverview'),
     },
   ]
 }

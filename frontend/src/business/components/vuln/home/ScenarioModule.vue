@@ -31,7 +31,7 @@
 
 <script>
 import {getCurrentAccountID} from "@/common/js/utils";
-import NodeTree from "@/business/components/common/components/NodeTree";
+import NodeTree from "./NodeTree";
 import {buildNodePath} from "@/common/js/NodeTree";
 import DialogFooter from "../../common/components/DialogFooter";
 /* eslint-disable */

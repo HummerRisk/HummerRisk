@@ -895,6 +895,7 @@ export default {
     please_choose_vuln: '请选择漏洞检测目标',
     back_vuln: '返回漏洞检测列表',
     history: '漏洞检测历史记录',
+    all_label: '全部漏洞检测',
   },
   oss: {
     oss_setting: '对象存储',

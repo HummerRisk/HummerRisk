@@ -36,7 +36,6 @@
             class="item"
             effect="dark"
             :open-delay="200"
-            :content="$t('test_track.module.rename')"
             placement="top">
             <i @click.stop="edit(node, data)" class="el-icon-edit"></i>
           </el-tooltip>
@@ -44,7 +43,6 @@
             class="item"
             effect="dark"
             :open-delay="200"
-            :content="$t('test_track.module.add_submodule')"
             placement="top">
             <i @click.stop="append(node, data)" class="el-icon-circle-plus-outline"></i>
           </el-tooltip>
@@ -91,7 +89,7 @@ export default {
     allLabel: {
       type: String,
       default() {
-        return this.$t("account.all_label");
+        return this.$t("vuln.all_label");
       }
     },
   },

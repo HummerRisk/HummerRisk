@@ -895,6 +895,7 @@ export default {
     please_choose_vuln: 'Please choose a vulnerability detection target',
     back_vuln: 'Return the vulnerability detection list',
     history: 'Vulnerability detection history',
+    all_label: 'All vulnerability detection',
   },
   oss: {
     oss_setting: 'Object storage',
