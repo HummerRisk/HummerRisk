@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS `image_result`
     `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
     `apply_user`                 varchar(50)         DEFAULT NULL COMMENT '创建人ID',
     `user_name`                  varchar(128)        DEFAULT NULL COMMENT '创建人名称',
+    `return_log`                 longtext            DEFAULT NULL COMMENT 'return log',
     `grype_table`                longtext            DEFAULT NULL COMMENT 'grype table',
     `grype_json`                 longtext            DEFAULT NULL COMMENT 'grype json',
     `syft_table`                 longtext            DEFAULT NULL COMMENT 'syft table',

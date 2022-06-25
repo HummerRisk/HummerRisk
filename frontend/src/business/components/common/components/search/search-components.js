@@ -350,6 +350,16 @@ export const PACKAGE_STATUS = {
   }
 }
 
+export const IMAGE_URL = {
+  key: "imageUrl", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "image.image_url", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
 export const ACCOUNT_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const VULN_CONFIGS = [NAME, VULN_PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const RULE_TAG_CONFIGS = [TAG_KEY, TAG_NAME, TAG_FLAG, TAG_INDEX];
@@ -362,4 +372,5 @@ export const PACKAGE_CONFIGS = [NAME, PACKAGE_NAME, PACKAGE_STATUS, CREATOR, UPD
 export const PACKAGE_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
 export const PACKAGE_RESULT_CONFIGS = [NAME, PACKAGE_NAME, RULE_NAME, RULE_SEVERITY, CREATOR, UPDATE_TIME];
 export const IMAGE_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
+export const IMAGE_RESULT_CONFIGS = [NAME, IMAGE_URL, RULE_NAME, RULE_SEVERITY, CREATOR, UPDATE_TIME];
 

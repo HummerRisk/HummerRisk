@@ -337,8 +337,35 @@ export default {
     filterStatus(value, row) {
       return row.status === value;
     },
-    handleScan(item) {
-
+    handleScan(data) {
+      if(data.type === 'image') {
+        if(!data.imageUrl || !data.imageUrl) {
+          this.$warning(this.$t('image.no_image'));
+          return;
+        }
+      } else if (data.type === 'tar') {
+        if(!data.path) {
+          this.$warning(this.$t('image.no_package'));
+          return;
+        }
+      }
+      this.$alert(this.$t('package.one_scan') + this.$t('image.image_rule') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.$get('/image/scan/' + data.id, response => {
+              if (response.success) {
+                this.$success(this.$t('schedule.event_success'));
+              } else {
+                this.$error(this.$t('schedule.event_failed'));
+              }
+            });
+            this.$router.push({
+              path: '/image/result',
+            }).catch(error => error);
+          }
+        }
+      });
     },
     save(form) {
       this.$refs[form].validate(valid => {

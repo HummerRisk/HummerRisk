@@ -2,15 +2,17 @@ package com.hummerrisk.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummerrisk.base.domain.Image;
-import com.hummerrisk.base.domain.ImageRepo;
-import com.hummerrisk.base.domain.ImageRule;
+import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.request.image.ImageRepoRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
+import com.hummerrisk.controller.request.image.ImageResultRequest;
 import com.hummerrisk.controller.request.image.ImageRuleRequest;
+import com.hummerrisk.controller.request.packageSetting.PackageResultRequest;
+import com.hummerrisk.dto.ImageResultDTO;
 import com.hummerrisk.dto.ImageRuleDTO;
+import com.hummerrisk.dto.PackageResultDTO;
 import com.hummerrisk.service.ImageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -119,5 +121,36 @@ public class ImageController {
     @PostMapping(value = "changeStatus")
     public int changeStatus(@RequestBody ImageRule rule) throws Exception {
         return imageService.changeStatus(rule);
+    }
+
+    @ApiOperation(value = "镜像检测规则")
+    @GetMapping("scan/{id}")
+    public void scan(@PathVariable String id) throws Exception {
+        imageService.scan(id);
+    }
+
+    @ApiOperation(value = "重新检测镜像规则")
+    @GetMapping("reScan/{id}")
+    public void reScan(@PathVariable String id) throws Exception {
+        imageService.reScan(id);
+    }
+
+    @ApiOperation(value = "镜像检测结果列表")
+    @PostMapping(value = "resultList/{goPage}/{pageSize}")
+    public Pager<List<ImageResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, imageService.resultList(request));
+    }
+
+    @ApiOperation(value = "镜像检测日志")
+    @GetMapping(value = "log/{resultId}")
+    public List<ImageResultLog> getPackageResultLog(@PathVariable String resultId) {
+        return imageService.getImageResultLog(resultId);
+    }
+
+    @ApiOperation(value = "删除镜像检测记录")
+    @GetMapping("deleteImageResult/{id}")
+    public void deleteImageResult(@PathVariable String id) throws Exception {
+        imageService.deleteImageResult(id);
     }
 }

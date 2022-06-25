@@ -91,7 +91,7 @@
             </el-col>
           </el-row>
         </div>
-        <el-table :show-header="false" :data="logData" class="adjust-table table-content" height="538">
+        <el-table :show-header="false" :data="logData" class="adjust-table table-content">
           <el-table-column>
             <template v-slot:default="scope">
               <div class="bg-purple-div">

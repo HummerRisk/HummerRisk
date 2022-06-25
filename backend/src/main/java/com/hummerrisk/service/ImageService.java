@@ -4,6 +4,7 @@ import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtImageMapper;
 import com.hummerrisk.base.mapper.ext.ExtImageRepoMapper;
+import com.hummerrisk.base.mapper.ext.ExtImageResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtImageRuleMapper;
 import com.hummerrisk.commons.constants.PackageConstants;
 import com.hummerrisk.commons.constants.ResourceOperation;
@@ -14,7 +15,9 @@ import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.commons.utils.UUIDUtil;
 import com.hummerrisk.controller.request.image.ImageRepoRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
+import com.hummerrisk.controller.request.image.ImageResultRequest;
 import com.hummerrisk.controller.request.image.ImageRuleRequest;
+import com.hummerrisk.dto.ImageResultDTO;
 import com.hummerrisk.dto.ImageRuleDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -50,6 +53,12 @@ public class ImageService {
     private RuleTagMappingMapper ruleTagMappingMapper;
     @Resource
     private RuleTagMapper ruleTagMapper;
+    @Resource
+    private ExtImageResultMapper extImageResultMapper;
+    @Resource
+    private AccountService accountService;
+    @Resource
+    private ImageResultLogMapper imageResultLogMapper;
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
@@ -231,5 +240,35 @@ public class ImageService {
         return imageRuleMapper.updateByPrimaryKeySelective(rule);
     }
 
+    public void scan(String id) throws Exception{}
+
+    public void createScan (ImageResultWithBLOBs result) {}
+
+    public void reScan(String id) throws Exception {}
+
+    public void deleteImageResult(String id) throws Exception {}
+
+    public void deleteResultByImageId(String id) throws Exception {}
+
+    void saveImageResultLog(String resultId, String operation, String output, boolean result) {}
+
+    public String execute(Image image, ImageRuleDTO dto, String outType) throws Exception {
+        return "";
+    }
+
+    public List<ImageResultDTO> resultList(ImageResultRequest request) {
+        List<ImageResultDTO> list = extImageResultMapper.resultList(request);
+        for (ImageResultDTO imageResultDTO : list) {
+            imageResultDTO.setGrypeJson(accountService.toJSONString(imageResultDTO.getGrypeJson()!=null?imageResultDTO.getGrypeJson():"{}"));
+            imageResultDTO.setSyftJson(accountService.toJSONString(imageResultDTO.getSyftJson()!=null?imageResultDTO.getSyftJson():"{}"));
+        }
+        return list;
+    }
+
+    public List<ImageResultLog> getImageResultLog(String resultId) {
+        ImageResultLogExample example = new ImageResultLogExample();
+        example.createCriteria().andResultIdEqualTo(resultId);
+        return imageResultLogMapper.selectByExampleWithBLOBs(example);
+    }
 
 }

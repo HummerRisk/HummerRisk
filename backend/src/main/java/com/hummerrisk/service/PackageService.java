@@ -59,6 +59,8 @@ public class PackageService {
     private ProxyMapper proxyMapper;
     @Resource
     private NoticeService noticeService;
+    @Resource
+    private AccountService accountService;
 
     public List<PackageDTO> packageList(PackageRequest request) {
         return extPackageMapper.packageList(request);
@@ -447,7 +449,11 @@ public class PackageService {
     }
 
     public List<PackageResultDTO> resultList(PackageResultRequest request) {
-        return extPackageResultMapper.resultList(request);
+        List<PackageResultDTO> list = extPackageResultMapper.resultList(request);
+        for (PackageResultDTO packageResultDTO : list) {
+            packageResultDTO.setReturnJson(accountService.toJSONString(packageResultDTO.getReturnJson()!=null?packageResultDTO.getReturnJson():"{}"));
+        }
+        return list;
     }
 
     public List<PackageResultLog> getPackageResultLog(String resultId) {
