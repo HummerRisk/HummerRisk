@@ -47,3 +47,37 @@ CREATE TABLE IF NOT EXISTS `image_rule` (
 
 INSERT INTO `image_rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `last_modified`, `flag`) VALUES ('3095fa07-78f5-4d8d-8751-76a961bb8c21', '镜像检测', 1, 'HighRisk', '容器镜像和文件系统的漏洞检测', '扫描容器镜像或文件系统的内容以查找已知漏洞。\n查找主要操作系统包的漏洞：\n  Alpine\n  Amazon Linux\n  BusyBox\n  CentOS\n  Debian\n  Distroless\n  Oracle Linux\n  Red Hat (RHEL)\n  Ubuntu\n查找特定语言包的漏洞：\n  Ruby (Gems)\n  Java (JAR, WAR, EAR, JPI, HPI)\n  JavaScript (NPM, Yarn)\n  Python (Egg, Wheel, Poetry, requirements.txt/setup.py files)\n  Dotnet (deps.json)\n  Golang (go.mod)\n  PHP (composer.json)\n支持 Docker 和 OCI 镜像格式。\n使用 SBOM 证明。', '[]', concat(unix_timestamp(now()), '001'), 1);
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('3095fa07-78f5-4d8d-8751-76a961bb8c21', 'image');
+
+CREATE TABLE IF NOT EXISTS `image_result`
+(
+    `id`                         varchar(50)         NOT NULL,
+    `image_id`                   varchar(50)         DEFAULT NULL COMMENT 'imageID',
+    `name`                       varchar(128)        DEFAULT NULL COMMENT '镜像检测名称(别名)',
+    `size`                       varchar(128)        DEFAULT '0M' COMMENT '镜像大小',
+    `plugin_icon`                varchar(256)        DEFAULT 'docker.png' COMMENT '图标地址',
+    `rule_id`                    varchar(50)         DEFAULT NULL COMMENT '镜像检测规则ID',
+    `rule_name`                  varchar(50)         DEFAULT NULL COMMENT '镜像检测规则名称',
+    `rule_desc`                  varchar(50)         DEFAULT NULL COMMENT '镜像检测规则描述',
+    `result_status`              varchar(45)         DEFAULT NULL COMMENT '检测状态',
+    `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
+    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
+    `apply_user`                 varchar(50)         DEFAULT NULL COMMENT '创建人ID',
+    `user_name`                  varchar(128)        DEFAULT NULL COMMENT '创建人名称',
+    `grype_table`                longtext            DEFAULT NULL COMMENT 'grype table',
+    `grype_json`                 longtext            DEFAULT NULL COMMENT 'grype json',
+    `syft_table`                 longtext            DEFAULT NULL COMMENT 'syft table',
+    `syft_json`                  longtext            DEFAULT NULL COMMENT 'syft json',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `image_result_log` (
+    `id`                           int(11)             NOT NULL AUTO_INCREMENT,
+    `result_id`                    varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
+    `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
+    `operation`                    varchar(255)        DEFAULT NULL COMMENT '操作内容',
+    `output`                       mediumtext          DEFAULT NULL COMMENT '输出',
+    `result`                       tinyint(1)          DEFAULT NULL COMMENT '结果',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;

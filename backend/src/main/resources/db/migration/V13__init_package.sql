@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `package_result`
     `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
     `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
-    `apply_user`                 varchar(50)         DEFAULT NULL COMMENT '创建人',
+    `apply_user`                 varchar(50)         DEFAULT NULL COMMENT '创建人ID',
     `user_name`                  varchar(128)        DEFAULT NULL COMMENT '创建人名称',
     `resources`                  longtext            DEFAULT NULL COMMENT 'resources',
     `return_json`                longtext            DEFAULT NULL COMMENT 'return json',
