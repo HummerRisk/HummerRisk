@@ -224,25 +224,25 @@ public class NoticeService {
         messageOrderItemMapper.insertSelective(messageOrderItem);
     }
 
-//    public void createImageMessageOrder (Image image) {
-//        MessageOrder messageOrder = new MessageOrder();
-//        String uuid = UUIDUtil.newUUID();
-//        messageOrder.setId(uuid);
-//        messageOrder.setAccountId(image.getId());
-//        messageOrder.setAccountName(image.getName());
-//        messageOrder.setCreateTime(System.currentTimeMillis());
-//        messageOrder.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
-//        messageOrder.setScanType(ScanConstants.SCAN_TYPE.IMAGE.name());
-//        messageOrderMapper.insertSelective(messageOrder);
-//
-//        MessageOrderItem messageOrderItem = new MessageOrderItem();
-//        messageOrderItem.setMessageOrderId(uuid);
-//        messageOrderItem.setTaskId(image.getId());
-//        messageOrderItem.setTaskName(image.getName());
-//        messageOrderItem.setCreateTime(System.currentTimeMillis());
-//        messageOrderItem.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
-//        messageOrderItemMapper.insertSelective(messageOrderItem);
-//    }
+    public void createImageMessageOrder (ImageResultWithBLOBs image) {
+        MessageOrder messageOrder = new MessageOrder();
+        String uuid = UUIDUtil.newUUID();
+        messageOrder.setId(uuid);
+        messageOrder.setAccountId(image.getId());
+        messageOrder.setAccountName(image.getName());
+        messageOrder.setCreateTime(System.currentTimeMillis());
+        messageOrder.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
+        messageOrder.setScanType(ScanConstants.SCAN_TYPE.IMAGE.name());
+        messageOrderMapper.insertSelective(messageOrder);
+
+        MessageOrderItem messageOrderItem = new MessageOrderItem();
+        messageOrderItem.setMessageOrderId(uuid);
+        messageOrderItem.setTaskId(image.getId());
+        messageOrderItem.setTaskName(image.getName());
+        messageOrderItem.setCreateTime(System.currentTimeMillis());
+        messageOrderItem.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
+        messageOrderItemMapper.insertSelective(messageOrderItem);
+    }
 
 
 }

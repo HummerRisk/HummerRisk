@@ -85,8 +85,8 @@ public class ReadFileUtils {
             String line; // 用来保存每行读取的内容
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             line = reader.readLine(); // 读取第一行
-            int a = 0;// 最多10000行数据
-            while (line != null && a < 10000) { // 如果 line 为空说明读完了
+            int a = 0;// 最多1000000行数据
+            while (line != null && a < 1000000) { // 如果 line 为空说明读完了
                 sb.append(line); // 将读到的内容添加到 buffer 中
                 sb.append("\n"); // 添加换行符
                 line = reader.readLine(); // 读取下一行

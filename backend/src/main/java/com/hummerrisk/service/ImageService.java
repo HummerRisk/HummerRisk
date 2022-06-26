@@ -1,24 +1,24 @@
 package com.hummerrisk.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtImageMapper;
 import com.hummerrisk.base.mapper.ext.ExtImageRepoMapper;
 import com.hummerrisk.base.mapper.ext.ExtImageResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtImageRuleMapper;
-import com.hummerrisk.commons.constants.PackageConstants;
-import com.hummerrisk.commons.constants.ResourceOperation;
-import com.hummerrisk.commons.constants.ResourceTypeConstants;
-import com.hummerrisk.commons.utils.BeanUtils;
-import com.hummerrisk.commons.utils.FileUploadUtils;
-import com.hummerrisk.commons.utils.SessionUtils;
-import com.hummerrisk.commons.utils.UUIDUtil;
+import com.hummerrisk.commons.constants.*;
+import com.hummerrisk.commons.exception.HRException;
+import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.image.ImageRepoRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.image.ImageResultRequest;
 import com.hummerrisk.controller.request.image.ImageRuleRequest;
 import com.hummerrisk.dto.ImageResultDTO;
 import com.hummerrisk.dto.ImageRuleDTO;
+import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +59,14 @@ public class ImageService {
     private AccountService accountService;
     @Resource
     private ImageResultLogMapper imageResultLogMapper;
+    @Resource
+    private UserMapper userMapper;
+    @Resource
+    private ImageResultMapper imageResultMapper;
+    @Resource
+    private ProxyMapper proxyMapper;
+    @Resource
+    private NoticeService noticeService;
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
@@ -111,11 +119,11 @@ public class ImageService {
             request.setUpdateTime(System.currentTimeMillis());
             request.setCreator(SessionUtils.getUserId());
             if (iconFile != null) {
-                String iconFilePath = upload(iconFile, PackageConstants.DEFAULT_BASE_DIR);
+                String iconFilePath = upload(iconFile, ImageConstants.DEFAULT_BASE_DIR);
                 request.setPluginIcon(iconFilePath);
             }
             if (tarFile != null) {
-                String tarFilePath = upload(tarFile, PackageConstants.DEFAULT_BASE_DIR);
+                String tarFilePath = upload(tarFile, ImageConstants.DEFAULT_BASE_DIR);
                 request.setPath(tarFilePath);
                 request.setSize(changeFlowFormat(tarFile.getSize()));
             }
@@ -137,11 +145,11 @@ public class ImageService {
             request.setUpdateTime(System.currentTimeMillis());
             request.setCreator(SessionUtils.getUserId());
             if (iconFile != null) {
-                String iconFilePath = upload(iconFile, PackageConstants.DEFAULT_BASE_DIR);
+                String iconFilePath = upload(iconFile, ImageConstants.DEFAULT_BASE_DIR);
                 request.setPluginIcon(iconFilePath);
             }
             if (tarFile != null) {
-                String tarFilePath = upload(tarFile, PackageConstants.DEFAULT_BASE_DIR);
+                String tarFilePath = upload(tarFile, ImageConstants.DEFAULT_BASE_DIR);
                 request.setPath(tarFilePath);
             }
 
@@ -240,20 +248,173 @@ public class ImageService {
         return imageRuleMapper.updateByPrimaryKeySelective(rule);
     }
 
-    public void scan(String id) throws Exception{}
+    public void scan(String id) throws Exception{
+        Image image = imageMapper.selectByPrimaryKey(id);
+        if(StringUtils.equalsIgnoreCase(image.getStatus(), CloudAccountConstants.Status.VALID.name())) {
+            List<ImageRuleDTO> ruleList = ruleList(null);
+            ImageResultWithBLOBs result = new ImageResultWithBLOBs();
 
-    public void createScan (ImageResultWithBLOBs result) {}
+            deleteResultByImageId(id);
+            for(ImageRuleDTO dto : ruleList) {
+                BeanUtils.copyBean(result, image);
+                result.setId(UUIDUtil.newUUID());
+                result.setImageId(id);
+                result.setApplyUser(SessionUtils.getUserId());
+                result.setCreateTime(System.currentTimeMillis());
+                result.setUpdateTime(System.currentTimeMillis());
+                result.setRuleId(dto.getId());
+                result.setRuleName(dto.getName());
+                result.setRuleDesc(dto.getDescription());
+                result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+                result.setSeverity(dto.getSeverity());
+                result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
+                imageResultMapper.insertSelective(result);
 
-    public void reScan(String id) throws Exception {}
+                saveImageResultLog(result.getId(), Translator.get("i18n_start_image_result"), "", true);
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "开始镜像检测");
+            }
+        }
 
-    public void deleteImageResult(String id) throws Exception {}
+    }
 
-    public void deleteResultByImageId(String id) throws Exception {}
+    public void createScan (ImageResultWithBLOBs result) {
+        try {
+            ImageRuleRequest request = new ImageRuleRequest();
+            request.setId(result.getRuleId());
+            ImageRuleDTO dto = ruleList(request).get(0);
+            Image image = imageMapper.selectByPrimaryKey(result.getImageId());
+            String script = dto.getScript();
+            JSONArray jsonArray = JSON.parseArray(dto.getParameter());
+            for (Object o : jsonArray) {
+                JSONObject jsonObject = (JSONObject) o;
+                String key = "${{" + jsonObject.getString("key") + "}}";
+                if (script.contains(key)) {
+                    script = script.replace(key, jsonObject.getString("defaultValue"));
+                }
+            }
+            String log = execute(image, dto, ImageConstants.GRYPE, ImageConstants.TABLE);
+            String grypeTable = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
+            execute(image, dto, ImageConstants.GRYPE, ImageConstants.JSON);
+            String grypeJson = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
+            execute(image, dto, ImageConstants.SYFT, ImageConstants.TABLE);
+            String syftTable = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
+            execute(image, dto, ImageConstants.SYFT, ImageConstants.JSON);
+            String syftJson = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
 
-    void saveImageResultLog(String resultId, String operation, String output, boolean result) {}
+            result.setReturnLog(log);
+            result.setGrypeTable(grypeTable);
+            result.setGrypeJson(grypeJson);
+            result.setSyftTable(syftTable);
+            result.setSyftJson(syftJson);
+            result.setUpdateTime(System.currentTimeMillis());
+            result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
+            imageResultMapper.updateByPrimaryKeySelective(result);
 
-    public String execute(Image image, ImageRuleDTO dto, String outType) throws Exception {
-        return "";
+            noticeService.createImageMessageOrder(result);
+            saveImageResultLog(result.getId(), Translator.get("i18n_end_image_result"), "", true);
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
+            result.setUpdateTime(System.currentTimeMillis());
+            result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
+            imageResultMapper.updateByPrimaryKeySelective(result);
+            saveImageResultLog(result.getId(), Translator.get("i18n_operation_ex") + ": " + e.getMessage(), e.getMessage(), false);
+            throw new HRException(e.getMessage());
+        }
+    }
+
+    public void reScan(String id) throws Exception {
+        ImageResultWithBLOBs result = imageResultMapper.selectByPrimaryKey(id);
+        ImageRule rule = imageRuleMapper.selectByPrimaryKey(result.getRuleId());
+        Image image = imageMapper.selectByPrimaryKey(result.getImageId());
+        ImageRuleDTO dto = BeanUtils.copyBean(new ImageRuleDTO(), rule);
+
+        deleteImageResult(id);
+
+        BeanUtils.copyBean(result, image);
+        result.setId(UUIDUtil.newUUID());
+        result.setImageId(id);
+        result.setApplyUser(SessionUtils.getUserId());
+        result.setCreateTime(System.currentTimeMillis());
+        result.setUpdateTime(System.currentTimeMillis());
+        result.setRuleId(dto.getId());
+        result.setRuleName(dto.getName());
+        result.setRuleDesc(dto.getDescription());
+        result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+        result.setSeverity(dto.getSeverity());
+        result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
+        imageResultMapper.insertSelective(result);
+
+        saveImageResultLog(result.getId(), Translator.get("i18n_restart_image_result"), "", true);
+
+        OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "重新开始镜像检测");
+
+    }
+
+    public void deleteImageResult(String id) throws Exception {
+
+        ImageResultLogExample logExample = new ImageResultLogExample();
+        logExample.createCriteria().andResultIdEqualTo(id);
+        imageResultLogMapper.deleteByExample(logExample);
+
+        imageResultMapper.deleteByPrimaryKey(id);
+    }
+
+    public void deleteResultByImageId(String id) throws Exception {
+        ImageResultExample example = new ImageResultExample();
+        example.createCriteria().andImageIdEqualTo(id);
+        List<ImageResult> list = imageResultMapper.selectByExample(example);
+
+        for (ImageResult result : list) {
+            ImageResultLogExample logExample = new ImageResultLogExample();
+            logExample.createCriteria().andResultIdEqualTo(result.getId());
+            imageResultLogMapper.deleteByExample(logExample);
+
+        }
+        imageResultMapper.deleteByExample(example);
+    }
+
+    public String execute(Image image, ImageRuleDTO dto, String scanType, String outType) throws Exception {
+        try {
+            Proxy proxy;
+            String _proxy = "";
+            if(image.getIsProxy()!=null && image.getIsProxy()) {
+                proxy = proxyMapper.selectByPrimaryKey(image.getProxyId());
+                String proxyType = proxy.getProxyType();
+                String proxyIp = proxy.getProxyIp();
+                String proxyPort = proxy.getProxyPort();
+                String proxyName = proxy.getProxyName();
+                String proxyPassword = proxy.getProxyPassword();
+                if (StringUtils.isNotEmpty(proxyType)) {
+                    if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Http.toString())) {
+                        if (StringUtils.isNotEmpty(proxyName)) {
+                            _proxy = "export http_proxy=http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        } else {
+                            _proxy = "export http_proxy=http://" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        }
+                    } else if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Https.toString())) {
+                        if (StringUtils.isNotEmpty(proxyName)) {
+                            _proxy = "export https_proxy=http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        } else {
+                            _proxy = "export https_proxy=http://" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        }
+                    }
+                } else {
+                    _proxy = "unset http_proxy;" + "\n" +
+                            "unset https_proxy;" + "\n";
+                }
+            }
+            String fileName = "";
+            if (StringUtils.equalsIgnoreCase("image", image.getType())) {
+                fileName = image.getImageUrl() + ":" + image.getImageTag();
+            } else {
+                fileName = ImageConstants.DEFAULT_BASE_DIR + image.getPath();
+            }
+            String command = _proxy + scanType + fileName + ImageConstants.SCOPE + ImageConstants.OUT + outType + ImageConstants._FILE + ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT;
+            String resultStr = CommandUtils.commonExecCmdWithResult(command, ImageConstants.DEFAULT_BASE_DIR);
+            return resultStr;
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     public List<ImageResultDTO> resultList(ImageResultRequest request) {
@@ -278,6 +439,25 @@ public class ImageService {
         ImageResultLogExample example = new ImageResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
         return imageResultLogMapper.selectByExampleWithBLOBs(example);
+    }
+
+    void saveImageResultLog(String resultId, String operation, String output, boolean result) {
+        ImageResultLog imageResultLog = new ImageResultLog();
+        String operator = "system";
+        try {
+            if (SessionUtils.getUser() != null) {
+                operator = SessionUtils.getUser().getId();
+            }
+        } catch (Exception e) {
+            //防止单元测试无session
+        }
+        imageResultLog.setOperator(operator);
+        imageResultLog.setResultId(resultId);
+        imageResultLog.setCreateTime(System.currentTimeMillis());
+        imageResultLog.setOperation(operation);
+        imageResultLog.setOutput(output);
+        imageResultLog.setResult(result);
+        imageResultLogMapper.insertSelective(imageResultLog);
     }
 
 }

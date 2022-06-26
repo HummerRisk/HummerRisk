@@ -835,6 +835,10 @@ export default {
     severity: '風險等級',
     result_status: '檢測結果狀態',
     last_modified: '最後更新時間',
+    grype_table: '鏡像檢測漏洞結果表格',
+    grype_json: '鏡像檢測漏洞結果JSON',
+    syft_table: '鏡像檢測 SBOM 清單',
+    syft_json: '鏡像檢測 SBOM JSON',
   },
   package: {
     package_setting: '軟件包管理',

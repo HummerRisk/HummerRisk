@@ -13,25 +13,24 @@
         <el-table-column type="expand" min-width="1%">
           <template slot-scope="props">
             <el-form>
-              <codemirror ref="cmEditor" v-model="props.row.returnLog" class="code-mirror" :options="cmOptions" />
+              <codemirror ref="cmEditor" v-model="props.row.grypeTable" class="code-mirror" :options="cmOptions" />
             </el-form>
           </template>
         </el-table-column >
         <!-- 展开 end -->
         <el-table-column type="index" min-width="3%"/>
         <el-table-column prop="name" :label="$t('image.image_name')" min-width="10%" show-overflow-tooltip></el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('image.image_url')" min-width="10%" show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" :label="$t('image.image_url')" min-width="30%" show-overflow-tooltip>
           <el-row v-if="scope.row.type==='image'">{{ scope.row.imageUrl }} : {{ scope.row.imageTag }}</el-row>
           <el-row v-if="scope.row.type==='tar'">{{ scope.row.path }}</el-row>
         </el-table-column>
-        <el-table-column prop="size" :label="$t('image.image_size')" min-width="10%" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="ruleName" :label="$t('image.rule_name')" min-width="12%" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="ruleName" :label="$t('image.rule_name')" min-width="10%" show-overflow-tooltip></el-table-column>
         <el-table-column min-width="10%" :label="$t('image.severity')" column-key="severity">
           <template v-slot:default="{row}">
             <rule-type :row="row"/>
           </template>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="15%" prop="resultStatus" sortable show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="12%" prop="resultStatus" sortable show-overflow-tooltip>
           <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
           </el-button>
@@ -56,7 +55,7 @@
             <span><i class="el-icon-time"></i> {{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
@@ -78,8 +77,8 @@
               <div class="grid-content bg-purple-light">
                 <span class="grid-content-log-span"> {{ logForm.ruleName }} | {{ logForm.name }}</span>
                 <span class="grid-content-log-span">
-                  <img :src="require(`@/assets/img/platform/package.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ logForm.packageName }}
+                  <img :src="require(`@/assets/img/platform/docker.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ logForm.imageName }}
                 </span>
                 <span class="grid-content-status-span" v-if="logForm.resultStatus === 'APPROVED'" style="color: #579df8">
                   <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
@@ -110,16 +109,20 @@
           </el-table-column>
         </el-table>
         <el-form>
-          <div class="pure-span">{{ $t('package.result_resources') }}</div>
-          <codemirror ref="cmEditor" v-model="logForm.resources" class="code-mirror" :options="cmOptions" />
+          <div class="pure-span">{{ $t('image.grype_table') }}</div>
+          <codemirror ref="cmEditor" v-model="logForm.grypeTable" class="code-mirror" :options="cmOptions" />
         </el-form>
         <el-form>
-          <div class="pure-span">{{ $t('package.result_log') }}</div>
-          <codemirror ref="cmEditor" v-model="logForm.returnLog" class="code-mirror" :options="cmOptions" />
+          <div class="pure-span">{{ $t('image.grype_json') }}</div>
+          <codemirror ref="cmEditor" v-model="logForm.grypeJson" class="code-mirror" :options="cmOptions" />
         </el-form>
         <el-form>
-          <div class="pure-span">{{ $t('package.result_json') }}</div>
-          <codemirror ref="cmEditor" v-model="logForm.returnJson" class="code-mirror" :options="cmOptions" />
+          <div class="pure-span">{{ $t('image.syft_table') }}</div>
+          <codemirror ref="cmEditor" v-model="logForm.syftTable" class="code-mirror" :options="cmOptions" />
+        </el-form>
+        <el-form>
+          <div class="pure-span">{{ $t('image.syft_json') }}</div>
+          <codemirror ref="cmEditor" v-model="logForm.syftJson" class="code-mirror" :options="cmOptions" />
         </el-form>
       </el-row>
       <template v-slot:footer>

@@ -99,11 +99,16 @@
         t.*,
         t1.tag_key as tagKey,
         t2.tag_name as tagName,
-        u.name as user
+        u.name as user,
+        i.type as type,
+        i.image_url as imageUrl,
+        i.image_tag as imageTag,
+        i.path as path
         FROM image_result t
         left join rule_tag_mapping t1 on t1.rule_id = t.rule_id
         left join rule_tag t2 on t1.tag_key = t2.tag_key
         left join user u on t.apply_user = u.id
+        left join image i on t.image_id = i.id
 
         <where>
             <if test="id != null">

@@ -71,6 +71,10 @@ public class ResourceCreateService {
     private ServerService serverService;
     @Resource
     private ServerResultMapper serverResultMapper;
+    @Resource
+    private ImageService imageService;
+    @Resource
+    private ImageResultMapper imageResultMapper;
 
     @QuartzScheduled(cron = "${cron.expression.local}")
     public void handleTasks() {
@@ -180,6 +184,37 @@ public class ResourceCreateService {
         }
 
         //镜像检测
+        final ImageResultExample imageResultExample = new ImageResultExample();
+        ImageResultExample.Criteria ic = imageResultExample.createCriteria();
+        ic.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
+            pc.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+        }
+        imageResultExample.setOrderByClause("create_time limit 10");
+        List<ImageResultWithBLOBs> imageResults = imageResultMapper.selectByExampleWithBLOBs(imageResultExample);
+        if (CollectionUtils.isNotEmpty(imageResults)) {
+            imageResults.forEach(imageResult -> {
+                final ImageResultWithBLOBs imageToBeProceed;
+                try {
+                    imageToBeProceed = BeanUtils.copyBean(new ImageResultWithBLOBs(), imageResult);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                if (processingGroupIdMap.get(imageToBeProceed.getId()) != null) {
+                    return;
+                }
+                processingGroupIdMap.put(imageToBeProceed.getId(), imageToBeProceed.getId());
+                commonThreadPool.addTask(() -> {
+                    try {
+                        imageService.createScan(imageToBeProceed);
+                    } catch (Exception e) {
+                        LogUtil.error(e);
+                    } finally {
+                        processingGroupIdMap.remove(imageToBeProceed.getId());
+                    }
+                });
+            });
+        }
 
         //网络检测
 

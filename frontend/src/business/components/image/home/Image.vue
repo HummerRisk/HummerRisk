@@ -27,8 +27,8 @@
                 <el-row class="cl-mid-row">
                   <el-col :span="3" class="cl-span-col">{{ $t('image.image_name') }}</el-col>
                   <el-col :span="3" class="cl-span-col">{{ $t('image.image_status') }}</el-col>
-                  <el-col :span="5" class="cl-span-col">{{ $t('image.image_url') }}</el-col>
-                  <el-col :span="3" class="cl-span-col">{{ $t('image.image_size') }}</el-col>
+                  <el-col :span="data.type==='tar'?5:8" class="cl-span-col">{{ $t('image.image_url') }}</el-col>
+                  <el-col :span="3" v-if="data.type==='tar'" class="cl-span-col">{{ $t('image.image_size') }}</el-col>
                   <el-col :span="5" class="cl-span-col">{{ $t('image.image_repo_name') }}</el-col>
                   <el-col :span="5" class="cl-span-col">{{ $t('commons.update_time') }}</el-col>
                 </el-row>
@@ -45,10 +45,10 @@
                       {{ $t('server.INVALID') }}
                     </el-tag>
                   </el-col>
-                  <el-col :span="5" class="cl-data-col">
+                  <el-col :span="data.type==='tar'?5:8" class="cl-data-col">
                     {{ data.type==='image'?(data.imageUrl + ':' + data.imageTag):data.path }}
                   </el-col>
-                  <el-col :span="3" class="cl-data-col">{{ data.size }}</el-col>
+                  <el-col :span="3" v-if="data.type==='tar'" class="cl-data-col">{{ data.size }}</el-col>
                   <el-col :span="5" class="cl-data-col">{{ data.image_repo_name?data.image_repo_name:$t('image.no_image_repo') }}</el-col>
                   <el-col :span="5" class="cl-data-col">{{ data.updateTime | timestampFormatDate }}</el-col>
                 </el-row>

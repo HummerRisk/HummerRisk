@@ -835,6 +835,10 @@ export default {
     severity: 'Risk level',
     result_status: 'Test result status',
     last_modified: 'Last update time',
+    grype_table: 'Mirror detection vulnerability result table',
+    grype_json: 'Image detection vulnerability result JSON',
+    syft_table: 'Mirror detection SBOM list',
+    syft_json: 'Mirror detection SBOM JSON',
   },
   package: {
     package_setting: 'Package Management',
