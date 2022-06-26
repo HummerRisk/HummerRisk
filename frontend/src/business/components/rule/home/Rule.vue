@@ -712,6 +712,8 @@ import {RULE_CONFIGS} from "../../common/components/search/search-components";
         param.tags = [];
         this.result = this.$post('/rule/dryRun', param, response => {
           this.$success(this.$t('rule.opt_success'));
+        }, error => {
+          this.$warning(error);
         });
       },
       tableRowClassName({row, rowIndex}) {

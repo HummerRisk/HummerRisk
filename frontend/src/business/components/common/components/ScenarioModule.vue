@@ -249,11 +249,6 @@ import DialogFooter from "../../common/components/DialogFooter";
     margin-bottom: 15px;
   }
 
-  .ms-el-input {
-    height: 25px;
-    line-height: 25px;
-  }
-
   .custom-tree-node {
     flex: 1 1 auto;
     display: flex;
@@ -288,10 +283,6 @@ import DialogFooter from "../../common/components/DialogFooter";
 
   /deep/ .el-tree-node__content {
     height: 33px;
-  }
-
-  .ms-api-buttion {
-    width: 30px;
   }
 
   .module-input {

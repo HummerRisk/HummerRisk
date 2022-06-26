@@ -1,12 +1,12 @@
 <template>
   <div>
-    <rs-chart :options="options"></rs-chart>
+    <hr-chart :options="options"></hr-chart>
   </div>
 </template>
 
 <script>
 import echarts from 'echarts';
-import RsChart from "@/business/components/common/chart/HrChart";
+import HrChart from "@/business/components/common/chart/HrChart";
 
 let opt = {
   index: 0
@@ -16,7 +16,7 @@ let color = ['#11cfae', '#009ef0', '#627dec', '#0051a4', '#893fdc', '#89ffff', '
 export default {
   name: "RuleListPieChart",
   components: {
-    RsChart,
+    HrChart,
     echarts
   },
   data() {

@@ -9,11 +9,11 @@
 
 <script>
 
-import RsChart from "@/business/components/common/chart/HrChart";
+import HrChart from "@/business/components/common/chart/HrChart";
 /* eslint-disable */
 export default {
   name: "PieChart",
-  components: {RsChart},
+  components: {HrChart},
   mounted() {
     this.getDataNamesByData();
   },

@@ -50,11 +50,11 @@
 </template>
 
 <script>
-import RsChart from "@/business/components/common/chart/HrChart";
+import HrChart from "@/business/components/common/chart/HrChart";
 /* eslint-disable */
 export default {
   name: "MetricChart",
-  components: {RsChart},
+  components: {HrChart},
   props: {
     content: Object
   },

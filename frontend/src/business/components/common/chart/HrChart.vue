@@ -1,42 +1,85 @@
 <template>
   <chart
+    v-if="loaded"
+    :style="{'height': chartHeight, 'width': chartWidth}"
+    class="hr-chart"
     :init-options="defaultInitOptions"
     :options="options"
     :theme="theme"
     :group="group"
+    @click="onClick"
     :watch-shallow="watchShallow"
     :manual-update="manualUpdate"
-    :autoresize="autoresize"/>
+    :autoresize="autoresize" id="chartsShow"/>
 </template>
 
 <script>
-/* eslint-disable */
-  export default {
-    name: "RsChart",
-    props: {
-      options: Object,
-      theme: [String, Object],
-      initOptions: Object,
-      group: String,
-      autoresize: Boolean,
-      watchShallow: Boolean,
-      manualUpdate: Boolean
-    },
-    data() {
-      return {
-        defaultInitOptions: this.initOptions
+export default {
+  name: "HrChart",
+  props: {
+    options: Object,
+    theme: [String, Object],
+    initOptions: {
+      type: Object,
+      default() {
+        return {
+          renderer: 'canvas'
+        }
       }
     },
-    mounted() {
-      this.defaultInitOptions = this.defaultInitOptions || {};
-      // 默认渲染svg
-      // BUG: 渲染svg之后 图上的legend 太多会不显示
-      // if (!this.defaultInitOptions.renderer) {
-      // this.defaultInitOptions.renderer = 'svg';
-      // }
+    group: String,
+    autoresize: Boolean,
+    watchShallow: Boolean,
+    manualUpdate: Boolean,
+    height: {
+      type: [Number, String],
+      default() {
+        return 400
+      }
+    },
+    width: [Number, String],
+  },
+  data() {
+    return {
+      loaded: true,
+      defaultInitOptions: this.initOptions
+    };
+  },
+  computed: {
+    chartHeight() {
+      if (this.height.indexOf) {
+        return this.height;
+      } else {
+        return this.height + 'px';
+      }
+    },
+    chartWidth() {
+      if (!this.width) {
+        return this.width;
+      }
+      if (this.width.indexOf) {
+        return this.width;
+      } else {
+        return this.width + 'px';
+      }
     }
+  },
+  mounted() {
+  },
+  methods: {
+    onClick(params) {
+      this.$emit('onClick', params.data);
+    },
+    reload() {
+      this.loaded = false;
+      this.$nextTick(() => {
+        this.loaded = true;
+      })
+    },
   }
+};
 </script>
 
 <style scoped>
+
 </style>
