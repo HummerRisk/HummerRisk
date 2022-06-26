@@ -363,6 +363,12 @@ public class ResourceService {
                 case "nuclei":
                     createNucleiResource(resourceWithBLOBs, taskItem, operation);
                     break;
+                case "xray":
+                    createXrayResource(resourceWithBLOBs, taskItem, operation);
+                    break;
+                case "tsunami":
+                    createTsunamiResource(resourceWithBLOBs, taskItem, operation);
+                    break;
                 case "prowler":
                     createProwlerResource(resourceWithBLOBs, taskItem, cloudTask, operation);
                     break;
@@ -433,6 +439,52 @@ public class ResourceService {
             } else {
                 resourceWithBLOBs.setReturnSum((long) 0);
             }
+
+            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), Translator.get("i18n_operation_end") + ": " + operation, Translator.get("i18n_cloud_account") + ": " + resourceWithBLOBs.getPluginName() + "，"
+                    + Translator.get("i18n_region") + ": " + resourceWithBLOBs.getRegionName() + "，" + Translator.get("i18n_rule_type") + ": " + resourceWithBLOBs.getResourceType() + "，" + Translator.get("i18n_resource_manage") + ": "
+                    + resourceWithBLOBs.getResourceName() + "，" + Translator.get("i18n_resource_manage") + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(), true);
+        } catch (Exception e) {
+            HRException.throwException(e.getMessage());
+        }
+    }
+
+    private void createXrayResource (ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemWithBLOBs taskItem, String operation) {
+        try {
+            CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskItem.getTaskId());
+            String fileName = cloudTask.getResourceTypes().replace("[", "").replace("]", "");
+            String dirPath = CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskItem.getTaskId() + "/" + taskItem.getRegionId();
+            AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
+            Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
+            String command = PlatformUtils.fixedCommand(CommandEnum.xray.getCommand(), CommandEnum.run.getCommand(), dirPath, fileName, map);
+
+            LogUtil.info(taskItem.getTaskId() + " {}[command]: " + command);
+            String resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
+
+            String xrayRun = command;
+            String metadata = resultStr;
+            String resources = ReadFileUtils.readToBufferByXray(dirPath + "/" + CloudTaskConstants.XRAY_RUN_RESULT_FILE, resultStr);
+
+            resourceWithBLOBs.setCustodianRunLog(xrayRun);
+            resourceWithBLOBs.setMetadata(metadata);
+            resourceWithBLOBs.setResources(resources);
+
+            resourceWithBLOBs.setResourcesSum((long) 1);
+            if (StringUtils.isNotEmpty(resourceWithBLOBs.getResources())) {
+                resourceWithBLOBs.setReturnSum((long) 1);
+            } else {
+                resourceWithBLOBs.setReturnSum((long) 0);
+            }
+
+            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), Translator.get("i18n_operation_end") + ": " + operation, Translator.get("i18n_cloud_account") + ": " + resourceWithBLOBs.getPluginName() + "，"
+                    + Translator.get("i18n_region") + ": " + resourceWithBLOBs.getRegionName() + "，" + Translator.get("i18n_rule_type") + ": " + resourceWithBLOBs.getResourceType() + "，" + Translator.get("i18n_resource_manage") + ": "
+                    + resourceWithBLOBs.getResourceName() + "，" + Translator.get("i18n_resource_manage") + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(), true);
+        } catch (Exception e) {
+            HRException.throwException(e.getMessage());
+        }
+    }
+
+    private void createTsunamiResource (ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemWithBLOBs taskItem, String operation) {
+        try {
 
             orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), Translator.get("i18n_operation_end") + ": " + operation, Translator.get("i18n_cloud_account") + ": " + resourceWithBLOBs.getPluginName() + "，"
                     + Translator.get("i18n_region") + ": " + resourceWithBLOBs.getRegionName() + "，" + Translator.get("i18n_rule_type") + ": " + resourceWithBLOBs.getResourceType() + "，" + Translator.get("i18n_resource_manage") + ": "
@@ -637,7 +689,7 @@ public class ResourceService {
     public ResourceWithBLOBs resource(CloudTaskItem cloudTaskItem) {
         ResourceWithBLOBs resource = extResourceMapper.resource(cloudTaskItem);
         try{
-            if (!StringUtils.equalsIgnoreCase(resource.getPluginId(), PlatformUtils.nuclei)) {
+            if (PlatformUtils.isSupportCloudAccount(resource.getPluginId())) {
                 resource.setMetadata(toJSONString(resource.getMetadata()));
                 resource.setResources(toJSONString2(resource.getResources()));
             }

@@ -262,6 +262,8 @@ public class ResourceCreateService {
             case "xray":
                 xrayService.createXrayResource(taskItem, cloudTask);
                 break;
+            case "tsunami":
+                break;
             case "prowler":
                 prowlerService.createProwlerResource(taskItem, cloudTask);
                 break;

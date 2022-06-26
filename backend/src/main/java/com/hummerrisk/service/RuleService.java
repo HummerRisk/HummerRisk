@@ -1,5 +1,6 @@
 package com.hummerrisk.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.base.domain.*;
@@ -177,6 +178,29 @@ public class RuleService {
                 }
             } else if(StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.nuclei.name())){
                 String resourceType = "nuclei";
+                example.createCriteria().andRuleIdEqualTo(ruleRequest.getId()).andResourceTypeEqualTo(resourceType);
+                List<RuleType> ruleTypes = ruleTypeMapper.selectByExample(example);
+                if (ruleTypes.isEmpty()) {
+                    ruleType.setId(UUIDUtil.newUUID());
+                    ruleType.setResourceType(resourceType);
+                    ruleTypeMapper.insertSelective(ruleType);
+                }
+            }  else if(StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.xray.name())){
+                String groupName = "xss";
+                JSONArray jsonArray = JSON.parseArray(ruleRequest.getParameter());
+                for (Object o : jsonArray) {
+                    JSONObject jsonObject = (JSONObject) o;
+                    groupName = jsonObject.getString("defaultValue");
+                }
+                example.createCriteria().andRuleIdEqualTo(ruleRequest.getId()).andResourceTypeEqualTo(groupName);
+                List<RuleType> ruleTypes = ruleTypeMapper.selectByExample(example);
+                if (ruleTypes.isEmpty()) {
+                    ruleType.setId(UUIDUtil.newUUID());
+                    ruleType.setResourceType(groupName);
+                    ruleTypeMapper.insertSelective(ruleType);
+                }
+            }  else if(StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.tsunami.name())){
+                String resourceType = "tsunami";
                 example.createCriteria().andRuleIdEqualTo(ruleRequest.getId()).andResourceTypeEqualTo(resourceType);
                 List<RuleType> ruleTypes = ruleTypeMapper.selectByExample(example);
                 if (ruleTypes.isEmpty()) {
