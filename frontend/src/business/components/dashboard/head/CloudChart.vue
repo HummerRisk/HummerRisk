@@ -1,6 +1,6 @@
 <template>
   <div>
-    <hr-chart :options="options" :width="280" :height="300"></hr-chart>
+    <hr-chart :options="options" :width="400" :height="256"></hr-chart>
   </div>
 </template>
 
@@ -9,7 +9,7 @@ import echarts from 'echarts';
 import HrChart from "@/business/components/common/chart/HrChart";
 /* eslint-disable */
 export default {
-  name: "AccountPieChart",
+  name: "CloudChart",
   components: {
     HrChart,
     echarts,
@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     init() {
-      this.$post("/dashboard/distribution", {group: "accountList", limit: 5}, response => {
+      this.$post("/dashboard/distribution", {group: "accountList", limit: 10}, response => {
         let legendData = [];
         let seriesData = [];
         for (let obj of response.data) {
@@ -36,7 +36,7 @@ export default {
         }
         this.options = {
           title: {
-            text: this.$t('dashboard.cloud_account_statistics_top'),
+            text: this.$t('dashboard.cloud_account_statistics_top10'),
             subtext: this.$t('resource.resource_result_score'),
             left: 'center'
           },
@@ -84,11 +84,5 @@ export default {
 </script>
 
 <style scoped>
-
-  .echarts {
-    margin: 0 auto;
-    min-width: 300px;
-    min-height: 200px;
-  }
 
 </style>

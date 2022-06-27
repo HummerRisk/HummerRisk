@@ -1,25 +1,28 @@
 <template>
-  <container v-loading="result.loading" style="padding-right: 5px !important;">
+  <container v-loading="result.loading" class="container">
     <el-col :span="10" style="padding: 0 10px 0 0;">
       <el-row>
         <el-card class="table-card" v-loading="result.loading">
           <template v-slot:header>
-            <span class="title">{{ $t('resource.i18n_not_compliance') }}</span>
+            <span class="title">{{ $t('dashboard.cloud_account_statistics') }}</span>
           </template>
+          <cloud-chart/>
         </el-card>
       </el-row>
       <el-row>
         <el-card class="table-card" v-loading="result.loading">
           <template v-slot:header>
-            <span class="title">{{ $t('resource.i18n_not_compliance') }}</span>
+            <span class="title">{{ $t('dashboard.vuln_statistics') }}</span>
           </template>
+          <vuln-chart/>
         </el-card>
       </el-row>
       <el-row>
         <el-card class="table-card" v-loading="result.loading">
           <template v-slot:header>
-            <span class="title">{{ $t('resource.i18n_not_compliance') }}</span>
+            <span class="title">{{ $t('dashboard.server_statistics') }}</span>
           </template>
+          <server-chart/>
         </el-card>
       </el-row>
     </el-col>
@@ -30,11 +33,17 @@
           <template
             slot="dateCell"
             slot-scope="{date, data}">
-            <p :class="data.isSelected ? 'is-selected' : ''">
+            <p :class="data.isSelected ? 'is-selected' : ''" @click="handle(data.day)">
               {{ data.day.split('-').slice(1).join('-') }} {{ data.isSelected ? '✔️' : ''}}
             </p>
           </template>
         </el-calendar>
+      </el-card>
+      <el-card class="table-card" v-loading="result.loading">
+        <template v-slot:header>
+          <span class="title">{{ $t('dashboard.package_statistics') }}</span>
+        </template>
+        <package-chart/>
       </el-card>
     </el-col>
   </container>
@@ -42,11 +51,19 @@
 
 <script>
 import Container from "../.././common/components/Container";
+import CloudChart from "@/business/components/dashboard/head/CloudChart";
+import VulnChart from "@/business/components/dashboard/head/VulnChart";
+import PackageChart from "@/business/components/dashboard/head/PackageChart";
+import ServerChart from "@/business/components/dashboard/head/ServerChart";
 
 /* eslint-disable */
 export default {
   components: {
     Container,
+    CloudChart,
+    VulnChart,
+    PackageChart,
+    ServerChart,
   },
   data() {
     return {
@@ -54,7 +71,14 @@ export default {
     }
   },
   methods: {
+    /** 查询节假日管理 - 法定节假日列表 */
+    getList() {
+    },
+    handle() {},
   },
+  created() {
+    this.getList();
+  }
 }
 </script>
 
@@ -65,6 +89,15 @@ export default {
 }
 .is-selected {
   color: #1989FA;
+}
+
+.container {
+  padding: 3px 5px 3px 15px;
+}
+
+.is-selected {
+  color: white;
+  background: green;
 }
 </style>
 

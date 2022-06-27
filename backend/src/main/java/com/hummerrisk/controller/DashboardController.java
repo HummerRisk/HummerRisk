@@ -7,6 +7,7 @@ import com.hummerrisk.commons.utils.DashboardTarget;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.dto.ScanHistoryDTO;
+import com.hummerrisk.dto.TopInfoDTO;
 import com.hummerrisk.service.DashboardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -61,6 +62,12 @@ public class DashboardController {
     public Pager<List<ScanHistoryDTO>> vulnHistory(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, dashboardService.vulnHistory(params));
+    }
+
+    @ApiOperation(value = "分组统计")
+    @PostMapping("topInfo")
+    public TopInfoDTO topInfo(@RequestBody Map<String, Object> params) {
+        return dashboardService.topInfo(params);
     }
 
 

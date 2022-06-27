@@ -1,6 +1,6 @@
 <template>
   <div>
-    <hr-chart :options="options" :width="100" :height="200"></hr-chart>
+    <hr-chart :options="options" :width="280" :height="300"></hr-chart>
   </div>
 </template>
 
@@ -13,7 +13,7 @@ const gaugeData = [
     value: 20,
     name: 'Good',
     title: {
-      offsetCenter: ['-40%', '80%']
+      offsetCenter: ['40%', '80%']
     },
     detail: {
       offsetCenter: ['-40%', '95%']
@@ -56,6 +56,9 @@ export default {
   methods: {
     init () {
       let data=[];
+      gaugeData[0].value = +(Math.random() * 100).toFixed(2);
+      gaugeData[1].value = +(Math.random() * 100).toFixed(2);
+      gaugeData[2].value = +(Math.random() * 100).toFixed(2);
       this.options = {
         series: [
           {
@@ -63,15 +66,15 @@ export default {
             anchor: {
               show: true,
               showAbove: true,
-              size: 18,
+              size: 10,
               itemStyle: {
                 color: '#FAC858'
               }
             },
             pointer: {
               icon: 'path://M2.9,0.7L2.9,0.7c1.4,0,2.6,1.2,2.6,2.6v115c0,1.4-1.2,2.6-2.6,2.6l0,0c-1.4,0-2.6-1.2-2.6-2.6V3.3C0.3,1.9,1.4,0.7,2.9,0.7z',
-              width: 8,
-              length: '80%',
+              width: 5,
+              length: '60%',
               offsetCenter: [0, '8%']
             },
             progress: {
@@ -84,15 +87,15 @@ export default {
             },
             data: gaugeData,
             title: {
-              fontSize: 14
+              fontSize: 10
             },
             detail: {
-              width: 40,
-              height: 14,
-              fontSize: 14,
+              width: 30,
+              height: 10,
+              fontSize: 10,
               color: '#fff',
               backgroundColor: 'auto',
-              borderRadius: 3,
+              borderRadius: 1,
               formatter: '{value}%'
             }
           }

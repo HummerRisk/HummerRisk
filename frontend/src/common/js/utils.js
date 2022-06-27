@@ -139,7 +139,6 @@ export function downloadFile(name, content) {
     URL.revokeObjectURL(aTag.href)
   } else {
     // IE10+下载
-    navigator.msSaveBlob(blob, name)
   }
 }
 

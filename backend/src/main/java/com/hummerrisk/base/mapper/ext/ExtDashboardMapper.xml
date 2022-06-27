@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummerrisk.base.mapper.ext.ExtDashboardMapper">
+
+    <select id="topInfo" parameterType="java.util.Map" resultType="com.hummerrisk.dto.TopInfoDTO">
+        SELECT *
+        from (
+              (SELECT count(user.id) as users from user) as users,
+              (SELECT (SELECT count(t.id) from cloud_account t) + (SELECT count(t.id) from image t) + (SELECT count(t.id) from package t) + (SELECT count(t.id) from server t) as accounts) as accounts,
+              (SELECT count(t.id) as cloudAccounts from cloud_account t where t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')) as cloudAccounts,
+              (SELECT count(t.id) as vulnAccounts from cloud_account t where t.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')) as vulnAccounts,
+              (SELECT count(t.id) as serverAccounts from server t) as serverAccounts,
+              (SELECT count(t.id) as packageAccounts from package t) as packageAccounts,
+              (SELECT count(t.id) as imageAccounts from image t) as imageAccounts,
+              (SELECT (SELECT count(t.id) from rule t) + (SELECT count(t.id) from image_rule t) + (SELECT count(t.id) from package_rule t) + (SELECT count(t.id) from server_rule t) as rules) as rules,
+              (SELECT count(t.id) as cloudRules from rule t where t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')) as cloudRules,
+              (SELECT count(t.id) as vulnRules from rule t where t.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')) as vulnRules,
+              (SELECT count(t.id) as imageRules from image_rule t) as imageRules,
+              (SELECT count(t.id) as packageRules from package_rule t) as packageRules,
+              (SELECT count(t.id) as serverRules from server_rule t) as serverRules,
+              (SELECT (SELECT count(t.id) from resource_item t) + (SELECT count(t.id) from image_result t) + (SELECT count(t.id) from package_result t) + (SELECT count(t.id) from server_result t) as results) as results,
+              (SELECT count(t.id) as cloudResult from resource_item t where t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')) as cloudResult,
+              (SELECT count(t.id) as vulnResult from resource_item t where t.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')) as vulnResult,
+              (SELECT count(t.id) as imageResult from image_result t) as imageResult,
+              (SELECT count(t.id) as packageResult from package_result t) as packageResult,
+              (SELECT count(t.id) as serverResult from server_result t) as serverResult
+                 )
+    </select>
+
+
+</mapper>

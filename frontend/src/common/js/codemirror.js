@@ -19,7 +19,7 @@
   var platform = navigator.platform;
 
   var gecko = /gecko\/\d/i.test(userAgent);
-  var ie_upto10 = /MSIE \d/.test(userAgent);
+  var ie_upto10 = /IE \d/.test(userAgent);
   var ie_11up = /Trident\/(?:[7-9]|\d{2,})\..*rv:(\d+)/.exec(userAgent);
   var edge = /Edge\/(\d+)/.exec(userAgent);
   var ie = ie_upto10 || ie_11up || edge;
@@ -187,12 +187,12 @@
       setTimeout(self.handler, self.time - +new Date);
     }
   };
-  Delayed.prototype.set = function (ms, f) {
+  Delayed.prototype.set = function (hr, f) {
     this.f = f;
-    var time = +new Date + ms;
+    var time = +new Date + hr;
     if (!this.id || time < this.time) {
       clearTimeout(this.id);
-      this.id = setTimeout(this.handler, ms);
+      this.id = setTimeout(this.handler, hr);
       this.time = time;
     }
   };

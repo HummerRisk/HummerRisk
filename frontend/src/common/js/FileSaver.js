@@ -16,7 +16,7 @@
 export var saveAs = saveAs || (function(view) {
   "use strict";
   // IE <10 is explicitly unsupported
-  if (typeof view === "undefined" || typeof navigator !== "undefined" && /MSIE [1-9]\./.test(navigator.userAgent)) {
+  if (typeof view === "undefined" || typeof navigator !== "undefined" && /IE [1-9]\./.test(navigator.userAgent)) {
     return;
   }
   var
@@ -41,7 +41,7 @@ export var saveAs = saveAs || (function(view) {
     }
     , force_saveable_type = "application/octet-stream"
     // the Blob API is fundamentally broken as there is no "downloadfinished" event to subscribe to
-    , arbitrary_revoke_timeout = 1000 * 40 // in ms
+    , arbitrary_revoke_timeout = 1000 * 40
     , revoke = function(file) {
       var revoker = function() {
         if (typeof file === "string") { // file is an object URL
@@ -144,20 +144,6 @@ export var saveAs = saveAs || (function(view) {
       return new FileSaver(blob, name || blob.name || "download", no_auto_bom);
     }
   ;
-
-  // IE 10+ (native saveAs)
-  if (typeof navigator !== "undefined" && navigator.msSaveOrOpenBlob) {
-    return function(blob, name, no_auto_bom) {
-      name = name || blob.name || "download";
-
-      if (!no_auto_bom) {
-        blob = auto_bom(blob);
-      }
-      return navigator.msSaveOrOpenBlob(blob, name);
-    };
-  }
-
-  //save_link.target = "_blank";
 
   FS_proto.abort = function(){};
   FS_proto.readyState = FS_proto.INIT = 0;

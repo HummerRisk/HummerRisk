@@ -202,6 +202,27 @@
         </if>
     </select>
 
+    <select id="vulnList" resultType="com.hummerrisk.commons.utils.ChartData">
+        SELECT
+        IFNULL( sum( t1.return_sum ), 0 ) AS yAxis,
+        IFNULL( sum( t1.resources_sum ), 0 ) AS yAxis2,
+        t.name AS groupName,
+        IFNULL( (SELECT scan_score FROM scan_history tt WHERE tt.account_id = t.id ORDER BY tt.create_time DESC limit 1), 100) AS xAxis
+        FROM
+        cloud_account t
+        LEFT JOIN resource t1 ON t1.account_id = t.id
+        WHERE t.plugin_id IN ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+        GROUP BY
+        t.id
+        HAVING
+        yAxis != 0
+        ORDER BY
+        yAxis desc
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
     <select id="regionsList" resultType="com.hummerrisk.commons.utils.ChartData">
         SELECT
             IFNULL( sum(t2.return_sum), 0 ) AS yAxis,

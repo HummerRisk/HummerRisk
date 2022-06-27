@@ -3,10 +3,12 @@ package com.hummerrisk.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.hummerrisk.base.mapper.ext.ExtDashboardMapper;
 import com.hummerrisk.base.mapper.ext.ExtVulnMapper;
 import com.hummerrisk.commons.utils.ChartData;
 import com.hummerrisk.commons.utils.DashboardTarget;
 import com.hummerrisk.dto.ScanHistoryDTO;
+import com.hummerrisk.dto.TopInfoDTO;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,8 @@ public class DashboardService {
 
     @Resource
     private ExtVulnMapper extVulnMapper;
+    @Resource
+    private ExtDashboardMapper extDashboardMapper;
 
     public List<ChartData> vulnDistribution(Map<String, Object> params) {
 
@@ -37,6 +41,8 @@ public class DashboardService {
                 return extVulnMapper.ruleList(params);
             case "accountList":
                 return extVulnMapper.accountList(params);
+            case "vulnList":
+                return extVulnMapper.vulnList(params);
             case "regionsList":
                 return extVulnMapper.regionsList(params);
             default:
@@ -77,6 +83,10 @@ public class DashboardService {
         JSONArray jsonArray = parseArray(res);
         return JSON.toJSONString(jsonArray, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue,
                 SerializerFeature.WriteDateUseDateFormat);
+    }
+
+    public TopInfoDTO topInfo(Map<String, Object> params) {
+        return extDashboardMapper.topInfo(params);
     }
 
 }
