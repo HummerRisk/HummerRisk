@@ -15,7 +15,15 @@
                 @sort-change="sort"
                 @filter-change="filter">
         <el-table-column type="index" min-width="2%"/>
-        <el-table-column v-slot:default="scope" :label="$t('resource.i18n_task_type')" min-width="15%" show-overflow-tooltip>
+        <el-table-column prop="name" :label="$t('vuln.name')" min-width="10%" show-overflow-tooltip>
+          <template v-slot:default="scope">
+              <span>
+                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ $t(scope.row.accountName) }}
+              </span>
+          </template>
+        </el-table-column>
+        <el-table-column v-slot:default="scope" :label="$t('resource.i18n_task_type')" min-width="10%" show-overflow-tooltip>
           <span>
             <template v-for="tag in tagSelect">
               <span :key="tag.value" v-if="scope.row.ruleTags">
@@ -32,7 +40,7 @@
             </span>
           </span>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="18%" show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="13%" show-overflow-tooltip>
           <el-link type="primary" class="md-primary text-click" @click="showTaskDetail(scope.row)">
             {{ scope.row.taskName }}
           </el-link>
@@ -388,7 +396,7 @@ export default {
       let showLogTaskId = cloudTask.id;
       let url = "";
       if (showLogTaskId) {
-        url = "/cloudTask/log/taskId/";
+        url = "/cloud/task/log/taskId/";
       }
       this.logForm.cloudTaskItemLogDTOs = [];
       this.logForm.showLogTaskId = showLogTaskId;
@@ -399,7 +407,7 @@ export default {
     },
     showTaskDetail(item) {
       this.detailForm = {};
-      this.$get("/cloudTask/detail/" + item.id, response => {
+      this.$get("/cloud/task/detail/" + item.id, response => {
         if (response.success) {
           this.detailForm = response.data;
           this.detailVisible = true;

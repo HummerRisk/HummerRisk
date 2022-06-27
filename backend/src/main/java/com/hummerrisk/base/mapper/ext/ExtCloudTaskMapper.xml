@@ -106,4 +106,70 @@
         WHERE t2.id = #{id}
     </select>
 
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <resultMap id="BaseDtoResultMap" type="com.hummerrisk.dto.CloudTaskDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="task_name" jdbcType="VARCHAR" property="taskName" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="cron" jdbcType="VARCHAR" property="cron" />
+        <result column="trigger_id" jdbcType="VARCHAR" property="triggerId" />
+        <result column="prev_fire_time" jdbcType="BIGINT" property="prevFireTime" />
+        <result column="last_fire_time" jdbcType="BIGINT" property="lastFireTime" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_tags" jdbcType="VARCHAR" property="ruleTags" />
+        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="resource_types" jdbcType="VARCHAR" property="resourceTypes" />
+        <result column="resources_sum" jdbcType="BIGINT" property="resourcesSum" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="cron_desc" jdbcType="VARCHAR" property="cronDesc" />
+        <result column="scan_type" jdbcType="VARCHAR" property="scanType" />
+        <result column="accountName" jdbcType="VARCHAR" property="accountName" />
+    </resultMap>
+    <select id="selectByExample" parameterType="com.hummerrisk.base.domain.CloudTaskExample" resultMap="BaseDtoResultMap">
+        select cloud_task.*, (select t1.name from cloud_account t1 where cloud_task.account_id = t1.id) as accountName
+        from cloud_task
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
 </mapper>

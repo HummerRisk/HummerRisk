@@ -1,6 +1,7 @@
 package com.hummerrisk.base.mapper.ext;
 
 import com.hummerrisk.base.domain.CloudTask;
+import com.hummerrisk.base.domain.CloudTaskExample;
 import com.hummerrisk.base.domain.MessageOrder;
 import com.hummerrisk.controller.request.cloudTask.CloudTaskSearchRequest;
 import com.hummerrisk.dto.CloudTaskDTO;
@@ -25,4 +26,6 @@ public interface ExtCloudTaskMapper {
     int getReturnSumForEmail(MessageOrder messageOrder);
 
     int getResourcesSumForEmail(MessageOrder messageOrder);
+
+    List<CloudTaskDTO> selectByExample(CloudTaskExample example);
 }

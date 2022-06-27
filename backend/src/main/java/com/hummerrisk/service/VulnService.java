@@ -4,17 +4,21 @@ import com.hummerrisk.base.domain.CloudTask;
 import com.hummerrisk.base.domain.CloudTaskExample;
 import com.hummerrisk.base.mapper.CloudTaskMapper;
 import com.hummerrisk.base.mapper.ext.ExtAccountMapper;
+import com.hummerrisk.base.mapper.ext.ExtCloudTaskMapper;
 import com.hummerrisk.base.mapper.ext.ExtRuleMapper;
 import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.controller.request.account.CloudAccountRequest;
 import com.hummerrisk.controller.request.rule.CreateRuleRequest;
 import com.hummerrisk.dto.AccountDTO;
+import com.hummerrisk.dto.CloudTaskDTO;
 import com.hummerrisk.dto.RuleDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +35,8 @@ public class VulnService {
     private ExtRuleMapper extRuleMapper;
     @Resource
     private CloudTaskMapper cloudTaskMapper;
+    @Resource
+    private ExtCloudTaskMapper extCloudTaskMapper;
 
     public List<AccountDTO> getVulnList(CloudAccountRequest request) {
         return extAccountMapper.getVulnList(request);
@@ -40,7 +46,7 @@ public class VulnService {
         return extRuleMapper.vulnList(ruleRequest);
     }
 
-    public List<CloudTask> selectManualTasks(Map<String, Object> params) throws Exception {
+    public List<CloudTaskDTO> selectManualTasks(Map<String, Object> params) throws Exception {
 
         try {
             CloudTaskExample example = new CloudTaskExample();
@@ -74,7 +80,7 @@ public class VulnService {
             }
             criteria.andPluginIdIn(PlatformUtils.getVulnPlugin());
             example.setOrderByClause("FIELD(`status`, 'PROCESSING', 'APPROVED', 'FINISHED', 'WARNING', 'ERROR'), return_sum desc, create_time desc, FIELD(`severity`, 'HighRisk', 'MediumRisk', 'LowRisk')");
-            return cloudTaskMapper.selectByExample(example);
+            return extCloudTaskMapper.selectByExample(example);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
