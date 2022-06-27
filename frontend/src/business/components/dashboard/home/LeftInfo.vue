@@ -14,7 +14,7 @@
           <template v-slot:header>
             <span class="title">{{ $t('dashboard.vuln_statistics') }}</span>
           </template>
-          <vuln-chart/>
+          <vuln-chart style="width: 100%;"/>
         </el-card>
       </el-row>
       <el-row>
@@ -34,7 +34,7 @@
             slot="dateCell"
             slot-scope="{date, data}">
             <p :class="data.isSelected ? 'is-selected' : ''" @click="handle(data.day)">
-              {{ data.day.split('-').slice(1).join('-') }} {{ data.isSelected ? '✔️' : ''}}
+              {{ data.day.split('-').slice(1).join('-') }} {{ data.isSelected ? $t('dashboard.data_task') : ''}}
             </p>
           </template>
         </el-calendar>

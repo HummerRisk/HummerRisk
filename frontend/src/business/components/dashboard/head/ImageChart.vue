@@ -1,6 +1,6 @@
 <template>
   <div>
-    <hr-chart :options="options" :width="1700" :height="280"></hr-chart>
+    <hr-chart :options="options" :width="1335" :height="280"></hr-chart>
   </div>
 </template>
 
@@ -39,7 +39,8 @@ export default {
             type: 'line',
             areaStyle: {}
           }
-        ]
+        ],
+        color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4']
       };
     },
   },

@@ -454,6 +454,7 @@ export default {
     server_statistics: '虛擬機檢測統計',
     package_statistics: '軟件包檢測統計',
     image_statistics: '鏡像檢測統計',
+    data_task: '檢測任務✔️',
   },
   rule: {
     rule: '檢測規則',

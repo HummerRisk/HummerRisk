@@ -1,6 +1,6 @@
 <template>
   <div>
-    <hr-chart :options="options" :width="400" :height="256"></hr-chart>
+    <hr-chart :options="options" :width="430" :height="256"></hr-chart>
   </div>
 </template>
 
@@ -47,15 +47,14 @@ export default {
           legend: {
             type: 'scroll',
             orient: 'vertical',
-            right: 10,
-            top: 20,
+            right: -20,
+            top: 50,
             bottom: 20,
             data: legendData,
 
           },
           series: [
             {
-
               name: this.$t('resource.resource_result_score'),
               type: 'pie',
               radius: '55%',
@@ -71,7 +70,7 @@ export default {
               }
             }
           ],
-          color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4' ]
+          color: ['#0051a4', '#89ffff', '#893fdc', '#627dec', '#009ef0', '#11cfae']
         };
       });
     },

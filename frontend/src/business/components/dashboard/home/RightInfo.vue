@@ -13,7 +13,7 @@
         </template>
         <el-table
           :data="tableData"
-          stripe max-height="550"
+          stripe max-height="528"
           style="width: 100%">
           <el-table-column
             prop="resourceUserId"

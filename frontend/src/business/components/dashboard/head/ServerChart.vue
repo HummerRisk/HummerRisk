@@ -26,7 +26,7 @@ export default {
     init() {
       this.options = {
         title: {
-          text: 'Funnel'
+          text: ''
         },
         tooltip: {
           trigger: 'item',
@@ -47,8 +47,8 @@ export default {
             name: 'Funnel',
             type: 'funnel',
             left: '10%',
-            top: 60,
-            bottom: 60,
+            top: 50,
+            bottom: 0,
             width: '80%',
             min: 0,
             max: 100,
@@ -84,7 +84,8 @@ export default {
               { value: 100, name: 'Show' }
             ]
           }
-        ]
+        ],
+        color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4']
       };
     },
   },

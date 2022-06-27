@@ -454,6 +454,7 @@ export default {
     server_statistics: 'Virtual machine detection statistics',
     package_statistics: 'Package detection statistics',
     image_statistics: 'Image detection statistics',
+    data_task: 'Scan task ✔️',
   },
   rule: {
     rule:'Scan Rule',

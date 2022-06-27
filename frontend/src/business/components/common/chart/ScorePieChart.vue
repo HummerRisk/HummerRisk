@@ -40,7 +40,6 @@ const gaugeData = [
     }
   }
 ];
-let color = ['#11cfae', '#009ef0', '#627dec', '#0051a4', '#893fdc', '#89ffff', '#0099ff'];
 /* eslint-disable */
 export default {
   name: "ScorePieChart",
@@ -56,9 +55,6 @@ export default {
   methods: {
     init () {
       let data=[];
-      gaugeData[0].value = +(Math.random() * 100).toFixed(2);
-      gaugeData[1].value = +(Math.random() * 100).toFixed(2);
-      gaugeData[2].value = +(Math.random() * 100).toFixed(2);
       this.options = {
         series: [
           {
@@ -99,7 +95,8 @@ export default {
               formatter: '{value}%'
             }
           }
-        ]
+        ],
+        color: ['#11cfae', '#009ef0', '#627dec', '#0051a4', '#893fdc', '#89ffff', '#0099ff'],
       };
     },
   },
