@@ -390,7 +390,6 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              let formData = new FormData();
               this.result = this.$request({
                 method: 'POST',
                 url: "/server/scan",

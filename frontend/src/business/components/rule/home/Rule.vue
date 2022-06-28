@@ -54,7 +54,7 @@
               <span v-for="(resourceType, index) in scope.row.types" :key="index">[{{ resourceType }}] </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" min-width="7%" show-overflow-tooltip>
+          <el-table-column :label="$t('account.cloud_platform')" min-width="9%" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -68,7 +68,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="description" :label="$t('rule.description')" min-width="24%" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.status')" min-width="7%" show-overflow-tooltip>
+          <el-table-column :label="$t('rule.status')" min-width="5%" show-overflow-tooltip>
             <template v-slot:default="scope">
               <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
             </template>

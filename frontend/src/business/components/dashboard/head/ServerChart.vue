@@ -25,67 +25,120 @@ export default {
   methods: {
     init() {
       this.options = {
-        title: {
-          text: ''
-        },
-        tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b} : {c}%'
-        },
-        toolbox: {
-          feature: {
-            dataView: { readOnly: false },
-            restore: {},
-            saveAsImage: {}
-          }
-        },
-        legend: {
-          data: ['Show', 'Click', 'Visit', 'Inquiry', 'Order']
-        },
         series: [
           {
-            name: 'Funnel',
-            type: 'funnel',
-            left: '10%',
-            top: 50,
-            bottom: 0,
-            width: '80%',
-            min: 0,
-            max: 100,
-            minSize: '0%',
-            maxSize: '100%',
-            sort: 'descending',
-            gap: 2,
-            label: {
-              show: true,
-              position: 'inside'
-            },
-            labelLine: {
-              length: 10,
-              lineStyle: {
-                width: 1,
-                type: 'solid'
-              }
-            },
-            itemStyle: {
-              borderColor: '#fff',
-              borderWidth: 1
-            },
-            emphasis: {
-              label: {
-                fontSize: 20
-              }
-            },
+            type: 'treemap',
             data: [
-              { value: 60, name: 'Visit' },
-              { value: 40, name: 'Inquiry' },
-              { value: 20, name: 'Order' },
-              { value: 80, name: 'Click' },
-              { value: 100, name: 'Show' }
+              {
+                name: 'nodeA',
+                value: 10,
+                children: [
+                  {
+                    name: this.$t('server.server1'),
+                    value: 5
+                  },
+                  {
+                    name: this.$t('server.server2'),
+                    value: 5
+                  }
+                ]
+              },
+              {
+                name: 'nodeB',
+                value: 20,
+                children: [
+                  {
+                    name: 'nodeBa',
+                    value: 10,
+                    children: [
+                      {
+                        name: this.$t('server.server3'),
+                        value: 20
+                      },
+                      {
+                        name: this.$t('server.server4'),
+                        value: 20
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                name: 'nodeC',
+                value: 20,
+                children: [
+                  {
+                    name: 'nodeCa',
+                    value: 20,
+                    children: [
+                      {
+                        name: this.$t('server.server5'),
+                        value: 20
+                      },
+                      {
+                        name: this.$t('server.server6'),
+                        value: 20
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                name: 'nodeD',
+                value: 20,
+                children: [
+                  {
+                    name: 'nodeDa',
+                    value: 20,
+                    children: [
+                      {
+                        name: this.$t('server.server7'),
+                        value: 20
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                name: 'nodeE',
+                value: 20,
+                children: [
+                  {
+                    name: 'nodeEa',
+                    value: 20,
+                    children: [
+                      {
+                        name: this.$t('server.server8'),
+                        value: 20
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                name: 'nodeF',
+                value: 20,
+                children: [
+                  {
+                    name: 'nodeFa',
+                    value: 20,
+                    children: [
+                      {
+                        name: this.$t('server.server9'),
+                        value: 20
+                      },
+                      {
+                        name: this.$t('server.server10'),
+                        value: 20
+                      }
+                    ]
+                  }
+                ]
+              }
             ]
           }
         ],
-        color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4']
+        color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#1eb27f','#0051a4']
       };
     },
   },
