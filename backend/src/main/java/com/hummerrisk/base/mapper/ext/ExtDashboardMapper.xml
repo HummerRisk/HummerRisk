@@ -27,16 +27,30 @@
                  )
     </select>
 
-    <select id="packageChartX" parameterType="java.util.Map">
+    <select id="packageChartX" parameterType="java.util.Map" resultType="java.lang.String">
         select name
         from package_result
         order by update_time desc
         limit 10;
     </select>
 
-    <select id="packageChartY" parameterType="java.util.Map">
-        select return_sum as returnSum
+    <select id="packageChartY" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select IFNULL(return_sum, 0) as returnSum
         from package_result
+        order by update_time desc
+        limit 10;
+    </select>
+
+    <select id="imageChartX" parameterType="java.util.Map" resultType="java.lang.String">
+        select name
+        from image_result
+        order by update_time desc
+        limit 10;
+    </select>
+
+    <select id="imageChartY" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select IFNULL(return_sum, 0) as returnSum
+        from image_result
         order by update_time desc
         limit 10;
     </select>

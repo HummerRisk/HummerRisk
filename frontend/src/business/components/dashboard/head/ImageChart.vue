@@ -24,24 +24,27 @@ export default {
   },
   methods: {
     init() {
-      this.options = {
+      this.$post("/dashboard/imageChart", {}, response => {
+        let data = response.data;
+        this.options = {
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          data: data.xAxis
         },
         yAxis: {
           type: 'value'
         },
         series: [
           {
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            data: data.yAxis,
             type: 'line',
             areaStyle: {}
           }
         ],
         color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4']
       };
+      });
     },
   },
   created() {

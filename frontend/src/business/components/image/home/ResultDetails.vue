@@ -117,9 +117,6 @@ import RuleType from "@/business/components/image/home/RuleType";
       }
     },
     props: ["id"],
-    watch: {
-      '$route': 'init'
-    },
     methods: {
       scanAgain() {
       },

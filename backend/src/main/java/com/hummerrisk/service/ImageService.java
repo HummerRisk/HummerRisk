@@ -126,7 +126,7 @@ public class ImageService {
             request.setCreator(SessionUtils.getUserId());
             if (iconFile != null) {
                 String iconFilePath = upload(iconFile, ImageConstants.DEFAULT_BASE_DIR);
-                request.setPluginIcon(iconFilePath);
+                request.setPluginIcon("images/" + iconFilePath);
             }
             if (tarFile != null) {
                 String tarFilePath = upload(tarFile, ImageConstants.DEFAULT_BASE_DIR);
@@ -152,7 +152,7 @@ public class ImageService {
             request.setCreator(SessionUtils.getUserId());
             if (iconFile != null) {
                 String iconFilePath = upload(iconFile, ImageConstants.DEFAULT_BASE_DIR);
-                request.setPluginIcon(iconFilePath);
+                request.setPluginIcon("images/" + iconFilePath);
             }
             if (tarFile != null) {
                 String tarFilePath = upload(tarFile, ImageConstants.DEFAULT_BASE_DIR);

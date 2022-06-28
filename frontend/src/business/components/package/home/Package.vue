@@ -304,10 +304,10 @@ export default {
               } else {
                 this.$error(this.$t('schedule.event_failed'));
               }
+              this.$router.push({
+                path: '/package/result',
+              }).catch(error => error);
             });
-            this.$router.push({
-              path: '/package/result',
-            }).catch(error => error);
           }
         }
       });

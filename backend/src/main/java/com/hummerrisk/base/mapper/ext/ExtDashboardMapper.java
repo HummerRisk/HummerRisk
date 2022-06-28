@@ -18,6 +18,10 @@ public interface ExtDashboardMapper {
 
     List<String> packageChartX(Map<String, Object> params);
 
-    List<String> packageChartY(Map<String, Object> params);
+    List<Integer> packageChartY(Map<String, Object> params);
+
+    List<String> imageChartX(Map<String, Object> params);
+
+    List<Integer> imageChartY(Map<String, Object> params);
 
 }

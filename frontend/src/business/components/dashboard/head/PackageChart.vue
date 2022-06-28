@@ -20,27 +20,30 @@ export default {
   data() {
     return {
       options: {},
+
     }
   },
   methods: {
     init() {
-
-      this.options = {
-        xAxis: {
-          type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-        },
-        yAxis: {
-          type: 'value'
-        },
-        series: [
-          {
-            data: [120, 200, 150, 80, 70, 110, 130],
-            type: 'bar'
-          }
-        ],
-        color: ['#009ef0', '#627dec', '#11cfae', '#893fdc', '#89ffff','#0051a4']
-      };
+      this.$post("/dashboard/packageChart", {}, response => {
+        let data = response.data;
+        this.options = {
+          xAxis: {
+            type: 'category',
+            data: data.xAxis
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: [
+            {
+              data: data.yAxis,
+              type: 'bar'
+            }
+          ],
+          color: ['#009ef0', '#627dec', '#11cfae', '#893fdc', '#89ffff','#0051a4']
+        };
+      });
     },
   },
   created() {

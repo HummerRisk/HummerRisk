@@ -6,6 +6,7 @@ import com.hummerrisk.commons.utils.ChartData;
 import com.hummerrisk.commons.utils.DashboardTarget;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
+import com.hummerrisk.dto.ImageChartDTO;
 import com.hummerrisk.dto.PackageChartDTO;
 import com.hummerrisk.dto.ScanHistoryDTO;
 import com.hummerrisk.dto.TopInfoDTO;
@@ -75,6 +76,12 @@ public class DashboardController {
     @PostMapping("packageChart")
     public PackageChartDTO packageChart(@RequestBody Map<String, Object> params) {
         return dashboardService.packageChart(params);
+    }
+
+    @ApiOperation(value = "首页镜像检测统计")
+    @PostMapping("imageChart")
+    public ImageChartDTO imageChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.imageChart(params);
     }
 
 }

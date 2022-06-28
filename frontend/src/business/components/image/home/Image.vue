@@ -359,10 +359,10 @@ export default {
               } else {
                 this.$error(this.$t('schedule.event_failed'));
               }
+              this.$router.push({
+                path: '/image/result',
+              }).catch(error => error);
             });
-            this.$router.push({
-              path: '/image/result',
-            }).catch(error => error);
           }
         }
       });
