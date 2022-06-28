@@ -12,7 +12,7 @@
         </template>
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                  :row-class-name="tableRowClassName" max-height="675"
+                  :row-class-name="tableRowClassName"
                   @filter-change="filter" @select-all="select" @select="select">
           <el-table-column type="selection" min-width="3%"/>
           <el-table-column type="index" min-width="3%"/>
@@ -52,7 +52,7 @@
 
       <!--Create server-->
       <el-drawer class="rtl" :title="$t('server.server_create')" :visible.sync="createVisible" size="70%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true" max-height="550">
+                 :destroy-on-close="true">
         <div style="margin: 10px;">
           <el-row>
             <el-col :span="10">
@@ -400,14 +400,14 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
                 }
               }, res => {
                 if (res.data) {
-                  this.$success(this.$t('schedule.event_success'));
+                  this.$success(this.$t('schedule.event_start'));
                 } else {
                   this.$error(this.$t('schedule.event_failed'));
                 }
+                this.$router.push({
+                  path: '/server/result',
+                }).catch(error => error);
               });
-              this.$router.push({
-                path: '/server/result',
-              }).catch(error => error);
             }
           }
         });

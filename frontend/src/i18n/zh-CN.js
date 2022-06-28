@@ -373,6 +373,7 @@ export default {
       no_qualifying_results: '没有达到条件的结果',
     },
     event_success: '检测成功',
+    event_start: '开始检测',
     event_failed: '检测失败',
   },
   history: {

@@ -20,7 +20,7 @@
 
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                  @filter-change="filter" @select-all="select" @select="select" max-height="675">
+                  @filter-change="filter" @select-all="select" @select="select">
           <!-- 展开 start -->
           <el-table-column type="expand" min-width="1%">
             <template slot-scope="props">

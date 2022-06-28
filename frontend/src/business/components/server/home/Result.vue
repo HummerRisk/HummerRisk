@@ -8,7 +8,7 @@
       </template>
 
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                @filter-change="filter" max-height="675">
+                @filter-change="filter">
         <!-- 展开 start -->
         <el-table-column type="expand" min-width="1%">
           <template slot-scope="props">
@@ -100,11 +100,11 @@
             </el-col>
           </el-row>
         </div>
-        <el-table :show-header="false" :data="logData" class="adjust-table table-content" height="538">
+        <el-table :show-header="false" :data="logData" class="adjust-table table-content">
           <el-table-column>
             <template v-slot:default="scope">
               <div class="bg-purple-div">
-                <span :key="index"
+                <span
                       v-bind:class="{true: 'color-red', false: ''}[scope.row.result == false]">
                       {{ scope.row.createTime | timestampFormatDate }}
                       {{ scope.row.operator }}
@@ -266,9 +266,10 @@ export default {
       this.$get(url + result.id, response => {
         this.logData = response.data;
         this.logVisible = true;
+        console.log(this.logForm, this.logData)
       });
     },
-    handleClose(done) {
+    handleClose() {
       this.logVisible=false;
       this.detailVisible=false;
     },

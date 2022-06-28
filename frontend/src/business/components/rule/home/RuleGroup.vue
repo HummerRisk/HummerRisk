@@ -11,7 +11,7 @@
         </template>
 
         <el-table :border="true" :stripe="true" :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                  @filter-change="filter" @select-all="select" @select="select" max-height="600">
+                  @filter-change="filter" @select-all="select" @select="select">
           <el-table-column type="index" min-width="5%"/>
           <el-table-column prop="name" :label="$t('rule.rule_set_name')" min-width="15%" show-overflow-tooltip></el-table-column>
           <el-table-column prop="description" :label="$t('commons.description')" min-width="50%" show-overflow-tooltip></el-table-column>

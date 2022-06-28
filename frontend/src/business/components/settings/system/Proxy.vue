@@ -7,7 +7,7 @@
                          :create-tip="$t('proxy.create')" :title="$t('commons.proxy')"/>
       </template>
 
-      <el-table border class="adjust-table" :data="tableData" style="width: 100%" max-height="550" :row-class-name="tableRowClassName">
+      <el-table border class="adjust-table" :data="tableData" style="width: 100%" :row-class-name="tableRowClassName">
         <el-table-column type="index" min-width="5%"/>
         <el-table-column prop="proxyType" :label="$t('commons.proxy_type')" min-width="10%"/>
         <el-table-column prop="proxyIp" label="Proxy IP" min-width="15%"/>

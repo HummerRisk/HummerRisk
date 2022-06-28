@@ -12,7 +12,7 @@
         </template>
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                  :row-class-name="tableRowClassName" max-height="550"
+                  :row-class-name="tableRowClassName"
                   @filter-change="filter" @select-all="select" @select="select">
           <el-table-column type="selection" min-width="5%">
           </el-table-column>

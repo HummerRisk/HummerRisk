@@ -300,7 +300,7 @@ export default {
           if (action === 'confirm') {
             this.$get('/package/scan/' + data.id, response => {
               if (response.success) {
-                this.$success(this.$t('schedule.event_success'));
+                this.$success(this.$t('schedule.event_start'));
               } else {
                 this.$error(this.$t('schedule.event_failed'));
               }

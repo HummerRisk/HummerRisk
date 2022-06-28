@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div align="middle">
     <hr-chart :options="options" :width="580" :height="220"></hr-chart>
   </div>
 </template>

@@ -8,7 +8,7 @@
       </template>
 
       <el-table border class="adjust-table" :data="tableData" style="width: 100%" @sort-change="sort" @filter-change="filter"
-                max-height="550" :row-class-name="tableRowClassName">
+                :row-class-name="tableRowClassName">
         <el-table-column type="index" min-width="3%"/>
         <el-table-column prop="name" :label="$t('image.image_repo_name')" min-width="15%"/>
         <el-table-column prop="repo" :label="$t('image.image_repo_url')" min-width="15%"/>
@@ -43,7 +43,7 @@
 
     <!--Create imageRepo-->
     <el-drawer class="rtl" :title="$t('image.repo_create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true" max-height="550">
+               :destroy-on-close="true">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
         <el-form-item :label="$t('image.image_repo_name')" ref="name" prop="name">
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_repo_name')"/>
@@ -68,7 +68,7 @@
 
     <!--Update imageRepo-->
     <el-drawer class="rtl" :title="$t('image.repo_update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true" max-height="550">
+               :destroy-on-close="true">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
         <el-form-item :label="$t('image.image_repo_name')" ref="name" prop="name">
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_repo_name')"/>

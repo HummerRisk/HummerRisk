@@ -7,7 +7,7 @@
                       :title="$t('dashboard.active_list')"/>
       </template>
 
-      <el-table border :data="tableData" max-height="550"
+      <el-table border :data="tableData"
                 class="adjust-table table-content"
                 @sort-change="sort"
                 :row-class-name="tableRowClassName"
@@ -112,7 +112,7 @@ import TableHeader from "../head/TableHeader";
 </script>
 
 <style scoped>
-  .rs-container >>> span.title {
+  .hr-container >>> span.title {
     font-size: 16px;
     font-weight: 500;
     margin-top: 0;
@@ -121,7 +121,7 @@ import TableHeader from "../head/TableHeader";
     word-wrap: break-word;
     white-space: nowrap;
   }
-  .rs-main-container {
+  .hr-main-container {
     padding: 15px;
     height: calc(100vh - 80px);
   }

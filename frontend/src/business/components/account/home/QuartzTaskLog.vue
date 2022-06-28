@@ -4,7 +4,7 @@
       <span>{{ $t('resource.i18n_no_data') }}<br></span>
     </el-row>
     <el-row class="el-form-item-dev" v-if="row.data.length > 0">
-      <el-table :show-header="true" :data="row.data" class="adjust-table table-content" max-height="550" :row-class-name="tableRowClassName">
+      <el-table :show-header="true" :data="row.data" class="adjust-table table-content" :row-class-name="tableRowClassName">
         <el-table-column type="index" min-width="3%"/>
         <el-table-column prop="qzType" :label="$t('account.choose_qztype')" min-width="7%" show-overflow-tooltip></el-table-column>
         <el-table-column prop="operator" :label="$t('account.operator')" min-width="10%" show-overflow-tooltip></el-table-column>

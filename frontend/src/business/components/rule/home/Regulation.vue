@@ -8,7 +8,7 @@
         </template>
 
         <el-table :border="true" :stripe="true" :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                  @filter-change="filter" @select-all="select" @select="select" max-height="600">
+                  @filter-change="filter" @select-all="select" @select="select">
           <el-table-column type="index" min-width="5%"/>
           <el-table-column prop="itemSortFirstLevel" :label="$t('resource.security_level')" min-width="13%" show-overflow-tooltip></el-table-column>
           <el-table-column prop="itemSortSecondLevel" :label="$t('resource.control_point')" min-width="12%" show-overflow-tooltip></el-table-column>

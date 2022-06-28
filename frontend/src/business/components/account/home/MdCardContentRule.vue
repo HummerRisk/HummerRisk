@@ -10,7 +10,7 @@
     </el-tabs>
 
     <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-              @filter-change="filter" @select-all="select" @select="select" max-height="550">
+              @filter-change="filter" @select-all="select" @select="select">
       <el-table-column :label="$t('rule.rule_name')" width="350" show-overflow-tooltip>
         <template v-slot:default="scope">
           <el-link type="primary" @click="goRule(scope.row)">

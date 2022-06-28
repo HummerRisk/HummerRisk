@@ -9,7 +9,7 @@
             </div>
           </el-row>
 
-          <rs-chart id="chart" ref="chart" :options="options" :autoresize="true"></rs-chart>
+          <hr-chart id="chart" ref="chart" :options="options" :autoresize="true" :width="140" :height="140"></hr-chart>
           <el-row type="flex" justify="center" align="middle">
             <i class="circle success"/>
             <div class="metric-box">

@@ -7,7 +7,7 @@
                          :create-tip="$t('user.create')" :title="$t('commons.user')"/>
       </template>
 
-      <el-table border class="adjust-table" :data="tableData" style="width: 100%" max-height="550" :row-class-name="tableRowClassName">
+      <el-table border class="adjust-table" :data="tableData" style="width: 100%" :row-class-name="tableRowClassName">
         <el-table-column prop="id" label="ID" min-width="10%"/>
         <el-table-column prop="name" :label="$t('commons.name')" min-width="10%"/>
         <el-table-column :label="$t('commons.role')" min-width="10%">

@@ -29,7 +29,7 @@ public class SshUtil {
         Connection conn = null;
         long startTime = Calendar.getInstance().getTimeInMillis();
         try {
-            if(proxy != null) {
+            if(proxy.getProxyIp() != null) {
                 HTTPProxyData httpProxyData = new HTTPProxyData(proxy.getProxyIp(), Integer.valueOf(proxy.getProxyPort()), proxy.getProxyName(), proxy.getProxyPassword());
                 conn = new Connection(sshIp, 22, httpProxyData);
             } else {

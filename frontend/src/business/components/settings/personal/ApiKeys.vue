@@ -15,7 +15,7 @@
         </div>
       </template>
 
-      <el-table border class="adjust-table" :data="tableData" style="width: 100%" max-height="550">
+      <el-table border class="adjust-table" :data="tableData" style="width: 100%">
         <el-table-column prop="accessKey" label="Access Key" min-width="20%">
           <template v-slot:default="scope">
             <div class="variable-combine">

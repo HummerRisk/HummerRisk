@@ -4,7 +4,7 @@
       <!-- 检测规则 start-->
       <el-tab-pane :label="$t('history.rule')">
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                  @filter-change="filter" @select-all="select" @select="select" max-height="675">
+                  @filter-change="filter" @select-all="select" @select="select">
           <el-table-column type="index" min-width="5%"/>
           <el-table-column :label="$t('rule.rule_name')" min-width="35%" show-overflow-tooltip>
             <template v-slot:default="scope">

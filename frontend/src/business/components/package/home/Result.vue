@@ -8,7 +8,7 @@
       </template>
 
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                @filter-change="filter" max-height="675">
+                @filter-change="filter">
         <!-- 展开 start -->
         <el-table-column type="expand" min-width="1%">
           <template slot-scope="props">

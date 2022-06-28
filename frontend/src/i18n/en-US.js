@@ -373,6 +373,7 @@ export default {
       no_qualifying_results:'No results that meet the conditions',
     },
     event_success:'Scan successfully',
+    event_start: 'Start detection',
     event_failed:'Scan failed',
   },
   history: {

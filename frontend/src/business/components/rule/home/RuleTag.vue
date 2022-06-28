@@ -11,7 +11,7 @@
         </template>
 
         <el-table :border="true" :stripe="true" :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                  @filter-change="filter" @select-all="select" @select="select" max-height="550">
+                  @filter-change="filter" @select-all="select" @select="select">
           <el-table-column min-width="1%"></el-table-column>
           <el-table-column prop="tagKey" :label="$t('rule.tag_key')" min-width="20%" show-overflow-tooltip></el-table-column>
           <el-table-column prop="tagName" :label="$t('rule.tag_name')" min-width="20%" show-overflow-tooltip></el-table-column>

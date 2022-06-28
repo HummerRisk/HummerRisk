@@ -72,7 +72,7 @@
         </template>
 
 
-        <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" max-height="600" @filter-change="filter" :row-class-name="tableRowClassName">
+        <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter" :row-class-name="tableRowClassName">
           <el-table-column type="index" min-width="5%"/>
           <el-table-column prop="itemSortFirstLevel" :label="$t('resource.security_level')" min-width="10%" show-overflow-tooltip></el-table-column>
           <el-table-column prop="itemSortSecondLevel" :label="$t('resource.control_point')" min-width="10%" show-overflow-tooltip></el-table-column>

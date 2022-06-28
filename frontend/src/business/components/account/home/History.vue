@@ -76,7 +76,7 @@ import MainContainer from "../.././common/components/MainContainer";
 </script>
 
 <style scoped>
-  .rs-container >>> span.title {
+  .hr-container >>> span.title {
     font-size: 16px;
     font-weight: 500;
     margin-top: 0;
@@ -85,7 +85,7 @@ import MainContainer from "../.././common/components/MainContainer";
     word-wrap: break-word;
     white-space: nowrap;
   }
-  .rs-main-container {
+  .hr-main-container {
     padding: 15px;
     height: calc(100vh - 80px);
   }

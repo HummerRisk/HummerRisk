@@ -10,7 +10,7 @@
                         :title="$t('resource.result_details_list')"/>
         </template>
 
-        <el-table border :data="tableData" class="adjust-table table-content" max-height="675" @sort-change="sort" @filter-change="filter" :row-class-name="tableRowClassName">
+        <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter" :row-class-name="tableRowClassName">
           <!-- 展开 start -->
           <el-table-column type="expand">
             <template v-slot:default="props">

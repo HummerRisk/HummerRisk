@@ -373,6 +373,7 @@ export default {
       no_qualifying_results: '沒有達到條件的結果',
     },
     event_success: '檢測成功',
+    event_start: '開始檢測',
     event_failed: '檢測失敗',
   },
   history: {

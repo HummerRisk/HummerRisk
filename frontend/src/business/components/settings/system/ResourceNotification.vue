@@ -17,7 +17,7 @@
 
     <el-row>
       <el-col :span="24">
-        <el-table :data="resourceTask" class="tb-edit" border max-height="550" :cell-style="rowClass" :header-cell-style="headClass">
+        <el-table :data="resourceTask" class="tb-edit" border :cell-style="rowClass" :header-cell-style="headClass">
           <el-table-column :label="$t('schedule.event')" min-width="15%" prop="events">
             <template slot-scope="scope">
               <el-select v-model="scope.row.event" :placeholder="$t('system_parameter_setting.message.select_events')"

@@ -90,7 +90,7 @@
 
     <!--Create image-->
     <el-drawer class="rtl" :title="$t('image.create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true" max-height="550">
+               :destroy-on-close="true">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form" :rules="rule">
         <el-form-item :label="$t('image.image_name')" ref="name" prop="name">
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_name')"/>
@@ -160,7 +160,7 @@
 
     <!--Update image-->
     <el-drawer class="rtl" :title="$t('image.update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true" max-height="550">
+               :destroy-on-close="true">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form" :rules="rule">
         <el-form-item :label="$t('image.image_name')" ref="name" prop="name">
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_name')"/>
@@ -355,7 +355,7 @@ export default {
           if (action === 'confirm') {
             this.$get('/image/scan/' + data.id, response => {
               if (response.success) {
-                this.$success(this.$t('schedule.event_success'));
+                this.$success(this.$t('schedule.event_start'));
               } else {
                 this.$error(this.$t('schedule.event_failed'));
               }

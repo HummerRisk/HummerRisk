@@ -9,7 +9,7 @@
       </template>
 
       <el-table class="adjust-table table-content"
-                border max-height="675"
+                border
                 :data="tableData"
                 :row-class-name="tableRowClassName"
                 @sort-change="sort"

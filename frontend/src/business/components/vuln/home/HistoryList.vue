@@ -3,7 +3,7 @@
     <el-col :span="24">
       <el-card class="box-card" shadow="always">
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                  @filter-change="filter" @select-all="select" @select="select" max-height="675">
+                  @filter-change="filter" @select-all="select" @select="select">
           <el-table-column type="index" min-width="5%"/>
           <el-table-column :label="$t('vuln.vuln_setting')" min-width="20%" show-overflow-tooltip>
             <template v-slot:default="scope">
