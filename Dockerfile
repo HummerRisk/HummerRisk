@@ -6,6 +6,10 @@ FROM registry.cn-beijing.aliyuncs.com/hummerrisk/dependency-check:v0.1 as depend
 
 FROM registry.cn-beijing.aliyuncs.com/hummerrisk/xray:v0.1 as xray-env
 
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/grype:v0.1 as grype-env
+
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/syft:v0.1 as syft-env
+
 FROM registry.cn-beijing.aliyuncs.com/hummerrisk/cloud-custodian:v0.1 as custodian-env
 
 COPY --from=nuclei-env /usr/local/bin/nuclei /usr/local/bin/nuclei
@@ -15,6 +19,10 @@ COPY --from=prowler-env /prowler /prowler
 COPY --from=dependency-env /usr/share/dependency-check/bin/dependency-check.sh /usr/share/dependency-check/bin/dependency-check.sh
 
 COPY --from=xray-env /opt/hummerrisk/xray/ /opt/hummerrisk/xray/
+
+COPY --from=grype-env /grype /grype
+
+COPY --from=syft-env /syft /syft
 
 RUN mkdir -p /opt/apps
 
