@@ -7,6 +7,7 @@ import com.hummerrisk.base.mapper.ext.ExtDashboardMapper;
 import com.hummerrisk.base.mapper.ext.ExtVulnMapper;
 import com.hummerrisk.commons.utils.ChartData;
 import com.hummerrisk.commons.utils.DashboardTarget;
+import com.hummerrisk.dto.PackageChartDTO;
 import com.hummerrisk.dto.ScanHistoryDTO;
 import com.hummerrisk.dto.TopInfoDTO;
 import org.apache.commons.collections4.MapUtils;
@@ -87,6 +88,15 @@ public class DashboardService {
 
     public TopInfoDTO topInfo(Map<String, Object> params) {
         return extDashboardMapper.topInfo(params);
+    }
+
+    public PackageChartDTO packageChart(Map<String, Object> params) {
+        PackageChartDTO packageChartDTO = new PackageChartDTO();
+        List<String> xAxis = extDashboardMapper.packageChartX(params);
+        List<String> yAxis = extDashboardMapper.packageChartY(params);
+        packageChartDTO.setxAxis(xAxis);
+        packageChartDTO.setyAxis(yAxis);
+        return packageChartDTO;
     }
 
 }

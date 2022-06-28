@@ -853,6 +853,8 @@ export default {
     grype_json: 'Image detection vulnerability result JSON',
     syft_table: 'Mirror detection SBOM list',
     syft_json: 'Mirror detection SBOM JSON',
+    back_resource: 'Return the list of mirror detection results',
+    result_details_list: 'Mirror detection result details list',
   },
   package: {
     package_setting: 'Package Management',
@@ -899,6 +901,8 @@ export default {
     result_json: 'Scan result JSON',
     no_package: 'No package, please scan after uploading the package',
     result_still_run: 'The scan is still going on, there is no scan result for the time being, please wait patiently',
+    back_resource: 'Return the list of package detection results',
+    result_details_list: 'Package detection result details list',
   },
   vuln: {
     vuln_setting: 'Vulnerability Scan',

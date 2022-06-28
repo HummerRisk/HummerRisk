@@ -20,7 +20,7 @@
         <!-- 展开 end -->
         <el-table-column type="index" min-width="3%"/>
         <el-table-column prop="name" :label="$t('image.image_name')" min-width="10%" show-overflow-tooltip></el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('image.image_url')" min-width="30%" show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" :label="$t('image.image_url')" min-width="24%" show-overflow-tooltip>
           <el-row v-if="scope.row.type==='image'">{{ scope.row.imageUrl }} : {{ scope.row.imageTag }}</el-row>
           <el-row v-if="scope.row.type==='tar'">{{ scope.row.path }}</el-row>
         </el-table-column>
@@ -29,6 +29,11 @@
           <template v-slot:default="{row}">
             <rule-type :row="row"/>
           </template>
+        </el-table-column>
+        <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="6%">
+          <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
+            <el-link type="primary" class="text-click" @click="goResource(scope.row)">{{ scope.row.returnSum }}</el-link>
+          </el-tooltip>
         </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="12%" prop="resultStatus" sortable show-overflow-tooltip>
           <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
@@ -224,6 +229,10 @@ export default {
             let result = response.data;
             if (data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
+              data.grypeTable = result.grypeTable;
+              data.grypeJson = result.grypeJson;
+              data.syftTable = result.syftTable;
+              data.syftJson = result.syftJson;
             }
           });
         }
@@ -305,6 +314,16 @@ export default {
           }
         }
       });
+    },
+    goResource (params) {
+      if (params.returnSum == 0) {
+        this.$warning(this.$t('resource.no_resources_allowed'));
+        return;
+      }
+      let p = '/image/resultdetails/' + params.id;
+      this.$router.push({
+        path: p
+      }).catch(error => error);
     },
   },
   computed: {

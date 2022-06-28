@@ -53,6 +53,18 @@ CREATE TABLE IF NOT EXISTS `package_result`
     `return_json`                longtext            DEFAULT NULL COMMENT 'return json',
     `return_log`                 longtext            DEFAULT NULL COMMENT 'return log',
     `return_html`                varchar(256)        DEFAULT '' COMMENT 'return html地址',
+    `return_sum`                 bigint(13)          DEFAULT 0 COMMENT '输出检测结果依赖数',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `package_result_item` (
+    `id`                         varchar(50)         NOT NULL COMMENT '资源ID（唯一标识）',
+    `result_id`                  varchar(50)         DEFAULT NULL COMMENT 'result主键ID',
+    `name`                       varchar(128)        DEFAULT NULL COMMENT '软件包名称(别名)',
+    `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
+    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
+    `resource`                   longtext            DEFAULT NULL COMMENT '资源JSON',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 

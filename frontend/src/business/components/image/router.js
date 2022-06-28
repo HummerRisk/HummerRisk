@@ -27,5 +27,10 @@ export default {
       name: "imageResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/Result'),
     },
+    {
+      path: "resultdetails/:id",
+      name: "resultdetails",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/image/home/ResultDetails"),
+    },
   ]
 }

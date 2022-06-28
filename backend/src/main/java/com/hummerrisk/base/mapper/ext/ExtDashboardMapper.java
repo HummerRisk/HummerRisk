@@ -16,4 +16,8 @@ public interface ExtDashboardMapper {
 
     TopInfoDTO topInfo(Map<String, Object> params);
 
+    List<String> packageChartX(Map<String, Object> params);
+
+    List<String> packageChartY(Map<String, Object> params);
+
 }

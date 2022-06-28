@@ -28,6 +28,11 @@
             <rule-type :row="row"/>
           </template>
         </el-table-column>
+        <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="6%">
+          <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
+            <el-link type="primary" class="text-click" @click="goResource(scope.row)">{{ scope.row.returnSum }}</el-link>
+          </el-tooltip>
+        </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('package.result_status')" min-width="15%" prop="resultStatus" sortable show-overflow-tooltip>
           <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
@@ -222,6 +227,9 @@ export default {
             let result = response.data;
             if (data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
+              data.resources = result.resources;
+              data.returnLog = result.returnLog;
+              data.returnJson = result.returnJson;
             }
           });
         }
@@ -310,6 +318,16 @@ export default {
         return;
       }
       window.open(this.location + item.returnHtml, 'target');
+    },
+    goResource (params) {
+      if (params.returnSum == 0) {
+        this.$warning(this.$t('resource.no_resources_allowed'));
+        return;
+      }
+      let p = '/package/resultdetails/' + params.id;
+      this.$router.push({
+        path: p
+      }).catch(error => error);
     },
   },
   computed: {

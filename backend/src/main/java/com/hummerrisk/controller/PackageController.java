@@ -2,9 +2,8 @@ package com.hummerrisk.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.domain.Package;
-import com.hummerrisk.base.domain.PackageResultLog;
-import com.hummerrisk.base.domain.PackageRule;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.request.packageSetting.PackageRequest;
@@ -146,5 +145,12 @@ public class PackageController {
     @GetMapping("deletePackageResult/{id}")
     public void deletePackageResult(@PathVariable String id) throws Exception {
         packageService.deletePackageResult(id);
+    }
+
+    @ApiOperation(value = "检测结果详情")
+    @PostMapping("resultItemList/{goPage}/{pageSize}")
+    public Pager<List<PackageResultItem>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody PackageResultItem request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, packageService.resultItemList(request));
     }
 }

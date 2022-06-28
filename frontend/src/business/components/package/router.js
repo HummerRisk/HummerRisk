@@ -22,5 +22,10 @@ export default {
       name: "packageResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/package/home/Result'),
     },
+    {
+      path: "resultdetails/:id",
+      name: "resultdetails",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/package/home/ResultDetails"),
+    },
   ]
 }

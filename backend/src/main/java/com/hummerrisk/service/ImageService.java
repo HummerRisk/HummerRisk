@@ -16,8 +16,10 @@ import com.hummerrisk.controller.request.image.ImageRepoRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.image.ImageResultRequest;
 import com.hummerrisk.controller.request.image.ImageRuleRequest;
+import com.hummerrisk.controller.request.resource.ResourceRequest;
 import com.hummerrisk.dto.ImageResultDTO;
 import com.hummerrisk.dto.ImageRuleDTO;
+import com.hummerrisk.dto.ResourceDTO;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static com.hummerrisk.service.SysListener.changeFlowFormat;
@@ -67,6 +71,8 @@ public class ImageService {
     private ProxyMapper proxyMapper;
     @Resource
     private NoticeService noticeService;
+    @Resource
+    private ImageResultItemMapper imageResultItemMapper;
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
@@ -308,6 +314,12 @@ public class ImageService {
             result.setSyftJson(syftJson);
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
+
+            String lines[] = grypeTable.split("\\r?\\n");
+            result.setReturnSum(Long.parseLong(lines.length+""));
+            for (String line : lines) {
+                saveResultItem(result, line);
+            }
             imageResultMapper.updateByPrimaryKeySelective(result);
 
             noticeService.createImageMessageOrder(result);
@@ -320,6 +332,28 @@ public class ImageService {
             saveImageResultLog(result.getId(), Translator.get("i18n_operation_ex") + ": " + e.getMessage(), e.getMessage(), false);
             throw new HRException(e.getMessage());
         }
+    }
+
+    void saveResultItem(ImageResult result, String line) {
+        ImageResultItem imageResultItem = new ImageResultItem();
+        imageResultItem.setId(UUIDUtil.newUUID());
+        imageResultItem.setSeverity(result.getSeverity());
+        imageResultItem.setName(result.getName());
+        imageResultItem.setResultId(result.getId());
+        imageResultItem.setCreateTime(System.currentTimeMillis());
+        imageResultItem.setUpdateTime(System.currentTimeMillis());
+
+        SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间
+        sdf.applyPattern("yyyy-MM-dd HH:mm:ss a");// a为am/pm的标记
+        Date date = new Date();// 获取当前时间
+        String json = "{\n" +
+                "  \"id\": " + "\"" + UUIDUtil.newUUID() + "\"" + ",\n" +
+                "  \"CreatedTime\": " + "\"" + sdf.format(date) + "\"" + ",\n" +
+                "  \"Name\": " + "\"" + result.getName() + "\"" + ",\n" +
+                "  \"Result\": " + "\"" + line + "\"" + "\n" +
+                "}";
+        imageResultItem.setResource(json);
+        imageResultItemMapper.insertSelective(imageResultItem);
     }
 
     public void reScan(String id) throws Exception {
@@ -458,6 +492,12 @@ public class ImageService {
         imageResultLog.setOutput(output);
         imageResultLog.setResult(result);
         imageResultLogMapper.insertSelective(imageResultLog);
+    }
+
+    public List<ImageResultItem> resultItemList(ImageResultItem resourceRequest) {
+        ImageResultItemExample example = new ImageResultItemExample();
+        example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
+        return imageResultItemMapper.selectByExampleWithBLOBs(example);
     }
 
 }

@@ -9,10 +9,8 @@ import com.hummerrisk.controller.request.image.ImageRepoRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.image.ImageResultRequest;
 import com.hummerrisk.controller.request.image.ImageRuleRequest;
-import com.hummerrisk.controller.request.packageSetting.PackageResultRequest;
 import com.hummerrisk.dto.ImageResultDTO;
 import com.hummerrisk.dto.ImageRuleDTO;
-import com.hummerrisk.dto.PackageResultDTO;
 import com.hummerrisk.service.ImageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -158,5 +156,12 @@ public class ImageController {
     @GetMapping("deleteImageResult/{id}")
     public void deleteImageResult(@PathVariable String id) throws Exception {
         imageService.deleteImageResult(id);
+    }
+
+    @ApiOperation(value = "检测结果详情")
+    @PostMapping("resultItemList/{goPage}/{pageSize}")
+    public Pager<List<ImageResultItem>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultItem request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, imageService.resultItemList(request));
     }
 }

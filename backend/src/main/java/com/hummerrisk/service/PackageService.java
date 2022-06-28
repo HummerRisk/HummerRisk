@@ -61,6 +61,8 @@ public class PackageService {
     private NoticeService noticeService;
     @Resource
     private AccountService accountService;
+    @Resource
+    private PackageResultItemMapper packageResultItemMapper;
 
     public List<PackageDTO> packageList(PackageRequest request) {
         return extPackageMapper.packageList(request);
@@ -306,6 +308,13 @@ public class PackageService {
             result.setReturnHtml(returnHtml);
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
+
+            JSONArray jsonArr = JSON.parseObject(returnJson).getJSONArray("dependencies");
+            result.setReturnSum(Long.parseLong(jsonArr.size() + ""));
+            for (Object o : jsonArr) {
+                JSONObject jsonObject = (JSONObject) o;
+                saveResultItem(result, jsonObject);
+            }
             packageResultMapper.updateByPrimaryKeySelective(result);
 
             noticeService.createPackageMessageOrder(result);
@@ -318,6 +327,18 @@ public class PackageService {
             savePackageResultLog(result.getId(), Translator.get("i18n_operation_ex") + ": " + e.getMessage(), e.getMessage(), false);
             throw new HRException(e.getMessage());
         }
+    }
+
+    void saveResultItem(PackageResult result, JSONObject jsonObject) {
+        PackageResultItem packageResultItem = new PackageResultItem();
+        packageResultItem.setId(UUIDUtil.newUUID());
+        packageResultItem.setSeverity(result.getSeverity());
+        packageResultItem.setName(result.getName());
+        packageResultItem.setResultId(result.getId());
+        packageResultItem.setCreateTime(System.currentTimeMillis());
+        packageResultItem.setUpdateTime(System.currentTimeMillis());
+        packageResultItem.setResource(jsonObject.toJSONString());
+        packageResultItemMapper.insertSelective(packageResultItem);
     }
 
     public void reScan(String id) throws Exception {
@@ -468,6 +489,12 @@ public class PackageService {
         PackageResultLogExample example = new PackageResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
         return packageResultLogMapper.selectByExampleWithBLOBs(example);
+    }
+
+    public List<PackageResultItem> resultItemList(PackageResultItem resourceRequest) {
+        PackageResultItemExample example = new PackageResultItemExample();
+        example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
+        return packageResultItemMapper.selectByExampleWithBLOBs(example);
     }
 
 }

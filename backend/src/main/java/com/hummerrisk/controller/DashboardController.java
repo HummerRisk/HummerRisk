@@ -6,6 +6,7 @@ import com.hummerrisk.commons.utils.ChartData;
 import com.hummerrisk.commons.utils.DashboardTarget;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
+import com.hummerrisk.dto.PackageChartDTO;
 import com.hummerrisk.dto.ScanHistoryDTO;
 import com.hummerrisk.dto.TopInfoDTO;
 import com.hummerrisk.service.DashboardService;
@@ -64,10 +65,16 @@ public class DashboardController {
         return PageUtils.setPageInfo(page, dashboardService.vulnHistory(params));
     }
 
-    @ApiOperation(value = "分组统计")
+    @ApiOperation(value = "首页TOP统计")
     @PostMapping("topInfo")
     public TopInfoDTO topInfo(@RequestBody Map<String, Object> params) {
         return dashboardService.topInfo(params);
+    }
+
+    @ApiOperation(value = "首页软件包检测统计")
+    @PostMapping("packageChart")
+    public PackageChartDTO packageChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.packageChart(params);
     }
 
 }

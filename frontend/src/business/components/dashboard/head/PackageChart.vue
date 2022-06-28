@@ -1,6 +1,6 @@
 <template>
   <div>
-    <hr-chart :options="options" :width="560" :height="220"></hr-chart>
+    <hr-chart :options="options" :width="580" :height="220"></hr-chart>
   </div>
 </template>
 
@@ -24,6 +24,7 @@ export default {
   },
   methods: {
     init() {
+
       this.options = {
         xAxis: {
           type: 'category',

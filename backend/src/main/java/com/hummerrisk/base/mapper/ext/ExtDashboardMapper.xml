@@ -27,5 +27,18 @@
                  )
     </select>
 
+    <select id="packageChartX" parameterType="java.util.Map">
+        select name
+        from package_result
+        order by update_time desc
+        limit 10;
+    </select>
+
+    <select id="packageChartY" parameterType="java.util.Map">
+        select return_sum as returnSum
+        from package_result
+        order by update_time desc
+        limit 10;
+    </select>
 
 </mapper>

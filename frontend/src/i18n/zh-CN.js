@@ -853,6 +853,8 @@ export default {
     grype_json: '镜像检测漏洞结果JSON',
     syft_table: '镜像检测 SBOM 清单',
     syft_json: '镜像检测 SBOM JSON',
+    back_resource: '返回镜像检测结果列表',
+    result_details_list: '镜像检测结果详情列表',
   },
   package: {
     package_setting: '软件包管理',
@@ -899,6 +901,8 @@ export default {
     result_json: '检测结果JSON',
     no_package: '没有软件包，请上传完软件包之后检测',
     result_still_run: '检测还在持续，暂时没有检测结果，请耐心等待',
+    back_resource: '返回软件包检测结果列表',
+    result_details_list: '软件包检测结果详情列表',
   },
   vuln: {
     vuln_setting: '漏洞检测',
