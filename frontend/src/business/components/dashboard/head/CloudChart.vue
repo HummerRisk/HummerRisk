@@ -1,6 +1,6 @@
 <template>
   <div align="middle">
-    <hr-chart :options="options" :width="430" :height="256"></hr-chart>
+    <hr-chart :options="options" :width="width" :height="256"></hr-chart>
   </div>
 </template>
 
@@ -16,6 +16,12 @@ export default {
   },
   props: {
     data: {},
+    width: [Number, String],
+  },
+  watch: {
+    width() {
+      this.init();
+    },
   },
   data() {
     return {
@@ -58,7 +64,7 @@ export default {
               name: this.$t('resource.resource_result_score'),
               type: 'pie',
               radius: '55%',
-              center: ['40%', '50%'],
+              center: ['38%', '60%'],
               data: seriesData,
               // data: this.sycData("seriesData"),
               emphasis: {

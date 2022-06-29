@@ -456,6 +456,11 @@ export default {
     package_statistics: '软件包检测统计',
     image_statistics: '镜像检测统计',
     data_task: '检测任务✔️',
+    scan_analysis: '检测分析',
+    type: '样式',
+    setting: '设置',
+    exhibit: '展示',
+    color: '颜色',
   },
   rule: {
     rule: '检测规则',

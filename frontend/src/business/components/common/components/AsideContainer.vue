@@ -35,7 +35,6 @@
 
   .aside-container {
     border: 1px solid #e6e6e6;
-    padding: 10px;
     border-radius: 2px;
     box-sizing: border-box;
     background-color: #FFF;

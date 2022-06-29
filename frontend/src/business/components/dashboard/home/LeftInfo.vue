@@ -6,7 +6,7 @@
           <template v-slot:header>
             <span class="title">{{ $t('dashboard.cloud_account_statistics') }}</span>
           </template>
-          <cloud-chart/>
+          <cloud-chart ref="cloudChart" :width="cloudChart"/>
         </el-card>
       </el-row>
       <el-row>
@@ -14,7 +14,7 @@
           <template v-slot:header>
             <span class="title">{{ $t('dashboard.vuln_statistics') }}</span>
           </template>
-          <vuln-chart style="width: 100%;"/>
+          <vuln-chart ref="vulnChart" :width="vulnChart"/>
         </el-card>
       </el-row>
       <el-row>
@@ -68,6 +68,8 @@ export default {
   data() {
     return {
       result: {},
+      cloudChart: 390,
+      vulnChart: 390,
     }
   },
   methods: {
@@ -78,6 +80,10 @@ export default {
   },
   created() {
     this.getList();
+    this.$nextTick(() => {
+      this.cloudChart = this.$refs.cloudChart.$el.offsetWidth;
+      this.vulnChart = this.$refs.vulnChart.$el.offsetWidth;
+    });
   }
 }
 </script>
