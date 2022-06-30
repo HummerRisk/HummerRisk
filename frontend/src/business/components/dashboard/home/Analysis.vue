@@ -3,25 +3,14 @@
     <el-row :gutter="20">
       <el-col :span="18">
         <el-row :gutter="20">
-          <el-card class="table-card" shadow="always">
+          <el-card class="table-card" shadow="always" >
             <template v-slot:header>
               <span class="title">{{ $t('dashboard.scan_analysis') }}</span>
             </template>
             <analysis-top-chart/>
           </el-card>
         </el-row>
-        <el-row :gutter="20">
-          <el-col :span="6">
-            <aside-container>
-              <h1>{{ $t('commons.setting') }}</h1>
-            </aside-container>
-          </el-col>
-          <el-col :span="18">
-            <main-container>
-              <h1>{{ $t('commons.setting') }}</h1>
-            </main-container>
-          </el-col>
-        </el-row>
+        <analysis-left-info/>
       </el-col>
       <el-col :span="6" style="padding: 10px 0 10px 0;">
         <analysis-right-container/>
@@ -32,7 +21,7 @@
 
 <script>
 import AnalysisTopChart from "@/business/components/dashboard/head/AnalysisTopChart";
-import AsideContainer from "@/business/components/common/components/AsideContainer";
+import AnalysisLeftInfo from "@/business/components/dashboard/home/AnalysisLeftInfo";
 import AnalysisRightContainer from "@/business/components/dashboard/home/AnalysisRightContainer";
 import MainContainer from "@/business/components/common/components/MainContainer";
 
@@ -40,13 +29,14 @@ import MainContainer from "@/business/components/common/components/MainContainer
 export default {
   components: {
     AnalysisTopChart,
-    AsideContainer,
     MainContainer,
+    AnalysisLeftInfo,
     AnalysisRightContainer,
   },
   data() {
     return {
       result: {},
+      tableData1: [{name: this.$t('dashboard.select_type')}],
     }
   },
   methods: {
@@ -61,9 +51,10 @@ export default {
 .table-card {
   margin: 10px;
   min-height: 10%;
+  border-left-color: #e8a97e;
+  border-left-width: 3px;
 }
 .title {
-
 }
 </style>
 

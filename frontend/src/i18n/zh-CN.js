@@ -461,6 +461,10 @@ export default {
     setting: '设置',
     exhibit: '展示',
     color: '颜色',
+    quick_search: '快捷筛选',
+    select_type: '按类型筛选',
+    qu_save: '立即保存',
+    reset: '重置',
   },
   rule: {
     rule: '检测规则',
