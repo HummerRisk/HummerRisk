@@ -77,7 +77,7 @@ public class RuleService {
     @Resource @Lazy
     private OrderService orderService;
     @Resource @Lazy
-    private ScanHistoryMapper scanHistoryMapper;
+    private CloudScanHistoryMapper scanHistoryMapper;
     @Resource @Lazy
     private ExtRuleGroupMapper extRuleGroupMapper;
     @Resource @Lazy
@@ -648,9 +648,9 @@ public class RuleService {
                     long current = System.currentTimeMillis();
                     long zero = current / (1000 * 3600 * 24) * (1000 * 3600 * 24) - TimeZone.getDefault().getRawOffset();//当天00点
 
-                    ScanHistoryExample example = new ScanHistoryExample();
+                    CloudScanHistoryExample example = new CloudScanHistoryExample();
                     example.createCriteria().andAccountIdEqualTo(account.getId()).andCreateTimeEqualTo(zero);
-                    List<ScanHistory> list = scanHistoryMapper.selectByExample(example);
+                    List<CloudScanHistory> list = scanHistoryMapper.selectByExample(example);
                     if (!list.isEmpty()) {
                         orderService.insertScanHistory(account);
                     } else {

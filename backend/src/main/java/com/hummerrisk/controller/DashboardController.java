@@ -8,7 +8,7 @@ import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.dto.ImageChartDTO;
 import com.hummerrisk.dto.PackageChartDTO;
-import com.hummerrisk.dto.ScanHistoryDTO;
+import com.hummerrisk.dto.CloudScanHistoryDTO;
 import com.hummerrisk.dto.TopInfoDTO;
 import com.hummerrisk.service.DashboardService;
 import io.swagger.annotations.Api;
@@ -54,14 +54,14 @@ public class DashboardController {
 
     @ApiOperation(value = "云资源历史记录")
     @PostMapping("history/{goPage}/{pageSize}")
-    public Pager<List<ScanHistoryDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+    public Pager<List<CloudScanHistoryDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, dashboardService.history(params));
     }
 
     @ApiOperation(value = "漏洞检测历史记录")
     @PostMapping("vuln/history/{goPage}/{pageSize}")
-    public Pager<List<ScanHistoryDTO>> vulnHistory(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+    public Pager<List<CloudScanHistoryDTO>> vulnHistory(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, dashboardService.vulnHistory(params));
     }

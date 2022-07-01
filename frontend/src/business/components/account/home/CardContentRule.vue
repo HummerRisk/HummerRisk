@@ -41,7 +41,7 @@
       <!-- 规则组别 start-->
       <el-tab-pane :label="$t('history.rule_set')">
         <el-table border :data="groupData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                  @filter-change="filter" @select-all="select" @select="select" height="538">
+                  @filter-change="filter" @select-all="select" @select="select" >
           <el-table-column type="index" min-width="5%"/>
           <el-table-column :label="$t('rule.rule_set')" min-width="20%" show-overflow-tooltip>
             <template v-slot:default="scope">
@@ -65,7 +65,7 @@
       <!-- 等保条例 start-->
       <el-tab-pane :label="$t('history.inspection_report')">
         <el-table border :data="reportData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                  @filter-change="filter" @select-all="select" @select="select" height="538">
+                  @filter-change="filter" @select-all="select" @select="select" >
           <el-table-column type="index" min-width="5%"/>
           <el-table-column prop="item_sort_first_level" :label="$t('resource.security_level')" min-width="10%" show-overflow-tooltip></el-table-column>
           <el-table-column prop="item_sort_second_level" :label="$t('resource.control_point')" min-width="10%" show-overflow-tooltip></el-table-column>
@@ -106,7 +106,7 @@
       <!-- 规则标签 start-->
       <el-tab-pane :label="$t('history.rule_tag')">
         <el-table border :data="tagData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                  @filter-change="filter" @select-all="select" @select="select" height="538">
+                  @filter-change="filter" @select-all="select" @select="select" >
           <el-table-column type="index" min-width="5%"/>
           <el-table-column :label="$t('rule.tag_key')" min-width="15%" show-overflow-tooltip>
             <template v-slot:default="scope">
@@ -135,7 +135,7 @@
       <!-- 检测区域 start-->
       <el-tab-pane :label="$t('history.regions')">
         <el-table border :data="regionsData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                  @filter-change="filter" @select-all="select" @select="select" height="538">
+                  @filter-change="filter" @select-all="select" @select="select" >
           <el-table-column type="index" min-width="20%"/>
           <el-table-column :label="$t('account.region_name')" min-width="30%" show-overflow-tooltip>
             <template v-slot:default="scope">
@@ -167,7 +167,7 @@
       <!-- 检测资源 start-->
       <el-tab-pane :label="$t('history.scan_resources')">
         <el-table border :data="resourceData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                  @filter-change="filter" @select-all="select" @select="select" height="538">
+                  @filter-change="filter" @select-all="select" @select="select" >
           <el-table-column type="index" min-width="5%"/>
           <el-table-column v-slot:default="scope" :label="$t('resource.Hummer_ID')" min-width="20%">
             {{ scope.row.hummerId }}

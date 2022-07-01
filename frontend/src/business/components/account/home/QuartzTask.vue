@@ -228,7 +228,7 @@
                 <el-divider></el-divider>
 
                 <el-row class="el-form-item-dev" v-for="dto in detailForm.quartzTaskRelationDtos" :key="dto.id">
-                  <el-table :show-header="true" :data="dto.cloudTaskList" class="adjust-table table-content" height="538">
+                  <el-table :show-header="true" :data="dto.cloudTaskList" class="adjust-table table-content">
                     <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="20%">
                         {{ scope.row.taskName }}
                     </el-table-column>

@@ -43,7 +43,7 @@
         WHERE
         tt.account_id = t.id
         ), 0) as resourcesSum,
-        IFNULL((select t1.scan_score FROM scan_history t1 WHERE t.id = t1.account_id ORDER BY t1.create_time DESC limit 1), 100) AS scanScore,
+        IFNULL((select t1.scan_score FROM cloud_scan_history t1 WHERE t.id = t1.account_id ORDER BY t1.create_time DESC limit 1), 100) AS scanScore,
         CASE
         WHEN 'APPROVED' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'APPROVED'
         WHEN 'PROCESSING' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'PROCESSING'

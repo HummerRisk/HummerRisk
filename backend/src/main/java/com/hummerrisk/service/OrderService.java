@@ -14,10 +14,10 @@ import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.constants.ScanTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
-import com.hummerrisk.dto.QuartzTaskDTO;
 import com.hummerrisk.dto.CloudTaskCopyDTO;
 import com.hummerrisk.dto.CloudTaskDTO;
 import com.hummerrisk.dto.CloudTaskItemLogDTO;
+import com.hummerrisk.dto.QuartzTaskDTO;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -69,9 +69,9 @@ public class OrderService {
     @Resource @Lazy
     private ExtResourceMapper extResourceMapper;
     @Resource @Lazy
-    private ScanHistoryMapper scanHistoryMapper;
+    private CloudScanHistoryMapper scanHistoryMapper;
     @Resource @Lazy
-    private ScanTaskHistoryMapper scanTaskHistoryMapper;
+    private CloudScanTaskHistoryMapper scanTaskHistoryMapper;
     @Resource @Lazy
     private NoticeService noticeService;
     @Resource @Lazy
@@ -593,18 +593,18 @@ public class OrderService {
         long current = System.currentTimeMillis();
         long zero = current/(1000*3600*24)*(1000*3600*24) - TimeZone.getDefault().getRawOffset();//当天00点
 
-        ScanHistoryExample example = new ScanHistoryExample();
+        CloudScanHistoryExample example = new CloudScanHistoryExample();
         example.createCriteria().andAccountIdEqualTo(account.getId()).andCreateTimeEqualTo(zero);
-        List<ScanHistory> list = scanHistoryMapper.selectByExample(example);
-        ScanHistory history = new ScanHistory();
+        List<CloudScanHistory> list = scanHistoryMapper.selectByExample(example);
+        CloudScanHistory history = new CloudScanHistory();
         if (!list.isEmpty()) {
             int id = list.get(0).getId();
             if (list.size() > 1) {
                 list.stream().filter(item -> !StringUtils.equals(item.getId().toString(), String.valueOf(id))).forEach(item -> scanHistoryMapper.deleteByPrimaryKey(item.getId()));
             }
-            ScanTaskHistoryExample scanTaskHistoryExample = new ScanTaskHistoryExample();
+            CloudScanTaskHistoryExample scanTaskHistoryExample = new CloudScanTaskHistoryExample();
             scanTaskHistoryExample.createCriteria().andIdEqualTo(id);
-            List<ScanTaskHistory> scanTaskHistories = scanTaskHistoryMapper.selectByExampleWithBLOBs(scanTaskHistoryExample);
+            List<CloudScanTaskHistory> scanTaskHistories = scanTaskHistoryMapper.selectByExampleWithBLOBs(scanTaskHistoryExample);
             JSONArray jsonArray = new JSONArray();
             scanTaskHistories.forEach(item ->{
                 if(item.getOutput()!=null) jsonArray.addAll(JSON.parseArray(item.getOutput()));
@@ -625,13 +625,13 @@ public class OrderService {
     }
 
     public void insertTaskHistory (CloudTask cloudTask, Integer scanId) throws Exception {
-        ScanTaskHistoryExample example = new ScanTaskHistoryExample();
+        CloudScanTaskHistoryExample example = new CloudScanTaskHistoryExample();
         example.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andScanIdEqualTo(scanId);
-        List<ScanTaskHistory> list = scanTaskHistoryMapper.selectByExample(example);
+        List<CloudScanTaskHistory> list = scanTaskHistoryMapper.selectByExample(example);
         if (list.size() > 0) {
             updateTaskHistory(cloudTask, example);
         } else {
-            ScanTaskHistory history = new ScanTaskHistory();
+            CloudScanTaskHistory history = new CloudScanTaskHistory();
             history.setScanId(scanId);
             history.setTaskId(cloudTask.getId());
             history.setOperation("新增历史合规检测");
@@ -639,7 +639,7 @@ public class OrderService {
         }
     }
 
-    public void updateTaskHistory (CloudTask cloudTask, ScanTaskHistoryExample example) throws Exception {
+    public void updateTaskHistory (CloudTask cloudTask, CloudScanTaskHistoryExample example) throws Exception {
         try{
             CloudTaskItemResourceExample cloudTaskItemResourceExample = new CloudTaskItemResourceExample();
             cloudTaskItemResourceExample.createCriteria().andTaskIdEqualTo(cloudTask.getId());
@@ -661,7 +661,7 @@ public class OrderService {
                     }
                 }
             });
-            ScanTaskHistory history = new ScanTaskHistory();
+            CloudScanTaskHistory history = new CloudScanTaskHistory();
             history.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
             history.setReturnSum(cloudTask.getReturnSum()!=null? cloudTask.getReturnSum():0);
             history.setScanScore(calculateScore(accountMapper.selectByPrimaryKey(cloudTask.getAccountId()), cloudTask));

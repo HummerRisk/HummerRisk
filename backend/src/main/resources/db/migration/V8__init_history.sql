@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `scan_history` (
+CREATE TABLE IF NOT EXISTS `cloud_scan_history` (
     `id`                           int(11)             NOT NULL AUTO_INCREMENT,
     `account_id`                   varchar(50)         DEFAULT NULL COMMENT '云账号ID',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `scan_history` (
     KEY `IDX_ITEM_ID` (`account_id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
-CREATE TABLE IF NOT EXISTS `scan_task_history` (
+CREATE TABLE IF NOT EXISTS `cloud_scan_task_history` (
     `id`                           int(11)             NOT NULL AUTO_INCREMENT,
     `scan_id`                      int(11)             DEFAULT NULL COMMENT '历史表主键ID',
     `task_id`                      varchar(50)         DEFAULT NULL COMMENT '任务ID',

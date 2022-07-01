@@ -145,7 +145,7 @@
             <el-col :span="8"><span style="color: #909090;">{{ $t('resource.i18n_detail') }} <i class="el-icon-question"></i></span></el-col>
             <el-col :span="16">
               <span>
-                <el-table :data="detailForm.cloudTaskList" style="width: 100%" height="538">
+                <el-table :data="detailForm.cloudTaskList" style="width: 100%">
                     <el-table-column :label="$t('rule.rule_name')" min-width="75%">
                       <template slot-scope="scope">
                         <span v-if="!!scope.row.returnSum && scope.row.returnSum>0"><i class="el-icon-warning-outline" style="color: red"></i> {{ scope.row.taskName }}</span>
@@ -264,7 +264,7 @@
 
       <!-- 合并下载报告 -->
       <el-drawer class="rtl" :title="$t('resource.merge_resource')" :visible.sync="infoVisible" size="80%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true" height="538">
+                 :destroy-on-close="true">
         <el-table border :data="accountData" class="adjust-table table-content" @sort-change="sort"
                   :row-class-name="tableRowClassName" @select-all="select" @select="select" style="margin: 1%;">
           <el-table-column type="selection" min-width="5%">

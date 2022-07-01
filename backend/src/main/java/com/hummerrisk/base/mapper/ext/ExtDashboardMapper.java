@@ -1,9 +1,6 @@
 package com.hummerrisk.base.mapper.ext;
 
 
-import com.hummerrisk.commons.utils.ChartData;
-import com.hummerrisk.commons.utils.DashboardTarget;
-import com.hummerrisk.dto.ScanHistoryDTO;
 import com.hummerrisk.dto.TopInfoDTO;
 
 import java.util.List;

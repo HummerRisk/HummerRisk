@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.hummerrisk.base.mapper.ext.ExtScanHistoryMapper">
+<mapper namespace="com.hummerrisk.base.mapper.ext.ExtCloudScanHistoryMapper">
 
     <select id="getScanId">
       select t.id
-      from scan_history t
+      from cloud_scan_history t
       <where>
         <if test="accountId != null">
           and t.account_id = #{accountId}
@@ -14,8 +14,8 @@
       limit 1
     </select>
 
-    <update id="updateByExampleSelective" parameterType="com.hummerrisk.base.domain.ScanHistory">
-        UPDATE scan_history
+    <update id="updateByExampleSelective" parameterType="com.hummerrisk.base.domain.CloudScanHistory">
+        UPDATE cloud_scan_history
         <set>
             <if test="operator != null">
                 `operator` = #{operator},

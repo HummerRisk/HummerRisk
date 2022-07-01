@@ -7,9 +7,9 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.hummer.quartz.service.QuartzManageService;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
+import com.hummerrisk.base.mapper.ext.ExtCloudScanHistoryMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudTaskMapper;
 import com.hummerrisk.base.mapper.ext.ExtResourceMapper;
-import com.hummerrisk.base.mapper.ext.ExtScanHistoryMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
@@ -75,11 +75,11 @@ public class ResourceService {
     @Resource @Lazy
     private ResourceItemMapper resourceItemMapper;
     @Resource @Lazy
-    private ScanHistoryMapper scanHistoryMapper;
+    private CloudScanHistoryMapper scanHistoryMapper;
     @Resource @Lazy
-    private ExtScanHistoryMapper extScanHistoryMapper;
+    private ExtCloudScanHistoryMapper extCloudScanHistoryMapper;
     @Resource @Lazy
-    private ScanTaskHistoryMapper scanTaskHistoryMapper;
+    private CloudScanTaskHistoryMapper cloudScanTaskHistoryMapper;
     @Resource @Lazy
     private ProxyMapper proxyMapper;
     @Resource @Lazy
@@ -631,18 +631,18 @@ public class ResourceService {
         List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(example);
         cloudTasks.forEach(task -> {
             cloudTaskService.deleteManualTask(task.getId());
-            ScanTaskHistoryExample scanTaskHistoryExample = new ScanTaskHistoryExample();
+            CloudScanTaskHistoryExample scanTaskHistoryExample = new CloudScanTaskHistoryExample();
             scanTaskHistoryExample.createCriteria().andTaskIdEqualTo(task.getId());
-            scanTaskHistoryMapper.deleteByExample(scanTaskHistoryExample);
+            cloudScanTaskHistoryMapper.deleteByExample(scanTaskHistoryExample);
         });
         long current = System.currentTimeMillis();
         long zero = current/(1000*3600*24)*(1000*3600*24) - TimeZone.getDefault().getRawOffset();//当天00点
 
-        ScanHistoryExample scanHistoryExample = new ScanHistoryExample();
+        CloudScanHistoryExample scanHistoryExample = new CloudScanHistoryExample();
         example.createCriteria().andAccountIdEqualTo(accountId).andCreateTimeEqualTo(zero);
-        List<ScanHistory> list = scanHistoryMapper.selectByExample(scanHistoryExample);
+        List<CloudScanHistory> list = scanHistoryMapper.selectByExample(scanHistoryExample);
 
-        ScanHistory history = new ScanHistory();
+        CloudScanHistory history = new CloudScanHistory();
         history.setResourcesSum(0L);
         history.setReturnSum(0L);
         history.setScanScore(100);
@@ -650,7 +650,7 @@ public class ResourceService {
         if (!list.isEmpty()) {
             int id = list.get(0).getId();
             history.setId(id);
-            extScanHistoryMapper.updateByExampleSelective(history);
+            extCloudScanHistoryMapper.updateByExampleSelective(history);
         } else {
             history.setAccountId(accountId);
             history.setCreateTime(zero);

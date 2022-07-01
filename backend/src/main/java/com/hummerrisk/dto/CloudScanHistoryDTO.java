@@ -1,10 +1,10 @@
 package com.hummerrisk.dto;
 
-import com.hummerrisk.base.domain.ScanHistory;
+import com.hummerrisk.base.domain.CloudScanHistory;
 
 import java.io.Serializable;
 
-public class ScanHistoryDTO extends ScanHistory implements Serializable {
+public class CloudScanHistoryDTO extends CloudScanHistory implements Serializable {
 
     private String pluginId;
 
