@@ -3,28 +3,60 @@
     <el-row :gutter="20">
       <el-col :span="6">
         <el-card shadow="always" class="hr-card-index-1">
-          <div class="block">
-            <span class="descriptions__title">{{ $t('dashboard.quick_search') }}</span>
-          </div>
-          <el-divider></el-divider>
+          <template v-slot:header>
+            <span class="title">{{ $t('dashboard.quick_search') }}</span>
+          </template>
           <el-collapse v-model="activeName" accordion>
-            <el-collapse-item title="一致性 Consistency" name="1">
-              <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
-              <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
+            <el-form ref="form" :model="searchForm" label-width="80px" size="mini">
+              <el-collapse-item :title="$t('dashboard.types_1')" name="1">
+                <el-radio-group v-model="searchForm.scanType" size="medium">
+                  <div class="_group"><el-radio class="radio_group" border :label="$t('dashboard.cloud_scan')" name="cloud_scan"></el-radio></div>
+                  <div class="_group"><el-radio class="radio_group" border :label="$t('dashboard.vuln_scan')" name="vuln_scan"></el-radio></div>
+                  <div class="_group"><el-radio class="radio_group" border :label="$t('dashboard.server_scan')" name="server_scan"></el-radio></div>
+                  <div class="_group"><el-radio class="radio_group" border :label="$t('dashboard.package_scan')" name="package_scan"></el-radio></div>
+                  <div class="_group"><el-radio class="radio_group" border :label="$t('dashboard.image_scan')" name="image_scan"></el-radio></div>
+                </el-radio-group>
+              </el-collapse-item>
+              <el-collapse-item :title="$t('dashboard.types_2')" name="2">
+                <el-tree
+                  :data="groupData"
+                  :props="defaultProps"
+                  accordion
+                  @node-click="handleNodeClick">
+                </el-tree>
+              </el-collapse-item>
+              <el-collapse-item :title="$t('dashboard.types_3')" name="3">
+                <el-tree
+                  :data="accountData"
+                  :props="defaultProps"
+                  accordion
+                  @node-click="handleNodeClick">
+                </el-tree>
+              </el-collapse-item>
+              <el-collapse-item :title="$t('dashboard.types_4')" name="4">
+                <el-radio-group v-model="searchForm.severityType" size="medium">
+                  <div class="_group"><el-radio class="radio_group" border :label="$t('rule.HighRisk')" name="HighRisk"></el-radio></div>
+                  <div class="_group"><el-radio class="radio_group" border :label="$t('rule.MediumRisk')" name="MediumRisk"></el-radio></div>
+                  <div class="_group"><el-radio class="radio_group" border :label="$t('rule.LowRisk')" name="LowRisk"></el-radio></div>
+                </el-radio-group>
+              </el-collapse-item>
+              <el-collapse-item :title="$t('dashboard.types_5')" name="5">
+                <div class="block">
+                  <el-date-picker
+                    v-model="searchForm.date"
+                    size="mini"
+                    type="daterange"
+                    align="right"
+                    class="date_picker"
+                    unlink-panels
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    :picker-options="pickerOptions">
+                  </el-date-picker>
+                </div>
             </el-collapse-item>
-            <el-collapse-item title="反馈 Feedback" name="2">
-              <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
-              <div>页面反馈：操作后，通过页面元素的变化清晰地展现当前状态。</div>
-            </el-collapse-item>
-            <el-collapse-item title="效率 Efficiency" name="3">
-              <div>简化流程：设计简洁直观的操作流程；</div>
-              <div>清晰明确：语言表达清晰且表意明确，让用户快速理解进而作出决策；</div>
-              <div>帮助用户识别：界面简单直白，让用户快速识别而非回忆，减少用户记忆负担。</div>
-            </el-collapse-item>
-            <el-collapse-item title="可控 Controllability" name="4">
-              <div>用户决策：根据场景可给予用户操作建议或安全提示，但不能代替用户进行决策；</div>
-              <div>结果可控：用户可以自由的进行操作，包括撤销、回退和终止当前操作等。</div>
-            </el-collapse-item>
+            </el-form>
           </el-collapse>
         </el-card>
       </el-col>
@@ -92,7 +124,6 @@
               </el-table-column>
             </el-table>
 
-
             <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
           </div>
         </el-card>
@@ -123,27 +154,88 @@ export default {
       total: 0,
       condition: {
       },
+      searchForm: {},
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近一周',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近一个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+            picker.$emit('pick', [start, end]);
+          }
+        }]
+      },
+      groupData: [{
+        label: this.$t('dashboard.rule_tag'),
+        children: []
+      }, {
+        label: this.$t('dashboard.rule_set'),
+        children: []
+      }, {
+        label: this.$t('dashboard.rule_report'),
+        children: []
+      }],
+      accountData: [{
+        label: this.$t('dashboard.cloud_scan'),
+        children: []
+      }, {
+        label: this.$t('dashboard.vuln_scan'),
+        children: []
+      }, {
+        label: this.$t('dashboard.server_scan'),
+        children: []
+      }, {
+        label: this.$t('dashboard.package_scan'),
+        children: []
+      }, {
+        label: this.$t('dashboard.image_scan'),
+        children: []
+      }],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      },
+
     }
   },
   methods: {
     sort(column) {
       _sort(column, this.condition);
-      this.init();
+      this.search();
     },
     filter(filters) {
       _filter(filters, this.condition);
-      this.init();
+      this.search();
     },
     search () {
       let url = "/cloud/task/manual/list/" + this.currentPage + "/" + this.pageSize;
       //在这里实现事件
       this.result = this.$post(url, this.condition, response => {
-        console.log(response)
         let data = response.data;
         this.total = data.itemCount;
         this.tableData = data.listObject;
       });
     },
+    handleNodeClick(data) {
+      console.log(data);
+    }
   },
   created() {
     this.search();
@@ -167,5 +259,27 @@ export default {
 }
 .block {
   margin: 10px 10px 0 30px;
+}
+.title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-wrap: break-word;
+  white-space: nowrap;
+}
+._group {
+  margin: 10px 0 10px 20px;
+  width: 200px;
+}
+.radio_group {
+  width: 130px;
+}
+.block {
+  width: 100%;
+}
+.date_picker {
+  width: 80%;
 }
 </style>

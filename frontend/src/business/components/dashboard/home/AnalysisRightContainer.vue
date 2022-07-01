@@ -14,7 +14,7 @@
           <el-card :body-style="{ padding: '10px', 'text-align': 'center' }" shadow="always">
             <el-image class="logo" :src="require(`@/assets/img/analysis/${exhibit.pluginIcon}`)"/>
             <div style="text-align: center;">
-              <span><el-checkbox>{{ exhibit.name }}</el-checkbox></span>
+              <span><el-checkbox v-model="activePluginIcon">{{ exhibit.name }}</el-checkbox></span>
             </div>
           </el-card>
         </el-col>
@@ -43,36 +43,25 @@
     <div v-if="activeIndex==='2'">
       <el-row align="middle" style="margin: 10px;">
         <el-form ref="form" :model="sizeForm" label-width="80px" size="mini">
-          <el-form-item label="活动名称">
-            <el-input v-model="sizeForm.name"></el-input>
+          <el-form-item :label="$t('dashboard.analysis_cycle')">
+            <el-input type="number" max="30" v-model="sizeForm.cycle" clearable :placeholder="$t('dashboard.analysis_cycle_placeholder')"></el-input>
           </el-form-item>
-          <el-form-item label="活动区域">
-            <el-select v-model="sizeForm.region" placeholder="请选择活动区域">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
+          <el-form-item :label="$t('dashboard.scan_users')">
+            <el-select v-model="sizeForm.users" :placeholder="$t('dashboard.scan_users')" multiple>
             </el-select>
           </el-form-item>
-          <el-form-item label="活动时间">
-            <el-col :span="11">
-              <el-date-picker type="date" placeholder="选择日期" v-model="sizeForm.date1" style="width: 100%;"></el-date-picker>
-            </el-col>
-            <el-col class="line" :span="2">-</el-col>
-            <el-col :span="11">
-              <el-time-picker placeholder="选择时间" v-model="sizeForm.date2" style="width: 100%;"></el-time-picker>
-            </el-col>
+          <el-form-item :label="$t('dashboard.scan_types')">
+            <el-select v-model="sizeForm.types" :placeholder="$t('dashboard.scan_types')">
+              <el-option :label="$t('dashboard.cloud_scan')" value="cloud_scan"></el-option>
+              <el-option :label="$t('dashboard.vuln_scan')" value="vuln_scan"></el-option>
+              <el-option :label="$t('dashboard.server_scan')" value="server_scan"></el-option>
+              <el-option :label="$t('dashboard.package_scan')" value="package_scan"></el-option>
+              <el-option :label="$t('dashboard.image_scan')" value="image_scan"></el-option>
+            </el-select>
           </el-form-item>
-          <el-form-item label="活动性质">
-            <el-checkbox-group v-model="sizeForm.type">
-              <el-checkbox-button label="美食/餐厅线上活动" name="type"></el-checkbox-button>
-              <el-checkbox-button label="地推活动" name="type"></el-checkbox-button>
-              <el-checkbox-button label="线下主题活动" name="type"></el-checkbox-button>
-            </el-checkbox-group>
-          </el-form-item>
-          <el-form-item label="特殊资源">
-            <el-radio-group v-model="sizeForm.resource" size="medium">
-              <el-radio border label="线上品牌商赞助"></el-radio>
-              <el-radio border label="线下场地免费"></el-radio>
-            </el-radio-group>
+          <el-form-item :label="$t('dashboard.scan_account')">
+            <el-select v-model="sizeForm.accounts" :placeholder="$t('dashboard.scan_account')" multiple>
+            </el-select>
           </el-form-item>
           <el-form-item size="large">
             <el-button type="primary" @click="confirm">{{ $t('dashboard.qu_save') }}</el-button>
@@ -103,17 +92,19 @@
           asideHidden: false,
           activeIndex: '1',
           exhibits: [
-            {name: '带背景色柱状图', pluginIcon: 'backgroud-bar.png'},
-            {name: '基础面积图', pluginIcon: 'basic-area.png'},
-            {name: '基础柱状图', pluginIcon: 'basic-bar.png'},
-            {name: '基础折线图', pluginIcon: 'basic-line.png'},
-            {name: '标签对齐饼图', pluginIcon: 'label-pie.png'},
-            {name: '基础平滑折线图', pluginIcon: 'smooted-line.png'},
-            {name: '堆叠折线图', pluginIcon: 'stacked-line.png'},
-            {name: '坐标刻度柱状图', pluginIcon: 'tick-bar.png'},
+            {name: this.$t('dashboard.basic_bar_chart'), pluginIcon: 'basic-bar.png'},
+            {name: this.$t('dashboard.backgroud_bar_chart'), pluginIcon: 'backgroud-bar.png'},
+            {name: this.$t('dashboard.tick_bar_chart'), pluginIcon: 'tick-bar.png'},
+            {name: this.$t('dashboard.area_bar_chart'), pluginIcon: 'basic-area.png'},
+            {name: this.$t('dashboard.basic_line_chart'), pluginIcon: 'basic-line.png'},
+            {name: this.$t('dashboard.smooted_line_chart'), pluginIcon: 'smooted-line.png'},
+            {name: this.$t('dashboard.stacked_line_chart'), pluginIcon: 'stacked-line.png'},
+            {name: this.$t('dashboard.label_pie_chart'), pluginIcon: 'label-pie.png'},
+
           ],
           color1: '#409EFF',
           sizeForm: {},
+          activePluginIcon: 'basic-bar.png',
         }
       },
       methods: {
