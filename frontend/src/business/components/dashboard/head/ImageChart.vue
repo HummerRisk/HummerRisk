@@ -42,7 +42,7 @@ export default {
             areaStyle: {}
           }
         ],
-        color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4']
+        color: ['#009ef0', '#11cfae', '#627dec', '#893fdc', '#89ffff','#0051a4']
       };
       });
     },

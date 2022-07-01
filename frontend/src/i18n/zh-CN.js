@@ -491,6 +491,7 @@ export default {
     scan_users: '检测人员',
     scan_types: '检测类型',
     scan_account: '检测账号',
+    safe_score_all: '安全检测评分',
   },
   rule: {
     rule: '检测规则',

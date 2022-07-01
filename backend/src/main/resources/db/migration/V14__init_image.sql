@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `image` (
     `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
     `creator`                    varchar(128)        DEFAULT NULL COMMENT '创建人',
     `repo_id`                    varchar(50)         DEFAULT NULL COMMENT '镜像仓库ID',
-    `size`                       varchar(128)        DEFAULT '0M' COMMENT '镜像大小',
+    `size`                       varchar(128)        DEFAULT NULL COMMENT '镜像大小',
     `type`                       varchar(50)         DEFAULT 'image' COMMENT '镜像类型：镜像/image、镜像包/tar',
     `image_url`                  varchar(128)        DEFAULT NULL COMMENT '镜像名称',
     `image_tag`                  varchar(128)        DEFAULT NULL COMMENT '镜像标签',

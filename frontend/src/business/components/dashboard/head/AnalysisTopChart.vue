@@ -1,6 +1,6 @@
 <template>
   <div align="middle">
-    <hr-chart :options="options" :width="1130" :height="280"></hr-chart>
+    <hr-chart :options="options" :width="999" :height="280"></hr-chart>
   </div>
 </template>
 
@@ -42,7 +42,7 @@ export default {
             areaStyle: {}
           }
         ],
-        color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4']
+        color: ['#009ef0', '#11cfae', '#627dec', '#893fdc', '#89ffff','#0051a4']
       };
       });
     },

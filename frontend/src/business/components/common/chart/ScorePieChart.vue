@@ -5,47 +5,13 @@
 </template>
 
 <script>
-import echarts from 'echarts';
 import HrChart from "@/business/components/common/chart/HrChart";
 
-const gaugeData = [
-  {
-    value: 20,
-    name: 'Good',
-    title: {
-      offsetCenter: ['40%', '80%']
-    },
-    detail: {
-      offsetCenter: ['-40%', '95%']
-    }
-  },
-  {
-    value: 40,
-    name: 'Better',
-    title: {
-      offsetCenter: ['0%', '80%']
-    },
-    detail: {
-      offsetCenter: ['0%', '95%']
-    }
-  },
-  {
-    value: 60,
-    name: 'Perfect',
-    title: {
-      offsetCenter: ['40%', '80%']
-    },
-    detail: {
-      offsetCenter: ['40%', '95%']
-    }
-  }
-];
 /* eslint-disable */
 export default {
   name: "ScorePieChart",
   components: {
     HrChart,
-    echarts
   },
   data() {
     return {
@@ -54,7 +20,18 @@ export default {
   },
   methods: {
     init () {
-      let data=[];
+      let gaugeData = [
+        {
+          value: 80,
+          name: this.$t('dashboard.safe_score_all'),
+          title: {
+            offsetCenter: ['40%', '80%']
+          },
+          detail: {
+            offsetCenter: ['-40%', '95%']
+          }
+        },
+      ];
       this.options = {
         series: [
           {
@@ -62,7 +39,7 @@ export default {
             anchor: {
               show: true,
               showAbove: true,
-              size: 10,
+              size: 18,
               itemStyle: {
                 color: '#FAC858'
               }
@@ -71,7 +48,7 @@ export default {
               icon: 'path://M2.9,0.7L2.9,0.7c1.4,0,2.6,1.2,2.6,2.6v115c0,1.4-1.2,2.6-2.6,2.6l0,0c-1.4,0-2.6-1.2-2.6-2.6V3.3C0.3,1.9,1.4,0.7,2.9,0.7z',
               width: 5,
               length: '60%',
-              offsetCenter: [0, '8%']
+              offsetCenter: [0, '80%']
             },
             progress: {
               show: true,
@@ -92,11 +69,11 @@ export default {
               color: '#fff',
               backgroundColor: 'auto',
               borderRadius: 1,
-              formatter: '{value}%'
+              formatter: '{value}分'
             }
           }
         ],
-        color: ['#11cfae', '#009ef0', '#627dec', '#0051a4', '#893fdc', '#89ffff', '#0099ff'],
+        color: ['#009ef0', '#0051a4', '#0099ff', '#11cfae'],
       };
     },
   },

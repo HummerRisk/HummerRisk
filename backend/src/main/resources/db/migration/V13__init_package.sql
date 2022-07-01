@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `package` (
     `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
     `creator`                    varchar(128)        DEFAULT NULL COMMENT '创建人',
-    `size`                       varchar(128)        DEFAULT '0M' COMMENT '软件包大小',
+    `size`                       varchar(128)        DEFAULT NULL COMMENT '软件包大小',
     `path`                       varchar(128)        DEFAULT NULL COMMENT '软件包持久化存储路径/opt/hummerrisk/file/',
     `is_proxy`                   tinyint(1)          DEFAULT 0 COMMENT '是否启用代理',
     `proxy_id`                   int(11)             DEFAULT NULL COMMENT '代理ID',

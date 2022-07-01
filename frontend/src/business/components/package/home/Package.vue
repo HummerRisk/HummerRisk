@@ -21,7 +21,7 @@
             </el-image>
             <div style="padding: 14px;">
               <span>{{ data.name }}</span>
-              <el-button size="medium" type="primary" class="round" round>{{ data.size }}</el-button>
+              <el-button size="medium" type="primary" class="round" round>{{ data.size?data.size:'0MB' }}</el-button>
               <span class="button time">
                 <span v-bind:class="{true: 'color-red', false: ''}[!data.packageName]">{{ data.packageName?data.packageName:'No package' }}</span>
               </span>
