@@ -11,12 +11,14 @@ import com.hummerrisk.controller.request.packageSetting.PackageResultRequest;
 import com.hummerrisk.controller.request.packageSetting.PackageRuleRequest;
 import com.hummerrisk.dto.PackageDTO;
 import com.hummerrisk.dto.PackageResultDTO;
+import com.hummerrisk.dto.PackageResultWithBLOBsDTO;
 import com.hummerrisk.dto.PackageRuleDTO;
 import com.hummerrisk.service.PackageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -123,6 +125,13 @@ public class PackageController {
     }
 
     @ApiOperation(value = "软件包检测结果列表")
+    @PostMapping(value = "resultListWithBLOBs/{goPage}/{pageSize}")
+    public Pager<List<PackageResultWithBLOBsDTO>> resultListWithBLOBs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody PackageResultRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, packageService.resultListWithBLOBs(request));
+    }
+
+    @ApiIgnore
     @PostMapping(value = "resultList/{goPage}/{pageSize}")
     public Pager<List<PackageResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody PackageResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
@@ -131,7 +140,7 @@ public class PackageController {
 
     @ApiOperation(value = "软件包检测结果")
     @GetMapping(value = "getPackageResult/{resultId}")
-    public PackageResultDTO getPackageResult(@PathVariable String resultId) {
+    public PackageResultWithBLOBs getPackageResult(@PathVariable String resultId) {
         return packageService.getPackageResult(resultId);
     }
 

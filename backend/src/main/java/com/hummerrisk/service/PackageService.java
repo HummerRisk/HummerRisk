@@ -17,6 +17,7 @@ import com.hummerrisk.controller.request.packageSetting.PackageResultRequest;
 import com.hummerrisk.controller.request.packageSetting.PackageRuleRequest;
 import com.hummerrisk.dto.PackageDTO;
 import com.hummerrisk.dto.PackageResultDTO;
+import com.hummerrisk.dto.PackageResultWithBLOBsDTO;
 import com.hummerrisk.dto.PackageRuleDTO;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
@@ -469,20 +470,23 @@ public class PackageService {
         }
     }
 
-    public List<PackageResultDTO> resultList(PackageResultRequest request) {
-        List<PackageResultDTO> list = extPackageResultMapper.resultList(request);
-        for (PackageResultDTO packageResultDTO : list) {
-            packageResultDTO.setReturnJson(accountService.toJSONString(packageResultDTO.getReturnJson()!=null?packageResultDTO.getReturnJson():"{}"));
+    public List<PackageResultWithBLOBsDTO> resultListWithBLOBs(PackageResultRequest request) {
+        List<PackageResultWithBLOBsDTO> list = extPackageResultMapper.resultListWithBLOBs(request);
+        for (PackageResultWithBLOBsDTO packageResultWithBLOBsDTO : list) {
+            packageResultWithBLOBsDTO.setReturnJson(accountService.toJSONString(packageResultWithBLOBsDTO.getReturnJson()!=null? packageResultWithBLOBsDTO.getReturnJson():"{}"));
         }
         return list;
     }
 
-    public PackageResultDTO getPackageResult(String resultId) {
-        PackageResultRequest request = new PackageResultRequest();
-        request.setId(resultId);
-        PackageResultDTO packageResultDTO = extPackageResultMapper.resultList(request).get(0);
-        packageResultDTO.setReturnJson(accountService.toJSONString(packageResultDTO.getReturnJson()!=null?packageResultDTO.getReturnJson():"{}"));
-        return packageResultDTO;
+    public List<PackageResultDTO> resultList(PackageResultRequest request) {
+        List<PackageResultDTO> list = extPackageResultMapper.resultList(request);
+        return list;
+    }
+
+    public PackageResultWithBLOBs getPackageResult(String resultId) {
+        PackageResultWithBLOBs packageResultWithBLOBs = packageResultMapper.selectByPrimaryKey(resultId);
+        packageResultWithBLOBs.setReturnJson(accountService.toJSONString(packageResultWithBLOBs.getReturnJson()!=null? packageResultWithBLOBs.getReturnJson():"{}"));
+        return packageResultWithBLOBs;
     }
 
     public List<PackageResultLog> getPackageResultLog(String resultId) {

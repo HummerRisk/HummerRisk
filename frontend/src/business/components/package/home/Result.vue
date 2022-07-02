@@ -58,7 +58,7 @@
             <span><i class="el-icon-time"></i> {{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="15%" :label="$t('commons.operating')">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
@@ -275,13 +275,20 @@ export default {
     },
     showResultLog (result) {
       let url = "/package/log/";
-      this.logForm = result;
       this.$get(url + result.id, response => {
         this.logData = response.data;
         this.logVisible = true;
       });
+      if (!result.returnJson) {
+        this.$get("/package/getPackageResult/"+ result.id, response => {
+          let result = response.data;
+          this.logForm = result;
+        });
+      } else {
+        this.logForm = result;
+      }
     },
-    handleClose(done) {
+    handleClose() {
       this.logVisible=false;
       this.detailVisible=false;
     },
@@ -435,6 +442,9 @@ export default {
   margin-bottom: 0;
   padding: 10px 2%;
   width: 46%;
+}
+.code-mirror {
+  width: 100%;
 }
 * { touch-action: pan-y; }
 /deep/ :focus{outline:0;}

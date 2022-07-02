@@ -1,11 +1,11 @@
 package com.hummerrisk.dto;
 
-import com.hummerrisk.base.domain.PackageResult;
+import com.hummerrisk.base.domain.PackageResultWithBLOBs;
 
 /**
  * @author harris
  */
-public class PackageResultDTO extends PackageResult {
+public class PackageResultWithBLOBsDTO extends PackageResultWithBLOBs {
 
     private String name;
 
@@ -14,8 +14,6 @@ public class PackageResultDTO extends PackageResult {
     private String tagName;
 
     private String user;
-
-    private String resources;
 
     public String getName() {
         return name;
@@ -49,11 +47,4 @@ public class PackageResultDTO extends PackageResult {
         this.user = user;
     }
 
-    public String getResources() {
-        return resources;
-    }
-
-    public void setResources(String resources) {
-        this.resources = resources;
-    }
 }
