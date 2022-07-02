@@ -16,10 +16,9 @@ import com.hummerrisk.controller.request.image.ImageRepoRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.image.ImageResultRequest;
 import com.hummerrisk.controller.request.image.ImageRuleRequest;
-import com.hummerrisk.controller.request.resource.ResourceRequest;
 import com.hummerrisk.dto.ImageResultDTO;
+import com.hummerrisk.dto.ImageResultWithBLOBsDTO;
 import com.hummerrisk.dto.ImageRuleDTO;
-import com.hummerrisk.dto.ResourceDTO;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -451,22 +450,25 @@ public class ImageService {
         }
     }
 
-    public List<ImageResultDTO> resultList(ImageResultRequest request) {
-        List<ImageResultDTO> list = extImageResultMapper.resultList(request);
-        for (ImageResultDTO imageResultDTO : list) {
-            imageResultDTO.setGrypeJson(accountService.toJSONString(imageResultDTO.getGrypeJson()!=null?imageResultDTO.getGrypeJson():"{}"));
-            imageResultDTO.setSyftJson(accountService.toJSONString(imageResultDTO.getSyftJson()!=null?imageResultDTO.getSyftJson():"{}"));
+    public List<ImageResultWithBLOBsDTO> resultListWithBLOBs(ImageResultRequest request) {
+        List<ImageResultWithBLOBsDTO> list = extImageResultMapper.resultListWithBLOBs(request);
+        for (ImageResultWithBLOBsDTO imageResultWithBLOBsDTO : list) {
+            imageResultWithBLOBsDTO.setGrypeJson(accountService.toJSONString(imageResultWithBLOBsDTO.getGrypeJson()!=null? imageResultWithBLOBsDTO.getGrypeJson():"{}"));
+            imageResultWithBLOBsDTO.setSyftJson(accountService.toJSONString(imageResultWithBLOBsDTO.getSyftJson()!=null? imageResultWithBLOBsDTO.getSyftJson():"{}"));
         }
         return list;
     }
 
-    public ImageResultDTO getImageResult(String resultId) {
-        ImageResultRequest request = new ImageResultRequest();
-        request.setId(resultId);
-        ImageResultDTO imageResultDTO = extImageResultMapper.resultList(request).get(0);
-        imageResultDTO.setGrypeJson(accountService.toJSONString(imageResultDTO.getGrypeJson()!=null?imageResultDTO.getGrypeJson():"{}"));
-        imageResultDTO.setSyftJson(accountService.toJSONString(imageResultDTO.getSyftJson()!=null?imageResultDTO.getSyftJson():"{}"));
-        return imageResultDTO;
+    public List<ImageResultDTO> resultList(ImageResultRequest request) {
+        List<ImageResultDTO> list = extImageResultMapper.resultList(request);
+        return list;
+    }
+
+    public ImageResultWithBLOBs getImageResult(String resultId) {
+        ImageResultWithBLOBs imageResultWithBLOBs = imageResultMapper.selectByPrimaryKey(resultId);
+        imageResultWithBLOBs.setGrypeJson(accountService.toJSONString(imageResultWithBLOBs.getGrypeJson()!=null? imageResultWithBLOBs.getGrypeJson():"{}"));
+        imageResultWithBLOBs.setSyftJson(accountService.toJSONString(imageResultWithBLOBs.getSyftJson()!=null? imageResultWithBLOBs.getSyftJson():"{}"));
+        return imageResultWithBLOBs;
     }
 
     public List<ImageResultLog> getImageResultLog(String resultId) {

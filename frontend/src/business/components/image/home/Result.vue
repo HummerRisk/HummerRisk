@@ -60,7 +60,7 @@
             <span><i class="el-icon-time"></i> {{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="10%" :label="$t('commons.operating')">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
@@ -278,13 +278,20 @@ export default {
     },
     showResultLog (result) {
       let url = "/image/log/";
-      this.logForm = result;
       this.$get(url + result.id, response => {
         this.logData = response.data;
         this.logVisible = true;
       });
+      if(!result.grypeJson) {
+        let url = "/image/getImageResult/";
+        this.$get(url + result.id, response => {
+          this.logForm = response.data;
+        });
+      } else {
+        this.logForm = result;
+      }
     },
-    handleClose(done) {
+    handleClose() {
       this.logVisible=false;
       this.detailVisible=false;
     },

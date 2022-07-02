@@ -1,11 +1,11 @@
 package com.hummerrisk.dto;
 
-import com.hummerrisk.base.domain.ImageResult;
+import com.hummerrisk.base.domain.ImageResultWithBLOBs;
 
 /**
  * @author harris
  */
-public class ImageResultDTO extends ImageResult {
+public class ImageResultWithBLOBsDTO extends ImageResultWithBLOBs {
 
     private String name;
 
@@ -22,8 +22,6 @@ public class ImageResultDTO extends ImageResult {
     private String imageTag;
 
     private String path;
-
-    private String grypeTable;
 
     public String getName() {
         return name;
@@ -87,13 +85,5 @@ public class ImageResultDTO extends ImageResult {
 
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public String getGrypeTable() {
-        return grypeTable;
-    }
-
-    public void setGrypeTable(String grypeTable) {
-        this.grypeTable = grypeTable;
     }
 }

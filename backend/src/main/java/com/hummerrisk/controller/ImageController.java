@@ -10,12 +10,14 @@ import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.image.ImageResultRequest;
 import com.hummerrisk.controller.request.image.ImageRuleRequest;
 import com.hummerrisk.dto.ImageResultDTO;
+import com.hummerrisk.dto.ImageResultWithBLOBsDTO;
 import com.hummerrisk.dto.ImageRuleDTO;
 import com.hummerrisk.service.ImageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -134,6 +136,13 @@ public class ImageController {
     }
 
     @ApiOperation(value = "镜像检测结果列表")
+    @PostMapping(value = "resultListWithBLOBs/{goPage}/{pageSize}")
+    public Pager<List<ImageResultWithBLOBsDTO>> resultListWithBLOBs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, imageService.resultListWithBLOBs(request));
+    }
+
+    @ApiIgnore
     @PostMapping(value = "resultList/{goPage}/{pageSize}")
     public Pager<List<ImageResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
@@ -142,7 +151,7 @@ public class ImageController {
 
     @ApiOperation(value = "镜像检测结果")
     @GetMapping(value = "getImageResult/{resultId}")
-    public ImageResultDTO getImageResult(@PathVariable String resultId) {
+    public ImageResultWithBLOBs getImageResult(@PathVariable String resultId) {
         return imageService.getImageResult(resultId);
     }
 

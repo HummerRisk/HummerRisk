@@ -281,8 +281,7 @@ export default {
       });
       if (!result.returnJson) {
         this.$get("/package/getPackageResult/"+ result.id, response => {
-          let result = response.data;
-          this.logForm = result;
+          this.logForm = response.data;
         });
       } else {
         this.logForm = result;
