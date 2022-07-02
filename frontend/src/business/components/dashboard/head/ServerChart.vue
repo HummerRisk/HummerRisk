@@ -138,6 +138,13 @@ export default {
             ]
           }
         ],
+        grid: {
+          top: '10%',
+          left: '1%',
+          right: '2%',
+          bottom: '2%',
+          containLabel: true
+        },
         color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#1eb27f','#0051a4']
       };
     },

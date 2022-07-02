@@ -76,6 +76,13 @@ export default {
               }
             }
           ],
+          grid: {
+            top: '10%',
+            left: '1%',
+            right: '2%',
+            bottom: '2%',
+            containLabel: true
+          },
           color: ['#0051a4', '#89ffff', '#893fdc', '#627dec', '#009ef0', '#11cfae']
         };
       });

@@ -20,7 +20,6 @@ export default {
   data() {
     return {
       options: {},
-
     }
   },
   methods: {
@@ -41,6 +40,13 @@ export default {
               type: 'bar'
             }
           ],
+          grid: {
+            top: '10%',
+            left: '1%',
+            right: '2%',
+            bottom: '2%',
+            containLabel: true
+          },
           color: ['#009ef0', '#627dec', '#11cfae', '#893fdc', '#89ffff','#0051a4']
         };
       });
