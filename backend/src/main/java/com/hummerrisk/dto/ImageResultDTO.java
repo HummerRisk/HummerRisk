@@ -23,8 +23,6 @@ public class ImageResultDTO extends ImageResult {
 
     private String path;
 
-    private String grypeTable;
-
     public String getName() {
         return name;
     }
@@ -89,11 +87,4 @@ public class ImageResultDTO extends ImageResult {
         this.path = path;
     }
 
-    public String getGrypeTable() {
-        return grypeTable;
-    }
-
-    public void setGrypeTable(String grypeTable) {
-        this.grypeTable = grypeTable;
-    }
 }

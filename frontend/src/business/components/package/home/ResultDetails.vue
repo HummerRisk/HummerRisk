@@ -145,7 +145,6 @@ import RuleType from "@/business/components/image/home/RuleType";
         this.visible =  false;
       },
       search () {
-        alert("nimabi ")
         let url = "/package/resultItemList/" + this.currentPage + "/" + this.pageSize;
         this.condition.resultId = this.resultId;
         this.result = this.$post(url, this.condition, response => {
