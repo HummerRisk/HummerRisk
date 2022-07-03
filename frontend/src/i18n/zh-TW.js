@@ -477,7 +477,8 @@ export default {
     types_2: '按規則分組篩選',
     types_3: '按檢測賬號篩選',
     types_4: '按風險等級篩選',
-    types_5: '按時間節點篩選',
+    types_5: '按檢測人員篩選',
+    types_6: '按時間節點篩選',
     cloud_scan: '雲資源檢測',
     vuln_scan: '漏洞檢測',
     server_scan: '虛擬機檢測',
@@ -491,6 +492,7 @@ export default {
     scan_users: '檢測人員',
     scan_types: '檢測類型',
     scan_account: '檢測賬號',
+    safe_score_all: '安全檢測評分',
   },
   rule: {
     rule: '檢測規則',
@@ -1094,4 +1096,5 @@ export default {
   '标签': '標籤',
   '实例': '實例',
   '镜像': '鏡像',
+  warning_task: '暫時無法保存，任務編排功能上線後使用此功能，敬請期待！ ',
 };

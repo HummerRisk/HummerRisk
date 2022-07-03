@@ -477,7 +477,8 @@ export default {
     types_2: '按规则分组筛选',
     types_3: '按检测账号筛选',
     types_4: '按风险等级筛选',
-    types_5: '按时间节点筛选',
+    types_5: '按检测人员筛选',
+    types_6: '按时间节点筛选',
     cloud_scan: '云资源检测',
     vuln_scan: '漏洞检测',
     server_scan: '虚拟机检测',
@@ -1095,4 +1096,5 @@ export default {
   '标签': '标签',
   '实例': '实例',
   '镜像': '镜像',
+  warning_task: '暂时无法保存，任务编排功能上线后使用此功能，敬请期待！',
 };

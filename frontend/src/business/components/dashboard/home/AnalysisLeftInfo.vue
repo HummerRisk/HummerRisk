@@ -41,6 +41,17 @@
                 </el-radio-group>
               </el-collapse-item>
               <el-collapse-item :title="$t('dashboard.types_5')" name="5">
+                <el-select v-model="searchForm.users" :placeholder="$t('dashboard.scan_users')">
+                  <el-option
+                    v-for="item in users"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+                    &nbsp;&nbsp; {{ $t(item.name) }}
+                  </el-option>
+                </el-select>
+              </el-collapse-item>
+              <el-collapse-item :title="$t('dashboard.types_6')" name="6">
                 <div class="block">
                   <el-date-picker
                     v-model="searchForm.date"
@@ -212,7 +223,7 @@ export default {
         children: 'children',
         label: 'label'
       },
-
+      users: [],
     }
   },
   methods: {
@@ -225,6 +236,10 @@ export default {
       this.search();
     },
     search () {
+      this.result = this.$get("/user/list/all", response => {
+        let data = response.data;
+        this.users =  data;
+      });
       let url = "/cloud/task/manual/list/" + this.currentPage + "/" + this.pageSize;
       //在这里实现事件
       this.result = this.$post(url, this.condition, response => {

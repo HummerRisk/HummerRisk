@@ -10,11 +10,13 @@
           <span class="descriptions__title">{{ $t('dashboard.exhibit') }}</span>
           <el-divider><i class="el-icon-data-analysis"></i></el-divider>
         </div>
-        <el-col :span="10" v-for="(exhibit, index) in exhibits" :key="index" style="margin: 4%;">
+        <el-col :span="10" v-for="(exhibit, index) in exhibits" v-model="sizeForm.id" :key="index" style="margin: 4%;">
           <el-card :body-style="{ padding: '10px', 'text-align': 'center' }" shadow="always">
             <el-image class="logo" :src="require(`@/assets/img/analysis/${exhibit.pluginIcon}`)"/>
-            <div style="text-align: center;">
-              <span><el-checkbox v-model="activePluginIcon">{{ exhibit.name }}</el-checkbox></span>
+            <div style="text-align: center; display: inline-block;font-size: 14px;">
+              <span>
+                <el-checkbox @change="changeCheck(exhibit.id, index)" v-model="sizeForm.id[index]" :checked="sizeForm.id[index]" :key="exhibit.id">{{ exhibit.name }}</el-checkbox>
+              </span>
             </div>
           </el-card>
         </el-col>
@@ -27,10 +29,10 @@
         <div class="block">
           <el-row>
             <el-col :span="12">
-              <el-color-picker v-model="color1"></el-color-picker>
+              <el-color-picker v-model="sizeForm.color"></el-color-picker>
             </el-col>
             <el-col :span="12">
-              <span style="font-size: 30px;">{{ color1 }}</span>
+              <span style="font-size: 30px;">{{ sizeForm.color }}</span>
             </el-col>
           </el-row>
         </div>
@@ -41,13 +43,20 @@
       </div>
     </div>
     <div v-if="activeIndex==='2'">
-      <el-row align="middle" style="margin: 10px;">
+      <el-row align="middle" style="margin: 10px;" class="rtl">
         <el-form ref="form" :model="sizeForm" label-width="80px" size="mini">
           <el-form-item :label="$t('dashboard.analysis_cycle')">
-            <el-input type="number" max="30" v-model="sizeForm.cycle" clearable :placeholder="$t('dashboard.analysis_cycle_placeholder')"></el-input>
+            <el-input style="width: 80%;" type="number" max="30" min="1" v-model="sizeForm.cycle" clearable :placeholder="$t('dashboard.analysis_cycle_placeholder')"></el-input>
           </el-form-item>
           <el-form-item :label="$t('dashboard.scan_users')">
-            <el-select v-model="sizeForm.users" :placeholder="$t('dashboard.scan_users')" multiple>
+            <el-select v-model="sizeForm.users" :placeholder="$t('dashboard.scan_users')">
+              <el-option
+                v-for="item in users"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+                &nbsp;&nbsp; {{ $t(item.name) }}
+              </el-option>
             </el-select>
           </el-form-item>
           <el-form-item :label="$t('dashboard.scan_types')">
@@ -92,29 +101,61 @@
           asideHidden: false,
           activeIndex: '1',
           exhibits: [
-            {name: this.$t('dashboard.basic_bar_chart'), pluginIcon: 'basic-bar.png'},
-            {name: this.$t('dashboard.backgroud_bar_chart'), pluginIcon: 'backgroud-bar.png'},
-            {name: this.$t('dashboard.tick_bar_chart'), pluginIcon: 'tick-bar.png'},
-            {name: this.$t('dashboard.area_bar_chart'), pluginIcon: 'basic-area.png'},
-            {name: this.$t('dashboard.basic_line_chart'), pluginIcon: 'basic-line.png'},
-            {name: this.$t('dashboard.smooted_line_chart'), pluginIcon: 'smooted-line.png'},
-            {name: this.$t('dashboard.stacked_line_chart'), pluginIcon: 'stacked-line.png'},
-            {name: this.$t('dashboard.label_pie_chart'), pluginIcon: 'label-pie.png'},
+            {name: this.$t('dashboard.basic_bar_chart'), pluginIcon: 'basic-bar.png', id: 'basic_bar'},
+            {name: this.$t('dashboard.backgroud_bar_chart'), pluginIcon: 'backgroud-bar.png', id: 'backgroud_bar'},
+            {name: this.$t('dashboard.tick_bar_chart'), pluginIcon: 'tick-bar.png', id: 'tick_bar'},
+            {name: this.$t('dashboard.area_bar_chart'), pluginIcon: 'basic-area.png', id: 'basic_area'},
+            {name: this.$t('dashboard.basic_line_chart'), pluginIcon: 'basic-line.png', id: 'basic_line'},
+            {name: this.$t('dashboard.smooted_line_chart'), pluginIcon: 'smooted-line.png', id: 'smooted_line'},
+            {name: this.$t('dashboard.stacked_line_chart'), pluginIcon: 'stacked-line.png', id: 'stacked_line'},
+            {name: this.$t('dashboard.label_pie_chart'), pluginIcon: 'label-pie.png', id: 'label_pie'},
 
           ],
-          color1: '#409EFF',
-          sizeForm: {},
-          activePluginIcon: 'basic-bar.png',
+          sizeForm: {
+            id: [true],
+            color: '#409EFF',
+            cycle: 30,
+          },
+          users: [],
         }
       },
       methods: {
+        init() {
+          let url = "/user/list/all";
+          this.result = this.$get(url, response => {
+            let data = response.data;
+            this.users =  data;
+          });
+        },
         handleSelect(key, keyPath) {
           this.activeIndex = key;
         },
         cancel() {
+          this.sizeForm = {
+            id: [true],
+            color: '#409EFF',
+            cycle: 30,
+          };
+        },
+        changeCheck(id, index) {
+          for (let i = 0; i < 9; i++) {
+            console.log(111, i)
+            this.sizeForm.id[i] = false;
+          }
+          console.log(this.sizeForm.id, id, index)
+          if (this.sizeForm.id[index]) {
+            this.sizeForm.id[index] = false;
+          } else {
+            this.sizeForm.id[index] = true;
+          }
+          console.log(this.sizeForm.id)
         },
         confirm() {
-        }
+          this.$warning(this.$t('warning_task'));
+        },
+      },
+      created() {
+        this.init();
       }
     }
 </script>
@@ -146,5 +187,15 @@
   }
   .dialog-footer {
     text-align: center;
+  }
+  .rtl >>> .el-drawer__body {
+    overflow-y: auto;
+    padding: 20px;
+  }
+  .rtl >>> .el-select {
+    width: 80%;
+  }
+  .rtl >>> .el-form-item__content {
+    width: 80%;
   }
 </style>

@@ -5,14 +5,12 @@
 </template>
 
 <script>
-import echarts from 'echarts';
 import HrChart from "@/business/components/common/chart/HrChart";
 /* eslint-disable */
 export default {
   name: "ImageChart",
   components: {
     HrChart,
-    echarts,
   },
   props: {
     data: {},

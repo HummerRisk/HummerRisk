@@ -477,7 +477,8 @@ export default {
     types_2: 'Filter by rule grouping',
     types_3: 'Filter by detection account',
     types_4: 'Filter by risk level',
-    types_5: 'Filter by time node',
+    types_5: 'Filter by inspectors',
+    types_6: 'Filter by time node',
     cloud_scan: 'Cloud resource detection',
     vuln_scan: 'Vulnerability detection',
     server_scan: 'Virtual machine detection',
@@ -491,6 +492,7 @@ export default {
     scan_users: 'Detection personnel',
     scan_types: 'Detection type',
     scan_account: 'Check account',
+    safe_score_all: 'Safety detection score',
   },
   rule: {
     rule:'Scan Rule',
@@ -1094,4 +1096,5 @@ export default {
   '标签': 'Label',
   '实例': 'Server',
   '镜像': 'Image',
+  warning_task: 'Unable to save temporarily, this function will be used after the task scheduling function is online, so stay tuned! ',
 };
