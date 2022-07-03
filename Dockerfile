@@ -20,9 +20,9 @@ COPY --from=dependency-env /usr/share/dependency-check/bin/dependency-check.sh /
 
 COPY --from=xray-env /opt/hummerrisk/xray/ /opt/hummerrisk/xray/
 
-COPY --from=grype-env /grype /grype
+COPY --from=grype-env /grype /usr/bin/grype
 
-COPY --from=syft-env /syft /syft
+COPY --from=syft-env /syft /usr/bin/syft
 
 RUN mkdir -p /opt/apps
 
