@@ -459,7 +459,7 @@ export default {
       });
     },
     buildPagePath(path) {
-      return path + "/" + this.currentPage + "/" + this.pageSize;
+      return path + this.currentPage + "/" + this.pageSize;
     },
     tableRowClassName({row, rowIndex}) {
       if (rowIndex%4 === 0) {

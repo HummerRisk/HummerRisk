@@ -787,6 +787,7 @@ export default {
     account_setting: '云端检测',
     overview: '云资源概览',
     history: '云资源历史记录',
+    cloud_result_list: '云资源检测结果列表',
   },
   server: {
     server_setting: '虚机检测',

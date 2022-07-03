@@ -787,6 +787,7 @@ export default {
     account_setting: 'Cloud scan',
     overview: 'Cloud resource overview',
     history: 'Cloud resource history',
+    cloud_result_list: 'Cloud resource detection result list',
   },
   server: {
     server_setting: 'Virtual machine scan',

@@ -65,7 +65,7 @@
         <div>
           <el-row>
             <el-col :span="24">
-              <el-table :data="servers" class="tb-edit" height="538" border :cell-style="rowClass" :header-cell-style="headClass">
+              <el-table :data="servers" class="tb-edit" border :cell-style="rowClass" :header-cell-style="headClass">
                 <el-table-column :label="$t('server.server_name')" min-width="20%" prop="serverName">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.name"></el-input>

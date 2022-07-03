@@ -787,6 +787,7 @@ export default {
     account_setting: '雲端檢測',
     overview: '雲資源概覽',
     history: '雲資源歷史記錄',
+    cloud_result_list: '雲資源檢測結果列表',
   },
   server: {
     server_setting: '虛機檢測',
