@@ -346,7 +346,7 @@ export default {
     getStatus () {
       if (this.checkStatus(this.tableData)) {
         this.search();
-        return;
+        clearInterval(this.timer);
       } else {
         let url = "/cloud/task/manual/list/" + this.currentPage + "/" + this.pageSize;
         this.condition.accountId = this.accountId;

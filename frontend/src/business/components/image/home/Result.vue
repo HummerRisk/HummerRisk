@@ -212,7 +212,7 @@ export default {
     getStatus () {
       if (this.checkStatus(this.tableData)) {
         this.search();
-        return;
+        clearInterval(this.timer);
       } else {
         for (let data of this.tableData) {
           let url = "/image/getImageResult/";
@@ -233,7 +233,7 @@ export default {
     checkStatus (tableData) {
       let sum = 0;
       for (let row of tableData) {
-        if (row.status != 'ERROR' && row.status != 'FINISHED' && row.status != 'WARNING') {
+        if (row.resultStatus != 'ERROR' && row.resultStatus != 'FINISHED' && row.resultStatus != 'WARNING') {
           sum++;
         }
       }

@@ -210,7 +210,7 @@ export default {
     getStatus () {
       if (this.checkStatus(this.tableData)) {
         this.search();
-        return;
+        clearInterval(this.timer);
       } else {
         for (let data of this.tableData) {
           let url = "/package/getPackageResult/";
