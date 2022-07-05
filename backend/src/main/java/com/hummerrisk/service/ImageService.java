@@ -365,7 +365,7 @@ public class ImageService {
 
         BeanUtils.copyBean(result, image);
         result.setId(UUIDUtil.newUUID());
-        result.setImageId(id);
+        result.setImageId(image.getId());
         result.setApplyUser(SessionUtils.getUserId());
         result.setCreateTime(System.currentTimeMillis());
         result.setUpdateTime(System.currentTimeMillis());

@@ -5,7 +5,7 @@ function resolve(dir) {
 }
 
 module.exports = {
-  productionSourceMap: true,
+  productionSourceMap: false,
   configureWebpack: {
     devtool: 'source-map',
     resolve: {

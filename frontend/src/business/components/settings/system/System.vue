@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     search(value) {
-      this.$get('/system/searchSystem', response => {
+      this.result = this.$get('/system/searchSystem', response => {
         this.datas = response.data;
         if(value) {
           let searchForValues = [];
@@ -63,7 +63,7 @@ export default {
       });
     },
     updateSystem() {
-      this.$get('/system/updateSystem', response => {
+      this.result = this.$get('/system/updateSystem', response => {
         this.$success(this.$t('organization.integration.successful_operation'));
         this.search();
       });

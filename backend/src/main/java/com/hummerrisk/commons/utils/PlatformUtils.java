@@ -807,7 +807,7 @@ public class PlatformUtils {
 
                     break;
                 case baidu:
-                    for (Map.Entry entry : RegionsConstants.BaiduMap.entrySet()) {
+                    for (Map.Entry<String, String> entry : RegionsConstants.BaiduMap.entrySet()) {
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("regionId", entry.getKey());
                         jsonObject.put("regionName", entry.getValue());
@@ -815,7 +815,7 @@ public class PlatformUtils {
                     }
                     break;
                 case qiniu:
-                    for (Map.Entry entry : RegionsConstants.QiniuMap.entrySet()) {
+                    for (Map.Entry<String, String> entry : RegionsConstants.QiniuMap.entrySet()) {
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("regionId", entry.getKey());
                         jsonObject.put("regionName", entry.getValue());
@@ -823,7 +823,7 @@ public class PlatformUtils {
                     }
                     break;
                 case qingcloud:
-                    for (Map.Entry entry : RegionsConstants.QingcloudMap.entrySet()) {
+                    for (Map.Entry<String, String> entry : RegionsConstants.QingcloudMap.entrySet()) {
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("regionId", entry.getKey());
                         jsonObject.put("regionName", entry.getValue());
@@ -831,7 +831,7 @@ public class PlatformUtils {
                     }
                     break;
                 case ucloud:
-                    for (Map.Entry entry : RegionsConstants.UcloudMap.entrySet()) {
+                    for (Map.Entry<String, String> entry : RegionsConstants.UcloudMap.entrySet()) {
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("regionId", entry.getKey());
                         jsonObject.put("regionName", entry.getValue());

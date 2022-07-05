@@ -23,10 +23,7 @@
       <div class="container" v-loading="result.loading" v-if="ready">
         <el-row type="flex">
 
-          <el-col :span="12" class="image">
-          </el-col>
-
-          <el-col :span="12">
+          <el-col :span="24">
             <el-form :model="form" :rules="rules" ref="form">
               <div class="title">
                 <img src="../assets/img/logo/logo-dark.png" style="width: 224px" alt="">
@@ -170,9 +167,9 @@ import {DEFAULT_LANGUAGE} from "@/common/js/constants";
 
 <style scoped>
   .container {
-    width: 80%;
-    min-width: 900px;
-    max-width: 1440px;
+    width: 30%;
+    min-width: 600px;
+    max-width: 740px;
     height: 560px;
     /*background-color: #fff;*/
     margin: auto;
@@ -180,7 +177,7 @@ import {DEFAULT_LANGUAGE} from "@/common/js/constants";
     top: 17%;
     left: 10%;
     right: 10%;
-    box-shadow: #6f7180 0 0 10px;
+    box-shadow: #dddddd 0 0 10px;
   }
 
   .title {
@@ -239,12 +236,6 @@ import {DEFAULT_LANGUAGE} from "@/common/js/constants";
     padding: 0 40px;
     color: red;
     text-align: center;
-  }
-
-  .image {
-    background: url(../assets/login-img.jpg);
-    background-size:cover;
-    height: 560px;
   }
 
 </style>

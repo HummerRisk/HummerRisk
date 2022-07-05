@@ -356,12 +356,12 @@ export default {
             this.$get('/image/scan/' + data.id, response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start'));
+                this.$router.push({
+                  path: '/image/result',
+                }).catch(error => error);
               } else {
                 this.$error(this.$t('schedule.event_failed'));
               }
-              this.$router.push({
-                path: '/image/result',
-              }).catch(error => error);
             });
           }
         }

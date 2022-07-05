@@ -352,7 +352,7 @@ public class PackageService {
 
         BeanUtils.copyBean(result, aPackage);
         result.setId(UUIDUtil.newUUID());
-        result.setPackageId(id);
+        result.setPackageId(aPackage.getId());
         result.setApplyUser(SessionUtils.getUserId());
         result.setCreateTime(System.currentTimeMillis());
         result.setUpdateTime(System.currentTimeMillis());
