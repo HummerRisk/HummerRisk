@@ -656,6 +656,7 @@ export default {
     resource_report_xls: '不合規資源檢測報告.xls',
     merge_resource: '合併報告',
     desc: '注：請選擇需要合併的雲賬號一起導出報告，若不合併請直接下載報告即可。 ',
+    scan_vuln_search: '登錄國家信息安全漏洞庫，查詢檢測出的漏洞',
   },
   account: {
     cloud_account_setting: '雲賬號設置',
@@ -943,7 +944,7 @@ export default {
     result_status: '檢測結果狀態',
     search_by_name: '根據軟件包名稱搜索',
     size: '軟件包大小',
-    result_tip: '結果',
+    result_tip: '檢測結果H5頁面',
     delete_confirm: '確認刪除 ',
     result_resources: '檢測過程',
     result_log: '檢測結果日誌',

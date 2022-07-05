@@ -7,7 +7,7 @@
             <el-link type="primary" @click="showJson(element)">{{ 'Details' }}</el-link>
           </el-tooltip>
         </span>
-        <el-tooltip v-if="element.flag && !!element.value" class="item" effect="light" :content="element.value" placement="top">
+        <el-tooltip v-if="element.flag && !!element.value" class="item" effect="light" :content="typeof(element.value) === 'boolean'?element.value.toString():element.value" placement="top">
           <span class="table-expand-span-value">
               {{ element.value }}
           </span>
@@ -119,7 +119,7 @@
     width: 100%;
   }
   .el-table-expand .table-expand-span-value {
-    max-width: 15em;
+    max-width: 95%;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis; /*超出部分用...代替*/

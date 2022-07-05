@@ -176,6 +176,10 @@ export default {
       detailForm: {},
       buttons: [
         {
+          tip: this.$t('resource.scan_vuln_search'), icon: "el-icon-share", type: "primary",
+          exec: this.handleVuln
+        },
+        {
           tip: this.$t('resource.scan'), icon: "el-icon-zoom-in", type: "success",
           exec: this.handleScans
         },
@@ -200,6 +204,9 @@ export default {
   },
 
   methods: {
+    handleVuln() {
+      window.open('http://www.cnnvd.org.cn/web/vulnerability/queryLds.tag','target','');
+    },
     //查询列表
     search() {
       let url = "/image/resultList/" + this.currentPage + "/" + this.pageSize;

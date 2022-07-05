@@ -241,7 +241,11 @@ export default {
       timer: '',
       rule_buttons: [
         {
-          tip: this.$t('resource.i18n_detail'), icon: "el-icon-document", type: "info",
+          tip: this.$t('resource.scan_vuln_search'), icon: "el-icon-share", type: "primary",
+          exec: this.handleVuln
+        },
+        {
+          tip: this.$t('resource.i18n_detail'), icon: "el-icon-document", type: "warning",
           exec: this.showTaskDetail
         },
         {
@@ -249,7 +253,7 @@ export default {
           exec: this.goResource
         },
         {
-          tip: this.$t('resource.scan'), icon: "el-icon-zoom-in", type: "primary",
+          tip: this.$t('resource.scan'), icon: "el-icon-zoom-in", type: "danger",
           exec: this.handleScan
         }
       ],
@@ -306,6 +310,9 @@ export default {
     }
   },
   methods: {
+    handleVuln() {
+      window.open('http://www.cnnvd.org.cn/web/vulnerability/queryLds.tag','target','');
+    },
     sort(column) {
       _sort(column, this.condition);
       this.init();

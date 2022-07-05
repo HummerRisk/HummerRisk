@@ -656,6 +656,7 @@ export default {
     resource_report_xlsx: '不合规资源检测报告.xlsx',
     merge_resource: '合并报告',
     desc: '注：请选择需要合并的云账号一起导出报告，若不合并请直接下载报告即可。',
+    scan_vuln_search: '登录国家信息安全漏洞库，查询检测出的漏洞',
   },
   account: {
     cloud_account_setting: '云账号设置',
@@ -943,7 +944,7 @@ export default {
     result_status: '检测结果状态',
     search_by_name: '根据软件包名称搜索',
     size: '软件包大小',
-    result_tip: '结果',
+    result_tip: '检测结果H5页面',
     delete_confirm: '确认删除 ',
     result_resources: '检测过程',
     result_log: '检测结果日志',

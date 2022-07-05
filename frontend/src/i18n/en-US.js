@@ -656,6 +656,7 @@ export default {
     resource_report_xls:'Non-compliant resource scan report.xls',
     merge_resource:'Merge report',
     desc:'Note: Please select the cloud accounts that need to be merged and export the report together. If you do not merge, please download the report directly. ',
+    scan_vuln_search: 'Log in to the national information security vulnerability database and query the detected vulnerabilities',
   },
   account: {
     cloud_account_setting:'Cloud account settings',
@@ -943,7 +944,7 @@ export default {
     result_status: 'Scan result status',
     search_by_name: 'Search by package name',
     size: 'package size',
-    result_tip: 'Result',
+    result_tip: 'Scan result H5 page',
     delete_confirm: 'Confirm delete',
     result_resources: 'Scan process',
     result_log: 'Scan result log',

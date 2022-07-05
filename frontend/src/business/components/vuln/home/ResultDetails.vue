@@ -27,7 +27,7 @@
           <el-table-column v-slot:default="scope" :label="$t('resource.Hummer_ID')" min-width="28%">
               {{ scope.row.hummerId }}
           </el-table-column>
-          <el-table-column v-slot:default="scope" :label="$t('rule.resource_type')" min-width="20%">
+          <el-table-column v-slot:default="scope" :label="$t('rule.resource_type')" min-width="15%">
               {{ scope.row.resourceType }}
           </el-table-column>
           <el-table-column :label="$t('vuln.vuln_info')" min-width="15%" show-overflow-tooltip>
@@ -38,9 +38,14 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column min-width="20%" :label="$t('account.update_time')" prop="updateTime">
+          <el-table-column min-width="15%" :label="$t('account.update_time')" prop="updateTime">
             <template v-slot:default="scope">
               <span><i class="el-icon-time"></i> {{ scope.row.updateTime | timestampFormatDate }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column min-width="10%" :label="$t('commons.operating')">
+            <template v-slot:default="scope">
+              <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
           </el-table-column>
         </el-table>
@@ -97,9 +102,9 @@ import {_filter, _sort} from "@/common/js/utils";
         direction: 'rtl',
         buttons: [
           {
-            tip: this.$t('resource.scan'), icon: "el-icon-zoom-in", type: "success",
-            exec: this.scanAgain
-          }
+            tip: this.$t('resource.scan_vuln_search'), icon: "el-icon-share", type: "primary",
+            exec: this.handleVuln
+          },
         ],
         platforms: [
           {text: 'Xray', value: 'hummer-xray-plugin'},
@@ -127,7 +132,8 @@ import {_filter, _sort} from "@/common/js/utils";
       '$route': 'init'
     },
     methods: {
-      scanAgain() {
+      handleVuln() {
+        window.open('http://www.cnnvd.org.cn/web/vulnerability/queryLds.tag','target','');
       },
       sort(column) {
         _sort(column, this.condition);
