@@ -311,7 +311,7 @@ export default {
   },
   methods: {
     handleVuln() {
-      window.open('http://www.cnnvd.org.cn/web/vulnerability/queryLds.tag','target','');
+      window.open('http://www.cnnvd.org.cn/web/vulnerability/queryLds.tag','_blank','');
     },
     sort(column) {
       _sort(column, this.condition);
@@ -362,6 +362,7 @@ export default {
       if (this.checkStatus(this.tableData)) {
         this.search();
         clearInterval(this.timer);
+        this.timer = setInterval(this.getStatus,30000);
       } else {
         let url = "/cloud/task/manual/list/" + this.currentPage + "/" + this.pageSize;
         this.condition.accountId = this.accountId;

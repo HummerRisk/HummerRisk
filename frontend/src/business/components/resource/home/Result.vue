@@ -489,7 +489,8 @@ import {ACCOUNT_ID} from "@/common/js/constants";
       getStatus () {
         if (this.checkStatus(this.tableData)) {
           this.search();
-          return;
+          clearInterval(this.timer);
+          this.timer = setInterval(this.getStatus,30000);
         }
         this.$get("/resource/source/" + this.accountId, response => {
           let data = response.data;

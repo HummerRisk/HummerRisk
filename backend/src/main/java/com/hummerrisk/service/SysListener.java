@@ -53,7 +53,7 @@ public class SysListener {
             maps.put("system.java.specification.vender", "Java运行时环境规范供应商：    " + props.getProperty("java.specification.vender"));
             maps.put("system.java.specification.name", "Java运行时环境规范名称：    " + props.getProperty("java.specification.name"));
             maps.put("system.java.class.version", "Java的类格式版本号：    " + props.getProperty("java.class.version"));
-            maps.put("system.java.library.path", "加载库时搜索的路径列表：    " + props.getProperty("java.library.path"));
+            maps.put("system.java.library.path", "Java加载库时搜索的路径列表：    " + props.getProperty("java.library.path"));
             maps.put("system.java.io.tmpdir", "默认的临时文件路径：    " + props.getProperty("java.io.tmpdir"));
             maps.put("system.java.ext.dirs", "一个或多个扩展目录的路径：    " + props.getProperty("java.ext.dirs"));
             maps.put("system.os.name", "操作系统的名称：    " + props.getProperty("os.name"));

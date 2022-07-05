@@ -205,7 +205,7 @@ export default {
 
   methods: {
     handleVuln() {
-      window.open('http://www.cnnvd.org.cn/web/vulnerability/queryLds.tag','target','');
+      window.open('http://www.cnnvd.org.cn/web/vulnerability/queryLds.tag','_blank','');
     },
     //查询列表
     search() {
@@ -219,6 +219,8 @@ export default {
     getStatus () {
       if (this.checkStatus(this.tableData)) {
         this.search();
+        clearInterval(this.timer);
+        this.timer = setInterval(this.getStatus,30000);
       } else {
         for (let data of this.tableData) {
           let url = "/image/getImageResult/";

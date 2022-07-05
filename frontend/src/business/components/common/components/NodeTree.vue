@@ -371,4 +371,8 @@ export default {
   height: 25px;
   line-height: 25px;
 }
+
+.el-input-group{
+  margin: 6px;
+}
 </style>

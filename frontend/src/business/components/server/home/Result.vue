@@ -209,6 +209,8 @@ export default {
     getStatus () {
       if (this.checkStatus(this.tableData)) {
         this.search();
+        clearInterval(this.timer);
+        this.timer = setInterval(this.getStatus,30000);
       } else {
         for (let data of this.tableData) {
           let url = "/server/getServerResult/";

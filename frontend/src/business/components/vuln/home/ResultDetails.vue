@@ -133,7 +133,7 @@ import {_filter, _sort} from "@/common/js/utils";
     },
     methods: {
       handleVuln() {
-        window.open('http://www.cnnvd.org.cn/web/vulnerability/queryLds.tag','target','');
+        window.open('http://www.cnnvd.org.cn/web/vulnerability/queryLds.tag','_blank','');
       },
       sort(column) {
         _sort(column, this.condition);
