@@ -13,8 +13,8 @@
         <el-table-column prop="name" :label="$t('package.name')" min-width="10%" show-overflow-tooltip></el-table-column>
         <el-table-column prop="packageName" :label="$t('package.package_name')" min-width="10%" show-overflow-tooltip></el-table-column>
         <el-table-column prop="size" :label="$t('package.size')" min-width="10%" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="ruleName" :label="$t('package.rule_name')" min-width="11%" show-overflow-tooltip></el-table-column>
-        <el-table-column min-width="8%" :label="$t('package.severity')" column-key="severity">
+        <el-table-column prop="ruleName" :label="$t('package.rule_name')" min-width="10%" show-overflow-tooltip></el-table-column>
+        <el-table-column min-width="6%" :label="$t('package.severity')" column-key="severity">
           <template v-slot:default="{row}">
             <rule-type :row="row"/>
           </template>
@@ -24,7 +24,7 @@
             <el-link type="primary" class="text-click" @click="goResource(scope.row)">{{ scope.row.returnSum }}</el-link>
           </el-tooltip>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('package.result_status')" min-width="15%" prop="resultStatus" sortable show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" :label="$t('package.result_status')" min-width="14%" prop="resultStatus" sortable show-overflow-tooltip>
           <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
           </el-button>
@@ -49,7 +49,7 @@
             <span><i class="el-icon-time"></i> {{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="11%" :label="$t('commons.operating')">
+        <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="result.loading">
     <!--文件上传入口-->
     <!-- 上传组件 -->
     <el-upload action drag :auto-upload="true" :on-change="handleChange" :http-request="submit" :on-progress="uploadProcess"
@@ -45,6 +45,7 @@ export default {
       headers: {
         'Content-Type': 'multipart/form-data'
       },
+      result: {},
     }
   },
   props:['url', 'param'],
@@ -98,7 +99,7 @@ export default {
     },
     handleRemove(file, fileList) {
       this.param.url = file.path;
-      this.$post(this.url + "/" + this.param.id, this.param, () => {
+      this.result = this.$post(this.url + "/" + this.param.id, this.param, () => {
         this.$message({
           message: this.$t("commons.delete_success"),
           duration: 1000
@@ -114,7 +115,7 @@ export default {
         }
         this.percentage += 1; //进度条进度
       }, 80);
-      this.$fileUpload(this.url, file.file, null, this.param, response => {
+      this.result = this.$fileUpload(this.url, file.file, null, this.param, response => {
         if(response.success) {
           this.percentage = 100;//上传成功后直接给了100
           this.$message({

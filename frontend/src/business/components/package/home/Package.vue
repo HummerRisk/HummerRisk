@@ -20,9 +20,9 @@
               </div>
             </el-image>
             <div style="padding: 14px;">
-              <span>{{ data.name }}</span>
+              <span class="da-na">{{ data.name }}</span>
               <el-button size="medium" type="primary" class="round" round>{{ data.size?data.size:'0MB' }}</el-button>
-              <span class="button time">
+              <span class="button time pa-na">
                 <span v-bind:class="{true: 'color-red', false: ''}[!data.packageName]">{{ data.packageName?data.packageName:'No package' }}</span>
               </span>
               <div class="bottom clearfix">
@@ -164,7 +164,7 @@
         @cancel="updateVisible = false"
         :show-pre="preVisible" @preStep="pre()"
         :show-next="nextVisible" @nextStep="next('edit')"
-        :show-confirm="confirmVisible" @confirm="save(editPackageForm, 'edit')"/>
+        :show-confirm="confirmVisible" @confirm="handleClose"/>
     </el-drawer>
     <!--Update package-->
 
@@ -347,11 +347,12 @@ export default {
             return;
           }
           this.save(this.addPackageForm, 'add');
-        }else{
+        } else {
           if (!this.editPackageForm.name) {
             this.$error(this.$t('package.name_not_null'));
             return;
           }
+          this.save(this.editPackageForm, 'edit');
         }
         this.active = 2;
       } else if (this.active === 2) {
@@ -402,12 +403,28 @@ export default {
 .button {
   padding: 0;
   float: right;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  -o-text-overflow:ellipsis;
+  overflow:hidden;
+}
+.da-na {
+  max-width: 15%;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  -o-text-overflow:ellipsis;
+  overflow:hidden;
+}
+
+.pa-na {
+  max-width: 60%;
 }
 
 .el-dropdown-link {
   cursor: pointer;
   color: #409EFF;
 }
+
 .el-icon-arrow-down {
   font-size: 12px;
 }

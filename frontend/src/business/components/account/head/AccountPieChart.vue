@@ -1,6 +1,6 @@
 <template>
   <div>
-    <hr-chart :options="options"></hr-chart>
+    <hr-chart :options="options" :width="280" :height="300"></hr-chart>
   </div>
 </template>
 
@@ -85,10 +85,10 @@ export default {
 
 <style scoped>
 
-.echarts {
-  margin: 0 auto;
-  min-width: 300px;
-  min-height: 200px;
-}
+  .echarts {
+    margin: 0 auto;
+    min-width: 300px;
+    min-height: 200px;
+  }
 
 </style>

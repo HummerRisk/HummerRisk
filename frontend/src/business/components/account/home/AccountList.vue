@@ -30,7 +30,7 @@
 
 <script>
 
-import AccountPieChart from "@/business/components/common/chart/AccountPieChart";
+import AccountPieChart from "../head/AccountPieChart";
 import AccountExpandChart from "@/business/components/common/chart/AccountExpandChart";
 /* eslint-disable */
   export default {
