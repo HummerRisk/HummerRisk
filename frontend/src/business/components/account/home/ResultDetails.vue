@@ -188,7 +188,7 @@ import {_filter, _sort} from "@/common/js/utils";
       },
       back () {
         this.$router.push({
-          path: '/resource/result',
+          path: '/account/result',
         }).catch(error => error);
       },
       goRule (ruleId) {

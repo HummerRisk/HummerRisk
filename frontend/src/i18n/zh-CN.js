@@ -1004,6 +1004,7 @@ export default {
     task_server: '虚拟机资源',
     task_image: '镜像检测资源',
     task_package: '软件包资源',
+    add_fav: '收藏',
   },
   proxy: {
     create: '创建代理',

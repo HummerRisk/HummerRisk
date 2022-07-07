@@ -18,7 +18,7 @@ COPY --from=nuclei-env /usr/local/bin/nuclei /usr/local/bin/nuclei
 
 COPY --from=prowler-env /prowler /prowler
 
-COPY --from=dependency-env /dependency-check /dependency-check
+COPY --from=dependency-env /usr/share /usr/share
 
 COPY --from=xray-env /opt/hummerrisk/xray/ /opt/hummerrisk/xray/
 

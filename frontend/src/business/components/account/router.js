@@ -38,6 +38,11 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/Result'),
     },
     {
+      path: "resultdetails/:id",
+      name: "resultdetails",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/ResultDetails"),
+    },
+    {
       path: "history",
       name: "history",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/History"),

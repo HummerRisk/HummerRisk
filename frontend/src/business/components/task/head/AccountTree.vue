@@ -5,7 +5,6 @@
       :data="extendTreeNodes"
       :default-expanded-keys="expandedNode"
       node-key="id"
-      @node-drag-end="handleDragEnd"
       @node-expand="nodeExpand"
       @node-collapse="nodeCollapse"
       :filter-node-method="filterNode"
@@ -15,18 +14,32 @@
       ref="tree">
 
       <template v-slot:default="{node,data}">
-      <span class="custom-tree-node father" @click="handleNodeSelect(node)">
+        <span class="custom-tree-node father" @click="handleNodeSelect(node)">
 
-        <span v-if="data.isEdit" @click.stop>
-          <el-input  @blur.stop="save(node, data)" v-model="data.name" class="name-input" size="mini" ref="nameInput"/>
+          <span class="node-icon">
+            <i class="el-icon-folder"/>
+          </span>
+          <span class="node-title" v-text="data.name"/>
+
+          <span class="node-operate child">
+            <el-tooltip
+              v-if="node.level === 3 && !data.favour"
+              class="item" effect="dark"
+              :open-delay="200"
+              :content="$t('task.add_fav')"
+              placement="top">
+              <i v-if="true" style="color: red;" @click.stop="favourite(node, data)" class="el-icon-star-off"></i>
+            </el-tooltip>
+            <el-tooltip
+              v-if="node.level === 3 && data.favour"
+              class="item" effect="dark"
+              :open-delay="200"
+              :content="$t('task.add_fav')"
+              placement="top">
+              <i v-if="true" style="color: red;" @click.stop="favourite(node, data)" class="el-icon-star-on"></i>
+            </el-tooltip>
+          </span>
         </span>
-
-        <span v-if="!data.isEdit" class="node-icon">
-          <i class="el-icon-folder"/>
-        </span>
-        <span v-if="!data.isEdit" class="node-title" v-text="data.name"/>
-
-      </span>
       </template>
     </el-tree>
   </div>
@@ -54,9 +67,7 @@ export default {
       type: String,
       default: "view"
     },
-    treeNodes: {
-      type: Array
-    },
+    treeNodes: {},
     allLabel: {
       type: String,
       default() {
@@ -108,6 +119,10 @@ export default {
     }
   },
   methods: {
+    favourite(node, data) {
+      console.log(node, data)
+      this.$emit('favourite', node.data);
+    },
     init() {
       //资源信息树
       this.extendTreeNodes = [];
@@ -153,70 +168,6 @@ export default {
       if (data.id) {
         this.expandedNode.splice(this.expandedNode.indexOf(data.id), 1);
       }
-    },
-    handleDragEnd(draggingNode, dropNode, dropType, ev) {
-      if (dropType === "none" || dropType === undefined) {
-        return;
-      }
-      let param = this.buildParam(draggingNode, dropNode, dropType);
-      let list = [];
-      this.getNodeTree(this.treeNodes, draggingNode.data.id, list);
-      if (param.parentId === 'root') {
-        param.parentId = undefined;
-      }
-      this.$emit('drag', param, list);
-    },
-    buildSaveParam(param, parentData, data) {
-      if (data.id) {
-        param.nodeIds = [];
-        param.type = 'edit';
-        param.id = data.id;
-        param.level = data.level;
-        this.getChildNodeId(data, param.nodeIds);
-      } else {
-        param.level = 1;
-        param.type = 'add';
-        if (parentData.id !== 'root') {
-          // 非根节点
-          param.parentId = parentData.id;
-          param.level = parentData.level + 1;
-        }
-      }
-      param.name = data.name.trim();
-      param.label = data.name;
-    },
-    buildParam(draggingNode, dropNode, dropType) {
-      let param = {};
-      param.id = draggingNode.data.id;
-      param.name = draggingNode.data.name;
-      param.projectId = draggingNode.data.projectId;
-      if (dropType === "inner") {
-        param.parentId = dropNode.data.id;
-        param.level = dropNode.data.level + 1;
-      } else {
-        if (!dropNode.parent.id || dropNode.parent.id === 0) {
-          param.parentId = 0;
-          param.level = 1;
-        } else {
-          param.parentId = dropNode.parent.data.id;
-          param.level = dropNode.parent.data.level + 1;
-        }
-      }
-      let nodeIds = [];
-      this.getChildNodeId(draggingNode.data, nodeIds);
-      if (dropNode.data.level === 1 && dropType !== "inner") {
-        // nodeTree 为需要修改的子节点
-        param.nodeTree = draggingNode.data;
-      } else {
-        for (let i = 0; i < this.treeNodes.length; i++) {
-          param.nodeTree = this.findTreeByNodeId(this.treeNodes[i], dropNode.data.id);
-          if (param.nodeTree) {
-            break;
-          }
-        }
-      }
-      param.nodeIds = nodeIds;
-      return param;
     },
     getNodeTree(nodes, id, list) {
       if (!nodes) {

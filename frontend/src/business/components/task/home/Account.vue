@@ -59,23 +59,13 @@ export default {
       this.result = this.$get("/task/favorite/list", response => {
         if (response.data != undefined && response.data != null) {
           this.favouriteData = response.data;
-          let moduleOptions = [];
-          this.favouriteData.forEach(node => {
-            buildNodePath(node, {path: ''}, moduleOptions);
-          });
-          this.$emit('setModuleOptions', moduleOptions);
         }
       });
 
-      let url = "/server/serverGroupList";
+      let url = "/task/account/list";
       this.result = this.$get(url, response => {
         if (response.data != undefined && response.data != null) {
           this.data = response.data;
-          let moduleOptions = [];
-          this.data.forEach(node => {
-            buildNodePath(node, {path: ''}, moduleOptions);
-          });
-          this.$emit('setModuleOptions', moduleOptions);
         }
       });
     },

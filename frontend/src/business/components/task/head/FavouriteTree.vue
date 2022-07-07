@@ -21,14 +21,21 @@
       <template v-slot:default="{node,data}">
       <span class="custom-tree-node father" @click="handleNodeSelect(node)">
 
-        <span v-if="data.isEdit" @click.stop>
-          <el-input v-model="data.name" class="name-input" size="mini" ref="nameInput"/>
-        </span>
-
         <span class="node-icon">
           <i class="el-icon-star-on"/>
         </span>
         <span class="node-title" v-text="data.name"/>
+
+        <span class="node-operate child">
+            <el-tooltip
+              v-if="node.level === 2"
+              class="item" effect="dark"
+              :open-delay="200"
+              :content="$t('rule.clear')"
+              placement="top">
+              <i style="color: red;" @click.stop="favourite(node, data)" class="el-icon-star-on"></i>
+            </el-tooltip>
+          </span>
 
       </span>
       </template>
@@ -84,6 +91,10 @@ export default {
     }
   },
   methods: {
+    favourite(node, data) {
+      console.log(node, data)
+      this.$emit('favourite', node.data);
+    },
     init() {
       //收藏夹树
       this.favoritesTreeNodes = [];
