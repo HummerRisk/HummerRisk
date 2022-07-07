@@ -500,6 +500,7 @@ public class PlatformUtils {
                 map.put("AccessKeyId", baiduCredential.getAccessKeyId());
                 map.put("SecretAccessKey", baiduCredential.getSecretAccessKey());
                 map.put("Endpoint", baiduCredential.getEndpoint());
+                map.put("region", region);
                 break;
             case qiniu:
                 map.put("type", qiniu);

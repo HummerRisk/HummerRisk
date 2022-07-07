@@ -999,6 +999,11 @@ export default {
     reset: '重置清空',
     save_task: '保存任务',
     favorites: '收藏夹',
+    task_cloud: '云账号资源',
+    task_vuln: '漏洞检测资源',
+    task_server: '虚拟机资源',
+    task_image: '镜像检测资源',
+    task_package: '软件包资源',
   },
   proxy: {
     create: '创建代理',

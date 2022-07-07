@@ -63,40 +63,34 @@ export default {
         return this.$t("task.all_account");
       }
     },
-    allLabel: {
-      type: String,
-      default() {
-        return this.$t("task.all_account");
-      }
-    },
     cloudAccount: {
       type: String,
       default() {
-        return this.$t("task.all_account");
+        return this.$t("task.task_cloud");
       }
     },
     vulnAccount: {
       type: String,
       default() {
-        return this.$t("task.all_account");
+        return this.$t("task.task_vuln");
       }
     },
     serverAccount: {
       type: String,
       default() {
-        return this.$t("task.all_account");
+        return this.$t("task.task_server");
       }
     },
     imageAccount: {
       type: String,
       default() {
-        return this.$t("task.all_account");
+        return this.$t("task.task_image");
       }
     },
     packageAccount: {
       type: String,
       default() {
-        return this.$t("task.all_account");
+        return this.$t("task.task_package");
       }
     },
   },
@@ -121,7 +115,13 @@ export default {
         "id": "root",
         "name": this.allLabel,
         "level": 0,
-        "children": this.treeNodes,
+        "children": [
+          {name: this.cloudAccount, level: 1, children: this.treeNodes.cloudAccount},
+          {name: this.vulnAccount, level: 1, children: this.treeNodes.vulnAccount},
+          {name: this.serverAccount, level: 1, children: this.treeNodes.serverAccount},
+          {name: this.imageAccount, level: 1, children: this.treeNodes.imageAccount},
+          {name: this.packageAccount, level: 1, children: this.treeNodes.packageAccount},
+        ],
       });
       if (this.expandedNode.length === 0) {
         this.expandedNode.push("root");

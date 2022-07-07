@@ -23,5 +23,11 @@ public class TaskController {
         return taskService.listFavorites();
     }
 
+    @ApiOperation(value = "资源信息列表")
+    @GetMapping(value = "account/list")
+    public Object listAccounts() throws Exception {
+        return taskService.listAccounts();
+    }
+
 
 }
