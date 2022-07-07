@@ -112,5 +112,6 @@
 <!--        <table tableName="image_result" domainObjectName="ImageResult"/>-->
 <!--        <table tableName="image_result_item" domainObjectName="ImageResultItem"/>-->
 <!--        <table tableName="image_result_log" domainObjectName="ImageResultLog"/>-->
+<!--        <table tableName="favorite" domainObjectName="Favorite"/>-->
     </context>
 </generatorConfiguration>

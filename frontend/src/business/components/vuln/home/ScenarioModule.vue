@@ -196,6 +196,7 @@ import DialogFooter from "../../common/components/DialogFooter";
 
   .module-input {
     width: 275px;
+    margin: 6px;
   }
 
   .rtl >>> .el-drawer__body {

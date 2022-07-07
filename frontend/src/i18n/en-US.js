@@ -991,6 +991,13 @@ export default {
     task_settings_list: 'Task scheduling settings list',
     task_overview: 'Data analysis',
     task_quartz: 'Scheduled task',
+    task_search: 'Search resource information',
+    all_account: 'All resource information',
+    search_rule: 'Search by rule name',
+    task_name: 'Task name',
+    task_desc: 'Task Notes',
+    reset: 'Reset clear',
+    save_task: 'Save task',
   },
   proxy: {
     create:'Create an agent',

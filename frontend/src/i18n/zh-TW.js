@@ -991,6 +991,13 @@ export default {
     task_settings_list: '任務編排設置列表',
     task_overview: '數據分析',
     task_quartz: '定時任務',
+    task_search: '搜索資源信息',
+    all_account: '所有資源信息',
+    search_rule: '按規則名稱搜索',
+    task_name: '任務名稱',
+    task_desc: '任務備註',
+    reset: '重置清空',
+    save_task: '保存任務',
   },
   proxy: {
     create: '創建代理',

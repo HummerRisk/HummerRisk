@@ -28,6 +28,11 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/QuartzTask'),
     },
     {
+      path: "rule",
+      name: "cloudRule",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/rule/home/Rule"),
+    },
+    {
       path: "result",
       name: "cloudResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/Result'),
