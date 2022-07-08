@@ -61,8 +61,6 @@ import DialogFooter from "../../common/components/DialogFooter";
           return false
         }
       },
-      relevanceProjectId: String,
-      planId: String
     },
     computed: {
     },
@@ -102,12 +100,6 @@ import DialogFooter from "../../common/components/DialogFooter";
       'condition.trashEnable'() {
         this.$emit('enableTrash', this.condition.trashEnable);
       },
-      planId() {
-        this.list();
-      },
-      relevanceProjectId() {
-        this.list();
-      }
     },
     methods: {
       list() {

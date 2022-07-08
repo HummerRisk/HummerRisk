@@ -1005,6 +1005,9 @@ export default {
     task_image: '镜像检测资源',
     task_package: '软件包资源',
     add_fav: '收藏',
+    first_task: '第一步: 选择资源信息',
+    second_task: '第二步: 选择检测规则',
+    third_task: '第三步: 填写编排任务',
   },
   proxy: {
     create: '创建代理',

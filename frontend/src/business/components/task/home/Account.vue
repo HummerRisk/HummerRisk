@@ -1,14 +1,13 @@
 <template>
-  <div class="box-dev">
-
+  <main-container class="box-dev">
     <slot name="header"></slot>
-
     <favourite-tree
       v-loading="result.loading"
       :tree-nodes="favouriteData"
       :type="'view'"
       @nodeSelectEvent="nodeChange"
-      ref="nodeTree">
+      @delFavourite="delFavourite"
+      ref="favouriteTree">
       <template v-slot:header>
         <el-input class="module-input" :placeholder="$t('task.task_search')" v-model="condition.filterText"
                   size="small" :clearable="true">
@@ -24,22 +23,23 @@
       :tree-nodes="data"
       :type="'view'"
       @nodeSelectEvent="nodeChange"
+      @favourite="favourite"
       ref="nodeTree">
     </account-tree>
-
-  </div>
+  </main-container>
 </template>
 
 <script>
-import {buildNodePath} from "@/common/js/NodeTree";
 import FavouriteTree from "@/business/components/task/head/FavouriteTree";
 import AccountTree from "@/business/components/task/head/AccountTree";
+import MainContainer from "../../common/components/MainContainer";
 
 /* eslint-disable */
 export default {
   components: {
     AccountTree,
     FavouriteTree,
+    MainContainer,
   },
   data() {
     return {
@@ -53,6 +53,15 @@ export default {
       currentModule: undefined,
     }
   },
+  watch: {
+    'condition.filterText'(val) {
+      this.$refs.nodeTree.filter(val);
+      this.$refs.favouriteTree.filter(val);
+    },
+    'condition.trashEnable'() {
+      this.$emit('enableTrash', this.condition.trashEnable);
+    },
+  },
   methods: {
     list() {
       //收藏夹
@@ -61,7 +70,7 @@ export default {
           this.favouriteData = response.data;
         }
       });
-
+      //资源信息
       let url = "/task/account/list";
       this.result = this.$get(url, response => {
         if (response.data != undefined && response.data != null) {
@@ -77,6 +86,25 @@ export default {
       } else {
         this.$emit("nodeSelectEvent", node, nodeIds, pNodes);
       }
+    },
+    favourite(data) {
+      let param = {};
+      param = data;
+      param.icon = param.pluginIcon;
+      let url = "/task/addOrDelFavorite";
+      this.result = this.$post(url, param, response => {
+        if (response.data != undefined && response.data != null) {
+          this.list();
+        }
+      });
+    },
+    delFavourite(data) {
+      let url = "/task/favorite/delete/" + data.id;
+      this.result = this.$get(url, response => {
+        if (response.data != undefined && response.data != null) {
+          this.list();
+        }
+      });
     },
   },
   created() {
@@ -151,9 +179,23 @@ export default {
   background: #d3dce6;
   width: 100%;
 }
-.box-dev >>> .module-input {
-
+.box-dev {
+  max-height: 426px;
 }
 /deep/ :focus{outline:0;}
+/deep/ .scrollbar {
+  white-space: nowrap;
+}
+.el-scrollbar {
+  display: flex;
+  justify-content: space-around;
+  padding: 0 10px;
+}
+/deep/ .el-scrollbar__wrap {
+  overflow: scroll;
+  width: 110%;
+  height: 100%;
+}
+
 </style>
 

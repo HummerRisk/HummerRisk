@@ -3,7 +3,7 @@
     <el-tree
       class="filter-tree node-tree"
       :data="extendTreeNodes"
-      :default-expanded-keys="expandedNode"
+      default-expand-all
       node-key="id"
       @node-expand="nodeExpand"
       @node-collapse="nodeCollapse"
@@ -23,20 +23,20 @@
 
           <span class="node-operate child">
             <el-tooltip
-              v-if="node.level === 3 && !data.favour"
-              class="item" effect="dark"
-              :open-delay="200"
-              :content="$t('task.add_fav')"
-              placement="top">
-              <i v-if="true" style="color: red;" @click.stop="favourite(node, data)" class="el-icon-star-off"></i>
-            </el-tooltip>
-            <el-tooltip
               v-if="node.level === 3 && data.favour"
               class="item" effect="dark"
               :open-delay="200"
               :content="$t('task.add_fav')"
               placement="top">
-              <i v-if="true" style="color: red;" @click.stop="favourite(node, data)" class="el-icon-star-on"></i>
+              <i style="color: red;" @click.stop="favourite(node, data)" class="el-icon-star-off"></i>
+            </el-tooltip>
+            <el-tooltip
+              v-if="node.level === 3 && !data.favour"
+              class="item" effect="dark"
+              :open-delay="200"
+              :content="$t('task.add_fav')"
+              placement="top">
+              <i style="color: red;" @click.stop="favourite(node, data)" class="el-icon-star-on"></i>
             </el-tooltip>
           </span>
         </span>
@@ -120,7 +120,6 @@ export default {
   },
   methods: {
     favourite(node, data) {
-      console.log(node, data)
       this.$emit('favourite', node.data);
     },
     init() {
@@ -131,11 +130,11 @@ export default {
         "name": this.allLabel,
         "level": 0,
         "children": [
-          {name: this.cloudAccount, level: 1, children: this.treeNodes.cloudAccount},
-          {name: this.vulnAccount, level: 1, children: this.treeNodes.vulnAccount},
-          {name: this.serverAccount, level: 1, children: this.treeNodes.serverAccount},
-          {name: this.imageAccount, level: 1, children: this.treeNodes.imageAccount},
-          {name: this.packageAccount, level: 1, children: this.treeNodes.packageAccount},
+          {name: this.cloudAccount, level: 1, type: 'cloudAccount', children: this.treeNodes.cloudAccount},
+          {name: this.vulnAccount, level: 1, type: 'vulnAccount', children: this.treeNodes.vulnAccount},
+          {name: this.serverAccount, level: 1, type: 'serverAccount', children: this.treeNodes.serverAccount},
+          {name: this.imageAccount, level: 1, type: 'imageAccount', children: this.treeNodes.imageAccount},
+          {name: this.packageAccount, level: 1, type: 'packageAccount', children: this.treeNodes.packageAccount},
         ],
       });
       if (this.expandedNode.length === 0) {
@@ -243,10 +242,6 @@ export default {
 }
 
 .father .child {
-  display: none;
-}
-
-.father:hover .child {
   display: block;
 }
 
@@ -272,5 +267,9 @@ export default {
 .name-input >>> .el-input__inner {
   height: 25px;
   line-height: 25px;
+}
+
+.node-icon {
+  color: #409eff;
 }
 </style>

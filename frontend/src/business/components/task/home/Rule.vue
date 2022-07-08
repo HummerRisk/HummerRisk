@@ -180,7 +180,7 @@ import RuleType from "./RuleType";
     width: 100%;
   }
   .table-card {
-    max-height: 500px;
+    max-height: 480px;
   }
 
   /deep/ :focus{outline:0;}

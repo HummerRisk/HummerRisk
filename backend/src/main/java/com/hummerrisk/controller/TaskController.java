@@ -1,13 +1,17 @@
 package com.hummerrisk.controller;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.Favorite;
+import com.hummerrisk.commons.utils.PageUtils;
+import com.hummerrisk.commons.utils.Pager;
+import com.hummerrisk.controller.request.rule.CreateRuleRequest;
 import com.hummerrisk.dto.AccountTreeDTO;
+import com.hummerrisk.dto.RuleDTO;
 import com.hummerrisk.service.TaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -32,5 +36,15 @@ public class TaskController {
         return taskService.listAccounts();
     }
 
+    @ApiOperation(value = "添加/取消收藏")
+    @PostMapping(value = "addOrDelFavorite")
+    public Favorite addOrDelFavorite(@RequestBody Favorite favorite) {
+        return taskService.addOrDelFavorite(favorite);
+    }
 
+    @ApiOperation(value = "删除收藏")
+    @GetMapping(value = "favorite/delete/{id}")
+    public void deleteFavorite(@PathVariable String id) {
+        taskService.deleteFavorite(id);
+    }
 }

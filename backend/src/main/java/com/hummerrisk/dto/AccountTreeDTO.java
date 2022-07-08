@@ -4,59 +4,63 @@ import com.hummerrisk.base.domain.Account;
 import com.hummerrisk.base.domain.Image;
 import com.hummerrisk.base.domain.Package;
 import com.hummerrisk.base.domain.Server;
+import com.hummerrisk.controller.request.task.AccountVo;
+import com.hummerrisk.controller.request.task.ImageVo;
+import com.hummerrisk.controller.request.task.PackageVo;
+import com.hummerrisk.controller.request.task.ServerVo;
 
 import java.util.List;
 
 
 public class AccountTreeDTO {
 
-    private List<Account> cloudAccount;
+    private List<AccountVo> cloudAccount;
 
-    private List<Account> vulnAccount;
+    private List<AccountVo> vulnAccount;
 
-    private List<Server> serverAccount;
+    private List<ServerVo> serverAccount;
 
-    private List<Image> imageAccount;
+    private List<ImageVo> imageAccount;
 
-    private List<Package> packageAccount;
+    private List<PackageVo> packageAccount;
 
-    public List<Account> getCloudAccount() {
+    public List<AccountVo> getCloudAccount() {
         return cloudAccount;
     }
 
-    public void setCloudAccount(List<Account> cloudAccount) {
+    public void setCloudAccount(List<AccountVo> cloudAccount) {
         this.cloudAccount = cloudAccount;
     }
 
-    public List<Account> getVulnAccount() {
+    public List<AccountVo> getVulnAccount() {
         return vulnAccount;
     }
 
-    public void setVulnAccount(List<Account> vulnAccount) {
+    public void setVulnAccount(List<AccountVo> vulnAccount) {
         this.vulnAccount = vulnAccount;
     }
 
-    public List<Server> getServerAccount() {
+    public List<ServerVo> getServerAccount() {
         return serverAccount;
     }
 
-    public void setServerAccount(List<Server> serverAccount) {
+    public void setServerAccount(List<ServerVo> serverAccount) {
         this.serverAccount = serverAccount;
     }
 
-    public List<Image> getImageAccount() {
+    public List<ImageVo> getImageAccount() {
         return imageAccount;
     }
 
-    public void setImageAccount(List<Image> imageAccount) {
+    public void setImageAccount(List<ImageVo> imageAccount) {
         this.imageAccount = imageAccount;
     }
 
-    public List<Package> getPackageAccount() {
+    public List<PackageVo> getPackageAccount() {
         return packageAccount;
     }
 
-    public void setPackageAccount(List<Package> packageAccount) {
+    public void setPackageAccount(List<PackageVo> packageAccount) {
         this.packageAccount = packageAccount;
     }
 }

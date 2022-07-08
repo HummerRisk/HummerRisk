@@ -6,8 +6,8 @@
 
     <el-tree
       class="filter-tree node-tree"
-      :data="favoritesTreeNodes"
-      :default-expanded-keys="favoritesNode"
+      :data="extendTreeNodes"
+      :default-expanded-keys="expandedNode"
       node-key="id"
       @node-drag-end="handleDragEnd"
       @node-expand="nodeExpand"
@@ -46,20 +46,18 @@
 <script>
 /* eslint-disable */
 export default {
-  name: "AccountTree",
+  name: "FavouriteTree",
   components: {},
   data() {
     return {
       result: {},
       filterText: "",
       expandedNode: [],
-      favoritesNode: [],
       defaultProps: {
         children: "children",
         label: "label"
       },
       extendTreeNodes: [],
-      favoritesTreeNodes: [],
     };
   },
   props: {
@@ -92,20 +90,19 @@ export default {
   },
   methods: {
     favourite(node, data) {
-      console.log(node, data)
-      this.$emit('favourite', node.data);
+      this.$emit('delFavourite', node.data);
     },
     init() {
       //收藏夹树
-      this.favoritesTreeNodes = [];
-      this.favoritesTreeNodes.unshift({
+      this.extendTreeNodes = [];
+      this.extendTreeNodes.unshift({
         "id": "root",
         "name": this.favoritesLabel,
         "level": 0,
         "children": this.treeNodes,
       });
-      if (this.favoritesNode.length === 0) {
-        this.favoritesNode.push("root");
+      if (this.expandedNode.length === 0) {
+        this.expandedNode.push("root");
       }
     },
     handleNodeSelect(node) {
@@ -273,10 +270,6 @@ export default {
 }
 
 .father .child {
-  display: none;
-}
-
-.father:hover .child {
   display: block;
 }
 

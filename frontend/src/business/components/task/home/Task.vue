@@ -2,15 +2,15 @@
   <main-container>
     <el-card class="table-card" v-loading="result.loading">
       <el-row :gutter="20">
-        <el-col :span="5" style="max-height: 500px;">
-          <el-card class="box-card">
+        <el-col :span="5" style="max-height: 468px;">
+          <el-card class="box-card" style="max-height: 456px;">
             <div slot="header" class="clearfix">
-              <span>资源信息</span>
+              <span>{{ $t('task.first_task') }}</span>
             </div>
-            <account/>
+            <account @nodeSelectEvent="nodeChange"/>
           </el-card>
         </el-col>
-        <el-col :span="19" style="max-height: 500px;">
+        <el-col :span="19" style="max-height: 480px;">
           <rule @addTask="addTask"/>
         </el-col>
       </el-row>
@@ -49,10 +49,12 @@ export default {
   },
   methods: {
     addTask(item) {
-      console.log(222, item);
     },
     confirm() {},
     reset() {},
+    nodeChange(node, nodeIds, pNodes) {
+      console.log("taskaccount", node, nodeIds, pNodes)
+    },
   },
 }
 </script>
