@@ -1,16 +1,13 @@
 <template>
   <div>
-    <el-tag size="mini" type="danger" v-if="row.severity === 'HighRisk'">
-    {{ $t('rule.HighRisk') }}
+    <el-tag size="medium" type="primary" v-if="row.ruleType === 'rule'">
+      {{ $t('task.task_rule') }}
     </el-tag>
-    <el-tag size="mini" type="warning" v-else-if="row.severity === 'MediumRisk'">
-      {{ $t('rule.MediumRisk') }}
+    <el-tag size="medium" type="primary" v-else-if="row.ruleType === 'tag'">
+      {{ $t('task.task_tag') }}
     </el-tag>
-    <el-tag size="mini" type="success" v-else-if="row.severity === 'LowRisk'">
-      {{ $t('rule.LowRisk') }}
-    </el-tag>
-    <el-tag size="mini" type="primary" v-else-if="row.severity === ''">
-      N/A
+    <el-tag size="medium" type="primary" v-else-if="row.ruleType === 'group'">
+      {{ $t('task.task_group') }}
     </el-tag>
   </div>
 </template>

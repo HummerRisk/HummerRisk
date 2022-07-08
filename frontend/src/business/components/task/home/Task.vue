@@ -3,20 +3,20 @@
     <el-card class="table-card" v-loading="result.loading">
       <el-row :gutter="20">
         <el-col :span="5" style="max-height: 468px;">
-          <el-card class="box-card" style="max-height: 456px;">
+          <el-card class="box-card" style="max-height: 489px;">
             <div slot="header" class="clearfix">
               <span>{{ $t('task.first_task') }}</span>
             </div>
             <account @nodeSelectEvent="nodeChange"/>
           </el-card>
         </el-col>
-        <el-col :span="19" style="max-height: 480px;">
-          <rule @addTask="addTask"/>
+        <el-col :span="19" style="max-height: 513px;">
+          <rule :account="account" @addTask="addTask"/>
         </el-col>
       </el-row>
       <el-row :gutter="20">
         <el-col :span="24">
-          <task-order/>
+          <task-order :taskOrder="taskOrder"/>
         </el-col>
       </el-row>
       <div class="dialog-footer">
@@ -45,15 +45,18 @@ export default {
     return {
       result: {},
       loading: false,
+      account: {},
+      taskOrder: {},
     }
   },
   methods: {
     addTask(item) {
+      this.taskOrder = item;
     },
     confirm() {},
     reset() {},
     nodeChange(node, nodeIds, pNodes) {
-      console.log("taskaccount", node, nodeIds, pNodes)
+      this.account = node.data;
     },
   },
 }

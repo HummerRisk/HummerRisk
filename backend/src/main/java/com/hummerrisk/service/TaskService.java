@@ -3,18 +3,20 @@ package com.hummerrisk.service;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtTaskMapper;
+import com.hummerrisk.commons.constants.TaskEnum;
 import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.commons.utils.UUIDUtil;
-import com.hummerrisk.controller.request.task.AccountVo;
-import com.hummerrisk.controller.request.task.ImageVo;
-import com.hummerrisk.controller.request.task.PackageVo;
-import com.hummerrisk.controller.request.task.ServerVo;
+import com.hummerrisk.controller.request.server.ServerRequest;
+import com.hummerrisk.controller.request.task.*;
 import com.hummerrisk.dto.AccountTreeDTO;
+import com.hummerrisk.dto.ServerDTO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -95,6 +97,21 @@ public class TaskService {
 
     public void deleteFavorite(String id) {
         favoriteMapper.deleteByPrimaryKey(id);
+    }
+
+    public List<RuleVo> ruleList(RuleVo ruleVo) {
+        if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.cloudAccount.getType())) {
+            return extTaskMapper.cloudRuleList(ruleVo);
+        } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.vulnAccount.getType())) {
+            return extTaskMapper.vulnRuleList(ruleVo);
+        } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.serverAccount.getType())) {
+            return extTaskMapper.serverRuleList(ruleVo);
+        } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.imageAccount.getType())) {
+            return extTaskMapper.imageRuleList(ruleVo);
+        } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.packageAccount.getType())) {
+            return extTaskMapper.packageRuleList(ruleVo);
+        }
+        return new LinkedList<>();
     }
 
 }

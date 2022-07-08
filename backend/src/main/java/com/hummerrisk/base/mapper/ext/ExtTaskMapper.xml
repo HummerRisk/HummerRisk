@@ -107,21 +107,15 @@
         <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
         <result column="status" jdbcType="VARCHAR" property="status" />
         <result column="create_time" jdbcType="BIGINT" property="createTime" />
-        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
-        <result column="creator" jdbcType="VARCHAR" property="creator" />
-        <result column="repo_id" jdbcType="VARCHAR" property="repoId" />
-        <result column="size" jdbcType="VARCHAR" property="size" />
         <result column="image_url" jdbcType="VARCHAR" property="imageUrl" />
         <result column="image_tag" jdbcType="VARCHAR" property="imageTag" />
         <result column="path" jdbcType="VARCHAR" property="path" />
-        <result column="is_proxy" jdbcType="BIT" property="isProxy" />
-        <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
         <result column="favour" jdbcType="BOOLEAN" property="favour" />
         <result column="type" jdbcType="VARCHAR" property="type" />
     </resultMap>
 
     <select id="selectImageByExample" parameterType="com.hummerrisk.base.domain.ImageExample" resultMap="ImageBaseResultMap">
-        select t.*, (f.id is null) as favour, 'imageAccount' as type
+        select t.id, t.name, t.plugin_icon, t.status, t.image_url, t.image_tag, t.path, t.create_time, (f.id is null) as favour, 'imageAccount' as type
         from image t
         left join favorite f on t.id = f.source_id
         <if test="_parameter != null">
@@ -159,5 +153,115 @@
         <if test="orderByClause != null">
             order by ${orderByClause}
         </if>
+    </select>
+
+    <select id="cloudRuleList" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.controller.request.task.RuleVo">
+        select
+            t.id as sourceId,
+            'rule' as ruleType,
+            t.name as ruleName,
+            t.description as ruleDesc,
+            t.plugin_icon as icon,
+            t.severity,
+            t1.id as accountId,
+            t1.name as accountName,
+            'cloudAccount' as accountType
+        from rule t
+        left join cloud_account t1 on t.plugin_id = t1.plugin_id
+        <where>
+            <if test="accountId != null">
+                AND t1.id = #{accountId}
+            </if>
+            <if test="ruleName != null">
+                AND t.name like CONCAT('%', #{ruleName},'%')
+            </if>
+            and t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+        </where>
+        order by t.last_modified desc
+    </select>
+
+    <select id="vulnRuleList" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.controller.request.task.RuleVo">
+        select
+        t.id as sourceId,
+        'rule' as ruleType,
+        t.name as ruleName,
+        t.description as ruleDesc,
+        t.plugin_icon as icon,
+        t.severity,
+        t1.id as accountId,
+        t1.name as accountName,
+        'vulnAccount' as accountType
+        from rule t
+        left join cloud_account t1 on t.plugin_id = t1.plugin_id
+        <where>
+            <if test="accountId != null">
+                AND t1.id = #{accountId}
+            </if>
+            <if test="ruleName != null">
+                AND t.name like CONCAT('%', #{ruleName},'%')
+            </if>
+            and t.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+        </where>
+        order by t.last_modified desc
+    </select>
+
+    <select id="serverRuleList" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.controller.request.task.RuleVo">
+        select
+        t.id as sourceId,
+        'rule' as ruleType,
+        t.name as ruleName,
+        t.description as ruleDesc,
+        'server.png' as icon,
+        t.severity,
+        (select id from server where id = #{accountId}) as accountId,
+        (select name from server where id = #{accountId}) as accountName,
+        'serverAccount' as accountType
+        from server_rule t
+        <where>
+            <if test="ruleName != null">
+                AND t.name like CONCAT('%', #{ruleName},'%')
+            </if>
+        </where>
+        order by t.update_time desc
+    </select>
+
+    <select id="imageRuleList" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.controller.request.task.RuleVo">
+        select
+        t.id as sourceId,
+        'rule' as ruleType,
+        t.name as ruleName,
+        t.description as ruleDesc,
+        'docker.png' as icon,
+        t.severity,
+        (select id from image where id = #{accountId}) as accountId,
+        (select name from image where id = #{accountId}) as accountName,
+        'imageAccount' as accountType
+        from image_rule t
+        <where>
+            <if test="ruleName != null">
+                AND t.name like CONCAT('%', #{ruleName},'%')
+            </if>
+        </where>
+        order by t.update_time desc
+    </select>
+
+    <select id="packageRuleList" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.controller.request.task.RuleVo">
+        select
+        t.id as sourceId,
+        'rule' as ruleType,
+        t.name as ruleName,
+        t.description as ruleDesc,
+        'package.png' as icon,
+        t.severity,
+        (select id from package where id = #{accountId}) as accountId,
+        (select name from package where id = #{accountId}) as accountName,
+        'packageAccount' as accountType
+        from package_rule t
+        <where>
+            <if test="ruleName != null">
+                AND t.name like CONCAT('%', #{ruleName},'%')
+            </if>
+        </where>
+        order by t.update_time desc
     </select>
 </mapper>

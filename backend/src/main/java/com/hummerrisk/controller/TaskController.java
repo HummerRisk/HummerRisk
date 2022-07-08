@@ -6,8 +6,11 @@ import com.hummerrisk.base.domain.Favorite;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.request.rule.CreateRuleRequest;
+import com.hummerrisk.controller.request.server.ServerRequest;
+import com.hummerrisk.controller.request.task.RuleVo;
 import com.hummerrisk.dto.AccountTreeDTO;
 import com.hummerrisk.dto.RuleDTO;
+import com.hummerrisk.dto.ServerDTO;
 import com.hummerrisk.service.TaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -46,5 +49,13 @@ public class TaskController {
     @GetMapping(value = "favorite/delete/{id}")
     public void deleteFavorite(@PathVariable String id) {
         taskService.deleteFavorite(id);
+    }
+
+    @ApiOperation(value = "检测规则列表")
+    @PostMapping("ruleList/{goPage}/{pageSize}")
+    public Pager<List<RuleVo>> ruleList(
+            @PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleVo ruleVo) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, taskService.ruleList(ruleVo));
     }
 }

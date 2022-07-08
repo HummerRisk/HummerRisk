@@ -93,17 +93,13 @@ export default {
       param.icon = param.pluginIcon;
       let url = "/task/addOrDelFavorite";
       this.result = this.$post(url, param, response => {
-        if (response.data != undefined && response.data != null) {
-          this.list();
-        }
+        this.list();
       });
     },
     delFavourite(data) {
       let url = "/task/favorite/delete/" + data.id;
       this.result = this.$get(url, response => {
-        if (response.data != undefined && response.data != null) {
-          this.list();
-        }
+        this.list();
       });
     },
   },

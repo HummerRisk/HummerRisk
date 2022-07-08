@@ -2,6 +2,9 @@
     <main-container class="main-content-box">
       <el-card class="table-card" v-loading="result.loading">
           <template v-slot:header>
+            <div slot="header" class="clearfix">
+              <span>{{ $t('task.third_task') }}</span>
+            </div>
             <el-row :gutter="20">
               <el-form ref="form" :model="form" label-width="80px">
                 <el-col :span="8">
@@ -47,24 +50,34 @@
 
           <el-table border :data="tableData" class="adjust-table table-content" stripe @filter-change="filter">
             <el-table-column type="index" min-width="3%"/>
-            <el-table-column :label="$t('account.cloud_platform')" min-width="15%" show-overflow-tooltip>
+            <el-table-column :label="$t('task.task_account_name')" min-width="15%" show-overflow-tooltip>
               <template v-slot:default="scope">
-                <span>
-                  <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                   &nbsp;&nbsp; {{ scope.row.pluginName }}
-                </span>
+              <span>
+                <img :src="require(`@/assets/img/platform/${scope.row.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ $t(scope.row.accountName) }}
+              </span>
               </template>
             </el-table-column>
-            <el-table-column prop="name" :label="$t('rule.rule_name')" min-width="20%" show-overflow-tooltip></el-table-column>
-            <el-table-column min-width="8%" :label="$t('rule.severity')" column-key="severity">
+            <el-table-column prop="ruleName" :label="$t('task.task_rule_name')" min-width="20%" show-overflow-tooltip></el-table-column>
+            <el-table-column min-width="10%" :label="$t('task.task_rule_type')" column-key="ruleType">
               <template v-slot:default="{row}">
                 <rule-type :row="row"/>
               </template>
             </el-table-column>
-            <el-table-column prop="description" :label="$t('rule.description')" min-width="45%" show-overflow-tooltip></el-table-column>
+            <el-table-column min-width="10%" :label="$t('task.task_rule_severity')" column-key="severity">
+              <template v-slot:default="{row}">
+                <severity-type :row="row"/>
+              </template>
+            </el-table-column>
+            <el-table-column prop="ruleDesc" :label="$t('task.task_rule_desc')" min-width="30%" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('task.task_order')" min-width="10%" prop="taskOrder">
+              <template slot-scope="scope">
+                <el-input type="number" min="1" v-model="scope.row.taskOrder"></el-input>
+              </template>
+            </el-table-column>
             <el-table-column min-width="9%" :label="$t('commons.operating')" fixed="right">
               <template v-slot:default="scope">
-                <el-button type="danger" plain size="mini" @click="addTask(scope.row)"><i class="el-icon-delete"/>{{ $t('commons.delete') }}</el-button>
+                <el-button type="danger" plain size="mini" @click="deleteTask(scope.row, scope.$index)"><i class="el-icon-delete"/>{{ $t('commons.delete') }}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -83,6 +96,7 @@ import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/RuleDialogFooter";
 import {_filter} from "@/common/js/utils";
 import RuleType from "./RuleType";
+import SeverityType from "./SeverityType";
 
 /* eslint-disable */
   export default {
@@ -94,7 +108,8 @@ import RuleType from "./RuleType";
       TablePagination,
       TableOperator,
       DialogFooter,
-      RuleType
+      RuleType,
+      SeverityType,
     },
     data() {
       return {
@@ -106,48 +121,29 @@ import RuleType from "./RuleType";
         pageSize: 10,
         total: 0,
         loading: false,
-        plugins: [],
-        tags: [],
         form: {},
       }
     },
 
     watch: {
-      '$route': 'init'
+      '$route': 'init',
+      taskOrder: function (val) {
+        val.taskOrder = this.tableData.length + 1;
+        this.init(val);
+      }
+    },
+    props: {
+      taskOrder: Object,
     },
 
     methods: {
+      init(val) {
+        this.tableData.unshift(val);
+        this.total = this.tableData.length;
+      },
       //查询列表
       search() {
-        let url = "/rule/list/" + this.currentPage + "/" + this.pageSize;
-        this.result = this.$post(url, this.condition, response => {
-          let data = response.data;
-          this.total = data.itemCount;
-          this.tableData = data.listObject;
-        });
-      },
-      tagLists() {
-        let url = "/rule/ruleTags";
-        this.result = this.$get(url, response => {
-          this.tags = response.data;
-        });
-      },
-      filterRules (tag) {
-        let key = "";
-        for (let obj of this.tags) {
-          if (tag.label == obj.tagName) {
-            key = obj.tagKey;
-            break;
-          } else {
-            key = 'all';
-          }
-        }
-        if (this.condition.combine) {
-          this.condition.combine.ruleTag = {operator: 'in', value: key};
-        } else {
-          this.condition.combine = {ruleTag: {operator: 'in', value: key }};
-        }
-        this.search();
+
       },
       severityOptionsFnc () {
         this.severityOptions = [
@@ -156,32 +152,16 @@ import RuleType from "./RuleType";
           {key: '高风险', value: "HighRisk"}
         ];
       },
-      ruleSetOptionsFnc (pluginId) {
-        this.$get("/rule/ruleGroups/" + pluginId, res => {
-          this.ruleSetOptions = res.data;
-        });
-      },
-      inspectionSeportOptionsFnc () {
-        this.$get("/rule/all/ruleInspectionReport", res => {
-          this.inspectionSeportOptions = res.data;
-        });
-      },
-      init() {
-        this.tagLists();
-        this.severityOptionsFnc();
-        this.inspectionSeportOptionsFnc();
-        this.search();
-      },
       filter(filters) {
         _filter(filters, this.condition);
-        this.init();
+        this.search();
       },
-      addTask(item) {
-        this.$emit('addTask', item);
+      deleteTask(item, index) {
+        this.tableData.splice(item, index+1);
       }
     },
     created() {
-      this.init();
+      this.search();
     }
 
   }
@@ -189,10 +169,11 @@ import RuleType from "./RuleType";
 
 <style scoped>
   .table-card >>> .el-card__header {
-    padding: 10px 5px 0 5px;
+    padding: 0;
   }
   .main-content-box{
     padding: 0;
+    height: calc(100% - 680px);
   }
   .table-content {
     width: 100%;
@@ -211,6 +192,12 @@ import RuleType from "./RuleType";
   .tag-v{
     margin: 10px;
     cursor:pointer;
+  }
+  .clearfix {
+    padding: 5px 20px;
+    background-color: #b0abab;
+    color: #fff;
+    margin-bottom: 3px;
   }
   /deep/ :focus{outline:0;}
 </style>
