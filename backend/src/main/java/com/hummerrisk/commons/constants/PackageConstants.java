@@ -23,7 +23,7 @@ public class PackageConstants {
      */
     public static final int DEFAULT_FILE_NAME_LENGTH = 100;
 
-    public final static String DEPENDENCY_CHECK = "dependency-check ";
+    public final static String DEPENDENCY_CHECK = "/usr/share/dependency-check/bin/dependency-check.sh ";//mac本地dependency-check
     public final static String PROJECT = "--project ";
     public final static String SCAN = "--scan ";
     public final static String OUT = "-o ";

@@ -42,10 +42,6 @@
         <i class="el-icon-box"></i>
         <span slot="title">{{ $t('package.package_scan') }}</span>
       </el-menu-item>
-      <el-menu-item index="/oss" onselectstart="return false" v-permission="['admin']">
-        <i class="el-icon-folder-opened"></i>
-        <span slot="title">{{ $t('oss.oss_setting') }}</span>
-      </el-menu-item>
       <el-menu-item index="/task" onselectstart="return false" v-permission="['admin']">
         <i class="el-icon-s-operation"></i>
         <span slot="title">{{ $t('task.task_setting') }}</span>

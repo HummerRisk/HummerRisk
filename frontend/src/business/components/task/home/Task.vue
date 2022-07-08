@@ -2,7 +2,7 @@
   <main-container>
     <el-card class="table-card" v-loading="result.loading">
       <el-row :gutter="20">
-        <el-col :span="5" tyle="max-height: 500px;">
+        <el-col :span="5" style="max-height: 500px;">
           <el-card class="box-card">
             <div slot="header" class="clearfix">
               <span>资源信息</span>
