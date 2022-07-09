@@ -19,10 +19,6 @@
           <task-order :taskOrder="taskOrder"/>
         </el-col>
       </el-row>
-      <div class="dialog-footer">
-        <el-button @click="reset">{{ $t('task.reset') }}</el-button>
-        <el-button type="primary" @click="confirm" @keydown.enter.native.prevent>{{ $t('task.save_task') }}</el-button>
-      </div>
     </el-card>
   </main-container>
 </template>
@@ -53,9 +49,11 @@ export default {
     addTask(item) {
       this.taskOrder = item;
     },
-    confirm() {},
-    reset() {},
     nodeChange(node, nodeIds, pNodes) {
+      if(node.data.id === "root" || !node.data.id) {
+        this.$warning(this.$t('task.task_tree_child'));
+        return;
+      }
       this.account = node.data;
     },
   },
@@ -74,9 +72,6 @@ export default {
 .box-card >>> .el-card__body {
   padding: 10px;
   min-height: 405px;
-}
-.dialog-footer {
-  text-align: center;
 }
 </style>
 

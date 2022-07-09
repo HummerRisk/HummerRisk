@@ -83,6 +83,10 @@
           </el-table>
           <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
+      <div class="dialog-footer">
+        <el-button @click="reset">{{ $t('task.reset') }}</el-button>
+        <el-button type="primary" @click="confirm" @keydown.enter.native.prevent>{{ $t('task.save_task') }}</el-button>
+      </div>
     </main-container>
 </template>
 
@@ -158,7 +162,11 @@ import SeverityType from "./SeverityType";
       },
       deleteTask(item, index) {
         this.tableData.splice(item, index+1);
-      }
+      },
+      confirm() {},
+      reset() {
+        this.tableData = [];
+      },
     },
     created() {
       this.search();
@@ -189,15 +197,14 @@ import SeverityType from "./SeverityType";
     padding: 10px 10%;
     width: 47%;
   }
-  .tag-v{
-    margin: 10px;
-    cursor:pointer;
-  }
   .clearfix {
     padding: 5px 20px;
     background-color: #b0abab;
     color: #fff;
     margin-bottom: 3px;
+  }
+  .dialog-footer {
+    text-align: center;
   }
   /deep/ :focus{outline:0;}
 </style>

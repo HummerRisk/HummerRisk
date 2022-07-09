@@ -1017,6 +1017,7 @@ export default {
     task_order: '任务排序',
     task_account_name: '资源名称',
     task_rule_type: '规则类型',
+    task_tree_child: '该节点不是叶子节点，请点击最叶子节点获取资源信息',
   },
   proxy: {
     create: '创建代理',

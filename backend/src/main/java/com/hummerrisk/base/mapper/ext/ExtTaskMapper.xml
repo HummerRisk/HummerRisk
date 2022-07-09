@@ -222,7 +222,7 @@
                 AND t.name like CONCAT('%', #{ruleName},'%')
             </if>
         </where>
-        order by t.update_time desc
+        order by t.last_modified desc
     </select>
 
     <select id="imageRuleList" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.controller.request.task.RuleVo">
@@ -242,7 +242,7 @@
                 AND t.name like CONCAT('%', #{ruleName},'%')
             </if>
         </where>
-        order by t.update_time desc
+        order by t.last_modified desc
     </select>
 
     <select id="packageRuleList" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.controller.request.task.RuleVo">
@@ -262,6 +262,6 @@
                 AND t.name like CONCAT('%', #{ruleName},'%')
             </if>
         </where>
-        order by t.update_time desc
+        order by t.last_modified desc
     </select>
 </mapper>
