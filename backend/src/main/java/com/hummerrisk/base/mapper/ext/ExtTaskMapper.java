@@ -36,4 +36,8 @@ public interface ExtTaskMapper {
     List<RuleVo> imageRuleList(RuleVo ruleVo);
 
     List<RuleVo> packageRuleList(RuleVo ruleVo);
+
+    List<RuleVo> ruleTagList(RuleVo ruleVo);
+
+    List<RuleVo> ruleGroupList(RuleVo ruleVo);
 }

@@ -114,4 +114,12 @@ public class TaskService {
         return new LinkedList<>();
     }
 
+    public List<RuleVo> ruleTagList(RuleVo ruleVo) {
+        return extTaskMapper.ruleTagList(ruleVo);
+    }
+
+    public List<RuleVo> ruleGroupList(RuleVo ruleVo) {
+        return extTaskMapper.ruleGroupList(ruleVo);
+    }
+
 }

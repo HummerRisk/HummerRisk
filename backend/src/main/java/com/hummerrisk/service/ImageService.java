@@ -443,6 +443,7 @@ public class ImageService {
                 fileName = ImageConstants.DEFAULT_BASE_DIR + image.getPath();
             }
             String command = _proxy + scanType + fileName + ImageConstants.SCOPE + ImageConstants.OUT + outType + ImageConstants._FILE + ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT;
+            LogUtil.info(image.getId() + " {image}[command]: " + image.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, ImageConstants.DEFAULT_BASE_DIR);
             return resultStr;
         } catch (Exception e) {

@@ -156,6 +156,7 @@ public class ServerService {
             if(server.getIsProxy()!=null && server.getIsProxy()) {
                 proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
             }
+            LogUtil.info(server.getId() + " {server}[command]: " + server.getName() + "   "  + script);
             String returnLog = execute(server.getIp(), server.getUserName(), server.getPassword(), script, proxy);
             result.setReturnLog(returnLog);
             result.setUpdateTime(System.currentTimeMillis());

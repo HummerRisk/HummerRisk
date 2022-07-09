@@ -341,11 +341,11 @@ export default {
     }
   },
   created() {
-  },
-  mounted() {
-    this.timer = setInterval(this.getStatus,5000);
     this.init();
     this.location = window.location.href.split("#")[0];
+    this.timer = setInterval(this.getStatus,5000);
+  },
+  mounted() {
   },
   beforeDestroy() {
     clearInterval(this.timer);

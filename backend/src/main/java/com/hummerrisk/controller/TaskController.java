@@ -53,9 +53,22 @@ public class TaskController {
 
     @ApiOperation(value = "检测规则列表")
     @PostMapping("ruleList/{goPage}/{pageSize}")
-    public Pager<List<RuleVo>> ruleList(
-            @PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleVo ruleVo) {
+    public Pager<List<RuleVo>> ruleList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleVo ruleVo) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, taskService.ruleList(ruleVo));
+    }
+
+    @ApiOperation(value = "检测规则标签列表")
+    @PostMapping("ruleTagList/{goPage}/{pageSize}")
+    public Pager<List<RuleVo>> ruleTagList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleVo ruleVo) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, taskService.ruleTagList(ruleVo));
+    }
+
+    @ApiOperation(value = "检测规则分组列表")
+    @PostMapping("ruleGroupList/{goPage}/{pageSize}")
+    public Pager<List<RuleVo>> ruleGroupList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleVo ruleVo) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, taskService.ruleGroupList(ruleVo));
     }
 }

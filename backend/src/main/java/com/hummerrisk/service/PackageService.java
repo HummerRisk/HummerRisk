@@ -452,7 +452,7 @@ public class PackageService {
             String fileName = !aPackage.getPath().isEmpty()?aPackage.getPath().split("/")[aPackage.getPath().split("/").length-1]:"";
             String suffix = StringUtils.isNotBlank(fileName)?fileName.split("\\.")[fileName.split("\\.").length-1]:"";
             String path = PackageConstants.DEFAULT_BASE_DIR + aPackage.getPath();//jar包路径，项目外
-            String command = PackageConstants.DEPENDENCY_CHECK + PackageConstants.PROJECT + aPackage.getName() + " " +
+            String command = PackageConstants.DEPENDENCY_CHECK +
                     PackageConstants.SCAN + path + " ";
             if (StringUtils.equalsIgnoreCase(outType, "json")) {
                 command =  _proxy + command +
@@ -463,6 +463,7 @@ public class PackageService {
                         PackageConstants.FORMAT + PackageConstants.HTML + " " +
                         PackageConstants.OUT + path.replace(suffix, "html");
             }
+            LogUtil.info(aPackage.getId() + " {package}[command]: " + aPackage.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, PackageConstants.DEFAULT_BASE_DIR);
             return resultStr;
         } catch (Exception e) {
