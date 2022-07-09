@@ -222,8 +222,6 @@ import CodeDiff from 'vue-code-diff';
         ],
       }
     },
-    created() {
-    },
     computed: {
     },
     methods: {
@@ -314,7 +312,7 @@ import CodeDiff from 'vue-code-diff';
         this.innerDrawer = true;
       },
     },
-    mounted() {
+    created() {
       this.init();
     },
   }

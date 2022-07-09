@@ -8,12 +8,16 @@
             {{ $t("task.task_setting") }}
           </el-menu-item>
 
+          <el-menu-item :index="'/task/list'">
+            {{ $t("task.task_list") }}
+          </el-menu-item>
+
           <el-menu-item :index="'/task/quartz'">
             {{ $t("task.task_quartz") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/task/overview'">
-            {{ $t("task.task_overview") }}
+          <el-menu-item :index="'/task/report'">
+            {{ $t("task.task_report") }}
           </el-menu-item>
 
         </el-menu>

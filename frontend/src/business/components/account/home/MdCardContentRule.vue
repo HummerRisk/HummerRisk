@@ -174,7 +174,7 @@ const assets = [
         return "cloud_done";
       },
     },
-    mounted() {
+    created() {
       this.init();
     },
   }

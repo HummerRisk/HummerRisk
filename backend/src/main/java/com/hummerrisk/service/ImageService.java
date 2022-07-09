@@ -282,7 +282,7 @@ public class ImageService {
 
     }
 
-    public void createScan (ImageResultWithBLOBs result) {
+    public void createScan (ImageResultWithBLOBs result) throws Exception {
         try {
             ImageRuleRequest request = new ImageRuleRequest();
             request.setId(result.getRuleId());
@@ -324,12 +324,12 @@ public class ImageService {
             noticeService.createImageMessageOrder(result);
             saveImageResultLog(result.getId(), Translator.get("i18n_end_image_result"), "", true);
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
+            LogUtil.error("create ImageResult: " + e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             imageResultMapper.updateByPrimaryKeySelective(result);
             saveImageResultLog(result.getId(), Translator.get("i18n_operation_ex") + ": " + e.getMessage(), e.getMessage(), false);
-            throw new HRException(e.getMessage());
+            throw e;
         }
     }
 

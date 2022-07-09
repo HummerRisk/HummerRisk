@@ -13,14 +13,19 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/task/home/Task'),
     },
     {
-      path: "quartz",
-      name: "quartz",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/task/home/Task'),
+      path: "list",
+      name: "list",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/task/home/List'),
     },
     {
-      path: "overview",
-      name: "overview",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/task/home/Overview'),
+      path: "quartz",
+      name: "quartz",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/task/home/Quartz'),
+    },
+    {
+      path: "report",
+      name: "report",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/task/home/Report'),
     },
   ]
 }

@@ -58,9 +58,6 @@ import RuleListExpandChart from "@/business/components/common/chart/RuleListExpa
         this.dialogVisible = false;
       }
     },
-
-    mounted() {
-    },
   }
 </script>
 

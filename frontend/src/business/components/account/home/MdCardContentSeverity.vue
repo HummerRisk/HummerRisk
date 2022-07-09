@@ -80,7 +80,7 @@
         });
       },
     },
-    mounted() {
+    created() {
       this.init();
     },
   }

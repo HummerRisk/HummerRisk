@@ -603,10 +603,8 @@ import {ACCOUNT_ID} from "@/common/js/constants";
       }
     },
     created() {
-    },
-    mounted() {
-      this.timer = setInterval(this.getStatus,5000);
       this.init();
+      this.timer = setInterval(this.getStatus,5000);
     },
     beforeDestroy() {
       clearInterval(this.timer);

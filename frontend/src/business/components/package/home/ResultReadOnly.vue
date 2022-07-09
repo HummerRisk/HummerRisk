@@ -92,7 +92,7 @@
         return this.$refs.cmEditor.codemirror
       }
     },
-    mounted() {
+    created() {
       this.init();
     }
   }

@@ -345,8 +345,6 @@ export default {
     this.location = window.location.href.split("#")[0];
     this.timer = setInterval(this.getStatus,5000);
   },
-  mounted() {
-  },
   beforeDestroy() {
     clearInterval(this.timer);
   }

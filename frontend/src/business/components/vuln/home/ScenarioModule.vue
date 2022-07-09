@@ -81,7 +81,7 @@ import DialogFooter from "../../common/components/DialogFooter";
         },
       }
     },
-    mounted() {
+    created() {
       this.accountId = getCurrentAccountID();
       this.list();
       this.activePlugin();

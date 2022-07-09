@@ -102,7 +102,7 @@
       },
       goResource() {},
     },
-    mounted() {
+    created() {
       this.init();
     },
   }

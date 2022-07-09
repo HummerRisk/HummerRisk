@@ -42,10 +42,8 @@ export default {
       searchValue: '',
     }
   },
-  mounted() {
-    this.search(null);
-  },
   created() {
+    this.search(null);
   },
   methods: {
     search(value) {

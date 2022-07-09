@@ -278,7 +278,7 @@ public class PackageService {
         }
     }
 
-    public void createScan (PackageResultWithBLOBs result) {
+    public void createScan (PackageResultWithBLOBs result) throws Exception {
         try {
             PackageRuleRequest request = new PackageRuleRequest();
             request.setId(result.getRuleId());
@@ -321,12 +321,12 @@ public class PackageService {
             noticeService.createPackageMessageOrder(result);
             savePackageResultLog(result.getId(), Translator.get("i18n_end_package_result"), "", true);
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
+            LogUtil.error("create PackageResult: " + e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             packageResultMapper.updateByPrimaryKeySelective(result);
             savePackageResultLog(result.getId(), Translator.get("i18n_operation_ex") + ": " + e.getMessage(), e.getMessage(), false);
-            throw new HRException(e.getMessage());
+            throw e;
         }
     }
 

@@ -48,7 +48,7 @@
             </el-row>
           </template>
 
-          <el-table border :data="tableData" class="adjust-table table-content" stripe @filter-change="filter">
+          <el-table border :data="tableData" :key="itemKey" class="adjust-table table-content" stripe @filter-change="filter">
             <el-table-column type="index" min-width="3%"/>
             <el-table-column :label="$t('task.task_account_name')" min-width="15%" show-overflow-tooltip>
               <template v-slot:default="scope">
@@ -70,9 +70,9 @@
               </template>
             </el-table-column>
             <el-table-column prop="ruleDesc" :label="$t('task.task_rule_desc')" min-width="30%" show-overflow-tooltip></el-table-column>
-            <el-table-column :label="$t('task.task_order')" min-width="10%" prop="taskOrder">
+            <el-table-column :label="$t('task.task_order')" min-width="10%">
               <template slot-scope="scope">
-                <el-input type="number" min="1" v-model="scope.row.taskOrder"></el-input>
+                <el-input type="number" @input="change($event)" v-model="scope.row.taskOrder" :key="scope.$index"/>
               </template>
             </el-table-column>
             <el-table-column min-width="9%" :label="$t('commons.operating')" fixed="right">
@@ -81,7 +81,11 @@
               </template>
             </el-table-column>
           </el-table>
-          <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
+          <el-row type="flex" justify="end">
+            <div class="table-page">
+              {{ $t('task.page_total', [total]) }}
+            </div>
+          </el-row>
       </el-card>
       <div class="dialog-footer">
         <el-button @click="reset">{{ $t('task.reset') }}</el-button>
@@ -95,7 +99,6 @@ import TableOperators from "../../common/components/TableOperators";
 import MainContainer from "../../common/components/MainContainer";
 import Container from "../../common/components/Container";
 import TableHeader from "../../common/components/TableHeader";
-import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/RuleDialogFooter";
 import {_filter} from "@/common/js/utils";
@@ -109,7 +112,6 @@ import SeverityType from "./SeverityType";
       MainContainer,
       Container,
       TableHeader,
-      TablePagination,
       TableOperator,
       DialogFooter,
       RuleType,
@@ -126,6 +128,7 @@ import SeverityType from "./SeverityType";
         total: 0,
         loading: false,
         form: {},
+        itemKey: Math.random(),
       }
     },
 
@@ -139,11 +142,31 @@ import SeverityType from "./SeverityType";
     props: {
       taskOrder: Object,
     },
-
     methods: {
+      change(e) {
+        //3种方法都没效果
+        // 1. 在nextTick中使用this.$refs.table.doLayout()
+        // 2. 在data赋值前清空tableData
+        // 3. 强制刷新：this.$forceUpdate()
+        //el-table表格数据变化，页面不更新问题。给table加个key，页面就能更新了
+        this.itemKey = Math.random();
+      },
       init(val) {
         this.tableData.unshift(val);
         this.total = this.tableData.length;
+
+        // 按照order值排序数组
+        this.tableData.sort(function (a, b) {
+          let aVal = a.taskOrder;
+          let bVal = b.taskOrder;
+          if (aVal < bVal) {
+            return -1;
+          }
+          if (aVal > bVal) {
+            return 1;
+          }
+          return 0;
+        });
       },
       //查询列表
       search() {
@@ -205,6 +228,9 @@ import SeverityType from "./SeverityType";
   }
   .dialog-footer {
     text-align: center;
+  }
+  .table-page {
+    padding-top: 20px;
   }
   /deep/ :focus{outline:0;}
 </style>

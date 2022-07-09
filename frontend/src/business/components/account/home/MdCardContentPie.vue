@@ -20,7 +20,7 @@ import DashboardPieChart from "@/business/components/common/chart/DashboardPieCh
       init() {
       },
     },
-    mounted() {
+    created() {
       this.init();
     },
   }

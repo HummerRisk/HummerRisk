@@ -1018,6 +1018,9 @@ export default {
     task_account_name: '资源名称',
     task_rule_type: '规则类型',
     task_tree_child: '该节点不是叶子节点，请点击最叶子节点获取资源信息',
+    task_list: '任务列表',
+    task_report: '任务报告',
+    page_total: '共 {0} 条',
   },
   proxy: {
     create: '创建代理',

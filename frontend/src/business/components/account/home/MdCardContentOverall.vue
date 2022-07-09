@@ -72,7 +72,7 @@ import RuleGroupPieChart from "@/business/components/common/chart/RuleGroupPieCh
         return "";
       },
     },
-    mounted() {
+    created() {
       this.init();
     },
   }
