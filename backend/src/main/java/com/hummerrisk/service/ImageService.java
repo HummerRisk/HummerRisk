@@ -334,6 +334,7 @@ public class ImageService {
     }
 
     void saveResultItem(ImageResult result, String line) {
+        if(line.contains("NAME INSTALLED FIXED-IN TYPE VULNERABILITY SEVERITY")) {return;}
         ImageResultItem imageResultItem = new ImageResultItem();
         imageResultItem.setId(UUIDUtil.newUUID());
         imageResultItem.setSeverity(result.getSeverity());
