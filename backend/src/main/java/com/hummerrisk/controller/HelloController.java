@@ -18,6 +18,6 @@ public class HelloController {
 
     @GetMapping("hello")
     public String hello() {
-        return messageSource.getMessage("max_thread_insufficient", null, "默认值", LocaleContextHolder.getLocale());
+        return messageSource.getMessage("i18n_operation_begin", null, "默认值", LocaleContextHolder.getLocale());
     }
 }
