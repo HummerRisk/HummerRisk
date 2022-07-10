@@ -468,8 +468,10 @@ public class ImageService {
 
     public ImageResultWithBLOBs getImageResult(String resultId) {
         ImageResultWithBLOBs imageResultWithBLOBs = imageResultMapper.selectByPrimaryKey(resultId);
-        imageResultWithBLOBs.setGrypeJson(accountService.toJSONString(imageResultWithBLOBs.getGrypeJson()!=null? imageResultWithBLOBs.getGrypeJson():"{}"));
-        imageResultWithBLOBs.setSyftJson(accountService.toJSONString(imageResultWithBLOBs.getSyftJson()!=null? imageResultWithBLOBs.getSyftJson():"{}"));
+        if(imageResultWithBLOBs!=null) {
+            imageResultWithBLOBs.setGrypeJson(accountService.toJSONString(imageResultWithBLOBs.getGrypeJson()!=null? imageResultWithBLOBs.getGrypeJson():"{}"));
+            imageResultWithBLOBs.setSyftJson(accountService.toJSONString(imageResultWithBLOBs.getSyftJson()!=null? imageResultWithBLOBs.getSyftJson():"{}"));
+        }
         return imageResultWithBLOBs;
     }
 
