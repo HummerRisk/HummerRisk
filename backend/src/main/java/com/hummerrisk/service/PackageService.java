@@ -330,6 +330,11 @@ public class PackageService {
         }
     }
 
+    public void updateStatus(PackageResultWithBLOBs result) {
+        result.setResultStatus(CloudTaskConstants.TASK_STATUS.PROCESSING.toString());
+        packageResultMapper.updateByPrimaryKeySelective(result);
+    }
+
     void saveResultItem(PackageResult result, JSONObject jsonObject) {
         PackageResultItem packageResultItem = new PackageResultItem();
         packageResultItem.setId(UUIDUtil.newUUID());
@@ -465,6 +470,9 @@ public class PackageService {
             }
             LogUtil.info(aPackage.getId() + " {package}[command]: " + aPackage.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, PackageConstants.DEFAULT_BASE_DIR);
+            if(resultStr.contains("ERROR")) {
+                throw new Exception(resultStr);
+            }
             return resultStr;
         } catch (Exception e) {
             return "";
@@ -486,7 +494,7 @@ public class PackageService {
 
     public PackageResultWithBLOBs getPackageResult(String resultId) {
         PackageResultWithBLOBs packageResultWithBLOBs = packageResultMapper.selectByPrimaryKey(resultId);
-        packageResultWithBLOBs.setReturnJson(accountService.toJSONString(packageResultWithBLOBs.getReturnJson()!=null? packageResultWithBLOBs.getReturnJson():"{}"));
+        if(packageResultWithBLOBs!=null) packageResultWithBLOBs.setReturnJson(accountService.toJSONString(packageResultWithBLOBs.getReturnJson()!=null? packageResultWithBLOBs.getReturnJson():"{}"));
         return packageResultWithBLOBs;
     }
 

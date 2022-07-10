@@ -905,6 +905,7 @@ export default {
     syft_json: '镜像检测 SBOM JSON',
     back_resource: '返回镜像检测结果列表',
     result_details_list: '镜像检测结果详情列表',
+    image_note: '注: 私有镜像请绑定镜像仓库!',
   },
   package: {
     package_setting: '软件包管理',
@@ -953,6 +954,7 @@ export default {
     result_still_run: '检测还在持续，暂时没有检测结果，请耐心等待',
     back_resource: '返回软件包检测结果列表',
     result_details_list: '软件包检测结果详情列表',
+    package_note: '注: 软件包检测时间较长，请耐心等待输出结果!',
   },
   vuln: {
     vuln_setting: '漏洞检测',

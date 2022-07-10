@@ -77,6 +77,9 @@
                 </el-option>
               </el-select>
             </el-form-item>
+            <el-form-item>
+              <span style="color: red">{{ $t('package.package_note') }}</span>
+            </el-form-item>
           </div>
         </div>
         <div v-if="active == 2">
@@ -137,6 +140,9 @@
                   &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
                 </el-option>
               </el-select>
+            </el-form-item>
+            <el-form-item>
+              <span style="color: red">{{ $t('package.package_note') }}</span>
             </el-form-item>
           </div>
         </div>

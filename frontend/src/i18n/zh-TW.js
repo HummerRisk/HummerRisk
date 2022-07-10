@@ -905,6 +905,7 @@ export default {
     syft_json: '鏡像檢測 SBOM JSON',
     back_resource: '返回鏡像檢測結果列表',
     result_details_list: '鏡像檢測結果詳情列表',
+    image_note: '注: 私有鏡像請綁定鏡像倉庫!',
   },
   package: {
     package_setting: '軟件包管理',
@@ -953,6 +954,7 @@ export default {
     result_still_run: '檢測還在持續，暫時沒有檢測結果，請耐心等待',
     back_resource: '返回軟件包檢測結果列表',
     result_details_list: '軟件包檢測結果詳情列表',
+    package_note: '注: 軟件包檢測時間較長，請耐心等待輸出結果!',
   },
   vuln: {
     vuln_setting: '漏洞檢測',
@@ -1017,6 +1019,10 @@ export default {
     task_order: '任務排序',
     task_account_name: '資源名稱',
     task_rule_type: '規則類型',
+    task_tree_child: '該節點不是葉子節點，請點擊最葉子節點獲取資源信息',
+    task_list: '任務列表',
+    task_report: '任務報告',
+    page_total: '共 {0} 條',
   },
   proxy: {
     create: '創建代理',

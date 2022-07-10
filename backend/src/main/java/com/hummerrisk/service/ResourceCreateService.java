@@ -140,6 +140,7 @@ public class ResourceCreateService {
                 processingGroupIdMap.put(packageToBeProceed.getId(), packageToBeProceed.getId());
                 commonThreadPool.addTask(() -> {
                     try {
+                        packageService.updateStatus(packageToBeProceed);
                         packageService.createScan(packageToBeProceed);
                     } catch (Exception e) {
                         LogUtil.error(e);
@@ -206,6 +207,7 @@ public class ResourceCreateService {
                 processingGroupIdMap.put(imageToBeProceed.getId(), imageToBeProceed.getId());
                 commonThreadPool.addTask(() -> {
                     try {
+                        imageService.updateStatus(imageToBeProceed);
                         imageService.createScan(imageToBeProceed);
                     } catch (Exception e) {
                         LogUtil.error(e);

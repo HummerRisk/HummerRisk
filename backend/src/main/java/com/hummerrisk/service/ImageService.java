@@ -315,15 +315,18 @@ public class ImageService {
             }
             String log = execute(image, dto, ImageConstants.GRYPE, ImageConstants.TABLE);
             String grypeTable = "", grypeJson = "", syftTable = "", syftJson = "";
-            if (!log.contains("docker login")) {
-                grypeTable = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
-                execute(image, dto, ImageConstants.GRYPE, ImageConstants.JSON);
-                grypeJson = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
-                execute(image, dto, ImageConstants.SYFT, ImageConstants.TABLE);
-                syftTable = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
-                execute(image, dto, ImageConstants.SYFT, ImageConstants.JSON);
-                syftJson = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
+            if (log.contains("docker login")) {
+                throw new Exception(log);
             }
+
+            execute(image, dto, ImageConstants.GRYPE, ImageConstants.TABLE);
+            grypeTable = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
+            execute(image, dto, ImageConstants.GRYPE, ImageConstants.JSON);
+            grypeJson = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
+            execute(image, dto, ImageConstants.SYFT, ImageConstants.TABLE);
+            syftTable = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
+            execute(image, dto, ImageConstants.SYFT, ImageConstants.JSON);
+            syftJson = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
 
             result.setReturnLog(log);
             result.setGrypeTable(grypeTable);
@@ -350,6 +353,11 @@ public class ImageService {
             saveImageResultLog(result.getId(), Translator.get("i18n_operation_ex") + ": " + e.getMessage(), e.getMessage(), false);
             throw e;
         }
+    }
+
+    public void updateStatus(ImageResultWithBLOBs result) {
+        result.setResultStatus(CloudTaskConstants.TASK_STATUS.PROCESSING.toString());
+        imageResultMapper.updateByPrimaryKeySelective(result);
     }
 
     void saveResultItem(ImageResult result, String line) {
@@ -470,6 +478,9 @@ public class ImageService {
             String command = _proxy + dockerLogin + scanType + fileName + ImageConstants.SCOPE + ImageConstants.OUT + outType + ImageConstants._FILE + ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT;
             LogUtil.info(image.getId() + " {image}[command]: " + image.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, ImageConstants.DEFAULT_BASE_DIR);
+            if(resultStr.contains("ERROR")) {
+                throw new Exception(resultStr);
+            }
             return resultStr;
         } catch (Exception e) {
             return "";

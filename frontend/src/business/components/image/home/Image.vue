@@ -149,6 +149,9 @@
         <el-form-item v-if="form.type==='tar'" :label="$t('image.image_url')" ref="type" prop="type">
           <image-tar-upload v-on:appendTar="appendTar" v-model="form.path" :param="form.path"/>
         </el-form-item>
+        <el-form-item>
+          <span style="color: red">{{ $t('image.image_note') }}</span>
+        </el-form-item>
       </el-form>
       <div style="margin: 10px;">
         <dialog-footer
@@ -218,6 +221,9 @@
         </el-form-item>
         <el-form-item v-if="form.type==='tar'" :label="$t('image.image_url')" ref="type" prop="type">
           <image-tar-upload v-on:appendTar="appendTar" v-model="form.path" :param="form.path"/>
+        </el-form-item>
+        <el-form-item>
+          <span style="color: red">{{ $t('image.image_note') }}</span>
         </el-form-item>
       </el-form>
       <div style="margin: 10px;">

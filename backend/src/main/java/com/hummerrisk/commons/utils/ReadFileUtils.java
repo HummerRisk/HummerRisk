@@ -96,10 +96,10 @@ public class ReadFileUtils {
             is.close();
         } catch (FileNotFoundException e) {
             LogUtil.error("File not found!" + e.getMessage());
-            return "File not found!" + e.getMessage();
+            throw new FileNotFoundException("File not found!" + e.getMessage());
         } catch (IOException e) {
             LogUtil.error(e.getMessage());
-            return e.getMessage();
+            throw new IOException(e.getMessage());
         }
         return sb.toString();
     }
@@ -127,7 +127,7 @@ public class ReadFileUtils {
             return sb.toString();
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
-            return e.getMessage();
+            throw new Exception(e.getMessage());
         } finally {
             if (is != null) {
                 try {
@@ -168,10 +168,10 @@ public class ReadFileUtils {
             is.close();
         } catch (FileNotFoundException e) {
             LogUtil.error("File not found!" + e.getMessage());
-            return "[{'result': '" + resultStr + "' }]";
+            throw new FileNotFoundException("File not found!" + e.getMessage());
         } catch (IOException e) {
             LogUtil.error(e.getMessage());
-            return "[{'result': '" + resultStr + "' }]";
+            throw new IOException(e.getMessage());
         }
         return sb.toString();
     }

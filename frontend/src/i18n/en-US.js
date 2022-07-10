@@ -905,6 +905,7 @@ export default {
     syft_json: 'Mirror detection SBOM JSON',
     back_resource: 'Return the list of mirror detection results',
     result_details_list: 'Mirror detection result details list',
+    image_note: 'Note: Please bind the mirror repository for private images!',
   },
   package: {
     package_setting: 'Package Management',
@@ -953,6 +954,7 @@ export default {
     result_still_run: 'The scan is still going on, there is no scan result for the time being, please wait patiently',
     back_resource: 'Return the list of package detection results',
     result_details_list: 'Package detection result details list',
+    package_note: 'Note: Package detection takes a long time, please be patient and wait for the output result!',
   },
   vuln: {
     vuln_setting: 'Vulnerability Scan',
@@ -1017,6 +1019,10 @@ export default {
     task_order: 'Task order',
     task_account_name: 'Resource name',
     task_rule_type: 'Rule type',
+    task_tree_child: 'This node is not a leaf node, please click the most leaf node to get resource information',
+    task_list: 'Task list',
+    task_report: 'Task report',
+    page_total: 'Total {0} entries',
   },
   proxy: {
     create:'Create an agent',
