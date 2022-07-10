@@ -9,6 +9,7 @@ import com.hummerrisk.controller.request.image.ImageRepoRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.image.ImageResultRequest;
 import com.hummerrisk.controller.request.image.ImageRuleRequest;
+import com.hummerrisk.dto.ImageDTO;
 import com.hummerrisk.dto.ImageResultDTO;
 import com.hummerrisk.dto.ImageResultWithBLOBsDTO;
 import com.hummerrisk.dto.ImageRuleDTO;
@@ -64,7 +65,7 @@ public class ImageController {
 
     @ApiOperation(value = "镜像列表")
     @PostMapping("imageList/{goPage}/{pageSize}")
-    public Pager<List<Image>> imageList(
+    public Pager<List<ImageDTO>> imageList(
             @PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, imageService.imageList(request));

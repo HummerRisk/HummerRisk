@@ -15,6 +15,10 @@ public class ImageDTO extends Image {
 
     private String proxyPassword;
 
+    private String user;
+
+    private String imageRepoName;
+
     public String getUserName() {
         return userName;
     }
@@ -53,5 +57,21 @@ public class ImageDTO extends Image {
 
     public void setProxyPassword(String proxyPassword) {
         this.proxyPassword = proxyPassword;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getImageRepoName() {
+        return imageRepoName;
+    }
+
+    public void setImageRepoName(String imageRepoName) {
+        this.imageRepoName = imageRepoName;
     }
 }

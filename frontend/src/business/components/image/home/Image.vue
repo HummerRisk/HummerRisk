@@ -49,7 +49,7 @@
                     {{ data.type==='image'?(data.imageUrl + ':' + data.imageTag):data.path }}
                   </el-col>
                   <el-col :span="3" v-if="data.type==='tar'" class="cl-data-col">{{ data.size }}</el-col>
-                  <el-col :span="5" class="cl-data-col">{{ data.image_repo_name?data.image_repo_name:$t('image.no_image_repo') }}</el-col>
+                  <el-col :span="5" class="cl-data-col">{{ data.imageRepoName?data.imageRepoName:$t('image.no_image_repo') }}</el-col>
                   <el-col :span="5" class="cl-data-col">{{ data.updateTime | timestampFormatDate }}</el-col>
                 </el-row>
               </el-col>
@@ -99,7 +99,7 @@
           <el-switch v-model="form.isImageRepo"></el-switch>
         </el-form-item>
         <el-form-item v-if="form.isImageRepo" :label="$t('image.image_repo')" :rules="{required: true, message: $t('image.image_repo') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.repo" :placeholder="$t('image.image_repo_url')">
+          <el-select style="width: 100%;" v-model="form.repoId" :placeholder="$t('image.image_repo_url')">
             <el-option
               v-for="item in repos"
               :key="item.id"
@@ -169,7 +169,7 @@
           <el-switch v-model="form.isImageRepo"></el-switch>
         </el-form-item>
         <el-form-item v-if="form.isImageRepo" :label="$t('image.image_repo')" :rules="{required: true, message: $t('image.image_repo') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.repo" :placeholder="$t('image.image_repo_url')">
+          <el-select style="width: 100%;" v-model="form.repoId" :placeholder="$t('image.image_repo_url')">
             <el-option
               v-for="item in repos"
               :key="item.id"
@@ -262,7 +262,7 @@ export default {
       queryPath: '/image/imageList/',
       deletePath: '/image/deleteImage/',
       createPath: '/image/addImage',
-      updatePath: '/image/editImage',
+      updatePath: '/image/updateImage',
       result: {},
       createVisible: false,
       updateVisible: false,
@@ -378,6 +378,7 @@ export default {
             formData.append("tarFile", this.tarFile);
           }
           formData.append("request", new Blob([JSON.stringify(this.form)], {type: "application/json"}));
+          console.log(this.form)
           let axiosRequestConfig = {
             method: "POST",
             url: this.createPath,
@@ -407,6 +408,7 @@ export default {
             formData.append("tarFile", this.tarFile);
           }
           formData.append("request", new Blob([JSON.stringify(this.form)], {type: "application/json"}));
+          console.log(this.form)
           let axiosRequestConfig = {
             method: "POST",
             url: this.updatePath,

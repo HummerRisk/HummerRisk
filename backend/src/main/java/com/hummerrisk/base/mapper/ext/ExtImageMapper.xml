@@ -2,9 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummerrisk.base.mapper.ext.ExtImageMapper">
 
-    <resultMap id="ImageResultMap" type="com.hummerrisk.base.domain.Image"
+    <resultMap id="ImageResultMap" type="com.hummerrisk.dto.ImageDTO"
                extends="com.hummerrisk.base.mapper.PackageMapper.BaseResultMap">
         <result column="user" property="user"/>
+        <result column="imageRepoName" property="imageRepoName"/>
     </resultMap>
 
     <sql id="condition">
@@ -84,8 +85,10 @@
     <select id="imageList" resultMap="ImageResultMap">
         select
         t.*,
+        r.name as imageRepoName,
         user.name as userName
         from image as t
+        left join image_repo r on t.repo_id = r.id
         left join user on t.creator = user.id
         <where>
             <if test="request.combine != null">

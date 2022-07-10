@@ -26,6 +26,8 @@ CREATE TABLE IF NOT EXISTS `image` (
     `image_url`                  varchar(128)        DEFAULT NULL COMMENT '镜像名称',
     `image_tag`                  varchar(128)        DEFAULT NULL COMMENT '镜像标签',
     `path`                       varchar(128)        DEFAULT NULL COMMENT '镜像包持久化存储路径/opt/hummerrisk/image/',
+    `is_image_repo`              tinyint(1)          DEFAULT 0 COMMENT '是否绑定镜像仓库',
+    `is_image_icon`              tinyint(1)          DEFAULT 0 COMMENT '是否上传镜像图片',
     `is_proxy`                   tinyint(1)          DEFAULT 0 COMMENT '是否启用代理',
     `proxy_id`                   int(11)             DEFAULT NULL COMMENT '代理ID',
     PRIMARY KEY (`id`)

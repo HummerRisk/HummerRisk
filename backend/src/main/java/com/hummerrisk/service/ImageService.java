@@ -10,12 +10,12 @@ import com.hummerrisk.base.mapper.ext.ExtImageRepoMapper;
 import com.hummerrisk.base.mapper.ext.ExtImageResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtImageRuleMapper;
 import com.hummerrisk.commons.constants.*;
-import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.image.ImageRepoRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.image.ImageResultRequest;
 import com.hummerrisk.controller.request.image.ImageRuleRequest;
+import com.hummerrisk.dto.ImageDTO;
 import com.hummerrisk.dto.ImageResultDTO;
 import com.hummerrisk.dto.ImageResultWithBLOBsDTO;
 import com.hummerrisk.dto.ImageRuleDTO;
@@ -89,7 +89,14 @@ public class ImageService {
         imageRepo.setCreator(SessionUtils.getUserId());
         imageRepo.setCreateTime(System.currentTimeMillis());
         imageRepo.setUpdateTime(System.currentTimeMillis());
-        imageRepo.setStatus("VALID");
+
+        String dockerLogin = "docker login " + imageRepo.getRepo() + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword();
+        String resultStr = CommandUtils.commonExecCmdWithResult(dockerLogin, ImageConstants.DEFAULT_BASE_DIR);
+        if(resultStr.contains("Succeeded")) {
+            imageRepo.setStatus("VALID");
+        } else {
+            imageRepo.setStatus("INVALID");
+        }
 
         OperationLogService.log(SessionUtils.getUser(), imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "创建镜像仓库");
         imageRepoMapper.insertSelective(imageRepo);
@@ -98,7 +105,13 @@ public class ImageService {
 
     public ImageRepo editImageRepo(ImageRepo imageRepo) throws Exception {
         imageRepo.setUpdateTime(System.currentTimeMillis());
-        imageRepo.setStatus("VALID");
+        String dockerLogin = "docker login " + imageRepo.getRepo() + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword();
+        String resultStr = CommandUtils.commonExecCmdWithResult(dockerLogin, ImageConstants.DEFAULT_BASE_DIR);
+        if(resultStr.contains("Succeeded")) {
+            imageRepo.setStatus("VALID");
+        } else {
+            imageRepo.setStatus("INVALID");
+        }
 
         OperationLogService.log(SessionUtils.getUser(), imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "更新镜像仓库");
         imageRepoMapper.updateByPrimaryKeySelective(imageRepo);
@@ -110,7 +123,7 @@ public class ImageService {
         OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "删除镜像仓库");
     }
 
-    public List<Image> imageList(ImageRequest request) {
+    public List<ImageDTO> imageList(ImageRequest request) {
         return extImageMapper.imageList(request);
     }
 
@@ -156,6 +169,9 @@ public class ImageService {
             if (tarFile != null) {
                 String tarFilePath = upload(tarFile, ImageConstants.DEFAULT_BASE_DIR);
                 request.setPath(tarFilePath);
+            }
+            if(!request.getIsImageRepo()) {
+                request.setRepoId("");
             }
 
             imageMapper.updateByPrimaryKeySelective(request);
@@ -298,13 +314,16 @@ public class ImageService {
                 }
             }
             String log = execute(image, dto, ImageConstants.GRYPE, ImageConstants.TABLE);
-            String grypeTable = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
-            execute(image, dto, ImageConstants.GRYPE, ImageConstants.JSON);
-            String grypeJson = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
-            execute(image, dto, ImageConstants.SYFT, ImageConstants.TABLE);
-            String syftTable = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
-            execute(image, dto, ImageConstants.SYFT, ImageConstants.JSON);
-            String syftJson = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
+            String grypeTable = "", grypeJson = "", syftTable = "", syftJson = "";
+            if (!log.contains("docker login")) {
+                grypeTable = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
+                execute(image, dto, ImageConstants.GRYPE, ImageConstants.JSON);
+                grypeJson = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
+                execute(image, dto, ImageConstants.SYFT, ImageConstants.TABLE);
+                syftTable = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
+                execute(image, dto, ImageConstants.SYFT, ImageConstants.JSON);
+                syftJson = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
+            }
 
             result.setReturnLog(log);
             result.setGrypeTable(grypeTable);
@@ -411,6 +430,7 @@ public class ImageService {
         try {
             Proxy proxy;
             String _proxy = "";
+            String dockerLogin = "";
             if(image.getIsProxy()!=null && image.getIsProxy()) {
                 proxy = proxyMapper.selectByPrimaryKey(image.getProxyId());
                 String proxyType = proxy.getProxyType();
@@ -437,13 +457,17 @@ public class ImageService {
                             "unset https_proxy;" + "\n";
                 }
             }
+            if(image.getRepoId()!=null) {
+                ImageRepo imageRepo = imageRepoMapper.selectByPrimaryKey(image.getRepoId());
+                dockerLogin = "docker login " + imageRepo.getRepo() + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword() + "\n";
+            }
             String fileName = "";
             if (StringUtils.equalsIgnoreCase("image", image.getType())) {
                 fileName = image.getImageUrl() + ":" + image.getImageTag();
             } else {
                 fileName = ImageConstants.DEFAULT_BASE_DIR + image.getPath();
             }
-            String command = _proxy + scanType + fileName + ImageConstants.SCOPE + ImageConstants.OUT + outType + ImageConstants._FILE + ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT;
+            String command = _proxy + dockerLogin + scanType + fileName + ImageConstants.SCOPE + ImageConstants.OUT + outType + ImageConstants._FILE + ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT;
             LogUtil.info(image.getId() + " {image}[command]: " + image.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, ImageConstants.DEFAULT_BASE_DIR);
             return resultStr;
