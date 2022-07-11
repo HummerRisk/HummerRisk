@@ -468,7 +468,7 @@
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-core</artifactId>
-            <version>3.0.23-beta</version>
+            <version>3.0.97</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -483,7 +483,7 @@
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-vpc</artifactId>
-            <version>3.0.23-beta</version>
+            <version>3.0.97</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -498,7 +498,7 @@
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-iam</artifactId>
-            <version>3.0.23-beta</version>
+            <version>3.0.97</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -513,7 +513,7 @@
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-ecs</artifactId>
-            <version>3.0.23-beta</version>
+            <version>3.0.97</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -528,7 +528,7 @@
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-evs</artifactId>
-            <version>3.0.23-beta</version>
+            <version>3.0.97</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -543,7 +543,7 @@
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-ims</artifactId>
-            <version>3.0.23-beta</version>
+            <version>3.0.97</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -558,7 +558,7 @@
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-ces</artifactId>
-            <version>3.0.23-beta</version>
+            <version>3.0.97</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
