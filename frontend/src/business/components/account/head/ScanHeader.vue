@@ -28,6 +28,7 @@
         <slot name="button"></slot>
       </span>
       <span>
+        <el-button icon="el-icon-refresh" size="small" @click="refresh">{{ $t('commons.refresh') }}</el-button>
         <table-button  icon="el-icon-back"
                       type="info"
                       :content="backTip" @click="back"/>
@@ -117,7 +118,10 @@ export default {
       },
       back() {
         this.$emit('back')
-      }
+      },
+      refresh() {
+        this.$emit('search');
+      },
     },
     computed: {
     }

@@ -364,6 +364,9 @@ export default {
                 this.$success(this.$t('schedule.event_start'));
                 this.$router.push({
                   path: '/image/result',
+                  query: {
+                    date:new Date().getTime()
+                  },
                 }).catch(error => error);
               } else {
                 this.$error(this.$t('schedule.event_failed'));
@@ -384,7 +387,6 @@ export default {
             formData.append("tarFile", this.tarFile);
           }
           formData.append("request", new Blob([JSON.stringify(this.form)], {type: "application/json"}));
-          console.log(this.form)
           let axiosRequestConfig = {
             method: "POST",
             url: this.createPath,
@@ -414,7 +416,6 @@ export default {
             formData.append("tarFile", this.tarFile);
           }
           formData.append("request", new Blob([JSON.stringify(this.form)], {type: "application/json"}));
-          console.log(this.form)
           let axiosRequestConfig = {
             method: "POST",
             url: this.updatePath,
@@ -423,10 +424,12 @@ export default {
               "Content-Type": 'multipart/form-data'
             }
           };
-          this.result = this.$request(axiosRequestConfig, () => {
-            this.$success(this.$t('commons.save_success'));
-            this.search();
-            this.updateVisible = false;
+          this.result = this.$request(axiosRequestConfig, (res) => {
+            if (res.success) {
+              this.$success(this.$t('commons.save_success'));
+              this.search();
+              this.updateVisible = false;
+            }
           });
         } else {
           return false;

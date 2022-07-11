@@ -229,6 +229,7 @@ export default {
               data.resources = result.resources;
               data.returnLog = result.returnLog;
               data.returnJson = result.returnJson;
+              data.returnSum = result.returnSum;
             }
           });
         }
@@ -274,16 +275,17 @@ export default {
     },
     showResultLog (result) {
       let url = "/package/log/";
-      this.$get(url + result.id, response => {
+      this.result = this.$get(url + result.id, response => {
         this.logData = response.data;
-        this.logVisible = true;
       });
       if (!result.returnJson) {
-        this.$get("/package/getPackageResult/"+ result.id, response => {
+        this.result = this.$get("/package/getPackageResult/"+ result.id, response => {
           this.logForm = response.data;
+          this.logVisible = true;
         });
       } else {
         this.logForm = result;
+        this.logVisible = true;
       }
     },
     handleClose() {
@@ -340,10 +342,12 @@ export default {
       return this.$refs.cmEditor.codemirror;
     }
   },
-  created() {
+  mounted() {
     this.init();
     this.location = window.location.href.split("#")[0];
     this.timer = setInterval(this.getStatus,5000);
+  },
+  created() {
   },
   beforeDestroy() {
     clearInterval(this.timer);

@@ -232,6 +232,7 @@ export default {
               data.grypeJson = result.grypeJson;
               data.syftTable = result.syftTable;
               data.syftJson = result.syftJson;
+              data.returnSum = result.returnSum;
             }
           });
         }
@@ -277,17 +278,18 @@ export default {
     },
     showResultLog (result) {
       let url = "/image/log/";
-      this.$get(url + result.id, response => {
+      this.result = this.$get(url + result.id, response => {
         this.logData = response.data;
-        this.logVisible = true;
       });
       if(!result.grypeJson) {
         let url = "/image/getImageResult/";
-        this.$get(url + result.id, response => {
+        this.result = this.$get(url + result.id, response => {
           this.logForm = response.data;
+          this.logVisible = true;
         });
       } else {
         this.logForm = result;
+        this.logVisible = true;
       }
     },
     handleClose() {
@@ -337,10 +339,12 @@ export default {
       return this.$refs.cmEditor.codemirror;
     }
   },
-  created() {
+  mounted() {
     this.init();
     this.location = window.location.href.split("#")[0];
     this.timer = setInterval(this.getStatus,5000);
+  },
+  created() {
   },
   beforeDestroy() {
     clearInterval(this.timer);
