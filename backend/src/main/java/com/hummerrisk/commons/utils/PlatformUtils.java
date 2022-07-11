@@ -308,9 +308,9 @@ public class PlatformUtils {
             case huoshan:
                 String AccessKeyId = params.get("AccessKeyId");
                 String SecretAccessKey = params.get("SecretAccessKey");
-                pre = "HUOSHAN_ACCESSKEYID=" + AccessKeyId + " " +
-                        "HUOSHAN_SECRETACCESSKEY=" + SecretAccessKey + " " +
-                        "HUOSHAN_DEFAULT_REGION=" + region + " ";
+                pre = "VOLC_ACCESSKEYID=" + AccessKeyId + " " +
+                        "VOLC_SECRETACCESSKEY=" + SecretAccessKey + " " +
+                        "VOLC_DEFAULT_REGION=" + region + " ";
                 break;
             case baidu:
                 String baiduAk = params.get("AccessKeyId");

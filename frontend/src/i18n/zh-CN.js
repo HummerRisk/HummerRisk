@@ -1023,6 +1023,8 @@ export default {
     task_list: '任务列表',
     task_report: '任务报告',
     page_total: '共 {0} 条',
+    warn_background: '被检索行已经高亮',
+    no_warn_background: '没有检索到结果',
   },
   proxy: {
     create: '创建代理',

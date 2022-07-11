@@ -597,7 +597,7 @@ export default {
     i18n_compliance_false: "Non-compliance",
     i18n_resource_scanning_log:'Scan log',
     i18n_resource_scanning_api:'Scan API',
-    i18n_resource_scanning_return:'scanning result',
+    i18n_resource_scanning_return:'Scan result',
     i18n_resource_file:'Scan file:',
     back_resource:'Return to scan result list',
     i18n_log_detail:'Log details',

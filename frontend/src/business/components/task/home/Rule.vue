@@ -88,7 +88,6 @@
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
 
-
       <!--Task rule detail-->
       <el-drawer v-if="detailVisible" :close-on-click-modal="false" class="rtl" :visible.sync="detailVisible" size="60%" :show-close="false" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
