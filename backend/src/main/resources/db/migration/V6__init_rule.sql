@@ -1569,7 +1569,7 @@ INSERT INTO `plugin` ( `id`, `name`, `icon`, `update_time`, `scan_type`) values 
 
 INSERT INTO `cloud_account` (`id`, `name`, `credential`, `plugin_id`, `plugin_name`, `plugin_icon`, `status`, `create_time`, `update_time`, `creator`, `regions`, `proxy_id`) VALUES ('6953e0fd-57f3-4ca8-915f-e8b97725fcd7', 'Tsunami 网络安全检测', '{\"description\":\"功能强大的通用网络安全检测工具,可以帮助广大安全研究人员以高可信度的方式检测和检测高危严重漏洞。\",\"ip\":\"127.0.0.1\"}', 'hummer-tsunami-plugin', 'Tsunami', 'tsunami.png', 'VALID', concat(unix_timestamp(now()), '001'), concat(unix_timestamp(now()), '001'), 'admin', '[{"regionId":"ALL","regionName":"Tsunami 网络安全检测"}]', 0);
 
-INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Baidu 风险扫描', 'Baidu 风险扫描', NULL, 'hummer-baidu-plugin', '1');
+INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Baidu 等保预检', '等保合规检查（全称为等级保护合规检查）为您提供了全面覆盖通信网络、区域边界、计算环境和管理中心的网络安全检查。', '等保三级', 'hummer-baidu-plugin', '1');
 SELECT @groupId := LAST_INSERT_ID();
 
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`) VALUES ('09b1030c-e094-4d23-a75b-e3d876f55a67', 'Baidu CDN域名HTTPS监听检测', '1', 'HighRisk', 'Badiu  检测CDN域名是否开启HTTPS监听，若开启视为“合规”，否则视为“不合规”', 'policies:\n    # 检测CDN域名是否开启HTTPS监听\n    - name: baidu-cdn-ssl-protocol\n      resource: baidu.cdn\n      filters:\n        - type: ssl-protocol', '[]', 'hummer-baidu-plugin', '百度云', 'baidu.png', concat(unix_timestamp(now()), '001'), '1', 'custodian');
