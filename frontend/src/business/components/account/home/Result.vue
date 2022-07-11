@@ -406,7 +406,7 @@ export default {
         }
       });
     },
-    handleClose(done) {
+    handleClose() {
       this.logVisible=false;
       this.detailVisible=false;
     },

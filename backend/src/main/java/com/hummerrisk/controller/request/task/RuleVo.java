@@ -1,6 +1,8 @@
 package com.hummerrisk.controller.request.task;
 
 
+import java.util.Map;
+
 public class RuleVo {
 
     private String sourceId;
@@ -92,4 +94,5 @@ public class RuleVo {
     public void setAccountType(String accountType) {
         this.accountType = accountType;
     }
+
 }

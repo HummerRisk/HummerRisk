@@ -140,7 +140,7 @@
                 </span>
             </el-table-column>
             <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="20%" show-overflow-tooltip>
-              <el-link type="primary" class="md-primary text-click" @click="showTaskDetail(scope.row)">
+              <el-link type="primary" :underline="false" class="md-primary text-click" @click="showTaskDetail(scope.row)">
                 {{ scope.row.taskName }}
               </el-link>
             </el-table-column>
@@ -559,7 +559,7 @@ import {ACCOUNT_ID} from "@/common/js/constants";
           }
         });
       },
-      handleClose(done) {
+      handleClose() {
           this.logVisible=false;
           this.detailVisible=false;
       },
@@ -679,6 +679,7 @@ import {ACCOUNT_ID} from "@/common/js/constants";
   }
   .text-click {
     color: #0066ac;
+    text-decoration: none;
   }
   .rtl >>> .el-drawer__body {
     overflow-y: auto;

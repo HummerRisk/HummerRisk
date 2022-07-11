@@ -18,6 +18,8 @@ public class PackageRuleDTO extends PackageRule {
 
     private List<String> tags = new ArrayList<>();
 
+    private String pluginIcon;
+
     public String getTagKey() {
         return tagKey;
     }
@@ -50,4 +52,11 @@ public class PackageRuleDTO extends PackageRule {
         isSaveParam = saveParam;
     }
 
+    public String getPluginIcon() {
+        return pluginIcon;
+    }
+
+    public void setPluginIcon(String pluginIcon) {
+        this.pluginIcon = pluginIcon;
+    }
 }

@@ -1,17 +1,10 @@
 package com.hummerrisk.base.mapper.ext;
 
 import com.hummerrisk.base.domain.*;
-import com.hummerrisk.base.domain.Package;
-import com.hummerrisk.controller.request.account.CloudAccountRequest;
 import com.hummerrisk.controller.request.task.*;
-import com.hummerrisk.dto.AccountDTO;
-import com.hummerrisk.dto.QuartzTaskDTO;
-import com.hummerrisk.dto.RuleDTO;
-import com.hummerrisk.dto.ServerDTO;
-import org.apache.ibatis.annotations.Param;
+import com.hummerrisk.dto.*;
 
 import java.util.List;
-import java.util.Map;
 
 public interface ExtTaskMapper {
 
@@ -40,4 +33,18 @@ public interface ExtTaskMapper {
     List<RuleVo> ruleTagList(RuleVo ruleVo);
 
     List<RuleVo> ruleGroupList(RuleVo ruleVo);
+
+    RuleDTO cloudDetailRule(RuleVo ruleVo);
+
+    RuleDTO vulnDetailRule(RuleVo ruleVo);
+
+    ServerRuleDTO serverDetailRule(RuleVo ruleVo);
+
+    ImageRuleDTO imageDetailRule(RuleVo ruleVo);
+
+    PackageRuleDTO packageDetailRule(RuleVo ruleVo);
+
+    List<TaskTagGroupDTO> detailTag(RuleVo ruleVo);
+
+    List<TaskTagGroupDTO> detailGroup(RuleVo ruleVo);
 }

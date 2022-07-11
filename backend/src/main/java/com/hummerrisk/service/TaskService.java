@@ -7,10 +7,10 @@ import com.hummerrisk.commons.constants.TaskEnum;
 import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.commons.utils.UUIDUtil;
-import com.hummerrisk.controller.request.server.ServerRequest;
 import com.hummerrisk.controller.request.task.*;
 import com.hummerrisk.dto.AccountTreeDTO;
-import com.hummerrisk.dto.ServerDTO;
+import com.hummerrisk.dto.TaskRuleDTO;
+import com.hummerrisk.dto.TaskTagGroupDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,6 +99,25 @@ public class TaskService {
         favoriteMapper.deleteByPrimaryKey(id);
     }
 
+    public List<RuleVo> allList(RuleVo ruleVo) {
+        List<RuleVo> allList = new LinkedList<>();
+        if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.cloudAccount.getType())) {
+            allList = extTaskMapper.cloudRuleList(ruleVo);
+        } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.vulnAccount.getType())) {
+            allList = extTaskMapper.vulnRuleList(ruleVo);
+        } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.serverAccount.getType())) {
+            allList = extTaskMapper.serverRuleList(ruleVo);
+        } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.imageAccount.getType())) {
+            allList = extTaskMapper.imageRuleList(ruleVo);
+        } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.packageAccount.getType())) {
+            allList = extTaskMapper.packageRuleList(ruleVo);
+        }
+        if(ruleVo.getAccountType()!=null) allList.addAll(extTaskMapper.ruleTagList(ruleVo));
+        if(ruleVo.getAccountType()!=null && StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.cloudAccount.getType()))
+            allList.addAll(extTaskMapper.ruleGroupList(ruleVo));
+        return allList;
+    }
+
     public List<RuleVo> ruleList(RuleVo ruleVo) {
         if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.cloudAccount.getType())) {
             return extTaskMapper.cloudRuleList(ruleVo);
@@ -115,11 +134,39 @@ public class TaskService {
     }
 
     public List<RuleVo> ruleTagList(RuleVo ruleVo) {
-        return extTaskMapper.ruleTagList(ruleVo);
+        if(ruleVo.getAccountType()!=null)
+            return extTaskMapper.ruleTagList(ruleVo);
+        return new LinkedList<>();
     }
 
     public List<RuleVo> ruleGroupList(RuleVo ruleVo) {
-        return extTaskMapper.ruleGroupList(ruleVo);
+        if(ruleVo.getAccountType()!=null && StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.cloudAccount.getType()))
+            return extTaskMapper.ruleGroupList(ruleVo);
+        return new LinkedList<>();
+    }
+
+    public TaskRuleDTO detailRule(RuleVo ruleVo) {
+        TaskRuleDTO ruleDTO = new TaskRuleDTO();
+        if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.cloudAccount.getType())) {
+            ruleDTO.setRuleDTO(extTaskMapper.cloudDetailRule(ruleVo));
+        } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.vulnAccount.getType())) {
+            ruleDTO.setRuleDTO(extTaskMapper.vulnDetailRule(ruleVo));
+        } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.serverAccount.getType())) {
+            ruleDTO.setServerRuleDTO(extTaskMapper.serverDetailRule(ruleVo));
+        } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.imageAccount.getType())) {
+            ruleDTO.setImageRuleDTO(extTaskMapper.imageDetailRule(ruleVo));
+        } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.packageAccount.getType())) {
+            ruleDTO.setPackageRuleDTO(extTaskMapper.packageDetailRule(ruleVo));
+        }
+        return ruleDTO;
+    }
+
+    public List<TaskTagGroupDTO> detailTag(RuleVo ruleVo) {
+        return extTaskMapper.detailTag(ruleVo);
+    }
+
+    public List<TaskTagGroupDTO> detailGroup(RuleVo ruleVo) {
+        return extTaskMapper.detailGroup(ruleVo);
     }
 
 }

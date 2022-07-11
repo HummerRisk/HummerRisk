@@ -18,6 +18,8 @@ public class ImageRuleDTO extends ImageRule {
 
     private List<String> tags = new ArrayList<>();
 
+    private String pluginIcon;
+
     public String getTagKey() {
         return tagKey;
     }
@@ -50,4 +52,11 @@ public class ImageRuleDTO extends ImageRule {
         isSaveParam = saveParam;
     }
 
+    public String getPluginIcon() {
+        return pluginIcon;
+    }
+
+    public void setPluginIcon(String pluginIcon) {
+        this.pluginIcon = pluginIcon;
+    }
 }

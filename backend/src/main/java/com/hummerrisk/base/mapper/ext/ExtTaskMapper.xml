@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummerrisk.base.mapper.ext.ExtTaskMapper">
+
     <sql id="Example_Where_Clause">
         <where>
             <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -271,63 +272,69 @@
         'tag' as ruleType,
         t.tag_name as ruleName,
         t.tag_name as ruleDesc,
+        <if test="accountType != null">
+            (
+            <if test="accountType != null and accountType == 'cloudAccount'">
+                select id from cloud_account where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'vulnAccount'">
+                select id from cloud_account where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'serverAccount'">
+                select id from server where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'imageAccount'">
+                select id from image where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'packageAccount'">
+                select id from package where id = #{accountId}
+            </if>
+            ) as accountId,
+        </if>
+        <if test="accountType != null">
+            (
+            <if test="accountType != null and accountType == 'cloudAccount'">
+                select name from cloud_account where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'vulnAccount'">
+                select name from cloud_account where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'serverAccount'">
+                select name from server where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'imageAccount'">
+                select name from image where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'packageAccount'">
+                select name from package where id = #{accountId}
+            </if>
+            ) as accountName,
+        </if>
+        <if test="accountType != null">
+            (
+            <if test="accountType != null and accountType == 'cloudAccount'">
+                'cloudAccount'
+            </if>
+            <if test="accountType != null and accountType == 'vulnAccount'">
+                'vulnAccount'
+            </if>
+            <if test="accountType != null and accountType == 'serverAccount'">
+                'serverAccount'
+            </if>
+            <if test="accountType != null and accountType == 'imageAccount'">
+                'imageAccount'
+            </if>
+            <if test="accountType != null and accountType == 'packageAccount'">
+                'packageAccount'
+            </if>
+        ) as accountType,
+        </if>
         'tag.png' as icon,
-        'HighRisk' as severity,
-        (
-        <if test="accountType != null and accountType == 'cloudAccount'">
-            select id from cloud_account where id = #{accountId}
-        </if>
-        <if test="accountType != null and accountType == 'vulnAccount'">
-            select id from cloud_account where id = #{accountId}
-        </if>
-        <if test="accountType != null and accountType == 'serverAccount'">
-            select id from server where id = #{accountId}
-        </if>
-        <if test="accountType != null and accountType == 'imageAccount'">
-            select id from image where id = #{accountId}
-        </if>
-        <if test="accountType != null and accountType == 'packageAccount'">
-            select id from package where id = #{accountId}
-        </if>
-        ) as accountId,
-        (
-        <if test="accountType != null and accountType == 'cloudAccount'">
-            select name from cloud_account where id = #{accountId}
-        </if>
-        <if test="accountType != null and accountType == 'vulnAccount'">
-            select name from cloud_account where id = #{accountId}
-        </if>
-        <if test="accountType != null and accountType == 'serverAccount'">
-            select name from server where id = #{accountId}
-        </if>
-        <if test="accountType != null and accountType == 'imageAccount'">
-            select name from image where id = #{accountId}
-        </if>
-        <if test="accountType != null and accountType == 'packageAccount'">
-            select name from package where id = #{accountId}
-        </if>
-        ) as accountName,
-        (
-        <if test="accountType != null and accountType == 'cloudAccount'">
-            'cloudAccount'
-        </if>
-        <if test="accountType != null and accountType == 'vulnAccount'">
-            'vulnAccount'
-        </if>
-        <if test="accountType != null and accountType == 'serverAccount'">
-            'serverAccount'
-        </if>
-        <if test="accountType != null and accountType == 'imageAccount'">
-            'imageAccount'
-        </if>
-        <if test="accountType != null and accountType == 'packageAccount'">
-            'packageAccount'
-        </if>
-        ) as accountType
+        'HighRisk' as severity
         from rule_tag t
         <where>
             <if test="ruleName != null">
-                AND t.name like CONCAT('%', #{ruleName},'%')
+                AND t.tag_name like CONCAT('%', #{ruleName},'%')
             </if>
         </where>
     </select>
@@ -338,64 +345,360 @@
         'group' as ruleType,
         t.name as ruleName,
         t.description as ruleDesc,
+        <if test="accountType != null">
+            (
+            <if test="accountType != null and accountType == 'cloudAccount'">
+                select id from cloud_account where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'vulnAccount'">
+                select id from cloud_account where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'serverAccount'">
+                select id from server where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'imageAccount'">
+                select id from image where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'packageAccount'">
+                select id from package where id = #{accountId}
+            </if>
+            ) as accountId,
+        </if>
+        <if test="accountType != null">
+            (
+            <if test="accountType != null and accountType == 'cloudAccount'">
+                select name from cloud_account where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'vulnAccount'">
+                select name from cloud_account where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'serverAccount'">
+                select name from server where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'imageAccount'">
+                select name from image where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'packageAccount'">
+                select name from package where id = #{accountId}
+            </if>
+            ) as accountName,
+        </if>
+        <if test="accountType != null">
+            (
+            <if test="accountType != null and accountType == 'cloudAccount'">
+                'cloudAccount'
+            </if>
+            <if test="accountType != null and accountType == 'vulnAccount'">
+                'vulnAccount'
+            </if>
+            <if test="accountType != null and accountType == 'serverAccount'">
+                'serverAccount'
+            </if>
+            <if test="accountType != null and accountType == 'imageAccount'">
+                'imageAccount'
+            </if>
+            <if test="accountType != null and accountType == 'packageAccount'">
+                'packageAccount'
+            </if>
+            ) as accountType,
+        </if>
         'group.png' as icon,
-        'HighRisk' as severity,
-        (
-        <if test="accountType != null and accountType == 'cloudAccount'">
-            select id from cloud_account where id = #{accountId}
-        </if>
-        <if test="accountType != null and accountType == 'vulnAccount'">
-            select id from cloud_account where id = #{accountId}
-        </if>
-        <if test="accountType != null and accountType == 'serverAccount'">
-            select id from server where id = #{accountId}
-        </if>
-        <if test="accountType != null and accountType == 'imageAccount'">
-            select id from image where id = #{accountId}
-        </if>
-        <if test="accountType != null and accountType == 'packageAccount'">
-            select id from package where id = #{accountId}
-        </if>
-        ) as accountId,
-        (
-        <if test="accountType != null and accountType == 'cloudAccount'">
-            select name from cloud_account where id = #{accountId}
-        </if>
-        <if test="accountType != null and accountType == 'vulnAccount'">
-            select name from cloud_account where id = #{accountId}
-        </if>
-        <if test="accountType != null and accountType == 'serverAccount'">
-            select name from server where id = #{accountId}
-        </if>
-        <if test="accountType != null and accountType == 'imageAccount'">
-            select name from image where id = #{accountId}
-        </if>
-        <if test="accountType != null and accountType == 'packageAccount'">
-            select name from package where id = #{accountId}
-        </if>
-        ) as accountName,
-        (
-        <if test="accountType != null and accountType == 'cloudAccount'">
-            'cloudAccount'
-        </if>
-        <if test="accountType != null and accountType == 'vulnAccount'">
-            'vulnAccount'
-        </if>
-        <if test="accountType != null and accountType == 'serverAccount'">
-            'serverAccount'
-        </if>
-        <if test="accountType != null and accountType == 'imageAccount'">
-            'imageAccount'
-        </if>
-        <if test="accountType != null and accountType == 'packageAccount'">
-            'packageAccount'
-        </if>
-        ) as accountType
+        'HighRisk' as severity
         from rule_group t
+        left join cloud_account t1 on t.plugin_id = t1.plugin_id
         <where>
             <if test="ruleName != null">
                 AND t.name like CONCAT('%', #{ruleName},'%')
             </if>
+            <if test="accountId != null">
+                AND t1.id = #{accountId}
+            </if>
         </where>
+    </select>
+
+    <resultMap id="CloudDetailRule" type="com.hummerrisk.dto.RuleDTO"
+               extends="com.hummerrisk.base.mapper.RuleMapper.BaseResultMap">
+        <result column="isSaveParam" property="isSaveParam" jdbcType="BOOLEAN"/>
+        <result column="tagKey" property="tagKey" jdbcType="VARCHAR"/>
+        <result column="tagName" property="tagName" jdbcType="VARCHAR"/>
+        <collection property="tags" javaType="list" ofType="string" select="getTags" column="id">
+            <result column="tagKey" jdbcType="VARCHAR" property="tagKey"/>
+        </collection>
+    </resultMap>
+
+    <select id="getTags" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT t.tag_key as tagKey
+        FROM rule_tag t
+        WHERE tag_key IN
+              (SELECT tag_key FROM rule_tag_mapping WHERE rule_id = #{id})
+    </select>
+
+    <select id="cloudDetailRule" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultMap="CloudDetailRule">
+        SELECT
+        t.*,
+        (select tag_key from rule_tag_mapping where rule_id = t.id limit 1) as tagKey,
+        (select tag_name from rule_tag_mapping m left join rule_tag g on m.tag_key = g.tag_key where rule_id = t.id limit 1) as tagName
+        FROM rule t
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+            and t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+        </where>
+        ORDER BY t.last_modified desc
+    </select>
+
+    <select id="vulnDetailRule" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultMap="CloudDetailRule">
+        SELECT
+        t.*,
+        (select tag_key from rule_tag_mapping where rule_id = t.id limit 1) as tagKey,
+        (select tag_name from rule_tag_mapping m left join rule_tag g on m.tag_key = g.tag_key where rule_id = t.id limit 1) as tagName
+        FROM rule t
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+            and t.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+        </where>
+        ORDER BY t.last_modified desc
+    </select>
+
+    <select id="serverDetailRule" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.dto.ServerRuleDTO">
+        SELECT
+        t.*,
+        'server.png' as pluginIcon,
+        t1.tag_key as tagKey,
+        t2.tag_name as tagName
+        FROM server_rule t
+        left join rule_tag_mapping t1 on t1.rule_id = t.id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+        ORDER BY t.last_modified desc
+    </select>
+
+    <select id="imageDetailRule" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.dto.ImageRuleDTO">
+        SELECT
+        t.*,
+        'docker.png' as pluginIcon,
+        t1.tag_key as tagKey,
+        t2.tag_name as tagName
+        FROM image_rule t
+        left join rule_tag_mapping t1 on t1.rule_id = t.id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+        ORDER BY t.last_modified desc
+    </select>
+
+    <select id="packageDetailRule" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.dto.PackageRuleDTO">
+        SELECT
+        t.*,
+        'package.png' as pluginIcon,
+        t1.tag_key as tagKey,
+        t2.tag_name as tagName
+        FROM package_rule t
+        left join rule_tag_mapping t1 on t1.rule_id = t.id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+        ORDER BY t.last_modified desc
+    </select>
+
+    <select id="detailTag" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.dto.TaskTagGroupDTO">
+        SELECT
+            DISTINCT
+            t2.id,
+            t2.name,
+            t2.status,
+            t2.severity,
+            t2.description,
+            t2.parameter,
+            t2.last_modified as lastModified,
+            t2.flag,
+            t2.script
+        FROM rule_tag t
+        left join rule_tag_mapping t1 on t.tag_key = t1.tag_key
+        join rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.tag_key = #{sourceId}
+            </if>
+        </where>
+
+        UNION ALL
+
+        SELECT
+            DISTINCT
+            t2.id,
+            t2.name,
+            t2.status,
+            t2.severity,
+            t2.description,
+            t2.parameter,
+            t2.last_modified as lastModified,
+            t2.flag,
+            t2.script
+        FROM rule_tag t
+        left join rule_tag_mapping t1 on t.tag_key = t1.tag_key
+        join server_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.tag_key = #{sourceId}
+            </if>
+        </where>
+
+        UNION ALL
+
+        SELECT
+            DISTINCT
+            t2.id,
+            t2.name,
+            t2.status,
+            t2.severity,
+            t2.description,
+            t2.parameter,
+            t2.last_modified as lastModified,
+            t2.flag,
+            t2.script
+        FROM rule_tag t
+        left join rule_tag_mapping t1 on t.tag_key = t1.tag_key
+        join image_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.tag_key = #{sourceId}
+            </if>
+        </where>
+
+        UNION ALL
+
+        SELECT
+            DISTINCT
+            t2.id,
+            t2.name,
+            t2.status,
+            t2.severity,
+            t2.description,
+            t2.parameter,
+            t2.last_modified as lastModified,
+            t2.flag,
+            t2.script
+        FROM rule_tag t
+        left join rule_tag_mapping t1 on t.tag_key = t1.tag_key
+        join package_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.tag_key = #{sourceId}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="detailGroup" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.dto.TaskTagGroupDTO">
+        SELECT
+            DISTINCT
+            t2.id,
+            t2.name,
+            t2.status,
+            t2.severity,
+            t2.description,
+            t2.parameter,
+            t2.last_modified as lastModified,
+            t2.flag,
+            t2.script
+        FROM rule_group t
+        left join rule_group_mapping t1 on t.id = t1.group_id
+        join rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+
+        UNION ALL
+
+        SELECT
+            DISTINCT
+            t2.id,
+            t2.name,
+            t2.status,
+            t2.severity,
+            t2.description,
+            t2.parameter,
+            t2.last_modified as lastModified,
+            t2.flag,
+            t2.script
+        FROM rule_group t
+        left join rule_group_mapping t1 on t.id = t1.group_id
+        join server_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+
+        UNION ALL
+
+        SELECT
+            DISTINCT
+            t2.id,
+            t2.name,
+            t2.status,
+            t2.severity,
+            t2.description,
+            t2.parameter,
+            t2.last_modified as lastModified,
+            t2.flag,
+            t2.script
+        FROM rule_group t
+        left join rule_group_mapping t1 on t.id = t1.group_id
+        join image_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+
+        UNION ALL
+
+        SELECT
+            DISTINCT
+            t2.id,
+            t2.name,
+            t2.status,
+            t2.severity,
+            t2.description,
+            t2.parameter,
+            t2.last_modified as lastModified,
+            t2.flag,
+            t2.script
+        FROM rule_group t
+        left join rule_group_mapping t1 on t.id = t1.group_id
+        join package_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+
     </select>
 </mapper>

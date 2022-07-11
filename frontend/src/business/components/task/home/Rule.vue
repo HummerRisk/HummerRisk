@@ -56,7 +56,7 @@
                 prefix-icon="el-icon-search"
                 @change="search"
                 maxlength="60"
-                v-model="condition.name" clearable/>
+                v-model="condition.ruleName" clearable/>
             </el-col>
           </el-row>
         </template>
@@ -65,10 +65,12 @@
           <el-table-column type="index" min-width="3%"/>
           <el-table-column :label="$t('task.task_rule_name')" min-width="27%" show-overflow-tooltip>
             <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.ruleName }}
-              </span>
+              <el-link type="primary" :underline="false" class="md-primary text-click"  @click="showTaskDetail(scope.row)">
+                <span>
+                  <img :src="require(`@/assets/img/platform/${scope.row.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                   &nbsp;&nbsp; {{ scope.row.ruleName }}
+                </span>
+              </el-link>
             </template>
           </el-table-column>
           <el-table-column min-width="10%" :label="$t('task.task_rule_severity')" column-key="severity">
@@ -85,6 +87,126 @@
         </el-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
+
+
+      <!--Task rule detail-->
+      <el-drawer v-if="detailVisible" :close-on-click-modal="false" class="rtl" :visible.sync="detailVisible" size="60%" :show-close="false" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true">
+        <div slot="title" class="dialog-title">
+          <span>{{ $t('resource.i18n_detail') }}</span>
+          <i class="el-icon-close el-icon-close-detail" @click="detailVisible=false"></i>
+        </div>
+        <el-form :model="detailForm" label-position="right" label-width="120px" size="small" ref="detailForm">
+          <el-form-item class="el-form-item-dev">
+            <el-tabs type="border-card" @tab-click="showCodemirror">
+              <el-tab-pane>
+                <span slot="label"><i class="el-icon-reading"></i> {{ $t('rule.rule') }}</span>
+                <el-form label-position="left" inline class="demo-table-expand" >
+                  <el-form-item :label="$t('task.task_rule_type')" v-if="detailForm.pluginIcon">
+                        <span>
+                          <img :src="require(`@/assets/img/platform/${detailForm.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                        </span>
+                  </el-form-item>
+                  <el-form-item :label="$t('rule.rule_name')">
+                    <el-tooltip class="item" effect="dark" :content="detailForm.name" placement="top-start">
+                      <span v-if="detailForm.name" class="view-text">{{ detailForm.name }}</span>
+                    </el-tooltip>
+                  </el-form-item>
+                  <el-form-item :label="$t('task.task_tag')">
+                      <span> {{ detailForm.tagName }}</span>
+                  </el-form-item>
+                  <el-form-item :label="$t('rule.severity')">
+                    <span v-if="detailForm.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
+                    <span v-else-if="detailForm.severity == 'MediumRisk'" style="color: #fe9636;"> {{ $t('rule.MediumRisk') }}</span>
+                    <span v-else-if="detailForm.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
+                    <span v-else> N/A</span>
+                  </el-form-item>
+                  <el-form-item :label="$t('account.create_time')">
+                    <span>{{ detailForm.lastModified | timestampFormatDate }}</span>
+                  </el-form-item>
+                </el-form>
+                <div style="color: red;margin-left: 10px;">
+                  注: {{detailForm.description}}
+                </div>
+              </el-tab-pane>
+              <el-tab-pane>
+                <span slot="label"><i class="el-icon-info"></i> {{ $t('rule.rule_detail') }}</span>
+                <codemirror ref="cmEditor" v-model="detailForm.script" class="code-mirror" :options="cmOptions" />
+              </el-tab-pane>
+            </el-tabs>
+          </el-form-item>
+        </el-form>
+      </el-drawer>
+      <!--Task rule detail-->
+
+      <!--Task tag detail-->
+      <el-drawer class="rtl" :title="$t('resource.i18n_detail')" :visible.sync="tagDetailVisible" size="85%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true">
+        <el-table border :data="tagDetailTable" class="adjust-table table-content" style="margin: 2%;">
+          <el-table-column type="index" min-width="5%"/>
+          <el-table-column prop="name" :label="$t('task.task_rule_name')" min-width="20%" show-overflow-tooltip></el-table-column>
+          <el-table-column min-width="10%" :label="$t('package.severity')" column-key="severity">
+            <template v-slot:default="{row}">
+              <severity-type :row="row"/>
+            </template>
+          </el-table-column>
+          <el-table-column prop="description" :label="$t('package.description')" min-width="35%" show-overflow-tooltip></el-table-column>
+          <el-table-column :label="$t('package.status')" min-width="10%" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <el-switch v-model="scope.row.status"/>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('rule.tag_flag')" min-width="10%" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <el-switch v-model="scope.row.flag"/>
+            </template>
+          </el-table-column>
+          <el-table-column prop="lastModified" min-width="20%" :label="$t('package.last_modified')" sortable>
+            <template v-slot:default="scope">
+              <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+        <dialog-footer
+          @cancel="tagDetailVisible = false"
+          @confirm="handleClose"/>
+      </el-drawer>
+      <!--Task tag detail-->
+
+      <!--Task group detail-->
+      <el-drawer class="rtl" :title="$t('resource.i18n_detail')" :visible.sync="groupDetailVisible" size="85%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true">
+        <el-table border :data="groupDetailTable" class="adjust-table table-content" style="margin: 2%;">
+          <el-table-column type="index" min-width="5%"/>
+          <el-table-column prop="name" :label="$t('task.task_rule_name')" min-width="20%" show-overflow-tooltip></el-table-column>
+          <el-table-column min-width="10%" :label="$t('package.severity')" column-key="severity">
+            <template v-slot:default="{row}">
+              <severity-type :row="row"/>
+            </template>
+          </el-table-column>
+          <el-table-column prop="description" :label="$t('package.description')" min-width="25%" show-overflow-tooltip></el-table-column>
+          <el-table-column :label="$t('package.status')" min-width="10%" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <el-switch v-model="scope.row.status"/>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('rule.tag_flag')" min-width="10%" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <el-switch v-model="scope.row.flag"/>
+            </template>
+          </el-table-column>
+          <el-table-column prop="lastModified" min-width="20%" :label="$t('package.last_modified')" sortable>
+            <template v-slot:default="scope">
+              <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+        <dialog-footer
+          @cancel="groupDetailVisible = false"
+          @confirm="handleClose"/>
+      </el-drawer>
+      <!--Task group detail-->
+
     </main-container>
 </template>
 
@@ -95,7 +217,7 @@ import Container from "../../common/components/Container";
 import TableHeader from "../../common/components/TableHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
-import DialogFooter from "../../common/components/RuleDialogFooter";
+import DialogFooter from "../head/DialogFooter";
 import {_filter} from "@/common/js/utils";
 import SeverityType from "./SeverityType";
 
@@ -127,6 +249,25 @@ import SeverityType from "./SeverityType";
           {id: 'tag', name: this.$t('task.task_tag')},
           {id: 'group', name: this.$t('task.task_group')},
         ],
+        key: 'all',
+        detailVisible: false,
+        detailForm: {},
+        direction: 'rtl',
+        cmOptions: {
+          tabSize: 4,
+          mode: {
+            name: 'shell',
+            json: true
+          },
+          theme: 'bespin',
+          lineNumbers: true,
+          line: true,
+          indentWithTabs: true,
+        },
+        tagDetailVisible: false,
+        tagDetailTable: [],
+        groupDetailVisible: false,
+        groupDetailTable: [],
       }
     },
 
@@ -146,50 +287,48 @@ import SeverityType from "./SeverityType";
     methods: {
       //查询列表
       search() {
-        let url = "/task/ruleList/" + this.currentPage + "/" + this.pageSize;
+        let url = "/task/allList/" + this.currentPage + "/" + this.pageSize;
+        if(this.key === 'all') {
+          url = "/task/allList/" + this.currentPage + "/" + this.pageSize;
+        } else if (this.key === 'rule') {
+          url = "/task/ruleList/" + this.currentPage + "/" + this.pageSize;
+        } else if (this.key === 'tag') {
+          url = "/task/ruleTagList/" + this.currentPage + "/" + this.pageSize;
+        } else if (this.key === 'group') {
+          url = "/task/ruleGroupList/" + this.currentPage + "/" + this.pageSize;
+        }
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;
         });
       },
+      searchTag(item) {
+        this.result = this.$post("/task/detailTag",item, response => {
+          if (response.success) {
+            this.tagDetailTable = response.data;
+          }
+        });
+      },
+      searchGroup(item) {
+        this.result = this.$post("/task/detailGroup",item, response => {
+          if (response.success) {
+            this.groupDetailTable = response.data;
+          }
+        });
+      },
       filterRules (tag) {
-        let key = "";
         for (let obj of this.tags) {
-          if (tag.label == obj.tagName) {
-            key = obj.tagKey;
+          if (tag.label == obj.name) {
+            this.key = obj.id;
             break;
           } else {
-            key = 'all';
+            this.key = 'all';
           }
-        }
-        if (this.condition.combine) {
-          this.condition.combine.ruleTag = {operator: 'in', value: key};
-        } else {
-          this.condition.combine = {ruleTag: {operator: 'in', value: key }};
         }
         this.search();
       },
-      severityOptionsFnc () {
-        this.severityOptions = [
-          {key: '低风险', value: "LowRisk"},
-          {key: '中风险', value: "MediumRisk"},
-          {key: '高风险', value: "HighRisk"}
-        ];
-      },
-      ruleSetOptionsFnc (pluginId) {
-        this.$get("/rule/ruleGroups/" + pluginId, res => {
-          this.ruleSetOptions = res.data;
-        });
-      },
-      inspectionSeportOptionsFnc () {
-        this.$get("/rule/all/ruleInspectionReport", res => {
-          this.inspectionSeportOptions = res.data;
-        });
-      },
       init() {
-        this.severityOptionsFnc();
-        this.inspectionSeportOptionsFnc();
         this.search();
       },
       filter(filters) {
@@ -198,6 +337,49 @@ import SeverityType from "./SeverityType";
       },
       addTask(item) {
         this.$emit('addTask', item);
+      },
+      showTaskDetail(item) {
+        if (item.ruleType === 'rule') {
+          this.detailForm = {};
+          this.result = this.$post("/task/detailRule",item, response => {
+            if (response.success) {
+              let data = response.data;
+              if (item.accountType === 'cloudAccount') {
+                this.detailForm = data.ruleDTO;
+              } else if(item.accountType === 'vulnAccount') {
+                this.detailForm = data.ruleDTO;
+              } else if(item.accountType === 'serverAccount') {
+                this.detailForm = data.serverRuleDTO;
+              } else if(item.accountType === 'imageAccount') {
+                this.detailForm = data.imageRuleDTO;
+              } else if(item.accountType === 'packageAccount') {
+                this.detailForm = data.packageRuleDTO;
+              }
+              this.detailVisible = true;
+            }
+          });
+        } else if(item.ruleType === 'tag') {
+          this.searchTag(item);
+          this.tagDetailVisible = true;
+        } else if(item.ruleType === 'group') {
+          this.searchGroup(item);
+          this.groupDetailVisible = true;
+        }
+      },
+      handleClose() {
+        this.detailVisible=false;
+        this.tagDetailVisible=false;
+        this.groupDetailVisible=false;
+      },
+      showCodemirror () {
+        setTimeout(() => {
+          this.$refs.cmEditor.codemirror.refresh();
+        },50);
+      },
+    },
+    computed: {
+      codemirror() {
+        return this.$refs.cmEditor.codemirror;
       }
     },
     created() {
@@ -226,6 +408,45 @@ import SeverityType from "./SeverityType";
     background-color: #b0abab;
     color: #fff;
     margin-bottom: 3px;
+  }
+  .text-click {
+    color: #0066ac;
+    text-decoration: none;
+  }
+  .el-form-item-dev  >>> .el-form-item__content {
+    margin-left: 0 !important;
+  }
+
+  .grid-content-log-span {
+    width: 40%;float: left;
+    vertical-align: middle;
+    display:table-cell;
+    margin: 6px 0;
+  }
+
+  .grid-content-status-span {
+    width: 20%;float: left;
+    vertical-align: middle;
+    display:table-cell;
+    margin: 6px 0;
+  }
+  .demo-table-expand {
+    font-size: 0;
+  }
+  .demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+  }
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    padding: 10px 2%;
+    width: 46%;
+  }
+
+  .el-icon-close-detail {
+    float: right;
+    cursor:pointer;
   }
   /deep/ :focus{outline:0;}
 </style>
