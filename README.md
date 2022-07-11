@@ -19,7 +19,7 @@
 
 ## 什么是 HummerRisk
 
-> HummerRisk 是开源的安全合规检测平台，全面支持云原生，实现对主流公(私)有云资源的安全合规检测、网络漏洞检测、虚拟机安全检测、软件依赖检测、容器镜像检测，支持 Cloud Custodian、Prowler、Nuclei、 Xray 、 Dependency Check 、 Grype 和 Syft 等多种检测引擎，全面满足日常的安全合规检测需要。
+> HummerRisk 是开源的安全合规检测平台，全面支持云原生，实现对主流公(私)有云资源的安全合规检测、网络漏洞检测、网络安全扫描、虚拟机安全检测、软件依赖检测、容器镜像检测，支持 Cloud Custodian、Prowler、Nuclei、Xray 、Tsunami 、Dependency Check、Grype 和 Syft 等多种检测引擎，全面满足日常的安全合规检测需要。
 
 ![架构](http://hummerrisk-1312321453.cos.ap-beijing.myqcloud.com/architecture.png)
 
@@ -69,9 +69,10 @@ curl -sSL https://github.com/HummerRisk/HummerRisk/releases/latest/download/quic
 - [Prowler](https://prowler.pro/)：使用了 Prowler 作为 AWS 检测引擎
 - [Nuclei](https://nuclei.projectdiscovery.io/)：使用了 Nuclei 作为漏洞检测引擎
 - [Xray](https://xray.cool/)：使用了 Xray 作为漏洞检测引擎
+- [Tsunami](https://github.com/google/tsunami-security-scanner/blob/master/docs/index.md)：使用了 Tsunami 作为网络安全扫描引擎
 - [Dependency Check](https://jeremylong.github.io/DependencyCheck/)：使用了 Dependency Check 作为软件依赖检查引擎
-- [Grype](https://github.com/anchore/grype)：使用了 Grype 作为镜像依赖检查引擎
-- [Syft](https://github.com/anchore/syft)：使用了 Syft 作为镜像物料清单检查引擎
+- [Grype](https://github.com/anchore/grype)：使用了 Grype 作为镜像依赖检测引擎
+- [Syft](https://github.com/anchore/syft)：使用了 Syft 作为镜像物料清单检测引擎
 - [Element](https://element.eleme.cn/#/)：使用了 Element 提供的优秀组件库
 
 ## License & Copyright
