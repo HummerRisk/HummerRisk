@@ -8,9 +8,9 @@
       </template>
 
       <el-card class="table-card el-row-card" :body-style="{ padding: '0' }" :key="index" v-for="(data, index) in tableData">
-        <el-row style="margin: 2%;">
-          <el-col :span="3">
-            <el-image style="width: 100px; height: 100px;"
+        <el-row class="cp-el-i">
+          <el-col :span="3" class="co-el-img">
+            <el-image class="co-el-i"
                       :src="data.pluginIcon==='docker.png'?require(`@/assets/img/platform/${data.pluginIcon}`):`${location}${data.pluginIcon}`"
                       :fit="'fill'">
               <div slot="error" class="image-slot">
@@ -520,22 +520,21 @@ export default {
 }
 /deep/ :focus{outline:0;}
 .el-row-card {
-  padding: 0 20px 0 20px;
-  margin: 2%;
+  padding: 0 10px 0 10px;
+  margin: 1%;
 }
 .split {
-  height: 120px;
+  height: 80px;
   border-left: 1px solid #D8DBE1;
 }
 .cl-ver-col {
   vertical-align: middle;
-  margin-top: 2%;
 }
 .cl-mid-row {
-  margin: 1%;
+  margin: 0 0 1% 0;
 }
 .cl-btn-mid-row {
-  margin: 2%;
+  margin: 1%;
 }
 .cl-span-col {
   margin: 1% 0;
@@ -565,5 +564,17 @@ export default {
 
 .input-inline-t >>> .el-input__inner {
   width: 30%;
+}
+
+.co-el-img >>> .el-image {
+  display: table-cell;
+  left: 40%;
+}
+.cp-el-i {
+  margin: 1%;
+}
+.co-el-i{
+  width: 70px;
+  height: 70px;
 }
 </style>
