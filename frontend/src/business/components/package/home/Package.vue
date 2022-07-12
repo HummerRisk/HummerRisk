@@ -9,10 +9,10 @@
 
       </template>
       <el-row :gutter="20" class="el-row-body">
-        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" v-for="(data, index) in tableData"
-                :key="index" class="el-col el-col-su" style="margin: 10px 0 5px 0;">
+        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in tableData"
+                :key="index" class="el-col el-col-su">
           <el-card :body-style="{ padding: '0' }">
-            <el-image style="width: 100%; height: 220px;"
+            <el-image style="width: 100%; height: 160px;"
                       :src="data.pluginIcon==='package.png'?require(`@/assets/img/platform/${data.pluginIcon}`):`${location}${data.pluginIcon}`"
                       :fit="'fill'">
               <div slot="error" class="image-slot">
@@ -26,8 +26,8 @@
                 <span v-bind:class="{true: 'color-red', false: ''}[!data.packageName]">{{ data.packageName?data.packageName:'No package' }}</span>
               </span>
               <div class="bottom clearfix">
-                <time class="time">{{ data.updateTime | timestampFormatDate }} | {{ data.userName }}{{ $t('dashboard.i18n_create') }}</time>
-                <el-dropdown class="button" @command="(command)=>{handleCommand(command, data)}">
+                <time class="time pa-time">{{ data.updateTime | timestampFormatDate }} | {{ data.userName }}{{ $t('dashboard.i18n_create') }}</time>
+                <el-dropdown class="button button-drop" @command="(command)=>{handleCommand(command, data)}">
                   <span class="el-dropdown-link">
                     {{ $t('package.operate') }}
                     <i class="el-icon-arrow-down el-icon--right"></i>
@@ -103,7 +103,7 @@
         </div>
       </el-form>
       <dialog-footer
-        @cancel="createVisible = false"
+        @cancel="handleClose"
         :show-pre="preVisible" @preStep="pre()"
         :show-next="nextVisible" @nextStep="next('add')"
         :show-confirm="confirmVisible" @confirm="handleClose"/>
@@ -167,7 +167,7 @@
         </div>
       </el-form>
       <dialog-footer
-        @cancel="updateVisible = false"
+        @cancel="handleClose"
         :show-pre="preVisible" @preStep="pre()"
         :show-next="nextVisible" @nextStep="next('edit')"
         :show-confirm="confirmVisible" @confirm="handleClose"/>
@@ -403,7 +403,7 @@ export default {
 }
 .bottom {
   margin-top: 13px;
-  line-height: 12px;
+  line-height: 13px;
 }
 
 .button {
@@ -424,6 +424,23 @@ export default {
 
 .pa-na {
   max-width: 60%;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  -o-text-overflow:ellipsis;
+  overflow:hidden;
+}
+
+.pa-time {
+  width:80%;
+  display:inline-block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.button-drop {
+  width: 20%;
+  float: right;
 }
 
 .el-dropdown-link {
@@ -466,7 +483,8 @@ export default {
 }
 
 .el-col-su >>> .el-card {
-  margin: 10px;
+  margin: 10px 0;
 }
+
 </style>
 

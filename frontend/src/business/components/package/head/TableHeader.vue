@@ -65,6 +65,9 @@ export default {
       create() {
         this.$emit('create');
       },
+      refresh() {
+        this.$emit('search');
+      },
     },
     computed: {
       isCombine() {
