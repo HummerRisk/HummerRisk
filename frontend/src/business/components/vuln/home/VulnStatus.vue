@@ -22,7 +22,7 @@
     },
     methods: {
       validate(row) {
-        this.$alert(this.$t('account.validate') + this.$t('account.cloud_account') + ' : ' + row.name +  " ？", '', {
+        this.$alert(this.$t('account.validate') + this.$t('vuln.vuln_setting') + ' : ' + row.name +  " ？", '', {
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {

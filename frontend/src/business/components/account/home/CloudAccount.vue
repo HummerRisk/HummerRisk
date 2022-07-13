@@ -658,13 +658,17 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
       //编辑云账号
       editAccount(item, type){
         if (!this.tmpList.length) {
-          this.$error(this.$t('account.i18n_account_cloud_plugin_param'));
+          this.$warning(this.$t('account.i18n_account_cloud_plugin_param'));
           return;
         }
         this.$refs['accountForm'].validate(valid => {
           if (valid) {
             let data = {}, key = {};
             for (let tmp of this.tmpList) {
+              if(!tmp.input) {
+                this.$warning(this.$t('vuln.no_plugin_param') + tmp.label);
+                return;
+              }
               key[tmp.name] = tmp.input;
             }
             data["credential"] = JSON.stringify(key);

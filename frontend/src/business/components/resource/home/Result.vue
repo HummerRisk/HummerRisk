@@ -96,7 +96,7 @@
                   <el-col :span="8">
                     <span>
                        <el-tooltip class="item" effect="dark" :content="$t('resource.scan')" placement="top">
-                          <el-button type="primary" size="mini" @click="handleScans(source)" circle><i class="el-icon-zoom-in"></i></el-button>
+                          <el-button type="primary" size="mini" @click="handleScans(source)" circle><i class="el-icon-refresh-right"></i></el-button>
                        </el-tooltip>
                       <el-tooltip class="item" effect="dark" :content="$t('resource.delete_result')" placement="top">
                         <el-button type="danger" size="mini" @click="handleDelete(source)" circle><i class="el-icon-delete"></i></el-button>
@@ -344,7 +344,7 @@ import {ACCOUNT_ID} from "@/common/js/constants";
         timer: '',
         buttons: [
           {
-            tip: this.$t('resource.scan'), icon: "el-icon-zoom-in", type: "success",
+            tip: this.$t('resource.scan'), icon: "el-icon-refresh-right", type: "success",
             exec: this.handleScans
           },
           {
@@ -362,7 +362,7 @@ import {ACCOUNT_ID} from "@/common/js/constants";
             exec: this.goResource
           },
           {
-            tip: this.$t('resource.scan'), icon: "el-icon-zoom-in", type: "primary",
+            tip: this.$t('resource.scan'), icon: "el-icon-refresh-right", type: "primary",
             exec: this.handleScan
           }
         ],

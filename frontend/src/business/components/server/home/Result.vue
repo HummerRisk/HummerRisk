@@ -174,7 +174,7 @@ export default {
       detailForm: {},
       buttons: [
         {
-          tip: this.$t('resource.scan'), icon: "el-icon-zoom-in", type: "success",
+          tip: this.$t('resource.scan'), icon: "el-icon-refresh-right", type: "success",
           exec: this.handleScans
         },
         {

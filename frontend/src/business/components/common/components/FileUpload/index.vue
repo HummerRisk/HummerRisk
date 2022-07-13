@@ -17,7 +17,10 @@
         <span>{{ 'Tape Archive Format (.tar)' }}</span>
       </div>
       <div class="el-upload__tip content" slot="tip">
-        <span>{{ 'Gzip format (*.gz, .tgz); Bzip2 format (.bz2, *.tbz2)' }}</span>
+        <span>{{ 'Gzip format (*.gz, .tgz)' }}</span>
+      </div>
+      <div class="el-upload__tip content" slot="tip">
+        <span>{{ 'Bzip2 format (.bz2, *.tbz2)' }}</span>
       </div>
     </el-upload>
 

@@ -249,11 +249,11 @@ export default {
           exec: this.showTaskDetail
         },
         {
-          tip: this.$t('resource.result_details_list'), icon: "el-icon-edit-outline", type: "success",
+          tip: this.$t('resource.result_details_list'), icon: "el-icon-notebook-2", type: "success",
           exec: this.goResource
         },
         {
-          tip: this.$t('resource.scan'), icon: "el-icon-zoom-in", type: "danger",
+          tip: this.$t('resource.scan'), icon: "el-icon-refresh-right", type: "danger",
           exec: this.handleScan
         }
       ],

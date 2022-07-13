@@ -326,7 +326,7 @@ export default {
     //校验漏洞检测账号
     validate() {
       if (this.selectIds.size === 0) {
-        this.$warning(this.$t('account.please_choose_account'));
+        this.$warning(this.$t('vuln.please_choose_vuln'));
         return;
       }
       this.$alert(this.$t('account.one_validate') + this.$t('vuln.vuln_setting') + " ？", '', {
@@ -480,11 +480,15 @@ export default {
     saveAccount(addAccountForm, type){
       for (let item of addAccountForm) {
         if (!item.tmpList.length) {
-          this.$error(this.$t('account.i18n_account_cloud_plugin_param'));
+          this.$warning(this.$t('account.no_plugin_param'));
           return;
         }
         let data = {}, key = {};
         for (let tmp of item.tmpList) {
+          if(!tmp.input) {
+            this.$warning(this.$t('vuln.no_plugin_param') + tmp.label);
+            return;
+          }
           key[tmp.name] = tmp.input.trim();
         }
         data["credential"] = JSON.stringify(key);

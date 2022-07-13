@@ -98,7 +98,7 @@ import {_filter, _sort} from "@/common/js/utils";
         direction: 'rtl',
         buttons: [
           {
-            tip: this.$t('resource.scan'), icon: "el-icon-zoom-in", type: "success",
+            tip: this.$t('resource.scan'), icon: "el-icon-refresh-right", type: "success",
             exec: this.scanAgain
           }
         ],

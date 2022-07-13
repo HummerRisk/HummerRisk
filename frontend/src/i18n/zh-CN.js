@@ -818,7 +818,7 @@ export default {
     DELETE: '删除',
     NEW: '新建',
     please_choose_server: '请选择虚拟机',
-    one_scan: '一键检测',
+    one_scan: '一键执行',
     one_validate: '一键校验',
     server_rule: '虚拟机检测规则',
     server_result: '虚拟机检测结果',
@@ -906,6 +906,7 @@ export default {
     back_resource: '返回镜像检测结果列表',
     result_details_list: '镜像检测结果详情列表',
     image_note: '注: 私有镜像请绑定镜像仓库!',
+    one_scan: '一键执行',
   },
   package: {
     package_setting: '软件包管理',
@@ -939,7 +940,7 @@ export default {
     status: '启用',
     description: '描述',
     last_modified: '最后更新时间',
-    one_scan: '一键检测',
+    one_scan: '一键执行',
     result_list: '软件包检测结果列表',
     result: '软件包规则检测结果',
     result_status: '检测结果状态',
@@ -980,6 +981,7 @@ export default {
     back_vuln: '返回漏洞检测列表',
     history: '漏洞检测历史记录',
     all_label: '全部漏洞检测',
+    no_plugin_param: '请填写参数:',
   },
   oss: {
     oss_setting: '对象存储',
