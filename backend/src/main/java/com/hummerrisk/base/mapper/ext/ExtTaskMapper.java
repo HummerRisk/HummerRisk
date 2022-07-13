@@ -1,6 +1,9 @@
 package com.hummerrisk.base.mapper.ext;
 
-import com.hummerrisk.base.domain.*;
+import com.hummerrisk.base.domain.AccountExample;
+import com.hummerrisk.base.domain.ImageExample;
+import com.hummerrisk.base.domain.PackageExample;
+import com.hummerrisk.base.domain.ServerExample;
 import com.hummerrisk.controller.request.task.*;
 import com.hummerrisk.dto.*;
 

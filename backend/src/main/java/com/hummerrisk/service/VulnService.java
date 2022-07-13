@@ -1,6 +1,5 @@
 package com.hummerrisk.service;
 
-import com.hummerrisk.base.domain.CloudTask;
 import com.hummerrisk.base.domain.CloudTaskExample;
 import com.hummerrisk.base.mapper.CloudTaskMapper;
 import com.hummerrisk.base.mapper.ext.ExtAccountMapper;
@@ -17,8 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 

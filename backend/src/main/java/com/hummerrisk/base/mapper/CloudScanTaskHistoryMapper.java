@@ -2,8 +2,9 @@ package com.hummerrisk.base.mapper;
 
 import com.hummerrisk.base.domain.CloudScanTaskHistory;
 import com.hummerrisk.base.domain.CloudScanTaskHistoryExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface CloudScanTaskHistoryMapper {
     /**

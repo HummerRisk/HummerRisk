@@ -1,9 +1,5 @@
 package com.hummerrisk.dto;
 
-import com.hummerrisk.base.domain.Account;
-import com.hummerrisk.base.domain.Image;
-import com.hummerrisk.base.domain.Package;
-import com.hummerrisk.base.domain.Server;
 import com.hummerrisk.controller.request.task.AccountVo;
 import com.hummerrisk.controller.request.task.ImageVo;
 import com.hummerrisk.controller.request.task.PackageVo;

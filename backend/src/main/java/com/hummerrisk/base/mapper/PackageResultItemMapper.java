@@ -2,8 +2,9 @@ package com.hummerrisk.base.mapper;
 
 import com.hummerrisk.base.domain.PackageResultItem;
 import com.hummerrisk.base.domain.PackageResultItemExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface PackageResultItemMapper {
     /**

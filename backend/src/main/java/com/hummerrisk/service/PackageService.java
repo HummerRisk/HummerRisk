@@ -10,7 +10,6 @@ import com.hummerrisk.base.mapper.ext.ExtPackageMapper;
 import com.hummerrisk.base.mapper.ext.ExtPackageResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtPackageRuleMapper;
 import com.hummerrisk.commons.constants.*;
-import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.packageSetting.PackageRequest;
 import com.hummerrisk.controller.request.packageSetting.PackageResultRequest;

@@ -1,8 +1,6 @@
 package com.hummerrisk.controller.request.task;
 
 
-import java.util.Map;
-
 public class RuleVo {
 
     private String sourceId;

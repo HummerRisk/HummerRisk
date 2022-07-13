@@ -3,9 +3,9 @@ package com.hummerrisk.sechedule;
 import com.hummer.quartz.anno.QuartzScheduled;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.service.AccountService;
+import com.hummerrisk.service.CloudTaskService;
 import com.hummerrisk.service.RuleService;
 import com.hummerrisk.service.SystemParameterService;
-import com.hummerrisk.service.CloudTaskService;
 import org.quartz.*;
 
 import javax.annotation.Resource;
