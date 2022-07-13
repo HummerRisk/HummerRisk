@@ -22,11 +22,7 @@ CREATE TABLE IF NOT EXISTS `cloud_task` (
     `return_sum`                    bigint(13)            DEFAULT NULL COMMENT '输出检测结果资源数',
     `cron_desc`                     varchar(512)          DEFAULT NULL COMMENT '定时时间(cron中文翻译)',
     `scan_type`                     varchar(32)           DEFAULT NULL COMMENT '检测类型',
-    PRIMARY KEY (`id`),
-    KEY `IDX_STATUS` (`status`),
-    KEY `IDX_APPLY_USER` (`apply_user`),
-    KEY `IDX_TYPE` (`type`),
-    KEY `IDX_CREATE_TIME` (`create_time`)
+    PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 
@@ -47,9 +43,7 @@ CREATE TABLE IF NOT EXISTS `cloud_task_item` (
     `account_label`                varchar(128)        DEFAULT NULL COMMENT '云账号名称',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `update_time`                  bigint(13)          DEFAULT NULL COMMENT '修改时间',
-    PRIMARY KEY (`id`),
-    KEY `IDX_task_id` (`task_id`),
-    KEY `IDX_rule_id` (`rule_id`)
+    PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 
@@ -62,9 +56,7 @@ CREATE TABLE IF NOT EXISTS `cloud_task_item_log` (
     `operation`                    varchar(255)        DEFAULT NULL COMMENT '操作内容',
     `output`                       mediumtext          DEFAULT NULL COMMENT '输出',
     `result`                       tinyint(1)          DEFAULT NULL COMMENT '结果',
-    PRIMARY KEY (`id`),
-    KEY `IDX_ITEM_ID` (`task_item_id`),
-    KEY `IDX_RES_ID` (`resource_id`)
+    PRIMARY KEY (`id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
 
@@ -79,11 +71,8 @@ CREATE TABLE IF NOT EXISTS `cloud_task_item_resource`
     `resource_id`                 varchar(50)         DEFAULT NULL COMMENT '资源ID',
     `resource_command`            longtext            DEFAULT NULL COMMENT 'policy(无actions)',
     `resource_command_action`     longtext            DEFAULT NULL COMMENT 'policy(有actions)',
-    PRIMARY KEY (`id`),
-    KEY `IDX_ITEM_ID` (`task_item_id`),
-    KEY `IDX_RES_ID` (`resource_id`),
-    KEY `IDX_task_id` (`task_id`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `resource`
 (
@@ -116,9 +105,7 @@ CREATE TABLE IF NOT EXISTS `resource_rule` (
     `resource_id`                varchar(50)          NOT NULL COMMENT '资源ID',
     `rule_id`                    varchar(50)          DEFAULT NULL COMMENT '规则ID',
     `apply_user`                 varchar(50)          DEFAULT NULL COMMENT '申请人',
-    PRIMARY KEY (`resource_id`),
-    KEY `IDX_rule_id` (`rule_id`),
-    KEY `IDX_APPLY_USER` (`apply_user`)
+    PRIMARY KEY (`resource_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `resource_item` (
