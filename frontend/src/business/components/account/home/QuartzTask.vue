@@ -13,7 +13,7 @@
           <el-table-column prop="name" :label="$t('account.task_input_name')" min-width="10%" show-overflow-tooltip></el-table-column>
           <el-table-column prop="qzType" :label="$t('account.choose_qztype')" min-width="9%" show-overflow-tooltip>
             <template v-slot:default="scope">
-              <el-link type="primary" @click="showAccount(scope.row)">{{ scope.row.qzType }}</el-link>
+              <el-link type="primary" @click="showAccount(scope.row)">{{ $t(scope.row.qzType) }}</el-link>
             </template>
           </el-table-column>
           <el-table-column prop="cron" :label="$t('account.cron_expression')" min-width="8%" show-overflow-tooltip></el-table-column>

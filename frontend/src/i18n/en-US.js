@@ -1133,5 +1133,7 @@ export default {
   '标签': 'Label',
   '实例': 'Server',
   '镜像': 'Image',
+  ACCOUNT: 'Cloud account',
+  RULE: 'Rule',
   warning_task: 'Unable to save temporarily, this function will be used after the task scheduling function is online, so stay tuned! ',
 };

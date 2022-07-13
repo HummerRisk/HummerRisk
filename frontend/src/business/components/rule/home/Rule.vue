@@ -641,6 +641,7 @@ import {RULE_CONFIGS} from "../../common/components/search/search-components";
         for (let i in parameter) {
           if (parameter[i].key === p.key) {
             parameter.splice(i, 1);
+            return;
           }
         }
       },

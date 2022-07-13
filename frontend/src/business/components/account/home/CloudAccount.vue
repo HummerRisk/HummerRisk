@@ -866,6 +866,7 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
         for (let i in parameter) {
           if (parameter[i].name === p.name) {
             parameter.splice(i, 1);
+            return;
           }
         }
       },
