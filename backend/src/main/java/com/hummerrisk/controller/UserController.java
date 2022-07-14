@@ -8,6 +8,7 @@ import com.hummerrisk.commons.user.SessionUser;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.commons.utils.SessionUtils;
+import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.member.AddMemberRequest;
 import com.hummerrisk.controller.request.member.EditPassWordRequest;
 import com.hummerrisk.controller.request.member.QueryMemberRequest;
@@ -35,6 +36,7 @@ public class UserController {
     @Resource
     private UserService userService;
 
+    @I18n
     @ApiOperation(value = "添加用户")
     @PostMapping("/special/add")
     @RequiresRoles(RoleConstants.ADMIN)
@@ -42,6 +44,7 @@ public class UserController {
         return userService.insert(user);
     }
 
+    @I18n
     @ApiOperation(value = "用户列表")
     @PostMapping("/special/list/{goPage}/{pageSize}")
     @RequiresRoles(RoleConstants.ADMIN)
@@ -50,6 +53,7 @@ public class UserController {
         return PageUtils.setPageInfo(page, userService.getUserListWithRequest(request));
     }
 
+    @I18n
     @ApiOperation(value = "用户角色")
     @GetMapping("/special/user/role/{userId}")
     @RequiresRoles(RoleConstants.ADMIN)
@@ -78,6 +82,7 @@ public class UserController {
         userService.updateUser(user);
     }
 
+    @I18n
     @ApiIgnore
     @PostMapping("/special/ws/member/list/{goPage}/{pageSize}")
     @RequiresRoles(RoleConstants.ADMIN)
@@ -86,6 +91,7 @@ public class UserController {
         return PageUtils.setPageInfo(page, userService.getMemberList(request));
     }
 
+    @I18n
     @ApiIgnore
     @PostMapping("/special/ws/member/list/all")
     @RequiresRoles(RoleConstants.ADMIN)
@@ -121,6 +127,7 @@ public class UserController {
         userService.delOrganizationMember(organizationId, userId);
     }
 
+    @I18n
     @ApiIgnore
     @PostMapping("/special/org/member/list/{goPage}/{pageSize}")
     @RequiresRoles(RoleConstants.ADMIN)
@@ -129,6 +136,7 @@ public class UserController {
         return PageUtils.setPageInfo(page, userService.getOrgMemberList(request));
     }
 
+    @I18n
     @ApiIgnore
     @PostMapping("/special/org/member/list/all")
     @RequiresRoles(RoleConstants.ADMIN)
@@ -136,6 +144,7 @@ public class UserController {
         return userService.getOrgMemberList(request);
     }
 
+    @I18n
     @ApiOperation(value = "所有用户")
     @GetMapping("/list/all")
     public List<User> getUserList() {
@@ -151,12 +160,14 @@ public class UserController {
         return SessionUtils.getUser();
     }
 
+    @I18n
     @ApiOperation(value = "用户信息")
     @GetMapping("/info/{userId}")
     public UserDTO getUserInfo(@PathVariable(value = "userId") String userId) {
         return userService.getUserInfo(userId);
     }
 
+    @I18n
     @ApiIgnore
     @GetMapping("/besideorg/list/{orgId}")
     public List<User> getBesideOrgMemberList(@PathVariable String orgId) {
@@ -181,6 +192,7 @@ public class UserController {
         return userService.updateUserPassword(request);
     }
 
+    @I18n
     @ApiIgnore
     @GetMapping("/search/{condition}")
     @RequiresRoles(value = {RoleConstants.ADMIN}, logical = Logical.OR)

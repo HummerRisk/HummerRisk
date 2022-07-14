@@ -2,12 +2,10 @@ package com.hummerrisk.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummerrisk.base.domain.Rule;
-import com.hummerrisk.base.domain.RuleGroup;
-import com.hummerrisk.base.domain.RuleInspectionReport;
-import com.hummerrisk.base.domain.RuleTag;
+import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
+import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.rule.CreateRuleRequest;
 import com.hummerrisk.controller.request.rule.RuleGroupRequest;
 import com.hummerrisk.controller.request.rule.RuleTagRequest;
@@ -35,6 +33,7 @@ public class RuleController {
     @Resource
     private RuleService ruleService;
 
+    @I18n
     @ApiOperation(value = "云账号规则列表")
     @PostMapping(value = "list/{goPage}/{pageSize}")
     public Pager<List<RuleDTO>> cloudList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CreateRuleRequest rule) {
@@ -42,12 +41,14 @@ public class RuleController {
         return PageUtils.setPageInfo(page, ruleService.cloudList(rule));
     }
 
+    @I18n
     @ApiIgnore
     @GetMapping(value = "listByAccountId/{accountId}")
     public List<Rule> listByAccountId(@PathVariable String accountId) {
         return ruleService.getRulesByAccountId(accountId);
     }
 
+    @I18n
     @ApiOperation(value = "规则标签列表")
     @PostMapping(value = "ruleTag/list/{goPage}/{pageSize}")
     public Pager<List<RuleTag>> ruleTagList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleTagRequest request) {
@@ -55,6 +56,7 @@ public class RuleController {
         return PageUtils.setPageInfo(page, ruleService.ruleTagList(request));
     }
 
+    @I18n
     @ApiOperation(value = "规则组列表")
     @PostMapping(value = "ruleGroup/list/{goPage}/{pageSize}")
     public Pager<List<RuleGroupDTO>> ruleGroupList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleGroupRequest request) {
@@ -62,12 +64,14 @@ public class RuleController {
         return PageUtils.setPageInfo(page, ruleService.ruleGroupList(request));
     }
 
+    @I18n
     @ApiOperation(value = "规则标签")
     @GetMapping(value = "ruleTags")
     public List<RuleTagDTO> getRuleTags() throws Exception {
         return ruleService.getRuleTags();
     }
 
+    @I18n
     @ApiOperation(value = "添加规则")
     @PostMapping(value = "add")
     public Rule addRule(@RequestBody CreateRuleRequest createRuleRequest) {
@@ -75,27 +79,30 @@ public class RuleController {
         return ruleService.saveRules(createRuleRequest);
     }
 
+    @I18n
     @ApiOperation(value = "修改规则")
     @PostMapping(value = "update")
     public Rule updateRule(@RequestBody CreateRuleRequest createRuleRequest) {
         return ruleService.saveRules(createRuleRequest);
     }
 
+    @I18n
     @ApiOperation(value = "复制规则")
     @PostMapping(value = "copy")
     public Rule copyRule(@RequestBody CreateRuleRequest createRuleRequest) {
         return ruleService.copyRule(createRuleRequest);
     }
 
+    @I18n
     @ApiOperation(value = "运行规则")
     @PostMapping(value = "run")
-    public Object runRule(@RequestBody RuleDTO ruleDTO) {
+    public CloudTask runRule(@RequestBody RuleDTO ruleDTO) {
         return ruleService.runRules(ruleDTO);
     }
 
     @ApiOperation(value = "测试运行规则")
     @PostMapping(value = "dryRun")
-    public Object dryRun(@RequestBody RuleDTO ruleDTO) throws Exception {
+    public boolean dryRun(@RequestBody RuleDTO ruleDTO) throws Exception {
         return ruleService.dryRun(ruleDTO);
     }
 
@@ -105,12 +112,14 @@ public class RuleController {
         ruleService.deleteRule(id);
     }
 
+    @I18n
     @ApiOperation(value = "规则详情")
     @GetMapping(value = "get/{ruleId}")
     public RuleDTO getRule(@PathVariable String ruleId) throws Exception {
         return ruleService.getRuleById(ruleId);
     }
 
+    @I18n
     @ApiIgnore
     @GetMapping(value = "getRuleByTaskId/{taskId}")
     public RuleDTO getRuleByTaskId(@PathVariable String taskId) throws Exception {
@@ -129,12 +138,14 @@ public class RuleController {
         return ruleService.getAllResourceTypes();
     }
 
+    @I18n
     @ApiOperation(value = "规则组")
     @GetMapping(value = "ruleGroups/{pluginId}")
     public List<RuleGroup> getRuleGroups(@PathVariable String pluginId) {
         return ruleService.getRuleGroups(pluginId);
     }
 
+    @I18n
     @ApiOperation(value = "规则条例")
     @PostMapping(value = "ruleInspectionReports/{goPage}/{pageSize}")
     public Pager<List<RuleInspectionReport>> getRuleInspectionReports(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleInspectionReport ruleInspectionReport) {
@@ -142,6 +153,7 @@ public class RuleController {
         return PageUtils.setPageInfo(page, ruleService.getRuleInspectionReport(ruleInspectionReport));
     }
 
+    @I18n
     @ApiIgnore
     @GetMapping(value = "all/ruleInspectionReport")
     public List<RuleInspectionReport> getRuleInspectionReport() {
@@ -184,12 +196,14 @@ public class RuleController {
         ruleService.insertScanHistory(accountId);
     }
 
+    @I18n
     @ApiOperation(value = "新增规则组")
     @RequestMapping(value = "group/save")
     public RuleGroup saveRuleGroup(@RequestBody RuleGroup ruleGroup) {
         return ruleService.saveRuleGroup(ruleGroup);
     }
 
+    @I18n
     @ApiOperation(value = "修改规则组")
     @RequestMapping(value = "group/update")
     public RuleGroup updateRuleGroup(@RequestBody RuleGroup ruleGroup) {
@@ -202,6 +216,7 @@ public class RuleController {
         return ruleService.deleteRuleGroupById(id);
     }
 
+    @I18n
     @ApiIgnore
     @PostMapping("groups")
     public List<GroupDTO> groups(@RequestPart(value = "selectIds") List<String> ids) {

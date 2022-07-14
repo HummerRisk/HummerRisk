@@ -3,6 +3,7 @@ package com.hummerrisk.controller;
 import com.hummerrisk.base.domain.UserKey;
 import com.hummerrisk.commons.constants.RoleConstants;
 import com.hummerrisk.commons.utils.SessionUtils;
+import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.security.ApiKeyHandler;
 import com.hummerrisk.service.UserKeyService;
 import io.swagger.annotations.Api;
@@ -30,6 +31,7 @@ public class UserKeysController {
     @Resource
     private UserKeyService userKeyService;
 
+    @I18n
     @ApiOperation(value = "API Keys信息")
     @GetMapping("info")
     public List<UserKey> getUserKeysInfo() {
@@ -37,6 +39,7 @@ public class UserKeysController {
         return userKeyService.getUserKeysInfo(userId);
     }
 
+    @I18n
     @ApiOperation(value = "校验API Keys")
     @GetMapping("validate")
     public String validate(ServletRequest request) throws Exception {

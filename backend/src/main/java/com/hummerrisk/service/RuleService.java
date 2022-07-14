@@ -290,7 +290,7 @@ public class RuleService {
         }
     }
 
-    public Object runRules(RuleDTO ruleDTO) {
+    public CloudTask runRules(RuleDTO ruleDTO) {
         try {
             cloudTaskService.validateYaml(BeanUtils.copyBean(new QuartzTaskDTO(), ruleDTO));
             QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
@@ -302,7 +302,7 @@ public class RuleService {
         }
     }
 
-    public Object dryRun(RuleDTO ruleDTO) throws Exception {
+    public boolean dryRun(RuleDTO ruleDTO) throws Exception {
         QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
         BeanUtils.copyBean(quartzTaskDTO, ruleDTO);
         //validate && dryrun

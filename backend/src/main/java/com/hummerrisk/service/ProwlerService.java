@@ -196,7 +196,7 @@ public class ProwlerService {
 
     public void createProwlerResource(CloudTaskItemWithBLOBs taskItem, CloudTask cloudTask) throws Exception {
         LogUtil.info("createResource for taskItem: {}", toJSONString(taskItem));
-        String operation = Translator.get("i18n_create_resource");
+        String operation = "i18n_create_resource";
         String resultStr = "";
         String fileName = cloudTask.getResourceTypes().replace("[", "").replace("]", "");
         try {
@@ -221,10 +221,10 @@ public class ProwlerService {
                 String resourceName = taskItemResource.getResourceName();
                 String taskItemId = taskItem.getId();
                 if (StringUtils.equals(cloudTask.getType(), CloudTaskConstants.TaskType.manual.name()))
-                    orderService.saveTaskItemLog(taskItemId, "resourceType", Translator.get("i18n_operation_begin") + ": " + operation, StringUtils.EMPTY, true);
+                    orderService.saveTaskItemLog(taskItemId, "resourceType", "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true);
                 Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getRuleId());
                 if (rule == null) {
-                    orderService.saveTaskItemLog(taskItemId, taskItemId, Translator.get("i18n_operation_ex") + ": " + operation, Translator.get("i18n_ex_rule_not_exist"), false);
+                    orderService.saveTaskItemLog(taskItemId, taskItemId, "i18n_operation_ex" + ": " + operation, "i18n_ex_rule_not_exist", false);
                     throw new Exception(Translator.get("i18n_ex_rule_not_exist") + ":" + taskItem.getRuleId());
                 }
                 String prowlerRun = ReadFileUtils.readToBuffer(dirPath + "/" + CloudTaskConstants.PROWLER_RUN_RESULT_FILE);
@@ -249,12 +249,12 @@ public class ProwlerService {
                 resourceWithBLOBs.setResourceCommandAction(taskItemResource.getResourceCommandAction());
                 ResourceWithBLOBs resource = saveResource(resourceWithBLOBs, taskItem, cloudTask, taskItemResource);
                 LogUtil.info("The returned data is{}: " + new Gson().toJson(resource));
-                orderService.saveTaskItemLog(taskItemId, resourceType, Translator.get("i18n_operation_end") + ": " + operation, Translator.get("i18n_cloud_account") + ": " + resource.getPluginName() + "，"
-                        + Translator.get("i18n_region") + ": " + resource.getRegionName() + "，" + Translator.get("i18n_rule_type") + ": " + resourceType + "，" + Translator.get("i18n_resource_manage") + ": " + resource.getReturnSum() + "/" + resource.getResourcesSum(), true);
+                orderService.saveTaskItemLog(taskItemId, resourceType, "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resource.getPluginName() + "，"
+                        + "i18n_region" + ": " + resource.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceType + "，" + "i18n_resource_manage" + ": " + resource.getReturnSum() + "/" + resource.getResourcesSum(), true);
             }
 
         } catch (Exception e) {
-            orderService.saveTaskItemLog(taskItem.getId(), taskItem.getId(), Translator.get("i18n_operation_ex") + ": " + operation, e.getMessage(), false);
+            orderService.saveTaskItemLog(taskItem.getId(), taskItem.getId(), "i18n_operation_ex" + ": " + operation, e.getMessage(), false);
             LogUtil.error("createResource, taskItemId: " + taskItem.getId() + ", resultStr:" + resultStr, ExceptionUtils.getStackTrace(e));
             throw e;
         }

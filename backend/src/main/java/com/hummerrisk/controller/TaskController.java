@@ -5,8 +5,11 @@ import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.Favorite;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
+import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.task.RuleVo;
+import com.hummerrisk.controller.request.task.TaskRequest;
 import com.hummerrisk.dto.AccountTreeDTO;
+import com.hummerrisk.dto.TaskDTO;
 import com.hummerrisk.dto.TaskRuleDTO;
 import com.hummerrisk.dto.TaskTagGroupDTO;
 import com.hummerrisk.service.TaskService;
@@ -25,18 +28,21 @@ public class TaskController {
     @Resource
     private TaskService taskService;
 
+    @I18n
     @ApiOperation(value = "收藏夹列表")
     @GetMapping(value = "favorite/list")
     public List<Favorite> listFavorites() throws Exception {
         return taskService.listFavorites();
     }
 
+    @I18n
     @ApiOperation(value = "资源信息列表")
     @GetMapping(value = "account/list")
     public AccountTreeDTO listAccounts() throws Exception {
         return taskService.listAccounts();
     }
 
+    @I18n
     @ApiOperation(value = "添加/取消收藏")
     @PostMapping(value = "addOrDelFavorite")
     public Favorite addOrDelFavorite(@RequestBody Favorite favorite) {
@@ -49,6 +55,7 @@ public class TaskController {
         taskService.deleteFavorite(id);
     }
 
+    @I18n
     @ApiOperation(value = "全部检测列表")
     @PostMapping("allList/{goPage}/{pageSize}")
     public Pager<List<RuleVo>> allList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleVo ruleVo) {
@@ -56,6 +63,7 @@ public class TaskController {
         return PageUtils.setPageInfo(page, taskService.allList(ruleVo));
     }
 
+    @I18n
     @ApiOperation(value = "检测规则列表")
     @PostMapping("ruleList/{goPage}/{pageSize}")
     public Pager<List<RuleVo>> ruleList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleVo ruleVo) {
@@ -63,6 +71,7 @@ public class TaskController {
         return PageUtils.setPageInfo(page, taskService.ruleList(ruleVo));
     }
 
+    @I18n
     @ApiOperation(value = "检测规则标签列表")
     @PostMapping("ruleTagList/{goPage}/{pageSize}")
     public Pager<List<RuleVo>> ruleTagList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleVo ruleVo) {
@@ -70,6 +79,7 @@ public class TaskController {
         return PageUtils.setPageInfo(page, taskService.ruleTagList(ruleVo));
     }
 
+    @I18n
     @ApiOperation(value = "检测规则分组列表")
     @PostMapping("ruleGroupList/{goPage}/{pageSize}")
     public Pager<List<RuleVo>> ruleGroupList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleVo ruleVo) {
@@ -77,21 +87,33 @@ public class TaskController {
         return PageUtils.setPageInfo(page, taskService.ruleGroupList(ruleVo));
     }
 
+    @I18n
     @ApiOperation(value = "检测规则详情")
     @PostMapping(value = "detailRule")
     public TaskRuleDTO detailRule(@RequestBody RuleVo ruleVo) {
         return taskService.detailRule(ruleVo);
     }
 
+    @I18n
     @ApiOperation(value = "检测规则标签详情")
     @PostMapping(value = "detailTag")
     public List<TaskTagGroupDTO> detailTag(@RequestBody RuleVo ruleVo) {
         return taskService.detailTag(ruleVo);
     }
 
+    @I18n
     @ApiOperation(value = "检测规则分组详情")
     @PostMapping(value = "detailGroup")
     public List<TaskTagGroupDTO> detailGroup(@RequestBody RuleVo ruleVo) {
         return taskService.detailGroup(ruleVo);
     }
+
+    @I18n
+    @ApiOperation(value = "任务列表")
+    @PostMapping("taskList/{goPage}/{pageSize}")
+    public Pager<List<TaskDTO>> taskList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody TaskRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, taskService.taskList(request));
+    }
+
 }

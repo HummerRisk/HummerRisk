@@ -458,7 +458,7 @@ public class OrderService {
                     }
 
                     if (item.getCount() > Optional.ofNullable(this.getResourceByTaskItemId(item.getId())).orElse(new ArrayList<>()).size()) {
-                        saveTaskItemLog(item.getId(), null, Translator.get("i18n_retry_create_resource"), "", true);
+                        saveTaskItemLog(item.getId(), null, "i18n_retry_create_resource", "", true);
                         item.setStatus(CloudTaskConstants.TASK_STATUS.UNCHECKED.name());
                     } else {
                         item.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());

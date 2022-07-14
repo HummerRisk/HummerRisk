@@ -260,7 +260,7 @@ public class AccountService {
         return stringBuffer.toString();
     }
 
-    public Object cleanParameter(List<RuleAccountParameter> list) {
+    public boolean cleanParameter(List<RuleAccountParameter> list) {
         try {
             list.forEach(rule -> {
                 if (rule.getRuleId() != null) {
@@ -277,7 +277,7 @@ public class AccountService {
         return true;
     }
 
-    public Object saveParameter(List<QuartzTaskDTO> list) {
+    public boolean saveParameter(List<QuartzTaskDTO> list) {
         try {
             list.forEach(this::accept);
             OperationLogService.log(SessionUtils.getUser(), list.get(0).getId(), accountMapper.selectByPrimaryKey(list.get(0).getAccountId()).getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "保存云账号参数");

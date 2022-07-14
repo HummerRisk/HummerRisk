@@ -6,6 +6,7 @@ import com.hummerrisk.base.domain.Proxy;
 import com.hummerrisk.commons.constants.RoleConstants;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
+import com.hummerrisk.controller.handler.annotation.I18n;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -22,6 +23,7 @@ public class ProxyController {
     @Resource
     private com.hummerrisk.service.ProxyService ProxyService;
 
+    @I18n
     @ApiOperation(value = "添加代理")
     @PostMapping("/add")
     @RequiresRoles(RoleConstants.ADMIN)
@@ -29,6 +31,7 @@ public class ProxyController {
         return ProxyService.insert(Proxy);
     }
 
+    @I18n
     @ApiOperation(value = "代理列表")
     @PostMapping("/list/{goPage}/{pageSize}")
     @RequiresRoles(RoleConstants.ADMIN)
@@ -51,6 +54,7 @@ public class ProxyController {
         ProxyService.updateProxy(proxy);
     }
 
+    @I18n
     @ApiOperation(value = "所有代理")
     @GetMapping("/list/all")
     public List<Proxy> getProxyList() {

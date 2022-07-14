@@ -271,7 +271,7 @@ public class PackageService {
                 result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
                 packageResultMapper.insertSelective(result);
 
-                savePackageResultLog(result.getId(), Translator.get("i18n_start_package_result"), "", true);
+                savePackageResultLog(result.getId(), "i18n_start_package_result", "", true);
                 OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "开始软件包检测");
             }
         }
@@ -318,13 +318,13 @@ public class PackageService {
             packageResultMapper.updateByPrimaryKeySelective(result);
 
             noticeService.createPackageMessageOrder(result);
-            savePackageResultLog(result.getId(), Translator.get("i18n_end_package_result"), "", true);
+            savePackageResultLog(result.getId(), "i18n_end_package_result", "", true);
         } catch (Exception e) {
             LogUtil.error("create PackageResult: " + e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             packageResultMapper.updateByPrimaryKeySelective(result);
-            savePackageResultLog(result.getId(), Translator.get("i18n_operation_ex") + ": " + e.getMessage(), e.getMessage(), false);
+            savePackageResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
             throw e;
         }
     }
@@ -368,7 +368,7 @@ public class PackageService {
         result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
         packageResultMapper.insertSelective(result);
 
-        savePackageResultLog(result.getId(), Translator.get("i18n_restart_package_result"), "", true);
+        savePackageResultLog(result.getId(), "i18n_restart_package_result", "", true);
 
         OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "重新开始软件包检测");
 

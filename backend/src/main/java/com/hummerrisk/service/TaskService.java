@@ -9,6 +9,7 @@ import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.commons.utils.UUIDUtil;
 import com.hummerrisk.controller.request.task.*;
 import com.hummerrisk.dto.AccountTreeDTO;
+import com.hummerrisk.dto.TaskDTO;
 import com.hummerrisk.dto.TaskRuleDTO;
 import com.hummerrisk.dto.TaskTagGroupDTO;
 import org.apache.commons.lang3.StringUtils;
@@ -167,6 +168,10 @@ public class TaskService {
 
     public List<TaskTagGroupDTO> detailGroup(RuleVo ruleVo) {
         return extTaskMapper.detailGroup(ruleVo);
+    }
+
+    public List<TaskDTO> taskList(TaskRequest request) {
+        return extTaskMapper.taskList(request);
     }
 
 }

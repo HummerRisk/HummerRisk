@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
+import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.account.CloudAccountRequest;
 import com.hummerrisk.controller.request.rule.CreateRuleRequest;
 import com.hummerrisk.dto.AccountDTO;
@@ -26,6 +27,7 @@ public class VulnController {
     @Resource
     private VulnService vulnService;
 
+    @I18n
     @ApiOperation(value = "漏洞配置列表")
     @PostMapping("vulnList/{goPage}/{pageSize}")
     public Pager<List<AccountDTO>> getVulnList(
@@ -34,6 +36,7 @@ public class VulnController {
         return PageUtils.setPageInfo(page, vulnService.getVulnList(request));
     }
 
+    @I18n
     @ApiOperation(value = "漏洞规则列表")
     @PostMapping(value = "vulnRuleList/{goPage}/{pageSize}")
     public Pager<List<RuleDTO>> vulnRuleList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CreateRuleRequest rule) {
@@ -41,6 +44,7 @@ public class VulnController {
         return PageUtils.setPageInfo(page, vulnService.vulnList(rule));
     }
 
+    @I18n
     @ApiOperation(value = "漏洞结果列表")
     @PostMapping("manual/list/{goPage}/{pageSize}")
     public Pager<List<CloudTaskDTO>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> param) throws Exception {

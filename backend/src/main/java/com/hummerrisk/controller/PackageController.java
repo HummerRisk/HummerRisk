@@ -6,6 +6,7 @@ import com.hummerrisk.base.domain.Package;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
+import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.packageSetting.PackageRequest;
 import com.hummerrisk.controller.request.packageSetting.PackageResultRequest;
 import com.hummerrisk.controller.request.packageSetting.PackageRuleRequest;
@@ -26,11 +27,13 @@ import java.util.List;
 @Api(tags = "软件包管理")
 @RestController
 @RequestMapping(value = "package")
-public class PackageController {
+public class
+PackageController {
 
     @Resource
     private PackageService packageService;
 
+    @I18n
     @ApiOperation(value = "软件包列表")
     @PostMapping("packageList/{goPage}/{pageSize}")
     public Pager<List<PackageDTO>> packageList(
@@ -81,6 +84,7 @@ public class PackageController {
         packageService.deleteFile(id, p);
     }
 
+    @I18n
     @ApiOperation(value = "软件包规则列表")
     @PostMapping(value = "ruleList/{goPage}/{pageSize}")
     public Pager<List<PackageRuleDTO>> ruleList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody PackageRuleRequest request) {
@@ -124,6 +128,7 @@ public class PackageController {
         packageService.reScan(id);
     }
 
+    @I18n
     @ApiOperation(value = "软件包检测结果列表")
     @PostMapping(value = "resultListWithBLOBs/{goPage}/{pageSize}")
     public Pager<List<PackageResultWithBLOBsDTO>> resultListWithBLOBs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody PackageResultRequest request) {
@@ -131,6 +136,7 @@ public class PackageController {
         return PageUtils.setPageInfo(page, packageService.resultListWithBLOBs(request));
     }
 
+    @I18n
     @ApiIgnore
     @PostMapping(value = "resultList/{goPage}/{pageSize}")
     public Pager<List<PackageResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody PackageResultRequest request) {
@@ -138,12 +144,14 @@ public class PackageController {
         return PageUtils.setPageInfo(page, packageService.resultList(request));
     }
 
+    @I18n
     @ApiOperation(value = "软件包检测结果")
     @GetMapping(value = "getPackageResult/{resultId}")
     public PackageResultWithBLOBs getPackageResult(@PathVariable String resultId) {
         return packageService.getPackageResult(resultId);
     }
 
+    @I18n
     @ApiOperation(value = "软件包检测日志")
     @GetMapping(value = "log/{resultId}")
     public List<PackageResultLog> getPackageResultLog(@PathVariable String resultId) {
@@ -156,6 +164,7 @@ public class PackageController {
         packageService.deletePackageResult(id);
     }
 
+    @I18n
     @ApiOperation(value = "检测结果详情")
     @PostMapping("resultItemList/{goPage}/{pageSize}")
     public Pager<List<PackageResultItem>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody PackageResultItem request) {

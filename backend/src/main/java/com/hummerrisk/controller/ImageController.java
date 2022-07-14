@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
+import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.image.ImageRepoRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.image.ImageResultRequest;
@@ -31,6 +32,7 @@ public class ImageController {
     @Resource
     private ImageService imageService;
 
+    @I18n
     @ApiOperation(value = "镜像仓库列表")
     @PostMapping("imageRepoList/{goPage}/{pageSize}")
     public Pager<List<ImageRepo>> imageRepoList(
@@ -39,12 +41,14 @@ public class ImageController {
         return PageUtils.setPageInfo(page, imageService.imageRepoList(request));
     }
 
+    @I18n
     @ApiOperation(value = "添加镜像仓库")
     @PostMapping("addImageRepo")
     public ImageRepo addImageRepo(@RequestBody ImageRepo imageRepo) throws Exception {
         return imageService.addImageRepo(imageRepo);
     }
 
+    @I18n
     @ApiOperation(value = "编辑镜像仓库")
     @PostMapping("editImageRepo")
     public ImageRepo editImageRepo(@RequestBody ImageRepo imageRepo) throws Exception {
@@ -57,12 +61,14 @@ public class ImageController {
         imageService.deleteImageRepo(id);
     }
 
+    @I18n
     @ApiOperation(value = "查询所有镜像仓库")
     @GetMapping("allImageRepos")
     public List<ImageRepo> allImageRepos() {
         return imageService.allImageRepos();
     }
 
+    @I18n
     @ApiOperation(value = "镜像列表")
     @PostMapping("imageList/{goPage}/{pageSize}")
     public Pager<List<ImageDTO>> imageList(
@@ -71,6 +77,7 @@ public class ImageController {
         return PageUtils.setPageInfo(page, imageService.imageList(request));
     }
 
+    @I18n
     @ApiOperation(value = "添加镜像")
     @PostMapping(value = "addImage", consumes = {"multipart/form-data"})
     public Image addImage(@RequestPart(value = "iconFile", required = false) MultipartFile iconFile,
@@ -79,6 +86,7 @@ public class ImageController {
         return imageService.addImage(iconFile, tarFile, request);
     }
 
+    @I18n
     @ApiOperation(value = "修改镜像")
     @PostMapping(value = "updateImage", consumes = {"multipart/form-data"})
     public Image updateImage(@RequestPart(value = "iconFile", required = false) MultipartFile iconFile,
@@ -93,6 +101,7 @@ public class ImageController {
         imageService.deleteImage(id);
     }
 
+    @I18n
     @ApiOperation(value = "镜像检测规则列表")
     @PostMapping(value = "ruleList/{goPage}/{pageSize}")
     public Pager<List<ImageRuleDTO>> ruleList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageRuleRequest request) {
@@ -136,6 +145,7 @@ public class ImageController {
         imageService.reScan(id);
     }
 
+    @I18n
     @ApiOperation(value = "镜像检测结果列表")
     @PostMapping(value = "resultListWithBLOBs/{goPage}/{pageSize}")
     public Pager<List<ImageResultWithBLOBsDTO>> resultListWithBLOBs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultRequest request) {
@@ -143,6 +153,7 @@ public class ImageController {
         return PageUtils.setPageInfo(page, imageService.resultListWithBLOBs(request));
     }
 
+    @I18n
     @ApiIgnore
     @PostMapping(value = "resultList/{goPage}/{pageSize}")
     public Pager<List<ImageResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultRequest request) {
@@ -150,12 +161,14 @@ public class ImageController {
         return PageUtils.setPageInfo(page, imageService.resultList(request));
     }
 
+    @I18n
     @ApiOperation(value = "镜像检测结果")
     @GetMapping(value = "getImageResult/{resultId}")
     public ImageResultWithBLOBs getImageResult(@PathVariable String resultId) {
         return imageService.getImageResult(resultId);
     }
 
+    @I18n
     @ApiOperation(value = "镜像检测日志")
     @GetMapping(value = "log/{resultId}")
     public List<ImageResultLog> getPackageResultLog(@PathVariable String resultId) {
@@ -168,6 +181,7 @@ public class ImageController {
         imageService.deleteImageResult(id);
     }
 
+    @I18n
     @ApiOperation(value = "检测结果详情")
     @PostMapping("resultItemList/{goPage}/{pageSize}")
     public Pager<List<ImageResultItem>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultItem request) {

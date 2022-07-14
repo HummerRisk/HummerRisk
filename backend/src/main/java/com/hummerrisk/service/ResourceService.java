@@ -335,10 +335,10 @@ public class ResourceService {
             String operation = "";
             String finalScript = "";
             if (StringUtils.equals(operating, "fix")) {
-                operation = Translator.get("i18n_bug_fix");
+                operation = "i18n_bug_fix";
                 finalScript = resourceWithBLOBs.getResourceCommandAction();
             } else if (StringUtils.equals(operating, "restart")) {
-                operation = Translator.get("i18n_more_resource");
+                operation = "i18n_more_resource";
                 finalScript = resourceWithBLOBs.getResourceCommand();
             }
 
@@ -353,7 +353,7 @@ public class ResourceService {
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(resourceWithBLOBs.getAccountId());
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, region, proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
 
-            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), Translator.get("i18n_operation_begin") + ": " + operation, StringUtils.EMPTY, true);
+            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true);
 
             CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskItem.getTaskId());
             switch (cloudTask.getScanType()) {
@@ -404,9 +404,9 @@ public class ResourceService {
             resourceWithBLOBs.setReturnSum((long) jsonArray.size());
             resourceWithBLOBs = calculateTotal(resourceWithBLOBs);
 
-            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), Translator.get("i18n_operation_end") + ": " + operation, Translator.get("i18n_cloud_account") + ": " + resourceWithBLOBs.getPluginName() + "，"
-                    + Translator.get("i18n_region") + ": " + resourceWithBLOBs.getRegionName() + "，" + Translator.get("i18n_rule_type") + ": " + resourceWithBLOBs.getResourceType() + "，" + Translator.get("i18n_resource_manage") + ": "
-                    + resourceWithBLOBs.getResourceName() + "，" + Translator.get("i18n_resource_manage") + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(), true);
+            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
+                    + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
+                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(), true);
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
@@ -440,9 +440,9 @@ public class ResourceService {
                 resourceWithBLOBs.setReturnSum((long) 0);
             }
 
-            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), Translator.get("i18n_operation_end") + ": " + operation, Translator.get("i18n_cloud_account") + ": " + resourceWithBLOBs.getPluginName() + "，"
-                    + Translator.get("i18n_region") + ": " + resourceWithBLOBs.getRegionName() + "，" + Translator.get("i18n_rule_type") + ": " + resourceWithBLOBs.getResourceType() + "，" + Translator.get("i18n_resource_manage") + ": "
-                    + resourceWithBLOBs.getResourceName() + "，" + Translator.get("i18n_resource_manage") + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(), true);
+            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
+                    + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
+                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(), true);
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
@@ -475,9 +475,9 @@ public class ResourceService {
                 resourceWithBLOBs.setReturnSum((long) 0);
             }
 
-            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), Translator.get("i18n_operation_end") + ": " + operation, Translator.get("i18n_cloud_account") + ": " + resourceWithBLOBs.getPluginName() + "，"
-                    + Translator.get("i18n_region") + ": " + resourceWithBLOBs.getRegionName() + "，" + Translator.get("i18n_rule_type") + ": " + resourceWithBLOBs.getResourceType() + "，" + Translator.get("i18n_resource_manage") + ": "
-                    + resourceWithBLOBs.getResourceName() + "，" + Translator.get("i18n_resource_manage") + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(), true);
+            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
+                    + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
+                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(), true);
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
@@ -486,9 +486,9 @@ public class ResourceService {
     private void createTsunamiResource (ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemWithBLOBs taskItem, String operation) {
         try {
 
-            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), Translator.get("i18n_operation_end") + ": " + operation, Translator.get("i18n_cloud_account") + ": " + resourceWithBLOBs.getPluginName() + "，"
-                    + Translator.get("i18n_region") + ": " + resourceWithBLOBs.getRegionName() + "，" + Translator.get("i18n_rule_type") + ": " + resourceWithBLOBs.getResourceType() + "，" + Translator.get("i18n_resource_manage") + ": "
-                    + resourceWithBLOBs.getResourceName() + "，" + Translator.get("i18n_resource_manage") + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(), true);
+            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
+                    + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
+                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(), true);
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
@@ -521,9 +521,9 @@ public class ResourceService {
             resourceWithBLOBs.setResourcesSum(passNum + failNum + infoNum + warnNum);
             resourceWithBLOBs.setReturnSum(failNum);
 
-            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), Translator.get("i18n_operation_end") + ": " + operation, Translator.get("i18n_cloud_account") + ": " + resourceWithBLOBs.getPluginName() + "，"
-                    + Translator.get("i18n_region") + ": " + resourceWithBLOBs.getRegionName() + "，" + Translator.get("i18n_rule_type") + ": " + resourceWithBLOBs.getResourceType() + "，" + Translator.get("i18n_resource_manage") + ": "
-                    + resourceWithBLOBs.getResourceName() + "，" + Translator.get("i18n_resource_manage") + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(), true);
+            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
+                    + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
+                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(), true);
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }

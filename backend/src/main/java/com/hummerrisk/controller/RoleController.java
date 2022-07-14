@@ -1,6 +1,7 @@
 package com.hummerrisk.controller;
 
 import com.hummerrisk.base.domain.Role;
+import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.service.RoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,12 +21,14 @@ public class RoleController {
     @Resource
     private RoleService roleService;
 
+    @I18n
     @ApiOperation(value = "获取角色")
     @GetMapping("/list/{sign}")
     public List<Role> getRoleList(@PathVariable String sign) {
         return roleService.getRoleList(sign);
     }
 
+    @I18n
     @ApiOperation(value = "所有角色")
     @GetMapping("/all")
     public List<Role> getAllRole() {

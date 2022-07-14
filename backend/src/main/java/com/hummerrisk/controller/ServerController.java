@@ -8,6 +8,7 @@ import com.hummerrisk.base.domain.ServerResultLog;
 import com.hummerrisk.base.domain.ServerRule;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
+import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.server.ServerRequest;
 import com.hummerrisk.controller.request.server.ServerResultRequest;
 import com.hummerrisk.controller.request.server.ServerRuleRequest;
@@ -35,6 +36,7 @@ public class ServerController {
         return serverService.getServerGroupList();
     }
 
+    @I18n
     @ApiOperation(value = "虚拟机列表")
     @PostMapping("serverList/{goPage}/{pageSize}")
     public Pager<List<ServerDTO>> getServerList(
@@ -97,6 +99,7 @@ public class ServerController {
         serverService.deleteServer(id);
     }
 
+    @I18n
     @ApiOperation(value = "虚拟机规则列表")
     @PostMapping(value = "ruleList/{goPage}/{pageSize}")
     public Pager<List<ServerRuleDTO>> ruleList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerRuleRequest request) {
@@ -129,6 +132,7 @@ public class ServerController {
         return serverService.changeStatus(rule);
     }
 
+    @I18n
     @ApiOperation(value = "虚拟机检测结果列表")
     @PostMapping(value = "resultList/{goPage}/{pageSize}")
     public Pager<List<ServerResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerResultRequest request) {
@@ -136,12 +140,14 @@ public class ServerController {
         return PageUtils.setPageInfo(page, serverService.resultList(request));
     }
 
+    @I18n
     @ApiOperation(value = "虚拟机检测结果")
     @GetMapping(value = "getServerResult/{resultId}")
     public ServerResultDTO getServerResult(@PathVariable String resultId) {
         return serverService.getServerResult(resultId);
     }
 
+    @I18n
     @ApiOperation(value = "虚拟机检测日志")
     @GetMapping(value = "log/{resultId}")
     public List<ServerResultLog> getServerResultLog(@PathVariable String resultId) {

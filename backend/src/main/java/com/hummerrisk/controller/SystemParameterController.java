@@ -3,6 +3,7 @@ package com.hummerrisk.controller;
 import com.hummerrisk.base.domain.SystemParameter;
 import com.hummerrisk.commons.constants.ParamConstants;
 import com.hummerrisk.commons.constants.RoleConstants;
+import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.service.SystemParameterService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -66,6 +67,7 @@ public class SystemParameterController {
         return systemParameterService.getVersion();
     }
 
+    @I18n
     @ApiOperation(value = "邮件设置")
     @GetMapping("/mail/info")
     @RequiresRoles(value = {RoleConstants.ADMIN})
@@ -73,6 +75,7 @@ public class SystemParameterController {
         return systemParameterService.info(ParamConstants.Classify.MAIL.getValue());
     }
 
+    @I18n
     @ApiOperation(value = "企业微信设置")
     @GetMapping("/wechat/info")
     @RequiresRoles(value = {RoleConstants.ADMIN})
@@ -87,6 +90,7 @@ public class SystemParameterController {
         return systemParameterService.dingdingInfo(ParamConstants.Classify.DINGDING.getValue());
     }
 
+    @I18n
     @ApiOperation(value = "消息通知")
     @GetMapping("/message/info")
     @RequiresRoles(value = {RoleConstants.ADMIN})
@@ -108,6 +112,7 @@ public class SystemParameterController {
         systemParameterService.updateSystem();
     }
 
+    @I18n
     @ApiOperation(value = "查询系统参数信息")
     @GetMapping("/searchSystem")
     @RequiresRoles(value = {RoleConstants.ADMIN})

@@ -255,7 +255,7 @@ public class SysListener {
 
     public static ConcurrentHashMap<String, String> getMaps () throws Exception {
         try {
-            memory();
+            //memory();
             readRAM();
             readDisk();
             cpuUsage();

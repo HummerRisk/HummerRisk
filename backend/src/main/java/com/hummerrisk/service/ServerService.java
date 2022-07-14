@@ -129,7 +129,7 @@ public class ServerService {
                     result.setSeverity(dto.getSeverity());
                     serverResultMapper.insertSelective(result);
 
-                    saveServerResultLog(result.getId(), Translator.get("i18n_start_server_result"), "", true);
+                    saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
 
                 }
             }
@@ -163,20 +163,20 @@ public class ServerService {
             serverResultMapper.updateByPrimaryKeySelective(result);
 
             noticeService.createServerMessageOrder(result);
-            saveServerResultLog(result.getId(), Translator.get("i18n_end_server_result"), returnLog, true);
+            saveServerResultLog(result.getId(), "i18n_end_server_result", returnLog, true);
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             serverResultMapper.updateByPrimaryKeySelective(result);
-            saveServerResultLog(result.getId(), Translator.get("i18n_operation_ex") + ": " + e.getMessage(), e.getMessage(), false);
+            saveServerResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
             throw new HRException(e.getMessage());
         }
     }
 
     public void rescan(String id) {
         ServerResult result = serverResultMapper.selectByPrimaryKey(id);
-        saveServerResultLog(result.getId(), Translator.get("i18n_restart_server_result"), "", true);
+        saveServerResultLog(result.getId(), "i18n_restart_server_result", "", true);
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         serverResultMapper.updateByPrimaryKeySelective(result);

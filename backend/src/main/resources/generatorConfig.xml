@@ -113,5 +113,9 @@
 <!--        <table tableName="image_result_item" domainObjectName="ImageResultItem"/>-->
 <!--        <table tableName="image_result_log" domainObjectName="ImageResultLog"/>-->
 <!--        <table tableName="favorite" domainObjectName="Favorite"/>-->
+<!--        <table tableName="task" domainObjectName="Task"/>-->
+<!--        <table tableName="task_item" domainObjectName="TaskItem"/>-->
+<!--        <table tableName="task_item_resource" domainObjectName="TaskItemResource"/>-->
+<!--        <table tableName="task_item_log" domainObjectName="TaskItemLog"/>-->
     </context>
 </generatorConfiguration>

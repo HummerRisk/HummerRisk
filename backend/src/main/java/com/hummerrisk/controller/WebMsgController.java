@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.WebMsg;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
+import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.service.WebMsgService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,6 +22,7 @@ public class WebMsgController {
     @Resource
     private WebMsgService webMsgService;
 
+    @I18n
     @ApiOperation("分页查询")
     @PostMapping("/list/{goPage}/{pageSize}")
     public Pager<List<WebMsg>> messages(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody WebMsg webMsg) {

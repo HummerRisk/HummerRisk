@@ -6,6 +6,7 @@ import com.hummerrisk.base.domain.CloudTaskItem;
 import com.hummerrisk.base.domain.ResourceWithBLOBs;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
+import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.excel.ExcelExportRequest;
 import com.hummerrisk.controller.request.resource.JsonRequest;
 import com.hummerrisk.controller.request.resource.ResourceRequest;
@@ -34,12 +35,14 @@ public class ResourceController {
     @Resource
     private ResourceService resourceService;
 
+    @I18n
     @ApiOperation(value = "云账号资源")
     @GetMapping("source/{accountId}")
     public SourceDTO sourceDTO(@PathVariable String accountId) {
         return resourceService.source(accountId);
     }
 
+    @I18n
     @ApiOperation(value = "资源列表")
     @PostMapping("list/{goPage}/{pageSize}")
     public Pager<List<ResourceDTO>> list(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {
@@ -47,6 +50,7 @@ public class ResourceController {
         return PageUtils.setPageInfo(page, resourceService.search(request));
     }
 
+    @I18n
     @ApiOperation(value = "合规报告列表")
     @PostMapping("reportList/{goPage}/{pageSize}")
     public Pager<List<ReportDTO>> reportList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {
@@ -54,6 +58,7 @@ public class ResourceController {
         return PageUtils.setPageInfo(page, resourceService.reportList(request));
     }
 
+    @I18n
     @ApiOperation(value = "资源详情")
     @GetMapping("{id}")
     public ResourceDetailDTO getResource(@PathVariable String id) throws Exception {
@@ -72,18 +77,21 @@ public class ResourceController {
         return result;
     }
 
+    @I18n
     @ApiIgnore
     @GetMapping("fix/{id}")
     public ResourceWithBLOBs fixResource(@PathVariable String id) throws Exception {
         return resourceService.operatingResource(id, "fix");
     }
 
+    @I18n
     @ApiOperation(value = "重新检测")
     @GetMapping("restart/{id}")
     public ResourceWithBLOBs restartResource(@PathVariable String id) throws Exception {
         return resourceService.operatingResource(id, "restart");
     }
 
+    @I18n
     @ApiOperation(value = "检测日志")
     @GetMapping(value = "log/resourceId/{resourceId}")
     public List<ResourceLogDTOCloud> getResourceLog(@PathVariable String resourceId) {
@@ -119,18 +127,21 @@ public class ResourceController {
         resourceService.deleteResourceByAccountId(id);
     }
 
+    @I18n
     @ApiOperation(value = "规则条例信息")
     @GetMapping("report/iso/{accountId}/{groupId}")
     public Map<String, String> reportIso(@PathVariable String accountId, @PathVariable String groupId) {
         return resourceService.reportIso(accountId, groupId);
     }
 
+    @I18n
     @ApiOperation(value = "规则组详情")
     @PostMapping("rule/groups")
     public List<Map<String, String>> groups(@RequestBody Map<String, Object> params) {
         return resourceService.groups(params);
     }
 
+    @I18n
     @ApiOperation(value = "资源日志")
     @PostMapping("resourceLog")
     public ResourceWithBLOBs resource(@RequestBody CloudTaskItem cloudTaskItem) {

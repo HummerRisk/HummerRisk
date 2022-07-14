@@ -291,7 +291,7 @@ public class ImageService {
                 result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
                 imageResultMapper.insertSelective(result);
 
-                saveImageResultLog(result.getId(), Translator.get("i18n_start_image_result"), "", true);
+                saveImageResultLog(result.getId(), "i18n_start_image_result", "", true);
                 OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "开始镜像检测");
             }
         }
@@ -344,13 +344,13 @@ public class ImageService {
             imageResultMapper.updateByPrimaryKeySelective(result);
 
             noticeService.createImageMessageOrder(result);
-            saveImageResultLog(result.getId(), Translator.get("i18n_end_image_result"), "", true);
+            saveImageResultLog(result.getId(), "i18n_end_image_result", "", true);
         } catch (Exception e) {
             LogUtil.error("create ImageResult: " + e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             imageResultMapper.updateByPrimaryKeySelective(result);
-            saveImageResultLog(result.getId(), Translator.get("i18n_operation_ex") + ": " + e.getMessage(), e.getMessage(), false);
+            saveImageResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
             throw e;
         }
     }
@@ -405,7 +405,7 @@ public class ImageService {
         result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
         imageResultMapper.insertSelective(result);
 
-        saveImageResultLog(result.getId(), Translator.get("i18n_restart_image_result"), "", true);
+        saveImageResultLog(result.getId(), "i18n_restart_image_result", "", true);
 
         OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "重新开始镜像检测");
 

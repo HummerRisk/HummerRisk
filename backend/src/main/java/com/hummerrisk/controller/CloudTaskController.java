@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
+import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.service.CloudTaskService;
 import com.hummerrisk.service.OrderService;
@@ -25,26 +26,31 @@ public class CloudTaskController {
     @Resource
     private OrderService orderService;
 
+    @I18n
     @GetMapping(value = "detail/{taskId}")
     public CloudTaskDTO getTaskDetail(@PathVariable String taskId) {
         return orderService.getTaskDetail(taskId);
     }
 
+    @I18n
     @GetMapping(value = "copy/{taskId}")
     public CloudTaskCopyDTO copy(@PathVariable String taskId) {
         return orderService.copy(taskId);
     }
 
+    @I18n
     @GetMapping(value = "log/taskId/{taskId}")
     public List<CloudTaskItemLogDTO> getTaskItemLogByTask(@PathVariable String taskId) {
         return orderService.getTaskItemLogByTaskId(taskId);
     }
 
+    @I18n
     @GetMapping(value = "quartz/log/taskId/{taskId}")
     public List<CloudTaskItemLogDTO> getQuartzLogByTask(@PathVariable String taskId) {
         return orderService.getQuartzLogByTask(taskId);
     }
 
+    @I18n
     @PostMapping("quartz/log/{taskItemId}/{goPage}/{pageSize}")
     public Pager<List<CloudTaskItemLog>> getquartzLogDetails(@PathVariable int goPage, @PathVariable int pageSize, @PathVariable String taskItemId) {
         CloudTaskItemWithBLOBs taskItem = orderService.taskItemWithBLOBs(taskItemId);
@@ -52,6 +58,7 @@ public class CloudTaskController {
         return PageUtils.setPageInfo(page, orderService.getQuartzLogByTaskItemId(taskItem));
     }
 
+    @I18n
     @PostMapping("quartz/rela/log/{qzTaskId}/{goPage}/{pageSize}")
     public Pager<List<CloudAccountQuartzTaskRelaLog>> getQuartzLogs(@PathVariable int goPage, @PathVariable int pageSize, @PathVariable String qzTaskId) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
@@ -73,6 +80,7 @@ public class CloudTaskController {
         orderService.getCronDesc(taskId);
     }
 
+    @I18n
     @PostMapping("manual/list/{goPage}/{pageSize}")
     public Pager<List<CloudTask>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> param) throws Exception {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
@@ -80,6 +88,7 @@ public class CloudTaskController {
         return PageUtils.setPageInfo(page, cloudTaskService.selectManualTasks(param));
     }
 
+    @I18n
     @PostMapping("manual/Alllist")
     public List<CloudTask> getAllManualTasks(@RequestBody Map<String, Object> param) throws Exception {
         param.put("type", "manual");
@@ -91,6 +100,7 @@ public class CloudTaskController {
         return cloudTaskService.morelTask(taskId);
     }
 
+    @I18n
     @PostMapping("manual/create")
     public CloudTask saveManualTask(@RequestBody QuartzTaskDTO quartzTaskDTO) {
         quartzTaskDTO.setType("manual");
@@ -108,12 +118,14 @@ public class CloudTaskController {
         return cloudTaskService.dryRun(quartzTaskDTO);
     }
 
+    @I18n
     @PostMapping("quartz/list/{goPage}/{pageSize}")
     public Pager<List<CloudAccountQuartzTask>> getQuartzTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> param) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, cloudTaskService.selectQuartzTasks(param));
     }
 
+    @I18n
     @PostMapping("quartz/Alllist")
     public List<CloudAccountQuartzTask> getQuartzTasks(@RequestBody Map<String, Object> param) {
         return cloudTaskService.selectQuartzTasks(param);
@@ -150,11 +162,13 @@ public class CloudTaskController {
         return CronExpression.isValidExpression(map.get("cron"));
     }
 
+    @I18n
     @GetMapping("show/account/{taskId}")
     public ShowAccountQuartzTaskDTO showAccount(@PathVariable String taskId) {
         return cloudTaskService.showAccount(taskId);
     }
 
+    @I18n
     @PostMapping("vuln/list/{goPage}/{pageSize}")
     public Pager<List<CloudTask>> getVulnTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> param) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
