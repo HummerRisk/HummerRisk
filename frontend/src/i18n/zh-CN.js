@@ -1027,6 +1027,8 @@ export default {
     page_total: '共 {0} 条',
     warn_background: '被检索行已经高亮',
     no_warn_background: '没有检索到结果',
+    task_add: '创建任务',
+    waiting: '待续',
   },
   proxy: {
     create: '创建代理',

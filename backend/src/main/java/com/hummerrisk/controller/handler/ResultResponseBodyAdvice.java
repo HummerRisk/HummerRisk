@@ -1,7 +1,11 @@
 package com.hummerrisk.controller.handler;
 
 import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
+import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.ResultHolder;
+import com.hummerrisk.controller.handler.annotation.NoResultHolder;
+import com.hummerrisk.i18n.Translator;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -30,13 +34,27 @@ public class ResultResponseBodyAdvice implements ResponseBodyAdvice<Object> {
             return null;
         }
 
+        if (methodParameter.hasMethodAnnotation(NoResultHolder.class)) {
+            return o;
+        }
+
+        //if true, need to translate
+        if (methodParameter.hasMethodAnnotation(I18n.class)) {
+            I18n i18n = methodParameter.getMethodAnnotation(I18n.class);
+            o = translate(o, i18n.value());
+        }
+
         if (!(o instanceof ResultHolder)) {
             if (o instanceof String) {
-                return JSON.toJSONString(ResultHolder.success(o));
+                return new Gson().toJson(ResultHolder.success(o));
             }
             return ResultHolder.success(o);
         }
         return o;
+    }
+
+    private Object translate(Object obj, String type) {
+        return Translator.translateObject(obj);
     }
 
 }

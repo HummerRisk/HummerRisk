@@ -39,6 +39,8 @@ import {getCurrentUser} from "../../../../common/js/utils";
       this.currentUserInfo = this.currentUser();
       if (!lang) {
         lang = localStorage.getItem(DEFAULT_LANGUAGE);
+      } else {
+        localStorage.setItem(DEFAULT_LANGUAGE, lang);
       }
       this.checkLanguage(lang);
     },

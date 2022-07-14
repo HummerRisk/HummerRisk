@@ -87,9 +87,9 @@ public class CommonThreadPool {
                 Future future = executorService.submit(task);
                 future.get(timeOut, timeUnit); // 此行会阻塞，直到任务执行完或超时
             } catch (TimeoutException timeoutException) {
-                LogUtil.getLogger().error("timeout to execute cloudTask", timeoutException);
+                LogUtil.getLogger().error("timeout to execute task", timeoutException);
             } catch (Exception exception) {
-                LogUtil.getLogger().error("failed to execute cloudTask", exception);
+                LogUtil.getLogger().error("failed to execute task", exception);
             } finally {
                 if (!executorService.isShutdown()) {
                     executorService.shutdown();

@@ -10,9 +10,9 @@ export const CURRENT_ACCOUNT = "current_account";
 export const REFRESH_SESSION_USER_URL = "user/refresh";
 export const DEFAULT = "default";
 
-export const ZH_CN = "zh_CN";
-export const ZH_TW = "zh_TW";
-export const EN_US = "en_US";
+export const ZH_CN = "zh-CN";
+export const ZH_TW = "zh-TW";
+export const EN_US = "en-US";
 
 export const REQUEST_HEADERS = [
   {value: "Accept"},
