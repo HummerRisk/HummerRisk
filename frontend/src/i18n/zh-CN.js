@@ -165,6 +165,7 @@ export default {
     proxy_port: 'Proxy 端口',
     proxy_name: 'Proxy 用户名',
     proxy_password: 'Proxy 密码',
+    version: '版本',
   },
   workspace: {
     create: '创建工作空间',
@@ -1029,6 +1030,8 @@ export default {
     no_warn_background: '没有检索到结果',
     task_add: '创建任务',
     waiting: '待续',
+    execute: '执行',
+
   },
   proxy: {
     create: '创建代理',

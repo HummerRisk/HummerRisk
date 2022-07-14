@@ -165,6 +165,7 @@ export default {
     proxy_port: 'Proxy 端口',
     proxy_name: 'Proxy 用戶名',
     proxy_password: 'Proxy 密碼',
+    version: '版本',
   },
   workspace: {
     create: '創建工作空間',

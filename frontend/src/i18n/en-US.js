@@ -165,6 +165,7 @@ export default {
     proxy_port: "Proxy range",
     proxy_name: "Proxy username",
     proxy_password: "Proxy password",
+    version: 'Version',
   },
   workspace: {
     create:'Create a workspace',
