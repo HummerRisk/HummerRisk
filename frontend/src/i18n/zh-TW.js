@@ -981,6 +981,7 @@ export default {
     back_vuln: '返回漏洞檢測列表',
     history: '漏洞檢測歷史記錄',
     all_label: '全部漏洞檢測',
+    no_plugin_param: '請填寫參數:',
   },
   oss: {
     oss_setting: '對象存儲',
@@ -1026,6 +1027,8 @@ export default {
     page_total: '共 {0} 條',
     warn_background: '被檢索行已經高亮',
     no_warn_background: '沒有檢索到結果',
+    task_add: '創建任務',
+    waiting: '待續',
   },
   proxy: {
     create: '創建代理',
@@ -1136,4 +1139,119 @@ export default {
   ACCOUNT: '雲賬號',
   RULE: '規則',
   warning_task: '暫時無法保存，任務編排功能上線後使用此功能，敬請期待！ ',
+  // element組件翻譯
+  el: {
+    colorpicker: {
+      confirm: '確定',
+      clear: '清空'
+    },
+    datepicker: {
+      now: '此刻',
+      today: '今天',
+      cancel: '取消',
+      clear: '清空',
+      confirm: '確定',
+      selectDate: '選擇日期',
+      selectTime: '選擇時間',
+      startDate: '開始日期',
+      startTime: '開始時間',
+      endDate: '結束日期',
+      endTime: '結束時間',
+      prevYear: '前一年',
+      nextYear: '後一年',
+      prevMonth: '上個月',
+      nextMonth: '下個月',
+      year: '年',
+      month1: '1 月',
+      month2: '2 月',
+      month3: '3 月',
+      month4: '4 月',
+      month5: '5 月',
+      month6: '6 月',
+      month7: '7 月',
+      month8: '8 月',
+      month9: '9 月',
+      month10: '10 月',
+      month11: '11 月',
+      month12: '12 月',
+      // week: '週次',
+      weeks: {
+        sun: '日',
+        mon: '一',
+        tue: '二',
+        wed: '三',
+        thu: '四',
+        fri: '五',
+        sat: '六'
+      },
+      months: {
+        jan: '一月',
+        feb: '二月',
+        mar: '三月',
+        apr: '四月',
+        may: '五月',
+        jun: '六月',
+        jul: '七月',
+        aug: '八月',
+        sep: '九月',
+        oct: '十月',
+        nov: '十一月',
+        dec: '十二月'
+      }
+    },
+    select: {
+      loading: '加載中',
+      noMatch: '無匹配數據',
+      noData: '無數據',
+      placeholder: '請選擇'
+    },
+    cascader: {
+      noMatch: '無匹配數據',
+      loading: '加載中',
+      placeholder: '請選擇',
+      noData: '暫無數據'
+    },
+    pagination: {
+      goto: '前往',
+      pagesize: '條/頁',
+      total: '共 {total} 條',
+      pageClassifier: '頁'
+    },
+    messagebox: {
+      title: '提示',
+      confirm: '確定',
+      cancel: '取消',
+      error: '輸入的數據不合法!'
+    },
+    upload: {
+      deleteTip: '按 delete 鍵可刪除',
+      delete: '刪除',
+      preview: '查看圖片',
+      continue: '繼續上傳'
+    },
+    table: {
+      emptyText: '暫無數據',
+      confirmFilter: '篩選',
+      resetFilter: '重置',
+      clearFilter: '全部',
+      sumText: '合計'
+    },
+    tree: {
+      emptyText: '暫無數據'
+    },
+    transfer: {
+      noMatch: '無匹配數據',
+      noData: '無數據',
+      titles: ['列表 1', '列表 2'],
+      filterPlaceholder: '請輸入搜索內容',
+      noCheckedFormat: '共 {total} 項',
+      hasCheckedFormat: '已選 {checked}/{total} 項'
+    },
+    image: {
+      error: '加載失敗'
+    },
+    pageHeader: {
+      title: '返回'
+    }
+  },
 };
