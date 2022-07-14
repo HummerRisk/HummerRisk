@@ -8,11 +8,6 @@
         <el-dropdown-item command="personal"><i class="el-icon-user-solid"/> {{ $t('commons.personal_information') }}</el-dropdown-item>
         <el-dropdown-item command="about"><i class="el-icon-info"/> {{ $t('commons.about_us') }}</el-dropdown-item>
         <el-dropdown-item command="ApiHelp"><i class="el-icon-question"/> {{ $t('commons.api_help_documentation') }}</el-dropdown-item>
-        <el-dropdown-item command="custodian"><i class="el-icon-document"/> {{ 'Custodian' }}</el-dropdown-item>
-        <el-dropdown-item command="prowler"><i class="el-icon-document"/> {{ 'Prowler' }}</el-dropdown-item>
-        <el-dropdown-item command="nuclei"><i class="el-icon-document"/> {{ 'Nuclei' }}</el-dropdown-item>
-        <el-dropdown-item command="xray"><i class="el-icon-document"/> {{ 'Xray' }}</el-dropdown-item>
-        <el-dropdown-item command="dependency"><i class="el-icon-document"/> {{ 'Dependency' }}</el-dropdown-item>
         <el-dropdown-item command="logout"><i class="el-icon-warning"/> {{ $t('commons.exit_system') }}</el-dropdown-item>
       </el-dropdown-menu>
     </template>
@@ -59,21 +54,6 @@ import axios from "axios";
             break;
           case "ApiHelp":
             window.open('/doc.html', "_blank");
-            break;
-          case "custodian":
-            window.open('https://docs.hummerrisk.com/question/rule', "_blank");
-            break;
-          case "prowler":
-            window.open('https://docs.hummerrisk.com/question/prowler', "_blank");
-            break;
-          case "nuclei":
-            window.open('https://docs.hummerrisk.com/question/nuclei', "_blank");
-            break;
-          case "xray":
-            window.open('https://docs.hummerrisk.com/question/xray', "_blank");
-            break;
-          case "dependency":
-            window.open('https://docs.hummerrisk.com/question/dependency', "_blank");
             break;
           default:
             break;

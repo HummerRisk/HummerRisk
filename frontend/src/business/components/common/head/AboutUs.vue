@@ -4,9 +4,9 @@
     :visible.sync="dialogVisible" class="about-us">
 
     <el-row>
-      <el-col>
+      <el-col class="version">
         <el-link :underline="false" :href="websiteUrl" target="_blank">
-          <img class="logo" src="../../../../assets/img/logo/favicon-彩色.png"/>
+          <img class="logo github-icon" src="../../../../assets/img/logo/favicon-彩色.png"/>
         </el-link>
         <el-link class="url" :href="websiteUrl" target="_blank">
           <span>{{ websiteUrl }}</span>
@@ -15,12 +15,10 @@
     </el-row>
 
     <el-row>
-      <el-col>
-        <div class="github">
-          <el-link :underline="false" :href="githubUrl" target="_blank">
-            <font-awesome-icon class="github-icon" :icon="['fab', 'github-square']"/>
-          </el-link>
-        </div>
+      <el-col class="version">
+        <el-link :underline="false" :href="githubUrl" target="_blank">
+          <font-awesome-icon class="github-icon" :icon="['fab', 'github-square']"/>
+        </el-link>
         <el-link class="url" :href="githubUrl" target="_blank">
           <span>{{ githubUrl }}</span>
         </el-link>
@@ -29,7 +27,87 @@
 
     <el-row>
       <el-col class="version">
-        <span><font-awesome-icon class="github-icon" :icon="['fas', 'code-branch']"/> 版本:</span> &nbsp;
+        <el-link :underline="false" href="https://docs.hummerrisk.com/question/rule" target="_blank">
+          <img class="logo github-icon" src="../../../../assets/img/engine/custodian.png"/>
+        </el-link>
+        <el-link class="url" href="https://docs.hummerrisk.com/question/rule" target="_blank">
+          <span>{{ 'https://docs.hummerrisk.com/question/rule' }}</span>
+        </el-link>
+      </el-col>
+    </el-row>
+
+    <el-row>
+      <el-col class="version">
+        <el-link :underline="false" href="https://docs.hummerrisk.com/question/prowler" target="_blank">
+          <img class="logo github-icon" src="../../../../assets/img/engine/prowler.png"/>
+        </el-link>
+        <el-link class="url" href="https://docs.hummerrisk.com/question/prowler" target="_blank">
+          <span>{{ 'https://docs.hummerrisk.com/question/prowler' }}</span>
+        </el-link>
+      </el-col>
+    </el-row>
+
+    <el-row>
+      <el-col class="version">
+        <el-link :underline="false" href="https://docs.hummerrisk.com/question/nuclei" target="_blank">
+          <img class="logo github-icon" src="../../../../assets/img/engine/nuclei.png"/>
+        </el-link>
+        <el-link class="url" href="https://docs.hummerrisk.com/question/nuclei" target="_blank">
+          <span>{{ 'https://docs.hummerrisk.com/question/nuclei' }}</span>
+        </el-link>
+      </el-col>
+    </el-row>
+
+
+    <el-row>
+      <el-col class="version">
+        <el-link :underline="false" href="https://docs.hummerrisk.com/question/xray" target="_blank">
+          <img class="logo github-icon" src="../../../../assets/img/engine/xray.png"/>
+        </el-link>
+        <el-link class="url" href="https://docs.hummerrisk.com/question/xray" target="_blank">
+          <span>{{ 'https://docs.hummerrisk.com/question/xray' }}</span>
+        </el-link>
+      </el-col>
+    </el-row>
+
+
+    <el-row>
+      <el-col class="version">
+        <el-link :underline="false" href="https://docs.hummerrisk.com/question/grype" target="_blank">
+          <img class="logo github-icon" src="../../../../assets/img/engine/grype.png"/>
+        </el-link>
+        <el-link class="url" href="https://docs.hummerrisk.com/question/grype" target="_blank">
+          <span>{{ 'https://docs.hummerrisk.com/question/grype' }}</span>
+        </el-link>
+      </el-col>
+    </el-row>
+
+
+    <el-row>
+      <el-col class="version">
+        <el-link :underline="false" href="https://docs.hummerrisk.com/question/syft" target="_blank">
+          <img class="logo github-icon" src="../../../../assets/img/engine/syft.png"/>
+        </el-link>
+        <el-link class="url" href="https://docs.hummerrisk.com/question/syft" target="_blank">
+          <span>{{ 'https://docs.hummerrisk.com/question/syft' }}</span>
+        </el-link>
+      </el-col>
+    </el-row>
+
+    <el-row>
+      <el-col class="version">
+        <el-link :underline="false" href="https://docs.hummerrisk.com/question/dependency" target="_blank">
+          <img class="logo github-icon" src="../../../../assets/img/engine/dependency.png"/>
+        </el-link>
+        <el-link class="url" href="https://docs.hummerrisk.com/question/dependency" target="_blank">
+          <span>{{ 'https://docs.hummerrisk.com/question/dependency' }}</span>
+        </el-link>
+      </el-col>
+    </el-row>
+
+    <el-row>
+      <el-col class="version">
+        <span><font-awesome-icon class="github-icon" :icon="['fas', 'code-branch']"/> {{ $t('commons.version') }}:</span> &nbsp;
         <span>{{ version }}</span>
       </el-col>
     </el-row>
@@ -69,7 +147,7 @@
 <style scoped>
 
   .logo {
-    height: 30px;
+    height: 20px;
     line-height: 30px;
     vertical-align: middle
   }
@@ -84,14 +162,6 @@
     font-size: 20px;
     margin-left: 5px;
   }
-
-  .github {
-    height: 30px;
-    width: 30px;
-    line-height: 30px;
-    display: inline-block;
-  }
-
 
   .el-row {
     margin-bottom: 3%;
