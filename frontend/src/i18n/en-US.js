@@ -1029,7 +1029,10 @@ export default {
     warn_background: 'The retrieved line has been highlighted',
     no_warn_background: 'No results were retrieved',
     task_add: 'Create task',
-    waiting: 'to be continued',
+    waiting: 'To be continued',
+    execute: 'Execute',
+    task_type: 'Task type',
+    task_manual: 'Manual task',
   },
   proxy: {
     create:'Create an agent',

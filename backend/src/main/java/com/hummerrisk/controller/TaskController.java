@@ -3,11 +3,14 @@ package com.hummerrisk.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.Favorite;
+import com.hummerrisk.base.domain.Task;
+import com.hummerrisk.commons.constants.RoleConstants;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.task.RuleVo;
 import com.hummerrisk.controller.request.task.TaskRequest;
+import com.hummerrisk.controller.request.task.TaskVo;
 import com.hummerrisk.dto.AccountTreeDTO;
 import com.hummerrisk.dto.TaskDTO;
 import com.hummerrisk.dto.TaskRuleDTO;
@@ -15,6 +18,7 @@ import com.hummerrisk.dto.TaskTagGroupDTO;
 import com.hummerrisk.service.TaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -111,9 +115,30 @@ public class TaskController {
     @I18n
     @ApiOperation(value = "任务列表")
     @PostMapping("taskList/{goPage}/{pageSize}")
-    public Pager<List<TaskDTO>> taskList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody TaskRequest request) {
+    public Pager<List<TaskVo>> taskList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody TaskRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, taskService.taskList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "添加任务")
+    @PostMapping(value = "addTask")
+    public int addTask(@RequestBody TaskDTO taskDTO) throws Exception {
+        return taskService.addTask(taskDTO);
+    }
+
+    @I18n
+    @ApiOperation(value = "修改任务")
+    @PostMapping(value = "editTask")
+    public int editTask(@RequestBody TaskDTO taskDTO) throws Exception {
+        return taskService.editTask(taskDTO);
+    }
+
+    @ApiOperation(value = "删除任务")
+    @GetMapping("/deleteTask/{taskId}")
+    @RequiresRoles(RoleConstants.ADMIN)
+    public void deleteTask(@PathVariable String taskId) throws Exception {
+        taskService.deleteTask(taskId);
     }
 
 }

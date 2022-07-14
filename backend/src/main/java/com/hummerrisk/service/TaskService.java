@@ -3,7 +3,10 @@ package com.hummerrisk.service;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtTaskMapper;
+import com.hummerrisk.commons.constants.TaskConstants;
 import com.hummerrisk.commons.constants.TaskEnum;
+import com.hummerrisk.commons.exception.HRException;
+import com.hummerrisk.commons.utils.BeanUtils;
 import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.commons.utils.UUIDUtil;
@@ -30,15 +33,15 @@ public class TaskService {
     @Resource
     private FavoriteMapper favoriteMapper;
     @Resource
-    private AccountMapper accountMapper;
-    @Resource
-    private ServerMapper serverMapper;
-    @Resource
-    private ImageMapper imageMapper;
-    @Resource
-    private PackageMapper packageMapper;
-    @Resource
     private ExtTaskMapper extTaskMapper;
+    @Resource
+    private TaskMapper taskMapper;
+    @Resource
+    private TaskItemMapper taskItemMapper;
+    @Resource
+    private TaskItemResourceMapper taskItemResourceMapper;
+    @Resource
+    private TaskItemLogMapper taskItemLogMapper;
 
     public List<Favorite> listFavorites() {
         FavoriteExample example = new FavoriteExample();
@@ -170,8 +173,63 @@ public class TaskService {
         return extTaskMapper.detailGroup(ruleVo);
     }
 
-    public List<TaskDTO> taskList(TaskRequest request) {
+    public List<TaskVo> taskList(TaskRequest request) {
         return extTaskMapper.taskList(request);
+    }
+
+    public int addTask(TaskDTO taskDTO) throws Exception {
+        Task task = BeanUtils.copyBean(new Task(), taskDTO);
+        task.setId(UUIDUtil.newUUID());
+        task.setStatus(TaskConstants.TASK_STATUS.WAITING.name());
+        task.setApplyUser(SessionUtils.getUserId());
+        task.setCreateTime(System.currentTimeMillis());
+        task.setType(TaskConstants.TaskType.manual.name());
+        int i = taskMapper.insertSelective(task);
+        for (TaskItem taskItem : taskDTO.getTaskItemList()) {
+            taskItem.setId(UUIDUtil.newUUID());
+            taskItem.setTaskId(task.getId());
+            taskItem.setCreateTime(System.currentTimeMillis());
+            taskItemMapper.insertSelective(taskItem);
+        }
+        return i;
+    }
+
+    public int editTask(TaskDTO taskDTO) throws Exception {
+        this.deleteTask(taskDTO.getId());
+        Task task = BeanUtils.copyBean(new Task(), taskDTO);
+        task.setId(UUIDUtil.newUUID());
+        task.setStatus(TaskConstants.TASK_STATUS.WAITING.name());
+        task.setApplyUser(SessionUtils.getUserId());
+        task.setCreateTime(System.currentTimeMillis());
+        int i = taskMapper.insertSelective(task);
+        for (TaskItem taskItem : taskDTO.getTaskItemList()) {
+            taskItem.setId(UUIDUtil.newUUID());
+            taskItem.setTaskId(task.getId());
+            taskItem.setCreateTime(System.currentTimeMillis());
+            taskItemMapper.insertSelective(taskItem);
+        }
+        return i;
+    }
+
+    public void deleteTask(String taskId) throws Exception {
+        try {
+            TaskItemExample example = new TaskItemExample();
+            example.createCriteria().andTaskIdEqualTo(taskId);
+            List<TaskItem> taskItems = taskItemMapper.selectByExample(example);
+            for (TaskItem taskItem : taskItems) {
+                TaskItemResourceExample taskItemResourceExample = new TaskItemResourceExample();
+                taskItemResourceExample.createCriteria().andTaskIdEqualTo(taskId).andTaskItemIdEqualTo(taskItem.getId());
+                taskItemResourceMapper.deleteByExample(taskItemResourceExample);
+                TaskItemLogExample taskItemLogExample = new TaskItemLogExample();
+                taskItemLogExample.createCriteria().andTaskItemIdEqualTo(taskItem.getId());
+                taskItemLogMapper.deleteByExample(taskItemLogExample);
+                taskItemMapper.deleteByPrimaryKey(taskItem.getId());
+            }
+            taskMapper.deleteByPrimaryKey(taskId);
+        } catch (Exception e) {
+            HRException.throwException(e.getMessage());
+        }
+
     }
 
 }

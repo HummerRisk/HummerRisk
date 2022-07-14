@@ -32,6 +32,62 @@
         </where>
     </sql>
 
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.taskName != null'>
+            and t.task_name
+            <include refid="condition">
+                <property name="object" value="${condition}.taskName"/>
+            </include>
+        </if>
+        <if test='${condition}.severity != null'>
+            and t.severity
+            <include refid="condition">
+                <property name="object" value="${condition}.severity"/>
+            </include>
+        </if>
+    </sql>
+
     <resultMap id="AccountBaseResultMap" type="com.hummerrisk.controller.request.task.AccountVo">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
@@ -700,5 +756,29 @@
             </if>
         </where>
 
+    </select>
+
+    <select id="taskList" parameterType="com.hummerrisk.controller.request.task.TaskRequest"
+            resultType="com.hummerrisk.controller.request.task.TaskVo">
+        SELECT
+        t.*,
+        t1.name as userName
+        FROM task t
+        left join user t1 on t1.id = t.apply_user
+
+        <where>
+            <if test="id != null">
+                AND t.id = #{id}
+            </if>
+            <if test="taskName != null">
+                AND t.task_name like CONCAT('%',#{taskName},'%')
+            </if>
+            <if test="combine != null">
+                <include refid="combine">
+                    <property name="condition" value="combine"/>
+                </include>
+            </if>
+        </where>
+        ORDER BY t.create_time desc
     </select>
 </mapper>

@@ -1030,6 +1030,9 @@ export default {
     no_warn_background: '沒有檢索到結果',
     task_add: '創建任務',
     waiting: '待續',
+    execute: '執行',
+    task_type: '任務類型',
+    task_manual: '手動任務',
   },
   proxy: {
     create: '創建代理',

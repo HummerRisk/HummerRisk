@@ -1031,7 +1031,8 @@ export default {
     task_add: '创建任务',
     waiting: '待续',
     execute: '执行',
-
+    task_type: '任务类型',
+    task_manual: '手动任务',
   },
   proxy: {
     create: '创建代理',

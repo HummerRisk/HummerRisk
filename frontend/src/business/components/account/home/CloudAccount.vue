@@ -464,7 +464,6 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              let formData = new FormData();
               this.result = this.$request({
                 method: 'POST',
                 url: "/account/validate",

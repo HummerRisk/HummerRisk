@@ -67,7 +67,7 @@
             <template v-slot:default="scope">
               <el-link type="primary" :underline="false" class="md-primary text-click"  @click="showTaskDetail(scope.row)">
                 <span>
-                  <img :src="require(`@/assets/img/platform/${scope.row.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                  <img v-if="scope.row.icon" :src="require(`@/assets/img/platform/${scope.row.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                    &nbsp;&nbsp; {{ scope.row.ruleName }}
                 </span>
               </el-link>

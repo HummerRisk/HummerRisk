@@ -351,7 +351,7 @@ import {saveAs} from "@/common/js/FileSaver.js";
         },
         buttons: [
           {
-            tip: this.$t('resource.i18n_detail'), icon: "el-icon-edit-outline", type: "primary",
+            tip: this.$t('resource.i18n_detail'), icon: "el-icon-notebook-2", type: "primary",
             exec: this.handleDetails
           }
         ],

@@ -16,7 +16,7 @@
                       :placeholder="$t('task.task_name')"
                       @change="search"
                       maxlength="60"
-                      v-model="form.name" clearable/>
+                      v-model="form.taskName" clearable/>
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
@@ -28,7 +28,7 @@
                       :placeholder="$t('task.task_desc')"
                       @change="search"
                       maxlength="60"
-                      v-model="form.desc" clearable/>
+                      v-model="form.description" clearable/>
                   </el-form-item>
                 </el-col>
               </el-form>
@@ -54,7 +54,7 @@
               <template v-slot:default="scope">
                 <el-link type="primary" :underline="false" class="md-primary text-click"  @click="showTaskDetail(scope.row)">
                   <span>
-                    <img :src="require(`@/assets/img/platform/${scope.row.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                    <img v-if="scope.row.icon" :src="require(`@/assets/img/platform/${scope.row.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                      &nbsp;&nbsp; {{ $t(scope.row.accountName) }}
                   </span>
                 </el-link>
@@ -348,7 +348,28 @@ import SeverityType from "./SeverityType";
       deleteTask(item, index) {
         this.tableData.splice(index, 1);
       },
-      confirm() {},
+      confirm() {
+        if (!this.form.taskName) {
+          this.$warning(this.$t('vuln.no_plugin_param') + this.$t('task.task_name'));
+          return;
+        }
+        if (!this.form.description) {
+          this.$warning(this.$t('vuln.no_plugin_param') + this.$t('task.task_desc'));
+          return;
+        }
+        if (this.tableData.length === 0) {
+          this.$warning(this.$t('task.second_task'));
+          return;
+        }
+        this.form.taskItemList = this.tableData;
+        this.result = this.$post("/task/addTask",this.form, response => {
+          if (response.success) {
+            this.$router.push({
+              path: '/task/list',
+            }).catch(error => error);
+          }
+        });
+      },
       reset() {
         this.tableData = [];
       },
