@@ -1035,6 +1035,9 @@ export default {
     task_manual: '手动任务',
     re_execute: '重新执行',
     task_detail: '任务详情',
+    task_update: '修改任务',
+    task_start: '开始执行',
+    task_restart: '开始重新执行',
   },
   proxy: {
     create: '创建代理',

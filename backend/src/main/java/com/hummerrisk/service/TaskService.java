@@ -1,27 +1,27 @@
 package com.hummerrisk.service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.base.domain.*;
+import com.hummerrisk.base.domain.Package;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtTaskMapper;
-import com.hummerrisk.commons.constants.TaskConstants;
-import com.hummerrisk.commons.constants.TaskEnum;
+import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
-import com.hummerrisk.commons.utils.BeanUtils;
-import com.hummerrisk.commons.utils.PlatformUtils;
-import com.hummerrisk.commons.utils.SessionUtils;
-import com.hummerrisk.commons.utils.UUIDUtil;
+import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.task.*;
-import com.hummerrisk.dto.AccountTreeDTO;
-import com.hummerrisk.dto.TaskDTO;
-import com.hummerrisk.dto.TaskRuleDTO;
-import com.hummerrisk.dto.TaskTagGroupDTO;
+import com.hummerrisk.dto.*;
+import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import static com.alibaba.fastjson.JSON.parseArray;
 
 /**
  * @author harris
@@ -42,6 +42,54 @@ public class TaskService {
     private TaskItemResourceMapper taskItemResourceMapper;
     @Resource
     private TaskItemLogMapper taskItemLogMapper;
+    @Resource
+    private RuleMapper ruleMapper;
+    @Resource
+    private ServerRuleMapper serverRuleMapper;
+    @Resource
+    private ServerMapper serverMapper;
+    @Resource
+    private ServerGroupMapper serverGroupMapper;
+    @Resource
+    private ServerResultMapper serverResultMapper;
+    @Resource
+    private ServerService serverService;
+    @Resource
+    private PackageRuleMapper packageRuleMapper;
+    @Resource
+    private PackageMapper packageMapper;
+    @Resource
+    private PackageResultMapper packageResultMapper;
+    @Resource
+    private PackageService packageService;
+    @Resource
+    private ImageRuleMapper imageRuleMapper;
+    @Resource
+    private ImageMapper imageMapper;
+    @Resource
+    private ImageResultMapper imageResultMapper;
+    @Resource
+    private ImageRepoMapper imageRepoMapper;
+    @Resource
+    private ImageService imageService;
+    @Resource
+    private RuleTagMapper ruleTagMapper;
+    @Resource
+    private RuleTagMappingMapper ruleTagMappingMapper;
+    @Resource
+    private RuleGroupMapper ruleGroupMapper;
+    @Resource
+    private RuleGroupMappingMapper ruleGroupMappingMapper;
+    @Resource
+    private NoticeService noticeService;
+    @Resource
+    private AccountMapper accountMapper;
+    @Resource
+    private OrderService orderService;
+    @Resource
+    private CloudTaskService cloudTaskService;
+    @Resource
+    private UserMapper userMapper;
 
     public List<Favorite> listFavorites() {
         FavoriteExample example = new FavoriteExample();
@@ -244,6 +292,84 @@ public class TaskService {
         example.createCriteria().andTaskIdEqualTo(id);
         example.setOrderByClause("task_order desc");
         List<TaskItem> taskItems = taskItemMapper.selectByExample(example);
+        for (TaskItem taskItem : taskItems) {
+            String ruleType = taskItem.getRuleType();
+            if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.rule.name())) {
+                String resourceId = "";
+                if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.cloudAccount.getType())) {
+                    resourceId = this.cloudResource(taskItem.getSourceId(), taskItem.getAccountId());
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.vulnAccount.getType())) {
+                    resourceId = this.vulnResource(taskItem.getSourceId(), taskItem.getAccountId());
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.serverAccount.getType())) {
+                    resourceId = this.serverResource(taskItem.getSourceId(), taskItem.getAccountId());
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
+                    resourceId = this.imageResource(taskItem.getSourceId(), taskItem.getAccountId());
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.packageAccount.getType())) {
+                    resourceId = this.packageResource(taskItem.getSourceId(), taskItem.getAccountId());
+                }
+                this.insertTaskItemResource(taskItem, resourceId);
+            } else if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.tag.name())) {
+                String resourceId = "";
+                List<RuleTagMapping> ruleTagMappings = this.ruleTagMappings(taskItem.getSourceId());
+                if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.cloudAccount.getType())) {
+                    for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
+                        resourceId = this.cloudResource(ruleTagMapping.getRuleId(), taskItem.getAccountId());
+                        this.insertTaskItemResource(taskItem, resourceId);
+                    }
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.vulnAccount.getType())) {
+                    for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
+                        resourceId = this.vulnResource(ruleTagMapping.getRuleId(), taskItem.getAccountId());
+                        this.insertTaskItemResource(taskItem, resourceId);
+                    }
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.serverAccount.getType())) {
+                    for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
+                        resourceId = this.serverResource(ruleTagMapping.getRuleId(), taskItem.getAccountId());
+                        this.insertTaskItemResource(taskItem, resourceId);
+                    }
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
+                    for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
+                        resourceId = this.imageResource(ruleTagMapping.getRuleId(), taskItem.getAccountId());
+                        this.insertTaskItemResource(taskItem, resourceId);
+                    }
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.packageAccount.getType())) {
+                    for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
+                        resourceId = this.packageResource(ruleTagMapping.getRuleId(), taskItem.getAccountId());
+                        this.insertTaskItemResource(taskItem, resourceId);
+                    }
+                }
+            } else if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.group.name())) {
+                String resourceId = "";
+                List<RuleGroupMapping> ruleGroupMappings = this.ruleGroupMappings(taskItem.getSourceId());
+                if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.cloudAccount.getType())) {
+                    for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
+                        resourceId = this.cloudResource(ruleGroupMapping.getRuleId(), taskItem.getAccountId());
+                        this.insertTaskItemResource(taskItem, resourceId);
+                    }
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.vulnAccount.getType())) {
+                    for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
+                        resourceId = this.vulnResource(ruleGroupMapping.getRuleId(), taskItem.getAccountId());
+                        this.insertTaskItemResource(taskItem, resourceId);
+                    }
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.serverAccount.getType())) {
+                    for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
+                        resourceId = this.serverResource(ruleGroupMapping.getRuleId(), taskItem.getAccountId());
+                        this.insertTaskItemResource(taskItem, resourceId);
+                    }
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
+                    for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
+                        resourceId = this.imageResource(ruleGroupMapping.getRuleId(), taskItem.getAccountId());
+                        this.insertTaskItemResource(taskItem, resourceId);
+                    }
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.packageAccount.getType())) {
+                    for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
+                        resourceId = this.packageResource(ruleGroupMapping.getRuleId(), taskItem.getAccountId());
+                        this.insertTaskItemResource(taskItem, resourceId);
+                    }
+                }
+            }
+            taskItem.setStatus(TaskConstants.TASK_STATUS.APPROVED.name());
+            taskItemMapper.updateByPrimaryKeySelective(taskItem);
+        }
     }
 
     public void reExecute(String id) throws Exception{
@@ -252,6 +378,201 @@ public class TaskService {
         example.createCriteria().andTaskIdEqualTo(id);
         example.setOrderByClause("task_order desc");
         List<TaskItem> taskItems = taskItemMapper.selectByExample(example);
+    }
+
+    private String dealCloudOrVulnTask (Rule rule, AccountWithBLOBs account, Integer scanId) {
+        try {
+            if (rule.getStatus()) {
+                QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
+                BeanUtils.copyBean(quartzTaskDTO, rule);
+                List<SelectTag> selectTags = new LinkedList<>();
+                SelectTag s = new SelectTag();
+                s.setAccountId(account.getId());
+                JSONArray array = parseArray(account.getRegions()!=null?account.getRegions():account.getRegions());
+                JSONObject object;
+                List<String> regions = new ArrayList<>();
+                for (int i = 0; i < array.size(); i++) {
+                    try {
+                        object = array.getJSONObject(i);
+                        String value = object.getString("regionId");
+                        regions.add(value);
+                    } catch (Exception e) {
+                        String value = array.get(0).toString();
+                        regions.add(value);
+                    }
+                }
+                s.setRegions(regions);
+                selectTags.add(s);
+                quartzTaskDTO.setSelectTags(selectTags);
+                quartzTaskDTO.setType("manual");
+                quartzTaskDTO.setAccountId(account.getId());
+                quartzTaskDTO.setTaskName(rule.getName());
+                CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, null);
+                orderService.insertTaskHistory(cloudTask, scanId);
+                return cloudTask.getId();
+            } else {
+                LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
+                HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
+            }
+        } catch (Exception e) {
+            LogUtil.error(e);
+            HRException.throwException(e.getMessage());
+        }
+        return "";
+    }
+
+    private String dealServerTask (ServerRule rule, Server server) {
+        try {
+            if (rule.getStatus()) {
+                ServerResult result = new ServerResult();
+                String serverGroupName = serverGroupMapper.selectByPrimaryKey(server.getServerGroupId()).getName();
+                BeanUtils.copyBean(result, server);
+                result.setId(UUIDUtil.newUUID());
+                result.setServerId(server.getId());
+                result.setServerGroupId(server.getServerGroupId());
+                result.setServerGroupName(serverGroupName);
+                result.setApplyUser(SessionUtils.getUserId());
+                result.setCreateTime(System.currentTimeMillis());
+                result.setUpdateTime(System.currentTimeMillis());
+                result.setServerName(server.getName());
+                result.setRuleId(rule.getId());
+                result.setRuleName(rule.getName());
+                result.setRuleDesc(rule.getDescription());
+                result.setResultStatus(TaskConstants.TASK_STATUS.APPROVED.toString());
+                result.setSeverity(rule.getSeverity());
+                serverResultMapper.insertSelective(result);
+
+                serverService.saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
+                return result.getId();
+            } else {
+                LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
+                HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
+            }
+        } catch (Exception e) {
+            LogUtil.error(e);
+            HRException.throwException(e.getMessage());
+        }
+        return "";
+    }
+
+    private String dealPackageTask (PackageRule rule, Package apackage) {
+        try {
+            if (rule.getStatus()) {
+                PackageResultWithBLOBs result = new PackageResultWithBLOBs();
+                BeanUtils.copyBean(result, apackage);
+                result.setId(UUIDUtil.newUUID());
+                result.setPackageId(apackage.getId());
+                result.setApplyUser(SessionUtils.getUserId());
+                result.setCreateTime(System.currentTimeMillis());
+                result.setUpdateTime(System.currentTimeMillis());
+                result.setRuleId(rule.getId());
+                result.setRuleName(rule.getName());
+                result.setRuleDesc(rule.getDescription());
+                result.setResultStatus(TaskConstants.TASK_STATUS.APPROVED.toString());
+                result.setSeverity(rule.getSeverity());
+                result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
+                packageResultMapper.insertSelective(result);
+
+                packageService.savePackageResultLog(result.getId(), "i18n_start_package_result", "", true);
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "开始软件包检测");
+                return result.getId();
+            } else {
+                LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
+                HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
+            }
+        } catch (Exception e) {
+            LogUtil.error(e);
+            HRException.throwException(e.getMessage());
+        }
+        return "";
+    }
+
+    private String dealImageTask (ImageRule rule, Image image) {
+        try {
+            if (rule.getStatus()) {
+                ImageResultWithBLOBs result = new ImageResultWithBLOBs();
+                BeanUtils.copyBean(result, image);
+                result.setId(UUIDUtil.newUUID());
+                result.setImageId(image.getId());
+                result.setApplyUser(SessionUtils.getUserId());
+                result.setCreateTime(System.currentTimeMillis());
+                result.setUpdateTime(System.currentTimeMillis());
+                result.setRuleId(rule.getId());
+                result.setRuleName(rule.getName());
+                result.setRuleDesc(rule.getDescription());
+                result.setResultStatus(TaskConstants.TASK_STATUS.APPROVED.toString());
+                result.setSeverity(rule.getSeverity());
+                result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
+                imageResultMapper.insertSelective(result);
+
+                imageService.saveImageResultLog(result.getId(), "i18n_start_image_result", "", true);
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "开始镜像检测");
+                return result.getId();
+            } else {
+                LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
+                HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
+            }
+        } catch (Exception e) {
+            LogUtil.error(e);
+            HRException.throwException(e.getMessage());
+        }
+        return "";
+    }
+
+    private String cloudResource(String ruleId, String accountId) {
+        Rule rule = ruleMapper.selectByPrimaryKey(ruleId);
+        AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
+        Integer scanId = orderService.insertScanHistory(account);
+        //String messageOrderId = noticeService.createMessageOrder(account);
+        return this.dealCloudOrVulnTask(rule, account, scanId);
+    }
+
+    private String vulnResource(String ruleId, String accountId) {
+        Rule rule = ruleMapper.selectByPrimaryKey(ruleId);
+        AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
+        Integer scanId = orderService.insertScanHistory(account);
+        return this.dealCloudOrVulnTask(rule, account, scanId);
+    }
+
+    private String serverResource(String ruleId, String accountId) {
+        ServerRule serverRule = serverRuleMapper.selectByPrimaryKey(ruleId);
+        Server server = serverMapper.selectByPrimaryKey(accountId);
+        return this.dealServerTask(serverRule, server);
+    }
+
+    private String packageResource(String ruleId, String accountId) {
+        PackageRule packageRule = packageRuleMapper.selectByPrimaryKey(ruleId);
+        Package aPackage = packageMapper.selectByPrimaryKey(accountId);
+        return this.dealPackageTask(packageRule, aPackage);
+    }
+
+    private String imageResource(String ruleId, String accountId) {
+        ImageRule imageRule = imageRuleMapper.selectByPrimaryKey(ruleId);
+        Image image = imageMapper.selectByPrimaryKey(accountId);
+        return this.dealImageTask(imageRule, image);
+    }
+
+    private void insertTaskItemResource(TaskItem taskItem, String resourceId) throws Exception {
+        TaskItemResource record = new TaskItemResource();
+        BeanUtils.copyBean(record, taskItem);
+        record.setResourceId(resourceId);
+        record.setTaskItemId(taskItem.getId());
+        record.setCreateTime(System.currentTimeMillis());
+        taskItemResourceMapper.insertSelective(record);
+    }
+
+    private List<RuleTagMapping> ruleTagMappings (String tagKey) {
+        RuleTagMappingExample ruleTagMappingExample = new RuleTagMappingExample();
+        ruleTagMappingExample.createCriteria().andTagKeyEqualTo(tagKey);
+        List<RuleTagMapping> ruleTagMappings = ruleTagMappingMapper.selectByExample(ruleTagMappingExample);
+        return ruleTagMappings;
+    }
+
+    private List<RuleGroupMapping> ruleGroupMappings (String groupId) {
+        RuleGroupMappingExample ruleGroupMappingExample = new RuleGroupMappingExample();
+        ruleGroupMappingExample.createCriteria().andGroupIdEqualTo(groupId);
+        List<RuleGroupMapping> ruleGroupMappings = ruleGroupMappingMapper.selectByExample(ruleGroupMappingExample);
+        return ruleGroupMappings;
     }
 
 }

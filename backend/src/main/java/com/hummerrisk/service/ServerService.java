@@ -130,7 +130,7 @@ public class ServerService {
                     serverResultMapper.insertSelective(result);
 
                     saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
-
+                    OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "开始虚拟机检测");
                 }
             }
         return true;
@@ -195,7 +195,7 @@ public class ServerService {
         serverResultMapper.deleteByExample(example);
     }
 
-    void saveServerResultLog(String resultId, String operation, String output, boolean result) {
+    public void saveServerResultLog(String resultId, String operation, String output, boolean result) {
         ServerResultLog serverResultLog = new ServerResultLog();
         String operator = "system";
         try {

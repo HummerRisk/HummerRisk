@@ -228,6 +228,121 @@
     </el-drawer>
     <!--Task detail-->
 
+    <!--Update Task-->
+    <el-drawer class="rtl" :title="$t('task.task_update')" :visible.sync="updateVisible" size="90%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <el-card class="table-card" v-loading="result.loading">
+        <el-row :gutter="20">
+          <el-col :span="5" style="max-height: 468px;">
+            <el-card class="box-card" style="max-height: 489px;">
+              <div slot="header" class="clearfix">
+                <span>{{ $t('task.first_task') }}</span>
+              </div>
+              <account @nodeSelectEvent="nodeChange"/>
+            </el-card>
+          </el-col>
+          <el-col :span="19" style="max-height: 513px;">
+            <update-rule :account="account" @addTask="addTask"/>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-card class="table-card" v-loading="result.loading">
+              <template v-slot:header>
+                <div slot="header" class="clearfix">
+                  <span>{{ $t('task.third_task') }}</span>
+                </div>
+                <el-row :gutter="20">
+                  <el-form ref="form" :model="form" label-width="80px">
+                    <el-col :span="8">
+                      <el-form-item :label="$t('task.task_name')" :rules="{required: true, message: $t('task.task_name'), trigger: 'change'}">
+                        <el-input
+                          class="search"
+                          type="text"
+                          size="medium"
+                          :placeholder="$t('task.task_name')"
+                          @change="search"
+                          maxlength="60"
+                          v-model="form.taskName" clearable/>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                      <el-form-item :label="$t('task.task_desc')" :rules="{required: true, message: $t('task.task_name'), trigger: 'change'}">
+                        <el-input
+                          class="search"
+                          type="text"
+                          size="medium"
+                          :placeholder="$t('task.task_desc')"
+                          @change="search"
+                          maxlength="60"
+                          v-model="form.description" clearable/>
+                      </el-form-item>
+                    </el-col>
+                  </el-form>
+                  <el-col :span="4"  style="height: 36px;">
+                  </el-col>
+                  <el-col :span="4">
+                    <el-input
+                      class="search"
+                      type="text"
+                      size="medium"
+                      :placeholder="$t('task.search_rule')"
+                      prefix-icon="el-icon-search"
+                      @change="search"
+                      maxlength="60"
+                      v-model="condition.accountName" clearable/>
+                  </el-col>
+                </el-row>
+              </template>
+
+              <el-table border :data="updateTableData" :key="itemKey" class="adjust-table table-content" :row-class-name="tableRowClassName" @filter-change="updateFilter">
+                <el-table-column type="index" min-width="3%"/>
+                <el-table-column :label="$t('task.task_account_name')" min-width="15%" show-overflow-tooltip>
+                  <template v-slot:default="scope">
+              <span>
+                <img v-if="scope.row.icon" :src="require(`@/assets/img/platform/${scope.row.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ $t(scope.row.accountName) }}
+              </span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="ruleName" :label="$t('task.task_rule_name')" min-width="20%" show-overflow-tooltip></el-table-column>
+                <el-table-column min-width="10%" :label="$t('task.task_rule_type')" column-key="ruleType">
+                  <template v-slot:default="{row}">
+                    <rule-type :row="row"/>
+                  </template>
+                </el-table-column>
+                <el-table-column min-width="10%" :label="$t('task.task_rule_severity')" column-key="severity">
+                  <template v-slot:default="{row}">
+                    <severity-type :row="row"/>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="ruleDesc" :label="$t('task.task_rule_desc')" min-width="30%" show-overflow-tooltip></el-table-column>
+                <el-table-column :label="$t('task.task_order')" min-width="10%">
+                  <template slot-scope="scope">
+                    <el-input type="number" @input="change($event)" v-model="scope.row.taskOrder" :key="scope.$index"/>
+                  </template>
+                </el-table-column>
+                <el-table-column min-width="9%" :label="$t('commons.operating')" fixed="right">
+                  <template v-slot:default="scope">
+                    <el-button type="danger" plain size="mini" @click="deleteUpdateTask(scope.row, scope.$index)"><i class="el-icon-delete"/>{{ $t('commons.delete') }}</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <el-row type="flex" justify="end">
+                <div class="table-page">
+                  {{ $t('task.page_total', [updateTotal]) }}
+                </div>
+              </el-row>
+            </el-card>
+            <div class="dialog-footer">
+              <el-button @click="reset">{{ $t('task.reset') }}</el-button>
+              <el-button type="primary" @click="confirm" @keydown.enter.native.prevent>{{ $t('task.save_task') }}</el-button>
+            </div>
+          </el-col>
+        </el-row>
+      </el-card>
+    </el-drawer>
+    <!--Update Task-->
 
   </div>
 </template>
@@ -241,6 +356,8 @@ import TaskType from "./TaskType";
 import {_filter, _sort} from "@/common/js/utils";
 import RuleType from "@/business/components/task/home/RuleType";
 import SeverityType from "@/business/components/task/home/SeverityType";
+import Account from "@/business/components/task/home/Account";
+import UpdateRule from "@/business/components/task/home/UpdateRule";
 
 /* eslint-disable */
 export default {
@@ -252,6 +369,8 @@ export default {
     TaskType,
     RuleType,
     SeverityType,
+    Account,
+    UpdateRule,
   },
   data() {
     return {
@@ -260,8 +379,11 @@ export default {
       currentPage: 1,
       pageSize: 10,
       total: 0,
+      updateTotal: 0,
       condition: {},
+      updateCondition: {},
       tableData: [],
+      updateTableData: [],
       form: {},
       direction: 'rtl',
       buttons: [
@@ -305,6 +427,10 @@ export default {
       groupDetailVisible: false,
       groupDetailTable: [],
       detailTable: [],
+      updateVisible: false,
+      itemKey: Math.random(),
+      account: {},
+      taskOrder: {},
     }
   },
   methods: {
@@ -314,6 +440,10 @@ export default {
     },
     filter(filters) {
       _filter(filters, this.condition);
+      this.init();
+    },
+    updateFilter(filters) {
+      _filter(filters, this.updateCondition);
       this.init();
     },
     filterStatus(value, row) {
@@ -346,6 +476,7 @@ export default {
     },
     handleClose() {
       this.form = {};
+      this.updateVisible =  false;
       this.detailVisible =  false;
     },
     tableRowClassName({row, rowIndex}) {
@@ -399,9 +530,18 @@ export default {
         this.groupDetailVisible = true;
       }
     },
-    handleExecute() {},
+    handleExecute(item) {
+      this.result = this.$get("/task/execute/" + item.id, response => {
+        this.$success(this.$t('task.task_start'));
+      });
+    },
     handleEdit(item) {
-      this.updateVisible = true;
+      this.form = item;
+      this.result = this.$post("/task/taskItemList", item, response => {
+        let data = response.data;
+        this.updateTableData = data;
+        this.updateVisible = true;
+      });
     },
     handleDelete(item) {
       this.$alert(this.$t('account.delete_confirm') + item.taskName + " ？", '', {
@@ -417,11 +557,74 @@ export default {
       });
     },
     handleQuartz(item) {},
-    handleReExecute(item) {},
+    handleReExecute(item) {
+      this.result = this.$get("/task/reExecute/" + item.id, response => {
+        this.$success(this.$t('task.task_restart'));
+      });
+    },
     showCodemirror () {
       setTimeout(() => {
         this.$refs.cmEditor.codemirror.refresh();
       },50);
+    },
+    change(e) {
+      //3种方法都没效果
+      // 1. 在nextTick中使用this.$refs.table.doLayout()
+      // 2. 在data赋值前清空tableData
+      // 3. 强制刷新：this.$forceUpdate()
+      //el-table表格数据变化，页面不更新问题。给table加个key，页面就能更新了
+      this.itemKey = Math.random();
+    },
+    deleteUpdateTask(item, index) {
+      this.updateTableData.splice(index, 1);
+    },
+    confirm() {
+      if (!this.form.taskName) {
+        this.$warning(this.$t('vuln.no_plugin_param') + this.$t('task.task_name'));
+        return;
+      }
+      if (!this.form.description) {
+        this.$warning(this.$t('vuln.no_plugin_param') + this.$t('task.task_desc'));
+        return;
+      }
+      if (this.updateTableData.length === 0) {
+        this.$warning(this.$t('task.second_task'));
+        return;
+      }
+      this.form.taskItemList = this.updateTableData;
+      this.result = this.$post("/task/updateTask", this.form, response => {
+        if (response.success) {
+          this.$success(this.$t('commons.save_success'));
+        }
+      });
+    },
+    reset() {
+      this.updateTableData = [];
+    },
+    nodeChange(node, nodeIds, pNodes) {
+      if(node.data.id === "root" || !node.data.id) {
+        this.$warning(this.$t('task.task_tree_child'));
+        return;
+      }
+      this.account = node.data;
+    },
+    addTask(val) {
+      val.taskOrder = this.updateTableData.length + 1;
+      this.updateTableData.unshift(val);
+      this.updateTotal = this.updateTableData.length;
+
+      // 按照order值排序数组
+      this.updateTableData.sort(function (a, b) {
+        let aVal = a.taskOrder;
+        let bVal = b.taskOrder;
+        if (aVal < bVal) {
+          return -1;
+        }
+        if (aVal > bVal) {
+          return 1;
+        }
+        return 0;
+      });
     },
   },
   activated() {
@@ -431,6 +634,9 @@ export default {
 </script>
 
 <style scoped>
+.table-card >>> .el-card__header {
+  padding: 0;
+}
 .text-click {
   text-decoration: none;
 }
@@ -501,6 +707,18 @@ export default {
 
 .table-content .success-row {
   background: #0066ac !important;
+}
+.box-card {
+  margin: 10px 0 0 0;
+}
+.box-card >>> .el-card__header {
+  padding: 5px 20px;
+  background-color: #b0abab;
+  color: #fff;
+}
+.box-card >>> .el-card__body {
+  padding: 10px;
+  min-height: 405px;
 }
 </style>
 

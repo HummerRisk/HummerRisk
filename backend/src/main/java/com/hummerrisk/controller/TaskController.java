@@ -130,7 +130,7 @@ public class TaskController {
 
     @I18n
     @ApiOperation(value = "修改任务")
-    @PostMapping(value = "editTask")
+    @PostMapping(value = "updateTask")
     public int editTask(@RequestBody TaskDTO taskDTO) throws Exception {
         return taskService.editTask(taskDTO);
     }
