@@ -314,26 +314,31 @@ public class TaskService {
                 if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.cloudAccount.getType())) {
                     for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
                         resourceId = this.cloudResource(ruleTagMapping.getRuleId(), taskItem.getAccountId());
+                        if(resourceId == null) continue;
                         this.insertTaskItemResource(taskItem, resourceId);
                     }
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.vulnAccount.getType())) {
                     for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
                         resourceId = this.vulnResource(ruleTagMapping.getRuleId(), taskItem.getAccountId());
+                        if(resourceId == null) continue;
                         this.insertTaskItemResource(taskItem, resourceId);
                     }
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.serverAccount.getType())) {
                     for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
                         resourceId = this.serverResource(ruleTagMapping.getRuleId(), taskItem.getAccountId());
+                        if(resourceId == null) continue;
                         this.insertTaskItemResource(taskItem, resourceId);
                     }
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
                     for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
                         resourceId = this.imageResource(ruleTagMapping.getRuleId(), taskItem.getAccountId());
+                        if(resourceId == null) continue;
                         this.insertTaskItemResource(taskItem, resourceId);
                     }
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.packageAccount.getType())) {
                     for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
                         resourceId = this.packageResource(ruleTagMapping.getRuleId(), taskItem.getAccountId());
+                        if(resourceId == null) continue;
                         this.insertTaskItemResource(taskItem, resourceId);
                     }
                 }
@@ -521,6 +526,7 @@ public class TaskService {
 
     private String cloudResource(String ruleId, String accountId) {
         Rule rule = ruleMapper.selectByPrimaryKey(ruleId);
+        if (rule == null)  return null;
         AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
         Integer scanId = orderService.insertScanHistory(account);
         //String messageOrderId = noticeService.createMessageOrder(account);

@@ -102,9 +102,9 @@
                 <span slot="label"><i class="el-icon-reading"></i> {{ $t('rule.rule') }}</span>
                 <el-form label-position="left" inline class="demo-table-expand" >
                   <el-form-item :label="$t('task.task_rule_type')" v-if="detailForm.pluginIcon">
-                        <span>
-                          <img :src="require(`@/assets/img/platform/${detailForm.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                        </span>
+                    <span>
+                      <img :src="require(`@/assets/img/platform/${detailForm.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                    </span>
                   </el-form-item>
                   <el-form-item :label="$t('rule.rule_name')">
                     <el-tooltip class="item" effect="dark" :content="detailForm.name" placement="top-start">

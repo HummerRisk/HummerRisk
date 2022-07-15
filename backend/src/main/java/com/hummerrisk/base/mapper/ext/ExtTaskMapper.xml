@@ -587,10 +587,14 @@
         FROM rule_tag t
         left join rule_tag_mapping t1 on t.tag_key = t1.tag_key
         join rule t2 on t1.rule_id = t2.id
+        join cloud_account t3 on t2.plugin_id = t3.plugin_id
 
         <where>
             <if test="sourceId != null">
                 AND t.tag_key = #{sourceId}
+            </if>
+            <if test="accountId != null">
+                AND t3.id = #{accountId}
             </if>
         </where>
 
@@ -615,6 +619,9 @@
             <if test="sourceId != null">
                 AND t.tag_key = #{sourceId}
             </if>
+            <if test="accountType != null and accountType != 'serverAccount'">
+                AND t.tag_key = 'serverAccount'
+            </if>
         </where>
 
         UNION ALL
@@ -638,6 +645,9 @@
             <if test="sourceId != null">
                 AND t.tag_key = #{sourceId}
             </if>
+            <if test="accountType != null and accountType != 'imageAccount'">
+                AND t.tag_key = 'imageAccount'
+            </if>
         </where>
 
         UNION ALL
@@ -660,6 +670,9 @@
         <where>
             <if test="sourceId != null">
                 AND t.tag_key = #{sourceId}
+            </if>
+            <if test="accountType != null and accountType != 'packageAccount'">
+                AND t.tag_key = 'packageAccount'
             </if>
         </where>
 
