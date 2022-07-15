@@ -10,7 +10,7 @@ FROM registry.cn-beijing.aliyuncs.com/hummerrisk/grype:v0.1 as grype-env
 
 FROM registry.cn-beijing.aliyuncs.com/hummerrisk/syft:v0.1 as syft-env
 
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/cloud-custodian:v0.1.1
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/cloud-custodian:v0.1.2
 
 WORKDIR /usr
 

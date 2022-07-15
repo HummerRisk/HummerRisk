@@ -4,7 +4,7 @@
     </a>
 </p>
 <h3 align="center">
-    开源的云原生安全合规检测平台 
+    云原生安全检测平台 
     <a href="https://github.com/hummerrisk/hummerrisk/blob/master/README_EN.md" style="color: #df913c;">[英文版]</a>
 </h3>
 
@@ -19,7 +19,7 @@
 
 ## 什么是 HummerRisk
 
-> HummerRisk 是开源的安全合规检测平台，全面支持云原生，实现对主流公(私)有云资源的安全合规检测、网络漏洞检测、网络安全扫描、虚拟机安全检测、软件依赖检测、容器镜像检测，支持 Cloud Custodian、Prowler、Nuclei、Xray 、Tsunami 、Dependency Check、Grype 和 Syft 等多种检测引擎，全面满足日常的安全合规检测需要。
+> HummerRisk 是开源的安全检测平台，全面支持云原生，实现对主流公(私)有云资源的安全合规检测、网络漏洞检测、网络安全扫描、虚拟机安全检测、软件依赖检测、容器镜像检测，支持 Cloud Custodian、Prowler、Nuclei、Xray 、Tsunami 、Dependency Check、Grype 和 Syft 等多种检测引擎，全面满足日常的安全合规检测需要。
 
 ![架构](http://hummerrisk-1312321453.cos.ap-beijing.myqcloud.com/architecture.png)
 
