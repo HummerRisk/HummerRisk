@@ -48,7 +48,7 @@
         </el-table-column >
         <!-- 展开 end -->
         <el-table-column type="index" min-width="3%"/>
-        <el-table-column prop="name" :label="$t('rule.rule_name')" min-width="18%" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="name" :label="$t('rule.rule_name')" min-width="17%" show-overflow-tooltip></el-table-column>
         <el-table-column :label="$t('vuln.platform')" min-width="10%" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
@@ -62,7 +62,7 @@
             <rule-type :row="row"/>
           </template>
         </el-table-column>
-        <el-table-column prop="description" :label="$t('rule.description')" min-width="27%" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="description" :label="$t('rule.description')" min-width="25%" show-overflow-tooltip></el-table-column>
         <el-table-column :label="$t('rule.status')" min-width="7%" show-overflow-tooltip>
           <template v-slot:default="scope">
             <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
@@ -70,10 +70,10 @@
         </el-table-column>
         <el-table-column prop="lastModified" min-width="15%" :label="$t('rule.last_modified')" sortable>
           <template v-slot:default="scope">
-            <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
+            <span>{{ scope.row.lastModified | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="12%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>

@@ -18,11 +18,6 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/task/home/List'),
     },
     {
-      path: "quartz",
-      name: "quartz",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/task/home/Quartz'),
-    },
-    {
       path: "report",
       name: "report",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/task/home/Report'),

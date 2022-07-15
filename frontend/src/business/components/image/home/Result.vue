@@ -11,7 +11,7 @@
                 @filter-change="filter">
         <el-table-column type="index" min-width="3%"/>
         <el-table-column prop="name" :label="$t('image.image_name')" min-width="10%" show-overflow-tooltip></el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('image.image_url')" min-width="24%" show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" :label="$t('image.image_url')" min-width="23%" show-overflow-tooltip>
           <el-row v-if="scope.row.type==='image'">{{ scope.row.imageUrl }}:{{ scope.row.imageTag }}</el-row>
           <el-row v-if="scope.row.type==='tar'">{{ scope.row.path }}</el-row>
         </el-table-column>
@@ -48,10 +48,10 @@
         </el-table-column>
         <el-table-column prop="updateTime" min-width="15%" :label="$t('image.last_modified')" sortable>
           <template v-slot:default="scope">
-            <span><i class="el-icon-time"></i> {{ scope.row.updateTime | timestampFormatDate }}</span>
+            <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="11%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="12%" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
@@ -220,7 +220,7 @@ export default {
       if (this.checkStatus(this.tableData)) {
         this.search();
         clearInterval(this.timer);
-        this.timer = setInterval(this.getStatus,30000);
+        this.timer = setInterval(this.getStatus,60000);
       } else {
         for (let data of this.tableData) {
           let url = "/image/getImageResult/";
@@ -339,7 +339,7 @@ export default {
       return this.$refs.cmEditor.codemirror;
     }
   },
-  mounted() {
+  activated() {
     this.init();
     this.location = window.location.href.split("#")[0];
     this.timer = setInterval(this.getStatus,5000);

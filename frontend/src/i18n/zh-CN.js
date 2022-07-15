@@ -1033,6 +1033,8 @@ export default {
     execute: '执行',
     task_type: '任务类型',
     task_manual: '手动任务',
+    re_execute: '重新执行',
+    task_detail: '任务详情',
   },
   proxy: {
     create: '创建代理',

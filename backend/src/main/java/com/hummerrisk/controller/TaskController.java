@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.Favorite;
 import com.hummerrisk.base.domain.Task;
+import com.hummerrisk.base.domain.TaskItem;
 import com.hummerrisk.commons.constants.RoleConstants;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
@@ -140,5 +141,25 @@ public class TaskController {
     public void deleteTask(@PathVariable String taskId) throws Exception {
         taskService.deleteTask(taskId);
     }
+
+    @I18n
+    @ApiOperation(value = "子任务列表")
+    @PostMapping("taskItemList")
+    public List<TaskItem> taskItemList(@RequestBody TaskRequest request) {
+        return taskService.taskItemList(request);
+    }
+
+    @ApiOperation(value = "执行任务")
+    @GetMapping("execute/{id}")
+    public void executeTask(@PathVariable String id) throws Exception {
+        taskService.executeTask(id);
+    }
+
+    @ApiOperation(value = "重新执行任务")
+    @GetMapping("reExecute/{id}")
+    public void reExecute(@PathVariable String id) throws Exception {
+        taskService.reExecute(id);
+    }
+
 
 }

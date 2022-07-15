@@ -61,7 +61,7 @@
         </el-table-column>
         <el-table-column prop="lastModified" min-width="14%" :label="$t('package.last_modified')" sortable>
           <template v-slot:default="scope">
-            <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
+            <span>{{ scope.row.lastModified | timestampFormatDate }}</span>
           </template>
         </el-table-column>
         <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">

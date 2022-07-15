@@ -23,7 +23,7 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('resource.i18n_task_type')" min-width="10%" show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" :label="$t('resource.i18n_task_type')" min-width="9%" show-overflow-tooltip>
           <span>
             <template v-for="tag in tagSelect">
               <span :key="tag.value" v-if="scope.row.ruleTags">
@@ -40,7 +40,7 @@
             </span>
           </span>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="13%" show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="12%" show-overflow-tooltip>
           <el-link type="primary" :underline="false" class="md-primary text-click" @click="showTaskDetail(scope.row)">
             {{ scope.row.taskName }}
           </el-link>
@@ -90,12 +90,12 @@
           <span v-else-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)" style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
           <span v-else-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
         </el-table-column>
-        <el-table-column prop="createTime" min-width="14%" :label="$t('account.update_time')" sortable show-overflow-tooltip>
+        <el-table-column prop="createTime" min-width="13%" :label="$t('account.update_time')" sortable show-overflow-tooltip>
           <template v-slot:default="scope">
-            <span><i class="el-icon-time"></i> {{ scope.row.createTime | timestampFormatDate }}</span>
+            <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
+        <el-table-column min-width="18%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
           <template v-slot:default="scope">
             <table-operators :buttons="rule_buttons" :row="scope.row"/>
           </template>
@@ -362,7 +362,7 @@ export default {
       if (this.checkStatus(this.tableData)) {
         this.search();
         clearInterval(this.timer);
-        this.timer = setInterval(this.getStatus,30000);
+        this.timer = setInterval(this.getStatus,60000);
       } else {
         let url = "/cloud/task/manual/list/" + this.currentPage + "/" + this.pageSize;
         this.condition.accountId = this.accountId;

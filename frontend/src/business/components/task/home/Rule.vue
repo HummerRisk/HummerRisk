@@ -381,7 +381,7 @@ import SeverityType from "./SeverityType";
         return this.$refs.cmEditor.codemirror;
       }
     },
-    created() {
+    activated() {
       this.init();
     }
 

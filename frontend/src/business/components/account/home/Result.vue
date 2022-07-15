@@ -84,7 +84,7 @@
         </el-table-column>
         <el-table-column prop="createTime" min-width="15%" :label="$t('account.update_time')" sortable show-overflow-tooltip>
           <template v-slot:default="scope">
-            <span><i class="el-icon-time"></i> {{ scope.row.createTime | timestampFormatDate }}</span>
+            <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
         <el-table-column min-width="13%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
@@ -437,7 +437,7 @@ export default {
   },
   created() {
   },
-  mounted() {
+  activated() {
     this.timer = setInterval(this.getStatus,5000);
     this.init();
   },

@@ -32,10 +32,11 @@ const timestampFormatDate = function (timestamp) {
   let m = date.getMinutes();
   m = m < 10 ? ('0' + m) : m;
 
-  let s = date.getSeconds();
-  s = s < 10 ? ('0' + s) : s;
+  //let s = date.getSeconds();
+  //s = s < 10 ? ('0' + s) : s;
 
-  return y + '-' + MM + '-' + d + ' ' + h + ':' + m + ':' + s;
+  return y + '-' + MM + '-' + d + ' ' + h + ':' + m;
+  //return y + '-' + MM + '-' + d + ' ' + h + ':' + m + ':' + s;
 };
 
 const timestampFormatMinutesDate = function (timestamp) {

@@ -27,7 +27,7 @@
           <el-table-column min-width="20%" :label="$t('history.create_time')" sortable
                            prop="createTime">
             <template v-slot:default="scope">
-              <span><i class="el-icon-time"></i> {{ scope.row.createTime | timestampFormatDayDate }}</span>
+              <span>{{ scope.row.createTime | timestampFormatDayDate }}</span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('resource.resource_result')" min-width="20%" show-overflow-tooltip>

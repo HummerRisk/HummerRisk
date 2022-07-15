@@ -168,7 +168,7 @@
           </el-table-column>
           <el-table-column prop="lastModified" min-width="20%" :label="$t('package.last_modified')" sortable>
             <template v-slot:default="scope">
-              <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
+              <span>{{ scope.row.lastModified | timestampFormatDate }}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -202,7 +202,7 @@
           </el-table-column>
           <el-table-column prop="lastModified" min-width="20%" :label="$t('package.last_modified')" sortable>
             <template v-slot:default="scope">
-              <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
+              <span>{{ scope.row.lastModified | timestampFormatDate }}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -211,6 +211,7 @@
           @confirm="handleClose"/>
       </el-drawer>
       <!--Task group detail-->
+
     </main-container>
 </template>
 
@@ -423,10 +424,9 @@ import SeverityType from "./SeverityType";
         return this.$refs.cmEditor.codemirror;
       }
     },
-    created() {
+    activated() {
       this.search();
-    }
-
+    },
   }
 </script>
 

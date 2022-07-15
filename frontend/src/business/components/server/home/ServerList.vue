@@ -37,7 +37,7 @@
           <el-table-column min-width="18%" :label="$t('account.update_time')" sortable
                            prop="updateTime">
             <template v-slot:default="scope">
-              <span><i class="el-icon-time"></i> {{ scope.row.updateTime | timestampFormatDate }}</span>
+              <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="user" :label="$t('account.creator')" min-width="10%" show-overflow-tooltip/>

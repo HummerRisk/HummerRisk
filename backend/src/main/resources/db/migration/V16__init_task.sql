@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS `task_item` (
     `account_id`                   varchar(50)         DEFAULT NULL COMMENT '资源ID',
     `account_name`                 varchar(128)        DEFAULT NULL COMMENT '资源名称',
     `account_type`                 varchar(50)         DEFAULT NULL COMMENT '资源类型：cloudAccount/vulnAccount/serverAccount/imageAccount/packageAccount',
+    `task_order`                   varchar(50)         DEFAULT NULL COMMENT '任务排序',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;

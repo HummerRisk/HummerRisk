@@ -188,7 +188,7 @@
           <el-table-column min-width="20%" :label="$t('account.update_time')" sortable
                            prop="update_time">
             <template v-slot:default="scope">
-              <span><i class="el-icon-time"></i> {{ scope.row.update_time | timestampFormatDate }}</span>
+              <span>{{ scope.row.update_time | timestampFormatDate }}</span>
             </template>
           </el-table-column>
         </el-table>

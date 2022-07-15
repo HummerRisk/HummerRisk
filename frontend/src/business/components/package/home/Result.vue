@@ -46,7 +46,7 @@
         </el-table-column>
         <el-table-column prop="updateTime" min-width="15%" :label="$t('package.last_modified')" sortable>
           <template v-slot:default="scope">
-            <span><i class="el-icon-time"></i> {{ scope.row.updateTime | timestampFormatDate }}</span>
+            <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
         <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right">
@@ -218,7 +218,7 @@ export default {
       if (this.checkStatus(this.tableData)) {
         this.search();
         clearInterval(this.timer);
-        this.timer = setInterval(this.getStatus,30000);
+        this.timer = setInterval(this.getStatus,60000);
       } else {
         for (let data of this.tableData) {
           let url = "/package/getPackageResult/";
@@ -342,7 +342,7 @@ export default {
       return this.$refs.cmEditor.codemirror;
     }
   },
-  mounted() {
+  activated() {
     this.init();
     this.location = window.location.href.split("#")[0];
     this.timer = setInterval(this.getStatus,5000);

@@ -229,7 +229,29 @@ public class TaskService {
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
+    }
 
+    public List<TaskItem> taskItemList(TaskRequest request) {
+        TaskItemExample example = new TaskItemExample();
+        example.createCriteria().andTaskIdEqualTo(request.getId());
+        example.setOrderByClause("task_order desc");
+        return taskItemMapper.selectByExample(example);
+    }
+
+    public void executeTask(String id) throws Exception{
+        Task task = taskMapper.selectByPrimaryKey(id);
+        TaskItemExample example = new TaskItemExample();
+        example.createCriteria().andTaskIdEqualTo(id);
+        example.setOrderByClause("task_order desc");
+        List<TaskItem> taskItems = taskItemMapper.selectByExample(example);
+    }
+
+    public void reExecute(String id) throws Exception{
+        Task task = taskMapper.selectByPrimaryKey(id);
+        TaskItemExample example = new TaskItemExample();
+        example.createCriteria().andTaskIdEqualTo(id);
+        example.setOrderByClause("task_order desc");
+        List<TaskItem> taskItems = taskItemMapper.selectByExample(example);
     }
 
 }

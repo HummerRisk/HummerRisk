@@ -88,7 +88,7 @@
                     <span style="color: #909090;">{{ $t('account.create_time') }}</span>
                   </el-col>
                   <el-col :span="8">
-                    <span><i class="el-icon-time"></i> {{ source.createTime | timestampFormatDate }}</span>
+                    <span>{{ source.createTime | timestampFormatDate }}</span>
                   </el-col>
                   <el-col :span="4">
                     <span style="color: #909090;">{{ $t('commons.operating') }}</span>
@@ -191,7 +191,7 @@
             </el-table-column>
             <el-table-column prop="createTime" min-width="14%" :label="$t('account.update_time')" sortable show-overflow-tooltip>
               <template v-slot:default="scope">
-                <span><i class="el-icon-time"></i> {{ scope.row.createTime | timestampFormatDate }}</span>
+                <span>{{ scope.row.createTime | timestampFormatDate }}</span>
               </template>
             </el-table-column>
             <el-table-column min-width="11%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
@@ -490,7 +490,7 @@ import {ACCOUNT_ID} from "@/common/js/constants";
         if (this.checkStatus(this.tableData)) {
           this.search();
           clearInterval(this.timer);
-          this.timer = setInterval(this.getStatus,30000);
+          this.timer = setInterval(this.getStatus,60000);
         }
         this.$get("/resource/source/" + this.accountId, response => {
           let data = response.data;
@@ -602,7 +602,7 @@ import {ACCOUNT_ID} from "@/common/js/constants";
         return this.$refs.cmEditor.codemirror;
       }
     },
-    created() {
+    activated() {
       this.init();
       this.timer = setInterval(this.getStatus,5000);
     },
