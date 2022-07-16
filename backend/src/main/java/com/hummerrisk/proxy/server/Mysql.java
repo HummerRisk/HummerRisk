@@ -1,6 +1,8 @@
 package com.hummerrisk.proxy.server;
 
 import ch.ethz.ssh2.Connection;
+import com.hummerrisk.base.domain.Proxy;
+import com.hummerrisk.dto.SshServerDTO;
 
 public class Mysql {
 
@@ -10,7 +12,12 @@ public class Mysql {
         Connection root = null;
         try {
             String pid = "";
-            root = SshUtil.login(sshIp, sshUsername, sshPassword, null);//通过ssh连接到服务器
+            SshServerDTO sshServerDTO = new SshServerDTO();
+            sshServerDTO.setSshIp(sshIp);
+            sshServerDTO.setSshUserName(sshUsername);
+            sshServerDTO.setSshPassword(sshPassword);
+            sshServerDTO.setProxy(new Proxy());
+            root = SshUtil.login(sshServerDTO);//通过ssh连接到服务器
             String execute = SshUtil.execute(root, "netstat -ntpl|grep mysql");//执行命令
 
             //以下是我业务逻辑 可忽略

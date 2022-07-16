@@ -846,6 +846,9 @@ export default {
     server8: '防火牆',
     server9: '用戶',
     server10: '操作系統',
+    is_public_key: '是否啟動密鑰',
+    public_key: '密鑰',
+    port: '端口號',
   },
   image: {
     image_repo: '鏡像倉庫',
@@ -1033,6 +1036,11 @@ export default {
     execute: '執行',
     task_type: '任務類型',
     task_manual: '手動任務',
+    re_execute: '重新執行',
+    task_detail: '任務詳情',
+    task_update: '修改任務',
+    task_start: '開始執行',
+    task_restart: '開始重新執行',
   },
   proxy: {
     create: '創建代理',

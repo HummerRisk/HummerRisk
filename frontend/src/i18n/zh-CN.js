@@ -846,6 +846,9 @@ export default {
     server8: '防火墙',
     server9: '用户',
     server10: '操作系统',
+    is_public_key: '是否启动密钥',
+    public_key: '密钥',
+    port: '端口号',
   },
   image: {
     image_repo: '镜像仓库',

@@ -604,7 +604,7 @@ import {ACCOUNT_ID} from "@/common/js/constants";
     },
     activated() {
       this.init();
-      this.timer = setInterval(this.getStatus,5000);
+      this.timer = setInterval(this.getStatus,10000);
     },
     beforeDestroy() {
       clearInterval(this.timer);

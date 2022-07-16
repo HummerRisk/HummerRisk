@@ -6,6 +6,7 @@ import ch.ethz.ssh2.Session;
 import ch.ethz.ssh2.StreamGobbler;
 import com.hummerrisk.base.domain.Proxy;
 import com.hummerrisk.commons.utils.LogUtil;
+import com.hummerrisk.dto.SshServerDTO;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
@@ -24,21 +25,27 @@ public class SshUtil {
      * 登录主机
      * @return 登录成功返回true，否则返回false
      */
-    public static Connection login(String sshIp, String sshUsername, String sshPassword, Proxy proxy) throws Exception {
+    public static Connection login(SshServerDTO sshServerDTO) throws Exception {
         boolean isAuthenticated = false;
         Connection conn = null;
         long startTime = Calendar.getInstance().getTimeInMillis();
         try {
-            if(proxy.getProxyIp() != null) {
+            Proxy proxy = sshServerDTO.getProxy();
+            if(sshServerDTO.getProxy().getProxyIp() != null) {
                 HTTPProxyData httpProxyData = new HTTPProxyData(proxy.getProxyIp(), Integer.valueOf(proxy.getProxyPort()), proxy.getProxyName(), proxy.getProxyPassword());
-                conn = new Connection(sshIp, 22, httpProxyData);
+                conn = new Connection(sshServerDTO.getSshIp(), sshServerDTO.getSshPort(), httpProxyData);
             } else {
-                conn = new Connection(sshIp);
+                conn = new Connection(sshServerDTO.getSshIp(), sshServerDTO.getSshPort());
             }
 
             conn.connect(); // 连接主机
 
-            isAuthenticated = conn.authenticateWithPassword(sshUsername, sshPassword); // 认证
+            if (sshServerDTO.getIsPublicKey()) {
+                isAuthenticated = conn.authenticateWithPublicKey(sshServerDTO.getSshUserName(), sshServerDTO.getPublicKey().toCharArray(), sshServerDTO.getSshPassword());
+            } else {
+                isAuthenticated = conn.authenticateWithPassword(sshServerDTO.getSshUserName(), sshServerDTO.getSshPassword()); // 认证
+            }
+
             if(isAuthenticated){
                 LogUtil.info(String.format(tipStr, "认证成功"));
             } else {

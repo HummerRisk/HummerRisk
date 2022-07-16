@@ -169,7 +169,7 @@
       this.init();
     },
     mounted() {
-      this.timer = setInterval(this.getStatus,5000);
+      this.timer = setInterval(this.getStatus,10000);
     },
     beforeDestroy() {
       clearInterval(this.timer);

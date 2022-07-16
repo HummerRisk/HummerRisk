@@ -14,6 +14,7 @@ import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.constants.ScanTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
+import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.dto.CloudTaskCopyDTO;
 import com.hummerrisk.dto.CloudTaskDTO;
 import com.hummerrisk.dto.CloudTaskItemLogDTO;
@@ -361,6 +362,7 @@ public class OrderService {
         return result;
     }
 
+    @I18n
     private List<CloudTaskItemLogDTO> getTaskItemLogByTaskItemId(String taskItemId) {
         List<CloudTaskItemLogDTO> result = new ArrayList<>();
         try {

@@ -66,7 +66,7 @@
           <el-row>
             <el-col :span="24">
               <el-table :data="servers" class="tb-edit" border :cell-style="rowClass" :header-cell-style="headClass">
-                <el-table-column :label="$t('server.server_name')" min-width="20%" prop="serverName">
+                <el-table-column :label="$t('server.server_name')" min-width="15%" prop="serverName">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.name"></el-input>
                   </template>
@@ -86,7 +86,12 @@
                     <el-input v-model="scope.row.password"></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('commons.operating')" fixed="right" min-width="20%" prop="result">
+                <el-table-column :label="$t('server.port')" min-width="10%" prop="port">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.port"></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('commons.operating')" fixed="right" min-width="15%" prop="result">
                   <template v-slot:default="scope">
                     <el-button type="primary" size="mini" @click="handleAddServerModel(scope.$index, scope.row)">
                       {{ $t('commons.add') }}
@@ -143,11 +148,20 @@
           <el-form-item :label="'IP'" ref="ip" prop="ip">
             <el-input v-model="form.ip" autocomplete="off" :placeholder="'IP'"/>
           </el-form-item>
+          <el-form-item :label="$t('server.port')" ref="port" prop="port">
+            <el-input type="number" v-model="form.port" autocomplete="off" :placeholder="$t('server.port')"/>
+          </el-form-item>
           <el-form-item :label="$t('server.server_user_name')" ref="userName" prop="userName">
             <el-input v-model="form.userName" autocomplete="off" :placeholder="$t('server.server_user_name')"/>
           </el-form-item>
           <el-form-item :label="$t('commons.password')" ref="password" prop="password">
             <el-input type="password" v-model="form.password" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
+          </el-form-item>
+          <el-form-item :label="$t('server.is_public_key')" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-switch v-model="form.isPublicKey"></el-switch>
+          </el-form-item>
+          <el-form-item v-if="form.isPublicKey" :label="$t('server.public_key')" ref="password">
+            <el-input type="textarea" :rows="10" v-model="form.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
           </el-form-item>
           <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-switch v-model="form.isProxy"></el-switch>

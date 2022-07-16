@@ -846,6 +846,9 @@ export default {
     server8: 'Firewall',
     server9: 'User',
     server10: 'Operating system',
+    is_public_key: 'Whether to start the public key',
+    public_key: 'Public Key',
+    port: 'Port number',
   },
   image: {
     image_repo: 'Mirror repository',
@@ -1033,6 +1036,11 @@ export default {
     execute: 'Execute',
     task_type: 'Task type',
     task_manual: 'Manual task',
+    re_execute: 'Re execute',
+    task_detail: 'Task details',
+    task_update: 'Modify task',
+    task_start: 'Start execution',
+    task_restart: 'Start re-execution',
   },
   proxy: {
     create:'Create an agent',

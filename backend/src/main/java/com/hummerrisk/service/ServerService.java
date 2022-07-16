@@ -23,6 +23,7 @@ import com.hummerrisk.controller.request.server.ServerRuleRequest;
 import com.hummerrisk.dto.ServerDTO;
 import com.hummerrisk.dto.ServerResultDTO;
 import com.hummerrisk.dto.ServerRuleDTO;
+import com.hummerrisk.dto.SshServerDTO;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.proxy.server.SshUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -156,7 +157,7 @@ public class ServerService {
                 proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
             }
             LogUtil.info(server.getId() + " {server}[command]: " + server.getName() + "   "  + script);
-            String returnLog = execute(server.getIp(), server.getUserName(), server.getPassword(), script, proxy);
+            String returnLog = execute(server, script, proxy);
             result.setReturnLog(returnLog);
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
@@ -220,7 +221,7 @@ public class ServerService {
             if(server.getIsProxy()!=null && server.getIsProxy()) {
                 proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
             }
-            return login(server.getIp(), server.getUserName(), server.getPassword(), proxy);
+            return login(server, proxy);
         } catch (Exception e) {
             LogUtil.error(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), e.getMessage()), e);
             return false;
@@ -276,8 +277,7 @@ public class ServerService {
             proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
         }
         server.setStatus(
-                login(server.getIp(), server.getUserName(),
-                        server.getPassword(), proxy)?
+                login(server, proxy)?
                         CloudAccountConstants.Status.VALID.name():
                         CloudAccountConstants.Status.INVALID.name());
 
@@ -292,8 +292,7 @@ public class ServerService {
             proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
         }
         server.setStatus(
-                login(server.getIp(), server.getUserName(),
-                        server.getPassword(), proxy)?
+                login(server, proxy)?
                         CloudAccountConstants.Status.VALID.name():
                         CloudAccountConstants.Status.INVALID.name());
 
@@ -306,18 +305,34 @@ public class ServerService {
         OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "删除虚拟机");
     }
 
-    public boolean login(String sshIp, String sshUsername, String sshPassword, Proxy proxy) throws Exception {
+    public boolean login(Server server, Proxy proxy) throws Exception {
         try {
-            SshUtil.login(sshIp, sshUsername, sshPassword, proxy);
+            SshServerDTO sshServerDTO = new SshServerDTO();
+            sshServerDTO.setSshIp(server.getIp());
+            sshServerDTO.setSshUserName(server.getUserName());
+            sshServerDTO.setSshPassword(server.getPassword());
+            sshServerDTO.setIsPublicKey(server.getIsPublicKey());
+            sshServerDTO.setPublicKey(server.getPublicKey());
+            sshServerDTO.setSshPassword(server.getPassword());
+            sshServerDTO.setProxy(proxy);
+            SshUtil.login(sshServerDTO);
         }catch (Exception e) {
             return false;
         }
         return true;
     }
 
-    public String execute(String sshIp, String sshUsername, String sshPassword, String cmd, Proxy proxy) throws Exception {
+    public String execute(Server server, String cmd, Proxy proxy) throws Exception {
         try {
-            return SshUtil.execute(SshUtil.login(sshIp, sshUsername, sshPassword, proxy), cmd);
+            SshServerDTO sshServerDTO = new SshServerDTO();
+            sshServerDTO.setSshIp(server.getIp());
+            sshServerDTO.setSshUserName(server.getUserName());
+            sshServerDTO.setSshPassword(server.getPassword());
+            sshServerDTO.setIsPublicKey(server.getIsPublicKey());
+            sshServerDTO.setPublicKey(server.getPublicKey());
+            sshServerDTO.setSshPassword(server.getPassword());
+            sshServerDTO.setProxy(proxy);
+            return SshUtil.execute(SshUtil.login(sshServerDTO), cmd);
         }catch (Exception e) {
             return "";
         }
