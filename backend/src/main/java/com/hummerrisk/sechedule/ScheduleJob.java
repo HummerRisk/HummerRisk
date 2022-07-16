@@ -56,7 +56,7 @@ public abstract class ScheduleJob implements Job {
     //每天留一条整体检测记录
     @QuartzScheduled(cron = "${cron.history.sync}")
     public void SyncScan() {
-        ruleService.syncScanHistory();
+//        ruleService.syncScanHistory();
     }
 
     @QuartzScheduled(cron = "${cron.system.sync}")

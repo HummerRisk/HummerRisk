@@ -1041,6 +1041,7 @@ export default {
     task_update: '修改任务',
     task_start: '开始执行',
     task_restart: '开始重新执行',
+    task_waiting: '待续状态没有执行日志，请点击执行',
   },
   proxy: {
     create: '创建代理',

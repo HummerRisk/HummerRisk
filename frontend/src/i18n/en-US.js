@@ -1041,6 +1041,7 @@ export default {
     task_update: 'Modify task',
     task_start: 'Start execution',
     task_restart: 'Start re-execution',
+    task_waiting: 'There is no execution log in the pending state, please click to execute',
   },
   proxy: {
     create:'Create an agent',

@@ -383,7 +383,7 @@ public class ImageService {
         imageResultItemMapper.insertSelective(imageResultItem);
     }
 
-    public void reScan(String id) throws Exception {
+    public String reScan(String id) throws Exception {
         ImageResultWithBLOBs result = imageResultMapper.selectByPrimaryKey(id);
         ImageRule rule = imageRuleMapper.selectByPrimaryKey(result.getRuleId());
         Image image = imageMapper.selectByPrimaryKey(result.getImageId());
@@ -408,7 +408,7 @@ public class ImageService {
         saveImageResultLog(result.getId(), "i18n_restart_image_result", "", true);
 
         OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "重新开始镜像检测");
-
+        return result.getId();
     }
 
     public void deleteImageResult(String id) throws Exception {

@@ -794,4 +794,73 @@
         </where>
         ORDER BY t.create_time desc
     </select>
+
+    <resultMap id="TaskItemLogResultMap" type="com.hummerrisk.controller.request.task.TaskLogVo"
+               extends="com.hummerrisk.base.mapper.TaskItemResourceMapper.BaseResultMap">
+        <result column="userName" jdbcType="VARCHAR" property="userName"/>
+        <association property="taskResourceVo" column="resource_id" select="getTaskResourceVo">
+        </association>
+        <collection property="taskItemLogList" ofType="com.hummerrisk.base.domain.TaskItemLog" javaType="list" select="getTaskItemLogList" column="id">
+            <id column="id" jdbcType="INTEGER" property="id" />
+            <result column="task_item_id" jdbcType="VARCHAR" property="taskItemId" />
+            <result column="task_item_resource_id" jdbcType="VARCHAR" property="taskItemResourceId" />
+            <result column="resource_id" jdbcType="VARCHAR" property="resourceId" />
+            <result column="create_time" jdbcType="BIGINT" property="createTime" />
+            <result column="operator" jdbcType="VARCHAR" property="operator" />
+            <result column="operation" jdbcType="VARCHAR" property="operation" />
+            <result column="result" jdbcType="BIT" property="result" />
+        </collection>
+    </resultMap>
+
+    <select id="getTaskResourceVo" resultType="com.hummerrisk.controller.request.task.TaskResourceVo" parameterType="java.lang.String">
+        SELECT t.id,
+               t.task_ame as name,
+               t.description as desc,
+               t.status,
+               t.severity,
+               t.plugin_icon as icon
+        FROM cloud_task t
+        WHERE t.id = #{resource_id}
+
+        UNION ALL
+
+        SELECT t.id,
+               t.server_ame as name,
+               t.rule_desc as desc,
+               t.result_status as status,
+               t.severity,
+               t.plugin_icon as icon
+        FROM server_result t
+        WHERE t.id = #{resource_id}
+
+        UNION ALL
+
+        SELECT t.id,
+               t.name,
+               t.rule_desc as desc,
+               t.result_status as status,
+               t.severity,
+               'docker.png' as icon
+        FROM image_result t
+        WHERE t.id = #{resource_id}
+
+        UNION ALL
+
+        SELECT t.id,
+               t.name,
+               t.rule_desc as desc,
+               t.result_status as status,
+               t.severity,
+               'package.png' as icon
+        FROM package_result t
+        WHERE t.id = #{resource_id}
+    </select>
+
+    <select id="getTaskItemLogList" resultType="com.hummerrisk.base.domain.TaskItemLog" parameterType="java.lang.String">
+        SELECT t.*
+        FROM task_ite_log t
+        WHERE t.task_item_resource_id = #{id}
+    </select>
+
+
 </mapper>

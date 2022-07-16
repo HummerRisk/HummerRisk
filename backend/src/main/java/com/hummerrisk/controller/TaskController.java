@@ -10,12 +10,10 @@ import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.task.RuleVo;
+import com.hummerrisk.controller.request.task.TaskLogVo;
 import com.hummerrisk.controller.request.task.TaskRequest;
 import com.hummerrisk.controller.request.task.TaskVo;
-import com.hummerrisk.dto.AccountTreeDTO;
-import com.hummerrisk.dto.TaskDTO;
-import com.hummerrisk.dto.TaskRuleDTO;
-import com.hummerrisk.dto.TaskTagGroupDTO;
+import com.hummerrisk.dto.*;
 import com.hummerrisk.service.TaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -122,6 +120,13 @@ public class TaskController {
     }
 
     @I18n
+    @ApiOperation(value = "查询任务")
+    @GetMapping(value = "getTask/{taskId}")
+    public TaskVo getTask(@PathVariable String taskId) {
+        return taskService.getTask(taskId);
+    }
+
+    @I18n
     @ApiOperation(value = "添加任务")
     @PostMapping(value = "addTask")
     public int addTask(@RequestBody TaskDTO taskDTO) throws Exception {
@@ -159,6 +164,13 @@ public class TaskController {
     @GetMapping("reExecute/{id}")
     public void reExecute(@PathVariable String id) throws Exception {
         taskService.reExecute(id);
+    }
+
+    @I18n
+    @ApiOperation(value = "查询执行任务日志")
+    @PostMapping("taskLogList")
+    public List<TaskLogVo> taskLogList(@RequestBody TaskRequest request) {
+        return taskService.taskLogList(request);
     }
 
 

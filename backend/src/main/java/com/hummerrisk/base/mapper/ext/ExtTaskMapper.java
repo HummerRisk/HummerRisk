@@ -52,4 +52,6 @@ public interface ExtTaskMapper {
     List<TaskTagGroupDTO> detailGroup(RuleVo ruleVo);
 
     List<TaskVo> taskList(TaskRequest request);
+
+    List<TaskLogVo> taskLogList(TaskRequest request);
 }

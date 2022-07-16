@@ -310,8 +310,8 @@ export default {
   created() {
   },
   activated() {
-    this.timer = setInterval(this.getStatus,10000);
     this.init();
+    this.timer = setInterval(this.getStatus,10000);
   },
   beforeDestroy() {
     clearInterval(this.timer);

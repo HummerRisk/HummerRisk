@@ -346,7 +346,7 @@ public class PackageService {
         packageResultItemMapper.insertSelective(packageResultItem);
     }
 
-    public void reScan(String id) throws Exception {
+    public String reScan(String id) throws Exception {
         PackageResultWithBLOBs result = packageResultMapper.selectByPrimaryKey(id);
         PackageRule rule = packageRuleMapper.selectByPrimaryKey(result.getRuleId());
         Package aPackage = packageMapper.selectByPrimaryKey(result.getPackageId());
@@ -372,6 +372,7 @@ public class PackageService {
 
         OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "重新开始软件包检测");
 
+        return result.getId();
     }
 
     public void deletePackageResult(String id) throws Exception {

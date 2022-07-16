@@ -428,6 +428,8 @@ export default {
       groupDetailTable: [],
       detailTable: [],
       updateVisible: false,
+      taskLogListTable: [],
+      taskLogListVisible: false,
       itemKey: Math.random(),
       account: {},
       taskOrder: {},
@@ -494,6 +496,16 @@ export default {
       }).catch(error => error);
     },
     showTaskLog (task) {
+      if (task.status === 'WAITING') {
+        this.$warning(this.$t('task.task_waiting'));
+        return;
+      }
+      this.result = this.$post("/task/taskLogList", task, response => {
+        let data = response.data;
+        console.log(111, data);
+        this.taskLogListTable = data;
+        this.taskLogListVisible = true;
+      });
     },
     showTaskDetail(item) {
       this.result = this.$post("/task/taskItemList", item, response => {
@@ -533,6 +545,7 @@ export default {
     handleExecute(item) {
       this.result = this.$get("/task/execute/" + item.id, response => {
         this.$success(this.$t('task.task_start'));
+        this.search();
       });
     },
     handleEdit(item) {
@@ -556,7 +569,9 @@ export default {
         }
       });
     },
-    handleQuartz(item) {},
+    handleQuartz(item) {
+      this.$warning(this.$t('功能暂未开放'));
+    },
     handleReExecute(item) {
       this.result = this.$get("/task/reExecute/" + item.id, response => {
         this.$success(this.$t('task.task_restart'));
@@ -595,6 +610,7 @@ export default {
       this.result = this.$post("/task/updateTask", this.form, response => {
         if (response.success) {
           this.$success(this.$t('commons.save_success'));
+          this.handleClose();
         }
       });
     },
@@ -626,10 +642,41 @@ export default {
         return 0;
       });
     },
+    getStatus () {
+      if (this.checkStatus(this.tableData)) {
+        this.search();
+        clearInterval(this.timer);
+        this.timer = setInterval(this.getStatus,60000);
+      } else {
+        for (let data of this.tableData) {
+          let url = "/task/getTask/";
+          this.$get(url + data.id, response => {
+            let result = response.data;
+            if (data.status !== result.status) {
+              data.status = result.status;
+            }
+          });
+        }
+      }
+    },
+    //是否是结束状态，返回false代表都在运行中，true代表已结束
+    checkStatus (tableData) {
+      let sum = 0;
+      for (let row of tableData) {
+        if (row.status != 'ERROR' && row.status != 'FINISHED' && row.status != 'WARNING' && row.status != 'WAITING') {
+          sum++;
+        }
+      }
+      return sum == 0;
+    },
   },
   activated() {
     this.search();
+    this.timer = setInterval(this.getStatus,10000);
   },
+  beforeDestroy() {
+    clearInterval(this.timer);
+  }
 }
 </script>
 
@@ -663,7 +710,7 @@ export default {
   text-align: center;
 }
 .table-page {
-  padding-top: 20px;
+  padding: 20px 20px 0 0;
 }
 .text-click {
   color: #0066ac;
