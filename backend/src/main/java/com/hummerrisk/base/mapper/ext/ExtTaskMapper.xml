@@ -797,7 +797,6 @@
 
     <resultMap id="TaskItemLogResultMap" type="com.hummerrisk.controller.request.task.TaskLogVo"
                extends="com.hummerrisk.base.mapper.TaskItemResourceMapper.BaseResultMap">
-        <result column="userName" jdbcType="VARCHAR" property="userName"/>
         <association property="taskResourceVo" column="resource_id" select="getTaskResourceVo">
         </association>
         <collection property="taskItemLogList" ofType="com.hummerrisk.base.domain.TaskItemLog" javaType="list" select="getTaskItemLogList" column="id">
@@ -858,8 +857,14 @@
 
     <select id="getTaskItemLogList" resultType="com.hummerrisk.base.domain.TaskItemLog" parameterType="java.lang.String">
         SELECT t.*
-        FROM task_ite_log t
+        FROM task_item_log t
         WHERE t.task_item_resource_id = #{id}
+    </select>
+
+    <select id="taskLogList" resultType="com.hummerrisk.controller.request.task.TaskLogVo" parameterType="java.lang.String">
+        SELECT t.*
+        FROM task_item_resource t
+        WHERE t.task_id = #{id}
     </select>
 
 

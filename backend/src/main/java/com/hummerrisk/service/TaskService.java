@@ -298,6 +298,7 @@ public class TaskService {
     }
 
     public void executeTask(String id) throws Exception{
+        Task task = taskMapper.selectByPrimaryKey(id);
         TaskItemExample example = new TaskItemExample();
         example.createCriteria().andTaskIdEqualTo(id);
         example.setOrderByClause("task_order desc");
@@ -306,10 +307,11 @@ public class TaskService {
             String ruleType = taskItem.getRuleType();
             if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.rule.name())) {
                 String resourceId = "";
+                Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getSourceId());
                 if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.cloudAccount.getType())) {
-                    resourceId = this.cloudResource(taskItem.getSourceId(), taskItem.getAccountId());
+                    resourceId = this.cloudResource(rule, taskItem.getAccountId());
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.vulnAccount.getType())) {
-                    resourceId = this.vulnResource(taskItem.getSourceId(), taskItem.getAccountId());
+                    resourceId = this.vulnResource(rule, taskItem.getAccountId());
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.serverAccount.getType())) {
                     resourceId = this.serverResource(taskItem.getSourceId(), taskItem.getAccountId());
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
@@ -317,39 +319,44 @@ public class TaskService {
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.packageAccount.getType())) {
                     resourceId = this.packageResource(taskItem.getSourceId(), taskItem.getAccountId());
                 }
-                this.insertTaskItemResource(taskItem, resourceId);
+                this.insertTaskItemResource(taskItem, rule.getId(), rule.getName(), resourceId);
             } else if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.tag.name())) {
                 String resourceId = "";
                 List<RuleTagMapping> ruleTagMappings = this.ruleTagMappings(taskItem.getSourceId());
                 if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.cloudAccount.getType())) {
                     for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
-                        resourceId = this.cloudResource(ruleTagMapping.getRuleId(), taskItem.getAccountId());
+                        Rule rule = ruleMapper.selectByPrimaryKey(ruleTagMapping.getRuleId());
+                        resourceId = this.cloudResource(rule, taskItem.getAccountId());
                         if(resourceId == null) continue;
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        this.insertTaskItemResource(taskItem, rule.getId(), rule.getName(), resourceId);
                     }
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.vulnAccount.getType())) {
                     for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
-                        resourceId = this.vulnResource(ruleTagMapping.getRuleId(), taskItem.getAccountId());
+                        Rule rule = ruleMapper.selectByPrimaryKey(ruleTagMapping.getRuleId());
+                        resourceId = this.vulnResource(rule, taskItem.getAccountId());
                         if(resourceId == null) continue;
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        this.insertTaskItemResource(taskItem, rule.getId(), rule.getName(), resourceId);
                     }
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.serverAccount.getType())) {
                     for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
-                        resourceId = this.serverResource(ruleTagMapping.getRuleId(), taskItem.getAccountId());
+                        ServerRule serverRule = serverRuleMapper.selectByPrimaryKey(ruleTagMapping.getRuleId());
+                        resourceId = this.serverResource(serverRule.getId(), taskItem.getAccountId());
                         if(resourceId == null) continue;
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        this.insertTaskItemResource(taskItem, serverRule.getId(), serverRule.getName(), resourceId);
                     }
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
                     for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
-                        resourceId = this.imageResource(ruleTagMapping.getRuleId(), taskItem.getAccountId());
+                        PackageRule packageRule = packageRuleMapper.selectByPrimaryKey(ruleTagMapping.getRuleId());
+                        resourceId = this.imageResource(packageRule.getId(), taskItem.getAccountId());
                         if(resourceId == null) continue;
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        this.insertTaskItemResource(taskItem, packageRule.getId(), packageRule.getName(), resourceId);
                     }
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.packageAccount.getType())) {
                     for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
-                        resourceId = this.packageResource(ruleTagMapping.getRuleId(), taskItem.getAccountId());
+                        ImageRule imageRule = imageRuleMapper.selectByPrimaryKey(ruleTagMapping.getRuleId());
+                        resourceId = this.packageResource(imageRule.getId(), taskItem.getAccountId());
                         if(resourceId == null) continue;
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        this.insertTaskItemResource(taskItem, imageRule.getId(), imageRule.getName(), resourceId);
                     }
                 }
             } else if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.group.name())) {
@@ -357,34 +364,43 @@ public class TaskService {
                 List<RuleGroupMapping> ruleGroupMappings = this.ruleGroupMappings(taskItem.getSourceId());
                 if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.cloudAccount.getType())) {
                     for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
-                        resourceId = this.cloudResource(ruleGroupMapping.getRuleId(), taskItem.getAccountId());
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        Rule rule = ruleMapper.selectByPrimaryKey(ruleGroupMapping.getRuleId());
+                        resourceId = this.cloudResource(rule, taskItem.getAccountId());
+                        if(resourceId == null) continue;
+                        this.insertTaskItemResource(taskItem, rule.getId(), rule.getName(), resourceId);
                     }
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.vulnAccount.getType())) {
                     for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
-                        resourceId = this.vulnResource(ruleGroupMapping.getRuleId(), taskItem.getAccountId());
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        Rule rule = ruleMapper.selectByPrimaryKey(ruleGroupMapping.getRuleId());
+                        resourceId = this.vulnResource(rule, taskItem.getAccountId());
+                        if(resourceId == null) continue;
+                        this.insertTaskItemResource(taskItem, rule.getId(), rule.getName(), resourceId);
                     }
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.serverAccount.getType())) {
                     for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
-                        resourceId = this.serverResource(ruleGroupMapping.getRuleId(), taskItem.getAccountId());
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        ServerRule serverRule = serverRuleMapper.selectByPrimaryKey(ruleGroupMapping.getRuleId());
+                        resourceId = this.serverResource(serverRule.getId(), taskItem.getAccountId());
+                        this.insertTaskItemResource(taskItem, serverRule.getId(), serverRule.getName(), resourceId);
                     }
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
                     for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
-                        resourceId = this.imageResource(ruleGroupMapping.getRuleId(), taskItem.getAccountId());
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        ImageRule imageRule = imageRuleMapper.selectByPrimaryKey(ruleGroupMapping.getRuleId());
+                        resourceId = this.imageResource(imageRule.getId(), taskItem.getAccountId());
+                        this.insertTaskItemResource(taskItem, imageRule.getId(), imageRule.getName(), resourceId);
                     }
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.packageAccount.getType())) {
                     for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
-                        resourceId = this.packageResource(ruleGroupMapping.getRuleId(), taskItem.getAccountId());
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        PackageRule packageRule = packageRuleMapper.selectByPrimaryKey(ruleGroupMapping.getRuleId());
+                        resourceId = this.packageResource(packageRule.getId(), taskItem.getAccountId());
+                        this.insertTaskItemResource(taskItem, packageRule.getId(), packageRule.getName(), resourceId);
                     }
                 }
             }
             taskItem.setStatus(TaskConstants.TASK_STATUS.APPROVED.name());
             taskItemMapper.updateByPrimaryKeySelective(taskItem);
         }
+        task.setStatus(TaskConstants.TASK_STATUS.APPROVED.name());
+        taskMapper.updateByPrimaryKeySelective(task);
     }
 
     public void reExecute(String id) throws Exception{
@@ -392,6 +408,7 @@ public class TaskService {
         String ruleType = taskItem.getRuleType();
         if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.rule.name())) {
             String resourceId = "";
+            Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getSourceId());
             if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.cloudAccount.getType())) {
                 resourceId = ruleService.reScan(taskItem.getSourceId(), taskItem.getAccountId());
             } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.vulnAccount.getType())) {
@@ -403,7 +420,7 @@ public class TaskService {
             } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.packageAccount.getType())) {
                 resourceId = packageService.reScan(taskItem.getSourceId());
             }
-            this.insertTaskItemResource(taskItem, resourceId);
+            this.updateTaskItemResource(taskItem, rule.getId(), resourceId);
         } else if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.tag.name())) {
             String resourceId = "";
             List<RuleTagMapping> ruleTagMappings = this.ruleTagMappings(taskItem.getSourceId());
@@ -413,9 +430,10 @@ public class TaskService {
                     cloudTaskExample.createCriteria().andRuleIdEqualTo(ruleTagMapping.getRuleId()).andAccountIdEqualTo(taskItem.getAccountId());
                     List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(cloudTaskExample);
                     for(CloudTask cloudTask : cloudTasks) {
+                        Rule rule = ruleMapper.selectByPrimaryKey(cloudTask.getRuleId());
                         resourceId = ruleService.reScan(cloudTask.getId(), cloudTask.getAccountId());
                         if(resourceId == null) continue;
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        this.updateTaskItemResource(taskItem, rule.getId(), resourceId);
                     }
                 }
             } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.vulnAccount.getType())) {
@@ -424,9 +442,10 @@ public class TaskService {
                     cloudTaskExample.createCriteria().andRuleIdEqualTo(ruleTagMapping.getRuleId()).andAccountIdEqualTo(taskItem.getAccountId());
                     List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(cloudTaskExample);
                     for(CloudTask cloudTask : cloudTasks) {
+                        Rule rule = ruleMapper.selectByPrimaryKey(cloudTask.getRuleId());
                         resourceId = ruleService.reScan(cloudTask.getId(), cloudTask.getAccountId());
                         if(resourceId == null) continue;
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        this.updateTaskItemResource(taskItem, rule.getId(), resourceId);
                     }
                 }
             } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.serverAccount.getType())) {
@@ -435,9 +454,10 @@ public class TaskService {
                     serverResultExample.createCriteria().andRuleIdEqualTo(ruleTagMapping.getRuleId());
                     List<ServerResult> serverResults = serverResultMapper.selectByExample(serverResultExample);
                     for(ServerResult serverResult : serverResults) {
+                        ServerRule serverRule = serverRuleMapper.selectByPrimaryKey(serverResult.getRuleId());
                         resourceId = serverService.rescan(serverResult.getId());
                         if(resourceId == null) continue;
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        this.updateTaskItemResource(taskItem, serverRule.getId(), resourceId);
                     }
                 }
             } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
@@ -446,9 +466,10 @@ public class TaskService {
                     imageResultExample.createCriteria().andRuleIdEqualTo(ruleTagMapping.getRuleId());
                     List<ImageResult> imageResults = imageResultMapper.selectByExample(imageResultExample);
                     for(ImageResult imageResult : imageResults) {
+                        ImageRule imageRule = imageRuleMapper.selectByPrimaryKey(imageResult.getRuleId());
                         resourceId = imageService.reScan(imageResult.getId());
                         if (resourceId == null) continue;
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        this.updateTaskItemResource(taskItem, imageRule.getId(), resourceId);
                     }
                 }
             } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.packageAccount.getType())) {
@@ -457,9 +478,10 @@ public class TaskService {
                     packageResultExample.createCriteria().andRuleIdEqualTo(ruleTagMapping.getRuleId());
                     List<PackageResult> packageResults = packageResultMapper.selectByExample(packageResultExample);
                     for(PackageResult packageResult : packageResults) {
+                        PackageRule packageRule = packageRuleMapper.selectByPrimaryKey(packageResult.getRuleId());
                         resourceId = packageService.reScan(packageResult.getId());
                         if (resourceId == null) continue;
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        this.updateTaskItemResource(taskItem, packageRule.getId(), resourceId);
                     }
                 }
             }
@@ -472,9 +494,10 @@ public class TaskService {
                     cloudTaskExample.createCriteria().andRuleIdEqualTo(ruleGroupMapping.getRuleId()).andAccountIdEqualTo(taskItem.getAccountId());
                     List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(cloudTaskExample);
                     for(CloudTask cloudTask : cloudTasks) {
+                        Rule rule = ruleMapper.selectByPrimaryKey(cloudTask.getRuleId());
                         resourceId = ruleService.reScan(cloudTask.getId(), cloudTask.getAccountId());
                         if(resourceId == null) continue;
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        this.updateTaskItemResource(taskItem, rule.getId(), resourceId);
                     }
                 }
             } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.vulnAccount.getType())) {
@@ -483,9 +506,10 @@ public class TaskService {
                     cloudTaskExample.createCriteria().andRuleIdEqualTo(ruleGroupMapping.getRuleId()).andAccountIdEqualTo(taskItem.getAccountId());
                     List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(cloudTaskExample);
                     for(CloudTask cloudTask : cloudTasks) {
+                        Rule rule = ruleMapper.selectByPrimaryKey(cloudTask.getRuleId());
                         resourceId = ruleService.reScan(cloudTask.getId(), cloudTask.getAccountId());
                         if(resourceId == null) continue;
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        this.updateTaskItemResource(taskItem, rule.getId(), resourceId);
                     }
                 }
             } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.serverAccount.getType())) {
@@ -494,9 +518,10 @@ public class TaskService {
                     serverResultExample.createCriteria().andRuleIdEqualTo(ruleGroupMapping.getRuleId());
                     List<ServerResult> serverResults = serverResultMapper.selectByExample(serverResultExample);
                     for(ServerResult serverResult : serverResults) {
+                        ServerRule serverRule = serverRuleMapper.selectByPrimaryKey(serverResult.getRuleId());
                         resourceId = serverService.rescan(serverResult.getId());
                         if(resourceId == null) continue;
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        this.updateTaskItemResource(taskItem, serverRule.getId(), resourceId);
                     }
                 }
             } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
@@ -505,9 +530,10 @@ public class TaskService {
                     imageResultExample.createCriteria().andRuleIdEqualTo(ruleGroupMapping.getRuleId());
                     List<ImageResult> imageResults = imageResultMapper.selectByExample(imageResultExample);
                     for(ImageResult imageResult : imageResults) {
+                        ImageRule imageRule = imageRuleMapper.selectByPrimaryKey(imageResult.getRuleId());
                         resourceId = imageService.reScan(imageResult.getId());
                         if (resourceId == null) continue;
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        this.updateTaskItemResource(taskItem, imageRule.getId(), resourceId);
                     }
                 }
             } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.packageAccount.getType())) {
@@ -516,9 +542,10 @@ public class TaskService {
                     packageResultExample.createCriteria().andRuleIdEqualTo(ruleGroupMapping.getRuleId());
                     List<PackageResult> packageResults = packageResultMapper.selectByExample(packageResultExample);
                     for(PackageResult packageResult : packageResults) {
+                        PackageRule packageRule = packageRuleMapper.selectByPrimaryKey(packageResult.getRuleId());
                         resourceId = packageService.reScan(packageResult.getId());
                         if (resourceId == null) continue;
-                        this.insertTaskItemResource(taskItem, resourceId);
+                        this.updateTaskItemResource(taskItem, packageRule.getId(), resourceId);
                     }
                 }
             }
@@ -666,8 +693,7 @@ public class TaskService {
         return "";
     }
 
-    private String cloudResource(String ruleId, String accountId) {
-        Rule rule = ruleMapper.selectByPrimaryKey(ruleId);
+    private String cloudResource(Rule rule, String accountId) {
         if (rule == null)  return null;
         AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
         Integer scanId = orderService.insertScanHistory(account);
@@ -675,8 +701,8 @@ public class TaskService {
         return this.dealCloudOrVulnTask(rule, account, scanId);
     }
 
-    private String vulnResource(String ruleId, String accountId) {
-        Rule rule = ruleMapper.selectByPrimaryKey(ruleId);
+    private String vulnResource(Rule rule, String accountId) {
+        if (rule == null)  return null;
         AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
         Integer scanId = orderService.insertScanHistory(account);
         return this.dealCloudOrVulnTask(rule, account, scanId);
@@ -700,13 +726,24 @@ public class TaskService {
         return this.dealImageTask(imageRule, image);
     }
 
-    private void insertTaskItemResource(TaskItem taskItem, String resourceId) throws Exception {
+    private void insertTaskItemResource(TaskItem taskItem, String ruleId, String ruleName, String resourceId) throws Exception {
         TaskItemResource record = new TaskItemResource();
         BeanUtils.copyBean(record, taskItem);
         record.setResourceId(resourceId);
+        record.setRuleId(ruleId);
+        record.setRuleName(ruleName);
         record.setTaskItemId(taskItem.getId());
         record.setCreateTime(System.currentTimeMillis());
         taskItemResourceMapper.insertSelective(record);
+    }
+
+    private void updateTaskItemResource(TaskItem taskItem, String ruleId, String resourceId) throws Exception {
+        TaskItemResourceExample example = new TaskItemResourceExample();
+        example.createCriteria().andTaskIdEqualTo(taskItem.getTaskId()).andTaskItemIdEqualTo(taskItem.getId()).andRuleIdEqualTo(ruleId);
+        TaskItemResource record = taskItemResourceMapper.selectByExample(example).get(0);
+        record.setResourceId(resourceId);
+        record.setCreateTime(System.currentTimeMillis());
+        taskItemResourceMapper.updateByPrimaryKeySelective(record);
     }
 
     private List<RuleTagMapping> ruleTagMappings (String tagKey) {

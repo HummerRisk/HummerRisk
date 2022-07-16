@@ -8,19 +8,9 @@ import java.util.List;
 
 public class TaskLogVo extends TaskItemResource {
 
-    private String userName;
-
     private List<TaskItemLog> taskItemLogList;
 
     private TaskResourceVo taskResourceVo;
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
 
     public List<TaskItemLog> getTaskItemLogList() {
         return taskItemLogList;
