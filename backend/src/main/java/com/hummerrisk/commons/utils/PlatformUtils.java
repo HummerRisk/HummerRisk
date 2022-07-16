@@ -1229,6 +1229,9 @@ public class PlatformUtils {
             case huoshan:
                 break;
             case baidu:
+                if("hbfsg".equals(region)){
+                    return false;
+                }
                 break;
             case qiniu:
                 break;
