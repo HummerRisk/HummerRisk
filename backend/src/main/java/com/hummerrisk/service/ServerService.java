@@ -309,6 +309,7 @@ public class ServerService {
         try {
             SshServerDTO sshServerDTO = new SshServerDTO();
             sshServerDTO.setSshIp(server.getIp());
+            sshServerDTO.setSshPort(Integer.valueOf(server.getPort()));
             sshServerDTO.setSshUserName(server.getUserName());
             sshServerDTO.setSshPassword(server.getPassword());
             sshServerDTO.setIsPublicKey(server.getIsPublicKey());
@@ -326,6 +327,7 @@ public class ServerService {
         try {
             SshServerDTO sshServerDTO = new SshServerDTO();
             sshServerDTO.setSshIp(server.getIp());
+            sshServerDTO.setSshPort(Integer.valueOf(server.getPort()));
             sshServerDTO.setSshUserName(server.getUserName());
             sshServerDTO.setSshPassword(server.getPassword());
             sshServerDTO.setIsPublicKey(server.getIsPublicKey());

@@ -11,7 +11,7 @@ public class SshServerDTO {
 
     private String sshPassword;
 
-    private int sshPort = 22;
+    private int sshPort;
 
     private Boolean isPublicKey;
 

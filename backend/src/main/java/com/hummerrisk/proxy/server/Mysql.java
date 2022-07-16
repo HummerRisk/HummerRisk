@@ -14,6 +14,7 @@ public class Mysql {
             String pid = "";
             SshServerDTO sshServerDTO = new SshServerDTO();
             sshServerDTO.setSshIp(sshIp);
+            sshServerDTO.setSshPort(22);
             sshServerDTO.setSshUserName(sshUsername);
             sshServerDTO.setSshPassword(sshPassword);
             sshServerDTO.setProxy(new Proxy());

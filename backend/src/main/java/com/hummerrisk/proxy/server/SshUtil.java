@@ -52,6 +52,7 @@ public class SshUtil {
                 LogUtil.error(String.format(tipStr, "认证失败"));
                 throw new Exception(String.format(tipStr, "认证失败"));
             }
+
         } catch (IOException e) {
             LogUtil.error(String.format(tipStr, "登录失败"));
             throw new Exception(String.format(tipStr, "登录失败"));
