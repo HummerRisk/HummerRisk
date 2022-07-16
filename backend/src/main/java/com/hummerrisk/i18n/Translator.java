@@ -6,9 +6,7 @@ import com.alibaba.fastjson.serializer.ObjectSerializer;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.BeanUtils;
-import com.hummerrisk.commons.utils.LogUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -77,9 +75,8 @@ public class Translator {
                         Object a = translateObject(jsonObject);
                         return JSON.toJSONString(a);
                     } catch (Exception e) {
-                        LogUtil.error("Failed to translate object: " + rawString, e);
                         e.printStackTrace();
-                        LogUtil.warn("Failed to translate object " + rawString + ". Error: " + ExceptionUtils.getStackTrace(e));
+//                        LogUtil.warn("Failed to translate object " + rawString + ". Error: " + ExceptionUtils.getStackTrace(e));
                         return translateRawString(null, rawString);
                     }
 
@@ -148,7 +145,7 @@ public class Translator {
             try {
                 return JSON.parseObject(translateRawString(null, JSON.toJSONString(javaObject)).toString(), javaObject.getClass());
             } catch (Exception e) {
-                LogUtil.error("Failed to translate object " + javaObject.toString(), e);
+//                LogUtil.error("Failed to translate object " + javaObject.toString(), e);
                 return javaObject;
             }
         }
