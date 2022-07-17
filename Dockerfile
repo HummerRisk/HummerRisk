@@ -28,7 +28,9 @@ COPY --from=syft-env /syft /usr/bin/syft
 
 RUN mkdir -p /opt/apps && \
     curl -fsSL https://company.hummercloud.com/offline-package/docker/x86_64/docker-20.10.8.tgz -o docker-20.10.8.tgz && \
-    tar zxf docker-20.10.8.tgz && \cp -rp docker/docker /usr/bin && rm -rf docker-20.10.8.tgz
+    tar zxf docker-20.10.8.tgz && \cp -rp docker/docker /usr/bin && rm -rf docker-20.10.8.tgz && \
+    curl https://company.hummercloud.com/offline-package/sigar/sigar.zip -o sigar.zip &&  \
+    mkdir -p /usr/lib/jvm/java-1.8-openjdk/bin && unzip sigar.zip -d /usr/lib/jvm/java-1.8-openjdk/bin && rm -rf sigar.zip \
 
 COPY backend/target/backend-1.0.jar /opt/apps
 
