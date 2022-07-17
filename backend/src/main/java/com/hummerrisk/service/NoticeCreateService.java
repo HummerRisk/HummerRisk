@@ -11,6 +11,7 @@ import com.hummerrisk.commons.utils.BeanUtils;
 import com.hummerrisk.commons.utils.CommonBeanFactory;
 import com.hummerrisk.commons.utils.CommonThreadPool;
 import com.hummerrisk.commons.utils.LogUtil;
+import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.message.NoticeModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -128,9 +129,9 @@ public class NoticeCreateService {
             messageOrder.setSendTime(System.currentTimeMillis());
             messageOrderMapper.updateByPrimaryKeySelective(messageOrder);
 
-            LogUtil.debug("开始发送通知消息！" + messageOrder.getAccountName());
+            LogUtil.debug(Translator.get("i18n_start_messageorder") + messageOrder.getAccountName());
             sendTask(messageOrder);
-            LogUtil.debug("结束发送通知消息！" + messageOrder.getAccountName());
+            LogUtil.debug(Translator.get("i18n_end_messageorder") + messageOrder.getAccountName());
 
         } catch (Exception e) {
             messageOrder.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
@@ -205,7 +206,7 @@ public class NoticeCreateService {
 
         String successContext = "success";
         String failedContext = "failed";
-        String subject = "云资源安全合规检测结果";
+        String subject = "i18n_cloud_messageorder";
         String event = NoticeConstants.Event.EXECUTE_SUCCESSFUL;
 
         List<CloudTask> cloudTasks = extCloudTaskMapper.getTopTasksForEmail(messageOrder);
@@ -222,21 +223,21 @@ public class NoticeCreateService {
         String details = "";
 
         if (StringUtils.equals(ScanConstants.SCAN_TYPE.CLOUD.name(), messageOrder.getScanType())) {
-            subject = "云资源安全合规检测结果";
+            subject = "i18n_cloud_messageorder";
             returnSum = extCloudTaskMapper.getReturnSumForEmail(messageOrder);
             resourcesSum = extCloudTaskMapper.getResourcesSumForEmail(messageOrder);
-            details =  "【 不合规资源/资源总数】" + returnSum  + "/" + resourcesSum;
+            details =  "i18n_cloud_messageorder_sum" + returnSum  + "/" + resourcesSum;
         } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.VULN.name(), messageOrder.getScanType())) {
-            subject = "安全合规漏洞检测结果";
+            subject = "i18n_vuln_messageorder";
             returnSum = extCloudTaskMapper.getReturnSumForEmail(messageOrder);
             resourcesSum = extCloudTaskMapper.getResourcesSumForEmail(messageOrder);
-            details =  "【 不合规资源/资源总数】" + returnSum  + "/" + resourcesSum;
+            details =  "i18n_cloud_messageorder_sum" + returnSum  + "/" + resourcesSum;
         } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), messageOrder.getScanType())) {
-            subject = "虚拟机安全合规检测结果";
+            subject = "i18n_server_messageorder";
         } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.PACKAGE.name(), messageOrder.getScanType())) {
-            subject = "软件包安全合规检测结果";
+            subject = "i18n_package_messageorder";
         } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), messageOrder.getScanType())) {
-            subject = "镜像安全合规检测结果";
+            subject = "i18n_image_messageorder";
         }
 
         Map<String, Object> paramMap = new HashMap<>();
@@ -254,7 +255,7 @@ public class NoticeCreateService {
                 .build();
         noticeSendService.send(noticeModel);
 
-        LogUtil.debug("开始添加站内消息！" + messageOrder.getAccountName());
+        LogUtil.debug(Translator.get("i18n_start_msg") + messageOrder.getAccountName());
         WebMsg msg = new WebMsg();
         msg.setStatus(false);
         msg.setType(subject);
@@ -262,6 +263,6 @@ public class NoticeCreateService {
         msg.setContent(subject + "【" + messageOrder.getAccountName() + "】" +  messageOrder.getStatus() + details);
         msg.setScanType(messageOrder.getScanType());
         webMsgMapper.insertSelective(msg);
-        LogUtil.debug("结束添加站内消息！" + messageOrder.getAccountName());
+        LogUtil.debug(Translator.get("i18n_end_msg") + messageOrder.getAccountName());
     }
 }

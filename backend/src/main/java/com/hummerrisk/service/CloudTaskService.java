@@ -172,7 +172,7 @@ public class CloudTaskService {
 
             });
             cloudTaskMapper.deleteByPrimaryKey(cloudTask.getId());
-            OperationLogService.log(SessionUtils.getUser(), taskId, cloudTask.getDescription(), ResourceTypeConstants.TASK.name(), ResourceOperation.DELETE, "删除任务");
+            OperationLogService.log(SessionUtils.getUser(), taskId, cloudTask.getDescription(), ResourceTypeConstants.TASK.name(), ResourceOperation.DELETE, "i18n_delete_cloud_task");
         } catch (Exception e) {
             LogUtil.error("Delete manual cloudTask error{} " + e.getMessage());
             HRException.throwException(e.getMessage());
@@ -478,7 +478,7 @@ public class CloudTaskService {
                     quartzTaskRelaLogMapper.insertSelective(quartzTaskRelaLog);
                 }
             }
-            OperationLogService.log(SessionUtils.getUser(), dto.getId(), dto.getName(), ResourceTypeConstants.QUOTA.name(), ResourceOperation.CREATE, "创建定时任务");
+            OperationLogService.log(SessionUtils.getUser(), dto.getId(), dto.getName(), ResourceTypeConstants.QUOTA.name(), ResourceOperation.CREATE, "i18n_create_qrtz_cloud_task");
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
             throw e;
@@ -624,7 +624,7 @@ public class CloudTaskService {
                 quartzTaskRelationMapper.deleteByPrimaryKey(quartzTaskRelation.getId());
             }
             quartzTaskMapper.deleteByPrimaryKey(quartzTaskId);
-            OperationLogService.log(SessionUtils.getUser(), quartzTaskId, quartzTask.getName(), ResourceTypeConstants.QUOTA.name(), ResourceOperation.DELETE, "删除定时任务");
+            OperationLogService.log(SessionUtils.getUser(), quartzTaskId, quartzTask.getName(), ResourceTypeConstants.QUOTA.name(), ResourceOperation.DELETE, "i18n_delete_qrtz_cloud_task");
         }
     }
 

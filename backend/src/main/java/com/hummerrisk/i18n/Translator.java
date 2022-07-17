@@ -24,9 +24,6 @@ public class Translator {
 
     private static final HashSet<String> IGNORE_KEYS = new HashSet<>(Arrays.asList("id", "password", "passwd"));
 
-    private static final HashSet<String> LOG_KEYS = new HashSet<>(Arrays.asList("i18n_operation_begin", "i18n_create_resource", "i18n_operation_end",
-            "i18n_region", "i18n_rule_type", "i18n_resource_manage", "i18n_vuln", "i18n_domain", "i18n_operation_ex"));
-
     @Resource
     public void setMessageSource(MessageSource messageSource) {
         Translator.messageSource = messageSource;
@@ -48,7 +45,7 @@ public class Translator {
                 return rawString;
             }
         }
-        for (String logKey : LOG_KEYS) {
+        for (String logKey : TranslatorKeys.LOG_KEYS) {
             String desc = get(logKey);
             rawString = rawString.replace(logKey, desc);
         }

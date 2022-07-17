@@ -98,7 +98,7 @@ public class ImageService {
             imageRepo.setStatus("INVALID");
         }
 
-        OperationLogService.log(SessionUtils.getUser(), imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "创建镜像仓库");
+        OperationLogService.log(SessionUtils.getUser(), imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image_repo");
         imageRepoMapper.insertSelective(imageRepo);
         return imageRepo;
     }
@@ -113,14 +113,14 @@ public class ImageService {
             imageRepo.setStatus("INVALID");
         }
 
-        OperationLogService.log(SessionUtils.getUser(), imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "更新镜像仓库");
+        OperationLogService.log(SessionUtils.getUser(), imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image_repo");
         imageRepoMapper.updateByPrimaryKeySelective(imageRepo);
         return imageRepo;
     }
 
     public void deleteImageRepo(String id) throws Exception {
         imageRepoMapper.deleteByPrimaryKey(id);
-        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "删除镜像仓库");
+        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_repo");
     }
 
     public List<ImageDTO> imageList(ImageRequest request) {
@@ -148,7 +148,7 @@ public class ImageService {
 
             imageMapper.insertSelective(request);
 
-            OperationLogService.log(SessionUtils.getUser(), request.getId(), request.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "创建镜像");
+            OperationLogService.log(SessionUtils.getUser(), request.getId(), request.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image");
 
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -176,7 +176,7 @@ public class ImageService {
 
             imageMapper.updateByPrimaryKeySelective(request);
 
-            OperationLogService.log(SessionUtils.getUser(), request.getId(), request.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "修改镜像");
+            OperationLogService.log(SessionUtils.getUser(), request.getId(), request.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image");
 
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -186,7 +186,7 @@ public class ImageService {
 
     public void deleteImage(String id) throws Exception {
         imageMapper.deleteByPrimaryKey(id);
-        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "删除镜像");
+        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image");
     }
 
     /**
@@ -222,7 +222,7 @@ public class ImageService {
         record.setId(UUIDUtil.newUUID());
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
-        OperationLogService.log(SessionUtils.getUser(), record.getId(), record.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "创建镜像检测规则");
+        OperationLogService.log(SessionUtils.getUser(), record.getId(), record.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image_rule");
         return imageRuleMapper.insertSelective(record);
     }
 
@@ -255,14 +255,14 @@ public class ImageService {
         BeanUtils.copyBean(record, request);
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
-        OperationLogService.log(SessionUtils.getUser(), record.getId(), record.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "修改镜像检测规则");
+        OperationLogService.log(SessionUtils.getUser(), record.getId(), record.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image_rule");
         return imageRuleMapper.updateByPrimaryKeySelective(record);
     }
 
     public void deleteImageRule(String id) throws Exception {
         deleteRuleTag(null, id);
         imageRuleMapper.deleteByPrimaryKey(id);
-        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "删除镜像检测规则");
+        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_rule");
     }
 
     public int changeStatus(ImageRule rule) throws Exception {
@@ -292,7 +292,7 @@ public class ImageService {
                 imageResultMapper.insertSelective(result);
 
                 saveImageResultLog(result.getId(), "i18n_start_image_result", "", true);
-                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "开始镜像检测");
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_start_image_result");
             }
         }
 
@@ -405,7 +405,7 @@ public class ImageService {
 
         saveImageResultLog(result.getId(), "i18n_restart_image_result", "", true);
 
-        OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "重新开始镜像检测");
+        OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_restart_image_result");
         return result.getId();
     }
 

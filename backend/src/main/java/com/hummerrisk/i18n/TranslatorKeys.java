@@ -1,0 +1,31 @@
+package com.hummerrisk.i18n;
+
+import java.util.Arrays;
+import java.util.HashSet;
+
+public class TranslatorKeys {
+
+    public static final HashSet<String> LOG_KEYS = new HashSet<>(
+            Arrays.asList(
+                    "i18n_operation_begin",
+                    "i18n_create_resource",
+                    "i18n_operation_end",
+                    "i18n_region",
+                    "i18n_rule_type",
+                    "i18n_resource_manage",
+                    "i18n_vuln",
+                    "i18n_domain",
+                    "i18n_operation_ex",
+                    "i18n_start_messageorder",
+                    "i18n_end_messageorder",
+                    "i18n_cloud_messageorder",
+                    "i18n_cloud_messageorder_sum",
+                    "i18n_vuln_messageorder",
+                    "i18n_server_messageorder",
+                    "i18n_package_messageorder",
+                    "i18n_image_messageorder",
+                    "i18n_start_msg",
+                    "i18n_end_msg"
+            ));
+
+}

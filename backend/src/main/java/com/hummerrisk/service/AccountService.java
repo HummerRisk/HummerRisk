@@ -136,7 +136,7 @@ public class AccountService {
                 account.setId(UUIDUtil.newUUID());
                 accountMapper.insertSelective(account);
                 updateRegions(account);
-                OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "创建云账号");
+                OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "i18n_create_cloud_account");
                 return getCloudAccountById(account.getId());
             }
         } catch (Exception e) {
@@ -184,7 +184,7 @@ public class AccountService {
                 updateRegions(account);
 
                 //检验账号已更新状态
-                OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.UPDATE, "更新云账号");
+                OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.UPDATE, "i18n_update_cloud_account");
                 return getCloudAccountById(account.getId());
             }
 
@@ -199,7 +199,7 @@ public class AccountService {
     public void delete(String accountId) {
         AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(accountId);
         accountMapper.deleteByPrimaryKey(accountId);
-        OperationLogService.log(SessionUtils.getUser(), accountId, accountWithBLOBs.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.DELETE, "删除云账号");
+        OperationLogService.log(SessionUtils.getUser(), accountId, accountWithBLOBs.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.DELETE, "i18n_delete_cloud_account");
     }
 
     public Object getRegions(String id) {
@@ -269,7 +269,7 @@ public class AccountService {
                     ruleAccountParameterMapper.deleteByExample(example);
                 }
             });
-            OperationLogService.log(SessionUtils.getUser(), list.get(0).getRuleId(), accountMapper.selectByPrimaryKey(list.get(0).getAccountId()).getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, " 清除云账号参数");
+            OperationLogService.log(SessionUtils.getUser(), list.get(0).getRuleId(), accountMapper.selectByPrimaryKey(list.get(0).getAccountId()).getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, " i18n_clean_cloud_account");
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
             throw e;
@@ -280,7 +280,7 @@ public class AccountService {
     public boolean saveParameter(List<QuartzTaskDTO> list) {
         try {
             list.forEach(this::accept);
-            OperationLogService.log(SessionUtils.getUser(), list.get(0).getId(), accountMapper.selectByPrimaryKey(list.get(0).getAccountId()).getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "保存云账号参数");
+            OperationLogService.log(SessionUtils.getUser(), list.get(0).getId(), accountMapper.selectByPrimaryKey(list.get(0).getAccountId()).getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "i18n_save_cloud_account");
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
             throw e;
