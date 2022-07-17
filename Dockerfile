@@ -26,21 +26,18 @@ COPY --from=grype-env /grype /usr/bin/grype
 
 COPY --from=syft-env /syft /usr/bin/syft
 
-RUN mkdir -p /opt/apps
-
-RUN curl -fsSL https://company.hummercloud.com/offline-package/docker/x86_64/docker-20.10.8.tgz -o docker-20.10.8.tgz && tar zxf docker-20.10.8.tgz && \cp -rp docker/docker /usr/bin && rm -rf docker-20.10.8.tgz
+RUN mkdir -p /opt/apps && \
+    curl -fsSL https://company.hummercloud.com/offline-package/docker/x86_64/docker-20.10.8.tgz -o docker-20.10.8.tgz && \
+    tar zxf docker-20.10.8.tgz && \cp -rp docker/docker /usr/bin && rm -rf docker-20.10.8.tgz
 
 COPY backend/target/backend-1.0.jar /opt/apps
 
 ARG HR_VERSION=dev
 
-ENV JAVA_APP_JAR=/opt/apps/backend-1.0.jar
-
-ENV AB_OFF=true
-
-ENV HR_VERSION=${HR_VERSION}
-
-ENV JAVA_OPTIONS="-Dfile.encoding=utf-8 -Djava.awt.headless=true -Xss5m -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:+ExitOnOutOfMemoryError"
+ENV JAVA_APP_JAR=/opt/apps/backend-1.0.jar \
+    AB_OFF=true \
+    HR_VERSION=${HR_VERSION} \
+    JAVA_OPTIONS="-Dfile.encoding=utf-8 -Djava.awt.headless=true -Xss5m -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:+ExitOnOutOfMemoryError"
 
 HEALTHCHECK --interval=15s --timeout=5s --retries=20 --start-period=30s CMD curl -f 127.0.0.1:8088
 
