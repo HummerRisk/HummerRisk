@@ -6,9 +6,7 @@ import com.alibaba.fastjson.serializer.ObjectSerializer;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.BeanUtils;
-import com.hummerrisk.commons.utils.LogUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -27,7 +25,7 @@ public class Translator {
     private static final HashSet<String> IGNORE_KEYS = new HashSet<>(Arrays.asList("id", "password", "passwd"));
 
     private static final HashSet<String> LOG_KEYS = new HashSet<>(Arrays.asList("i18n_operation_begin", "i18n_create_resource", "i18n_operation_end",
-            "i18n_region", "i18n_rule_type", "i18n_resource_manage", "i18n_vuln", "i18n_domain"));
+            "i18n_region", "i18n_rule_type", "i18n_resource_manage", "i18n_vuln", "i18n_domain", "i18n_operation_ex"));
 
     @Resource
     public void setMessageSource(MessageSource messageSource) {
@@ -77,9 +75,8 @@ public class Translator {
                         Object a = translateObject(jsonObject);
                         return JSON.toJSONString(a);
                     } catch (Exception e) {
-                        LogUtil.error("Failed to translate object: " + rawString, e);
                         e.printStackTrace();
-                        LogUtil.warn("Failed to translate object " + rawString + ". Error: " + ExceptionUtils.getStackTrace(e));
+//                        LogUtil.warn("Failed to translate object " + rawString + ". Error: " + ExceptionUtils.getStackTrace(e));
                         return translateRawString(null, rawString);
                     }
 
@@ -148,7 +145,7 @@ public class Translator {
             try {
                 return JSON.parseObject(translateRawString(null, JSON.toJSONString(javaObject)).toString(), javaObject.getClass());
             } catch (Exception e) {
-                LogUtil.error("Failed to translate object " + javaObject.toString(), e);
+//                LogUtil.error("Failed to translate object " + javaObject.toString(), e);
                 return javaObject;
             }
         }

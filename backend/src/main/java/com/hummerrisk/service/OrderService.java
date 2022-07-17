@@ -362,7 +362,6 @@ public class OrderService {
         return result;
     }
 
-    @I18n
     private List<CloudTaskItemLogDTO> getTaskItemLogByTaskItemId(String taskItemId) {
         List<CloudTaskItemLogDTO> result = new ArrayList<>();
         try {

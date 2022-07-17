@@ -549,7 +549,7 @@ public class RuleService {
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
-    public void reScan(String taskId, String accountId) throws Exception {
+    public String reScan(String taskId, String accountId) throws Exception {
         CloudTaskItemExample example = new CloudTaskItemExample();
         example.createCriteria().andTaskIdEqualTo(taskId);
         List<CloudTaskItem> cloudTaskItems = cloudTaskItemMapper.selectByExample(example);
@@ -557,7 +557,7 @@ public class RuleService {
         RuleDTO rule = getRuleDtoById(cloudTaskItems.get(0).getRuleId(), accountId);
         if (!rule.getStatus()) HRException.throwException(Translator.get("i18n_disabled_rules_not_scanning"));
         Integer scanId = orderService.insertScanHistory(account);
-        this.dealTask(rule, account, scanId, null);
+        return this.dealTask(rule, account, scanId, null);
     }
 
     private void scanGroups(AccountWithBLOBs account, String groupId) {
@@ -590,7 +590,7 @@ public class RuleService {
         }
     }
 
-    private void dealTask (RuleDTO rule, AccountWithBLOBs account, Integer scanId, String messageOrderId) {
+    private String dealTask (RuleDTO rule, AccountWithBLOBs account, Integer scanId, String messageOrderId) {
         try {
             if (rule.getStatus()) {
                 QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
@@ -619,6 +619,7 @@ public class RuleService {
                 quartzTaskDTO.setTaskName(rule.getName());
                 CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, messageOrderId);
                 orderService.insertTaskHistory(cloudTask, scanId);
+                return cloudTask.getId();
             } else {
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
                 HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
@@ -627,6 +628,7 @@ public class RuleService {
             LogUtil.error(e);
             HRException.throwException(e.getMessage());
         }
+        return "";
     }
 
     public void insertScanHistory (String accountId) {

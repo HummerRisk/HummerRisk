@@ -4,6 +4,7 @@ import com.hummerrisk.base.domain.TaskItemResource;
 import com.hummerrisk.base.domain.TaskItemResourceExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.SelectKey;
 
 public interface TaskItemResourceMapper {
     /**
@@ -44,6 +45,10 @@ public interface TaskItemResourceMapper {
      *
      * @mbg.generated Wed Jul 13 17:40:49 CST 2022
      */
+
+    @SelectKey(keyProperty = "id", resultType = int.class, before = false,
+            statement = "select LAST_INSERT_ID()"
+    )
     int insertSelective(TaskItemResource record);
 
     /**

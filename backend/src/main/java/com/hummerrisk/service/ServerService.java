@@ -175,12 +175,13 @@ public class ServerService {
         }
     }
 
-    public void rescan(String id) {
+    public String rescan(String id) {
         ServerResult result = serverResultMapper.selectByPrimaryKey(id);
         saveServerResultLog(result.getId(), "i18n_restart_server_result", "", true);
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         serverResultMapper.updateByPrimaryKeySelective(result);
+        return result.getId();
     }
 
     public void deleteServerResult(String id) {

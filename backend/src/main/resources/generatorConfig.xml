@@ -116,6 +116,6 @@
 <!--        <table tableName="task" domainObjectName="Task"/>-->
 <!--        <table tableName="task_item" domainObjectName="TaskItem"/>-->
 <!--        <table tableName="task_item_resource" domainObjectName="TaskItemResource"/>-->
-<!--        <table tableName="task_item_log" domainObjectName="TaskItemLog"/>-->
+<!--        <table tableName="task_item_resource_log" domainObjectName="TaskItemResourceLog"/>-->
     </context>
 </generatorConfiguration>

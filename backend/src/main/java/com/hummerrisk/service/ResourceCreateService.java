@@ -5,9 +5,7 @@ import com.hummer.quartz.anno.QuartzScheduled;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCloudScanHistoryMapper;
-import com.hummerrisk.commons.constants.CloudAccountConstants;
-import com.hummerrisk.commons.constants.CloudTaskConstants;
-import com.hummerrisk.commons.constants.CommandEnum;
+import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.resource.ResourceRequest;
 import com.hummerrisk.dto.ResourceDTO;
@@ -18,10 +16,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.alibaba.fastjson.JSON.toJSONString;
@@ -75,18 +70,26 @@ public class ResourceCreateService {
     private ImageService imageService;
     @Resource
     private ImageResultMapper imageResultMapper;
+    @Resource
+    private TaskMapper taskMapper;
+    @Resource
+    private TaskItemMapper taskItemMapper;
+    @Resource
+    private TaskItemResourceMapper taskItemResourceMapper;
+    @Resource
+    private TaskService taskService;
 
     @QuartzScheduled(cron = "${cron.expression.local}")
     public void handleTasks() {
         //云资源检测、漏洞检测
-        final CloudTaskExample taskExample = new CloudTaskExample();
-        CloudTaskExample.Criteria criteria = taskExample.createCriteria();
+        final CloudTaskExample cloudTaskExample = new CloudTaskExample();
+        CloudTaskExample.Criteria criteria = cloudTaskExample.createCriteria();
         criteria.andStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
             criteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
         }
-        taskExample.setOrderByClause("create_time limit 10");
-        List<CloudTask> cloudTaskList = cloudTaskMapper.selectByExample(taskExample);
+        cloudTaskExample.setOrderByClause("create_time limit 10");
+        List<CloudTask> cloudTaskList = cloudTaskMapper.selectByExample(cloudTaskExample);
         if (CollectionUtils.isNotEmpty(cloudTaskList)) {
             cloudTaskList.forEach(task -> {
                 LogUtil.info("handling cloudTask: {}", toJSONString(task));
@@ -219,6 +222,70 @@ public class ResourceCreateService {
         }
 
         //网络检测
+
+        //任务编排
+        final TaskExample taskExample = new TaskExample();
+        TaskExample.Criteria taskCriteria = taskExample.createCriteria();
+        taskCriteria.andStatusEqualTo(TaskConstants.TASK_STATUS.APPROVED.toString());
+        taskExample.setOrderByClause("create_time limit 1");
+        List<Task> tasks = taskMapper.selectByExample(taskExample);
+        List<String> status = Arrays.asList(TaskConstants.TASK_STATUS.ERROR.name(), TaskConstants.TASK_STATUS.FINISHED.name(), TaskConstants.TASK_STATUS.WARNING.name());
+        for (Task task : tasks) {
+            TaskItemExample taskItemExample = new TaskItemExample();
+            TaskItemExample.Criteria taskItemCriteria = taskItemExample.createCriteria();
+            taskItemCriteria.andTaskIdEqualTo(task.getId());
+            List<TaskItem> taskItems = taskItemMapper.selectByExample(taskItemExample);
+            for (TaskItem taskItem : taskItems) {
+                TaskItemResourceExample taskItemResourceExample = new TaskItemResourceExample();
+                TaskItemResourceExample.Criteria resourceCriteria = taskItemResourceExample.createCriteria();
+                resourceCriteria.andTaskItemIdEqualTo(taskItem.getId());
+                long sum = taskItemResourceMapper.countByExample(taskItemResourceExample);
+                long i = 0;
+                List<TaskItemResource> taskItemResources = taskItemResourceMapper.selectByExample(taskItemResourceExample);
+                for (TaskItemResource taskItemResource : taskItemResources) {
+                    long n = 0;
+                    if (StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.cloudAccount.getType())) {
+                        CloudTaskExample example = new CloudTaskExample();
+                        example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andStatusIn(status);
+                        n = cloudTaskMapper.countByExample(example);
+                        i = i + n;
+                    } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.vulnAccount.getType())) {
+                        CloudTaskExample example = new CloudTaskExample();
+                        example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andStatusIn(status);
+                        n = cloudTaskMapper.countByExample(example);
+                        i = i + n;
+                    } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.serverAccount.getType())) {
+                        ServerResultExample example = new ServerResultExample();
+                        example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
+                        n = serverResultMapper.countByExample(example);
+                        i = i + n;
+                    } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.imageAccount.getType())) {
+                        ImageResultExample example = new ImageResultExample();
+                        example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
+                        n = imageResultMapper.countByExample(example);
+                        i = i + n;
+                    } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.packageAccount.getType())) {
+                        PackageResultExample example = new PackageResultExample();
+                        example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
+                        n = packageResultMapper.countByExample(example);
+                        i = i + n;
+                    }
+                    if (n > 0) {
+                        taskService.saveTaskItemResourceLog(taskItemResource.getTaskItemId(), String.valueOf(taskItemResource.getId()), taskItemResource.getResourceId(), "i18n_end_task", "", true);
+                    }
+                }
+                if (sum == i) {
+                    taskItem.setStatus(TaskConstants.TASK_STATUS.FINISHED.name());
+                    taskItemMapper.updateByPrimaryKeySelective(taskItem);
+                }
+            }
+            taskItemCriteria.andStatusIn(status);
+            long count = taskItemMapper.countByExample(taskItemExample);
+            if(taskItems.size() == count) {
+                task.setStatus(TaskConstants.TASK_STATUS.FINISHED.name());
+                taskMapper.updateByPrimaryKeySelective(task);
+            }
+        }
 
     }
 
