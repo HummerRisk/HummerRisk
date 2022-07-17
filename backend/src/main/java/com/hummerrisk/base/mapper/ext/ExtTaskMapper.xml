@@ -805,7 +805,7 @@
             <result column="severity" jdbcType="VARCHAR" property="severity"/>
             <result column="icon" jdbcType="VARCHAR" property="icon"/>
         </association>
-        <collection property="taskItemLogList" ofType="com.hummerrisk.base.domain.TaskItemLog" javaType="list" select="getTaskItemLogList" column="id">
+        <collection property="taskItemResourceLogList" ofType="com.hummerrisk.base.domain.TaskItemResourceLog" javaType="list" select="getTaskItemResourceLogList" column="id">
             <id column="id" jdbcType="INTEGER" property="id" />
             <result column="task_item_id" jdbcType="VARCHAR" property="taskItemId" />
             <result column="task_item_resource_id" jdbcType="VARCHAR" property="taskItemResourceId" />
@@ -861,9 +861,9 @@
         WHERE t.id = #{resource_id}
     </select>
 
-    <select id="getTaskItemLogList" resultType="com.hummerrisk.base.domain.TaskItemLog" parameterType="java.lang.String">
+    <select id="getTaskItemResourceLogList" resultType="com.hummerrisk.base.domain.TaskItemResourceLog" parameterType="java.lang.String">
         SELECT t.*
-        FROM task_item_log t
+        FROM task_item_resource_log t
         WHERE t.task_item_resource_id = #{id}
     </select>
 

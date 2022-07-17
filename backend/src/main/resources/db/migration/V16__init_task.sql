@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `task_item_resource`
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
-CREATE TABLE IF NOT EXISTS `task_item_log` (
+CREATE TABLE IF NOT EXISTS `task_item_resource_log` (
     `id`                           int(11)             NOT NULL AUTO_INCREMENT,
     `task_item_id`                 varchar(50)         DEFAULT NULL COMMENT '任务项ID',
     `task_item_resource_id`        varchar(50)         DEFAULT NULL COMMENT '任务资源ID',

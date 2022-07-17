@@ -1,23 +1,23 @@
 package com.hummerrisk.controller.request.task;
 
-import com.hummerrisk.base.domain.TaskItemLog;
 import com.hummerrisk.base.domain.TaskItemResource;
+import com.hummerrisk.base.domain.TaskItemResourceLog;
 
 import java.util.List;
 
 
 public class TaskLogVo extends TaskItemResource {
 
-    private List<TaskItemLog> taskItemLogList;
+    private List<TaskItemResourceLog> taskItemResourceLogList;
 
     private TaskResourceVo taskResourceVo;
 
-    public List<TaskItemLog> getTaskItemLogList() {
-        return taskItemLogList;
+    public List<TaskItemResourceLog> getTaskItemResourceLogList() {
+        return taskItemResourceLogList;
     }
 
-    public void setTaskItemLogList(List<TaskItemLog> taskItemLogList) {
-        this.taskItemLogList = taskItemLogList;
+    public void setTaskItemResourceLogList(List<TaskItemResourceLog> taskItemResourceLogList) {
+        this.taskItemResourceLogList = taskItemResourceLogList;
     }
 
     public TaskResourceVo getTaskResourceVo() {

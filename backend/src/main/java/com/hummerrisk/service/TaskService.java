@@ -42,7 +42,7 @@ public class TaskService {
     @Resource
     private TaskItemResourceMapper taskItemResourceMapper;
     @Resource
-    private TaskItemLogMapper taskItemLogMapper;
+    private TaskItemResourceLogMapper taskItemResourceLogMapper;
     @Resource
     private RuleMapper ruleMapper;
     @Resource
@@ -281,9 +281,9 @@ public class TaskService {
                 TaskItemResourceExample taskItemResourceExample = new TaskItemResourceExample();
                 taskItemResourceExample.createCriteria().andTaskIdEqualTo(taskId).andTaskItemIdEqualTo(taskItem.getId());
                 taskItemResourceMapper.deleteByExample(taskItemResourceExample);
-                TaskItemLogExample taskItemLogExample = new TaskItemLogExample();
-                taskItemLogExample.createCriteria().andTaskItemIdEqualTo(taskItem.getId());
-                taskItemLogMapper.deleteByExample(taskItemLogExample);
+                TaskItemResourceLogExample taskItemResourceLogExample = new TaskItemResourceLogExample();
+                taskItemResourceLogExample.createCriteria().andTaskItemIdEqualTo(taskItem.getId());
+                taskItemResourceLogMapper.deleteByExample(taskItemResourceLogExample);
                 taskItemMapper.deleteByPrimaryKey(taskItem.getId());
             }
             taskMapper.deleteByPrimaryKey(taskId);
@@ -736,7 +736,30 @@ public class TaskService {
         record.setRuleName(ruleName);
         record.setTaskItemId(taskItem.getId());
         record.setCreateTime(System.currentTimeMillis());
-        taskItemResourceMapper.insertSelective(record);
+        int key = taskItemResourceMapper.insertSelective(record);
+
+        saveTaskItemResourceLog(record.getTaskItemId(), String.valueOf(key), resourceId, "i18n_start_task", "", true);
+    }
+
+    void saveTaskItemResourceLog(String taskItemId, String taskItemResourceId, String resourceId, String operation, String output, boolean result) {
+        TaskItemResourceLog taskItemResourceLog = new TaskItemResourceLog();
+        String operator = "system";
+        try {
+            if (SessionUtils.getUser() != null) {
+                operator = SessionUtils.getUser().getId();
+            }
+        } catch (Exception e) {
+            //防止单元测试无session
+        }
+        taskItemResourceLog.setOperator(operator);
+        taskItemResourceLog.setTaskItemId(taskItemId);
+        taskItemResourceLog.setTaskItemResourceId(taskItemResourceId);
+        taskItemResourceLog.setResourceId(resourceId);
+        taskItemResourceLog.setCreateTime(System.currentTimeMillis());
+        taskItemResourceLog.setOperation(operation);
+        taskItemResourceLog.setOutput(output);
+        taskItemResourceLog.setResult(result);
+        taskItemResourceLogMapper.insertSelective(taskItemResourceLog);
     }
 
     private void updateTaskItemResource(TaskItem taskItem, String ruleId, String resourceId) throws Exception {
