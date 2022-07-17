@@ -1,7 +1,7 @@
 <template>
   <div v-loading="result.loading">
 
-    <el-card class="table-card">
+    <el-card>
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search" @create="create" :createTip="$t('task.task_add')" :title="$t('task.task_list')"/>
       </template>

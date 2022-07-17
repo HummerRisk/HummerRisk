@@ -247,6 +247,7 @@ public class TaskService {
         for (TaskItem taskItem : taskDTO.getTaskItemList()) {
             taskItem.setId(UUIDUtil.newUUID());
             taskItem.setTaskId(task.getId());
+            taskItem.setStatus(TaskConstants.TASK_STATUS.WAITING.name());
             taskItem.setCreateTime(System.currentTimeMillis());
             taskItemMapper.insertSelective(taskItem);
         }
@@ -264,6 +265,7 @@ public class TaskService {
         for (TaskItem taskItem : taskDTO.getTaskItemList()) {
             taskItem.setId(UUIDUtil.newUUID());
             taskItem.setTaskId(task.getId());
+            taskItem.setStatus(TaskConstants.TASK_STATUS.WAITING.name());
             taskItem.setCreateTime(System.currentTimeMillis());
             taskItemMapper.insertSelective(taskItem);
         }

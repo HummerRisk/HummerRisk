@@ -798,6 +798,12 @@
     <resultMap id="TaskItemLogResultMap" type="com.hummerrisk.controller.request.task.TaskLogVo"
                extends="com.hummerrisk.base.mapper.TaskItemResourceMapper.BaseResultMap">
         <association property="taskResourceVo" column="resource_id" select="getTaskResourceVo">
+            <result column="id" jdbcType="VARCHAR" property="id"/>
+            <result column="name" jdbcType="VARCHAR" property="name"/>
+            <result column="desc" jdbcType="VARCHAR" property="desc"/>
+            <result column="status" jdbcType="VARCHAR" property="status"/>
+            <result column="severity" jdbcType="VARCHAR" property="severity"/>
+            <result column="icon" jdbcType="VARCHAR" property="icon"/>
         </association>
         <collection property="taskItemLogList" ofType="com.hummerrisk.base.domain.TaskItemLog" javaType="list" select="getTaskItemLogList" column="id">
             <id column="id" jdbcType="INTEGER" property="id" />
@@ -813,8 +819,8 @@
 
     <select id="getTaskResourceVo" resultType="com.hummerrisk.controller.request.task.TaskResourceVo" parameterType="java.lang.String">
         SELECT t.id,
-               t.task_ame as name,
-               t.description as desc,
+               t.task_name as name,
+               t.description as 'desc',
                t.status,
                t.severity,
                t.plugin_icon as icon
@@ -824,8 +830,8 @@
         UNION ALL
 
         SELECT t.id,
-               t.server_ame as name,
-               t.rule_desc as desc,
+               t.server_name as name,
+               t.rule_desc as 'desc',
                t.result_status as status,
                t.severity,
                t.plugin_icon as icon
@@ -836,7 +842,7 @@
 
         SELECT t.id,
                t.name,
-               t.rule_desc as desc,
+               t.rule_desc as 'desc',
                t.result_status as status,
                t.severity,
                'docker.png' as icon
@@ -847,7 +853,7 @@
 
         SELECT t.id,
                t.name,
-               t.rule_desc as desc,
+               t.rule_desc as 'desc',
                t.result_status as status,
                t.severity,
                'package.png' as icon
@@ -861,11 +867,11 @@
         WHERE t.task_item_resource_id = #{id}
     </select>
 
-    <select id="taskLogList" resultType="com.hummerrisk.controller.request.task.TaskLogVo" parameterType="java.lang.String">
+    <select id="taskLogList" resultMap="TaskItemLogResultMap" parameterType="java.lang.String">
         SELECT t.*
         FROM task_item_resource t
         WHERE t.task_id = #{id}
+        order by t.id desc
     </select>
-
 
 </mapper>
