@@ -292,17 +292,13 @@ public class PackageService {
                     script = script.replace(key, jsonObject.getString("defaultValue"));
                 }
             }
-            String resources = execute(aPackage, dto, "json");
-            execute(aPackage, dto, "html");
-            String fileName = !aPackage.getPath().isEmpty()?aPackage.getPath().split("/")[aPackage.getPath().split("/").length-1]:"";
-            String suffix = StringUtils.isNotBlank(fileName)?fileName.split("\\.")[fileName.split("\\.").length-1]:"";
-            String s1 = !aPackage.getPath().isEmpty()?aPackage.getPath().split("/")[0]:"";
-            String s2 = !aPackage.getPath().isEmpty()?aPackage.getPath().split("/")[aPackage.getPath().split("/").length-1]:"";
-            String fileFolder = PackageConstants.DEFAULT_BASE_DIR + s1 + "/";
-            String returnJson = !aPackage.getPath().isEmpty()? ReadFileUtils.readJsonFile(fileFolder, s2.replace(suffix, "json")):"";
-            String returnHtml = "files/" + (!aPackage.getPath().isEmpty()?aPackage.getPath().replace(suffix, "html"):"");
-            String log = ReadFileUtils.readToBuffer(fileFolder + fileName.replace(suffix, "log"));
-            result.setReturnLog(log);
+            String resources = execute(aPackage);
+            //检测包输出路径，去除后缀
+            String suffix = (!aPackage.getPath().isEmpty()?aPackage.getPath().split("\\.")[0]:"") + "/";
+
+            //路径：/opt/hummerrisk/file/20220801/4ba96f2abb2681c426c98d767795da6b/dependency-check-report.html
+            String returnJson = !aPackage.getPath().isEmpty()? ReadFileUtils.readJsonFile(PackageConstants.DEFAULT_BASE_DIR + suffix, PackageConstants.JSON_DIR):"";
+            String returnHtml = "files/" + suffix + PackageConstants.HTML_DIR;
             result.setResources(resources);
             result.setReturnJson(returnJson);
             result.setReturnHtml(returnHtml);
@@ -383,8 +379,10 @@ public class PackageService {
         packageResultLogMapper.deleteByExample(logExample);
         FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml()));
         FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml().replace("html", "json")));
-        FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml().replace("html", "log")));
-
+        FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml().replace("html", "xml")));
+        FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml().replace("html", "csv")));
+        FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml().replace("html", "sarif")));
+        FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml().replace("html", "xml").replace("dependency-check-report", "dependency-check-junit")));
         packageResultMapper.deleteByPrimaryKey(id);
     }
 
@@ -399,7 +397,10 @@ public class PackageService {
             packageResultLogMapper.deleteByExample(logExample);
             FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml()));
             FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml().replace("html", "json")));
-            FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml().replace("html", "log")));
+            FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml().replace("html", "xml")));
+            FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml().replace("html", "csv")));
+            FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml().replace("html", "sarif")));
+            FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml().replace("html", "xml").replace("dependency-check-report", "dependency-check-junit")));
 
         }
         packageResultMapper.deleteByExample(example);
@@ -424,7 +425,7 @@ public class PackageService {
         packageResultLogMapper.insertSelective(packageResultLog);
     }
 
-    public String execute(Package aPackage, PackageRuleDTO dto, String outType) throws Exception {
+    public String execute(Package aPackage) throws Exception {
         try {
             Proxy proxy;
             String _proxy = "";
@@ -454,20 +455,15 @@ public class PackageService {
                             "unset https_proxy;" + "\n";
                 }
             }
-            String fileName = !aPackage.getPath().isEmpty()?aPackage.getPath().split("/")[aPackage.getPath().split("/").length-1]:"";
-            String suffix = StringUtils.isNotBlank(fileName)?fileName.split("\\.")[fileName.split("\\.").length-1]:"";
-            String path = PackageConstants.DEFAULT_BASE_DIR + aPackage.getPath();//jar包路径，项目外
-            String command = PackageConstants.DEPENDENCY_CHECK +
-                    PackageConstants.SCAN + path + " ";
-            if (StringUtils.equalsIgnoreCase(outType, "json")) {
-                command =  _proxy + command +
-                        PackageConstants.FORMAT + PackageConstants.JSON + " " +
-                        PackageConstants.OUT + path.replace(suffix, "json") + " " + PackageConstants.LOG + path.replace(suffix, "log");
-            } else if (StringUtils.equalsIgnoreCase(outType, "html")) {
-                command = _proxy + command +
-                        PackageConstants.FORMAT + PackageConstants.HTML + " " +
-                        PackageConstants.OUT + path.replace(suffix, "html");
-            }
+
+            //检测包输出路径，去除后缀
+            String suffix = PackageConstants.DEFAULT_BASE_DIR + (!aPackage.getPath().isEmpty()?aPackage.getPath().split("\\.")[0]:"");
+            //检测包路径，项目外
+            String path = PackageConstants.DEFAULT_BASE_DIR + aPackage.getPath();
+            String command = _proxy + PackageConstants.DEPENDENCY_CHECK +
+                        PackageConstants.SCAN + path + " " +
+                        PackageConstants.FORMAT + PackageConstants.ALL + " " +
+                        PackageConstants.OUT + suffix;
             LogUtil.info(aPackage.getId() + " {package}[command]: " + aPackage.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, PackageConstants.DEFAULT_BASE_DIR);
             if(resultStr.contains("ERROR")) {

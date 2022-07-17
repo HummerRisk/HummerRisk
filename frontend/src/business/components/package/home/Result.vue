@@ -107,10 +107,6 @@
           <codemirror ref="cmEditor" v-model="logForm.resources" class="code-mirror" :options="cmOptions" />
         </el-form>
         <el-form>
-          <div class="pure-span">{{ $t('package.result_log') }}</div>
-          <codemirror ref="cmEditor" v-model="logForm.returnLog" class="code-mirror" :options="cmOptions" />
-        </el-form>
-        <el-form>
           <div class="pure-span">{{ $t('package.result_json') }}</div>
           <codemirror ref="cmEditor" v-model="logForm.returnJson" class="code-mirror" :options="cmOptions" />
         </el-form>
@@ -227,7 +223,6 @@ export default {
             if (data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
               data.resources = result.resources;
-              data.returnLog = result.returnLog;
               data.returnJson = result.returnJson;
               data.returnSum = result.returnSum;
             }
