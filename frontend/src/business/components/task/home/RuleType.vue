@@ -1,12 +1,12 @@
 <template>
   <div>
-    <el-tag size="medium" type="primary" v-if="row.ruleType === 'rule'">
+    <el-tag size="mini" type="primary" v-if="row.ruleType === 'rule'">
       {{ $t('task.task_rule') }}
     </el-tag>
-    <el-tag size="medium" type="primary" v-else-if="row.ruleType === 'tag'">
+    <el-tag size="mini" type="primary" v-else-if="row.ruleType === 'tag'">
       {{ $t('task.task_tag') }}
     </el-tag>
-    <el-tag size="medium" type="primary" v-else-if="row.ruleType === 'group'">
+    <el-tag size="mini" type="primary" v-else-if="row.ruleType === 'group'">
       {{ $t('task.task_group') }}
     </el-tag>
   </div>

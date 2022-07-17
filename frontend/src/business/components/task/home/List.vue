@@ -344,6 +344,78 @@
     </el-drawer>
     <!--Update Task-->
 
+    <!--Task status detail-->
+    <el-drawer class="rtl" :title="$t('task.task_detail')" :visible.sync="taskLogListVisible" size="80%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <div v-for="taskLogTable in taskLogListTable" :key="taskLogTable.id" class="el-form-item-dev">
+        <div class="el-icon-detail" @click="goResource(taskLogTable)">
+          <el-row>
+            <el-col :span="24">
+              <div class="grid-content bg-purple-light">
+                <span class="grid-content-log-span"> {{ taskLogTable.taskResourceVo.name }}</span>
+                <span class="grid-content-log-span">
+                  <img :src="require(`@/assets/img/platform/${taskLogTable.taskResourceVo.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                  {{ taskLogTable.accountName }}
+                </span>
+                <span class="grid-content-status-span" v-if="taskLogTable.taskResourceVo.status === 'APPROVED'" style="color: #579df8">
+                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                </span>
+                <span class="grid-content-status-span" v-else-if="taskLogTable.taskResourceVo.status === 'FINISHED'" style="color: #7ebf50">
+                  <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+                </span>
+                <span class="grid-content-status-span" v-else-if="taskLogTable.taskResourceVo.status === 'WARNING'" style="color: #e6a23c;">
+                  <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+                </span>
+                <span class="grid-content-status-span" v-else-if="taskLogTable.taskResourceVo.status === 'ERROR'" style="color: red;">
+                  <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+                </span>
+              </div>
+            </el-col>
+            <el-col :span="24">
+              <div class="grid-content bg-purple-light">
+                <span class="grid-content-log-span">
+                  <i class="el-icon-time"></i> {{ taskLogTable.createTime | timestampFormatDate }}
+                </span>
+                <span class="grid-content-log-span">
+                  <account-type :row="taskLogTable"/>
+                </span>
+                <span class="grid-content-status-span">
+                   <severity-type :row="taskLogTable.taskResourceVo"/>
+                </span>
+              </div>
+            </el-col>
+            <el-col :span="24">
+              <div class="grid-content bg-purple-light">
+                <span class="grid-content-log-span">
+                  <rule-type :row="taskLogTable"/>
+                </span>
+                <span class="grid-content-desc-span">
+                  {{ taskLogTable.taskResourceVo.desc }}
+                </span>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+        <el-table :show-header="false" :data="taskLogTable.taskItemResourceLogList" class="adjust-table table-content">
+          <el-table-column>
+            <template v-slot:default="scope">
+              <div class="bg-purple-div">
+                <span
+                  v-bind:class="{true: 'color-red', false: ''}[scope.row.result == false]">
+                      {{ scope.row.createTime | timestampFormatDate }}
+                      {{ scope.row.operator }}
+                      {{ scope.row.operation }}
+                      {{ scope.row.output }}<br>
+                </span>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-divider><i class="el-icon-circle-check"></i></el-divider>
+      </div>
+    </el-drawer>
+    <!--Task status detail-->
+
   </div>
 </template>
 
@@ -358,6 +430,7 @@ import RuleType from "@/business/components/task/home/RuleType";
 import SeverityType from "@/business/components/task/home/SeverityType";
 import Account from "@/business/components/task/home/Account";
 import UpdateRule from "@/business/components/task/home/UpdateRule";
+import AccountType from "@/business/components/task/home/AccountType";
 
 /* eslint-disable */
 export default {
@@ -371,6 +444,7 @@ export default {
     SeverityType,
     Account,
     UpdateRule,
+    AccountType,
   },
   data() {
     return {
@@ -480,6 +554,7 @@ export default {
       this.form = {};
       this.updateVisible =  false;
       this.detailVisible =  false;
+      this.taskLogListVisible = false;
     },
     tableRowClassName({row, rowIndex}) {
       if (rowIndex%4 === 0) {
@@ -502,7 +577,6 @@ export default {
       }
       this.result = this.$post("/task/taskLogList", task, response => {
         let data = response.data;
-        console.log(111, data);
         this.taskLogListTable = data;
         this.taskLogListVisible = true;
       });
@@ -669,6 +743,36 @@ export default {
       }
       return sum == 0;
     },
+    goResource(item) {
+      this.$alert(this.$t('resource.i18n_comfirm_resource') + item.taskResourceVo.name, '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            if (item.accountType === 'cloudAccount') {
+              this.$router.push({
+                path: '/resource/result',
+              }).catch(error => error);
+            } else if(item.accountType === 'vulnAccount') {
+              this.$router.push({
+                path: '/resource/vulnResult',
+              }).catch(error => error);
+            } else if(item.accountType === 'serverAccount') {
+              this.$router.push({
+                path: '/resource/serverResult',
+              }).catch(error => error);
+            } else if(item.accountType === 'imageAccount') {
+              this.$router.push({
+                path: '/resource/imageResult',
+              }).catch(error => error);
+            } else if(item.accountType === 'packageAccount') {
+              this.$router.push({
+                path: '/resource/packageResult',
+              }).catch(error => error);
+            }
+          }
+        }
+      });
+    }
   },
   activated() {
     this.search();
@@ -719,20 +823,6 @@ export default {
 .el-form-item-dev  >>> .el-form-item__content {
   margin-left: 0 !important;
 }
-
-.grid-content-log-span {
-  width: 40%;float: left;
-  vertical-align: middle;
-  display:table-cell;
-  margin: 6px 0;
-}
-
-.grid-content-status-span {
-  width: 20%;float: left;
-  vertical-align: middle;
-  display:table-cell;
-  margin: 6px 0;
-}
 .demo-table-expand {
   font-size: 0;
 }
@@ -747,8 +837,7 @@ export default {
   width: 46%;
 }
 
-.el-icon-close-detail {
-  float: right;
+.el-icon-detail {
   cursor:pointer;
 }
 
@@ -767,5 +856,61 @@ export default {
   padding: 10px;
   min-height: 405px;
 }
+.bg-purple-dark {
+  background: #99a9bf;
+}
+.bg-purple {
+  background: #d3dce6;
+}
+.bg-purple-light {
+  background: #f2f2f2;
+}
+.el-form-item-dev  >>> .el-form-item__content {
+  margin-left: 0 !important;
+}
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
+.el-form-item-dev  >>> .el-form-item__content {
+  margin-left: 0 !important;
+}
+.rtl >>> .el-drawer__body {
+  overflow-y: auto;
+  padding: 20px;
+}
+.grid-content-log-span {
+  width: 38%;
+  float: left;
+  vertical-align: middle;
+  display:table-cell;
+  margin: 6px 0 6px 10px;
+  color: #606266;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.grid-content-status-span {
+  width: 20%;
+  float: left;
+  vertical-align: middle;
+  display:table-cell;
+  margin: 6px 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.grid-content-desc-span {
+  width: 60%;
+  float: left;
+  vertical-align: middle;
+  display:table-cell;
+  margin: 6px 0 6px 10px;
+  color: #606266;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 </style>
 
