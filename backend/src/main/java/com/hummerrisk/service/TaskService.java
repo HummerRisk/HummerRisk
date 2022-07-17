@@ -406,154 +406,162 @@ public class TaskService {
     }
 
     public void reExecute(String id) throws Exception{
-        TaskItem taskItem = taskItemMapper.selectByPrimaryKey(id);
-        String ruleType = taskItem.getRuleType();
-        if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.rule.name())) {
-            String resourceId = "";
-            Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getSourceId());
-            if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.cloudAccount.getType())) {
-                resourceId = ruleService.reScan(taskItem.getSourceId(), taskItem.getAccountId());
-            } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.vulnAccount.getType())) {
-                resourceId = ruleService.reScan(taskItem.getSourceId(), taskItem.getAccountId());
-            } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.serverAccount.getType())) {
-                resourceId = serverService.rescan(taskItem.getSourceId());
-            } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
-                resourceId = imageService.reScan(taskItem.getSourceId());
-            } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.packageAccount.getType())) {
-                resourceId = packageService.reScan(taskItem.getSourceId());
+        Task task = taskMapper.selectByPrimaryKey(id);
+        TaskItemExample example = new TaskItemExample();
+        example.createCriteria().andTaskIdEqualTo(id);
+        example.setOrderByClause("task_order desc");
+        List<TaskItem> taskItems = taskItemMapper.selectByExample(example);
+        for (TaskItem taskItem : taskItems) {
+            String ruleType = taskItem.getRuleType();
+            if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.rule.name())) {
+                String resourceId = "";
+                Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getSourceId());
+                if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.cloudAccount.getType())) {
+                    resourceId = ruleService.reScan(taskItem.getSourceId(), taskItem.getAccountId());
+                } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.vulnAccount.getType())) {
+                    resourceId = ruleService.reScan(taskItem.getSourceId(), taskItem.getAccountId());
+                } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.serverAccount.getType())) {
+                    resourceId = serverService.rescan(taskItem.getSourceId());
+                } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
+                    resourceId = imageService.reScan(taskItem.getSourceId());
+                } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.packageAccount.getType())) {
+                    resourceId = packageService.reScan(taskItem.getSourceId());
+                }
+                this.updateTaskItemResource(taskItem, rule.getId(), resourceId);
+            } else if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.tag.name())) {
+                String resourceId = "";
+                List<RuleTagMapping> ruleTagMappings = this.ruleTagMappings(taskItem.getSourceId());
+                if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.cloudAccount.getType())) {
+                    for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
+                        CloudTaskExample cloudTaskExample = new CloudTaskExample();
+                        cloudTaskExample.createCriteria().andRuleIdEqualTo(ruleTagMapping.getRuleId()).andAccountIdEqualTo(taskItem.getAccountId());
+                        List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(cloudTaskExample);
+                        for (CloudTask cloudTask : cloudTasks) {
+                            Rule rule = ruleMapper.selectByPrimaryKey(cloudTask.getRuleId());
+                            resourceId = ruleService.reScan(cloudTask.getId(), cloudTask.getAccountId());
+                            if (resourceId == null) continue;
+                            this.updateTaskItemResource(taskItem, rule.getId(), resourceId);
+                        }
+                    }
+                } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.vulnAccount.getType())) {
+                    for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
+                        CloudTaskExample cloudTaskExample = new CloudTaskExample();
+                        cloudTaskExample.createCriteria().andRuleIdEqualTo(ruleTagMapping.getRuleId()).andAccountIdEqualTo(taskItem.getAccountId());
+                        List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(cloudTaskExample);
+                        for (CloudTask cloudTask : cloudTasks) {
+                            Rule rule = ruleMapper.selectByPrimaryKey(cloudTask.getRuleId());
+                            resourceId = ruleService.reScan(cloudTask.getId(), cloudTask.getAccountId());
+                            if (resourceId == null) continue;
+                            this.updateTaskItemResource(taskItem, rule.getId(), resourceId);
+                        }
+                    }
+                } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.serverAccount.getType())) {
+                    for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
+                        ServerResultExample serverResultExample = new ServerResultExample();
+                        serverResultExample.createCriteria().andRuleIdEqualTo(ruleTagMapping.getRuleId());
+                        List<ServerResult> serverResults = serverResultMapper.selectByExample(serverResultExample);
+                        for (ServerResult serverResult : serverResults) {
+                            ServerRule serverRule = serverRuleMapper.selectByPrimaryKey(serverResult.getRuleId());
+                            resourceId = serverService.rescan(serverResult.getId());
+                            if (resourceId == null) continue;
+                            this.updateTaskItemResource(taskItem, serverRule.getId(), resourceId);
+                        }
+                    }
+                } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
+                    for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
+                        ImageResultExample imageResultExample = new ImageResultExample();
+                        imageResultExample.createCriteria().andRuleIdEqualTo(ruleTagMapping.getRuleId());
+                        List<ImageResult> imageResults = imageResultMapper.selectByExample(imageResultExample);
+                        for (ImageResult imageResult : imageResults) {
+                            ImageRule imageRule = imageRuleMapper.selectByPrimaryKey(imageResult.getRuleId());
+                            resourceId = imageService.reScan(imageResult.getId());
+                            if (resourceId == null) continue;
+                            this.updateTaskItemResource(taskItem, imageRule.getId(), resourceId);
+                        }
+                    }
+                } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.packageAccount.getType())) {
+                    for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
+                        PackageResultExample packageResultExample = new PackageResultExample();
+                        packageResultExample.createCriteria().andRuleIdEqualTo(ruleTagMapping.getRuleId());
+                        List<PackageResult> packageResults = packageResultMapper.selectByExample(packageResultExample);
+                        for (PackageResult packageResult : packageResults) {
+                            PackageRule packageRule = packageRuleMapper.selectByPrimaryKey(packageResult.getRuleId());
+                            resourceId = packageService.reScan(packageResult.getId());
+                            if (resourceId == null) continue;
+                            this.updateTaskItemResource(taskItem, packageRule.getId(), resourceId);
+                        }
+                    }
+                }
+            } else if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.group.name())) {
+                String resourceId = "";
+                List<RuleGroupMapping> ruleGroupMappings = this.ruleGroupMappings(taskItem.getSourceId());
+                if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.cloudAccount.getType())) {
+                    for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
+                        CloudTaskExample cloudTaskExample = new CloudTaskExample();
+                        cloudTaskExample.createCriteria().andRuleIdEqualTo(ruleGroupMapping.getRuleId()).andAccountIdEqualTo(taskItem.getAccountId());
+                        List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(cloudTaskExample);
+                        for (CloudTask cloudTask : cloudTasks) {
+                            Rule rule = ruleMapper.selectByPrimaryKey(cloudTask.getRuleId());
+                            resourceId = ruleService.reScan(cloudTask.getId(), cloudTask.getAccountId());
+                            if (resourceId == null) continue;
+                            this.updateTaskItemResource(taskItem, rule.getId(), resourceId);
+                        }
+                    }
+                } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.vulnAccount.getType())) {
+                    for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
+                        CloudTaskExample cloudTaskExample = new CloudTaskExample();
+                        cloudTaskExample.createCriteria().andRuleIdEqualTo(ruleGroupMapping.getRuleId()).andAccountIdEqualTo(taskItem.getAccountId());
+                        List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(cloudTaskExample);
+                        for (CloudTask cloudTask : cloudTasks) {
+                            Rule rule = ruleMapper.selectByPrimaryKey(cloudTask.getRuleId());
+                            resourceId = ruleService.reScan(cloudTask.getId(), cloudTask.getAccountId());
+                            if (resourceId == null) continue;
+                            this.updateTaskItemResource(taskItem, rule.getId(), resourceId);
+                        }
+                    }
+                } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.serverAccount.getType())) {
+                    for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
+                        ServerResultExample serverResultExample = new ServerResultExample();
+                        serverResultExample.createCriteria().andRuleIdEqualTo(ruleGroupMapping.getRuleId());
+                        List<ServerResult> serverResults = serverResultMapper.selectByExample(serverResultExample);
+                        for (ServerResult serverResult : serverResults) {
+                            ServerRule serverRule = serverRuleMapper.selectByPrimaryKey(serverResult.getRuleId());
+                            resourceId = serverService.rescan(serverResult.getId());
+                            if (resourceId == null) continue;
+                            this.updateTaskItemResource(taskItem, serverRule.getId(), resourceId);
+                        }
+                    }
+                } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
+                    for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
+                        ImageResultExample imageResultExample = new ImageResultExample();
+                        imageResultExample.createCriteria().andRuleIdEqualTo(ruleGroupMapping.getRuleId());
+                        List<ImageResult> imageResults = imageResultMapper.selectByExample(imageResultExample);
+                        for (ImageResult imageResult : imageResults) {
+                            ImageRule imageRule = imageRuleMapper.selectByPrimaryKey(imageResult.getRuleId());
+                            resourceId = imageService.reScan(imageResult.getId());
+                            if (resourceId == null) continue;
+                            this.updateTaskItemResource(taskItem, imageRule.getId(), resourceId);
+                        }
+                    }
+                } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.packageAccount.getType())) {
+                    for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
+                        PackageResultExample packageResultExample = new PackageResultExample();
+                        packageResultExample.createCriteria().andRuleIdEqualTo(ruleGroupMapping.getRuleId());
+                        List<PackageResult> packageResults = packageResultMapper.selectByExample(packageResultExample);
+                        for (PackageResult packageResult : packageResults) {
+                            PackageRule packageRule = packageRuleMapper.selectByPrimaryKey(packageResult.getRuleId());
+                            resourceId = packageService.reScan(packageResult.getId());
+                            if (resourceId == null) continue;
+                            this.updateTaskItemResource(taskItem, packageRule.getId(), resourceId);
+                        }
+                    }
+                }
             }
-            this.updateTaskItemResource(taskItem, rule.getId(), resourceId);
-        } else if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.tag.name())) {
-            String resourceId = "";
-            List<RuleTagMapping> ruleTagMappings = this.ruleTagMappings(taskItem.getSourceId());
-            if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.cloudAccount.getType())) {
-                for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
-                    CloudTaskExample cloudTaskExample = new CloudTaskExample();
-                    cloudTaskExample.createCriteria().andRuleIdEqualTo(ruleTagMapping.getRuleId()).andAccountIdEqualTo(taskItem.getAccountId());
-                    List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(cloudTaskExample);
-                    for(CloudTask cloudTask : cloudTasks) {
-                        Rule rule = ruleMapper.selectByPrimaryKey(cloudTask.getRuleId());
-                        resourceId = ruleService.reScan(cloudTask.getId(), cloudTask.getAccountId());
-                        if(resourceId == null) continue;
-                        this.updateTaskItemResource(taskItem, rule.getId(), resourceId);
-                    }
-                }
-            } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.vulnAccount.getType())) {
-                for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
-                    CloudTaskExample cloudTaskExample = new CloudTaskExample();
-                    cloudTaskExample.createCriteria().andRuleIdEqualTo(ruleTagMapping.getRuleId()).andAccountIdEqualTo(taskItem.getAccountId());
-                    List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(cloudTaskExample);
-                    for(CloudTask cloudTask : cloudTasks) {
-                        Rule rule = ruleMapper.selectByPrimaryKey(cloudTask.getRuleId());
-                        resourceId = ruleService.reScan(cloudTask.getId(), cloudTask.getAccountId());
-                        if(resourceId == null) continue;
-                        this.updateTaskItemResource(taskItem, rule.getId(), resourceId);
-                    }
-                }
-            } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.serverAccount.getType())) {
-                for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
-                    ServerResultExample serverResultExample = new ServerResultExample();
-                    serverResultExample.createCriteria().andRuleIdEqualTo(ruleTagMapping.getRuleId());
-                    List<ServerResult> serverResults = serverResultMapper.selectByExample(serverResultExample);
-                    for(ServerResult serverResult : serverResults) {
-                        ServerRule serverRule = serverRuleMapper.selectByPrimaryKey(serverResult.getRuleId());
-                        resourceId = serverService.rescan(serverResult.getId());
-                        if(resourceId == null) continue;
-                        this.updateTaskItemResource(taskItem, serverRule.getId(), resourceId);
-                    }
-                }
-            } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
-                for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
-                    ImageResultExample imageResultExample = new ImageResultExample();
-                    imageResultExample.createCriteria().andRuleIdEqualTo(ruleTagMapping.getRuleId());
-                    List<ImageResult> imageResults = imageResultMapper.selectByExample(imageResultExample);
-                    for(ImageResult imageResult : imageResults) {
-                        ImageRule imageRule = imageRuleMapper.selectByPrimaryKey(imageResult.getRuleId());
-                        resourceId = imageService.reScan(imageResult.getId());
-                        if (resourceId == null) continue;
-                        this.updateTaskItemResource(taskItem, imageRule.getId(), resourceId);
-                    }
-                }
-            } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.packageAccount.getType())) {
-                for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
-                    PackageResultExample packageResultExample = new PackageResultExample();
-                    packageResultExample.createCriteria().andRuleIdEqualTo(ruleTagMapping.getRuleId());
-                    List<PackageResult> packageResults = packageResultMapper.selectByExample(packageResultExample);
-                    for(PackageResult packageResult : packageResults) {
-                        PackageRule packageRule = packageRuleMapper.selectByPrimaryKey(packageResult.getRuleId());
-                        resourceId = packageService.reScan(packageResult.getId());
-                        if (resourceId == null) continue;
-                        this.updateTaskItemResource(taskItem, packageRule.getId(), resourceId);
-                    }
-                }
-            }
-        } else if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.group.name())) {
-            String resourceId = "";
-            List<RuleGroupMapping> ruleGroupMappings = this.ruleGroupMappings(taskItem.getSourceId());
-            if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.cloudAccount.getType())) {
-                for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
-                    CloudTaskExample cloudTaskExample = new CloudTaskExample();
-                    cloudTaskExample.createCriteria().andRuleIdEqualTo(ruleGroupMapping.getRuleId()).andAccountIdEqualTo(taskItem.getAccountId());
-                    List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(cloudTaskExample);
-                    for(CloudTask cloudTask : cloudTasks) {
-                        Rule rule = ruleMapper.selectByPrimaryKey(cloudTask.getRuleId());
-                        resourceId = ruleService.reScan(cloudTask.getId(), cloudTask.getAccountId());
-                        if(resourceId == null) continue;
-                        this.updateTaskItemResource(taskItem, rule.getId(), resourceId);
-                    }
-                }
-            } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.vulnAccount.getType())) {
-                for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
-                    CloudTaskExample cloudTaskExample = new CloudTaskExample();
-                    cloudTaskExample.createCriteria().andRuleIdEqualTo(ruleGroupMapping.getRuleId()).andAccountIdEqualTo(taskItem.getAccountId());
-                    List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(cloudTaskExample);
-                    for(CloudTask cloudTask : cloudTasks) {
-                        Rule rule = ruleMapper.selectByPrimaryKey(cloudTask.getRuleId());
-                        resourceId = ruleService.reScan(cloudTask.getId(), cloudTask.getAccountId());
-                        if(resourceId == null) continue;
-                        this.updateTaskItemResource(taskItem, rule.getId(), resourceId);
-                    }
-                }
-            } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.serverAccount.getType())) {
-                for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
-                    ServerResultExample serverResultExample = new ServerResultExample();
-                    serverResultExample.createCriteria().andRuleIdEqualTo(ruleGroupMapping.getRuleId());
-                    List<ServerResult> serverResults = serverResultMapper.selectByExample(serverResultExample);
-                    for(ServerResult serverResult : serverResults) {
-                        ServerRule serverRule = serverRuleMapper.selectByPrimaryKey(serverResult.getRuleId());
-                        resourceId = serverService.rescan(serverResult.getId());
-                        if(resourceId == null) continue;
-                        this.updateTaskItemResource(taskItem, serverRule.getId(), resourceId);
-                    }
-                }
-            } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
-                for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
-                    ImageResultExample imageResultExample = new ImageResultExample();
-                    imageResultExample.createCriteria().andRuleIdEqualTo(ruleGroupMapping.getRuleId());
-                    List<ImageResult> imageResults = imageResultMapper.selectByExample(imageResultExample);
-                    for(ImageResult imageResult : imageResults) {
-                        ImageRule imageRule = imageRuleMapper.selectByPrimaryKey(imageResult.getRuleId());
-                        resourceId = imageService.reScan(imageResult.getId());
-                        if (resourceId == null) continue;
-                        this.updateTaskItemResource(taskItem, imageRule.getId(), resourceId);
-                    }
-                }
-            } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.packageAccount.getType())) {
-                for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
-                    PackageResultExample packageResultExample = new PackageResultExample();
-                    packageResultExample.createCriteria().andRuleIdEqualTo(ruleGroupMapping.getRuleId());
-                    List<PackageResult> packageResults = packageResultMapper.selectByExample(packageResultExample);
-                    for(PackageResult packageResult : packageResults) {
-                        PackageRule packageRule = packageRuleMapper.selectByPrimaryKey(packageResult.getRuleId());
-                        resourceId = packageService.reScan(packageResult.getId());
-                        if (resourceId == null) continue;
-                        this.updateTaskItemResource(taskItem, packageRule.getId(), resourceId);
-                    }
-                }
-            }
+            taskItem.setStatus(TaskConstants.TASK_STATUS.APPROVED.name());
+            taskItemMapper.updateByPrimaryKeySelective(taskItem);
         }
-        taskItem.setStatus(TaskConstants.TASK_STATUS.APPROVED.name());
-        taskItemMapper.updateByPrimaryKeySelective(taskItem);
+        task.setStatus(TaskConstants.TASK_STATUS.APPROVED.name());
+        taskMapper.updateByPrimaryKeySelective(task);
     }
 
     private String dealCloudOrVulnTask (Rule rule, AccountWithBLOBs account, Integer scanId) {

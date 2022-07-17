@@ -255,27 +255,17 @@ public class SysListener {
 
     public static ConcurrentHashMap<String, String> getMaps () throws Exception {
         try {
-//            memory();
-//            readRAM();
-//            readDisk();
-//            cpuUsage();
-//            getDiskUsage();
-//            memoryUsage();
-//            property();
-            systemGet();
+            memory();
+            readRAM();
+            readDisk();
+            cpuUsage();
+            getDiskUsage();
+            memoryUsage();
+            property();
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
         return maps;
-    }
-
-    public static void systemGet() throws UnknownHostException {
-        try {
-            Properties props = System.getProperties();
-            maps.put("system.java.library.path", "Java加载库时搜索的路径列表：    " + props.getProperty("java.library.path"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /*获取内存*/
