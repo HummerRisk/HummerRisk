@@ -26,10 +26,19 @@ public class ImageConstants {
     public final static String GRYPE = "grype ";
     public final static String SYFT = "syft ";
     public final static String SCOPE = " --scope all-layers ";
-    public final static String OUT = "-o ";
+    public final static String OUT = " -o ";
     public final static String _FILE = "--file ";
-    public final static String TXT = "result.txt";
-    public final static String TEXT = "text ";
+    public final static String GRYPE_TABLE_TXT = "grype_table.txt";
+    public final static String GRYPE_JSON_TXT = "grype_json.json";
+
     public final static String TABLE = "table ";
     public final static String JSON = "json ";
+    public final static String DISTRO = " --distro ";
+    public final static String _DISTRO = "grype:0.42.0";//固定版本
+
+    public final static String SYFT_JSON = "json=";
+    public final static String SYFT_TABLE = "table=";
+    public final static String SYFT_JSON_TXT = "syft_json.json";
+    public final static String SYFT_TABLE_TXT = "syft_table.txt";
+
 }

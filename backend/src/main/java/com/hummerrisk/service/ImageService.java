@@ -313,20 +313,18 @@ public class ImageService {
                     script = script.replace(key, jsonObject.getString("defaultValue"));
                 }
             }
-            String log = execute(image, dto, ImageConstants.GRYPE, ImageConstants.TABLE);
             String grypeTable = "", grypeJson = "", syftTable = "", syftJson = "";
+
+            String log = execute(image, ImageConstants.GRYPE, ImageConstants.TABLE);
             if (log.contains("docker login")) {
                 throw new Exception(log);
             }
-
-            execute(image, dto, ImageConstants.GRYPE, ImageConstants.TABLE);
-            grypeTable = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
-            execute(image, dto, ImageConstants.GRYPE, ImageConstants.JSON);
-            grypeJson = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
-            execute(image, dto, ImageConstants.SYFT, ImageConstants.TABLE);
-            syftTable = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
-            execute(image, dto, ImageConstants.SYFT, ImageConstants.JSON);
-            syftJson = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT);
+            grypeTable = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.GRYPE_TABLE_TXT);
+            execute(image, ImageConstants.GRYPE, ImageConstants.JSON);
+            grypeJson = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.GRYPE_JSON_TXT);
+            execute(image, ImageConstants.SYFT, "");
+            syftTable = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.SYFT_TABLE_TXT);
+            syftJson = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.SYFT_JSON_TXT);
 
             result.setReturnLog(log);
             result.setGrypeTable(grypeTable);
@@ -434,7 +432,7 @@ public class ImageService {
         imageResultMapper.deleteByExample(example);
     }
 
-    public String execute(Image image, ImageRuleDTO dto, String scanType, String outType) throws Exception {
+    public String execute(Image image, String scanType, String outType) throws Exception {
         try {
             Proxy proxy;
             String _proxy = "";
@@ -475,7 +473,19 @@ public class ImageService {
             } else {
                 fileName = ImageConstants.DEFAULT_BASE_DIR + image.getPath();
             }
-            String command = _proxy + dockerLogin + scanType + fileName + ImageConstants.SCOPE + ImageConstants.OUT + outType + ImageConstants._FILE + ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TXT;
+            String command = "";
+            if (StringUtils.equalsIgnoreCase(scanType, ImageConstants.GRYPE)) {
+                if (StringUtils.equalsIgnoreCase(outType, ImageConstants.JSON)) {
+                    command = _proxy + dockerLogin + scanType + fileName + ImageConstants.SCOPE + ImageConstants.OUT + outType + ImageConstants._FILE +
+                            ImageConstants.DEFAULT_BASE_DIR + ImageConstants.GRYPE_JSON_TXT + ImageConstants.DISTRO + ImageConstants._DISTRO;
+                } else if (StringUtils.equalsIgnoreCase(outType, ImageConstants.TABLE)) {
+                    command = _proxy + dockerLogin + scanType + fileName + ImageConstants.SCOPE + ImageConstants.OUT + outType + ImageConstants._FILE +
+                            ImageConstants.DEFAULT_BASE_DIR + ImageConstants.GRYPE_TABLE_TXT + ImageConstants.DISTRO + ImageConstants._DISTRO;
+                }
+            } else if (StringUtils.equalsIgnoreCase(scanType, ImageConstants.SYFT)) {
+                command = _proxy + dockerLogin + scanType + fileName + ImageConstants.SCOPE + ImageConstants.OUT + ImageConstants.SYFT_JSON + ImageConstants.DEFAULT_BASE_DIR + ImageConstants.SYFT_JSON_TXT +
+                        ImageConstants.OUT + ImageConstants.SYFT_TABLE + ImageConstants.DEFAULT_BASE_DIR + ImageConstants.SYFT_TABLE_TXT;
+            }
             LogUtil.info(image.getId() + " {image}[command]: " + image.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, ImageConstants.DEFAULT_BASE_DIR);
             if(resultStr.contains("ERROR")) {
