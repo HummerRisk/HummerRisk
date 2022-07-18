@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  */
 public class ProjectUtil {
 
-    private static final Set<String> noPermissionRegions = new HashSet(){{add("MOS");add("cn-north-1");}};
+    private static final Set<String> noPermissionRegions = new HashSet(){{add("MOS");}};
 
     public static List<ProjectResult> listProjects(IamClient iamClient, String userId){
         KeystoneListProjectsForUserRequest request = new KeystoneListProjectsForUserRequest().withUserId(userId);

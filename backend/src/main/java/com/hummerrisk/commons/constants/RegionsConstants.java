@@ -107,6 +107,10 @@ public class RegionsConstants {
         HuaweiMap.put("la-south-2", "拉美-圣地亚哥");
         HuaweiMap.put("sa-brazil-1", "拉美-圣保罗一");
         HuaweiMap.put("na-mexico-1", "拉美-墨西哥城一");
+        HuaweiMap.put("cn-north-9", "华南-广州-友好用户环境");
+        HuaweiMap.put("cn-south-4", "华北-乌兰察布一");
+        HuaweiMap.put("cn-south-2", "华南-深圳");
+        HuaweiMap.put("eu-west-0", "欧洲-巴黎");
         // Huawei end
 
         TencentMap = new HashMap<>();
