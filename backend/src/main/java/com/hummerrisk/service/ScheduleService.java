@@ -15,6 +15,7 @@ import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.controller.request.OrderRequest;
 import com.hummerrisk.controller.request.QueryScheduleRequest;
 import com.hummerrisk.dto.ScheduleDao;
+import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.sechedule.ScheduleManager;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.JobKey;
@@ -98,13 +99,13 @@ public class ScheduleService {
         Schedules.forEach(schedule -> {
             try {
                 if (schedule.getEnable()) {
-                    LogUtil.error("初始化任务：" + JSON.toJSONString(schedule));
+                    LogUtil.error(Translator.get("i18n_init_task") + "：" + JSON.toJSONString(schedule));
                     scheduleManager.addOrUpdateCronJob(new JobKey(schedule.getKey(), schedule.getGroup()),
                             new TriggerKey(schedule.getKey(), schedule.getGroup()), Class.forName(schedule.getJob()), schedule.getValue(),
                             scheduleManager.getDefaultJobDataMap(schedule.getResourceId(), schedule.getValue(), schedule.getUserId()));
                 }
             } catch (HRException | ClassNotFoundException | SchedulerException e) {
-                LogUtil.error("初始化任务失败", e);
+                LogUtil.error(Translator.get("i18n_init_task_error"), e);
                 e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -133,7 +134,7 @@ public class ScheduleService {
                 scheduleManager.addOrUpdateCronJob(jobKey, triggerKey, clazz, cronExpression, scheduleManager.getDefaultJobDataMap(request.getResourceId(), cronExpression, Objects.requireNonNull(SessionUtils.getUser()).getId()));
             } catch (SchedulerException e) {
                 LogUtil.error(e.getMessage(), e);
-                HRException.throwException("定时任务开启异常");
+                HRException.throwException(Translator.get("i18n_qrtz_task_start_error"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -141,7 +142,7 @@ public class ScheduleService {
             try {
                 scheduleManager.removeJob(jobKey, triggerKey);
             } catch (HRException e) {
-                HRException.throwException("定时任务关闭异常");
+                HRException.throwException(Translator.get("i18n_qrtz_task_end_error"));
             }
         }
     }

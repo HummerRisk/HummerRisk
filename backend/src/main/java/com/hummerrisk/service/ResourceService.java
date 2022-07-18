@@ -7,8 +7,8 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.hummer.quartz.service.QuartzManageService;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
-import com.hummerrisk.base.mapper.ext.ExtCloudScanHistoryMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudTaskMapper;
+import com.hummerrisk.base.mapper.ext.ExtHistoryScanMapper;
 import com.hummerrisk.base.mapper.ext.ExtResourceMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
@@ -75,11 +75,11 @@ public class ResourceService {
     @Resource @Lazy
     private ResourceItemMapper resourceItemMapper;
     @Resource @Lazy
-    private CloudScanHistoryMapper scanHistoryMapper;
+    private HistoryScanMapper historyScanMapper;
     @Resource @Lazy
-    private ExtCloudScanHistoryMapper extCloudScanHistoryMapper;
+    private ExtHistoryScanMapper extHistoryScanMapper;
     @Resource @Lazy
-    private CloudScanTaskHistoryMapper cloudScanTaskHistoryMapper;
+    private HistoryScanTaskMapper historyScanTaskMapper;
     @Resource @Lazy
     private ProxyMapper proxyMapper;
     @Resource @Lazy
@@ -621,7 +621,7 @@ public class ResourceService {
             }};
         }).collect(Collectors.toList());
         OperationLogService.log(SessionUtils.getUser(), request.getAccountIds().get(0), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "导出合规报告");
-        return ExcelExportUtils.exportExcelData("不合规资源检测报告", request.getColumns().stream().map(ExcelExportRequest.Column::getValue).collect(Collectors.toList()), data);
+        return ExcelExportUtils.exportExcelData(Translator.get("i18n_scan_resource"), request.getColumns().stream().map(ExcelExportRequest.Column::getValue).collect(Collectors.toList()), data);
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
@@ -631,18 +631,18 @@ public class ResourceService {
         List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(example);
         cloudTasks.forEach(task -> {
             cloudTaskService.deleteManualTask(task.getId());
-            CloudScanTaskHistoryExample scanTaskHistoryExample = new CloudScanTaskHistoryExample();
-            scanTaskHistoryExample.createCriteria().andTaskIdEqualTo(task.getId());
-            cloudScanTaskHistoryMapper.deleteByExample(scanTaskHistoryExample);
+            HistoryScanTaskExample historyScanTaskExample = new HistoryScanTaskExample();
+            historyScanTaskExample.createCriteria().andTaskIdEqualTo(task.getId());
+            historyScanTaskMapper.deleteByExample(historyScanTaskExample);
         });
         long current = System.currentTimeMillis();
         long zero = current/(1000*3600*24)*(1000*3600*24) - TimeZone.getDefault().getRawOffset();//当天00点
 
-        CloudScanHistoryExample scanHistoryExample = new CloudScanHistoryExample();
-        example.createCriteria().andAccountIdEqualTo(accountId).andCreateTimeEqualTo(zero);
-        List<CloudScanHistory> list = scanHistoryMapper.selectByExample(scanHistoryExample);
+        HistoryScanExample historyScanExample = new HistoryScanExample();
+        historyScanExample.createCriteria().andAccountIdEqualTo(accountId).andCreateTimeEqualTo(zero);
+        List<HistoryScan> list = historyScanMapper.selectByExample(historyScanExample);
 
-        CloudScanHistory history = new CloudScanHistory();
+        HistoryScan history = new HistoryScan();
         history.setResourcesSum(0L);
         history.setReturnSum(0L);
         history.setScanScore(100);
@@ -650,11 +650,11 @@ public class ResourceService {
         if (!list.isEmpty()) {
             int id = list.get(0).getId();
             history.setId(id);
-            extCloudScanHistoryMapper.updateByExampleSelective(history);
+            extHistoryScanMapper.updateByExampleSelective(history);
         } else {
             history.setAccountId(accountId);
             history.setCreateTime(zero);
-            scanHistoryMapper.insertSelective(history);
+            historyScanMapper.insertSelective(history);
         }
 
         CloudAccountQuartzTaskRelationExample quartzTaskRelationExample = new CloudAccountQuartzTaskRelationExample();
@@ -674,7 +674,7 @@ public class ResourceService {
             quartzTaskMapper.deleteByPrimaryKey(quartzTaskRelation.getQuartzTaskId());
         }
 
-        OperationLogService.log(SessionUtils.getUser(), accountId, "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.DELETE, "删除检测结果");
+        OperationLogService.log(SessionUtils.getUser(), accountId, "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.DELETE, "i18n_delete_scan_resource");
 
     }
 

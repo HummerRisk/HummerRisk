@@ -2,11 +2,14 @@ package com.hummerrisk.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.domain.Package;
+import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtTaskMapper;
-import com.hummerrisk.commons.constants.*;
+import com.hummerrisk.commons.constants.ResourceOperation;
+import com.hummerrisk.commons.constants.ResourceTypeConstants;
+import com.hummerrisk.commons.constants.TaskConstants;
+import com.hummerrisk.commons.constants.TaskEnum;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.task.*;
@@ -15,7 +18,6 @@ import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;

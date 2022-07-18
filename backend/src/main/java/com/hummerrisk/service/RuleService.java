@@ -77,7 +77,7 @@ public class RuleService {
     @Resource @Lazy
     private OrderService orderService;
     @Resource @Lazy
-    private CloudScanHistoryMapper scanHistoryMapper;
+    private HistoryScanMapper historyScanMapper;
     @Resource @Lazy
     private ExtRuleGroupMapper extRuleGroupMapper;
     @Resource @Lazy
@@ -136,7 +136,7 @@ public class RuleService {
             saveRuleInspectionReportMapping(ruleRequest.getId(), ruleRequest.getInspectionSeports());
             saveRuleType(ruleRequest);
 
-            OperationLogService.log(SessionUtils.getUser(), ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.CREATE, "创建规则");
+            OperationLogService.log(SessionUtils.getUser(), ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.CREATE, "i18n_create_rule");
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
@@ -247,7 +247,7 @@ public class RuleService {
             if (!flag) {
                 HRException.throwException(Translator.get("i18n_compliance_rule_code_error"));
             }
-            OperationLogService.log(SessionUtils.getUser(), ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.CREATE, "复制规则");
+            OperationLogService.log(SessionUtils.getUser(), ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.CREATE, "i18n_copy_rule");
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
@@ -324,7 +324,7 @@ public class RuleService {
             ruleTypeMapper.deleteByExample(ruleTypeExample);
             deleteRuleInspectionReportMapping(id);
             deleteRuleGroupMapping(id);
-            OperationLogService.log(SessionUtils.getUser(), id, rule.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.DELETE, "删除规则");
+            OperationLogService.log(SessionUtils.getUser(), id, rule.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.DELETE, "i18n_delete_rule");
         } else {
             HRException.throwException(Translator.get("i18n_compliance_rule_useage_error"));
         }
@@ -501,7 +501,7 @@ public class RuleService {
         example.createCriteria().andTagKeyEqualTo(tagkey);
         List<RuleTagMapping> list = ruleTagMappingMapper.selectByExample(example);
         if (!list.isEmpty()) HRException.throwException(Translator.get("i18n_not_allowed"));
-        OperationLogService.log(SessionUtils.getUser(), tagkey, tagkey, ResourceTypeConstants.RULE_TAG.name(), ResourceOperation.DELETE, "删除规则标签");
+        OperationLogService.log(SessionUtils.getUser(), tagkey, tagkey, ResourceTypeConstants.RULE_TAG.name(), ResourceOperation.DELETE, "i18n_delete_rule_tag");
         return ruleTagMapper.deleteByPrimaryKey(tagkey);
     }
 
@@ -650,9 +650,9 @@ public class RuleService {
                     long current = System.currentTimeMillis();
                     long zero = current / (1000 * 3600 * 24) * (1000 * 3600 * 24) - TimeZone.getDefault().getRawOffset();//当天00点
 
-                    CloudScanHistoryExample example = new CloudScanHistoryExample();
+                    HistoryScanExample example = new HistoryScanExample();
                     example.createCriteria().andAccountIdEqualTo(account.getId()).andCreateTimeEqualTo(zero);
-                    List<CloudScanHistory> list = scanHistoryMapper.selectByExample(example);
+                    List<HistoryScan> list = historyScanMapper.selectByExample(example);
                     if (!list.isEmpty()) {
                         orderService.insertScanHistory(account);
                     } else {

@@ -126,7 +126,7 @@ public class ProwlerService {
             }
         }
         //向首页活动添加操作信息
-        OperationLogService.log(SessionUtils.getUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.CREATE, "创建检测任务");
+        OperationLogService.log(SessionUtils.getUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.CREATE, "i18n_create_scan_task");
         return cloudTask;
     }
 
@@ -304,11 +304,11 @@ public class ProwlerService {
                     read.close();
 
                 } else {
-                    LogUtil.error("找不到指定的文件");
-                    throw new Exception("找不到指定的文件");
+                    LogUtil.error(Translator.get("i18n_not_found_file"));
+                    throw new Exception(Translator.get("i18n_not_found_file"));
                 }
             } catch (Exception error) {
-                LogUtil.error(error.getMessage(), "读取文件内容出错");
+                LogUtil.error(error.getMessage(), Translator.get("i18n_read_file_error"));
                 throw new Exception(error.getMessage());
             }
 

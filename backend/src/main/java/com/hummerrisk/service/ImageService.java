@@ -19,7 +19,6 @@ import com.hummerrisk.dto.ImageDTO;
 import com.hummerrisk.dto.ImageResultDTO;
 import com.hummerrisk.dto.ImageResultWithBLOBsDTO;
 import com.hummerrisk.dto.ImageRuleDTO;
-import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -25,6 +25,10 @@ public class TranslatorKeys {
                     "i18n_package_messageorder",
                     "i18n_image_messageorder",
                     "i18n_start_msg",
+                    "i18n_ex_rule_not_exist",
+                    "i18n_cloud_account",
+                    "i18n_bug_fix",
+                    "i18n_more_resource",
                     "i18n_end_msg"
             ));
 

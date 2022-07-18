@@ -8,7 +8,7 @@ import com.hummerrisk.base.mapper.ext.ExtVulnMapper;
 import com.hummerrisk.commons.utils.ChartData;
 import com.hummerrisk.commons.utils.DashboardTarget;
 import com.hummerrisk.controller.request.dashboard.TaskCalendarVo;
-import com.hummerrisk.dto.CloudScanHistoryDTO;
+import com.hummerrisk.dto.HistoryScanDTO;
 import com.hummerrisk.dto.ImageChartDTO;
 import com.hummerrisk.dto.PackageChartDTO;
 import com.hummerrisk.dto.TopInfoDTO;
@@ -65,17 +65,17 @@ public class DashboardService {
         return extVulnMapper.target(params);
     }
 
-    public List<CloudScanHistoryDTO> history(Map<String, Object> params) {
-        List<CloudScanHistoryDTO> historyList = extVulnMapper.history(params);
-        for (CloudScanHistoryDTO scanHistory : historyList) {
+    public List<HistoryScanDTO> history(Map<String, Object> params) {
+        List<HistoryScanDTO> historyList = extVulnMapper.history(params);
+        for (HistoryScanDTO scanHistory : historyList) {
             scanHistory.setOutput(toJSONString2(scanHistory.getOutput()!=null?scanHistory.getOutput():"[]"));
         }
         return historyList;
     }
 
-    public List<CloudScanHistoryDTO> vulnHistory(Map<String, Object> params) {
-        List<CloudScanHistoryDTO> historyList = extVulnMapper.vulnHistory(params);
-        for (CloudScanHistoryDTO scanHistory : historyList) {
+    public List<HistoryScanDTO> vulnHistory(Map<String, Object> params) {
+        List<HistoryScanDTO> historyList = extVulnMapper.vulnHistory(params);
+        for (HistoryScanDTO scanHistory : historyList) {
             scanHistory.setOutput(toJSONString2(scanHistory.getOutput()!=null?scanHistory.getOutput():"[]"));
         }
         return historyList;

@@ -14,7 +14,6 @@ import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.constants.ScanTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
-import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.dto.CloudTaskCopyDTO;
 import com.hummerrisk.dto.CloudTaskDTO;
 import com.hummerrisk.dto.CloudTaskItemLogDTO;
@@ -70,9 +69,9 @@ public class OrderService {
     @Resource @Lazy
     private ExtResourceMapper extResourceMapper;
     @Resource @Lazy
-    private CloudScanHistoryMapper scanHistoryMapper;
+    private HistoryScanMapper historyScanMapper;
     @Resource @Lazy
-    private CloudScanTaskHistoryMapper scanTaskHistoryMapper;
+    private HistoryScanTaskMapper historyScanTaskMapper;
     @Resource @Lazy
     private NoticeService noticeService;
     @Resource @Lazy
@@ -179,7 +178,7 @@ public class OrderService {
             }
         }
         //向首页活动添加操作信息
-        OperationLogService.log(SessionUtils.getUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.CREATE, "创建检测任务");
+        OperationLogService.log(SessionUtils.getUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.CREATE, "i18n_create_scan_task");
         return cloudTask;
     }
 
@@ -594,20 +593,20 @@ public class OrderService {
         long current = System.currentTimeMillis();
         long zero = current/(1000*3600*24)*(1000*3600*24) - TimeZone.getDefault().getRawOffset();//当天00点
 
-        CloudScanHistoryExample example = new CloudScanHistoryExample();
+        HistoryScanExample example = new HistoryScanExample();
         example.createCriteria().andAccountIdEqualTo(account.getId()).andCreateTimeEqualTo(zero);
-        List<CloudScanHistory> list = scanHistoryMapper.selectByExample(example);
-        CloudScanHistory history = new CloudScanHistory();
+        List<HistoryScan> list = historyScanMapper.selectByExample(example);
+        HistoryScan history = new HistoryScan();
         if (!list.isEmpty()) {
             int id = list.get(0).getId();
             if (list.size() > 1) {
-                list.stream().filter(item -> !StringUtils.equals(item.getId().toString(), String.valueOf(id))).forEach(item -> scanHistoryMapper.deleteByPrimaryKey(item.getId()));
+                list.stream().filter(item -> !StringUtils.equals(item.getId().toString(), String.valueOf(id))).forEach(item -> historyScanMapper.deleteByPrimaryKey(item.getId()));
             }
-            CloudScanTaskHistoryExample scanTaskHistoryExample = new CloudScanTaskHistoryExample();
-            scanTaskHistoryExample.createCriteria().andIdEqualTo(id);
-            List<CloudScanTaskHistory> scanTaskHistories = scanTaskHistoryMapper.selectByExampleWithBLOBs(scanTaskHistoryExample);
+            HistoryScanTaskExample historyScanTaskExample = new HistoryScanTaskExample();
+            historyScanTaskExample.createCriteria().andIdEqualTo(id);
+            List<HistoryScanTask> historyScanTasks = historyScanTaskMapper.selectByExampleWithBLOBs(historyScanTaskExample);
             JSONArray jsonArray = new JSONArray();
-            scanTaskHistories.forEach(item ->{
+            historyScanTasks.forEach(item ->{
                 if(item.getOutput()!=null) jsonArray.addAll(JSON.parseArray(item.getOutput()));
             });
             history.setOutput(jsonArray.toJSONString());
@@ -615,32 +614,32 @@ public class OrderService {
             history.setResourcesSum(Long.valueOf(extResourceMapper.sumResourcesSum(account.getId())));
             history.setReturnSum(Long.valueOf(extResourceMapper.sumReturnSum(account.getId())));
             history.setScanScore(calculateScore(accountMapper.selectByPrimaryKey(account.getId()), null));
-            scanHistoryMapper.updateByPrimaryKeySelective(history);
+            historyScanMapper.updateByPrimaryKeySelective(history);
             return id;
         }
 
         history.setOperator("System");
         history.setAccountId(account.getId());
         history.setCreateTime(zero);
-        return scanHistoryMapper.insertSelective(history);
+        return historyScanMapper.insertSelective(history);
     }
 
     public void insertTaskHistory (CloudTask cloudTask, Integer scanId) throws Exception {
-        CloudScanTaskHistoryExample example = new CloudScanTaskHistoryExample();
+        HistoryScanTaskExample example = new HistoryScanTaskExample();
         example.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andScanIdEqualTo(scanId);
-        List<CloudScanTaskHistory> list = scanTaskHistoryMapper.selectByExample(example);
+        List<HistoryScanTask> list = historyScanTaskMapper.selectByExample(example);
         if (list.size() > 0) {
             updateTaskHistory(cloudTask, example);
         } else {
-            CloudScanTaskHistory history = new CloudScanTaskHistory();
+            HistoryScanTask history = new HistoryScanTask();
             history.setScanId(scanId);
             history.setTaskId(cloudTask.getId());
-            history.setOperation("新增历史合规检测");
-            scanTaskHistoryMapper.insertSelective(history);
+            history.setOperation("i18n_create_scan_history");
+            historyScanTaskMapper.insertSelective(history);
         }
     }
 
-    public void updateTaskHistory (CloudTask cloudTask, CloudScanTaskHistoryExample example) throws Exception {
+    public void updateTaskHistory (CloudTask cloudTask, HistoryScanTaskExample example) throws Exception {
         try{
             CloudTaskItemResourceExample cloudTaskItemResourceExample = new CloudTaskItemResourceExample();
             cloudTaskItemResourceExample.createCriteria().andTaskIdEqualTo(cloudTask.getId());
@@ -662,13 +661,13 @@ public class OrderService {
                     }
                 }
             });
-            CloudScanTaskHistory history = new CloudScanTaskHistory();
+            HistoryScanTask history = new HistoryScanTask();
             history.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
             history.setReturnSum(cloudTask.getReturnSum()!=null? cloudTask.getReturnSum():0);
             history.setScanScore(calculateScore(accountMapper.selectByPrimaryKey(cloudTask.getAccountId()), cloudTask));
-            history.setOperation("修改历史合规检测");
+            history.setOperation("i18n_update_scan_history");
             history.setOutput(jsonArray.toJSONString());
-            scanTaskHistoryMapper.updateByExampleSelective(history, example);
+            historyScanTaskMapper.updateByExampleSelective(history, example);
         }catch (Exception e){
             throw new Exception(e.getMessage());
         }
@@ -715,7 +714,7 @@ public class OrderService {
                     quartzTaskRelaLog.setSourceId(quartzTaskRelation.getSourceId());
                     quartzTaskRelaLog.setQzType(quartzTaskRelation.getQzType());
                     quartzTaskRelaLog.setOperator("System");
-                    quartzTaskRelaLog.setOperation("执行定时任务");
+                    quartzTaskRelaLog.setOperation("i18n_exec_qrtz_task");
                     quartzTaskRelaLogMapper.insertSelective(quartzTaskRelaLog);
                 }
 

@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.hummer.quartz.anno.QuartzScheduled;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
-import com.hummerrisk.base.mapper.ext.ExtCloudScanHistoryMapper;
+import com.hummerrisk.base.mapper.ext.ExtHistoryScanMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.resource.ResourceRequest;
@@ -47,7 +47,7 @@ public class ResourceCreateService {
     @Resource
     private OrderService orderService;
     @Resource
-    private ExtCloudScanHistoryMapper extCloudScanHistoryMapper;
+    private ExtHistoryScanMapper extHistoryScanMapper;
     @Resource
     private ProxyMapper proxyMapper;
     @Resource
@@ -55,7 +55,7 @@ public class ResourceCreateService {
     @Resource
     private ProwlerService prowlerService;
     @Resource
-    private CloudScanTaskHistoryMapper scanTaskHistoryMapper;
+    private HistoryScanTaskMapper historyScanTaskMapper;
     @Resource
     private XrayService xrayService;
     @Resource
@@ -322,21 +322,21 @@ public class ResourceCreateService {
             orderService.updateTaskStatus(taskId, null, taskStatus);
 
             if (PlatformUtils.isSupportCloudAccount(cloudTask.getPluginId())) {
-                CloudScanTaskHistoryExample example = new CloudScanTaskHistoryExample();
-                CloudScanTaskHistoryExample.Criteria criteria = example.createCriteria();
+                HistoryScanTaskExample example = new HistoryScanTaskExample();
+                HistoryScanTaskExample.Criteria criteria = example.createCriteria();
                 criteria.andTaskIdEqualTo(cloudTask.getId());
                 example.setOrderByClause("id desc");
-                CloudScanTaskHistory scanTaskHistory = scanTaskHistoryMapper.selectByExampleWithBLOBs(example).get(0);
+                HistoryScanTask historyScanTask = historyScanTaskMapper.selectByExampleWithBLOBs(example).get(0);
 
-                criteria.andScanIdEqualTo(scanTaskHistory.getScanId()).andIdEqualTo(scanTaskHistory.getId());
+                criteria.andScanIdEqualTo(historyScanTask.getScanId()).andIdEqualTo(historyScanTask.getId());
                 orderService.updateTaskHistory(cloudTask, example);
             }
         } catch (Exception e) {
             orderService.updateTaskStatus(taskId, null, CloudTaskConstants.TASK_STATUS.ERROR.name());
             LogUtil.error("handleTask, taskId: " + taskId, e);
         }
-        CloudScanTaskHistoryExample example = new CloudScanTaskHistoryExample();
-        example.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andScanIdEqualTo(extCloudScanHistoryMapper.getScanId(cloudTask.getAccountId()));
+        HistoryScanTaskExample example = new HistoryScanTaskExample();
+        example.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andScanIdEqualTo(extHistoryScanMapper.getScanId(cloudTask.getAccountId()));
         orderService.updateTaskHistory(cloudTask, example);
     }
 

@@ -2,6 +2,7 @@ package com.hummerrisk.service;
 
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.commons.utils.SigarUtil;
+import com.hummerrisk.i18n.Translator;
 import org.hyperic.sigar.*;
 import org.springframework.stereotype.Service;
 
@@ -570,7 +571,7 @@ public class SysListener {
                 return changeG + "GB";
             }
         }
-        return "暂无数据";
+        return Translator.get("i18n_no_data");
     }
 }
 

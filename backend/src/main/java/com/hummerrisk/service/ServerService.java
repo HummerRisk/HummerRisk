@@ -131,7 +131,7 @@ public class ServerService {
                     serverResultMapper.insertSelective(result);
 
                     saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
-                    OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "开始虚拟机检测");
+                    OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_start_server_result");
                 }
             }
         return true;
@@ -242,14 +242,14 @@ public class ServerService {
         serverGroup.setCreator(SessionUtils.getUserId());
         serverGroup.setCreateTime(System.currentTimeMillis());
         serverGroup.setUpdateTime(System.currentTimeMillis());
-        OperationLogService.log(SessionUtils.getUser(), serverGroup.getId(), serverGroup.getId(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "创建虚拟机分组");
+        OperationLogService.log(SessionUtils.getUser(), serverGroup.getId(), serverGroup.getId(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_create_server_group");
 
         return serverGroupMapper.insertSelective(serverGroup);
     }
 
     public int editServerGroup(ServerGroup serverGroup) {
         serverGroup.setUpdateTime(System.currentTimeMillis());
-        OperationLogService.log(SessionUtils.getUser(), serverGroup.getId(), serverGroup.getId(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "更新虚拟机分组");
+        OperationLogService.log(SessionUtils.getUser(), serverGroup.getId(), serverGroup.getId(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "i18n_update_server_group");
         return serverGroupMapper.updateByPrimaryKeySelective(serverGroup);
     }
 
@@ -263,7 +263,7 @@ public class ServerService {
         } else {
             serverGroupMapper.deleteByPrimaryKey(serverGroup.getId());
         }
-        OperationLogService.log(SessionUtils.getUser(), serverGroup.getId(), serverGroup.getId(), ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "删除虚拟机分组");
+        OperationLogService.log(SessionUtils.getUser(), serverGroup.getId(), serverGroup.getId(), ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server_group");
 
     }
 
@@ -282,7 +282,7 @@ public class ServerService {
                         CloudAccountConstants.Status.VALID.name():
                         CloudAccountConstants.Status.INVALID.name());
 
-        OperationLogService.log(SessionUtils.getUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "创建虚拟机");
+        OperationLogService.log(SessionUtils.getUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_create_server");
         return serverMapper.insertSelective(server);
     }
 
@@ -297,13 +297,13 @@ public class ServerService {
                         CloudAccountConstants.Status.VALID.name():
                         CloudAccountConstants.Status.INVALID.name());
 
-        OperationLogService.log(SessionUtils.getUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "更新虚拟机");
+        OperationLogService.log(SessionUtils.getUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "i18n_update_server");
         return serverMapper.updateByPrimaryKeySelective(server);
     }
 
     public void deleteServer(String id) throws Exception {
         serverMapper.deleteByPrimaryKey(id);
-        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "删除虚拟机");
+        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server");
     }
 
     public boolean login(Server server, Proxy proxy) throws Exception {

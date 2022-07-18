@@ -186,7 +186,7 @@
             IFNULL( sum( t1.return_sum ), 0 ) AS yAxis,
             IFNULL( sum( t1.resources_sum ), 0 ) AS yAxis2,
             t.name AS groupName,
-            IFNULL( (SELECT scan_score FROM cloud_scan_history tt WHERE tt.account_id = t.id ORDER BY tt.create_time DESC limit 1), 100) AS xAxis
+            IFNULL( (SELECT scan_score FROM history_scan tt WHERE tt.account_id = t.id ORDER BY tt.create_time DESC limit 1), 100) AS xAxis
         FROM
             cloud_account t
             LEFT JOIN resource t1 ON t1.account_id = t.id
@@ -207,7 +207,7 @@
         IFNULL( sum( t1.return_sum ), 0 ) AS yAxis,
         IFNULL( sum( t1.resources_sum ), 0 ) AS yAxis2,
         t.name AS groupName,
-        IFNULL( (SELECT scan_score FROM cloud_scan_history tt WHERE tt.account_id = t.id ORDER BY tt.create_time DESC limit 1), 100) AS xAxis
+        IFNULL( (SELECT scan_score FROM history_scan tt WHERE tt.account_id = t.id ORDER BY tt.create_time DESC limit 1), 100) AS xAxis
         FROM
         cloud_account t
         LEFT JOIN resource t1 ON t1.account_id = t.id
@@ -292,7 +292,7 @@
             AND t2.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
     </select>
 
-    <select id="history" resultType="com.hummerrisk.dto.CloudScanHistoryDTO">
+    <select id="history" resultType="com.hummerrisk.dto.HistoryScanDTO">
         SELECT
             t.id,
             t.account_id as accountId,
@@ -307,7 +307,7 @@
             t1.plugin_name as pluginName,
             t1.plugin_icon as pluginIcon
         FROM
-        cloud_scan_history t
+        history_scan t
             LEFT JOIN cloud_account t1 ON t.account_id = t1.id
         <where>
             <if test="accountId != null">
@@ -322,7 +322,7 @@
             t.create_time DESC
     </select>
 
-    <select id="vulnHistory" resultType="com.hummerrisk.dto.CloudScanHistoryDTO">
+    <select id="vulnHistory" resultType="com.hummerrisk.dto.HistoryScanDTO">
         SELECT
         t.id,
         t.account_id as accountId,
@@ -337,7 +337,7 @@
         t1.plugin_name as pluginName,
         t1.plugin_icon as pluginIcon
         FROM
-        cloud_scan_history t
+        history_scan t
         LEFT JOIN cloud_account t1 ON t.account_id = t1.id
         <where>
             <if test="accountId != null">

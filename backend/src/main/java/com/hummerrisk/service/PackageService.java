@@ -18,7 +18,6 @@ import com.hummerrisk.dto.PackageDTO;
 import com.hummerrisk.dto.PackageResultDTO;
 import com.hummerrisk.dto.PackageResultWithBLOBsDTO;
 import com.hummerrisk.dto.PackageRuleDTO;
-import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,7 +75,7 @@ public class PackageService {
         p.setUpdateTime(System.currentTimeMillis());
         p.setStatus("VALID");
 
-        OperationLogService.log(SessionUtils.getUser(), p.getId(), p.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "创建软件包");
+        OperationLogService.log(SessionUtils.getUser(), p.getId(), p.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "i18n_create_package");
         packageMapper.insertSelective(p);
         return p;
     }
@@ -85,14 +84,14 @@ public class PackageService {
         p.setUpdateTime(System.currentTimeMillis());
         p.setStatus("VALID");
 
-        OperationLogService.log(SessionUtils.getUser(), p.getId(), p.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.UPDATE, "更新软件包");
+        OperationLogService.log(SessionUtils.getUser(), p.getId(), p.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.UPDATE, "i18n_update_package");
         packageMapper.updateByPrimaryKeySelective(p);
         return p;
     }
 
     public void deletePackage(String id) throws Exception {
         packageMapper.deleteByPrimaryKey(id);
-        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.PACKAGE.name(), ResourceOperation.DELETE, "删除软件包");
+        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.PACKAGE.name(), ResourceOperation.DELETE, "i18n_delete_package");
     }
 
     public Package uploadImg(MultipartFile file, Package request) throws Exception {
@@ -101,7 +100,7 @@ public class PackageService {
         request.setUpdateTime(System.currentTimeMillis());
         request.setStatus("VALID");
         packageMapper.updateByPrimaryKeySelective(request);
-        OperationLogService.log(SessionUtils.getUser(), request.getId(), request.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.UPLOAD, "上传软件包图片");
+        OperationLogService.log(SessionUtils.getUser(), request.getId(), request.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.UPLOAD, "i18n_upload_package_img");
         return request;
     }
 
@@ -113,7 +112,7 @@ public class PackageService {
         request.setStatus("VALID");
         request.setSize(changeFlowFormat(file.getSize()));
         packageMapper.updateByPrimaryKeySelective(request);
-        OperationLogService.log(SessionUtils.getUser(), request.getId(), request.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.UPLOAD, "上传软件包");
+        OperationLogService.log(SessionUtils.getUser(), request.getId(), request.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.UPLOAD, "i18n_upload_package");
         return request;
     }
 
@@ -189,7 +188,7 @@ public class PackageService {
                 return changeG + "GB";
             }
         }
-        return "暂无数据";
+        return "i18n_no_data";
     }
 
     public List<PackageRuleDTO> ruleList(PackageRuleRequest request) {
@@ -202,7 +201,7 @@ public class PackageService {
         record.setId(UUIDUtil.newUUID());
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
-        OperationLogService.log(SessionUtils.getUser(), record.getId(), record.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "创建软件包规则");
+        OperationLogService.log(SessionUtils.getUser(), record.getId(), record.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "i18n_create_package_rule");
         return packageRuleMapper.insertSelective(record);
     }
 
@@ -235,14 +234,14 @@ public class PackageService {
         BeanUtils.copyBean(record, request);
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
-        OperationLogService.log(SessionUtils.getUser(), record.getId(), record.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.UPDATE, "修改软件包规则");
+        OperationLogService.log(SessionUtils.getUser(), record.getId(), record.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.UPDATE, "i18n_update_package_rule");
         return packageRuleMapper.updateByPrimaryKeySelective(record);
     }
 
     public void deletePackageRule(String id) throws Exception {
         deleteRuleTag(null, id);
         packageRuleMapper.deleteByPrimaryKey(id);
-        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.PACKAGE.name(), ResourceOperation.DELETE, "删除软件包规则");
+        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.PACKAGE.name(), ResourceOperation.DELETE, "i18n_delete_package_rule");
     }
 
     public int changeStatus(PackageRule rule) throws Exception {
@@ -272,7 +271,7 @@ public class PackageService {
                 packageResultMapper.insertSelective(result);
 
                 savePackageResultLog(result.getId(), "i18n_start_package_result", "", true);
-                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "开始软件包检测");
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "i18n_start_package_result");
             }
         }
     }
@@ -366,7 +365,7 @@ public class PackageService {
 
         savePackageResultLog(result.getId(), "i18n_restart_package_result", "", true);
 
-        OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "重新开始软件包检测");
+        OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "i18n_restart_package_result");
 
         return result.getId();
     }

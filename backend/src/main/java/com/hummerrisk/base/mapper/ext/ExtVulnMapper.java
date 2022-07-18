@@ -3,7 +3,7 @@ package com.hummerrisk.base.mapper.ext;
 
 import com.hummerrisk.commons.utils.ChartData;
 import com.hummerrisk.commons.utils.DashboardTarget;
-import com.hummerrisk.dto.CloudScanHistoryDTO;
+import com.hummerrisk.dto.HistoryScanDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -33,8 +33,8 @@ public interface ExtVulnMapper {
 
     List<DashboardTarget> target(Map<String, Object> params);
 
-    List<CloudScanHistoryDTO> history(Map<String, Object> params);
+    List<HistoryScanDTO> history(Map<String, Object> params);
 
-    List<CloudScanHistoryDTO> vulnHistory(Map<String, Object> params);
+    List<HistoryScanDTO> vulnHistory(Map<String, Object> params);
 
 }

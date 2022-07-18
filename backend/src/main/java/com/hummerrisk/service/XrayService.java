@@ -11,7 +11,6 @@ import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.dto.QuartzTaskDTO;
-import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.proxy.xray.XrayCredential;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
