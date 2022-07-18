@@ -4,6 +4,8 @@ public class TopInfoDTO {
 
     private String users;
 
+    private String tasks;
+
     private String accounts;
 
     private String cloudAccounts;
@@ -46,6 +48,14 @@ public class TopInfoDTO {
 
     public void setUsers(String users) {
         this.users = users;
+    }
+
+    public String getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(String tasks) {
+        this.tasks = tasks;
     }
 
     public String getAccounts() {

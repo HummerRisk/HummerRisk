@@ -494,6 +494,7 @@ export default {
     scan_types: 'Detection type',
     scan_account: 'Check account',
     safe_score_all: 'Safety detection score',
+    comfirm_task: 'Would you like to jump to the detection task interface?',
   },
   rule: {
     rule:'Scan Rule',

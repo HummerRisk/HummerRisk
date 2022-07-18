@@ -7,6 +7,7 @@ import com.hummerrisk.base.mapper.ext.ExtDashboardMapper;
 import com.hummerrisk.base.mapper.ext.ExtVulnMapper;
 import com.hummerrisk.commons.utils.ChartData;
 import com.hummerrisk.commons.utils.DashboardTarget;
+import com.hummerrisk.controller.request.dashboard.TaskCalendarVo;
 import com.hummerrisk.dto.CloudScanHistoryDTO;
 import com.hummerrisk.dto.ImageChartDTO;
 import com.hummerrisk.dto.PackageChartDTO;
@@ -107,6 +108,10 @@ public class DashboardService {
         imageChartDTO.setxAxis(xAxis);
         imageChartDTO.setyAxis(yAxis);
         return imageChartDTO;
+    }
+
+    public List<TaskCalendarVo> taskCalendar() {
+        return extDashboardMapper.taskCalendar();
     }
 
 }

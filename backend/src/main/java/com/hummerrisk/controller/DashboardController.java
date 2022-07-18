@@ -7,6 +7,7 @@ import com.hummerrisk.commons.utils.DashboardTarget;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
+import com.hummerrisk.controller.request.dashboard.TaskCalendarVo;
 import com.hummerrisk.dto.CloudScanHistoryDTO;
 import com.hummerrisk.dto.ImageChartDTO;
 import com.hummerrisk.dto.PackageChartDTO;
@@ -92,6 +93,12 @@ public class DashboardController {
     @PostMapping("imageChart")
     public ImageChartDTO imageChart(@RequestBody Map<String, Object> params) {
         return dashboardService.imageChart(params);
+    }
+
+    @ApiOperation(value = "首页任务日历")
+    @GetMapping("taskCalendar")
+    public List<TaskCalendarVo> taskCalendar() {
+        return dashboardService.taskCalendar();
     }
 
 }

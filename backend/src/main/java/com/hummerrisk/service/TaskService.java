@@ -401,6 +401,7 @@ public class TaskService {
             taskItem.setStatus(TaskConstants.TASK_STATUS.APPROVED.name());
             taskItemMapper.updateByPrimaryKeySelective(taskItem);
         }
+        task.setLastFireTime(System.currentTimeMillis());
         task.setStatus(TaskConstants.TASK_STATUS.APPROVED.name());
         taskMapper.updateByPrimaryKeySelective(task);
     }
@@ -560,6 +561,7 @@ public class TaskService {
             taskItem.setStatus(TaskConstants.TASK_STATUS.APPROVED.name());
             taskItemMapper.updateByPrimaryKeySelective(taskItem);
         }
+        task.setLastFireTime(System.currentTimeMillis());
         task.setStatus(TaskConstants.TASK_STATUS.APPROVED.name());
         taskMapper.updateByPrimaryKeySelective(task);
     }

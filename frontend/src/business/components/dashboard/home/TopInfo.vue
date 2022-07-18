@@ -39,7 +39,7 @@
     <el-col :span="4">
       <el-card shadow="always" class="hr-card-index-5">
         <span class="hr-card-data">
-          <span class="hr-card-data-digital">{{ '0' }}</span>
+          <span class="hr-card-data-digital">{{ topInfo.tasks }}</span>
           <span class="hr-card-data-unit"> {{ 'Tasks' }}</span>
         </span>
         <span class="hr-card-desc">{{ $t('dashboard.tasks') }}</span>

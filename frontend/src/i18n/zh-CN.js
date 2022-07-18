@@ -494,6 +494,7 @@ export default {
     scan_types: '检测类型',
     scan_account: '检测账号',
     safe_score_all: '安全检测评分',
+    comfirm_task: '是否跳转到检测任务界面?',
   },
   rule: {
     rule: '检测规则',

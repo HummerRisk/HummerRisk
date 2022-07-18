@@ -33,8 +33,11 @@
           <template
             slot="dateCell"
             slot-scope="{date, data}">
-            <p :class="data.isSelected ? 'is-selected' : ''" @click="handle(data.day)">
-              {{ data.day.split('-').slice(1).join('-') }} {{ data.isSelected ? $t('dashboard.data_task') : ''}}
+            <p v-if="(taskCalendar.indexOf(data.day) === -1) && !data.isSelected" :class="''">
+              {{ data.day.split('-').slice(1).join('-') }}
+            </p>
+            <p v-if="(taskCalendar.indexOf(data.day) > -1) || data.isSelected" :class="'is-selected'" @click="goTask()">
+              {{ data.day.split('-').slice(1).join('-') }} {{ $t('dashboard.data_task') }}
             </p>
           </template>
         </el-calendar>
@@ -70,13 +73,31 @@ export default {
       result: {},
       cloudChart: 390,
       vulnChart: 390,
+      taskCalendar: [],
     }
   },
   methods: {
     /** 查询节假日管理 - 法定节假日列表 */
     getList() {
+      this.result = this.$get("/dashboard/taskCalendar", response => {
+        let data = response.data;
+        for (let obj of data) {
+          this.taskCalendar.push(obj.day);
+        }
+      });
     },
-    handle() {},
+    goTask() {
+      this.$alert(this.$t('dashboard.comfirm_task'), '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.$router.push({
+              path: '/task/list',
+            }).catch(error => error);
+          }
+        }
+      });
+    },
   },
   created() {
     this.getList();

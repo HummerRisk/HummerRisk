@@ -5,25 +5,26 @@
     <select id="topInfo" parameterType="java.util.Map" resultType="com.hummerrisk.dto.TopInfoDTO">
         SELECT *
         from (
-              (SELECT count(user.id) as users from user) as users,
-              (SELECT (SELECT count(t.id) from cloud_account t) + (SELECT count(t.id) from image t) + (SELECT count(t.id) from package t) + (SELECT count(t.id) from server t) as accounts) as accounts,
-              (SELECT count(t.id) as cloudAccounts from cloud_account t where t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')) as cloudAccounts,
-              (SELECT count(t.id) as vulnAccounts from cloud_account t where t.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')) as vulnAccounts,
-              (SELECT count(t.id) as serverAccounts from server t) as serverAccounts,
-              (SELECT count(t.id) as packageAccounts from package t) as packageAccounts,
-              (SELECT count(t.id) as imageAccounts from image t) as imageAccounts,
-              (SELECT (SELECT count(t.id) from rule t) + (SELECT count(t.id) from image_rule t) + (SELECT count(t.id) from package_rule t) + (SELECT count(t.id) from server_rule t) as rules) as rules,
-              (SELECT count(t.id) as cloudRules from rule t where t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')) as cloudRules,
-              (SELECT count(t.id) as vulnRules from rule t where t.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')) as vulnRules,
-              (SELECT count(t.id) as imageRules from image_rule t) as imageRules,
-              (SELECT count(t.id) as packageRules from package_rule t) as packageRules,
-              (SELECT count(t.id) as serverRules from server_rule t) as serverRules,
-              (SELECT (SELECT count(t.id) from resource_item t) + (SELECT count(t.id) from image_result t) + (SELECT count(t.id) from package_result t) + (SELECT count(t.id) from server_result t) as results) as results,
-              (SELECT count(t.id) as cloudResult from resource_item t where t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')) as cloudResult,
-              (SELECT count(t.id) as vulnResult from resource_item t where t.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')) as vulnResult,
-              (SELECT count(t.id) as imageResult from image_result t) as imageResult,
-              (SELECT count(t.id) as packageResult from package_result t) as packageResult,
-              (SELECT count(t.id) as serverResult from server_result t) as serverResult
+              (SELECT IFNULL(count(user.id), 0) as users from user) as users,
+              (SELECT IFNULL(count(task.id), 0) as tasks from task) as tasks,
+              (SELECT (SELECT IFNULL(count(t.id), 0) from cloud_account t) + (SELECT IFNULL(count(t.id), 0) from image t) + (SELECT IFNULL(count(t.id), 0) from package t) + (SELECT IFNULL(count(t.id), 0) from server t) as accounts) as accounts,
+              (SELECT IFNULL(count(t.id), 0) as cloudAccounts from cloud_account t where t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')) as cloudAccounts,
+              (SELECT IFNULL(count(t.id), 0) as vulnAccounts from cloud_account t where t.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')) as vulnAccounts,
+              (SELECT IFNULL(count(t.id), 0) as serverAccounts from server t) as serverAccounts,
+              (SELECT IFNULL(count(t.id), 0) as packageAccounts from package t) as packageAccounts,
+              (SELECT IFNULL(count(t.id), 0) as imageAccounts from image t) as imageAccounts,
+              (SELECT (SELECT IFNULL(count(t.id), 0) from rule t) + (SELECT IFNULL(count(t.id), 0) from image_rule t) + (SELECT IFNULL(count(t.id), 0) from package_rule t) + (SELECT IFNULL(count(t.id), 0) from server_rule t) as rules) as rules,
+              (SELECT IFNULL(count(t.id), 0) as cloudRules from rule t where t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')) as cloudRules,
+              (SELECT IFNULL(count(t.id), 0) as vulnRules from rule t where t.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')) as vulnRules,
+              (SELECT IFNULL(count(t.id), 0) as imageRules from image_rule t) as imageRules,
+              (SELECT IFNULL(count(t.id), 0) as packageRules from package_rule t) as packageRules,
+              (SELECT IFNULL(count(t.id), 0) as serverRules from server_rule t) as serverRules,
+              (SELECT (SELECT IFNULL(count(t.id), 0) from resource_item t) + (SELECT IFNULL(count(t.id), 0) from image_result t) + (SELECT IFNULL(count(t.id), 0) from package_result t) + (SELECT IFNULL(count(t.id), 0) from server_result t) as results) as results,
+              (SELECT IFNULL(count(t.id), 0) as cloudResult from resource_item t where t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')) as cloudResult,
+              (SELECT IFNULL(count(t.id), 0) as vulnResult from resource_item t where t.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')) as vulnResult,
+              (SELECT IFNULL(count(t.id), 0) as imageResult from image_result t) as imageResult,
+              (SELECT IFNULL(count(t.id), 0) as packageResult from package_result t) as packageResult,
+              (SELECT IFNULL(count(t.id), 0) as serverResult from server_result t) as serverResult
                  )
     </select>
 
@@ -53,6 +54,18 @@
         from image_result
         order by update_time desc
         limit 10;
+    </select>
+
+    <select id="taskCalendar" resultType="com.hummerrisk.controller.request.dashboard.TaskCalendarVo">
+        select
+            'current-month' as 'type',
+            true as 'isSelected',
+            from_unixtime(t.last_fire_time/1000, '%Y-%m-%d') as 'day'
+        from task t
+        GROUP BY
+            from_unixtime(t.last_fire_time/1000, '%Y-%m-%d')
+        ORDER BY
+            from_unixtime(t.last_fire_time/1000, '%Y-%m-%d')
     </select>
 
 </mapper>
