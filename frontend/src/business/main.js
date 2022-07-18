@@ -25,6 +25,9 @@ import "codemirror/theme/bespin.css";
 import "codemirror/lib/codemirror.css";
 import 'element-ui/lib/theme-chalk/index.css';
 import 'vue-cron-generator/src/styles/global.less';
+//图片选择器
+import VueSelectImage from 'vue-select-image';
+import 'vue-select-image/dist/vue-select-image.css';
 
 // you can set default global options and events when Vue.use
 Vue.use(VueCodemirror,  {
@@ -43,6 +46,7 @@ Vue.use(chart);
 Vue.use(CalendarHeatmap);
 Vue.use(message);
 Vue.use(CKEditor);
+Vue.use(VueSelectImage);
 // v-permission
 Vue.directive("permission", permission);
 

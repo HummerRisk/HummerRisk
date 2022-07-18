@@ -960,6 +960,9 @@ export default {
     back_resource: '返回軟件包檢測結果列表',
     result_details_list: '軟件包檢測結果詳情列表',
     package_note: '注: 軟件包檢測時間較長，請耐心等待輸出結果!',
+    package_default_icon: '系統內置圖片',
+    package_definition_icon: '軟件包自定義圖片',
+    package_note2: '可以選擇系統內置圖片，也可以上傳自定義圖片',
   },
   vuln: {
     vuln_setting: '漏洞檢測',

@@ -960,6 +960,9 @@ export default {
     back_resource: 'Return the list of package detection results',
     result_details_list: 'Package detection result details list',
     package_note: 'Note: Package detection takes a long time, please be patient and wait for the output result!',
+    package_default_icon: 'System built-in image',
+    package_definition_icon: 'Package custom image',
+    package_note2: 'You can choose the built-in image in the system, or upload a custom image',
   },
   vuln: {
     vuln_setting: 'Vulnerability Scan',

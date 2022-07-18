@@ -13,7 +13,7 @@
                 :key="index" class="el-col el-col-su">
           <el-card :body-style="{ padding: '0' }">
             <el-image style="width: 100%; height: 160px;"
-                      :src="data.pluginIcon==='package.png'?require(`@/assets/img/platform/${data.pluginIcon}`):`${location}${data.pluginIcon}`"
+                      :src="data.pluginIcon.indexOf('/') === -1?require(`@/assets/img/platform/${data.pluginIcon}`):`${location}${data.pluginIcon}`"
                       :fit="'fill'">
               <div slot="error" class="image-slot">
                 <i class="el-icon-picture-outline"></i>
@@ -84,6 +84,13 @@
         </div>
         <div v-if="active == 2">
           <div class="app">
+            <el-form-item :label="$t('package.package_default_icon')" ref="pluginIcon" prop="pluginIcon">
+              <vue-select-image :dataImages="dataImages" @onselectimage="onSelectImage" :selectedImages="initialSelected">
+              </vue-select-image>
+            </el-form-item>
+            <el-form-item>
+              <span style="color: red">{{ $t('package.package_note2') }}</span>
+            </el-form-item>
             <el-form-item :label="$t('package.package_icon')" ref="pluginIcon" prop="pluginIcon">
               <image-upload url="/package/uploadImg" :param="addPackageForm"/>
             </el-form-item>
@@ -148,7 +155,14 @@
         </div>
         <div v-if="active == 2">
           <div class="app">
-            <el-form-item :label="$t('package.package_icon')" ref="pluginIcon" prop="pluginIcon">
+            <el-form-item :label="$t('package.package_default_icon')" ref="pluginIcon" prop="pluginIcon">
+              <vue-select-image :dataImages="dataImages" @onselectimage="onSelectImage" :selectedImages="initialSelected">
+              </vue-select-image>
+            </el-form-item>
+            <el-form-item>
+              <span style="color: red">{{ $t('package.package_note2') }}</span>
+            </el-form-item>
+            <el-form-item :label="$t('package.package_definition_icon')" ref="pluginIcon" prop="pluginIcon">
               <image-upload url="/package/uploadImg" :param="editPackageForm"/>
             </el-form-item>
           </div>
@@ -186,6 +200,7 @@ import TablePagination from "../../common/pagination/TablePagination";
 import DialogFooter from "../head/DialogFooter";
 import ImageUpload from "@/business/components/common/components/ImageUpload/index";
 import FileUpload from "@/business/components/common/components/FileUpload/index";
+import VueSelectImage from "vue-select-image";
 
 /* eslint-disable */
 export default {
@@ -202,6 +217,7 @@ export default {
     DialogFooter,
     ImageUpload,
     FileUpload,
+    VueSelectImage,
   },
   data() {
     return {
@@ -240,6 +256,18 @@ export default {
       confirmVisible: false,
       location: "",
       proxys: [],
+      dataImages: [
+        {id: 'package.png', src: require(`@/assets/img/platform/package.png`), alt: ''},
+        {id: 'java.png', src: require(`@/assets/img/platform/java.png`), alt: ''},
+        {id: 'python.png', src: require(`@/assets/img/platform/python.png`), alt: ''},
+        {id: 'c++.png', src: require(`@/assets/img/platform/c++.png`), alt: ''},
+        {id: 'golang.png', src: require(`@/assets/img/platform/golang.png`), alt: ''},
+        {id: 'php.png', src: require(`@/assets/img/platform/php.png`), alt: ''},
+        {id: 'javascript.png', src: require(`@/assets/img/platform/javascript.png`), alt: ''},
+        {id: 'nodejs.png', src: require(`@/assets/img/platform/nodejs.png`), alt: ''},
+      ],
+      initialSelected: [{id: 'package.png', src: require(`@/assets/img/platform/package.png`), alt: ''}],
+      imageSelect: {},
     }
   },
   methods: {
@@ -260,10 +288,10 @@ export default {
           });
         }
       }else {
+        console.log(item);
         this.result = this.$post('/package/editPackage', this.editPackageForm, response => {
           let data = response.data;
           this.editPackageForm = data;
-          this.handleClose();
         });
       }
     },
@@ -362,6 +390,11 @@ export default {
         }
         this.active = 2;
       } else if (this.active === 2) {
+        console.log(this.imageSelect)
+        if(this.imageSelect.id) {
+          this.editPackageForm.pluginIcon = this.imageSelect.id;
+          this.save(this.editPackageForm, 'edit');
+        }
         this.active = 3;
         this.confirmVisible = true;
         this.nextVisible = false;
@@ -377,6 +410,9 @@ export default {
         this.active = 1;
         this.preVisible = false;
       }
+    },
+    onSelectImage(item) {
+      this.imageSelect = item;
     },
 },
   created() {
@@ -484,6 +520,11 @@ export default {
 
 .el-col-su >>> .el-card {
   margin: 10px 0;
+}
+
+.vue-select-image >>> .vue-select-image__img {
+  width: 120px;
+  height: 100px;
 }
 
 </style>
