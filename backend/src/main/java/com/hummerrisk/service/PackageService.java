@@ -490,7 +490,7 @@ public class PackageService {
 
     public PackageResultWithBLOBs getPackageResult(String resultId) {
         PackageResultWithBLOBs packageResultWithBLOBs = packageResultMapper.selectByPrimaryKey(resultId);
-        if(packageResultWithBLOBs!=null) packageResultWithBLOBs.setReturnJson(accountService.toJSONString(packageResultWithBLOBs.getReturnJson()!=null? packageResultWithBLOBs.getReturnJson():"{}"));
+        if(packageResultWithBLOBs!=null && !StringUtils.equalsIgnoreCase(packageResultWithBLOBs.getResultStatus(), TaskConstants.TASK_STATUS.APPROVED.toString())) packageResultWithBLOBs.setReturnJson(accountService.toJSONString(packageResultWithBLOBs.getReturnJson()!=null? packageResultWithBLOBs.getReturnJson():"{}"));
         return packageResultWithBLOBs;
     }
 
