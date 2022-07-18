@@ -255,12 +255,12 @@ public class SysListener {
 
     public static ConcurrentHashMap<String, String> getMaps () throws Exception {
         try {
-            memory();
-            readRAM();
-            readDisk();
-            cpuUsage();
-            getDiskUsage();
-            memoryUsage();
+//            memory();
+//            readRAM();
+//            readDisk();
+//            cpuUsage();
+//            getDiskUsage();
+//            memoryUsage();
             property();
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
