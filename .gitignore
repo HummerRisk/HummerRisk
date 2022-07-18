@@ -28,3 +28,4 @@ hs_err_pid*
 .log
 .json
 
+.DS_Store
