@@ -1213,7 +1213,7 @@ INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('f
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('f4ebb59b-c93a-4f34-9e66-660b03943d7d', '93');
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('f4ebb59b-c93a-4f34-9e66-660b03943d7d', '95');
 
-INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('2274a926-ea5e-4cdc-915e-09fa6d803bff', '5');
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('2274a926-ea5e-4cdc-915e-09fa6d803bff', '1');
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('4d427c93-5645-445a-93a3-0c536d6865ab', '1');
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('4f8fa101-171a-4491-9485-e5aa091a88a4', '2');
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('e28786b3-f2b1-46de-b4b6-7835b42ae58b', '1');
