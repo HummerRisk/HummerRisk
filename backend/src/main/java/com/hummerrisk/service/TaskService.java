@@ -713,7 +713,6 @@ public class TaskService {
         if (rule == null)  return null;
         AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
         Integer scanId = historyService.insertScanHistory(account);
-        //String messageOrderId = noticeService.createMessageOrder(account);
         return this.dealCloudOrVulnTask(rule, account, scanId);
     }
 

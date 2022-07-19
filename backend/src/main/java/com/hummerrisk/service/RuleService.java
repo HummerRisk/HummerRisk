@@ -633,10 +633,6 @@ public class RuleService {
         return "";
     }
 
-    public void insertScanHistory (String accountId) throws Exception {
-        historyService.insertScanHistory(accountMapper.selectByPrimaryKey(accountId));
-    }
-
     public RuleGroup saveRuleGroup(RuleGroup ruleGroup) {
         ruleGroupMapper.insertSelective(ruleGroup);
         return ruleGroup;

@@ -324,11 +324,6 @@ public class PackageService {
         }
     }
 
-    public void updateStatus(PackageResultWithBLOBs result) {
-        result.setResultStatus(CloudTaskConstants.TASK_STATUS.PROCESSING.toString());
-        packageResultMapper.updateByPrimaryKeySelective(result);
-    }
-
     void saveResultItem(PackageResult result, JSONObject jsonObject) {
         PackageResultItem packageResultItem = new PackageResultItem();
         packageResultItem.setId(UUIDUtil.newUUID());

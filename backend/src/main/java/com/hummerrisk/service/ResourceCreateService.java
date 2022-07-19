@@ -118,14 +118,14 @@ public class ResourceCreateService {
         }
 
         //软件包检测
-        final PackageResultExample packageExample = new PackageResultExample();
-        PackageResultExample.Criteria pc = packageExample.createCriteria();
-        pc.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+        final PackageResultExample packageResultExample = new PackageResultExample();
+        PackageResultExample.Criteria packageCriteria = packageResultExample.createCriteria();
+        packageCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
-            pc.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+            packageCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
         }
-        packageExample.setOrderByClause("create_time limit 10");
-        List<PackageResultWithBLOBs> packageResults = packageResultMapper.selectByExampleWithBLOBs(packageExample);
+        packageResultExample.setOrderByClause("create_time limit 10");
+        List<PackageResultWithBLOBs> packageResults = packageResultMapper.selectByExampleWithBLOBs(packageResultExample);
         if (CollectionUtils.isNotEmpty(packageResults)) {
             packageResults.forEach(packageResult -> {
                 final PackageResultWithBLOBs packageToBeProceed;
@@ -140,7 +140,6 @@ public class ResourceCreateService {
                 processingGroupIdMap.put(packageToBeProceed.getId(), packageToBeProceed.getId());
                 commonThreadPool.addTask(() -> {
                     try {
-                        packageService.updateStatus(packageToBeProceed);
                         packageService.createScan(packageToBeProceed);
                     } catch (Exception e) {
                         LogUtil.error(e);
@@ -152,14 +151,14 @@ public class ResourceCreateService {
         }
 
         //虚拟机检测
-        final ServerResultExample serverExample = new ServerResultExample();
-        ServerResultExample.Criteria s = serverExample.createCriteria();
-        s.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+        final ServerResultExample serverResultExample = new ServerResultExample();
+        ServerResultExample.Criteria serverCriteria = serverResultExample.createCriteria();
+        serverCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
-            pc.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+            serverCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
         }
-        serverExample.setOrderByClause("create_time limit 10");
-        List<ServerResult> serverResultList = serverResultMapper.selectByExample(serverExample);
+        serverResultExample.setOrderByClause("create_time limit 10");
+        List<ServerResult> serverResultList = serverResultMapper.selectByExample(serverResultExample);
         if (CollectionUtils.isNotEmpty(serverResultList)) {
             serverResultList.forEach(serverResult -> {
                 final ServerResult serverToBeProceed;
@@ -186,10 +185,10 @@ public class ResourceCreateService {
 
         //镜像检测
         final ImageResultExample imageResultExample = new ImageResultExample();
-        ImageResultExample.Criteria ic = imageResultExample.createCriteria();
-        ic.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+        ImageResultExample.Criteria imageCriteria = imageResultExample.createCriteria();
+        imageCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
-            pc.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+            imageCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
         }
         imageResultExample.setOrderByClause("create_time limit 10");
         List<ImageResultWithBLOBs> imageResults = imageResultMapper.selectByExampleWithBLOBs(imageResultExample);
@@ -207,7 +206,6 @@ public class ResourceCreateService {
                 processingGroupIdMap.put(imageToBeProceed.getId(), imageToBeProceed.getId());
                 commonThreadPool.addTask(() -> {
                     try {
-                        imageService.updateStatus(imageToBeProceed);
                         imageService.createScan(imageToBeProceed);
                     } catch (Exception e) {
                         LogUtil.error(e);
@@ -224,10 +222,23 @@ public class ResourceCreateService {
         final TaskExample taskExample = new TaskExample();
         TaskExample.Criteria taskCriteria = taskExample.createCriteria();
         taskCriteria.andStatusEqualTo(TaskConstants.TASK_STATUS.APPROVED.toString());
+        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
+            taskCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+        }
         taskExample.setOrderByClause("create_time limit 1");
         List<Task> tasks = taskMapper.selectByExample(taskExample);
         List<String> status = Arrays.asList(TaskConstants.TASK_STATUS.ERROR.name(), TaskConstants.TASK_STATUS.FINISHED.name(), TaskConstants.TASK_STATUS.WARNING.name());
         for (Task task : tasks) {
+            final Task taskToBeProceed;
+            try {
+                taskToBeProceed = BeanUtils.copyBean(new Task(), task);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+            if (processingGroupIdMap.get(taskToBeProceed.getId()) != null) {
+                return;
+            }
+            processingGroupIdMap.put(taskToBeProceed.getId(), taskToBeProceed.getId());
             TaskItemExample taskItemExample = new TaskItemExample();
             TaskItemExample.Criteria taskItemCriteria = taskItemExample.createCriteria();
             taskItemCriteria.andTaskIdEqualTo(task.getId());
@@ -282,7 +293,10 @@ public class ResourceCreateService {
                 task.setStatus(TaskConstants.TASK_STATUS.FINISHED.name());
                 taskMapper.updateByPrimaryKeySelective(task);
             }
+            processingGroupIdMap.remove(taskToBeProceed.getId());
         }
+
+        //历史数据统计
 
     }
 
@@ -318,23 +332,10 @@ public class ResourceCreateService {
             }
             orderService.updateTaskStatus(taskId, null, taskStatus);
 
-            if (PlatformUtils.isSupportCloudAccount(cloudTask.getPluginId())) {
-                HistoryScanTaskExample example = new HistoryScanTaskExample();
-                HistoryScanTaskExample.Criteria criteria = example.createCriteria();
-                criteria.andTaskIdEqualTo(cloudTask.getId());
-                example.setOrderByClause("id desc");
-                HistoryScanTask historyScanTask = historyScanTaskMapper.selectByExampleWithBLOBs(example).get(0);
-
-                criteria.andScanIdEqualTo(historyScanTask.getScanId()).andIdEqualTo(historyScanTask.getId());
-                historyService.updateTaskHistory(cloudTask, example);
-            }
         } catch (Exception e) {
             orderService.updateTaskStatus(taskId, null, CloudTaskConstants.TASK_STATUS.ERROR.name());
             LogUtil.error("handleTask, taskId: " + taskId, e);
         }
-        HistoryScanTaskExample example = new HistoryScanTaskExample();
-        example.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andScanIdEqualTo(extHistoryScanMapper.getScanId(cloudTask.getAccountId()));
-        historyService.updateTaskHistory(cloudTask, example);
     }
 
     private boolean handleTaskItem(CloudTaskItemWithBLOBs taskItem, CloudTask cloudTask) {

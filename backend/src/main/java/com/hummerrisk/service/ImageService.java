@@ -352,11 +352,6 @@ public class ImageService {
         }
     }
 
-    public void updateStatus(ImageResultWithBLOBs result) {
-        result.setResultStatus(CloudTaskConstants.TASK_STATUS.PROCESSING.toString());
-        imageResultMapper.updateByPrimaryKeySelective(result);
-    }
-
     void saveResultItem(ImageResult result, String line) {
         if(line.contains("NAME INSTALLED FIXED-IN TYPE VULNERABILITY SEVERITY")) {return;}
         ImageResultItem imageResultItem = new ImageResultItem();

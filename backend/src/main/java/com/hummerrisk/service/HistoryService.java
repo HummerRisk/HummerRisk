@@ -103,50 +103,57 @@ public class HistoryService {
         return historyScan.getId();
     }
 
-    public void insertTaskHistory (CloudTask cloudTask, Integer scanId) throws Exception {
-        HistoryScanTaskExample example = new HistoryScanTaskExample();
-        example.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andScanIdEqualTo(scanId);
-        List<HistoryScanTask> list = historyScanTaskMapper.selectByExample(example);
-        if (list.size() > 0) {
-            updateTaskHistory(cloudTask, example);
-        } else {
-            HistoryScanTask history = new HistoryScanTask();
-            history.setScanId(scanId);
-            history.setTaskId(cloudTask.getId());
-            history.setOperation("i18n_create_scan_history");
-            historyScanTaskMapper.insertSelective(history);
-        }
+    public void insertTaskHistory (Object obj, Integer scanId) throws Exception {
+        HistoryScan historyScan = historyScanMapper.selectByPrimaryKey(scanId);
+        HistoryScanTask historyScanTask = new HistoryScanTask();
+        historyScanTask.setScanId(scanId);
+        historyScanTask.setTaskId(obj2Result(obj));
+        historyScanTask.setAccountId(historyScan.getAccountId());
+        historyScanTask.setAccountType(historyScan.getAccountType());
+        historyScanTask.setStatus(TaskConstants.TASK_STATUS.APPROVED.name());
+        historyScanTask.setOperation("i18n_create_scan_history");
+        historyScanTaskMapper.insertSelective(historyScanTask);
     }
 
-    public void updateTaskHistory (CloudTask cloudTask, HistoryScanTaskExample example) throws Exception {
+    public void updateTaskHistory (Object obj, HistoryScanTask historyScanTask) throws Exception {
         try{
-            CloudTaskItemResourceExample cloudTaskItemResourceExample = new CloudTaskItemResourceExample();
-            cloudTaskItemResourceExample.createCriteria().andTaskIdEqualTo(cloudTask.getId());
-            List<CloudTaskItemResourceWithBLOBs> taskItemResources = cloudTaskItemResourceMapper.selectByExampleWithBLOBs(cloudTaskItemResourceExample);
+            String resultId = obj2Result(obj);
             JSONArray jsonArray = new JSONArray();
-            taskItemResources.forEach(item ->{
-                ResourceWithBLOBs resource = resourceMapper.selectByPrimaryKey(item.getResourceId());
-                if(resource!=null) {
-                    if (!resource.getResources().isEmpty()) {
-                        String json = resource.getResources();
-                        boolean isJson = isJson(json);
-                        if (isJson) {
-                            jsonArray.addAll(JSON.parseArray(json));
+            if (StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.cloudAccount.getType()) ||
+                    StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.vulnAccount.getType())) {
+                CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(resultId);
+                CloudTaskItemResourceExample cloudTaskItemResourceExample = new CloudTaskItemResourceExample();
+                cloudTaskItemResourceExample.createCriteria().andTaskIdEqualTo(cloudTask.getId());
+                List<CloudTaskItemResourceWithBLOBs> taskItemResources = cloudTaskItemResourceMapper.selectByExampleWithBLOBs(cloudTaskItemResourceExample);
+                taskItemResources.forEach(item ->{
+                    ResourceWithBLOBs resource = resourceMapper.selectByPrimaryKey(item.getResourceId());
+                    if(resource!=null) {
+                        if (!resource.getResources().isEmpty()) {
+                            String json = resource.getResources();
+                            boolean isJson = isJson(json);
+                            if (isJson) {
+                                jsonArray.addAll(JSON.parseArray(json));
+                            } else {
+                                jsonArray.addAll(JSON.parseArray("[{'key':'" + json + "'}]"));
+                            }
                         } else {
-                            jsonArray.addAll(JSON.parseArray("[{'key':'" + json + "'}]"));
+                            jsonArray.addAll(JSON.parseArray("[]"));
                         }
-                    } else {
-                        jsonArray.addAll(JSON.parseArray("[]"));
                     }
-                }
-            });
-            HistoryScanTask historyScanTask = new HistoryScanTask();
-            historyScanTask.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
-            historyScanTask.setReturnSum(cloudTask.getReturnSum()!=null? cloudTask.getReturnSum():0);
-            historyScanTask.setScanScore(calculateScore(accountMapper.selectByPrimaryKey(cloudTask.getAccountId()), cloudTask));
+                });
+                historyScanTask.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
+                historyScanTask.setReturnSum(cloudTask.getReturnSum()!=null? cloudTask.getReturnSum():0);
+                historyScanTask.setScanScore(calculateScore(accountMapper.selectByPrimaryKey(cloudTask.getAccountId()), cloudTask));
+            } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.serverAccount.getType())) {
+
+            } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.imageAccount.getType())) {
+
+            } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.packageAccount.getType())) {
+
+            }
             historyScanTask.setOperation("i18n_update_scan_history");
             historyScanTask.setOutput(jsonArray.toJSONString());
-            historyScanTaskMapper.updateByExampleSelective(historyScanTask, example);
+            historyScanTaskMapper.updateByPrimaryKeyWithBLOBs(historyScanTask);
         }catch (Exception e){
             throw new Exception(e.getMessage());
         }
@@ -166,7 +173,7 @@ public class HistoryService {
         Map map = new HashMap<>();
         try {
             String accountId = "";
-            if (obj.getClass() == (new Account()).getClass()) {
+            if (obj.getClass() == (new Account()).getClass() || obj.getClass() == (new AccountWithBLOBs()).getClass()) {
                 accountId = ((Account) obj).getId();
                 if (PlatformUtils.isSupportCloudAccount(((Account) obj).getPluginId())) {
                     map.put("accountType", TaskEnum.cloudAccount.getType());
@@ -185,6 +192,25 @@ public class HistoryService {
             }
             map.put("accountId", accountId);
             return map;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    //通过对象获取资源ID
+    public String obj2Result(Object obj) throws Exception{
+        try {
+            String resultId = "";
+            if (obj.getClass() == (new CloudTask()).getClass()) {
+                resultId = ((CloudTask) obj).getId();
+            } else if(obj.getClass() == (new ServerResult()).getClass()) {
+                resultId = ((ServerResult) obj).getId();
+            } else if(obj.getClass() == (new ImageResult()).getClass()) {
+                resultId = ((ImageResult) obj).getId();
+            } else if(obj.getClass() == (new PackageResult()).getClass()) {
+                resultId = ((PackageResult) obj).getId();
+            }
+            return resultId;
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

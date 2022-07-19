@@ -186,14 +186,8 @@ public class RuleController {
 
     @ApiOperation(value = "批量检测")
     @PostMapping("scan")
-    public void scan(@RequestPart(value = "scanCheckedGroups") List<String> scanCheckedGroups) {
+    public void scan(@RequestPart(value = "scanCheckedGroups") List<String> scanCheckedGroups) throws Exception {
         ruleService.scan(scanCheckedGroups);
-    }
-
-    @ApiOperation(value = "历史检测")
-    @GetMapping("insertScanHistory/{accountId}")
-    public void insertScanHistory(@PathVariable String accountId) throws Exception {
-        ruleService.insertScanHistory(accountId);
     }
 
     @I18n
