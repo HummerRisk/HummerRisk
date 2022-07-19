@@ -319,6 +319,8 @@ public class PackageService {
 
             noticeService.createPackageMessageOrder(result);
             savePackageResultLog(result.getId(), "i18n_end_package_result", "", true);
+
+            historyService.insertHistoryPackageTask(BeanUtils.copyBean(new HistoryPackageTaskWithBLOBs(), packageResultMapper.selectByPrimaryKey(result.getId())));
         } catch (Exception e) {
             LogUtil.error("create PackageResult: " + e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
@@ -329,7 +331,7 @@ public class PackageService {
         }
     }
 
-    void saveResultItem(PackageResult result, JSONObject jsonObject) {
+    void saveResultItem(PackageResult result, JSONObject jsonObject) throws Exception {
         PackageResultItem packageResultItem = new PackageResultItem();
         packageResultItem.setId(UUIDUtil.newUUID());
         packageResultItem.setSeverity(result.getSeverity());
@@ -339,6 +341,8 @@ public class PackageService {
         packageResultItem.setUpdateTime(System.currentTimeMillis());
         packageResultItem.setResource(jsonObject.toJSONString());
         packageResultItemMapper.insertSelective(packageResultItem);
+
+        historyService.insertHistoryPackageTaskItem(BeanUtils.copyBean(new HistoryPackageTaskItem(), packageResultItem));
     }
 
     public String reScan(String id) throws Exception {
@@ -405,7 +409,7 @@ public class PackageService {
         packageResultMapper.deleteByExample(example);
     }
 
-    void savePackageResultLog(String resultId, String operation, String output, boolean result) {
+    void savePackageResultLog(String resultId, String operation, String output, boolean result) throws Exception {
         PackageResultLog packageResultLog = new PackageResultLog();
         String operator = "system";
         try {
@@ -422,6 +426,8 @@ public class PackageService {
         packageResultLog.setOutput(output);
         packageResultLog.setResult(result);
         packageResultLogMapper.insertSelective(packageResultLog);
+
+        historyService.insertHistoryPackageTaskItemLog(BeanUtils.copyBean(new HistoryPackageTaskItemLog(), packageResultLog));
     }
 
     public String execute(Package aPackage) throws Exception {

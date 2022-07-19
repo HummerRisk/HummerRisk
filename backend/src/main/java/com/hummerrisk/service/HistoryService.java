@@ -82,6 +82,28 @@ public class HistoryService {
     private PackageMapper packageMapper;
     @Resource @Lazy
     private PackageResultMapper packageResultMapper;
+    @Resource @Lazy
+    private HistoryCloudTaskMapper historyCloudTaskMapper;
+    @Resource @Lazy
+    private HistoryCloudTaskItemMapper historyCloudTaskItemMapper;
+    @Resource @Lazy
+    private HistoryCloudTaskItemLogMapper historyCloudTaskItemLogMapper;
+    @Resource @Lazy
+    private HistoryServerTaskMapper historyServerTaskMapper;
+    @Resource @Lazy
+    private HistoryServerTaskLogMapper historyServerTaskLogMapper;
+    @Resource @Lazy
+    private HistoryPackageTaskMapper historyPackageTaskMapper;
+    @Resource @Lazy
+    private HistoryPackageTaskItemMapper historyPackageTaskItemMapper;
+    @Resource @Lazy
+    private HistoryPackageTaskItemLogMapper historyPackageTaskItemLogMapper;
+    @Resource @Lazy
+    private HistoryImageTaskMapper historyImageTaskMapper;
+    @Resource @Lazy
+    private HistoryImageTaskItemMapper historyImageTaskItemMapper;
+    @Resource @Lazy
+    private HistoryImageTaskItemLogMapper historyImageTaskItemLogMapper;
 
     public Integer insertScanHistory (Object obj) throws Exception {
 
@@ -308,6 +330,47 @@ public class HistoryService {
         return score;
     }
 
+    public void insertHistoryCloudTask(HistoryCloudTask record) {
+        historyCloudTaskMapper.insertSelective(record);
+    }
+    public void insertHistoryCloudTaskItem(HistoryCloudTaskItem record) {
+        historyCloudTaskItemMapper.insertSelective(record);
+    }
 
+    public void insertHistoryCloudTaskItemLog(HistoryCloudTaskItemLog record) {
+        historyCloudTaskItemLogMapper.insertSelective(record);
+    }
+
+    public void insertHistoryServerTask(HistoryServerTask record) {
+        historyServerTaskMapper.insertSelective(record);
+    }
+
+    public void insertHistoryServerTaskLog(HistoryServerTaskLog record) {
+        historyServerTaskLogMapper.insertSelective(record);
+    }
+
+    public void insertHistoryPackageTask(HistoryPackageTaskWithBLOBs record) {
+        historyPackageTaskMapper.insertSelective(record);
+    }
+
+    public void insertHistoryPackageTaskItem(HistoryPackageTaskItem record) {
+        historyPackageTaskItemMapper.insertSelective(record);
+    }
+
+    public void insertHistoryPackageTaskItemLog(HistoryPackageTaskItemLog record) {
+        historyPackageTaskItemLogMapper.insertSelective(record);
+    }
+
+    public void insertHistoryImageTask(HistoryImageTaskWithBLOBs record) {
+        historyImageTaskMapper.insertSelective(record);
+    }
+
+    public void insertHistoryImageTaskItem(HistoryImageTaskItem record) {
+        historyImageTaskItemMapper.insertSelective(record);
+    }
+
+    public void insertHistoryImageTaskItemLog(HistoryImageTaskItemLog record) {
+        historyImageTaskItemLogMapper.insertSelective(record);
+    }
 
 }

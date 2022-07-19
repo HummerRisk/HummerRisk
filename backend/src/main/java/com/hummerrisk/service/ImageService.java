@@ -347,6 +347,8 @@ public class ImageService {
 
             noticeService.createImageMessageOrder(result);
             saveImageResultLog(result.getId(), "i18n_end_image_result", "", true);
+
+            historyService.insertHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), imageResultMapper.selectByPrimaryKey(result.getId())));
         } catch (Exception e) {
             LogUtil.error("create ImageResult: " + e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
@@ -357,7 +359,7 @@ public class ImageService {
         }
     }
 
-    void saveResultItem(ImageResult result, String line) {
+    void saveResultItem(ImageResult result, String line) throws Exception {
         if(line.contains("NAME INSTALLED FIXED-IN TYPE VULNERABILITY SEVERITY")) {return;}
         ImageResultItem imageResultItem = new ImageResultItem();
         imageResultItem.setId(UUIDUtil.newUUID());
@@ -378,6 +380,8 @@ public class ImageService {
                 "}";
         imageResultItem.setResource(json);
         imageResultItemMapper.insertSelective(imageResultItem);
+
+        historyService.insertHistoryImageTaskItem(BeanUtils.copyBean(new HistoryImageTaskItem(), imageResultItem));
     }
 
     public String reScan(String id) throws Exception {
@@ -525,7 +529,7 @@ public class ImageService {
         return imageResultLogMapper.selectByExampleWithBLOBs(example);
     }
 
-    void saveImageResultLog(String resultId, String operation, String output, boolean result) {
+    void saveImageResultLog(String resultId, String operation, String output, boolean result) throws Exception {
         ImageResultLog imageResultLog = new ImageResultLog();
         String operator = "system";
         try {
@@ -542,6 +546,8 @@ public class ImageService {
         imageResultLog.setOutput(output);
         imageResultLog.setResult(result);
         imageResultLogMapper.insertSelective(imageResultLog);
+
+        historyService.insertHistoryImageTaskItemLog(BeanUtils.copyBean(new HistoryImageTaskItemLog(), imageResultLog));
     }
 
     public List<ImageResultItem> resultItemList(ImageResultItem resourceRequest) {

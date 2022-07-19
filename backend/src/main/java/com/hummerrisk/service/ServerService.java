@@ -142,7 +142,7 @@ public class ServerService {
         return true;
     }
 
-    public void createScan(ServerResult result) {
+    public void createScan(ServerResult result) throws Exception {
         ServerRuleRequest request = new ServerRuleRequest();
         request.setId(result.getRuleId());
         ServerRuleDTO dto = ruleList(request).get(0);
@@ -170,6 +170,8 @@ public class ServerService {
 
             noticeService.createServerMessageOrder(result);
             saveServerResultLog(result.getId(), "i18n_end_server_result", returnLog, true);
+
+            historyService.insertHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), serverResultMapper.selectByPrimaryKey(result.getId())));
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
@@ -180,7 +182,7 @@ public class ServerService {
         }
     }
 
-    public String rescan(String id) {
+    public String rescan(String id) throws Exception {
         ServerResult result = serverResultMapper.selectByPrimaryKey(id);
         saveServerResultLog(result.getId(), "i18n_restart_server_result", "", true);
         result.setUpdateTime(System.currentTimeMillis());
@@ -202,7 +204,7 @@ public class ServerService {
         serverResultMapper.deleteByExample(example);
     }
 
-    public void saveServerResultLog(String resultId, String operation, String output, boolean result) {
+    public void saveServerResultLog(String resultId, String operation, String output, boolean result) throws Exception {
         ServerResultLog serverResultLog = new ServerResultLog();
         String operator = "system";
         try {
@@ -219,6 +221,8 @@ public class ServerService {
         serverResultLog.setOutput(output);
         serverResultLog.setResult(result);
         serverResultLogMapper.insertSelective(serverResultLog);
+
+        historyService.insertHistoryServerTaskLog(BeanUtils.copyBean(new HistoryServerTaskLog(), serverResultLog));
     }
 
     private boolean validateAccount(Server server) {
