@@ -97,6 +97,8 @@ public class TaskService {
     private RuleService ruleService;
     @Resource
     private CloudTaskMapper cloudTaskMapper;
+    @Resource
+    private HistoryService historyService;
 
     public List<Favorite> listFavorites() {
         FavoriteExample example = new FavoriteExample();
@@ -596,7 +598,7 @@ public class TaskService {
                 quartzTaskDTO.setAccountId(account.getId());
                 quartzTaskDTO.setTaskName(rule.getName());
                 CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, null);
-                orderService.insertTaskHistory(cloudTask, scanId);
+                historyService.insertTaskHistory(cloudTask, scanId);
                 return cloudTask.getId();
             } else {
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
@@ -707,18 +709,18 @@ public class TaskService {
         return "";
     }
 
-    private String cloudResource(Rule rule, String accountId) {
+    private String cloudResource(Rule rule, String accountId) throws Exception {
         if (rule == null)  return null;
         AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
-        Integer scanId = orderService.insertScanHistory(account);
+        Integer scanId = historyService.insertScanHistory(account);
         //String messageOrderId = noticeService.createMessageOrder(account);
         return this.dealCloudOrVulnTask(rule, account, scanId);
     }
 
-    private String vulnResource(Rule rule, String accountId) {
+    private String vulnResource(Rule rule, String accountId) throws Exception {
         if (rule == null)  return null;
         AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
-        Integer scanId = orderService.insertScanHistory(account);
+        Integer scanId = historyService.insertScanHistory(account);
         return this.dealCloudOrVulnTask(rule, account, scanId);
     }
 

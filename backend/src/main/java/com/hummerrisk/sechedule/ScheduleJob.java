@@ -1,6 +1,5 @@
 package com.hummerrisk.sechedule;
 
-import com.hummer.quartz.anno.QuartzScheduled;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.service.AccountService;
 import com.hummerrisk.service.CloudTaskService;
@@ -23,8 +22,6 @@ public abstract class ScheduleJob implements Job {
     @Resource
     private AccountService accountService;
     @Resource
-    private RuleService ruleService;
-    @Resource
     private SystemParameterService systemParameterService;
 
     @Override
@@ -43,25 +40,20 @@ public abstract class ScheduleJob implements Job {
 
     abstract void businessExecute(JobExecutionContext context);
 
-    @QuartzScheduled(cron = "${cron.regions.sync}")
-    public void SyncRegions() {
-        accountService.syncRegions();
-    }
-
-    @QuartzScheduled(cron = "${cron.taskSum.sync}")
-    public void SyncTaskSum() {
-        cloudTaskService.syncTaskSum();
-    }
-
-    //每天留一条整体检测记录
-    @QuartzScheduled(cron = "${cron.history.sync}")
-    public void SyncScan() {
-//        ruleService.syncScanHistory();
-    }
-
-    @QuartzScheduled(cron = "${cron.system.sync}")
-    public void SyncSystem() throws Exception {
-        systemParameterService.updateSystem();
-    }
+//    @QuartzScheduled(cron = "${cron.regions.sync}")
+//    public void SyncRegions() {
+//        accountService.syncRegions();
+//    }
+//
+//    @QuartzScheduled(cron = "${cron.taskSum.sync}")
+//    public void SyncTaskSum() {
+//        cloudTaskService.syncTaskSum();
+//    }
+//
+//    //每天留一条整体检测记录
+//    @QuartzScheduled(cron = "${cron.system.sync}")
+//    public void SyncSystem() throws Exception {
+//        systemParameterService.updateSystem();
+//    }
 
 }

@@ -3,11 +3,9 @@ RENAME TABLE cloud_scan_history TO history_scan;
 
 RENAME TABLE cloud_scan_task_history TO history_scan_task;
 
-ALTER TABLE history_scan ADD `rule_type` varchar(50) DEFAULT NULL COMMENT '规则类型：rule/tag/group';
+ALTER TABLE history_scan ADD `status` varchar(20) DEFAULT NULL COMMENT '状态';
 
 ALTER TABLE history_scan ADD `account_type` varchar(50) DEFAULT NULL COMMENT '资源类型：cloudAccount/vulnAccount/serverAccount/imageAccount/packageAccount';
-
-ALTER TABLE history_scan_task ADD `rule_type` varchar(50) DEFAULT NULL COMMENT '规则类型：rule/tag/group';
 
 ALTER TABLE history_scan_task ADD `account_type` varchar(50) DEFAULT NULL COMMENT '资源类型：cloudAccount/vulnAccount/serverAccount/imageAccount/packageAccount';
 

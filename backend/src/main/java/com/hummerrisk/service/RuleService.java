@@ -84,6 +84,8 @@ public class RuleService {
     private CloudTaskItemMapper cloudTaskItemMapper;
     @Resource @Lazy
     private NoticeService noticeService;
+    @Resource @Lazy
+    private HistoryService historyService;
 
     public List<RuleDTO> cloudList(CreateRuleRequest ruleRequest) {
         return extRuleMapper.cloudList(ruleRequest);
@@ -534,16 +536,17 @@ public class RuleService {
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
-    public void scan(List<String> scanCheckedGroups) {
+    public void scan(List<String> scanCheckedGroups) throws Exception {
+        AccountWithBLOBs account = accountMapper.selectByPrimaryKey(scanCheckedGroups.get(0).split("/")[0]);
+        Integer scanId = historyService.insertScanHistory(account);
         scanCheckedGroups.forEach(scan -> {
             String[] str = scan.split("/");
-            AccountWithBLOBs account = accountMapper.selectByPrimaryKey(str[0]);
-            this.scanGroups(account, str[1]);
+            this.scanGroups(account, scanId, str[1]);
         });
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
-    public void reScans(String accountId) {
+    public void reScans(String accountId) throws Exception {
         AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
         this.scan(account);
     }
@@ -556,13 +559,12 @@ public class RuleService {
         AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
         RuleDTO rule = getRuleDtoById(cloudTaskItems.get(0).getRuleId(), accountId);
         if (!rule.getStatus()) HRException.throwException(Translator.get("i18n_disabled_rules_not_scanning"));
-        Integer scanId = orderService.insertScanHistory(account);
+        Integer scanId = historyService.insertScanHistory(account);
         return this.dealTask(rule, account, scanId, null);
     }
 
-    private void scanGroups(AccountWithBLOBs account, String groupId) {
+    private void scanGroups(AccountWithBLOBs account, Integer scanId, String groupId) {
         try {
-            Integer scanId = orderService.insertScanHistory(account);
 
             String messageOrderId = noticeService.createMessageOrder(account);
 
@@ -575,8 +577,8 @@ public class RuleService {
         }
     }
 
-    private void scan(AccountWithBLOBs account) {
-        Integer scanId = orderService.insertScanHistory(account);
+    private void scan(AccountWithBLOBs account) throws Exception {
+        Integer scanId = historyService.insertScanHistory(account);
 
         String messageOrderId = noticeService.createMessageOrder(account);
 
@@ -618,7 +620,7 @@ public class RuleService {
                 quartzTaskDTO.setAccountId(account.getId());
                 quartzTaskDTO.setTaskName(rule.getName());
                 CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, messageOrderId);
-                orderService.insertTaskHistory(cloudTask, scanId);
+                historyService.insertTaskHistory(cloudTask, scanId);
                 return cloudTask.getId();
             } else {
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
@@ -631,73 +633,8 @@ public class RuleService {
         return "";
     }
 
-    public void insertScanHistory (String accountId) {
-        orderService.insertScanHistory(accountMapper.selectByPrimaryKey(accountId));
-    }
-
-    public void syncScanHistory () {
-        AccountExample accountExample = new AccountExample();
-        accountExample.createCriteria().andStatusEqualTo(CloudAccountConstants.Status.VALID.name());
-        List<AccountWithBLOBs> accountList = accountMapper.selectByExampleWithBLOBs(accountExample);
-        accountList.forEach(account -> {
-            if (PlatformUtils.isSupportCloudAccount(account.getPluginId())) {
-                try {
-                    RuleExample ruleExample = new RuleExample();
-                    ruleExample.createCriteria().andPluginIdEqualTo(account.getPluginId());
-                    List<Rule> rules = ruleMapper.selectByExample(ruleExample);
-                    if (rules.isEmpty()) return;
-
-                    long current = System.currentTimeMillis();
-                    long zero = current / (1000 * 3600 * 24) * (1000 * 3600 * 24) - TimeZone.getDefault().getRawOffset();//当天00点
-
-                    HistoryScanExample example = new HistoryScanExample();
-                    example.createCriteria().andAccountIdEqualTo(account.getId()).andCreateTimeEqualTo(zero);
-                    List<HistoryScan> list = historyScanMapper.selectByExample(example);
-                    if (!list.isEmpty()) {
-                        orderService.insertScanHistory(account);
-                    } else {
-                        Integer scanId = orderService.insertScanHistory(account);
-
-                        QuartzTaskDTO dto = new QuartzTaskDTO();
-                        dto.setAccountId(account.getId());
-                        dto.setPluginId(account.getPluginId());
-                        dto.setStatus(true);
-                        List<RuleDTO> ruleDTOS = accountService.getRules(dto);
-                        for (RuleDTO rule : ruleDTOS) {
-                            commonThreadPool.addTask(() -> {
-                                try {
-                                    QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
-                                    BeanUtils.copyBean(quartzTaskDTO, rule);
-                                    List<SelectTag> selectTags = new LinkedList<>();
-                                    SelectTag s = new SelectTag();
-                                    s.setAccountId(account.getId());
-                                    JSONArray jsonArray = parseArray(account.getRegions());
-                                    JSONObject object;
-                                    List<String> regions = new ArrayList<>();
-                                    for (int i = 0; i < jsonArray.size(); i++) {
-                                        object = jsonArray.getJSONObject(i);
-                                        String value = object.getString("regionId");
-                                        regions.add(value);
-                                    }
-                                    s.setRegions(regions);
-                                    selectTags.add(s);
-                                    quartzTaskDTO.setSelectTags(selectTags);
-                                    quartzTaskDTO.setType("manual");
-                                    quartzTaskDTO.setAccountId(account.getId());
-                                    quartzTaskDTO.setTaskName(rule.getName());
-                                    CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, null);
-                                    orderService.insertTaskHistory(cloudTask, scanId);
-                                } catch (java.lang.Exception e) {
-                                    LogUtil.error(e);
-                                }
-                            });
-                        }
-                    }
-                } catch (Exception e) {
-                    LogUtil.error(e.getMessage());
-                }
-            }
-        });
+    public void insertScanHistory (String accountId) throws Exception {
+        historyService.insertScanHistory(accountMapper.selectByPrimaryKey(accountId));
     }
 
     public RuleGroup saveRuleGroup(RuleGroup ruleGroup) {

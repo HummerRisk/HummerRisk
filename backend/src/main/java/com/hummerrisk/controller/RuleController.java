@@ -174,7 +174,7 @@ public class RuleController {
 
     @ApiOperation(value = "批量重新检测")
     @GetMapping("reScans/{accountId}")
-    public void reScans(@PathVariable String accountId) {
+    public void reScans(@PathVariable String accountId) throws Exception {
         ruleService.reScans(accountId);
     }
 
@@ -192,7 +192,7 @@ public class RuleController {
 
     @ApiOperation(value = "历史检测")
     @GetMapping("insertScanHistory/{accountId}")
-    public void insertScanHistory(@PathVariable String accountId) {
+    public void insertScanHistory(@PathVariable String accountId) throws Exception {
         ruleService.insertScanHistory(accountId);
     }
 

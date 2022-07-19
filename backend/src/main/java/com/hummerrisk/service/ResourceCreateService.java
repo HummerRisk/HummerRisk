@@ -78,6 +78,8 @@ public class ResourceCreateService {
     private TaskItemResourceMapper taskItemResourceMapper;
     @Resource
     private TaskService taskService;
+    @Resource
+    private HistoryService historyService;
 
     @QuartzScheduled(cron = "${cron.expression.local}")
     public void handleTasks() {
@@ -113,11 +115,6 @@ public class ResourceCreateService {
                     }
                 });
             });
-        } else {
-            AccountExample accountExample = new AccountExample();
-            accountExample.createCriteria().andStatusEqualTo(CloudAccountConstants.Status.VALID.name());
-            List<AccountWithBLOBs> accountList = accountMapper.selectByExampleWithBLOBs(accountExample);
-            accountList.forEach(account -> orderService.insertScanHistory(account));
         }
 
         //软件包检测
@@ -329,7 +326,7 @@ public class ResourceCreateService {
                 HistoryScanTask historyScanTask = historyScanTaskMapper.selectByExampleWithBLOBs(example).get(0);
 
                 criteria.andScanIdEqualTo(historyScanTask.getScanId()).andIdEqualTo(historyScanTask.getId());
-                orderService.updateTaskHistory(cloudTask, example);
+                historyService.updateTaskHistory(cloudTask, example);
             }
         } catch (Exception e) {
             orderService.updateTaskStatus(taskId, null, CloudTaskConstants.TASK_STATUS.ERROR.name());
@@ -337,7 +334,7 @@ public class ResourceCreateService {
         }
         HistoryScanTaskExample example = new HistoryScanTaskExample();
         example.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andScanIdEqualTo(extHistoryScanMapper.getScanId(cloudTask.getAccountId()));
-        orderService.updateTaskHistory(cloudTask, example);
+        historyService.updateTaskHistory(cloudTask, example);
     }
 
     private boolean handleTaskItem(CloudTaskItemWithBLOBs taskItem, CloudTask cloudTask) {
