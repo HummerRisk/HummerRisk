@@ -620,7 +620,7 @@ public class RuleService {
                 quartzTaskDTO.setAccountId(account.getId());
                 quartzTaskDTO.setTaskName(rule.getName());
                 CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, messageOrderId);
-                historyService.insertTaskHistory(cloudTask, scanId);
+                historyService.insertScanTaskHistory(cloudTask, scanId);
                 return cloudTask.getId();
             } else {
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));

@@ -55,8 +55,6 @@ public class ResourceCreateService {
     @Resource
     private ProwlerService prowlerService;
     @Resource
-    private HistoryScanTaskMapper historyScanTaskMapper;
-    @Resource
     private XrayService xrayService;
     @Resource
     private PackageService packageService;
@@ -80,6 +78,10 @@ public class ResourceCreateService {
     private TaskService taskService;
     @Resource
     private HistoryService historyService;
+    @Resource
+    private HistoryScanMapper historyScanMapper;
+    @Resource
+    private HistoryScanTaskMapper historyScanTaskMapper;
 
     @QuartzScheduled(cron = "${cron.expression.local}")
     public void handleTasks() {
@@ -297,6 +299,72 @@ public class ResourceCreateService {
         }
 
         //历史数据统计
+        final HistoryScanExample historyScanExample = new HistoryScanExample();
+        HistoryScanExample.Criteria historyScanCriteria = historyScanExample.createCriteria();
+        historyScanCriteria.andStatusEqualTo(TaskConstants.TASK_STATUS.APPROVED.toString());
+        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
+            taskCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+        }
+        historyScanExample.setOrderByClause("create_time limit 1");
+        List<HistoryScan> historyScans = historyScanMapper.selectByExample(historyScanExample);
+        List<String> historyScanStatus = Arrays.asList(TaskConstants.TASK_STATUS.ERROR.name(), TaskConstants.TASK_STATUS.FINISHED.name(), TaskConstants.TASK_STATUS.WARNING.name());
+        for (HistoryScan historyScan : historyScans) {
+            final HistoryScan historyScanToBeProceed;
+            try {
+                historyScanToBeProceed = BeanUtils.copyBean(new HistoryScan(), historyScan);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+            if (processingGroupIdMap.get(historyScanToBeProceed.getId()) != null) {
+                return;
+            }
+            processingGroupIdMap.put(historyScanToBeProceed.getId().toString(), historyScanToBeProceed.getId().toString());
+            HistoryScanTaskExample historyScanTaskExample = new HistoryScanTaskExample();
+            HistoryScanTaskExample.Criteria historyScanTaskCriteria = historyScanTaskExample.createCriteria();
+            historyScanTaskCriteria.andScanIdEqualTo(historyScan.getId());
+            List<HistoryScanTask> historyScanTasks = historyScanTaskMapper.selectByExample(historyScanTaskExample);
+            for (HistoryScanTask historyScanTask : historyScanTasks) {
+                if (StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.cloudAccount.getType())) {
+                    CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                    if (historyScanStatus.contains(cloudTask.getStatus())) {
+                        historyScanTask.setStatus(cloudTask.getStatus());
+                        historyScanTaskMapper.updateByPrimaryKey(historyScanTask);
+                    }
+                } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.vulnAccount.getType())) {
+                    CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                    if (historyScanStatus.contains(cloudTask.getStatus())) {
+                        historyScanTask.setStatus(cloudTask.getStatus());
+                        historyScanTaskMapper.updateByPrimaryKey(historyScanTask);
+                    }
+                } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.serverAccount.getType())) {
+                    ServerResult serverResult = serverResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                    if (historyScanStatus.contains(serverResult.getResultStatus())) {
+                        historyScanTask.setStatus(serverResult.getResultStatus());
+                        historyScanTaskMapper.updateByPrimaryKey(historyScanTask);
+                    }
+                } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.imageAccount.getType())) {
+                    ImageResult imageResult = imageResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                    if (historyScanStatus.contains(imageResult.getResultStatus())) {
+                        historyScanTask.setStatus(imageResult.getResultStatus());
+                        historyScanTaskMapper.updateByPrimaryKey(historyScanTask);
+                    }
+                } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.packageAccount.getType())) {
+                    PackageResult packageResult = packageResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                    if (historyScanStatus.contains(packageResult.getResultStatus())) {
+                        historyScanTask.setStatus(packageResult.getResultStatus());
+                        historyScanTaskMapper.updateByPrimaryKey(historyScanTask);
+                    }
+                }
+            }
+            historyScanTaskCriteria.andStatusIn(status);
+            long count = historyScanTaskMapper.countByExample(historyScanTaskExample);
+            if(historyScanTasks.size() == count) {
+                historyScan.setStatus(TaskConstants.TASK_STATUS.FINISHED.name());
+                historyScanMapper.updateByPrimaryKeySelective(historyScan);
+            }
+            processingGroupIdMap.remove(historyScanToBeProceed.getId());
+        }
+
 
     }
 

@@ -62,6 +62,8 @@ public class PackageService {
     private AccountService accountService;
     @Resource
     private PackageResultItemMapper packageResultItemMapper;
+    @Resource
+    private HistoryService historyService;
 
     public List<PackageDTO> packageList(PackageRequest request) {
         return extPackageMapper.packageList(request);
@@ -250,6 +252,7 @@ public class PackageService {
 
     public void scan(String id) throws Exception{
         Package aPackage = packageMapper.selectByPrimaryKey(id);
+        Integer scanId = historyService.insertScanHistory(aPackage);
         if(StringUtils.equalsIgnoreCase(aPackage.getStatus(), CloudAccountConstants.Status.VALID.name())) {
             List<PackageRuleDTO> ruleList = ruleList(null);
             PackageResultWithBLOBs result = new PackageResultWithBLOBs();
@@ -272,6 +275,8 @@ public class PackageService {
 
                 savePackageResultLog(result.getId(), "i18n_start_package_result", "", true);
                 OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "i18n_start_package_result");
+
+                historyService.insertScanTaskHistory(result, scanId);
             }
         }
     }

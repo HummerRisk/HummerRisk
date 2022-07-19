@@ -15,6 +15,7 @@ import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.task.*;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
+import io.swagger.models.auth.In;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -598,7 +599,7 @@ public class TaskService {
                 quartzTaskDTO.setAccountId(account.getId());
                 quartzTaskDTO.setTaskName(rule.getName());
                 CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, null);
-                historyService.insertTaskHistory(cloudTask, scanId);
+                historyService.insertScanTaskHistory(cloudTask, scanId);
                 return cloudTask.getId();
             } else {
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
@@ -611,7 +612,7 @@ public class TaskService {
         return "";
     }
 
-    private String dealServerTask (ServerRule rule, Server server) {
+    private String dealServerTask (ServerRule rule, Server server, Integer scanId) {
         try {
             if (rule.getStatus()) {
                 ServerResult result = new ServerResult();
@@ -633,6 +634,8 @@ public class TaskService {
                 serverResultMapper.insertSelective(result);
 
                 serverService.saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_start_server_result");
+                historyService.insertScanTaskHistory(result, scanId);
                 return result.getId();
             } else {
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
@@ -645,7 +648,7 @@ public class TaskService {
         return "";
     }
 
-    private String dealPackageTask (PackageRule rule, Package apackage) {
+    private String dealPackageTask (PackageRule rule, Package apackage, Integer scanId) {
         try {
             if (rule.getStatus()) {
                 PackageResultWithBLOBs result = new PackageResultWithBLOBs();
@@ -664,7 +667,8 @@ public class TaskService {
                 packageResultMapper.insertSelective(result);
 
                 packageService.savePackageResultLog(result.getId(), "i18n_start_package_result", "", true);
-                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "开始软件包检测");
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "i18n_start_package_result");
+                historyService.insertScanTaskHistory(result, scanId);
                 return result.getId();
             } else {
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
@@ -677,7 +681,7 @@ public class TaskService {
         return "";
     }
 
-    private String dealImageTask (ImageRule rule, Image image) {
+    private String dealImageTask (ImageRule rule, Image image, Integer scanId) {
         try {
             if (rule.getStatus()) {
                 ImageResultWithBLOBs result = new ImageResultWithBLOBs();
@@ -696,7 +700,8 @@ public class TaskService {
                 imageResultMapper.insertSelective(result);
 
                 imageService.saveImageResultLog(result.getId(), "i18n_start_image_result", "", true);
-                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "开始镜像检测");
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_start_image_result");
+                historyService.insertScanTaskHistory(result, scanId);
                 return result.getId();
             } else {
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
@@ -723,22 +728,25 @@ public class TaskService {
         return this.dealCloudOrVulnTask(rule, account, scanId);
     }
 
-    private String serverResource(String ruleId, String accountId) {
+    private String serverResource(String ruleId, String accountId) throws Exception {
         ServerRule serverRule = serverRuleMapper.selectByPrimaryKey(ruleId);
         Server server = serverMapper.selectByPrimaryKey(accountId);
-        return this.dealServerTask(serverRule, server);
+        Integer scanId = historyService.insertScanHistory(server);
+        return this.dealServerTask(serverRule, server, scanId);
     }
 
-    private String packageResource(String ruleId, String accountId) {
+    private String packageResource(String ruleId, String accountId) throws Exception {
         PackageRule packageRule = packageRuleMapper.selectByPrimaryKey(ruleId);
         Package aPackage = packageMapper.selectByPrimaryKey(accountId);
-        return this.dealPackageTask(packageRule, aPackage);
+        Integer scanId = historyService.insertScanHistory(aPackage);
+        return this.dealPackageTask(packageRule, aPackage, scanId);
     }
 
-    private String imageResource(String ruleId, String accountId) {
+    private String imageResource(String ruleId, String accountId) throws Exception {
         ImageRule imageRule = imageRuleMapper.selectByPrimaryKey(ruleId);
         Image image = imageMapper.selectByPrimaryKey(accountId);
-        return this.dealImageTask(imageRule, image);
+        Integer scanId = historyService.insertScanHistory(image);
+        return this.dealImageTask(imageRule, image, scanId);
     }
 
     private void insertTaskItemResource(TaskItem taskItem, String ruleId, String ruleName, String resourceId) throws Exception {

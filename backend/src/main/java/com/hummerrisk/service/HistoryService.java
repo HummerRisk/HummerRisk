@@ -70,6 +70,18 @@ public class HistoryService {
     private HistoryScanMapper historyScanMapper;
     @Resource @Lazy
     private HistoryScanTaskMapper historyScanTaskMapper;
+    @Resource @Lazy
+    private ServerMapper serverMapper;
+    @Resource @Lazy
+    private ServerResultMapper serverResultMapper;
+    @Resource @Lazy
+    private ImageMapper imageMapper;
+    @Resource @Lazy
+    private ImageResultMapper imageResultMapper;
+    @Resource @Lazy
+    private PackageMapper packageMapper;
+    @Resource @Lazy
+    private PackageResultMapper packageResultMapper;
 
     public Integer insertScanHistory (Object obj) throws Exception {
 
@@ -103,7 +115,7 @@ public class HistoryService {
         return historyScan.getId();
     }
 
-    public void insertTaskHistory (Object obj, Integer scanId) throws Exception {
+    public void insertScanTaskHistory (Object obj, Integer scanId) throws Exception {
         HistoryScan historyScan = historyScanMapper.selectByPrimaryKey(scanId);
         HistoryScanTask historyScanTask = new HistoryScanTask();
         historyScanTask.setScanId(scanId);
@@ -115,7 +127,7 @@ public class HistoryService {
         historyScanTaskMapper.insertSelective(historyScanTask);
     }
 
-    public void updateTaskHistory (Object obj, HistoryScanTask historyScanTask) throws Exception {
+    public void updateScanTaskHistory (Object obj, HistoryScanTask historyScanTask) throws Exception {
         try{
             String resultId = obj2Result(obj);
             JSONArray jsonArray = new JSONArray();
@@ -145,11 +157,19 @@ public class HistoryService {
                 historyScanTask.setReturnSum(cloudTask.getReturnSum()!=null? cloudTask.getReturnSum():0);
                 historyScanTask.setScanScore(calculateScore(accountMapper.selectByPrimaryKey(cloudTask.getAccountId()), cloudTask));
             } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.serverAccount.getType())) {
-
+                historyScanTask.setResourcesSum(1L);
+                historyScanTask.setReturnSum(1L);
+                historyScanTask.setScanScore(calculateScore(serverMapper.selectByPrimaryKey(historyScanTask.getAccountId()), serverResultMapper.selectByPrimaryKey(resultId)));
             } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.imageAccount.getType())) {
-
+                ImageResult imageResult = imageResultMapper.selectByPrimaryKey(resultId);
+                historyScanTask.setResourcesSum(imageResult.getReturnSum()!=null? imageResult.getReturnSum():0);
+                historyScanTask.setReturnSum(imageResult.getReturnSum()!=null? imageResult.getReturnSum():0);
+                historyScanTask.setScanScore(calculateScore(imageMapper.selectByPrimaryKey(historyScanTask.getAccountId()), imageResult));
             } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.packageAccount.getType())) {
-
+                PackageResult packageResult = packageResultMapper.selectByPrimaryKey(resultId);
+                historyScanTask.setResourcesSum(packageResult.getReturnSum()!=null? packageResult.getReturnSum():0);
+                historyScanTask.setReturnSum(packageResult.getReturnSum()!=null? packageResult.getReturnSum():0);
+                historyScanTask.setScanScore(calculateScore(accountMapper.selectByPrimaryKey(historyScanTask.getAccountId()), packageResult));
             }
             historyScanTask.setOperation("i18n_update_scan_history");
             historyScanTask.setOutput(jsonArray.toJSONString());
@@ -205,9 +225,9 @@ public class HistoryService {
                 resultId = ((CloudTask) obj).getId();
             } else if(obj.getClass() == (new ServerResult()).getClass()) {
                 resultId = ((ServerResult) obj).getId();
-            } else if(obj.getClass() == (new ImageResult()).getClass()) {
+            } else if(obj.getClass() == (new ImageResult()).getClass() || obj.getClass() == (new ImageResultWithBLOBs()).getClass()) {
                 resultId = ((ImageResult) obj).getId();
-            } else if(obj.getClass() == (new PackageResult()).getClass()) {
+            } else if(obj.getClass() == (new PackageResult()).getClass() || obj.getClass() == (new PackageResultWithBLOBs()).getClass()) {
                 resultId = ((PackageResult) obj).getId();
             }
             return resultId;
@@ -217,26 +237,75 @@ public class HistoryService {
     }
 
     /**
+     * 计算安全检测评分
      * 高：中：低 = 5 ： 3 ： 2
      * @param account
      * @return
      */
-    public Integer calculateScore (Account account, CloudTask cloudTask) {
-        Double highResultPercent = Double.valueOf(extResourceMapper.resultPercent(account.getId(), "HighRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercent(account.getId(), "HighRisk", cloudTask ==null?null: cloudTask.getId()):"0.0");
-        Double mediumlResultPercent = Double.valueOf(extResourceMapper.resultPercent(account.getId(), "MediumRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercent(account.getId(), "MediumRisk", cloudTask ==null?null: cloudTask.getId()): "0.0");
-        Double lowResultPercent = Double.valueOf(extResourceMapper.resultPercent(account.getId(), "LowRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercent(account.getId(), "LowRisk", cloudTask ==null?null: cloudTask.getId()):"0.0");
+    public Integer calculateScore (Object account, Object task) {
 
-        CloudTaskExample example = new CloudTaskExample();
-        CloudTaskExample.Criteria criteria = example.createCriteria();
-        criteria.andAccountIdEqualTo(account.getId()).andSeverityEqualTo("HighRisk");
-        long high = cloudTaskMapper.countByExample(example);
-        criteria.andSeverityEqualTo("MediumRisk");
-        long mediuml = cloudTaskMapper.countByExample(example);
-        criteria.andSeverityEqualTo("LowRisk");
-        long low = cloudTaskMapper.countByExample(example);
+        Integer score = 100;
 
-        long sum = 5 * high + 3 * mediuml + 2 * low;
-        return 100 - (int) Math.ceil(highResultPercent * (5 * high / (sum == 0 ? 1 : sum) ) * 100 + mediumlResultPercent * (3 * mediuml / (sum == 0 ? 1 : sum) ) * 100 + lowResultPercent * (2 * low / (sum == 0 ? 1 : sum) ) * 100);
+        if (account.getClass() == (new Account()).getClass() || account.getClass() == (new AccountWithBLOBs()).getClass()) {
+            String accountId = ((Account) account).getId();
+            CloudTask cloudTask =  (CloudTask) task;
+            Double highResultPercent = Double.valueOf(extResourceMapper.resultPercent(accountId, "HighRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercent(accountId, "HighRisk", cloudTask ==null?null: cloudTask.getId()):"0.0");
+            Double mediumlResultPercent = Double.valueOf(extResourceMapper.resultPercent(accountId, "MediumRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercent(accountId, "MediumRisk", cloudTask ==null?null: cloudTask.getId()): "0.0");
+            Double lowResultPercent = Double.valueOf(extResourceMapper.resultPercent(accountId, "LowRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercent(accountId, "LowRisk", cloudTask ==null?null: cloudTask.getId()):"0.0");
+
+            CloudTaskExample example = new CloudTaskExample();
+            CloudTaskExample.Criteria criteria = example.createCriteria();
+            criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("HighRisk");
+            long high = cloudTaskMapper.countByExample(example);
+            criteria.andSeverityEqualTo("MediumRisk");
+            long mediuml = cloudTaskMapper.countByExample(example);
+            criteria.andSeverityEqualTo("LowRisk");
+            long low = cloudTaskMapper.countByExample(example);
+
+            long sum = 5 * high + 3 * mediuml + 2 * low;
+            score = 100 - (int) Math.ceil(highResultPercent * (5 * high / (sum == 0 ? 1 : sum) ) * 100 + mediumlResultPercent * (3 * mediuml / (sum == 0 ? 1 : sum) ) * 100 + lowResultPercent * (2 * low / (sum == 0 ? 1 : sum) ) * 100);
+        } else if(account.getClass() == (new Server()).getClass()) {
+            ServerResult serverResult = (ServerResult) task;
+            if (StringUtils.equalsIgnoreCase(serverResult.getSeverity(), TaskConstants.Severity.HighRisk.name())) {
+                score = 100 - 20;
+            } else if (StringUtils.equalsIgnoreCase(serverResult.getSeverity(), TaskConstants.Severity.MediumRisk.name())) {
+                score = 100 - 10;
+            } else if (StringUtils.equalsIgnoreCase(serverResult.getSeverity(), TaskConstants.Severity.LowRisk.name())) {
+                score = 100 - 5;
+            }
+        } else if(account.getClass() == (new Image()).getClass()) {
+            ImageResult imageResult = (ImageResult) task;
+            if (imageResult.getReturnSum() >= 0 && imageResult.getReturnSum() < 10) {
+                score = 100 - 5;
+            } else if (imageResult.getReturnSum() >= 10 && imageResult.getReturnSum() < 50) {
+                score = 100 - 10;
+            } else if (imageResult.getReturnSum() >= 50 && imageResult.getReturnSum() < 100) {
+                score = 100 - 20;
+            } else if (imageResult.getReturnSum() >= 100 && imageResult.getReturnSum() < 200) {
+                score = 100 - 30;
+            } else if (imageResult.getReturnSum() >= 200 && imageResult.getReturnSum() < 500) {
+                score = 100 - 40;
+            } else {
+                score = 100 - 41;
+            }
+        } else if(account.getClass() == (new Package()).getClass()) {
+            PackageResult packageResult = (PackageResult) task;
+            if (packageResult.getReturnSum() >= 0 && packageResult.getReturnSum() < 10) {
+                score = 100 - 5;
+            } else if (packageResult.getReturnSum() >= 10 && packageResult.getReturnSum() < 50) {
+                score = 100 - 10;
+            } else if (packageResult.getReturnSum() >= 50 && packageResult.getReturnSum() < 100) {
+                score = 100 - 20;
+            } else if (packageResult.getReturnSum() >= 100 && packageResult.getReturnSum() < 200) {
+                score = 100 - 30;
+            } else if (packageResult.getReturnSum() >= 200 && packageResult.getReturnSum() < 500) {
+                score = 100 - 40;
+            } else {
+                score = 100 - 41;
+            }
+        }
+
+        return score;
     }
 
 

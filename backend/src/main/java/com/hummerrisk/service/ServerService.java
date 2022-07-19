@@ -64,6 +64,8 @@ public class ServerService {
     private ProxyMapper proxyMapper;
     @Resource
     private NoticeService noticeService;
+    @Resource
+    private HistoryService historyService;
 
     public boolean validate(List<String> ids) {
         ids.forEach(id -> {
@@ -108,6 +110,7 @@ public class ServerService {
             ServerRequest request = new ServerRequest();
             request.setId(id);//serverId
             Server server = getServerList(request).get(0);
+            Integer scanId = historyService.insertScanHistory(server);
             if(StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.VALID.name())) {
                 deleteServerResult(id);
                 List<ServerRuleDTO> ruleList = ruleList(null);
@@ -132,6 +135,8 @@ public class ServerService {
 
                     saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
                     OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_start_server_result");
+
+                    historyService.insertScanTaskHistory(result, scanId);
                 }
             }
         return true;

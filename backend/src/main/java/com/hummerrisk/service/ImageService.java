@@ -71,6 +71,8 @@ public class ImageService {
     private NoticeService noticeService;
     @Resource
     private ImageResultItemMapper imageResultItemMapper;
+    @Resource
+    private HistoryService historyService;
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
@@ -270,6 +272,7 @@ public class ImageService {
 
     public void scan(String id) throws Exception{
         Image image = imageMapper.selectByPrimaryKey(id);
+        Integer scanId = historyService.insertScanHistory(image);
         if(StringUtils.equalsIgnoreCase(image.getStatus(), CloudAccountConstants.Status.VALID.name())) {
             List<ImageRuleDTO> ruleList = ruleList(null);
             ImageResultWithBLOBs result = new ImageResultWithBLOBs();
@@ -292,6 +295,8 @@ public class ImageService {
 
                 saveImageResultLog(result.getId(), "i18n_start_image_result", "", true);
                 OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_start_image_result");
+
+                historyService.insertScanTaskHistory(result, scanId);
             }
         }
 
