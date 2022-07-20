@@ -267,7 +267,6 @@ export default {
       this.$get(url + result.id, response => {
         this.logData = response.data;
         this.logVisible = true;
-        console.log(this.logForm, this.logData)
       });
     },
     handleClose() {

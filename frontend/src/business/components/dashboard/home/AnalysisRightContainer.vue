@@ -139,16 +139,13 @@
         },
         changeCheck(id, index) {
           for (let i = 0; i < 9; i++) {
-            console.log(111, i)
             this.sizeForm.id[i] = false;
           }
-          console.log(this.sizeForm.id, id, index)
           if (this.sizeForm.id[index]) {
             this.sizeForm.id[index] = false;
           } else {
             this.sizeForm.id[index] = true;
           }
-          console.log(this.sizeForm.id)
         },
         confirm() {
           this.$warning(this.$t('warning_task'));

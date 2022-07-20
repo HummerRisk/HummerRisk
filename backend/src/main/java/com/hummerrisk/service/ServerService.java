@@ -178,7 +178,6 @@ public class ServerService {
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             serverResultMapper.updateByPrimaryKeySelective(result);
             saveServerResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
-            throw new HRException(e.getMessage());
         }
     }
 

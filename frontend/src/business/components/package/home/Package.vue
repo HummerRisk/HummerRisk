@@ -288,7 +288,6 @@ export default {
           });
         }
       }else {
-        console.log(item);
         this.result = this.$post('/package/editPackage', this.editPackageForm, response => {
           let data = response.data;
           this.editPackageForm = data;
@@ -390,7 +389,6 @@ export default {
         }
         this.active = 2;
       } else if (this.active === 2) {
-        console.log(this.imageSelect)
         if(this.imageSelect.id) {
           this.editPackageForm.pluginIcon = this.imageSelect.id;
           this.save(this.editPackageForm, 'edit');
