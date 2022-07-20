@@ -426,7 +426,7 @@ public class PackageService {
         packageResultLog.setResult(result);
         packageResultLogMapper.insertSelective(packageResultLog);
 
-        historyService.insertHistoryPackageTaskItemLog(BeanUtils.copyBean(new HistoryPackageTaskItemLog(), packageResultLog));
+        historyService.insertHistoryPackageTaskLog(BeanUtils.copyBean(new HistoryPackageTaskLog(), packageResultLog));
     }
 
     public String execute(Package aPackage) throws Exception {

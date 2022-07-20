@@ -63,6 +63,8 @@ public class NucleiService {
     private ResourceItemMapper resourceItemMapper;
     @Resource @Lazy
     private ExtCloudTaskMapper extCloudTaskMapper;
+    @Resource @Lazy
+    private HistoryService historyService;
 
     public CloudTask createTask(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId) throws Exception {
         CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, messageOrderId);
@@ -307,7 +309,7 @@ public class NucleiService {
             }
 
             AccountWithBLOBs account = accountMapper.selectByPrimaryKey(resourceWithBLOBs.getAccountId());
-            resourceWithBLOBs = updateResourceSum(resourceWithBLOBs, account);
+            resourceWithBLOBs = updateResourceSum(resourceWithBLOBs, account, taskItemResource);
             NucleiCredential nucleiCredential = new Gson().fromJson(account.getCredential(), NucleiCredential.class);
             SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间
             sdf.applyPattern("yyyy-MM-dd HH:mm:ss a");// a为am/pm的标记
@@ -351,7 +353,7 @@ public class NucleiService {
         return resourceWithBLOBs;
     }
 
-    private ResourceWithBLOBs updateResourceSum(ResourceWithBLOBs resourceWithBLOBs, AccountWithBLOBs account) {
+    private ResourceWithBLOBs updateResourceSum(ResourceWithBLOBs resourceWithBLOBs, AccountWithBLOBs account, CloudTaskItemResource cloudTaskItemResource) throws Exception {
         try {
             resourceWithBLOBs.setPluginIcon(account.getPluginIcon());
             resourceWithBLOBs.setPluginName(account.getPluginName());
@@ -368,6 +370,8 @@ public class NucleiService {
                 resourceWithBLOBs.setId(UUIDUtil.newUUID());
                 resourceMapper.insertSelective(resourceWithBLOBs);
             }
+
+            historyService.insertHistoryCloudTask(resourceWithBLOBs, cloudTaskItemResource);
         } catch (Exception e) {
             LogUtil.error("[{}] Generate updateResourceSum nuclei.yml file，and nuclei run failed:{}", resourceWithBLOBs.getId(), e.getMessage());
             throw e;
@@ -375,7 +379,7 @@ public class NucleiService {
         return resourceWithBLOBs;
     }
 
-    private void saveResourceItem(ResourceWithBLOBs resourceWithBLOBs, JSONObject jsonObject) {
+    private void saveResourceItem(ResourceWithBLOBs resourceWithBLOBs, JSONObject jsonObject) throws Exception {
         ResourceItem resourceItem = new ResourceItem();
         try{
             String fid = UUIDUtil.newUUID();
@@ -403,6 +407,8 @@ public class NucleiService {
                 resourceItem.setCreateTime(System.currentTimeMillis());
                 resourceItemMapper.insertSelective(resourceItem);
             }
+
+            historyService.insertHistoryCloudTaskItem(resourceItem, resourceWithBLOBs);
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
             throw e;

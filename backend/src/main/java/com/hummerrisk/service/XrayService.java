@@ -64,6 +64,8 @@ public class XrayService {
     private ResourceItemMapper resourceItemMapper;
     @Resource @Lazy
     private ExtCloudTaskMapper extCloudTaskMapper;
+    @Resource @Lazy
+    private HistoryService historyService;
 
     public CloudTask createTask(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId) throws Exception {
         CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, messageOrderId);
@@ -283,7 +285,7 @@ public class XrayService {
             resourceWithBLOBs.setReturnSum(failNum);
 
             AccountWithBLOBs account = accountMapper.selectByPrimaryKey(resourceWithBLOBs.getAccountId());
-            resourceWithBLOBs = updateResourceSum(resourceWithBLOBs, account);
+            resourceWithBLOBs = updateResourceSum(resourceWithBLOBs, account, taskItemResource);
             XrayCredential xrayCredential = new Gson().fromJson(account.getCredential(), XrayCredential.class);
             InputStreamReader read = new InputStreamReader(new ByteArrayInputStream(resourceWithBLOBs.getMetadata().getBytes()));
             BufferedReader bufferedReader = new BufferedReader(read);
@@ -336,7 +338,7 @@ public class XrayService {
         return resourceWithBLOBs;
     }
 
-    private void saveResourceItem(ResourceWithBLOBs resourceWithBLOBs, String json, String fid) {
+    private void saveResourceItem(ResourceWithBLOBs resourceWithBLOBs, String json, String fid) throws Exception {
         ResourceItem resourceItem = new ResourceItem();
         try{
             resourceItem.setAccountId(resourceWithBLOBs.getAccountId());
@@ -355,13 +357,15 @@ public class XrayService {
             resourceItem.setId(fid);
             resourceItem.setCreateTime(System.currentTimeMillis());
             resourceItemMapper.insertSelective(resourceItem);
+
+            historyService.insertHistoryCloudTaskItem(resourceItem, resourceWithBLOBs);
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
             throw e;
         }
     }
 
-    private ResourceWithBLOBs updateResourceSum(ResourceWithBLOBs resourceWithBLOBs, AccountWithBLOBs account) {
+    private ResourceWithBLOBs updateResourceSum(ResourceWithBLOBs resourceWithBLOBs, AccountWithBLOBs account, CloudTaskItemResource cloudTaskItemResource) throws Exception {
         try {
             resourceWithBLOBs.setPluginIcon(account.getPluginIcon());
             resourceWithBLOBs.setPluginName(account.getPluginName());
@@ -378,6 +382,8 @@ public class XrayService {
                 resourceWithBLOBs.setId(UUIDUtil.newUUID());
                 resourceMapper.insertSelective(resourceWithBLOBs);
             }
+
+            historyService.insertHistoryCloudTask(resourceWithBLOBs, cloudTaskItemResource);
         } catch (Exception e) {
             LogUtil.error("[{}] Generate updateResourceSum xray.yml file，and xray run failed:{}", resourceWithBLOBs.getId(), e.getMessage());
             throw e;

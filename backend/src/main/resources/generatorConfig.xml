@@ -119,17 +119,17 @@
 <!--        <table tableName="history_scan_task" domainObjectName="HistoryScanTask"/>-->
 <!--        <table tableName="history_cloud_task" domainObjectName="HistoryCloudTask"/>-->
 <!--        <table tableName="history_cloud_task_item" domainObjectName="HistoryCloudTaskItem"/>-->
-<!--        <table tableName="history_cloud_task_item_log" domainObjectName="HistoryCloudTaskItemLog"/>-->
+<!--        <table tableName="history_cloud_task_log" domainObjectName="HistoryCloudTaskLog"/>-->
 <!--        <table tableName="history_vuln_task" domainObjectName="HistoryVulnTask"/>-->
 <!--        <table tableName="history_vuln_task_item" domainObjectName="HistoryVulnTaskItem"/>-->
-<!--        <table tableName="history_vuln_task_item_log" domainObjectName="HistoryVulnTaskItemLog"/>-->
+<!--        <table tableName="history_vuln_task_log" domainObjectName="HistoryVulnTaskLog"/>-->
 <!--        <table tableName="history_server_task" domainObjectName="HistoryServerTask"/>-->
 <!--        <table tableName="history_server_task_log" domainObjectName="HistoryServerTaskLog"/>-->
 <!--        <table tableName="history_image_task" domainObjectName="HistoryImageTask"/>-->
 <!--        <table tableName="history_image_task_item" domainObjectName="HistoryImageTaskItem"/>-->
-<!--        <table tableName="history_image_task_item_log" domainObjectName="HistoryImageTaskItemLog"/>-->
+<!--        <table tableName="history_image_task_log" domainObjectName="HistoryImageTaskLog"/>-->
 <!--        <table tableName="history_package_task" domainObjectName="HistoryPackageTask"/>-->
 <!--        <table tableName="history_package_task_item" domainObjectName="HistoryPackageTaskItem"/>-->
-<!--        <table tableName="history_package_task_item_log" domainObjectName="HistoryPackageTaskItemLog"/>-->
+<!--        <table tableName="history_package_task_log" domainObjectName="HistoryPackageTaskLog"/>-->
     </context>
 </generatorConfiguration>

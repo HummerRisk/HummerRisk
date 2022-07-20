@@ -62,10 +62,9 @@ CREATE TABLE IF NOT EXISTS `history_cloud_task_item` (
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
-CREATE TABLE IF NOT EXISTS `history_cloud_task_item_log` (
+CREATE TABLE IF NOT EXISTS `history_cloud_task_log` (
     `id`                           int(11)             NOT NULL AUTO_INCREMENT,
     `history_cloud_task_id`        varchar(50)         DEFAULT NULL COMMENT '任务项ID',
-    `history_cloud_task_item_id`   varchar(50)         DEFAULT NULL COMMENT '资源ID',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
     `operation`                    varchar(255)        DEFAULT NULL COMMENT '操作内容',
@@ -118,10 +117,9 @@ CREATE TABLE IF NOT EXISTS `history_vuln_task_item` (
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
-CREATE TABLE IF NOT EXISTS `history_vuln_task_item_log` (
+CREATE TABLE IF NOT EXISTS `history_vuln_task_log` (
     `id`                           int(11)             NOT NULL AUTO_INCREMENT,
     `history_cloud_task_id`        varchar(50)         DEFAULT NULL COMMENT '任务项ID',
-    `history_cloud_task_item_id`   varchar(50)         DEFAULT NULL COMMENT '资源ID',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
     `operation`                    varchar(255)        DEFAULT NULL COMMENT '操作内容',
@@ -201,7 +199,7 @@ CREATE TABLE IF NOT EXISTS `history_image_task_item` (
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
-CREATE TABLE IF NOT EXISTS `history_image_task_item_log` (
+CREATE TABLE IF NOT EXISTS `history_image_task_log` (
     `id`                           int(11)             NOT NULL AUTO_INCREMENT,
     `result_id`                    varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
@@ -247,7 +245,7 @@ CREATE TABLE IF NOT EXISTS `history_package_task_item` (
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
-CREATE TABLE IF NOT EXISTS `history_package_task_item_log` (
+CREATE TABLE IF NOT EXISTS `history_package_task_log` (
     `id`                           int(11)             NOT NULL AUTO_INCREMENT,
     `result_id`                    varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',

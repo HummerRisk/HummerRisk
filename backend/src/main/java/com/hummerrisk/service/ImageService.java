@@ -546,7 +546,7 @@ public class ImageService {
         imageResultLog.setResult(result);
         imageResultLogMapper.insertSelective(imageResultLog);
 
-        historyService.insertHistoryImageTaskItemLog(BeanUtils.copyBean(new HistoryImageTaskItemLog(), imageResultLog));
+        historyService.insertHistoryImageTaskLog(BeanUtils.copyBean(new HistoryImageTaskLog(), imageResultLog));
     }
 
     public List<ImageResultItem> resultItemList(ImageResultItem resourceRequest) {

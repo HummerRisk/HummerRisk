@@ -4,35 +4,24 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hummer.quartz.service.QuartzManageService;
-import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.domain.Package;
+import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCloudTaskMapper;
 import com.hummerrisk.base.mapper.ext.ExtResourceMapper;
-import com.hummerrisk.commons.constants.*;
-import com.hummerrisk.commons.exception.HRException;
-import com.hummerrisk.commons.utils.*;
-import com.hummerrisk.dto.CloudTaskCopyDTO;
-import com.hummerrisk.dto.CloudTaskDTO;
-import com.hummerrisk.dto.CloudTaskItemLogDTO;
-import com.hummerrisk.dto.QuartzTaskDTO;
-import com.hummerrisk.i18n.Translator;
-import org.apache.commons.collections.CollectionUtils;
+import com.hummerrisk.commons.constants.TaskConstants;
+import com.hummerrisk.commons.constants.TaskEnum;
+import com.hummerrisk.commons.utils.BeanUtils;
+import com.hummerrisk.commons.utils.CommonThreadPool;
+import com.hummerrisk.commons.utils.PlatformUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.quartz.Trigger;
-import org.quartz.TriggerKey;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Resource;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author harris
@@ -87,7 +76,7 @@ public class HistoryService {
     @Resource @Lazy
     private HistoryCloudTaskItemMapper historyCloudTaskItemMapper;
     @Resource @Lazy
-    private HistoryCloudTaskItemLogMapper historyCloudTaskItemLogMapper;
+    private HistoryCloudTaskLogMapper historyCloudTaskLogMapper;
     @Resource @Lazy
     private HistoryServerTaskMapper historyServerTaskMapper;
     @Resource @Lazy
@@ -97,13 +86,13 @@ public class HistoryService {
     @Resource @Lazy
     private HistoryPackageTaskItemMapper historyPackageTaskItemMapper;
     @Resource @Lazy
-    private HistoryPackageTaskItemLogMapper historyPackageTaskItemLogMapper;
+    private HistoryPackageTaskLogMapper historyPackageTaskLogMapper;
     @Resource @Lazy
     private HistoryImageTaskMapper historyImageTaskMapper;
     @Resource @Lazy
     private HistoryImageTaskItemMapper historyImageTaskItemMapper;
     @Resource @Lazy
-    private HistoryImageTaskItemLogMapper historyImageTaskItemLogMapper;
+    private HistoryImageTaskLogMapper historyImageTaskLogMapper;
 
     public Integer insertScanHistory (Object obj) throws Exception {
 
@@ -330,15 +319,42 @@ public class HistoryService {
         return score;
     }
 
-    public void insertHistoryCloudTask(HistoryCloudTask record) {
-        historyCloudTaskMapper.insertSelective(record);
+    public void insertHistoryCloudTask(ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemResource cloudTaskItemResource) throws Exception {
+        try {
+            CloudTaskItemResourceExample example = new CloudTaskItemResourceExample();
+            example.createCriteria().andResourceIdEqualTo(resourceWithBLOBs.getId());
+            CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(cloudTaskItemResource.getTaskId());
+            CloudTaskItem cloudTaskItem = cloudTaskItemMapper.selectByPrimaryKey(cloudTaskItemResource.getTaskItemId());
+            HistoryCloudTask historyCloudTask = new HistoryCloudTask();
+            BeanUtils.copyBean(historyCloudTask, resourceWithBLOBs);
+            BeanUtils.copyBean(historyCloudTask, cloudTask);
+            BeanUtils.copyBean(historyCloudTask, cloudTaskItem);
+            historyCloudTask.setTaskId(cloudTaskItemResource.getTaskId());
+            historyCloudTaskMapper.insertSelective(historyCloudTask);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
-    public void insertHistoryCloudTaskItem(HistoryCloudTaskItem record) {
-        historyCloudTaskItemMapper.insertSelective(record);
+    public void insertHistoryCloudTaskItem(ResourceItem resourceItem, ResourceWithBLOBs resourceWithBLOBs) throws Exception {
+        try {
+            HistoryCloudTaskItem historyCloudTaskItem = new HistoryCloudTaskItem();
+            BeanUtils.copyBean(historyCloudTaskItem, resourceItem);
+            historyCloudTaskItem.setHistoryCloudTaskId(resourceWithBLOBs.getId());
+            historyCloudTaskItemMapper.insertSelective(historyCloudTaskItem);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
-    public void insertHistoryCloudTaskItemLog(HistoryCloudTaskItemLog record) {
-        historyCloudTaskItemLogMapper.insertSelective(record);
+    public void insertHistoryCloudTaskLog(CloudTaskItemLog cloudTaskItemLog) throws Exception {
+        try {
+            HistoryCloudTaskLog historyCloudTaskLog = new HistoryCloudTaskLog();
+            BeanUtils.copyBean(historyCloudTaskLog, cloudTaskItemLog);
+            historyCloudTaskLog.setHistoryCloudTaskId(cloudTaskItemLog.getResourceId());
+            historyCloudTaskLogMapper.insertSelective(historyCloudTaskLog);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     public void insertHistoryServerTask(HistoryServerTask record) {
@@ -357,8 +373,8 @@ public class HistoryService {
         historyPackageTaskItemMapper.insertSelective(record);
     }
 
-    public void insertHistoryPackageTaskItemLog(HistoryPackageTaskItemLog record) {
-        historyPackageTaskItemLogMapper.insertSelective(record);
+    public void insertHistoryPackageTaskLog(HistoryPackageTaskLog record) {
+        historyPackageTaskLogMapper.insertSelective(record);
     }
 
     public void insertHistoryImageTask(HistoryImageTaskWithBLOBs record) {
@@ -369,8 +385,8 @@ public class HistoryService {
         historyImageTaskItemMapper.insertSelective(record);
     }
 
-    public void insertHistoryImageTaskItemLog(HistoryImageTaskItemLog record) {
-        historyImageTaskItemLogMapper.insertSelective(record);
+    public void insertHistoryImageTaskLog(HistoryImageTaskLog record) {
+        historyImageTaskLogMapper.insertSelective(record);
     }
 
 }

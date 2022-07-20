@@ -80,6 +80,8 @@ public class OrderService {
     private CloudAccountQuartzTaskRelationMapper quartzTaskRelationMapper;
     @Resource @Lazy
     private CloudAccountQuartzTaskRelaLogMapper quartzTaskRelaLogMapper;
+    @Resource @Lazy
+    private HistoryService historyService;
 
     public CloudTask createTask(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId) throws Exception {
         CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, messageOrderId);
@@ -254,7 +256,7 @@ public class OrderService {
         return extCloudTaskMapper.getTaskExtendInfo(taskId);
     }
 
-    void saveTaskItemLog(String taskItemId, String resourcePrimaryKey, String operation, String output, boolean success) {
+    void saveTaskItemLog(String taskItemId, String resourcePrimaryKey, String operation, String output, boolean success) throws Exception {
         CloudTaskItemLog cloudTaskItemLog = new CloudTaskItemLog();
         String operator = "system";
         try {
@@ -271,7 +273,9 @@ public class OrderService {
         cloudTaskItemLog.setOperation(operation);
         cloudTaskItemLog.setOutput(output);
         cloudTaskItemLog.setResult(success);
-        cloudTaskItemLogMapper.insert(cloudTaskItemLog);
+        cloudTaskItemLogMapper.insertSelective(cloudTaskItemLog);
+
+        historyService.insertHistoryCloudTaskLog(cloudTaskItemLog);
     }
 
     int updateTaskStatus(String taskId, String oldStatus, String newStatus) {
@@ -418,7 +422,7 @@ public class OrderService {
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
-    public void retry(String taskId) {
+    public void retry(String taskId) throws Exception {
         CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskId);
         if (cloudTask == null) {
             HRException.throwException(Translator.get("i18n_ex_task_not_found") + taskId);

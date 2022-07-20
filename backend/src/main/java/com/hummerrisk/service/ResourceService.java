@@ -90,6 +90,8 @@ public class ResourceService {
     private CloudAccountQuartzTaskRelaLogMapper quartzTaskRelaLogMapper;
     @Resource @Lazy
     private QuartzManageService quartzManageService;
+    @Resource
+    private HistoryService historyService;
 
 
     public SourceDTO source (String accountId) {
@@ -127,7 +129,7 @@ public class ResourceService {
             JSONArray jsonArray = parseArray(resourceWithBLOBs.getResources());
             resourceWithBLOBs.setReturnSum((long) jsonArray.size());
             //执行去除filter的yaml，取到总数
-            resourceWithBLOBs = updateResourceSum(resourceWithBLOBs);
+            resourceWithBLOBs = updateResourceSum(resourceWithBLOBs, taskItemResource);
 
             for (Object obj : jsonArray) {
                 //资源详情
@@ -155,6 +157,7 @@ public class ResourceService {
             cloudTask.setResourcesSum((long) resourceSum);
             cloudTask.setReturnSum((long) returnSum);
             cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
+
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
@@ -163,7 +166,7 @@ public class ResourceService {
         return resourceWithBLOBs;
     }
 
-    private void saveResourceItem(ResourceWithBLOBs resourceWithBLOBs, JSONObject jsonObject) {
+    private void saveResourceItem(ResourceWithBLOBs resourceWithBLOBs, JSONObject jsonObject) throws Exception {
         ResourceItem resourceItem = new ResourceItem();
         try{
             String fid = jsonObject.getString("hummerId") != null ? jsonObject.getString("hummerId") : jsonObject.getString("id");
@@ -191,13 +194,15 @@ public class ResourceService {
                 resourceItem.setCreateTime(System.currentTimeMillis());
                 resourceItemMapper.insertSelective(resourceItem);
             }
+
+            historyService.insertHistoryCloudTaskItem(resourceItem, resourceWithBLOBs);
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
             throw e;
         }
     }
 
-    private ResourceWithBLOBs updateResourceSum(ResourceWithBLOBs resourceWithBLOBs) {
+    private ResourceWithBLOBs updateResourceSum(ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemResource taskItemResource) throws Exception {
         try {
             resourceWithBLOBs = calculateTotal(resourceWithBLOBs);
             AccountWithBLOBs account = accountMapper.selectByPrimaryKey(resourceWithBLOBs.getAccountId());
@@ -216,6 +221,8 @@ public class ResourceService {
                 resourceWithBLOBs.setId(UUIDUtil.newUUID());
                 resourceMapper.insertSelective(resourceWithBLOBs);
             }
+
+            historyService.insertHistoryCloudTask(resourceWithBLOBs, taskItemResource);
         } catch (Exception e) {
             LogUtil.error("[{}] Generate updateResourceSum policy.yml file，and custodian run failed:{}", resourceWithBLOBs.getId(), e.getMessage());
             throw e;

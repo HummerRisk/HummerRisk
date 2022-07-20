@@ -71,7 +71,7 @@ public class CloudTaskController {
     }
 
     @PostMapping(value = "retry/{taskId}")
-    public void retryTask(@PathVariable String taskId) {
+    public void retryTask(@PathVariable String taskId) throws Exception {
         orderService.retry(taskId);
     }
 
