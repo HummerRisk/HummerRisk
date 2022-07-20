@@ -241,6 +241,8 @@ public class OrderService {
             cloudTaskMapper.insertSelective(cloudTask);
         }
 
+        historyService.insertHistoryCloudTask(cloudTask);//插入历史数据
+
         if (StringUtils.isNotEmpty(messageOrderId)) {
             noticeService.createMessageOrderItem(messageOrderId, cloudTask);
         }
@@ -256,7 +258,7 @@ public class OrderService {
         return extCloudTaskMapper.getTaskExtendInfo(taskId);
     }
 
-    void saveTaskItemLog(String taskItemId, String resourcePrimaryKey, String operation, String output, boolean success) throws Exception {
+    void saveTaskItemLog(String taskItemId, String resourcePrimaryKey, String operation, String output, boolean success, String historyType) throws Exception {
         CloudTaskItemLog cloudTaskItemLog = new CloudTaskItemLog();
         String operator = "system";
         try {
@@ -275,7 +277,12 @@ public class OrderService {
         cloudTaskItemLog.setResult(success);
         cloudTaskItemLogMapper.insertSelective(cloudTaskItemLog);
 
-        historyService.insertHistoryCloudTaskLog(cloudTaskItemLog);
+        if (StringUtils.equalsIgnoreCase(historyType, CloudTaskConstants.HISTORY_TYPE.Cloud.name())) {
+            historyService.insertHistoryCloudTaskLog(cloudTaskItemLog);
+        } else if (StringUtils.equalsIgnoreCase(historyType, CloudTaskConstants.HISTORY_TYPE.Vuln.name())) {
+            historyService.insertHistoryVulnTaskLog(cloudTaskItemLog);
+        }
+
     }
 
     int updateTaskStatus(String taskId, String oldStatus, String newStatus) {
@@ -462,7 +469,7 @@ public class OrderService {
                     }
 
                     if (item.getCount() > Optional.ofNullable(this.getResourceByTaskItemId(item.getId())).orElse(new ArrayList<>()).size()) {
-                        saveTaskItemLog(item.getId(), null, "i18n_retry_create_resource", "", true);
+                        saveTaskItemLog(item.getId(), null, "i18n_retry_create_resource", "", true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
                         item.setStatus(CloudTaskConstants.TASK_STATUS.UNCHECKED.name());
                     } else {
                         item.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());

@@ -14,6 +14,7 @@ import com.hummerrisk.commons.constants.TaskEnum;
 import com.hummerrisk.commons.utils.BeanUtils;
 import com.hummerrisk.commons.utils.CommonThreadPool;
 import com.hummerrisk.commons.utils.PlatformUtils;
+import com.hummerrisk.commons.utils.UUIDUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -77,6 +78,12 @@ public class HistoryService {
     private HistoryCloudTaskItemMapper historyCloudTaskItemMapper;
     @Resource @Lazy
     private HistoryCloudTaskLogMapper historyCloudTaskLogMapper;
+    @Resource @Lazy
+    private HistoryVulnTaskMapper historyVulnTaskMapper;
+    @Resource @Lazy
+    private HistoryVulnTaskItemMapper historyVulnTaskItemMapper;
+    @Resource @Lazy
+    private HistoryVulnTaskLogMapper historyVulnTaskLogMapper;
     @Resource @Lazy
     private HistoryServerTaskMapper historyServerTaskMapper;
     @Resource @Lazy
@@ -319,7 +326,19 @@ public class HistoryService {
         return score;
     }
 
-    public void insertHistoryCloudTask(ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemResource cloudTaskItemResource) throws Exception {
+    public void insertHistoryCloudTask(CloudTask cloudTask) throws Exception {
+        try {
+            HistoryCloudTask historyCloudTask = new HistoryCloudTask();
+            BeanUtils.copyBean(historyCloudTask, cloudTask);
+            historyCloudTask.setTaskId(cloudTask.getId());
+            historyCloudTask.setId(cloudTask.getId());
+            historyCloudTaskMapper.insertSelective(historyCloudTask);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    public void updateHistoryCloudTask(ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemResource cloudTaskItemResource) throws Exception {
         try {
             CloudTaskItemResourceExample example = new CloudTaskItemResourceExample();
             example.createCriteria().andResourceIdEqualTo(resourceWithBLOBs.getId());
@@ -330,11 +349,24 @@ public class HistoryService {
             BeanUtils.copyBean(historyCloudTask, cloudTask);
             BeanUtils.copyBean(historyCloudTask, cloudTaskItem);
             historyCloudTask.setTaskId(cloudTaskItemResource.getTaskId());
-            historyCloudTaskMapper.insertSelective(historyCloudTask);
+            historyCloudTask.setId(cloudTaskItemResource.getTaskId());
+            historyCloudTaskMapper.updateByPrimaryKeySelective(historyCloudTask);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
+
+    public void updateHistoryCloudTaskStatus(String taskId, String status) throws Exception {
+        try {
+            HistoryCloudTask historyCloudTask = new HistoryCloudTask();
+            historyCloudTask.setStatus(status);
+            historyCloudTask.setId(taskId);
+            historyCloudTaskMapper.updateByPrimaryKeySelective(historyCloudTask);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
     public void insertHistoryCloudTaskItem(ResourceItem resourceItem, ResourceWithBLOBs resourceWithBLOBs) throws Exception {
         try {
             HistoryCloudTaskItem historyCloudTaskItem = new HistoryCloudTaskItem();
@@ -357,8 +389,75 @@ public class HistoryService {
         }
     }
 
+    public void insertHistoryVulnTask(CloudTask cloudTask) throws Exception {
+        try {
+            HistoryVulnTask historyVulnTask = new HistoryVulnTask();
+            BeanUtils.copyBean(historyVulnTask, cloudTask);
+            historyVulnTask.setTaskId(cloudTask.getId());
+            historyVulnTask.setId(cloudTask.getId());
+            historyVulnTaskMapper.insertSelective(historyVulnTask);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    public void updateHistoryVulnTask(ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemResource cloudTaskItemResource) throws Exception {
+        try {
+            CloudTaskItemResourceExample example = new CloudTaskItemResourceExample();
+            example.createCriteria().andResourceIdEqualTo(resourceWithBLOBs.getId());
+            CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(cloudTaskItemResource.getTaskId());
+            CloudTaskItem cloudTaskItem = cloudTaskItemMapper.selectByPrimaryKey(cloudTaskItemResource.getTaskItemId());
+            HistoryVulnTask historyVulnTask = new HistoryVulnTask();
+            BeanUtils.copyBean(historyVulnTask, resourceWithBLOBs);
+            BeanUtils.copyBean(historyVulnTask, cloudTask);
+            BeanUtils.copyBean(historyVulnTask, cloudTaskItem);
+            historyVulnTask.setTaskId(cloudTaskItemResource.getTaskId());
+            historyVulnTask.setId(cloudTaskItemResource.getTaskId());
+            historyVulnTaskMapper.updateByPrimaryKeySelective(historyVulnTask);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    public void updateHistoryVulnTaskStatus(String taskId, String status) throws Exception {
+        try {
+            HistoryVulnTask historyVulnTask = new HistoryVulnTask();
+            historyVulnTask.setStatus(status);
+            historyVulnTask.setId(taskId);
+            historyVulnTaskMapper.updateByPrimaryKeySelective(historyVulnTask);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    public void insertHistoryVulnTaskItem(ResourceItem resourceItem, ResourceWithBLOBs resourceWithBLOBs) throws Exception {
+        try {
+            HistoryVulnTaskItem historyVulnTaskItem = new HistoryVulnTaskItem();
+            BeanUtils.copyBean(historyVulnTaskItem, resourceItem);
+            historyVulnTaskItem.setHistoryCloudTaskId(resourceWithBLOBs.getId());
+            historyVulnTaskItemMapper.insertSelective(historyVulnTaskItem);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    public void insertHistoryVulnTaskLog(CloudTaskItemLog cloudTaskItemLog) throws Exception {
+        try {
+            HistoryVulnTaskLog historyVulnTaskLog = new HistoryVulnTaskLog();
+            BeanUtils.copyBean(historyVulnTaskLog, cloudTaskItemLog);
+            historyVulnTaskLog.setHistoryCloudTaskId(cloudTaskItemLog.getResourceId());
+            historyVulnTaskLogMapper.insertSelective(historyVulnTaskLog);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
     public void insertHistoryServerTask(HistoryServerTask record) {
         historyServerTaskMapper.insertSelective(record);
+    }
+
+    public void updateHistoryServerTask(HistoryServerTask record) {
+        historyServerTaskMapper.updateByPrimaryKeySelective(record);
     }
 
     public void insertHistoryServerTaskLog(HistoryServerTaskLog record) {
@@ -367,6 +466,10 @@ public class HistoryService {
 
     public void insertHistoryPackageTask(HistoryPackageTaskWithBLOBs record) {
         historyPackageTaskMapper.insertSelective(record);
+    }
+
+    public void updateHistoryPackageTask(HistoryPackageTaskWithBLOBs record) {
+        historyPackageTaskMapper.updateByPrimaryKeySelective(record);
     }
 
     public void insertHistoryPackageTaskItem(HistoryPackageTaskItem record) {
@@ -379,6 +482,10 @@ public class HistoryService {
 
     public void insertHistoryImageTask(HistoryImageTaskWithBLOBs record) {
         historyImageTaskMapper.insertSelective(record);
+    }
+
+    public void updateHistoryImageTask(HistoryImageTaskWithBLOBs record) {
+        historyImageTaskMapper.updateByPrimaryKeySelective(record);
     }
 
     public void insertHistoryImageTaskItem(HistoryImageTaskItem record) {

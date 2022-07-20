@@ -222,7 +222,7 @@ public class ResourceService {
                 resourceMapper.insertSelective(resourceWithBLOBs);
             }
 
-            historyService.insertHistoryCloudTask(resourceWithBLOBs, taskItemResource);
+            historyService.updateHistoryCloudTask(resourceWithBLOBs, taskItemResource);
         } catch (Exception e) {
             LogUtil.error("[{}] Generate updateResourceSum policy.yml file，and custodian run failed:{}", resourceWithBLOBs.getId(), e.getMessage());
             throw e;
@@ -360,7 +360,7 @@ public class ResourceService {
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(resourceWithBLOBs.getAccountId());
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, region, proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
 
-            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true);
+            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
 
             CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskItem.getTaskId());
             switch (cloudTask.getScanType()) {
@@ -413,7 +413,8 @@ public class ResourceService {
 
             orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
                     + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
-                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(), true);
+                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(),
+                    true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
@@ -449,7 +450,8 @@ public class ResourceService {
 
             orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
                     + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
-                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(), true);
+                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(),
+                    true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
@@ -484,7 +486,8 @@ public class ResourceService {
 
             orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
                     + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
-                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(), true);
+                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(),
+                    true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
@@ -495,7 +498,8 @@ public class ResourceService {
 
             orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
                     + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
-                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(), true);
+                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(),
+                    true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
@@ -530,7 +534,8 @@ public class ResourceService {
 
             orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
                     + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
-                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(), true);
+                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(),
+                    true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }

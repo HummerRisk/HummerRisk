@@ -190,6 +190,8 @@ public class NucleiService {
             cloudTaskMapper.insertSelective(cloudTask);
         }
 
+        historyService.insertHistoryVulnTask(cloudTask);//插入历史数据
+
         if (StringUtils.isNotEmpty(messageOrderId)) {
             noticeService.createMessageOrderItem(messageOrderId, cloudTask);
         }
@@ -252,10 +254,10 @@ public class NucleiService {
                 String resourceName = taskItemResource.getResourceName();
                 String taskItemId = taskItem.getId();
                 if (StringUtils.equals(cloudTask.getType(), CloudTaskConstants.TaskType.manual.name()))
-                    orderService.saveTaskItemLog(taskItemId, "resourceType", "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true);
+                    orderService.saveTaskItemLog(taskItemId, "resourceType", "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, CloudTaskConstants.HISTORY_TYPE.Vuln.name());
                 Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getRuleId());
                 if (rule == null) {
-                    orderService.saveTaskItemLog(taskItemId, taskItemId, "i18n_operation_ex" + ": " + operation, "i18n_ex_rule_not_exist", false);
+                    orderService.saveTaskItemLog(taskItemId, taskItemId, "i18n_operation_ex" + ": " + operation, "i18n_ex_rule_not_exist", false, CloudTaskConstants.HISTORY_TYPE.Vuln.name());
                     throw new Exception("i18n_ex_rule_not_exist" + ":" + taskItem.getRuleId());
                 }
                 String nucleiRun = resultStr;
@@ -282,14 +284,15 @@ public class NucleiService {
                 LogUtil.info("The returned data is{}: " + new Gson().toJson(resource));
                 NucleiCredential nucleiCredential = new Gson().fromJson(accountWithBLOBs.getCredential(), NucleiCredential.class);
                 orderService.saveTaskItemLog(taskItemId, resourceType, "i18n_operation_end" + ": " + operation, "i18n_vuln" + ": " + resource.getPluginName() + "，"
-                        + "i18n_domain" + ": " + nucleiCredential.getTargetAddress() + "，" + "i18n_rule_type" + ": " + resourceType + "，" + "i18n_resource_manage" + ": " + resource.getReturnSum() + "/" + resource.getResourcesSum(), true);
+                        + "i18n_domain" + ": " + nucleiCredential.getTargetAddress() + "，" + "i18n_rule_type" + ": " + resourceType + "，" + "i18n_resource_manage" + ": " + resource.getReturnSum() + "/" + resource.getResourcesSum(),
+                        true, CloudTaskConstants.HISTORY_TYPE.Vuln.name());
                 //执行完删除返回目录文件，以便于下一次操作覆盖
                 String deleteResourceDir = "rm -rf " + dirPath;
                 CommandUtils.commonExecCmdWithResult(deleteResourceDir, dirPath);
             }
 
         } catch (Exception e) {
-            orderService.saveTaskItemLog(taskItem.getId(), taskItem.getId(), "i18n_operation_ex" + ": " + operation, e.getMessage(), false);
+            orderService.saveTaskItemLog(taskItem.getId(), taskItem.getId(), "i18n_operation_ex" + ": " + operation, e.getMessage(), false, CloudTaskConstants.HISTORY_TYPE.Vuln.name());
             LogUtil.error("createResource, taskItemId: " + taskItem.getId() + ", resultStr:" + resultStr, ExceptionUtils.getStackTrace(e));
             throw e;
         }
@@ -371,7 +374,7 @@ public class NucleiService {
                 resourceMapper.insertSelective(resourceWithBLOBs);
             }
 
-            historyService.insertHistoryCloudTask(resourceWithBLOBs, cloudTaskItemResource);
+            historyService.updateHistoryVulnTask(resourceWithBLOBs, cloudTaskItemResource);
         } catch (Exception e) {
             LogUtil.error("[{}] Generate updateResourceSum nuclei.yml file，and nuclei run failed:{}", resourceWithBLOBs.getId(), e.getMessage());
             throw e;
@@ -408,7 +411,7 @@ public class NucleiService {
                 resourceItemMapper.insertSelective(resourceItem);
             }
 
-            historyService.insertHistoryCloudTaskItem(resourceItem, resourceWithBLOBs);
+            historyService.insertHistoryVulnTaskItem(resourceItem, resourceWithBLOBs);
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
             throw e;

@@ -297,6 +297,8 @@ public class ImageService {
                 OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_start_image_result");
 
                 historyService.insertScanTaskHistory(result, scanId);
+
+                historyService.insertHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
             }
         }
 
@@ -348,12 +350,13 @@ public class ImageService {
             noticeService.createImageMessageOrder(result);
             saveImageResultLog(result.getId(), "i18n_end_image_result", "", true);
 
-            historyService.insertHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), imageResultMapper.selectByPrimaryKey(result.getId())));
+            historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), imageResultMapper.selectByPrimaryKey(result.getId())));
         } catch (Exception e) {
             LogUtil.error("create ImageResult: " + e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             imageResultMapper.updateByPrimaryKeySelective(result);
+            historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
             saveImageResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
         }
     }
@@ -408,6 +411,9 @@ public class ImageService {
         saveImageResultLog(result.getId(), "i18n_restart_image_result", "", true);
 
         OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_restart_image_result");
+
+        historyService.insertHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
+
         return result.getId();
     }
 

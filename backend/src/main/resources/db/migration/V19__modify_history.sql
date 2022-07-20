@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS `history_cloud_task_log` (
 
 CREATE TABLE IF NOT EXISTS `history_vuln_task` (
     `id`                            varchar(50)           NOT NULL COMMENT '任务ID',
+    `task_id`                       varchar(50)           NOT NULL COMMENT '任务ID',
     `status`                        varchar(20)           DEFAULT NULL COMMENT '状态',
     `apply_user`                    varchar(50)           DEFAULT NULL COMMENT '申请人',
     `create_time`                   bigint(13)            DEFAULT NULL COMMENT '创建时间',

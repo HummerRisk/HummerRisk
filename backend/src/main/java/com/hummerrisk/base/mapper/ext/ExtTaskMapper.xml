@@ -819,45 +819,56 @@
 
     <select id="getTaskResourceVo" resultType="com.hummerrisk.controller.request.task.TaskResourceVo" parameterType="java.lang.String">
         SELECT t.id,
-               t.task_name as name,
+               concat(t.task_name, ' ', t.resource_types, ' | ', t.region_name)  as name,
                t.description as 'desc',
                t.status,
                t.severity,
                t.plugin_icon as icon
-        FROM cloud_task t
-        WHERE t.id = #{resource_id}
+        FROM history_cloud_task t
+        WHERE t.task_id = #{resource_id}
 
         UNION ALL
 
         SELECT t.id,
-               t.server_name as name,
+               concat(t.task_name, ' ', t.resource_types) as name,
+               t.description as 'desc',
+               t.status,
+               t.severity,
+               t.plugin_icon as icon
+        FROM history_vuln_task t
+        WHERE t.task_id = #{resource_id}
+
+        UNION ALL
+
+        SELECT t.id,
+               concat(t.server_name, ' ', t.ip, ':', t.port) as name,
                t.rule_desc as 'desc',
                t.result_status as status,
                t.severity,
                t.plugin_icon as icon
-        FROM server_result t
+        FROM history_server_task t
         WHERE t.id = #{resource_id}
 
         UNION ALL
 
         SELECT t.id,
-               t.name,
+               concat(t.rule_name, ' | ' , t.name) as name,
                t.rule_desc as 'desc',
                t.result_status as status,
                t.severity,
                'docker.png' as icon
-        FROM image_result t
+        FROM history_image_task t
         WHERE t.id = #{resource_id}
 
         UNION ALL
 
         SELECT t.id,
-               t.name,
+               concat(t.name, ' | ', t.package_name) as name,
                t.rule_desc as 'desc',
                t.result_status as status,
                t.severity,
                'package.png' as icon
-        FROM package_result t
+        FROM history_package_task t
         WHERE t.id = #{resource_id}
     </select>
 

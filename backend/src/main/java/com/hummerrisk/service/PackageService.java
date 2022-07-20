@@ -274,9 +274,12 @@ public class PackageService {
                 packageResultMapper.insertSelective(result);
 
                 savePackageResultLog(result.getId(), "i18n_start_package_result", "", true);
+
                 OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "i18n_start_package_result");
 
                 historyService.insertScanTaskHistory(result, scanId);
+
+                historyService.insertHistoryPackageTask(BeanUtils.copyBean(new HistoryPackageTaskWithBLOBs(), result));
             }
         }
     }
@@ -320,12 +323,13 @@ public class PackageService {
             noticeService.createPackageMessageOrder(result);
             savePackageResultLog(result.getId(), "i18n_end_package_result", "", true);
 
-            historyService.insertHistoryPackageTask(BeanUtils.copyBean(new HistoryPackageTaskWithBLOBs(), packageResultMapper.selectByPrimaryKey(result.getId())));
+            historyService.updateHistoryPackageTask(BeanUtils.copyBean(new HistoryPackageTaskWithBLOBs(), result));
         } catch (Exception e) {
             LogUtil.error("create PackageResult: " + e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             packageResultMapper.updateByPrimaryKeySelective(result);
+            historyService.updateHistoryPackageTask(BeanUtils.copyBean(new HistoryPackageTaskWithBLOBs(), result));
             savePackageResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
         }
     }
@@ -369,6 +373,8 @@ public class PackageService {
         savePackageResultLog(result.getId(), "i18n_restart_package_result", "", true);
 
         OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "i18n_restart_package_result");
+
+        historyService.insertHistoryPackageTask(BeanUtils.copyBean(new HistoryPackageTaskWithBLOBs(), result));
 
         return result.getId();
     }

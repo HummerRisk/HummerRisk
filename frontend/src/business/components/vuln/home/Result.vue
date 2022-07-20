@@ -453,9 +453,9 @@ export default {
   },
   created() {
   },
-  mounted() {
-    this.timer = setInterval(this.getStatus,10000);
+  activated() {
     this.init();
+    this.timer = setInterval(this.getStatus,10000);
   },
   beforeDestroy() {
     clearInterval(this.timer);

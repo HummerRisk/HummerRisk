@@ -134,9 +134,12 @@ public class ServerService {
                     serverResultMapper.insertSelective(result);
 
                     saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
+
                     OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_start_server_result");
 
                     historyService.insertScanTaskHistory(result, scanId);
+
+                    historyService.insertHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
                 }
             }
         return true;
@@ -169,14 +172,16 @@ public class ServerService {
             serverResultMapper.updateByPrimaryKeySelective(result);
 
             noticeService.createServerMessageOrder(result);
+
             saveServerResultLog(result.getId(), "i18n_end_server_result", returnLog, true);
 
-            historyService.insertHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), serverResultMapper.selectByPrimaryKey(result.getId())));
+            historyService.updateHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             serverResultMapper.updateByPrimaryKeySelective(result);
+            historyService.updateHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
             saveServerResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
         }
     }
@@ -187,6 +192,7 @@ public class ServerService {
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         serverResultMapper.updateByPrimaryKeySelective(result);
+        historyService.insertHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
         return result.getId();
     }
 

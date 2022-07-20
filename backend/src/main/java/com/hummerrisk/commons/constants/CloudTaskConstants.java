@@ -9,6 +9,10 @@ public class CloudTaskConstants {
         DRAFT, UNCHECKED, APPROVED, FINISHED, TERMINATED, CANCELED, REJECTED, PROCESSING, ERROR, WARNING, RUNNING, PENDING, PAUSE, WAITING
     }
 
+    public enum HISTORY_TYPE {
+        Cloud, Vuln
+    }
+
     public static final String TASK_ID_PREFIX = "hr";
 
     public enum Type {

@@ -349,7 +349,7 @@
                :destroy-on-close="true">
       <div v-for="taskLogTable in taskLogListTable" :key="taskLogTable.id" class="el-form-item-dev">
         <div class="el-icon-detail" @click="goResource(taskLogTable)">
-          <el-row>
+          <el-row v-if="taskLogTable.taskResourceVo">
             <el-col :span="24">
               <div class="grid-content bg-purple-light">
                 <span class="grid-content-log-span"> {{ taskLogTable.taskResourceVo.name }}</span>

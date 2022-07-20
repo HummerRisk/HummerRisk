@@ -15,7 +15,6 @@ import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.task.*;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
-import io.swagger.models.auth.In;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,23 +72,13 @@ public class TaskService {
     @Resource
     private ImageResultMapper imageResultMapper;
     @Resource
-    private ImageRepoMapper imageRepoMapper;
-    @Resource
     private ImageService imageService;
-    @Resource
-    private RuleTagMapper ruleTagMapper;
     @Resource
     private RuleTagMappingMapper ruleTagMappingMapper;
     @Resource
-    private RuleGroupMapper ruleGroupMapper;
-    @Resource
     private RuleGroupMappingMapper ruleGroupMappingMapper;
     @Resource
-    private NoticeService noticeService;
-    @Resource
     private AccountMapper accountMapper;
-    @Resource
-    private OrderService orderService;
     @Resource
     private CloudTaskService cloudTaskService;
     @Resource
@@ -300,7 +289,7 @@ public class TaskService {
     public List<TaskItem> taskItemList(TaskRequest request) {
         TaskItemExample example = new TaskItemExample();
         example.createCriteria().andTaskIdEqualTo(request.getId());
-        example.setOrderByClause("task_order desc");
+        example.setOrderByClause("task_order");
         return taskItemMapper.selectByExample(example);
     }
 
@@ -636,6 +625,8 @@ public class TaskService {
                 serverService.saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
                 OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_start_server_result");
                 historyService.insertScanTaskHistory(result, scanId);
+
+                historyService.insertHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
                 return result.getId();
             } else {
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
@@ -669,6 +660,7 @@ public class TaskService {
                 packageService.savePackageResultLog(result.getId(), "i18n_start_package_result", "", true);
                 OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "i18n_start_package_result");
                 historyService.insertScanTaskHistory(result, scanId);
+                historyService.insertHistoryPackageTask(BeanUtils.copyBean(new HistoryPackageTaskWithBLOBs(), result));
                 return result.getId();
             } else {
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
@@ -702,6 +694,7 @@ public class TaskService {
                 imageService.saveImageResultLog(result.getId(), "i18n_start_image_result", "", true);
                 OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_start_image_result");
                 historyService.insertScanTaskHistory(result, scanId);
+                historyService.insertHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
                 return result.getId();
             } else {
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
