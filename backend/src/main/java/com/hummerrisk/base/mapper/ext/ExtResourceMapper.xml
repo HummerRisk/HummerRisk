@@ -136,9 +136,9 @@
         </if>
     </select>
 
-    <select id="resultPercent" resultType="java.lang.String">
+    <select id="resultPercentByCloud" resultType="java.lang.String">
         select IFNULL(sum( t.return_sum ), 0)/IFNULL(sum( t.resources_sum ), 1)
-        from cloud_task t
+        from history_cloud_task t
         join cloud_account t1 on t.account_id = t1.id
         <where>
             <if test="severity != null">
@@ -153,24 +153,49 @@
         </where>
     </select>
 
-    <select id="sumReturnSum" resultType="java.lang.String">
-        select IFNULL(sum( t.return_sum ), 0)
-        from cloud_task t
+    <select id="resultPercentByVuln" resultType="java.lang.String">
+        select IFNULL(sum( t.return_sum ), 0)/IFNULL(sum( t.resources_sum ), 1)
+        from history_vuln_task t
         join cloud_account t1 on t.account_id = t1.id
         <where>
+            <if test="severity != null">
+                AND t.severity = #{severity}
+            </if>
             <if test="accountId != null">
                 AND t.account_id = #{accountId}
+            </if>
+            <if test="taskId != null">
+                AND t.id = #{taskId}
             </if>
         </where>
     </select>
 
-    <select id="sumResourcesSum" resultType="java.lang.String">
-        select IFNULL(sum( t.resources_sum ), 0)
-        from cloud_task t
-        join cloud_account t1 on t.account_id = t1.id
+    <select id="sumReturnSum" resultType="Integer">
+        select IFNULL(sum( t.return_sum ), 0)
+        from history_scan_task t
         <where>
-            <if test="accountId != null">
-                AND t.account_id = #{accountId}
+            <if test="id != null">
+                AND t.scan_id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <select id="sumResourcesSum" resultType="Integer">
+        select IFNULL(sum( t.resources_sum ), 0)
+        from history_scan_task t
+        <where>
+            <if test="id != null">
+                AND t.scan_id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <select id="sumScanScore" resultType="Integer">
+        select IFNULL(ROUND(AVG( t.scan_score ), 0), 0)
+        from history_scan_task t
+        <where>
+            <if test="id != null">
+                AND t.scan_id = #{id}
             </if>
         </where>
     </select>

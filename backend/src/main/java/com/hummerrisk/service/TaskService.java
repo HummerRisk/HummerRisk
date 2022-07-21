@@ -791,7 +791,8 @@ public class TaskService {
         record.setRuleName(ruleName);
         record.setTaskItemId(taskItem.getId());
         record.setCreateTime(System.currentTimeMillis());
-        int key = taskItemResourceMapper.insertSelective(record);
+        taskItemResourceMapper.insertSelective(record);
+        int key = record.getId();
 
         saveTaskItemResourceLog(record.getTaskItemId(), String.valueOf(key), resourceId, "i18n_start_task", "", true);
     }

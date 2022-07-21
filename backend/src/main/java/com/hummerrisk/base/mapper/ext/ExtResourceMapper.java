@@ -24,11 +24,15 @@ public interface ExtResourceMapper {
 
     SourceDTO source(@Param("accountId")String accountId);
 
-    String resultPercent(@Param("accountId") String accountId, @Param("severity") String severity, @Param("taskId") String taskId);
+    String resultPercentByCloud(@Param("accountId") String accountId, @Param("severity") String severity, @Param("taskId") String taskId);
 
-    String sumReturnSum(@Param("accountId") String accountId);
+    String resultPercentByVuln(@Param("accountId") String accountId, @Param("severity") String severity, @Param("taskId") String taskId);
 
-    String sumResourcesSum(@Param("accountId") String accountId);
+    Integer sumReturnSum(@Param("id") Integer id);
+
+    Integer sumResourcesSum(@Param("id") Integer id);
+
+    Integer sumScanScore(@Param("id") Integer id);
 
     Map<String, String> reportIso(@Param("accountId") String accountId, @Param("groupId") String groupId);
 

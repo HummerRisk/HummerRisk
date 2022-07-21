@@ -46,9 +46,6 @@ public interface HistoryScanMapper {
      *
      * @mbg.generated Tue Jul 19 16:41:28 CST 2022
      */
-    @SelectKey(keyProperty = "id", resultType = int.class, before = false,
-            statement = "select LAST_INSERT_ID()"
-    )
     int insertSelective(HistoryScan record);
 
     /**

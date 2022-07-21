@@ -47,9 +47,6 @@ public interface TaskItemResourceMapper {
      *
      * @mbg.generated Wed Jul 13 17:40:49 CST 2022
      */
-    @SelectKey(keyProperty = "id", resultType = int.class, before = false,
-            statement = "select LAST_INSERT_ID()"
-    )
     int insertSelective(TaskItemResource record);
 
     /**
