@@ -48,8 +48,6 @@ public class ResourceCreateService {
     @Resource
     private OrderService orderService;
     @Resource
-    private ExtHistoryScanMapper extHistoryScanMapper;
-    @Resource
     private ProxyMapper proxyMapper;
     @Resource
     private NucleiService nucleiService;
@@ -83,6 +81,16 @@ public class ResourceCreateService {
     private HistoryScanMapper historyScanMapper;
     @Resource
     private HistoryScanTaskMapper historyScanTaskMapper;
+    @Resource
+    private HistoryCloudTaskMapper historyCloudTaskMapper;
+    @Resource
+    private HistoryVulnTaskMapper historyVulnTaskMapper;
+    @Resource
+    private HistoryServerTaskMapper historyServerTaskMapper;
+    @Resource
+    private HistoryImageTaskMapper historyImageTaskMapper;
+    @Resource
+    private HistoryPackageTaskMapper historyPackageTaskMapper;
     @Resource
     private ServerMapper serverMapper;
     @Resource
@@ -335,29 +343,29 @@ public class ResourceCreateService {
                 for (TaskItemResource taskItemResource : taskItemResources) {
                     long n = 0;
                     if (StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.cloudAccount.getType())) {
-                        CloudTaskExample example = new CloudTaskExample();
+                        HistoryCloudTaskExample example = new HistoryCloudTaskExample();
                         example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andStatusIn(status);
-                        n = cloudTaskMapper.countByExample(example);
+                        n = historyCloudTaskMapper.countByExample(example);
                         i = i + n;
                     } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.vulnAccount.getType())) {
-                        CloudTaskExample example = new CloudTaskExample();
+                        HistoryVulnTaskExample example = new HistoryVulnTaskExample();
                         example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andStatusIn(status);
-                        n = cloudTaskMapper.countByExample(example);
+                        n = historyVulnTaskMapper.countByExample(example);
                         i = i + n;
                     } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.serverAccount.getType())) {
-                        ServerResultExample example = new ServerResultExample();
+                        HistoryServerTaskExample example = new HistoryServerTaskExample();
                         example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
-                        n = serverResultMapper.countByExample(example);
+                        n = historyServerTaskMapper.countByExample(example);
                         i = i + n;
                     } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.imageAccount.getType())) {
-                        ImageResultExample example = new ImageResultExample();
+                        HistoryImageTaskExample example = new HistoryImageTaskExample();
                         example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
-                        n = imageResultMapper.countByExample(example);
+                        n = historyImageTaskMapper.countByExample(example);
                         i = i + n;
                     } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.packageAccount.getType())) {
-                        PackageResultExample example = new PackageResultExample();
+                        HistoryPackageTaskExample example = new HistoryPackageTaskExample();
                         example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
-                        n = packageResultMapper.countByExample(example);
+                        n = historyPackageTaskMapper.countByExample(example);
                         i = i + n;
                     }
                     if (n > 0) {
@@ -410,29 +418,64 @@ public class ResourceCreateService {
             }
             if (successCount != taskItemWithBLOBs.size()) {
                 taskStatus = CloudTaskConstants.TASK_STATUS.WARNING.toString();
-                historyService.updateHistoryCloudTaskStatus(taskId, CloudTaskConstants.TASK_STATUS.WARNING.name());
-                historyService.updateHistoryVulnTaskStatus(taskId, CloudTaskConstants.TASK_STATUS.WARNING.name());
             }
             orderService.updateTaskStatus(taskId, null, taskStatus);
 
+            //更新历史数据状态
+            HistoryCloudTask historyCloudTask = BeanUtils.copyBean(new HistoryCloudTask(), cloudTask);
+            historyCloudTask.setStatus(taskStatus);
+            historyService.updateHistoryCloudTask(historyCloudTask);
+            HistoryVulnTask historyVulnTask = BeanUtils.copyBean(new HistoryVulnTask(), cloudTask);
+            historyVulnTask.setStatus(taskStatus);
+            historyService.updateHistoryVulnTask(historyVulnTask);
+            //更新历史数据状态
+
         } catch (Exception e) {
             orderService.updateTaskStatus(taskId, null, CloudTaskConstants.TASK_STATUS.ERROR.name());
-            historyService.updateHistoryCloudTaskStatus(taskId, CloudTaskConstants.TASK_STATUS.ERROR.name());
-            historyService.updateHistoryVulnTaskStatus(taskId, CloudTaskConstants.TASK_STATUS.ERROR.name());
+
+            //更新历史数据状态
+            HistoryCloudTask historyCloudTask = BeanUtils.copyBean(new HistoryCloudTask(), cloudTask);
+            historyCloudTask.setStatus(CloudTaskConstants.TASK_STATUS.ERROR.name());
+            historyService.updateHistoryCloudTask(historyCloudTask);
+            HistoryVulnTask historyVulnTask = BeanUtils.copyBean(new HistoryVulnTask(), cloudTask);
+            historyVulnTask.setStatus(CloudTaskConstants.TASK_STATUS.ERROR.name());
+            historyService.updateHistoryVulnTask(historyVulnTask);
+            //更新历史数据状态
+
             LogUtil.error("handleTask, taskId: " + taskId, e);
         }
     }
 
-    private boolean handleTaskItem(CloudTaskItemWithBLOBs taskItem, CloudTask cloudTask) {
+    private boolean handleTaskItem(CloudTaskItemWithBLOBs taskItem, CloudTask cloudTask) throws Exception {
         orderService.updateTaskItemStatus(taskItem.getId(), CloudTaskConstants.TASK_STATUS.PROCESSING);
         try {
             for (int i = 0; i < taskItem.getCount(); i++) {
                 createResource(taskItem, cloudTask);
             }
             orderService.updateTaskItemStatus(taskItem.getId(), CloudTaskConstants.TASK_STATUS.FINISHED);
+
+            //更新历史数据状态
+            HistoryCloudTaskItemWithBLOBs historyCloudTaskItemWithBLOBs = BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItem);
+            historyCloudTaskItemWithBLOBs.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());
+            historyService.updateHistoryCloudTaskItem(historyCloudTaskItemWithBLOBs);
+            HistoryVulnTaskItemWithBLOBs historyVulnTaskItemWithBLOBs = BeanUtils.copyBean(new HistoryVulnTaskItemWithBLOBs(), taskItem);
+            historyVulnTaskItemWithBLOBs.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());
+            historyService.updateHistoryVulnTaskItem(historyVulnTaskItemWithBLOBs);
+            //更新历史数据状态
+
             return true;
         } catch (Exception e) {
             orderService.updateTaskItemStatus(taskItem.getId(), CloudTaskConstants.TASK_STATUS.ERROR);
+
+            //更新历史数据状态
+            HistoryCloudTaskItemWithBLOBs historyCloudTaskItemWithBLOBs = BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItem);
+            historyCloudTaskItemWithBLOBs.setStatus(CloudTaskConstants.TASK_STATUS.ERROR.name());
+            historyService.updateHistoryCloudTaskItem(historyCloudTaskItemWithBLOBs);
+            HistoryVulnTaskItemWithBLOBs historyVulnTaskItemWithBLOBs = BeanUtils.copyBean(new HistoryVulnTaskItemWithBLOBs(), taskItem);
+            historyVulnTaskItemWithBLOBs.setStatus(CloudTaskConstants.TASK_STATUS.ERROR.name());
+            historyService.updateHistoryVulnTaskItem(historyVulnTaskItemWithBLOBs);
+            //更新历史数据状态
+
             LogUtil.error("handleTaskItem, taskItemId: " + taskItem.getId(), e);
             return false;
         }

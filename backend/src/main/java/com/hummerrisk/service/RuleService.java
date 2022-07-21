@@ -9,10 +9,7 @@ import com.hummerrisk.base.mapper.ext.ExtRuleGroupMapper;
 import com.hummerrisk.base.mapper.ext.ExtRuleMapper;
 import com.hummerrisk.base.mapper.ext.ExtRuleTagMapper;
 import com.hummerrisk.base.mapper.ext.ExtRuleTypeMapper;
-import com.hummerrisk.commons.constants.CloudAccountConstants;
-import com.hummerrisk.commons.constants.ResourceOperation;
-import com.hummerrisk.commons.constants.ResourceTypeConstants;
-import com.hummerrisk.commons.constants.ScanTypeConstants;
+import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.rule.CreateRuleRequest;
@@ -620,7 +617,7 @@ public class RuleService {
                 quartzTaskDTO.setAccountId(account.getId());
                 quartzTaskDTO.setTaskName(rule.getName());
                 CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, messageOrderId);
-                historyService.insertScanTaskHistory(cloudTask, scanId);
+                historyService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.cloudAccount.getType());
                 return cloudTask.getId();
             } else {
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));

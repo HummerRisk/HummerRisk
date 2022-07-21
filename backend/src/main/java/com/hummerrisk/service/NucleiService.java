@@ -102,6 +102,8 @@ public class NucleiService {
                 taskItemWithBLOBs.setTags(cloudTask.getRuleTags());
                 cloudTaskItemMapper.insertSelective(taskItemWithBLOBs);
 
+                historyService.insertHistoryVulnTaskItem(BeanUtils.copyBean(new HistoryVulnTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
+
                 final String finalScript = script;
                 commonThreadPool.addTask(() -> {
                     String sc = "";
@@ -138,14 +140,32 @@ public class NucleiService {
                         taskItemResource.setResourceCommand(yaml.dump(map));
                         cloudTaskItemResourceMapper.insertSelective(taskItemResource);
 
+                        try {
+                            historyService.insertHistoryVulnTaskResource(BeanUtils.copyBean(new HistoryVulnTaskResourceWithBLOBs(), taskItemResource));
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+
                         resourceTypes.add(resourceType);
 
                         sc = yaml.dump(map);
                         taskItemWithBLOBs.setDetails(sc);
                         cloudTaskItemMapper.updateByPrimaryKeySelective(taskItemWithBLOBs);
 
+                        try {
+                            historyService.updateHistoryVulnTaskItem(BeanUtils.copyBean(new HistoryVulnTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+
                         cloudTask.setResourceTypes(resourceTypes.stream().collect(Collectors.toSet()).toString());
                         cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
+
+                        try {
+                            historyService.updateHistoryVulnTask(BeanUtils.copyBean(new HistoryVulnTask(), cloudTask));//插入历史数据
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 });
             }
@@ -183,14 +203,16 @@ public class NucleiService {
             cloudTask.setId(queryCloudTasks.get(0).getId());
             cloudTask.setCreateTime(System.currentTimeMillis());
             cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
+
+            historyService.updateHistoryVulnTask(BeanUtils.copyBean(new HistoryVulnTask(), cloudTask));//插入历史数据
         } else {
             String taskId = IDGenerator.newBusinessId(CloudTaskConstants.TASK_ID_PREFIX, SessionUtils.getUser().getId());
             cloudTask.setId(taskId);
             cloudTask.setCreateTime(System.currentTimeMillis());
             cloudTaskMapper.insertSelective(cloudTask);
-        }
 
-        historyService.insertHistoryVulnTask(cloudTask);//插入历史数据
+            historyService.insertHistoryVulnTask(BeanUtils.copyBean(new HistoryVulnTask(), cloudTask));//插入历史数据
+        }
 
         if (StringUtils.isNotEmpty(messageOrderId)) {
             noticeService.createMessageOrderItem(messageOrderId, cloudTask);
@@ -374,7 +396,6 @@ public class NucleiService {
                 resourceMapper.insertSelective(resourceWithBLOBs);
             }
 
-            historyService.updateHistoryVulnTask(resourceWithBLOBs, cloudTaskItemResource);
         } catch (Exception e) {
             LogUtil.error("[{}] Generate updateResourceSum nuclei.yml file，and nuclei run failed:{}", resourceWithBLOBs.getId(), e.getMessage());
             throw e;
@@ -411,18 +432,21 @@ public class NucleiService {
                 resourceItemMapper.insertSelective(resourceItem);
             }
 
-            historyService.insertHistoryVulnTaskItem(resourceItem, resourceWithBLOBs);
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
             throw e;
         }
     }
 
-    private void insertTaskItemResource(CloudTaskItemResourceWithBLOBs taskItemResource) {
+    private void insertTaskItemResource(CloudTaskItemResourceWithBLOBs taskItemResource) throws Exception {
         if (taskItemResource.getId() != null) {
             cloudTaskItemResourceMapper.updateByPrimaryKeySelective(taskItemResource);
+
+            historyService.updateHistoryVulnTaskResource(BeanUtils.copyBean(new HistoryVulnTaskResourceWithBLOBs(), taskItemResource));
         } else {
             cloudTaskItemResourceMapper.insertSelective(taskItemResource);
+
+            historyService.insertHistoryVulnTaskResource(BeanUtils.copyBean(new HistoryVulnTaskResourceWithBLOBs(), taskItemResource));
         }
     }
 }

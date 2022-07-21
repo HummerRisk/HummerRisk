@@ -31,7 +31,7 @@ public class TaskConstants {
      * 高风险
      */
     public enum Severity {
-        Normal, LowRisk, MediumRisk, HighRisk
+        Normal, LowRisk, MediumRisk, HighRisk, CriticalRisk
     }
 
     public enum TaskType {

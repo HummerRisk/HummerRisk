@@ -129,7 +129,7 @@ public class ResourceService {
             JSONArray jsonArray = parseArray(resourceWithBLOBs.getResources());
             resourceWithBLOBs.setReturnSum((long) jsonArray.size());
             //执行去除filter的yaml，取到总数
-            resourceWithBLOBs = updateResourceSum(resourceWithBLOBs, taskItemResource);
+            resourceWithBLOBs = updateResourceSum(resourceWithBLOBs);
 
             for (Object obj : jsonArray) {
                 //资源详情
@@ -195,14 +195,13 @@ public class ResourceService {
                 resourceItemMapper.insertSelective(resourceItem);
             }
 
-            historyService.insertHistoryCloudTaskItem(resourceItem, resourceWithBLOBs);
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
             throw e;
         }
     }
 
-    private ResourceWithBLOBs updateResourceSum(ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemResource taskItemResource) throws Exception {
+    private ResourceWithBLOBs updateResourceSum(ResourceWithBLOBs resourceWithBLOBs) throws Exception {
         try {
             resourceWithBLOBs = calculateTotal(resourceWithBLOBs);
             AccountWithBLOBs account = accountMapper.selectByPrimaryKey(resourceWithBLOBs.getAccountId());
@@ -222,7 +221,6 @@ public class ResourceService {
                 resourceMapper.insertSelective(resourceWithBLOBs);
             }
 
-            historyService.updateHistoryCloudTask(resourceWithBLOBs, taskItemResource);
         } catch (Exception e) {
             LogUtil.error("[{}] Generate updateResourceSum policy.yml file，and custodian run failed:{}", resourceWithBLOBs.getId(), e.getMessage());
             throw e;
@@ -262,11 +260,15 @@ public class ResourceService {
         return resourceWithBLOBs;
     }
 
-    private void insertTaskItemResource(CloudTaskItemResourceWithBLOBs taskItemResource) {
+    private void insertTaskItemResource(CloudTaskItemResourceWithBLOBs taskItemResource) throws Exception {
         if (taskItemResource.getId() != null) {
             cloudTaskItemResourceMapper.updateByPrimaryKeySelective(taskItemResource);
+
+            historyService.updateHistoryCloudTaskResource(BeanUtils.copyBean(new HistoryCloudTaskResourceWithBLOBs(), taskItemResource));
         } else {
             cloudTaskItemResourceMapper.insertSelective(taskItemResource);
+
+            historyService.insertHistoryCloudTaskResource(BeanUtils.copyBean(new HistoryCloudTaskResourceWithBLOBs(), taskItemResource));
         }
     }
 

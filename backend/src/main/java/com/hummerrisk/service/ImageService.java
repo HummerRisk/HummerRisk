@@ -296,7 +296,7 @@ public class ImageService {
                 saveImageResultLog(result.getId(), "i18n_start_image_result", "", true);
                 OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_start_image_result");
 
-                historyService.insertScanTaskHistory(result, scanId);
+                historyService.insertScanTaskHistory(result, scanId, image.getId(), TaskEnum.imageAccount.getType());
 
                 historyService.insertHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
             }
@@ -342,6 +342,12 @@ public class ImageService {
 
             String lines[] = grypeTable.split("\\r?\\n");
             result.setReturnSum(Long.parseLong(lines.length+""));
+
+            //删除历史垃圾数据插入新的
+            ImageResultItemExample imageResultItemExample = new ImageResultItemExample();
+            imageResultItemExample.createCriteria().andResultIdEqualTo(result.getId());
+            imageResultItemMapper.deleteByExample(imageResultItemExample);
+
             for (String line : lines) {
                 saveResultItem(result, line);
             }
@@ -362,23 +368,34 @@ public class ImageService {
     }
 
     void saveResultItem(ImageResult result, String line) throws Exception {
-        if(line.contains("NAME INSTALLED FIXED-IN TYPE VULNERABILITY SEVERITY")) {return;}
+        if(line.contains("NAME INSTALLED FIXED-IN TYPE VULNERABILITY SEVERITY")) {return;}//去除首行table title
         ImageResultItem imageResultItem = new ImageResultItem();
         imageResultItem.setId(UUIDUtil.newUUID());
-        imageResultItem.setSeverity(result.getSeverity());
         imageResultItem.setName(result.getName());
         imageResultItem.setResultId(result.getId());
         imageResultItem.setCreateTime(System.currentTimeMillis());
         imageResultItem.setUpdateTime(System.currentTimeMillis());
 
+        if (line.contains("Critical")) {
+            imageResultItem.setSeverity(TaskConstants.Severity.CriticalRisk.name());
+        } else if (line.contains("High")) {
+            imageResultItem.setSeverity(TaskConstants.Severity.HighRisk.name());
+        } else if (line.contains("Medium")) {
+            imageResultItem.setSeverity(TaskConstants.Severity.MediumRisk.name());
+        } else if (line.contains("Low")) {
+            imageResultItem.setSeverity(TaskConstants.Severity.LowRisk.name());
+        } else {
+            imageResultItem.setSeverity(TaskConstants.Severity.LowRisk.name());
+        }
+
         SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间
         sdf.applyPattern("yyyy-MM-dd HH:mm:ss a");// a为am/pm的标记
         Date date = new Date();// 获取当前时间
         String json = "{\n" +
-                "  \"id\": " + "\"" + UUIDUtil.newUUID() + "\"" + ",\n" +
-                "  \"CreatedTime\": " + "\"" + sdf.format(date) + "\"" + ",\n" +
                 "  \"Name\": " + "\"" + result.getName() + "\"" + ",\n" +
                 "  \"Result\": " + "\"" + line + "\"" + "\n" +
+                "  \"Desc\": " + "\"" + result.getRuleDesc() + "\"" + ",\n" +
+                "  \"CreatedTime\": " + "\"" + sdf.format(date) + "\"" + ",\n" +
                 "}";
         imageResultItem.setResource(json);
         imageResultItemMapper.insertSelective(imageResultItem);
@@ -388,31 +405,17 @@ public class ImageService {
 
     public String reScan(String id) throws Exception {
         ImageResultWithBLOBs result = imageResultMapper.selectByPrimaryKey(id);
-        ImageRule rule = imageRuleMapper.selectByPrimaryKey(result.getRuleId());
-        Image image = imageMapper.selectByPrimaryKey(result.getImageId());
-        ImageRuleDTO dto = BeanUtils.copyBean(new ImageRuleDTO(), rule);
 
-        deleteImageResult(id);
-
-        BeanUtils.copyBean(result, image);
-        result.setId(UUIDUtil.newUUID());
-        result.setImageId(image.getId());
-        result.setApplyUser(SessionUtils.getUserId());
-        result.setCreateTime(System.currentTimeMillis());
         result.setUpdateTime(System.currentTimeMillis());
-        result.setRuleId(dto.getId());
-        result.setRuleName(dto.getName());
-        result.setRuleDesc(dto.getDescription());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-        result.setSeverity(dto.getSeverity());
         result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
-        imageResultMapper.insertSelective(result);
+        imageResultMapper.updateByPrimaryKeySelective(result);
 
         saveImageResultLog(result.getId(), "i18n_restart_image_result", "", true);
 
         OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_restart_image_result");
 
-        historyService.insertHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
+        historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
 
         return result.getId();
     }

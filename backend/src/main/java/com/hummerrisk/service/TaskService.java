@@ -560,7 +560,7 @@ public class TaskService {
         taskMapper.updateByPrimaryKeySelective(task);
     }
 
-    private String dealCloudOrVulnTask (Rule rule, AccountWithBLOBs account, Integer scanId) {
+    private String dealCloudTask (Rule rule, AccountWithBLOBs account, Integer scanId) {
         try {
             if (rule.getStatus()) {
                 QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
@@ -588,7 +588,48 @@ public class TaskService {
                 quartzTaskDTO.setAccountId(account.getId());
                 quartzTaskDTO.setTaskName(rule.getName());
                 CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, null);
-                historyService.insertScanTaskHistory(cloudTask, scanId);
+                historyService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.cloudAccount.getType());
+                return cloudTask.getId();
+            } else {
+                LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
+                HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
+            }
+        } catch (Exception e) {
+            LogUtil.error(e);
+            HRException.throwException(e.getMessage());
+        }
+        return "";
+    }
+
+    private String dealVulnTask (Rule rule, AccountWithBLOBs account, Integer scanId) {
+        try {
+            if (rule.getStatus()) {
+                QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
+                BeanUtils.copyBean(quartzTaskDTO, rule);
+                List<SelectTag> selectTags = new LinkedList<>();
+                SelectTag s = new SelectTag();
+                s.setAccountId(account.getId());
+                JSONArray array = parseArray(account.getRegions()!=null?account.getRegions():account.getRegions());
+                JSONObject object;
+                List<String> regions = new ArrayList<>();
+                for (int i = 0; i < array.size(); i++) {
+                    try {
+                        object = array.getJSONObject(i);
+                        String value = object.getString("regionId");
+                        regions.add(value);
+                    } catch (Exception e) {
+                        String value = array.get(0).toString();
+                        regions.add(value);
+                    }
+                }
+                s.setRegions(regions);
+                selectTags.add(s);
+                quartzTaskDTO.setSelectTags(selectTags);
+                quartzTaskDTO.setType("manual");
+                quartzTaskDTO.setAccountId(account.getId());
+                quartzTaskDTO.setTaskName(rule.getName());
+                CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, null);
+                historyService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.vulnAccount.getType());
                 return cloudTask.getId();
             } else {
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
@@ -624,7 +665,7 @@ public class TaskService {
 
                 serverService.saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
                 OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_start_server_result");
-                historyService.insertScanTaskHistory(result, scanId);
+                historyService.insertScanTaskHistory(result, scanId, result.getServerId(), TaskEnum.serverAccount.getType());
 
                 historyService.insertHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
                 return result.getId();
@@ -659,7 +700,7 @@ public class TaskService {
 
                 packageService.savePackageResultLog(result.getId(), "i18n_start_package_result", "", true);
                 OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "i18n_start_package_result");
-                historyService.insertScanTaskHistory(result, scanId);
+                historyService.insertScanTaskHistory(result, scanId, result.getPackageId(), TaskEnum.packageAccount.getType());
                 historyService.insertHistoryPackageTask(BeanUtils.copyBean(new HistoryPackageTaskWithBLOBs(), result));
                 return result.getId();
             } else {
@@ -693,7 +734,7 @@ public class TaskService {
 
                 imageService.saveImageResultLog(result.getId(), "i18n_start_image_result", "", true);
                 OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_start_image_result");
-                historyService.insertScanTaskHistory(result, scanId);
+                historyService.insertScanTaskHistory(result, scanId, result.getImageId(), TaskEnum.imageAccount.getType());
                 historyService.insertHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
                 return result.getId();
             } else {
@@ -711,14 +752,14 @@ public class TaskService {
         if (rule == null)  return null;
         AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
         Integer scanId = historyService.insertScanHistory(account);
-        return this.dealCloudOrVulnTask(rule, account, scanId);
+        return this.dealCloudTask(rule, account, scanId);
     }
 
     private String vulnResource(Rule rule, String accountId) throws Exception {
         if (rule == null)  return null;
         AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
         Integer scanId = historyService.insertScanHistory(account);
-        return this.dealCloudOrVulnTask(rule, account, scanId);
+        return this.dealVulnTask(rule, account, scanId);
     }
 
     private String serverResource(String ruleId, String accountId) throws Exception {

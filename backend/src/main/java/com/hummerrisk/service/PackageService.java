@@ -277,7 +277,7 @@ public class PackageService {
 
                 OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "i18n_start_package_result");
 
-                historyService.insertScanTaskHistory(result, scanId);
+                historyService.insertScanTaskHistory(result, scanId, aPackage.getId(), TaskEnum.packageAccount.getType());
 
                 historyService.insertHistoryPackageTask(BeanUtils.copyBean(new HistoryPackageTaskWithBLOBs(), result));
             }
@@ -311,6 +311,11 @@ public class PackageService {
             result.setReturnHtml(returnHtml);
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
+
+            //删除历史垃圾数据插入新的
+            PackageResultItemExample packageResultItemExample = new PackageResultItemExample();
+            packageResultItemExample.createCriteria().andResultIdEqualTo(result.getId());
+            packageResultItemMapper.deleteByExample(packageResultItemExample);
 
             JSONArray jsonArr = JSON.parseObject(returnJson).getJSONArray("dependencies");
             result.setReturnSum(Long.parseLong(jsonArr.size() + ""));
@@ -350,31 +355,17 @@ public class PackageService {
 
     public String reScan(String id) throws Exception {
         PackageResultWithBLOBs result = packageResultMapper.selectByPrimaryKey(id);
-        PackageRule rule = packageRuleMapper.selectByPrimaryKey(result.getRuleId());
-        Package aPackage = packageMapper.selectByPrimaryKey(result.getPackageId());
-        PackageRuleDTO dto = BeanUtils.copyBean(new PackageRuleDTO(), rule);
 
-        deletePackageResult(id);
-
-        BeanUtils.copyBean(result, aPackage);
-        result.setId(UUIDUtil.newUUID());
-        result.setPackageId(aPackage.getId());
-        result.setApplyUser(SessionUtils.getUserId());
-        result.setCreateTime(System.currentTimeMillis());
         result.setUpdateTime(System.currentTimeMillis());
-        result.setRuleId(dto.getId());
-        result.setRuleName(dto.getName());
-        result.setRuleDesc(dto.getDescription());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-        result.setSeverity(dto.getSeverity());
         result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
-        packageResultMapper.insertSelective(result);
+        packageResultMapper.updateByPrimaryKeySelective(result);
 
         savePackageResultLog(result.getId(), "i18n_restart_package_result", "", true);
 
         OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "i18n_restart_package_result");
 
-        historyService.insertHistoryPackageTask(BeanUtils.copyBean(new HistoryPackageTaskWithBLOBs(), result));
+        historyService.updateHistoryPackageTask(BeanUtils.copyBean(new HistoryPackageTaskWithBLOBs(), result));
 
         return result.getId();
     }

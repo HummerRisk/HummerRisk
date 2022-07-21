@@ -119,6 +119,8 @@ public class OrderService {
                 taskItemWithBLOBs.setTags(cloudTask.getRuleTags());
                 cloudTaskItemMapper.insertSelective(taskItemWithBLOBs);
 
+                historyService.insertHistoryCloudTaskItem(BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
+
                 final String finalScript = script;
                 commonThreadPool.addTask(() -> {
                     String sc = "";
@@ -165,6 +167,12 @@ public class OrderService {
                             taskItemResource.setResourceCommand(yaml.dump(paramMap));
                             cloudTaskItemResourceMapper.insertSelective(taskItemResource);
 
+                            try {
+                                historyService.insertHistoryCloudTaskResource(BeanUtils.copyBean(new HistoryCloudTaskResourceWithBLOBs(), taskItemResource));
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+
                             resourceTypes.add(resourceType);
                         }
 
@@ -173,8 +181,20 @@ public class OrderService {
                         taskItemWithBLOBs.setDetails(sc);
                         cloudTaskItemMapper.updateByPrimaryKeySelective(taskItemWithBLOBs);
 
+                        try {
+                            historyService.updateHistoryCloudTaskItem(BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+
                         cloudTask.setResourceTypes(new HashSet<>(resourceTypes).toString());
                         cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
+
+                        try {
+                            historyService.updateHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 });
             }
@@ -234,14 +254,16 @@ public class OrderService {
             cloudTask.setId(queryCloudTasks.get(0).getId());
             cloudTask.setCreateTime(System.currentTimeMillis());
             cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
+
+            historyService.updateHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
         } else {
             String taskId = IDGenerator.newBusinessId(CloudTaskConstants.TASK_ID_PREFIX, SessionUtils.getUser().getId());
             cloudTask.setId(taskId);
             cloudTask.setCreateTime(System.currentTimeMillis());
             cloudTaskMapper.insertSelective(cloudTask);
-        }
 
-        historyService.insertHistoryCloudTask(cloudTask);//插入历史数据
+            historyService.insertHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+        }
 
         if (StringUtils.isNotEmpty(messageOrderId)) {
             noticeService.createMessageOrderItem(messageOrderId, cloudTask);
@@ -278,9 +300,9 @@ public class OrderService {
         cloudTaskItemLogMapper.insertSelective(cloudTaskItemLog);
 
         if (StringUtils.equalsIgnoreCase(historyType, CloudTaskConstants.HISTORY_TYPE.Cloud.name())) {
-            historyService.insertHistoryCloudTaskLog(cloudTaskItemLog);
+            historyService.insertHistoryCloudTaskLog(BeanUtils.copyBean(new HistoryCloudTaskLog(), cloudTaskItemLog));
         } else if (StringUtils.equalsIgnoreCase(historyType, CloudTaskConstants.HISTORY_TYPE.Vuln.name())) {
-            historyService.insertHistoryVulnTaskLog(cloudTaskItemLog);
+            historyService.insertHistoryVulnTaskLog(BeanUtils.copyBean(new HistoryVulnTaskLog(), cloudTaskItemLog));
         }
 
     }

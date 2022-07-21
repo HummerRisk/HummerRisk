@@ -8,10 +8,7 @@ import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtServerMapper;
 import com.hummerrisk.base.mapper.ext.ExtServerResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtServerRuleMapper;
-import com.hummerrisk.commons.constants.CloudAccountConstants;
-import com.hummerrisk.commons.constants.CloudTaskConstants;
-import com.hummerrisk.commons.constants.ResourceOperation;
-import com.hummerrisk.commons.constants.ResourceTypeConstants;
+import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.BeanUtils;
 import com.hummerrisk.commons.utils.LogUtil;
@@ -109,7 +106,7 @@ public class ServerService {
     public Boolean scan(String id) throws Exception{
             ServerRequest request = new ServerRequest();
             request.setId(id);//serverId
-            Server server = getServerList(request).get(0);
+            Server server = BeanUtils.copyBean(new Server(), getServerList(request).get(0));
             Integer scanId = historyService.insertScanHistory(server);
             if(StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.VALID.name())) {
                 deleteServerResult(id);
@@ -137,7 +134,7 @@ public class ServerService {
 
                     OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_start_server_result");
 
-                    historyService.insertScanTaskHistory(result, scanId);
+                    historyService.insertScanTaskHistory(result, scanId, server.getId(), TaskEnum.serverAccount.getType());
 
                     historyService.insertHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
                 }
@@ -192,7 +189,6 @@ public class ServerService {
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         serverResultMapper.updateByPrimaryKeySelective(result);
-        historyService.insertHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
         return result.getId();
     }
 
