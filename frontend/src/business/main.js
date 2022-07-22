@@ -29,6 +29,8 @@ import 'vue-cron-generator/src/styles/global.less';
 import VueSelectImage from 'vue-select-image';
 import 'vue-select-image/dist/vue-select-image.css';
 
+import 'vue-okr-tree/dist/vue-okr-tree.css';
+
 // you can set default global options and events when Vue.use
 Vue.use(VueCodemirror,  {
   options: { theme: "bespin", },

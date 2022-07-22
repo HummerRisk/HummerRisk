@@ -137,38 +137,6 @@ public class HistoryService {
 
     public void updateScanTaskHistory (HistoryScanTask historyScanTask) throws Exception {
         try{
-            if(historyScanTask == null) return;
-            String resultId = historyScanTask.getTaskId();
-            JSONArray jsonArray = new JSONArray();
-            if (StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.cloudAccount.getType())) {
-                HistoryCloudTask historyCloudTask = historyCloudTaskMapper.selectByPrimaryKey(resultId);
-                historyScanTask.setOutput(jsonArray.toJSONString());
-                historyScanTask.setResourcesSum(historyCloudTask.getResourcesSum()!=null? historyCloudTask.getResourcesSum():0);
-                historyScanTask.setReturnSum(historyCloudTask.getReturnSum()!=null? historyCloudTask.getReturnSum():0);
-                historyScanTask.setScanScore(calculateScore(accountMapper.selectByPrimaryKey(historyCloudTask.getAccountId()), historyCloudTask));
-            } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.vulnAccount.getType())) {
-                HistoryVulnTask historyVulnTask = historyVulnTaskMapper.selectByPrimaryKey(resultId);
-                historyScanTask.setOutput(jsonArray.toJSONString());
-                historyScanTask.setResourcesSum(historyVulnTask.getResourcesSum()!=null? historyVulnTask.getResourcesSum():0);
-                historyScanTask.setReturnSum(historyVulnTask.getReturnSum()!=null? historyVulnTask.getReturnSum():0);
-                historyScanTask.setScanScore(calculateScore(accountMapper.selectByPrimaryKey(historyVulnTask.getAccountId()), historyVulnTask));
-            } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.serverAccount.getType())) {
-                HistoryServerTask historyServerTask = historyServerTaskMapper.selectByPrimaryKey(resultId);
-                historyScanTask.setResourcesSum(1L);
-                historyScanTask.setReturnSum(1L);
-                historyScanTask.setScanScore(calculateScore(serverMapper.selectByPrimaryKey(historyScanTask.getAccountId()), historyServerTask));
-            } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.imageAccount.getType())) {
-                HistoryImageTask historyImageTask = historyImageTaskMapper.selectByPrimaryKey(resultId);
-                historyScanTask.setResourcesSum(historyImageTask.getReturnSum()!=null? historyImageTask.getReturnSum():0);
-                historyScanTask.setReturnSum(historyImageTask.getReturnSum()!=null? historyImageTask.getReturnSum():0);
-                historyScanTask.setScanScore(calculateScore(imageMapper.selectByPrimaryKey(historyScanTask.getAccountId()), historyImageTask));
-            } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.packageAccount.getType())) {
-                HistoryPackageTask historyPackageTask = historyPackageTaskMapper.selectByPrimaryKey(resultId);
-                historyScanTask.setResourcesSum(historyPackageTask.getReturnSum()!=null? historyPackageTask.getReturnSum():0);
-                historyScanTask.setReturnSum(historyPackageTask.getReturnSum()!=null? historyPackageTask.getReturnSum():0);
-                historyScanTask.setScanScore(calculateScore(accountMapper.selectByPrimaryKey(historyScanTask.getAccountId()), historyPackageTask));
-            }
-            historyScanTask.setOutput(jsonArray.toJSONString());
             historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
         }catch (Exception e){
             throw new Exception(e.getMessage());
@@ -238,54 +206,51 @@ public class HistoryService {
      * @param account
      * @return
      */
-    public Integer calculateScore (Object account, Object task) {
+    public Integer calculateScore (String accountId, Object task, String accountType) {
 
         Integer score = 100;
-        if(account == null || task == null) {
+        if(task == null) {
             return score;
         }
-        if (account.getClass() == Account.class || account.getClass() == AccountWithBLOBs.class || account.getClass() == AccountDTO.class) {
-            String accountId = ((Account) account).getId();
-            if (task.getClass() == HistoryCloudTask.class) {
-                HistoryCloudTask historyCloudTask = (HistoryCloudTask) task;
-                Double highResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "HighRisk", historyCloudTask ==null?null: historyCloudTask.getId())!=null?extResourceMapper.resultPercentByCloud(accountId, "HighRisk", historyCloudTask ==null?null: historyCloudTask.getId()):"0.0");
-                Double mediumlResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", historyCloudTask ==null?null: historyCloudTask.getId())!=null?extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", historyCloudTask ==null?null: historyCloudTask.getId()): "0.0");
-                Double lowResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "LowRisk", historyCloudTask ==null?null: historyCloudTask.getId())!=null?extResourceMapper.resultPercentByCloud(accountId, "LowRisk", historyCloudTask ==null?null: historyCloudTask.getId()):"0.0");
+        if (StringUtils.equalsIgnoreCase(accountType, TaskEnum.cloudAccount.getType())) {
 
-                HistoryCloudTaskExample example = new HistoryCloudTaskExample();
-                HistoryCloudTaskExample.Criteria criteria = example.createCriteria();
-                criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("HighRisk");
-                long high = historyCloudTaskMapper.countByExample(example);
-                criteria.andSeverityEqualTo("MediumRisk");
-                long mediuml = historyCloudTaskMapper.countByExample(example);
-                criteria.andSeverityEqualTo("LowRisk");
-                long low = historyCloudTaskMapper.countByExample(example);
+            CloudTask cloudTask = (CloudTask) task;
+            Double highResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "HighRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercentByCloud(accountId, "HighRisk", cloudTask ==null?null: cloudTask.getId()):"0.0");
+            Double mediumlResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask ==null?null: cloudTask.getId()): "0.0");
+            Double lowResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask ==null?null: cloudTask.getId()):"0.0");
 
-                long sum = 5 * high + 3 * mediuml + 2 * low;
-                score = 100 - (int) Math.ceil(highResultPercent * (5 * high / (sum == 0 ? 1 : sum) ) * 100 + mediumlResultPercent * (3 * mediuml / (sum == 0 ? 1 : sum) ) * 100 + lowResultPercent * (2 * low / (sum == 0 ? 1 : sum) ) * 100);
+            HistoryCloudTaskExample example = new HistoryCloudTaskExample();
+            HistoryCloudTaskExample.Criteria criteria = example.createCriteria();
+            criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("HighRisk");
+            long high = historyCloudTaskMapper.countByExample(example);
+            criteria.andSeverityEqualTo("MediumRisk");
+            long mediuml = historyCloudTaskMapper.countByExample(example);
+            criteria.andSeverityEqualTo("LowRisk");
+            long low = historyCloudTaskMapper.countByExample(example);
 
-            } else {
-                HistoryVulnTask historyVulnTask = (HistoryVulnTask) task;
-                Double highResultPercent = Double.valueOf(extResourceMapper.resultPercentByVuln(accountId, "HighRisk", historyVulnTask ==null?null: historyVulnTask.getId())!=null?extResourceMapper.resultPercentByVuln(accountId, "HighRisk", historyVulnTask ==null?null: historyVulnTask.getId()):"0.0");
-                Double mediumlResultPercent = Double.valueOf(extResourceMapper.resultPercentByVuln(accountId, "MediumRisk", historyVulnTask ==null?null: historyVulnTask.getId())!=null?extResourceMapper.resultPercentByVuln(accountId, "MediumRisk", historyVulnTask ==null?null: historyVulnTask.getId()): "0.0");
-                Double lowResultPercent = Double.valueOf(extResourceMapper.resultPercentByVuln(accountId, "LowRisk", historyVulnTask ==null?null: historyVulnTask.getId())!=null?extResourceMapper.resultPercentByVuln(accountId, "LowRisk", historyVulnTask ==null?null: historyVulnTask.getId()):"0.0");
+            long sum = 5 * high + 3 * mediuml + 2 * low;
+            score = 100 - (int) Math.ceil(highResultPercent * (5 * high / (sum == 0 ? 1 : sum) ) * 100 + mediumlResultPercent * (3 * mediuml / (sum == 0 ? 1 : sum) ) * 100 + lowResultPercent * (2 * low / (sum == 0 ? 1 : sum) ) * 100);
 
-                HistoryVulnTaskExample example = new HistoryVulnTaskExample();
-                HistoryVulnTaskExample.Criteria criteria = example.createCriteria();
-                criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("HighRisk");
-                long high = historyVulnTaskMapper.countByExample(example);
-                criteria.andSeverityEqualTo("MediumRisk");
-                long mediuml = historyVulnTaskMapper.countByExample(example);
-                criteria.andSeverityEqualTo("LowRisk");
-                long low = historyVulnTaskMapper.countByExample(example);
+        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.vulnAccount.getType())) {
+            CloudTask historyVulnTask = (CloudTask) task;
+            Double highResultPercent = Double.valueOf(extResourceMapper.resultPercentByVuln(accountId, "HighRisk", historyVulnTask ==null?null: historyVulnTask.getId())!=null?extResourceMapper.resultPercentByVuln(accountId, "HighRisk", historyVulnTask ==null?null: historyVulnTask.getId()):"0.0");
+            Double mediumlResultPercent = Double.valueOf(extResourceMapper.resultPercentByVuln(accountId, "MediumRisk", historyVulnTask ==null?null: historyVulnTask.getId())!=null?extResourceMapper.resultPercentByVuln(accountId, "MediumRisk", historyVulnTask ==null?null: historyVulnTask.getId()): "0.0");
+            Double lowResultPercent = Double.valueOf(extResourceMapper.resultPercentByVuln(accountId, "LowRisk", historyVulnTask ==null?null: historyVulnTask.getId())!=null?extResourceMapper.resultPercentByVuln(accountId, "LowRisk", historyVulnTask ==null?null: historyVulnTask.getId()):"0.0");
 
-                long sum = 5 * high + 3 * mediuml + 2 * low;
-                score = 100 - (int) Math.ceil(highResultPercent * (5 * high / (sum == 0 ? 1 : sum) ) * 100 + mediumlResultPercent * (3 * mediuml / (sum == 0 ? 1 : sum) ) * 100 + lowResultPercent * (2 * low / (sum == 0 ? 1 : sum) ) * 100);
+            HistoryVulnTaskExample example = new HistoryVulnTaskExample();
+            HistoryVulnTaskExample.Criteria criteria = example.createCriteria();
+            criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("HighRisk");
+            long high = historyVulnTaskMapper.countByExample(example);
+            criteria.andSeverityEqualTo("MediumRisk");
+            long mediuml = historyVulnTaskMapper.countByExample(example);
+            criteria.andSeverityEqualTo("LowRisk");
+            long low = historyVulnTaskMapper.countByExample(example);
 
-            }
+            long sum = 5 * high + 3 * mediuml + 2 * low;
+            score = 100 - (int) Math.ceil(highResultPercent * (5 * high / (sum == 0 ? 1 : sum) ) * 100 + mediumlResultPercent * (3 * mediuml / (sum == 0 ? 1 : sum) ) * 100 + lowResultPercent * (2 * low / (sum == 0 ? 1 : sum) ) * 100);
 
-        } else if(account.getClass() == Server.class || account.getClass() == ServerDTO.class) {
-            HistoryServerTask serverResult = (HistoryServerTask) task;
+        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.serverAccount.getType())) {
+            ServerResult serverResult = (ServerResult) task;
             if (StringUtils.equalsIgnoreCase(serverResult.getSeverity(), TaskConstants.Severity.HighRisk.name())) {
                 score = 100 - 20;
             } else if (StringUtils.equalsIgnoreCase(serverResult.getSeverity(), TaskConstants.Severity.MediumRisk.name())) {
@@ -293,8 +258,8 @@ public class HistoryService {
             } else if (StringUtils.equalsIgnoreCase(serverResult.getSeverity(), TaskConstants.Severity.LowRisk.name())) {
                 score = 100 - 5;
             }
-        } else if(account.getClass() == Image.class || account.getClass() == ImageDTO.class) {
-            HistoryImageTask imageResult = (HistoryImageTask) task;
+        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.imageAccount.getType())) {
+            ImageResult imageResult = (ImageResult) task;
             if (imageResult.getReturnSum() >= 0 && imageResult.getReturnSum() < 10) {
                 score = 100 - 5;
             } else if (imageResult.getReturnSum() >= 10 && imageResult.getReturnSum() < 50) {
@@ -308,8 +273,8 @@ public class HistoryService {
             } else {
                 score = 100 - 41;
             }
-        } else if(account.getClass() == Package.class || account.getClass() == PackageDTO.class) {
-            HistoryPackageTask packageResult = (HistoryPackageTask) task;
+        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.packageAccount.getType())) {
+            PackageResult packageResult = (PackageResult) task;
             if (packageResult.getReturnSum() >= 0 && packageResult.getReturnSum() < 10) {
                 score = 100 - 5;
             } else if (packageResult.getReturnSum() >= 10 && packageResult.getReturnSum() < 50) {

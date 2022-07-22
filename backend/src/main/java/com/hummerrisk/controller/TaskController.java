@@ -3,6 +3,7 @@ package com.hummerrisk.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.Favorite;
+import com.hummerrisk.base.domain.Task;
 import com.hummerrisk.base.domain.TaskItem;
 import com.hummerrisk.commons.constants.RoleConstants;
 import com.hummerrisk.commons.utils.PageUtils;
@@ -175,5 +176,9 @@ public class TaskController {
         return taskService.taskLogList(request);
     }
 
-
+    @ApiOperation(value = "所有任务")
+    @GetMapping("allTaskList")
+    public List<Task> allTaskList() {
+        return taskService.allTaskList();
+    }
 }

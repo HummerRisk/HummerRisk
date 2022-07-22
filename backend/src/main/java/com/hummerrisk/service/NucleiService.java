@@ -65,6 +65,8 @@ public class NucleiService {
     private ExtCloudTaskMapper extCloudTaskMapper;
     @Resource @Lazy
     private HistoryService historyService;
+    @Resource @Lazy
+    private HistoryVulnTaskMapper historyVulnTaskMapper;
 
     public CloudTask createTask(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId) throws Exception {
         CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, messageOrderId);
@@ -204,7 +206,13 @@ public class NucleiService {
             cloudTask.setCreateTime(System.currentTimeMillis());
             cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
 
-            historyService.updateHistoryVulnTask(BeanUtils.copyBean(new HistoryVulnTask(), cloudTask));//插入历史数据
+            HistoryVulnTask historyVulnTask = historyVulnTaskMapper.selectByPrimaryKey(queryCloudTasks.get(0).getId());
+            if (historyVulnTask != null) {
+                historyService.updateHistoryVulnTask(BeanUtils.copyBean(new HistoryVulnTask(), cloudTask));//插入历史数据
+            } else {
+                historyService.insertHistoryVulnTask(BeanUtils.copyBean(new HistoryVulnTask(), cloudTask));//插入历史数据
+            }
+
         } else {
             String taskId = IDGenerator.newBusinessId(CloudTaskConstants.TASK_ID_PREFIX, SessionUtils.getUser().getId());
             cloudTask.setId(taskId);

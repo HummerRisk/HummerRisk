@@ -138,7 +138,7 @@
 
     <select id="resultPercentByCloud" resultType="java.lang.String">
         select IFNULL(sum( t.return_sum ), 0)/IFNULL(sum( t.resources_sum ), 1)
-        from history_cloud_task t
+        from cloud_task t
         join cloud_account t1 on t.account_id = t1.id
         <where>
             <if test="severity != null">
@@ -155,7 +155,7 @@
 
     <select id="resultPercentByVuln" resultType="java.lang.String">
         select IFNULL(sum( t.return_sum ), 0)/IFNULL(sum( t.resources_sum ), 1)
-        from history_vuln_task t
+        from cloud_task t
         join cloud_account t1 on t.account_id = t1.id
         <where>
             <if test="severity != null">

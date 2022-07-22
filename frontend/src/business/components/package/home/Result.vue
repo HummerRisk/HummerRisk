@@ -276,12 +276,11 @@ export default {
       if (!result.returnJson) {
         this.result = this.$get("/package/getPackageResult/"+ result.id, response => {
           this.logForm = response.data;
-          this.logVisible = true;
         });
       } else {
         this.logForm = result;
-        this.logVisible = true;
       }
+      this.logVisible = true;
     },
     handleClose() {
       this.logVisible=false;

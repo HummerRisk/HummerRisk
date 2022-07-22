@@ -224,6 +224,10 @@ public class TaskService {
         return extTaskMapper.taskList(request);
     }
 
+    public List<Task> allTaskList() {
+        return taskMapper.selectByExample(null);
+    }
+
     public TaskVo getTask(String id) {
         TaskRequest request = new TaskRequest();
         request.setId(id);

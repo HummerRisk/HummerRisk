@@ -35,7 +35,7 @@
         <span slot="title">{{ $t('server.server_setting') }}</span>
       </el-menu-item>
       <el-menu-item index="/image" onselectstart="return false" v-permission="['admin']">
-        <i class="el-icon-picture-outline-round"></i>
+        <i class="el-icon-picture-outline"></i>
         <span slot="title">{{ $t('image.image_scan') }}</span>
       </el-menu-item>
       <el-menu-item index="/package" onselectstart="return false" v-permission="['admin']">

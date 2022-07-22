@@ -285,12 +285,11 @@ export default {
         let url = "/image/getImageResult/";
         this.result = this.$get(url + result.id, response => {
           this.logForm = response.data;
-          this.logVisible = true;
         });
       } else {
         this.logForm = result;
-        this.logVisible = true;
       }
+      this.logVisible = true;
     },
     handleClose() {
       this.logVisible=false;

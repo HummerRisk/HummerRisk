@@ -82,6 +82,8 @@ public class OrderService {
     private CloudAccountQuartzTaskRelaLogMapper quartzTaskRelaLogMapper;
     @Resource @Lazy
     private HistoryService historyService;
+    @Resource @Lazy
+    private HistoryCloudTaskMapper historyCloudTaskMapper;
 
     public CloudTask createTask(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId) throws Exception {
         CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, messageOrderId);
@@ -255,7 +257,13 @@ public class OrderService {
             cloudTask.setCreateTime(System.currentTimeMillis());
             cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
 
-            historyService.updateHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+            HistoryCloudTask historyCloudTask = historyCloudTaskMapper.selectByPrimaryKey(queryCloudTasks.get(0).getId());
+            if (historyCloudTask != null) {
+                historyService.updateHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+            } else {
+                historyService.insertHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+            }
+
         } else {
             String taskId = IDGenerator.newBusinessId(CloudTaskConstants.TASK_ID_PREFIX, SessionUtils.getUser().getId());
             cloudTask.setId(taskId);
