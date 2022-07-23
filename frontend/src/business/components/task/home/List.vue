@@ -839,6 +839,7 @@ export default {
 
 .el-icon-detail {
   cursor:pointer;
+  width: 100%;
 }
 
 .table-content .success-row {

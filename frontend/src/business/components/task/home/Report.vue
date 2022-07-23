@@ -14,7 +14,7 @@
                 :value="item">
               </el-option>
             </el-select>
-            <el-button type="primary" plain icon="el-icon-document" @click="genReport"> {{ $t('task.gen_report') }}</el-button>
+            <el-button type="primary" plain icon="el-icon-download" @click="genReport"> {{ $t('task.download_report') }}</el-button>
           </el-col>
           <el-col :span="12" v-if="selectedTask">
             <el-row :gutter="20">
@@ -53,7 +53,7 @@
           <div style="margin: 10px 0 0 0;">
             Scan Information:<br/>
             <ul style="margin-left: 60px;">
-              <li><i>HummerRisk version</i>: 7.1.0</li>
+              <li><i>HummerRisk version</i>: {{ version }}</li>
               <li><i>Report Generated On</i>: Fri, 22 Jul 2022 04:26:45 +0800</li>
               <li><i>Dependencies Scanned</i>:&nbsp;21 (21 unique)</li>
               <li><i>Vulnerable Dependencies</i>:&nbsp;<span id="vulnerableCount">14</span></li>
@@ -66,15 +66,39 @@
           </div>
         </el-row>
         <el-row :gutter="20" style="margin: 15px;">
-          <h2>Summary:&nbsp;</h2>
           <div style="margin: 10px 0 0 0;">
             <el-collapse v-model="activeNames">
               <el-collapse-item name="1">
                 <template slot="title">
                   {{ $t('account.account_setting') }} <i class="el-icon-cloudy" style="margin-left: 5px;padding-top: 3px;"></i>
                 </template>
-                <div></div>
-                <div></div>
+                <div>
+                  <h2>Summary:&nbsp;</h2>
+                  <div style="margin: 10px 0 0 0;">
+                    <el-table :data="tableData" border stripe style="width: 100%">
+                      <el-table-column prop="date" label="日期" width="180"></el-table-column>
+                      <el-table-column prop="name" label="姓名" width="180"></el-table-column>
+                      <el-table-column prop="address" label="地址"></el-table-column>
+                    </el-table>
+                  </div>
+                </div>
+                <div style="margin: 10px 0 0 0;">
+                  <h2>Details:&nbsp;</h2>
+                  <div style="margin: 10px 0 0 0;">
+                    <el-card class="box-card">
+                      <div slot="header" class="clearfix">
+                        <div class="icon-title">
+                          <span>{{ 'H' }}</span>
+<!--                          <span>{{ currentUser.name.substring(0, 1) }}</span>-->
+                        </div>
+                        <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
+                      </div>
+                      <div v-for="o in 4" :key="o" class="text item">
+                        {{'列表内容 ' + o }}
+                      </div>
+                    </el-card>
+                  </div>
+                </div>
               </el-collapse-item>
               <el-collapse-item name="2">
                 <template slot="title">
@@ -108,7 +132,7 @@
                     class="search"
                     type="text"
                     size="small"
-                    :="$t('task.filter_okr')"
+                    :placeholder="$t('task.filter_okr')"
                     prefix-icon="el-icon-search"
                     maxlength="60"
                     v-model="filterText" clearable/>
@@ -154,6 +178,7 @@ export default {
       tasks: [],
       selectedTask: null,
       activeNames: ['1','2','3','4','5'],
+      version: 'v1.0.0',
       testData: [{
         id: 1,
         label: 'xxx科技有有限公司',
@@ -235,6 +260,23 @@ export default {
           content: '这是一个有活力的财务部',
         }]
       }],
+      tableData: [{
+        date: '2016-05-02',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-04',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1517 弄'
+      }, {
+        date: '2016-05-01',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1519 弄'
+      }, {
+        date: '2016-05-03',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1516 弄'
+      }],
     }
   },
   watch: {
@@ -246,7 +288,6 @@ export default {
     init() {
       this.result = this.$get("/task/allTaskList", response => {
         this.tasks = response.data;
-        console.log(response.data)
       });
     },
     filterNode(value, data) {
@@ -315,8 +356,8 @@ export default {
         this.$refs.taskReport.innerHTML,
         '</body>',
         '</html>'
-      ]
-      return temp.join('')
+      ];
+      return temp.join('');
     },
     //构造html页面，并使用 createObjectURL构造一个文件流并下载
     exportDom() {
@@ -328,9 +369,15 @@ export default {
       link.click();
       window.URL.revokeObjectURL(url);
     },
+    getVersion() {
+      this.$get('/system/version', response => {
+        this.version = response.data;
+      });
+    }
   },
   created() {
     this.init();
+    this.getVersion();
   },
 }
 </script>
@@ -386,6 +433,44 @@ export default {
   text-overflow:ellipsis;
   cursor:pointer;
   font-size: 12px;
+}
+
+.text {
+  font-size: 14px;
+}
+
+.item {
+  margin-bottom: 18px;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both;
+}
+
+.box-card >>> .el-card__header {
+  background-color: aliceblue;
+}
+
+.box-card {
+  width: 99%;
+  border-top-color: #ff0000;
+  border-top-width: 5px;
+}
+
+.icon-title {
+  color: #fff;
+  width: 30px;
+  background-color: #72dc91;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 30px;
+  font-size: 14px;
 }
 
 </style>

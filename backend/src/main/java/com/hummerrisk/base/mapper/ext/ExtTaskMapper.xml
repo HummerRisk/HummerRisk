@@ -819,13 +819,13 @@
 
     <select id="getTaskResourceVo" resultType="com.hummerrisk.controller.request.task.TaskResourceVo" parameterType="java.lang.String">
         SELECT t.id,
-               concat(t.task_name, ' ', t.resource_types, ' | ', t.region_name)  as name,
+               concat(t.task_name, ' ', t.resource_types, ' | ', t.rule_tags)  as name,
                t.description as 'desc',
                t.status,
                t.severity,
                t.plugin_icon as icon
         FROM history_cloud_task t
-        WHERE t.task_id = #{resource_id}
+        WHERE t.id = #{resource_id}
 
         UNION ALL
 
@@ -836,7 +836,7 @@
                t.severity,
                t.plugin_icon as icon
         FROM history_vuln_task t
-        WHERE t.task_id = #{resource_id}
+        WHERE t.id = #{resource_id}
 
         UNION ALL
 
