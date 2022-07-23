@@ -93,8 +93,11 @@
                         </div>
                         <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
                       </div>
-                      <div v-for="o in 4" :key="o" class="text item">
-                        {{'列表内容 ' + o }}
+                      <div class="text item">
+
+                      </div>
+                      <div class="text item">
+
                       </div>
                     </el-card>
                   </div>
@@ -289,6 +292,13 @@ export default {
       this.result = this.$get("/task/allTaskList", response => {
         this.tasks = response.data;
       });
+    },
+    search() {
+      if (this.selectedTask) {
+        this.result = this.$get("/task/report/" + this.selectedTask.id, response => {
+          console.log(response.data);
+        });
+      }
     },
     filterNode(value, data) {
       if (!value) return true;

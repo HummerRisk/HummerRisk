@@ -184,7 +184,7 @@ public class ImageController {
     @I18n
     @ApiOperation(value = "检测结果详情")
     @PostMapping("resultItemList/{goPage}/{pageSize}")
-    public Pager<List<ImageResultItem>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultItem request) {
+    public Pager<List<ImageGrypeTable>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageGrypeTable request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, imageService.resultItemList(request));
     }

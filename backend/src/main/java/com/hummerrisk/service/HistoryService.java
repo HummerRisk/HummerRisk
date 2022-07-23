@@ -82,13 +82,9 @@ public class HistoryService {
     @Resource @Lazy
     private HistoryPackageTaskMapper historyPackageTaskMapper;
     @Resource @Lazy
-    private HistoryPackageTaskItemMapper historyPackageTaskItemMapper;
-    @Resource @Lazy
     private HistoryPackageTaskLogMapper historyPackageTaskLogMapper;
     @Resource @Lazy
     private HistoryImageTaskMapper historyImageTaskMapper;
-    @Resource @Lazy
-    private HistoryImageTaskItemMapper historyImageTaskItemMapper;
     @Resource @Lazy
     private HistoryImageTaskLogMapper historyImageTaskLogMapper;
 
@@ -203,7 +199,7 @@ public class HistoryService {
     /**
      * 计算安全检测评分
      * 高：中：低 = 5 ： 3 ： 2
-     * @param account
+     * @param accountId
      * @return
      */
     public Integer calculateScore (String accountId, Object task, String accountType) {
@@ -425,10 +421,6 @@ public class HistoryService {
         historyPackageTaskMapper.updateByPrimaryKeySelective(record);
     }
 
-    public void insertHistoryPackageTaskItem(HistoryPackageTaskItem record) {
-        historyPackageTaskItemMapper.insertSelective(record);
-    }
-
     public void insertHistoryPackageTaskLog(HistoryPackageTaskLog record) {
         historyPackageTaskLogMapper.insertSelective(record);
     }
@@ -439,10 +431,6 @@ public class HistoryService {
 
     public void updateHistoryImageTask(HistoryImageTaskWithBLOBs record) {
         historyImageTaskMapper.updateByPrimaryKeySelective(record);
-    }
-
-    public void insertHistoryImageTaskItem(HistoryImageTaskItem record) {
-        historyImageTaskItemMapper.insertSelective(record);
     }
 
     public void insertHistoryImageTaskLog(HistoryImageTaskLog record) {

@@ -61,9 +61,9 @@ public class PackageService {
     @Resource
     private AccountService accountService;
     @Resource
-    private PackageResultItemMapper packageResultItemMapper;
-    @Resource
     private HistoryService historyService;
+    @Resource
+    private PackageDependencyJsonMapper packageDependencyJsonMapper;
 
     public List<PackageDTO> packageList(PackageRequest request) {
         return extPackageMapper.packageList(request);
@@ -312,11 +312,6 @@ public class PackageService {
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
 
-            //删除历史垃圾数据插入新的
-            PackageResultItemExample packageResultItemExample = new PackageResultItemExample();
-            packageResultItemExample.createCriteria().andResultIdEqualTo(result.getId());
-            packageResultItemMapper.deleteByExample(packageResultItemExample);
-
             JSONArray jsonArr = JSON.parseObject(returnJson).getJSONArray("dependencies");
             result.setReturnSum(Long.parseLong(jsonArr.size() + ""));
             for (Object o : jsonArr) {
@@ -340,17 +335,19 @@ public class PackageService {
     }
 
     void saveResultItem(PackageResult result, JSONObject jsonObject) throws Exception {
-        PackageResultItem packageResultItem = new PackageResultItem();
-        packageResultItem.setId(UUIDUtil.newUUID());
-        packageResultItem.setSeverity(result.getSeverity());
-        packageResultItem.setName(result.getName());
+        PackageDependencyJsonWithBLOBs packageResultItem = new PackageDependencyJsonWithBLOBs();
+        packageResultItem.setIsVirtual(jsonObject.getString("isVirtual"));
+        packageResultItem.setFileName(jsonObject.getString("fileName"));
+        packageResultItem.setFilePath(jsonObject.getString("filePath"));
+        packageResultItem.setMd5(jsonObject.getString("md5"));
+        packageResultItem.setSha1(jsonObject.getString("sha1"));
+        packageResultItem.setSha256(jsonObject.getString("sha256"));
+        packageResultItem.setEvidenceCollected(jsonObject.getString("evidenceCollected"));
+        packageResultItem.setProjectreferences(jsonObject.getString("projectReferences"));
+        packageResultItem.setPackages(jsonObject.getString("packages"));
+        packageResultItem.setVulnerabilities(jsonObject.getString("vulnerabilities"));
         packageResultItem.setResultId(result.getId());
-        packageResultItem.setCreateTime(System.currentTimeMillis());
-        packageResultItem.setUpdateTime(System.currentTimeMillis());
-        packageResultItem.setResource(jsonObject.toJSONString());
-        packageResultItemMapper.insertSelective(packageResultItem);
-
-        historyService.insertHistoryPackageTaskItem(BeanUtils.copyBean(new HistoryPackageTaskItem(), packageResultItem));
+        packageDependencyJsonMapper.insertSelective(packageResultItem);
     }
 
     public String reScan(String id) throws Exception {
@@ -501,10 +498,10 @@ public class PackageService {
         return packageResultLogMapper.selectByExampleWithBLOBs(example);
     }
 
-    public List<PackageResultItem> resultItemList(PackageResultItem resourceRequest) {
-        PackageResultItemExample example = new PackageResultItemExample();
+    public List<PackageDependencyJsonWithBLOBs> resultItemList(PackageDependencyJson resourceRequest) {
+        PackageDependencyJsonExample example = new PackageDependencyJsonExample();
         example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
-        return packageResultItemMapper.selectByExampleWithBLOBs(example);
+        return packageDependencyJsonMapper.selectByExampleWithBLOBs(example);
     }
 
 }

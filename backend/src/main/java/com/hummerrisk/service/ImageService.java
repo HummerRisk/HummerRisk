@@ -70,7 +70,13 @@ public class ImageService {
     @Resource
     private NoticeService noticeService;
     @Resource
-    private ImageResultItemMapper imageResultItemMapper;
+    private ImageGrypeTableMapper imageGrypeTableMapper;
+    @Resource
+    private ImageGrypeJsonMapper imageGrypeJsonMapper;
+    @Resource
+    private ImageSyftTableMapper imageSyftTableMapper;
+    @Resource
+    private ImageSyftJsonMapper imageSyftJsonMapper;
     @Resource
     private HistoryService historyService;
 
@@ -340,17 +346,8 @@ public class ImageService {
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
 
-            String lines[] = grypeTable.split("\\r?\\n");
-            result.setReturnSum(Long.parseLong(lines.length+""));
-
-            //删除历史垃圾数据插入新的
-            ImageResultItemExample imageResultItemExample = new ImageResultItemExample();
-            imageResultItemExample.createCriteria().andResultIdEqualTo(result.getId());
-            imageResultItemMapper.deleteByExample(imageResultItemExample);
-
-            for (String line : lines) {
-                saveResultItem(result, line);
-            }
+            long count = saveResultItem(result);
+            result.setReturnSum(count);
             imageResultMapper.updateByPrimaryKeySelective(result);
 
             noticeService.createImageMessageOrder(result);
@@ -367,40 +364,122 @@ public class ImageService {
         }
     }
 
-    void saveResultItem(ImageResult result, String line) throws Exception {
-        if(line.contains("NAME INSTALLED FIXED-IN TYPE VULNERABILITY SEVERITY")) {return;}//去除首行table title
-        ImageResultItem imageResultItem = new ImageResultItem();
-        imageResultItem.setId(UUIDUtil.newUUID());
-        imageResultItem.setName(result.getName());
-        imageResultItem.setResultId(result.getId());
-        imageResultItem.setCreateTime(System.currentTimeMillis());
-        imageResultItem.setUpdateTime(System.currentTimeMillis());
+    long saveResultItem(ImageResultWithBLOBs result) throws Exception {
 
-        if (line.contains("Critical")) {
-            imageResultItem.setSeverity(TaskConstants.Severity.CriticalRisk.name());
-        } else if (line.contains("High")) {
-            imageResultItem.setSeverity(TaskConstants.Severity.HighRisk.name());
-        } else if (line.contains("Medium")) {
-            imageResultItem.setSeverity(TaskConstants.Severity.MediumRisk.name());
-        } else if (line.contains("Low")) {
-            imageResultItem.setSeverity(TaskConstants.Severity.LowRisk.name());
-        } else {
-            imageResultItem.setSeverity(TaskConstants.Severity.LowRisk.name());
+        //插入grypeTables
+        String grypeTables[] = result.getGrypeTable().split("\\r?\\n");
+        for (String line : grypeTables) {
+            if (line.contains("NAME")) {continue;}//去除首行table title
+            line = line.replaceAll(" +"," ");//将多个空格替换为一个
+            String[] newStr = line.split(" ");//截取table
+            ImageGrypeTable imageGrypeTable = new ImageGrypeTable();
+            for (int i = 0; i < newStr.length; i++) {
+                String str = newStr[i];
+                if(!str.isEmpty()) {//FIXED-IN可能为空
+//                    NAME               INSTALLED     FIXED-IN      TYPE  VULNERABILITY   SEVERITY
+//                    apk-tools          2.10.4-r2     2.10.7-r0     apk   CVE-2021-36159  Critical
+//                    apk-tools          2.10.4-r2     2.10.6-r0     apk   CVE-2021-30139  High
+//                    busybox            1.30.1-r2                   apk   CVE-2021-42384  High
+                    if (i == 0) {
+                        imageGrypeTable.setName(str);
+                    } else if (i == 1) {
+                        imageGrypeTable.setInstalled(str);
+                    } else if (i == 2 && newStr.length == 6) {
+                        imageGrypeTable.setFixedIn(str);
+                    } else if (i == 2 && newStr.length == 5) {
+                        imageGrypeTable.setType(str);
+                    } else if (i == 3 && newStr.length == 6) {
+                        imageGrypeTable.setType(str);
+                    } else if (i == 3 && newStr.length == 5) {
+                        imageGrypeTable.setVulnerability(str);
+                    } else if (i == 4 && newStr.length == 6) {
+                        imageGrypeTable.setVulnerability(str);
+                    } else if (i == 4 && newStr.length == 5) {
+                        imageGrypeTable.setSeverity(str);
+                    } else if (i == 5 && newStr.length == 6) {
+                        imageGrypeTable.setSeverity(str);
+                    }
+                }
+            }
+            imageGrypeTable.setResultId(result.getId());
+            imageGrypeTableMapper.insertSelective(imageGrypeTable);
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间
-        sdf.applyPattern("yyyy-MM-dd HH:mm:ss a");// a为am/pm的标记
-        Date date = new Date();// 获取当前时间
-        String json = "{\n" +
-                "  \"Name\": " + "\"" + result.getName() + "\"" + ",\n" +
-                "  \"Result\": " + "\"" + line + "\"" + "\n" +
-                "  \"Desc\": " + "\"" + result.getRuleDesc() + "\"" + ",\n" +
-                "  \"CreatedTime\": " + "\"" + sdf.format(date) + "\"" + ",\n" +
-                "}";
-        imageResultItem.setResource(json);
-        imageResultItemMapper.insertSelective(imageResultItem);
+        //插入grypeJsons
+        JSONObject jsonG = JSONObject.parseObject(result.getGrypeJson());
+        JSONArray grypeJsons = JSONArray.parseArray(jsonG.getString("matches"));
+        for (Object obj : grypeJsons) {
+            ImageGrypeJsonWithBLOBs imageGrypeJson = new ImageGrypeJsonWithBLOBs();
+            String artifact = ((JSONObject) obj).getString("artifact");
+            String vulnerability = ((JSONObject) obj).getString("vulnerability");
+            imageGrypeJson.setArtifact(artifact);
+            imageGrypeJson.setVulnerability(vulnerability);
+            imageGrypeJson.setRelatedVulnerabilities(((JSONObject) obj).getString("relatedVulnerabilities"));
+            imageGrypeJson.setMatchDetails(((JSONObject) obj).getString("matchDetails"));
+            JSONObject artifactJson = JSONObject.parseObject(artifact);
+            JSONObject vulnerabilityJson = JSONObject.parseObject(vulnerability);
+            imageGrypeJson.setName(artifactJson.getString("name"));
+            imageGrypeJson.setVersion(artifactJson.getString("version"));
+            imageGrypeJson.setType(artifactJson.getString("type"));
+            imageGrypeJson.setCve(vulnerabilityJson.getString("id"));
+            imageGrypeJson.setDatasource(vulnerabilityJson.getString("dataSource"));
+            imageGrypeJson.setNamespace(vulnerabilityJson.getString("namespace"));
+            imageGrypeJson.setSeverity(vulnerabilityJson.getString("severity"));
+            imageGrypeJson.setDescription(vulnerabilityJson.getString("description"));
+            imageGrypeJson.setResultId(result.getId());
+            imageGrypeJsonMapper.insertSelective(imageGrypeJson);
+        }
 
-        historyService.insertHistoryImageTaskItem(BeanUtils.copyBean(new HistoryImageTaskItem(), imageResultItem));
+        //插入syftTables
+        String syftTables[] = result.getSyftTable().split("\\r?\\n");
+        for (String line : syftTables) {
+            if (line.contains("NAME")) {continue;}//去除首行table title
+            line = line.replaceAll(" +"," ");//将多个空格替换为一个
+            String[] newStr = line.split(" ");//截取table
+            ImageSyftTable imageSyftTable = new ImageSyftTable();
+            for (int i = 0; i < newStr.length; i++) {
+                String str = newStr[i];
+                if(!str.isEmpty()) {//version 值可能为空
+//                    NAME                    VERSION        TYPE
+//                    US_export_policy                       java-archive
+//                    alpine-baselayout       3.1.2-r0       apk
+                    if (i == 0) {
+                        imageSyftTable.setName(str);
+                    } else if (i == 1 && newStr.length == 3) {
+                        imageSyftTable.setVersion(str);
+                    } else if (i == 1 && newStr.length == 2) {
+                        imageSyftTable.setType(str);
+                    } else if (i == 2) {
+                        imageSyftTable.setType(str);
+                    }
+                }
+            }
+            imageSyftTable.setResultId(result.getId());
+            imageSyftTableMapper.insertSelective(imageSyftTable);
+        }
+
+        //插入syftJsons
+        JSONObject jsonS = JSONObject.parseObject(result.getSyftJson());
+        JSONArray syftJsons = JSONArray.parseArray(jsonS.getString("artifacts"));
+        for (Object obj : syftJsons) {
+            ImageSyftJsonWithBLOBs imageSyftJson = new ImageSyftJsonWithBLOBs();
+            JSONObject artifact = (JSONObject) obj;
+            imageSyftJson.setName(artifact.getString("name"));
+            imageSyftJson.setVersion(!artifact.getString("version").isEmpty()?artifact.getString("version"):"");
+            imageSyftJson.setType(artifact.getString("type"));
+            imageSyftJson.setFoundBy(artifact.getString("foundBy"));
+            imageSyftJson.setLanguage(artifact.getString("language"));
+            imageSyftJson.setPurl(artifact.getString("purl"));
+            imageSyftJson.setMetadataType(artifact.getString("metadataType"));
+            imageSyftJson.setLocations(artifact.getString("locations"));
+            imageSyftJson.setLicenses(artifact.getString("licenses"));
+            imageSyftJson.setCpes(artifact.getString("cpes"));
+            imageSyftJson.setMetadata(artifact.getString("metadata"));
+            imageSyftJson.setResultId(result.getId());
+            imageSyftJsonMapper.insertSelective(imageSyftJson);
+        }
+
+        return Long.parseLong((grypeTables.length - 1) + "");
     }
 
     public String reScan(String id) throws Exception {
@@ -558,10 +637,10 @@ public class ImageService {
         historyService.insertHistoryImageTaskLog(BeanUtils.copyBean(new HistoryImageTaskLog(), imageResultLog));
     }
 
-    public List<ImageResultItem> resultItemList(ImageResultItem resourceRequest) {
-        ImageResultItemExample example = new ImageResultItemExample();
+    public List<ImageGrypeTable> resultItemList(ImageGrypeTable resourceRequest) {
+        ImageGrypeTableExample example = new ImageGrypeTableExample();
         example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
-        return imageResultItemMapper.selectByExampleWithBLOBs(example);
+        return imageGrypeTableMapper.selectByExample(example);
     }
 
 }

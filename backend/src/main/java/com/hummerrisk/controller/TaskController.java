@@ -13,10 +13,7 @@ import com.hummerrisk.controller.request.task.RuleVo;
 import com.hummerrisk.controller.request.task.TaskLogVo;
 import com.hummerrisk.controller.request.task.TaskRequest;
 import com.hummerrisk.controller.request.task.TaskVo;
-import com.hummerrisk.dto.AccountTreeDTO;
-import com.hummerrisk.dto.TaskDTO;
-import com.hummerrisk.dto.TaskRuleDTO;
-import com.hummerrisk.dto.TaskTagGroupDTO;
+import com.hummerrisk.dto.*;
 import com.hummerrisk.service.TaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -180,5 +177,11 @@ public class TaskController {
     @GetMapping("allTaskList")
     public List<Task> allTaskList() {
         return taskService.allTaskList();
+    }
+
+    @ApiOperation(value = "任务报告")
+    @GetMapping("report/{id}")
+    public TaskReportDTO report(@PathVariable String id) {
+        return taskService.report(id);
     }
 }

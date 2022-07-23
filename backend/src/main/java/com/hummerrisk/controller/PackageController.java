@@ -167,7 +167,7 @@ PackageController {
     @I18n
     @ApiOperation(value = "检测结果详情")
     @PostMapping("resultItemList/{goPage}/{pageSize}")
-    public Pager<List<PackageResultItem>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody PackageResultItem request) {
+    public Pager<List<PackageDependencyJsonWithBLOBs>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody PackageDependencyJson request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, packageService.resultItemList(request));
     }

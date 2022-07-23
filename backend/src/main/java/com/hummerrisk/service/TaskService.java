@@ -228,6 +228,10 @@ public class TaskService {
         return taskMapper.selectByExample(null);
     }
 
+    public TaskReportDTO report(String id) {
+        return null;
+    }
+
     public TaskVo getTask(String id) {
         TaskRequest request = new TaskRequest();
         request.setId(id);
