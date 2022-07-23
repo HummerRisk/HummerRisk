@@ -342,10 +342,10 @@ public class PackageService {
         packageResultItem.setMd5(jsonObject.getString("md5"));
         packageResultItem.setSha1(jsonObject.getString("sha1"));
         packageResultItem.setSha256(jsonObject.getString("sha256"));
-        packageResultItem.setEvidenceCollected(jsonObject.getString("evidenceCollected"));
-        packageResultItem.setProjectreferences(jsonObject.getString("projectReferences"));
-        packageResultItem.setPackages(jsonObject.getString("packages"));
-        packageResultItem.setVulnerabilities(jsonObject.getString("vulnerabilities"));
+        packageResultItem.setEvidenceCollected(!jsonObject.getString("evidenceCollected").isEmpty()?jsonObject.getString("evidenceCollected"):"{}");
+        packageResultItem.setProjectreferences(!jsonObject.getString("projectReferences").isEmpty()?jsonObject.getString("projectReferences"):"[]");
+        packageResultItem.setPackages(!jsonObject.getString("packages").isEmpty()?jsonObject.getString("packages"):"[]");
+        packageResultItem.setVulnerabilities(!jsonObject.getString("vulnerabilities").isEmpty()?jsonObject.getString("vulnerabilities"):"[]");
         packageResultItem.setResultId(result.getId());
         packageDependencyJsonMapper.insertSelective(packageResultItem);
     }
