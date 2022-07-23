@@ -1,16 +1,16 @@
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/nuclei:v0.1 as nuclei-env
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/nuclei:v0.2 as nuclei-env
 
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/prowler:v0.1 as prowler-env
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/prowler:v0.2 as prowler-env
 
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/dependency-check:v0.1 as dependency-env
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/dependency-check:v0.2 as dependency-env
 
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/xray:v0.1 as xray-env
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/xray:v0.2 as xray-env
 
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/grype:v0.1 as grype-env
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/grype:v0.2 as grype-env
 
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/syft:v0.1 as syft-env
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/syft:v0.2 as syft-env
 
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/cloud-custodian:v0.1.2
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/cloud-custodian:v0.2.0
 
 WORKDIR /usr
 
