@@ -10,13 +10,13 @@ import java.util.List;
  */
 public class HistoryPackageReportDTO extends HistoryPackageTask {
 
-    private List<PackageDependencyJson> packageDependencyJsonList;//结果json
+    private List<PackageDependencyJsonWithBLOBs> packageDependencyJsonList;//结果json
 
-    public List<PackageDependencyJson> getPackageDependencyJsonList() {
+    public List<PackageDependencyJsonWithBLOBs> getPackageDependencyJsonList() {
         return packageDependencyJsonList;
     }
 
-    public void setPackageDependencyJsonList(List<PackageDependencyJson> packageDependencyJsonList) {
+    public void setPackageDependencyJsonList(List<PackageDependencyJsonWithBLOBs> packageDependencyJsonList) {
         this.packageDependencyJsonList = packageDependencyJsonList;
     }
 }

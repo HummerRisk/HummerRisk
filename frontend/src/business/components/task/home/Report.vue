@@ -410,31 +410,77 @@
                 <template slot="title">
                   {{ $t('package.package_scan') }} <i class="el-icon-box" style="margin-left: 5px;padding-top: 2px;"></i>
                 </template>
-
-                <div class="filter-wrapper">
-                  <el-input
-                    class="search"
-                    type="text"
-                    size="small"
-                    :placeholder="$t('task.filter_okr')"
-                    prefix-icon="el-icon-search"
-                    maxlength="60"
-                    v-model="filterText" clearable/>
+                <div v-for="historyPackageReport in report.historyPackageReportDTOList" :key="historyPackageReport.id" style="border-style:ridge;padding: 15px;">
+                  <h2>Summary:&nbsp;</h2>
+                  <ul style="margin-left: 60px;">
+                    <li><i>Scan Name</i>: {{ historyPackageReport.name }}</li>
+                    <li><i>Package Name</i>: {{ historyPackageReport.packageName }}</li>
+                    <li><i>Package Size</i>:&nbsp;{{ historyPackageReport.size }}</li>
+                    <li><i>Rule Name</i>: {{ historyPackageReport.ruleDesc }}</li>
+                    <li><i>Scan User</i>:&nbsp;{{ historyPackageReport.userName }}</li>
+                    <li><i>Severity</i>:&nbsp;{{ historyPackageReport.severity }}</li>
+                    <li><i>Create Time</i>:&nbsp;{{ historyPackageReport.createTime | timestampFormatDate }}</li>
+                    <li><i>Result Status</i>:&nbsp;{{ historyPackageReport.resultStatus }}</li>
+                    <li><i>Vulnerabilities Found</i>: {{ historyPackageReport.returnSum }}</li>
+                  </ul>
+                  <div style="margin: 10px 0 0 0;">
+                    <h3>Vuln:&nbsp;</h3>
+                    <el-table :data="historyPackageReport.packageDependencyJsonList" border stripe style="width: 100%">
+                      <el-table-column type="index" min-width="5%"/>
+                      <el-table-column :label="'FileName'" min-width="20%" prop="fileName">
+                      </el-table-column>
+                      <el-table-column :label="'FilePath'" min-width="25%" prop="filePath">
+                      </el-table-column>
+                      <el-table-column min-width="5%" :label="'IsVirtual'" prop="isVirtual">
+                      </el-table-column>
+                      <el-table-column min-width="10%" :label="'Md5'" prop="md5">
+                      </el-table-column>
+                      <el-table-column min-width="15%" :label="'Sha1'" prop="sha1">
+                      </el-table-column>
+                      <el-table-column min-width="15%" :label="'Sha256'" prop="sha256">
+                      </el-table-column>
+                    </el-table>
+                  </div>
+                  <div style="margin: 10px 0 0 0;">
+                    <h2>Details:&nbsp;</h2>
+                    <div class="filter-wrapper">
+                      <el-input
+                        class="search"
+                        type="text"
+                        size="small"
+                        :placeholder="$t('task.filter_okr')"
+                        prefix-icon="el-icon-search"
+                        maxlength="60"
+                        v-model="filterText" clearable/>
+                    </div>
+                  </div>
+                  <div v-for="packageDependencyJson in historyPackageReport.packageDependencyJsonList" :key="packageDependencyJson.id">
+                    <h3>Vuln:&nbsp;</h3>
+                    <ul style="margin-left: 60px;">
+                      <li><i>FileName</i>: {{ packageDependencyJson.fileName }}</li>
+                      <li><i>FilePath</i>: {{ packageDependencyJson.filePath }}</li>
+                      <li><i>IsVirtual</i>:&nbsp;{{ packageDependencyJson.isVirtual }}</li>
+                      <li><i>Md5</i>: {{ packageDependencyJson.md5 }}</li>
+                      <li><i>Sha1</i>:&nbsp;{{ packageDependencyJson.sha1 }}</li>
+                      <li><i>Sha256</i>:&nbsp;{{ packageDependencyJson.sha256 }}</li>
+                    </ul>
+                    <div style="margin: 10px;">
+                      <vue-okr-tree
+                        ref="tree"
+                        :data="packageDependencyJson.vulnerabilities | packageDependencyJsonRight"
+                        :left-data="packageDependencyJson.vulnerabilities | packageDependencyJsonLeft"
+                        only-both-tree
+                        direction="horizontal"
+                        show-collapsable
+                        node-key="id"
+                        label-class-name='no-padding'
+                        default-expand-all
+                        :render-content="renderContent"
+                        :filter-node-method="filterNode"
+                      ></vue-okr-tree>
+                    </div>
+                  </div>
                 </div>
-
-                <vue-okr-tree
-                  ref="tree"
-                  :data="testData"
-                  :left-data="testLeftData"
-                  only-both-tree
-                  direction="horizontal"
-                  show-collapsable
-                  node-key="id"
-                  label-class-name='no-padding'
-                  default-expand-all
-                  :render-content="renderContent"
-                  :filter-node-method="filterNode"
-                ></vue-okr-tree>
               </el-collapse-item>
               <!-- 软件包检测 end -->
             </el-collapse>
@@ -468,87 +514,6 @@ export default {
       selectedTask: null,
       activeNames: ['1','2','3','4','5'],
       version: 'v1.0.0',
-      testData: [{
-        id: 1,
-        label: 'xxx科技有有限公司',
-        content: '这是一个有活力的公司',
-        children: [{
-          id: 2,
-          label: '产品研发部',
-          content: '这是一个有活力的产品研发部',
-          children: [{
-            id: 3,
-            label: '研发-前端',
-            content: '这是一个有活力的研发-前端',
-          }, {
-            id: 4,
-            label: '研发-后端',
-            content: '这是一个有活力的研发-后端',
-          }, {
-            id: 5,
-            label: 'UI 设计',
-            content: '这是一个有活力的UI 设计',
-          }]
-        }, {
-          id: 6,
-          label: '销售部',
-          content: '这是一个有活力的销售部',
-          children: [{
-            id: 7,
-            label: '销售一部',
-            content: '这是一个有活力的销售一部',
-          },{
-            id: 8,
-            label: '销售二部',
-            content: '这是一个有活力的销售二部',
-          }
-          ]
-        },{
-          id: 9,
-          label: '财务部',
-          content: '这是一个有活力的务部',
-        }]
-      }],
-      testLeftData: [{
-        id: 1,
-        label: 'xxx科技有有限公司',
-        content: '这是一个有活力的公司',
-        children: [{
-          id: 12,
-          label: '(左)产品研发部',
-          content: '这是一个有活力的产品研发部',
-          children: [{
-            id: 13,
-            label: '(左)研发-前端',
-            content: '这是一个有活力的研发-前端',
-          }, {
-            id: 14,
-            label: '(左)研发-后端',
-            content: '这是一个有活力的研发-后端',
-          }, {
-            id: 15,
-            label: '(左)UI 设计',
-            content: '这是一个有活力的UI 设计',
-          }]
-        }, {
-          id: 16,
-          label: '(左)销售部',
-          children: [{
-            id: 17,
-            label: '(左)销售一部',
-            content: '这是一个有活力的销售一部',
-          },{
-            id: 18,
-            label: '(左)销售二部',
-            content: '这是一个有活力的销售二部',
-          }
-          ]
-        },{
-          id: 19,
-          label: '(左)财务部',
-          content: '这是一个有活力的财务部',
-        }]
-      }],
       report: {},
       tagSelect: [],
       resourceTypes: [],
@@ -610,38 +575,48 @@ export default {
       }
       let spanLeft = 8;
       let spanRight = 16;
-      let span1 = this.$t('task.artifact');
-      let span2 = this.$t('task.related_vulnerabilities');
-      let span3 = this.$t('task.match_details');
-      let span4 = this.$t('task.vulnerability');
-      return (
-        <div class={cls}>
-          <div class="diy-con-name">
-            <el-row>
-              <el-col span={spanLeft} class="diy-con-left">{span1}</el-col>
-              <el-col span={spanRight} class="diy-con-right">{node.data.content}</el-col>
-            </el-row>
+      console.log('111', h, node)
+      if (node.level === 1) {
+        return (
+          <div class={cls}>
+            <div class="diy-con-name">
+              Package Scan: {node.data.name}
+            </div>
+            <div class="diy-con-content">
+              Description: {node.data.description}
+            </div>
           </div>
-          <div class="diy-con-content">
-            <el-row>
-              <el-col span={spanLeft} class="diy-con-left">{span2}</el-col>
-              <el-col span={spanRight} class="diy-con-right">{node.data.content}</el-col>
-            </el-row>
+        )
+      } else {
+        return (
+          <div class={cls}>
+            <div class="diy-con-name">
+              <el-row>
+                <el-col span={spanLeft} class="diy-con-left">Name</el-col>
+                <el-col span={spanRight} class="diy-con-right-cve">{node.data.name}</el-col>
+              </el-row>
+            </div>
+            <div class="diy-con-content">
+              <el-row>
+                <el-col span={spanLeft} class="diy-con-left">Severity</el-col>
+                <el-col span={spanRight} class="diy-con-right">{node.data.severity}</el-col>
+              </el-row>
+            </div>
+            <div class="diy-con-name">
+              <el-row>
+                <el-col span={spanLeft} class="diy-con-left">Source</el-col>
+                <el-col span={spanRight} class="diy-con-right">{node.data.source}</el-col>
+              </el-row>
+            </div>
+            <div class="diy-con-content">
+              <el-row>
+                <el-col span={spanLeft} class="diy-con-left">Notes</el-col>
+                <el-col span={spanRight} class="diy-con-right">{!!node.data.description?node.data.description.substr(0,60):'N/A'}</el-col>
+              </el-row>
+            </div>
           </div>
-          <div class="diy-con-name">
-            <el-row>
-              <el-col span={spanLeft} class="diy-con-left">{span3}</el-col>
-              <el-col span={spanRight} class="diy-con-right">{node.data.content}</el-col>
-            </el-row>
-          </div>
-          <div class="diy-con-content">
-            <el-row>
-              <el-col span={spanLeft} class="diy-con-left">{span4}</el-col>
-              <el-col span={spanRight} class="diy-con-right">{node.data.content}</el-col>
-            </el-row>
-          </div>
-        </div>
-      )
+        )
+      }
     },
     //相关获取 dom 元素的方法
     html() {
@@ -726,7 +701,16 @@ export default {
 
 .el-card >>> .diy-con-right {
   text-align: right;
-  color: #888;
+  color: #888888;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  font-size: 12px;
+}
+
+.el-card >>> .diy-con-right-cve {
+  text-align: right;
+  color: #32CD32;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
@@ -764,7 +748,7 @@ export default {
 .icon-title {
   color: #fff;
   width: 30px;
-  background-color: #72dc91;
+  background-color: #32CD32;
   height: 30px;
   line-height: 30px;
   text-align: center;

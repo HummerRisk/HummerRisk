@@ -4,7 +4,7 @@ const options = function (value, array) {
   if (array) {
     for (let i = 0; i < array.length; i++) {
       if (value === array[i].key) {
-        return array[i].value
+        return array[i].value;
       }
     }
   }
@@ -13,7 +13,7 @@ const options = function (value, array) {
 
 const timestampFormatDate = function (timestamp) {
   if (!timestamp) {
-    return timestamp
+    return timestamp;
   }
 
   let date = new Date(timestamp);
@@ -41,7 +41,7 @@ const timestampFormatDate = function (timestamp) {
 
 const timestampFormatMinutesDate = function (timestamp) {
   if (!timestamp) {
-    return timestamp
+    return timestamp;
   }
 
   let date = new Date(timestamp);
@@ -65,7 +65,7 @@ const timestampFormatMinutesDate = function (timestamp) {
 
 const timestampFormatDayDate = function (timestamp) {
   if (!timestamp) {
-    return timestamp
+    return timestamp;
   }
 
   let date = new Date(timestamp);
@@ -81,11 +81,57 @@ const timestampFormatDayDate = function (timestamp) {
   return y + '-' + MM + '-' + d;
 };
 
+const packageDependencyJsonLeft = function (vulnerabilities) {
+  if (!vulnerabilities) {
+    return vulnerabilities;
+  }
+
+  let list = JSON.parse(vulnerabilities);
+
+  const half = Math.ceil(list.length / 2);
+
+  let leftData = [
+    {
+      name: 'VulnerableSoftware',
+      severity: 'N/A',
+      source: 'package',
+      description: 'The scan results of this package are as follows',
+      children: list.splice(0, half),
+    }
+  ];
+
+  return leftData;
+};
+
+const packageDependencyJsonRight = function (vulnerabilities) {
+  if (!vulnerabilities) {
+    return vulnerabilities;
+  }
+
+  let list = JSON.parse(vulnerabilities);
+
+  const half = Math.ceil(list.length / 2);
+
+  let rightData = [
+    {
+      name: 'VulnerableSoftware',
+      severity: 'N/A',
+      source: 'package',
+      description: 'The scan results of this package are as follows',
+      children: list.splice(-half),
+    }
+  ];
+
+  return rightData;
+};
+
 const filters = {
   "options": options,
   "timestampFormatDate": timestampFormatDate,
   "timestampFormatMinutesDate": timestampFormatMinutesDate,
   "timestampFormatDayDate": timestampFormatDayDate,
+  "packageDependencyJsonLeft": packageDependencyJsonLeft,
+  "packageDependencyJsonRight": packageDependencyJsonRight,
 };
 
 export default {

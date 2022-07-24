@@ -990,7 +990,7 @@
         WHERE t1.id = #{id}
     </select>
 
-    <select id="getImageGrypeJsonList" resultType="com.hummerrisk.base.domain.ImageGrypeJson" parameterType="java.lang.String">
+    <select id="getImageGrypeJsonList" resultType="com.hummerrisk.base.domain.ImageGrypeJsonWithBLOBs" parameterType="java.lang.String">
         SELECT t.*
         FROM image_grype_json t
         JOIN history_image_task t1 on t1.id = t.result_id
@@ -1004,7 +1004,7 @@
         WHERE t1.id = #{id}
     </select>
 
-    <select id="getImageSyftJsonList" resultType="com.hummerrisk.base.domain.ImageSyftJson" parameterType="java.lang.String">
+    <select id="getImageSyftJsonList" resultType="com.hummerrisk.base.domain.ImageSyftJsonWithBLOBs" parameterType="java.lang.String">
         SELECT t.*
         FROM image_syft_json t
         JOIN history_image_task t1 on t1.id = t.result_id
@@ -1012,18 +1012,18 @@
     </select>
 
     <resultMap id="HistoryPackageReportDTOMap" type="com.hummerrisk.dto.HistoryPackageReportDTO" extends="com.hummerrisk.base.mapper.HistoryPackageTaskMapper.BaseResultMap">
-        <collection property="packageDependencyJsonList" ofType="com.hummerrisk.base.domain.PackageDependencyJson" javaType="list" select="getPackageDependencyJsonList" column="id">
+        <collection property="packageDependencyJsonList" ofType="com.hummerrisk.base.domain.PackageDependencyJsonWithBLOBs" javaType="list" select="getPackageDependencyJsonList" column="id">
         </collection>
     </resultMap>
 
-    <select id="getHistoryPackageReportDTOList" resultType="com.hummerrisk.dto.HistoryPackageReportDTO" parameterType="java.lang.String">
+    <select id="getHistoryPackageReportDTOList" resultMap="HistoryPackageReportDTOMap" parameterType="java.lang.String">
         SELECT t.*
         FROM history_package_task t
         JOIN task_item_resource t1 on t1.resource_id = t.id
         WHERE t1.task_id = #{id}
     </select>
 
-    <select id="getPackageDependencyJsonList" resultType="com.hummerrisk.base.domain.PackageDependencyJson" parameterType="java.lang.String">
+    <select id="getPackageDependencyJsonList" resultType="com.hummerrisk.base.domain.PackageDependencyJsonWithBLOBs" parameterType="java.lang.String">
         SELECT t.*
         FROM package_dependency_json t
         JOIN history_package_task t1 on t1.id = t.result_id
