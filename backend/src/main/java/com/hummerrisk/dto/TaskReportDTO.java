@@ -1,20 +1,17 @@
 package com.hummerrisk.dto;
 
-import com.hummerrisk.base.domain.HistoryCloudTaskItem;
-import com.hummerrisk.base.domain.HistoryServerTask;
-import com.hummerrisk.base.domain.HistoryVulnTaskItem;
-import com.hummerrisk.base.domain.Task;
+import com.hummerrisk.base.domain.*;
 
 import java.util.List;
 
 
 public class TaskReportDTO extends Task {
 
-    private List<HistoryCloudTaskItem> historyCloudTaskItemList;//云账号检测结果table
+    private List<HistoryCloudTaskDTO> historyCloudTaskDTOList;//云账号检测结果table
 
     private List<HistoryResourceReportDTO> historyCloudResourceReportDTOList;//云账号检测结果details
 
-    private List<HistoryVulnTaskItem> historyVulnTaskItemList;//漏洞检测结果table
+    private List<HistoryVulnTaskDTO> historyVulnTaskDTOList;//漏洞检测结果table
 
     private List<HistoryResourceReportDTO> historyVulnResourceReportDTOList;//漏洞检测结果details
 
@@ -24,12 +21,20 @@ public class TaskReportDTO extends Task {
 
     private List<HistoryPackageReportDTO> historyPackageReportDTOList;//软件包检测结果details
 
-    public List<HistoryCloudTaskItem> getHistoryCloudTaskItemList() {
-        return historyCloudTaskItemList;
+    public List<HistoryCloudTaskDTO> getHistoryCloudTaskDTOList() {
+        return historyCloudTaskDTOList;
     }
 
-    public void setHistoryCloudTaskItemList(List<HistoryCloudTaskItem> historyCloudTaskItemList) {
-        this.historyCloudTaskItemList = historyCloudTaskItemList;
+    public void setHistoryCloudTaskDTOList(List<HistoryCloudTaskDTO> historyCloudTaskDTOList) {
+        this.historyCloudTaskDTOList = historyCloudTaskDTOList;
+    }
+
+    public List<HistoryVulnTaskDTO> getHistoryVulnTaskDTOList() {
+        return historyVulnTaskDTOList;
+    }
+
+    public void setHistoryVulnTaskDTOList(List<HistoryVulnTaskDTO> historyVulnTaskDTOList) {
+        this.historyVulnTaskDTOList = historyVulnTaskDTOList;
     }
 
     public List<HistoryResourceReportDTO> getHistoryCloudResourceReportDTOList() {
@@ -38,14 +43,6 @@ public class TaskReportDTO extends Task {
 
     public void setHistoryCloudResourceReportDTOList(List<HistoryResourceReportDTO> historyCloudResourceReportDTOList) {
         this.historyCloudResourceReportDTOList = historyCloudResourceReportDTOList;
-    }
-
-    public List<HistoryVulnTaskItem> getHistoryVulnTaskItemList() {
-        return historyVulnTaskItemList;
-    }
-
-    public void setHistoryVulnTaskItemList(List<HistoryVulnTaskItem> historyVulnTaskItemList) {
-        this.historyVulnTaskItemList = historyVulnTaskItemList;
     }
 
     public List<HistoryResourceReportDTO> getHistoryVulnResourceReportDTOList() {
