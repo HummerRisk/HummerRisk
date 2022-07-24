@@ -885,4 +885,144 @@
         order by t.id desc
     </select>
 
+    <resultMap id="TaskReportMap" type="com.hummerrisk.dto.TaskReportDTO" extends="com.hummerrisk.base.mapper.TaskMapper.BaseResultMap">
+        <collection property="historyCloudTaskItemList" ofType="com.hummerrisk.base.domain.HistoryCloudTaskItem" javaType="list" select="getHistoryCloudTaskItemList" column="id">
+        </collection>
+        <collection property="historyCloudResourceReportDTOList" ofType="com.hummerrisk.dto.HistoryResourceReportDTO" javaType="list" select="getHistoryCloudResourceReportDTOList" column="id">
+        </collection>
+        <collection property="historyVulnTaskItemList" ofType="com.hummerrisk.base.domain.HistoryVulnTaskItemList" javaType="list" select="getHistoryVulnTaskItemList" column="id">
+        </collection>
+        <collection property="historyVulnResourceReportDTOList" ofType="com.hummerrisk.base.domain.HistoryResourceReportDTO" javaType="list" select="getHistoryVulnResourceReportDTOList" column="id">
+        </collection>
+        <collection property="historyServerTaskList" ofType="com.hummerrisk.base.domain.HistoryServerTask" javaType="list" select="getHistoryServerTaskList" column="id">
+        </collection>
+        <collection property="historyImageReportDTOList" ofType="com.hummerrisk.dto.HistoryImageReportDTO" javaType="list" select="getHistoryImageReportDTOList" column="id">
+        </collection>
+        <collection property="historyPackageReportDTOList" ofType="com.hummerrisk.dto.HistoryPackageReportDTO" javaType="list" select="getHistoryPackageReportDTOList" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="report" resultMap="TaskReportMap" parameterType="java.lang.String">
+        SELECT t.*
+        FROM task t
+        WHERE t.id = #{id}
+    </select>
+
+    <select id="getHistoryCloudTaskItemList" resultType="com.hummerrisk.base.domain.HistoryCloudTaskItem" parameterType="java.lang.String">
+        SELECT t.*
+        FROM history_cloud_task_item t
+        JOIN history_cloud_task t1 on t.task_id = t1.id
+        JOIN task_item_resource t2 on t2.resource_id = t1.id
+        WHERE t2.task_id = #{id}
+    </select>
+
+    <resultMap id="HistoryCloudResourceReportDTOMap" type="com.hummerrisk.dto.HistoryResourceReportDTO" extends="com.hummerrisk.base.mapper.ResourceMapper.BaseResultMap">
+        <collection property="resourceItemList" ofType="com.hummerrisk.base.domain.ResourceItem" javaType="list" select="getResourceItemList" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="getHistoryCloudResourceReportDTOList" resultMap="HistoryCloudResourceReportDTOMap" parameterType="java.lang.String">
+        SELECT t.*
+        FROM resource t
+        JOIN cloud_task_item_resource t1 on t.id = t1.resource_id
+        JOIN history_cloud_task t2 on t1.task_id = t2.id
+        JOIN task_item_resource t3 on t3.resource_id = t2.id
+        WHERE t3.task_id = #{id}
+    </select>
+
+    <select id="getResourceItemList" resultType="com.hummerrisk.base.domain.ResourceItem" parameterType="java.lang.String">
+        SELECT t.*
+        FROM resource_item t
+        WHERE t.resource_id = #{id}
+    </select>
+
+    <select id="getHistoryVulnTaskItemList" resultType="com.hummerrisk.base.domain.HistoryVulnTaskItem" parameterType="java.lang.String">
+        SELECT t.*
+        FROM history_vuln_task_item t
+        JOIN history_vuln_task t1 on t.task_id = t1.id
+        JOIN task_item_resource t2 on t2.resource_id = t1.id
+        WHERE t2.task_id = #{id}
+    </select>
+
+    <resultMap id="HistoryVulnResourceReportDTOMap" type="com.hummerrisk.dto.HistoryResourceReportDTO" extends="com.hummerrisk.base.mapper.ResourceMapper.BaseResultMap">
+        <collection property="resourceItemList" ofType="com.hummerrisk.base.domain.ResourceItem" javaType="list" select="getResourceItemList" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="getHistoryVulnResourceReportDTOList" resultMap="HistoryCloudResourceReportDTOMap" parameterType="java.lang.String">
+        SELECT t.*
+        FROM resource t
+        JOIN cloud_task_item_resource t1 on t.id = t1.resource_id
+        JOIN history_vuln_task t2 on t1.task_id = t2.id
+        JOIN task_item_resource t3 on t3.resource_id = t2.id
+        WHERE t3.task_id = #{id}
+    </select>
+
+    <select id="getHistoryServerTaskList" resultType="com.hummerrisk.base.domain.HistoryServerTask" parameterType="java.lang.String">
+        SELECT t.*
+        FROM history_server_task t
+        JOIN task_item_resource t1 on t1.resource_id = t.id
+        WHERE t1.task_id = #{id}
+    </select>
+
+    <resultMap id="HistoryImageReportDTOMap" type="com.hummerrisk.dto.HistoryImageReportDTO" extends="com.hummerrisk.base.mapper.HistoryImageTaskMapper.BaseResultMap">
+        <collection property="imageGrypeTableList" ofType="com.hummerrisk.base.domain.ImageGrypeTable" javaType="list" select="getImageGrypeTableList" column="id">
+        </collection>
+        <collection property="imageGrypeJsonList" ofType="com.hummerrisk.base.domain.ImageGrypeJson" javaType="list" select="getImageGrypeJsonList" column="id">
+        </collection>
+        <collection property="imageSyftTableList" ofType="com.hummerrisk.base.domain.ImageSyftTable" javaType="list" select="getImageSyftTableList" column="id">
+        </collection>
+        <collection property="imageSyftJsonList" ofType="com.hummerrisk.base.domain.ImageSyftJson" javaType="list" select="getImageSyftJsonList" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="getHistoryImageReportDTOList" resultType="com.hummerrisk.dto.HistoryImageReportDTO" parameterType="java.lang.String">
+        SELECT t.*
+        FROM history_image_task t
+        JOIN task_item_resource t1 on t1.resource_id = t.id
+        WHERE t1.task_id = #{id}
+    </select>
+
+    <select id="getImageGrypeTableList" resultType="com.hummerrisk.base.domain.ImageGrypeTable" parameterType="java.lang.String">
+        SELECT t.*
+        FROM image_grype_table t
+        WHERE t.result_id = #{id}
+    </select>
+
+    <select id="getImageGrypeJsonList" resultType="com.hummerrisk.base.domain.ImageGrypeJson" parameterType="java.lang.String">
+        SELECT t.*
+        FROM image_grype_json t
+        WHERE t.result_id = #{id}
+    </select>
+
+    <select id="getImageSyftTableList" resultType="com.hummerrisk.base.domain.ImageSyftTable" parameterType="java.lang.String">
+        SELECT t.*
+        FROM image_syft_table t
+        WHERE t.result_id = #{id}
+    </select>
+
+    <select id="getImageSyftJsonList" resultType="com.hummerrisk.base.domain.ImageSyftJson" parameterType="java.lang.String">
+        SELECT t.*
+        FROM image_syft_json t
+        WHERE t.result_id = #{id}
+    </select>
+
+    <resultMap id="HistoryPackageReportDTOMap" type="com.hummerrisk.dto.HistoryPackageReportDTO" extends="com.hummerrisk.base.mapper.HistoryPackageTaskMapper.BaseResultMap">
+        <collection property="packageDependencyJsonList" ofType="com.hummerrisk.base.domain.PackageDependencyJson" javaType="list" select="getPackageDependencyJsonList" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="getHistoryPackageReportDTOList" resultType="com.hummerrisk.dto.HistoryPackageReportDTO" parameterType="java.lang.String">
+        SELECT t.*
+        FROM history_package_task t
+        JOIN task_item_resource t1 on t1.resource_id = t.id
+        WHERE t1.task_id = #{id}
+    </select>
+
+    <select id="getPackageDependencyJsonList" resultType="com.hummerrisk.base.domain.PackageDependencyJson" parameterType="java.lang.String">
+        SELECT t.*
+        FROM package_dependency_json t
+        WHERE t.result_id = #{id}
+    </select>
+
 </mapper>

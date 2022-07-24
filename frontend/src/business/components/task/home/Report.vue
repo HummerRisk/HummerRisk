@@ -6,7 +6,7 @@
       <div class="filter-wrapper">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-select v-model="selectedTask" filterable clearable :placeholder="$t('task.please_filter_report')" style="width: 50%;">
+            <el-select v-model="selectedTask" filterable clearable :placeholder="$t('task.please_filter_report')" style="width: 50%;" @change="search">
               <el-option
                 v-for="item in tasks"
                 :key="item.id"

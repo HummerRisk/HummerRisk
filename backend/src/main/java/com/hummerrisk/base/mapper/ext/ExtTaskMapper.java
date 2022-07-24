@@ -54,4 +54,6 @@ public interface ExtTaskMapper {
     List<TaskVo> taskList(TaskRequest request);
 
     List<TaskLogVo> taskLogList(TaskRequest request);
+
+    TaskReportDTO report(String id);
 }

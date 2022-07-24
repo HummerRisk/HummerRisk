@@ -229,7 +229,7 @@ public class TaskService {
     }
 
     public TaskReportDTO report(String id) {
-        return null;
+        return extTaskMapper.report(id);
     }
 
     public TaskVo getTask(String id) {
