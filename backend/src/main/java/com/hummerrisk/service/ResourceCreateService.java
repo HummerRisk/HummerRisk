@@ -265,7 +265,7 @@ public class ResourceCreateService {
             for (HistoryScanTask historyScanTask : historyScanTasks) {
                 if (StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.cloudAccount.getType())) {
                     CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(historyScanTask.getTaskId());
-                    if (historyScanStatus.contains(cloudTask.getStatus())) {
+                    if (cloudTask != null && historyScanStatus.contains(cloudTask.getStatus())) {
                         historyScanTask.setStatus(cloudTask.getStatus());
                         historyScanTask.setOutput(jsonArray.toJSONString());
                         historyScanTask.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
@@ -275,7 +275,7 @@ public class ResourceCreateService {
                     }
                 } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.vulnAccount.getType())) {
                     CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(historyScanTask.getTaskId());
-                    if (historyScanStatus.contains(cloudTask.getStatus())) {
+                    if (cloudTask != null && historyScanStatus.contains(cloudTask.getStatus())) {
                         historyScanTask.setStatus(cloudTask.getStatus());
                         historyScanTask.setOutput(jsonArray.toJSONString());
                         historyScanTask.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
@@ -285,7 +285,7 @@ public class ResourceCreateService {
                     }
                 } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.serverAccount.getType())) {
                     ServerResult serverResult = serverResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
-                    if (historyScanStatus.contains(serverResult.getResultStatus())) {
+                    if (serverResult != null && historyScanStatus.contains(serverResult.getResultStatus())) {
                         historyScanTask.setStatus(serverResult.getResultStatus());
                         historyScanTask.setResourcesSum(1L);
                         historyScanTask.setReturnSum(1L);
@@ -294,7 +294,7 @@ public class ResourceCreateService {
                     }
                 } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.imageAccount.getType())) {
                     ImageResult imageResult = imageResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
-                    if (historyScanStatus.contains(imageResult.getResultStatus())) {
+                    if (imageResult != null && historyScanStatus.contains(imageResult.getResultStatus())) {
                         historyScanTask.setStatus(imageResult.getResultStatus());
                         historyScanTask.setResourcesSum(imageResult.getReturnSum()!=null? imageResult.getReturnSum():0);
                         historyScanTask.setReturnSum(imageResult.getReturnSum()!=null? imageResult.getReturnSum():0);
@@ -303,7 +303,7 @@ public class ResourceCreateService {
                     }
                 } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.packageAccount.getType())) {
                     PackageResult packageResult = packageResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
-                    if (historyScanStatus.contains(packageResult.getResultStatus())) {
+                    if (packageResult != null && historyScanStatus.contains(packageResult.getResultStatus())) {
                         historyScanTask.setStatus(packageResult.getResultStatus());
                         historyScanTask.setResourcesSum(packageResult.getReturnSum()!=null? packageResult.getReturnSum():0);
                         historyScanTask.setReturnSum(packageResult.getReturnSum()!=null? packageResult.getReturnSum():0);

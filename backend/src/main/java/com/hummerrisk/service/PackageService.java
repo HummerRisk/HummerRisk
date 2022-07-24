@@ -336,16 +336,16 @@ public class PackageService {
 
     void saveResultItem(PackageResult result, JSONObject jsonObject) throws Exception {
         PackageDependencyJsonWithBLOBs packageResultItem = new PackageDependencyJsonWithBLOBs();
-        packageResultItem.setIsVirtual(jsonObject.getString("isVirtual"));
-        packageResultItem.setFileName(jsonObject.getString("fileName"));
-        packageResultItem.setFilePath(jsonObject.getString("filePath"));
-        packageResultItem.setMd5(jsonObject.getString("md5"));
-        packageResultItem.setSha1(jsonObject.getString("sha1"));
-        packageResultItem.setSha256(jsonObject.getString("sha256"));
-        packageResultItem.setEvidenceCollected(!jsonObject.getString("evidenceCollected").isEmpty()?jsonObject.getString("evidenceCollected"):"{}");
-        packageResultItem.setProjectreferences(!jsonObject.getString("projectReferences").isEmpty()?jsonObject.getString("projectReferences"):"[]");
-        packageResultItem.setPackages(!jsonObject.getString("packages").isEmpty()?jsonObject.getString("packages"):"[]");
-        packageResultItem.setVulnerabilities(!jsonObject.getString("vulnerabilities").isEmpty()?jsonObject.getString("vulnerabilities"):"[]");
+        packageResultItem.setIsVirtual(jsonObject.getString("isVirtual") != null?jsonObject.getString("isVirtual"):"");
+        packageResultItem.setFileName(jsonObject.getString("fileName") != null?jsonObject.getString("fileName"):"");
+        packageResultItem.setFilePath(jsonObject.getString("filePath") != null?jsonObject.getString("filePath"):"");
+        packageResultItem.setMd5(jsonObject.getString("md5") != null?jsonObject.getString("md5"):"");
+        packageResultItem.setSha1(jsonObject.getString("sha1") != null?jsonObject.getString("sha1"):"");
+        packageResultItem.setSha256(jsonObject.getString("sha256") != null?jsonObject.getString("sha256"):"");
+        packageResultItem.setEvidenceCollected(jsonObject.getString("evidenceCollected") != null?jsonObject.getString("evidenceCollected"):"{}");
+        packageResultItem.setProjectreferences(jsonObject.getString("projectReferences") != null?jsonObject.getString("projectReferences"):"[]");
+        packageResultItem.setPackages(jsonObject.getString("packages") != null?jsonObject.getString("packages"):"[]");
+        packageResultItem.setVulnerabilities(jsonObject.getString("vulnerabilities") != null?jsonObject.getString("vulnerabilities"):"[]");
         packageResultItem.setResultId(result.getId());
         packageDependencyJsonMapper.insertSelective(packageResultItem);
     }
