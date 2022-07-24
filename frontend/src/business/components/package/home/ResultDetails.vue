@@ -10,37 +10,19 @@
                         :title="$t('package.result_details_list')"/>
         </template>
 
-        <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter" :row-class-name="tableRowClassName">
-          <!-- 展开 start -->
-          <el-table-column type="expand">
-            <template v-slot:default="props">
-
-              <el-divider><i class="el-icon-folder-opened"></i></el-divider>
-              <el-form v-if="props.row.resource !== '[]'">
-                  <result-read-only :row="typeof(props.row.resource) === 'string'?JSON.parse(props.row.resource):props.row.resource"></result-read-only>
-                  <el-divider><i class="el-icon-document-checked"></i></el-divider>
-              </el-form>
-            </template>
+        <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter">
+          <el-table-column type="index" min-width="3%"/>
+          <el-table-column prop="fileName" :label="'FileName'" min-width="15%">
           </el-table-column>
-          <!-- 展开 end -->
-          <el-table-column type="index" min-width="5%"/>
-          <el-table-column v-slot:default="scope" :label="$t('resource.Hummer_ID')" min-width="28%">
-              {{ scope.row.id }}
+          <el-table-column prop="filePath" :label="'FilePath'" min-width="23%">
           </el-table-column>
-          <el-table-column v-slot:default="scope" :label="$t('package.name')" min-width="15%">
-              {{ scope.row.name }}
+          <el-table-column min-width="5%" :label="'IsVirtual'" prop="isVirtual">
           </el-table-column>
-          <el-table-column min-width="10%" :label="$t('package.severity')" column-key="severity">
-            <template v-slot:default="{row}">
-              <rule-type :row="row"/>
-            </template>
+          <el-table-column min-width="15%" :label="'Md5'" prop="md5">
           </el-table-column>
-          <el-table-column min-width="15%" :label="$t('account.update_time')" prop="updateTime">
-            <template v-slot:default="scope">
-              <span><i class="el-icon-time"></i> {{ scope.row.updateTime | timestampFormatDate }}</span>
-            </template>
+          <el-table-column min-width="15%" :label="'Sha1'" prop="sha1">
           </el-table-column>
-          <el-table-column min-width="10%" :label="$t('commons.operating')">
+          <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
@@ -162,15 +144,6 @@ import RuleType from "@/business/components/image/home/RuleType";
       init() {
         this.resultId = this.$route.params.id;
         this.search();
-      },
-      tableRowClassName({row, rowIndex}) {
-        if (rowIndex % 4 === 0) {
-          return 'success-row';
-        } else if (rowIndex % 2 === 0) {
-          return 'warning-row';
-        } else {
-          return '';
-        }
       },
       back () {
         this.$router.push({
