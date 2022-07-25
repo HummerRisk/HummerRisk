@@ -147,28 +147,27 @@ public class CloudTaskService {
                 cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(taskItem.getId());
                 cloudTaskItemLogMapper.deleteByExample(cloudTaskItemLogExample);
 
-                //注释删除检测资源详情，因为要保留，关联历史数据
-//                CloudTaskItemResourceExample cloudTaskItemResourceExample = new CloudTaskItemResourceExample();
-//                cloudTaskItemResourceExample.createCriteria().andTaskItemIdEqualTo(taskItem.getId());
-//                List<CloudTaskItemResource> cloudTaskItemResources = cloudTaskItemResourceMapper.selectByExample(cloudTaskItemResourceExample);
-//                cloudTaskItemResourceMapper.deleteByExample(cloudTaskItemResourceExample);
-//                cloudTaskItemResources.forEach(taskItemResource -> {
-//                    if (taskItemResource == null) return;
-//                    resourceMapper.deleteByPrimaryKey(taskItemResource.getResourceId());
-//
-//                    if (taskItemResource.getResourceId() != null) {
-//                        ResourceItemExample resourceItemExample = new ResourceItemExample();
-//                        resourceItemExample.createCriteria().andResourceIdEqualTo(taskItemResource.getResourceId());
-//                        List<ResourceItem> resourceItems = resourceItemMapper.selectByExample(resourceItemExample);
-//                        resourceItems.forEach(resourceItem -> {
-//                            ResourceRuleExample resourceRuleExample = new ResourceRuleExample();
-//                            if (resourceItem.getResourceId() != null) {
-//                                resourceRuleExample.createCriteria().andResourceIdEqualTo(resourceItem.getResourceId());
-//                                resourceRuleMapper.deleteByExample(resourceRuleExample);
-//                            }
-//                        });
-//                    }
-//                });
+                CloudTaskItemResourceExample cloudTaskItemResourceExample = new CloudTaskItemResourceExample();
+                cloudTaskItemResourceExample.createCriteria().andTaskItemIdEqualTo(taskItem.getId());
+                List<CloudTaskItemResource> cloudTaskItemResources = cloudTaskItemResourceMapper.selectByExample(cloudTaskItemResourceExample);
+                cloudTaskItemResourceMapper.deleteByExample(cloudTaskItemResourceExample);
+                cloudTaskItemResources.forEach(taskItemResource -> {
+                    if (taskItemResource == null) return;
+                    resourceMapper.deleteByPrimaryKey(taskItemResource.getResourceId());
+
+                    if (taskItemResource.getResourceId() != null) {
+                        ResourceItemExample resourceItemExample = new ResourceItemExample();
+                        resourceItemExample.createCriteria().andResourceIdEqualTo(taskItemResource.getResourceId());
+                        List<ResourceItem> resourceItems = resourceItemMapper.selectByExample(resourceItemExample);
+                        resourceItems.forEach(resourceItem -> {
+                            ResourceRuleExample resourceRuleExample = new ResourceRuleExample();
+                            if (resourceItem.getResourceId() != null) {
+                                resourceRuleExample.createCriteria().andResourceIdEqualTo(resourceItem.getResourceId());
+                                resourceRuleMapper.deleteByExample(resourceRuleExample);
+                            }
+                        });
+                    }
+                });
 
             });
             cloudTaskMapper.deleteByPrimaryKey(cloudTask.getId());

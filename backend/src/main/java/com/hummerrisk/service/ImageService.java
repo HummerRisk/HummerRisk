@@ -490,6 +490,8 @@ public class ImageService {
         result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
         imageResultMapper.updateByPrimaryKeySelective(result);
 
+        this.reScanDeleteImageResult(id);
+
         saveImageResultLog(result.getId(), "i18n_restart_image_result", "", true);
 
         OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_restart_image_result");
@@ -497,6 +499,25 @@ public class ImageService {
         historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
 
         return result.getId();
+    }
+
+    public void reScanDeleteImageResult(String id) throws Exception {
+
+        ImageSyftTableExample imageSyftTableExample = new ImageSyftTableExample();
+        imageSyftTableExample.createCriteria().andResultIdEqualTo(id);
+        imageSyftTableMapper.deleteByExample(imageSyftTableExample);
+
+        ImageSyftJsonExample imageSyftJsonExample = new ImageSyftJsonExample();
+        imageSyftJsonExample.createCriteria().andResultIdEqualTo(id);
+        imageSyftJsonMapper.deleteByExample(imageSyftJsonExample);
+
+        ImageGrypeTableExample imageGrypeTableExample = new ImageGrypeTableExample();
+        imageGrypeTableExample.createCriteria().andResultIdEqualTo(id);
+        imageGrypeTableMapper.deleteByExample(imageGrypeTableExample);
+
+        ImageGrypeJsonExample imageGrypeJsonExample = new ImageGrypeJsonExample();
+        imageGrypeJsonExample.createCriteria().andResultIdEqualTo(id);
+        imageGrypeJsonMapper.deleteByExample(imageGrypeJsonExample);
     }
 
     public void deleteImageResult(String id) throws Exception {

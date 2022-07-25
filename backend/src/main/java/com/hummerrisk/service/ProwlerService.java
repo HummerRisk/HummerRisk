@@ -217,12 +217,11 @@ public class ProwlerService {
 
             CloudTaskItemResourceExample cloudTaskItemResourceExample = new CloudTaskItemResourceExample();
             cloudTaskItemResourceExample.createCriteria().andTaskItemIdEqualTo(cloudTaskItem.getId());
-            //注释删除检测资源详情，因为要保留，关联历史数据
-//            List<CloudTaskItemResource> cloudTaskItemResources = cloudTaskItemResourceMapper.selectByExample(cloudTaskItemResourceExample);
-//            for (CloudTaskItemResource cloudTaskItemResource : cloudTaskItemResources) {
-//                resourceMapper.deleteByPrimaryKey(cloudTaskItemResource.getResourceId());
-//                resourceRuleMapper.deleteByPrimaryKey(cloudTaskItemResource.getResourceId());
-//            }
+            List<CloudTaskItemResource> cloudTaskItemResources = cloudTaskItemResourceMapper.selectByExample(cloudTaskItemResourceExample);
+            for (CloudTaskItemResource cloudTaskItemResource : cloudTaskItemResources) {
+                resourceMapper.deleteByPrimaryKey(cloudTaskItemResource.getResourceId());
+                resourceRuleMapper.deleteByPrimaryKey(cloudTaskItemResource.getResourceId());
+            }
             cloudTaskItemResourceMapper.deleteByExample(cloudTaskItemResourceExample);
         }
         cloudTaskItemMapper.deleteByExample(cloudTaskItemExample);

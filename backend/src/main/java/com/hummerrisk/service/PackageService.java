@@ -358,6 +358,8 @@ public class PackageService {
         result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
         packageResultMapper.updateByPrimaryKeySelective(result);
 
+        this.reScanDeletePackageResult(id);
+
         savePackageResultLog(result.getId(), "i18n_restart_package_result", "", true);
 
         OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "i18n_restart_package_result");
@@ -365,6 +367,20 @@ public class PackageService {
         historyService.updateHistoryPackageTask(BeanUtils.copyBean(new HistoryPackageTaskWithBLOBs(), result));
 
         return result.getId();
+    }
+
+    public void reScanDeletePackageResult(String id) throws Exception {
+        PackageResultWithBLOBs result = packageResultMapper.selectByPrimaryKey(id);
+        FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml()));
+        FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml().replace("html", "json")));
+        FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml().replace("html", "xml")));
+        FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml().replace("html", "csv")));
+        FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml().replace("html", "sarif")));
+        FileUploadUtils.delete(PackageConstants.DEFAULT_BASE_DIR + FileUploadUtils.trans(result.getReturnHtml().replace("html", "xml").replace("dependency-check-report", "dependency-check-junit")));
+
+        PackageDependencyJsonExample packageDependencyJsonExample = new PackageDependencyJsonExample();
+        packageDependencyJsonExample.createCriteria().andResultIdEqualTo(id);
+        packageDependencyJsonMapper.deleteByExample(packageDependencyJsonExample);
     }
 
     public void deletePackageResult(String id) throws Exception {
