@@ -3,10 +3,18 @@ package com.hummerrisk.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.hummerrisk.base.domain.*;
+import com.hummerrisk.base.mapper.CloudTaskMapper;
+import com.hummerrisk.base.mapper.ImageResultMapper;
+import com.hummerrisk.base.mapper.PackageResultMapper;
+import com.hummerrisk.base.mapper.ServerResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtDashboardMapper;
 import com.hummerrisk.base.mapper.ext.ExtVulnMapper;
+import com.hummerrisk.commons.constants.TaskConstants;
+import com.hummerrisk.commons.constants.TaskEnum;
 import com.hummerrisk.commons.utils.ChartData;
 import com.hummerrisk.commons.utils.DashboardTarget;
+import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.controller.request.dashboard.TaskCalendarVo;
 import com.hummerrisk.dto.HistoryScanDTO;
 import com.hummerrisk.dto.ImageChartDTO;
@@ -29,6 +37,16 @@ public class DashboardService {
     private ExtVulnMapper extVulnMapper;
     @Resource
     private ExtDashboardMapper extDashboardMapper;
+    @Resource
+    private CloudTaskMapper cloudTaskMapper;
+    @Resource
+    private ServerResultMapper serverResultMapper;
+    @Resource
+    private PackageResultMapper packageResultMapper;
+    @Resource
+    private ImageResultMapper imageResultMapper;
+    @Resource
+    private HistoryService historyService;
 
     public List<ChartData> vulnDistribution(Map<String, Object> params) {
 
@@ -113,6 +131,49 @@ public class DashboardService {
     public List<TaskCalendarVo> taskCalendar() {
         return extDashboardMapper.taskCalendar();
     }
+
+    public Integer score() {
+        int score = 100, sum = 0, count = 0;//计数器
+
+        CloudTaskExample cloudTaskExample = new CloudTaskExample();
+        cloudTaskExample.createCriteria().andStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
+        List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(cloudTaskExample);
+        for(CloudTask cloudTask : cloudTasks) {
+            if (PlatformUtils.isSupportVuln(cloudTask.getPluginId())) {
+                sum = sum + historyService.calculateScore(cloudTask.getId(), cloudTask, TaskEnum.vulnAccount.getType());
+            } else {
+                sum = sum + historyService.calculateScore(cloudTask.getId(), cloudTask, TaskEnum.cloudAccount.getType());
+            }
+        }
+
+        ServerResultExample serverResultExample = new ServerResultExample();
+        serverResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
+        List<ServerResult> serverResults = serverResultMapper.selectByExample(serverResultExample);
+        for(ServerResult serverResult : serverResults) {
+            sum = sum + historyService.calculateScore(serverResult.getId(), serverResult, TaskEnum.serverAccount.getType());
+        }
+
+        ImageResultExample imageResultExample = new ImageResultExample();
+        imageResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
+        List<ImageResult> imageResults = imageResultMapper.selectByExample(imageResultExample);
+        for(ImageResult imageResult : imageResults) {
+            sum = sum + historyService.calculateScore(imageResult.getId(), imageResult, TaskEnum.imageAccount.getType());
+        }
+
+        PackageResultExample packageResultExample = new PackageResultExample();
+        packageResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
+        List<PackageResult> packageResults = packageResultMapper.selectByExample(packageResultExample);
+        for(PackageResult packageResult : packageResults) {
+            sum = sum + historyService.calculateScore(packageResult.getId(), packageResult, TaskEnum.packageAccount.getType());
+        }
+
+        count = cloudTasks.size() + serverResults.size() + imageResults.size() + packageResults.size();
+
+        if(count != 0) score = Math.round(sum / count);
+
+        return score;
+    }
+
 
 }
 

@@ -101,4 +101,10 @@ public class DashboardController {
         return dashboardService.taskCalendar();
     }
 
+    @ApiOperation(value = "首页安全评分")
+    @GetMapping("score")
+    public Integer score() {
+        return dashboardService.score();
+    }
+
 }
