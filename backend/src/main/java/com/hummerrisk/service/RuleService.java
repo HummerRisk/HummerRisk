@@ -9,7 +9,10 @@ import com.hummerrisk.base.mapper.ext.ExtRuleGroupMapper;
 import com.hummerrisk.base.mapper.ext.ExtRuleMapper;
 import com.hummerrisk.base.mapper.ext.ExtRuleTagMapper;
 import com.hummerrisk.base.mapper.ext.ExtRuleTypeMapper;
-import com.hummerrisk.commons.constants.*;
+import com.hummerrisk.commons.constants.ResourceOperation;
+import com.hummerrisk.commons.constants.ResourceTypeConstants;
+import com.hummerrisk.commons.constants.ScanTypeConstants;
+import com.hummerrisk.commons.constants.TaskEnum;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.rule.CreateRuleRequest;
@@ -26,7 +29,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import static com.alibaba.fastjson.JSON.parseArray;
 

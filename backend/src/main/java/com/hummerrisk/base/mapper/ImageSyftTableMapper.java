@@ -2,8 +2,9 @@ package com.hummerrisk.base.mapper;
 
 import com.hummerrisk.base.domain.ImageSyftTable;
 import com.hummerrisk.base.domain.ImageSyftTableExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface ImageSyftTableMapper {
     /**

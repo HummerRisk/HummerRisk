@@ -3,8 +3,9 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.PackageDependencyJson;
 import com.hummerrisk.base.domain.PackageDependencyJsonExample;
 import com.hummerrisk.base.domain.PackageDependencyJsonWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface PackageDependencyJsonMapper {
     /**

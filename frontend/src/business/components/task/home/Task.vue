@@ -57,6 +57,10 @@ export default {
       this.account = node.data;
     },
   },
+  activated() {
+    this.taskOrder = {};
+    this.account = {};
+  },
 }
 </script>
 

@@ -3,7 +3,6 @@ package com.hummerrisk.sechedule;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.service.AccountService;
 import com.hummerrisk.service.CloudTaskService;
-import com.hummerrisk.service.RuleService;
 import com.hummerrisk.service.SystemParameterService;
 import org.quartz.*;
 

@@ -806,7 +806,7 @@ export default {
     all_server: '全部虚拟机分组',
     server_name: '虚拟机名称',
     server_user_name: '用户名',
-    server_status: '虚拟机状态',
+    server_status: '状态',
     server_group_name: '虚拟机分组名称',
     server_group_create: '创建虚拟机分组',
     server_group_rename: '修改虚拟机分组名称',

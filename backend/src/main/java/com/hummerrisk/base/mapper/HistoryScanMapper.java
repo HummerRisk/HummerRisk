@@ -2,9 +2,9 @@ package com.hummerrisk.base.mapper;
 
 import com.hummerrisk.base.domain.HistoryScan;
 import com.hummerrisk.base.domain.HistoryScanExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.SelectKey;
+
+import java.util.List;
 
 public interface HistoryScanMapper {
     /**

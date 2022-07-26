@@ -2,8 +2,9 @@ package com.hummerrisk.base.mapper;
 
 import com.hummerrisk.base.domain.HistoryPackageTaskLog;
 import com.hummerrisk.base.domain.HistoryPackageTaskLogExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface HistoryPackageTaskLogMapper {
     /**

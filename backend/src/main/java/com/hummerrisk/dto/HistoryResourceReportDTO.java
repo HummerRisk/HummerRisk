@@ -1,8 +1,6 @@
 package com.hummerrisk.dto;
 
 
-import com.hummerrisk.base.domain.HistoryCloudTask;
-import com.hummerrisk.base.domain.HistoryCloudTaskItem;
 import com.hummerrisk.base.domain.Resource;
 import com.hummerrisk.base.domain.ResourceItem;
 

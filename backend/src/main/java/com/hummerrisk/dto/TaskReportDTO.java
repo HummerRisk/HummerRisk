@@ -1,6 +1,7 @@
 package com.hummerrisk.dto;
 
-import com.hummerrisk.base.domain.*;
+import com.hummerrisk.base.domain.HistoryServerTask;
+import com.hummerrisk.base.domain.Task;
 
 import java.util.List;
 

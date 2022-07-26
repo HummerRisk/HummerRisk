@@ -3,7 +3,6 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.TaskItemResource;
 import com.hummerrisk.base.domain.TaskItemResourceExample;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.SelectKey;
 
 import java.util.List;
 

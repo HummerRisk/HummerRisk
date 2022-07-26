@@ -275,8 +275,10 @@ import SeverityType from "./SeverityType";
     watch: {
       '$route': 'init',
       taskOrder: function (val) {
-        val.taskOrder = this.tableData.length + 1;
-        this.init(val);
+        if(val.accountId != null) {
+          val.taskOrder = this.tableData.length + 1;
+          this.init(val);
+        }
       }
     },
     props: {
@@ -425,6 +427,7 @@ import SeverityType from "./SeverityType";
       }
     },
     activated() {
+      this.tableData = [];
       this.search();
     },
   }

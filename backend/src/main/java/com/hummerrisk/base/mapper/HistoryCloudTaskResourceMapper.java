@@ -3,8 +3,9 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.HistoryCloudTaskResource;
 import com.hummerrisk.base.domain.HistoryCloudTaskResourceExample;
 import com.hummerrisk.base.domain.HistoryCloudTaskResourceWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface HistoryCloudTaskResourceMapper {
     /**

@@ -806,7 +806,7 @@ export default {
     all_server: 'All virtual machine groups',
     server_name: 'Virtual machine name',
     server_user_name: 'Username',
-    server_status: 'Virtual machine status',
+    server_status: 'Status',
     server_group_name: 'Virtual machine group name',
     server_group_create: 'Create a virtual machine group',
     server_group_rename: 'Modify the virtual machine group name',

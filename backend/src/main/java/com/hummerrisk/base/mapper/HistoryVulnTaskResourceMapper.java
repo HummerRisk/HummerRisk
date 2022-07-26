@@ -3,8 +3,9 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.HistoryVulnTaskResource;
 import com.hummerrisk.base.domain.HistoryVulnTaskResourceExample;
 import com.hummerrisk.base.domain.HistoryVulnTaskResourceWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface HistoryVulnTaskResourceMapper {
     /**

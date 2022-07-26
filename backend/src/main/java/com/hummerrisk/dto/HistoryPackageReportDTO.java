@@ -1,7 +1,8 @@
 package com.hummerrisk.dto;
 
 
-import com.hummerrisk.base.domain.*;
+import com.hummerrisk.base.domain.HistoryPackageTask;
+import com.hummerrisk.base.domain.PackageDependencyJsonWithBLOBs;
 
 import java.util.List;
 
