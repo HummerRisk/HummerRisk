@@ -89,6 +89,11 @@ public class RegionsConstants {
         AliyunMap.put("eu-west-1", "英国 (伦敦)");
         AliyunMap.put("me-east-1", "中东东部 1 (迪拜)");
         AliyunMap.put("eu-central-1", "欧洲中部 1 (法兰克福)");
+        AliyunMap.put("ap-northeast-2", "韩国 (首尔)");
+        AliyunMap.put("ap-southeast-6", "菲律宾 (马尼拉)");
+        AliyunMap.put("ap-southeast-7", "泰国 (曼谷)");
+        AliyunMap.put("me-central-1", "中东中部 1 (利雅得)");
+        AliyunMap.put("cn-fuzhou", "华东 6 (福州)");
         // Aliyun end
 
         HuaweiMap = new HashMap<>();
@@ -135,6 +140,8 @@ public class RegionsConstants {
         TencentMap.put("na-ashburn", "美国东部(弗吉尼亚)");
         TencentMap.put("na-siliconvalley", "美国西部(硅谷)");
         TencentMap.put("na-toronto", "北美地区(多伦多)");
+        TencentMap.put("ap-jakarta", "亚太东南(雅加达)");
+        TencentMap.put("sa-saopaulo", "南美地区(圣保罗)");
         // Tencent end
 
         GcpMap = new HashMap<>();
