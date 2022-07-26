@@ -31,7 +31,7 @@
                            :filters="statusFilters"
                            :filter-method="filterStatus">
             <template v-slot:default="{row}">
-              <account-status :row="row"/>
+              <account-status @search="search" :row="row"/>
             </template>
           </el-table-column>
           <el-table-column min-width="15%" :label="$t('account.create_time')" sortable

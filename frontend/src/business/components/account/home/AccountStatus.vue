@@ -29,7 +29,7 @@
               this.$post("/account/validate/" + row.id, {}, response => {
                 if (response.data) {
                   this.$success(this.$t('account.success'));
-                  this.search();
+                  this.$emit('search');
                 } else {
                   this.$error(this.$t('account.error'));
                 }

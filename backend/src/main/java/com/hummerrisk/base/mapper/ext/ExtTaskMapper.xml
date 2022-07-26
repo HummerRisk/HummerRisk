@@ -917,7 +917,7 @@
     </select>
 
     <resultMap id="HistoryCloudResourceReportDTOMap" type="com.hummerrisk.dto.HistoryResourceReportDTO" extends="com.hummerrisk.base.mapper.ResourceMapper.BaseResultMap">
-        <collection property="resourceItemList" ofType="com.hummerrisk.base.domain.ResourceItem" javaType="list" select="getResourceItemList" column="id">
+        <collection property="resourceItemList" ofType="com.hummerrisk.base.domain.ResourceItem" javaType="list" select="getCloudResourceItemList" column="id">
         </collection>
     </resultMap>
 
@@ -930,10 +930,13 @@
         WHERE t3.task_id = #{id}
     </select>
 
-    <select id="getResourceItemList" resultType="com.hummerrisk.base.domain.ResourceItem" parameterType="java.lang.String">
+    <select id="getCloudResourceItemList" resultType="com.hummerrisk.base.domain.ResourceItem" parameterType="java.lang.String">
         SELECT t.*
         FROM resource_item t
-        WHERE t.resource_id = #{id}
+        JOIN cloud_task_item_resource t1 on t.resource_id = t1.resource_id
+        JOIN history_cloud_task t2 on t1.task_id = t2.id
+        JOIN task_item_resource t3 on t3.resource_id = t2.id
+        WHERE t3.task_id = #{id}
     </select>
 
     <select id="getHistoryVulnTaskDTOList" resultType="com.hummerrisk.dto.HistoryVulnTaskDTO" parameterType="java.lang.String">
@@ -945,7 +948,7 @@
     </select>
 
     <resultMap id="HistoryVulnResourceReportDTOMap" type="com.hummerrisk.dto.HistoryResourceReportDTO" extends="com.hummerrisk.base.mapper.ResourceMapper.BaseResultMap">
-        <collection property="resourceItemList" ofType="com.hummerrisk.base.domain.ResourceItem" javaType="list" select="getResourceItemList" column="id">
+        <collection property="resourceItemList" ofType="com.hummerrisk.base.domain.ResourceItem" javaType="list" select="getVulnResourceItemList" column="id">
         </collection>
     </resultMap>
 
@@ -953,6 +956,15 @@
         SELECT t.*
         FROM resource t
         JOIN cloud_task_item_resource t1 on t.id = t1.resource_id
+        JOIN history_vuln_task t2 on t1.task_id = t2.id
+        JOIN task_item_resource t3 on t3.resource_id = t2.id
+        WHERE t3.task_id = #{id}
+    </select>
+
+    <select id="getVulnResourceItemList" resultType="com.hummerrisk.base.domain.ResourceItem" parameterType="java.lang.String">
+        SELECT t.*
+        FROM resource_item t
+        JOIN cloud_task_item_resource t1 on t.resource_id = t1.resource_id
         JOIN history_vuln_task t2 on t1.task_id = t2.id
         JOIN task_item_resource t3 on t3.resource_id = t2.id
         WHERE t3.task_id = #{id}
