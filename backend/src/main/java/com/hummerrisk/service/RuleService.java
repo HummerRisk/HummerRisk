@@ -534,12 +534,17 @@ public class RuleService {
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
     public void scan(List<String> scanCheckedGroups) throws Exception {
-        AccountWithBLOBs account = accountMapper.selectByPrimaryKey(scanCheckedGroups.get(0).split("/")[0]);
-        Integer scanId = historyService.insertScanHistory(account);
-        scanCheckedGroups.forEach(scan -> {
+        List<String> accountIds = new ArrayList<>();
+        Integer scanId = 0;
+        for (String scan : scanCheckedGroups) {
             String[] str = scan.split("/");
+            AccountWithBLOBs account = accountMapper.selectByPrimaryKey(str[0]);
+            if (!accountIds.contains(account.getId())) {
+                accountIds.add(account.getId());
+                scanId = historyService.insertScanHistory(account);
+            }
             this.scanGroups(account, scanId, str[1]);
-        });
+        }
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})

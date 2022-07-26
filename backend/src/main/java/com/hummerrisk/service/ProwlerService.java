@@ -78,7 +78,7 @@ public class ProwlerService {
             groupName = jsonObject.getString("defaultValue");
         }
 
-        this.deleteTaskItems(cloudTask.getId());
+        this.deleteTaskItems(taskId);
         List<String> resourceTypes = new ArrayList();
         resourceTypes.add(groupName);
         for (SelectTag selectTag : quartzTaskDTO.getSelectTags()) {
@@ -86,7 +86,7 @@ public class ProwlerService {
                 CloudTaskItemWithBLOBs taskItemWithBLOBs = new CloudTaskItemWithBLOBs();
                 String uuid = UUIDUtil.newUUID();
                 taskItemWithBLOBs.setId(uuid);
-                taskItemWithBLOBs.setTaskId(cloudTask.getId());
+                taskItemWithBLOBs.setTaskId(taskId);
                 taskItemWithBLOBs.setRuleId(quartzTaskDTO.getId());
                 taskItemWithBLOBs.setCustomData(script);
                 taskItemWithBLOBs.setStatus(CloudTaskConstants.TASK_STATUS.UNCHECKED.name());
@@ -123,7 +123,9 @@ public class ProwlerService {
                     cloudTaskItemResourceMapper.insertSelective(taskItemResource);
 
                     try {
-                        historyService.insertHistoryCloudTaskResource(BeanUtils.copyBean(new HistoryCloudTaskResourceWithBLOBs(), taskItemResource));
+                        HistoryCloudTaskResourceWithBLOBs historyCloudTaskResourceWithBLOBs = new HistoryCloudTaskResourceWithBLOBs();
+                        BeanUtils.copyBean(historyCloudTaskResourceWithBLOBs, taskItemResource);
+                        historyService.insertHistoryCloudTaskResource(historyCloudTaskResourceWithBLOBs);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -254,10 +256,10 @@ public class ProwlerService {
                 String resourceName = taskItemResource.getResourceName();
                 String taskItemId = taskItem.getId();
                 if (StringUtils.equals(cloudTask.getType(), CloudTaskConstants.TaskType.manual.name()))
-                    orderService.saveTaskItemLog(taskItemId, "resourceType", "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
+                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
                 Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getRuleId());
                 if (rule == null) {
-                    orderService.saveTaskItemLog(taskItemId, taskItemId, "i18n_operation_ex" + ": " + operation, "i18n_ex_rule_not_exist", false, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
+                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_ex" + ": " + operation, "i18n_ex_rule_not_exist", false, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
                     throw new Exception(Translator.get("i18n_ex_rule_not_exist") + ":" + taskItem.getRuleId());
                 }
                 String prowlerRun = ReadFileUtils.readToBuffer(dirPath + "/" + CloudTaskConstants.PROWLER_RUN_RESULT_FILE);
@@ -282,13 +284,13 @@ public class ProwlerService {
                 resourceWithBLOBs.setResourceCommandAction(taskItemResource.getResourceCommandAction());
                 ResourceWithBLOBs resource = saveResource(resourceWithBLOBs, taskItem, cloudTask, taskItemResource);
                 LogUtil.info("The returned data is{}: " + new Gson().toJson(resource));
-                orderService.saveTaskItemLog(taskItemId, resourceType, "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resource.getPluginName() + "，"
+                orderService.saveTaskItemLog(taskItemId, resource.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resource.getPluginName() + "，"
                         + "i18n_region" + ": " + resource.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceType + "，" + "i18n_resource_manage" + ": " + resource.getReturnSum() + "/" + resource.getResourcesSum(),
                         true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
             }
 
         } catch (Exception e) {
-            orderService.saveTaskItemLog(taskItem.getId(), taskItem.getId(), "i18n_operation_ex" + ": " + operation, e.getMessage(), false, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
+            orderService.saveTaskItemLog(taskItem.getId(), "", "i18n_operation_ex" + ": " + operation, e.getMessage(), false, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
             LogUtil.error("createResource, taskItemId: " + taskItem.getId() + ", resultStr:" + resultStr, ExceptionUtils.getStackTrace(e));
             throw e;
         }

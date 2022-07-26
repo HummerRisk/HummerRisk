@@ -81,7 +81,7 @@ public class XrayService {
             groupName = jsonObject.getString("defaultValue");
         }
 
-        this.deleteTaskItems(cloudTask.getId());
+        this.deleteTaskItems(taskId);
         List<String> resourceTypes = new ArrayList();
         resourceTypes.add(groupName);
         for (SelectTag selectTag : quartzTaskDTO.getSelectTags()) {
@@ -89,7 +89,7 @@ public class XrayService {
                 CloudTaskItemWithBLOBs taskItemWithBLOBs = new CloudTaskItemWithBLOBs();
                 String uuid = UUIDUtil.newUUID();
                 taskItemWithBLOBs.setId(uuid);
-                taskItemWithBLOBs.setTaskId(cloudTask.getId());
+                taskItemWithBLOBs.setTaskId(taskId);
                 taskItemWithBLOBs.setRuleId(quartzTaskDTO.getId());
                 taskItemWithBLOBs.setCustomData(script);
                 taskItemWithBLOBs.setStatus(CloudTaskConstants.TASK_STATUS.UNCHECKED.name());
@@ -126,7 +126,9 @@ public class XrayService {
                     cloudTaskItemResourceMapper.insertSelective(taskItemResource);
 
                     try {
-                        historyService.insertHistoryVulnTaskResource(BeanUtils.copyBean(new HistoryVulnTaskResourceWithBLOBs(), taskItemResource));
+                        HistoryVulnTaskResourceWithBLOBs historyVulnTaskResourceWithBLOBs = new HistoryVulnTaskResourceWithBLOBs();
+                        BeanUtils.copyBean(historyVulnTaskResourceWithBLOBs, taskItemResource);
+                        historyService.insertHistoryVulnTaskResource(historyVulnTaskResourceWithBLOBs);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -256,11 +258,11 @@ public class XrayService {
                 String resourceName = taskItemResource.getResourceName();
                 String taskItemId = taskItem.getId();
                 if (StringUtils.equals(cloudTask.getType(), CloudTaskConstants.TaskType.manual.name()))
-                    orderService.saveTaskItemLog(taskItemId, "resourceType", "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY,
+                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY,
                             true, CloudTaskConstants.HISTORY_TYPE.Vuln.name());
                 Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getRuleId());
                 if (rule == null) {
-                    orderService.saveTaskItemLog(taskItemId, taskItemId, "i18n_operation_ex" + ": " + operation, "i18n_ex_rule_not_exist",
+                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_ex" + ": " + operation, "i18n_ex_rule_not_exist",
                             false, CloudTaskConstants.HISTORY_TYPE.Vuln.name());
                     throw new Exception("i18n_ex_rule_not_exist" + ":" + taskItem.getRuleId());
                 }
@@ -287,7 +289,7 @@ public class XrayService {
                 ResourceWithBLOBs resource = saveResource(resourceWithBLOBs, taskItem, cloudTask, taskItemResource);
                 LogUtil.info("The returned data is{}: " + new Gson().toJson(resource));
                 XrayCredential xrayCredential = new Gson().fromJson(accountWithBLOBs.getCredential(), XrayCredential.class);
-                orderService.saveTaskItemLog(taskItemId, resourceType, "i18n_operation_end" + ": " + operation, "i18n_vuln" + ": " + resource.getPluginName() + "，"
+                orderService.saveTaskItemLog(taskItemId, resource.getId(), "i18n_operation_end" + ": " + operation, "i18n_vuln" + ": " + resource.getPluginName() + "，"
                         + "i18n_domain" + ": " + xrayCredential.getTargetAddress() + "，" + "i18n_rule_type" + ": " + resourceType + "，" + "i18n_resource_manage" + ": " + resource.getReturnSum() + "/" + resource.getResourcesSum(),
                         true, CloudTaskConstants.HISTORY_TYPE.Vuln.name());
                 //执行完删除返回目录文件，以便于下一次操作覆盖
@@ -296,7 +298,7 @@ public class XrayService {
             }
 
         } catch (Exception e) {
-            orderService.saveTaskItemLog(taskItem.getId(), taskItem.getId(), "i18n_operation_ex" + ": " + operation, e.getMessage(), false, CloudTaskConstants.HISTORY_TYPE.Vuln.name());
+            orderService.saveTaskItemLog(taskItem.getId(), "", "i18n_operation_ex" + ": " + operation, e.getMessage(), false, CloudTaskConstants.HISTORY_TYPE.Vuln.name());
             LogUtil.error("createResource, taskItemId: " + taskItem.getId() + ", resultStr:" + resultStr, ExceptionUtils.getStackTrace(e));
             throw e;
         }

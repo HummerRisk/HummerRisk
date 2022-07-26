@@ -99,14 +99,14 @@ public class OrderService {
             }
         }
 
-        this.deleteTaskItems(cloudTask.getId());
+        this.deleteTaskItems(taskId);
         List<String> resourceTypes = new ArrayList();
         for (SelectTag selectTag : quartzTaskDTO.getSelectTags()) {
             for (String regionId : selectTag.getRegions()) {
                 CloudTaskItemWithBLOBs taskItemWithBLOBs = new CloudTaskItemWithBLOBs();
                 String uuid = UUIDUtil.newUUID();
                 taskItemWithBLOBs.setId(uuid);
-                taskItemWithBLOBs.setTaskId(cloudTask.getId());
+                taskItemWithBLOBs.setTaskId(taskId);
                 taskItemWithBLOBs.setRuleId(quartzTaskDTO.getId());
                 taskItemWithBLOBs.setCustomData(script);
                 taskItemWithBLOBs.setStatus(CloudTaskConstants.TASK_STATUS.UNCHECKED.name());
@@ -170,7 +170,9 @@ public class OrderService {
                             cloudTaskItemResourceMapper.insertSelective(taskItemResource);
 
                             try {
-                                historyService.insertHistoryCloudTaskResource(BeanUtils.copyBean(new HistoryCloudTaskResourceWithBLOBs(), taskItemResource));
+                                HistoryCloudTaskResourceWithBLOBs historyCloudTaskResourceWithBLOBs = new HistoryCloudTaskResourceWithBLOBs();
+                                BeanUtils.copyBean(historyCloudTaskResourceWithBLOBs, taskItemResource);
+                                historyService.insertHistoryCloudTaskResource(historyCloudTaskResourceWithBLOBs);
                             } catch (Exception e) {
                                 throw new RuntimeException(e);
                             }

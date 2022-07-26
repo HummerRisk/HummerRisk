@@ -168,10 +168,40 @@ public class ReadFileUtils {
             is.close();
         } catch (FileNotFoundException e) {
             LogUtil.error("File not found!" + e.getMessage());
-            throw new FileNotFoundException("File not found!" + e.getMessage());
+            return "[{'result': '" + resultStr + "' }]";
         } catch (IOException e) {
             LogUtil.error(e.getMessage());
-            throw new IOException(e.getMessage());
+            return "[{'result': '" + resultStr + "' }]";
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 读取文件
+     * @param filePath
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static String readToBufferByNuclei(String filePath, String resultStr) throws IOException,FileNotFoundException {
+        StringBuffer sb = new StringBuffer();
+        try {
+            InputStream is = new FileInputStream(filePath);
+            String line; // 用来保存每行读取的内容
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            line = reader.readLine(); // 读取第一行
+            while (line != null) { // 如果 line 为空说明读完了
+                sb.append(line); // 将读到的内容添加到 buffer 中
+                sb.append("\n"); // 添加换行符
+                line = reader.readLine(); // 读取下一行
+            }
+            reader.close();
+            is.close();
+        } catch (FileNotFoundException e) {
+            LogUtil.error("File not found!" + e.getMessage());
+            return "";
+        } catch (IOException e) {
+            LogUtil.error(e.getMessage());
+            return "";
         }
         return sb.toString();
     }

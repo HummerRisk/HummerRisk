@@ -339,6 +339,7 @@ public class HistoryService {
 
     public void updateHistoryCloudTaskResource(HistoryCloudTaskResourceWithBLOBs historyCloudTaskResource) throws Exception {
         try {
+            historyCloudTaskResource.setId(UUIDUtil.newUUID());
             historyCloudTaskResourceMapper.updateByPrimaryKeySelective(historyCloudTaskResource);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -387,6 +388,7 @@ public class HistoryService {
 
     public void insertHistoryVulnTaskResource(HistoryVulnTaskResourceWithBLOBs historyVulnTaskResource) throws Exception {
         try {
+            historyVulnTaskResource.setId(UUIDUtil.newUUID());
             historyVulnTaskResourceMapper.insertSelective(historyVulnTaskResource);
         } catch (Exception e) {
             throw new Exception(e.getMessage());

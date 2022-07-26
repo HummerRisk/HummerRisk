@@ -82,14 +82,14 @@ public class NucleiService {
             }
         }
 
-        this.deleteTaskItems(cloudTask.getId());
+        this.deleteTaskItems(taskId);
         List<String> resourceTypes = new ArrayList();
         for (SelectTag selectTag : quartzTaskDTO.getSelectTags()) {
             for (String regionId : selectTag.getRegions()) {
                 CloudTaskItemWithBLOBs taskItemWithBLOBs = new CloudTaskItemWithBLOBs();
                 String uuid = UUIDUtil.newUUID();
                 taskItemWithBLOBs.setId(uuid);
-                taskItemWithBLOBs.setTaskId(cloudTask.getId());
+                taskItemWithBLOBs.setTaskId(taskId);
                 taskItemWithBLOBs.setRuleId(quartzTaskDTO.getId());
                 taskItemWithBLOBs.setCustomData(script);
                 taskItemWithBLOBs.setStatus(CloudTaskConstants.TASK_STATUS.UNCHECKED.name());
@@ -143,7 +143,9 @@ public class NucleiService {
                         cloudTaskItemResourceMapper.insertSelective(taskItemResource);
 
                         try {
-                            historyService.insertHistoryVulnTaskResource(BeanUtils.copyBean(new HistoryVulnTaskResourceWithBLOBs(), taskItemResource));
+                            HistoryVulnTaskResourceWithBLOBs historyVulnTaskResourceWithBLOBs = new HistoryVulnTaskResourceWithBLOBs();
+                            BeanUtils.copyBean(historyVulnTaskResourceWithBLOBs, taskItemResource);
+                            historyService.insertHistoryVulnTaskResource(historyVulnTaskResourceWithBLOBs);
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
@@ -284,15 +286,15 @@ public class NucleiService {
                 String resourceName = taskItemResource.getResourceName();
                 String taskItemId = taskItem.getId();
                 if (StringUtils.equals(cloudTask.getType(), CloudTaskConstants.TaskType.manual.name()))
-                    orderService.saveTaskItemLog(taskItemId, "resourceType", "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, CloudTaskConstants.HISTORY_TYPE.Vuln.name());
+                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, CloudTaskConstants.HISTORY_TYPE.Vuln.name());
                 Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getRuleId());
                 if (rule == null) {
-                    orderService.saveTaskItemLog(taskItemId, taskItemId, "i18n_operation_ex" + ": " + operation, "i18n_ex_rule_not_exist", false, CloudTaskConstants.HISTORY_TYPE.Vuln.name());
+                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_ex" + ": " + operation, "i18n_ex_rule_not_exist", false, CloudTaskConstants.HISTORY_TYPE.Vuln.name());
                     throw new Exception("i18n_ex_rule_not_exist" + ":" + taskItem.getRuleId());
                 }
                 String nucleiRun = resultStr;
                 String metadata = resultStr;
-                String resources = ReadFileUtils.readToBuffer(dirPath + "/" + CloudTaskConstants.NUCLEI_RUN_RESULT_FILE);
+                String resources = ReadFileUtils.readToBufferByNuclei(dirPath + "/" + CloudTaskConstants.NUCLEI_RUN_RESULT_FILE, resultStr);
 
                 ResourceWithBLOBs resourceWithBLOBs = new ResourceWithBLOBs();
                 if (taskItemResource.getResourceId() != null) {
@@ -313,7 +315,7 @@ public class NucleiService {
                 ResourceWithBLOBs resource = saveResource(resourceWithBLOBs, taskItem, cloudTask, taskItemResource);
                 LogUtil.info("The returned data is{}: " + new Gson().toJson(resource));
                 NucleiCredential nucleiCredential = new Gson().fromJson(accountWithBLOBs.getCredential(), NucleiCredential.class);
-                orderService.saveTaskItemLog(taskItemId, resourceType, "i18n_operation_end" + ": " + operation, "i18n_vuln" + ": " + resource.getPluginName() + "，"
+                orderService.saveTaskItemLog(taskItemId, resource.getId(), "i18n_operation_end" + ": " + operation, "i18n_vuln" + ": " + resource.getPluginName() + "，"
                         + "i18n_domain" + ": " + nucleiCredential.getTargetAddress() + "，" + "i18n_rule_type" + ": " + resourceType + "，" + "i18n_resource_manage" + ": " + resource.getReturnSum() + "/" + resource.getResourcesSum(),
                         true, CloudTaskConstants.HISTORY_TYPE.Vuln.name());
                 //执行完删除返回目录文件，以便于下一次操作覆盖
@@ -322,7 +324,7 @@ public class NucleiService {
             }
 
         } catch (Exception e) {
-            orderService.saveTaskItemLog(taskItem.getId(), taskItem.getId(), "i18n_operation_ex" + ": " + operation, e.getMessage(), false, CloudTaskConstants.HISTORY_TYPE.Vuln.name());
+            orderService.saveTaskItemLog(taskItem.getId(), "", "i18n_operation_ex" + ": " + operation, e.getMessage(), false, CloudTaskConstants.HISTORY_TYPE.Vuln.name());
             LogUtil.error("createResource, taskItemId: " + taskItem.getId() + ", resultStr:" + resultStr, ExceptionUtils.getStackTrace(e));
             throw e;
         }
