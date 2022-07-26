@@ -14,22 +14,22 @@ export default {
     },
     {
       path: "vulnRule",
-      name: "vulnRule",
+      name: "vulnRuleToRule",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/vuln/home/Rule'),
     },
     {
       path: "serverRule",
-      name: "serverRule",
+      name: "serverRuleToRule",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Rule'),
     },
     {
       path: "packageRule",
-      name: "packageRule",
+      name: "packageRuleToRule",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/package/home/Rule'),
     },
     {
       path: "imageRule",
-      name: "imageRule",
+      name: "imageRuleToRule",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/Rule'),
     },
     {

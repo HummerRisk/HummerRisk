@@ -14,17 +14,17 @@ export default {
     },
     {
       path: "cloudaccount",
-      name: "cloudaccount",
+      name: "cloudAccount",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/CloudAccount'),
     },
     {
       path: "accountscan/:id",
-      name: "accountscan",
+      name: "accountScan",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/AccountScan'),
     },
     {
       path: 'quartztask',
-      name: 'quartztask',
+      name: 'cloudQuartzTask',
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/QuartzTask'),
     },
     {
@@ -39,17 +39,17 @@ export default {
     },
     {
       path: "resultdetails/:id",
-      name: "resultdetails",
+      name: "resultDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/ResultDetails"),
     },
     {
       path: "history",
-      name: "history",
+      name: "cloudHistory",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/History"),
     },
     {
       path: 'accountoverview',
-      name: 'accountoverview',
+      name: 'cloudOverview',
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/AccountOverview'),
     },
   ]

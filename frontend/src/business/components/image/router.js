@@ -29,7 +29,7 @@ export default {
     },
     {
       path: "resultdetails/:id",
-      name: "resultdetails",
+      name: "imageResultDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/image/home/ResultDetails"),
     },
   ]

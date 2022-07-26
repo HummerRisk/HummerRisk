@@ -9,17 +9,17 @@ export default {
   children: [
     {
       path: "task",
-      name: "task",
+      name: "taskLay",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/task/home/Task'),
     },
     {
       path: "list",
-      name: "list",
+      name: "taskList",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/task/home/List'),
     },
     {
       path: "report",
-      name: "report",
+      name: "taskReport",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/task/home/Report'),
     },
   ]

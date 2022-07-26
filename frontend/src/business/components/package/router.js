@@ -24,7 +24,7 @@ export default {
     },
     {
       path: "resultdetails/:id",
-      name: "resultdetails",
+      name: "packageResultDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/package/home/ResultDetails"),
     },
   ]
