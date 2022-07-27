@@ -15,10 +15,7 @@ import com.hummerrisk.controller.request.image.ImageRepoRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.image.ImageResultRequest;
 import com.hummerrisk.controller.request.image.ImageRuleRequest;
-import com.hummerrisk.dto.ImageDTO;
-import com.hummerrisk.dto.ImageResultDTO;
-import com.hummerrisk.dto.ImageResultWithBLOBsDTO;
-import com.hummerrisk.dto.ImageRuleDTO;
+import com.hummerrisk.dto.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -620,7 +617,17 @@ public class ImageService {
         return list;
     }
 
-    public ImageResultWithBLOBs getImageResult(String resultId) {
+    public HistoryImageReportDTO getImageResultDto(String resultId) {
+        HistoryImageReportDTO dto = extImageResultMapper.getImageResultDto(resultId);
+        return dto;
+    }
+
+    public ImageResult getImageResult(String resultId) {
+        ImageResult imageResult = imageResultMapper.selectByPrimaryKey(resultId);
+        return imageResult;
+    }
+
+    public ImageResultWithBLOBs getImageResultWithBLOBs(String resultId) {
         ImageResultWithBLOBs imageResultWithBLOBs = imageResultMapper.selectByPrimaryKey(resultId);
         if(imageResultWithBLOBs!=null && !StringUtils.equalsIgnoreCase(imageResultWithBLOBs.getResultStatus(), TaskConstants.TASK_STATUS.APPROVED.toString())) {
             imageResultWithBLOBs.setGrypeJson(accountService.toJSONString(imageResultWithBLOBs.getGrypeJson()!=null? imageResultWithBLOBs.getGrypeJson():"{}"));

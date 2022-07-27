@@ -10,10 +10,7 @@ import com.hummerrisk.controller.request.image.ImageRepoRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.image.ImageResultRequest;
 import com.hummerrisk.controller.request.image.ImageRuleRequest;
-import com.hummerrisk.dto.ImageDTO;
-import com.hummerrisk.dto.ImageResultDTO;
-import com.hummerrisk.dto.ImageResultWithBLOBsDTO;
-import com.hummerrisk.dto.ImageRuleDTO;
+import com.hummerrisk.dto.*;
 import com.hummerrisk.service.ImageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -161,11 +158,26 @@ public class ImageController {
         return PageUtils.setPageInfo(page, imageService.resultList(request));
     }
 
+
     @I18n
-    @ApiOperation(value = "镜像检测结果")
+    @ApiIgnore
+    @GetMapping(value = "getImageResultDto/{resultId}")
+    public HistoryImageReportDTO getImageResultDto(@PathVariable String resultId) {
+        return imageService.getImageResultDto(resultId);
+    }
+
+    @I18n
+    @ApiIgnore
     @GetMapping(value = "getImageResult/{resultId}")
-    public ImageResultWithBLOBs getImageResult(@PathVariable String resultId) {
+    public ImageResult getImageResult(@PathVariable String resultId) {
         return imageService.getImageResult(resultId);
+    }
+
+    @I18n
+    @ApiOperation(value = "镜像检测结果详情")
+    @GetMapping(value = "getImageResultWithBLOBs/{resultId}")
+    public ImageResultWithBLOBs getImageResultWithBLOBs(@PathVariable String resultId) {
+        return imageService.getImageResultWithBLOBs(resultId);
     }
 
     @I18n
