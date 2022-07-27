@@ -1,7 +1,6 @@
 <template>
   <div id="menu-bar" v-if="isRouterAlive">
     <el-row type="flex">
-      <account-change :project-name="currentAccount"/>
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
           <el-menu-item :index="path">

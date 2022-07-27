@@ -98,6 +98,10 @@ public class ResourceService {
         return extResourceMapper.source(accountId);
     }
 
+    public SourceDTO vulnSource (String accountId) {
+        return extResourceMapper.vulnSource(accountId);
+    }
+
     public List<ResourceDTO> search(ResourceRequest request) {
         List<ResourceDTO> resourceDTOListTmp = new ArrayList<>();
         try {

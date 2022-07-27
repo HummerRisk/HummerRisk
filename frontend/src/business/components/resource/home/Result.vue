@@ -1,6 +1,14 @@
 <template>
       <main-container v-loading="result.loading">
 
+        <el-card class="table-card el-row-card">
+
+          <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"/>
+
+          <el-divider><i class="el-icon-tickets"></i></el-divider>
+
+        </el-card>
+
         <el-card class="table-card el-row-card" v-if="source">
             <h2 style="font-size: 18px;">{{ $t('account.cloud_account') }}</h2>
             <el-row>
@@ -17,7 +25,7 @@
                       </el-tooltip>
                     </span>
                     <span v-else>
-                      <img class="" :src="require(`@/assets/img/gif/loading.gif`)" alt=""/>
+                      <img style="width: 150px;height: 100px;" :src="require(`@/assets/img/gif/loading.gif`)" alt=""/>
                     </span>
                   </el-col>
                 </el-row>
@@ -312,6 +320,7 @@ import CenterChart from "../../common/components/CenterChart";
 import ResultLog from "./ResultLog";
 import {_filter, _sort, getCurrentAccountID} from "@/common/js/utils";
 import {ACCOUNT_ID} from "@/common/js/constants";
+import AccountChange from "@/business/components/common/head/AccountSwitch";
 
 /* eslint-disable */
   export default {
@@ -324,7 +333,8 @@ import {ACCOUNT_ID} from "@/common/js/constants";
       TableOperator,
       DialogFooter,
       CenterChart,
-      ResultLog
+      ResultLog,
+      AccountChange,
     },
     data() {
       return {
@@ -342,6 +352,7 @@ import {ACCOUNT_ID} from "@/common/js/constants";
         tagSelect: [],
         resourceTypes: [],
         timer: '',
+        currentAccount: '',
         buttons: [
           {
             tip: this.$t('resource.scan'), icon: "el-icon-refresh-right", type: "success",
@@ -440,10 +451,11 @@ import {ACCOUNT_ID} from "@/common/js/constants";
           }
         });
       },
+      cloudAccountSwitch(accountId) {
+        this.accountId = accountId;
+        this.search();
+      },
       async search () {
-        if (!!getCurrentAccountID()) {
-          this.accountId = getCurrentAccountID();
-        }
         await this.$get("/resource/source/" + this.accountId, response => {
           this.source = response.data;
         });
@@ -471,6 +483,9 @@ import {ACCOUNT_ID} from "@/common/js/constants";
             this.resourceTypes.push(typeItem);
           }
         });
+        if (!!getCurrentAccountID()) {
+          this.accountId = getCurrentAccountID();
+        }
       },
       goResource (params) {
         if (params.returnSum == 0) {
@@ -689,7 +704,7 @@ import {ACCOUNT_ID} from "@/common/js/constants";
     margin: 0 0 20px 0;
   }
   .el-row-card >>> .el-card__body {
-    margin: 30px 0 0 30px;
+    margin: 30px 0 0 0;
   }
   .split {
     height: 120px;

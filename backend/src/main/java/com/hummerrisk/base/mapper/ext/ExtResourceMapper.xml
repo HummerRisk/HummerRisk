@@ -58,7 +58,47 @@
             <if test="accountId != null">
                 AND t.id = #{accountId}
             </if>
-            and t.plugin_id in (select plugin_id from cloud_account ca where ca.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin'))
+            and t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+        </where>
+        ORDER BY t.create_time DESC
+    </select>
+
+    <select id="vulnSource" parameterType="java.lang.String" resultMap="ResultMap">
+        SELECT
+        t.*,
+        u.name as userName,
+        IFNULL((
+        SELECT
+        sum( tt.return_sum )
+        FROM
+        cloud_task tt
+        WHERE
+        tt.account_id = t.id
+        ), 0) as returnSum,
+        IFNULL((
+        SELECT
+        sum( tt.resources_sum )
+        FROM
+        cloud_task tt
+        WHERE
+        tt.account_id = t.id
+        ), 0) as resourcesSum,
+        IFNULL((select t1.scan_score FROM history_scan t1 WHERE t.id = t1.account_id ORDER BY t1.create_time DESC limit 1), 100) AS scanScore,
+        CASE
+        WHEN 'APPROVED' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'APPROVED'
+        WHEN 'PROCESSING' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'PROCESSING'
+        WHEN 'ERROR' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'ERROR'
+        WHEN 'WARNING' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'WARNING'
+        WHEN 'FINISHED' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'FINISHED'
+        ELSE 'UNDEFINED'
+        END AS resultStatus
+        FROM cloud_account t
+        LEFT JOIN user u on t.creator = u.id
+        <where>
+            <if test="accountId != null">
+                AND t.id = #{accountId}
+            </if>
+            and t.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
         </where>
         ORDER BY t.create_time DESC
     </select>

@@ -827,7 +827,6 @@ export default {
       if (this.selectedTask) {
         this.result = this.$get("/task/report/" + this.selectedTask.id, response => {
           this.report = response.data;
-          console.log(this.report)
         });
       }
     },

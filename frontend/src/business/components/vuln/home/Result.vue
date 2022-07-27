@@ -1,6 +1,121 @@
 <template>
   <main-container v-loading="result.loading">
 
+    <el-card class="table-card el-row-card">
+
+      <vuln-switch :project-name="vulnAccount" @vulnAccountSwitch="vulnAccountSwitch"/>
+
+      <el-divider><i class="el-icon-tickets"></i></el-divider>
+
+    </el-card>
+
+    <el-card class="table-card el-row-card" v-if="source">
+      <h2 style="font-size: 18px;">{{ $t('vuln.vuln_setting') }}</h2>
+      <el-row>
+        <el-col :span="8">
+          <div class="grid-content">
+            <el-row>
+              <el-col :span="8">
+                <span style="color: #909090;">{{ $t('account.scan_score_') }}</span>
+              </el-col>
+              <el-col :span="4">
+                    <span v-if="source.resultStatus != 'APPROVED' && source.resultStatus != 'PROCESSING'">
+                      <el-tooltip class="item" effect="dark" :content="$t('resource.scan_score')" placement="top">
+                        <center-chart v-if="!!source.scanScore" :row="source.scanScore"></center-chart>
+                      </el-tooltip>
+                    </span>
+                <span v-else>
+                      <img style="width: 150px;height: 100px;" :src="require(`@/assets/img/gif/loading.gif`)" alt=""/>
+                    </span>
+              </el-col>
+            </el-row>
+          </div>
+        </el-col>
+        <el-col :span="1">
+          <div class="split"></div>
+        </el-col>
+        <el-col :span="15">
+          <!-- 第一行 -->
+          <el-row>
+            <el-col :span="4">
+              <span style="color: #909090;">{{ $t('vuln.name') }}</span>
+            </el-col>
+            <el-col :span="8">
+              <span>{{ source.name }}</span>
+            </el-col>
+            <el-col :span="4">
+              <span style="color: #909090;">{{ $t('vuln.platform') }}</span>
+            </el-col>
+            <el-col :span="8">
+                <span>
+                  <img v-if="source.pluginIcon" :src="require(`@/assets/img/platform/${source.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                   &nbsp;&nbsp; {{ source.pluginName }}
+                </span>
+            </el-col>
+          </el-row>
+          <!-- 第二行 -->
+          <el-row>
+            <el-col :span="4">
+              <span style="color: #909090;">{{ $t('resource.i18n_not_compliance') }}</span>
+            </el-col>
+            <el-col :span="8">
+              <span>{{ source.returnSum }} / {{ source.resourcesSum }}</span>
+            </el-col>
+            <el-col :span="4">
+              <span style="color: #909090;">{{ $t('resource.status') }}</span>
+            </el-col>
+            <el-col :span="8">
+                    <span>
+                      <span style="color: #579df8;" v-if="source.resultStatus === 'APPROVED'">
+                        <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                      </span>
+                      <span style="color: #579df8;" v-else-if="source.resultStatus === 'PROCESSING'">
+                        <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                      </span>
+                      <span style="color: #7ebf59;" v-else-if="source.resultStatus === 'FINISHED'">
+                        <i class="el-icon-success"></i> {{ $t('resource.no_risk') }}
+                      </span>
+                      <span style="color: red;" v-else-if="source.resultStatus === 'ERROR'">
+                        <i class="el-icon-warning"></i> {{ $t('resource.discover_risk') }}
+                      </span>
+                      <span style="color: #dda450;" v-else-if="source.resultStatus === 'WARNING'">
+                        <i class="el-icon-warning"></i> {{ $t('resource.discover_risk') }}
+                      </span>
+                      <span style="color: #dda450;" v-else-if="source.resultStatus === 'UNDEFINED'">
+                        <i class="el-icon-warning"></i> {{ $t('resource.i18n_no_warn') }}
+                      </span>
+                      <span style="color: #dda450;" v-else>
+                        <i class="el-icon-warning"></i> {{ $t('resource.i18n_no_warn') }}
+                      </span>
+                    </span>
+            </el-col>
+          </el-row>
+          <!-- 第三行 -->
+          <el-row>
+            <el-col :span="4">
+              <span style="color: #909090;">{{ $t('account.create_time') }}</span>
+            </el-col>
+            <el-col :span="8">
+              <span>{{ source.createTime | timestampFormatDate }}</span>
+            </el-col>
+            <el-col :span="4">
+              <span style="color: #909090;">{{ $t('commons.operating') }}</span>
+            </el-col>
+            <el-col :span="8">
+              <span>
+                 <el-tooltip class="item" effect="dark" :content="$t('resource.scan')" placement="top">
+                    <el-button type="primary" size="mini" @click="handleScans(source)" circle><i class="el-icon-refresh-right"></i></el-button>
+                 </el-tooltip>
+                <el-tooltip class="item" effect="dark" :content="$t('resource.delete_result')" placement="top">
+                  <el-button type="danger" size="mini" @click="handleDelete(source)" circle><i class="el-icon-delete"></i></el-button>
+                </el-tooltip>
+              </span>
+            </el-col>
+          </el-row>
+        </el-col>
+      </el-row>
+    </el-card>
+
     <el-card class="table-card">
       <template v-slot:header>
         <table-header :condition.sync="condition"
@@ -211,6 +326,9 @@ import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/DialogFooter";
 import CenterChart from "../../common/components/CenterChart";
 import ResultLog from "./ResultLog";
+import VulnSwitch from "@/business/components/common/head/VulnSwitch";
+import {getVulnID} from "@/common/js/utils";
+import {VULN_ID} from "@/common/js/constants";
 
 /* eslint-disable */
 export default {
@@ -223,11 +341,13 @@ export default {
     TableOperator,
     DialogFooter,
     CenterChart,
-    ResultLog
+    ResultLog,
+    VulnSwitch,
   },
   data() {
     return {
       result: {},
+      source: {},
       tableData: [],
       currentPage: 1,
       pageSize: 10,
@@ -239,6 +359,8 @@ export default {
       tagSelect: [],
       resourceTypes: [],
       timer: '',
+      accountId: localStorage.getItem(VULN_ID),
+      vulnAccount: '',
       rule_buttons: [
         {
           tip: this.$t('resource.scan_vuln_search'), icon: "el-icon-share", type: "primary",
@@ -307,6 +429,12 @@ export default {
         line: true,
         indentWithTabs: true,
       },
+      vulnList: [],
+    }
+  },
+  watch: {
+    searchString(val) {
+      this.query(val)
     }
   },
   methods: {
@@ -321,7 +449,16 @@ export default {
       _filter(filters, this.condition);
       this.init();
     },
+    vulnAccountSwitch(vulnId) {
+      this.accountId = vulnId;
+      this.search();
+    },
     async search () {
+      await this.$get("/resource/vulnSource/" + this.accountId, response => {
+        this.source = response.data;
+      });
+      //在这里实现事件
+      this.condition.accountId = this.accountId;
       let url = "/vuln/manual/list/" + this.currentPage + "/" + this.pageSize;
       this.result = await this.$post(url, this.condition, response => {
         let data = response.data;
@@ -343,6 +480,9 @@ export default {
           this.resourceTypes.push(typeItem);
         }
       });
+      if (!!getVulnID()) {
+        this.accountId = getVulnID();
+      }
     },
     goResource (params) {
       if (params.returnSum == 0) {
@@ -444,7 +584,34 @@ export default {
       setTimeout(() => {
         this.$refs.cmEditor.codemirror.refresh();
       },50);
-    }
+    },
+    handleScans (item) {
+      this.$alert(this.$t('resource.handle_scans'), '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.$get("/rule/reScans/" + item.id, response => {
+              if (response.success) {
+                this.search();
+              }
+            });
+          }
+        }
+      });
+    },
+    handleDelete(obj) {
+      this.$alert(this.$t('account.delete_confirm') + obj.name + this.$t('resource.resource_result') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$get("/resource/account/delete/" + obj.id,  res => {
+              setTimeout(function () {window.location.reload()}, 2000);
+              this.$success(this.$t('commons.delete_success'));
+            });
+          }
+        }
+      });
+    },
   },
   computed: {
     codemirror() {
@@ -540,7 +707,7 @@ export default {
   margin: 0 0 20px 0;
 }
 .el-row-card >>> .el-card__body {
-  margin: 30px 0 0 30px;
+  margin: 30px 0 0 0;
 }
 .split {
   height: 120px;

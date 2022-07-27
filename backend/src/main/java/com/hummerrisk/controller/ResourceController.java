@@ -43,6 +43,13 @@ public class ResourceController {
     }
 
     @I18n
+    @ApiOperation(value = "云账号资源")
+    @GetMapping("vulnSource/{accountId}")
+    public SourceDTO vulnSource(@PathVariable String accountId) {
+        return resourceService.vulnSource(accountId);
+    }
+
+    @I18n
     @ApiOperation(value = "资源列表")
     @PostMapping("list/{goPage}/{pageSize}")
     public Pager<List<ResourceDTO>> list(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {

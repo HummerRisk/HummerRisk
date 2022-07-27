@@ -4,19 +4,15 @@
     <el-menu-item index="1" v-show="false">Placeholder</el-menu-item>
     <el-submenu index="2" popper-class="submenu">
       <template v-slot:title>
-        <span class="account-name" :title="currentAccount" style="width: 250px;">
-          {{ $t('account.cloud_account') }}: {{ currentAccount }}
+        <span class="account-name" :title="vulnAccount" style="width: 250px;">
+          {{ $t('vuln.name') }}: {{ vulnAccount }}
         </span>
       </template>
-      <search-list :current-account.sync="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"/>
+      <vuln-list :current-account.sync="vulnAccount" @vulnAccountSwitch="vulnAccountSwitch"/>
 
       <el-divider/>
 
-      <el-menu-item :index="'/account/cloudaccount'">
-        <font-awesome-icon :icon="['fa', 'plus']"/>
-        <span style="padding-left: 7px;">{{ $t("account.create") }}</span>
-      </el-menu-item>
-      <el-menu-item :index="'/account/cloudaccount'">
+      <el-menu-item :index="'/vuln/vuln'">
         <font-awesome-icon :icon="['fa', 'list-ul']"/>
         <span style="padding-left: 7px;">{{ $t('commons.show_all') }}</span>
       </el-menu-item>
@@ -26,25 +22,25 @@
 </template>
 
 <script>
-import SearchList from "@/business/components/common/head/SearchList";
-import {ACCOUNT_NAME} from "../../../../common/js/constants";
+import VulnList from "@/business/components/common/head/VulnList";
+import {VULN_NAME} from "../../../../common/js/constants";
 
 /* eslint-disable */
 export default {
   name: "AccountSwitch",
   props: {
-    accountName: String
+    vulnName: String
   },
-  components: {SearchList},
+  components: {VulnList},
   data() {
     return {
-      currentAccount: !!this.accountName?this.accountName:localStorage.getItem(ACCOUNT_NAME)
+      vulnAccount: !!this.vulnName?this.vulnName:localStorage.getItem(VULN_NAME)
     }
   },
   methods: {
-    cloudAccountSwitch(accountId, accountName) {
-      this.currentAccount = accountName;
-      this.$emit("cloudAccountSwitch", accountId);
+    vulnAccountSwitch(vulnId, vulnName) {
+      this.vulnAccount = vulnName;
+      this.$emit("vulnAccountSwitch", vulnId);
     },
   },
 }

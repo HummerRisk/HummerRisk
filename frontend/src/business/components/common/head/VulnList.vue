@@ -18,7 +18,7 @@
             <img :src="require(`@/assets/img/platform/${i.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
             {{ i.name }}
           </div>
-          <i class="el-icon-check" v-if="i.id === currentAccountId"></i>
+          <i class="el-icon-check" v-if="i.id === vulnAccountId"></i>
         </template>
       </el-menu-item>
     </div>
@@ -27,15 +27,15 @@
 </template>
 
 <script>
-import {getCurrentAccountID, getCurrentUser, hasRoles} from "@/common/js/utils";
-import {ACCOUNT_ID, ACCOUNT_NAME, ROLE_ADMIN} from "@/common/js/constants";
+import {getVulnID, getCurrentUser, hasRoles} from "@/common/js/utils";
+import {VULN_ID, VULN_NAME, ROLE_ADMIN} from "@/common/js/constants";
 
 /* eslint-disable */
 export default {
   name: "SearchList",
   props: {
     options: Object,
-    currentAccount: String
+    vulnAccount: String
   },
   created() {
     this.init();
@@ -49,7 +49,7 @@ export default {
       searchArray: [],
       searchString: '',
       userId: getCurrentUser().id,
-      currentAccountId: localStorage.getItem(ACCOUNT_ID),
+      vulnAccountId: localStorage.getItem(VULN_ID),
     }
   },
   watch: {
@@ -60,21 +60,21 @@ export default {
   methods: {
     init: function () {
       if (hasRoles(ROLE_ADMIN)) {
-        this.result = this.$get("/account/allList", response => {
+        this.result = this.$get("/account/vulnList", response => {
           this.items = response.data;
           this.searchArray = response.data;
-          if (!localStorage.getItem(ACCOUNT_ID)) {
+          if (!localStorage.getItem(VULN_ID)) {
             let userLastAccountId = getCurrentUser().lastAccountId;
             if (userLastAccountId) {
               // id 是否存在
               if (this.searchArray.length > 0 && this.searchArray.map(p => p.id).indexOf(userLastAccountId) !== -1) {
-                localStorage.setItem(ACCOUNT_ID, userLastAccountId);
+                localStorage.setItem(VULN_ID, userLastAccountId);
                 let account = this.searchArray.filter(p => p.id === userLastAccountId);
-                if(account) localStorage.setItem(ACCOUNT_NAME, account[0].name);
+                if(account) localStorage.setItem(VULN_NAME, account[0].name);
               }
             }
           }
-          let accountId = getCurrentAccountID();
+          let accountId = getVulnID();
           if (accountId) {
             // 保存的 accountId 在当前云张号列表是否存在; 切换工作空间后
             if (this.searchArray.length > 0 && this.searchArray.map(p => p.id).indexOf(accountId) === -1) {
@@ -98,17 +98,17 @@ export default {
       };
     },
     change(accountId) {
-      let currentAccountId = getCurrentAccountID();
-      if (accountId === currentAccountId) {
+      let vulnAccountId = getVulnID();
+      if (accountId === vulnAccountId) {
         return;
       }
       this.$post("/user/update/current", {id: this.userId, lastAccountId: accountId}, () => {
-        localStorage.setItem(ACCOUNT_ID, accountId);
+        localStorage.setItem(VULN_ID, accountId);
         let account = this.searchArray.filter(p => p.id === accountId);
-        if(account) localStorage.setItem(ACCOUNT_NAME, account[0].name);
+        if(account) localStorage.setItem(VULN_NAME, account[0].name);
 
-        this.currentAccountId = accountId;
-        this.$emit("cloudAccountSwitch", accountId, account[0].name);
+        this.vulnAccountId = accountId;
+        this.$emit("vulnAccountSwitch", accountId, account[0].name);
         this.changeAccountName(accountId);
       });
     },
@@ -116,10 +116,10 @@ export default {
       if (accountId) {
         let account = this.searchArray.filter(p => p.id === accountId);
         if (account.length > 0) {
-          this.$emit("update:currentAccount", !!this.currentAccount?this.currentAccount:account[0].name);
+          this.$emit("update:vulnAccount", !!this.vulnAccount?this.vulnAccount:account[0].name);
         }
       } else {
-        this.$emit("update:currentAccount", this.$t('account.select'));
+        this.$emit("update:vulnAccount", this.$t('commons.please_select'));
       }
     }
   }

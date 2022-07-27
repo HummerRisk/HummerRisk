@@ -1,6 +1,14 @@
 <template>
     <main-container v-loading="result.loading">
 
+      <el-card class="el-row-card">
+
+        <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"/>
+
+        <el-divider><i class="el-icon-tickets"></i></el-divider>
+
+      </el-card>
+
       <el-card class="table-card" v-if="groups.length > 0">
         <el-tabs class="border-card" type="border-card" @tab-click="handleClick">
           <el-tab-pane
@@ -317,6 +325,7 @@ import MetricChart from "./MetricChart";
 import {_filter, _sort, getCurrentAccountID} from "@/common/js/utils";
 import {ACCOUNT_ID} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver.js";
+import AccountChange from "@/business/components/common/head/AccountSwitch";
 
 /* eslint-disable */
   export default {
@@ -330,6 +339,7 @@ import {saveAs} from "@/common/js/FileSaver.js";
       DialogFooter,
       CenterChart,
       MetricChart,
+      AccountChange,
     },
     data() {
       return {
@@ -343,6 +353,7 @@ import {saveAs} from "@/common/js/FileSaver.js";
         loading: false,
         ruleForm: {parameter:[]},
         tags: [],
+        currentAccount: '',
         plugins: [],
         severityOptions: [],
         ruleSetOptions: [],
@@ -412,10 +423,11 @@ import {saveAs} from "@/common/js/FileSaver.js";
           this.selectIds.add(s.id)
         });
       },
+      cloudAccountSwitch(accountId) {
+        this.accountId = accountId;
+        this.search();
+      },
       async search () {
-        if (!!getCurrentAccountID()) {
-          this.accountId = getCurrentAccountID();
-        }
         await this.groupSearch();
       },
       async groupSearch () {
@@ -456,6 +468,9 @@ import {saveAs} from "@/common/js/FileSaver.js";
         this.result = this.$get(url, response => {
           this.tags = response.data;
         });
+        if (!!getCurrentAccountID()) {
+          this.accountId = getCurrentAccountID();
+        }
       },
       //查询插件
       activePlugin() {
@@ -705,6 +720,14 @@ import {saveAs} from "@/common/js/FileSaver.js";
 
   .rtl >>> .el-drawer{
     overflow: scroll;
+  }
+
+  .el-row-card {
+    padding: 0 20px 0 20px;
+    margin: 0 0 20px 0;
+  }
+  .el-row-card >>> .el-card__body {
+    margin: 0;
   }
   /deep/ :focus{outline:0;}
 </style>
