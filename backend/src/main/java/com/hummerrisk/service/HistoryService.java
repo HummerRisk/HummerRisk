@@ -327,6 +327,7 @@ public class HistoryService {
 
     public void insertHistoryCloudTaskResource(HistoryCloudTaskResourceWithBLOBs historyCloudTaskResource) throws Exception {
         try {
+            historyCloudTaskResource.setId(UUIDUtil.newUUID());
             historyCloudTaskResourceMapper.insertSelective(historyCloudTaskResource);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -335,7 +336,6 @@ public class HistoryService {
 
     public void updateHistoryCloudTaskResource(HistoryCloudTaskResourceWithBLOBs historyCloudTaskResource) throws Exception {
         try {
-            historyCloudTaskResource.setId(UUIDUtil.newUUID());
             historyCloudTaskResourceMapper.updateByPrimaryKeySelective(historyCloudTaskResource);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
