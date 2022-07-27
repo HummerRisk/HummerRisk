@@ -666,7 +666,7 @@
                       <div style="margin: 10px 0 0 0;" v-if="JSON.stringify(historyPackageReport.packageDependencyJsonList) !== '[]'">
                         <el-collapse-item title="Sbom:" name="8">
                           <div v-for="(packageDependencyJson, index) in historyPackageReport.packageDependencyJsonList" :key="index">
-                            <h3>Vuln:&nbsp;</h3>
+                            <h3>Vuln:&nbsp;{{ index+1 }}</h3>
                             <ul style="margin-left: 60px;">
                               <li><i>FileName</i>: {{ packageDependencyJson.fileName }}</li>
                               <li><i>FilePath</i>: {{ packageDependencyJson.filePath }}</li>
@@ -701,7 +701,7 @@
                             <el-card class="box-card">
                               <div slot="header" class="clearfix">
                                 <el-row>
-                                  <el-col :span="15" style="margin: -7px 0 0 15px;">
+                                  <el-col :span="24" style="margin: -7px 0 0 15px;">
                                     <span style="font-size: 24px;font-weight: 500;">{{ packageDependencyJson.fileName }}</span>
                                     <span style="font-size: 20px;color: #888;margin-left: 5px;">- IsVirtual:  {{ packageDependencyJson.isVirtual }}</span>
                                   </el-col>

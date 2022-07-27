@@ -143,4 +143,21 @@
         ORDER BY t.update_time desc
     </select>
 
+    <resultMap id="HistoryPackageReportDTOMap" type="com.hummerrisk.dto.HistoryPackageReportDTO" extends="com.hummerrisk.base.mapper.HistoryPackageTaskMapper.BaseResultMap">
+        <collection property="packageDependencyJsonList" ofType="com.hummerrisk.base.domain.PackageDependencyJsonWithBLOBs" javaType="list" select="getPackageDependencyJsonList" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="getPackageResultDto" resultMap="HistoryPackageReportDTOMap" parameterType="java.lang.String">
+        SELECT t.*
+        FROM history_package_task t
+        WHERE t.id = #{id}
+    </select>
+
+    <select id="getPackageDependencyJsonList" resultType="com.hummerrisk.base.domain.PackageDependencyJsonWithBLOBs" parameterType="java.lang.String">
+        SELECT t.*
+        FROM package_dependency_json t
+        WHERE t.result_id = #{id}
+    </select>
+
 </mapper>

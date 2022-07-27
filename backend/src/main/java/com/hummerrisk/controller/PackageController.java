@@ -10,10 +10,7 @@ import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.packageSetting.PackageRequest;
 import com.hummerrisk.controller.request.packageSetting.PackageResultRequest;
 import com.hummerrisk.controller.request.packageSetting.PackageRuleRequest;
-import com.hummerrisk.dto.PackageDTO;
-import com.hummerrisk.dto.PackageResultDTO;
-import com.hummerrisk.dto.PackageResultWithBLOBsDTO;
-import com.hummerrisk.dto.PackageRuleDTO;
+import com.hummerrisk.dto.*;
 import com.hummerrisk.service.PackageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -145,10 +142,24 @@ PackageController {
     }
 
     @I18n
+    @ApiIgnore
+    @GetMapping(value = "getPackageResultDto/{resultId}")
+    public HistoryPackageReportDTO getPackageResultDto(@PathVariable String resultId) {
+        return packageService.getPackageResultDto(resultId);
+    }
+
+    @I18n
     @ApiOperation(value = "软件包检测结果")
     @GetMapping(value = "getPackageResult/{resultId}")
-    public PackageResultWithBLOBs getPackageResult(@PathVariable String resultId) {
+    public PackageResult getPackageResult(@PathVariable String resultId) {
         return packageService.getPackageResult(resultId);
+    }
+
+    @I18n
+    @ApiOperation(value = "软件包检测结果详情")
+    @GetMapping(value = "PackageResultWithBLOBs/{resultId}")
+    public PackageResultWithBLOBs getPackageResultWithBLOBs(@PathVariable String resultId) {
+        return packageService.getPackageResultWithBLOBs(resultId);
     }
 
     @I18n

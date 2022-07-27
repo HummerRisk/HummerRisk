@@ -14,10 +14,7 @@ import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.packageSetting.PackageRequest;
 import com.hummerrisk.controller.request.packageSetting.PackageResultRequest;
 import com.hummerrisk.controller.request.packageSetting.PackageRuleRequest;
-import com.hummerrisk.dto.PackageDTO;
-import com.hummerrisk.dto.PackageResultDTO;
-import com.hummerrisk.dto.PackageResultWithBLOBsDTO;
-import com.hummerrisk.dto.PackageRuleDTO;
+import com.hummerrisk.dto.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -502,7 +499,17 @@ public class PackageService {
         return list;
     }
 
-    public PackageResultWithBLOBs getPackageResult(String resultId) {
+    public HistoryPackageReportDTO getPackageResultDto(String resultId) {
+        HistoryPackageReportDTO dto = extPackageResultMapper.getPackageResultDto(resultId);
+        return dto;
+    }
+
+    public PackageResult getPackageResult(String resultId) {
+        PackageResult packageResult = packageResultMapper.selectByPrimaryKey(resultId);
+        return packageResult;
+    }
+
+    public PackageResultWithBLOBs getPackageResultWithBLOBs(String resultId) {
         PackageResultWithBLOBs packageResultWithBLOBs = packageResultMapper.selectByPrimaryKey(resultId);
         if(packageResultWithBLOBs!=null && !StringUtils.equalsIgnoreCase(packageResultWithBLOBs.getResultStatus(), TaskConstants.TASK_STATUS.APPROVED.toString())) packageResultWithBLOBs.setReturnJson(accountService.toJSONString(packageResultWithBLOBs.getReturnJson()!=null? packageResultWithBLOBs.getReturnJson():"{}"));
         return packageResultWithBLOBs;

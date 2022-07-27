@@ -59,7 +59,7 @@
     </el-card>
 
     <!--Result log-->
-    <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="65%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="85%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-row class="el-form-item-dev" v-if="logData.length == 0">
         <span>{{ $t('resource.i18n_no_data') }}<br></span>
@@ -102,14 +102,127 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-form>
-          <div class="pure-span">{{ $t('package.result_resources') }}</div>
-          <codemirror ref="cmEditor" v-model="logForm.resources" class="code-mirror" :options="cmOptions" />
-        </el-form>
-        <el-form>
-          <div class="pure-span">{{ $t('package.result_json') }}</div>
-          <codemirror ref="cmEditor" v-model="logForm.returnJson" class="code-mirror" :options="cmOptions" />
-        </el-form>
+        <div style="margin: 10px;">
+          <h2>Summary:&nbsp;</h2>
+          <ul style="margin-left: 60px;">
+            <li><i>Scan Name</i>: {{ logForm.name }}</li>
+            <li><i>Package Name</i>: {{ logForm.packageName }}</li>
+            <li><i>Package Size</i>:&nbsp;{{ logForm.size }}</li>
+            <li><i>Rule Name</i>: {{ logForm.ruleDesc }}</li>
+            <li><i>Scan User</i>:&nbsp;{{ logForm.userName }}</li>
+            <li><i>Severity</i>:&nbsp;{{ logForm.severity }}</li>
+            <li><i>Create Time</i>:&nbsp;{{ logForm.createTime | timestampFormatDate }}</li>
+            <li><i>Result Status</i>:&nbsp;{{ logForm.resultStatus }}</li>
+            <li><i>Vulnerabilities Found</i>: {{ logForm.returnSum }}</li>
+          </ul>
+        </div>
+        <el-tabs type="border-card">
+          <el-tab-pane :label="$t('package.result_list_vuln')">
+            <h3>Vuln:&nbsp;</h3>
+            <el-table :data="logForm.packageDependencyJsonList" border stripe style="width: 100%">
+              <el-table-column type="index" min-width="5%"/>
+              <el-table-column :label="'FileName'" min-width="20%" prop="fileName">
+              </el-table-column>
+              <el-table-column :label="'FilePath'" min-width="25%" prop="filePath">
+              </el-table-column>
+              <el-table-column min-width="5%" :label="'IsVirtual'" prop="isVirtual">
+              </el-table-column>
+              <el-table-column min-width="10%" :label="'Md5'" prop="md5">
+              </el-table-column>
+              <el-table-column min-width="15%" :label="'Sha1'" prop="sha1">
+              </el-table-column>
+              <el-table-column min-width="15%" :label="'Sha256'" prop="sha256">
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
+          <el-tab-pane :label="$t('package.result_list_sbom')" class="el-card">
+            <div style="margin: 10px 0 0 0;" v-if="JSON.stringify(logForm.packageDependencyJsonList) !== '[]'">
+              <div v-for="(packageDependencyJson, index) in logForm.packageDependencyJsonList" :key="index">
+                <h3>Vuln:&nbsp;{{ index+1 }}</h3>
+                <ul style="margin-left: 60px;">
+                  <li><i>FileName</i>: {{ packageDependencyJson.fileName }}</li>
+                  <li><i>FilePath</i>: {{ packageDependencyJson.filePath }}</li>
+                  <li><i>IsVirtual</i>:&nbsp;{{ packageDependencyJson.isVirtual }}</li>
+                  <li><i>Md5</i>: {{ packageDependencyJson.md5 }}</li>
+                  <li><i>Sha1</i>:&nbsp;{{ packageDependencyJson.sha1 }}</li>
+                  <li><i>Sha256</i>:&nbsp;{{ packageDependencyJson.sha256 }}</li>
+                </ul>
+                <div style="margin: 10px;">
+                  <vue-okr-tree
+                    ref="tree"
+                    :data="packageDependencyJson.vulnerabilities?packageDependencyJson.vulnerabilities:'[]' | packageDependencyJsonRight"
+                    :left-data="packageDependencyJson.vulnerabilities?packageDependencyJson.vulnerabilities:'[]' | packageDependencyJsonLeft"
+                    only-both-tree
+                    direction="horizontal"
+                    show-collapsable
+                    node-key="id"
+                    label-class-name='no-padding'
+                    default-expand-all
+                    :render-content="renderContent"
+                    :filter-node-method="filterNode"
+                  ></vue-okr-tree>
+                </div>
+              </div>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane :label="$t('package.result_list_depen')">
+            <div style="margin: 10px 0 0 0;" v-if="JSON.stringify(logForm.packageDependencyJsonList) !== '[]'">
+              <div style="margin: 10px 0 0 0;" :key="index" v-for="(packageDependencyJson,index) in logForm.packageDependencyJsonList">
+                <el-card class="box-card">
+                  <div slot="header" class="clearfix">
+                    <el-row>
+                      <el-col :span="24" style="margin: -7px 0 0 15px;">
+                        <span style="font-size: 24px;font-weight: 500;">{{ packageDependencyJson.fileName }}</span>
+                        <span style="font-size: 20px;color: #888;margin-left: 5px;">- IsVirtual:  {{ packageDependencyJson.isVirtual }}</span>
+                      </el-col>
+                    </el-row>
+                    <el-row style="font-size: 18px;padding: 10px;">
+                      <el-col :span="20">
+                        <span style="color: #888;margin: 5px;">{{ 'SBOM' }}</span>
+                        <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                        <span style="color: #444;margin: 5px;">FilePath: {{ packageDependencyJson.filePath }}</span>
+                      </el-col>
+                    </el-row>
+                  </div>
+                  <div class="text div-json">
+                    <el-descriptions :column="2" v-for="(packagex, index) in JSON.parse(packageDependencyJson.packages)" :key="index" :title="'Package'+(index+1)">
+                      <el-descriptions-item v-for="(meta, index) in filterJson(packagex?packagex:{package: 'N/A'})" :key="index" :label="meta.key">
+                                  <span v-if="!meta.flag" show-overflow-tooltip>
+                                    <el-tooltip class="item" effect="dark" :content="JSON.stringify(meta.value)" placement="top-start">
+                                      <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
+                                    </el-tooltip>
+                                  </span>
+                        <el-tooltip v-if="meta.flag && meta.value" class="item" effect="light" :content="typeof(meta.value) === 'boolean'?meta.value.toString():meta.value" placement="top-start">
+                                    <span class="table-expand-span-value">
+                                        {{ meta.value }}
+                                    </span>
+                        </el-tooltip>
+                        <span v-if="meta.flag && !meta.value"> N/A</span>
+                      </el-descriptions-item>
+                    </el-descriptions>
+                  </div>
+                  <div class="text div-json">
+                    <el-descriptions :column="2" v-for="(vulnerability, index) in JSON.parse(packageDependencyJson.vulnerabilities)" :key="index" :title="'Vulnerabilitie'+(index+1)">
+                      <el-descriptions-item v-for="(meta, index) in filterJson(vulnerability?vulnerability:{vulnerability: 'N/A'})" :key="index" :label="meta.key">
+                                  <span v-if="!meta.flag" show-overflow-tooltip>
+                                    <el-tooltip class="item" effect="dark" :content="JSON.stringify(meta.value)" placement="top-start">
+                                      <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
+                                    </el-tooltip>
+                                  </span>
+                        <el-tooltip v-if="meta.flag && meta.value" class="item" effect="light" :content="typeof(meta.value) === 'boolean'?meta.value.toString():meta.value" placement="top-start">
+                                    <span class="table-expand-span-value">
+                                      {{ meta.value }}
+                                    </span>
+                        </el-tooltip>
+                        <span v-if="meta.flag && !meta.value"> N/A</span>
+                      </el-descriptions-item>
+                    </el-descriptions>
+                  </div>
+                </el-card>
+              </div>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
       </el-row>
       <template v-slot:footer>
         <dialog-footer
@@ -133,6 +246,7 @@ import DialogFooter from "../head/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import RuleType from "./RuleType";
 import {PACKAGE_RESULT_CONFIGS} from "../../common/components/search/search-components";
+import {VueOkrTree} from 'vue-okr-tree';
 
 /* eslint-disable */
 export default {
@@ -144,7 +258,8 @@ export default {
     TablePagination,
     TableOperator,
     DialogFooter,
-    RuleType
+    RuleType,
+    VueOkrTree,
   },
   data() {
     return {
@@ -194,6 +309,7 @@ export default {
         indentWithTabs: true,
         location: "",
       },
+      filterJson: this.filterJsonKeyAndValue,
     }
   },
 
@@ -222,8 +338,6 @@ export default {
             let result = response.data;
             if (data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
-              data.resources = result.resources;
-              data.returnJson = result.returnJson;
               data.returnSum = result.returnSum;
             }
           });
@@ -273,13 +387,9 @@ export default {
       this.result = this.$get(url + result.id, response => {
         this.logData = response.data;
       });
-      if (!result.returnJson) {
-        this.result = this.$get("/package/getPackageResult/"+ result.id, response => {
-          this.logForm = response.data;
-        });
-      } else {
-        this.logForm = result;
-      }
+      this.result = this.$get("/package/getPackageResultDto/"+ result.id, response => {
+        this.logForm = response.data;
+      });
       this.logVisible = true;
     },
     handleClose() {
@@ -329,6 +439,96 @@ export default {
       this.$router.push({
         path: p
       }).catch(error => error);
+    },
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    },
+    renderContent (h, node) {
+      const cls = ['diy-wrapper']
+      if (node.isCurrent) {
+        cls.push('current-select')
+      }
+      if (node.isLeftChild) {
+        cls.push('left-child')
+      }
+      let spanLeft = 8;
+      let spanRight = 16;
+      if (node.level === 1) {
+        return (
+          <div class={cls}>
+            <div class="diy-con-name">
+              Package Scan: {node.data.name}
+            </div>
+            <div class="diy-con-content">
+              Description: {node.data.description}
+            </div>
+          </div>
+        )
+      } else {
+        return (
+          <div class={cls}>
+            <div class="diy-con-name">
+              <el-row>
+                <el-col span={spanLeft} class="diy-con-left">Name</el-col>
+                <el-col span={spanRight} class="diy-con-right-cve">{node.data.name}</el-col>
+              </el-row>
+            </div>
+            <div class="diy-con-content">
+              <el-row>
+                <el-col span={spanLeft} class="diy-con-left">Severity</el-col>
+                <el-col span={spanRight} class="diy-con-right">{node.data.severity}</el-col>
+              </el-row>
+            </div>
+            <div class="diy-con-name">
+              <el-row>
+                <el-col span={spanLeft} class="diy-con-left">Source</el-col>
+                <el-col span={spanRight} class="diy-con-right">{node.data.source}</el-col>
+              </el-row>
+            </div>
+            <div class="diy-con-content">
+              <el-row>
+                <el-col span={spanLeft} class="diy-con-left">Notes</el-col>
+                <el-col span={spanRight} class="diy-con-right">{!!node.data.description?node.data.description.substr(0,60):'N/A'}</el-col>
+              </el-row>
+            </div>
+          </div>
+        )
+      }
+    },
+    filterJsonKeyAndValue(json) {
+      //json is json object , not array -- harris
+      let list = json;
+      if(typeof json === 'object') {
+        list = json;
+      } else {
+        list = JSON.parse(json);
+      }
+
+      let jsonKeyAndValue = [];
+
+      for (let item in list) {
+        let flag = true;
+        let value = list[item];
+        //string && boolean的值直接显示, object是[{}]
+        if (typeof (value) === 'number') {
+          value = String(value);
+        }
+        if (typeof (value) === 'object') {
+          if (value !== null && JSON.stringify(value) !== '[]' && JSON.stringify(value) !== '{}') {
+            flag = false;
+          }
+          if (JSON.stringify(value) === '[]' || JSON.stringify(value) === '{}') {
+            value = "";
+          }
+        }
+
+        if (item.indexOf('$$') === -1 && item !== 'show') {
+          let map = {key: item, value: value, flag: flag};
+          jsonKeyAndValue.push(map);
+        }
+      }
+      return jsonKeyAndValue;
     },
   },
   computed: {
@@ -439,6 +639,114 @@ export default {
 }
 .code-mirror {
   width: 100%;
+}
+.el-card >>> .label-class-blue {
+  color: #1989fa;
+}
+.el-card >>> .label-bg-blue {
+  background: #1989fa;
+  color: #fff;
+}
+.el-card >>> .diy-wrapper {
+  padding:10px
+}
+.el-card >>> .no-padding {
+  padding: 0 !important;
+}
+.diy-wrapper >>> .left-child {
+  border: 1px solid red;
+}
+.el-card >>> .org-chart-node-label-inner {
+  border-style: solid;
+  border-left-color: #ff0000;
+  border-left-width: 5px;
+  border-right-color:#fff;
+  border-top-color:#fff;
+  border-bottom-color:#fff;
+}
+
+.el-card >>> .diy-con-name {
+  margin: 8px 3px;
+}
+
+.el-card >>> .diy-con-content {
+  margin: 8px 3px;
+}
+
+.el-card >>> .diy-con-left {
+  text-align: left;
+  color: tomato;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  font-size: 14px;
+}
+
+.el-card >>> .diy-con-right {
+  text-align: right;
+  color: #888888;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  font-size: 12px;
+}
+
+.el-card >>> .diy-con-right-cve {
+  text-align: right;
+  color: #32CD32;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  cursor:pointer;
+  font-size: 12px;
+}
+
+.text {
+  font-size: 14px;
+}
+
+.item {
+  margin-bottom: 18px;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both;
+}
+
+.box-card >>> .el-card__header {
+  background-color: aliceblue;
+}
+
+.div-desc {
+  background-color: #ecebf5;
+  color: blueviolet;
+  padding: 15px;
+}
+
+.div-json {
+  padding: 15px;
+}
+
+.box-card {
+  width: 99%;
+  border-top-color: #ff0000;
+  border-top-width: 5px;
+}
+
+.icon-title {
+  color: #fff;
+  width: 30px;
+  background-color: #32CD32;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 30px;
+  font-size: 14px;
 }
 * { touch-action: pan-y; }
 /deep/ :focus{outline:0;}

@@ -964,6 +964,9 @@ export default {
     package_default_icon: '系統內置圖片',
     package_definition_icon: '軟件包自定義圖片',
     package_note2: '可以選擇系統內置圖片，也可以上傳自定義圖片',
+    result_list_vuln: '檢測結果列表',
+    result_list_sbom: '物料清單',
+    result_list_depen: '依賴關係',
   },
   vuln: {
     vuln_setting: '漏洞檢測',

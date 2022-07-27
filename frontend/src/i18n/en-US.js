@@ -964,6 +964,9 @@ export default {
     package_default_icon: 'System built-in image',
     package_definition_icon: 'Package custom image',
     package_note2: 'You can choose the built-in image in the system, or upload a custom image',
+    result_list_vuln: 'Vuln result list',
+    result_list_sbom: 'Sbom list',
+    result_list_depen: 'Dependencies',
   },
   vuln: {
     vuln_setting: 'Vulnerability Scan',

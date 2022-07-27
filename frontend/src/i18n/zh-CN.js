@@ -964,6 +964,9 @@ export default {
     package_default_icon: '系统内置图片',
     package_definition_icon: '软件包自定义图片',
     package_note2: '可以选择系统内置图片，也可以上传自定义图片',
+    result_list_vuln: '检测结果列表',
+    result_list_sbom: '物料清单',
+    result_list_depen: '依赖关系',
   },
   vuln: {
     vuln_setting: '漏洞检测',
