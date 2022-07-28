@@ -6,6 +6,7 @@ import com.alibaba.fastjson.serializer.ObjectSerializer;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.BeanUtils;
+import com.hummerrisk.commons.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -68,9 +69,7 @@ public class Translator {
                 String rawString = javaObject.toString();
                 if (StringUtils.contains(rawString, JSON_SYMBOL)) {
                     try {
-                        Object jsonObject = JSON.parse(rawString);
-                        Object a = translateObject(jsonObject);
-                        return JSON.toJSONString(a);
+                        return JsonUtils.toPrettyJSONString(rawString);
                     } catch (Exception e) {
                         e.printStackTrace();
 //                        LogUtil.warn("Failed to translate object " + rawString + ". Error: " + ExceptionUtils.getStackTrace(e));
