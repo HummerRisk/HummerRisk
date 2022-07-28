@@ -95,11 +95,7 @@ public class ResourceCreateService {
     @Resource
     private HistoryPackageTaskMapper historyPackageTaskMapper;
     @Resource
-    private ServerMapper serverMapper;
-    @Resource
-    private ImageMapper imageMapper;
-    @Resource
-    private PackageMapper packageMapper;
+    private TaskItemResourceLogMapper taskItemResourceLogMapper;
 
     @QuartzScheduled(cron = "${cron.expression.local}")
     public void handleTasks() throws Exception {
@@ -384,8 +380,14 @@ public class ResourceCreateService {
                         n = historyPackageTaskMapper.countByExample(example);
                         i = i + n;
                     }
-                    if (n > 0) {
-                        taskService.saveTaskItemResourceLog(taskItemResource.getTaskItemId(), String.valueOf(taskItemResource.getId()), taskItemResource.getResourceId(), "i18n_end_task", "", true);
+                    if (n > 0) {//任务结束时插入结束日志，但是只保留一条
+                        TaskItemResourceLogExample taskItemResourceLogExample = new TaskItemResourceLogExample();
+                        taskItemResourceLogExample.createCriteria().andTaskItemIdEqualTo(taskItemResource.getTaskItemId()).andTaskItemResourceIdEqualTo(String.valueOf(taskItemResource.getId()))
+                                        .andResourceIdEqualTo(taskItemResource.getResourceId()).andOperationEqualTo("i18n_end_task").andResultEqualTo(true);
+                        long c = taskItemResourceLogMapper.countByExample(taskItemResourceLogExample);
+                        if (c == 0) {
+                            taskService.saveTaskItemResourceLog(taskItemResource.getTaskItemId(), String.valueOf(taskItemResource.getId()), taskItemResource.getResourceId(), "i18n_end_task", "", true);
+                        }
                     }
                 }
                 if (sum == i) {//若总数与检测数相等，代表子项任务完成
