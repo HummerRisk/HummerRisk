@@ -967,6 +967,7 @@ export default {
     result_list_vuln: 'Vuln result list',
     result_list_sbom: 'Sbom list',
     result_list_depen: 'Dependencies',
+    no_package_name: 'No package',
   },
   vuln: {
     vuln_setting: 'Vulnerability Scan',

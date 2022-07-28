@@ -32,6 +32,7 @@ export default {
         'Content-Type': 'multipart/form-data'
       },
       result: {},
+      uploadSuccess: true,
     }
   },
   props:['url', 'param'],
@@ -64,12 +65,14 @@ export default {
         }
 
         const isTypeOk = this.fileType.some((type) => {
-          if (file.type?file.type.indexOf(type):file.name.indexOf(type) > -1) return true;
+          if (file.type?file.type.indexOf(type) > -1:file.name.indexOf(type) > -1) return true;
           if (fileExtension && fileExtension.indexOf(type) > -1) return true;
           return false;
         });
         if (!isTypeOk) {
-          this.$message.error(this.$t('common.adv_search.file_type_warn') + this.fileType.join("/") + this.$t('common.adv_search.file_type_warn2'));
+          this.$error(this.$t('commons.adv_search.file_type_warn') + this.fileType.join("/") + this.$t('commons.adv_search.file_type_warn2'));
+          this.fileList = [];
+          this.uploadSuccess = false;
           return false;
         }
       }
@@ -77,7 +80,9 @@ export default {
       if (this.fileSize) {
         const isLt = file.size / 1024 / 1024 < this.fileSize;
         if (!isLt) {
-          this.$message.error(this.$t('common.file_size_warn') + this.fileSize + ' MB!');
+          this.$error(this.$t('commons.file_size_warn') + this.fileSize + ' MB!');
+          this.fileList = [];
+          this.uploadSuccess = false;
           return false;
         }
       }
@@ -95,6 +100,7 @@ export default {
       this.percentage = 0;
     },
     submit(file) {
+      if(!this.uploadSuccess) return;
       const interval = setInterval(() => {
         if (this.percentage >= 100) {
           clearInterval(interval);

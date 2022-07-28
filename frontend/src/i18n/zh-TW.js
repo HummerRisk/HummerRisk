@@ -967,6 +967,7 @@ export default {
     result_list_vuln: '檢測結果列表',
     result_list_sbom: '物料清單',
     result_list_depen: '依賴關係',
+    no_package_name: '沒有軟件包',
   },
   vuln: {
     vuln_setting: '漏洞檢測',

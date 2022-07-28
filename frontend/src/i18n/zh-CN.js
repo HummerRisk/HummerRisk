@@ -967,6 +967,7 @@ export default {
     result_list_vuln: '检测结果列表',
     result_list_sbom: '物料清单',
     result_list_depen: '依赖关系',
+    no_package_name: '没有软件包',
   },
   vuln: {
     vuln_setting: '漏洞检测',

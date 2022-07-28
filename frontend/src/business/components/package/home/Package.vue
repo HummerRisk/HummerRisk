@@ -23,7 +23,7 @@
               <span class="da-na">{{ data.name }}</span>
               <el-button size="medium" type="primary" class="round" round>{{ data.size?data.size:'0MB' }}</el-button>
               <span class="button time pa-na">
-                <span v-bind:class="{true: 'color-red', false: ''}[!data.packageName]">{{ data.packageName?data.packageName:'No package' }}</span>
+                <span v-bind:class="{true: 'color-red', false: ''}[!data.packageName]">{{ data.packageName?data.packageName:$t('package.no_package_name') }}</span>
               </span>
               <div class="bottom clearfix">
                 <time class="time pa-time">{{ data.updateTime | timestampFormatDate }} | {{ data.userName }}{{ $t('dashboard.i18n_create') }}</time>
@@ -113,7 +113,7 @@
         @cancel="handleClose"
         :show-pre="preVisible" @preStep="pre()"
         :show-next="nextVisible" @nextStep="next('add')"
-        :show-confirm="confirmVisible" @confirm="handleClose"/>
+        :show-confirm="confirmVisible" @confirm="savePackage(addPackageForm, 'edit')"/>
     </el-drawer>
     <!--Create package-->
 
@@ -184,7 +184,7 @@
         @cancel="handleClose"
         :show-pre="preVisible" @preStep="pre()"
         :show-next="nextVisible" @nextStep="next('edit')"
-        :show-confirm="confirmVisible" @confirm="handleClose"/>
+        :show-confirm="confirmVisible" @confirm="savePackage(editPackageForm, 'edit')"/>
     </el-drawer>
     <!--Update package-->
 
@@ -280,19 +280,28 @@ export default {
       this.addPackageForm = {};
     },
     save(item, type) {
+      if(this.imageSelect.id) {
+        item.pluginIcon = this.imageSelect.id;
+      }
       if(type==='add') {
         if(!this.id) {
-          this.result = this.$post('/package/addPackage', this.addPackageForm, response => {
+          this.result = this.$post('/package/addPackage', item, response => {
             let data = response.data;
             this.addPackageForm = data;
+            this.search();
           });
         }
-      }else {
-        this.result = this.$post('/package/editPackage', this.editPackageForm, response => {
+      } else {
+        this.result = this.$post('/package/editPackage', item, response => {
           let data = response.data;
           this.editPackageForm = data;
+          this.search();
         });
       }
+    },
+    savePackage(item, type) {
+      this.save(item, type);
+      this.handleClose();
     },
     //查询代理
     activeProxy() {
@@ -346,8 +355,18 @@ export default {
       });
     },
     delete(data) {
-      this.$get('/package/deletePackage/' + data.id, () => {
-        this.search();
+      this.$alert(this.$t('workspace.delete_confirm') + data.name + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.$get('/package/deletePackage/' + data.id, response => {
+              if (response.success) {
+                this.$success(this.$t('commons.delete_success'));
+              }
+              this.search();
+            });
+          }
+        }
       });
     },
     //查询列表
@@ -376,23 +395,27 @@ export default {
       if (this.active === 1) {
         if(type==='add') {
           if (!this.addPackageForm.name) {
-            this.$error(this.$t('package.name_not_null'));
+            this.$warning(this.$t('package.name_not_null'));
+            return;
+          }
+          if (this.addPackageForm.isProxy && !this.addPackageForm.proxyId) {
+            this.$warning(this.$t('commons.proxy') + this.$t('commons.cannot_be_empty'));
             return;
           }
           this.save(this.addPackageForm, 'add');
         } else {
           if (!this.editPackageForm.name) {
-            this.$error(this.$t('package.name_not_null'));
+            this.$warning(this.$t('package.name_not_null'));
+            return;
+          }
+          if (!this.editPackageForm.isProxy && !this.editPackageForm.proxyId) {
+            this.$warning(this.$t('commons.proxy') + this.$t('commons.cannot_be_empty'));
             return;
           }
           this.save(this.editPackageForm, 'edit');
         }
         this.active = 2;
       } else if (this.active === 2) {
-        if(this.imageSelect.id) {
-          this.editPackageForm.pluginIcon = this.imageSelect.id;
-          this.save(this.editPackageForm, 'edit');
-        }
         this.active = 3;
         this.confirmVisible = true;
         this.nextVisible = false;
