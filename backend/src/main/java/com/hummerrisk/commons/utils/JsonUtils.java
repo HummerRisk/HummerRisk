@@ -11,10 +11,9 @@ import static com.alibaba.fastjson.JSON.parseObject;
 public class JsonUtils {
 
     public static String toPrettyJSONString(String jsonString) {
-        String res = JSON.parse(jsonString).toString();
         Object json = null;
         if(jsonString.startsWith("[")){
-            json = parseArray(res);
+            json = parseArray(jsonString);
         }else if(jsonString.startsWith("{")){
             json = parseObject(jsonString);
         }else{
