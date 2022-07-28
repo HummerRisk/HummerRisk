@@ -61,7 +61,7 @@
           </el-row>
         </template>
 
-        <el-table border :data="tableData" class="adjust-table table-content" stripe @filter-change="filter" height="317">
+        <el-table border :data="tableData" class="adjust-table table-content" stripe @filter-change="filter" style="min-height: 317px;" max-height="318">
           <el-table-column type="index" min-width="2%"/>
           <el-table-column :label="$t('task.task_rule_name')" min-width="27%" show-overflow-tooltip>
             <template v-slot:default="scope">
@@ -79,7 +79,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="ruleDesc" :label="$t('task.task_rule_desc')" min-width="48%" show-overflow-tooltip></el-table-column>
-          <el-table-column min-width="11%" :label="$t('commons.operating')" fixed="right">
+          <el-table-column min-width="11%" :label="$t('commons.operating')">
             <template v-slot:default="scope">
               <el-button type="primary" plain size="mini" @click="addTask(scope.row)"><i class="el-icon-plus"/>{{ $t('commons.add') }}</el-button>
             </template>
