@@ -30,7 +30,7 @@ public class PluginService {
 
     public List<Plugin> getAllPlugin(String scanType) {
         PluginExample example = new PluginExample();
-        example.setOrderByClause("update_time");
+        example.setOrderByClause("order_");
         PluginExample.Criteria criteria = example.createCriteria();
         if (scanType!=null) {
             if (StringUtils.equalsIgnoreCase(scanType, ScanTypeConstants.prowler.name())) {
@@ -44,7 +44,7 @@ public class PluginService {
 
     public List<Plugin> getCloudPlugin() {
         PluginExample example = new PluginExample();
-        example.setOrderByClause("update_time");
+        example.setOrderByClause("order_");
         PluginExample.Criteria criteria = example.createCriteria();
         criteria.andIdNotIn(PlatformUtils.getVulnPlugin());
         return pluginMapper.selectByExample(example);
@@ -52,7 +52,7 @@ public class PluginService {
 
     public List<Plugin> getVulnPlugin() {
         PluginExample example = new PluginExample();
-        example.setOrderByClause("update_time");
+        example.setOrderByClause("order_");
         PluginExample.Criteria criteria = example.createCriteria();
         criteria.andIdIn(PlatformUtils.getVulnPlugin());
         return pluginMapper.selectByExample(example);
@@ -74,6 +74,7 @@ public class PluginService {
     public List<Plugin> getPluginList(PluginRequest request) {
         PluginExample example = new PluginExample();
         example.createCriteria().andNameEqualTo(request.getName());
+        example.setOrderByClause("order_");
         return pluginMapper.selectByExample(example);
     }
 
