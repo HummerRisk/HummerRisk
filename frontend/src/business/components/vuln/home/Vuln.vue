@@ -188,7 +188,7 @@ import {VULN_CONFIGS} from "../../common/components/search/search-components";
 import ProxyDialogFooter from "../head/ProxyDialogFooter";
 import ProxyDialogCreateFooter from "../head/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
-import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
+import {VULN_ID, VULN_NAME} from "@/common/js/constants";
 
 /* eslint-disable */
 export default {
@@ -610,8 +610,8 @@ export default {
               for (let item of this.tableData) {
                 for (let id of this.selectIds) {
                   if (id===item.id) {
-                    localStorage.setItem(ACCOUNT_ID, item.id);
-                    localStorage.setItem(ACCOUNT_NAME, item.name);
+                    localStorage.setItem(VULN_ID, item.id);
+                    localStorage.setItem(VULN_NAME, item.name);
                     break;
                   }
                 }

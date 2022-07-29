@@ -97,7 +97,7 @@ import ScanHeader from "../head/ScanHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/DialogFooter";
-import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
+import {VULN_ID, VULN_NAME} from "@/common/js/constants";
 import {_sort} from "@/common/js/utils";
 
 /* eslint-disable */
@@ -232,8 +232,8 @@ import {_sort} from "@/common/js/utils";
                 confirmButtonText: this.$t('commons.confirm'),
                 callback: (action) => {
                   if (action === 'confirm') {
-                    localStorage.setItem(ACCOUNT_ID, this.accountId);
-                    localStorage.setItem(ACCOUNT_NAME, this.accountName);
+                    localStorage.setItem(VULN_ID, this.accountId);
+                    localStorage.setItem(VULN_NAME, this.accountName);
                     this.$router.push({
                       path: '/vuln/result',
                     }).catch(error => error);
