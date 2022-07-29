@@ -28,6 +28,7 @@ public class PackageConstants {
     public final static String SCAN = "--scan ";
     public final static String OUT = "-o ";
     public final static String LOG = "-log ";
+    public final static String NOUPDATE = "--noupdate ";
     public final static String FORMAT = "-f ";//HTML, XML, CSV, JSON,JUNIT, SARIF, or ALL
     public final static String HTML = "HTML";
     public final static String XML = "XML";

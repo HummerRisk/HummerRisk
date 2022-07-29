@@ -28,6 +28,8 @@ public class ImageConstants {
     public final static String SCOPE = " --scope all-layers ";
     public final static String OUT = " -o ";
     public final static String _FILE = "--file ";
+
+    public final static String ADDCPE = "--add-cpes-if-none ";
     public final static String GRYPE_TABLE_TXT = "grype_table.txt";
     public final static String GRYPE_JSON_TXT = "grype_json.json";
 

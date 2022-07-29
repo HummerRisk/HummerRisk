@@ -471,7 +471,7 @@ public class PackageService {
             String suffix = PackageConstants.DEFAULT_BASE_DIR + (!aPackage.getPath().isEmpty()?aPackage.getPath().split("\\.")[0]:"");
             //检测包路径，项目外
             String path = PackageConstants.DEFAULT_BASE_DIR + aPackage.getPath();
-            String command = _proxy + PackageConstants.DEPENDENCY_CHECK +
+            String command = _proxy + PackageConstants.DEPENDENCY_CHECK + PackageConstants.NOUPDATE +
                         PackageConstants.SCAN + path + " " +
                         PackageConstants.FORMAT + PackageConstants.ALL + " " +
                         PackageConstants.OUT + suffix;
