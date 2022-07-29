@@ -1147,7 +1147,8 @@ public class PlatformUtils {
             case aliyun:
                 if (StringUtils.contains(resource, "aliyun.polardb")) {
                     // 不支持aliyun.polardb资源的区域
-                    stringArray = new String[]{"cn-wulanchabu", "cn-heyuan", "cn-guangzhou", "me-east-1", "cn-nanjing"};
+                    stringArray = new String[]{"cn-wulanchabu", "cn-heyuan", "cn-guangzhou", "me-east-1",
+                            "cn-nanjing","ap-northeast-2","ap-southeast-7","me-central-1","cn-fuzhou"};
                     tempList = Arrays.asList(stringArray);
                     return !tempList.contains(region);
                 } else if (StringUtils.contains(resource, "aliyun.mongodb")) {
@@ -1157,7 +1158,7 @@ public class PlatformUtils {
                     return !tempList.contains(region);
                 } else if (StringUtils.contains(resource, "aliyun.slb")) {
                     // 不支持aliyun.slb资源的区域
-                    stringArray = new String[]{"cn-nanjing"};
+                    stringArray = new String[]{"cn-nanjing","me-central-1"};
                     tempList = Arrays.asList(stringArray);
                     return !tempList.contains(region);
                 } else if (StringUtils.contains(resource, "aliyun.ram")) {
@@ -1170,6 +1171,14 @@ public class PlatformUtils {
                     stringArray = new String[]{"cn-beijing"};
                     tempList = Arrays.asList(stringArray);
                     return tempList.contains(region);
+                } else if (StringUtils.contains(resource,"aliyun.rds")) {
+                    stringArray = new String[]{"cn-fuzhou"};
+                    tempList = Arrays.asList(stringArray);
+                    return !tempList.contains(region);
+                } else if (StringUtils.contains(resource,"aliyun.redis")){
+                    stringArray = new String[]{"cn-fuzhou"};
+                    tempList = Arrays.asList(stringArray);
+                    return !tempList.contains(region);
                 }
                 break;
             case huawei:

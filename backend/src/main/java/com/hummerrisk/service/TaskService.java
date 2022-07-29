@@ -90,6 +90,7 @@ public class TaskService {
     @Resource
     private HistoryService historyService;
 
+
     public List<Favorite> listFavorites() {
         FavoriteExample example = new FavoriteExample();
         example.setOrderByClause("create_time desc");
@@ -342,8 +343,12 @@ public class TaskService {
                 String resourceId = "";
                 List<RuleTagMapping> ruleTagMappings = this.ruleTagMappings(taskItem.getSourceId());
                 if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.cloudAccount.getType())) {
+                    AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
                     for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
                         Rule rule = ruleMapper.selectByPrimaryKey(ruleTagMapping.getRuleId());
+                        if(rule==null||rule.getPluginId()==null||!accountWithBLOBs.getPluginId().equals(rule.getPluginId())){
+                            continue;
+                        }
                         resourceId = this.cloudResource(rule, taskItem.getAccountId());
                         if(resourceId == null) continue;
                         this.insertTaskItemResource(taskItem, rule.getId(), rule.getName(), resourceId);
