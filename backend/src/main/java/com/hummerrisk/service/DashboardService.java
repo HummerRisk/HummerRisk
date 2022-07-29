@@ -4,29 +4,29 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.hummerrisk.base.domain.*;
-import com.hummerrisk.base.mapper.CloudTaskMapper;
-import com.hummerrisk.base.mapper.ImageResultMapper;
-import com.hummerrisk.base.mapper.PackageResultMapper;
-import com.hummerrisk.base.mapper.ServerResultMapper;
+import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtDashboardMapper;
 import com.hummerrisk.base.mapper.ext.ExtVulnMapper;
+import com.hummerrisk.commons.constants.ParamConstants;
 import com.hummerrisk.commons.constants.TaskConstants;
 import com.hummerrisk.commons.constants.TaskEnum;
 import com.hummerrisk.commons.utils.ChartData;
 import com.hummerrisk.commons.utils.DashboardTarget;
+import com.hummerrisk.commons.utils.EncryptUtils;
 import com.hummerrisk.commons.utils.PlatformUtils;
+import com.hummerrisk.controller.request.dashboard.AnslysisVo;
 import com.hummerrisk.controller.request.dashboard.TaskCalendarVo;
 import com.hummerrisk.dto.HistoryScanDTO;
 import com.hummerrisk.dto.ImageChartDTO;
 import com.hummerrisk.dto.PackageChartDTO;
 import com.hummerrisk.dto.TopInfoDTO;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.alibaba.fastjson.JSON.parseArray;
 
@@ -47,6 +47,8 @@ public class DashboardService {
     private ImageResultMapper imageResultMapper;
     @Resource
     private HistoryService historyService;
+    @Resource
+    private SystemParameterMapper systemParameterMapper;
 
     public List<ChartData> vulnDistribution(Map<String, Object> params) {
 
@@ -174,6 +176,73 @@ public class DashboardService {
         return score;
     }
 
+    public void saveAnalysis(AnslysisVo anslysisVo) {
+        ParamConstants.ANALYSIS[] values = ParamConstants.ANALYSIS.values();
+        for (ParamConstants.ANALYSIS value : values) {
+            SystemParameter systemParameter = new SystemParameter();
+            systemParameter.setParamKey(value.getKey());
+            systemParameter.setSort(value.getValue());
+            systemParameter.setType("system");
+            if (getValue(value.getKey()) != null) {
+                if (StringUtils.equalsIgnoreCase(value.getKey(), ParamConstants.ANALYSIS.COLOR.getKey())) {
+                    systemParameter.setParamValue(anslysisVo.getColor());
+                } else if (StringUtils.equalsIgnoreCase(value.getKey(), ParamConstants.ANALYSIS.CYCLE.getKey())) {
+                    systemParameter.setParamValue(anslysisVo.getCycle().toString());
+                } else if (StringUtils.equalsIgnoreCase(value.getKey(), ParamConstants.ANALYSIS.IDS.getKey())) {
+                    systemParameter.setParamValue(anslysisVo.getIds().toString().replace("[", "").replace("]", ""));
+                } else if (StringUtils.equalsIgnoreCase(value.getKey(), ParamConstants.ANALYSIS.TYPES.getKey())) {
+                    systemParameter.setParamValue(anslysisVo.getTypes().toString().replace("[", "").replace("]", ""));
+                } else if (StringUtils.equalsIgnoreCase(value.getKey(), ParamConstants.ANALYSIS.USERS.getKey())) {
+                    systemParameter.setParamValue(anslysisVo.getUsers().toString().replace("[", "").replace("]", ""));
+                }
+                systemParameterMapper.updateByPrimaryKeySelective(systemParameter);
+            } else {
+                if (StringUtils.equalsIgnoreCase(value.getKey(), ParamConstants.ANALYSIS.COLOR.getKey())) {
+                    systemParameter.setParamValue(anslysisVo.getColor());
+                } else if (StringUtils.equalsIgnoreCase(value.getKey(), ParamConstants.ANALYSIS.CYCLE.getKey())) {
+                    systemParameter.setParamValue(anslysisVo.getCycle().toString());
+                } else if (StringUtils.equalsIgnoreCase(value.getKey(), ParamConstants.ANALYSIS.IDS.getKey())) {
+                    systemParameter.setParamValue(anslysisVo.getIds().toString().replace("[", "").replace("]", ""));
+                } else if (StringUtils.equalsIgnoreCase(value.getKey(), ParamConstants.ANALYSIS.TYPES.getKey())) {
+                    systemParameter.setParamValue(anslysisVo.getTypes().toString().replace("[", "").replace("]", ""));
+                } else if (StringUtils.equalsIgnoreCase(value.getKey(), ParamConstants.ANALYSIS.USERS.getKey())) {
+                    systemParameter.setParamValue(anslysisVo.getUsers().toString().replace("[", "").replace("]", ""));
+                }
+                systemParameterMapper.insertSelective(systemParameter);
+            }
+        }
+    }
+
+    public List<SystemParameter> getParamList(String type) {
+        SystemParameterExample example = new SystemParameterExample();
+        example.createCriteria().andParamKeyLike(type + "%");
+        return systemParameterMapper.selectByExample(example);
+    }
+
+    private String getValue(String key) {
+        SystemParameter systemParameter = systemParameterMapper.selectByPrimaryKey(key);
+        if (systemParameter != null) {
+            return systemParameter.getParamValue();
+        }
+        return null;
+    }
+
+    public AnslysisVo queryAnalysis() {
+        AnslysisVo anslysisVo = new AnslysisVo();
+        anslysisVo.setColor(getValue(ParamConstants.ANALYSIS.COLOR.getKey()) != null?getValue(ParamConstants.ANALYSIS.COLOR.getKey()):ParamConstants.ANALYSIS.color);
+        anslysisVo.setCycle(getValue(ParamConstants.ANALYSIS.CYCLE.getKey()) != null?Integer.valueOf(getValue(ParamConstants.ANALYSIS.CYCLE.getKey())): ParamConstants.ANALYSIS.cycle);
+        List<Boolean> list = new ArrayList<Boolean>();
+        if(getValue(ParamConstants.ANALYSIS.IDS.getKey()) != null) {
+            String[] strs = getValue(ParamConstants.ANALYSIS.IDS.getKey()).split(",");
+            for (String s : strs) {
+                list.add(Boolean.parseBoolean(s.trim()));
+            }
+        }
+        anslysisVo.setIds(getValue(ParamConstants.ANALYSIS.IDS.getKey()) != null?list: ParamConstants.ANALYSIS.ids);
+        anslysisVo.setTypes(getValue(ParamConstants.ANALYSIS.TYPES.getKey()) != null?Arrays.asList(getValue(ParamConstants.ANALYSIS.TYPES.getKey()).split(",")): ParamConstants.ANALYSIS.types);
+        anslysisVo.setUsers(getValue(ParamConstants.ANALYSIS.USERS.getKey()) != null?Arrays.asList(getValue(ParamConstants.ANALYSIS.USERS.getKey()).split(",")):ParamConstants.ANALYSIS.users);
+        return anslysisVo;
+    }
 
 }
 

@@ -1,5 +1,7 @@
 package com.hummerrisk.commons.constants;
 
+import java.util.Arrays;
+import java.util.List;
 
 public interface ParamConstants {
 
@@ -33,7 +35,8 @@ public interface ParamConstants {
         DINGDING("dingding"),
         MESSAGE("message"),
         REGISTRY("registry"),
-        SYSTEM("system");
+        SYSTEM("system"),
+        ANALYSIS("analysis");
 
         private String value;
 
@@ -187,5 +190,36 @@ public interface ParamConstants {
         public Integer getValue() {
             return this.value;
         }
+    }
+
+    enum ANALYSIS {
+        COLOR("analysis.color", 1),
+        CYCLE("analysis.cycle", 2),
+        IDS("analysis.ids", 3),
+        TYPES("analysis.types", 4),
+        USERS("analysis.users", 5);
+
+        private String key;
+        private Integer value;
+
+        private ANALYSIS(String key, Integer value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public String getKey() {
+            return this.key;
+        }
+
+        public Integer getValue() {
+            return this.value;
+        }
+
+        public final static String color = "#409EFF";
+        public final static Integer cycle = 30;
+        public final static List<Boolean> ids = Arrays.asList(true, false, false, false, false, false, false, false);
+        public final static List<String> types = Arrays.asList("cloud_scan", "vuln_scan", "server_scan", "package_scan", "image_scan");
+        public final static List<String> users = Arrays.asList("admin");
+
     }
 }

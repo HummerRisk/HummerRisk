@@ -83,7 +83,7 @@ public class SystemParameterService {
             if (systemParameterMapper.countByExample(example) > 0) {
                 systemParameterMapper.updateByPrimaryKey(parameter);
             } else {
-                systemParameterMapper.insert(parameter);
+                systemParameterMapper.insertSelective(parameter);
             }
             example.clear();
         });
@@ -106,7 +106,7 @@ public class SystemParameterService {
             if (systemParameterMapper.countByExample(example) > 0) {
                 systemParameterMapper.updateByPrimaryKey(parameter);
             } else {
-                systemParameterMapper.insert(parameter);
+                systemParameterMapper.insertSelective(parameter);
             }
             example.clear();
         });

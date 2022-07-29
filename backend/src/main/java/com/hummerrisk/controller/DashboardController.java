@@ -7,6 +7,7 @@ import com.hummerrisk.commons.utils.DashboardTarget;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
+import com.hummerrisk.controller.request.dashboard.AnslysisVo;
 import com.hummerrisk.controller.request.dashboard.TaskCalendarVo;
 import com.hummerrisk.dto.HistoryScanDTO;
 import com.hummerrisk.dto.ImageChartDTO;
@@ -107,4 +108,16 @@ public class DashboardController {
         return dashboardService.score();
     }
 
+    @I18n
+    @ApiOperation(value = "保存统计分析")
+    @PostMapping("saveAnalysis")
+    public void saveAnalysis(@RequestBody AnslysisVo anslysisVo) {
+        dashboardService.saveAnalysis(anslysisVo);
+    }
+
+    @ApiOperation(value = "查询统计分析")
+    @GetMapping("queryAnalysis")
+    public AnslysisVo queryAnalysis() {
+        return dashboardService.queryAnalysis();
+    }
 }

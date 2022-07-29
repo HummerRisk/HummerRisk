@@ -10,12 +10,12 @@
           <span class="descriptions__title">{{ $t('dashboard.exhibit') }}</span>
           <el-divider><i class="el-icon-data-analysis"></i></el-divider>
         </div>
-        <el-col :span="10" v-for="(exhibit, index) in exhibits" v-model="sizeForm.id" :key="index" style="margin: 4%;">
+        <el-col :span="10" v-for="(exhibit, index) in exhibits" v-model="sizeForm.ids" :key="index" style="margin: 4%;">
           <el-card :body-style="{ padding: '10px', 'text-align': 'center' }" shadow="always">
             <el-image class="logo" :src="require(`@/assets/img/analysis/${exhibit.pluginIcon}`)"/>
             <div style="text-align: center; display: inline-block;font-size: 14px;">
               <span>
-                <el-checkbox @change="changeCheck(exhibit.id, index)" v-model="sizeForm.id[index]" :checked="sizeForm.id[index]" :key="exhibit.id">{{ exhibit.name }}</el-checkbox>
+                <el-checkbox @change="changeCheck(exhibit.id, index)" v-model="sizeForm.ids[index]" :checked="sizeForm.ids[index]" :key="exhibit.id">{{ exhibit.name }}</el-checkbox>
               </span>
             </div>
           </el-card>
@@ -61,16 +61,11 @@
           </el-form-item>
           <el-form-item :label="$t('dashboard.scan_types')">
             <el-select v-model="sizeForm.types" :placeholder="$t('dashboard.scan_types')" multiple>
-              <el-option :label="$t('webmsg.all_type')" value="all_scan"></el-option>
               <el-option :label="$t('dashboard.cloud_scan')" value="cloud_scan"></el-option>
               <el-option :label="$t('dashboard.vuln_scan')" value="vuln_scan"></el-option>
               <el-option :label="$t('dashboard.server_scan')" value="server_scan"></el-option>
               <el-option :label="$t('dashboard.package_scan')" value="package_scan"></el-option>
               <el-option :label="$t('dashboard.image_scan')" value="image_scan"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item :label="$t('dashboard.scan_account')">
-            <el-select v-model="sizeForm.accounts" :placeholder="$t('dashboard.scan_account')" multiple>
             </el-select>
           </el-form-item>
           <el-form-item size="large">
@@ -113,7 +108,7 @@
 
           ],
           sizeForm: {
-            id: [true],
+            ids: [true, false, false, false, false, false, false, false ],
             color: '#409EFF',
             cycle: 30,
           },
@@ -122,6 +117,13 @@
       },
       methods: {
         init() {
+          this.result = this.$get("/dashboard/queryAnalysis", response => {
+            let data = response.data;
+            this.sizeForm = data;
+            console.log(data);
+          });
+        },
+        initUsers() {
           let url = "/user/list/all";
           this.result = this.$get(url, response => {
             let data = response.data;
@@ -132,27 +134,27 @@
           this.activeIndex = key;
         },
         cancel() {
-          this.sizeForm = {
-            id: [true],
-            color: '#409EFF',
-            cycle: 30,
-          };
+          this.init();
         },
         changeCheck(id, index) {
           for (let i = 0; i < 9; i++) {
-            this.sizeForm.id[i] = false;
+            this.sizeForm.ids[i] = false;
           }
-          if (this.sizeForm.id[index]) {
-            this.sizeForm.id[index] = false;
+          if (this.sizeForm.ids[index]) {
+            this.sizeForm.ids[index] = false;
           } else {
-            this.sizeForm.id[index] = true;
+            this.sizeForm.ids[index] = true;
           }
         },
         confirm() {
           console.log(this.sizeForm);
+          this.result = this.$post("/dashboard/saveAnalysis", this.sizeForm, response => {
+            this.$success(this.$t('commons.save_success'));
+          });
         },
       },
       created() {
+        this.initUsers();
         this.init();
       }
     }
