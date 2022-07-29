@@ -8,7 +8,7 @@
           {{ $t('account.cloud_account') }}: {{ currentAccount }}
         </span>
       </template>
-      <search-list :current-account.sync="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"/>
+      <search-list @cloudAccountSwitch="cloudAccountSwitch"/>
 
       <el-divider/>
 
@@ -38,12 +38,14 @@ export default {
   components: {SearchList},
   data() {
     return {
-      currentAccount: !!this.accountName?this.accountName:localStorage.getItem(ACCOUNT_NAME)
+      currentAccount: this.accountName?this.accountName:localStorage.getItem(ACCOUNT_NAME)
     }
   },
   methods: {
     cloudAccountSwitch(accountId, accountName) {
+      console.log(this.currentAccount)
       this.currentAccount = accountName;
+      console.log(this.currentAccount)
       this.$emit("cloudAccountSwitch", accountId);
     },
   },

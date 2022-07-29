@@ -8,7 +8,7 @@
           {{ $t('vuln.name') }}: {{ vulnAccount }}
         </span>
       </template>
-      <vuln-list :current-account.sync="vulnAccount" @vulnAccountSwitch="vulnAccountSwitch"/>
+      <vuln-list @vulnAccountSwitch="vulnAccountSwitch"/>
 
       <el-divider/>
 
