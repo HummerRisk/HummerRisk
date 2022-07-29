@@ -438,6 +438,7 @@ export default {
     i18n_logout:'Logout',
     i18n_sync:'Sync',
     i18n_export:'Export',
+    i18n_upload: 'Upload',
     active_list:'Active list',
     search_by_name:'Search by operator name',
     expand_all:'Expand all',

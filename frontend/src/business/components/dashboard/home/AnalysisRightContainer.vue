@@ -46,10 +46,10 @@
       <el-row align="middle" style="margin: 10px;" class="rtl">
         <el-form ref="form" :model="sizeForm" label-width="80px" size="mini">
           <el-form-item :label="$t('dashboard.analysis_cycle')">
-            <el-input style="width: 80%;" type="number" max="30" min="1" v-model="sizeForm.cycle" clearable :placeholder="$t('dashboard.analysis_cycle_placeholder')"></el-input>
+            <el-input style="width: 80%;" type="number" max="31" min="1" v-model="sizeForm.cycle" clearable :placeholder="$t('dashboard.analysis_cycle_placeholder')"></el-input>
           </el-form-item>
           <el-form-item :label="$t('dashboard.scan_users')">
-            <el-select v-model="sizeForm.users" :placeholder="$t('dashboard.scan_users')">
+            <el-select v-model="sizeForm.users" :placeholder="$t('dashboard.scan_users')" multiple>
               <el-option
                 v-for="item in users"
                 :key="item.id"
@@ -60,7 +60,8 @@
             </el-select>
           </el-form-item>
           <el-form-item :label="$t('dashboard.scan_types')">
-            <el-select v-model="sizeForm.types" :placeholder="$t('dashboard.scan_types')">
+            <el-select v-model="sizeForm.types" :placeholder="$t('dashboard.scan_types')" multiple>
+              <el-option :label="$t('webmsg.all_type')" value="all_scan"></el-option>
               <el-option :label="$t('dashboard.cloud_scan')" value="cloud_scan"></el-option>
               <el-option :label="$t('dashboard.vuln_scan')" value="vuln_scan"></el-option>
               <el-option :label="$t('dashboard.server_scan')" value="server_scan"></el-option>
@@ -148,7 +149,7 @@
           }
         },
         confirm() {
-          this.$warning(this.$t('warning_task'));
+          console.log(this.sizeForm);
         },
       },
       created() {

@@ -438,6 +438,7 @@ export default {
     i18n_logout: '登出',
     i18n_sync: '同步',
     i18n_export: '导出',
+    i18n_upload: '上传',
     active_list: '活动列表',
     search_by_name: '按操作者名称搜索',
     expand_all: '展开全部',

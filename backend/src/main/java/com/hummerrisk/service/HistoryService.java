@@ -10,6 +10,7 @@ import com.hummerrisk.base.mapper.ext.ExtResourceMapper;
 import com.hummerrisk.commons.constants.TaskConstants;
 import com.hummerrisk.commons.constants.TaskEnum;
 import com.hummerrisk.commons.utils.PlatformUtils;
+import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.commons.utils.UUIDUtil;
 import com.hummerrisk.dto.*;
 import org.apache.commons.lang3.StringUtils;
@@ -28,33 +29,11 @@ import java.util.Map;
 public class HistoryService {
 
     @Resource @Lazy
-    private CloudTaskMapper cloudTaskMapper;
-    @Resource @Lazy
-    private CloudTaskItemMapper cloudTaskItemMapper;
-    @Resource @Lazy
-    private CloudTaskItemResourceMapper cloudTaskItemResourceMapper;
-    @Resource @Lazy
-    private ResourceMapper resourceMapper;
-    @Resource @Lazy
-    private AccountMapper accountMapper;
-    @Resource @Lazy
     private ExtResourceMapper extResourceMapper;
     @Resource @Lazy
     private HistoryScanMapper historyScanMapper;
     @Resource @Lazy
     private HistoryScanTaskMapper historyScanTaskMapper;
-    @Resource @Lazy
-    private ServerMapper serverMapper;
-    @Resource @Lazy
-    private ServerResultMapper serverResultMapper;
-    @Resource @Lazy
-    private ImageMapper imageMapper;
-    @Resource @Lazy
-    private ImageResultMapper imageResultMapper;
-    @Resource @Lazy
-    private PackageMapper packageMapper;
-    @Resource @Lazy
-    private PackageResultMapper packageResultMapper;
     @Resource @Lazy
     private HistoryCloudTaskMapper historyCloudTaskMapper;
     @Resource @Lazy
@@ -90,7 +69,7 @@ public class HistoryService {
         String accountType = obj2Account(obj).get("accountType").toString();
 
         HistoryScan history = new HistoryScan();
-        history.setOperator("System");
+        history.setOperator(SessionUtils.getUserId());
         history.setAccountId(accountId);
         history.setAccountType(accountType);
         history.setStatus(TaskConstants.TASK_STATUS.APPROVED.name());

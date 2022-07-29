@@ -43,9 +43,7 @@ export default {
   },
   methods: {
     cloudAccountSwitch(accountId, accountName) {
-      console.log(this.currentAccount)
       this.currentAccount = accountName;
-      console.log(this.currentAccount)
       this.$emit("cloudAccountSwitch", accountId);
     },
   },
