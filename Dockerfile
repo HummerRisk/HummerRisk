@@ -27,8 +27,6 @@ COPY --from=grype-env /grype /usr/bin/grype
 COPY --from=syft-env /syft /usr/bin/syft
 
 RUN mkdir -p /opt/apps && \
-    curl -fsSL https://download.docker.com/linux/static/stable/`uname -m`/docker-20.10.17.tgz -o docker.tgz && \
-    tar zxf docker.tgz && \cp -rp docker/docker /usr/bin && rm -rf docker.tgz && \
     curl https://company.hummercloud.com/offline-package/sigar/sigar.zip -o sigar.zip &&  \
     mkdir -p /usr/lib/jvm/java-1.8-openjdk/bin && unzip sigar.zip -d /usr/lib/jvm/java-1.8-openjdk/bin && rm -rf sigar.zip
 
