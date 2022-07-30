@@ -244,10 +244,15 @@ public class ResourceService {
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, resourceWithBLOBs.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
             String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, "policy.yml", map);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
+            String resources = "[]";
+            if(PlatformUtils.isUserForbidden(resultStr)){
+                resultStr = Translator.get("i18n_create_resource_region_failed");
+            }else{
+                resources = ReadFileUtils.readJsonFile(dirPath + "/" + resourceWithBLOBs.getDirName() + "/", CloudTaskConstants.RESOURCES_RESULT_FILE);
+            }
             if (LogUtil.getLogger().isDebugEnabled()) {
                 LogUtil.getLogger().debug("resource created: {}", resultStr);
             }
-            String resources = ReadFileUtils.readJsonFile(dirPath + "/" + resourceWithBLOBs.getDirName() + "/", CloudTaskConstants.RESOURCES_RESULT_FILE);
             JSONArray jsonArray = parseArray(resources);
             if ((long) jsonArray.size() < resourceWithBLOBs.getReturnSum()) {
                 resourceWithBLOBs.setResourcesSum(resourceWithBLOBs.getReturnSum());

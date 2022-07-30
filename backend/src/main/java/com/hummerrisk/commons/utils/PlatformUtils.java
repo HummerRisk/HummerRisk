@@ -123,6 +123,7 @@ public class PlatformUtils {
     public final static String tsunami = "hummer-tsunami-plugin";
     //虚拟机插件
     public final static String server = "hummer-server-plugin";
+    public final static String[] userForbiddenArr = {"The IAM user is forbidden"};
 
     /**
      * 支持的插件
@@ -1257,4 +1258,17 @@ public class PlatformUtils {
         return true;
     }
 
+    /**
+     * 检查返回值里是否包含用户被禁止的关键字
+     * @param result
+     * @return
+     */
+    public static boolean isUserForbidden(String result){
+        for(String userForbiddenStr : userForbiddenArr){
+            if(result.contains(userForbiddenStr)){
+                return true;
+            }
+        }
+        return false;
+    }
 }
