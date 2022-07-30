@@ -714,6 +714,9 @@ public class TaskService {
                 result.setRuleDesc(rule.getDescription());
                 result.setResultStatus(TaskConstants.TASK_STATUS.APPROVED.toString());
                 result.setSeverity(rule.getSeverity());
+                ServerResultExample serverResultExample = new ServerResultExample();
+                serverResultExample.createCriteria().andRuleIdEqualTo(rule.getId()).andServerIdEqualTo(server.getId());
+                serverResultMapper.deleteByExample(serverResultExample);
                 serverResultMapper.insertSelective(result);
 
                 serverService.saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
@@ -749,6 +752,9 @@ public class TaskService {
                 result.setResultStatus(TaskConstants.TASK_STATUS.APPROVED.toString());
                 result.setSeverity(rule.getSeverity());
                 result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
+                PackageResultExample packageResultExample = new PackageResultExample();
+                packageResultExample.createCriteria().andPackageIdEqualTo(apackage.getId()).andRuleIdEqualTo(rule.getId());
+                packageResultMapper.deleteByExample(packageResultExample);
                 packageResultMapper.insertSelective(result);
 
                 packageService.savePackageResultLog(result.getId(), "i18n_start_package_result", "", true);
@@ -783,6 +789,9 @@ public class TaskService {
                 result.setResultStatus(TaskConstants.TASK_STATUS.APPROVED.toString());
                 result.setSeverity(rule.getSeverity());
                 result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
+                ImageResultExample imageResultExample = new ImageResultExample();
+                imageResultExample.createCriteria().andImageIdEqualTo(image.getId()).andRuleIdEqualTo(rule.getId());
+                imageResultMapper.deleteByExample(imageResultExample);
                 imageResultMapper.insertSelective(result);
 
                 imageService.saveImageResultLog(result.getId(), "i18n_start_image_result", "", true);
