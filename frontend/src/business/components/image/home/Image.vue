@@ -321,7 +321,7 @@ export default {
       tarFile: Object,
     }
   },
-  created() {
+  activated() {
     this.search();
     this.activeProxy();
     this.activeRepo();

@@ -583,10 +583,10 @@ public class ImageService {
             if (StringUtils.equalsIgnoreCase(scanType, ImageConstants.GRYPE)) {
                 if (StringUtils.equalsIgnoreCase(outType, ImageConstants.JSON)) {
                     command = _proxy + dockerLogin + scanType + fileName + ImageConstants.SCOPE + ImageConstants.OUT + outType + ImageConstants._FILE +
-                            ImageConstants.DEFAULT_BASE_DIR + ImageConstants.GRYPE_JSON_TXT + ImageConstants.DISTRO + ImageConstants._DISTRO;
+                            ImageConstants.DEFAULT_BASE_DIR + ImageConstants.GRYPE_JSON_TXT;
                 } else if (StringUtils.equalsIgnoreCase(outType, ImageConstants.TABLE)) {
                     command = _proxy + dockerLogin + scanType + fileName + ImageConstants.SCOPE + ImageConstants.OUT + outType + ImageConstants._FILE +
-                            ImageConstants.DEFAULT_BASE_DIR + ImageConstants.GRYPE_TABLE_TXT + ImageConstants.DISTRO + ImageConstants._DISTRO;
+                            ImageConstants.DEFAULT_BASE_DIR + ImageConstants.GRYPE_TABLE_TXT;
                 }
             } else if (StringUtils.equalsIgnoreCase(scanType, ImageConstants.SYFT)) {
                 command = _proxy + dockerLogin + scanType + fileName + ImageConstants.SCOPE + ImageConstants.OUT + ImageConstants.SYFT_JSON + ImageConstants.DEFAULT_BASE_DIR + ImageConstants.SYFT_JSON_TXT +

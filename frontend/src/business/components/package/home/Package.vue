@@ -408,7 +408,7 @@ export default {
             this.$warning(this.$t('package.name_not_null'));
             return;
           }
-          if (!this.editPackageForm.isProxy && !this.editPackageForm.proxyId) {
+          if (this.editPackageForm.isProxy && !this.editPackageForm.proxyId) {
             this.$warning(this.$t('commons.proxy') + this.$t('commons.cannot_be_empty'));
             return;
           }
