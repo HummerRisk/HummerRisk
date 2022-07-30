@@ -1,7 +1,9 @@
 package com.hummerrisk.base.mapper.ext;
 
 
+import com.hummerrisk.base.domain.HistoryScan;
 import com.hummerrisk.controller.request.dashboard.AnslysisVo;
+import com.hummerrisk.controller.request.dashboard.HistoryScanVo;
 import com.hummerrisk.controller.request.dashboard.TaskCalendarVo;
 import com.hummerrisk.dto.TopInfoDTO;
 
@@ -28,5 +30,7 @@ public interface ExtDashboardMapper {
     List<String> analysisChartX(AnslysisVo anslysisVo);
 
     List<Integer> analysisChartY(AnslysisVo anslysisVo);
+
+    List<HistoryScanVo> historyScanVo(HistoryScanVo historyScanVo);
 
 }

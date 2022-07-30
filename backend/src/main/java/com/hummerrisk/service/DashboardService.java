@@ -15,6 +15,7 @@ import com.hummerrisk.commons.utils.DashboardTarget;
 import com.hummerrisk.commons.utils.EncryptUtils;
 import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.controller.request.dashboard.AnslysisVo;
+import com.hummerrisk.controller.request.dashboard.HistoryScanVo;
 import com.hummerrisk.controller.request.dashboard.TaskCalendarVo;
 import com.hummerrisk.dto.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -249,6 +250,10 @@ public class DashboardService {
         analysisChartDTO.setxAxis(xAxis);
         analysisChartDTO.setyAxis(yAxis);
         return analysisChartDTO;
+    }
+
+    public List<HistoryScanVo> historyScanVo(HistoryScanVo historyScanVo) {
+        return extDashboardMapper.historyScanVo(historyScanVo);
     }
 
 }

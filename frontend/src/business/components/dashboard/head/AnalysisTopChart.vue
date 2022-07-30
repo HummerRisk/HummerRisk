@@ -26,7 +26,6 @@ export default {
         let chartData = response.data;
         let ids = this.sizeForm.ids;
         for(let i = 0;i < ids.length; i++) {
-          console.log(ids[i], i)
           if(ids[i]) {
             switch (i) {
               case 0:

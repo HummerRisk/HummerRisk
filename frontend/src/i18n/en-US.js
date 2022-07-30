@@ -496,6 +496,9 @@ export default {
     scan_account: 'Check account',
     safe_score_all: 'Safety detection score',
     comfirm_task: 'Would you like to jump to the detection task interface?',
+    last_week: 'Last week',
+    last_month: 'Last month',
+    last_three_month: 'Last three months',
   },
   rule: {
     rule:'Scan Rule',

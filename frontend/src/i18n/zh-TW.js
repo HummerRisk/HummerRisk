@@ -496,6 +496,9 @@ export default {
     scan_account: '檢測賬號',
     safe_score_all: '安全檢測評分',
     comfirm_task: '是否跳轉到檢測任務界面?',
+    last_week: '最近一周',
+    last_month: '最近一個月',
+    last_three_month: '最近三個月',
   },
   rule: {
     rule: '檢測規則',

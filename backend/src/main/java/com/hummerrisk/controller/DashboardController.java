@@ -2,12 +2,14 @@ package com.hummerrisk.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.hummerrisk.base.domain.HistoryScan;
 import com.hummerrisk.commons.utils.ChartData;
 import com.hummerrisk.commons.utils.DashboardTarget;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.dashboard.AnslysisVo;
+import com.hummerrisk.controller.request.dashboard.HistoryScanVo;
 import com.hummerrisk.controller.request.dashboard.TaskCalendarVo;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.service.DashboardService;
@@ -123,5 +125,13 @@ public class DashboardController {
     @PostMapping("analysisChart")
     public AnalysisChartDTO analysisChart() {
         return dashboardService.analysisChart();
+    }
+
+    @I18n
+    @ApiOperation(value = "检测统计分析")
+    @PostMapping("historyScanVo/{goPage}/{pageSize}")
+    public Pager<List<HistoryScanVo>> historyScanVo(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody HistoryScanVo historyScanVo) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, dashboardService.historyScanVo(historyScanVo));
     }
 }

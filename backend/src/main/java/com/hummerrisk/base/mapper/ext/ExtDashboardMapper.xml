@@ -126,4 +126,93 @@
         limit 10;
     </select>
 
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.scanType != null and (${scanType} == null or ${scanType} == "")'>
+            and t.account_type
+            <include refid="condition">
+                <property name="object" value="${condition}.scanType"/>
+            </include>
+        </if>
+        <if test="${condition}.status != null">
+            and t.status
+            <include refid="condition">
+                <property name="object" value="${condition}.status"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="historyScanVo" parameterType="com.hummerrisk.controller.request.dashboard.HistoryScanVo" resultType="com.hummerrisk.controller.request.dashboard.HistoryScanVo">
+        select
+        t.*,
+        IFNULL(t4.name, IFNULL(t3.name, IFNULL(t2.server_name, t1.name))) as accountName,
+        t5.name as userName
+        from history_scan t
+        left join cloud_account t1 on t.account_id = t1.id
+        left join server_result t2 on t.account_id = t2.id
+        left join image_result t3 on t.account_id = t3.id
+        left join package_result t4 on t.account_id = t4.id
+        left join user t5 on t.operator = t5.id
+        <where>
+            <if test="combine != null">
+                <include refid="combine">
+                    <property name="condition" value="combine"/>
+                </include>
+            </if>
+            <if test="scanType != null">
+                AND t.account_type = #{scanType}
+            </if>
+            <if test="accountId != null">
+                AND t.account_id = #{accountId}
+            </if>
+            <if test="users != null">
+                AND t.operator = #{users}
+            </if>
+            <if test="startTime != null and endTime != null">
+                AND t.create_time between #{startTime} and #{endTime}
+            </if>
+            AND (t1.name is not null OR t2.server_name is not null OR t3.name is not null OR t4.name is not null)
+        </where>
+        order by t.create_time desc
+    </select>
 </mapper>
