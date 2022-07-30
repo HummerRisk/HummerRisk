@@ -342,8 +342,8 @@ public class TaskService {
             } else if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.tag.name())) {
                 String resourceId = "";
                 List<RuleTagMapping> ruleTagMappings = this.ruleTagMappings(taskItem.getSourceId());
+                AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
                 if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.cloudAccount.getType())) {
-                    AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
                     for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
                         Rule rule = ruleMapper.selectByPrimaryKey(ruleTagMapping.getRuleId());
                         if(rule==null||rule.getPluginId()==null||!accountWithBLOBs.getPluginId().equals(rule.getPluginId())){
@@ -356,6 +356,9 @@ public class TaskService {
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.vulnAccount.getType())) {
                     for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
                         Rule rule = ruleMapper.selectByPrimaryKey(ruleTagMapping.getRuleId());
+                        if(rule==null||rule.getPluginId()==null||!accountWithBLOBs.getPluginId().equals(rule.getPluginId())){
+                            continue;
+                        }
                         resourceId = this.vulnResource(rule, taskItem.getAccountId());
                         if(resourceId == null) continue;
                         this.insertTaskItemResource(taskItem, rule.getId(), rule.getName(), resourceId);
@@ -363,6 +366,9 @@ public class TaskService {
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.serverAccount.getType())) {
                     for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
                         ServerRule serverRule = serverRuleMapper.selectByPrimaryKey(ruleTagMapping.getRuleId());
+                        if(serverRule == null){
+                            continue;
+                        }
                         resourceId = this.serverResource(serverRule.getId(), taskItem.getAccountId());
                         if(resourceId == null) continue;
                         this.insertTaskItemResource(taskItem, serverRule.getId(), serverRule.getName(), resourceId);
@@ -370,6 +376,9 @@ public class TaskService {
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
                     for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
                         PackageRule packageRule = packageRuleMapper.selectByPrimaryKey(ruleTagMapping.getRuleId());
+                        if(packageRule == null){
+                            continue;
+                        }
                         resourceId = this.imageResource(packageRule.getId(), taskItem.getAccountId());
                         if(resourceId == null) continue;
                         this.insertTaskItemResource(taskItem, packageRule.getId(), packageRule.getName(), resourceId);
@@ -377,6 +386,9 @@ public class TaskService {
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.packageAccount.getType())) {
                     for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
                         ImageRule imageRule = imageRuleMapper.selectByPrimaryKey(ruleTagMapping.getRuleId());
+                        if(imageRule == null){
+                            continue;
+                        }
                         resourceId = this.packageResource(imageRule.getId(), taskItem.getAccountId());
                         if(resourceId == null) continue;
                         this.insertTaskItemResource(taskItem, imageRule.getId(), imageRule.getName(), resourceId);
