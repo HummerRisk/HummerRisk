@@ -13,7 +13,7 @@ export default {
     HrChart,
   },
   props: {
-    data: {},
+    sizeForm: {},
   },
   data() {
     return {
@@ -21,9 +21,11 @@ export default {
     }
   },
   methods: {
-    init() {
-      this.$post("/dashboard/imageChart", {}, response => {
+    async init() {
+      this.$post("/dashboard/analysisChart", {}, response => {
         let data = response.data;
+        console.log(data)
+        let ids = data.ids;
         this.options = {
           xAxis: {
             type: 'category',
@@ -47,7 +49,7 @@ export default {
             bottom: '2%',
             containLabel: true
           },
-          color: ['#009ef0', '#11cfae', '#627dec', '#893fdc', '#89ffff','#0051a4']
+          color: this.sizeForm.color
         };
       });
     },

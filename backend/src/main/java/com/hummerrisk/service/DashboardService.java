@@ -16,10 +16,7 @@ import com.hummerrisk.commons.utils.EncryptUtils;
 import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.controller.request.dashboard.AnslysisVo;
 import com.hummerrisk.controller.request.dashboard.TaskCalendarVo;
-import com.hummerrisk.dto.HistoryScanDTO;
-import com.hummerrisk.dto.ImageChartDTO;
-import com.hummerrisk.dto.PackageChartDTO;
-import com.hummerrisk.dto.TopInfoDTO;
+import com.hummerrisk.dto.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -242,6 +239,16 @@ public class DashboardService {
         anslysisVo.setTypes(getValue(ParamConstants.ANALYSIS.TYPES.getKey()) != null?Arrays.asList(getValue(ParamConstants.ANALYSIS.TYPES.getKey()).split(",")): ParamConstants.ANALYSIS.types);
         anslysisVo.setUsers(getValue(ParamConstants.ANALYSIS.USERS.getKey()) != null?Arrays.asList(getValue(ParamConstants.ANALYSIS.USERS.getKey()).split(",")):ParamConstants.ANALYSIS.users);
         return anslysisVo;
+    }
+
+    public AnalysisChartDTO analysisChart() {
+        AnslysisVo anslysisVo = queryAnalysis();
+        AnalysisChartDTO analysisChartDTO = new AnalysisChartDTO();
+        List<String> xAxis = extDashboardMapper.analysisChartX(anslysisVo);
+        List<Integer> yAxis = extDashboardMapper.analysisChartY(anslysisVo);
+        analysisChartDTO.setxAxis(xAxis);
+        analysisChartDTO.setyAxis(yAxis);
+        return analysisChartDTO;
     }
 
 }

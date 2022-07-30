@@ -7,7 +7,7 @@
             <template v-slot:header>
               <span class="title">{{ $t('dashboard.scan_analysis') }}</span>
             </template>
-            <analysis-top-chart/>
+            <analysis-top-chart :sizeForm="sizeForm"/>
           </el-card>
         </el-row>
         <analysis-left-info/>
@@ -37,10 +37,20 @@ export default {
     return {
       result: {},
       tableData1: [{name: this.$t('dashboard.select_type')}],
+      sizeForm: {},
     }
   },
   methods: {
+    init() {
+      this.result = this.$get("/dashboard/queryAnalysis", response => {
+        let data = response.data;
+        this.sizeForm = data;
+      });
+    },
   },
+  created() {
+    this.init();
+  }
 }
 </script>
 

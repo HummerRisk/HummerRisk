@@ -1,6 +1,7 @@
 package com.hummerrisk.base.mapper.ext;
 
 
+import com.hummerrisk.controller.request.dashboard.AnslysisVo;
 import com.hummerrisk.controller.request.dashboard.TaskCalendarVo;
 import com.hummerrisk.dto.TopInfoDTO;
 
@@ -23,5 +24,9 @@ public interface ExtDashboardMapper {
     List<Integer> imageChartY(Map<String, Object> params);
 
     List<TaskCalendarVo> taskCalendar();
+
+    List<String> analysisChartX(AnslysisVo anslysisVo);
+
+    List<Integer> analysisChartY(AnslysisVo anslysisVo);
 
 }

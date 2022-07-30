@@ -68,4 +68,62 @@
             from_unixtime(t.last_fire_time/1000, '%Y-%m-%d')
     </select>
 
+    <select id="analysisChartX" parameterType="com.hummerrisk.controller.request.dashboard.AnslysisVo" resultType="java.lang.String">
+        select
+        IFNULL(t4.name, IFNULL(t3.name, IFNULL(t2.server_name, t1.name))) as name
+        from history_scan t
+        left join cloud_account t1 on t.account_id = t1.id
+        left join server_result t2 on t.account_id = t2.id
+        left join image_result t3 on t.account_id = t3.id
+        left join package_result t4 on t.account_id = t4.id
+        <where>
+            <if test="cycle != null">
+                AND DATE_SUB(CURDATE(), INTERVAL #{cycle} DAY) &lt;= from_unixtime(t.create_time/1000, '%Y-%m-%d')
+            </if>
+            <if test="types != null">
+                AND t.account_type in
+                <foreach collection="types" item="item" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="users != null">
+                AND t.operator in
+                <foreach collection="users" item="item" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            AND t1.name is not null AND t2.server_name is not null AND t3.name is not null AND t4.name is not null
+        </where>
+        limit 30;
+    </select>
+
+    <select id="analysisChartY" parameterType="com.hummerrisk.controller.request.dashboard.AnslysisVo" resultType="java.lang.Integer">
+        select
+        t.scan_score as score
+        from history_scan t
+        left join cloud_account t1 on t.account_id = t1.id
+        left join server_result t2 on t.account_id = t2.id
+        left join image_result t3 on t.account_id = t3.id
+        left join package_result t4 on t.account_id = t4.id
+        <where>
+            <if test="cycle != null">
+                AND DATE_SUB(CURDATE(), INTERVAL #{cycle} DAY) &lt;= from_unixtime(t.create_time/1000, '%Y-%m-%d')
+            </if>
+            <if test="types != null">
+                AND t.account_type in
+                <foreach collection="types" item="item" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="users != null">
+                AND t.operator in
+                <foreach collection="users" item="item" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            AND t1.name is not null AND t2.server_name is not null AND t3.name is not null AND t4.name is not null
+        </where>
+        limit 30;
+    </select>
+
 </mapper>

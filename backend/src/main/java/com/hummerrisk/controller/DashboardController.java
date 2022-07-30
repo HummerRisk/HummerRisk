@@ -9,10 +9,7 @@ import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.dashboard.AnslysisVo;
 import com.hummerrisk.controller.request.dashboard.TaskCalendarVo;
-import com.hummerrisk.dto.HistoryScanDTO;
-import com.hummerrisk.dto.ImageChartDTO;
-import com.hummerrisk.dto.PackageChartDTO;
-import com.hummerrisk.dto.TopInfoDTO;
+import com.hummerrisk.dto.*;
 import com.hummerrisk.service.DashboardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -119,5 +116,12 @@ public class DashboardController {
     @GetMapping("queryAnalysis")
     public AnslysisVo queryAnalysis() {
         return dashboardService.queryAnalysis();
+    }
+
+    @I18n
+    @ApiOperation(value = "检测统计分析")
+    @PostMapping("analysisChart")
+    public AnalysisChartDTO analysisChart() {
+        return dashboardService.analysisChart();
     }
 }
