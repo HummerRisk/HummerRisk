@@ -92,9 +92,9 @@
                     #{item}
                 </foreach>
             </if>
-            AND t1.name is not null AND t2.server_name is not null AND t3.name is not null AND t4.name is not null
+            AND (t1.name is not null OR t2.server_name is not null OR t3.name is not null OR t4.name is not null)
         </where>
-        limit 30;
+        limit 10;
     </select>
 
     <select id="analysisChartY" parameterType="com.hummerrisk.controller.request.dashboard.AnslysisVo" resultType="java.lang.Integer">
@@ -121,9 +121,9 @@
                     #{item}
                 </foreach>
             </if>
-            AND t1.name is not null AND t2.server_name is not null AND t3.name is not null AND t4.name is not null
+            AND (t1.name is not null OR t2.server_name is not null OR t3.name is not null OR t4.name is not null)
         </where>
-        limit 30;
+        limit 10;
     </select>
 
 </mapper>

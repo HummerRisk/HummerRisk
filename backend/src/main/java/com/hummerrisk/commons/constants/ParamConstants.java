@@ -218,7 +218,7 @@ public interface ParamConstants {
         public final static String color = "#409EFF";
         public final static Integer cycle = 30;
         public final static List<Boolean> ids = Arrays.asList(true, false, false, false, false, false, false, false);
-        public final static List<String> types = Arrays.asList("cloud_scan", "vuln_scan", "server_scan", "package_scan", "image_scan");
+        public final static List<String> types = Arrays.asList("cloudAccount", "vulnAccount", "serverAccount", "packageAccount", "imageAccount");
         public final static List<String> users = Arrays.asList("admin");
 
     }

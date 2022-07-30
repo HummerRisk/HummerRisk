@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `image_grype_json` (
     `dataSource`                   varchar(50)         DEFAULT NULL COMMENT 'dataSource',
     `severity`                     varchar(50)         DEFAULT NULL COMMENT 'severity',
     `namespace`                    varchar(50)         DEFAULT NULL COMMENT 'namespace',
-    `description`                  varchar(512)        DEFAULT NULL COMMENT 'description',
+    `description`                  varchar(1024)       DEFAULT NULL COMMENT 'description',
     `vulnerability`                longtext            DEFAULT NULL COMMENT 'vulnerability',
     `related_vulnerabilities`      longtext            DEFAULT NULL COMMENT 'relatedVulnerabilities',
     `match_details`                longtext            DEFAULT NULL COMMENT 'matchDetails',

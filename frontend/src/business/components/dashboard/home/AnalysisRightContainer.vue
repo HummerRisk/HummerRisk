@@ -61,11 +61,11 @@
           </el-form-item>
           <el-form-item :label="$t('dashboard.scan_types')">
             <el-select v-model="sizeForm.types" :placeholder="$t('dashboard.scan_types')" multiple>
-              <el-option :label="$t('dashboard.cloud_scan')" value="cloud_scan"></el-option>
-              <el-option :label="$t('dashboard.vuln_scan')" value="vuln_scan"></el-option>
-              <el-option :label="$t('dashboard.server_scan')" value="server_scan"></el-option>
-              <el-option :label="$t('dashboard.package_scan')" value="package_scan"></el-option>
-              <el-option :label="$t('dashboard.image_scan')" value="image_scan"></el-option>
+              <el-option :label="$t('dashboard.cloud_scan')" :value="'cloudAccount'" :key="'cloudAccount'"></el-option>
+              <el-option :label="$t('dashboard.vuln_scan')" :value="'vulnAccount'" :key="'vulnAccount'"></el-option>
+              <el-option :label="$t('dashboard.server_scan')" :value="'serverAccount'" :key="'serverAccount'"></el-option>
+              <el-option :label="$t('dashboard.package_scan')" :value="'packageAccount'" :key="'packageAccount'"></el-option>
+              <el-option :label="$t('dashboard.image_scan')" :value="'imageAccount'" :key="'imageAccount'"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item size="large">
@@ -120,7 +120,6 @@
           this.result = this.$get("/dashboard/queryAnalysis", response => {
             let data = response.data;
             this.sizeForm = data;
-            console.log(data);
           });
         },
         initUsers() {
@@ -147,9 +146,9 @@
           }
         },
         confirm() {
-          console.log(this.sizeForm);
           this.result = this.$post("/dashboard/saveAnalysis", this.sizeForm, response => {
             this.$success(this.$t('commons.save_success'));
+            window.location.reload();
           });
         },
       },

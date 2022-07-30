@@ -236,8 +236,8 @@ public class DashboardService {
             }
         }
         anslysisVo.setIds(getValue(ParamConstants.ANALYSIS.IDS.getKey()) != null?list: ParamConstants.ANALYSIS.ids);
-        anslysisVo.setTypes(getValue(ParamConstants.ANALYSIS.TYPES.getKey()) != null?Arrays.asList(getValue(ParamConstants.ANALYSIS.TYPES.getKey()).split(",")): ParamConstants.ANALYSIS.types);
-        anslysisVo.setUsers(getValue(ParamConstants.ANALYSIS.USERS.getKey()) != null?Arrays.asList(getValue(ParamConstants.ANALYSIS.USERS.getKey()).split(",")):ParamConstants.ANALYSIS.users);
+        anslysisVo.setTypes(getValue(ParamConstants.ANALYSIS.TYPES.getKey()) != null?Arrays.asList(getValue(ParamConstants.ANALYSIS.TYPES.getKey()).replace(" ", "").split(",")): ParamConstants.ANALYSIS.types);
+        anslysisVo.setUsers(getValue(ParamConstants.ANALYSIS.USERS.getKey()) != null?Arrays.asList(getValue(ParamConstants.ANALYSIS.USERS.getKey()).replace(" ", "").split(",")):ParamConstants.ANALYSIS.users);
         return anslysisVo;
     }
 
