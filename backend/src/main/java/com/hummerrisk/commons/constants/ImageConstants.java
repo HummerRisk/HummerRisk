@@ -35,8 +35,6 @@ public class ImageConstants {
 
     public final static String TABLE = "table ";
     public final static String JSON = "json ";
-    public final static String DISTRO = " --distro ";
-    public final static String _DISTRO = "grype:0.42.0";//固定版本
 
     public final static String SYFT_JSON = "json=";
     public final static String SYFT_TABLE = "table=";

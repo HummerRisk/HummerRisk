@@ -81,12 +81,10 @@
         </if>
     </sql>
 
-    <select id="imageRepoList" resultMap="ImageRepoResultMap">
+    <select id="imageRepoList" resultType="com.hummerrisk.base.domain.ImageRepo">
         select
-        t.*,
-        user.name as userName
+        t.*
         from image_repo as t
-        left join user on t.creator = user.id
         <where>
             <if test="request.combine != null">
                 <include refid="combine">
