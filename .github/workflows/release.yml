@@ -22,15 +22,16 @@ jobs:
           git clone https://github.com/HummerRisk/installer.git --depth=1
           cd installer
           rm -rf hudson.* .travis.yml .git .github
-          chmod +x hrctl.sh
+          chmod +x hummerrisk/hrctl
+          sed -i "s@Version=.*@Version=${version}@g" quick_start.sh
           cd ..
           version=`echo ${RELEASE_VERSION##*/}`
           filename=hummerrisk-installer-$version
-          mv installer $filename
-          echo $version > $filename/config_init/conf/version
-          sed -i "s@VERSION=.*@VERSION=${version}@g" $filename/static.env
-          sed -i "s@Version=.*@Version=${version}@g" $filename/quick_start.sh
+          mv installer/hummerrisk $filename
+          sed -i "s@HR_CURRENT_VERSION=.*@HR_CURRENT_VERSION=${version}@g" $filename/install.conf
+          sed -i "s@VERSION=.*@VERSION=${version}@g" $filename/scripts/const.sh
           tar -czvf $filename.tar.gz $filename
+          mv installer/quick_start.sh ./
           echo "::set-output name=VERSION::$(echo $version)"
       - name: Create Release
         id: create_release
@@ -53,7 +54,7 @@ jobs:
             如果您已经部署旧版本，可通过如下命令一键升级至最新版本:
             ```sh
               # 升级
-              ./hrctl.sh check_update
+              hrctl upgrade v0.2.0
             ```
             # 产品文档
             点击 [完整文档](https://docs.hummerrisk.com/) 查看完整的安装和使用文档
@@ -79,6 +80,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: ./hummerrisk-installer-${{ steps.create_release_file.outputs.VERSION }}/quick_start.sh
+          asset_path: ./quick_start.sh
           asset_name: quick_start.sh
           asset_content_type: application/text
