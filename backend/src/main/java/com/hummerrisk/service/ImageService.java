@@ -594,7 +594,7 @@ public class ImageService {
             }
             LogUtil.info(image.getId() + " {image}[command]: " + image.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, ImageConstants.DEFAULT_BASE_DIR);
-            if(resultStr.contains("ERROR")) {
+            if(resultStr.contains("ERROR") || resultStr.contains("error")) {
                 throw new Exception(resultStr);
             }
             return resultStr;
