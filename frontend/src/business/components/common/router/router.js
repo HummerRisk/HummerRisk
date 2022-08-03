@@ -12,7 +12,13 @@ import Rule from "@/business/components/rule/router";
 import Resource from "@/business/components/resource/router";
 import Dashboard from "@/business/components/dashboard/router";
 import Task from "@/business/components/task/router";
+import TaskReport from "@/business/components/taskReport/router";
 import Oss from "@/business/components/oss/router";
+import Report from "@/business/components/report/router";
+import K8s from "@/business/components/k8s/router";
+import Situation from "@/business/components/situation/router";
+import Code from "@/business/components/code/router";
+import Sbom from "@/business/components/sbom/router";
 
 Vue.use(VueRouter);
 /* eslint-disable */
@@ -34,8 +40,14 @@ const router = new VueRouter({
     Rule,
     Resource,
     Task,
+    TaskReport,
     Oss,
-    Dashboard
+    Dashboard,
+    Report,
+    K8s,
+    Situation,
+    Code,
+    Sbom
   ]
 });
 

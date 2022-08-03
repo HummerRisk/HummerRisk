@@ -10,17 +10,17 @@
       </el-menu-item>
     </el-submenu>
 
-    <el-submenu index="2" v-permission="['admin']">
-      <template v-slot:title>
-        <font-awesome-icon class="icon account" :icon="['fa', 'database']" size="lg"/>
-        <span>{{ $t('oss.oss_setting') }}</span>
-      </template>
-      <el-menu-item v-for="menu in osss" :key="menu.index" :index="menu.index" class="setting-item">
-        {{ $t(menu.title) }}
-      </el-menu-item>
-    </el-submenu>
+<!--    <el-submenu index="2" v-permission="['admin']">-->
+<!--      <template v-slot:title>-->
+<!--        <font-awesome-icon class="icon account" :icon="['fa', 'database']" size="lg"/>-->
+<!--        <span>{{ $t('oss.oss_setting') }}</span>-->
+<!--      </template>-->
+<!--      <el-menu-item v-for="menu in osss" :key="menu.index" :index="menu.index" class="setting-item">-->
+<!--        {{ $t(menu.title) }}-->
+<!--      </el-menu-item>-->
+<!--    </el-submenu>-->
 
-    <el-submenu index="4">
+    <el-submenu index="3">
       <template v-slot:title>
         <font-awesome-icon class="icon account" :icon="['far', 'user']" size="lg"/>
         <span>{{ $t('commons.personal_info') }}</span>

@@ -164,5 +164,6 @@ export default {
   .el-main {
     padding: 0;
   }
+
 </style>
 

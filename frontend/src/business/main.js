@@ -28,8 +28,11 @@ import 'vue-cron-generator/src/styles/global.less';
 //图片选择器
 import VueSelectImage from 'vue-select-image';
 import 'vue-select-image/dist/vue-select-image.css';
-
+//okr树样式
 import 'vue-okr-tree/dist/vue-okr-tree.css';
+//阿里矢量图标样式
+import '@/common/css/iconfont/iconfont.css';
+
 
 // you can set default global options and events when Vue.use
 Vue.use(VueCodemirror,  {

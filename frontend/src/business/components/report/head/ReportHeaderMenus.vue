@@ -4,12 +4,8 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
-          <el-menu-item :index="'/task/task'">
-            {{ $t("task.task_setting") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/task/list'">
-            {{ $t("task.task_list") }}
+          <el-menu-item :index="'/report/list'">
+            {{ $t("resource.cloud_statistics") }}
           </el-menu-item>
 
         </el-menu>

@@ -38,30 +38,6 @@ export default {
       meta: {system: true, title: "system.system"}
     },
     {
-      path: "account",
-      name: "account",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/oss/home/Account'),
-      meta: {oss: true, title: "oss.oss_account"}
-    },
-    {
-      path: "oss",
-      name: "oss",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/oss/home/Oss'),
-      meta: {oss: true, title: "oss.oss_overview"}
-    },
-    {
-      path: "bucket",
-      name: "bucket",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/oss/home/Bucket'),
-      meta: {oss: true, title: "oss.oss_bucket"}
-    },
-    {
-      path: "ossOrder",
-      name: "ossOrder",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/oss/home/OssOrder'),
-      meta: {oss: true, title: "oss.oss_order"}
-    },
-    {
       path: "personsetting",
       component: () => import(/* webpackChunkName: "setting" */ "@/business/components/settings/personal/PersonSetting"),
       meta: {person: true, title: "commons.personal_setting"}

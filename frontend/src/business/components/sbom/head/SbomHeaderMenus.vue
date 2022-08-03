@@ -4,12 +4,8 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
-          <el-menu-item :index="'/task/task'">
-            {{ $t("task.task_setting") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/task/list'">
-            {{ $t("task.task_list") }}
+          <el-menu-item :index="'/sbom/sbom'">
+            {{ $t("commons.sbom_dependency") }}
           </el-menu-item>
 
         </el-menu>
