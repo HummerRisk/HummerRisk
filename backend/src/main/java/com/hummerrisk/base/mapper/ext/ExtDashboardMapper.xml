@@ -70,12 +70,18 @@
 
     <select id="analysisChartX" parameterType="com.hummerrisk.controller.request.dashboard.AnslysisVo" resultType="java.lang.String">
         select
-        IFNULL(t4.name, IFNULL(t3.name, IFNULL(t2.server_name, t1.name))) as name
+        from_unixtime(t.create_time/1000, '%Y-%m-%d') as name
         from history_scan t
         left join cloud_account t1 on t.account_id = t1.id
         left join server_result t2 on t.account_id = t2.id
         left join image_result t3 on t.account_id = t3.id
         left join package_result t4 on t.account_id = t4.id
+        JOIN (
+        SELECT FROM_UNIXTIME( create_time/1000, '%Y-%m-%d') as date,
+        MAX( create_time ) max_time
+        FROM history_scan
+        GROUP BY date
+        ) b ON b.max_time = t.create_time
         <where>
             <if test="cycle != null">
                 AND DATE_SUB(CURDATE(), INTERVAL #{cycle} DAY) &lt;= from_unixtime(t.create_time/1000, '%Y-%m-%d')
@@ -94,17 +100,24 @@
             </if>
             AND (t1.name is not null OR t2.server_name is not null OR t3.name is not null OR t4.name is not null)
         </where>
-        limit 10;
+        ORDER BY t.create_time
+        limit #{cycle};
     </select>
 
     <select id="analysisChartY" parameterType="com.hummerrisk.controller.request.dashboard.AnslysisVo" resultType="java.lang.Integer">
         select
-        t.scan_score as score
+        IFNULL(t.scan_score, 100) as score
         from history_scan t
         left join cloud_account t1 on t.account_id = t1.id
         left join server_result t2 on t.account_id = t2.id
         left join image_result t3 on t.account_id = t3.id
         left join package_result t4 on t.account_id = t4.id
+        JOIN (
+        SELECT FROM_UNIXTIME( create_time/1000, '%Y-%m-%d') as date,
+            MAX( create_time ) max_time
+            FROM history_scan
+        GROUP BY date
+        ) b ON b.max_time = t.create_time
         <where>
             <if test="cycle != null">
                 AND DATE_SUB(CURDATE(), INTERVAL #{cycle} DAY) &lt;= from_unixtime(t.create_time/1000, '%Y-%m-%d')
@@ -123,7 +136,8 @@
             </if>
             AND (t1.name is not null OR t2.server_name is not null OR t3.name is not null OR t4.name is not null)
         </where>
-        limit 10;
+        ORDER BY t.create_time
+        limit #{cycle};
     </select>
 
     <sql id="condition">
