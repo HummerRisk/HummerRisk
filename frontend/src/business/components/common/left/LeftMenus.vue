@@ -16,7 +16,7 @@
       </el-menu-item>
       <el-submenu index="1">
         <template slot="title">
-          <i class="iconfont icon-shangyun"></i>
+          <i class="iconfont icon-duoyun"></i>
           <span slot="title">{{ $t('commons.cloud_mix_scan') }}</span>
         </template>
         <el-menu-item index="/account" onselectstart="return false" v-permission="['admin']">
@@ -28,7 +28,7 @@
           <span slot="title">{{ $t('vuln.vuln_setting') }}</span>
         </el-menu-item>
         <el-menu-item index="/report" onselectstart="return false" v-permission="['admin']">
-          <i class="iconfont icon-gongyouyunzengzhifuwushenqingliucheng-06"></i>
+          <i class="iconfont icon-xitonganquanheguibaobiao"></i>
           <span slot="title">{{ $t('resource.statistics') }}</span>
         </el-menu-item>
         <el-menu-item index="/oss">
@@ -42,7 +42,7 @@
           <span slot="title">{{ $t('commons.cloud_native') }}</span>
         </template>
         <el-menu-item index="/situation" onselectstart="return false" v-permission="['admin']">
-          <i class="iconfont icon-zuixintaishifenxi"></i>
+          <i class="iconfont icon-taishiganzhi"></i>
           <span slot="title">{{ $t('commons.resource_situation') }}</span>
         </el-menu-item>
         <el-menu-item index="/server" onselectstart="return false" v-permission="['admin']">

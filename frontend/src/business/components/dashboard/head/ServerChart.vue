@@ -30,7 +30,7 @@ export default {
             type: 'treemap',
             data: [
               {
-                name: 'nodeA',
+                name: this.$t('server.server_1'),
                 value: 10,
                 children: [
                   {
@@ -44,11 +44,11 @@ export default {
                 ]
               },
               {
-                name: 'nodeB',
+                name: this.$t('server.server_2'),
                 value: 20,
                 children: [
                   {
-                    name: 'nodeBa',
+                    name: this.$t('server.server_2'),
                     value: 10,
                     children: [
                       {
@@ -64,11 +64,11 @@ export default {
                 ]
               },
               {
-                name: 'nodeC',
+                name: this.$t('server.server_3'),
                 value: 20,
                 children: [
                   {
-                    name: 'nodeCa',
+                    name: this.$t('server.server_3'),
                     value: 20,
                     children: [
                       {
@@ -84,11 +84,11 @@ export default {
                 ]
               },
               {
-                name: 'nodeD',
+                name: this.$t('server.server_4'),
                 value: 20,
                 children: [
                   {
-                    name: 'nodeDa',
+                    name: this.$t('server.server_4'),
                     value: 20,
                     children: [
                       {
@@ -100,11 +100,11 @@ export default {
                 ]
               },
               {
-                name: 'nodeE',
+                name: this.$t('server.server_5'),
                 value: 20,
                 children: [
                   {
-                    name: 'nodeEa',
+                    name: this.$t('server.server_5'),
                     value: 20,
                     children: [
                       {
@@ -116,11 +116,11 @@ export default {
                 ]
               },
               {
-                name: 'nodeF',
+                name: this.$t('server.server_6'),
                 value: 20,
                 children: [
                   {
-                    name: 'nodeFa',
+                    name: this.$t('server.server_6'),
                     value: 20,
                     children: [
                       {

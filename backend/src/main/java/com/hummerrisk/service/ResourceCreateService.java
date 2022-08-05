@@ -285,6 +285,7 @@ public class ResourceCreateService {
                     ServerResult serverResult = serverResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
                     if (serverResult != null && historyScanStatus.contains(serverResult.getResultStatus())) {
                         historyScanTask.setStatus(serverResult.getResultStatus());
+                        historyScanTask.setOutput(jsonArray.toJSONString());
                         historyScanTask.setResourcesSum(1L);
                         historyScanTask.setReturnSum(1L);
                         historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), serverResult, TaskEnum.serverAccount.getType()));
@@ -294,6 +295,7 @@ public class ResourceCreateService {
                     ImageResult imageResult = imageResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
                     if (imageResult != null && historyScanStatus.contains(imageResult.getResultStatus())) {
                         historyScanTask.setStatus(imageResult.getResultStatus());
+                        historyScanTask.setOutput(jsonArray.toJSONString());
                         historyScanTask.setResourcesSum(imageResult.getReturnSum()!=null? imageResult.getReturnSum():0);
                         historyScanTask.setReturnSum(imageResult.getReturnSum()!=null? imageResult.getReturnSum():0);
                         historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), imageResult, TaskEnum.imageAccount.getType()));
@@ -303,6 +305,7 @@ public class ResourceCreateService {
                     PackageResult packageResult = packageResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
                     if (packageResult != null && historyScanStatus.contains(packageResult.getResultStatus())) {
                         historyScanTask.setStatus(packageResult.getResultStatus());
+                        historyScanTask.setOutput(jsonArray.toJSONString());
                         historyScanTask.setResourcesSum(packageResult.getReturnSum()!=null? packageResult.getReturnSum():0);
                         historyScanTask.setReturnSum(packageResult.getReturnSum()!=null? packageResult.getReturnSum():0);
                         historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), packageResult, TaskEnum.packageAccount.getType()));
