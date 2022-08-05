@@ -368,6 +368,48 @@
             AND t2.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
     </select>
 
+    <select id="vulnTotalPolicy" resultType="java.util.Map">
+        SELECT
+            IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,
+            IFNULL( sum( t4.resources_sum ), 0 ) AS yAxis2,
+            concat(truncate(IFNULL(sum( t4.resources_sum ), 0) / (select IFNULL(sum(resources_sum), 1) from resource)*100,2),'%') as everyTotalPecent,
+            (select count(tag_name) from rule_tag) AS critical,
+            t.tag_name AS groupName,
+            t.tag_key AS xAxis,
+            (select IFNULL( sum( return_sum ), 0 ) from resource) AS returnTotal,
+            (select IFNULL( sum( resources_sum ), 0 ) from resource) AS resourceTotal
+        FROM
+            rule_tag t
+                LEFT JOIN rule_tag_mapping t1 ON t.tag_key = t1.tag_key
+                LEFT JOIN rule t2 ON t1.rule_id = t2.id
+                LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
+                LEFT JOIN resource t4 ON t3.resource_id = t4.id
+        WHERE t2.plugin_id IN ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+        GROUP BY
+            t.tag_key
+        HAVING
+            t.tag_key IN ( 'cost', 'safety', 'tagging' )
+        UNION ALL
+        SELECT
+            IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,
+            IFNULL( sum( t4.resources_sum ), 0 ) AS yAxis2,
+            concat(truncate(IFNULL(sum( t4.resources_sum ), 0)/(select IFNULL(sum(resources_sum), 1) from resource)*100,2),'%') as everyTotalPecent,
+            (select count(tag_name) from rule_tag) AS critical,
+            '其他' AS groupName,
+            'other' AS xAxis,
+            (select IFNULL( sum( return_sum ), 0 ) from resource) AS returnTotal,
+            (select IFNULL( sum( resources_sum ), 0 ) from resource) AS resourceTotal
+        FROM
+            rule_tag t
+                LEFT JOIN rule_tag_mapping t1 ON t.tag_key = t1.tag_key
+                LEFT JOIN rule t2 ON t1.rule_id = t2.id
+                LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
+                LEFT JOIN resource t4 ON t3.resource_id = t4.id
+        WHERE
+            t.tag_key NOT IN ( 'cost', 'safety', 'tagging' )
+          AND t2.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+    </select>
+
     <select id="history" resultType="com.hummerrisk.dto.HistoryScanDTO">
         SELECT
             t.id,

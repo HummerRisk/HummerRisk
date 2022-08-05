@@ -37,6 +37,8 @@ public interface ExtVulnMapper {
 
     List<Map<String, Object>> totalPolicy(Map<String, Object> params);
 
+    List<Map<String, Object>> vulnTotalPolicy(Map<String, Object> params);
+
     List<DashboardTarget> target(Map<String, Object> params);
 
     List<HistoryScanDTO> history(Map<String, Object> params);

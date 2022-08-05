@@ -52,7 +52,7 @@ import RuleGroupPieChart from "../head//RuleGroupPieChart";
     },
     methods: {
       init() {
-        this.$post('/dashboard/totalPolicy', {}, response => {
+        this.$post('/dashboard/vulnTotalPolicy', {}, response => {
           this.totalPolicy = response.data;
           for (let item of this.totalPolicy) {
             this.totalPolicy[item.xAxis] = item;

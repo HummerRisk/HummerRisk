@@ -1017,6 +1017,7 @@ export default {
     all_label: '全部漏洞检测',
     no_plugin_param: '请填写参数:',
     overview: '漏洞概览',
+    vuln_statistics: '漏洞合规报告',
   },
   oss: {
     oss_setting: '对象存储',

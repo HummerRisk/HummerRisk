@@ -14,38 +14,28 @@ export default {
     },
     {
       path: "vuln",
-      name: "vuln",
+      name: "Vuln",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/vuln/home/Vuln'),
     },
     {
       path: "rule",
-      name: "vulnRule",
+      name: "VulnRule",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/vuln/home/Rule'),
     },
     {
       path: "result",
-      name: "vulnResult",
+      name: "VulnResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/vuln/home/Result'),
     },
     {
       path: "resultdetails/:id",
-      name: "vulnResultdetails",
+      name: "VulnResultdetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/vuln/home/ResultDetails"),
     },
     {
       path: "vlunscan/:id",
-      name: "vlunscan",
+      name: "Vlunscan",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/vuln/home/VulnScan'),
-    },
-    {
-      path: "history",
-      name: "history",
-      component: () => import(/* webpackChunkName: "api" */ "@/business/components/vuln/home/History"),
-    },
-    {
-      path: 'vlunOverview',
-      name: 'vlunOverview',
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/vuln/home/VulnOverview'),
     },
   ]
 }

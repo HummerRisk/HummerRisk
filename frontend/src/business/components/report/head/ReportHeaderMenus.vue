@@ -4,23 +4,27 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
-          <el-menu-item :index="'/report/list'">
+          <el-menu-item :index="'/report/cloudReport'">
             {{ $t("resource.cloud_statistics") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/account/history'">
+          <el-menu-item :index="'/report/cloudHistory'">
             {{ $t("account.history") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/account/accountoverview'">
+          <el-menu-item :index="'/report/accountOverview'">
             {{ $t("account.statistical_analysis") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/vuln/history'">
+          <el-menu-item :index="'/report/vulnReport'">
+            {{ $t("vuln.vuln_statistics") }}
+          </el-menu-item>
+
+          <el-menu-item :index="'/report/vulnHistory'">
             {{ $t("vuln.history") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/vuln/vlunOverview'">
+          <el-menu-item :index="'/report/vlunOverview'">
             {{ $t("vuln.statistical_analysis") }}
           </el-menu-item>
 

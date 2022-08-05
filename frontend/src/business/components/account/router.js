@@ -47,15 +47,5 @@ export default {
       name: "cloudStatistics",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/resource/home/Statistics"),
     },
-    {
-      path: "history",
-      name: "cloudHistory",
-      component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/History"),
-    },
-    {
-      path: 'accountoverview',
-      name: 'cloudOverview',
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/AccountOverview'),
-    },
   ]
 }
