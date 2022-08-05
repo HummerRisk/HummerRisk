@@ -1016,6 +1016,7 @@ export default {
     history: '漏洞检测历史记录',
     all_label: '全部漏洞检测',
     no_plugin_param: '请填写参数:',
+    overview: '漏洞概览',
   },
   oss: {
     oss_setting: '对象存储',

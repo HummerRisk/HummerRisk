@@ -25,6 +25,12 @@ public interface ExtVulnMapper {
 
     List<ChartData> vulnList(Map<String, Object> params);
 
+    List<ChartData> vulnRuleList(Map<String, Object> params);
+
+    List<ChartData> vulnOverall(Map<String, Object> params);
+
+    List<ChartData> vulnRuleGroup(Map<String, Object> params);
+
     List<ChartData> regionsList(Map<String, Object> params);
 
     List<Map<String, Object>> severityList(Map<String, Object> params);

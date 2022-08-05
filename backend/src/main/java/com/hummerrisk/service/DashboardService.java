@@ -64,6 +64,12 @@ public class DashboardService {
                 return extVulnMapper.accountList(params);
             case "vulnList":
                 return extVulnMapper.vulnList(params);
+            case "vulnRuleList":
+                return extVulnMapper.vulnRuleList(params);
+            case "vulnOverall":
+                return extVulnMapper.vulnOverall(params);
+            case "vulnRuleGroup":
+                return extVulnMapper.vulnRuleGroup(params);
             case "regionsList":
                 return extVulnMapper.regionsList(params);
             default:

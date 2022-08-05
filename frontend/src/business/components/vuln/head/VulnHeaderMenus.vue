@@ -4,6 +4,10 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
+          <el-menu-item :index="'/vuln/vulndashboard'">
+            {{ $t("vuln.overview") }}
+          </el-menu-item>
+
           <el-menu-item :index="'/vuln/vuln'">
             {{ $t("vuln.vuln_settings") }}
           </el-menu-item>

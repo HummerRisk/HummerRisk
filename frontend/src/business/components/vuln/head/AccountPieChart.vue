@@ -9,7 +9,7 @@ import echarts from 'echarts';
 import HrChart from "@/business/components/common/chart/HrChart";
 /* eslint-disable */
 export default {
-  name: "AccountPieChart",
+  name: "VulnPieChart",
   components: {
     HrChart,
     echarts,
@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     init() {
-      this.$post("/dashboard/distribution", {group: "vulnList", limit: 5}, response => {
+      this.$post("/dashboard/distribution", {group: "accountList", limit: 5}, response => {
         let legendData = [];
         let seriesData = [];
         for (let obj of response.data) {

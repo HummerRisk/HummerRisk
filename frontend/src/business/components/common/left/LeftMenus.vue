@@ -16,7 +16,7 @@
       </el-menu-item>
       <el-submenu index="1">
         <template slot="title">
-          <i class="iconfont icon-duoyun"></i>
+          <i class="iconfont icon-guanyuyunguanjia"></i>
           <span slot="title">{{ $t('commons.cloud_mix_scan') }}</span>
         </template>
         <el-menu-item index="/account" onselectstart="return false" v-permission="['admin']">

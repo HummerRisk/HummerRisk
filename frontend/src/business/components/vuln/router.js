@@ -8,6 +8,11 @@ export default {
   },
   children: [
     {
+      path: "vulndashboard",
+      name: "vulnDashboard",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/vuln/home/Dashboard"),
+    },
+    {
       path: "vuln",
       name: "vuln",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/vuln/home/Vuln'),
