@@ -34,9 +34,9 @@ public class PluginService {
         PluginExample.Criteria criteria = example.createCriteria();
         if (scanType!=null) {
             if (StringUtils.equalsIgnoreCase(scanType, ScanTypeConstants.prowler.name())) {
-                criteria.andIdEqualTo(PlatformUtils.aws);
+                criteria.andIdEqualTo(PlatformUtils.aws).andTypeNotEqualTo(PlatformUtils.native_);
             } else {
-                criteria.andScanTypeLike(scanType);
+                criteria.andScanTypeLike(scanType).andTypeNotEqualTo(PlatformUtils.native_);
             }
         }
         return pluginMapper.selectByExample(example);
@@ -46,7 +46,7 @@ public class PluginService {
         PluginExample example = new PluginExample();
         example.setOrderByClause("order_");
         PluginExample.Criteria criteria = example.createCriteria();
-        criteria.andIdNotIn(PlatformUtils.getVulnPlugin());
+        criteria.andIdIn(PlatformUtils.getCloudPlugin());
         return pluginMapper.selectByExample(example);
     }
 
@@ -54,16 +54,21 @@ public class PluginService {
         PluginExample example = new PluginExample();
         example.setOrderByClause("order_");
         PluginExample.Criteria criteria = example.createCriteria();
-        criteria.andIdIn(PlatformUtils.getVulnPlugin());
+        criteria.andTypeEqualTo(PlatformUtils.vuln_);
+        return pluginMapper.selectByExample(example);
+    }
+
+    public List<Plugin> getNativePlugin() {
+        PluginExample example = new PluginExample();
+        example.setOrderByClause("order_");
+        PluginExample.Criteria criteria = example.createCriteria();
+        criteria.andTypeEqualTo(PlatformUtils.native_);
         return pluginMapper.selectByExample(example);
     }
 
     public String getCredential(String pluginId) {
         try {
             return ReadFileUtils.readConfigFile(BASE_CREDENTIAL_DIC, pluginId, JSON_EXTENSION);
-        } catch (HRException e) {
-            LogUtil.error("Error getting credential parameters: " + pluginId, e);
-            HRException.throwException(Translator.get("i18n_ex_plugin_get"));
         } catch (Exception e) {
             LogUtil.error("Error getting credential parameters: " + pluginId, e);
             HRException.throwException(Translator.get("i18n_ex_plugin_get"));

@@ -111,7 +111,6 @@ public class PlatformUtils {
     public final static String vsphere = "hummer-vsphere-plugin";
     public final static String openstack = "hummer-openstack-plugin";
     public final static String gcp = "hummer-gcp-plugin";
-    public final static String k8s = "hummer-k8s-plugin";
     public final static String huoshan = "hummer-huoshan-plugin";
     public final static String baidu = "hummer-baidu-plugin";
     public final static String qiniu = "hummer-qiniu-plugin";
@@ -123,15 +122,33 @@ public class PlatformUtils {
     public final static String tsunami = "hummer-tsunami-plugin";
     //虚拟机插件
     public final static String server = "hummer-server-plugin";
+    //云原生检测插件
+    public final static String k8s = "hummer-k8s-plugin";
+    public final static String openshift = "hummer-openshift-plugin";
+    public final static String rancher = "hummer-rancher-plugin";
+    public final static String kubesphere = "hummer-kubesphere-plugin";
     public final static String[] userForbiddenArr = {"The IAM user is forbidden"};
+    // 插件类型: 多云、漏洞、云原生
+    public final static String cloud_ = "cloud";
+    public final static String vuln_ = "vuln";
+    public final static String native_ = "native";
 
     /**
      * 支持的插件
-     * 云平台插件： aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud
-     * 漏洞检测插件：xray, nuclei, tsunami
+     * 云平台插件: aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud
+     * 漏洞检测插件: xray, nuclei, tsunami
+     * 云原生检测插件: k8s, openshift, rancher, kubesphere
      */
     public final static List<String> getPlugin() {
-        return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, nuclei, xray, tsunami);
+        return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud,
+                nuclei, xray, tsunami, k8s, openshift, rancher, kubesphere);
+    }
+
+    /**
+     * 支持云平台插件
+     */
+    public final static List<String> getCloudPlugin() {
+        return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, k8s);
     }
 
     /**
@@ -139,7 +156,7 @@ public class PlatformUtils {
      */
     public static boolean isSupportCloudAccount(String source) {
         // 云平台插件
-        List<String> tempList = Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud);
+        List<String> tempList = Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, k8s);
 
         // 利用list的包含方法,进行判断
         return tempList.contains(source);
@@ -158,6 +175,17 @@ public class PlatformUtils {
     public static boolean isSupportVuln(String source) {
         // 漏洞检测插件
         List<String> tempList = Arrays.asList(xray, nuclei, tsunami);
+
+        // 利用list的包含方法,进行判断
+        return tempList.contains(source);
+    }
+
+    /**
+     * 是否支持云原生检测插件
+     */
+    public static boolean isSupportNative(String source) {
+        // 云原生检测插件
+        List<String> tempList = Arrays.asList(k8s, openshift, rancher, kubesphere);
 
         // 利用list的包含方法,进行判断
         return tempList.contains(source);

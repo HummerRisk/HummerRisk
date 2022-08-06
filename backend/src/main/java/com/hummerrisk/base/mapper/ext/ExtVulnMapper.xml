@@ -55,6 +55,7 @@
         LEFT JOIN rule_tag_mapping t2 ON t.id = t2.rule_id
         LEFT JOIN rule_tag t3 ON t2.tag_key = t3.tag_key
         LEFT JOIN cloud_account t4 ON t.plugin_id = t4.plugin_id
+        LEFT JOIN plugin p on t.plugin_id = p.id
         <where>
             t.id in (select rule_id from resource_rule)
             AND t4.`status` = 'VALID'
@@ -68,7 +69,7 @@
                 AND t4.id = #{accountId}
             </if>
             AND (SELECT SUM( t1.return_sum ) FROM resource t1 LEFT JOIN resource_rule t2 ON t1.id = t2.resource_id WHERE t2.rule_id = t.id) != 0
-            AND t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+            and p.type = 'cloud'
         </where>
         ORDER BY CONVERT(ratio, signed), ruSum desc
     </select>
@@ -80,7 +81,8 @@
             IFNULL( sum(t.resources_sum), 0 ) AS resourcesSum
         FROM
             resource t
-        WHERE t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+            LEFT JOIN plugin p on t.plugin_id = p.id
+        WHERE p.type = 'cloud'
         GROUP BY t.severity
     </select>
 
@@ -96,7 +98,8 @@
             LEFT JOIN rule t2 ON t1.rule_id = t2.id
             LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
             LEFT JOIN resource t4 ON t3.resource_id = t4.id
-        WHERE t2.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+            LEFT JOIN plugin p on t2.plugin_id = p.id
+        WHERE p.type = 'cloud'
         GROUP BY
             t.tag_key
         HAVING
@@ -113,9 +116,10 @@
             LEFT JOIN rule t2 ON t1.rule_id = t2.id
             LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
             LEFT JOIN resource t4 ON t3.resource_id = t4.id
+            LEFT JOIN plugin p on t2.plugin_id = p.id
         WHERE
             t.tag_key NOT IN ( 'cost', 'safety', 'tagging' )
-            AND t2.plugin_id NOT IN ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+        AND p.type = 'cloud'
     </select>
 
     <select id="ruleGroup" resultType="com.hummerrisk.commons.utils.ChartData">
@@ -130,7 +134,8 @@
             LEFT JOIN rule t2 ON t1.rule_id = t2.id
             LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
             LEFT JOIN resource t4 ON t3.resource_id = t4.id
-        WHERE t2.plugin_id NOT IN ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+            LEFT JOIN plugin p on t2.plugin_id = p.id
+        WHERE p.type = 'cloud'
         GROUP BY
             t.name
         ORDER BY
@@ -152,7 +157,8 @@
             LEFT JOIN rule t2 ON t1.rule_id = t2.id
             LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
             LEFT JOIN resource t4 ON t3.resource_id = t4.id
-        WHERE t2.plugin_id NOT IN ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+            LEFT JOIN plugin p on t2.plugin_id = p.id
+        WHERE p.type = 'cloud'
         GROUP BY
             t.item_sort_first_level
         HAVING
@@ -171,7 +177,8 @@
             rule t
             LEFT JOIN resource_rule t1 ON t.id = t1.rule_id
             LEFT JOIN resource t2 ON t1.resource_id = t2.id
-        WHERE t.plugin_id NOT IN ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+            LEFT JOIN plugin p on t.plugin_id = p.id
+        WHERE p.type = 'cloud'
         GROUP BY
             t.id, t.name
         ORDER BY
@@ -190,7 +197,8 @@
         FROM
             cloud_account t
             LEFT JOIN resource t1 ON t1.account_id = t.id
-        WHERE t.plugin_id NOT IN ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+            LEFT JOIN plugin p on t.plugin_id = p.id
+        WHERE p.type = 'cloud'
         GROUP BY
             t.id
         HAVING
@@ -211,7 +219,8 @@
         FROM
         cloud_account t
         LEFT JOIN resource t1 ON t1.account_id = t.id
-        WHERE t.plugin_id IN ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+        LEFT JOIN plugin p on t.plugin_id = p.id
+        WHERE p.type = 'vuln'
         GROUP BY
         t.id
         HAVING
@@ -233,7 +242,8 @@
         rule t
         LEFT JOIN resource_rule t1 ON t.id = t1.rule_id
         LEFT JOIN resource t2 ON t1.resource_id = t2.id
-        WHERE t.plugin_id IN ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+        LEFT JOIN plugin p on t.plugin_id = p.id
+        WHERE p.type = 'vuln'
         GROUP BY
         t.id, t.name
         ORDER BY
@@ -255,7 +265,8 @@
                 LEFT JOIN rule t2 ON t1.rule_id = t2.id
                 LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
                 LEFT JOIN resource t4 ON t3.resource_id = t4.id
-        WHERE t2.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+                LEFT JOIN plugin p on t2.plugin_id = p.id
+        WHERE p.type = 'vuln'
         GROUP BY
             t.tag_key
         HAVING
@@ -272,9 +283,10 @@
                 LEFT JOIN rule t2 ON t1.rule_id = t2.id
                 LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
                 LEFT JOIN resource t4 ON t3.resource_id = t4.id
+                LEFT JOIN plugin p on t2.plugin_id = p.id
         WHERE
             t.tag_key NOT IN ( 'cost', 'safety', 'tagging' )
-          AND t2.plugin_id IN ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+          AND p.type = 'vuln'
     </select>
 
     <select id="vulnRuleGroup" resultType="com.hummerrisk.commons.utils.ChartData">
@@ -289,7 +301,8 @@
         LEFT JOIN rule t2 ON t1.rule_id = t2.id
         LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
         LEFT JOIN resource t4 ON t3.resource_id = t4.id
-        WHERE t2.plugin_id IN ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+        LEFT JOIN plugin p on t2.plugin_id = p.id
+        WHERE p.type = 'vuln'
         GROUP BY
         t.name
         ORDER BY
@@ -309,10 +322,11 @@
             cloud_task_item t
             LEFT JOIN cloud_task_item_resource t1 ON t.id = t1.task_item_id
             LEFT JOIN resource t2 ON t2.id = t1.resource_id
+            LEFT JOIN plugin p on t2.plugin_id = p.id
         <where>
             <if test="accountId != null">
                 AND t.account_id = #{accountId}
-                AND t.plugin_id NOT IN ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+                AND p.type = 'cloud'
             </if>
         </where>
         GROUP BY
@@ -342,7 +356,8 @@
             LEFT JOIN rule t2 ON t1.rule_id = t2.id
             LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
             LEFT JOIN resource t4 ON t3.resource_id = t4.id
-        WHERE t2.plugin_id NOT IN ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+            LEFT JOIN plugin p on t2.plugin_id = p.id
+        WHERE p.type = 'cloud'
         GROUP BY
             t.tag_key
         HAVING
@@ -363,9 +378,10 @@
             LEFT JOIN rule t2 ON t1.rule_id = t2.id
             LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
             LEFT JOIN resource t4 ON t3.resource_id = t4.id
+            LEFT JOIN plugin p on t2.plugin_id = p.id
         WHERE
             t.tag_key NOT IN ( 'cost', 'safety', 'tagging' )
-            AND t2.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+        AND p.type = 'cloud'
     </select>
 
     <select id="vulnTotalPolicy" resultType="java.util.Map">
@@ -384,7 +400,8 @@
                 LEFT JOIN rule t2 ON t1.rule_id = t2.id
                 LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
                 LEFT JOIN resource t4 ON t3.resource_id = t4.id
-        WHERE t2.plugin_id IN ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+                LEFT JOIN plugin p on t2.plugin_id = p.id
+        WHERE p.type = 'vuln'
         GROUP BY
             t.tag_key
         HAVING
@@ -405,9 +422,10 @@
                 LEFT JOIN rule t2 ON t1.rule_id = t2.id
                 LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
                 LEFT JOIN resource t4 ON t3.resource_id = t4.id
+                LEFT JOIN plugin p on t2.plugin_id = p.id
         WHERE
             t.tag_key NOT IN ( 'cost', 'safety', 'tagging' )
-          AND t2.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+          AND p.type = 'vuln'
     </select>
 
     <select id="history" resultType="com.hummerrisk.dto.HistoryScanDTO">
@@ -426,7 +444,8 @@
             t1.plugin_icon as pluginIcon
         FROM
         history_scan t
-            LEFT JOIN cloud_account t1 ON t.account_id = t1.id
+        LEFT JOIN cloud_account t1 ON t.account_id = t1.id
+        LEFT JOIN plugin p on t1.plugin_id = p.id
         <where>
             <if test="accountId != null">
                 AND t.account_id = #{accountId}
@@ -434,7 +453,7 @@
             <if test="pluginId != null">
                 AND t1.plugin_id = #{pluginId}
             </if>
-            AND t1.plugin_id NOT IN ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+            AND p.type = 'cloud'
         </where>
         ORDER BY
             t.create_time DESC
@@ -457,6 +476,7 @@
         FROM
         history_scan t
         LEFT JOIN cloud_account t1 ON t.account_id = t1.id
+        LEFT JOIN plugin p on t1.plugin_id = p.id
         <where>
             <if test="accountId != null">
                 AND t.account_id = #{accountId}
@@ -464,7 +484,7 @@
             <if test="pluginId != null">
                 AND t1.plugin_id = #{pluginId}
             </if>
-            AND t1.plugin_id IN ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+            AND p.type = 'vuln'
         </where>
         ORDER BY
         t.create_time DESC

@@ -54,11 +54,12 @@
         END AS resultStatus
         FROM cloud_account t
         LEFT JOIN user u on t.creator = u.id
+        LEFT JOIN plugin p on t.plugin_id = p.id
         <where>
             <if test="accountId != null">
                 AND t.id = #{accountId}
             </if>
-            and t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+            and p.type = 'cloud'
         </where>
         ORDER BY t.create_time DESC
     </select>
@@ -94,11 +95,12 @@
         END AS resultStatus
         FROM cloud_account t
         LEFT JOIN user u on t.creator = u.id
+        LEFT JOIN plugin p on t.plugin_id = p.id
         <where>
             <if test="accountId != null">
                 AND t.id = #{accountId}
             </if>
-            and t.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin')
+            and p.type = 'vuln'
         </where>
         ORDER BY t.create_time DESC
     </select>

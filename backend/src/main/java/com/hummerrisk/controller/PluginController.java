@@ -24,7 +24,7 @@ public class PluginController {
 
     @I18n
     @ApiOperation(value = "所有云账号插件")
-    @GetMapping("all")
+    @GetMapping("cloud")
     public List<Plugin> getCloudPlugin() {
         return pluginService.getCloudPlugin();
     }
@@ -34,6 +34,13 @@ public class PluginController {
     @GetMapping("vuln")
     public List<Plugin> getVulnPlugin() {
         return pluginService.getVulnPlugin();
+    }
+
+    @I18n
+    @ApiOperation(value = "所有云原生插件")
+    @GetMapping("native")
+    public List<Plugin> getNativePlugin() {
+        return pluginService.getNativePlugin();
     }
 
     @I18n

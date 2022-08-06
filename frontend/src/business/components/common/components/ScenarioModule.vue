@@ -137,7 +137,7 @@ import DialogFooter from "../../common/components/DialogFooter";
     methods: {
       //查询插件
       activePlugin() {
-        let url = "/plugin/all";
+        let url = "/plugin/cloud";
         this.result = this.$get(url, response => {
           let data = response.data;
           this.plugins =  data;

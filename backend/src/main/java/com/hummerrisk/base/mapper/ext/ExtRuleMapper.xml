@@ -147,6 +147,7 @@
         t.*,
         (select tag_key from rule_tag_mapping where rule_id = t.id limit 1) as tagKey
         FROM rule t
+        LEFT JOIN plugin p on t.plugin_id = p.id
         <where>
             <if test="id != null">
                 AND t.id = #{id}
@@ -162,7 +163,7 @@
                     <property name="condition" value="combine"/>
                 </include>
             </if>
-            and t.plugin_id in (select plugin_id from cloud_account ca where ca.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin'))
+            AND p.type = 'cloud'
         </where>
         ORDER BY t.last_modified desc
     </select>
@@ -173,6 +174,7 @@
         t.*,
         (select tag_key from rule_tag_mapping where rule_id = t.id limit 1) as tagKey
         FROM rule t
+        LEFT JOIN plugin p on t.plugin_id = p.id
         <where>
             <if test="id != null">
                 AND t.id = #{id}
@@ -188,7 +190,7 @@
                     <property name="condition" value="combine"/>
                 </include>
             </if>
-            and t.plugin_id in (select plugin_id from cloud_account ca where ca.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin'))
+            AND p.type = 'vuln'
         </where>
         ORDER BY t.last_modified desc
     </select>

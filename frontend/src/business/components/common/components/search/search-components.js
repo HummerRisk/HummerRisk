@@ -93,7 +93,7 @@ export const PLUGIN_NAME = {
     options: [OPERATORS.IN, OPERATORS.NOT_IN]
   },
   options: { // 异步获取候选项
-    url: "/plugin/all",
+    url: "/plugin/cloud",
     labelKey: "name",
     valueKey: "id",
     showLabel: option => {
@@ -245,7 +245,7 @@ export const RULE_PLUGIN_NAME = {
     options: [OPERATORS.IN, OPERATORS.NOT_IN]
   },
   options: { // 异步获取候选项
-    url: "/plugin/all",
+    url: "/plugin/cloud",
     labelKey: "name",
     valueKey: "id",
     showLabel: option => {

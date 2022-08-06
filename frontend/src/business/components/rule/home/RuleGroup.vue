@@ -332,7 +332,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         })
       },
       getPlugins () {
-        this.result = this.$get("/plugin/all", response => {
+        this.result = this.$get("/plugin/cloud", response => {
           this.plugins = response.data;
         });
       },
