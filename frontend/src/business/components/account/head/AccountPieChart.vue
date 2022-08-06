@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     init() {
-      this.$post("/dashboard/distribution", {group: "vulnList", limit: 5}, response => {
+      this.$post("/dashboard/distribution", {group: "accountList", limit: 5}, response => {
         let legendData = [];
         let seriesData = [];
         for (let obj of response.data) {

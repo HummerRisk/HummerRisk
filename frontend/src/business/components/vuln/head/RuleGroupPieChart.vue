@@ -49,12 +49,15 @@ export default {
   methods: {
     init () {
       this.$post("/dashboard/distribution", {group: "vulnRuleGroup", limit: 6}, response => {
-        let data = '{"rule":"规则组不合规资源", "key1":value1, "key2":value2, "key3":value3}';
+        let data = '{"rule":"' + this.$t('vuln.rule_group_vuln') + '", "key1":value1, "key2":value2, "key3":value3}';
         let i = 1;
         for (let obj of response.data) {
           groupName.push(obj.xAxis);
           data = data.replace('key' + i, obj.xAxis).replace('value' + i, obj.yAxis);
           i++;
+        }
+        if(data.indexOf("key3")) {
+          data = data.replace(", \"key3\":value3", "");
         }
         ruleGroup.push(typeof(data) == 'string'?JSON.parse(data):data);
       });
