@@ -85,6 +85,10 @@ public class DashboardService {
         return extVulnMapper.totalPolicy(params);
     }
 
+    public List<Map<String, Object>> vulnTotalPolicy(Map<String, Object> params) {
+        return extVulnMapper.vulnTotalPolicy(params);
+    }
+
     public List<DashboardTarget> target(Map<String, Object> params) {
         return extVulnMapper.target(params);
     }
