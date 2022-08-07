@@ -829,6 +829,7 @@ INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('c30779c4-44b8-
 
 SELECT id INTO @groupIdAli FROM rule_group WHERE name = 'Aliyun 等保预检';
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('083d24e2-881f-488b-b120-8f2cd961707f', @groupIdAli);
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('083d24e2-881f-488b-b120-8f2cd961707f', '083d24e2-881f-488b-b120-8f2cd961707f', 'aliyun.security-group');
 
 INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('02971259-93f0-4cbe-921b-e9c589ca3543', '0dda84c1-794b-4977-bb66-6f12695c6c51', 'aws.rds');
 INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('04de48af-246a-43eb-8e14-841fbe1f15a9', 'fa5e89e3-417d-4296-9d17-ca51ed914be5', 'aws.ec2');
