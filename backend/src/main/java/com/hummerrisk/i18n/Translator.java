@@ -67,7 +67,7 @@ public class Translator {
         try {
             if (javaObject instanceof String) {
                 String rawString = javaObject.toString();
-                if (StringUtils.contains(rawString, JSON_SYMBOL)) {
+                if (StringUtils.contains(rawString, JSON_SYMBOL)&&(rawString.startsWith("[") || rawString.startsWith("{"))) {
                     try {
                         return JsonUtils.toPrettyJSONString(rawString);
                     } catch (Exception e) {
