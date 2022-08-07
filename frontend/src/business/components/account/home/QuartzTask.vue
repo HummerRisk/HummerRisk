@@ -4,7 +4,7 @@
         <template v-slot:header>
           <table-header :condition.sync="condition" @search="search"
                            :title="$t('account.quartz_task_list')"
-                           @create="create" :createTip="$t('commons.create')"
+                           @create="create" :createTip="$t('account.quartz_task_add')"
                            :show-create="true"/>
         </template>
 

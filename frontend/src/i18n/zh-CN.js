@@ -764,6 +764,7 @@ export default {
     delete_this_cloud_account: '删除此云账号',
     quartz_task: '云账号定时检测',
     quartz_task_list: '定时任务列表',
+    quartz_task_add: '新建定时任务',
     cron_expression_desc: '定时时间描述',
     prev_fire_time: '上次执行时间',
     last_fire_time: '下次执行时间',

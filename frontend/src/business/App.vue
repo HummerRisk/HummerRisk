@@ -26,11 +26,9 @@
     </el-header>
     <el-container>
       <!-- width的宽度跟collapse一样动态控制 -->
-      <el-scrollbar>
       <el-aside width="collapse" class="el-aside-menu">
-          <left-menus :collapse="isCollapse"/>
+        <left-menus :collapse="isCollapse"/>
       </el-aside>
-      </el-scrollbar>
       <el-main>
         <el-scrollbar>
           <el-col v-if="auth" :span="24">
@@ -170,8 +168,7 @@ export default {
   }
 
   .el-aside-menu {
-    height: 100%;
-    overflow: hidden;
+    height: calc(100vh - 42px);
   }
 
 </style>

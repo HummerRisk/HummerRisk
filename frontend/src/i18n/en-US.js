@@ -764,6 +764,7 @@ export default {
     delete_this_cloud_account:'Delete this cloud account',
     quartz_task:'Cloud account timing detection',
     quartz_task_list:'Timing task list',
+    quartz_task_add: 'New timed task',
     cron_expression_desc:'Timing time description',
     last_excute_time:'Last execution time',
     next_excute_time:'Next execution time',

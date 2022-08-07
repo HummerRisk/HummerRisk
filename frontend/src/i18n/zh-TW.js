@@ -764,6 +764,7 @@ export default {
     delete_this_cloud_account: '刪除此云賬號',
     quartz_task: '雲賬號定時檢測',
     quartz_task_list: '定時任務列表',
+    quartz_task_add: '新建定時任務',
     cron_expression_desc: '定時時間描述',
     last_excute_time: '上次執行時間',
     next_excute_time: '下次執行時間',
