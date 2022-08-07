@@ -103,7 +103,7 @@
         <el-form-item :label="$t('rule.rule_description')" prop="description">
           <el-input v-model="createRuleForm.description" autocomplete="off" :placeholder="$t('rule.rule_description')"/>
         </el-form-item>
-        <el-form-item :label="$t('vuln.platform')" :rules="{required: true, message: $t('vlun.platform'), trigger: 'change'}">
+        <el-form-item :label="$t('vuln.platform')" :rules="{required: true, message: $t('vlun.platform'), trigger: 'change'}" style="display: none;">
           <el-select style="width: 100%;" v-model="createRuleForm.pluginId" :placeholder="$t('vlun.platform')" @change="changePlugin(createRuleForm.pluginId)">
             <el-option
               v-for="item in plugins"
@@ -203,7 +203,7 @@
         <el-form-item :label="$t('rule.rule_description')" prop="description">
           <el-input v-model="updateRuleForm.description" autocomplete="off" :placeholder="$t('rule.rule_description')"/>
         </el-form-item>
-        <el-form-item :label="$t('vuln.platform')" :rules="{required: true, message: $t('vuln.platform'), trigger: 'change'}">
+        <el-form-item :label="$t('vuln.platform')" :rules="{required: true, message: $t('vuln.platform'), trigger: 'change'}" style="display: none;">
           <el-select style="width: 100%;" v-model="updateRuleForm.pluginId" :placeholder="$t('vuln.platform')" @change="changePlugin(updateRuleForm.pluginId)">
             <el-option
               v-for="item in plugins"

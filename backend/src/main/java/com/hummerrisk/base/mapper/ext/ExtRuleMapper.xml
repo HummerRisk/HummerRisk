@@ -163,9 +163,9 @@
                     <property name="condition" value="combine"/>
                 </include>
             </if>
-            AND p.type = 'cloud'
+            AND p.type = 'cloud' OR p.id = 'hummer-k8s-plugin'
         </where>
-        ORDER BY t.last_modified desc
+        ORDER BY t.plugin_id, t.last_modified desc
     </select>
 
     <select id="vulnList" parameterType="com.hummerrisk.controller.request.rule.CreateRuleRequest"

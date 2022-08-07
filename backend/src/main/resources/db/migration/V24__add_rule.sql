@@ -87,8 +87,8 @@ INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('8
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('86254202-388c-4c55-bba2-a3053c16fe3b', '57');
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('86254202-388c-4c55-bba2-a3053c16fe3b', '58');
 
-SELECT id INTO @groupId1  FROM rule_group WHERE name = 'Huawei 等保预检';
-SELECT id INTO @groupId2  FROM rule_group WHERE name = 'Huawei CIS合规检查';
+SELECT id INTO @groupId1 FROM rule_group WHERE name = 'Huawei 等保预检';
+SELECT id INTO @groupId2 FROM rule_group WHERE name = 'Huawei CIS合规检查';
 
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('b4620c46-795f-4d13-9139-2055849ec7b9', @groupId1);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('b4620c46-795f-4d13-9139-2055849ec7b9', @groupId2);

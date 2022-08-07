@@ -49,7 +49,7 @@ export default {
   methods: {
     init () {
       this.$post("/dashboard/distribution", {group: "ruleGroup", limit: 6}, response => {
-        let data = '{"rule":"' + this.t('vuln.rule_group_resource') + '", "key1":value1, "key2":value2, "key3":value3}';
+        let data = '{"rule":"' + this.$t('vuln.rule_group_resource') + '", "key1":value1, "key2":value2, "key3":value3}';
         let i = 1;
         for (let obj of response.data) {
           groupName.push(obj.xAxis);

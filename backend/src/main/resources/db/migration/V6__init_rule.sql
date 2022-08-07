@@ -591,9 +591,6 @@ INSERT INTO rule_type(id, rule_id, resource_type) VALUES ('ce4967f4-70f9-4de5-b6
 INSERT INTO rule_type(id, rule_id, resource_type) VALUES ('d4f87cf6-fe25-4251-ade9-00b07cfc6021', '968837c3-25f2-4848-8174-5413c859f1f1', 'huawei.obs');
 
 
-
-
-
 INSERT INTO rule_group (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Tencent 等保预检', '等保合规检查（全称为等级保护合规检查）为您提供了全面覆盖通信网络、区域边界、计算环境和管理中心的网络安全检查。', '等保三级', 'hummer-qcloud-plugin', 1);
 SELECT @groupId1 := LAST_INSERT_ID();
 INSERT INTO rule_group (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Tencent CIS合规检查', 'CIS（Center for Internet Security）合规检查能力，为您动态且持续地监控您保有在云上的资源是否符合 CIS Control 网络安全架构要求。', '高风险', 'hummer-qcloud-plugin', 1);
@@ -830,6 +827,8 @@ INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('43a1556b-5417-
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('d0f3f4b0-000a-4407-85ee-ed4a2f9dac44', @groupId3);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('c30779c4-44b8-4c7b-b2ec-29ff3a96033b', @groupId3);
 
+SELECT id INTO @groupIdAli FROM rule_group WHERE name = 'Aliyun 等保预检';
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('083d24e2-881f-488b-b120-8f2cd961707f', @groupIdAli);
 
 INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('02971259-93f0-4cbe-921b-e9c589ca3543', '0dda84c1-794b-4977-bb66-6f12695c6c51', 'aws.rds');
 INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('04de48af-246a-43eb-8e14-841fbe1f15a9', 'fa5e89e3-417d-4296-9d17-ca51ed914be5', 'aws.ec2');

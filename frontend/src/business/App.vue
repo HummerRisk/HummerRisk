@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <el-container style="overflow: hidden;">
     <el-header>
       <el-col v-if="auth" :span="24">
         <el-row id="header-top" type="flex" justify="space-between" align="middle">
@@ -26,15 +26,19 @@
     </el-header>
     <el-container>
       <!-- width的宽度跟collapse一样动态控制 -->
-      <el-aside width="collapse">
-        <left-menus :collapse="isCollapse"/>
+      <el-scrollbar>
+      <el-aside width="collapse" class="el-aside-menu">
+          <left-menus :collapse="isCollapse"/>
       </el-aside>
+      </el-scrollbar>
       <el-main>
-        <el-col v-if="auth" :span="24">
-          <el-row type="flex" justify="space-between" align="middle">
-            <hr-view/>
-          </el-row>
-        </el-col>
+        <el-scrollbar>
+          <el-col v-if="auth" :span="24">
+            <el-row type="flex" justify="space-between" align="middle">
+              <hr-view/>
+            </el-row>
+          </el-col>
+        </el-scrollbar>
       </el-main>
     </el-container>
   </el-container>
@@ -163,6 +167,11 @@ export default {
 
   .el-main {
     padding: 0;
+  }
+
+  .el-aside-menu {
+    height: 100%;
+    overflow: hidden;
   }
 
 </style>
