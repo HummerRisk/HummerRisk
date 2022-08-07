@@ -3,7 +3,7 @@
     <template v-slot:header>
       <el-row>
         <el-col :span="20">
-          <span class="title">{{ $t('account.regions') }}</span>
+          <span class="title">{{ $t('vuln.regions_statistics') }}</span>
         </el-col>
         <el-col :span="4">
           <span class="title-unfold" @click="expand" style="max-height: 20px;">
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import RegionsPieChart from "@/business/components/common/chart/RegionsPieChart";
+import RegionsPieChart from "../head/RegionsPieChart";
 import RegionsListExpand from "./RegionsListExpand";
 /* eslint-disable */
   export default {

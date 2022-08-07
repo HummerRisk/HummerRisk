@@ -3,7 +3,7 @@
 
       <el-card class="el-row-card">
 
-        <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"/>
+        <vuln-switch :project-name="vulnAccount" @vulnAccountSwitch="vulnAccountSwitch"/>
 
         <el-divider><i class="el-icon-tickets"></i></el-divider>
 
@@ -325,7 +325,7 @@ import MetricChart from "./MetricChart";
 import {_filter, _sort, getVulnID} from "@/common/js/utils";
 import {VULN_ID} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver.js";
-import AccountChange from "@/business/components/common/head/VulnSwitch";
+import VulnSwitch from "@/business/components/common/head/VulnSwitch";
 
 /* eslint-disable */
   export default {
@@ -339,7 +339,7 @@ import AccountChange from "@/business/components/common/head/VulnSwitch";
       DialogFooter,
       CenterChart,
       MetricChart,
-      AccountChange,
+      VulnSwitch,
     },
     data() {
       return {
@@ -353,7 +353,7 @@ import AccountChange from "@/business/components/common/head/VulnSwitch";
         loading: false,
         ruleForm: {parameter:[]},
         tags: [],
-        currentAccount: '',
+        vulnAccount: '',
         plugins: [],
         severityOptions: [],
         ruleSetOptions: [],
@@ -408,7 +408,7 @@ import AccountChange from "@/business/components/common/head/VulnSwitch";
           this.selectIds.add(s.id)
         });
       },
-      cloudAccountSwitch(accountId) {
+      vulnAccountSwitch(accountId) {
         this.accountId = accountId;
         this.search();
       },

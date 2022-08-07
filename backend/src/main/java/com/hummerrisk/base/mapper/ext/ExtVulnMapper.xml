@@ -428,6 +428,32 @@
           AND p.type = 'vuln'
     </select>
 
+    <select id="countList" resultType="com.hummerrisk.commons.utils.ChartData">
+        SELECT
+        IFNULL( t.return_sum, 0 ) AS yAxis,
+        IFNULL( t.resources_sum, 0 ) AS yAxis2,
+        t.task_name AS groupName,
+        t.id AS xAxis
+        FROM
+        cloud_task t
+        LEFT JOIN plugin p on t.plugin_id = p.id
+        <where>
+            <if test="accountId != null">
+                AND t.account_id = #{accountId}
+                AND p.type = 'vuln'
+            </if>
+        </where>
+        GROUP BY
+        t.id
+        HAVING
+        yAxis != 0
+        ORDER BY
+        yAxis desc
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
     <select id="history" resultType="com.hummerrisk.dto.HistoryScanDTO">
         SELECT
             t.id,

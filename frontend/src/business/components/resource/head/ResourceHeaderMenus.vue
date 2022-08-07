@@ -7,10 +7,6 @@
             {{ $t("resource.cloud_resource_result") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/resource/statistics'">
-            {{ $t("resource.cloud_statistics") }}
-          </el-menu-item>
-
           <el-menu-item :index="'/resource/vulnResult'">
             {{ $t("vuln.vuln_result") }}
           </el-menu-item>

@@ -49,7 +49,7 @@
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_repo_name')"/>
         </el-form-item>
         <el-form-item :label="$t('image.image_repo_url')" ref="repo" prop="repo">
-          <el-input v-model="form.repo" autocomplete="off" :placeholder="$t('image.image_repo_url')"/>
+          <el-input v-model="form.repo" autocomplete="off" :placeholder="$t('image.image_repo_url_desc')"/>
         </el-form-item>
         <el-form-item :label="$t('image.image_repo_user_name')" ref="userName" prop="userName">
           <el-input v-model="form.userName" autocomplete="off" :placeholder="$t('image.image_repo_user_name')"/>
@@ -74,7 +74,7 @@
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_repo_name')"/>
         </el-form-item>
         <el-form-item :label="$t('image.image_repo_url')" ref="repo" prop="repo">
-          <el-input v-model="form.repo" autocomplete="off" :placeholder="$t('image.image_repo_url')"/>
+          <el-input v-model="form.repo" autocomplete="off" :placeholder="$t('image.image_repo_url_desc')"/>
         </el-form-item>
         <el-form-item :label="$t('image.image_repo_user_name')" ref="userName" prop="userName">
           <el-input v-model="form.userName" autocomplete="off" :placeholder="$t('image.image_repo_user_name')"/>

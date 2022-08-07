@@ -8,11 +8,6 @@ export default {
   },
   children: [
     {
-      path: "statistics",
-      name: "resourceStatistics",
-      component: () => import(/* webpackChunkName: "api" */ "@/business/components/resource/home/Statistics"),
-    },
-    {
       path: "result",
       name: "cloudResourceResult",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/resource/home/Result"),

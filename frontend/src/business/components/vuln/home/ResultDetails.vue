@@ -182,9 +182,16 @@ import {_filter, _sort} from "@/common/js/utils";
         }
       },
       back () {
-        this.$router.push({
-          path: '/vuln/result',
-        }).catch(error => error);
+        let path = this.$route.path;
+        if (path.indexOf("/vuln") >= 0) {
+          this.$router.push({
+            path: '/vuln/result',
+          }).catch(error => error);
+        } else if (path.indexOf("/resource") >= 0) {
+          this.$router.push({
+            path: '/resource/vulnResult',
+          }).catch(error => error);
+        }
       },
       goRule (ruleId) {
         this.$router.push({

@@ -148,9 +148,16 @@ import RuleType from "@/business/components/image/home/RuleType";
         this.search();
       },
       back () {
-        this.$router.push({
-          path: '/image/result',
-        }).catch(error => error);
+        let path = this.$route.path;
+        if (path.indexOf("/image") >= 0) {
+          this.$router.push({
+            path: '/image/result',
+          }).catch(error => error);
+        } else if (path.indexOf("/resource") >= 0) {
+          this.$router.push({
+            path: '/resource/imageResult',
+          }).catch(error => error);
+        }
       },
     },
     computed: {

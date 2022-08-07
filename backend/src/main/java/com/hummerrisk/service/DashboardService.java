@@ -72,6 +72,8 @@ public class DashboardService {
                 return extVulnMapper.vulnRuleGroup(params);
             case "regionsList":
                 return extVulnMapper.regionsList(params);
+            case "countList":
+                return extVulnMapper.countList(params);
             default:
                 return new LinkedList<>();
         }

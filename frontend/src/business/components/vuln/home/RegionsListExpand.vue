@@ -3,27 +3,7 @@
     <template v-slot:header>
       <el-row>
         <el-col :span="20">
-          <span class="title">{{ $t('account.regions') }}</span>
-        </el-col>
-        <el-col :span="4">
-          <span class="title-account">{{ data }}</span>
-          <el-divider direction="vertical"></el-divider>
-          <el-dropdown @command="handleCommand" style="max-height: 20px;">
-            <span class="el-dropdown-link">
-              {{ $t('account.cloud_account_list') }}<i class="el-icon-arrow-down el-icon--right"></i>
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item
-                v-for="item in accounts"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-                :command="item">
-                {{ item.name }}
-              </el-dropdown-item>
-              <el-dropdown-item divided :command="{id: 'all', name: $t('rule.all')}">{{ $t('rule.all') }}</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+          <span class="title">{{ $t('vuln.regions_statistics') }}</span>
         </el-col>
       </el-row>
     </template>
@@ -32,7 +12,7 @@
 </template>
 
 <script>
-import RegionsExpandChart from "@/business/components/common/chart/RegionsExpandChart";
+import RegionsExpandChart from "../head/RegionsExpandChart";
 /* eslint-disable */
   export default {
     name: "RegionsListExpand",
