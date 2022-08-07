@@ -1,3 +1,4 @@
+
 CREATE TABLE IF NOT EXISTS `task` (
     `id`                            varchar(50)           NOT NULL COMMENT '任务ID',
     `status`                        varchar(20)           DEFAULT NULL COMMENT '状态',
