@@ -57,4 +57,8 @@ public interface ExtVulnMapper {
 
     List<Map<String, Object>> resourceList(Map<String, Object> params);
 
+    List<Map<String, Object>> historyList(Map<String, Object> params);
+
+    List<Map<String, Object>> historyDiffList(Map<String, Object> params);
+
 }

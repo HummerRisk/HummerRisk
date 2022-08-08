@@ -114,6 +114,7 @@ export default {
     opt_success: '操作成功',
     please_input: '请输入',
     detail: '详情',
+    diff: '历史数据对比',
     date: {
       select_date: '选择日期',
       start_date: '开始日期',

@@ -698,4 +698,70 @@
         ORDER BY t.create_time DESC
     </select>
 
+    <select id="historyList" resultType="java.util.Map">
+        SELECT
+        t5.resource_name as resourceName,
+        t5.resource_status as resourceStatus,
+        t5.resource_type as resourceType,
+        t5.return_sum as returnSum,
+        t5.resources_sum as resourcesSum,
+        t5.plugin_name as pluginName,
+        t5.plugin_icon as pluginIcon,
+        t5.region_name as regionName,
+        t5.severity as severity,
+        t5.update_time as updateTime,
+        t5.return_html as returnHtml,
+        t5.resources as resources,
+        t5.id as id
+        FROM history_scan t
+        JOIN history_scan_task t1 ON t.id = t1.scan_id
+        JOIN cloud_task t2 ON t1.task_id = t2.id
+        JOIN cloud_task_item t3 ON t3.task_id = t2.id
+        JOIN cloud_task_item_resource t4 ON t3.id = t4.task_item_id
+        JOIN resource t5 ON t4.resource_id = t5.id
+        JOIN plugin p on t2.plugin_id = p.id
+        <where>
+            <if test="id != null">
+                AND t.id = #{id}
+            </if>
+            AND p.type = 'vuln'
+        </where>
+        ORDER BY t5.create_time DESC
+    </select>
+
+    <select id="historyDiffList" resultType="java.util.Map">
+        SELECT
+        t5.resource_name as resourceName,
+        t5.resource_status as resourceStatus,
+        t5.resource_type as resourceType,
+        t5.return_sum as returnSum,
+        t5.resources_sum as resourcesSum,
+        t5.plugin_name as pluginName,
+        t5.plugin_icon as pluginIcon,
+        t5.region_name as regionName,
+        t5.severity as severity,
+        t5.update_time as updateTime,
+        t5.return_html as returnHtml,
+        t5.resources as resources,
+        t5.id as id
+        FROM resource t5
+        JOIN plugin p on t5.plugin_id = p.id
+        <where>
+            <if test="resourceName != null">
+                AND t5.resource_name = #{resourceName}
+            </if>
+            <if test="resourceStatus != null">
+                AND t5.resource_status = #{resourceStatus}
+            </if>
+            <if test="resourceType != null">
+                AND t5.resource_type = #{resourceType}
+            </if>
+            <if test="pluginName != null">
+                AND t5.plugin_name = #{pluginName}
+            </if>
+            AND p.type = 'vuln'
+        </where>
+        ORDER BY t5.create_time DESC
+    </select>
+
 </mapper>

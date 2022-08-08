@@ -40,80 +40,145 @@
 
       </el-card>
 
-      <!--History output-->
-      <el-drawer class="rtl" :title="$t('vuln.history')" :visible.sync="visible" size="60%" :before-close="handleClose" :direction="direction"
+      <!--History output list-->
+      <el-drawer class="rtl" :title="$t('vuln.history')" :visible.sync="visibleList" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <el-form label-position="right">
-          <el-form-item style="margin: 1%;">
-            <codemirror ref="cmEditor" v-model="script" class="code-mirror" :options="cmOptions" />
-          </el-form-item>
-        </el-form>
-        <dialog-footer
-          @cancel="visible = false"
-          @confirm="handleClose"/>
-      </el-drawer>
-      <!--History output-->
-
-      <!--History result-->
-      <el-drawer class="rtl" :title="$t('vuln.history')" :visible.sync="diffVisible" size="85%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
-        <el-table border :data="historys" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName" style="margin: 2%;">
-          <el-table-column type="index" min-width="5%"/>
-          <el-table-column :label="$t('vuln.vuln_setting')" min-width="20%" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <el-row type="primary">
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                {{ scope.row.accountName }}
-              </el-row>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('history.scan_score')" min-width="15%" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              {{ scope.row.scanScore }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('history.resource_result')" min-width="15%" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <span> {{ scope.row.returnSum?scope.row.returnSum:0 }}/{{ scope.row.resourcesSum?scope.row.resourcesSum:0 }}</span>
-              <span> &nbsp;&nbsp;<i :class="scope.row.assets" ></i></span>
-            </template>
-          </el-table-column>
-          <el-table-column min-width="20%" :label="$t('history.create_time')" sortable
-                           prop="createTime">
-            <template v-slot:default="scope">
-              <span><i class="el-icon-time"></i> {{ scope.row.createTime | timestampFormatDayDate }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('resource.resource_result')" min-width="20%" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <el-link type="primary" @click="innerDrawerComparison(scope.row)">
-                {{ $t('dashboard.online_comparison') }} <i class="el-icon-s-data"></i>
-              </el-link>
-            </template>
-          </el-table-column>
-        </el-table>
-        <table-pagination :change="historyList" :current-page.sync="historyPage" :page-size.sync="historyPageSize" :total="historyTotal"/>
-        <el-drawer
-          size="80%"
-          :title="$t('dashboard.online_comparison')"
-          :append-to-body="true"
-          :before-close="innerDrawerClose"
-          :visible.sync="innerDrawer">
-          <el-form>
-            <code-diff
-              :old-string="oldStr"
-              :new-string="newStr"
-              outputFormat="side-by-side"
-              :isShowNoChange="true"
-              :drawFileList="true"
-              :context="10"/>
+        <div>
+          <el-table border :data="outputListData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
+            <el-table-column type="index" min-width="2%"/>
+            <el-table-column prop="name" :label="$t('vuln.name')" min-width="15%" show-overflow-tooltip>
+              <template v-slot:default="scope">
+                <span>
+                  <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                   &nbsp;&nbsp; {{ $t(scope.row.resourceName) }}
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="15%" :sort-by="['HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
+              <span v-if="scope.row.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
+              <span v-else-if="scope.row.severity == 'MediumRisk'" style="color: #fe9636;"> {{ $t('rule.MediumRisk') }}</span>
+              <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
+              <span v-else> N/A</span>
+            </el-table-column>
+            <el-table-column :label="$t('resource.status')" min-width="15%" prop="resourceStatus" show-overflow-tooltip>
+            </el-table-column>
+            <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="10%">
+              <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
+                <span v-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
+                <span v-if="(scope.row.returnSum != null) && (scope.row.returnSum == 0)">
+                  {{ scope.row.returnSum }}/{{ scope.row.resourcesSum }}
+                </span>
+                <span v-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)">
+                  {{ scope.row.returnSum }}/{{ scope.row.resourcesSum }}
+                </span>
+              </el-tooltip>
+            </el-table-column>
+            <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" sortable show-overflow-tooltip min-width="10%">
+              <span v-if="scope.row.returnSum == 0" style="color: #46ad59;">{{ $t('resource.i18n_compliance_true') }}</span>
+              <span v-else-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)" style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
+              <span v-else-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
+            </el-table-column>
+            <el-table-column prop="createTime" min-width="15%" :label="$t('account.create_time')" sortable show-overflow-tooltip>
+              <template v-slot:default="scope">
+                <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column min-width="17%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
+              <template v-slot:default="scope">
+                <table-operators :buttons="listButtons" :row="scope.row"/>
+              </template>
+            </el-table-column>
+          </el-table>
+          <table-pagination :change="search" :current-page.sync="outputListPage" :page-size.sync="outputListPageSize" :total="outputListTotal"/>
+        </div>
+        <!--History output-->
+        <el-drawer class="rtl"
+                   :title="$t('vuln.history')"
+                   :visible.sync="visible"
+                   size="60%"
+                   :append-to-body="true"
+                   :before-close="innerDrawerClose">
+          <el-form label-position="right">
+            <el-form-item style="margin: 1%;">
+              <codemirror ref="cmEditor" v-model="script" class="code-mirror" :options="cmOptions" />
+            </el-form-item>
           </el-form>
         </el-drawer>
+        <!--History output-->
+        <!--History result-->
+        <el-drawer class="rtl"
+                   :title="$t('vuln.history')"
+                   :visible.sync="diffVisible"
+                   size="80%"
+                   :append-to-body="true"
+                   :before-close="innerDrawerClose">
+          <el-table border :data="outputListData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
+            <el-table-column type="index" min-width="2%"/>
+            <el-table-column prop="name" :label="$t('vuln.name')" min-width="15%" show-overflow-tooltip>
+              <template v-slot:default="scope">
+                <span>
+                  <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                   &nbsp;&nbsp; {{ $t(scope.row.resourceName) }}
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="15%" :sort-by="['HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
+              <span v-if="scope.row.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
+              <span v-else-if="scope.row.severity == 'MediumRisk'" style="color: #fe9636;"> {{ $t('rule.MediumRisk') }}</span>
+              <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
+              <span v-else> N/A</span>
+            </el-table-column>
+            <el-table-column :label="$t('resource.status')" min-width="15%" prop="resourceStatus" show-overflow-tooltip>
+            </el-table-column>
+            <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="10%">
+              <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
+                <span v-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
+                <span v-if="(scope.row.returnSum != null) && (scope.row.returnSum == 0)">
+                  {{ scope.row.returnSum }}/{{ scope.row.resourcesSum }}
+                </span>
+                <span v-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)">
+                  {{ scope.row.returnSum }}/{{ scope.row.resourcesSum }}
+                </span>
+              </el-tooltip>
+            </el-table-column>
+            <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" sortable show-overflow-tooltip min-width="10%">
+              <span v-if="scope.row.returnSum == 0" style="color: #46ad59;">{{ $t('resource.i18n_compliance_true') }}</span>
+              <span v-else-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)" style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
+              <span v-else-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
+            </el-table-column>
+            <el-table-column prop="createTime" min-width="15%" :label="$t('account.create_time')" sortable show-overflow-tooltip>
+              <template v-slot:default="scope">
+                <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column min-width="17%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
+              <template v-slot:default="scope">
+                <table-operators :buttons="diffButtons" :row="scope.row"/>
+              </template>
+            </el-table-column>
+          </el-table>
+          <table-pagination :change="codeDiffList" :current-page.sync="historyPage" :page-size.sync="historyPageSize" :total="historyTotal"/>
+        </el-drawer>
+        <!--History result-->
         <dialog-footer
-          @cancel="diffVisible = false"
+          @cancel="visibleList = false"
           @confirm="handleClose"/>
       </el-drawer>
-      <!--History result-->
+      <!--History output list-->
+
+      <!--History Compared-->
+      <el-dialog :title="$t('dashboard.online_comparison')" width="80%" :visible.sync="innerDrawer" :close-on-click-modal="false">
+        <el-form>
+          <code-diff
+            :old-string="oldStr"
+            :new-string="newStr"
+            outputFormat="side-by-side"
+            :isShowNoChange="true"
+            :drawFileList="true"
+            :context="10"/>
+        </el-form>
+      </el-dialog>
+      <!--History Compared-->
 
     </el-col>
   </el-row>
@@ -201,6 +266,7 @@ import CodeDiff from 'vue-code-diff';
           indentWithTabs: true,
         },
         visible: false,
+        visibleList: false,
         diffVisible: false,
         radio: '',
         historys: [],
@@ -215,11 +281,27 @@ import CodeDiff from 'vue-code-diff';
           {
             tip: this.$t('resource.resource_result'), icon: "el-icon-s-data", type: "success",
             exec: this.handleOpen
+          }
+        ],
+        listButtons: [
+          {
+            tip: this.$t('resource.resource_result'), icon: "el-icon-data-board", type: "success",
+            exec: this.handleOpenJson
           }, {
-            tip: this.$t('commons.edit'), icon: "el-icon-document-copy", type: "primary",
+            tip: this.$t('vuln.history'), icon: "el-icon-guide", type: "primary",
+            exec: this.codeDiffListOpen
+          }
+        ],
+        diffButtons: [
+         {
+            tip: this.$t('commons.diff'), icon: "el-icon-sort", type: "primary",
             exec: this.codeDiffOpen
           }
         ],
+        outputListData: [],
+        outputListPage: 1,
+        outputListPageSize: 10,
+        outputListTotal: 0,
       }
     },
     computed: {
@@ -279,36 +361,44 @@ import CodeDiff from 'vue-code-diff';
         this.$emit('edit', row);
       },
       handleOpen(item) {
+        this.$post("/vuln/historyList/" + this.outputListPage + "/" + this.outputListPageSize, item, response => {
+          let data = response.data;
+          this.outputListTotal = data.itemCount;
+          this.outputListData = data.listObject;
+          this.visibleList =  true;
+        });
+      },
+      handleOpenJson(item) {
+        this.script = item.resources;
         this.visible =  true;
-        this.$post("/resource/string2PrettyFormat", {json: item.output?item.output:"[]"}, res => {
-          this.script = res.data;
-        });
       },
-      codeDiffOpen(item) {
-        this.condition.accountId = item.accountId;
-        this.historyList();
-        this.diffVisible =  true;
-        this.$post("/resource/string2PrettyFormat", {json: item.output?item.output:"[]"}, res => {
-          this.oldStr = res.data;
-        });
-      },
-      handleClose() {
-        this.visible =  false;
-        this.diffVisible =  false;
-      },
-      historyList() {
-        let url = "/dashboard/history/" + this.historyPage + "/" + this.historyPageSize;
-        this.result = this.$post(url, this.condition, response => {
+      codeDiffList(item) {
+        let url = "/vuln/historyDiffList/" + this.historyPage + "/" + this.historyPageSize;
+        this.result = this.$post(url, item, response => {
           let data = response.data;
           this.historyTotal = data.itemCount;
           this.historys = data.listObject;
         });
       },
+      codeDiffListOpen(item) {
+        this.oldStr = item.resources;
+        this.codeDiffList(item);
+        this.diffVisible = true;
+      },
+      codeDiffOpen(item) {
+        this.innerDrawerComparison(item);
+      },
+      handleClose() {
+        this.visibleList = false;
+        this.diffVisible =  false;
+      },
       innerDrawerClose() {
+        this.visible = false;
+        this.diffVisible = false;
         this.innerDrawer = false;
       },
       innerDrawerComparison(item) {
-        this.newStr = item.output?item.output:"[]";
+        this.newStr = item.resources?item.resources:"[]";
         this.innerDrawer = true;
       },
     },
@@ -319,15 +409,19 @@ import CodeDiff from 'vue-code-diff';
 </script>
 
 <style scoped>
-/deep/  .code-mirror {
-    height: 600px !important;
+.code-mirror {
+    height: 800px !important;
   }
-/deep/ .code-mirror >>> .CodeMirror {
+.code-mirror >>> .CodeMirror {
     /* Set height, width, borders, and global font properties here */
-    height: 600px !important;
+    height: 800px !important;
   }
-/deep/ .el-drawer__header {
+.el-drawer__header {
     margin-bottom: 0;
   }
-/deep/ :focus{outline:0;}
+:focus{outline:0;}
+.rtl >>> .el-drawer__body {
+  overflow-y: auto;
+  padding: 20px;
+}
 </style>

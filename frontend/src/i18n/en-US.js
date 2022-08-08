@@ -114,6 +114,7 @@ export default {
     opt_success:'Operation successful',
     please_input:'Please input',
     detail:'Details',
+    diff: 'Historical data comparison',
     date: {
       select_date:'Select date',
       start_date:'Start date',

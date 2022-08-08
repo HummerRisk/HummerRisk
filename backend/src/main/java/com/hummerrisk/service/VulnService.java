@@ -1,5 +1,8 @@
 package com.hummerrisk.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.hummerrisk.base.domain.CloudTaskExample;
 import com.hummerrisk.base.mapper.CloudTaskMapper;
 import com.hummerrisk.base.mapper.ext.ExtAccountMapper;
@@ -12,6 +15,7 @@ import com.hummerrisk.controller.request.account.CloudAccountRequest;
 import com.hummerrisk.controller.request.rule.CreateRuleRequest;
 import com.hummerrisk.dto.AccountDTO;
 import com.hummerrisk.dto.CloudTaskDTO;
+import com.hummerrisk.dto.ImageResultWithBLOBsDTO;
 import com.hummerrisk.dto.RuleDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -20,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+
+import static com.alibaba.fastjson.JSON.parseArray;
 
 /**
  * @author harris
@@ -32,8 +38,6 @@ public class VulnService {
     private ExtAccountMapper extAccountMapper;
     @Resource
     private ExtRuleMapper extRuleMapper;
-    @Resource
-    private CloudTaskMapper cloudTaskMapper;
     @Resource
     private ExtCloudTaskMapper extCloudTaskMapper;
     @Resource
@@ -106,6 +110,32 @@ public class VulnService {
 
     public List<Map<String, Object>> resourceList(Map<String, Object> params) {
         return extVulnMapper.resourceList(params);
+    }
+
+    public List<Map<String, Object>> historyList(Map<String, Object> params) {
+        List<Map<String, Object>> list = extVulnMapper.historyList(params);
+        for (Map<String, Object> map : list) {
+            if(map.get("rsources") != null) {
+                map.put("rsources", toJSONString2(map.get("rsources").toString()));
+            }
+        }
+        return list;
+    }
+
+    public List<Map<String, Object>> historyDiffList(Map<String, Object> params) {
+        List<Map<String, Object>> list = extVulnMapper.historyDiffList(params);
+        for (Map<String, Object> map : list) {
+            if(map.get("rsources") != null) {
+                map.put("rsources", toJSONString2(map.get("rsources").toString()));
+            }
+        }
+        return list;
+    }
+
+    public String toJSONString2(String jsonString) {
+        JSONArray jsonArray = parseArray(jsonString);
+        return JSON.toJSONString(jsonArray, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue,
+                SerializerFeature.WriteDateUseDateFormat);
     }
 
 }
