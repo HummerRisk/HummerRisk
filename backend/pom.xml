@@ -14,7 +14,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <shiro.version>1.5.1</shiro.version>
+        <shiro.version>1.7.1</shiro.version>
         <java.version>1.8</java.version>
         <graalvm.version>20.1.0</graalvm.version>
         <knife4j.version>2.0.9</knife4j.version>
@@ -99,7 +99,7 @@
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>2.1.2</version>
+            <version>2.2.2</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -185,7 +185,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.72</version>
+            <version>1.2.83</version>
         </dependency>
 
         <dependency>
@@ -323,7 +323,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.10.3</version>
+            <version>1.14.2</version>
         </dependency>
 
         <dependency>
@@ -658,16 +658,17 @@
             <groupId>com.toastcoders</groupId>
             <artifactId>yavijava</artifactId>
             <version>6.0.05</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>log4j</artifactId>
+                    <groupId>log4j</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.vmware</groupId>
             <artifactId>vijava</artifactId>
             <version>5.1</version>
-        </dependency>
-        <dependency>
-            <groupId>dom4j</groupId>
-            <artifactId>dom4j</artifactId>
-            <version>1.6.1</version>
         </dependency>
         <!-- VMware -->
 
@@ -1005,7 +1006,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>3.15</version>
+            <version>3.17</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-collections4</artifactId>
@@ -1017,7 +1018,22 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>3.15</version>
+            <version>3.17</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>poi</artifactId>
+                    <groupId>org.apache.poi</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>xmlbeans</artifactId>
+                    <groupId>org.apache.xmlbeans</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+            <version>3.0.0</version>
         </dependency>
 
         <!-- 钉钉 -->
