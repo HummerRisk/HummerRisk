@@ -5,6 +5,8 @@ import com.hummerrisk.base.mapper.CloudTaskMapper;
 import com.hummerrisk.base.mapper.ext.ExtAccountMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudTaskMapper;
 import com.hummerrisk.base.mapper.ext.ExtRuleMapper;
+import com.hummerrisk.base.mapper.ext.ExtVulnMapper;
+import com.hummerrisk.commons.utils.DashboardTarget;
 import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.controller.request.account.CloudAccountRequest;
 import com.hummerrisk.controller.request.rule.CreateRuleRequest;
@@ -34,6 +36,8 @@ public class VulnService {
     private CloudTaskMapper cloudTaskMapper;
     @Resource
     private ExtCloudTaskMapper extCloudTaskMapper;
+    @Resource
+    private ExtVulnMapper extVulnMapper;
 
     public List<AccountDTO> getVulnList(CloudAccountRequest request) {
         return extAccountMapper.getVulnList(request);
@@ -83,4 +87,25 @@ public class VulnService {
         }
 
     }
+
+    public List<DashboardTarget> target(Map<String, Object> params) {
+        return extVulnMapper.vulnTarget(params);
+    }
+
+    public List<Map<String, Object>> groupList(Map<String, Object> params) {
+        return extVulnMapper.groupList(params);
+    }
+
+    public List<Map<String, Object>> reportList(Map<String, Object> params) {
+        return extVulnMapper.reportList(params);
+    }
+
+    public List<Map<String, Object>> tagList(Map<String, Object> params) {
+        return extVulnMapper.tagList(params);
+    }
+
+    public List<Map<String, Object>> resourceList(Map<String, Object> params) {
+        return extVulnMapper.resourceList(params);
+    }
+
 }

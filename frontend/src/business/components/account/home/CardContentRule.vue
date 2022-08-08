@@ -31,7 +31,7 @@
               <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
               <span v-else> N/A</span>
               <span> | ({{ scope.row.ruSum?scope.row.ruSum:0 }}/{{ scope.row.reSum?scope.row.reSum:0 }})</span>
-              <span> &nbsp;&nbsp;<i :class="scope.row.assets" ></i></span>
+              <span> &nbsp;&nbsp;<i :class="scope.row.assets"></i></span>
             </template>
           </el-table-column>
         </el-table>
@@ -197,7 +197,7 @@
       <!-- 检测资源 end-->
     </el-tabs>
     <!--View rule-->
-    <el-drawer class="rtl" :title="$t('rule.rule_detail')" :visible.sync="ruleVisible" size="70%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('rule.rule_detail')" :visible.sync="ruleVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-form :model="ruleForm" label-position="right" label-width="120px" size="small" ref="ruleForm">
         <el-form-item :label="$t('rule.rule_name')">
@@ -495,7 +495,7 @@ import DialogFooter from "../../common/components/DialogFooter";
             return item.value;
           }
         }
-        return "cloud_done";
+        return "el-icon-s-platform";
       },
       severityOptionsFnc () {
         this.severityOptions = [

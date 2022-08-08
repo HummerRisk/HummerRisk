@@ -218,10 +218,12 @@
             LEFT JOIN rule t2 ON t1.rule_id = t2.id
             LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
             LEFT JOIN resource t4 ON t3.resource_id = t4.id
+            LEFT JOIN plugin p on t2.plugin_id = p.id
         <where>
             <if test="accountId != null">
                 AND t4.account_id = #{accountId}
             </if>
+            and p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
         </where>
         GROUP BY
             t.id
@@ -242,7 +244,9 @@
             JOIN resource_rule t3 ON t2.id = t3.rule_id
             JOIN resource t4 ON t3.resource_id = t4.id
             JOIN resource_item t5 ON t4.id = t5.resource_id
+            LEFT JOIN plugin p on t2.plugin_id = p.id
             WHERE t1.report_id = t.id
+            AND p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
             <if test="accountId != null">
                 AND t4.account_id = #{accountId}
             </if>
@@ -254,10 +258,12 @@
             LEFT JOIN rule t2 ON t1.rule_id = t2.id
             LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
             LEFT JOIN resource t4 ON t3.resource_id = t4.id
+            LEFT JOIN plugin p on t2.plugin_id = p.id
         <where>
             <if test="accountId != null">
                 AND t4.account_id = #{accountId}
             </if>
+            AND p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
         </where>
         GROUP BY
             t.id
@@ -279,10 +285,12 @@
             LEFT JOIN rule t2 ON t1.rule_id = t2.id
             LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
             LEFT JOIN resource t4 ON t3.resource_id = t4.id
+            LEFT JOIN plugin p on t2.plugin_id = p.id
         <where>
             <if test="accountId != null">
                 AND t4.account_id = #{accountId}
             </if>
+            AND p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
         </where>
         GROUP BY
             t.tag_key
@@ -303,10 +311,12 @@
             LEFT JOIN cloud_task_item t1 ON t.id = t1.task_id
             LEFT JOIN cloud_task_item_resource t2 ON t1.id = t2.task_item_id
             LEFT JOIN resource t3 ON t3.id = t2.resource_id
+            LEFT JOIN plugin p on t.plugin_id = p.id
         <where>
             <if test="accountId != null">
                 AND t1.account_id = #{accountId}
             </if>
+            AND p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
         </where>
         GROUP BY
             t1.region_id, t1.region_name, t1.account_label, t1.account_url
@@ -330,11 +340,13 @@
             LEFT JOIN cloud_task_item_resource t2 ON t1.id = t2.resource_id
             LEFT JOIN cloud_task_item t3 ON t3.id = t2.task_item_id
             LEFT JOIN cloud_task t4 ON t3.task_id = t4.id
+            LEFT JOIN plugin p on t1.plugin_id = p.id
         <where>
             <if test="accountId != null">
                 AND t.account_id = #{accountId}
             </if>
             AND t4.task_name IS NOT NULL
+            AND p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
         </where>
         ORDER BY t.create_time DESC
     </select>

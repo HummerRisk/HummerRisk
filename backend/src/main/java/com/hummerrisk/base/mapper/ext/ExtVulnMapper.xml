@@ -57,6 +57,68 @@
         LEFT JOIN cloud_account t4 ON t.plugin_id = t4.plugin_id
         LEFT JOIN plugin p on t.plugin_id = p.id
         <where>
+            AND t4.`status` = 'VALID'
+            <if test="severity != null">
+                AND t.severity = #{severity}
+            </if>
+            <if test="tagKey != null">
+                AND t2.tag_key = #{tagKey}
+            </if>
+            <if test="accountId != null">
+                AND t4.id = #{accountId}
+            </if>
+            and p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
+        </where>
+        ORDER BY CONVERT(ratio, signed), ruSum desc
+    </select>
+
+    <select id="vulnTarget" parameterType="java.util.Map" resultMap="TargetMap">
+        SELECT
+        t.*,
+        t3.tag_name AS tagName,
+        IFNULL((
+        SELECT
+        sum( t1.return_sum )
+        FROM
+        resource t1
+        LEFT JOIN resource_rule t2 ON t1.id = t2.resource_id
+        WHERE
+        t2.rule_id = t.id
+        ), 0) as ruSum,
+        IFNULL((
+        SELECT
+        sum( t1.resources_sum )
+        FROM
+        resource t1
+        LEFT JOIN resource_rule t2 ON t1.id = t2.resource_id
+        WHERE
+        t2.rule_id = t.id
+        ), 0) as reSum,
+        IFNULL(concat(truncate('100%'-
+        IFNULL(
+        (SELECT
+        sum( t1.return_sum )
+        FROM
+        resource t1
+        LEFT JOIN resource_rule t2 ON t1.id = t2.resource_id
+        WHERE
+        t2.rule_id = t.id
+        ), 0) / IFNULL((
+        SELECT
+        sum( t1.resources_sum )
+        FROM
+        resource t1
+        LEFT JOIN resource_rule t2 ON t1.id = t2.resource_id
+        WHERE
+        t2.rule_id = t.id
+        ), 1)
+        *100, 2),'%'), '100.00%') AS ratio
+        FROM rule t
+        LEFT JOIN rule_tag_mapping t2 ON t.id = t2.rule_id
+        LEFT JOIN rule_tag t3 ON t2.tag_key = t3.tag_key
+        LEFT JOIN cloud_account t4 ON t.plugin_id = t4.plugin_id
+        LEFT JOIN plugin p on t.plugin_id = p.id
+        <where>
             t.id in (select rule_id from resource_rule)
             AND t4.`status` = 'VALID'
             <if test="severity != null">
@@ -68,8 +130,7 @@
             <if test="accountId != null">
                 AND t4.id = #{accountId}
             </if>
-            AND (SELECT SUM( t1.return_sum ) FROM resource t1 LEFT JOIN resource_rule t2 ON t1.id = t2.resource_id WHERE t2.rule_id = t.id) != 0
-            and p.type = 'cloud'
+            and p.type = 'vuln'
         </where>
         ORDER BY CONVERT(ratio, signed), ruSum desc
     </select>
@@ -514,6 +575,127 @@
         </where>
         ORDER BY
         t.create_time DESC
+    </select>
+
+    <select id="groupList" resultType="java.util.Map">
+        SELECT
+        IFNULL( sum( t4.return_sum ), 0 ) AS returnSum,
+        IFNULL( sum( t4.resources_sum ), 0 ) AS resourcesSum,
+        t.name,
+        t.description
+        FROM
+        rule_group t
+        LEFT JOIN rule_group_mapping t1 ON t.id = t1.group_id
+        LEFT JOIN rule t2 ON t1.rule_id = t2.id
+        LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
+        LEFT JOIN resource t4 ON t3.resource_id = t4.id
+        LEFT JOIN plugin p on t2.plugin_id = p.id
+        <where>
+            <if test="accountId != null">
+                AND t4.account_id = #{accountId}
+            </if>
+            and p.type = 'vuln'
+        </where>
+        GROUP BY
+        t.id
+        ORDER BY
+        returnSum desc
+    </select>
+
+    <select id="reportList" resultType="java.util.Map">
+        SELECT
+        t.*,
+        IFNULL( sum( t4.return_sum ), 0 ) AS returnSum,
+        IFNULL( sum( t4.resources_sum ), 0 ) AS resourcesSum,
+        CASE
+        WHEN
+        (
+        SELECT count(t5.id) FROM rule_inspection_report_mapping t1
+        JOIN rule t2 ON t1.rule_id = t2.id
+        JOIN resource_rule t3 ON t2.id = t3.rule_id
+        JOIN resource t4 ON t3.resource_id = t4.id
+        JOIN resource_item t5 ON t4.id = t5.resource_id
+        JOIN plugin p on t2.plugin_id = p.id
+        WHERE t1.report_id = t.id
+        AND p.type = 'vuln'
+        <if test="accountId != null">
+            AND t4.account_id = #{accountId}
+        </if>
+        ) > 0 THEN 'risky'
+        ELSE 'risk_free'
+        END AS status
+        FROM rule_inspection_report t
+        LEFT JOIN rule_inspection_report_mapping t1 ON t.id = t1.report_id
+        LEFT JOIN rule t2 ON t1.rule_id = t2.id
+        LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
+        LEFT JOIN resource t4 ON t3.resource_id = t4.id
+        LEFT JOIN plugin p on t2.plugin_id = p.id
+        <where>
+            <if test="accountId != null">
+                AND t4.account_id = #{accountId}
+            </if>
+            AND p.type = 'vuln'
+        </where>
+        GROUP BY
+        t.id
+        ORDER BY
+        returnSum DESC
+    </select>
+
+    <select id="tagList" resultType="java.util.Map">
+        SELECT
+        IFNULL( sum( t4.return_sum ), 0 ) AS returnSum,
+        IFNULL( sum( t4.resources_sum ), 0 ) AS resourcesSum,
+        t.tag_key as tagKey,
+        t.tag_name as tagName,
+        t._index as `index`,
+        t.flag
+        FROM
+        rule_tag t
+        LEFT JOIN rule_tag_mapping t1 ON t.tag_key = t1.tag_key
+        LEFT JOIN rule t2 ON t1.rule_id = t2.id
+        LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
+        LEFT JOIN resource t4 ON t3.resource_id = t4.id
+        LEFT JOIN plugin p on t2.plugin_id = p.id
+        <where>
+            <if test="accountId != null">
+                AND t4.account_id = #{accountId}
+            </if>
+            AND p.type = 'vuln'
+        </where>
+        GROUP BY
+        t.tag_key
+        ORDER BY
+        returnSum DESC
+    </select>
+
+    <select id="resourceList" resultType="java.util.Map">
+        SELECT
+        t4.task_name as taskName,
+        t4.type,
+        t4.id as taskId,
+        t4.apply_user as applyUser,
+        t1.resource_type as resourceType,
+        t.hummer_id as hummerId,
+        t.plugin_name as pluginName,
+        t.plugin_icon as pluginIcon,
+        t.region_name as regionName,
+        t.update_time as updateTime,
+        t.id
+        FROM resource_item t
+        LEFT JOIN resource t1 ON t1.id = t.resource_id
+        LEFT JOIN cloud_task_item_resource t2 ON t1.id = t2.resource_id
+        LEFT JOIN cloud_task_item t3 ON t3.id = t2.task_item_id
+        LEFT JOIN cloud_task t4 ON t3.task_id = t4.id
+        LEFT JOIN plugin p on t1.plugin_id = p.id
+        <where>
+            <if test="accountId != null">
+                AND t.account_id = #{accountId}
+            </if>
+            AND t4.task_name IS NOT NULL
+            AND p.type = 'vuln'
+        </where>
+        ORDER BY t.create_time DESC
     </select>
 
 </mapper>

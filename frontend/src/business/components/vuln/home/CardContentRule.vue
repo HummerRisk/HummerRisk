@@ -31,7 +31,7 @@
               <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
               <span v-else> N/A</span>
               <span> | ({{ scope.row.ruSum?scope.row.ruSum:0 }}/{{ scope.row.reSum?scope.row.reSum:0 }})</span>
-              <span> &nbsp;&nbsp;<i :class="scope.row.assets" ></i></span>
+              <span> &nbsp;&nbsp;<i class="el-icon-data-line"></i></span>
             </template>
           </el-table-column>
         </el-table>
@@ -132,44 +132,12 @@
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="tagTotal"/>
       </el-tab-pane>
       <!-- 规则标签 end-->
-      <!-- 检测区域 start-->
-      <el-tab-pane :label="$t('history.regions')">
-        <el-table border :data="regionsData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                  @filter-change="filter" @select-all="select" @select="select" >
-          <el-table-column type="index" min-width="20%"/>
-          <el-table-column :label="$t('account.region_name')" min-width="15%" show-overflow-tooltip>
-            <template v-slot:default="scope">
-                {{ scope.row.regionName }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('account.region_id')" min-width="15%" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              {{ scope.row.regionId }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('vuln.vuln_setting')" min-width="20%" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.accountUrl}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.accountName }}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="returnSum" :label="$t('history.resource_result')" min-width="30%" show-overflow-tooltip sortable>
-            <template v-slot:default="scope">
-              <span> {{ scope.row.returnSum?scope.row.returnSum:0 }}/{{ scope.row.resourcesSum?scope.row.resourcesSum:0 }}</span>
-            </template>
-          </el-table-column>
-        </el-table>
-        <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="regionsTotal"/>
-      </el-tab-pane>
-      <!-- 检测区域 end-->
       <!-- 检测资源 start-->
       <el-tab-pane :label="$t('history.scan_resources')">
         <el-table border :data="resourceData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                   @filter-change="filter" @select-all="select" @select="select" >
           <el-table-column type="index" min-width="5%"/>
-          <el-table-column v-slot:default="scope" :label="$t('resource.Hummer_ID')" min-width="20%">
+          <el-table-column v-slot:default="scope" :label="$t('resource.Hummer_ID')" min-width="30%">
             {{ scope.row.hummerId }}
           </el-table-column>
           <el-table-column v-slot:default="scope" :label="$t('rule.resource_type')" min-width="10%">
@@ -184,7 +152,6 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="regionName" :label="$t('account.region_name')" min-width="10%"/>
           <el-table-column min-width="20%" :label="$t('account.update_time')" sortable
                            prop="updateTime">
             <template v-slot:default="scope">
@@ -197,7 +164,7 @@
       <!-- 检测资源 end-->
     </el-tabs>
     <!--View rule-->
-    <el-drawer class="rtl" :title="$t('rule.rule_detail')" :visible.sync="ruleVisible" size="70%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('rule.rule_detail')" :visible.sync="ruleVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-form :model="ruleForm" label-position="right" label-width="120px" size="small" ref="ruleForm">
         <el-form-item :label="$t('rule.rule_name')">
@@ -294,37 +261,6 @@ import {_filter, _sort} from "@/common/js/utils";
 import TablePagination from "../../common/pagination/TablePagination";
 import DialogFooter from "../../common/components/DialogFooter";
 /* eslint-disable */
-  const assets = [
-    {key: "ec2", value: "el-icon-s-platform"},
-    {key: "ecs", value: "el-icon-s-platform"},
-    {key: "cvm", value: "el-icon-s-platform"},
-    {key: "ami", value: "el-icon-picture"},
-    {key: "s3", value: "el-icon-folder-opened"},
-    {key: "oss", value: "el-icon-folder-opened"},
-    {key: "obs", value: "el-icon-folder-opened"},
-    {key: "cos", value: "el-icon-folder-opened"},
-    {key: "security-group", value: "el-icon-lock"},
-    {key: "network-addr", value: "el-icon-connection"},
-    {key: "etc", value: "el-icon-s-platform"},
-    {key: "asg", value: "el-icon-s-operation"},
-    {key: "elb", value: "el-icon-s-operation"},
-    {key: "slb", value: "el-icon-s-operation"},
-    {key: "lambda", value: "el-icon-data-board"},
-    {key: "autoscaling", value: "el-icon-s-operation"},
-    {key: "account", value: "el-icon-s-custom"},
-    {key: "eip", value: "el-icon-s-grid"},
-    {key: "ip", value: "el-icon-s-grid"},
-    {key: "ebs", value: "el-icon-wallet"},
-    {key: "iam", value: "el-icon-s-tools"},
-    {key: "rds", value: "el-icon-s-finance"},
-    {key: "tag", value: "el-icon-s-flag"},
-    {key: "vpc", value: "el-icon-menu"},
-    {key: "vm", value: "el-icon-s-platform"},
-    {key: "networksecuritygroup", value: "el-icon-lock"},
-    {key: "disk", value: "el-icon-wallet"},
-    {key: "storage", value: "el-icon-wallet"},
-    {key: "others", value: "el-icon-s-unfold"},
-  ];
   export default {
     name: "CardContentRule",
     components: {
@@ -354,8 +290,6 @@ import DialogFooter from "../../common/components/DialogFooter";
         reportTotal: 0,
         tagData: [],
         tagTotal: 0,
-        regionsData: [],
-        regionsTotal: 0,
         resourceData: [],
         resourceTotal: 0,
         loading: false,
@@ -424,35 +358,27 @@ import DialogFooter from "../../common/components/DialogFooter";
         } else {
           this.condition.accountId = null;
         }
-        this.result = await this.$post("/dashboard/point/target/" + this.currentPage + "/" + this.pageSize, this.condition, response => {
+        this.result = await this.$post("/vuln/point/target/" + this.currentPage + "/" + this.pageSize, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;
-          for (let data of this.tableData) {
-            this.getAssets(data);
-          }
         });
-        this.result = await this.$post("/account/group/list/" + this.currentPage + "/" + this.pageSize, {accountId: this.selectNodeIds[0]}, response => {
+        this.result = await this.$post("/vuln/group/list/" + this.currentPage + "/" + this.pageSize, {accountId: this.selectNodeIds[0]}, response => {
           let data = response.data;
           this.groupTotal = data.itemCount;
           this.groupData = data.listObject;
         });
-        this.result = await this.$post("/account/report/list/" + this.currentPage + "/" + this.pageSize, {accountId: this.selectNodeIds[0]}, response => {
+        this.result = await this.$post("/vuln/report/list/" + this.currentPage + "/" + this.pageSize, {accountId: this.selectNodeIds[0]}, response => {
           let data = response.data;
           this.reportTotal = data.itemCount;
           this.reportData = data.listObject;
         });
-        this.result = await this.$post("/account/tag/list/" + this.currentPage + "/" + this.pageSize, {accountId: this.selectNodeIds[0]}, response => {
+        this.result = await this.$post("/vuln/tag/list/" + this.currentPage + "/" + this.pageSize, {accountId: this.selectNodeIds[0]}, response => {
           let data = response.data;
           this.tagTotal = data.itemCount;
           this.tagData = data.listObject;
         });
-        this.result = await this.$post("/account/regions/list/" + this.currentPage + "/" + this.pageSize, {accountId: this.selectNodeIds[0]}, response => {
-          let data = response.data;
-          this.regionsTotal = data.itemCount;
-          this.regionsData = data.listObject;
-        });
-        this.result = await this.$post("/account/resource/list/" + this.currentPage + "/" + this.pageSize, {accountId: this.selectNodeIds[0]}, response => {
+        this.result = await this.$post("/vuln/resource/list/" + this.currentPage + "/" + this.pageSize, {accountId: this.selectNodeIds[0]}, response => {
           let data = response.data;
           this.resourceTotal = data.itemCount;
           this.resourceData = data.listObject;
@@ -483,19 +409,6 @@ import DialogFooter from "../../common/components/DialogFooter";
         } else {
           return '';
         }
-      },
-      async getAssets (item) {
-        await this.$get("rule/getResourceTypesById/" + item.id, response => {
-          item.assets = this.checkoutAssets(response.data);
-        });
-      },
-      checkoutAssets (resource) {
-        for(let item of assets){
-          if (resource.indexOf(item.key) > -1) {
-            return item.value;
-          }
-        }
-        return "cloud_done";
       },
       severityOptionsFnc () {
         this.severityOptions = [

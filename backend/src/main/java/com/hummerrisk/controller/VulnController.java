@@ -2,6 +2,7 @@ package com.hummerrisk.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.hummerrisk.commons.utils.DashboardTarget;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
@@ -52,4 +53,45 @@ public class VulnController {
         param.put("type", "manual");
         return PageUtils.setPageInfo(page, vulnService.selectManualTasks(param));
     }
+
+    @I18n
+    @ApiOperation(value = "不合规统计")
+    @PostMapping("point/target/{goPage}/{pageSize}")
+    public Pager<List<DashboardTarget>> target(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, vulnService.target(params));
+    }
+
+    @I18n
+    @ApiOperation(value = "规则组列表")
+    @PostMapping("group/list/{goPage}/{pageSize}")
+    public Pager<List<Map<String, Object>>> groupList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, vulnService.groupList(params));
+    }
+
+    @I18n
+    @ApiOperation(value = "等保条例列表")
+    @PostMapping("report/list/{goPage}/{pageSize}")
+    public Pager<List<Map<String, Object>>> reportList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, vulnService.reportList(params));
+    }
+
+    @I18n
+    @ApiOperation(value = "规则标签列表")
+    @PostMapping("tag/list/{goPage}/{pageSize}")
+    public Pager<List<Map<String, Object>>> tagList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, vulnService.tagList(params));
+    }
+
+    @I18n
+    @ApiOperation(value = "资源列表")
+    @PostMapping("resource/list/{goPage}/{pageSize}")
+    public Pager<List<Map<String, Object>>> resourceList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, vulnService.resourceList(params));
+    }
+
 }
