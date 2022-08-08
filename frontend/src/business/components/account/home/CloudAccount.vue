@@ -766,10 +766,11 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
                   }
                 }
                 this.$success(this.$t('account.i18n_hr_create_success'));
+                this.scanVisible = false;
+                this.$router.push({
+                  path: '/account/result',
+                }).catch(error => error);
               });
-              this.$router.push({
-                path: '/account/result',
-              }).catch(error => error);
             }
           }
         });
