@@ -179,16 +179,16 @@
           <el-table-column :label="$t('vuln.vuln_setting')" min-width="10%" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.plugin_icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.plugin_name }}
+                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ scope.row.pluginName }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="region_name" :label="$t('account.region_name')" min-width="10%"/>
+          <el-table-column prop="regionName" :label="$t('account.region_name')" min-width="10%"/>
           <el-table-column min-width="20%" :label="$t('account.update_time')" sortable
-                           prop="update_time">
+                           prop="updateTime">
             <template v-slot:default="scope">
-              <span><i class="el-icon-time"></i> {{ scope.row.update_time | timestampFormatDate }}</span>
+              <span><i class="el-icon-time"></i> {{ scope.row.updateTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
         </el-table>
