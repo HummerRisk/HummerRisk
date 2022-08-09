@@ -89,7 +89,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <table-pagination :change="search" :current-page.sync="outputListPage" :page-size.sync="outputListPageSize" :total="outputListTotal"/>
+          <table-pagination :change="outputListDataSearch" :current-page.sync="outputListPage" :page-size.sync="outputListPageSize" :total="outputListTotal"/>
         </div>
         <!--History output-->
         <el-drawer class="rtl"
@@ -112,7 +112,7 @@
                    size="80%"
                    :append-to-body="true"
                    :before-close="innerDrawerClose">
-          <el-table border :data="outputListData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
+          <el-table border :data="historys" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
             <el-table-column type="index" min-width="2%"/>
             <el-table-column prop="name" :label="$t('vuln.name')" min-width="15%" show-overflow-tooltip>
               <template v-slot:default="scope">
@@ -157,7 +157,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <table-pagination :change="codeDiffList" :current-page.sync="historyPage" :page-size.sync="historyPageSize" :total="historyTotal"/>
+          <table-pagination :change="codeDiffListSearch" :current-page.sync="historyPage" :page-size.sync="historyPageSize" :total="historyTotal"/>
         </el-drawer>
         <!--History result-->
         <dialog-footer
@@ -302,6 +302,8 @@ import CodeDiff from 'vue-code-diff';
         outputListPage: 1,
         outputListPageSize: 10,
         outputListTotal: 0,
+        outputListSearchData: {},
+        codeDiffData: {},
       }
     },
     computed: {
@@ -361,20 +363,26 @@ import CodeDiff from 'vue-code-diff';
         this.$emit('edit', row);
       },
       handleOpen(item) {
-        this.$post("/vuln/historyList/" + this.outputListPage + "/" + this.outputListPageSize, item, response => {
+        this.outputListSearchData = item;
+        this.outputListDataSearch();
+        this.visibleList =  true;
+      },
+      async outputListDataSearch() {
+        let item = this.outputListSearchData;
+        await this.$post("/vuln/historyList/" + this.outputListPage + "/" + this.outputListPageSize, item, response => {
           let data = response.data;
           this.outputListTotal = data.itemCount;
           this.outputListData = data.listObject;
-          this.visibleList =  true;
         });
       },
       handleOpenJson(item) {
         this.script = item.resources;
         this.visible =  true;
       },
-      codeDiffList(item) {
+      async codeDiffListSearch() {
+        let item = this.codeDiffData;
         let url = "/vuln/historyDiffList/" + this.historyPage + "/" + this.historyPageSize;
-        this.result = this.$post(url, item, response => {
+        await this.$post(url, item, response => {
           let data = response.data;
           this.historyTotal = data.itemCount;
           this.historys = data.listObject;
@@ -382,7 +390,8 @@ import CodeDiff from 'vue-code-diff';
       },
       codeDiffListOpen(item) {
         this.oldStr = item.resources;
-        this.codeDiffList(item);
+        this.codeDiffData = item;
+        this.codeDiffListSearch();
         this.diffVisible = true;
       },
       codeDiffOpen(item) {

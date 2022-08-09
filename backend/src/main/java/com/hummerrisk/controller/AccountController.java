@@ -189,4 +189,20 @@ public class AccountController {
         return accountService.strategy(type);
     }
 
+    @I18n
+    @ApiOperation(value = "历史数据")
+    @PostMapping("historyList/{goPage}/{pageSize}")
+    public Pager<List<Map<String, Object>>> historyList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, accountService.historyList(params));
+    }
+
+    @I18n
+    @ApiOperation(value = "对比历史数据")
+    @PostMapping("historyDiffList/{goPage}/{pageSize}")
+    public Pager<List<Map<String, Object>>> historyDiffList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, accountService.historyDiffList(params));
+    }
+
 }

@@ -351,4 +351,24 @@ public class AccountService {
         }
     }
 
+    public List<Map<String, Object>> historyList(Map<String, Object> params) {
+        List<Map<String, Object>> list = extAccountMapper.historyList(params);
+        for (Map<String, Object> map : list) {
+            if(map.get("rsources") != null) {
+                map.put("rsources", toJSONString2(map.get("rsources").toString()));
+            }
+        }
+        return list;
+    }
+
+    public List<Map<String, Object>> historyDiffList(Map<String, Object> params) {
+        List<Map<String, Object>> list = extAccountMapper.historyDiffList(params);
+        for (Map<String, Object> map : list) {
+            if(map.get("rsources") != null) {
+                map.put("rsources", toJSONString2(map.get("rsources").toString()));
+            }
+        }
+        return list;
+    }
+
 }

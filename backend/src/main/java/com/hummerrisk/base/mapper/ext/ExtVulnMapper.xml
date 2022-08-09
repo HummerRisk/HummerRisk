@@ -750,9 +750,6 @@
             <if test="resourceName != null">
                 AND t5.resource_name = #{resourceName}
             </if>
-            <if test="resourceStatus != null">
-                AND t5.resource_status = #{resourceStatus}
-            </if>
             <if test="resourceType != null">
                 AND t5.resource_type = #{resourceType}
             </if>
