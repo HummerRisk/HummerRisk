@@ -5,6 +5,8 @@ export const ACCOUNT_ID = "account_id";
 export const ACCOUNT_NAME = "account_name";
 export const VULN_ID = "vuln_id";
 export const VULN_NAME = "vuln_name";
+export const K8S_ID = "k8s_id";
+export const K8S_NAME = "k8s_name";
 export const ROLE_ADMIN = "admin";
 
 export const CURRENT_ACCOUNT = "current_account";

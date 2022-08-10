@@ -400,9 +400,6 @@ export default {
     change(e) {
       this.$forceUpdate();
     },
-    handleCopy(test) {
-      this.$refs.apiCopy.open(test);
-    },
     //调参漏洞检测信息对应的规则
     handleScan(params) {
       this.$router.push({

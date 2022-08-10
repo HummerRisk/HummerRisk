@@ -179,6 +179,9 @@ export default {
     package_scan: 'Software dependencies',
     sbom_dependency: 'SBOM Management',
     conf_setting: 'Detection management',
+    no_plugin_param: 'Please fill in the parameters:',
+    create_success: 'Create success',
+    update_success: 'Edit success',
   },
   workspace: {
     create:'Create a workspace',
@@ -1110,6 +1113,18 @@ export default {
     is_proxy:'Whether to enable proxy',
     add_proxy:'Add proxy',
   },
+  k8s: {
+    k8s_setting: 'Kubernetes configuration',
+    k8s_settings_list: 'Kubernetes account list',
+    k8s_create: 'Create a Kubernetes account',
+    k8s_update: 'Update Kubernetes account',
+    name: 'Kubernetes name',
+    platform: 'Cloud native platform',
+    status: 'Status',
+    add: 'Add multiple',
+    delete_this_k8s: 'Delete this Kubernetes',
+    please_choose_k8s: 'Please choose a Kubernetes account',
+  },
   second: {
     title:'seconds',
     val: '0 1 2...59',
@@ -1204,7 +1219,6 @@ export default {
   '镜像': 'Image',
   ACCOUNT: 'Cloud account',
   RULE: 'Rule',
-  warning_task: 'Unable to save temporarily, this function will be used after the task scheduling function is online, so stay tuned! ',
   // element组件翻译
   el: {
     colorpicker: {

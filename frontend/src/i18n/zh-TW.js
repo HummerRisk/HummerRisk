@@ -179,6 +179,9 @@ export default {
     package_scan: '軟件依賴',
     sbom_dependency: 'SBOM 管理',
     conf_setting: '檢測管理',
+    no_plugin_param: '請填寫參數:',
+    create_success: '創建成功',
+    update_success: '編輯成功',
   },
   workspace: {
     create: '創建工作空間',
@@ -1110,6 +1113,18 @@ export default {
     is_proxy: '是否啟用代理',
     add_proxy: '新增代理',
   },
+  k8s: {
+    k8s_setting: 'Kubernetes 配置',
+    k8s_settings_list: 'Kubernetes 賬號列表',
+    k8s_create: '創建 Kubernetes 賬號',
+    k8s_update: '更新 Kubernetes 賬號',
+    name: 'Kubernetes 名稱',
+    platform: '雲原生平台',
+    status: '狀態',
+    add: '新增多個',
+    delete_this_k8s: '刪除此 Kubernetes',
+    please_choose_k8s: '請選擇 Kubernetes 賬號',
+  },
   second: {
     title: '秒',
     val: '0 1 2...59',
@@ -1204,7 +1219,6 @@ export default {
   '镜像': '鏡像',
   ACCOUNT: '雲賬號',
   RULE: '規則',
-  warning_task: '暫時無法保存，任務編排功能上線後使用此功能，敬請期待！ ',
   // element組件翻譯
   el: {
     colorpicker: {

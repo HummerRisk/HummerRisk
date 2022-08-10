@@ -5,7 +5,7 @@
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
           <el-menu-item :index="'/k8s/k8s'">
-            {{ $t("commons.k8s_scan") }}
+            {{ $t("k8s.k8s_setting") }}
           </el-menu-item>
 
         </el-menu>

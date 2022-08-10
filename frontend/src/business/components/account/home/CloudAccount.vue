@@ -530,9 +530,6 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
       change(e) {
         this.$forceUpdate();
       },
-      handleCopy(test) {
-        this.$refs.apiCopy.open(test);
-      },
       addAccountIam(form) {
         //点击需要的IAM策略按钮
         this.$get("/account/iam/strategy/" + form.pluginId,res => {

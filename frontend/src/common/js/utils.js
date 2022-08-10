@@ -1,4 +1,4 @@
-import {ACCOUNT_ID, VULN_ID, REFRESH_SESSION_USER_URL, ROLE_ADMIN, TokenKey} from "./constants";
+import {ACCOUNT_ID, VULN_ID, K8S_ID, REFRESH_SESSION_USER_URL, ROLE_ADMIN, TokenKey} from "./constants";
 import axios from "axios";
 
 export function hasRole(role) {
@@ -51,6 +51,10 @@ export function getCurrentAccountID() {
 
 export function getVulnID() {
   return localStorage.getItem(VULN_ID);
+}
+
+export function getK8sID() {
+  return localStorage.getItem(K8S_ID);
 }
 
 export function saveLocalStorage(response) {

@@ -13,7 +13,7 @@
         <table-button v-if="showScan" icon="el-icon-video-play"
                          type="success"
                          :content="scanTip" @click="scan"/>
-        <table-button v-if="showRun" icon="el-icon-check"
+        <table-button v-if="showRun" icon="el-icon-circle-check"
                       type="primary"
                       :content="runTip" @click="validate"/>
 

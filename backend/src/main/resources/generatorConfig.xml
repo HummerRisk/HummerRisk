@@ -134,5 +134,6 @@
 <!--        <table tableName="image_syft_table" domainObjectName="ImageSyftTable"/>-->
 <!--        <table tableName="image_syft_json" domainObjectName="ImageSyftJson"/>-->
 <!--        <table tableName="package_dependency_json" domainObjectName="PackageDependencyJson"/>-->
+<!--        <table tableName="cloud_native" domainObjectName="CloudNative"/>-->
     </context>
 </generatorConfiguration>

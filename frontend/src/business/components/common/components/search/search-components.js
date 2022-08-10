@@ -126,6 +126,27 @@ export const VULN_PLUGIN_NAME = {
   }
 }
 
+//云原生检测插件
+export const K8S_PLUGIN_NAME = {
+  key: "pluginId",
+  name: 'TableSearchSelect',
+  label: 'commons.adv_search.plugin',
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN]
+  },
+  options: { // 异步获取候选项
+    url: "/plugin/native",
+    labelKey: "name",
+    valueKey: "id",
+    showLabel: option => {
+      return option.label + " (" + option.value + ") ";
+    }
+  },
+  props: { // 尾部控件的props，一般为element ui控件的props
+    multiple: true
+  }
+}
+
 export const CREATE_TIME = {
   key: "createTime",
   name: 'TableSearchDateTimePicker',
@@ -373,4 +394,5 @@ export const PACKAGE_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
 export const PACKAGE_RESULT_CONFIGS = [NAME, PACKAGE_NAME, RULE_NAME, RULE_SEVERITY, CREATOR, UPDATE_TIME];
 export const IMAGE_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
 export const IMAGE_RESULT_CONFIGS = [NAME, IMAGE_URL, RULE_NAME, RULE_SEVERITY, CREATOR, UPDATE_TIME];
+export const K8S_CONFIGS = [NAME, K8S_PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 

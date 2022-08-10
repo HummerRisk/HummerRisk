@@ -8,12 +8,9 @@
     </el-row>
     <el-row type="flex" justify="space-between" align="middle">
       <span class="operate-button">
-        <table-button  v-if="showCreate" icon="el-icon-circle-plus-outline"
+        <table-button  v-if="showCreate" icon="el-icon-plus"
                          :content="createTip" @click="create"/>
-        <table-button v-if="showScan" icon="el-icon-video-play"
-                         type="success"
-                         :content="scanTip" @click="scan"/>
-        <table-button v-if="showRun" icon="el-icon-circle-check"
+        <table-button v-if="showRun" icon="el-icon-check"
                       type="primary"
                       :content="runTip" @click="validate"/>
 
@@ -48,10 +45,6 @@ export default {
         type: Boolean,
         default: false
       },
-      showScan: {
-        type: Boolean,
-        default: false
-      },
       showRun: {
         type: Boolean,
         default: false
@@ -63,12 +56,6 @@ export default {
         type: String,
         default() {
           return this.$t('commons.create');
-        }
-      },
-      scanTip: {
-        type: String,
-        default() {
-          return this.$t('account.scan');
         }
       },
       runTip: {
@@ -91,9 +78,6 @@ export default {
       },
       create() {
         this.$emit('create');
-      },
-      scan() {
-        this.$emit('scan');
       },
       validate() {
         this.$emit('validate')

@@ -34,6 +34,7 @@ import com.huaweicloud.sdk.iam.v3.model.KeystoneListProjectsRequest;
 import com.huaweicloud.sdk.iam.v3.model.ProjectResult;
 import com.huaweicloud.sdk.iam.v3.model.ShowCredential;
 import com.hummerrisk.base.domain.AccountWithBLOBs;
+import com.hummerrisk.base.domain.CloudNative;
 import com.hummerrisk.base.domain.Proxy;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
@@ -1102,6 +1103,35 @@ public class PlatformUtils {
                 throw new IllegalStateException("Unexpected value: " + account.getPluginId());
         }
         return false;
+    }
+
+    public static boolean validateCloudNative(CloudNative cloudNative, Proxy proxy) throws IOException, PluginException {
+        switch (cloudNative.getPluginId()) {
+            case k8s:
+                K8sCredential k8sCredential = new Gson().fromJson(cloudNative.getCredential(), K8sCredential.class);
+                /**创建默认 Api 客户端**/
+                // 定义连接集群的 Token
+                try {
+                    String token = k8sCredential.getToken();
+                    // 定义 Kubernetes 集群地址
+                    String url = k8sCredential.getUrl();
+                    // 配置客户端
+                    ApiClient apiClient = io.kubernetes.client.util.Config.fromToken(url, token, false);
+                    // 设置默认 Api 客户端到配置
+                    Configuration.setDefaultApiClient(apiClient);
+                    return true;
+                } catch (Exception e) {
+                    throw new PluginException("Verify that the account has an error!", e);
+                }
+            case openshift:
+                return true;
+            case rancher:
+                return true;
+            case kubesphere:
+                return true;
+            default:
+                throw new IllegalStateException("Unexpected value: " + cloudNative.getPluginId());
+        }
     }
 
     public static String tranforRegionId2RegionName(String strEn, String pluginId) {
