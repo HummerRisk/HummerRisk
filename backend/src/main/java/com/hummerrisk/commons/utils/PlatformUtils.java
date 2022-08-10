@@ -517,11 +517,13 @@ public class PlatformUtils {
                 map.put("type", nuclei);
                 NucleiCredential nucleiCredential = new Gson().fromJson(account.getCredential(), NucleiCredential.class);
                 map.put("nucleiCredential", nucleiCredential.getTargetAddress());
+                map.put("region", region);
                 break;
             case xray:
                 map.put("type", xray);
                 XrayCredential xrayCredential = new Gson().fromJson(account.getCredential(), XrayCredential.class);
                 map.put("xrayCredential", xrayCredential.getTargetAddress());
+                map.put("region", region);
                 break;
             case tsunami:
                 map.put("type", tsunami);
@@ -533,7 +535,7 @@ public class PlatformUtils {
                 HuoshanCredential huoshanCredential = new Gson().fromJson(account.getCredential(), HuoshanCredential.class);
                 map.put("AccessKeyId", huoshanCredential.getAccessKeyId());
                 map.put("SecretAccessKey", huoshanCredential.getSecretAccessKey());
-                map.put("region",region);
+                map.put("region", region);
                 break;
             case baidu:
                 map.put("type", baidu);
@@ -549,6 +551,7 @@ public class PlatformUtils {
                 map.put("accessKey", qiniuCredential.getAccessKey());
                 map.put("secretKey", qiniuCredential.getSecretKey());
                 map.put("bucket", qiniuCredential.getBucket());
+                map.put("region", region);
                 break;
             case qingcloud:
                 map.put("type", qingcloud);
@@ -561,12 +564,14 @@ public class PlatformUtils {
                 UCloudCredential uCloudCredential = new Gson().fromJson(account.getCredential(), UCloudCredential.class);
                 map.put("UcloudPublicKey", uCloudCredential.getUcloudPublicKey());
                 map.put("UcloudPrivateKey", uCloudCredential.getUcloudPrivateKey());
+                map.put("region", region);
                 break;
             case k8s:
                 map.put("type", k8s);
                 K8sCredential k8sCredential = new Gson().fromJson(account.getCredential(), K8sCredential.class);
                 map.put("url", k8sCredential.getUrl());
                 map.put("token", k8sCredential.getToken());
+                map.put("region", region);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + account.getPluginId());
