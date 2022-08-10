@@ -56,7 +56,9 @@ import com.hummerrisk.proxy.huawei.ClientUtil;
 import com.hummerrisk.proxy.huawei.HuaweiCloudCredential;
 import com.hummerrisk.proxy.huoshan.HuoshanCredential;
 import com.hummerrisk.proxy.k8s.K8sCredential;
+import com.hummerrisk.proxy.k8s.K8sRequest;
 import com.hummerrisk.proxy.nuclei.NucleiCredential;
+import com.hummerrisk.proxy.openshift.OpenShiftRequest;
 import com.hummerrisk.proxy.openstack.OpenStackCredential;
 import com.hummerrisk.proxy.openstack.OpenStackRequest;
 import com.hummerrisk.proxy.openstack.OpenStackUtils;
@@ -83,8 +85,16 @@ import com.volcengine.service.cdn.CDNService;
 import com.volcengine.service.cdn.impl.CDNServiceImpl;
 import com.volcengine.service.iam.IIamService;
 import com.volcengine.service.iam.impl.IamServiceImpl;
+import io.fabric8.kubernetes.api.model.NamespaceList;
+import io.fabric8.openshift.client.OpenShiftClient;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.Configuration;
+import io.kubernetes.client.openapi.apis.CoreV1Api;
+import io.kubernetes.client.openapi.models.V1Namespace;
+import io.kubernetes.client.openapi.models.V1NamespaceList;
+import io.kubernetes.client.openapi.models.V1PodList;
+import io.kubernetes.client.util.ClientBuilder;
+import io.kubernetes.client.util.credentials.AccessTokenAuthentication;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openstack4j.api.OSClient;
@@ -886,6 +896,19 @@ public class PlatformUtils {
                     }
                     break;
                 case k8s:
+                    K8sRequest k8sRequest = new K8sRequest();
+                    k8sRequest.setCredential(account.getCredential());
+                    ApiClient apiClient = k8sRequest.getK8sClient(proxy);
+                    CoreV1Api apiInstance = new CoreV1Api(apiClient);
+                    String pretty = "true";
+                    V1NamespaceList v1NamespaceList = apiInstance.listNamespace(pretty, true, null,
+                            null, null, null, null, null, null, null);
+                    for (V1Namespace v1Namespace : v1NamespaceList.getItems()) {
+                        JSONObject k8sJsonObject = new JSONObject();
+                        k8sJsonObject.put("regionId", v1Namespace.getSpec());
+                        k8sJsonObject.put("regionName", v1Namespace.getSpec());
+                        if (!jsonArray.contains(k8sJsonObject)) jsonArray.add(k8sJsonObject);
+                    }
                     break;
                 default:
                     throw new IllegalStateException("Unexpected regions value{}: " + account.getPluginName());
@@ -1100,18 +1123,17 @@ public class PlatformUtils {
                     throw new PluginException("Verify that the account has an error!", e);
                 }
             case k8s:
-                K8sCredential k8sCredential = new Gson().fromJson(account.getCredential(), K8sCredential.class);
                 /**创建默认 Api 客户端**/
                 // 定义连接集群的 Token
                 try {
-                    String token = k8sCredential.getToken();
-                    // 定义 Kubernetes 集群地址
-                    String url = k8sCredential.getUrl();
-                    // 配置客户端
-                    ApiClient apiClient = io.kubernetes.client.util.Config.fromToken(url, token, false);
-                    // 设置默认 Api 客户端到配置
-                    Configuration.setDefaultApiClient(apiClient);
-                    return true;
+                    K8sRequest k8sRequest = new K8sRequest();
+                    k8sRequest.setCredential(account.getCredential());
+                    ApiClient apiClient = k8sRequest.getK8sClient(proxy);
+                    CoreV1Api apiInstance = new CoreV1Api(apiClient);
+                    String pretty = "true";
+                    V1NamespaceList result = apiInstance.listNamespace(pretty, true, null,
+                            null, null, null, null, null, null, null);
+                    return result != null;
                 } catch (Exception e) {
                     throw new PluginException("Verify that the account has an error!", e);
                 }
@@ -1124,23 +1146,30 @@ public class PlatformUtils {
     public static boolean validateCloudNative(CloudNative cloudNative, Proxy proxy) throws IOException, PluginException {
         switch (cloudNative.getPluginId()) {
             case k8s:
-                K8sCredential k8sCredential = new Gson().fromJson(cloudNative.getCredential(), K8sCredential.class);
                 /**创建默认 Api 客户端**/
                 // 定义连接集群的 Token
                 try {
-                    String token = k8sCredential.getToken();
-                    // 定义 Kubernetes 集群地址
-                    String url = k8sCredential.getUrl();
-                    // 配置客户端
-                    ApiClient apiClient = io.kubernetes.client.util.Config.fromToken(url, token, false);
-                    // 设置默认 Api 客户端到配置
-                    Configuration.setDefaultApiClient(apiClient);
-                    return true;
+                    K8sRequest k8sRequest = new K8sRequest();
+                    k8sRequest.setCredential(cloudNative.getCredential());
+                    ApiClient apiClient = k8sRequest.getK8sClient(proxy);
+                    CoreV1Api apiInstance = new CoreV1Api(apiClient);
+                    String pretty = "true";
+                    V1NamespaceList result = apiInstance.listNamespace(pretty, true, null,
+                            null, null, null, null, null, null, null);
+                    return result != null;
                 } catch (Exception e) {
-                    throw new PluginException("Verify that the account has an error!", e);
+                    throw new PluginException("Verify that the cloud native has an error!", e);
                 }
             case openshift:
-                return true;
+                try {
+                    OpenShiftRequest openShiftRequest = new OpenShiftRequest();
+                    openShiftRequest.setCredential(cloudNative.getCredential());
+                    OpenShiftClient openShiftClient = openShiftRequest.getOpenShiftClient(proxy);
+                    NamespaceList ns = openShiftClient.namespaces().list();
+                    return ns != null;
+                } catch (Exception e) {
+                    throw new PluginException("Verify that the cloud native has an error!", e);
+                }
             case rancher:
                 return true;
             case kubesphere:

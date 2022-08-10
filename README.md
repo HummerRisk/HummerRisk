@@ -118,6 +118,7 @@ curl -sSL https://github.com/HummerRisk/HummerRisk/releases/latest/download/quic
 - [Nuclei](https://nuclei.projectdiscovery.io/)：使用了 Nuclei 作为漏洞检测引擎
 - [Xray](https://xray.cool/)：使用了 Xray 作为漏洞检测引擎
 - [Tsunami](https://github.com/google/tsunami-security-scanner/blob/master/docs/index.md)：使用了 Tsunami 作为网络安全扫描引擎
+- [Trivy](https://github.com/aquasecurity/trivy)：使用了 Trivy 作为云原生检测引擎
 - [Dependency Check](https://jeremylong.github.io/DependencyCheck/)：使用了 Dependency Check 作为软件依赖检查引擎
 - [Grype](https://github.com/anchore/grype)：使用了 Grype 作为镜像依赖检测引擎
 - [Syft](https://github.com/anchore/syft)：使用了 Syft 作为镜像物料清单检测引擎

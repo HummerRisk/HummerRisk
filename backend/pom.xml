@@ -786,25 +786,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>io.kubernetes</groupId>
-            <artifactId>client-java-extended</artifactId>
-            <version>16.0.0</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>checker-qual</artifactId>
-                    <groupId>org.checkerframework</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-lang3</artifactId>
-                    <groupId>org.apache.commons</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-collections4</artifactId>
-                    <groupId>org.apache.commons</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <!-- Kubernetes -->
 
         <!-- 字节云火山引擎 -->
@@ -962,6 +943,14 @@
             </exclusions>
         </dependency>
         <!-- UCloud -->
+
+        <!-- OpenShift -->
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>openshift-client</artifactId>
+            <version>6.0.0</version>
+        </dependency>
+        <!-- OpenShift -->
 
         <!-- Java使用SSH连接Linux并获取cpu，内存，磁盘使用率 -->
         <dependency>
