@@ -523,6 +523,7 @@ public class PlatformUtils {
                 HuoshanCredential huoshanCredential = new Gson().fromJson(account.getCredential(), HuoshanCredential.class);
                 map.put("AccessKeyId", huoshanCredential.getAccessKeyId());
                 map.put("SecretAccessKey", huoshanCredential.getSecretAccessKey());
+                map.put("region",region);
                 break;
             case baidu:
                 map.put("type", baidu);
@@ -827,10 +828,10 @@ public class PlatformUtils {
                         JSONObject jsonObject4 = new JSONObject();
                         jsonObject4.put("regionId", "cn-guangzhou");
                         jsonObject4.put("regionName", "广州");
-                        jsonArray.add(jsonObject);
-                        jsonArray.add(jsonObject2);
-                        jsonArray.add(jsonObject3);
-                        jsonArray.add(jsonObject4);
+                        if (!jsonArray.contains(jsonObject)) jsonArray.add(jsonObject);
+                        if (!jsonArray.contains(jsonObject2)) jsonArray.add(jsonObject2);
+                        if (!jsonArray.contains(jsonObject3)) jsonArray.add(jsonObject3);
+                        if (!jsonArray.contains(jsonObject4)) jsonArray.add(jsonObject4);
                        /* HuoshanCredential huoshanCredential = new Gson().fromJson(account.getCredential(), HuoshanCredential.class);
 
                         CDNService service = CDNServiceImpl.getInstance();
