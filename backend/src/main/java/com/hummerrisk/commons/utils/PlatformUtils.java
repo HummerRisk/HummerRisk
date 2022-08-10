@@ -815,7 +815,23 @@ public class PlatformUtils {
                     break;
                 case huoshan:
                     try {
-                        HuoshanCredential huoshanCredential = new Gson().fromJson(account.getCredential(), HuoshanCredential.class);
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("regionId", "cn-beijing");
+                        jsonObject.put("regionName", "北京");
+                        JSONObject jsonObject2 = new JSONObject();
+                        jsonObject2.put("regionId", "cn-nantong");
+                        jsonObject2.put("regionName", "南通");
+                        JSONObject jsonObject3 = new JSONObject();
+                        jsonObject3.put("regionId", "cn-shanghai");
+                        jsonObject3.put("regionName", "上海");
+                        JSONObject jsonObject4 = new JSONObject();
+                        jsonObject4.put("regionId", "cn-guangzhou");
+                        jsonObject4.put("regionName", "广州");
+                        jsonArray.add(jsonObject);
+                        jsonArray.add(jsonObject2);
+                        jsonArray.add(jsonObject3);
+                        jsonArray.add(jsonObject4);
+                       /* HuoshanCredential huoshanCredential = new Gson().fromJson(account.getCredential(), HuoshanCredential.class);
 
                         CDNService service = CDNServiceImpl.getInstance();
                         service.setAccessKey(huoshanCredential.getAccessKeyId());
@@ -831,7 +847,7 @@ public class PlatformUtils {
                             jsonObject.put("regionId", JSONObject.parseObject(obj.toString()).getString("Code"));
                             jsonObject.put("regionName", JSONObject.parseObject(obj.toString()).getString("Name"));
                             if (!jsonArray.contains(jsonObject)) jsonArray.add(jsonObject);
-                        }
+                        }*/
                     } catch (Exception e) {
                         LogUtil.error(e.getMessage());
                     }
