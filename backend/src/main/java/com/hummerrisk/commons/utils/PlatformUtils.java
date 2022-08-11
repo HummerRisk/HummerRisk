@@ -79,22 +79,15 @@ import com.tencentcloudapi.common.Credential;
 import com.tencentcloudapi.cvm.v20170312.CvmClient;
 import com.tencentcloudapi.cvm.v20170312.models.RegionInfo;
 import com.vmware.vim25.mo.Datacenter;
-import com.volcengine.model.beans.CDN;
 import com.volcengine.model.request.iam.ListUsersRequest;
-import com.volcengine.service.cdn.CDNService;
-import com.volcengine.service.cdn.impl.CDNServiceImpl;
 import com.volcengine.service.iam.IIamService;
 import com.volcengine.service.iam.impl.IamServiceImpl;
 import io.fabric8.kubernetes.api.model.NamespaceList;
 import io.fabric8.openshift.client.OpenShiftClient;
 import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.openapi.Configuration;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.V1Namespace;
 import io.kubernetes.client.openapi.models.V1NamespaceList;
-import io.kubernetes.client.openapi.models.V1PodList;
-import io.kubernetes.client.util.ClientBuilder;
-import io.kubernetes.client.util.credentials.AccessTokenAuthentication;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openstack4j.api.OSClient;
@@ -847,23 +840,23 @@ public class PlatformUtils {
                         if (!jsonArray.contains(jsonObject2)) jsonArray.add(jsonObject2);
                         if (!jsonArray.contains(jsonObject3)) jsonArray.add(jsonObject3);
                         if (!jsonArray.contains(jsonObject4)) jsonArray.add(jsonObject4);
-                       /* HuoshanCredential huoshanCredential = new Gson().fromJson(account.getCredential(), HuoshanCredential.class);
-
-                        CDNService service = CDNServiceImpl.getInstance();
-                        service.setAccessKey(huoshanCredential.getAccessKeyId());
-                        service.setSecretKey(huoshanCredential.getSecretAccessKey());
-                        CDN.DescribeCdnRegionAndIspRequest describeCdnRegionAndIspRequest = new CDN.DescribeCdnRegionAndIspRequest()
-                                .setArea("China");
-
-                        CDN.DescribeCdnRegionAndIspResponse resp = service.describeCdnRegionAndIsp(describeCdnRegionAndIspRequest);
-                        JSONArray jsons = JSON.parseArray(JSON.toJSONString(resp.getResult().getRegions()));
-
-                        for (Object obj : jsons) {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("regionId", JSONObject.parseObject(obj.toString()).getString("Code"));
-                            jsonObject.put("regionName", JSONObject.parseObject(obj.toString()).getString("Name"));
-                            if (!jsonArray.contains(jsonObject)) jsonArray.add(jsonObject);
-                        }*/
+//                        HuoshanCredential huoshanCredential = new Gson().fromJson(account.getCredential(), HuoshanCredential.class);
+//
+//                        CDNService service = CDNServiceImpl.getInstance();
+//                        service.setAccessKey(huoshanCredential.getAccessKeyId());
+//                        service.setSecretKey(huoshanCredential.getSecretAccessKey());
+//                        CDN.DescribeCdnRegionAndIspRequest describeCdnRegionAndIspRequest = new CDN.DescribeCdnRegionAndIspRequest()
+//                                .setArea("China");
+//
+//                        CDN.DescribeCdnRegionAndIspResponse resp = service.describeCdnRegionAndIsp(describeCdnRegionAndIspRequest);
+//                        JSONArray jsons = JSON.parseArray(JSON.toJSONString(resp.getResult().getRegions()));
+//
+//                        for (Object obj : jsons) {
+//                            JSONObject jsonObject = new JSONObject();
+//                            jsonObject.put("regionId", JSONObject.parseObject(obj.toString()).getString("Code"));
+//                            jsonObject.put("regionName", JSONObject.parseObject(obj.toString()).getString("Name"));
+//                            if (!jsonArray.contains(jsonObject)) jsonArray.add(jsonObject);
+//                        }
                     } catch (Exception e) {
                         LogUtil.error(e.getMessage());
                     }
@@ -911,8 +904,8 @@ public class PlatformUtils {
                             null, null, null, null, null, null, null);
                     for (V1Namespace v1Namespace : v1NamespaceList.getItems()) {
                         JSONObject k8sJsonObject = new JSONObject();
-                        k8sJsonObject.put("regionId", v1Namespace.getSpec());
-                        k8sJsonObject.put("regionName", v1Namespace.getSpec());
+                        k8sJsonObject.put("regionId", v1Namespace.getMetadata().getName());
+                        k8sJsonObject.put("regionName", v1Namespace.getMetadata().getName());
                         if (!jsonArray.contains(k8sJsonObject)) jsonArray.add(k8sJsonObject);
                     }
                     break;
@@ -1157,8 +1150,8 @@ public class PlatformUtils {
                 try {
                     K8sRequest k8sRequest = new K8sRequest();
                     k8sRequest.setCredential(cloudNative.getCredential());
-                    ApiClient apiClient = k8sRequest.getK8sClient(proxy);
-                    CoreV1Api apiInstance = new CoreV1Api(apiClient);
+                    ApiClient client = k8sRequest.getK8sClient(proxy);
+                    CoreV1Api apiInstance = new CoreV1Api(client);
                     String pretty = "true";
                     V1NamespaceList result = apiInstance.listNamespace(pretty, true, null,
                             null, null, null, null, null, null, null);
