@@ -7,15 +7,19 @@ import com.hummerrisk.base.mapper.CloudNativeSourceMapper;
 import com.hummerrisk.base.mapper.PluginMapper;
 import com.hummerrisk.base.mapper.ProxyMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeMapper;
+import com.hummerrisk.base.mapper.ext.ExtCloudNativeSourceMapper;
 import com.hummerrisk.commons.constants.CloudAccountConstants;
 import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.cloudNative.CloudNativeRequest;
+import com.hummerrisk.controller.request.cloudNative.CloudNativeSourceRequest;
 import com.hummerrisk.controller.request.cloudNative.CreateCloudNativeRequest;
 import com.hummerrisk.controller.request.cloudNative.UpdateCloudNativeRequest;
 import com.hummerrisk.dto.CloudNativeDTO;
+import com.hummerrisk.dto.CloudNativeSourceDTO;
+import com.hummerrisk.dto.SituationDTO;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.proxy.k8s.K8sRequest;
 import io.kubernetes.client.openapi.ApiException;
@@ -26,9 +30,9 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -42,6 +46,8 @@ public class CloudNativeService {
     private ExtCloudNativeMapper extCloudNativeMapper;
     @Resource
     private CloudNativeMapper cloudNativeMapper;
+    @Resource
+    private ExtCloudNativeSourceMapper extCloudNativeSourceMapper;
     @Resource
     private CloudNativeSourceMapper cloudNativeSourceMapper;
     @Resource
@@ -235,6 +241,14 @@ public class CloudNativeService {
                 LogUtil.error(e);
             }
         });
+    }
+
+    public List<CloudNativeSourceDTO> getCloudNativeSourceList(CloudNativeSourceRequest request) {
+        return extCloudNativeSourceMapper.getCloudNativeSourceList(request);
+    }
+
+    public SituationDTO situationInfo(Map<String, Object> params) {
+        return extCloudNativeSourceMapper.situationInfo(params);
     }
 
 

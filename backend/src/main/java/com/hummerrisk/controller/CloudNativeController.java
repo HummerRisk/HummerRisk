@@ -8,9 +8,12 @@ import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.cloudNative.CloudNativeRequest;
+import com.hummerrisk.controller.request.cloudNative.CloudNativeSourceRequest;
 import com.hummerrisk.controller.request.cloudNative.CreateCloudNativeRequest;
 import com.hummerrisk.controller.request.cloudNative.UpdateCloudNativeRequest;
 import com.hummerrisk.dto.CloudNativeDTO;
+import com.hummerrisk.dto.CloudNativeSourceDTO;
+import com.hummerrisk.dto.SituationDTO;
 import com.hummerrisk.service.CloudNativeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "云原生")
 @RestController
@@ -81,6 +85,22 @@ public class CloudNativeController {
     @PostMapping(value = "delete/{accountId}")
     public void deleteAccount(@PathVariable String accountId) {
         cloudNativeService.delete(accountId);
+    }
+
+    @I18n
+    @ApiOperation(value = "资源态势列表")
+    @PostMapping("cloudNativeSourceList/{goPage}/{pageSize}")
+    public Pager<List<CloudNativeSourceDTO>> getCloudNativeSourceList(
+            @PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudNativeSourceRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, cloudNativeService.getCloudNativeSourceList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "资源态势")
+    @PostMapping("situation")
+    public SituationDTO situationInfo(@RequestBody Map<String, Object> params) {
+        return cloudNativeService.situationInfo(params);
     }
 
 }

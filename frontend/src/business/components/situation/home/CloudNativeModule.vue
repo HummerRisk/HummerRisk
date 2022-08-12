@@ -15,7 +15,7 @@
       ref="nodeTree">
 
       <template v-slot:header>
-        <el-input class="module-input" :placeholder="$t('vuln.vuln_setting')" v-model="condition.filterText"
+        <el-input class="module-input" :placeholder="$t('commons.search_by_name')" v-model="condition.filterText"
                   size="small">
           <template v-slot:append>
             <el-button icon="el-icon-folder-add"/>
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import {getVulnID} from "@/common/js/utils";
+import {getK8sID} from "@/common/js/utils";
 import NodeTree from "./NodeTree";
 import {buildNodePath} from "@/common/js/NodeTree";
 import DialogFooter from "../../common/components/DialogFooter";
@@ -82,7 +82,7 @@ import DialogFooter from "../../common/components/DialogFooter";
       }
     },
     created() {
-      this.accountId = getVulnID();
+      this.accountId = getK8sID();
       this.list();
       this.activePlugin();
     },
@@ -103,14 +103,14 @@ import DialogFooter from "../../common/components/DialogFooter";
     methods: {
       //查询插件
       activePlugin() {
-        let url = "/plugin/vuln";
+        let url = "/plugin/native";
         this.result = this.$get(url, response => {
           let data = response.data;
           this.plugins =  data;
         });
       },
       list() {
-        let url = "/account/vulnList";
+        let url = "/cloud/native/allCloudNativeList";
         this.result = this.$get(url, response => {
           if (response.data != undefined && response.data != null) {
             this.data = response.data;

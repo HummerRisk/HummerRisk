@@ -381,6 +381,50 @@ export const IMAGE_URL = {
   },
 }
 
+export const SOURCE_NAME = {
+  key: "sourceName", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "k8s.source_name", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
+export const SOURCE_NAMESPACE = {
+  key: "name", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "k8s.source_namespace", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
+export const SOURCE_TYPE = {
+  key: "sourceType",
+  name: 'TableSearchSelect',
+  label: 'k8s.source_type',
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN]
+  },
+  options: [
+    {label: 'Namespace', value: 'Namespace'},
+    {label: 'Pod', value: 'Pod'},
+    {label: 'Node', value: 'Node'},
+    {label: 'Deployment', value: 'Deployment'},
+    {label: 'Daemonset', value: 'Daemonset'},
+    {label: 'Service', value: 'Service'},
+    {label: 'Ingress', value: 'Ingress'},
+    {label: 'Role', value: 'Role'},
+    {label: 'Secret', value: 'Secret'},
+    {label: 'Configmap', value: 'Configmap'},
+  ],
+  props: { // 尾部控件的props，一般为element ui控件的props
+    multiple: true
+  }
+}
+
 export const ACCOUNT_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const VULN_CONFIGS = [NAME, VULN_PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const RULE_TAG_CONFIGS = [TAG_KEY, TAG_NAME, TAG_FLAG, TAG_INDEX];
@@ -395,4 +439,5 @@ export const PACKAGE_RESULT_CONFIGS = [NAME, PACKAGE_NAME, RULE_NAME, RULE_SEVER
 export const IMAGE_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
 export const IMAGE_RESULT_CONFIGS = [NAME, IMAGE_URL, RULE_NAME, RULE_SEVERITY, CREATOR, UPDATE_TIME];
 export const K8S_CONFIGS = [NAME, K8S_PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
+export const SITUATION_CONFIGS = [SOURCE_NAME, SOURCE_NAMESPACE, SOURCE_TYPE, CREATOR, UPDATE_TIME, CREATE_TIME];
 

@@ -89,7 +89,4 @@ import MainContainer from "../.././common/components/MainContainer";
     padding: 15px;
     height: calc(100vh - 80px);
   }
-  .el-row-se {
-    margin: 15px 0 0 0;
-  }
 </style>

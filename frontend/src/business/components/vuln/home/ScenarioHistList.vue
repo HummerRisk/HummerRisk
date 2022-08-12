@@ -1,5 +1,5 @@
 <template>
-  <el-row :gutter="24" class="el-row-se">
+  <el-row :gutter="24">
     <el-col :span="24">
       <history-list :select-node-ids="selectNodeIds"/>
     </el-col>

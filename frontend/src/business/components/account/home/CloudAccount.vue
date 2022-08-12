@@ -305,7 +305,6 @@
 <script>
 import TablePagination from "../../common/pagination/TablePagination";
 import TableHeader from "../head/TableHeader";
-import TableOperator from "../../common/components/TableOperator";
 import Container from "../../common/components/Container";
 import MainContainer from "../../common/components/MainContainer";
 import AccountStatus from "./AccountStatus";
@@ -328,7 +327,6 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
       Container,
       TableHeader,
       TablePagination,
-      TableOperator,
       DialogFooter,
       ProxyDialogFooter,
       ProxyDialogCreateFooter

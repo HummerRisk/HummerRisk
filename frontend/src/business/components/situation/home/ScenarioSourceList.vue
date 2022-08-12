@@ -1,18 +1,18 @@
 <template>
   <el-row :gutter="24">
     <el-col :span="24">
-      <card-content-rule :select-node-ids="selectNodeIds"/>
+      <source-list :select-node-ids="selectNodeIds"/>
     </el-col>
   </el-row>
 </template>
 
 <script>
-import CardContentRule from "./CardContentRule";
+import SourceList from "./SourceList";
 /* eslint-disable */
   export default {
-    name: "ScenarioList",
+    name: "ScenarioSourceList",
     components: {
-      CardContentRule
+      SourceList
     },
     props: {
       selectNodeIds: Array,

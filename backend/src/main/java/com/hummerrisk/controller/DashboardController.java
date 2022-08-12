@@ -59,7 +59,7 @@ public class DashboardController {
     }
 
     @I18n
-    @ApiOperation(value = "合计统计")
+    @ApiOperation(value = "漏洞合计统计")
     @PostMapping("vulnTotalPolicy")
     public List<Map<String, Object>> vulnTotalPolicy(@RequestBody Map<String, Object> params) {
         return dashboardService.vulnTotalPolicy(params);

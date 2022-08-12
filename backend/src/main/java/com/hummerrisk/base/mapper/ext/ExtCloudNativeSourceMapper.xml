@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummerrisk.base.mapper.ext.ExtCloudNativeSourceMapper">
+
+    <resultMap id="BaseResultMap" type="com.hummerrisk.dto.CloudNativeSourceDTO"
+               extends="com.hummerrisk.base.mapper.CloudNativeSourceMapper.BaseResultMap">
+        <result column="userName" property="userName"/>
+        <result column="cloudNativeName" jdbcType="VARCHAR" property="cloudNativeName" />
+        <result column="pluginIcon" jdbcType="VARCHAR" property="pluginIcon" />
+    </resultMap>
+
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.sourceName != null and (${name} == null or ${name} == "")'>
+            and t.source_name
+            <include refid="condition">
+                <property name="object" value="${condition}.sourceName"/>
+            </include>
+        </if>
+        <if test="${condition}.updateTime != null">
+            and t.update_time
+            <include refid="condition">
+                <property name="object" value="${condition}.updateTime"/>
+            </include>
+        </if>
+        <if test="${condition}.sourceNamespace != null">
+            and t.source_namespace
+            <include refid="condition">
+                <property name="object" value="${condition}.sourceNamespace"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+        <if test="${condition}.sourceType != null">
+            and t.source_type
+            <include refid="condition">
+                <property name="object" value="${condition}.sourceType"/>
+            </include>
+        </if>
+        <if test="${condition}.cloudNativeId != null">
+            and t.cloud_native_id
+            <include refid="condition">
+                <property name="object" value="${condition}.cloudNativeId"/>
+            </include>
+        </if>
+        <if test="${condition}.creator != null">
+            and t.creator
+            <include refid="condition">
+                <property name="object" value="${condition}.creator"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="getCloudNativeSourceList" resultMap="BaseResultMap">
+        select
+        t.*,
+        t1.plugin_icon as pluginIcon,
+        t1.name as cloudNativeName,
+        t2.name as userName
+        FROM cloud_native_source as t
+        LEFT JOIN cloud_native t1 ON t.cloud_native_id = t1.id
+        LEFT JOIN user t2 ON t1.creator = t2.id
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
+            </if>
+
+            <if test="request.name != null and request.name != ''">
+                and t.source_name like CONCAT('%', #{request.name},'%')
+            </if>
+        </where>
+        order by t.update_time desc
+    </select>
+
+    <select id="situationInfo" parameterType="java.util.Map" resultType="com.hummerrisk.dto.SituationDTO">
+        SELECT *
+        from (
+                (
+                SELECT IFNULL(count(t.id), 0) as namespaces
+                from cloud_native_source t
+                where t.source_type = 'Namespace'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as namespaces,
+                (
+                SELECT IFNULL(count(t.id), 0) as pods
+                from cloud_native_source t
+                where t.source_type = 'Pod'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as pods,
+                (
+                SELECT IFNULL(count(t.id), 0) as nodes
+                from cloud_native_source t
+                where t.source_type = 'Node'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as nodes,
+                (
+                SELECT IFNULL(count(t.id), 0) as deployments
+                from cloud_native_source t
+                where t.source_type = 'Deployment'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as deployments,
+                (
+                SELECT IFNULL(count(t.id), 0) as daemonsets
+                from cloud_native_source t
+                where t.source_type = 'Daemonset'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as daemonsets,
+                (
+                SELECT IFNULL(count(t.id), 0) as services
+                from cloud_native_source t
+                where t.source_type = 'Service'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as services,
+                (
+                SELECT IFNULL(count(t.id), 0) as ingress
+                from cloud_native_source t
+                where t.source_type = 'Ingress'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as ingress,
+                (
+                SELECT IFNULL(count(t.id), 0) as roles
+                from cloud_native_source t
+                where t.source_type = 'Role'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as roles,
+                (
+                SELECT IFNULL(count(t.id), 0) as secrets
+                from cloud_native_source t
+                where t.source_type = 'Secret'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as secrets,
+                (
+                SELECT IFNULL(count(t.id), 0) as configmaps
+                from cloud_native_source t
+                where t.source_type = 'Configmap'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as configmaps
+             )
+    </select>
+
+</mapper>

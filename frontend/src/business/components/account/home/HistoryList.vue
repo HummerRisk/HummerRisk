@@ -1,5 +1,5 @@
 <template>
-  <el-row :gutter="24" class="el-row-se">
+  <el-row :gutter="24">
     <el-col :span="24">
       <el-card class="box-card" shadow="always">
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
