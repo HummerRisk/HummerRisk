@@ -1,11 +1,9 @@
 package com.hummerrisk.service;
 
 import com.aliyuncs.exceptions.ClientException;
-import com.hummerrisk.base.domain.CloudNative;
-import com.hummerrisk.base.domain.CloudNativeExample;
-import com.hummerrisk.base.domain.Plugin;
-import com.hummerrisk.base.domain.Proxy;
+import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.CloudNativeMapper;
+import com.hummerrisk.base.mapper.CloudNativeSourceMapper;
 import com.hummerrisk.base.mapper.PluginMapper;
 import com.hummerrisk.base.mapper.ProxyMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeMapper;
@@ -19,12 +17,16 @@ import com.hummerrisk.controller.request.cloudNative.CreateCloudNativeRequest;
 import com.hummerrisk.controller.request.cloudNative.UpdateCloudNativeRequest;
 import com.hummerrisk.dto.CloudNativeDTO;
 import com.hummerrisk.i18n.Translator;
+import com.hummerrisk.proxy.k8s.K8sRequest;
+import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,6 +41,8 @@ public class CloudNativeService {
     private ExtCloudNativeMapper extCloudNativeMapper;
     @Resource
     private CloudNativeMapper cloudNativeMapper;
+    @Resource
+    private CloudNativeSourceMapper cloudNativeSourceMapper;
     @Resource
     private PluginMapper pluginMapper;
     @Resource
@@ -132,6 +136,7 @@ public class CloudNativeService {
                     account.setStatus(CloudAccountConstants.Status.INVALID.name());
                 }
                 cloudNativeMapper.insertSelective(account);
+                addCloudNativeSource(account);
                 OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_create_cloud_native");
                 return getCloudNative(account.getId());
             }
@@ -180,7 +185,7 @@ public class CloudNativeService {
                 }
                 cloudNativeMapper.updateByPrimaryKeySelective(account);
                 account = cloudNativeMapper.selectByPrimaryKey(account.getId());
-
+                addCloudNativeSource(account);
                 //检验账号已更新状态
                 OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.UPDATE, "i18n_update_cloud_native");
                 return getCloudNative(account.getId());
@@ -198,6 +203,28 @@ public class CloudNativeService {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(accountId);
         cloudNativeMapper.deleteByPrimaryKey(accountId);
         OperationLogService.log(SessionUtils.getUser(), accountId, cloudNative.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.DELETE, "i18n_delete_cloud_native");
+    }
+
+    public void addCloudNativeSource(CloudNative cloudNative) throws IOException, ApiException {
+
+        CloudNativeSourceExample example = new CloudNativeSourceExample();
+        example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId());
+        cloudNativeSourceMapper.deleteByExample(example);
+
+        List<CloudNativeSource> list = new ArrayList<>();
+        K8sRequest k8sRequest = new K8sRequest();
+        k8sRequest.setCredential(cloudNative.getCredential());
+        list.addAll(k8sRequest.getNameSpace(cloudNative));
+        list.addAll(k8sRequest.getNode(cloudNative));
+        list.addAll(k8sRequest.getPod(cloudNative));
+        list.addAll(k8sRequest.getService(cloudNative));
+        list.addAll(k8sRequest.getDeployment(cloudNative));
+        list.addAll(k8sRequest.getDaemonSet(cloudNative));
+        list.addAll(k8sRequest.getIngress(cloudNative));
+        list.addAll(k8sRequest.getRole(cloudNative));
+        for (CloudNativeSource cloudNativeSource : list) {
+            cloudNativeSourceMapper.insertSelective(cloudNativeSource);
+        }
     }
 
 

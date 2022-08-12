@@ -1,20 +1,20 @@
 package com.hummerrisk.proxy.k8s;
 
-import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.hummerrisk.base.domain.CloudNative;
 import com.hummerrisk.base.domain.CloudNativeSource;
 import com.hummerrisk.base.domain.Proxy;
 import com.hummerrisk.commons.constants.CloudNativeConstants;
-import com.hummerrisk.commons.exception.PluginException;
 import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.proxy.Request;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.Configuration;
+import io.kubernetes.client.openapi.apis.AppsV1Api;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
-import io.kubernetes.client.openapi.models.V1Namespace;
-import io.kubernetes.client.openapi.models.V1NamespaceList;
+import io.kubernetes.client.openapi.apis.NetworkingV1Api;
+import io.kubernetes.client.openapi.apis.RbacAuthorizationV1Api;
+import io.kubernetes.client.openapi.models.*;
 import io.kubernetes.client.util.Config;
 
 import java.io.IOException;
@@ -80,9 +80,6 @@ public class K8sRequest extends Request {
 
     public List<CloudNativeSource> getNameSpace(CloudNative cloudNative) throws IOException, ApiException {
         try {
-            K8sRequest k8sRequest = new K8sRequest();
-            k8sRequest.setCredential(cloudNative.getCredential());
-            this.k8sCredential = k8sRequest.getK8sCredential();
             ApiClient apiClient = getK8sClient(null);
             CoreV1Api apiInstance = new CoreV1Api(apiClient);
             String pretty = "true";
@@ -97,7 +94,170 @@ public class K8sRequest extends Request {
                 cloudNativeSource.setUpdateTime(System.currentTimeMillis());
                 cloudNativeSource.setSourceNamespace(v1Namespace.getMetadata().getName());
                 cloudNativeSource.setSourceName(v1Namespace.getMetadata().getName());
-                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.namespace.name());
+                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Namespace.name());
+                list.add(cloudNativeSource);
+            }
+            return list;
+        } catch (IOException e) {
+            throw new IOException(e.getMessage());
+        }
+    }
+
+    public List<CloudNativeSource> getNode(CloudNative cloudNative) throws IOException, ApiException {
+        try {
+            ApiClient apiClient = getK8sClient(null);
+            CoreV1Api apiInstance = new CoreV1Api(apiClient);
+            String pretty = "true";
+            V1NodeList result = apiInstance.listNode(pretty, true, null,
+                    null, null, null, null, null, null, null);
+            List<CloudNativeSource> list = new ArrayList<>();
+            for (V1Node v1Node : result.getItems()) {
+                CloudNativeSource cloudNativeSource = new CloudNativeSource();
+                cloudNativeSource.setCloudNativeId(cloudNative.getId());
+                cloudNativeSource.setCreator(SessionUtils.getUserId());
+                cloudNativeSource.setCreateTime(System.currentTimeMillis());
+                cloudNativeSource.setUpdateTime(System.currentTimeMillis());
+                cloudNativeSource.setSourceNamespace(v1Node.getMetadata().getName());
+                cloudNativeSource.setSourceName(v1Node.getMetadata().getName());
+                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Namespace.name());
+                list.add(cloudNativeSource);
+            }
+            return list;
+        } catch (IOException e) {
+            throw new IOException(e.getMessage());
+        }
+    }
+
+    public List<CloudNativeSource> getPod(CloudNative cloudNative) throws IOException, ApiException {
+        try {
+            ApiClient apiClient = getK8sClient(null);
+            CoreV1Api apiInstance = new CoreV1Api(apiClient);
+            V1PodList result = apiInstance.listPodForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
+            List<CloudNativeSource> list = new ArrayList<>();
+            for (V1Pod v1Pod : result.getItems()) {
+                CloudNativeSource cloudNativeSource = new CloudNativeSource();
+                cloudNativeSource.setCloudNativeId(cloudNative.getId());
+                cloudNativeSource.setCreator(SessionUtils.getUserId());
+                cloudNativeSource.setCreateTime(System.currentTimeMillis());
+                cloudNativeSource.setUpdateTime(System.currentTimeMillis());
+                cloudNativeSource.setSourceNamespace(v1Pod.getMetadata().getNamespace());
+                cloudNativeSource.setSourceName(v1Pod.getMetadata().getName());
+                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Pod.name());
+                list.add(cloudNativeSource);
+            }
+            return list;
+        } catch (IOException e) {
+            throw new IOException(e.getMessage());
+        }
+    }
+
+    public List<CloudNativeSource> getDeployment(CloudNative cloudNative) throws IOException, ApiException {
+        try {
+            ApiClient apiClient = getK8sClient(null);
+            AppsV1Api apiInstance = new AppsV1Api(apiClient);
+            V1DeploymentList result = apiInstance.listDeploymentForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
+            List<CloudNativeSource> list = new ArrayList<>();
+            for (V1Deployment v1Deployment : result.getItems()) {
+                CloudNativeSource cloudNativeSource = new CloudNativeSource();
+                cloudNativeSource.setCloudNativeId(cloudNative.getId());
+                cloudNativeSource.setCreator(SessionUtils.getUserId());
+                cloudNativeSource.setCreateTime(System.currentTimeMillis());
+                cloudNativeSource.setUpdateTime(System.currentTimeMillis());
+                cloudNativeSource.setSourceNamespace(v1Deployment.getMetadata().getNamespace());
+                cloudNativeSource.setSourceName(v1Deployment.getMetadata().getName());
+                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Deployment.name());
+                list.add(cloudNativeSource);
+            }
+            return list;
+        } catch (IOException e) {
+            throw new IOException(e.getMessage());
+        }
+    }
+
+    public List<CloudNativeSource> getDaemonSet(CloudNative cloudNative) throws IOException, ApiException {
+        try {
+            ApiClient apiClient = getK8sClient(null);
+            AppsV1Api apiInstance = new AppsV1Api(apiClient);
+            V1DaemonSetList result = apiInstance.listDaemonSetForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
+            List<CloudNativeSource> list = new ArrayList<>();
+            for (V1DaemonSet v1DaemonSet : result.getItems()) {
+                CloudNativeSource cloudNativeSource = new CloudNativeSource();
+                cloudNativeSource.setCloudNativeId(cloudNative.getId());
+                cloudNativeSource.setCreator(SessionUtils.getUserId());
+                cloudNativeSource.setCreateTime(System.currentTimeMillis());
+                cloudNativeSource.setUpdateTime(System.currentTimeMillis());
+                cloudNativeSource.setSourceNamespace(v1DaemonSet.getMetadata().getNamespace());
+                cloudNativeSource.setSourceName(v1DaemonSet.getMetadata().getName());
+                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.DaemonSet.name());
+                list.add(cloudNativeSource);
+            }
+            return list;
+        } catch (IOException e) {
+            throw new IOException(e.getMessage());
+        }
+    }
+
+    public List<CloudNativeSource> getService(CloudNative cloudNative) throws IOException, ApiException {
+        try {
+            ApiClient apiClient = getK8sClient(null);
+            CoreV1Api apiInstance = new CoreV1Api(apiClient);
+            V1ServiceList result = apiInstance.listNamespacedService(null, null, null, null, null, null, null, null, null, null, null);
+            List<CloudNativeSource> list = new ArrayList<>();
+            for (V1Service v1Service : result.getItems()) {
+                CloudNativeSource cloudNativeSource = new CloudNativeSource();
+                cloudNativeSource.setCloudNativeId(cloudNative.getId());
+                cloudNativeSource.setCreator(SessionUtils.getUserId());
+                cloudNativeSource.setCreateTime(System.currentTimeMillis());
+                cloudNativeSource.setUpdateTime(System.currentTimeMillis());
+                cloudNativeSource.setSourceNamespace(v1Service.getMetadata().getNamespace());
+                cloudNativeSource.setSourceName(v1Service.getMetadata().getName());
+                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Service.name());
+                list.add(cloudNativeSource);
+            }
+            return list;
+        } catch (IOException e) {
+            throw new IOException(e.getMessage());
+        }
+    }
+
+    public List<CloudNativeSource> getIngress(CloudNative cloudNative) throws IOException, ApiException {
+        try {
+            ApiClient apiClient = getK8sClient(null);
+            NetworkingV1Api apiInstance = new NetworkingV1Api(apiClient);
+            V1IngressList result = apiInstance.listIngressForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
+            List<CloudNativeSource> list = new ArrayList<>();
+            for (V1Ingress v1Ingress : result.getItems()) {
+                CloudNativeSource cloudNativeSource = new CloudNativeSource();
+                cloudNativeSource.setCloudNativeId(cloudNative.getId());
+                cloudNativeSource.setCreator(SessionUtils.getUserId());
+                cloudNativeSource.setCreateTime(System.currentTimeMillis());
+                cloudNativeSource.setUpdateTime(System.currentTimeMillis());
+                cloudNativeSource.setSourceNamespace(v1Ingress.getMetadata().getNamespace());
+                cloudNativeSource.setSourceName(v1Ingress.getMetadata().getName());
+                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Ingress.name());
+                list.add(cloudNativeSource);
+            }
+            return list;
+        } catch (IOException e) {
+            throw new IOException(e.getMessage());
+        }
+    }
+
+    public List<CloudNativeSource> getRole(CloudNative cloudNative) throws IOException, ApiException {
+        try {
+            ApiClient apiClient = getK8sClient(null);
+            RbacAuthorizationV1Api apiInstance = new RbacAuthorizationV1Api(apiClient);
+            V1RoleList result = apiInstance.listRoleForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
+            List<CloudNativeSource> list = new ArrayList<>();
+            for (V1Role v1Role : result.getItems()) {
+                CloudNativeSource cloudNativeSource = new CloudNativeSource();
+                cloudNativeSource.setCloudNativeId(cloudNative.getId());
+                cloudNativeSource.setCreator(SessionUtils.getUserId());
+                cloudNativeSource.setCreateTime(System.currentTimeMillis());
+                cloudNativeSource.setUpdateTime(System.currentTimeMillis());
+                cloudNativeSource.setSourceNamespace(v1Role.getMetadata().getNamespace());
+                cloudNativeSource.setSourceName(v1Role.getMetadata().getName());
+                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Role.name());
                 list.add(cloudNativeSource);
             }
             return list;

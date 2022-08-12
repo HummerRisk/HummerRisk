@@ -22,7 +22,7 @@ public class CloudNativeConstants {
     }
 
     public enum K8S_TYPE {
-        namespace, pod, node
+        Namespace, Pod, Node, Deployment, DaemonSet, Service, Ingress, Role
     }
 
 }
