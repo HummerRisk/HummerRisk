@@ -27,6 +27,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,6 +48,8 @@ public class CloudNativeService {
     private PluginMapper pluginMapper;
     @Resource
     private ProxyMapper proxyMapper;
+    @Resource
+    private CommonThreadPool commonThreadPool;
 
     public List<CloudNativeDTO> getCloudNativeList(CloudNativeRequest request) {
         return extCloudNativeMapper.getCloudNativeList(request);
@@ -206,25 +209,32 @@ public class CloudNativeService {
     }
 
     public void addCloudNativeSource(CloudNative cloudNative) throws IOException, ApiException {
+        commonThreadPool.addTask(() -> {
+            try {
+                CloudNativeSourceExample example = new CloudNativeSourceExample();
+                example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId());
+                cloudNativeSourceMapper.deleteByExample(example);
 
-        CloudNativeSourceExample example = new CloudNativeSourceExample();
-        example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId());
-        cloudNativeSourceMapper.deleteByExample(example);
-
-        List<CloudNativeSource> list = new ArrayList<>();
-        K8sRequest k8sRequest = new K8sRequest();
-        k8sRequest.setCredential(cloudNative.getCredential());
-        list.addAll(k8sRequest.getNameSpace(cloudNative));
-        list.addAll(k8sRequest.getNode(cloudNative));
-        list.addAll(k8sRequest.getPod(cloudNative));
-        list.addAll(k8sRequest.getService(cloudNative));
-        list.addAll(k8sRequest.getDeployment(cloudNative));
-        list.addAll(k8sRequest.getDaemonSet(cloudNative));
-        list.addAll(k8sRequest.getIngress(cloudNative));
-        list.addAll(k8sRequest.getRole(cloudNative));
-        for (CloudNativeSource cloudNativeSource : list) {
-            cloudNativeSourceMapper.insertSelective(cloudNativeSource);
-        }
+                List<CloudNativeSource> list = new LinkedList<>();
+                K8sRequest k8sRequest = new K8sRequest();
+                k8sRequest.setCredential(cloudNative.getCredential());
+                list.addAll(k8sRequest.getNameSpace(cloudNative));
+                list.addAll(k8sRequest.getNode(cloudNative));
+                list.addAll(k8sRequest.getPod(cloudNative));
+                list.addAll(k8sRequest.getService(cloudNative));
+                list.addAll(k8sRequest.getDeployment(cloudNative));
+                list.addAll(k8sRequest.getDaemonSet(cloudNative));
+                list.addAll(k8sRequest.getIngress(cloudNative));
+                list.addAll(k8sRequest.getRole(cloudNative));
+                list.addAll(k8sRequest.getSecret(cloudNative));
+                list.addAll(k8sRequest.getConfigMap(cloudNative));
+                for (CloudNativeSource cloudNativeSource : list) {
+                    cloudNativeSourceMapper.insertSelective(cloudNativeSource);
+                }
+            } catch (Exception e) {
+                LogUtil.error(e);
+            }
+        });
     }
 
 
