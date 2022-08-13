@@ -10,12 +10,10 @@ import com.hummerrisk.proxy.Request;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.Configuration;
-import io.kubernetes.client.openapi.apis.AppsV1Api;
-import io.kubernetes.client.openapi.apis.CoreV1Api;
-import io.kubernetes.client.openapi.apis.NetworkingV1Api;
-import io.kubernetes.client.openapi.apis.RbacAuthorizationV1Api;
+import io.kubernetes.client.openapi.apis.*;
 import io.kubernetes.client.openapi.models.*;
 import io.kubernetes.client.util.Config;
+import io.kubernetes.client.util.version.Version;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -266,6 +264,22 @@ public class K8sRequest extends Request {
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.ConfigMap.name());
                 list.add(cloudNativeSource);
             }
+            return list;
+        } catch (IOException e) {
+            throw new IOException(e.getMessage());
+        }
+    }
+
+    public List<CloudNativeSource> getVersion(CloudNative cloudNative) throws IOException, ApiException {
+        try {
+            ApiClient apiClient = getK8sClient(null);
+            VersionApi apiInstance = new VersionApi(apiClient);
+            VersionInfo result = apiInstance.getCode();
+            List<CloudNativeSource> list = new ArrayList<>();
+            CloudNativeSource cloudNativeSource = base(cloudNative);
+            cloudNativeSource.setSourceName(result.getGitVersion());
+            cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Version.name());
+            list.add(cloudNativeSource);
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());

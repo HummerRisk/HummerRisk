@@ -224,6 +224,7 @@ public class CloudNativeService {
                 List<CloudNativeSource> list = new LinkedList<>();
                 K8sRequest k8sRequest = new K8sRequest();
                 k8sRequest.setCredential(cloudNative.getCredential());
+                list.addAll(k8sRequest.getVersion(cloudNative));
                 list.addAll(k8sRequest.getNameSpace(cloudNative));
                 list.addAll(k8sRequest.getNode(cloudNative));
                 list.addAll(k8sRequest.getPod(cloudNative));

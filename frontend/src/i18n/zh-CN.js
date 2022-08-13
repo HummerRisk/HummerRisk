@@ -1130,6 +1130,7 @@ export default {
     source_type: '资源类型',
     source_list: '资源清单',
     sync_time: '同步时间',
+    execute_scan: '执行检测',
   },
   second: {
     title: '秒',

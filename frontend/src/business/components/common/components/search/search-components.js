@@ -419,6 +419,7 @@ export const SOURCE_TYPE = {
     {label: 'Role', value: 'Role'},
     {label: 'Secret', value: 'Secret'},
     {label: 'Configmap', value: 'Configmap'},
+    {label: 'Version', value: 'Version'},
   ],
   props: { // 尾部控件的props，一般为element ui控件的props
     multiple: true

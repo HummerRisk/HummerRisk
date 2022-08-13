@@ -236,7 +236,7 @@ export default {
       },
       buttons: [
         {
-          tip: this.$t('account.tuning'), icon: "el-icon-setting", type: "success",
+          tip: this.$t('k8s.execute_scan'), icon: "el-icon-s-promotion", type: "success",
           exec: this.handleScan
         }, {
           tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
@@ -508,6 +508,9 @@ export default {
           return;
         }
       }
+    },
+    handleScan(item) {
+      console.log(111, item);
     },
   },
   activated() {
