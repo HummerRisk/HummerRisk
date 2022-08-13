@@ -10,7 +10,7 @@ export default {
     {
       path: "user",
       component: () => import(/* webpackChunkName: "setting" */ "@/business/components/settings/system/User"),
-      meta: {system: true, title: "commons.user"}
+      meta: {system: true, title: "system.user"}
     },
     {
       path: "systemparametersetting",
@@ -36,6 +36,11 @@ export default {
       path: "system",
       component: () => import("@/business/components/settings/system/System"),
       meta: {system: true, title: "system.system"}
+    },
+    {
+      path: "plugin",
+      component: () => import("@/business/components/settings/system/Plugin"),
+      meta: {system: true, title: "system.plugin"}
     },
     {
       path: "personsetting",

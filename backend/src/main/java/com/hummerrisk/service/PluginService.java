@@ -77,9 +77,13 @@ public class PluginService {
     }
 
     public List<Plugin> getPluginList(PluginRequest request) {
+
         PluginExample example = new PluginExample();
-        example.createCriteria().andNameEqualTo(request.getName());
         example.setOrderByClause("order_");
+        if(request.getName()!=null) {
+            PluginExample.Criteria criteria = example.createCriteria();
+            criteria.andNameLike(request.getName());
+        }
         return pluginMapper.selectByExample(example);
     }
 
