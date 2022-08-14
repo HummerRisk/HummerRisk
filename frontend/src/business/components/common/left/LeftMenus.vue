@@ -67,6 +67,10 @@
             <i class="iconfont icon-erji-xunijianquanjiancha"></i>
             <span slot="title">{{ $t('commons.software_security') }}</span>
           </template>
+          <el-menu-item index="/sbom" onselectstart="return false" v-permission="['admin']">
+            <i class="iconfont icon-tongjijieguo"></i>
+            <span slot="title">{{ $t('commons.sbom_dependency') }}</span>
+          </el-menu-item>
           <el-menu-item index="/code" onselectstart="return false" v-permission="['admin']">
             <i class="iconfont icon-yuandaimaxiayoudaima"></i>
             <span slot="title">{{ $t('commons.code_scan') }}</span>
@@ -78,10 +82,6 @@
           <el-menu-item index="/package" onselectstart="return false" v-permission="['admin']">
             <i class="iconfont icon-ruanjiankaifabao"></i>
             <span slot="title">{{ $t('commons.package_scan') }}</span>
-          </el-menu-item>
-          <el-menu-item index="/sbom" onselectstart="return false" v-permission="['admin']">
-            <i class="iconfont icon-tongjijieguo"></i>
-            <span slot="title">{{ $t('commons.sbom_dependency') }}</span>
           </el-menu-item>
         </el-submenu>
         <el-submenu index="4">
