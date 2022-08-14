@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS operation_log (
     `operation`           varchar(45)         NOT NULL COMMENT '操作',
     `time`                bigint(13)          NOT NULL COMMENT '操作时间',
     `message`             mediumtext          DEFAULT NULL COMMENT '操作信息',
-    `source_ip`           varchar(15)         DEFAULT NULL COMMENT '操作方IP',
+    `source_ip`           varchar(50)         DEFAULT NULL COMMENT '操作方IP',
     PRIMARY KEY (`id`),
     KEY `IDX_USER_ID` (`resource_user_id`),
     KEY `IDX_OP` (`operation`),

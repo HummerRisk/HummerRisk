@@ -25,4 +25,7 @@ public class CloudNativeConstants {
         Namespace, Pod, Node, Deployment, DaemonSet, Service, Ingress, Role, Secret, ConfigMap, Version
     }
 
+    public final static String URL1 = "/apis/aquasecurity.github.io/v1alpha1/configauditreports?limit=500";
+    public final static String URL2 = "apis/aquasecurity.github.io/v1alpha1/configauditreports?limit=500";
+
 }

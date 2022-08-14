@@ -136,5 +136,7 @@
 <!--        <table tableName="package_dependency_json" domainObjectName="PackageDependencyJson"/>-->
 <!--        <table tableName="cloud_native" domainObjectName="CloudNative"/>-->
 <!--        <table tableName="cloud_native_source" domainObjectName="CloudNativeSource"/>-->
+        <table tableName="cloud_native_result" domainObjectName="CloudNativeResult"/>
+        <table tableName="cloud_native_result_item" domainObjectName="CloudNativeResultItem"/>
     </context>
 </generatorConfiguration>

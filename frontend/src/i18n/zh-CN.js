@@ -1131,6 +1131,7 @@ export default {
     source_list: '资源清单',
     sync_time: '同步时间',
     execute_scan: '执行检测',
+    result: '云原生检测结果',
   },
   second: {
     title: '秒',

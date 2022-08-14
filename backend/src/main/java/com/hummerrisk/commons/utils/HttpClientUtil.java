@@ -1,5 +1,10 @@
 package com.hummerrisk.commons.utils;
 
+import com.hummerrisk.service.impl.SSLSocketFactoryImp;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -10,21 +15,25 @@ import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.*;
 import java.io.IOException;
 import java.net.URI;
 import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +59,6 @@ public class HttpClientUtil {
 
             // 创建http GET请求
             HttpGet httpGet = new HttpGet(uri);
-
             // 执行请求
             response = httpClient.execute(httpGet);
             // 判断返回状态是否为200
@@ -131,39 +139,46 @@ public class HttpClientUtil {
     }
 
     public static CloseableHttpClient createClient() throws Exception {
-        //采用绕过验证的方式处理https请求
-        SSLContext sslcontext = createIgnoreVerifySSL();
-        //设置协议http和https对应的处理socket链接工厂的对象
-        Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
-                .register("http", PlainConnectionSocketFactory.INSTANCE)
-                .register("https", new SSLConnectionSocketFactory(sslcontext))
-                .build();
-        PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
-        HttpClients.custom().setConnectionManager(connManager);
+        SSLContext sslContext = null;
+        try {
+            sslContext = SSLContexts.custom().loadTrustMaterial(null, new TrustStrategy() {
+                @Override
+                public boolean isTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+                    return true;
+                }
+            }).build();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
 
-        //创建自定义的httpclient对象
-        CloseableHttpClient client = HttpClients.custom().setConnectionManager(connManager).build();
+//创建httpClient
+        CloseableHttpClient client = HttpClients.custom().setSslcontext(sslContext).
+                setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
         return client;
     }
 
     public static SSLContext createIgnoreVerifySSL() throws NoSuchAlgorithmException, KeyManagementException {
-        SSLContext sc = SSLContext.getInstance("SSLv3");
+        SSLContext sc = SSLContext.getInstance("TLSv1.3");
 
         // 实现一个X509TrustManager接口，用于绕过验证，不用修改里面的方法
         X509TrustManager trustManager = new X509TrustManager() {
-            //            @Override
+            @Override
             public void checkClientTrusted(
                     java.security.cert.X509Certificate[] paramArrayOfX509Certificate,
                     String paramString) throws CertificateException {
             }
 
-            //            @Override
+            @Override
             public void checkServerTrusted(
                     java.security.cert.X509Certificate[] paramArrayOfX509Certificate,
                     String paramString) throws CertificateException {
             }
 
-            //            @Override
+            @Override
             public java.security.cert.X509Certificate[] getAcceptedIssuers() {
                 return null;
             }
@@ -172,4 +187,67 @@ public class HttpClientUtil {
         sc.init(null, new TrustManager[]{trustManager}, null);
         return sc;
     }
+
+    public static String HttpGet(String url, Map<String, String> param) throws Exception {
+        OkHttpClient client = getClient();
+        Request.Builder builder = new Request.Builder();
+        if (param != null) {
+            for (String key : param.keySet()) {
+                builder.addHeader(key, param.get(key));
+            }
+        }
+        Request request = builder.url(url).method("GET", null).build();
+        try (Response response = client.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                return response.body().string();
+            } else {
+                throw new IOException("Unexpected code " + response);
+            }
+        }
+    }
+
+    public static String HttpPost(String url, Map<String, String> param) throws Exception {
+        OkHttpClient client = getClient();
+        Request.Builder builder = new Request.Builder();
+        if (param != null) {
+            for (String key : param.keySet()) {
+                builder.addHeader(key, param.get(key));
+            }
+        }
+        Request request = builder.url(url).method("GET", null).build();
+        try (Response response = client.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                return response.body().string();
+            } else {
+                throw new IOException("Unexpected code " + response);
+            }
+        }
+    }
+
+    public static OkHttpClient getClient(Interceptor... interceptor) {
+        OkHttpClient.Builder builder = null;
+        try {
+            builder = new OkHttpClient.Builder();
+            //ssl verifier
+            KeyStore trustStore;
+            trustStore = KeyStore.getInstance(KeyStore
+                    .getDefaultType());
+            trustStore.load(null, null);
+            SSLSocketFactoryImp ssl = new SSLSocketFactoryImp(KeyStore.getInstance(KeyStore.getDefaultType()));
+
+            HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            };
+
+            builder.sslSocketFactory(ssl.getSSLContext().getSocketFactory(), ssl.getTrustManager())
+                    .hostnameVerifier(DO_NOT_VERIFY);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return builder.build();
+    }
+
 }

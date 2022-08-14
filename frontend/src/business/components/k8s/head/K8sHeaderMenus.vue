@@ -8,6 +8,10 @@
             {{ $t("k8s.k8s_setting") }}
           </el-menu-item>
 
+          <el-menu-item :index="'/k8s/result'">
+            {{ $t("k8s.result") }}
+          </el-menu-item>
+
         </el-menu>
       </el-col>
     </el-row>

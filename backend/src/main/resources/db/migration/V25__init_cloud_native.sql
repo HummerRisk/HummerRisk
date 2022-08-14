@@ -25,3 +25,31 @@ CREATE TABLE IF NOT EXISTS cloud_native_source (
     `creator`                    varchar(128)        DEFAULT NULL COMMENT '创建人',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `cloud_native_result`
+(
+    `id`                         varchar(50)         NOT NULL,
+    `cloud_native_id`            varchar(50)         DEFAULT NULL COMMENT '云原生ID',
+    `name`                       varchar(128)        DEFAULT NULL UNIQUE COMMENT '云原生名称',
+    `plugin_icon`                varchar(256)        DEFAULT NULL COMMENT '插件图标',
+    `result_status`              varchar(45)         DEFAULT NULL COMMENT '检测状态',
+    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
+    `apply_user`                 varchar(50)         DEFAULT NULL COMMENT '创建人ID',
+    `user_name`                  varchar(128)        DEFAULT NULL COMMENT '创建人名称',
+    `return_json`                longtext            DEFAULT NULL COMMENT 'return json',
+    `return_sum`                 bigint(13)          DEFAULT 0 COMMENT '输出检测结果漏洞数',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `cloud_native_result_item`
+(
+    `id`                         varchar(50)         NOT NULL,
+    `result_id`                  varchar(50)         DEFAULT NULL COMMENT '云原生检测结果ID',
+    `namespace`                  varchar(50)         DEFAULT NULL UNIQUE COMMENT 'Namespace',
+    `kind`                       varchar(50)         DEFAULT NULL COMMENT 'Kind',
+    `name`                       varchar(50)         DEFAULT NULL COMMENT 'Name',
+    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `results`                    longtext            DEFAULT NULL COMMENT 'Results',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
