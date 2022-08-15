@@ -201,7 +201,39 @@
                 <if test="cloudNativeId != null and cloudNativeId != ''">
                     and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
                 </if>
-                ) as configmaps
+                ) as configmaps,
+                (
+                SELECT IFNULL(count(t.id), 0) as statefulSets
+                from cloud_native_source t
+                where t.source_type = 'StatefulSet'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as statefulSets,
+                (
+                SELECT IFNULL(count(t.id), 0) as cronJobs
+                from cloud_native_source t
+                where t.source_type = 'CronJob'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as cronJobs,
+                (
+                SELECT IFNULL(count(t.id), 0) as jobs
+                from cloud_native_source t
+                where t.source_type = 'Job'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as jobs,
+                (
+                SELECT IFNULL(count(t.id), 0) as versions
+                from cloud_native_source t
+                where t.source_type = 'Version'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as versions
              )
     </select>
 

@@ -22,6 +22,14 @@ public class SituationDTO {
 
     private String configmaps;
 
+    private String statefulSets;
+
+    private String cronJobs;
+
+    private String jobs;
+
+    private String versions;
+
     public String getNamespaces() {
         return namespaces;
     }
@@ -100,5 +108,37 @@ public class SituationDTO {
 
     public void setConfigmaps(String configmaps) {
         this.configmaps = configmaps;
+    }
+
+    public String getStatefulSets() {
+        return statefulSets;
+    }
+
+    public void setStatefulSets(String statefulSets) {
+        this.statefulSets = statefulSets;
+    }
+
+    public String getCronJobs() {
+        return cronJobs;
+    }
+
+    public void setCronJobs(String cronJobs) {
+        this.cronJobs = cronJobs;
+    }
+
+    public String getJobs() {
+        return jobs;
+    }
+
+    public void setJobs(String jobs) {
+        this.jobs = jobs;
+    }
+
+    public String getVersions() {
+        return versions;
+    }
+
+    public void setVersions(String versions) {
+        this.versions = versions;
     }
 }

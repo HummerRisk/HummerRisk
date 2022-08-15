@@ -146,6 +146,7 @@ public class K8sRequest extends Request {
             for (V1Deployment v1Deployment : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Deployment.getMetadata().getNamespace()!=null?v1Deployment.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceYaml(v1Deployment.getMetadata().toString());
                 cloudNativeSource.setSourceName(v1Deployment.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Deployment.name());
                 list.add(cloudNativeSource);
@@ -262,6 +263,63 @@ public class K8sRequest extends Request {
                 cloudNativeSource.setSourceNamespace(v1ConfigMap.getMetadata().getNamespace()!=null?v1ConfigMap.getMetadata().getNamespace():"");
                 cloudNativeSource.setSourceName(v1ConfigMap.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.ConfigMap.name());
+                list.add(cloudNativeSource);
+            }
+            return list;
+        } catch (IOException e) {
+            throw new IOException(e.getMessage());
+        }
+    }
+
+    public List<CloudNativeSource> getStatefulSet(CloudNative cloudNative) throws IOException, ApiException {
+        try {
+            ApiClient apiClient = getK8sClient(null);
+            AppsV1Api apiInstance = new AppsV1Api(apiClient);
+            V1StatefulSetList result = apiInstance.listStatefulSetForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
+            List<CloudNativeSource> list = new ArrayList<>();
+            for (V1StatefulSet v1StatefulSet : result.getItems()) {
+                CloudNativeSource cloudNativeSource = base(cloudNative);
+                cloudNativeSource.setSourceNamespace(v1StatefulSet.getMetadata().getNamespace()!=null?v1StatefulSet.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceName(v1StatefulSet.getMetadata().getName());
+                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.StatefulSet.name());
+                list.add(cloudNativeSource);
+            }
+            return list;
+        } catch (IOException e) {
+            throw new IOException(e.getMessage());
+        }
+    }
+
+    public List<CloudNativeSource> getCronJob(CloudNative cloudNative) throws IOException, ApiException {
+        try {
+            ApiClient apiClient = getK8sClient(null);
+            BatchV1beta1Api apiInstance = new BatchV1beta1Api(apiClient);
+            V1beta1CronJobList result = apiInstance.listCronJobForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
+            List<CloudNativeSource> list = new ArrayList<>();
+            for (V1beta1CronJob v1beta1CronJob : result.getItems()) {
+                CloudNativeSource cloudNativeSource = base(cloudNative);
+                cloudNativeSource.setSourceNamespace(v1beta1CronJob.getMetadata().getNamespace()!=null?v1beta1CronJob.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceName(v1beta1CronJob.getMetadata().getName());
+                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.CronJob.name());
+                list.add(cloudNativeSource);
+            }
+            return list;
+        } catch (IOException e) {
+            throw new IOException(e.getMessage());
+        }
+    }
+
+    public List<CloudNativeSource> getJob(CloudNative cloudNative) throws IOException, ApiException {
+        try {
+            ApiClient apiClient = getK8sClient(null);
+            BatchV1Api apiInstance = new BatchV1Api(apiClient);
+            V1JobList result = apiInstance.listJobForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
+            List<CloudNativeSource> list = new ArrayList<>();
+            for (V1Job v1Job : result.getItems()) {
+                CloudNativeSource cloudNativeSource = base(cloudNative);
+                cloudNativeSource.setSourceNamespace(v1Job.getMetadata().getNamespace()!=null?v1Job.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceName(v1Job.getMetadata().getName());
+                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Job.name());
                 list.add(cloudNativeSource);
             }
             return list;

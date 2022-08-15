@@ -139,5 +139,7 @@
 <!--        <table tableName="cloud_native_result" domainObjectName="CloudNativeResult"/>-->
 <!--        <table tableName="cloud_native_result_log" domainObjectName="CloudNativeResultLog"/>-->
 <!--        <table tableName="cloud_native_result_item" domainObjectName="CloudNativeResultItem"/>-->
+<!--        <table tableName="history_cloud_native_result" domainObjectName="HistoryCloudNativeResult"/>-->
+<!--        <table tableName="history_cloud_native_result_log" domainObjectName="HistoryCloudNativeResultLog"/>-->
     </context>
 </generatorConfiguration>

@@ -144,6 +144,9 @@ public class HistoryService {
             } else if(obj.getClass() == Package.class || obj.getClass() == PackageDTO.class) {
                 accountId = ((Package) obj).getId();
                 map.put("accountType", TaskEnum.packageAccount.getType());
+            } else if(obj.getClass() == CloudNative.class || obj.getClass() == CloudNativeDTO.class) {
+                accountId = ((CloudNative) obj).getId();
+                map.put("accountType", TaskEnum.k8sAccount.getType());
             }
             map.put("accountId", accountId);
             return map;

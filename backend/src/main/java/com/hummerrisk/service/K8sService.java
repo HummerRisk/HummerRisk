@@ -46,11 +46,10 @@ public class K8sService {
                 url = url + CloudNativeConstants.URL1;
             }
             Map<String, String> param = new HashMap<>();
-            param.put("Accept", "application/json;as=Table;v=v1;g=meta.k8s.io,application/json;as=Table;v=v1beta1;g=meta.k8s.io,application/json");
-            param.put("User-Agent", "kubectl/v1.22.8 (linux/amd64) kubernetes/7061dbb");
+            param.put("Accept", CloudNativeConstants.Accept);
             param.put("Authorization", token);
             String reponse = HttpClientUtil.HttpGet(url, param);
-
+            
         } else if(StringUtils.equalsIgnoreCase(PlatformUtils.rancher, cloudNative.getPluginId())) {
 
         } else if(StringUtils.equalsIgnoreCase(PlatformUtils.openshift, cloudNative.getPluginId())) {

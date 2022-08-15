@@ -235,6 +235,9 @@ public class CloudNativeService {
                 list.addAll(k8sRequest.getRole(cloudNative));
                 list.addAll(k8sRequest.getSecret(cloudNative));
                 list.addAll(k8sRequest.getConfigMap(cloudNative));
+                list.addAll(k8sRequest.getStatefulSet(cloudNative));
+                list.addAll(k8sRequest.getCronJob(cloudNative));
+                list.addAll(k8sRequest.getJob(cloudNative));
                 for (CloudNativeSource cloudNativeSource : list) {
                     cloudNativeSourceMapper.insertSelective(cloudNativeSource);
                 }
