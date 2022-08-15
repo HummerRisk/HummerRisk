@@ -227,6 +227,54 @@
                 </if>
                 ) as jobs,
                 (
+                SELECT IFNULL(count(t.id), 0) as pvs
+                from cloud_native_source t
+                where t.source_type = 'PV'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as pvs,
+                (
+                SELECT IFNULL(count(t.id), 0) as pvcs
+                from cloud_native_source t
+                where t.source_type = 'PVC'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as pvcs,
+                (
+                SELECT IFNULL(count(t.id), 0) as leases
+                from cloud_native_source t
+                where t.source_type = 'Lease'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as leases,
+                (
+                SELECT IFNULL(count(t.id), 0) as endpointSlices
+                from cloud_native_source t
+                where t.source_type = 'EndpointSlice'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as endpointSlices,
+                (
+                SELECT IFNULL(count(t.id), 0) as events
+                from cloud_native_source t
+                where t.source_type = 'Event'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as events,
+                (
+                SELECT IFNULL(count(t.id), 0) as networkPolicies
+                from cloud_native_source t
+                where t.source_type = 'NetworkPolicy'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as networkPolicies,
+                (
                 SELECT IFNULL(count(t.id), 0) as versions
                 from cloud_native_source t
                 where t.source_type = 'Version'

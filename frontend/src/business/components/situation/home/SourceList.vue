@@ -1,7 +1,25 @@
 <template>
   <el-row :gutter="24">
     <el-col :span="24">
-      <el-card class="" shadow="always">
+      <el-card class="content" shadow="always">
+        <el-descriptions :title="$t('k8s.source_sum')" :column="8" border direction="vertical">
+          <el-descriptions-item label="DaemonSet" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.daemonsets }}</el-descriptions-item>
+          <el-descriptions-item label="Ingress" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.ingress }}</el-descriptions-item>
+          <el-descriptions-item label="Role" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.roles }}</el-descriptions-item>
+          <el-descriptions-item label="Secret" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.secrets }}</el-descriptions-item>
+          <el-descriptions-item label="ConfigMap" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.configmaps }}</el-descriptions-item>
+          <el-descriptions-item label="StatefulSet" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.statefulSets }}</el-descriptions-item>
+          <el-descriptions-item label="CronJob" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.cronJobs }}</el-descriptions-item>
+          <el-descriptions-item label="Job" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.jobs }}</el-descriptions-item>
+          <el-descriptions-item label="PV" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.pvs }}</el-descriptions-item>
+          <el-descriptions-item label="PVC" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.pvcs }}</el-descriptions-item>
+          <el-descriptions-item label="Lease" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.leases }}</el-descriptions-item>
+          <el-descriptions-item label="EndpointSlice" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.endpointSlices }}</el-descriptions-item>
+          <el-descriptions-item label="Event" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.events }}</el-descriptions-item>
+          <el-descriptions-item label="NetworkPolicy" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.networkPolicies }}</el-descriptions-item>
+          <el-descriptions-item label="Version" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.versions }}</el-descriptions-item>
+        </el-descriptions>
+
         <container v-loading="result.loading">
           <el-col :span="5">
             <el-card shadow="always" class="hr-card-index-1">
@@ -42,60 +60,14 @@
           <el-col :span="5">
             <el-card shadow="always" class="hr-card-index-5">
               <span class="hr-card-data">
-                <span class="hr-card-data-digital">{{ situationInfo.daemonsets }}</span>
-                <span class="hr-card-data-unit"> {{ 'daemonsets' }}</span>
-              </span>
-              <span class="hr-card-desc">{{ 'DaemonSet' }}</span>
-            </el-card>
-          </el-col>
-        </container>
-        <container v-loading="result.loading">
-          <el-col :span="5">
-            <el-card shadow="always" class="hr-card-index-1">
-              <span class="hr-card-data">
                 <span class="hr-card-data-digital">{{ situationInfo.services }}</span>
                 <span class="hr-card-data-unit"> {{ 'services' }}</span>
               </span>
               <span class="hr-card-desc">{{ 'Service' }}</span>
             </el-card>
           </el-col>
-          <el-col :span="5">
-            <el-card shadow="always" class="hr-card-index-2">
-              <span class="hr-card-data">
-                <span class="hr-card-data-digital">{{ situationInfo.ingress }}</span>
-                <span class="hr-card-data-unit"> {{ 'ingress' }}</span>
-              </span>
-              <span class="hr-card-desc">{{ 'Ingress' }}</span>
-            </el-card>
-          </el-col>
-          <el-col :span="5">
-            <el-card shadow="always" class="hr-card-index-3">
-              <span class="hr-card-data">
-                <span class="hr-card-data-digital">{{ situationInfo.roles }}</span>
-                <span class="hr-card-data-unit"> {{ 'roles' }}</span>
-              </span>
-              <span class="hr-card-desc">{{ 'Role' }}</span>
-            </el-card>
-          </el-col>
-          <el-col :span="5">
-            <el-card shadow="always" class="hr-card-index-4">
-              <span class="hr-card-data">
-                <span class="hr-card-data-digital">{{ situationInfo.secrets }}</span>
-                <span class="hr-card-data-unit"> {{ 'secrets' }}</span>
-              </span>
-              <span class="hr-card-desc">{{ $t('Secret') }}</span>
-            </el-card>
-          </el-col>
-          <el-col :span="5">
-            <el-card shadow="always" class="hr-card-index-5">
-              <span class="hr-card-data">
-                <span class="hr-card-data-digital">{{ situationInfo.configmaps }}</span>
-                <span class="hr-card-data-unit"> {{ 'configmaps' }}</span>
-              </span>
-              <span class="hr-card-desc">{{ 'ConfigMap' }}</span>
-            </el-card>
-          </el-col>
         </container>
+
         <el-card class="table-card" v-loading="result.loading">
           <template v-slot:header>
             <table-header :condition.sync="condition" @search="search"
@@ -268,4 +240,21 @@ export default {
   color: #8492a6;
   font-size: 10px;
 }
+
+.margin-top {
+  padding: 15px 25px 0 25px;
+}
+
+.content >>> .my-label {
+  font-size: 14px;
+  background: #ebf5ff;
+  text-align: center;
+}
+
+.content >>> .my-content {
+  color: red;
+  font-size: 10px;
+  text-align: center;
+}
+
 </style>

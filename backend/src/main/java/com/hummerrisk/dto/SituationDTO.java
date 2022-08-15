@@ -30,6 +30,18 @@ public class SituationDTO {
 
     private String versions;
 
+    private String pvs;
+
+    private String pvcs;
+
+    private String leases;
+
+    private String endpointSlices;
+
+    private String events;
+
+    private String networkPolicies;
+
     public String getNamespaces() {
         return namespaces;
     }
@@ -140,5 +152,53 @@ public class SituationDTO {
 
     public void setVersions(String versions) {
         this.versions = versions;
+    }
+
+    public String getPvs() {
+        return pvs;
+    }
+
+    public void setPvs(String pvs) {
+        this.pvs = pvs;
+    }
+
+    public String getPvcs() {
+        return pvcs;
+    }
+
+    public void setPvcs(String pvcs) {
+        this.pvcs = pvcs;
+    }
+
+    public String getLeases() {
+        return leases;
+    }
+
+    public void setLeases(String leases) {
+        this.leases = leases;
+    }
+
+    public String getEndpointSlices() {
+        return endpointSlices;
+    }
+
+    public void setEndpointSlices(String endpointSlices) {
+        this.endpointSlices = endpointSlices;
+    }
+
+    public String getEvents() {
+        return events;
+    }
+
+    public void setEvents(String events) {
+        this.events = events;
+    }
+
+    public String getNetworkPolicies() {
+        return networkPolicies;
+    }
+
+    public void setNetworkPolicies(String networkPolicies) {
+        this.networkPolicies = networkPolicies;
     }
 }

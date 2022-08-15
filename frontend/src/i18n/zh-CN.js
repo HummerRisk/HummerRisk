@@ -1129,6 +1129,7 @@ export default {
     source_namespace: '命名空间',
     source_type: '资源类型',
     source_list: '资源清单',
+    source_sum: '资源汇总',
     sync_time: '同步时间',
     execute_scan: '执行检测',
     result: '云原生检测结果',

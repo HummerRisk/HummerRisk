@@ -83,7 +83,7 @@ public class CloudNativeService {
     }
 
 
-    public boolean validate(String id) {
+    public boolean validate(String id) throws IOException, ApiException {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
         //检验账号的有效性
         boolean valid = validateAccount(cloudNative);
@@ -93,6 +93,7 @@ public class CloudNativeService {
             cloudNative.setStatus(CloudAccountConstants.Status.INVALID.name());
         }
         cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
+        addCloudNativeSource(cloudNative);
         return valid;
     }
 
@@ -238,6 +239,12 @@ public class CloudNativeService {
                 list.addAll(k8sRequest.getStatefulSet(cloudNative));
                 list.addAll(k8sRequest.getCronJob(cloudNative));
                 list.addAll(k8sRequest.getJob(cloudNative));
+                list.addAll(k8sRequest.getPv(cloudNative));
+                list.addAll(k8sRequest.getPvc(cloudNative));
+                list.addAll(k8sRequest.getLease(cloudNative));
+                list.addAll(k8sRequest.getEndpointSlice(cloudNative));
+                list.addAll(k8sRequest.getEvent(cloudNative));
+                list.addAll(k8sRequest.getNetworkPolicy(cloudNative));
                 for (CloudNativeSource cloudNativeSource : list) {
                     cloudNativeSourceMapper.insertSelective(cloudNativeSource);
                 }

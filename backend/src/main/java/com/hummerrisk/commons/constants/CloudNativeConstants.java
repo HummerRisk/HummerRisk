@@ -23,7 +23,7 @@ public class CloudNativeConstants {
 
     public enum K8S_TYPE {
         Namespace, Pod, Node, Deployment, DaemonSet, Service, Ingress, Role, Secret, ConfigMap,
-        StatefulSet, CronJob, Job, Version
+        StatefulSet, CronJob, Job, PV, PVC, Lease, EndpointSlice, Event, NetworkPolicy, Version
     }
 
     public final static String URL1 = "/apis/aquasecurity.github.io/v1alpha1/configauditreports?limit=500";

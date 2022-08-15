@@ -15,11 +15,13 @@ import com.hummerrisk.dto.CloudNativeDTO;
 import com.hummerrisk.dto.CloudNativeSourceDTO;
 import com.hummerrisk.dto.SituationDTO;
 import com.hummerrisk.service.CloudNativeService;
+import io.kubernetes.client.openapi.ApiException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +65,7 @@ public class CloudNativeController {
 
     @ApiOperation(value = "校验云原生账号")
     @PostMapping("validate/{id}")
-    public Boolean validate(@PathVariable String id) {
+    public Boolean validate(@PathVariable String id) throws IOException, ApiException {
         return cloudNativeService.validate(id);
     }
 
