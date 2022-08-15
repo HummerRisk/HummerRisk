@@ -1,5 +1,5 @@
 <template>
-  <el-container style="overflow: hidden;">
+  <el-container class="main-container-a">
     <el-header>
       <el-col v-if="auth" :span="24">
         <el-row id="header-top" type="flex" justify="space-between" align="middle">
@@ -167,8 +167,12 @@ export default {
     padding: 0;
   }
 
-  .el-aside-menu {
-    height: calc(100vh - 42px);
+  .main-container-a {
+    overflow: hidden;
+  }
+
+  .main-container-a >>> .el-aside-menu {
+    height: calc(100vh - 45px);
   }
 
 </style>
