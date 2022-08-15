@@ -244,5 +244,25 @@ public class NoticeService {
         messageOrderItemMapper.insertSelective(messageOrderItem);
     }
 
+    public void createCloudNativeMessageOrder (CloudNativeResult cloudNativeResult) {
+        MessageOrder messageOrder = new MessageOrder();
+        String uuid = UUIDUtil.newUUID();
+        messageOrder.setId(uuid);
+        messageOrder.setAccountId(cloudNativeResult.getId());
+        messageOrder.setAccountName(cloudNativeResult.getName());
+        messageOrder.setCreateTime(System.currentTimeMillis());
+        messageOrder.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
+        messageOrder.setScanType(ScanConstants.SCAN_TYPE.CLOUD_NATIVE.name());
+        messageOrderMapper.insertSelective(messageOrder);
+
+        MessageOrderItem messageOrderItem = new MessageOrderItem();
+        messageOrderItem.setMessageOrderId(uuid);
+        messageOrderItem.setTaskId(cloudNativeResult.getId());
+        messageOrderItem.setTaskName(cloudNativeResult.getName());
+        messageOrderItem.setCreateTime(System.currentTimeMillis());
+        messageOrderItem.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
+        messageOrderItemMapper.insertSelective(messageOrderItem);
+    }
+
 
 }

@@ -470,10 +470,6 @@ export default {
           exec: this.handleEdit
         },
         {
-          tip: this.$t('task.task_quartz'), icon: "el-icon-time", type: "warning",
-          exec: this.handleQuartz
-        },
-        {
           tip: this.$t('task.re_execute'), icon: "el-icon-refresh-right", type: "info",
           exec: this.handleReExecute
         },
@@ -642,9 +638,6 @@ export default {
           }
         }
       });
-    },
-    handleQuartz(item) {
-      this.$warning(this.$t('功能暂未开放'));
     },
     handleReExecute(item) {
       this.result = this.$get("/task/reExecute/" + item.id, response => {

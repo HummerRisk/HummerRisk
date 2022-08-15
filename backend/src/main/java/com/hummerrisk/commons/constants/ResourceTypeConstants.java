@@ -16,5 +16,5 @@ public enum ResourceTypeConstants {
     PROXY,
     SERVER,
     PACKAGE,
-    IMAGE
+    IMAGE,
 }

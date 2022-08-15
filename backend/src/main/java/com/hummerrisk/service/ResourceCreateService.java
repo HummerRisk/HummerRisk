@@ -96,6 +96,10 @@ public class ResourceCreateService {
     private HistoryPackageTaskMapper historyPackageTaskMapper;
     @Resource
     private TaskItemResourceLogMapper taskItemResourceLogMapper;
+    @Resource
+    private CloudNativeResultMapper cloudNativeResultMapper;
+    @Resource
+    private K8sService k8sService;
 
     @QuartzScheduled(cron = "${cron.expression.local}")
     public void handleTasks() throws Exception {
@@ -233,6 +237,39 @@ public class ResourceCreateService {
         }
 
         //网络检测
+
+        //云原生检测
+        final CloudNativeResultExample cloudNativeResultExample = new CloudNativeResultExample();
+        CloudNativeResultExample.Criteria cloudNativeCriteria = cloudNativeResultExample.createCriteria();
+        cloudNativeCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
+            cloudNativeCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+        }
+        cloudNativeResultExample.setOrderByClause("create_time limit 10");
+        List<CloudNativeResult> cloudNativeResults = cloudNativeResultMapper.selectByExampleWithBLOBs(cloudNativeResultExample);
+        if (CollectionUtils.isNotEmpty(cloudNativeResults)) {
+            cloudNativeResults.forEach(cloudNativeResult -> {
+                final CloudNativeResult cloudNativeToBeProceed;
+                try {
+                    cloudNativeToBeProceed = BeanUtils.copyBean(new CloudNativeResult(), cloudNativeResult);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                if (processingGroupIdMap.get(cloudNativeToBeProceed.getId()) != null) {
+                    return;
+                }
+                processingGroupIdMap.put(cloudNativeToBeProceed.getId(), cloudNativeToBeProceed.getId());
+                commonThreadPool.addTask(() -> {
+                    try {
+                        k8sService.createScan(cloudNativeToBeProceed);
+                    } catch (Exception e) {
+                        LogUtil.error(e);
+                    } finally {
+                        processingGroupIdMap.remove(cloudNativeToBeProceed.getId());
+                    }
+                });
+            });
+        }
 
         //历史数据统计
         final HistoryScanExample historyScanExample = new HistoryScanExample();

@@ -348,7 +348,7 @@ public class ImageService {
             noticeService.createImageMessageOrder(result);
             saveImageResultLog(result.getId(), "i18n_end_image_result", "", true);
 
-            historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), imageResultMapper.selectByPrimaryKey(result.getId())));
+            historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
         } catch (Exception e) {
             LogUtil.error("create ImageResult: " + e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());

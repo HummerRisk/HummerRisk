@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `cloud_native_result`
 (
     `id`                         varchar(50)         NOT NULL,
     `cloud_native_id`            varchar(50)         DEFAULT NULL COMMENT '云原生ID',
-    `name`                       varchar(128)        DEFAULT NULL UNIQUE COMMENT '云原生名称',
+    `name`                       varchar(128)        DEFAULT NULL COMMENT '云原生名称',
     `plugin_icon`                varchar(256)        DEFAULT NULL COMMENT '插件图标',
     `result_status`              varchar(45)         DEFAULT NULL COMMENT '检测状态',
     `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `cloud_native_result_item`
 (
     `id`                         varchar(50)         NOT NULL,
     `result_id`                  varchar(50)         DEFAULT NULL COMMENT '云原生检测结果ID',
-    `namespace`                  varchar(50)         DEFAULT NULL UNIQUE COMMENT 'Namespace',
+    `namespace`                  varchar(50)         DEFAULT NULL COMMENT 'Namespace',
     `kind`                       varchar(50)         DEFAULT NULL COMMENT 'Kind',
     `name`                       varchar(50)         DEFAULT NULL COMMENT 'Name',
     `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `history_cloud_native_result`
 (
     `id`                         varchar(50)         NOT NULL,
     `cloud_native_id`            varchar(50)         DEFAULT NULL COMMENT '云原生ID',
-    `name`                       varchar(128)        DEFAULT NULL UNIQUE COMMENT '云原生名称',
+    `name`                       varchar(128)        DEFAULT NULL COMMENT '云原生名称',
     `plugin_icon`                varchar(256)        DEFAULT NULL COMMENT '插件图标',
     `result_status`              varchar(45)         DEFAULT NULL COMMENT '检测状态',
     `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',

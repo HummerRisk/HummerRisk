@@ -513,7 +513,7 @@ export default {
       this.$get("/k8s/scan/" + item.id,response => {
         if (response.success) {
           console.log(response)
-          this.$success(this.$t('commons.success'));
+          this.$success(this.$t('schedule.event_start'));
         } else {
           this.$error(response.message);
         }

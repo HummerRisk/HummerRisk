@@ -62,6 +62,10 @@ public class HistoryService {
     private HistoryImageTaskMapper historyImageTaskMapper;
     @Resource @Lazy
     private HistoryImageTaskLogMapper historyImageTaskLogMapper;
+    @Resource @Lazy
+    private HistoryCloudNativeResultMapper historyCloudNativeResultMapper;
+    @Resource @Lazy
+    private HistoryCloudNativeResultLogMapper historyCloudNativeResultLogMapper;
 
     public Integer insertScanHistory (Object obj) throws Exception {
 
@@ -415,6 +419,18 @@ public class HistoryService {
 
     public void insertHistoryImageTaskLog(HistoryImageTaskLog record) {
         historyImageTaskLogMapper.insertSelective(record);
+    }
+
+    public void insertHistoryCloudNativeResult(HistoryCloudNativeResult record) {
+        historyCloudNativeResultMapper.insertSelective(record);
+    }
+
+    public void updateHistoryCloudNativeResult(HistoryCloudNativeResult record) {
+        historyCloudNativeResultMapper.updateByPrimaryKeySelective(record);
+    }
+
+    public void insertHistoryCloudNativeResultLog(HistoryCloudNativeResultLog record) {
+        historyCloudNativeResultLogMapper.insertSelective(record);
     }
 
 }

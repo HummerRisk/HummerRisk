@@ -2,7 +2,6 @@ package com.hummerrisk.controller.request.dashboard;
 
 import com.hummerrisk.base.domain.HistoryScan;
 
-import java.util.List;
 import java.util.Map;
 
 public class HistoryScanVo extends HistoryScan {
