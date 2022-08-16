@@ -6,6 +6,7 @@ import com.hummerrisk.base.domain.CloudNativeSource;
 import com.hummerrisk.base.domain.Proxy;
 import com.hummerrisk.commons.constants.CloudNativeConstants;
 import com.hummerrisk.commons.utils.SessionUtils;
+import com.hummerrisk.commons.utils.YamlUtil;
 import com.hummerrisk.proxy.Request;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
@@ -87,6 +88,7 @@ public class K8sRequest extends Request {
             for (V1Namespace v1Namespace : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Namespace.getMetadata().getName());
+                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Namespace));
                 cloudNativeSource.setSourceName(v1Namespace.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Namespace.name());
                 list.add(cloudNativeSource);
@@ -108,6 +110,7 @@ public class K8sRequest extends Request {
             for (V1Node v1Node : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Node.getMetadata().getNamespace()!=null?v1Node.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Node));
                 cloudNativeSource.setSourceName(v1Node.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Node.name());
                 list.add(cloudNativeSource);
@@ -127,6 +130,7 @@ public class K8sRequest extends Request {
             for (V1Pod v1Pod : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Pod.getMetadata().getNamespace()!=null?v1Pod.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Pod));
                 cloudNativeSource.setSourceName(v1Pod.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Pod.name());
                 list.add(cloudNativeSource);
@@ -146,7 +150,7 @@ public class K8sRequest extends Request {
             for (V1Deployment v1Deployment : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Deployment.getMetadata().getNamespace()!=null?v1Deployment.getMetadata().getNamespace():"");
-                cloudNativeSource.setSourceYaml(v1Deployment.getMetadata().toString());
+                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Deployment));
                 cloudNativeSource.setSourceName(v1Deployment.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Deployment.name());
                 list.add(cloudNativeSource);
@@ -166,6 +170,7 @@ public class K8sRequest extends Request {
             for (V1DaemonSet v1DaemonSet : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1DaemonSet.getMetadata().getNamespace()!=null?v1DaemonSet.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1DaemonSet));
                 cloudNativeSource.setSourceName(v1DaemonSet.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.DaemonSet.name());
                 list.add(cloudNativeSource);
@@ -185,6 +190,7 @@ public class K8sRequest extends Request {
             for (V1Service v1Service : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Service.getMetadata().getNamespace()!=null?v1Service.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Service));
                 cloudNativeSource.setSourceName(v1Service.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Service.name());
                 list.add(cloudNativeSource);
@@ -204,6 +210,7 @@ public class K8sRequest extends Request {
             for (V1Ingress v1Ingress : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Ingress.getMetadata().getNamespace()!=null?v1Ingress.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Ingress));
                 cloudNativeSource.setSourceName(v1Ingress.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Ingress.name());
                 list.add(cloudNativeSource);
@@ -223,6 +230,7 @@ public class K8sRequest extends Request {
             for (V1Role v1Role : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Role.getMetadata().getNamespace()!=null?v1Role.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Role));
                 cloudNativeSource.setSourceName(v1Role.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Role.name());
                 list.add(cloudNativeSource);
@@ -242,6 +250,7 @@ public class K8sRequest extends Request {
             for (V1Secret v1Secret : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Secret.getMetadata().getNamespace()!=null?v1Secret.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Secret));
                 cloudNativeSource.setSourceName(v1Secret.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Secret.name());
                 list.add(cloudNativeSource);
@@ -261,6 +270,7 @@ public class K8sRequest extends Request {
             for (V1ConfigMap v1ConfigMap : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1ConfigMap.getMetadata().getNamespace()!=null?v1ConfigMap.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1ConfigMap));
                 cloudNativeSource.setSourceName(v1ConfigMap.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.ConfigMap.name());
                 list.add(cloudNativeSource);
@@ -280,6 +290,7 @@ public class K8sRequest extends Request {
             for (V1StatefulSet v1StatefulSet : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1StatefulSet.getMetadata().getNamespace()!=null?v1StatefulSet.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1StatefulSet));
                 cloudNativeSource.setSourceName(v1StatefulSet.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.StatefulSet.name());
                 list.add(cloudNativeSource);
@@ -299,6 +310,7 @@ public class K8sRequest extends Request {
             for (V1beta1CronJob v1beta1CronJob : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1beta1CronJob.getMetadata().getNamespace()!=null?v1beta1CronJob.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1beta1CronJob));
                 cloudNativeSource.setSourceName(v1beta1CronJob.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.CronJob.name());
                 list.add(cloudNativeSource);
@@ -318,6 +330,7 @@ public class K8sRequest extends Request {
             for (V1Job v1Job : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Job.getMetadata().getNamespace()!=null?v1Job.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Job));
                 cloudNativeSource.setSourceName(v1Job.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Job.name());
                 list.add(cloudNativeSource);
@@ -337,6 +350,7 @@ public class K8sRequest extends Request {
             for (V1PersistentVolume v1PersistentVolume : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1PersistentVolume.getMetadata().getNamespace()!=null?v1PersistentVolume.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1PersistentVolume));
                 cloudNativeSource.setSourceName(v1PersistentVolume.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.PVC.name());
                 list.add(cloudNativeSource);
@@ -356,6 +370,7 @@ public class K8sRequest extends Request {
             for (V1PersistentVolumeClaim v1PersistentVolumeClaim : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1PersistentVolumeClaim.getMetadata().getNamespace()!=null?v1PersistentVolumeClaim.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1PersistentVolumeClaim));
                 cloudNativeSource.setSourceName(v1PersistentVolumeClaim.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.PVC.name());
                 list.add(cloudNativeSource);
@@ -375,6 +390,7 @@ public class K8sRequest extends Request {
             for (V1Lease v1Lease : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Lease.getMetadata().getNamespace()!=null?v1Lease.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Lease));
                 cloudNativeSource.setSourceName(v1Lease.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Lease.name());
                 list.add(cloudNativeSource);
@@ -394,6 +410,7 @@ public class K8sRequest extends Request {
             for (V1EndpointSlice v1EndpointSlice : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1EndpointSlice.getMetadata().getNamespace()!=null?v1EndpointSlice.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1EndpointSlice));
                 cloudNativeSource.setSourceName(v1EndpointSlice.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Lease.name());
                 list.add(cloudNativeSource);
@@ -413,6 +430,7 @@ public class K8sRequest extends Request {
             for (EventsV1Event eventsV1Event : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(eventsV1Event.getMetadata().getNamespace()!=null?eventsV1Event.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(eventsV1Event));
                 cloudNativeSource.setSourceName(eventsV1Event.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Event.name());
                 list.add(cloudNativeSource);
@@ -432,6 +450,7 @@ public class K8sRequest extends Request {
             for (V1NetworkPolicy v1NetworkPolicy : result.getItems()) {
                 CloudNativeSource cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1NetworkPolicy.getMetadata().getNamespace()!=null?v1NetworkPolicy.getMetadata().getNamespace():"");
+                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1NetworkPolicy));
                 cloudNativeSource.setSourceName(v1NetworkPolicy.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.NetworkPolicy.name());
                 list.add(cloudNativeSource);
