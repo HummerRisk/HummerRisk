@@ -421,11 +421,11 @@ public class HistoryService {
         historyImageTaskLogMapper.insertSelective(record);
     }
 
-    public void insertHistoryCloudNativeResult(HistoryCloudNativeResult record) {
+    public void insertHistoryCloudNativeResult(HistoryCloudNativeResultWithBLOBs record) {
         historyCloudNativeResultMapper.insertSelective(record);
     }
 
-    public void updateHistoryCloudNativeResult(HistoryCloudNativeResult record) {
+    public void updateHistoryCloudNativeResult(HistoryCloudNativeResultWithBLOBs record) {
         historyCloudNativeResultMapper.updateByPrimaryKeySelective(record);
     }
 

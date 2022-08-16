@@ -510,12 +510,24 @@ export default {
       }
     },
     handleScan(item) {
-      this.$get("/k8s/scan/" + item.id,response => {
-        if (response.success) {
-          console.log(response)
-          this.$success(this.$t('schedule.event_start'));
-        } else {
-          this.$error(response.message);
+      this.$alert(this.$t('image.one_scan') + item.name + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.$get("/k8s/scan/" + item.id,response => {
+              if (response.success) {
+                this.$success(this.$t('schedule.event_start'));
+                this.$router.push({
+                  path: '/k8s/result',
+                  query: {
+                    date:new Date().getTime()
+                  },
+                }).catch(error => error);
+              } else {
+                this.$error(response.message);
+              }
+            });
+          }
         }
       });
     },

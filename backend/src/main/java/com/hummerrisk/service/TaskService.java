@@ -751,7 +751,7 @@ public class TaskService {
                 result.setRuleDesc(rule.getDescription());
                 result.setResultStatus(TaskConstants.TASK_STATUS.APPROVED.toString());
                 result.setSeverity(rule.getSeverity());
-                result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
+                result.setUserName(SessionUtils.getUser().getName());
                 PackageResultExample packageResultExample = new PackageResultExample();
                 packageResultExample.createCriteria().andPackageIdEqualTo(apackage.getId()).andRuleIdEqualTo(rule.getId());
                 packageResultMapper.deleteByExample(packageResultExample);
@@ -788,7 +788,7 @@ public class TaskService {
                 result.setRuleDesc(rule.getDescription());
                 result.setResultStatus(TaskConstants.TASK_STATUS.APPROVED.toString());
                 result.setSeverity(rule.getSeverity());
-                result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
+                result.setUserName(SessionUtils.getUser().getName());
                 ImageResultExample imageResultExample = new ImageResultExample();
                 imageResultExample.createCriteria().andImageIdEqualTo(image.getId()).andRuleIdEqualTo(rule.getId());
                 imageResultMapper.deleteByExample(imageResultExample);

@@ -1133,6 +1133,7 @@ export default {
     sync_time: '同步时间',
     execute_scan: '执行检测',
     result: '云原生检测结果',
+    result_list: '云原生检测结果列表',
   },
   second: {
     title: '秒',

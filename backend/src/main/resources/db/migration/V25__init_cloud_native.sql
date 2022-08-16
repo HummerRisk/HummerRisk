@@ -38,7 +38,8 @@ CREATE TABLE IF NOT EXISTS `cloud_native_result`
     `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
     `apply_user`                 varchar(50)         DEFAULT NULL COMMENT '创建人ID',
     `user_name`                  varchar(128)        DEFAULT NULL COMMENT '创建人名称',
-    `return_json`                longtext            DEFAULT NULL COMMENT 'return json',
+    `vulnerability_report`       longtext            DEFAULT NULL COMMENT 'VulnerabilityReport',
+    `config_audit_report`        longtext            DEFAULT NULL COMMENT 'ConfigAuditReport',
     `return_sum`                 bigint(13)          DEFAULT 0 COMMENT '输出检测结果漏洞数',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
@@ -47,11 +48,16 @@ CREATE TABLE IF NOT EXISTS `cloud_native_result_item`
 (
     `id`                         varchar(50)         NOT NULL,
     `result_id`                  varchar(50)         DEFAULT NULL COMMENT '云原生检测结果ID',
-    `namespace`                  varchar(50)         DEFAULT NULL COMMENT 'Namespace',
-    `kind`                       varchar(50)         DEFAULT NULL COMMENT 'Kind',
-    `name`                       varchar(50)         DEFAULT NULL COMMENT 'Name',
+    `title`                      varchar(128)        DEFAULT NULL COMMENT 'title',
+    `vulnerability_id`           varchar(50)         DEFAULT NULL COMMENT 'vulnerabilityID',
+    `severity`                   varchar(50)         DEFAULT NULL COMMENT 'severity',
+    `score`                      varchar(50)         DEFAULT NULL COMMENT 'score',
+    `target`                     varchar(50)         DEFAULT NULL COMMENT 'target',
+    `primary_link`               varchar(50)         DEFAULT NULL COMMENT 'primaryLink',
+    `installed_version`          varchar(50)         DEFAULT NULL COMMENT 'installedVersion',
+    `fixed_version`              varchar(50)         DEFAULT NULL COMMENT 'fixedVersion',
     `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
-    `results`                    longtext            DEFAULT NULL COMMENT 'Results',
+    `links`                      longtext            DEFAULT NULL COMMENT 'links',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
@@ -77,8 +83,26 @@ CREATE TABLE IF NOT EXISTS `history_cloud_native_result`
     `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
     `apply_user`                 varchar(50)         DEFAULT NULL COMMENT '创建人ID',
     `user_name`                  varchar(128)        DEFAULT NULL COMMENT '创建人名称',
-    `return_json`                longtext            DEFAULT NULL COMMENT 'return json',
+    `vulnerability_report`       longtext            DEFAULT NULL COMMENT 'VulnerabilityReport',
+    `config_audit_report`        longtext            DEFAULT NULL COMMENT 'ConfigAuditReport',
     `return_sum`                 bigint(13)          DEFAULT 0 COMMENT '输出检测结果漏洞数',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `history_cloud_native_result_item`
+(
+    `id`                         varchar(50)         NOT NULL,
+    `result_id`                  varchar(50)         DEFAULT NULL COMMENT '云原生检测结果ID',
+    `title`                      varchar(128)        DEFAULT NULL COMMENT 'title',
+    `vulnerability_id`           varchar(50)         DEFAULT NULL COMMENT 'vulnerabilityID',
+    `severity`                   varchar(50)         DEFAULT NULL COMMENT 'severity',
+    `score`                      varchar(50)         DEFAULT NULL COMMENT 'score',
+    `target`                     varchar(50)         DEFAULT NULL COMMENT 'target',
+    `primary_link`               varchar(50)         DEFAULT NULL COMMENT 'primaryLink',
+    `installed_version`          varchar(50)         DEFAULT NULL COMMENT 'installedVersion',
+    `fixed_version`              varchar(50)         DEFAULT NULL COMMENT 'fixedVersion',
+    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `links`                      longtext            DEFAULT NULL COMMENT 'links',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 

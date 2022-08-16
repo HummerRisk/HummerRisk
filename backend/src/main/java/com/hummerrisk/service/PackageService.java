@@ -267,7 +267,7 @@ public class PackageService {
                 result.setRuleDesc(dto.getDescription());
                 result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
                 result.setSeverity(dto.getSeverity());
-                result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
+                result.setUserName(SessionUtils.getUser().getName());
                 packageResultMapper.insertSelective(result);
 
                 savePackageResultLog(result.getId(), "i18n_start_package_result", "", true);
@@ -352,7 +352,7 @@ public class PackageService {
 
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-        result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
+        result.setUserName(SessionUtils.getUser().getName());
         packageResultMapper.updateByPrimaryKeySelective(result);
 
         this.reScanDeletePackageResult(id);

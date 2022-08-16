@@ -246,12 +246,12 @@ public class ResourceCreateService {
             cloudNativeCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
         }
         cloudNativeResultExample.setOrderByClause("create_time limit 10");
-        List<CloudNativeResult> cloudNativeResults = cloudNativeResultMapper.selectByExampleWithBLOBs(cloudNativeResultExample);
+        List<CloudNativeResultWithBLOBs> cloudNativeResults = cloudNativeResultMapper.selectByExampleWithBLOBs(cloudNativeResultExample);
         if (CollectionUtils.isNotEmpty(cloudNativeResults)) {
             cloudNativeResults.forEach(cloudNativeResult -> {
-                final CloudNativeResult cloudNativeToBeProceed;
+                final CloudNativeResultWithBLOBs cloudNativeToBeProceed;
                 try {
-                    cloudNativeToBeProceed = BeanUtils.copyBean(new CloudNativeResult(), cloudNativeResult);
+                    cloudNativeToBeProceed = BeanUtils.copyBean(new CloudNativeResultWithBLOBs(), cloudNativeResult);
                 } catch (Exception e) {
                     throw new RuntimeException(e.getMessage());
                 }

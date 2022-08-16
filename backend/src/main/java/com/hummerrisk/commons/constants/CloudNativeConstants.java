@@ -28,7 +28,8 @@ public class CloudNativeConstants {
 
     public final static String URL1 = "/apis/aquasecurity.github.io/v1alpha1/configauditreports?limit=500";
     public final static String URL2 = "apis/aquasecurity.github.io/v1alpha1/configauditreports?limit=500";
-
-    public final static String Accept = "application/json;as=Table;v=v1;g=meta.k8s.io,application/json;as=Table;v=v1beta1;g=meta.k8s.io,application/json";
+    public final static String URL3 = "/apis/aquasecurity.github.io/v1alpha1/vulnerabilityreports?limit=500";
+    public final static String URL4 = "apis/aquasecurity.github.io/v1alpha1/vulnerabilityreports?limit=500";
+    public final static String Accept = "application/json";
 
 }

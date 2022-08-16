@@ -291,7 +291,7 @@ public class ImageService {
                 result.setRuleDesc(dto.getDescription());
                 result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
                 result.setSeverity(dto.getSeverity());
-                result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
+                result.setUserName(SessionUtils.getUser().getName());
                 imageResultMapper.insertSelective(result);
 
                 saveImageResultLog(result.getId(), "i18n_start_image_result", "", true);
@@ -482,7 +482,7 @@ public class ImageService {
 
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-        result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
+        result.setUserName(SessionUtils.getUser().getName());
         imageResultMapper.updateByPrimaryKeySelective(result);
 
         this.reScanDeleteImageResult(id);

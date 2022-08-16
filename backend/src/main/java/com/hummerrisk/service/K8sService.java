@@ -4,12 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.base.domain.*;
-import com.hummerrisk.base.mapper.CloudNativeMapper;
-import com.hummerrisk.base.mapper.CloudNativeResultLogMapper;
-import com.hummerrisk.base.mapper.CloudNativeResultMapper;
-import com.hummerrisk.base.mapper.UserMapper;
+import com.hummerrisk.base.mapper.*;
+import com.hummerrisk.base.mapper.ext.ExtCloudNativeResultMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.utils.*;
+import com.hummerrisk.controller.request.image.ImageResultRequest;
+import com.hummerrisk.controller.request.k8s.K8sResultRequest;
+import com.hummerrisk.dto.ImageResultDTO;
 import com.hummerrisk.proxy.k8s.K8sRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,8 @@ public class K8sService {
     @Resource
     private CloudNativeResultMapper cloudNativeResultMapper;
     @Resource
+    private ExtCloudNativeResultMapper extCloudNativeResultMapper;
+    @Resource
     private CloudNativeResultLogMapper cloudNativeResultLogMapper;
     @Resource
     private UserMapper userMapper;
@@ -39,12 +42,14 @@ public class K8sService {
     private HistoryService historyService;
     @Resource
     private NoticeService noticeService;
+    @Resource
+    private CloudNativeResultItemMapper cloudNativeResultItemMapper;
 
     public void scan(String id) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
         Integer scanId = historyService.insertScanHistory(cloudNative);
         if(StringUtils.equalsIgnoreCase(cloudNative.getStatus(), CloudAccountConstants.Status.VALID.name())) {
-            CloudNativeResult result = new CloudNativeResult();
+            CloudNativeResultWithBLOBs result = new CloudNativeResultWithBLOBs();
 
             deleteResultByCloudNativeId(id);
 
@@ -55,7 +60,7 @@ public class K8sService {
             result.setCreateTime(System.currentTimeMillis());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-            result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
+            result.setUserName(SessionUtils.getUser().getName());
             cloudNativeResultMapper.insertSelective(result);
 
             saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_result", "", true);
@@ -63,28 +68,30 @@ public class K8sService {
 
             historyService.insertScanTaskHistory(result, scanId, cloudNative.getId(), TaskEnum.k8sAccount.getType());
 
-            historyService.insertHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResult(), result));
+            historyService.insertHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
         }
     }
 
     public String reScan(String id) throws Exception {
-        CloudNativeResult result = cloudNativeResultMapper.selectByPrimaryKey(id);
+        CloudNativeResultWithBLOBs result = cloudNativeResultMapper.selectByPrimaryKey(id);
 
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-        result.setUserName(userMapper.selectByPrimaryKey(SessionUtils.getUserId()).getName());
+        result.setUserName(SessionUtils.getUser().getName());
         cloudNativeResultMapper.updateByPrimaryKeySelective(result);
+
+        reScanDeleteCloudNativeResult(id);
 
         saveCloudNativeResultLog(result.getId(), "i18n_restart_k8s_result", "", true);
 
         OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_restart_k8s_result");
 
-        historyService.updateHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResult(), result));
+        historyService.updateHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
 
         return result.getId();
     }
 
-    public void createScan (CloudNativeResult result) throws Exception {
+    public void createScan (CloudNativeResultWithBLOBs result) throws Exception {
         try {
             CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(result.getCloudNativeId());
             if (StringUtils.equalsIgnoreCase(PlatformUtils.k8s, cloudNative.getPluginId())) {
@@ -100,8 +107,16 @@ public class K8sService {
                 Map<String, String> param = new HashMap<>();
                 param.put("Accept", CloudNativeConstants.Accept);
                 param.put("Authorization", token);
-                String reponse = HttpClientUtil.HttpGet(url, param);
-                result.setReturnJson(reponse);
+                String reponse1 = HttpClientUtil.HttpGet(url, param);
+                result.setConfigAuditReport(reponse1);
+                String url2 = k8sRequest.getUrl();
+                if (url2.endsWith("/")) {
+                    url2 = url2 + CloudNativeConstants.URL4;
+                } else {
+                    url2 = url2 + CloudNativeConstants.URL3;
+                }
+                String reponse2 = HttpClientUtil.HttpGet(url2, param);
+                result.setVulnerabilityReport(reponse2);
             } else if(StringUtils.equalsIgnoreCase(PlatformUtils.rancher, cloudNative.getPluginId())) {
 
             } else if(StringUtils.equalsIgnoreCase(PlatformUtils.openshift, cloudNative.getPluginId())) {
@@ -119,13 +134,13 @@ public class K8sService {
             noticeService.createCloudNativeMessageOrder(result);
             saveCloudNativeResultLog(result.getId(), "i18n_end_k8s_result", "", true);
 
-            historyService.updateHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResult(), result));
+            historyService.updateHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
         } catch (Exception e) {
             LogUtil.error("create ImageResult: " + e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             cloudNativeResultMapper.updateByPrimaryKeySelective(result);
-            historyService.updateHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResult(), result));
+            historyService.updateHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
             saveCloudNativeResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
         }
     }
@@ -136,12 +151,20 @@ public class K8sService {
         List<CloudNativeResult> list = cloudNativeResultMapper.selectByExample(example);
 
         for (CloudNativeResult result : list) {
+            CloudNativeResultItemExample cloudNativeResultItemExample = new CloudNativeResultItemExample();
+            cloudNativeResultItemExample.createCriteria().andResultIdEqualTo(result.getId());
+            cloudNativeResultItemMapper.deleteByExample(cloudNativeResultItemExample);
             CloudNativeResultLogExample logExample = new CloudNativeResultLogExample();
             logExample.createCriteria().andResultIdEqualTo(result.getId());
             cloudNativeResultLogMapper.deleteByExample(logExample);
-
         }
         cloudNativeResultMapper.deleteByExample(example);
+    }
+
+    public void reScanDeleteCloudNativeResult(String id) throws Exception {
+        CloudNativeResultItemExample cloudNativeResultItemExample = new CloudNativeResultItemExample();
+        cloudNativeResultItemExample.createCriteria().andResultIdEqualTo(id);
+        cloudNativeResultItemMapper.deleteByExample(cloudNativeResultItemExample);
     }
 
     void saveCloudNativeResultLog(String resultId, String operation, String output, boolean result) throws Exception {
@@ -165,14 +188,52 @@ public class K8sService {
         historyService.insertHistoryCloudNativeResultLog(BeanUtils.copyBean(new HistoryCloudNativeResultLog(), cloudNativeResultLog));
     }
 
-    long saveResultItem(CloudNativeResult result) throws Exception {
+    long saveResultItem(CloudNativeResultWithBLOBs result) throws Exception {
 
-        String json = result.getReturnJson();
-        JSONObject jsonObject = JSON.parseObject(json);
-        JSONArray jsonArray = jsonObject.getJSONArray("rows");
+        String json = result.getVulnerabilityReport();
+        JSONObject jsonObject1 = JSON.parseObject(json);
+        JSONArray jsonArray1 = jsonObject1.getJSONArray("items");
+        int i = 0;
+        for(Object object : jsonArray1) {
+            JSONObject obj1 = (JSONObject) object;
+            JSONObject jsonObject2 = obj1.getJSONObject("report");
+            JSONArray jsonArray = jsonObject2.getJSONArray("vulnerabilities");
+            for(Object object2 : jsonArray) {
+                JSONObject obj2 = (JSONObject) object2;
+                CloudNativeResultItem cloudNativeResultItem = new CloudNativeResultItem();
+                cloudNativeResultItem.setId(UUIDUtil.newUUID());
+                cloudNativeResultItem.setResultId(result.getId());
+                cloudNativeResultItem.setPrimaryLink(obj2.getString("primaryLink"));
+                cloudNativeResultItem.setScore(obj2.getString("score"));
+                cloudNativeResultItem.setSeverity(obj2.getString("severity"));
+                cloudNativeResultItem.setTarget(obj2.getString("target"));
+                cloudNativeResultItem.setTitle(obj2.getString("title"));
+                cloudNativeResultItem.setVulnerabilityId(obj2.getString("vulnerabilityID"));
+                cloudNativeResultItem.setInstalledVersion(obj2.getString("installedVersion"));
+                cloudNativeResultItem.setFixedVersion(obj2.getString("fixedVersion"));
+                cloudNativeResultItem.setLinks(obj2.getString("links"));
+                cloudNativeResultItem.setCreateTime(System.currentTimeMillis());
+                cloudNativeResultItemMapper.insertSelective(cloudNativeResultItem);
+                i++;
+            }
+        }
 
-        return jsonArray.size();
+
+        return i;
     }
 
+    public List<CloudNativeResult> resultList(K8sResultRequest request) {
+        List<CloudNativeResult> list = extCloudNativeResultMapper.resultList(request);
+        return list;
+    }
+
+    public void deleteCloudNativeResult(String id) throws Exception {
+
+        CloudNativeResultLogExample logExample = new CloudNativeResultLogExample();
+        logExample.createCriteria().andResultIdEqualTo(id);
+        cloudNativeResultLogMapper.deleteByExample(logExample);
+
+        cloudNativeResultMapper.deleteByPrimaryKey(id);
+    }
 
 }
