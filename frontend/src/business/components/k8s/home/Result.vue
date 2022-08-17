@@ -176,6 +176,66 @@
                 </div>
               </div>
             </el-tab-pane>
+            <el-tab-pane label="ConfigAuditReport">
+              <div style="margin: 10px 0 0 0;">
+                <h2>Details:&nbsp;</h2>
+                <ul style="margin-left: 60px;">
+                  <li><i>Api Version</i>: {{ logForm.configAuditReport.apiVersion }}</li>
+                  <li><i>Kind</i>: {{ logForm.configAuditReport.kind }}</li>
+                </ul>
+                <div style="margin: 10px 0 0 0;">
+                  <div style="margin: 10px 0 0 0;" :key="index" v-for="(item, index) in logForm.configAuditReport.items">
+                    <el-card class="box-card">
+                      <div style="margin: 10px;">
+                        <h3>Summary:&nbsp;</h3>
+                        <ul style="margin-left: 60px;">
+                          <li><i>Name</i>: {{ item.metadata.name }}</li>
+                          <li><i>Namespace</i>: {{ item.metadata.namespace }}</li>
+                          <li><i>Critical Count</i>: {{ item.report.summary.criticalCount }}</li>
+                          <li><i>High Count</i>: {{ item.report.summary.highCount }}</li>
+                          <li><i>Low Count</i>:&nbsp;{{ item.report.summary.lowCount }}</li>
+                          <li><i>Medium Count</i>:&nbsp;{{ item.report.summary.mediumCount }}</li>
+                        </ul>
+                      </div>
+                      <div style="margin: 10px 0 10px 0;padding: 5px; box-shadow: 1px 1px 1px 1px #e8e8e8;" :key="index" v-for="(check, index) in item.report.checks">
+                        <div slot="header" class="clearfix clearfix-dev">
+                          <el-row>
+                            <el-col class="icon-title" :span="3">
+                              <span>{{ check.severity.substring(0, 1) }}</span>
+                            </el-col>
+                            <el-col :span="15" style="margin: -7px 0 0 15px;">
+                              <span style="font-size: 24px;font-weight: 500;">{{ check.title }}</span>
+                            </el-col>
+                            <el-col :span="6" style="float: right;">
+                              <span style="font-size: 20px;color: #999;float: right;">{{ 'CHECKID' }}</span>
+                            </el-col>
+                          </el-row>
+                          <el-row style="font-size: 18px;padding: 10px;">
+                            <el-col :span="20">
+                              <span style="color: #888;margin: 5px;">{{ 'CHECKS' }}</span>
+                              <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                              <span style="margin: 5px;">{{ check.category }}</span>
+                              <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                              <span style="margin: 5px;"><el-button type="danger" size="mini">{{ check.severity }}</el-button></span>
+                              <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                              <span style="color: #444;margin: 5px;">SUCCESS: {{ check.success }}</span>
+                            </el-col>
+                            <el-col :span="4" style="float: right;">
+                              <span style="font-size: 20px;color: #000;float: right;">{{ check.checkID }}</span>
+                            </el-col>
+                          </el-row>
+                        </div>
+                        <div class="text item div-desc">
+                          <el-row>
+                            <i class="el-icon-s-opportunity"></i> {{ check.description }}
+                          </el-row>
+                        </div>
+                      </div>
+                    </el-card>
+                  </div>
+                </div>
+              </div>
+            </el-tab-pane>
           </el-tabs>
         </div>
       </el-row>
@@ -361,7 +421,6 @@ export default {
         this.logForm = response.data;
         this.logForm.vulnerabilityReport = JSON.parse(this.logForm.vulnerabilityReport);
         this.logForm.configAuditReport = JSON.parse(this.logForm.configAuditReport);
-        console.log(this.logForm)
       });
       this.logVisible = true;
     },
