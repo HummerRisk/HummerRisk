@@ -12,6 +12,8 @@ public class K8sResultRequest extends CloudNativeResult {
 
     private String name;
 
+    private String resultId;
+
     private Map<String, Object> combine;
 
     public String getName() {
@@ -20,6 +22,14 @@ public class K8sResultRequest extends CloudNativeResult {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getResultId() {
+        return resultId;
+    }
+
+    public void setResultId(String resultId) {
+        this.resultId = resultId;
     }
 
     public Map<String, Object> getCombine() {

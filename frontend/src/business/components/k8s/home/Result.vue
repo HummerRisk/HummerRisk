@@ -18,6 +18,7 @@
               </span>
           </template>
         </el-table-column>
+        <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
         <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="6%">
           <el-tooltip effect="dark" :content="$t('history.resource_result')" placement="top">
             <el-link type="primary" class="text-click" @click="goResource(scope.row)">{{ scope.row.returnSum }}</el-link>
@@ -48,12 +49,6 @@
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="updateTime" min-width="15%" :label="$t('image.last_modified')" sortable>
-          <template v-slot:default="scope">
-            <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
         <el-table-column min-width="12%" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
@@ -144,7 +139,6 @@ export default {
         let data = response.data;
         this.total = data.itemCount;
         this.tableData = data.listObject;
-        console.log(this.tableData);
       });
     },
     init() {
@@ -193,6 +187,16 @@ export default {
           }
         }
       });
+    },
+    goResource (params) {
+      if (params.returnSum == 0) {
+        this.$warning(this.$t('resource.no_resources_allowed'));
+        return;
+      }
+      let p = '/k8s/resultdetails/' + params.id;
+      this.$router.push({
+        path: p
+      }).catch(error => error);
     },
   },
   activated() {

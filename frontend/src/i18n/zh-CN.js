@@ -1134,6 +1134,8 @@ export default {
     execute_scan: '执行检测',
     result: '云原生检测结果',
     result_list: '云原生检测结果列表',
+    back_resource: '返回云原生检测结果列表',
+    result_details_list: '云原生检测结果详情列表',
   },
   second: {
     title: '秒',

@@ -227,6 +227,16 @@ public class K8sService {
         return list;
     }
 
+    public List<CloudNativeResultItem> resultItemList(K8sResultRequest resourceRequest) {
+        CloudNativeResultItemExample example = new CloudNativeResultItemExample();
+        if(resourceRequest.getName()!=null) {
+            example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId()).andTitleLike(resourceRequest.getName());
+        } else {
+            example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
+        }
+        return cloudNativeResultItemMapper.selectByExample(example);
+    }
+
     public void deleteCloudNativeResult(String id) throws Exception {
 
         CloudNativeResultLogExample logExample = new CloudNativeResultLogExample();
