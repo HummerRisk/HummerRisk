@@ -4,7 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.base.domain.*;
-import com.hummerrisk.base.mapper.*;
+import com.hummerrisk.base.mapper.CloudNativeMapper;
+import com.hummerrisk.base.mapper.CloudNativeResultItemMapper;
+import com.hummerrisk.base.mapper.CloudNativeResultLogMapper;
+import com.hummerrisk.base.mapper.CloudNativeResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeResultMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.utils.*;
@@ -34,8 +37,6 @@ public class K8sService {
     private ExtCloudNativeResultMapper extCloudNativeResultMapper;
     @Resource
     private CloudNativeResultLogMapper cloudNativeResultLogMapper;
-    @Resource
-    private UserMapper userMapper;
     @Resource
     private HistoryService historyService;
     @Resource
@@ -237,6 +238,11 @@ public class K8sService {
         return cloudNativeResultItemMapper.selectByExample(example);
     }
 
+    public CloudNativeResult getCloudNativeResult(String resultId) {
+        CloudNativeResult cloudNativeResult = cloudNativeResultMapper.selectByPrimaryKey(resultId);
+        return cloudNativeResult;
+    }
+
     public void deleteCloudNativeResult(String id) throws Exception {
 
         CloudNativeResultLogExample logExample = new CloudNativeResultLogExample();
@@ -244,6 +250,17 @@ public class K8sService {
         cloudNativeResultLogMapper.deleteByExample(logExample);
 
         cloudNativeResultMapper.deleteByPrimaryKey(id);
+    }
+
+    public List<CloudNativeResultLog> getCloudNativeResultLog(String resultId) {
+        CloudNativeResultLogExample example = new CloudNativeResultLogExample();
+        example.createCriteria().andResultIdEqualTo(resultId);
+        return cloudNativeResultLogMapper.selectByExampleWithBLOBs(example);
+    }
+
+    public CloudNativeResultWithBLOBs getCloudNativeResultWithBLOBs(String resultId) {
+        CloudNativeResultWithBLOBs cloudNativeResultWithBLOBs = cloudNativeResultMapper.selectByPrimaryKey(resultId);
+        return cloudNativeResultWithBLOBs;
     }
 
 }

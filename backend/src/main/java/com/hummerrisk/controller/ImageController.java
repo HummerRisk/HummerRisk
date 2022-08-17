@@ -183,7 +183,7 @@ public class ImageController {
     @I18n
     @ApiOperation(value = "镜像检测日志")
     @GetMapping(value = "log/{resultId}")
-    public List<ImageResultLog> getPackageResultLog(@PathVariable String resultId) {
+    public List<ImageResultLog> getImageResultLog(@PathVariable String resultId) {
         return imageService.getImageResultLog(resultId);
     }
 

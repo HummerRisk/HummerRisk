@@ -2,9 +2,7 @@ package com.hummerrisk.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummerrisk.base.domain.CloudNativeResult;
-import com.hummerrisk.base.domain.CloudNativeResultItem;
-import com.hummerrisk.base.domain.ImageGrypeTable;
+import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
@@ -13,6 +11,7 @@ import com.hummerrisk.service.K8sService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -52,11 +51,32 @@ public class K8sController {
     }
 
     @I18n
-    @ApiOperation(value = "云原生检测结果详情")
+    @ApiOperation(value = "云原生检测结果详情列表")
     @PostMapping("resultItemList/{goPage}/{pageSize}")
     public Pager<List<CloudNativeResultItem>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, k8sService.resultItemList(request));
+    }
+
+    @I18n
+    @ApiIgnore
+    @GetMapping(value = "getCloudNativeResult/{resultId}")
+    public CloudNativeResult getCloudNativeResult(@PathVariable String resultId) {
+        return k8sService.getCloudNativeResult(resultId);
+    }
+
+    @I18n
+    @ApiOperation(value = "云原生检测结果详情")
+    @GetMapping(value = "getCloudNativeResultWithBLOBs/{resultId}")
+    public CloudNativeResultWithBLOBs getCloudNativeResultWithBLOBs(@PathVariable String resultId) {
+        return k8sService.getCloudNativeResultWithBLOBs(resultId);
+    }
+
+    @I18n
+    @ApiOperation(value = "云原生检测日志")
+    @GetMapping(value = "log/{resultId}")
+    public List<CloudNativeResultLog> getCloudNativeResultLog(@PathVariable String resultId) {
+        return k8sService.getCloudNativeResultLog(resultId);
     }
 
 
