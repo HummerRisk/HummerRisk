@@ -19,6 +19,7 @@ import K8s from "@/business/components/k8s/router";
 import Situation from "@/business/components/situation/router";
 import Code from "@/business/components/code/router";
 import Sbom from "@/business/components/sbom/router";
+import Log from "@/business/components/log/router";
 
 Vue.use(VueRouter);
 /* eslint-disable */
@@ -47,7 +48,8 @@ const router = new VueRouter({
     K8s,
     Situation,
     Code,
-    Sbom
+    Sbom,
+    Log
   ]
 });
 

@@ -1137,6 +1137,11 @@ export default {
     back_resource: '返回云原生检测结果列表',
     result_details_list: '云原生检测结果详情列表',
   },
+  log: {
+    audit: '操作审计',
+    event_query: '事件查询',
+    event_analysis: '事件分析',
+  },
   second: {
     title: '秒',
     val: '0 1 2...59',

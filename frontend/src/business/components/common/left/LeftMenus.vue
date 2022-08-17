@@ -31,6 +31,10 @@
             <i class="iconfont icon-xitonganquanheguibaobiao"></i>
             <span slot="title">{{ $t('resource.statistics') }}</span>
           </el-menu-item>
+          <el-menu-item index="/log" onselectstart="return false" v-permission="['admin']">
+            <i class="iconfont icon-anquanhegui"></i>
+            <span slot="title">{{ $t('log.audit') }}</span>
+          </el-menu-item>
           <el-menu-item index="/oss">
             <i class="iconfont icon-ossduixiangcunchuOSS"></i>
             <span slot="title">{{ $t('oss.oss_setting') }}</span>
