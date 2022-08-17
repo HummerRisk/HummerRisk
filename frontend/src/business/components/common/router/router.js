@@ -20,6 +20,8 @@ import Situation from "@/business/components/situation/router";
 import Code from "@/business/components/code/router";
 import Sbom from "@/business/components/sbom/router";
 import Log from "@/business/components/log/router";
+import k8sImage from "@/business/components/k8sImage/router";
+import config from "@/business/components/config/router";
 
 Vue.use(VueRouter);
 /* eslint-disable */
@@ -49,7 +51,9 @@ const router = new VueRouter({
     Situation,
     Code,
     Sbom,
-    Log
+    Log,
+    k8sImage,
+    config
   ]
 });
 

@@ -1,6 +1,6 @@
 <template>
   <el-col>
-    <log-header-menus/>
+    <config-header-menus/>
     <div>
       <transition>
         <keep-alive>
@@ -12,13 +12,13 @@
 </template>
 <script>
 
-import LogHeaderMenus from "./head/LogHeaderMenus";
+import ConfigHeaderMenus from "./head/ConfigHeaderMenus";
 
 export default {
-    components: {LogHeaderMenus},
+    components: {ConfigHeaderMenus},
     data() {
       return {
-        baseUrl: "image"
+        baseUrl: "config"
       }
     }
   }

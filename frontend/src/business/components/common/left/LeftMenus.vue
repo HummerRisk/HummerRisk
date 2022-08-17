@@ -57,11 +57,11 @@
             <i class="iconfont icon-a-cskrongqifuwuKubernetesban"></i>
             <span slot="title">{{ $t('commons.k8s_scan') }}</span>
           </el-menu-item>
-          <el-menu-item index="/image" onselectstart="return false" v-permission="['admin']">
+          <el-menu-item index="/k8sImage" onselectstart="return false" v-permission="['admin']">
             <i class="iconfont icon-jingxiang2"></i>
             <span slot="title">{{ $t('image.image_scan') }}</span>
           </el-menu-item>
-          <el-menu-item index="/package" onselectstart="return false" v-permission="['admin']">
+          <el-menu-item index="/config" onselectstart="return false" v-permission="['admin']">
             <i class="iconfont icon-dicengjiagou"></i>
             <span slot="title">{{ $t('commons.deployment_detection') }}</span>
           </el-menu-item>
