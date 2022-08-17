@@ -18,7 +18,7 @@
         <el-input class="module-input" :placeholder="$t('commons.search_by_name')" v-model="condition.filterText"
                   size="small">
           <template v-slot:append>
-            <el-button icon="el-icon-folder-add"/>
+            <el-button icon="el-icon-folder"/>
           </template>
         </el-input>
       </template>

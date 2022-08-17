@@ -64,7 +64,7 @@ export default {
     },
     nodeChange(node, nodeIds, pNodes) {
       this.selectNodeIds = nodeIds;
-      localStorage.setItem('selectNodeIds', this.selectNodeIds[0]);
+      localStorage.setItem('selectK8sIds', this.selectNodeIds[0]);
     },
     setData(data) {
       this.currentScenario = Array.from(data).map(row => row);

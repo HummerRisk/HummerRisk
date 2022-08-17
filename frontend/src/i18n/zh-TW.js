@@ -1129,7 +1129,18 @@ export default {
     source_namespace: '命名空間',
     source_type: '資源類型',
     source_list: '資源清單',
+    source_sum: '資源匯總',
     sync_time: '同步時間',
+    execute_scan: '執行檢測',
+    result: '雲原生檢測結果',
+    result_list: '雲原生檢測結果列表',
+    back_resource: '返回雲原生檢測結果列表',
+    result_details_list: '雲原生檢測結果詳情列表',
+  },
+  log: {
+    audit: '操作審計',
+    event_query: '事件查詢',
+    event_analysis: '事件分析',
   },
   second: {
     title: '秒',

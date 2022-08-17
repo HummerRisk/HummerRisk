@@ -1129,7 +1129,18 @@ export default {
     source_namespace: 'Namespace',
     source_type: 'Resource type',
     source_list: 'Resource list',
+    source_sum: 'Resource summary',
     sync_time: 'Sync time',
+    execute_scan: 'Execute check',
+    result: 'Cloud native detection result',
+    result_list: 'Cloud native detection result list',
+    back_resource: 'Return the list of cloud native detection results',
+    result_details_list: 'Cloud native detection result details list',
+  },
+  log: {
+    audit: 'Operation audit',
+    event_query: 'Event query',
+    event_analysis: 'Event analysis',
   },
   second: {
     title:'seconds',

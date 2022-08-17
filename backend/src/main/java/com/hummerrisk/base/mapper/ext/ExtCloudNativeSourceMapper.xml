@@ -115,6 +115,10 @@
             <if test="request.name != null and request.name != ''">
                 and t.source_name like CONCAT('%', #{request.name},'%')
             </if>
+
+            <if test="request.cloudNativeId != null and request.cloudNativeId != ''">
+                and t.cloud_native_id = #{request.cloudNativeId}
+            </if>
         </where>
         order by t.update_time desc
     </select>

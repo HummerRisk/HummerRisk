@@ -132,16 +132,35 @@ export default {
       total: 0,
     }
   },
+  props: {
+    selectNodeIds: Array,
+  },
+  watch: {
+    selectNodeIds() {
+      this.search();
+    },
+    batchReportId() {
+    }
+  },
   methods: {
     init() {
-      this.result = this.$post("/cloud/native/situation", {}, response => {
-        let data = response.data;
-        this.situationInfo = data;
-      });
       this.search();
     },
     search() {
+      let param = {};
+      if (!!this.selectNodeIds) {
+        param.cloudNativeId = this.selectNodeIds[0];
+      }
+      this.result = this.$post("/cloud/native/situation", param, response => {
+        let data = response.data;
+        this.situationInfo = data;
+      });
       let url = "/cloud/native/cloudNativeSourceList/" + this.currentPage + "/" + this.pageSize;
+      if (!!this.selectNodeIds) {
+        this.condition.cloudNativeId = this.selectNodeIds[0];
+      } else {
+        this.condition.cloudNativeId = null;
+      }
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
