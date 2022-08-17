@@ -65,6 +65,8 @@ public class HistoryService {
     @Resource @Lazy
     private HistoryCloudNativeResultMapper historyCloudNativeResultMapper;
     @Resource @Lazy
+    private HistoryCloudNativeResultItemMapper historyCloudNativeResultItemMapper;
+    @Resource @Lazy
     private HistoryCloudNativeResultLogMapper historyCloudNativeResultLogMapper;
 
     public Integer insertScanHistory (Object obj) throws Exception {
@@ -427,6 +429,22 @@ public class HistoryService {
 
     public void updateHistoryCloudNativeResult(HistoryCloudNativeResultWithBLOBs record) {
         historyCloudNativeResultMapper.updateByPrimaryKeySelective(record);
+    }
+
+    public void insertHistoryCloudNativeResultItem(HistoryCloudNativeResultItem historyCloudNativeResultItem) throws Exception {
+        try {
+            historyCloudNativeResultItemMapper.insertSelective(historyCloudNativeResultItem);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    public void updateHistoryCloudNativeResultItem(HistoryCloudNativeResultItem historyCloudNativeResultItem) throws Exception {
+        try {
+            historyCloudNativeResultItemMapper.updateByPrimaryKeySelective(historyCloudNativeResultItem);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     public void insertHistoryCloudNativeResultLog(HistoryCloudNativeResultLog record) {

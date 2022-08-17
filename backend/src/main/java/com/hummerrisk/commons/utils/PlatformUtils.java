@@ -80,7 +80,6 @@ import com.tencentcloudapi.cvm.v20170312.CvmClient;
 import com.tencentcloudapi.cvm.v20170312.models.RegionInfo;
 import com.vmware.vim25.mo.Datacenter;
 import com.volcengine.model.request.iam.ListUsersRequest;
-import com.volcengine.service.cdn.CDNService;
 import com.volcengine.service.iam.IIamService;
 import com.volcengine.service.iam.impl.IamServiceImpl;
 import io.fabric8.kubernetes.api.model.NamespaceList;

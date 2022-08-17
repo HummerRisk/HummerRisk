@@ -14,7 +14,6 @@ import io.kubernetes.client.openapi.Configuration;
 import io.kubernetes.client.openapi.apis.*;
 import io.kubernetes.client.openapi.models.*;
 import io.kubernetes.client.util.Config;
-import io.kubernetes.client.util.version.Version;
 
 import java.io.IOException;
 import java.util.ArrayList;

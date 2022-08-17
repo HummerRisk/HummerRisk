@@ -8,9 +8,7 @@ import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeResultMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.utils.*;
-import com.hummerrisk.controller.request.image.ImageResultRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
-import com.hummerrisk.dto.ImageResultDTO;
 import com.hummerrisk.proxy.k8s.K8sRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -214,6 +212,8 @@ public class K8sService {
                 cloudNativeResultItem.setLinks(obj2.getString("links"));
                 cloudNativeResultItem.setCreateTime(System.currentTimeMillis());
                 cloudNativeResultItemMapper.insertSelective(cloudNativeResultItem);
+
+                historyService.insertHistoryCloudNativeResultItem(BeanUtils.copyBean(new HistoryCloudNativeResultItem(), cloudNativeResultItem));
                 i++;
             }
         }

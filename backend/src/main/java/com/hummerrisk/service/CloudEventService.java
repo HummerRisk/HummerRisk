@@ -4,7 +4,6 @@ import com.aliyun.actiontrail20171204.Client;
 import com.aliyun.actiontrail20171204.models.LookupEventsRequest;
 import com.aliyun.actiontrail20171204.models.LookupEventsResponse;
 import com.aliyun.teaopenapi.models.Config;
-import com.hummerrisk.base.domain.Account;
 import com.hummerrisk.base.domain.AccountWithBLOBs;
 import com.hummerrisk.base.mapper.ProxyMapper;
 import com.hummerrisk.commons.utils.PlatformUtils;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
