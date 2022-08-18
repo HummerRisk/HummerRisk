@@ -35,7 +35,7 @@ export default {
       title: {
         type: String,
         default() {
-          return this.$t('resource.search_by_hummerid');
+          return this.$t('image.search_by_title');
         }
       },
       showBack: {
@@ -51,7 +51,7 @@ export default {
       tip: {
         String,
         default() {
-          return this.$t('resource.search_by_hummerid');
+          return this.$t('image.search_by_title');
         }
       }
     },

@@ -4,14 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.base.domain.*;
-import com.hummerrisk.base.mapper.CloudNativeMapper;
-import com.hummerrisk.base.mapper.CloudNativeResultItemMapper;
-import com.hummerrisk.base.mapper.CloudNativeResultLogMapper;
-import com.hummerrisk.base.mapper.CloudNativeResultMapper;
+import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeResultMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.utils.*;
+import com.hummerrisk.controller.request.image.ImageRuleRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
+import com.hummerrisk.dto.ImageRuleDTO;
 import com.hummerrisk.proxy.k8s.K8sRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -43,6 +42,18 @@ public class K8sService {
     private NoticeService noticeService;
     @Resource
     private CloudNativeResultItemMapper cloudNativeResultItemMapper;
+    @Resource
+    private ImageMapper imageMapper;
+    @Resource
+    private ImageResultMapper imageResultMapper;
+    @Resource
+    private ImageTrivyJsonMapper imageTrivyJsonMapper;
+    @Resource
+    private ImageResultLogMapper imageResultLogMapper;
+    @Resource
+    private ProxyMapper proxyMapper;
+    @Resource
+    private ImageRepoMapper imageRepoMapper;
 
     public void scan(String id) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
@@ -263,8 +274,229 @@ public class K8sService {
         return cloudNativeResultWithBLOBs;
     }
 
-    public void imageScan(String id) throws Exception {}
+    public void imageScan(String id) throws Exception {
+        Image image = imageMapper.selectByPrimaryKey(id);
+        Integer scanId = historyService.insertScanHistory(image);
+        if(StringUtils.equalsIgnoreCase(image.getStatus(), CloudAccountConstants.Status.VALID.name())) {
+            ImageResultWithBLOBs result = new ImageResultWithBLOBs();
 
-    public void imageReScan(String id) throws Exception {}
+            deleteResultByImageId(id);
 
+            BeanUtils.copyBean(result, image);
+            result.setId(UUIDUtil.newUUID());
+            result.setImageId(id);
+            result.setApplyUser(SessionUtils.getUserId());
+            result.setCreateTime(System.currentTimeMillis());
+            result.setUpdateTime(System.currentTimeMillis());
+            result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+            result.setUserName(SessionUtils.getUser().getName());
+            result.setScanType(CloudTaskConstants.IMAGE_TYPE.trivy.name());
+            imageResultMapper.insertSelective(result);
+
+            saveImageResultLog(result.getId(), "i18n_start_image_result", "", true);
+            OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.SCAN, "i18n_start_image_result");
+
+            historyService.insertScanTaskHistory(result, scanId, image.getId(), TaskEnum.imageAccount.getType());
+
+            historyService.insertHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
+        }
+    }
+
+    public String imageReScan(String id) throws Exception {
+        ImageResultWithBLOBs result = imageResultMapper.selectByPrimaryKey(id);
+
+        result.setUpdateTime(System.currentTimeMillis());
+        result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+        result.setUserName(SessionUtils.getUser().getName());
+        result.setScanType(CloudTaskConstants.IMAGE_TYPE.trivy.name());
+        imageResultMapper.updateByPrimaryKeySelective(result);
+
+        reScanDeleteImageResult(id);
+
+        saveImageResultLog(result.getId(), "i18n_restart_image_result", "", true);
+
+        OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.RESCAN, "i18n_restart_image_result");
+
+        historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
+
+        return result.getId();
+    }
+
+    public void deleteResultByImageId(String id) throws Exception {
+        ImageResultExample example = new ImageResultExample();
+        example.createCriteria().andImageIdEqualTo(id).andScanTypeEqualTo(CloudTaskConstants.IMAGE_TYPE.trivy.name());
+        List<ImageResult> list = imageResultMapper.selectByExample(example);
+
+        for (ImageResult result : list) {
+            ImageResultLogExample logExample = new ImageResultLogExample();
+            logExample.createCriteria().andResultIdEqualTo(result.getId());
+            imageResultLogMapper.deleteByExample(logExample);
+
+        }
+        imageResultMapper.deleteByExample(example);
+    }
+
+    void saveImageResultLog(String resultId, String operation, String output, boolean result) throws Exception {
+        ImageResultLog imageResultLog = new ImageResultLog();
+        String operator = "system";
+        try {
+            if (SessionUtils.getUser() != null) {
+                operator = SessionUtils.getUser().getId();
+            }
+        } catch (Exception e) {
+            //防止单元测试无session
+        }
+        imageResultLog.setOperator(operator);
+        imageResultLog.setResultId(resultId);
+        imageResultLog.setCreateTime(System.currentTimeMillis());
+        imageResultLog.setOperation(operation);
+        imageResultLog.setOutput(output);
+        imageResultLog.setResult(result);
+        imageResultLogMapper.insertSelective(imageResultLog);
+
+        historyService.insertHistoryImageTaskLog(BeanUtils.copyBean(new HistoryImageTaskLog(), imageResultLog));
+    }
+
+    public void reScanDeleteImageResult(String id) throws Exception {
+
+        ImageTrivyJsonExample imageTrivyJsonExample = new ImageTrivyJsonExample();
+        imageTrivyJsonExample.createCriteria().andResultIdEqualTo(id);
+        imageTrivyJsonMapper.deleteByExample(imageTrivyJsonExample);
+
+    }
+
+    public void createImageScan (ImageResultWithBLOBs result) throws Exception {
+        try {
+            Image image = imageMapper.selectByPrimaryKey(result.getImageId());
+            String trivyJson = "";
+
+            String log = execute(image);
+            if (log.contains("docker login")) {
+                throw new Exception(log);
+            }
+            trivyJson = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TRIVY_JSON);
+
+            result.setReturnLog(log);
+            result.setTrivyJson(trivyJson);
+            result.setUpdateTime(System.currentTimeMillis());
+            result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
+
+            long count = saveImageResultItem(result);
+            result.setReturnSum(count);
+            imageResultMapper.updateByPrimaryKeySelective(result);
+
+            noticeService.createImageMessageOrder(result);
+            saveImageResultLog(result.getId(), "i18n_end_image_result", "", true);
+
+            historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
+        } catch (Exception e) {
+            LogUtil.error("create ImageResult: " + e.getMessage());
+            result.setUpdateTime(System.currentTimeMillis());
+            result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
+            imageResultMapper.updateByPrimaryKeySelective(result);
+            historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
+            saveImageResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
+        }
+    }
+
+    public String execute(Image image) throws Exception {
+        try {
+            Proxy proxy;
+            String _proxy = "";
+            String dockerLogin = "";
+            if(image.getIsProxy()!=null && image.getIsProxy()) {
+                proxy = proxyMapper.selectByPrimaryKey(image.getProxyId());
+                String proxyType = proxy.getProxyType();
+                String proxyIp = proxy.getProxyIp();
+                String proxyPort = proxy.getProxyPort();
+                String proxyName = proxy.getProxyName();
+                String proxyPassword = proxy.getProxyPassword();
+                if (StringUtils.isNotEmpty(proxyType)) {
+                    if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Http.toString())) {
+                        if (StringUtils.isNotEmpty(proxyName)) {
+                            _proxy = "export http_proxy=http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        } else {
+                            _proxy = "export http_proxy=http://" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        }
+                    } else if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Https.toString())) {
+                        if (StringUtils.isNotEmpty(proxyName)) {
+                            _proxy = "export https_proxy=http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        } else {
+                            _proxy = "export https_proxy=http://" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        }
+                    }
+                } else {
+                    _proxy = "unset http_proxy;" + "\n" +
+                            "unset https_proxy;" + "\n";
+                }
+            }
+            if(image.getRepoId()!=null) {
+                ImageRepo imageRepo = imageRepoMapper.selectByPrimaryKey(image.getRepoId());
+                dockerLogin = "docker login " + imageRepo.getRepo() + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword() + "\n";
+            }
+            String fileName = "";
+            if (StringUtils.equalsIgnoreCase("image", image.getType())) {
+                fileName = image.getImageUrl() + ":" + image.getImageTag();
+            } else {
+                fileName = ImageConstants.DEFAULT_BASE_DIR + image.getPath();
+            }
+            String command = _proxy + dockerLogin + ImageConstants.TRIVY + fileName + ImageConstants.TRIVY_TYPE + ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TRIVY_JSON;
+            LogUtil.info(image.getId() + " {k8sImage}[command]: " + image.getName() + "   " + command);
+            String resultStr = CommandUtils.commonExecCmdWithResult(command, ImageConstants.DEFAULT_BASE_DIR);
+            if(resultStr.contains("ERROR") || resultStr.contains("error")) {
+                throw new Exception(resultStr);
+            }
+            return resultStr;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    long saveImageResultItem(ImageResultWithBLOBs result) throws Exception {
+
+        //插入trivyJsons
+        JSONObject jsonG = JSONObject.parseObject(result.getTrivyJson());
+        JSONArray trivyJsons = JSONArray.parseArray(jsonG.getString("Results"));
+        int i = 0;
+        for (Object obj : trivyJsons) {
+            JSONObject jsonObject = (JSONObject) obj;
+            JSONArray vulnJsons = JSONArray.parseArray(jsonObject.getString("Vulnerabilities"));
+            for (Object o : vulnJsons) {
+                JSONObject resultObject = (JSONObject) o;
+                ImageTrivyJsonWithBLOBs imageTrivyJsonWithBLOBs = new ImageTrivyJsonWithBLOBs();
+                imageTrivyJsonWithBLOBs.setResultId(result.getId());
+                imageTrivyJsonWithBLOBs.setVulnerabilityId(resultObject.getString("VulnerabilityID"));
+                imageTrivyJsonWithBLOBs.setPkgName(resultObject.getString("PkgName"));
+                imageTrivyJsonWithBLOBs.setInstalledVersion(resultObject.getString("InstalledVersion"));
+                imageTrivyJsonWithBLOBs.setFixedVersion(resultObject.getString("FixedVersion"));
+                imageTrivyJsonWithBLOBs.setLayer(resultObject.getString("Layer"));
+                imageTrivyJsonWithBLOBs.setSeveritySource(resultObject.getString("SeveritySource"));
+                imageTrivyJsonWithBLOBs.setPrimaryUrl(resultObject.getString("PrimaryURL"));
+                imageTrivyJsonWithBLOBs.setDataSource(resultObject.getString("DataSource"));
+                imageTrivyJsonWithBLOBs.setTitle(resultObject.getString("Title"));
+                imageTrivyJsonWithBLOBs.setDescription(resultObject.getString("Description"));
+                imageTrivyJsonWithBLOBs.setSeverity(resultObject.getString("Severity"));
+                imageTrivyJsonWithBLOBs.setCweIds(resultObject.getString("CweIDs"));
+                imageTrivyJsonWithBLOBs.setCvss(resultObject.getString("CVSS"));
+                imageTrivyJsonWithBLOBs.setReferences(resultObject.getString("References"));
+                imageTrivyJsonWithBLOBs.setPublishedDate(resultObject.getString("PublishedDate"));
+                imageTrivyJsonWithBLOBs.setLastModifiedDate(resultObject.getString("LastModifiedDate"));
+                imageTrivyJsonMapper.insertSelective(imageTrivyJsonWithBLOBs);
+                i++;
+            }
+
+        }
+
+        return i;
+    }
+
+    public List<ImageTrivyJsonWithBLOBs> k8sImageResultItemList(ImageTrivyJson resourceRequest) {
+        ImageTrivyJsonExample example = new ImageTrivyJsonExample();
+        if(resourceRequest.getPkgName()!=null) {
+            example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId()).andPkgNameLike(resourceRequest.getPkgName());
+        } else {
+            example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
+        }
+        return imageTrivyJsonMapper.selectByExampleWithBLOBs(example);
+    }
 }

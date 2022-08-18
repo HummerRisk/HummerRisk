@@ -132,7 +132,7 @@ public class ServerService {
 
                     saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
 
-                    OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_start_server_result");
+                    OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.SCAN, "i18n_start_server_result");
 
                     historyService.insertScanTaskHistory(result, scanId, server.getId(), TaskEnum.serverAccount.getType());
 
@@ -189,6 +189,7 @@ public class ServerService {
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         serverResultMapper.updateByPrimaryKeySelective(result);
+        OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.RESCAN, "i18n_restart_server_result");
         return result.getId();
     }
 

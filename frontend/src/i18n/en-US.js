@@ -515,6 +515,8 @@ export default {
     last_week: 'Last week',
     last_month: 'Last month',
     last_three_month: 'Last three months',
+    i18n_scan: 'Execute detection',
+    i18n_rescan: 'Re-execute detection',
   },
   rule: {
     rule:'Scan Rule',
@@ -940,6 +942,10 @@ export default {
     result_details_list: 'Mirror detection result details list',
     image_note: 'Note: Please bind the mirror repository for private images!',
     one_scan: 'One key execution',
+    k8s_image: 'Cloud native image detection',
+    k8s_image_manager: 'Cloud native image management',
+    k8s_image_result: 'Cloud native image detection result',
+    search_by_title: 'Search by PkgName',
   },
   package: {
     package_setting: 'Package Management',

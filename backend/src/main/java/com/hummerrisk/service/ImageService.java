@@ -296,7 +296,7 @@ public class ImageService {
                 imageResultMapper.insertSelective(result);
 
                 saveImageResultLog(result.getId(), "i18n_start_image_result", "", true);
-                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_start_image_result");
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.SCAN, "i18n_start_image_result");
 
                 historyService.insertScanTaskHistory(result, scanId, image.getId(), TaskEnum.imageAccount.getType());
 
@@ -484,13 +484,14 @@ public class ImageService {
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         result.setUserName(SessionUtils.getUser().getName());
+        result.setScanType(CloudTaskConstants.IMAGE_TYPE.grype.name());
         imageResultMapper.updateByPrimaryKeySelective(result);
 
         this.reScanDeleteImageResult(id);
 
         saveImageResultLog(result.getId(), "i18n_restart_image_result", "", true);
 
-        OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_restart_image_result");
+        OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.RESCAN, "i18n_restart_image_result");
 
         historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
 
@@ -527,7 +528,7 @@ public class ImageService {
 
     public void deleteResultByImageId(String id) throws Exception {
         ImageResultExample example = new ImageResultExample();
-        example.createCriteria().andImageIdEqualTo(id);
+        example.createCriteria().andImageIdEqualTo(id).andScanTypeEqualTo(CloudTaskConstants.IMAGE_TYPE.grype.name());
         List<ImageResult> list = imageResultMapper.selectByExample(example);
 
         for (ImageResult result : list) {

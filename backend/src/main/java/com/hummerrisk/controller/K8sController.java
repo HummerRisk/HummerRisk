@@ -91,5 +91,13 @@ public class K8sController {
         k8sService.imageReScan(id);
     }
 
+    @I18n
+    @ApiOperation(value = "检测结果详情")
+    @PostMapping("k8sImageResultItemList/{goPage}/{pageSize}")
+    public Pager<List<ImageTrivyJsonWithBLOBs>> k8sImageResultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageTrivyJson request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, k8sService.k8sImageResultItemList(request));
+    }
+
 
 }

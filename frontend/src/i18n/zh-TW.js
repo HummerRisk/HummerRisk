@@ -515,6 +515,8 @@ export default {
     last_week: '最近一周',
     last_month: '最近一個月',
     last_three_month: '最近三個月',
+    i18n_scan: '執行檢測',
+    i18n_rescan: '重新執行檢測',
   },
   rule: {
     rule: '檢測規則',
@@ -940,6 +942,10 @@ export default {
     result_details_list: '鏡像檢測結果詳情列表',
     image_note: '注: 私有鏡像請綁定鏡像倉庫!',
     one_scan: '一鍵執行',
+    k8s_image: '雲原生鏡像檢測',
+    k8s_image_manager: '雲原生鏡像管理',
+    k8s_image_result: '雲原生鏡像檢測結果',
+    search_by_title: '根據PkgName進行搜索',
   },
   package: {
     package_setting: '軟件包管理',

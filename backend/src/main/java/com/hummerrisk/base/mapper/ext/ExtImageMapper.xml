@@ -107,9 +107,6 @@
             <if test="request.status != null and request.status != ''">
                 and t.status = #{request.status}
             </if>
-            <if test="request.scanType != null and request.scanType != ''">
-                and t.scan_type = #{request.scanType}
-            </if>
         </where>
         order by t.update_time desc
     </select>

@@ -151,7 +151,7 @@ public class ProwlerService {
             }
         }
         //向首页活动添加操作信息
-        OperationLogService.log(SessionUtils.getUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.CREATE, "i18n_create_scan_task");
+        OperationLogService.log(SessionUtils.getUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.SCAN, "i18n_create_scan_task");
         return cloudTask;
     }
 

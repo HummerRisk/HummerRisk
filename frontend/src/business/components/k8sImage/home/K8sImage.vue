@@ -355,7 +355,7 @@ export default {
           return;
         }
       }
-      this.$alert(this.$t('image.one_scan') + this.$t('image.image_rule') + " ？", '', {
+      this.$alert(this.$t('image.one_scan') + this.$t('image.k8s_image') + " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {

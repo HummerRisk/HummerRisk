@@ -15,12 +15,6 @@
           <el-row v-if="scope.row.type==='image'">{{ scope.row.imageUrl }}:{{ scope.row.imageTag }}</el-row>
           <el-row v-if="scope.row.type==='tar'">{{ scope.row.path }}</el-row>
         </el-table-column>
-        <el-table-column prop="ruleName" :label="$t('image.rule_name')" min-width="10%" show-overflow-tooltip></el-table-column>
-        <el-table-column min-width="10%" :label="$t('image.severity')" column-key="severity">
-          <template v-slot:default="{row}">
-            <rule-type :row="row"/>
-          </template>
-        </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="6%">
           <el-tooltip effect="dark" :content="$t('history.resource_result')" placement="top">
             <el-link type="primary" class="text-click" @click="goResource(scope.row)">{{ scope.row.returnSum }}</el-link>
@@ -329,7 +323,6 @@ import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../head/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
-import RuleType from "./RuleType";
 import {IMAGE_RESULT_CONFIGS} from "../../common/components/search/search-components";
 
 /* eslint-disable */
@@ -342,7 +335,6 @@ export default {
     TablePagination,
     TableOperator,
     DialogFooter,
-    RuleType
   },
   data() {
     return {
@@ -509,7 +501,7 @@ export default {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      let p = '/image/resultdetails/' + params.id;
+      let p = '/k8sImage/k8sImageResultDetails/' + params.id;
       this.$router.push({
         path: p
       }).catch(error => error);

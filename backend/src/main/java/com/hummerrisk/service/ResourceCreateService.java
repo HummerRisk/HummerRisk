@@ -203,10 +203,10 @@ public class ResourceCreateService {
             });
         }
 
-        //镜像检测
+        //软件检测: 镜像依赖检测
         final ImageResultExample imageResultExample = new ImageResultExample();
         ImageResultExample.Criteria imageCriteria = imageResultExample.createCriteria();
-        imageCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+        imageCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString()).andScanTypeEqualTo(CloudTaskConstants.IMAGE_TYPE.grype.name());
         if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
             imageCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
         }
@@ -266,6 +266,39 @@ public class ResourceCreateService {
                         LogUtil.error(e);
                     } finally {
                         processingGroupIdMap.remove(cloudNativeToBeProceed.getId());
+                    }
+                });
+            });
+        }
+
+        //云原生镜像漏洞检测
+        final ImageResultExample k8sImageResultExample = new ImageResultExample();
+        ImageResultExample.Criteria kisImageCriteria = k8sImageResultExample.createCriteria();
+        kisImageCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString()).andScanTypeEqualTo(CloudTaskConstants.IMAGE_TYPE.trivy.name());
+        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
+            kisImageCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+        }
+        k8sImageResultExample.setOrderByClause("create_time limit 10");
+        List<ImageResultWithBLOBs> k8sImageResults = imageResultMapper.selectByExampleWithBLOBs(k8sImageResultExample);
+        if (CollectionUtils.isNotEmpty(k8sImageResults)) {
+            k8sImageResults.forEach(k8sImageResult -> {
+                final ImageResultWithBLOBs K8sImageToBeProceed;
+                try {
+                    K8sImageToBeProceed = BeanUtils.copyBean(new ImageResultWithBLOBs(), k8sImageResult);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                if (processingGroupIdMap.get(K8sImageToBeProceed.getId()) != null) {
+                    return;
+                }
+                processingGroupIdMap.put(K8sImageToBeProceed.getId(), K8sImageToBeProceed.getId());
+                commonThreadPool.addTask(() -> {
+                    try {
+                        k8sService.createImageScan(K8sImageToBeProceed);
+                    } catch (Exception e) {
+                        LogUtil.error(e);
+                    } finally {
+                        processingGroupIdMap.remove(K8sImageToBeProceed.getId());
                     }
                 });
             });

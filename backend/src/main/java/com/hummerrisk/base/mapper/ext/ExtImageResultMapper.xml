@@ -122,6 +122,9 @@
                     <property name="condition" value="combine"/>
                 </include>
             </if>
+            <if test="request.scanType != null and request.scanType != ''">
+                and t.scan_type = #{request.scanType}
+            </if>
         </where>
         ORDER BY t.update_time desc
     </select>

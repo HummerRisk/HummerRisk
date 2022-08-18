@@ -9,11 +9,11 @@
           </el-menu-item>
 
           <el-menu-item :index="'/k8sImage/k8sImage'">
-            {{ $t("image.image_setting") }}
+            {{ $t("image.k8s_image_manager") }}
           </el-menu-item>
 
           <el-menu-item :index="'/k8sImage/k8sImageResult'">
-            {{ $t("image.image_result") }}
+            {{ $t("image.k8s_image_result") }}
           </el-menu-item>
 
         </el-menu>

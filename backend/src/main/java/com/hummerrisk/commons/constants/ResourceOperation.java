@@ -14,4 +14,7 @@ public class ResourceOperation {
     public static final String LOGIN = "dashboard.i18n_login";
     public static final String LOGOUT = "dashboard.i18n_logout";
 
+    public static final String SCAN = "dashboard.i18n_scan";
+    public static final String RESCAN = "dashboard.i18n_rescan";
+
 }

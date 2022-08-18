@@ -272,7 +272,7 @@ public class PackageService {
 
                 savePackageResultLog(result.getId(), "i18n_start_package_result", "", true);
 
-                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "i18n_start_package_result");
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.SCAN, "i18n_start_package_result");
 
                 historyService.insertScanTaskHistory(result, scanId, aPackage.getId(), TaskEnum.packageAccount.getType());
 
@@ -359,7 +359,7 @@ public class PackageService {
 
         savePackageResultLog(result.getId(), "i18n_restart_package_result", "", true);
 
-        OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.CREATE, "i18n_restart_package_result");
+        OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.RESCAN, "i18n_restart_package_result");
 
         historyService.updateHistoryPackageTask(BeanUtils.copyBean(new HistoryPackageTaskWithBLOBs(), result));
 

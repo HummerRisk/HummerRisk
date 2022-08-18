@@ -125,6 +125,7 @@ ALTER TABLE history_image_task ADD trivy_json longtext DEFAULT NULL COMMENT 'tri
 
 CREATE TABLE IF NOT EXISTS `image_trivy_json` (
     `id`                           int(11)             NOT NULL AUTO_INCREMENT,
+    `result_id`                    varchar(50)         NOT NULL COMMENT 'Result ID',
     `vulnerability_id`             varchar(50)         NOT NULL COMMENT 'VulnerabilityID',
     `pkg_name`                     varchar(50)         DEFAULT NULL COMMENT 'PkgName',
     `installed_version`            varchar(255)        DEFAULT NULL COMMENT 'InstalledVersion',

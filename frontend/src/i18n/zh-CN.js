@@ -515,6 +515,8 @@ export default {
     last_week: '最近一周',
     last_month: '最近一个月',
     last_three_month: '最近三个月',
+    i18n_scan: '执行检测',
+    i18n_rescan: '重新执行检测',
   },
   rule: {
     rule: '检测规则',
@@ -940,6 +942,10 @@ export default {
     result_details_list: '镜像检测结果详情列表',
     image_note: '注: 私有镜像请绑定镜像仓库!',
     one_scan: '一键执行',
+    k8s_image: '云原生镜像检测',
+    k8s_image_manager: '云原生镜像管理',
+    k8s_image_result: '云原生镜像检测结果',
+    search_by_title: '根据PkgName进行搜索',
   },
   package: {
     package_setting: '软件包管理',
