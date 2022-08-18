@@ -359,11 +359,11 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get('/image/scan/' + data.id, response => {
+            this.$get('/k8s/imageScan/' + data.id, response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start'));
                 this.$router.push({
-                  path: '/image/result',
+                  path: '/k8sImage/k8sImageResult',
                   query: {
                     date:new Date().getTime()
                   },

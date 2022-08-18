@@ -263,4 +263,8 @@ public class K8sService {
         return cloudNativeResultWithBLOBs;
     }
 
+    public void imageScan(String id) throws Exception {}
+
+    public void imageReScan(String id) throws Exception {}
+
 }

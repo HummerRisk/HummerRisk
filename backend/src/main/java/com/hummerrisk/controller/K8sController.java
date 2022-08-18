@@ -79,5 +79,17 @@ public class K8sController {
         return k8sService.getCloudNativeResultLog(resultId);
     }
 
+    @ApiOperation(value = "云原生镜像检测")
+    @GetMapping("imageScan/{id}")
+    public void imageScan(@PathVariable String id) throws Exception {
+        k8sService.imageScan(id);
+    }
+
+    @ApiOperation(value = "重新云原生镜像检测")
+    @GetMapping("imageReScan/{id}")
+    public void imageReScan(@PathVariable String id) throws Exception {
+        k8sService.imageReScan(id);
+    }
+
 
 }

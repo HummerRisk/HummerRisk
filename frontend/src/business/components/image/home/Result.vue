@@ -400,6 +400,7 @@ export default {
     //查询列表
     search() {
       let url = "/image/resultList/" + this.currentPage + "/" + this.pageSize;
+      this.condition.scanType = 'grype';
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;

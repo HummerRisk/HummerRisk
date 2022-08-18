@@ -116,3 +116,30 @@ CREATE TABLE IF NOT EXISTS `history_cloud_native_result_log` (
     `result`                       tinyint(1)          DEFAULT NULL COMMENT '结果',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
+
+ALTER TABLE image_result ADD scan_type varchar(32) DEFAULT 'grype' COMMENT '镜像检测类型';
+ALTER TABLE image_result ADD trivy_json longtext DEFAULT NULL COMMENT 'trivy json';
+
+ALTER TABLE history_image_task ADD scan_type varchar(32) DEFAULT 'grype' COMMENT '镜像检测类型';
+ALTER TABLE history_image_task ADD trivy_json longtext DEFAULT NULL COMMENT 'trivy json';
+
+CREATE TABLE IF NOT EXISTS `image_trivy_json` (
+    `id`                           int(11)             NOT NULL AUTO_INCREMENT,
+    `vulnerability_id`             varchar(50)         NOT NULL COMMENT 'VulnerabilityID',
+    `pkg_name`                     varchar(50)         DEFAULT NULL COMMENT 'PkgName',
+    `installed_version`            varchar(255)        DEFAULT NULL COMMENT 'InstalledVersion',
+    `fixed_version`                varchar(255)        DEFAULT NULL COMMENT 'FixedVersion',
+    `severity_source`              varchar(50)         DEFAULT NULL COMMENT 'SeveritySource',
+    `primary_url`                  varchar(255)        DEFAULT NULL COMMENT 'PrimaryURL',
+    `title`                        mediumtext          DEFAULT NULL COMMENT 'Title',
+    `description`                  mediumtext          DEFAULT NULL COMMENT 'Description',
+    `severity`                     varchar(50)         DEFAULT NULL COMMENT 'Severity',
+    `published_date`               varchar(50)         DEFAULT NULL COMMENT 'PublishedDate',
+    `last_modified_date`           varchar(50)         DEFAULT NULL COMMENT 'LastModifiedDate',
+    `layer`                        mediumtext          DEFAULT NULL COMMENT 'Layer',
+    `data_source`                  mediumtext          DEFAULT NULL COMMENT 'DataSource',
+    `cwe_ids`                      mediumtext          DEFAULT NULL COMMENT 'CweIDs',
+    `cvss`                         mediumtext          DEFAULT NULL COMMENT 'CVSS',
+    `references`                   mediumtext          DEFAULT NULL COMMENT 'References',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;

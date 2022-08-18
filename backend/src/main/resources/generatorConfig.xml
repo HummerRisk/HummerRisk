@@ -142,5 +142,6 @@
 <!--        <table tableName="history_cloud_native_result" domainObjectName="HistoryCloudNativeResult"/>-->
 <!--        <table tableName="history_cloud_native_result_item" domainObjectName="HistoryCloudNativeResultItem"/>-->
 <!--        <table tableName="history_cloud_native_result_log" domainObjectName="HistoryCloudNativeResultLog"/>-->
+<!--        <table tableName="image_trivy_json" domainObjectName="ImageTrivyJson"/>-->
     </context>
 </generatorConfiguration>

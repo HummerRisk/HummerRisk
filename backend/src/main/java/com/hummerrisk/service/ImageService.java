@@ -292,6 +292,7 @@ public class ImageService {
                 result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
                 result.setSeverity(dto.getSeverity());
                 result.setUserName(SessionUtils.getUser().getName());
+                result.setScanType(CloudTaskConstants.IMAGE_TYPE.grype.name());
                 imageResultMapper.insertSelective(result);
 
                 saveImageResultLog(result.getId(), "i18n_start_image_result", "", true);

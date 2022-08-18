@@ -27,6 +27,10 @@ public class CloudTaskConstants {
         json, yaml, string
     }
 
+    public enum IMAGE_TYPE {
+        grype, trivy
+    }
+
     /**
      * 风险等级:
      * 正常

@@ -5,13 +5,13 @@ RENAME TABLE cloud_scan_task_history TO history_scan_task;
 
 ALTER TABLE history_scan ADD `status` varchar(20) DEFAULT NULL COMMENT '状态';
 
-ALTER TABLE history_scan ADD `account_type` varchar(50) DEFAULT NULL COMMENT '资源类型：cloudAccount/vulnAccount/serverAccount/imageAccount/packageAccount';
+ALTER TABLE history_scan ADD `account_type` varchar(50) DEFAULT NULL COMMENT '资源类型：cloudAccount/vulnAccount/k8sAccount/codeAccouunt/serverAccount/imageAccount/packageAccount';
 
 ALTER TABLE history_scan_task ADD `status` varchar(20) DEFAULT NULL COMMENT '状态';
 
 ALTER TABLE history_scan_task ADD `account_id` varchar(50) DEFAULT NULL COMMENT '资源ID';
 
-ALTER TABLE history_scan_task ADD `account_type` varchar(50) DEFAULT NULL COMMENT '资源类型：cloudAccount/vulnAccount/serverAccount/imageAccount/packageAccount';
+ALTER TABLE history_scan_task ADD `account_type` varchar(50) DEFAULT NULL COMMENT '资源类型：cloudAccount/vulnAccount/k8sAccount/codeAccouunt/serverAccount/imageAccount/packageAccount';
 
 CREATE TABLE IF NOT EXISTS `history_cloud_task` (
     `id`                            varchar(50)           NOT NULL COMMENT '任务ID',
