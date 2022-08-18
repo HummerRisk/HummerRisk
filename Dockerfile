@@ -26,6 +26,8 @@ COPY --from=grype-env /grype /usr/bin/grype
 
 COPY --from=syft-env /syft /usr/bin/syft
 
+RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+
 RUN mkdir -p /opt/apps && \
     curl https://company.hummercloud.com/offline-package/sigar/sigar.zip -o sigar.zip &&  \
     mkdir -p /usr/lib/jvm/java-1.8-openjdk/bin && unzip sigar.zip -d /usr/lib/jvm/java-1.8-openjdk/bin && rm -rf sigar.zip
