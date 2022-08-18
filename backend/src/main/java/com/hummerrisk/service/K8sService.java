@@ -499,4 +499,8 @@ public class K8sService {
         }
         return imageTrivyJsonMapper.selectByExampleWithBLOBs(example);
     }
+
+    public ImageResultWithBLOBs getImageResult(String resultId) {
+        return imageResultMapper.selectByPrimaryKey(resultId);
+    }
 }

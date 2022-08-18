@@ -7,6 +7,7 @@ import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
+import com.hummerrisk.dto.HistoryImageReportDTO;
 import com.hummerrisk.service.K8sService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -97,6 +98,13 @@ public class K8sController {
     public Pager<List<ImageTrivyJsonWithBLOBs>> k8sImageResultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageTrivyJson request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, k8sService.k8sImageResultItemList(request));
+    }
+
+    @I18n
+    @ApiIgnore
+    @GetMapping(value = "getImageResult/{resultId}")
+    public ImageResultWithBLOBs getImageResult(@PathVariable String resultId) {
+        return k8sService.getImageResult(resultId);
     }
 
 
