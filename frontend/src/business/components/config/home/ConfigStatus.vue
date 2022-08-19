@@ -15,7 +15,7 @@
 <script>
   /* eslint-disable */
   export default {
-    name: "K8sStatus",
+    name: "ConfigStatus",
     inject:['search'],
     props: {
       row: Object
@@ -26,7 +26,7 @@
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.$post("/cloud/native/validate/" + row.id, {}, response => {
+              this.$post("/config/validate/" + row.id, {}, response => {
                 if (response.data) {
                   this.$success(this.$t('account.success'));
                   this.search();

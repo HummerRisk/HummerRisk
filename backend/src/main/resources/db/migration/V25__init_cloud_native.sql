@@ -1,7 +1,7 @@
 
 CREATE TABLE IF NOT EXISTS `cloud_native` (
     `id`                         varchar(50)         NOT NULL COMMENT '云原生ID',
-    `name`                       varchar(128)        DEFAULT NULL UNIQUE COMMENT '云原生名称',
+    `name`                       varchar(128)        DEFAULT NULL COMMENT '云原生名称',
     `credential`                 longtext            DEFAULT NULL COMMENT '云原生凭证',
     `plugin_id`                  varchar(50)         DEFAULT NULL COMMENT '插件ID',
     `plugin_name`                varchar(100)        DEFAULT NULL COMMENT '插件名称',
@@ -142,5 +142,87 @@ CREATE TABLE IF NOT EXISTS `image_trivy_json` (
     `cwe_ids`                      mediumtext          DEFAULT NULL COMMENT 'CweIDs',
     `cvss`                         mediumtext          DEFAULT NULL COMMENT 'CVSS',
     `references`                   mediumtext          DEFAULT NULL COMMENT 'References',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `cloud_native_config` (
+    `id`                         varchar(50)         NOT NULL COMMENT '云原生部署配置ID',
+    `name`                       varchar(128)        DEFAULT NULL COMMENT '云原生部署配置名称',
+    `config_yaml`                longtext            DEFAULT NULL COMMENT 'Config Yaml',
+    `status`                     varchar(10)         DEFAULT NULL COMMENT 'yaml配置状态',
+    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
+    `creator`                    varchar(128)        DEFAULT NULL COMMENT '创建人',
+    `proxy_id`                   int(11)             DEFAULT NULL COMMENT '代理ID',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
+
+CREATE TABLE IF NOT EXISTS `cloud_native_config_result` (
+    `id`                         varchar(50)         NOT NULL,
+    `config_id`                  varchar(50)         DEFAULT NULL COMMENT '云原生部署配置ID',
+    `name`                       varchar(128)        DEFAULT NULL COMMENT '云原生部署配置名称',
+    `result_status`              varchar(45)         DEFAULT NULL COMMENT '检测状态',
+    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
+    `apply_user`                 varchar(50)         DEFAULT NULL COMMENT '创建人ID',
+    `user_name`                  varchar(128)        DEFAULT NULL COMMENT '创建人名称',
+    `result_json`                longtext            DEFAULT NULL COMMENT 'result json',
+    `return_sum`                 bigint(13)          DEFAULT 0 COMMENT '输出检测结果漏洞数',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
+
+CREATE TABLE IF NOT EXISTS `cloud_native_config_result_log` (
+    `id`                           int(11)             NOT NULL AUTO_INCREMENT,
+    `result_id`                    varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
+    `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
+    `operation`                    varchar(1024)       DEFAULT NULL COMMENT '操作内容',
+    `output`                       mediumtext          DEFAULT NULL COMMENT '输出',
+    `result`                       tinyint(1)          DEFAULT NULL COMMENT '结果',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `cloud_native_config_result_item` (
+    `id`                         varchar(50)         NOT NULL,
+    `result_id`                  varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
+    `type`                       varchar(50)         DEFAULT NULL COMMENT 'Type',
+    `item_id`                    varchar(50)         DEFAULT NULL COMMENT 'ID',
+    `title`                      varchar(128)        DEFAULT NULL COMMENT 'Title',
+    `description`                varchar(128)        DEFAULT NULL COMMENT 'Description',
+    `message`                    varchar(128)        DEFAULT NULL COMMENT 'Message',
+    `Namespace`                  varchar(50)         DEFAULT NULL COMMENT 'namespace',
+    `query`                      varchar(128)        DEFAULT NULL COMMENT 'Query',
+    `resolution`                 varchar(128)        DEFAULT NULL COMMENT 'Resolution',
+    `severity`                   varchar(50)         DEFAULT NULL COMMENT 'Severity',
+    `primary_url`                varchar(50)         DEFAULT NULL COMMENT 'PrimaryURL',
+    `status`                     varchar(50)         DEFAULT NULL COMMENT 'Status',
+    `references`                 mediumtext          DEFAULT NULL COMMENT 'References',
+    `layer`                      mediumtext          DEFAULT NULL COMMENT 'Layer',
+    `causemeta_data`             mediumtext          DEFAULT NULL COMMENT 'CauseMetadata',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
+
+CREATE TABLE IF NOT EXISTS `history_cloud_native_config_result` (
+    `id`                         varchar(50)         NOT NULL,
+    `config_id`                  varchar(50)         DEFAULT NULL COMMENT '云原生部署配置ID',
+    `name`                       varchar(128)        DEFAULT NULL COMMENT '云原生部署配置名称',
+    `result_status`              varchar(45)         DEFAULT NULL COMMENT '检测状态',
+    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
+    `apply_user`                 varchar(50)         DEFAULT NULL COMMENT '创建人ID',
+    `user_name`                  varchar(128)        DEFAULT NULL COMMENT '创建人名称',
+    `result_json`                longtext            DEFAULT NULL COMMENT 'result json',
+    `return_sum`                 bigint(13)          DEFAULT 0 COMMENT '输出检测结果漏洞数',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
+
+CREATE TABLE IF NOT EXISTS `history_cloud_native_config_result_log` (
+    `id`                           int(11)             NOT NULL AUTO_INCREMENT,
+    `result_id`                    varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
+    `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
+    `operation`                    varchar(1024)       DEFAULT NULL COMMENT '操作内容',
+    `output`                       mediumtext          DEFAULT NULL COMMENT '输出',
+    `result`                       tinyint(1)          DEFAULT NULL COMMENT '结果',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;

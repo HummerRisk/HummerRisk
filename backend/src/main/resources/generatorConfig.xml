@@ -143,5 +143,11 @@
 <!--        <table tableName="history_cloud_native_result_item" domainObjectName="HistoryCloudNativeResultItem"/>-->
 <!--        <table tableName="history_cloud_native_result_log" domainObjectName="HistoryCloudNativeResultLog"/>-->
 <!--        <table tableName="image_trivy_json" domainObjectName="ImageTrivyJson"/>-->
+<!--        <table tableName="cloud_native_config" domainObjectName="CloudNativeConfig"/>-->
+<!--        <table tableName="cloud_native_config_result" domainObjectName="CloudNativeConfigResult"/>-->
+<!--        <table tableName="cloud_native_config_result_log" domainObjectName="CloudNativeConfigResultLog"/>-->
+<!--        <table tableName="cloud_native_config_result_item" domainObjectName="CloudNativeConfigResultItem"/>-->
+<!--        <table tableName="history_cloud_native_config_result" domainObjectName="HistoryCloudNativeConfigResult"/>-->
+<!--        <table tableName="history_cloud_native_config_result_log" domainObjectName="HistoryCloudNativeConfigResultLog"/>-->
     </context>
 </generatorConfiguration>

@@ -55,7 +55,7 @@
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
-    <!--Create vuln-->
+    <!--Create k8s-->
     <el-drawer class="rtl" :title="$t('k8s.k8s_create')" :visible.sync="createVisible" size="50%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <div v-for="(form, index) in addAccountForm" :key="index">
@@ -108,9 +108,9 @@
         @addAccount="addAccount(addAccountForm)"
         @confirm="saveAccount(addAccountForm, 'add')"/>
     </el-drawer>
-    <!--Create vuln-->
+    <!--Create k8s-->
 
-    <!--Update vuln-->
+    <!--Update k8s-->
     <el-drawer class="rtl" :title="$t('k8s.k8s_update')" :visible.sync="updateVisible" size="50%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="accountForm">
@@ -142,7 +142,7 @@
         @cancel="updateVisible = false"
         @confirm="editAccount(form, 'update')"/>
     </el-drawer>
-    <!--Update vuln-->
+    <!--Update k8s-->
 
   </main-container>
 </template>

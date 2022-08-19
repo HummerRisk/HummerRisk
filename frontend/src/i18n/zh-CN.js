@@ -1143,6 +1143,12 @@ export default {
     back_resource: '返回云原生检测结果列表',
     result_details_list: '云原生检测结果详情列表',
   },
+  config: {
+    config_settings: '部署配置',
+    config_settings_list: '部署配置列表',
+    config_create: '创建部署配置信息',
+    config_update: '更新部署配置信息',
+  },
   log: {
     audit: '操作审计',
     event_query: '事件查询',
