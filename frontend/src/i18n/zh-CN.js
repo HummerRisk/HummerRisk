@@ -1148,6 +1148,15 @@ export default {
     config_settings_list: '部署配置列表',
     config_create: '创建部署配置信息',
     config_update: '更新部署配置信息',
+    name: '部署配置',
+    status: '状态',
+    config_type: '配置类型',
+    menu_config: '手动填写 YAML 内容',
+    k8s_config: 'K8s 获取 YAML 内容',
+    upload_config: '上传文件获取 YAML 内容',
+    upload_yaml: '上传 YAML 文件',
+    config_yaml: '部署配置 YAML',
+    config_note: '请填写 YAML 后保存, YAML 可以通过手动填写、K8s 获取、手动上传!'
   },
   log: {
     audit: '操作审计',

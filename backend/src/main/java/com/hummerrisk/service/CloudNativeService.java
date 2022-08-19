@@ -148,7 +148,7 @@ public class CloudNativeService {
                 cloudNativeMapper.insertSelective(account);
                 addCloudNativeSource(account);
                 OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_create_cloud_native");
-                return getCloudNative(account.getId());
+                return account;
             }
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
@@ -198,7 +198,7 @@ public class CloudNativeService {
                 addCloudNativeSource(account);
                 //检验账号已更新状态
                 OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.UPDATE, "i18n_update_cloud_native");
-                return getCloudNative(account.getId());
+                return account;
             }
 
         } catch (HRException | ClientException e) {

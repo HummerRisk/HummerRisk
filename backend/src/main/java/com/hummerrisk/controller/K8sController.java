@@ -3,10 +3,13 @@ package com.hummerrisk.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.*;
+import com.hummerrisk.commons.constants.CloudAccountConstants;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
+import com.hummerrisk.controller.request.cloudNative.CloudNativeRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
+import com.hummerrisk.dto.CloudNativeDTO;
 import com.hummerrisk.dto.HistoryImageReportDTO;
 import com.hummerrisk.service.K8sService;
 import io.swagger.annotations.Api;
@@ -105,6 +108,13 @@ public class K8sController {
     @GetMapping(value = "getImageResult/{resultId}")
     public ImageResultWithBLOBs getImageResult(@PathVariable String resultId) {
         return k8sService.getImageResult(resultId);
+    }
+
+    @I18n
+    @ApiOperation(value = "所有带有 YAML 的云原生资源信息")
+    @GetMapping("allCloudNativeSource2YamlList")
+    public List<CloudNativeSource> allCloudNativeSource2YamlList() {
+        return k8sService.allCloudNativeSource2YamlList();
     }
 
 

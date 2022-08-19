@@ -16,21 +16,20 @@
         <el-table-column type="selection" min-width="5%">
         </el-table-column>
         <el-table-column type="index" min-width="5%"/>
-        <el-table-column prop="name" :label="$t('k8s.name')" min-width="15%" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('k8s.platform')" min-width="10%" show-overflow-tooltip>
+        <el-table-column :label="$t('config.name')" min-width="10%" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ $t(scope.row.pluginName) }}
+                <img :src="require(`@/assets/img/config/yaml.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ $t(scope.row.name) }}
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" min-width="10%" :label="$t('k8s.status')"
+        <el-table-column prop="status" min-width="10%" :label="$t('config.status')"
                          column-key="status"
                          :filters="statusFilters"
                          :filter-method="filterStatus">
           <template v-slot:default="{row}">
-            <k8s-status :row="row"/>
+            <config-status :row="row"/>
           </template>
         </el-table-column>
         <el-table-column min-width="15%" :label="$t('account.create_time')" sortable
@@ -56,6 +55,58 @@
     </el-card>
 
     <!--Create k8s config-->
+    <el-drawer class="rtl" :title="$t('image.create')" :visible.sync="createVisible" size="75%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form" :rules="rule">
+        <el-form-item :label="$t('config.name')" ref="name" prop="name">
+          <el-input v-model="form.name" autocomplete="off" :placeholder="$t('config.name')"/>
+        </el-form-item>
+        <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-switch v-model="form.isProxy"></el-switch>
+        </el-form-item>
+        <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+            <el-option
+              v-for="item in proxys"
+              :key="item.id"
+              :label="item.proxyIp"
+              :value="item.id">
+              &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="$t('config.config_type')" ref="type" prop="type">
+          <el-radio v-model="configType" label="menu">{{ $t('config.menu_config') }}</el-radio>
+          <el-radio v-model="configType" label="k8s">{{ $t('config.k8s_config') }}</el-radio>
+          <el-radio v-model="configType" label="upload">{{ $t('config.upload_config') }}</el-radio>
+        </el-form-item>
+        <el-form-item v-if="configType==='k8s'" :label="$t('k8s.k8s_setting')" ref="type" prop="type">
+          <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('k8s.k8s_setting')" @change="changeSearch">
+            <el-option
+              v-for="item in k8s"
+              :key="item.id"
+              :label="item.sourceName"
+              :value="item.sourceYaml">
+              &nbsp;&nbsp; {{ '(namespace)' +  item.sourceNamespace + ':(source)' + item.sourceName }}
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="configType==='upload'" :label="$t('config.upload_yaml')" ref="type" prop="type">
+          <yaml-upload v-on:appendYaml="appendYaml"/>
+        </el-form-item>
+        <el-form-item :label="$t('config.config_yaml')" ref="type" prop="type">
+          <codemirror ref="cmEditor" v-model="form.configYaml" class="code-mirror" :options="cmOptions" />
+        </el-form-item>
+        <el-form-item>
+          <span style="color: red">{{ $t('config.config_note') }}</span>
+        </el-form-item>
+      </el-form>
+      <div style="margin: 10px;">
+        <dialog-footer
+          @cancel="createVisible = false"
+          @confirm="save('form')"/>
+      </div>
+    </el-drawer>
     <!--Create k8s config-->
 
     <!--Update k8s config-->
@@ -77,6 +128,7 @@ import {CONFIG_CONFIGS} from "../../common/components/search/search-components";
 import ProxyDialogFooter from "../head/ProxyDialogFooter";
 import ProxyDialogCreateFooter from "../head/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
+import YamlUpload from "@/business/components/config/home/YamlUpload";
 
 /* eslint-disable */
 export default {
@@ -91,7 +143,8 @@ export default {
     TableOperator,
     DialogFooter,
     ProxyDialogFooter,
-    ProxyDialogCreateFooter
+    ProxyDialogCreateFooter,
+    YamlUpload,
   },
   data() {
     return {
@@ -112,6 +165,7 @@ export default {
       innerDrawerProxy: false,
       plugins: [],
       proxys: [],
+      k8s: [],
       tmpList: [],
       item: {},
       form: {},
@@ -167,14 +221,36 @@ export default {
         {id: 'Http', value: "Http"},
         {id: 'Https', value: "Https"},
       ],
+      cmOptions: {
+        tabSize: 4,
+        mode: 'text/x-yaml',
+        theme: 'bespin',
+        lineNumbers: true,
+        line: true,
+        indentWithTabs: true,
+      },
+      configType: 'menu',
     }
   },
   methods: {
+    create() {
+      this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
+      this.createVisible = true;
+      this.activeProxy();
+      this.activeK8s();
+    },
     //查询代理
     activeProxy() {
       let url = "/proxy/list/all";
       this.result = this.$get(url, response => {
         this.proxys = response.data;
+      });
+    },
+    //查询k8s配置
+    activeK8s() {
+      let url = "/k8s/allCloudNativeSource2YamlList";
+      this.result = this.$get(url, response => {
+        this.k8s = response.data;
       });
     },
     //校验云原生账号
@@ -250,6 +326,12 @@ export default {
         return '';
       }
     },
+    changeSearch(value){
+      this.form.configYaml = value;
+    },
+    appendYaml(yaml) {
+      this.form.configYaml = yaml;
+    },
   },
   activated() {
     this.init();
@@ -258,6 +340,84 @@ export default {
 </script>
 
 <style scoped>
+.rtl >>> .el-drawer__body {
+  overflow-y: auto;
+  padding: 20px;
+}
+.rtl >>> input {
+  width: 100%;
+}
+.rtl >>> .el-select {
+  width: 100%;
+}
+.rtl >>> .el-form-item__content {
+  width: 80%;
+}
+/deep/ :focus{outline:0;}
+.el-row-card {
+  padding: 0 10px 0 10px;
+  margin: 1%;
+}
+.split {
+  height: 80px;
+  border-left: 1px solid #D8DBE1;
+}
+.cl-ver-col {
+  vertical-align: middle;
+}
+.cl-mid-row {
+  margin: 0 0 1% 0;
+}
+.cl-btn-mid-row {
+  margin: 1%;
+}
+.cl-span-col {
+  margin: 1% 0;
+}
+.cl-btn-col {
+  margin: 4% 0;
+}
+.cl-data-col {
+  color: #888;
+  font-size: 10px;
+}
+.cl-btn-data-col {
+  color: #77aff9;
+}
 
+.input-inline-i{
+  display:inline;
+}
+
+.input-inline-i >>> .el-input__inner {
+  width: 68%;
+}
+
+.input-inline-t{
+  display:inline;
+}
+
+.input-inline-t >>> .el-input__inner {
+  width: 30%;
+}
+
+.co-el-img >>> .el-image {
+  display: table-cell;
+  left: 40%;
+}
+.cp-el-i {
+  margin: 1%;
+}
+.co-el-i{
+  width: 70px;
+  height: 70px;
+}
+.code-mirror {
+  height: 600px !important;
+}
+.code-mirror >>> .CodeMirror {
+  /* Set height, width, borders, and global font properties here */
+  height: 600px !important;
+}
 </style>
 

@@ -5,8 +5,10 @@ import com.hummerrisk.commons.exception.FileNameLengthLimitExceededException;
 import com.hummerrisk.commons.exception.FileSizeLimitExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * 文件上传工具类
@@ -183,6 +185,26 @@ public class FileUploadUtils
     public static final String trans(String path) throws Exception {
         String pathTrans = path.replace("files/", "");
         return pathTrans;
+    }
+
+    //直接读取文件内容
+    public static final String uploadFileToString(MultipartFile file) throws IOException
+    {
+        try
+        {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(file.getInputStream()));
+
+            StringBuffer buffer = new StringBuffer();
+            String lineTxt;
+            while ((lineTxt=bufferedReader.readLine())!=null){
+                buffer.append(lineTxt);
+            }
+            return buffer.toString();
+        }
+        catch (Exception e)
+        {
+            throw new IOException(e.getMessage(), e);
+        }
     }
 
 }

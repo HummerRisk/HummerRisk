@@ -10,7 +10,7 @@ export default {
     {
       path: "config",
       name: "config",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/log/home/event'),
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/config/home/Config'),
     },
   ]
 }

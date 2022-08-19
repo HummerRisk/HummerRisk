@@ -7,6 +7,7 @@ public enum ResourceTypeConstants {
     WORKSPACE,
     CLOUD_ACCOUNT,
     CLOUD_NATIVE,
+    CLOUD_NATIVE_CONFIG,
     RULE,
     RULE_TAG,
     RESOURCE,

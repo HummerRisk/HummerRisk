@@ -464,6 +464,16 @@ public class CloudNativeSourceExample {
             return (Criteria) this;
         }
 
+        public Criteria andSourceYamlIsNull() {
+            addCriterion("source_yaml is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSourceYamlIsNotNull() {
+            addCriterion("source_yaml is not null");
+            return (Criteria) this;
+        }
+
         public Criteria andSourceTypeIsNull() {
             addCriterion("source_type is null");
             return (Criteria) this;

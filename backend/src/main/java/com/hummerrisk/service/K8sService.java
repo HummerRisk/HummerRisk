@@ -54,6 +54,8 @@ public class K8sService {
     private ProxyMapper proxyMapper;
     @Resource
     private ImageRepoMapper imageRepoMapper;
+    @Resource
+    private CloudNativeSourceMapper cloudNativeSourceMapper;
 
     public void scan(String id) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
@@ -502,5 +504,11 @@ public class K8sService {
 
     public ImageResultWithBLOBs getImageResult(String resultId) {
         return imageResultMapper.selectByPrimaryKey(resultId);
+    }
+
+    public List<CloudNativeSource> allCloudNativeSource2YamlList() {
+        CloudNativeSourceExample example = new CloudNativeSourceExample();
+        example.createCriteria().andSourceTypeNotEqualTo("Version").andSourceYamlIsNotNull();
+        return cloudNativeSourceMapper.selectByExampleWithBLOBs(example);
     }
 }
