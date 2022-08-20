@@ -81,5 +81,19 @@ public class ConfigController {
         return cloudNativeConfigService.uploadYaml(file);
     }
 
+    @I18n
+    @ApiOperation(value = "云原生部署配置检测")
+    @GetMapping("scan/{id}")
+    public void scan(@PathVariable String id) throws Exception {
+        cloudNativeConfigService.scan(id);
+    }
+
+    @ApiOperation(value = "重新云原生部署配置检测")
+    @GetMapping("reScan/{id}")
+    public void reScan(@PathVariable String id) throws Exception {
+        cloudNativeConfigService.reScan(id);
+    }
+
+
 
 }

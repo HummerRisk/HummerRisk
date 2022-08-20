@@ -99,7 +99,11 @@ public class ResourceCreateService {
     @Resource
     private CloudNativeResultMapper cloudNativeResultMapper;
     @Resource
+    private CloudNativeConfigResultMapper cloudNativeConfigResultMapper;
+    @Resource
     private K8sService k8sService;
+    @Resource
+    private CloudNativeConfigService cloudNativeConfigService;
 
     @QuartzScheduled(cron = "${cron.expression.local}")
     public void handleTasks() throws Exception {
@@ -299,6 +303,39 @@ public class ResourceCreateService {
                         LogUtil.error(e);
                     } finally {
                         processingGroupIdMap.remove(K8sImageToBeProceed.getId());
+                    }
+                });
+            });
+        }
+
+        //云原生部署检测
+        final CloudNativeConfigResultExample cloudNativeConfigResultExample = new CloudNativeConfigResultExample();
+        CloudNativeConfigResultExample.Criteria cloudNativeConfigCriteria = cloudNativeConfigResultExample.createCriteria();
+        cloudNativeConfigCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
+            cloudNativeConfigCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+        }
+        cloudNativeConfigResultExample.setOrderByClause("create_time limit 10");
+        List<CloudNativeConfigResult> cloudNativeConfigResults = cloudNativeConfigResultMapper.selectByExampleWithBLOBs(cloudNativeConfigResultExample);
+        if (CollectionUtils.isNotEmpty(cloudNativeConfigResults)) {
+            cloudNativeConfigResults.forEach(cloudNativeConfigResult -> {
+                final CloudNativeConfigResult cloudNativeConfigToBeProceed;
+                try {
+                    cloudNativeConfigToBeProceed = BeanUtils.copyBean(new CloudNativeConfigResult(), cloudNativeConfigResult);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                if (processingGroupIdMap.get(cloudNativeConfigToBeProceed.getId()) != null) {
+                    return;
+                }
+                processingGroupIdMap.put(cloudNativeConfigToBeProceed.getId(), cloudNativeConfigToBeProceed.getId());
+                commonThreadPool.addTask(() -> {
+                    try {
+                        cloudNativeConfigService.createScan(cloudNativeConfigToBeProceed);
+                    } catch (Exception e) {
+                        LogUtil.error(e);
+                    } finally {
+                        processingGroupIdMap.remove(cloudNativeConfigToBeProceed.getId());
                     }
                 });
             });

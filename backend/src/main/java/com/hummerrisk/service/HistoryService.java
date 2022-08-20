@@ -68,6 +68,10 @@ public class HistoryService {
     private HistoryCloudNativeResultItemMapper historyCloudNativeResultItemMapper;
     @Resource @Lazy
     private HistoryCloudNativeResultLogMapper historyCloudNativeResultLogMapper;
+    @Resource @Lazy
+    private HistoryCloudNativeConfigResultMapper historyCloudNativeConfigResultMapper;
+    @Resource @Lazy
+    private HistoryCloudNativeConfigResultLogMapper historyCloudNativeConfigResultLogMapper;
 
     public Integer insertScanHistory (Object obj) throws Exception {
 
@@ -153,6 +157,9 @@ public class HistoryService {
             } else if(obj.getClass() == CloudNative.class || obj.getClass() == CloudNativeDTO.class) {
                 accountId = ((CloudNative) obj).getId();
                 map.put("accountType", TaskEnum.k8sAccount.getType());
+            } else if(obj.getClass() == CloudNativeConfig.class || obj.getClass() == CloudNativeConfigDTO.class) {
+                accountId = ((CloudNativeConfig) obj).getId();
+                map.put("accountType", TaskEnum.configAccount.getType());
             }
             map.put("accountId", accountId);
             return map;
@@ -449,6 +456,18 @@ public class HistoryService {
 
     public void insertHistoryCloudNativeResultLog(HistoryCloudNativeResultLog record) {
         historyCloudNativeResultLogMapper.insertSelective(record);
+    }
+
+    public void insertHistoryCloudNativeConfigResult(HistoryCloudNativeConfigResult record) {
+        historyCloudNativeConfigResultMapper.insertSelective(record);
+    }
+
+    public void updateHistoryCloudNativeConfigResult(HistoryCloudNativeConfigResult record) {
+        historyCloudNativeConfigResultMapper.updateByPrimaryKeySelective(record);
+    }
+
+    public void insertHistoryCloudNativeConfigResultLog(HistoryCloudNativeConfigResultLog record) {
+        historyCloudNativeConfigResultLogMapper.insertSelective(record);
     }
 
 }
