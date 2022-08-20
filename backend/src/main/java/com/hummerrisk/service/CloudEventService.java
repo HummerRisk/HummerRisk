@@ -35,14 +35,20 @@ public class CloudEventService {
                 result = getAliyunCloudEvents(accountMap,startTime,endTime,pageNum,maxResult);
                 break;
             case PlatformUtils.huawei:
-                result = getHuaweiCloudEvents();
+                result = getHuaweiCloudEvents(accountMap,startTime,endTime,pageNum,maxResult);
             default:
                 throw new IllegalStateException("Unexpected value: " + account.getPluginId());
         }
         return result;
     }
 
-    private List<CloudEventDto> getHuaweiCloudEvents() {
+    private List<CloudEventDto> getHuaweiCloudEvents(Map<String,String> accountMap,String startTime
+            , String endTime,int pageNum,int maxResult) {
+        return new ArrayList<>();
+    }
+
+    private List<CloudEventDto> getTencentEvents(Map<String,String> accountMap,String startTime
+            , String endTime,int pageNum,int maxResult) {
         return new ArrayList<>();
     }
 
