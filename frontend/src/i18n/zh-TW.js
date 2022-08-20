@@ -1143,6 +1143,21 @@ export default {
     back_resource: '返回雲原生檢測結果列表',
     result_details_list: '雲原生檢測結果詳情列表',
   },
+  config: {
+    config_settings: '部署配置',
+    config_settings_list: '部署配置列表',
+    config_create: '創建部署配置信息',
+    config_update: '更新部署配置信息',
+    name: '部署配置名稱',
+    status: '狀態',
+    config_type: '配置類型',
+    menu_config: '手動填寫 YAML 內容',
+    k8s_config: 'K8s 獲取 YAML 內容',
+    upload_config: '上傳文件獲取 YAML 內容',
+    upload_yaml: '上傳 YAML 文件',
+    config_yaml: '部署配置 YAML',
+    config_note: '請填寫 YAML 後保存, YAML 可以通過手動填寫、K8s 獲取、手動上傳!'
+  },
   log: {
     audit: '操作審計',
     event_query: '事件查詢',

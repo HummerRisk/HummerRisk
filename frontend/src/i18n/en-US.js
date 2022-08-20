@@ -1143,6 +1143,21 @@ export default {
     back_resource: 'Return the list of cloud native detection results',
     result_details_list: 'Cloud native detection result details list',
   },
+  config: {
+    config_settings: 'Deployment configuration',
+    config_settings_list: 'Deployment configuration list',
+    config_create: 'Create deployment configuration information',
+    config_update: 'Update deployment configuration information',
+    name: 'Deployment configuration name',
+    status: 'Status',
+    config_type: 'Configuration type',
+    menu_config: 'Manually fill in the YAML content',
+    k8s_config: 'K8s gets YAML content',
+    upload_config: 'Upload file to get YAML content',
+    upload_yaml: 'Upload YAML file',
+    config_yaml: 'Deployment configuration YAML',
+    config_note: 'Please fill in the YAML and save it. YAML can be filled in manually, obtained by K8s, and uploaded manually!'
+  },
   log: {
     audit: 'Operation audit',
     event_query: 'Event query',

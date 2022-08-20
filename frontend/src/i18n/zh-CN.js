@@ -1148,7 +1148,7 @@ export default {
     config_settings_list: '部署配置列表',
     config_create: '创建部署配置信息',
     config_update: '更新部署配置信息',
-    name: '部署配置',
+    name: '部署配置名称',
     status: '状态',
     config_type: '配置类型',
     menu_config: '手动填写 YAML 内容',

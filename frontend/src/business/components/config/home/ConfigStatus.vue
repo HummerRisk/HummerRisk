@@ -16,7 +16,6 @@
   /* eslint-disable */
   export default {
     name: "ConfigStatus",
-    inject:['search'],
     props: {
       row: Object
     },
@@ -29,7 +28,7 @@
               this.$post("/config/validate/" + row.id, {}, response => {
                 if (response.data) {
                   this.$success(this.$t('account.success'));
-                  this.search();
+                  this.$emit('search');
                 } else {
                   this.$error(this.$t('account.error'));
                 }

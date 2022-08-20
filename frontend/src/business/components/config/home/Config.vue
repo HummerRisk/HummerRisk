@@ -62,9 +62,9 @@
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('config.name')"/>
         </el-form-item>
         <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-switch v-model="form.isProxy"></el-switch>
+          <el-switch v-model="isProxy"></el-switch>
         </el-form-item>
-        <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+        <el-form-item v-if="isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
           <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
             <el-option
               v-for="item in proxys"
@@ -81,7 +81,7 @@
           <el-radio v-model="configType" label="upload">{{ $t('config.upload_config') }}</el-radio>
         </el-form-item>
         <el-form-item v-if="configType==='k8s'" :label="$t('k8s.k8s_setting')" ref="type" prop="type">
-          <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('k8s.k8s_setting')" @change="changeSearch">
+          <el-select style="width: 100%;" v-model="sourceId" :placeholder="$t('k8s.k8s_setting')" @change="changeSearch">
             <el-option
               v-for="item in k8s"
               :key="item.id"
@@ -169,7 +169,6 @@ export default {
       tmpList: [],
       item: {},
       form: {},
-      addAccountForm: [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ],
       proxyForm: {},
       script: '',
       direction: 'rtl',
@@ -230,14 +229,13 @@ export default {
         indentWithTabs: true,
       },
       configType: 'menu',
+      isProxy: false,
+      sourceId: '',
     }
   },
   methods: {
     create() {
-      this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
       this.createVisible = true;
-      this.activeProxy();
-      this.activeK8s();
     },
     //查询代理
     activeProxy() {
@@ -304,6 +302,8 @@ export default {
     },
     init() {
       this.selectIds.clear();
+      this.activeProxy();
+      this.activeK8s();
       this.search();
     },
     sort(column) {
@@ -331,6 +331,49 @@ export default {
     },
     appendYaml(yaml) {
       this.form.configYaml = yaml;
+    },
+    save(form) {
+      this.$refs[form].validate(valid => {
+        if (valid) {
+          console.log(111, this.form)
+          this.result = this.$post("/config/add", this.form, () => {
+            this.$success(this.$t('commons.save_success'));
+            this.createVisible = false;
+            this.search();
+          });
+        }
+      });
+    },
+    update(form) {
+      this.$refs[form].validate(valid => {
+        if (valid) {
+          this.result = this.$post("/config/update", this.form, () => {
+            this.$success(this.$t('commons.update_success'));
+            this.updateVisible = false;
+            this.search();
+          });
+        }
+      });
+    },
+    handleDelete(obj) {
+      this.$alert(this.$t('workspace.delete_confirm') + obj.name + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$get("/config/delete/" + obj.id, response => {
+              this.$success(this.$t('commons.delete_success'));
+              this.search();
+            });
+          }
+        }
+      });
+    },
+    handleEdit(row) {
+      this.form = row;
+      this.updateVisible = true;
+    },
+    handleScan(data) {
+
     },
   },
   activated() {

@@ -29,7 +29,7 @@
               this.$post("/server/validate/" + row.id, {}, response => {
                 if (response.data) {
                   this.$success(this.$t('server.success'));
-                  this.search();
+                  this.$emit('search');
                 } else {
                   this.$error(this.$t('server.error'));
                 }
