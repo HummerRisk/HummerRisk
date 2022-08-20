@@ -25,11 +25,36 @@ public class CloudEventService {
     @Resource
     private ProxyMapper proxyMapper;
 
-    public List<CloudEventDto>  getCloudEvents(String accountId, String region, String startTime, String endTime,
-                                              int pageNum, int maxResult) throws Exception {
-        List<CloudEventDto> result;
+    private static final int MAX_PAGE_NUM = 1000;
+
+    public void syncCloudEvent(String accountId, String region, String startTime, String endTime) throws Exception {
         AccountWithBLOBs account = accountService.getAccount(accountId);
         Map<String, String> accountMap = PlatformUtils.getAccount(account, region, proxyMapper.selectByPrimaryKey(account.getProxyId()));
+        List<CloudEventDto> result = new ArrayList<>();
+        int pageNum = 1;
+        int maxNum = 50;
+        boolean haveNextPage = true;
+        while (haveNextPage){
+            List<CloudEventDto> pageResult = getCloudEvents(account,accountMap,startTime,endTime,pageNum,maxNum);
+            result.addAll(pageResult);
+            if(pageResult.size() < maxNum || pageNum > MAX_PAGE_NUM){
+                haveNextPage = false;
+            }
+            pageNum++;
+        }
+        int size = result.size();
+    }
+
+    public List<CloudEventDto>  getCloudEvents(String accountId, String region, String startTime, String endTime,
+                                              int pageNum, int maxResult) throws Exception {
+        AccountWithBLOBs account = accountService.getAccount(accountId);
+        Map<String, String> accountMap = PlatformUtils.getAccount(account, region, proxyMapper.selectByPrimaryKey(account.getProxyId()));
+        return getCloudEvents(account,accountMap,startTime,endTime,pageNum,maxResult);
+    }
+
+    public List<CloudEventDto>  getCloudEvents(AccountWithBLOBs account,Map<String, String> accountMap,String startTime, String endTime,
+                                               int pageNum, int maxResult) throws Exception {
+        List<CloudEventDto> result;
         switch (account.getPluginId()){
             case PlatformUtils.aliyun:
                 result = getAliyunCloudEvents(accountMap,startTime,endTime,pageNum,maxResult);
