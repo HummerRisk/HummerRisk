@@ -70,7 +70,7 @@ public class ConfigController {
     }
 
     @ApiOperation(value = "删除云原生部署配置")
-    @PostMapping(value = "delete/{accountId}")
+    @GetMapping(value = "delete/{accountId}")
     public void deleteAccount(@PathVariable String accountId) {
         cloudNativeConfigService.delete(accountId);
     }

@@ -59,7 +59,7 @@ export default {
           return false;
         });
         if (!isTypeOk) {
-          this.$message.error(this.$t('common.adv_search.file_type_warn') + this.fileType.join("/") + this.$t('common.adv_search.file_type_warn2'));
+          this.$message.error(this.$t('common.adv_search.file_type_warn') + this.fileType.join("/") + this.$t('commons.adv_search.file_type_warn2'));
           return false;
         }
       }
