@@ -551,6 +551,7 @@ public class PlatformUtils {
                 QingCloudCredential qingCloudCredential = new Gson().fromJson(account.getCredential(), QingCloudCredential.class);
                 map.put("AccessKeyId", qingCloudCredential.getAccessKeyId());
                 map.put("SecretAccessKey", qingCloudCredential.getSecretAccessKey());
+                map.put("region", region);
                 break;
             case ucloud:
                 map.put("type", ucloud);
@@ -1350,6 +1351,12 @@ public class PlatformUtils {
             case qingcloud:
                 break;
             case ucloud:
+                if (StringUtils.contains(resource, "ucloud.uhost")) {
+                    stringArray = new String[]{"cn-qz"};
+                    tempList = Arrays.asList(stringArray);
+                    // 利用list的包含方法,进行判断
+                    return !tempList.contains(region);
+                }
                 break;
             case k8s:
                 break;
