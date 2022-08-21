@@ -17,6 +17,11 @@ export default {
       name: "ConfigResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/config/home/Result'),
     },
+    {
+      path: "resultdetails/:id",
+      name: "ConfigResultDetails",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/config/home/ResultDetails"),
+    },
   ]
 }
 

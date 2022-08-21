@@ -204,33 +204,33 @@ public class K8sService {
         JSONObject jsonObject1 = JSON.parseObject(json);
         JSONArray jsonArray1 = jsonObject1.getJSONArray("items");
         int i = 0;
-        for(Object object : jsonArray1) {
-            JSONObject obj1 = (JSONObject) object;
-            JSONObject jsonObject2 = obj1.getJSONObject("report");
-            JSONArray jsonArray = jsonObject2.getJSONArray("vulnerabilities");
-            for(Object object2 : jsonArray) {
-                JSONObject obj2 = (JSONObject) object2;
-                CloudNativeResultItem cloudNativeResultItem = new CloudNativeResultItem();
-                cloudNativeResultItem.setId(UUIDUtil.newUUID());
-                cloudNativeResultItem.setResultId(result.getId());
-                cloudNativeResultItem.setPrimaryLink(obj2.getString("primaryLink"));
-                cloudNativeResultItem.setScore(obj2.getString("score"));
-                cloudNativeResultItem.setSeverity(obj2.getString("severity"));
-                cloudNativeResultItem.setTarget(obj2.getString("target"));
-                cloudNativeResultItem.setTitle(obj2.getString("title"));
-                cloudNativeResultItem.setVulnerabilityId(obj2.getString("vulnerabilityID"));
-                cloudNativeResultItem.setInstalledVersion(obj2.getString("installedVersion"));
-                cloudNativeResultItem.setFixedVersion(obj2.getString("fixedVersion"));
-                cloudNativeResultItem.setLinks(obj2.getString("links"));
-                cloudNativeResultItem.setCreateTime(System.currentTimeMillis());
-                cloudNativeResultItemMapper.insertSelective(cloudNativeResultItem);
+        if(jsonArray1 != null) {
+            for(Object object : jsonArray1) {
+                JSONObject obj1 = (JSONObject) object;
+                JSONObject jsonObject2 = obj1.getJSONObject("report");
+                JSONArray jsonArray = jsonObject2.getJSONArray("vulnerabilities");
+                for(Object object2 : jsonArray) {
+                    JSONObject obj2 = (JSONObject) object2;
+                    CloudNativeResultItem cloudNativeResultItem = new CloudNativeResultItem();
+                    cloudNativeResultItem.setId(UUIDUtil.newUUID());
+                    cloudNativeResultItem.setResultId(result.getId());
+                    cloudNativeResultItem.setPrimaryLink(obj2.getString("primaryLink"));
+                    cloudNativeResultItem.setScore(obj2.getString("score"));
+                    cloudNativeResultItem.setSeverity(obj2.getString("severity"));
+                    cloudNativeResultItem.setTarget(obj2.getString("target"));
+                    cloudNativeResultItem.setTitle(obj2.getString("title"));
+                    cloudNativeResultItem.setVulnerabilityId(obj2.getString("vulnerabilityID"));
+                    cloudNativeResultItem.setInstalledVersion(obj2.getString("installedVersion"));
+                    cloudNativeResultItem.setFixedVersion(obj2.getString("fixedVersion"));
+                    cloudNativeResultItem.setLinks(obj2.getString("links"));
+                    cloudNativeResultItem.setCreateTime(System.currentTimeMillis());
+                    cloudNativeResultItemMapper.insertSelective(cloudNativeResultItem);
 
-                historyService.insertHistoryCloudNativeResultItem(BeanUtils.copyBean(new HistoryCloudNativeResultItem(), cloudNativeResultItem));
-                i++;
+                    historyService.insertHistoryCloudNativeResultItem(BeanUtils.copyBean(new HistoryCloudNativeResultItem(), cloudNativeResultItem));
+                    i++;
+                }
             }
         }
-
-
         return i;
     }
 
@@ -458,33 +458,35 @@ public class K8sService {
         JSONObject jsonG = JSONObject.parseObject(result.getTrivyJson());
         JSONArray trivyJsons = JSONArray.parseArray(jsonG.getString("Results"));
         int i = 0;
-        for (Object obj : trivyJsons) {
-            JSONObject jsonObject = (JSONObject) obj;
-            JSONArray vulnJsons = JSONArray.parseArray(jsonObject.getString("Vulnerabilities"));
-            for (Object o : vulnJsons) {
-                JSONObject resultObject = (JSONObject) o;
-                ImageTrivyJsonWithBLOBs imageTrivyJsonWithBLOBs = new ImageTrivyJsonWithBLOBs();
-                imageTrivyJsonWithBLOBs.setResultId(result.getId());
-                imageTrivyJsonWithBLOBs.setVulnerabilityId(resultObject.getString("VulnerabilityID"));
-                imageTrivyJsonWithBLOBs.setPkgName(resultObject.getString("PkgName"));
-                imageTrivyJsonWithBLOBs.setInstalledVersion(resultObject.getString("InstalledVersion"));
-                imageTrivyJsonWithBLOBs.setFixedVersion(resultObject.getString("FixedVersion"));
-                imageTrivyJsonWithBLOBs.setLayer(resultObject.getString("Layer"));
-                imageTrivyJsonWithBLOBs.setSeveritySource(resultObject.getString("SeveritySource"));
-                imageTrivyJsonWithBLOBs.setPrimaryUrl(resultObject.getString("PrimaryURL"));
-                imageTrivyJsonWithBLOBs.setDataSource(resultObject.getString("DataSource"));
-                imageTrivyJsonWithBLOBs.setTitle(resultObject.getString("Title"));
-                imageTrivyJsonWithBLOBs.setDescription(resultObject.getString("Description"));
-                imageTrivyJsonWithBLOBs.setSeverity(resultObject.getString("Severity"));
-                imageTrivyJsonWithBLOBs.setCweIds(resultObject.getString("CweIDs"));
-                imageTrivyJsonWithBLOBs.setCvss(resultObject.getString("CVSS"));
-                imageTrivyJsonWithBLOBs.setReferences(resultObject.getString("References"));
-                imageTrivyJsonWithBLOBs.setPublishedDate(resultObject.getString("PublishedDate"));
-                imageTrivyJsonWithBLOBs.setLastModifiedDate(resultObject.getString("LastModifiedDate"));
-                imageTrivyJsonMapper.insertSelective(imageTrivyJsonWithBLOBs);
-                i++;
-            }
+        if(trivyJsons != null) {
+            for (Object obj : trivyJsons) {
+                JSONObject jsonObject = (JSONObject) obj;
+                JSONArray vulnJsons = JSONArray.parseArray(jsonObject.getString("Vulnerabilities"));
+                for (Object o : vulnJsons) {
+                    JSONObject resultObject = (JSONObject) o;
+                    ImageTrivyJsonWithBLOBs imageTrivyJsonWithBLOBs = new ImageTrivyJsonWithBLOBs();
+                    imageTrivyJsonWithBLOBs.setResultId(result.getId());
+                    imageTrivyJsonWithBLOBs.setVulnerabilityId(resultObject.getString("VulnerabilityID"));
+                    imageTrivyJsonWithBLOBs.setPkgName(resultObject.getString("PkgName"));
+                    imageTrivyJsonWithBLOBs.setInstalledVersion(resultObject.getString("InstalledVersion"));
+                    imageTrivyJsonWithBLOBs.setFixedVersion(resultObject.getString("FixedVersion"));
+                    imageTrivyJsonWithBLOBs.setLayer(resultObject.getString("Layer"));
+                    imageTrivyJsonWithBLOBs.setSeveritySource(resultObject.getString("SeveritySource"));
+                    imageTrivyJsonWithBLOBs.setPrimaryUrl(resultObject.getString("PrimaryURL"));
+                    imageTrivyJsonWithBLOBs.setDataSource(resultObject.getString("DataSource"));
+                    imageTrivyJsonWithBLOBs.setTitle(resultObject.getString("Title"));
+                    imageTrivyJsonWithBLOBs.setDescription(resultObject.getString("Description"));
+                    imageTrivyJsonWithBLOBs.setSeverity(resultObject.getString("Severity"));
+                    imageTrivyJsonWithBLOBs.setCweIds(resultObject.getString("CweIDs"));
+                    imageTrivyJsonWithBLOBs.setCvss(resultObject.getString("CVSS"));
+                    imageTrivyJsonWithBLOBs.setReferences(resultObject.getString("References"));
+                    imageTrivyJsonWithBLOBs.setPublishedDate(resultObject.getString("PublishedDate"));
+                    imageTrivyJsonWithBLOBs.setLastModifiedDate(resultObject.getString("LastModifiedDate"));
+                    imageTrivyJsonMapper.insertSelective(imageTrivyJsonWithBLOBs);
+                    i++;
+                }
 
+            }
         }
 
         return i;

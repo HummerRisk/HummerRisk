@@ -1160,6 +1160,9 @@ export default {
     config_result: '部署检测结果',
     config_result_list: '部署检测结果列表',
     search_by_name: '根据部署配置名称搜索',
+    search_by_title: '根据 Title 名称搜索',
+    config_result_details_list: '部署检测结果详情列表',
+    back_resource: '返回部署检测结果列表',
   },
   log: {
     audit: '操作审计',

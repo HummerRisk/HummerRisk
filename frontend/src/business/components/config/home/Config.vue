@@ -80,7 +80,7 @@
           <el-radio v-model="configType" label="k8s" @change="changeYaml">{{ $t('config.k8s_config') }}</el-radio>
           <el-radio v-model="configType" label="upload" @change="changeYaml">{{ $t('config.upload_config') }}</el-radio>
         </el-form-item>
-        <el-form-item v-if="configType==='k8s'" :label="$t('k8s.k8s_setting')" ref="type" prop="type">
+        <el-form-item v-if="configType==='k8s'" :label="$t('k8s.k8s_setting')">
           <el-select style="width: 100%;" v-model="sourceId" :placeholder="$t('k8s.k8s_setting')" @change="changeSearch">
             <el-option
               v-for="item in k8s"
@@ -91,10 +91,10 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="configType==='upload'" :label="$t('config.upload_yaml')" ref="type" prop="type">
+        <el-form-item v-if="configType==='upload'" :label="$t('config.upload_yaml')">
           <yaml-upload v-on:appendYaml="appendYaml"/>
         </el-form-item>
-        <el-form-item :label="$t('config.config_yaml')" ref="type" prop="type" :rules="{required: true, message: $t('config.config_yaml') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+        <el-form-item :label="$t('config.config_yaml')" ref="configYaml" prop="configYaml">
           <codemirror ref="cmEditor" v-model="form.configYaml" class="code-mirror" :options="cmOptions" />
         </el-form-item>
         <el-form-item>
@@ -135,7 +135,7 @@
           <el-radio v-model="configType" label="k8s" @change="changeYaml">{{ $t('config.k8s_config') }}</el-radio>
           <el-radio v-model="configType" label="upload" @change="changeYaml">{{ $t('config.upload_config') }}</el-radio>
         </el-form-item>
-        <el-form-item v-if="configType==='k8s'" :label="$t('k8s.k8s_setting')" ref="type" prop="type">
+        <el-form-item v-if="configType==='k8s'" :label="$t('k8s.k8s_setting')">
           <el-select style="width: 100%;" v-model="sourceId" :placeholder="$t('k8s.k8s_setting')" @change="changeSearch">
             <el-option
               v-for="item in k8s"
@@ -146,10 +146,10 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="configType==='upload'" :label="$t('config.upload_yaml')" ref="type" prop="type">
+        <el-form-item v-if="configType==='upload'" :label="$t('config.upload_yaml')">
           <yaml-upload v-on:appendYaml="appendYaml"/>
         </el-form-item>
-        <el-form-item :label="$t('config.config_yaml')" ref="type" prop="type" :rules="{required: true, message: $t('config.config_yaml') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+        <el-form-item :label="$t('config.config_yaml')" ref="configYaml" prop="configYaml">
           <codemirror ref="cmEditor" v-model="form.configYaml" class="code-mirror" :options="cmOptions" />
         </el-form-item>
         <el-form-item>
@@ -231,6 +231,14 @@ export default {
           {
             required: true,
             message: this.$t("workspace.special_characters_are_not_supported"),
+            trigger: 'blur'
+          }
+        ],
+        name: [
+          {required: true, message: this.$t('config.config_yaml'), trigger: 'blur'},
+          {
+            required: true,
+            message: this.$t('config.config_yaml') + this.$t('commons.cannot_be_empty'),
             trigger: 'blur'
           }
         ],
@@ -423,8 +431,27 @@ export default {
       this.form = row;
       this.updateVisible = true;
     },
-    handleScan(data) {
-
+    handleScan(item) {
+      this.$alert(this.$t('image.one_scan') + item.name + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.$get("/config/scan/" + item.id,response => {
+              if (response.success) {
+                this.$success(this.$t('schedule.event_start'));
+                this.$router.push({
+                  path: '/config/result',
+                  query: {
+                    date:new Date().getTime()
+                  },
+                }).catch(error => error);
+              } else {
+                this.$error(response.message);
+              }
+            });
+          }
+        }
+      });
     },
     changeYaml() {
       this.form.configYaml = "";

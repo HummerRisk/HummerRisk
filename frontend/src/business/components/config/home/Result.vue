@@ -10,11 +10,15 @@
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                 @filter-change="filter">
         <el-table-column type="index" min-width="3%"/>
-        <el-table-column prop="name" :label="$t('image.image_name')" min-width="10%" show-overflow-tooltip></el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('image.image_url')" min-width="23%" show-overflow-tooltip>
-          <el-row v-if="scope.row.type==='image'">{{ scope.row.imageUrl }}:{{ scope.row.imageTag }}</el-row>
-          <el-row v-if="scope.row.type==='tar'">{{ scope.row.path }}</el-row>
+        <el-table-column prop="name" :label="$t('config.name')" min-width="10%" show-overflow-tooltip>
+          <template v-slot:default="scope">
+              <span>
+                <img :src="require(`@/assets/img/config/yaml.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ $t(scope.row.name) }}
+              </span>
+          </template>
         </el-table-column>
+        <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
         <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="6%">
           <el-tooltip effect="dark" :content="$t('history.resource_result')" placement="top">
             <el-link type="primary" class="text-click" @click="goResource(scope.row)">{{ scope.row.returnSum }}</el-link>
@@ -67,8 +71,7 @@
               <div class="grid-content bg-purple-light">
                 <span class="grid-content-log-span"> {{ logForm.name }}</span>
                 <span class="grid-content-log-span">
-                  <img :src="require(`@/assets/img/platform/docker.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ logForm.imageName }}
+                  <img :src="require(`@/assets/img/config/yaml.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                 </span>
                 <span class="grid-content-status-span" v-if="logForm.resultStatus === 'APPROVED'" style="color: #579df8">
                   <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
@@ -98,85 +101,85 @@
             </template>
           </el-table-column>
         </el-table>
-        <div style="margin: 10px;" v-if="logForm.trivyJson">
+        <div style="margin: 10px;" v-if="logForm.resultJson">
           <h2>Summary:&nbsp;</h2>
           <ul style="margin-left: 60px;">
             <li><i>Scan Name</i>: {{ logForm.name }}</li>
             <li><i>Scan User</i>:&nbsp;{{ logForm.userName }}</li>
-            <li><i>ArtifactType</i>:&nbsp;{{ logForm.trivyJson.ArtifactType }}</li>
-            <li><i>ArtifactName</i>:&nbsp;{{ logForm.trivyJson.ArtifactName }}</li>
-            <li><i>SchemaVersion</i>:&nbsp;{{ logForm.trivyJson.SchemaVersion }}</li>
-            <li><i>Architecture</i>:&nbsp;{{ logForm.trivyJson.Metadata.ImageConfig.architecture }}</li>
+            <li><i>ArtifactType</i>:&nbsp;{{ logForm.resultJson.ArtifactType }}</li>
+            <li><i>ArtifactName</i>:&nbsp;{{ logForm.resultJson.ArtifactName }}</li>
+            <li><i>SchemaVersion</i>:&nbsp;{{ logForm.resultJson.SchemaVersion }}</li>
+            <li><i>Architecture</i>:&nbsp;{{ logForm.resultJson.Metadata.ImageConfig.architecture?logForm.resultJson.Metadata.ImageConfig.architecture:'N/A' }}</li>
             <li><i>Create Time</i>:&nbsp;{{ logForm.createTime | timestampFormatDate }}</li>
             <li><i>Result Status</i>:&nbsp;{{ logForm.resultStatus }}</li>
-            <li><i>Vulnerabilities Found</i>: {{ logForm.returnSum }}</li>
+            <li><i>Results</i>: {{ logForm.returnSum }}</li>
           </ul>
         </div>
-        <div style="margin: 10px;" v-if="logForm.trivyJson">
+        <div style="margin: 10px;" v-if="logForm.resultJson">
           <div style="margin: 10px 0 0 0;">
             <h2>Details:&nbsp;</h2>
             <div style="margin: 10px 0 0 0;">
-              <div style="margin: 10px 0 0 0;" :key="index" v-for="(result, index) in logForm.trivyJson.Results">
+              <div style="margin: 10px 0 0 0;" :key="index" v-for="(result, index) in logForm.resultJson.Results">
                 <div style="margin: 10px;" v-if="result">
                   <h3>Summary:&nbsp;</h3>
                   <ul style="margin-left: 60px;">
                     <li><i>Target</i>: {{ result.Target }}</li>
                     <li><i>Class</i>:&nbsp;{{ result.Class }}</li>
                     <li><i>Type</i>:&nbsp;{{ result.Type }}</li>
+                    <li><i>Successes</i>: {{ result.MisconfSummary.Successes }}</li>
+                    <li><i>Failures</i>:&nbsp;{{ result.MisconfSummary.Failures }}</li>
+                    <li><i>Exceptions</i>:&nbsp;{{ result.MisconfSummary.Exceptions }}</li>
                   </ul>
                 </div>
-                <div style="margin: 10px 0 0 0;" :key="index" v-for="(vulnerabilitiy, index) in result.Vulnerabilities">
+                <div style="margin: 10px 0 0 0;" :key="index" v-for="(misconfiguration, index) in result.Misconfigurations">
                   <el-card class="box-card">
                     <div slot="header" class="clearfix">
                       <el-row>
                         <el-col class="icon-title" :span="3">
-                          <span>{{ vulnerabilitiy.Severity.substring(0, 1) }}</span>
+                          <span>{{ misconfiguration.Severity.substring(0, 1) }}</span>
                         </el-col>
                         <el-col :span="15" style="margin: -7px 0 0 15px;">
-                          <span style="font-size: 24px;font-weight: 500;">{{ vulnerabilitiy.Title }}</span>
+                          <span style="font-size: 24px;font-weight: 500;">{{ misconfiguration.Title }}</span>
                         </el-col>
                         <el-col :span="6" style="float: right;">
-                          <span style="font-size: 20px;color: #999;float: right;">{{ 'SEVERITY SOURCE' }}</span>
+                          <span style="font-size: 20px;color: #999;float: right;">{{ 'ID' }}</span>
                         </el-col>
                       </el-row>
                       <el-row style="font-size: 18px;padding: 10px;">
                         <el-col :span="20">
-                          <span style="margin: 5px;"><a :href="vulnerabilitiy.PrimaryURL">{{ vulnerabilitiy.VulnerabilityID }}</a></span>
+                          <span style="margin: 5px;"><a :href="misconfiguration.PrimaryURL">{{ misconfiguration.Namespace }}</a></span>
                           <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                          <span style="margin: 5px;"><el-button type="danger" size="mini">{{ vulnerabilitiy.Severity }}</el-button></span>
+                          <span style="margin: 5px;"><el-button type="danger" size="mini">{{ misconfiguration.Severity }}</el-button></span>
                           <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                          <span style="color: #888;margin: 5px;">INSTALLED VERSION: {{ vulnerabilitiy.InstalledVersion }}</span>
+                          <span style="color: #888;margin: 5px;">Type: {{ misconfiguration.Type }}</span>
                           <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                          <span style="color: #444;margin: 5px;">PkgName: {{ vulnerabilitiy.PkgName }}</span>
+                          <span style="color: #444;margin: 5px;">Status: {{ misconfiguration.Status }}</span>
                         </el-col>
                         <el-col :span="4" style="float: right;">
-                          <span style="font-size: 20px;color: #000;float: right;">{{ vulnerabilitiy.SeveritySource }}</span>
+                          <span style="font-size: 20px;color: #000;float: right;">{{ misconfiguration.ID }}</span>
                         </el-col>
                       </el-row>
                     </div>
                     <div class="text item div-desc">
                       <el-row>
-                        <span style="color: red;"><i class="el-icon-s-opportunity"></i>PrimaryURL:</span> &nbsp;{{ vulnerabilitiy.PrimaryURL }}
+                        <span style="color: red;"><i class="el-icon-s-opportunity"></i>PrimaryURL:</span> &nbsp;{{ misconfiguration.PrimaryURL }}
                       </el-row>
                       <el-row>
-                        <span style="color: red;">Description:</span> {{ vulnerabilitiy.Description }}
+                        <span style="color: red;">Description:</span> {{ misconfiguration.Description }}
                       </el-row>
                       <el-row>
-                        <span style="color: red;">PublishedDate:</span> {{ vulnerabilitiy.PublishedDate }}
+                        <span style="color: red;">Message:</span> {{ misconfiguration.Message }}
                       </el-row>
                       <el-row>
-                        <span style="color: red;">LastModifiedDate:</span> {{ vulnerabilitiy.LastModifiedDate }}
+                        <span style="color: red;">Query:</span> {{ misconfiguration.Query }}
                       </el-row>
                       <el-row>
-                        <span style="color: red;">FixedVersion:</span> {{ vulnerabilitiy.FixedVersion }}
-                      </el-row>
-                      <el-row>
-                        <span style="color: red;">DataSource:</span> {{ vulnerabilitiy.DataSource.ID }} | {{ vulnerabilitiy.DataSource.Name }} | {{ vulnerabilitiy.DataSource.URL }}
+                        <span style="color: red;">Resolution:</span> {{ misconfiguration.Resolution }}
                       </el-row>
                     </div>
                     <div class="text div-json">
                       <el-descriptions title="Layer" :column="2">
-                        <el-descriptions-item v-for="(vuln, index) in filterJson(vulnerabilitiy.Layer)" :key="index" :label="vuln.key">
+                        <el-descriptions-item v-for="(vuln, index) in filterJson(misconfiguration.Layer)" :key="index" :label="vuln.key">
                           <span v-if="!vuln.flag" show-overflow-tooltip>
                             <el-tooltip class="item" effect="dark" :content="JSON.stringify(vuln.value)" placement="top-start">
                               <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
@@ -192,15 +195,25 @@
                       </el-descriptions>
                     </div>
                     <div class="text div-json">
-                      <el-descriptions title="CweIDs" :column="2">
-                        <el-descriptions-item v-for="(CweID, index) in vulnerabilitiy.CweIDs" :key="index" :label="index">
-                          <span> {{ CweID }}</span>
+                      <el-descriptions title="CauseMetadata" :column="2">
+                        <el-descriptions-item v-for="(vuln, index) in filterJson(misconfiguration.CauseMetadata)" :key="index" :label="vuln.key">
+                          <span v-if="!vuln.flag" show-overflow-tooltip>
+                            <el-tooltip class="item" effect="dark" :content="JSON.stringify(vuln.value)" placement="top-start">
+                              <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
+                            </el-tooltip>
+                          </span>
+                          <el-tooltip v-if="vuln.flag && vuln.value" class="item" effect="light" :content="typeof(vuln.value) === 'boolean'?vuln.value.toString():vuln.value" placement="top-start">
+                            <span class="table-expand-span-value">
+                                {{ vuln.value }}
+                            </span>
+                          </el-tooltip>
+                          <span v-if="vuln.flag && !vuln.value"> N/A</span>
                         </el-descriptions-item>
                       </el-descriptions>
                     </div>
                     <div class="text div-json">
-                      <el-descriptions title="CweIDs" :column="2">
-                        <el-descriptions-item v-for="(Reference, index) in vulnerabilitiy.References" :key="index" :label="index">
+                      <el-descriptions title="References" :column="2">
+                        <el-descriptions-item v-for="(Reference, index) in misconfiguration.References" :key="index" :label="index">
                           <span> {{ Reference }}</span>
                         </el-descriptions-item>
                       </el-descriptions>
@@ -232,7 +245,7 @@ import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../head/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
-import {IMAGE_RESULT_CONFIGS} from "../../common/components/search/search-components";
+import {CONFIG_RESULT_CONFIGS} from "../../common/components/search/search-components";
 
 /* eslint-disable */
 export default {
@@ -249,7 +262,7 @@ export default {
     return {
       result: {},
       condition: {
-        components: IMAGE_RESULT_CONFIGS
+        components: CONFIG_RESULT_CONFIGS
       },
       tableData: [],
       currentPage: 1,
@@ -264,10 +277,6 @@ export default {
       logData: [],
       detailForm: {},
       buttons: [
-        {
-          tip: this.$t('resource.scan_vuln_search'), icon: "el-icon-share", type: "primary",
-          exec: this.handleVuln
-        },
         {
           tip: this.$t('resource.scan'), icon: "el-icon-refresh-right", type: "success",
           exec: this.handleScans
@@ -295,12 +304,9 @@ export default {
   },
 
   methods: {
-    handleVuln() {
-      window.open('http://www.cnnvd.org.cn/web/vulnerability/queryLds.tag','_blank','');
-    },
     //查询列表
     search() {
-      let url = "/image/resultList/" + this.currentPage + "/" + this.pageSize;
+      let url = "/config/resultList/" + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -314,7 +320,7 @@ export default {
         this.timer = setInterval(this.getStatus,60000);
       } else {
         for (let data of this.tableData) {
-          let url = "/image/getImageResult/";
+          let url = "/config/getCloudNativeConfigResult/";
           this.$get(url + data.id, response => {
             let result = response.data;
             if (data.resultStatus !== result.resultStatus) {
@@ -364,14 +370,14 @@ export default {
       }
     },
     showResultLog (result) {
-      let logUrl = "/image/log/";
+      let logUrl = "/config/log/";
       this.result = this.$get(logUrl + result.id, response => {
         this.logData = response.data;
       });
-      let resultUrl = "/k8s/getImageResult/";
+      let resultUrl = "/config/getCloudNativeConfigResult/";
       this.result = this.$get(resultUrl + result.id, response => {
         this.logForm = response.data;
-        this.logForm.trivyJson = JSON.parse(this.logForm.trivyJson);
+        this.logForm.resultJson = JSON.parse(this.logForm.resultJson);
       });
       this.logVisible = true;
     },
@@ -384,7 +390,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get("/image/reScan/" + item.id, response => {
+            this.$get("/config/reScan/" + item.id, response => {
               if (response.success) {
                 this.search();
               }
@@ -398,7 +404,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/image/deleteImageResult/" + obj.id,  res => {
+            this.result = this.$get("/config/deleteCloudNativeConfigResult/" + obj.id,  res => {
               setTimeout(function () {window.location.reload()}, 2000);
               this.$success(this.$t('commons.delete_success'));
             });
@@ -411,7 +417,7 @@ export default {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      let p = '/k8sImage/k8sImageResultDetails/' + params.id;
+      let p = '/config/resultdetails/' + params.id;
       this.$router.push({
         path: p
       }).catch(error => error);
@@ -448,6 +454,7 @@ export default {
           jsonKeyAndValue.push(map);
         }
       }
+      console.log(jsonKeyAndValue)
       return jsonKeyAndValue;
     },
   },

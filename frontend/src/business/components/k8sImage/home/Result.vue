@@ -199,7 +199,7 @@
                       </el-descriptions>
                     </div>
                     <div class="text div-json">
-                      <el-descriptions title="CweIDs" :column="2">
+                      <el-descriptions title="References" :column="2">
                         <el-descriptions-item v-for="(Reference, index) in vulnerabilitiy.References" :key="index" :label="index">
                           <span> {{ Reference }}</span>
                         </el-descriptions-item>

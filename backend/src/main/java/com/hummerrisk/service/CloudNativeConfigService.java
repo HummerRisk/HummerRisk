@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * @author harris
@@ -191,7 +192,8 @@ public class CloudNativeConfigService {
     public void scan(String id) throws Exception {
         CloudNativeConfig cloudNativeConfig = cloudNativeConfigMapper.selectByPrimaryKey(id);
         Integer scanId = historyService.insertScanHistory(cloudNativeConfig);
-        if(StringUtils.equalsIgnoreCase(cloudNativeConfig.getStatus(), CloudAccountConstants.Status.VALID.name())) {
+        if(StringUtils.equalsIgnoreCase(cloudNativeConfig.getStatus(), CloudAccountConstants.Status.VALID.name())
+        || StringUtils.equalsIgnoreCase(cloudNativeConfig.getStatus(), CloudAccountConstants.Status.INVALID.name())) {
             CloudNativeConfigResult result = new CloudNativeConfigResult();
 
             deleteResultByCloudNativeConfigId(id);
@@ -357,33 +359,35 @@ public class CloudNativeConfigService {
         JSONObject jsonG = JSONObject.parseObject(result.getResultJson());
         JSONArray trivyJsons = JSONArray.parseArray(jsonG.getString("Results"));
         int i = 0;
-        for (Object obj : trivyJsons) {
-            JSONObject jsonObject = (JSONObject) obj;
-            JSONArray misconfigurations = JSONArray.parseArray(jsonObject.getString("Misconfigurations"));
-            for (Object o : misconfigurations) {
-                JSONObject resultObject = (JSONObject) o;
-                CloudNativeConfigResultItemWithBLOBs cloudNativeConfigResultItem = new CloudNativeConfigResultItemWithBLOBs();
-                cloudNativeConfigResultItem.setResultId(result.getId());
-                cloudNativeConfigResultItem.setType(resultObject.getString("Type"));
-                cloudNativeConfigResultItem.setItemId(resultObject.getString("ID"));
-                cloudNativeConfigResultItem.setTitle(resultObject.getString("Title"));
-                cloudNativeConfigResultItem.setDescription(resultObject.getString("Description"));
-                cloudNativeConfigResultItem.setMessage(resultObject.getString("Message"));
-                cloudNativeConfigResultItem.setNamespace(resultObject.getString("Namespace"));
-                cloudNativeConfigResultItem.setLayer(resultObject.getString("Layer"));
-                cloudNativeConfigResultItem.setQuery(resultObject.getString("Query"));
-                cloudNativeConfigResultItem.setPrimaryUrl(resultObject.getString("PrimaryURL"));
-                cloudNativeConfigResultItem.setResolution(resultObject.getString("Resolution"));
+        if(trivyJsons != null) {
+            for (Object obj : trivyJsons) {
+                JSONObject jsonObject = (JSONObject) obj;
+                JSONArray misconfigurations = JSONArray.parseArray(jsonObject.getString("Misconfigurations"));
+                for (Object o : misconfigurations) {
+                    JSONObject resultObject = (JSONObject) o;
+                    CloudNativeConfigResultItemWithBLOBs cloudNativeConfigResultItem = new CloudNativeConfigResultItemWithBLOBs();
+                    cloudNativeConfigResultItem.setId(UUIDUtil.newUUID());
+                    cloudNativeConfigResultItem.setResultId(result.getId());
+                    cloudNativeConfigResultItem.setType(resultObject.getString("Type"));
+                    cloudNativeConfigResultItem.setItemId(resultObject.getString("ID"));
+                    cloudNativeConfigResultItem.setTitle(resultObject.getString("Title"));
+                    cloudNativeConfigResultItem.setDescription(resultObject.getString("Description"));
+                    cloudNativeConfigResultItem.setMessage(resultObject.getString("Message"));
+                    cloudNativeConfigResultItem.setNamespace(resultObject.getString("Namespace"));
+                    cloudNativeConfigResultItem.setLayer(resultObject.getString("Layer"));
+                    cloudNativeConfigResultItem.setQuery(resultObject.getString("Query"));
+                    cloudNativeConfigResultItem.setPrimaryUrl(resultObject.getString("PrimaryURL"));
+                    cloudNativeConfigResultItem.setResolution(resultObject.getString("Resolution"));
+                    cloudNativeConfigResultItem.setSeverity(resultObject.getString("Severity"));
+                    cloudNativeConfigResultItem.setStatus(resultObject.getString("Status"));
+                    cloudNativeConfigResultItem.setCausemetaData(resultObject.getString("CauseMetadata"));
+                    cloudNativeConfigResultItem.setReferences(resultObject.getString("References"));
+                    cloudNativeConfigResultItem.setLayer(resultObject.getString("Layer"));
+                    cloudNativeConfigResultItemMapper.insertSelective(cloudNativeConfigResultItem);
+                    i++;
+                }
 
-                cloudNativeConfigResultItem.setSeverity(resultObject.getString("Severity"));
-                cloudNativeConfigResultItem.setStatus(resultObject.getString("Status"));
-                cloudNativeConfigResultItem.setCausemetaData(resultObject.getString("CauseMetadata"));
-                cloudNativeConfigResultItem.setReferences(resultObject.getString("References"));
-                cloudNativeConfigResultItem.setLayer(resultObject.getString("Layer"));
-                cloudNativeConfigResultItemMapper.insertSelective(cloudNativeConfigResultItem);
-                i++;
             }
-
         }
 
         return i;
