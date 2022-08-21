@@ -8,9 +8,7 @@ import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeResultMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.utils.*;
-import com.hummerrisk.controller.request.image.ImageRuleRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
-import com.hummerrisk.dto.ImageRuleDTO;
 import com.hummerrisk.proxy.k8s.K8sRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -442,7 +440,7 @@ public class K8sService {
             } else {
                 fileName = ImageConstants.DEFAULT_BASE_DIR + image.getPath();
             }
-            String command = _proxy + dockerLogin + ImageConstants.TRIVY + fileName + ImageConstants.TRIVY_TYPE + ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TRIVY_JSON;
+            String command = _proxy + dockerLogin + ImageConstants.TRIVY_IMAGE + fileName + ImageConstants.TRIVY_TYPE + ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TRIVY_JSON;
             LogUtil.info(image.getId() + " {k8sImage}[command]: " + image.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, ImageConstants.DEFAULT_BASE_DIR);
             if(resultStr.contains("ERROR") || resultStr.contains("error")) {

@@ -5,7 +5,11 @@
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
           <el-menu-item :index="'/config/config'">
-            {{ $t("commons.deployment_detection") }}
+            {{ $t("config.config_settings") }}
+          </el-menu-item>
+
+          <el-menu-item :index="'/config/result'">
+            {{ $t("config.config_result") }}
           </el-menu-item>
 
         </el-menu>

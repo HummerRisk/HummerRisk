@@ -1156,7 +1156,10 @@ export default {
     upload_config: '上传文件获取 YAML 内容',
     upload_yaml: '上传 YAML 文件',
     config_yaml: '部署配置 YAML',
-    config_note: '请填写 YAML 后保存, YAML 可以通过手动填写、K8s 获取、手动上传!'
+    config_note: '请填写 YAML 后保存, YAML 可以通过手动填写、K8s 获取、手动上传!',
+    config_result: '部署检测结果',
+    config_result_list: '部署检测结果列表',
+    search_by_name: '根据部署配置名称搜索',
   },
   log: {
     audit: '操作审计',

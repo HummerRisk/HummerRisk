@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Scanner;
 
 /**
  * 文件上传工具类
@@ -193,11 +194,11 @@ public class FileUploadUtils
         try
         {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(file.getInputStream()));
-
             StringBuffer buffer = new StringBuffer();
             String lineTxt;
             while ((lineTxt=bufferedReader.readLine())!=null){
                 buffer.append(lineTxt);
+                buffer.append("\r\n");
             }
             return buffer.toString();
         }

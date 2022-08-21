@@ -55,7 +55,7 @@
     </el-card>
 
     <!--Create k8s config-->
-    <el-drawer class="rtl" :title="$t('image.create')" :visible.sync="createVisible" size="75%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('config.config_create')" :visible.sync="createVisible" size="75%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form" :rules="rule">
         <el-form-item :label="$t('config.name')" ref="name" prop="name">
@@ -76,9 +76,9 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('config.config_type')" ref="type" prop="type">
-          <el-radio v-model="configType" label="menu">{{ $t('config.menu_config') }}</el-radio>
-          <el-radio v-model="configType" label="k8s">{{ $t('config.k8s_config') }}</el-radio>
-          <el-radio v-model="configType" label="upload">{{ $t('config.upload_config') }}</el-radio>
+          <el-radio v-model="configType" label="menu" @change="changeYaml">{{ $t('config.menu_config') }}</el-radio>
+          <el-radio v-model="configType" label="k8s" @change="changeYaml">{{ $t('config.k8s_config') }}</el-radio>
+          <el-radio v-model="configType" label="upload" @change="changeYaml">{{ $t('config.upload_config') }}</el-radio>
         </el-form-item>
         <el-form-item v-if="configType==='k8s'" :label="$t('k8s.k8s_setting')" ref="type" prop="type">
           <el-select style="width: 100%;" v-model="sourceId" :placeholder="$t('k8s.k8s_setting')" @change="changeSearch">
@@ -94,7 +94,7 @@
         <el-form-item v-if="configType==='upload'" :label="$t('config.upload_yaml')" ref="type" prop="type">
           <yaml-upload v-on:appendYaml="appendYaml"/>
         </el-form-item>
-        <el-form-item :label="$t('config.config_yaml')" ref="type" prop="type">
+        <el-form-item :label="$t('config.config_yaml')" ref="type" prop="type" :rules="{required: true, message: $t('config.config_yaml') + $t('commons.cannot_be_empty'), trigger: 'change'}">
           <codemirror ref="cmEditor" v-model="form.configYaml" class="code-mirror" :options="cmOptions" />
         </el-form-item>
         <el-form-item>
@@ -110,6 +110,58 @@
     <!--Create k8s config-->
 
     <!--Update k8s config-->
+    <el-drawer class="rtl" :title="$t('config.config_update')" :visible.sync="updateVisible" size="75%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form" :rules="rule">
+        <el-form-item :label="$t('config.name')" ref="name" prop="name">
+          <el-input v-model="form.name" autocomplete="off" :placeholder="$t('config.name')"/>
+        </el-form-item>
+        <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-switch v-model="isProxy"></el-switch>
+        </el-form-item>
+        <el-form-item v-if="isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+            <el-option
+              v-for="item in proxys"
+              :key="item.id"
+              :label="item.proxyIp"
+              :value="item.id">
+              &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="$t('config.config_type')" ref="type" prop="type">
+          <el-radio v-model="configType" label="menu" @change="changeYaml">{{ $t('config.menu_config') }}</el-radio>
+          <el-radio v-model="configType" label="k8s" @change="changeYaml">{{ $t('config.k8s_config') }}</el-radio>
+          <el-radio v-model="configType" label="upload" @change="changeYaml">{{ $t('config.upload_config') }}</el-radio>
+        </el-form-item>
+        <el-form-item v-if="configType==='k8s'" :label="$t('k8s.k8s_setting')" ref="type" prop="type">
+          <el-select style="width: 100%;" v-model="sourceId" :placeholder="$t('k8s.k8s_setting')" @change="changeSearch">
+            <el-option
+              v-for="item in k8s"
+              :key="item.id"
+              :label="item.sourceName"
+              :value="item.sourceYaml">
+              &nbsp;&nbsp; {{ '(namespace)' +  item.sourceNamespace + ':(source)' + item.sourceName }}
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="configType==='upload'" :label="$t('config.upload_yaml')" ref="type" prop="type">
+          <yaml-upload v-on:appendYaml="appendYaml"/>
+        </el-form-item>
+        <el-form-item :label="$t('config.config_yaml')" ref="type" prop="type" :rules="{required: true, message: $t('config.config_yaml') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <codemirror ref="cmEditor" v-model="form.configYaml" class="code-mirror" :options="cmOptions" />
+        </el-form-item>
+        <el-form-item>
+          <span style="color: red">{{ $t('config.config_note') }}</span>
+        </el-form-item>
+      </el-form>
+      <div style="margin: 10px;">
+        <dialog-footer
+          @cancel="updateVisible = false"
+          @confirm="update('form')"/>
+      </div>
+    </el-drawer>
     <!--Update k8s config-->
 
   </main-container>
@@ -335,7 +387,6 @@ export default {
     save(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
-          console.log(111, this.form)
           this.result = this.$post("/config/add", this.form, () => {
             this.$success(this.$t('commons.save_success'));
             this.createVisible = false;
@@ -375,6 +426,14 @@ export default {
     handleScan(data) {
 
     },
+    changeYaml() {
+      this.form.configYaml = "";
+    },
+  },
+  computed: {
+    codemirror() {
+      return this.$refs.cmEditor.codemirror;
+    }
   },
   activated() {
     this.init();

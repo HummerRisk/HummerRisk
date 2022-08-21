@@ -1,20 +1,12 @@
 package com.hummerrisk.service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.exceptions.ClientException;
-import com.hummerrisk.base.domain.CloudNativeConfig;
-import com.hummerrisk.base.domain.CloudNativeConfigExample;
-import com.hummerrisk.base.domain.Package;
-import com.hummerrisk.base.domain.Proxy;
-import com.hummerrisk.base.mapper.CloudNativeConfigMapper;
-import com.hummerrisk.base.mapper.CloudNativeSourceMapper;
-import com.hummerrisk.base.mapper.PluginMapper;
-import com.hummerrisk.base.mapper.ProxyMapper;
+import com.hummerrisk.base.domain.*;
+import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeConfigMapper;
-import com.hummerrisk.base.mapper.ext.ExtCloudNativeSourceMapper;
-import com.hummerrisk.commons.constants.CloudAccountConstants;
-import com.hummerrisk.commons.constants.PackageConstants;
-import com.hummerrisk.commons.constants.ResourceOperation;
-import com.hummerrisk.commons.constants.ResourceTypeConstants;
+import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.config.ConfigRequest;
@@ -44,15 +36,17 @@ public class CloudNativeConfigService {
     @Resource
     private CloudNativeConfigMapper cloudNativeConfigMapper;
     @Resource
-    private ExtCloudNativeSourceMapper extCloudNativeSourceMapper;
+    private CloudNativeConfigResultMapper cloudNativeConfigResultMapper;
     @Resource
-    private CloudNativeSourceMapper cloudNativeSourceMapper;
+    private CloudNativeConfigResultItemMapper cloudNativeConfigResultItemMapper;
     @Resource
-    private PluginMapper pluginMapper;
+    private CloudNativeConfigResultLogMapper cloudNativeConfigResultLogMapper;
     @Resource
     private ProxyMapper proxyMapper;
     @Resource
-    private CommonThreadPool commonThreadPool;
+    private HistoryService historyService;
+    @Resource
+    private NoticeService noticeService;
 
     public List<CloudNativeConfigDTO> getCloudNativeConfigList(ConfigRequest request) {
         return extCloudNativeConfigMapper.getCloudNativeConfigList(request);
@@ -188,6 +182,207 @@ public class CloudNativeConfigService {
         {
             throw new IOException(e.getMessage(), e);
         }
+    }
+
+    public void scan(String id) throws Exception {
+        CloudNativeConfig cloudNativeConfig = cloudNativeConfigMapper.selectByPrimaryKey(id);
+        Integer scanId = historyService.insertScanHistory(cloudNativeConfig);
+        if(StringUtils.equalsIgnoreCase(cloudNativeConfig.getStatus(), CloudAccountConstants.Status.VALID.name())) {
+            CloudNativeConfigResult result = new CloudNativeConfigResult();
+
+            deleteResultByCloudNativeConfigId(id);
+
+            BeanUtils.copyBean(result, cloudNativeConfig);
+            result.setId(UUIDUtil.newUUID());
+            result.setConfigId(id);
+            result.setApplyUser(SessionUtils.getUserId());
+            result.setCreateTime(System.currentTimeMillis());
+            result.setUpdateTime(System.currentTimeMillis());
+            result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+            result.setUserName(SessionUtils.getUser().getName());
+            cloudNativeConfigResultMapper.insertSelective(result);
+
+            saveCloudNativeConfigResultLog(result.getId(), "i18n_start_k8s_result_config", "", true);
+            OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.CREATE, "i18n_start_k8s_result_config");
+
+            historyService.insertScanTaskHistory(result, scanId, cloudNativeConfig.getId(), TaskEnum.configAccount.getType());
+
+            historyService.insertHistoryCloudNativeConfigResult(BeanUtils.copyBean(new HistoryCloudNativeConfigResult(), result));
+        }
+    }
+
+    public String reScan(String id) throws Exception {
+        CloudNativeConfigResult result = cloudNativeConfigResultMapper.selectByPrimaryKey(id);
+
+        result.setUpdateTime(System.currentTimeMillis());
+        result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+        result.setUserName(SessionUtils.getUser().getName());
+        cloudNativeConfigResultMapper.updateByPrimaryKeySelective(result);
+
+        reScanDeleteCloudNativeConfigResult(id);
+
+        saveCloudNativeConfigResultLog(result.getId(), "i18n_restart_k8s_result_config", "", true);
+
+        OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.CREATE, "i18n_restart_k8s_result_config");
+
+        historyService.updateHistoryCloudNativeConfigResult(BeanUtils.copyBean(new HistoryCloudNativeConfigResult(), result));
+
+        return result.getId();
+    }
+
+    public void deleteResultByCloudNativeConfigId(String id) throws Exception {
+        CloudNativeConfigResultExample example = new CloudNativeConfigResultExample();
+        example.createCriteria().andConfigIdEqualTo(id);
+        List<CloudNativeConfigResult> list = cloudNativeConfigResultMapper.selectByExample(example);
+
+        for (CloudNativeConfigResult result : list) {
+            CloudNativeConfigResultItemExample cloudNativeConfigResultItemExample = new CloudNativeConfigResultItemExample();
+            cloudNativeConfigResultItemExample.createCriteria().andResultIdEqualTo(result.getId());
+            cloudNativeConfigResultItemMapper.deleteByExample(cloudNativeConfigResultItemExample);
+            CloudNativeConfigResultLogExample logExample = new CloudNativeConfigResultLogExample();
+            logExample.createCriteria().andResultIdEqualTo(result.getId());
+            cloudNativeConfigResultLogMapper.deleteByExample(logExample);
+        }
+        cloudNativeConfigResultMapper.deleteByExample(example);
+    }
+
+    void saveCloudNativeConfigResultLog(String resultId, String operation, String output, boolean result) throws Exception {
+        CloudNativeConfigResultLog cloudNativeConfigResultLog = new CloudNativeConfigResultLog();
+        String operator = "system";
+        try {
+            if (SessionUtils.getUser() != null) {
+                operator = SessionUtils.getUser().getId();
+            }
+        } catch (Exception e) {
+            //防止单元测试无session
+        }
+        cloudNativeConfigResultLog.setOperator(operator);
+        cloudNativeConfigResultLog.setResultId(resultId);
+        cloudNativeConfigResultLog.setCreateTime(System.currentTimeMillis());
+        cloudNativeConfigResultLog.setOperation(operation);
+        cloudNativeConfigResultLog.setOutput(output);
+        cloudNativeConfigResultLog.setResult(result);
+        cloudNativeConfigResultLogMapper.insertSelective(cloudNativeConfigResultLog);
+
+        historyService.insertHistoryCloudNativeConfigResultLog(BeanUtils.copyBean(new HistoryCloudNativeConfigResultLog(), cloudNativeConfigResultLog));
+    }
+
+    public void reScanDeleteCloudNativeConfigResult(String id) throws Exception {
+        CloudNativeConfigResultItemExample cloudNativeConfigResultItemExample = new CloudNativeConfigResultItemExample();
+        cloudNativeConfigResultItemExample.createCriteria().andResultIdEqualTo(id);
+        cloudNativeConfigResultItemMapper.deleteByExample(cloudNativeConfigResultItemExample);
+    }
+
+    public void createScan (CloudNativeConfigResult result) throws Exception {
+        try {
+            CloudNativeConfig cloudNativeConfig = cloudNativeConfigMapper.selectByPrimaryKey(result.getConfigId());
+            String trivyJson = "";
+
+            execute(cloudNativeConfig);
+
+            trivyJson = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TRIVY_JSON);
+
+            result.setResultJson(trivyJson);
+            result.setUpdateTime(System.currentTimeMillis());
+            result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
+
+            long count = saveCloudNativeConfigResultItem(result);
+            result.setReturnSum(count);
+            cloudNativeConfigResultMapper.updateByPrimaryKeySelective(result);
+
+            noticeService.createCloudNativeConfigMessageOrder(result);
+            saveCloudNativeConfigResultLog(result.getId(), "i18n_end_k8s_result_config", "", true);
+
+            historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
+        } catch (Exception e) {
+            LogUtil.error("create K8sConfigResult: " + e.getMessage());
+            result.setUpdateTime(System.currentTimeMillis());
+            result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
+            cloudNativeConfigResultMapper.updateByPrimaryKeySelective(result);
+            historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
+            saveCloudNativeConfigResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
+        }
+    }
+
+    public String execute(CloudNativeConfig cloudNativeConfig) throws Exception {
+        try {
+            Proxy proxy;
+            String _proxy = "";
+            if(cloudNativeConfig.getProxyId()!=null) {
+                proxy = proxyMapper.selectByPrimaryKey(cloudNativeConfig.getProxyId());
+                String proxyType = proxy.getProxyType();
+                String proxyIp = proxy.getProxyIp();
+                String proxyPort = proxy.getProxyPort();
+                String proxyName = proxy.getProxyName();
+                String proxyPassword = proxy.getProxyPassword();
+                if (StringUtils.isNotEmpty(proxyType)) {
+                    if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Http.toString())) {
+                        if (StringUtils.isNotEmpty(proxyName)) {
+                            _proxy = "export http_proxy=http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        } else {
+                            _proxy = "export http_proxy=http://" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        }
+                    } else if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Https.toString())) {
+                        if (StringUtils.isNotEmpty(proxyName)) {
+                            _proxy = "export https_proxy=http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        } else {
+                            _proxy = "export https_proxy=http://" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        }
+                    }
+                } else {
+                    _proxy = "unset http_proxy;" + "\n" +
+                            "unset https_proxy;" + "\n";
+                }
+            }
+            CommandUtils.saveAsFile(cloudNativeConfig.getConfigYaml(), ImageConstants.DEFAULT_BASE_DIR, "trivy.yaml");;
+            String command = _proxy + ImageConstants.TRIVY_CONFIG + ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TRIVY_YAML + ImageConstants.TRIVY_TYPE + ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TRIVY_JSON;
+            LogUtil.info(cloudNativeConfig.getId() + " {k8sConfig}[command]: " + cloudNativeConfig.getName() + "   " + command);
+            String resultStr = CommandUtils.commonExecCmdWithResult(command, ImageConstants.DEFAULT_BASE_DIR);
+            if(resultStr.contains("ERROR") || resultStr.contains("error")) {
+                throw new Exception(resultStr);
+            }
+            return resultStr;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    long saveCloudNativeConfigResultItem(CloudNativeConfigResult result) throws Exception {
+
+        //插入trivyJsons
+        JSONObject jsonG = JSONObject.parseObject(result.getResultJson());
+        JSONArray trivyJsons = JSONArray.parseArray(jsonG.getString("Results"));
+        int i = 0;
+        for (Object obj : trivyJsons) {
+            JSONObject jsonObject = (JSONObject) obj;
+            JSONArray misconfigurations = JSONArray.parseArray(jsonObject.getString("Misconfigurations"));
+            for (Object o : misconfigurations) {
+                JSONObject resultObject = (JSONObject) o;
+                CloudNativeConfigResultItemWithBLOBs cloudNativeConfigResultItem = new CloudNativeConfigResultItemWithBLOBs();
+                cloudNativeConfigResultItem.setResultId(result.getId());
+                cloudNativeConfigResultItem.setType(resultObject.getString("Type"));
+                cloudNativeConfigResultItem.setItemId(resultObject.getString("ID"));
+                cloudNativeConfigResultItem.setTitle(resultObject.getString("Title"));
+                cloudNativeConfigResultItem.setDescription(resultObject.getString("Description"));
+                cloudNativeConfigResultItem.setMessage(resultObject.getString("Message"));
+                cloudNativeConfigResultItem.setNamespace(resultObject.getString("Namespace"));
+                cloudNativeConfigResultItem.setLayer(resultObject.getString("Layer"));
+                cloudNativeConfigResultItem.setQuery(resultObject.getString("Query"));
+                cloudNativeConfigResultItem.setPrimaryUrl(resultObject.getString("PrimaryURL"));
+                cloudNativeConfigResultItem.setResolution(resultObject.getString("Resolution"));
+
+                cloudNativeConfigResultItem.setSeverity(resultObject.getString("Severity"));
+                cloudNativeConfigResultItem.setStatus(resultObject.getString("Status"));
+                cloudNativeConfigResultItem.setCausemetaData(resultObject.getString("CauseMetadata"));
+                cloudNativeConfigResultItem.setReferences(resultObject.getString("References"));
+                cloudNativeConfigResultItem.setLayer(resultObject.getString("Layer"));
+                cloudNativeConfigResultItemMapper.insertSelective(cloudNativeConfigResultItem);
+                i++;
+            }
+
+        }
+
+        return i;
     }
 
 }
