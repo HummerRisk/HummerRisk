@@ -2,8 +2,9 @@ package com.hummerrisk.base.mapper;
 
 import com.hummerrisk.base.domain.HistoryCloudNativeConfigResult;
 import com.hummerrisk.base.domain.HistoryCloudNativeConfigResultExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface HistoryCloudNativeConfigResultMapper {
     /**

@@ -2,26 +2,22 @@ package com.hummerrisk.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummerrisk.base.domain.*;
-import com.hummerrisk.base.domain.Package;
+import com.hummerrisk.base.domain.CloudNativeConfig;
+import com.hummerrisk.base.domain.CloudNativeConfigResult;
+import com.hummerrisk.base.domain.CloudNativeConfigResultItem;
+import com.hummerrisk.base.domain.CloudNativeConfigResultLog;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
-import com.hummerrisk.controller.request.cloudNative.CloudNativeRequest;
-import com.hummerrisk.controller.request.cloudNative.CreateCloudNativeRequest;
-import com.hummerrisk.controller.request.cloudNative.UpdateCloudNativeRequest;
 import com.hummerrisk.controller.request.config.ConfigRequest;
-import com.hummerrisk.controller.request.k8s.K8sResultRequest;
+import com.hummerrisk.controller.request.config.ConfigResultRequest;
 import com.hummerrisk.dto.CloudNativeConfigDTO;
-import com.hummerrisk.dto.CloudNativeDTO;
 import com.hummerrisk.service.CloudNativeConfigService;
-import com.hummerrisk.service.K8sService;
 import io.kubernetes.client.openapi.ApiException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -94,6 +90,41 @@ public class ConfigController {
         cloudNativeConfigService.reScan(id);
     }
 
+    @I18n
+    @ApiOperation(value = "云原生部署配置检测结果列表")
+    @PostMapping(value = "resultList/{goPage}/{pageSize}")
+    public Pager<List<CloudNativeConfigResult>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ConfigResultRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, cloudNativeConfigService.resultList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "云原生部署配置检测结果详情列表")
+    @PostMapping("resultItemList/{goPage}/{pageSize}")
+    public Pager<List<CloudNativeConfigResultItem>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ConfigResultRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, cloudNativeConfigService.resultItemList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "云原生部署配置检测结果详情")
+    @GetMapping(value = "getCloudNativeConfigResult/{resultId}")
+    public CloudNativeConfigResult getCloudNativeConfigResult(@PathVariable String resultId) {
+        return cloudNativeConfigService.getCloudNativeConfigResult(resultId);
+    }
+
+    @I18n
+    @ApiOperation(value = "云原生部署配置检测日志")
+    @GetMapping(value = "log/{resultId}")
+    public List<CloudNativeConfigResultLog> getCloudNativeConfigResultLog(@PathVariable String resultId) {
+        return cloudNativeConfigService.getCloudNativeConfigResultLog(resultId);
+    }
+
+    @ApiOperation(value = "删除云原生部署配置检测记录")
+    @GetMapping("deleteCloudNativeConfigResult/{id}")
+    public void deleteCloudNativeConfigResult(@PathVariable String id) throws Exception {
+        cloudNativeConfigService.deleteCloudNativeConfigResult(id);
+    }
 
 
 }

@@ -3,14 +3,10 @@ package com.hummerrisk.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.*;
-import com.hummerrisk.commons.constants.CloudAccountConstants;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
-import com.hummerrisk.controller.request.cloudNative.CloudNativeRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
-import com.hummerrisk.dto.CloudNativeDTO;
-import com.hummerrisk.dto.HistoryImageReportDTO;
 import com.hummerrisk.service.K8sService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -96,7 +92,7 @@ public class K8sController {
     }
 
     @I18n
-    @ApiOperation(value = "检测结果详情")
+    @ApiOperation(value = "原生镜像检测结果详情")
     @PostMapping("k8sImageResultItemList/{goPage}/{pageSize}")
     public Pager<List<ImageTrivyJsonWithBLOBs>> k8sImageResultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageTrivyJson request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);

@@ -6,10 +6,12 @@ import com.aliyuncs.exceptions.ClientException;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeConfigMapper;
+import com.hummerrisk.base.mapper.ext.ExtCloudNativeConfigResultMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.config.ConfigRequest;
+import com.hummerrisk.controller.request.config.ConfigResultRequest;
 import com.hummerrisk.dto.CloudNativeConfigDTO;
 import com.hummerrisk.i18n.Translator;
 import io.kubernetes.client.openapi.ApiException;
@@ -41,6 +43,8 @@ public class CloudNativeConfigService {
     private CloudNativeConfigResultItemMapper cloudNativeConfigResultItemMapper;
     @Resource
     private CloudNativeConfigResultLogMapper cloudNativeConfigResultLogMapper;
+    @Resource
+    private ExtCloudNativeConfigResultMapper extCloudNativeConfigResultMapper;
     @Resource
     private ProxyMapper proxyMapper;
     @Resource
@@ -385,4 +389,38 @@ public class CloudNativeConfigService {
         return i;
     }
 
+    public List<CloudNativeConfigResult> resultList(ConfigResultRequest request) {
+        List<CloudNativeConfigResult> list = extCloudNativeConfigResultMapper.resultList(request);
+        return list;
+    }
+
+    public List<CloudNativeConfigResultItem> resultItemList(ConfigResultRequest resourceRequest) {
+        CloudNativeConfigResultItemExample example = new CloudNativeConfigResultItemExample();
+        if(resourceRequest.getName()!=null) {
+            example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId()).andTitleLike(resourceRequest.getName());
+        } else {
+            example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
+        }
+        return cloudNativeConfigResultItemMapper.selectByExample(example);
+    }
+
+    public CloudNativeConfigResult getCloudNativeConfigResult(String resultId) {
+        CloudNativeConfigResult cloudNativeConfigResult = cloudNativeConfigResultMapper.selectByPrimaryKey(resultId);
+        return cloudNativeConfigResult;
+    }
+
+    public List<CloudNativeConfigResultLog> getCloudNativeConfigResultLog(String resultId) {
+        CloudNativeConfigResultLogExample example = new CloudNativeConfigResultLogExample();
+        example.createCriteria().andResultIdEqualTo(resultId);
+        return cloudNativeConfigResultLogMapper.selectByExampleWithBLOBs(example);
+    }
+
+    public void deleteCloudNativeConfigResult(String id) throws Exception {
+
+        CloudNativeConfigResultLogExample logExample = new CloudNativeConfigResultLogExample();
+        logExample.createCriteria().andResultIdEqualTo(id);
+        cloudNativeConfigResultLogMapper.deleteByExample(logExample);
+
+        cloudNativeConfigResultMapper.deleteByPrimaryKey(id);
+    }
 }

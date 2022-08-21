@@ -3,8 +3,9 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.ImageTrivyJson;
 import com.hummerrisk.base.domain.ImageTrivyJsonExample;
 import com.hummerrisk.base.domain.ImageTrivyJsonWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface ImageTrivyJsonMapper {
     /**
