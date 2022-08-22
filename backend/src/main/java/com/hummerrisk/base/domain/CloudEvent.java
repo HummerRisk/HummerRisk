@@ -1,8 +1,11 @@
 package com.hummerrisk.base.domain;
 
+import lombok.Builder;
+
 import java.io.Serializable;
 import java.util.Date;
 
+@Builder
 public class CloudEvent implements Serializable {
     /**
      *
