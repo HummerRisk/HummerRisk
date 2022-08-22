@@ -13,8 +13,6 @@ import com.hummerrisk.base.mapper.CloudEventSyncLogMapper;
 import com.hummerrisk.base.mapper.ProxyMapper;
 import com.hummerrisk.commons.utils.DateUtils;
 import com.hummerrisk.commons.utils.PlatformUtils;
-import com.hummerrisk.dto.CloudEventDto;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
