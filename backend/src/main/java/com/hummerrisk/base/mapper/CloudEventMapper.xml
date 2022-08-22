@@ -358,6 +358,28 @@
       </if>
     </trim>
   </insert>
+  <insert id="batchCloudEvents">
+    insert into cloud_event(event_id, sync_region, acs_region,
+    event_name, event_type, event_category,
+    event_version, event_rw, event_message,
+    event_source, event_time, source_ip_address,
+    user_agent, user_identity, service_name,
+    additional_event_data, request_id, request_parameters,
+    resource_type, resource_name, referenced_resources,
+    api_version, response_elements, cloud_account_id
+    ) values
+    <foreach item="item" index="index" collection="list" separator=",">
+      (#{item.eventId,jdbcType=VARCHAR}, #{item.syncRegion,jdbcType=VARCHAR}, #{item.acsRegion,jdbcType=VARCHAR},
+      #{item.eventName,jdbcType=VARCHAR}, #{item.eventType,jdbcType=VARCHAR}, #{item.eventCategory,jdbcType=VARCHAR},
+      #{item.eventVersion,jdbcType=VARCHAR}, #{item.eventRw,jdbcType=VARCHAR}, #{item.eventMessage,jdbcType=VARCHAR},
+      #{item.eventSource,jdbcType=VARCHAR}, #{item.eventTime,jdbcType=TIMESTAMP}, #{item.sourceIpAddress,jdbcType=VARCHAR},
+      #{item.userAgent,jdbcType=VARCHAR}, #{item.userIdentity,jdbcType=VARCHAR}, #{item.serviceName,jdbcType=VARCHAR},
+      #{item.additionalEventData,jdbcType=VARCHAR}, #{item.requestId,jdbcType=VARCHAR}, #{item.requestParameters,jdbcType=VARCHAR},
+      #{item.resourceType,jdbcType=VARCHAR}, #{item.resourceName,jdbcType=VARCHAR}, #{item.referencedResources,jdbcType=VARCHAR},
+      #{item.apiVersion,jdbcType=VARCHAR}, #{item.responseElements,jdbcType=VARCHAR}, #{item.cloudAccountId,jdbcType=VARBINARY}
+      )
+    </foreach>
+  </insert>
   <select id="countByExample" parameterType="com.hummerrisk.base.domain.CloudEventExample" resultType="java.lang.Long">
     <!--
       WARNING - @mbg.generated
@@ -523,4 +545,6 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
+
+
 </mapper>
