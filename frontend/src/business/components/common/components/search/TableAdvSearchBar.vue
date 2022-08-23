@@ -1,6 +1,7 @@
 <template>
   <span class="adv-search-bar">
-    <el-link type="primary" @click="open">{{ $t('commons.adv_search.title') }}</el-link>
+    <el-button icon="el-icon-refresh" size="small" @click="refresh">{{ $t('commons.refresh') }}</el-button>
+    <el-button icon="el-icon-setting" size="small" @click="open" style="margin: 0;">{{ $t('el.table.confirmFilter') }}</el-button>
     <el-dialog :title="$t('commons.adv_search.combine')" :visible.sync="visible" custom-class="adv-dialog"
                :append-to-body="true">
       <div>
@@ -91,7 +92,10 @@ import {cloneDeep} from "lodash";
       },
       open() {
         this.visible = true;
-      }
+      },
+      refresh() {
+        this.$emit('search');
+      },
     }
   }
 </script>
@@ -125,7 +129,6 @@ import {cloneDeep} from "lodash";
 
 <style scoped>
   .adv-search-bar {
-    margin-left: 5px;
   }
 
   .dialog-footer {

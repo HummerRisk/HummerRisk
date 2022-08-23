@@ -63,9 +63,6 @@ export default {
       back() {
         this.$emit('back');
       },
-      refresh() {
-        this.$emit('search');
-      },
     },
     computed: {
       isCombine() {

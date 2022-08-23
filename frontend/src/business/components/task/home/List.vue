@@ -431,6 +431,7 @@ import SeverityType from "@/business/components/task/home/SeverityType";
 import Account from "@/business/components/task/home/Account";
 import UpdateRule from "@/business/components/task/home/UpdateRule";
 import AccountType from "@/business/components/task/home/AccountType";
+import {TASK_CONFIGS} from "@/business/components/common/components/search/search-components";
 
 /* eslint-disable */
 export default {
@@ -454,7 +455,9 @@ export default {
       pageSize: 10,
       total: 0,
       updateTotal: 0,
-      condition: {},
+      condition: {
+        components: TASK_CONFIGS
+      },
       updateCondition: {},
       tableData: [],
       updateTableData: [],

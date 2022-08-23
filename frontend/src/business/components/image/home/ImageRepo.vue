@@ -101,6 +101,7 @@ import TableOperators from "@/business/components/common/components/TableOperato
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import ImageStatus from "../head/ImageStatus";
 import {_filter, _sort} from "@/common/js/utils";
+import {IMAGE_REPO_CONFIGS} from "@/business/components/common/components/search/search-components";
 /* eslint-disable */
 export default {
   name: "ImageRepo",
@@ -127,7 +128,9 @@ export default {
       currentPage: 1,
       pageSize: 10,
       total: 0,
-      condition: {},
+      condition: {
+        components: IMAGE_REPO_CONFIGS
+      },
       tableData: [],
       form: {},
       direction: 'rtl',

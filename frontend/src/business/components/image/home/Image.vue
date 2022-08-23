@@ -248,6 +248,7 @@ import {_filter, _sort} from "@/common/js/utils";
 import HrCodeEdit from "@/business/components/common/components/HrCodeEdit";
 import ImageUpload from "../head/ImageUpload";
 import ImageTarUpload from "../head/ImageTarUpload";
+import {IMAGE_CONFIGS} from "@/business/components/common/components/search/search-components";
 
 /* eslint-disable */
 export default {
@@ -279,7 +280,9 @@ export default {
       currentPage: 1,
       pageSize: 10,
       total: 0,
-      condition: {},
+      condition: {
+        components: IMAGE_CONFIGS
+      },
       tableData: [],
       form: {},
       direction: 'rtl',
