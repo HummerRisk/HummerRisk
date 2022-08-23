@@ -146,7 +146,7 @@ public class K8sService {
 
             historyService.updateHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
         } catch (Exception e) {
-            LogUtil.error("create ImageResult: " + e.getMessage());
+            LogUtil.error("create K8sResult: " + e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             cloudNativeResultMapper.updateByPrimaryKeySelective(result);

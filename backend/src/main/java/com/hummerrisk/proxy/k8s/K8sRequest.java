@@ -95,6 +95,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 
@@ -117,6 +119,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 
@@ -137,6 +141,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 
@@ -157,6 +163,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 
@@ -177,6 +185,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 
@@ -197,6 +207,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 
@@ -217,6 +229,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 
@@ -237,6 +251,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 
@@ -257,6 +273,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 
@@ -277,6 +295,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 
@@ -297,6 +317,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 
@@ -317,6 +339,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 
@@ -337,6 +361,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 
@@ -357,6 +383,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 
@@ -377,6 +405,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 
@@ -397,6 +427,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 
@@ -417,6 +449,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 
@@ -437,6 +471,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 
@@ -457,6 +493,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 
@@ -473,6 +511,8 @@ public class K8sRequest extends Request {
             return list;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (ApiException e) {
+            throw new ApiException(e.getMessage());
         }
     }
 

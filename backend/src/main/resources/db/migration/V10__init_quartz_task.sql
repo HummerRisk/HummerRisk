@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `cloud_account_quartz_task_rela_log` (
     `source_id`                    varchar(50)         DEFAULT NULL COMMENT '来源ID(accountId)',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
-    `operation`                    varchar(255)        DEFAULT NULL COMMENT '操作内容',
+    `operation`                    varchar(1024)       DEFAULT NULL COMMENT '操作内容',
     `qz_type`                      varchar(32)         DEFAULT NULL COMMENT '定时任务类型',
     `task_ids`                     mediumtext          DEFAULT NULL COMMENT 'taskIds',
     PRIMARY KEY (`id`)
