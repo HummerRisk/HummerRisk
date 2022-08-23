@@ -20,12 +20,13 @@ public class CloudEventController {
     @ApiOperation(value = "日志同步")
     @GetMapping("sync")
     public void syncEvents(String accountId,String region,String startTime,String endTime){
-        cloudEventService.syncCloudEvents(accountId,region,startTime,endTime);
+//        cloudEventService.syncCloudEvents(accountId,region,startTime,endTime);
     }
 
     @ApiOperation(value = "日志查询")
     @GetMapping()
     public List<CloudEvent> getEvents(String accountId, String region, String startTime, String endTime){
-        return cloudEventService.getCloudEvents(accountId,region,startTime,endTime);
+//        return cloudEventService.getCloudEvents(accountId,region,startTime,endTime);
+        return null;
     }
 }
