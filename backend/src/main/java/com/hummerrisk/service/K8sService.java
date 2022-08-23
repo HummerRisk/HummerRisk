@@ -146,7 +146,7 @@ public class K8sService {
 
             historyService.updateHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
         } catch (Exception e) {
-            LogUtil.error("create ImageResult: " + e.getMessage());
+            LogUtil.error("create K8sResult: " + e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             cloudNativeResultMapper.updateByPrimaryKeySelective(result);
@@ -374,7 +374,7 @@ public class K8sService {
             if (log.contains("docker login")) {
                 throw new Exception(log);
             }
-            trivyJson = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TRIVY_JSON);
+            trivyJson = ReadFileUtils.readToBuffer(TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON);
 
             result.setReturnLog(log);
             result.setTrivyJson(trivyJson);
@@ -438,11 +438,11 @@ public class K8sService {
             if (StringUtils.equalsIgnoreCase("image", image.getType())) {
                 fileName = image.getImageUrl() + ":" + image.getImageTag();
             } else {
-                fileName = ImageConstants.DEFAULT_BASE_DIR + image.getPath();
+                fileName = TrivyConstants.DEFAULT_BASE_DIR + image.getPath();
             }
-            String command = _proxy + dockerLogin + ImageConstants.TRIVY_IMAGE + fileName + ImageConstants.TRIVY_TYPE + ImageConstants.DEFAULT_BASE_DIR + ImageConstants.TRIVY_JSON;
+            String command = _proxy + dockerLogin + TrivyConstants.TRIVY_IMAGE + fileName + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON + TrivyConstants.TRIVY_SKIP;
             LogUtil.info(image.getId() + " {k8sImage}[command]: " + image.getName() + "   " + command);
-            String resultStr = CommandUtils.commonExecCmdWithResult(command, ImageConstants.DEFAULT_BASE_DIR);
+            String resultStr = CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
             if(resultStr.contains("ERROR") || resultStr.contains("error")) {
                 throw new Exception(resultStr);
             }
