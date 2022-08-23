@@ -41,14 +41,4 @@ public class ImageConstants {
     public final static String SYFT_JSON_TXT = "syft_json.json";
     public final static String SYFT_TABLE_TXT = "syft_table.txt";
 
-    public final static String TRIVY_IMAGE = "trivy image ";
-
-    public final static String TRIVY_CONFIG = "trivy config ";
-
-    public final static String TRIVY_TYPE = " --format json -o ";
-
-    public final static String TRIVY_JSON = "trivy.json";
-
-    public final static String TRIVY_YAML = "trivy.yaml";
-
 }
