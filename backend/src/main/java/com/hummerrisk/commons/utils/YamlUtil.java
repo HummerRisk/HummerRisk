@@ -13,6 +13,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 /**
@@ -42,7 +43,7 @@ public class YamlUtil {
      * @param object 对象
      * @return yaml字符串
      */
-    public static String toYaml(Object object){
+    public static String toYaml(Object object) {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         mapper.findAndRegisterModules();
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -52,6 +53,8 @@ public class YamlUtil {
             mapper.writeValue(stringWriter, object);
             return stringWriter.toString();
         } catch (IOException e) {
+            LogUtil.debug(e.getMessage());
+        } catch (Exception e) {
             LogUtil.debug(e.getMessage());
         }
         return "";

@@ -248,6 +248,10 @@ public class CloudNativeService {
                 for (CloudNativeSource cloudNativeSource : list) {
                     cloudNativeSourceMapper.insertSelective(cloudNativeSource);
                 }
+            } catch (IOException e) {
+                LogUtil.error(e);
+            } catch (ApiException e) {
+                LogUtil.error(e);
             } catch (Exception e) {
                 LogUtil.error(e);
             }

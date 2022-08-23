@@ -349,7 +349,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>2.13.3</version>
+            <version>2.11.4</version>
         </dependency>
 
         <!-- AWS -->
@@ -451,6 +451,24 @@
             <groupId>com.aliyun</groupId>
             <artifactId>actiontrail20171204</artifactId>
             <version>1.0.1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>openapiutil</artifactId>
+                    <groupId>com.aliyun</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>tea</artifactId>
+                    <groupId>com.aliyun</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>tea-util</artifactId>
+                    <groupId>com.aliyun</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>org.jacoco.agent</artifactId>
+                    <groupId>org.jacoco</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.aliyun</groupId>
@@ -725,6 +743,14 @@
                     <artifactId>google-auth-library-oauth2-http</artifactId>
                     <groupId>com.google.auth</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>opencensus-api</artifactId>
+                    <groupId>io.opencensus</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>proto-google-common-protos</artifactId>
+                    <groupId>com.google.api.grpc</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -922,6 +948,10 @@
                 <exclusion>
                     <artifactId>commons-lang3</artifactId>
                     <groupId>org.apache.commons</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>bcprov-jdk15on</artifactId>
+                    <groupId>org.bouncycastle</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
