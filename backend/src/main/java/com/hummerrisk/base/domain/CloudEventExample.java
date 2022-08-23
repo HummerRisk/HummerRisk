@@ -194,6 +194,11 @@ public class CloudEventExample {
             }
             criteria.add(new Criterion(condition, value1, value2));
         }
+        public Criteria andCloudAccountIdEqualTo(String value) {
+            addCriterion("cloud_account_id =", value, "cloudAccountId");
+            return (Criteria) this;
+        }
+
 
         public Criteria andEventIdIsNull() {
             addCriterion("event_id is null");
