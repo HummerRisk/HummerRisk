@@ -1,9 +1,11 @@
 package com.hummerrisk.service;
 
-import com.aliyun.actiontrail20171204.Client;
-import com.aliyun.actiontrail20171204.models.LookupEventsRequest;
-import com.aliyun.actiontrail20171204.models.LookupEventsResponse;
-import com.aliyun.teaopenapi.models.Config;
+
+import com.aliyuncs.DefaultAcsClient;
+import com.aliyuncs.IAcsClient;
+import com.aliyuncs.actiontrail.model.v20200706.LookupEventsRequest;
+import com.aliyuncs.actiontrail.model.v20200706.LookupEventsResponse;
+import com.aliyuncs.profile.DefaultProfile;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.CloudEventMapper;
 import com.hummerrisk.base.mapper.CloudEventSyncLogMapper;
@@ -152,17 +154,18 @@ public class CloudEventService {
     }
     public List<CloudEvent> getAliyunCloudEvents(Map<String, String> accountMap, String startTime, String endTime
             , int pageNum, int maxResult) throws Exception {
-        Config config = new Config().setAccessKeyId(accountMap.get("accessKey")).setAccessKeySecret(accountMap.get("secretKey"));
-        config.endpoint = "actiontrail."+accountMap.get("region")+".aliyuncs.com";
-        Client client = new Client(config);
+
+        DefaultProfile profile = DefaultProfile.getProfile(accountMap.get("region"), accountMap.get("accessKey"), accountMap.get("secretKey"));
+        IAcsClient client = new DefaultAcsClient(profile);
+        LookupEventsRequest request = new LookupEventsRequest();
         LookupEventsRequest lookupEventsRequest = new LookupEventsRequest();
         lookupEventsRequest.setStartTime(startTime);
         lookupEventsRequest.setEndTime(endTime);
         lookupEventsRequest.setNextToken((pageNum-1)*maxResult+"");
         lookupEventsRequest.setMaxResults(maxResult+"");
-        lookupEventsRequest.setEventRW("All");
-        LookupEventsResponse lookupEventsResponse = client.lookupEvents(lookupEventsRequest);
-        List<Map<String, ?>> events = lookupEventsResponse.body.getEvents();
+        //lookupEventsRequest.setEventRW("All");
+        LookupEventsResponse lookupEventsResponse = client.getAcsResponse(request);
+        List<Map<Object, Object>> events = lookupEventsResponse.getEvents();
         return events.stream().map(item -> {
             return CloudEvent.builder().eventId((String)item.get("eventId"))
                     .eventName((String)item.get("eventName")).eventRw((String)item.get("eventRw"))
