@@ -365,7 +365,7 @@ export default {
       }
     },
     showResultLog (result) {
-      let logUrl = "/k8s/log/";
+      let logUrl = "/image/log/";
       this.result = this.$get(logUrl + result.id, response => {
         this.logData = response.data;
       });
