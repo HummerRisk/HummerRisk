@@ -447,10 +447,15 @@
         <!-- azure -->
 
         <!-- aliyun -->
-        <dependency>
+        <!--<dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>actiontrail20171204</artifactId>
             <version>1.0.1</version>
+        </dependency>-->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-actiontrail</artifactId>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.aliyun</groupId>
