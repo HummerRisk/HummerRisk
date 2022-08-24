@@ -451,24 +451,6 @@
             <groupId>com.aliyun</groupId>
             <artifactId>actiontrail20171204</artifactId>
             <version>1.0.1</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>openapiutil</artifactId>
-                    <groupId>com.aliyun</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>tea</artifactId>
-                    <groupId>com.aliyun</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>tea-util</artifactId>
-                    <groupId>com.aliyun</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>org.jacoco.agent</artifactId>
-                    <groupId>org.jacoco</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.aliyun</groupId>

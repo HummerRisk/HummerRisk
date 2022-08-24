@@ -73,7 +73,7 @@
             </include>
         </if>
         <if test="${condition}.pluginId != null">
-            and plugin.id
+            and p1.id
             <include refid="condition">
                 <property name="object" value="${condition}.pluginId"/>
             </include>
@@ -359,7 +359,7 @@
         sg.id as groupItemId,
         user.name as user
         from cloud_account as t
-        left join plugin on t.plugin_id = plugin.id
+        left join plugin p1 on t.plugin_id = p1.id
         left join user on t.creator = user.id
         left join server_group_item sg on sg.server_id = t.id
         <where>
