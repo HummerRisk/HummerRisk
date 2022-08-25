@@ -74,6 +74,7 @@ public class YamlUtil {
 
     public static boolean validateYaml(String input) {
         try {
+            if(input.contains("---")) input = input.replace("---", "");
             Yaml yaml = new Yaml();
             yaml.loadAs(input, Map.class);
             return true;
