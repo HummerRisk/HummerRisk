@@ -18,4 +18,5 @@ public enum ResourceTypeConstants {
     SERVER,
     PACKAGE,
     IMAGE,
+    CODE,
 }

@@ -149,5 +149,12 @@
 <!--        <table tableName="cloud_native_config_result_item" domainObjectName="CloudNativeConfigResultItem"/>-->
 <!--        <table tableName="history_cloud_native_config_result" domainObjectName="HistoryCloudNativeConfigResult"/>-->
 <!--        <table tableName="history_cloud_native_config_result_log" domainObjectName="HistoryCloudNativeConfigResultLog"/>-->
+<!--        <table tableName="code" domainObjectName="Code"/>-->
+<!--        <table tableName="code_rule" domainObjectName="CodeRule"/>-->
+<!--        <table tableName="code_result" domainObjectName="CodeResult"/>-->
+<!--        <table tableName="code_result_item" domainObjectName="CodeResultItem"/>-->
+<!--        <table tableName="code_result_log" domainObjectName="CodeResultLog"/>-->
+<!--        <table tableName="history_code_result" domainObjectName="HistoryCodeResult"/>-->
+<!--        <table tableName="history_code_result_log" domainObjectName="HistoryCodeResultLog"/>-->
     </context>
 </generatorConfiguration>
