@@ -12,5 +12,20 @@ export default {
       name: "code",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/code/home/Code"),
     },
+    {
+      path: "rule",
+      name: "CodeRule",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/code/home/Rule'),
+    },
+    {
+      path: "result",
+      name: "CodeResult",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/code/home/Result"),
+    },
+    {
+      path: "resultdetails/:id",
+      name: "CodeResultDetails",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/code/home/ResultDetails"),
+    },
   ]
 }

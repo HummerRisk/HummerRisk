@@ -22,6 +22,7 @@ import Sbom from "@/business/components/sbom/router";
 import Log from "@/business/components/log/router";
 import k8sImage from "@/business/components/k8sImage/router";
 import config from "@/business/components/config/router";
+import cost from "@/business/components/cost/router";
 
 Vue.use(VueRouter);
 /* eslint-disable */
@@ -53,7 +54,8 @@ const router = new VueRouter({
     Sbom,
     Log,
     k8sImage,
-    config
+    config,
+    cost
   ]
 });
 

@@ -18,7 +18,7 @@ export default {
     components: {OssHeaderMenus},
     data() {
       return {
-        baseUrl: "image"
+        baseUrl: "oss"
       }
     }
   }

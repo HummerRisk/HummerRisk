@@ -234,7 +234,7 @@ export default {
             trigger: 'blur'
           }
         ],
-        name: [
+        configYaml: [
           {required: true, message: this.$t('config.config_yaml'), trigger: 'blur'},
           {
             required: true,
@@ -295,6 +295,7 @@ export default {
   },
   methods: {
     create() {
+      this.form = {};
       this.createVisible = true;
     },
     //查询代理

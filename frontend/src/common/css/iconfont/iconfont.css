@@ -2,9 +2,9 @@
   font-family: "iconfont"; /* Project id 3563552 */
   /* Color fonts */
   src: 
-       url('iconfont.woff2?t=1659525752739') format('woff2'),
-       url('iconfont.woff?t=1659525752739') format('woff'),
-       url('iconfont.ttf?t=1659525752739') format('truetype');
+       url('iconfont.woff2?t=1661526309277') format('woff2'),
+       url('iconfont.woff?t=1661526309277') format('woff'),
+       url('iconfont.ttf?t=1661526309277') format('truetype');
 }
 
 .iconfont {
@@ -13,6 +13,46 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-feiyongbaohan:before {
+  content: "\e8a4";
+}
+
+.icon-feiyongbuhan:before {
+  content: "\e8a5";
+}
+
+.icon-tubiaoshangshengqushi:before {
+  content: "\e790";
+}
+
+.icon-tubiaoxiajiangqushi:before {
+  content: "\e791";
+}
+
+.icon-feiyong:before {
+  content: "\e70b";
+}
+
+.icon-feiyong1:before {
+  content: "\e6b7";
+}
+
+.icon-rise:before {
+  content: "\e618";
+}
+
+.icon-shaixuan:before {
+  content: "\e74a";
+}
+
+.icon-shaixuan1:before {
+  content: "\e62b";
+}
+
+.icon-shaixuan2:before {
+  content: "\e64f";
 }
 
 .icon-anquanhegui:before {

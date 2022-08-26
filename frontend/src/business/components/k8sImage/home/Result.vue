@@ -315,7 +315,7 @@ export default {
         this.timer = setInterval(this.getStatus,60000);
       } else {
         for (let data of this.tableData) {
-          let url = "/image/getImageResult/";
+          let url = "/k8s/getImageResult/";
           this.$get(url + data.id, response => {
             let result = response.data;
             if (data.resultStatus !== result.resultStatus) {
@@ -385,7 +385,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get("/image/reScan/" + item.id, response => {
+            this.$get("/k8s/imageReScan/" + item.id, response => {
               if (response.success) {
                 this.search();
               }
