@@ -163,7 +163,7 @@ import MainContainer from "../../common/components/MainContainer";
 import CodeStatus from "./CodeStatus";
 import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
-import {K8S_CONFIGS} from "../../common/components/search/search-components";
+import {CODE_CONFIGS} from "../../common/components/search/search-components";
 import ProxyDialogFooter from "../head/ProxyDialogFooter";
 import ProxyDialogCreateFooter from "../head/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
@@ -192,7 +192,7 @@ export default {
       credential: {},
       result: {},
       condition: {
-        components: K8S_CONFIGS
+        components: CODE_CONFIGS
       },
       tableData: [],
       currentPage: 1,
