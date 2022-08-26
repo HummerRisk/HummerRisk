@@ -6,8 +6,8 @@
         <el-button icon="el-icon-circle-plus-outline" plain size="mini" @click="handleAddTaskModel">
           {{ $t('system_parameter_setting.message.create_new_notification') }}
         </el-button>
-        <el-popover placement="right-end" title="示例" width="400" trigger="click">
-          <hr-code-edit :read-only="true" height="400px" :data.sync="content" :modes="modes" :mode="'html'"/>
+        <el-popover placement="right-end" title="Example" width="600" trigger="click">
+          <hr-code-edit :read-only="true" width="600px" height="400px" :data.sync="content" :modes="modes" :mode="'html'"/>
           <el-button icon="el-icon-warning" plain size="mini" slot="reference">
             {{ $t('system_parameter_setting.message.mail_template_example') }}
           </el-button>

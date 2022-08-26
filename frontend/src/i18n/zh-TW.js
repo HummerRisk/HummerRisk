@@ -1143,6 +1143,7 @@ export default {
     result_list: '雲原生檢測結果列表',
     back_resource: '返回雲原生檢測結果列表',
     result_details_list: '雲原生檢測結果詳情列表',
+    k8s_note: '注: 使用雲原生安全檢測前，需在 K8s 集群上安裝 tirvy-operator!'
   },
   config: {
     config_settings: '部署配置',

@@ -1143,6 +1143,7 @@ export default {
     result_list: 'Cloud native detection result list',
     back_resource: 'Return the list of cloud native detection results',
     result_details_list: 'Cloud native detection result details list',
+    k8s_note: 'Note: Before using cloud native security detection, you need to install tirvy-operator on the K8s cluster!'
   },
   config: {
     config_settings: 'Deployment configuration',

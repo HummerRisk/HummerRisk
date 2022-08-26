@@ -102,6 +102,14 @@
           </el-form-item>
         </el-form>
         <el-divider><i class="el-icon-first-aid-kit"> {{ (index + 1) }}</i></el-divider>
+        <div style="margin: 10px;">
+          <el-popover placement="right-end" title="Example" width="800" trigger="click">
+            <hr-code-edit :read-only="true" width="800px" height="300px" :data.sync="content" :modes="modes" :mode="'html'"/>
+            <el-button icon="el-icon-warning" plain size="mini" slot="reference" style="color: red">
+              <span>{{ $t('k8s.k8s_note') }}</span>
+            </el-button>
+          </el-popover>
+        </div>
       </div>
       <proxy-dialog-create-footer
         @cancel="createVisible = false"
@@ -138,6 +146,14 @@
           </el-form-item>
         </div>
       </el-form>
+      <div style="margin: 10px;">
+        <el-popover placement="right-end" title="Example" width="800" trigger="click">
+          <hr-code-edit :read-only="true" width="800px" height="300px" :data.sync="content" :modes="modes" :mode="'html'"/>
+          <el-button icon="el-icon-warning" plain size="mini" slot="reference" style="color: red">
+            <span>{{ $t('k8s.k8s_note') }}</span>
+          </el-button>
+        </el-popover>
+      </div>
       <proxy-dialog-footer
         @cancel="updateVisible = false"
         @confirm="editAccount(form, 'update')"/>
@@ -160,7 +176,7 @@ import {K8S_CONFIGS} from "../../common/components/search/search-components";
 import ProxyDialogFooter from "../head/ProxyDialogFooter";
 import ProxyDialogCreateFooter from "../head/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
-import {K8S_ID, K8S_NAME} from "@/common/js/constants";
+import HrCodeEdit from "@/business/components/common/components/HrCodeEdit";
 
 /* eslint-disable */
 export default {
@@ -174,7 +190,8 @@ export default {
     TableOperator,
     DialogFooter,
     ProxyDialogFooter,
-    ProxyDialogCreateFooter
+    ProxyDialogCreateFooter,
+    HrCodeEdit
   },
   provide() {
     return {
@@ -255,6 +272,22 @@ export default {
         {id: 'Http', value: "Http"},
         {id: 'Https', value: "Https"},
       ],
+      modes: ['text', 'html'],
+      content: '# 1.添加 chart 仓库\n' +
+        'helm repo add hummer https://registry.hummercloud.com/repository/charts\n' +
+        '\n' +
+        '# 2.更新仓库源\n' +
+        'helm repo update\n' +
+        '\n' +
+        '# 3.开始安装, 可以自定义应用名称和NameSpace\n' +
+        'helm install trivy-operator hummer/trivy-operator \\\n' +
+        ' --namespace trivy-system \\\n' +
+        ' --set="image.repository=registry.cn-beijing.aliyuncs.com/hummerrisk/trivy-operator" \\\n' +
+        ' --create-namespace --set="trivy.ignoreUnfixed=true"\n' +
+        '\n' +
+        '# 4.检测operator是否启动成功\n' +
+        'kubectl get pod -A|grep trivy-operator\n' +
+        'trivy-system   trivy-operator-69f99f79c4-lvzvs           1/1     Running            0          118s',
     }
   },
   watch: {
