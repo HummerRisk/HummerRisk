@@ -1,14 +1,15 @@
 package com.hummerrisk.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCodeMapper;
 import com.hummerrisk.base.mapper.ext.ExtCodeResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtCodeRuleMapper;
 import com.hummerrisk.commons.constants.*;
-import com.hummerrisk.commons.utils.BeanUtils;
-import com.hummerrisk.commons.utils.SessionUtils;
-import com.hummerrisk.commons.utils.UUIDUtil;
+import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.code.CodeRequest;
 import com.hummerrisk.controller.request.code.CodeResultRequest;
 import com.hummerrisk.controller.request.code.CodeRuleRequest;
@@ -16,6 +17,8 @@ import com.hummerrisk.dto.CodeDTO;
 import com.hummerrisk.dto.CodeResultDTO;
 import com.hummerrisk.dto.CodeResultWithBLOBsDTO;
 import com.hummerrisk.dto.CodeRuleDTO;
+import com.hummerrisk.proxy.code.CodeCredential;
+import com.hummerrisk.proxy.code.CodeCredentialRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +54,11 @@ public class CodeService {
     @Resource
     private CodeResultItemMapper codeResultItemMapper;
     @Resource
+    private ProxyMapper proxyMapper;
+    @Resource
     private HistoryService historyService;
+    @Resource
+    private NoticeService noticeService;
 
 
     public List<CodeDTO> codeList(CodeRequest request) {
@@ -170,7 +177,7 @@ public class CodeService {
         codeResultMapper.deleteByPrimaryKey(id);
     }
 
-    public List<CodeResultItem> resultItemList(CodeResultItem codeResultItem) {
+    public List<CodeResultItemWithBLOBs> resultItemList(CodeResultItem codeResultItem) {
         CodeResultItemExample example = new CodeResultItemExample();
         example.createCriteria().andResultIdEqualTo(codeResultItem.getResultId());
         return codeResultItemMapper.selectByExampleWithBLOBs(example);
@@ -270,6 +277,141 @@ public class CodeService {
         codeResultLogMapper.insertSelective(codeResultLog);
 
         historyService.insertHistoryCodeResultLog(BeanUtils.copyBean(new HistoryCodeResultLog(), codeResultLog));
+    }
+
+    public void createScan (CodeResult result) throws Exception {
+        try {
+            CodeRuleRequest request = new CodeRuleRequest();
+            request.setId(result.getRuleId());
+            CodeRuleDTO dto = ruleList(request).get(0);
+            Code code = codeMapper.selectByPrimaryKey(result.getCodeId());
+            String script = dto.getScript();
+            JSONArray jsonArray = JSON.parseArray(dto.getParameter());
+            for (Object o : jsonArray) {
+                JSONObject jsonObject = (JSONObject) o;
+                String key = "${{" + jsonObject.getString("key") + "}}";
+                if (script.contains(key)) {
+                    script = script.replace(key, jsonObject.getString("defaultValue"));
+                }
+            }
+            String returnJson = "";
+
+            execute(code);
+            returnJson = ReadFileUtils.readToBuffer(TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON);
+            result.setUpdateTime(System.currentTimeMillis());
+            result.setReturnJson(returnJson);
+            result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
+
+            long count = saveResultItem(result);
+            result.setReturnSum(count);
+            codeResultMapper.updateByPrimaryKeySelective(result);
+
+            noticeService.createCodeMessageOrder(result);
+            saveCodeResultLog(result.getId(), "i18n_end_code_result", "", true);
+
+            historyService.updateHistoryCodeResult(BeanUtils.copyBean(new HistoryCodeResult(), result));
+        } catch (Exception e) {
+            LogUtil.error("create CodeResult: " + e.getMessage());
+            result.setUpdateTime(System.currentTimeMillis());
+            result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
+            codeResultMapper.updateByPrimaryKeySelective(result);
+            historyService.updateHistoryCodeResult(BeanUtils.copyBean(new HistoryCodeResult(), result));
+            saveCodeResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
+        }
+    }
+
+    public String execute(Code code) throws Exception {
+        try {
+            Proxy proxy;
+            String _proxy = "";
+            if(code.getProxyId()!=null) {
+                proxy = proxyMapper.selectByPrimaryKey(code.getProxyId());
+                String proxyType = proxy.getProxyType();
+                String proxyIp = proxy.getProxyIp();
+                String proxyPort = proxy.getProxyPort();
+                String proxyName = proxy.getProxyName();
+                String proxyPassword = proxy.getProxyPassword();
+                if (StringUtils.isNotEmpty(proxyType)) {
+                    if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Http.toString())) {
+                        if (StringUtils.isNotEmpty(proxyName)) {
+                            _proxy = "export http_proxy=http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        } else {
+                            _proxy = "export http_proxy=http://" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        }
+                    } else if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Https.toString())) {
+                        if (StringUtils.isNotEmpty(proxyName)) {
+                            _proxy = "export https_proxy=http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        } else {
+                            _proxy = "export https_proxy=http://" + proxyIp + ":" + proxyPort + ";" + "\n";
+                        }
+                    }
+                } else {
+                    _proxy = "unset http_proxy;" + "\n" +
+                            "unset https_proxy;" + "\n";
+                }
+            }
+            CodeCredentialRequest codeRequest = new CodeCredentialRequest();
+            codeRequest.setCredential(code.getCredential());
+            CodeCredential codeCredential = codeRequest.getCodeClient();
+            String token = "";
+            if(codeCredential.getToken() != null) {
+                if (StringUtils.equals(code.getPluginIcon(), CodeConstants.GITHUB_TOKEN)) {
+                    token = "export GITHUB_TOKEN=" + codeCredential.getToken() + "\n";
+                } else if (StringUtils.equals(code.getPluginIcon(), CodeConstants.GITLAB_TOKEN)) {
+                    token = "export GITLAB_TOKEN=" + codeCredential.getToken() + "\n";
+                }
+            }
+            String command = _proxy + token + TrivyConstants.TRIVY_REPO + TrivyConstants.TRIVY_SKIP + codeCredential.getUrl() + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
+            LogUtil.info(code.getId() + " {code scan}[command]: " + code.getName() + "   " + command);
+            String resultStr = CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
+            if(resultStr.contains("ERROR") || resultStr.contains("error")) {
+                throw new Exception(resultStr);
+            }
+            return resultStr;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    long saveResultItem(CodeResult result) throws Exception {
+//插入trivyJsons
+        JSONObject jsonG = JSONObject.parseObject(result.getReturnJson());
+        JSONArray trivyJsons = JSONArray.parseArray(jsonG.getString("Results"));
+        int i = 0;
+        if(trivyJsons != null) {
+            for (Object obj : trivyJsons) {
+                JSONObject jsonObject = (JSONObject) obj;
+                JSONArray misconfigurations = JSONArray.parseArray(jsonObject.getString("Misconfigurations"));
+                for (Object o : misconfigurations) {
+                    JSONObject resultObject = (JSONObject) o;
+                    CodeResultItemWithBLOBs codeResultItem = new CodeResultItemWithBLOBs();
+                    codeResultItem.setId(UUIDUtil.newUUID());
+                    codeResultItem.setResultId(result.getId());
+                    codeResultItem.setVulnerabilityId(resultObject.getString("VulnerabilityID"));
+                    codeResultItem.setPkgName(resultObject.getString("PkgName"));
+                    codeResultItem.setInstalledVersion(resultObject.getString("InstalledVersion"));
+                    codeResultItem.setFixedVersion(resultObject.getString("FixedVersion"));
+                    codeResultItem.setLayer(resultObject.getString("Layer"));
+                    codeResultItem.setSeveritySource(resultObject.getString("SeveritySource"));
+                    codeResultItem.setPrimaryUrl(resultObject.getString("PrimaryURL"));
+                    codeResultItem.setDataSource(resultObject.getString("DataSource"));
+                    codeResultItem.setTitle(resultObject.getString("Title"));
+                    codeResultItem.setDescription(resultObject.getString("Description"));
+                    codeResultItem.setSeverity(resultObject.getString("Severity"));
+                    codeResultItem.setCweIds(resultObject.getString("CweIDs"));
+                    codeResultItem.setCvss(resultObject.getString("CVSS"));
+                    codeResultItem.setReferences(resultObject.getString("References"));
+                    codeResultItem.setPublishedDate(resultObject.getString("PublishedDate"));
+                    codeResultItem.setLastModifiedDate(resultObject.getString("LastModifiedDate"));
+                    codeResultItemMapper.insertSelective(codeResultItem);
+                    i++;
+                }
+
+            }
+        }
+
+        return i;
+
     }
 
 }

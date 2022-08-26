@@ -104,6 +104,10 @@ public class ResourceCreateService {
     private K8sService k8sService;
     @Resource
     private CloudNativeConfigService cloudNativeConfigService;
+    @Resource
+    private CodeResultMapper codeResultMapper;
+    @Resource
+    private CodeService codeService;
 
     @QuartzScheduled(cron = "${cron.expression.local}")
     public void handleTasks() throws Exception {
@@ -277,32 +281,32 @@ public class ResourceCreateService {
 
         //云原生镜像漏洞检测
         final ImageResultExample k8sImageResultExample = new ImageResultExample();
-        ImageResultExample.Criteria kisImageCriteria = k8sImageResultExample.createCriteria();
-        kisImageCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString()).andScanTypeEqualTo(CloudTaskConstants.IMAGE_TYPE.trivy.name());
+        ImageResultExample.Criteria k8sImageCriteria = k8sImageResultExample.createCriteria();
+        k8sImageCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString()).andScanTypeEqualTo(CloudTaskConstants.IMAGE_TYPE.trivy.name());
         if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
-            kisImageCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+            k8sImageCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
         }
         k8sImageResultExample.setOrderByClause("create_time limit 10");
         List<ImageResultWithBLOBs> k8sImageResults = imageResultMapper.selectByExampleWithBLOBs(k8sImageResultExample);
         if (CollectionUtils.isNotEmpty(k8sImageResults)) {
             k8sImageResults.forEach(k8sImageResult -> {
-                final ImageResultWithBLOBs K8sImageToBeProceed;
+                final ImageResultWithBLOBs k8sImageToBeProceed;
                 try {
-                    K8sImageToBeProceed = BeanUtils.copyBean(new ImageResultWithBLOBs(), k8sImageResult);
+                    k8sImageToBeProceed = BeanUtils.copyBean(new ImageResultWithBLOBs(), k8sImageResult);
                 } catch (Exception e) {
                     throw new RuntimeException(e.getMessage());
                 }
-                if (processingGroupIdMap.get(K8sImageToBeProceed.getId()) != null) {
+                if (processingGroupIdMap.get(k8sImageToBeProceed.getId()) != null) {
                     return;
                 }
-                processingGroupIdMap.put(K8sImageToBeProceed.getId(), K8sImageToBeProceed.getId());
+                processingGroupIdMap.put(k8sImageToBeProceed.getId(), k8sImageToBeProceed.getId());
                 commonThreadPool.addTask(() -> {
                     try {
-                        k8sService.createImageScan(K8sImageToBeProceed);
+                        k8sService.createImageScan(k8sImageToBeProceed);
                     } catch (Exception e) {
                         LogUtil.error(e);
                     } finally {
-                        processingGroupIdMap.remove(K8sImageToBeProceed.getId());
+                        processingGroupIdMap.remove(k8sImageToBeProceed.getId());
                     }
                 });
             });
@@ -340,6 +344,40 @@ public class ResourceCreateService {
                 });
             });
         }
+
+        //源码检测
+        final CodeResultExample codeResultExample = new CodeResultExample();
+        CodeResultExample.Criteria codeCriteria = codeResultExample.createCriteria();
+        codeCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
+            codeCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+        }
+        codeResultExample.setOrderByClause("create_time limit 10");
+        List<CodeResult> codeResults = codeResultMapper.selectByExampleWithBLOBs(codeResultExample);
+        if (CollectionUtils.isNotEmpty(k8sImageResults)) {
+            codeResults.forEach(codeResult -> {
+                final CodeResult codeToBeProceed;
+                try {
+                    codeToBeProceed = BeanUtils.copyBean(new CodeResult(), codeResult);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                if (processingGroupIdMap.get(codeToBeProceed.getId()) != null) {
+                    return;
+                }
+                processingGroupIdMap.put(codeToBeProceed.getId(), codeToBeProceed.getId());
+                commonThreadPool.addTask(() -> {
+                    try {
+                        codeService.createScan(codeToBeProceed);
+                    } catch (Exception e) {
+                        LogUtil.error(e);
+                    } finally {
+                        processingGroupIdMap.remove(codeToBeProceed.getId());
+                    }
+                });
+            });
+        }
+
 
         //历史数据统计
         final HistoryScanExample historyScanExample = new HistoryScanExample();

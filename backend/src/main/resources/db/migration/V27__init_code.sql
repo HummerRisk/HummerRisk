@@ -46,13 +46,25 @@ CREATE TABLE IF NOT EXISTS `code_result`
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `code_result_item` (
-    `id`                         varchar(50)         NOT NULL COMMENT '资源ID（唯一标识）',
-    `result_id`                  varchar(50)         DEFAULT NULL COMMENT 'result主键ID',
-    `name`                       varchar(128)        DEFAULT NULL COMMENT '源码检测名称(别名)',
-    `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
-    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
-    `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
-    `resource`                   longtext            DEFAULT NULL COMMENT '资源JSON',
+    `id`                           varchar(50)         NOT NULL COMMENT '资源ID（唯一标识）',
+    `result_id`                    varchar(50)         DEFAULT NULL COMMENT 'result主键ID',
+    `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `vulnerability_id`             varchar(50)         NOT NULL COMMENT 'VulnerabilityID',
+    `pkg_name`                     varchar(50)         DEFAULT NULL COMMENT 'PkgName',
+    `installed_version`            varchar(255)        DEFAULT NULL COMMENT 'InstalledVersion',
+    `fixed_version`                varchar(255)        DEFAULT NULL COMMENT 'FixedVersion',
+    `severity_source`              varchar(50)         DEFAULT NULL COMMENT 'SeveritySource',
+    `primary_url`                  varchar(255)        DEFAULT NULL COMMENT 'PrimaryURL',
+    `title`                        mediumtext          DEFAULT NULL COMMENT 'Title',
+    `description`                  mediumtext          DEFAULT NULL COMMENT 'Description',
+    `severity`                     varchar(50)         DEFAULT NULL COMMENT 'Severity',
+    `published_date`               varchar(50)         DEFAULT NULL COMMENT 'PublishedDate',
+    `last_modified_date`           varchar(50)         DEFAULT NULL COMMENT 'LastModifiedDate',
+    `layer`                        mediumtext          DEFAULT NULL COMMENT 'Layer',
+    `data_source`                  mediumtext          DEFAULT NULL COMMENT 'DataSource',
+    `cwe_ids`                      mediumtext          DEFAULT NULL COMMENT 'CweIDs',
+    `cvss`                         mediumtext          DEFAULT NULL COMMENT 'CVSS',
+    `references`                   mediumtext          DEFAULT NULL COMMENT 'References',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
