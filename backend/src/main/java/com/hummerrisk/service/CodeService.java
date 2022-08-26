@@ -9,6 +9,7 @@ import com.hummerrisk.base.mapper.ext.ExtCodeMapper;
 import com.hummerrisk.base.mapper.ext.ExtCodeResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtCodeRuleMapper;
 import com.hummerrisk.commons.constants.*;
+import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.code.CodeRequest;
 import com.hummerrisk.controller.request.code.CodeResultRequest;
@@ -17,13 +18,16 @@ import com.hummerrisk.dto.CodeDTO;
 import com.hummerrisk.dto.CodeResultDTO;
 import com.hummerrisk.dto.CodeResultWithBLOBsDTO;
 import com.hummerrisk.dto.CodeRuleDTO;
+import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.proxy.code.CodeCredential;
 import com.hummerrisk.proxy.code.CodeCredentialRequest;
+import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -90,6 +94,32 @@ public class CodeService {
     public void deleteCode(String id) throws Exception {
         codeMapper.deleteByPrimaryKey(id);
         OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code");
+    }
+
+    public boolean validate(List<String> ids) {
+        ids.forEach(id -> {
+            try {
+                boolean validate = validate(id);
+                if(!validate) throw new HRException(Translator.get("failed_cloud_native"));
+            } catch (Exception e) {
+                LogUtil.error(e.getMessage());
+                throw new HRException(e.getMessage());
+            }
+        });
+        return true;
+    }
+
+    public boolean validate(String id) throws IOException, ApiException {
+        Code code = codeMapper.selectByPrimaryKey(id);
+        //检验账号的有效性
+        boolean valid = true;
+        if (valid) {
+            code.setStatus(CloudAccountConstants.Status.VALID.name());
+        } else {
+            code.setStatus(CloudAccountConstants.Status.INVALID.name());
+        }
+        codeMapper.updateByPrimaryKeySelective(code);
+        return valid;
     }
 
     public List<CodeRuleDTO> ruleList(CodeRuleRequest request) {
@@ -412,6 +442,19 @@ public class CodeService {
 
         return i;
 
+    }
+
+    public String getCredential() {
+        String BASE_CREDENTIAL_DIC = "support/credential/";
+        String JSON_EXTENSION = ".json";
+        String pluginId = "hummer-code-plugin";
+        try {
+            return ReadFileUtils.readConfigFile(BASE_CREDENTIAL_DIC, pluginId, JSON_EXTENSION);
+        } catch (Exception e) {
+            LogUtil.error("Error getting credential parameters: " + pluginId, e);
+            HRException.throwException(Translator.get("i18n_ex_plugin_get"));
+        }
+        return Translator.get("i18n_ex_plugin_get");
     }
 
 }

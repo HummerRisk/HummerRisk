@@ -1179,6 +1179,8 @@ export default {
     add: '新增多个',
     delete_this_code: '删除此项目',
     please_choose_code: '请选择项目',
+    platform: 'Git 仓库类型',
+    code_note: '注: 私有 Git 仓库请输入Token!',
   },
   cost: {
     analyze: '费用分析',

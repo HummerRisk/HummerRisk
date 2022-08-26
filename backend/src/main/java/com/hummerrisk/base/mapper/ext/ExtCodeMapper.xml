@@ -81,7 +81,7 @@
         </if>
     </sql>
 
-    <select id="imageList" resultMap="CodeMap">
+    <select id="codeList" resultMap="CodeMap">
         select
         t.*,
         user.name as userName
