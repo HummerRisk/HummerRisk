@@ -1,6 +1,6 @@
 <template>
   <el-col>
-    <oss-header-menus/>
+    <cost-header-menus/>
     <div>
       <transition>
         <keep-alive>
@@ -12,13 +12,13 @@
 </template>
 <script>
 
-import OssHeaderMenus from "./head/OssHeaderMenus";
+import CostHeaderMenus from "./head/CostHeaderMenus";
 
 export default {
-    components: {OssHeaderMenus},
+    components: {CostHeaderMenus},
     data() {
       return {
-        baseUrl: "oss"
+        baseUrl: "cost"
       }
     }
   }

@@ -6,6 +6,76 @@
   "description": "HummerRisk",
   "glyphs": [
     {
+      "icon_id": "2076322",
+      "name": "费用包含",
+      "font_class": "feiyongbaohan",
+      "unicode": "e8a4",
+      "unicode_decimal": 59556
+    },
+    {
+      "icon_id": "2076327",
+      "name": "费用不含",
+      "font_class": "feiyongbuhan",
+      "unicode": "e8a5",
+      "unicode_decimal": 59557
+    },
+    {
+      "icon_id": "3092315",
+      "name": "图表 上升趋势",
+      "font_class": "tubiaoshangshengqushi",
+      "unicode": "e790",
+      "unicode_decimal": 59280
+    },
+    {
+      "icon_id": "3092316",
+      "name": "图表 下降趋势",
+      "font_class": "tubiaoxiajiangqushi",
+      "unicode": "e791",
+      "unicode_decimal": 59281
+    },
+    {
+      "icon_id": "10056253",
+      "name": "费用",
+      "font_class": "feiyong",
+      "unicode": "e70b",
+      "unicode_decimal": 59147
+    },
+    {
+      "icon_id": "12129938",
+      "name": "费用",
+      "font_class": "feiyong1",
+      "unicode": "e6b7",
+      "unicode_decimal": 59063
+    },
+    {
+      "icon_id": "14680971",
+      "name": "icon-rise",
+      "font_class": "rise",
+      "unicode": "e618",
+      "unicode_decimal": 58904
+    },
+    {
+      "icon_id": "577355",
+      "name": "筛选",
+      "font_class": "shaixuan",
+      "unicode": "e74a",
+      "unicode_decimal": 59210
+    },
+    {
+      "icon_id": "10937703",
+      "name": "筛选",
+      "font_class": "shaixuan1",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
+      "icon_id": "11651475",
+      "name": "筛选",
+      "font_class": "shaixuan2",
+      "unicode": "e64f",
+      "unicode_decimal": 58959
+    },
+    {
       "icon_id": "3977659",
       "name": "安全合规",
       "font_class": "anquanhegui",

@@ -9,6 +9,7 @@ import Container from "../.././common/components/Container";
 
 /* eslint-disable */
 export default {
+  name: "Result",
   components: {
     Container,
   },
