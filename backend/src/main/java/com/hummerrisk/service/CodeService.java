@@ -404,15 +404,16 @@ public class CodeService {
     }
 
     long saveResultItem(CodeResult result) throws Exception {
-//插入trivyJsons
+
+        //插入trivyJsons
         JSONObject jsonG = JSONObject.parseObject(result.getReturnJson());
         JSONArray trivyJsons = JSONArray.parseArray(jsonG.getString("Results"));
         int i = 0;
         if(trivyJsons != null) {
             for (Object obj : trivyJsons) {
                 JSONObject jsonObject = (JSONObject) obj;
-                JSONArray misconfigurations = JSONArray.parseArray(jsonObject.getString("Misconfigurations"));
-                for (Object o : misconfigurations) {
+                JSONArray vulnerabilities = JSONArray.parseArray(jsonObject.getString("Vulnerabilities"));
+                for (Object o : vulnerabilities) {
                     JSONObject resultObject = (JSONObject) o;
                     CodeResultItemWithBLOBs codeResultItem = new CodeResultItemWithBLOBs();
                     codeResultItem.setId(UUIDUtil.newUUID());

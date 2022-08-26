@@ -96,7 +96,7 @@
           <el-form-item v-if="form.pluginId" :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-switch v-model="form.isProxy"></el-switch>
           </el-form-item>
-          <el-form-item v-if="index > 0" :label="$t('k8s.delete_this_k8s')">
+          <el-form-item v-if="index > 0" :label="$t('code.delete_this_code')">
             <el-button type="danger" icon="el-icon-delete" plain size="small" @click="deleteAccount(addAccountForm, form)">{{ $t('commons.delete') }}</el-button>
           </el-form-item>
         </el-form>
@@ -285,10 +285,10 @@ export default {
     //校验Git项目账号
     validate() {
       if (this.selectIds.size === 0) {
-        this.$warning(this.$t('k8s.please_choose_k8s'));
+        this.$warning(this.$t('code.please_choose_code'));
         return;
       }
-      this.$alert(this.$t('account.one_validate') + this.$t('k8s.k8s_setting') + " ？", '', {
+      this.$alert(this.$t('account.one_validate') + this.$t('code.code_setting') + " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
@@ -512,11 +512,11 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get("/k8s/scan/" + item.id,response => {
+            this.$get("/code/scan/" + item.id,response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start'));
                 this.$router.push({
-                  path: '/k8s/result',
+                  path: '/code/result',
                   query: {
                     date:new Date().getTime()
                   },

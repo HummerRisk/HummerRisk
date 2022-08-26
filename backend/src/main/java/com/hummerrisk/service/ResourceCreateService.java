@@ -354,7 +354,7 @@ public class ResourceCreateService {
         }
         codeResultExample.setOrderByClause("create_time limit 10");
         List<CodeResult> codeResults = codeResultMapper.selectByExampleWithBLOBs(codeResultExample);
-        if (CollectionUtils.isNotEmpty(k8sImageResults)) {
+        if (CollectionUtils.isNotEmpty(codeResults)) {
             codeResults.forEach(codeResult -> {
                 final CodeResult codeToBeProceed;
                 try {

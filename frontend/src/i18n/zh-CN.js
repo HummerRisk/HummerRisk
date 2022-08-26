@@ -1178,7 +1178,7 @@ export default {
     status: '状态',
     add: '新增多个',
     delete_this_code: '删除此项目',
-    please_choose_code: '请选择项目',
+    please_choose_code: '请选择项目源码',
     platform: 'Git 仓库类型',
     code_note: '注: 私有 Git 仓库请输入Token!',
     rule_list: '源码检测规则列表',
@@ -1192,7 +1192,8 @@ export default {
     severity: '风险等级',
     result_status: '检测状态',
     last_modified: '最后更新时间',
-    result_details_list: '镜像检测结果详情列表',
+    result_details_list: '源码检测结果详情列表',
+    back_resource: '返回源码检测结果列表',
   },
   cost: {
     analyze: '费用分析',
