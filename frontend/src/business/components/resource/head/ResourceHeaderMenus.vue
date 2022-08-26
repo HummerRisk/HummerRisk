@@ -23,6 +23,9 @@
             {{ $t("package.package_result") }}
           </el-menu-item>
 
+          <el-menu-item :index="'/resource/codeResult'">
+            {{ $t("code.code_result") }}
+          </el-menu-item>
         </el-menu>
       </el-col>
     </el-row>

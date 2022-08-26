@@ -7,7 +7,7 @@
                         @search="search"
                         :show-back="true"
                         @back="back" :backTip="$t('image.back_resource')"
-                        :title="$t('image.result_details_list')"/>
+                        :title="$t('code.result_details_list')"/>
         </template>
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter">
@@ -135,7 +135,7 @@ import RuleType from "@/business/components/image/home/RuleType";
         this.visible =  false;
       },
       search () {
-        let url = "/image/resultItemList/" + this.currentPage + "/" + this.pageSize;
+        let url = "/code/resultItemList/" + this.currentPage + "/" + this.pageSize;
         this.condition.resultId = this.resultId;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
@@ -149,13 +149,13 @@ import RuleType from "@/business/components/image/home/RuleType";
       },
       back () {
         let path = this.$route.path;
-        if (path.indexOf("/image") >= 0) {
+        if (path.indexOf("/code") >= 0) {
           this.$router.push({
-            path: '/image/result',
+            path: '/code/result',
           }).catch(error => error);
         } else if (path.indexOf("/resource") >= 0) {
           this.$router.push({
-            path: '/resource/imageResult',
+            path: '/resource/codeResult',
           }).catch(error => error);
         }
       },

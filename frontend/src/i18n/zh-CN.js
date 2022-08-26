@@ -1192,6 +1192,7 @@ export default {
     severity: '风险等级',
     result_status: '检测状态',
     last_modified: '最后更新时间',
+    result_details_list: '镜像检测结果详情列表',
   },
   cost: {
     analyze: '费用分析',

@@ -37,5 +37,10 @@ export default {
       name: "packageResultByResource",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/package/home/Result'),
     },
+    {
+      path: "codeResult",
+      name: "codeResultByResource",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/code/home/Result'),
+    },
   ]
 }

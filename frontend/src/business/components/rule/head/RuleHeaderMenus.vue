@@ -35,6 +35,10 @@
             {{ $t("package.package_rule") }}
           </el-menu-item>
 
+          <el-menu-item :index="'/rule/codeRule'">
+            {{ $t("code.code_rule") }}
+          </el-menu-item>
+
         </el-menu>
       </el-col>
     </el-row>
