@@ -1,12 +1,16 @@
 package com.hummerrisk.controller;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.CloudEvent;
+import com.hummerrisk.commons.utils.PageUtils;
+import com.hummerrisk.commons.utils.Pager;
+import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
 import com.hummerrisk.service.CloudEventService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -18,14 +22,16 @@ public class CloudEventController {
     private CloudEventService cloudEventService;
 
     @ApiOperation(value = "日志同步")
-    @GetMapping("sync")
-    public void syncEvents(String accountId,String region,String startTime,String endTime){
-        cloudEventService.syncCloudEvents(accountId,region,startTime,endTime);
+    @PostMapping("sync")
+    public void syncEvents(@RequestBody CloudEventRequest cloudEventRequest){
+        cloudEventService.syncCloudEvents(cloudEventRequest.getAccountId(),cloudEventRequest.getRegion()
+                ,cloudEventRequest.getStartTime(),cloudEventRequest.getEndTime());
     }
 
     @ApiOperation(value = "日志查询")
-    @GetMapping()
-    public List<CloudEvent> getEvents(String accountId, String region, String startTime, String endTime){
-        return cloudEventService.getCloudEvents(accountId,region,startTime,endTime);
+    @PostMapping("list/{goPage}/{pageSize}")
+    public Pager<List<CloudEvent>> listEvents(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest){
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, cloudEventService.getCloudEvents(cloudEventRequest));
     }
 }
