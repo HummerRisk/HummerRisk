@@ -882,6 +882,7 @@ export default {
   },
   image: {
     image_repo: '鏡像倉庫',
+    image_repo_type: '鏡像倉庫類型',
     image_repo_list: '鏡像倉庫列表',
     repo_create: '創建鏡像倉庫',
     repo_update: '編輯鏡像倉庫',

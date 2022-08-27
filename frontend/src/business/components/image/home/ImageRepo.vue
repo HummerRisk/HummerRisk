@@ -48,6 +48,18 @@
         <el-form-item :label="$t('image.image_repo_name')" ref="name" prop="name">
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_repo_name')"/>
         </el-form-item>
+        <el-form-item :label="$t('image.image_repo_type')" :rules="{required: true, message: $t('image.image_repo_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-select style="width: 100%;" v-model="form.pluginIcon" :placeholder="$t('image.image_repo_type')">
+            <el-option
+              v-for="item in plugins"
+              :key="item.value"
+              :label="item.id"
+              :value="item.value">
+              <img :src="require(`@/assets/img/repo/${item.value}`)" style="width: 20px; height: 16px; vertical-align:middle" alt=""/>
+              &nbsp;&nbsp; {{ $t(item.id) }}
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item :label="$t('image.image_repo_url')" ref="repo" prop="repo">
           <el-input v-model="form.repo" autocomplete="off" :placeholder="$t('image.image_repo_url_desc')"/>
         </el-form-item>
@@ -72,6 +84,18 @@
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
         <el-form-item :label="$t('image.image_repo_name')" ref="name" prop="name">
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_repo_name')"/>
+        </el-form-item>
+        <el-form-item :label="$t('image.image_repo_type')" :rules="{required: true, message: $t('image.image_repo_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-select style="width: 100%;" disabled v-model="form.pluginIcon" :placeholder="$t('image.image_repo_type')">
+            <el-option
+              v-for="item in plugins"
+              :key="item.id"
+              :label="item.id"
+              :value="item.id">
+              <img :src="require(`@/assets/img/repo/${item.value}`)" style="width: 20px; height: 16px; vertical-align:middle" alt=""/>
+              &nbsp;&nbsp; {{ $t(item.id) }}
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item :label="$t('image.image_repo_url')" ref="repo" prop="repo">
           <el-input v-model="form.repo" autocomplete="off" :placeholder="$t('image.image_repo_url_desc')"/>
@@ -158,6 +182,11 @@ export default {
         {text: this.$t('server.INVALID'), value: 'INVALID'},
         {text: this.$t('server.VALID'), value: 'VALID'},
         {text: this.$t('server.DELETE'), value: 'DELETE'}
+      ],
+      plugins: [
+        {value: 'harbor.png', id: "Harbor"},
+        {value: 'dockerhub.png', id: "DockerHub"},
+        {value: 'nexus.png', id: "Nexus"},
       ],
     }
   },

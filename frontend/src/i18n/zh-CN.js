@@ -882,6 +882,7 @@ export default {
   },
   image: {
     image_repo: '镜像仓库',
+    image_repo_type: '镜像仓库类型',
     image_repo_list: '镜像仓库列表',
     repo_create: '创建镜像仓库',
     repo_update: '编辑镜像仓库',

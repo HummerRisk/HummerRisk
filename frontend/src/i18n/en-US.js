@@ -882,6 +882,7 @@ export default {
   },
   image: {
     image_repo: 'Mirror repository',
+    image_repo_type: 'Image repository type',
     image_repo_list: 'image repository list',
     repo_create: 'Create a mirror warehouse',
     repo_update: 'Edit mirror repository',

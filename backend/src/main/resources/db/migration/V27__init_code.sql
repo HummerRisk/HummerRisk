@@ -111,4 +111,9 @@ CREATE TABLE IF NOT EXISTS `history_code_result_log` (
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
 INSERT INTO `code_rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `last_modified`, `flag`) VALUES ('dcbe30ad-e74c-4fd8-b3c5-5ef1106b02f3', '源码检测', 1, 'HighRisk', 'Git 源码漏洞检测', '全面的漏洞检测', '[]', concat(unix_timestamp(now()), '001'), 1);
+
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('dcbe30ad-e74c-4fd8-b3c5-5ef1106b02f3', 'safety');
+
+ALTER TABLE cloud_native ADD operator_status varchar(10) DEFAULT 'VALID' COMMENT 'operator 状态';
+
+ALTER TABLE image_repo ADD plugin_icon varchar(50) DEFAULT 'harbor.png' COMMENT '镜像仓库类型';

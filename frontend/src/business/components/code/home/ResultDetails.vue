@@ -11,7 +11,6 @@
         </template>
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter">
-          <el-table-column type="index" min-width="5%"/>
           <el-table-column type="index" min-width="2%"/>
           <el-table-column :label="'Title'" min-width="17%" prop="title">
           </el-table-column>
