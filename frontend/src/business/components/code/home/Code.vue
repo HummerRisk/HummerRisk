@@ -418,11 +418,9 @@ export default {
         }
         let data = {}, key = {};
         for (let tmp of item.tmpList) {
-          if(!tmp.input) {
-            this.$warning(this.$t('commons.no_plugin_param') + tmp.label);
-            return;
+          if(tmp.input) {
+            key[tmp.name] = tmp.input.trim();
           }
-          key[tmp.name] = tmp.input.trim();
         }
         data["credential"] = JSON.stringify(key);
         data["name"] = item.name;
@@ -571,13 +569,6 @@ export default {
 }
 .rtl >>> .el-form-item__content {
   width: 75%;
-}
-.code-mirror {
-  height: 600px !important;
-}
-.code-mirror >>> .CodeMirror {
-  /* Set height, width, borders, and global font properties here */
-  height: 600px !important;
 }
 /deep/ :focus{outline:0;}
 .el-box-card {

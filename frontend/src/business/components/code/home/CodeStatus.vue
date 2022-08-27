@@ -15,18 +15,18 @@
 <script>
   /* eslint-disable */
   export default {
-    name: "K8sStatus",
+    name: "CodeStatus",
     inject:['search'],
     props: {
       row: Object
     },
     methods: {
       validate(row) {
-        this.$alert(this.$t('account.validate') + this.$t('k8s.k8s_setting') + ' : ' + row.name +  " ？", '', {
+        this.$alert(this.$t('account.validate') + this.$t('code.code_setting') + ' : ' + row.name +  " ？", '', {
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.$post("/cloud/native/validate/" + row.id, {}, response => {
+              this.$post("/code/validate/" + row.id, {}, response => {
                 if (response.data) {
                   this.$success(this.$t('account.success'));
                   this.$emit('search');

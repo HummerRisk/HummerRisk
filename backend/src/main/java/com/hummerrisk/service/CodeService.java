@@ -383,15 +383,22 @@ public class CodeService {
             CodeCredentialRequest codeRequest = new CodeCredentialRequest();
             codeRequest.setCredential(code.getCredential());
             CodeCredential codeCredential = codeRequest.getCodeClient();
-            String token = "";
-            if(codeCredential.getToken() != null) {
+            String token = "", branch = "";
+            if(codeCredential !=null && !codeCredential.getToken().isEmpty()) {
                 if (StringUtils.equals(code.getPluginIcon(), CodeConstants.GITHUB_TOKEN)) {
                     token = "export GITHUB_TOKEN=" + codeCredential.getToken() + "\n";
                 } else if (StringUtils.equals(code.getPluginIcon(), CodeConstants.GITLAB_TOKEN)) {
                     token = "export GITLAB_TOKEN=" + codeCredential.getToken() + "\n";
                 }
             }
-            String command = _proxy + token + TrivyConstants.TRIVY_REPO + TrivyConstants.TRIVY_SKIP + codeCredential.getUrl() + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
+            if(codeCredential !=null && !codeCredential.getBranch().isEmpty()) {
+                branch = TrivyConstants.BRANCH + codeCredential.getBranch();
+            } else if(codeCredential !=null && !codeCredential.getCommit().isEmpty()) {
+                branch = TrivyConstants.COMMIT + codeCredential.getCommit();
+            } else if(codeCredential !=null && !codeCredential.getTag().isEmpty()) {
+                branch = TrivyConstants.TAG + codeCredential.getTag();
+            }
+            String command = _proxy + token + TrivyConstants.TRIVY_REPO + TrivyConstants.SKIP_DB_UPDATE + TrivyConstants.SECURITY_CHECKS + branch + " " + codeCredential.getUrl() + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
             LogUtil.info(code.getId() + " {code scan}[command]: " + code.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
             if(resultStr.contains("ERROR") || resultStr.contains("error")) {
@@ -405,14 +412,15 @@ public class CodeService {
 
     long saveResultItem(CodeResult result) throws Exception {
 
-        //插入trivyJsons
+        //插入returnJson
         JSONObject jsonG = JSONObject.parseObject(result.getReturnJson());
-        JSONArray trivyJsons = JSONArray.parseArray(jsonG.getString("Results"));
+        JSONArray returnJson = JSONArray.parseArray(jsonG.getString("Results"));
         int i = 0;
-        if(trivyJsons != null) {
-            for (Object obj : trivyJsons) {
+        if(returnJson != null) {
+            for (Object obj : returnJson) {
                 JSONObject jsonObject = (JSONObject) obj;
                 JSONArray vulnerabilities = JSONArray.parseArray(jsonObject.getString("Vulnerabilities"));
+                if(vulnerabilities == null) continue;
                 for (Object o : vulnerabilities) {
                     JSONObject resultObject = (JSONObject) o;
                     CodeResultItemWithBLOBs codeResultItem = new CodeResultItemWithBLOBs();

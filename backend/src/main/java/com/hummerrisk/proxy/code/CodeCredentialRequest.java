@@ -47,7 +47,7 @@ public class CodeCredentialRequest extends Request {
     }
 
     public CodeCredential getCodeClient() throws IOException {
-        CodeCredential code = codeCredential;
+        CodeCredential code = getCodeCredential();
         return code;
     }
 

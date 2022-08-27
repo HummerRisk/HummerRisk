@@ -37,4 +37,14 @@ public class TrivyConstants {
 
     public final static String TRIVY_SKIP = " --skip-update ";
 
+    public final static String SECURITY_CHECKS = " --security-checks vuln,config,secret ";
+
+    public final static String SKIP_DB_UPDATE = " --skip-db-update ";
+
+    public final static String BRANCH = " --branch ";
+
+    public final static String COMMIT = " --commit ";
+
+    public final static String TAG = " --tag ";
+
 }
