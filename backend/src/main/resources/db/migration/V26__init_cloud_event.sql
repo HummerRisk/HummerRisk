@@ -3,7 +3,7 @@
 -- ------------
 CREATE TABLE IF NOT EXISTS  `cloud_event` (
     `event_id` varchar(64)  DEFAULT NULL COMMENT '事件ID',
-    `cloud_account_id` varbinary(64) DEFAULT NULL COMMENT '云账号ID',
+    `cloud_account_id` varchar(64) DEFAULT NULL COMMENT '云账号ID',
     `sync_region` varchar(255)  DEFAULT NULL COMMENT '同步区域',
     `acs_region` varchar(32)  DEFAULT NULL COMMENT '事件区域',
     `event_name` varchar(64)  DEFAULT NULL COMMENT '事件名称',
@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS  `cloud_event` (
     `referenced_resources` varchar(1024)  DEFAULT NULL COMMENT '映射的资源',
     `api_version` varchar(16)  DEFAULT NULL COMMENT 'API版本',
     `response_elements` varchar(1024)  DEFAULT NULL COMMENT '响应值',
+    `user_name` varchar(255)  DEFAULT NULL COMMENT '用户名',
     KEY `index_cloud_event_account_id` (`cloud_account_id`),
     KEY `index_cloud_event_event_time` (`event_time`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
