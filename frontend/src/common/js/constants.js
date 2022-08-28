@@ -3,6 +3,7 @@ export const TokenKey = "Admin-Token";
 export const DEFAULT_LANGUAGE = "default_language";
 export const ACCOUNT_ID = "account_id";
 export const ACCOUNT_NAME = "account_name";
+export const ACCOUNT = "account"
 export const VULN_ID = "vuln_id";
 export const VULN_NAME = "vuln_name";
 export const K8S_ID = "k8s_id";

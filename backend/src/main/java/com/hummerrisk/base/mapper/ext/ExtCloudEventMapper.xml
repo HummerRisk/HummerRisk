@@ -11,7 +11,7 @@
     user_agent, user_identity, service_name,
     additional_event_data, request_id, request_parameters,
     resource_type, resource_name, referenced_resources,
-    api_version, response_elements, cloud_account_id
+    api_version, response_elements, cloud_account_id,user_name
     ) values
     <foreach item="item" index="index" collection="list" separator=",">
       (#{item.eventId,jdbcType=VARCHAR}, #{item.syncRegion,jdbcType=VARCHAR}, #{item.acsRegion,jdbcType=VARCHAR},
@@ -21,7 +21,8 @@
       #{item.userAgent,jdbcType=VARCHAR}, #{item.userIdentity,jdbcType=VARCHAR}, #{item.serviceName,jdbcType=VARCHAR},
       #{item.additionalEventData,jdbcType=VARCHAR}, #{item.requestId,jdbcType=VARCHAR}, #{item.requestParameters,jdbcType=VARCHAR},
       #{item.resourceType,jdbcType=VARCHAR}, #{item.resourceName,jdbcType=VARCHAR}, #{item.referencedResources,jdbcType=VARCHAR},
-      #{item.apiVersion,jdbcType=VARCHAR}, #{item.responseElements,jdbcType=VARCHAR}, #{item.cloudAccountId,jdbcType=VARBINARY}
+      #{item.apiVersion,jdbcType=VARCHAR}, #{item.responseElements,jdbcType=VARCHAR}, #{item.cloudAccountId,jdbcType=VARCHAR}
+      , #{item.userName,jdbcType=VARCHAR}
       )
     </foreach>
   </insert>

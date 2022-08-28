@@ -28,7 +28,7 @@
 
 <script>
 import {getCurrentAccountID, getCurrentUser, hasRoles} from "@/common/js/utils";
-import {ACCOUNT_ID, ACCOUNT_NAME, ROLE_ADMIN} from "@/common/js/constants";
+import {ACCOUNT,ACCOUNT_ID, ACCOUNT_NAME, ROLE_ADMIN} from "@/common/js/constants";
 
 /* eslint-disable */
 export default {
@@ -70,7 +70,10 @@ export default {
               if (this.searchArray.length > 0 && this.searchArray.map(p => p.id).indexOf(userLastAccountId) !== -1) {
                 localStorage.setItem(ACCOUNT_ID, userLastAccountId);
                 let account = this.searchArray.filter(p => p.id === userLastAccountId);
-                if(account) localStorage.setItem(ACCOUNT_NAME, account[0].name);
+                if(account) {
+                  localStorage.setItem(ACCOUNT_NAME, account[0].name);
+                  localStorage.setItem(ACCOUNT, JSON.stringify(account[0]));
+                }
               }
             }
           }
@@ -105,7 +108,10 @@ export default {
       this.$post("/user/update/current", {id: this.userId, lastAccountId: accountId}, () => {
         localStorage.setItem(ACCOUNT_ID, accountId);
         let account = this.searchArray.filter(p => p.id === accountId);
-        if(account) localStorage.setItem(ACCOUNT_NAME, account[0].name);
+        if(account) {
+          localStorage.setItem(ACCOUNT_NAME, account[0].name);
+          localStorage.setItem(ACCOUNT, JSON.stringify(account[0]));
+        }
 
         this.currentAccountId = accountId;
         this.$emit("cloudAccountSwitch", accountId, account[0].name);
