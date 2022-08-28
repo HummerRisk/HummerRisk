@@ -19,4 +19,15 @@ CREATE TABLE IF NOT EXISTS `sbom_version` (
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
+ALTER TABLE code ADD sbom_id varchar(50) DEFAULT NULL COMMENT 'SBOM ID';
+
+ALTER TABLE code ADD sbom_version_id varchar(50) DEFAULT NULL COMMENT 'SBOM VERSION ID';
+
+ALTER TABLE image ADD sbom_id varchar(50) DEFAULT NULL COMMENT 'SBOM ID';
+
+ALTER TABLE image ADD sbom_version_id varchar(50) DEFAULT NULL COMMENT 'SBOM VERSION ID';
+
+ALTER TABLE package ADD sbom_id varchar(50) DEFAULT NULL COMMENT 'SBOM ID';
+
+ALTER TABLE package ADD sbom_version_id varchar(50) DEFAULT NULL COMMENT 'SBOM VERSION ID';
 

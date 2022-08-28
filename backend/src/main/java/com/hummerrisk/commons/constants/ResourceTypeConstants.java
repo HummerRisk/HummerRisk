@@ -19,4 +19,6 @@ public enum ResourceTypeConstants {
     PACKAGE,
     IMAGE,
     CODE,
+    SBOM,
+    SBOM_VERSION,
 }
