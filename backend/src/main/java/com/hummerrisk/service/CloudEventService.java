@@ -1,11 +1,10 @@
 package com.hummerrisk.service;
 
 
-import com.aliyuncs.DefaultAcsClient;
-import com.aliyuncs.IAcsClient;
-import com.aliyuncs.actiontrail.model.v20200706.LookupEventsRequest;
-import com.aliyuncs.actiontrail.model.v20200706.LookupEventsResponse;
-import com.aliyuncs.profile.DefaultProfile;
+import com.aliyun.actiontrail20171204.Client;
+import com.aliyun.actiontrail20171204.models.LookupEventsRequest;
+import com.aliyun.actiontrail20171204.models.LookupEventsResponse;
+import com.aliyun.teaopenapi.models.Config;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.CloudEventMapper;
 import com.hummerrisk.base.mapper.CloudEventSyncLogMapper;
@@ -15,7 +14,6 @@ import com.hummerrisk.commons.utils.CommonThreadPool;
 import com.hummerrisk.commons.utils.DateUtils;
 import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -57,18 +55,21 @@ public class CloudEventService {
     public List<CloudEvent> getCloudEvents(CloudEventRequest cloudEventRequest) {
         CloudEventExample cloudEventExample = new CloudEventExample();
         cloudEventExample.createCriteria().andCloudAccountIdEqualTo(cloudEventRequest.getAccountId()).andSyncRegionEqualTo(cloudEventRequest.getRegion())
-                .andEventTimeBetween(DateUtils.dateTime("yyyy-MM-dd HH:mi:ss", cloudEventRequest.getStartTime())
-                        , DateUtils.dateTime("yyyy-MM-dd HH:mi:ss", cloudEventRequest.getEndTime()));
+                .andEventTimeBetween(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", cloudEventRequest.getStartTime())
+                        , DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", cloudEventRequest.getEndTime()));
         return cloudEventMapper.selectByExample(cloudEventExample);
     }
 
     public void syncCloudEvents(String accountId, String region, String startTime, String endTime) {
+        if(accountId==null||region==null||startTime==null||endTime==null){
+            throw new RuntimeException("参数为空");
+        }
         CloudEventSyncLog cloudEventSyncLog = new CloudEventSyncLog();
         cloudEventSyncLog.setAccountId(accountId);
         cloudEventSyncLog.setRegion(region);
         cloudEventSyncLog.setCreateTime(DateUtils.getNowDate());
-        cloudEventSyncLog.setRequestStartTime(DateUtils.dateTime("yyyy-MM-dd HH:mi:ss", startTime));
-        cloudEventSyncLog.setRequestEndTime(DateUtils.dateTime("yyyy-MM-dd HH:mi:ss", endTime));
+        cloudEventSyncLog.setRequestStartTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime));
+        cloudEventSyncLog.setRequestEndTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", endTime));
         cloudEventSyncLog.setStatus(0);
         CloudEventSyncLogExample cloudEventSyncLogExample = new CloudEventSyncLogExample();
         cloudEventSyncLogExample.createCriteria().andStatusEqualTo(0).andAccountIdEqualTo(accountId)
@@ -89,7 +90,7 @@ public class CloudEventService {
             Map<String, String> accountMap = PlatformUtils.getAccount(account, region, proxyMapper.selectByPrimaryKey(account.getProxyId()));
             List<CloudEvent> result = new ArrayList<>();
             int pageNum = 1;
-            int maxNum = 50;
+            int maxNum = 20;
             boolean haveNextPage = true;
             while (haveNextPage) {
                 List<CloudEvent> pageResult = getCloudEvents(account, accountMap, startTime, endTime, pageNum, maxNum);
@@ -109,17 +110,21 @@ public class CloudEventService {
                         cloudEventSyncLog.setStartTime(result.get(result.size() - 1).getEventTime());
                         cloudEventSyncLog.setEndTime(result.get(0).getEventTime());
                         CloudEventExample cloudEventExample = new CloudEventExample();
-                        cloudEventExample.createCriteria().andCloudAccountIdEqualTo(accountId).andSyncRegionEqualTo(region).andEventTimeBetween(DateUtils.dateTime("yyyy-MM-dd HH:mi:ss", startTime)
-                                , DateUtils.dateTime("yyyy-MM-dd HH:mi:ss", endTime));
+                        cloudEventExample.createCriteria().andCloudAccountIdEqualTo(accountId).andSyncRegionEqualTo(region).andEventTimeBetween(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime)
+                                , DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", endTime));
                         cloudEventMapper.deleteByExample(cloudEventExample);
                     } else {
-                        cloudEventSyncLog.setStartTime(DateUtils.dateTime("yyyy-MM-dd HH:mi:ss", startTime));
-                        cloudEventSyncLog.setEndTime(DateUtils.dateTime("yyyy-MM-dd HH:mi:ss", startTime));
+                        cloudEventSyncLog.setStartTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime));
+                        cloudEventSyncLog.setEndTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime));
                     }
                     result.forEach(item -> {
                         item.setCloudAccountId(accountId);
                         item.setSyncRegion(region);
                     });
+                    /*int times = result.size()%50;
+                    for(int i = 0;i<times;i++){
+                        List<CloudEvent>
+                    }*/
                     int num = extCloudEventMapper.batchCloudEvents(result);
                     cloudEventSyncLog.setDataCount(num);
                     cloudEventSyncLog.setStatus(1);
@@ -127,10 +132,11 @@ public class CloudEventService {
                 }
             });
         } catch (Exception e) {
+            e.printStackTrace();
             CloudEventSyncLog cloudEventSyncLog = new CloudEventSyncLog();
             cloudEventSyncLog.setId(logId);
             cloudEventSyncLog.setStatus(2);
-            cloudEventSyncLog.setException(e.getMessage());
+            //cloudEventSyncLog.setException(e.getMessage());
             cloudEventSyncLogMapper.updateByPrimaryKeySelective(cloudEventSyncLog);
         }
     }
@@ -171,6 +177,36 @@ public class CloudEventService {
                                                  int pageNum, int maxResult) throws Exception {
         startTime = DateUtils.localDateStrToUtcDateStr("yyyy-MM-dd HH:mm:ss", startTime).replace(" ", "T") + "Z";
         endTime = DateUtils.localDateStrToUtcDateStr("yyyy-MM-dd HH:mm:ss", endTime).replace(" ", "T") + "Z";
+        Config config = new Config().setAccessKeyId(accountMap.get("accessKey")).setAccessKeySecret(accountMap.get("secretKey"));
+        config.endpoint = "actiontrail."+accountMap.get("region")+".aliyuncs.com";
+        Client client = new Client(config);
+        LookupEventsRequest lookupEventsRequest = new LookupEventsRequest();
+        lookupEventsRequest.setStartTime(startTime);
+        lookupEventsRequest.setEndTime(endTime);
+        lookupEventsRequest.setNextToken((pageNum - 1) * maxResult + "");
+        lookupEventsRequest.setMaxResults(maxResult + "");
+        lookupEventsRequest.setEventRW("Write");
+        LookupEventsResponse lookupEventsResponse = client.lookupEvents(lookupEventsRequest);
+        List<Map<String, ?>> events = lookupEventsResponse.getBody().events;
+        return events.stream().map(item -> {
+            Map<String,?> userIdentity = (Map)item.get("userIdentity");
+
+            return CloudEvent.builder().eventId((String) item.get("eventId"))
+                    .eventName((String) item.get("eventName")).eventRw((String) item.get("eventRW"))
+                    .eventTime(DateUtils.utcTimeStrToLocalDate("yyyy-MM-dd'T'HH:mm:ss'Z'", (String) item.get("eventTime")))
+                    .eventMessage((String) item.get("eventMessage")).eventSource((String) item.get("eventSource"))
+                    .acsRegion((String) item.get("acsRegion")).userAgent((String) item.get("userAgent"))
+                    .sourceIpAddress((String) item.get("sourceIpAddress")).serviceName((String) item.get("serviceName"))
+                    .resourceName((String) item.get("resourceName")).resourceType((String) item.get("resourceType"))
+                    .userName(userIdentity!=null?(String)userIdentity.get("userName"):"").build();
+
+        }).collect(Collectors.toList());
+    }
+
+    /*public List<CloudEvent> getAliyunCloudEvents(Map<String, String> accountMap, String startTime, String endTime,
+                                                 int pageNum, int maxResult) throws Exception {
+        startTime = DateUtils.localDateStrToUtcDateStr("yyyy-MM-dd HH:mm:ss", startTime).replace(" ", "T") + "Z";
+        endTime = DateUtils.localDateStrToUtcDateStr("yyyy-MM-dd HH:mm:ss", endTime).replace(" ", "T") + "Z";
         DefaultProfile profile = DefaultProfile.getProfile(accountMap.get("region"), accountMap.get("accessKey"), accountMap.get("secretKey"));
         IAcsClient client = new DefaultAcsClient(profile);
         LookupEventsRequest lookupEventsRequest = new LookupEventsRequest();
@@ -190,6 +226,6 @@ public class CloudEventService {
                     .sourceIpAddress((String) item.get("sourceIpAddress")).serviceName((String) item.get("serviceName")).build();
 
         }).collect(Collectors.toList());
-    }
+    }*/
 
 }

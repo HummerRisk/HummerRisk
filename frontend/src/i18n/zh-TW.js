@@ -1,6 +1,7 @@
 /* eslint-disable */
 export default {
   commons: {
+    sync: '同步',
     help_documentation: '幫助文檔',
     notification: '通知',
     api_help_documentation: 'API文檔',
