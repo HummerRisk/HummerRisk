@@ -1196,6 +1196,10 @@ export default {
     result_details_list: '源码检测结果详情列表',
     back_resource: '返回源码检测结果列表',
   },
+  sbom: {
+    project: '项目管理',
+    sbom_analyze: 'SBOM 分析',
+  },
   cost: {
     analyze: '费用分析',
     overview: '概览',
