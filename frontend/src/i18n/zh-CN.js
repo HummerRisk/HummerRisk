@@ -1200,6 +1200,7 @@ export default {
   sbom: {
     project: '项目管理',
     project_list: '项目列表',
+    project_version: '项目版本管理',
     project_version_list: '项目版本列表',
     sbom_analyze: 'SBOM 分析',
     sbom_create: '创建项目',
@@ -1212,6 +1213,10 @@ export default {
     desc: '项目描述',
     version_name: '项目版本名称',
     version_desc: '项目版本描述',
+    sbom_note: '注: 先创建项目信息，后创建项目版本信息。',
+    sbom_note2: '注: 创建完项目版本信息，即可绑定检测资源。',
+    sbom_scan: '执行SBOM项目版本检测',
+    sbom_version_setting: '项目版本检测配置',
   },
   cost: {
     analyze: '费用分析',

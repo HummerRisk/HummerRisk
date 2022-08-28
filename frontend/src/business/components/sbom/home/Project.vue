@@ -10,13 +10,18 @@
 
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
                 :row-class-name="tableRowClassName" @filter-change="filter">
-        <el-table-column type="index" min-width="5%"/>
+        <el-table-column type="index" min-width="3%"/>
         <el-table-column prop="name" :label="$t('sbom.name')" min-width="15%" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
-                <i class="iconfont icon-SBOM"></i>
+                <i class="iconfont icon-SBOM sbom-icon"></i>
                 <span slot="title">{{ $t(scope.row.name) }}</span>
               </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="description" :label="$t('sbom.desc')" min-width="20%" show-overflow-tooltip>
+          <template v-slot:default="scope">
+              <span slot="title">{{ $t(scope.row.description) }}</span>
           </template>
         </el-table-column>
         <el-table-column min-width="15%" :label="$t('account.create_time')" sortable
@@ -32,7 +37,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
-        <el-table-column min-width="17%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
@@ -40,6 +45,148 @@
       </el-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
+
+    <!--Create sbom-->
+    <el-drawer class="rtl" :title="$t('sbom.sbom_create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <el-form :model="addForm" label-position="right" label-width="150px" size="small" ref="addForm" :rules="rule">
+        <el-form-item :label="$t('sbom.name')" ref="name" prop="name">
+          <el-input v-model="addForm.name" autocomplete="off" :placeholder="$t('sbom.name')"/>
+        </el-form-item>
+        <el-form-item :label="$t('sbom.desc')" ref="name" prop="description">
+          <el-input v-model="addForm.description" autocomplete="off" :placeholder="$t('sbom.desc')"/>
+        </el-form-item>
+        <el-form-item>
+          <span style="color: red">{{ $t('sbom.sbom_note') }}</span>
+        </el-form-item>
+      </el-form>
+      <div style="margin: 10px;">
+        <dialog-footer
+          @cancel="createVisible = false"
+          @confirm="save()"/>
+      </div>
+    </el-drawer>
+    <!--Create sbom-->
+
+    <!--Update sbom-->
+    <el-drawer class="rtl" :title="$t('sbom.sbom_update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form" :rules="rule">
+        <el-form-item :label="$t('sbom.name')" ref="name" prop="name">
+          <el-input v-model="form.name" autocomplete="off" :placeholder="$t('sbom.name')"/>
+        </el-form-item>
+        <el-form-item :label="$t('sbom.desc')" ref="name" prop="description">
+          <el-input v-model="form.description" autocomplete="off" :placeholder="$t('sbom.desc')"/>
+        </el-form-item>
+        <el-form-item>
+          <span style="color: red">{{ $t('sbom.sbom_note') }}</span>
+        </el-form-item>
+      </el-form>
+      <div style="margin: 10px;">
+        <dialog-footer
+          @cancel="updateVisible = false"
+          @confirm="edit()"/>
+      </div>
+    </el-drawer>
+    <!--Update sbom-->
+
+    <!--Sbom version-->
+    <el-drawer class="rtl" :title="$t('sbom.project_version')" :visible.sync="versionVisible" size="90%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <el-card class="table-card">
+        <template v-slot:header>
+          <version-table-header :title="$t('sbom.project_version_list')" @search="searchVersion"
+                        @create="createVersion" :createTip="$t('sbom.version_create')" :show-create="true"/>
+        </template>
+
+        <el-table border :data="versionTableData" class="adjust-table table-content" @sort-change="sort"
+                  :row-class-name="tableRowClassName" @filter-change="filter">
+          <el-table-column type="index" min-width="3%"/>
+          <el-table-column prop="name" :label="$t('sbom.version_name')" min-width="15%" show-overflow-tooltip>
+            <template v-slot:default="scope">
+                <span>
+                  <i class="iconfont icon-lianmenglian sbom-icon-2"></i>
+                  <span slot="title">{{ $t(scope.row.name) }}</span>
+                </span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="description" :label="$t('sbom.version_desc')" min-width="20%" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <span slot="title">{{ $t(scope.row.description) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column min-width="15%" :label="$t('account.create_time')" sortable
+                           prop="createTime">
+            <template v-slot:default="scope">
+              <span>{{ scope.row.createTime | timestampFormatDate }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column min-width="15%" :label="$t('account.update_time')" sortable
+                           prop="updateTime">
+            <template v-slot:default="scope">
+              <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column min-width="20%" :label="$t('commons.operating')" fixed="right">
+            <template v-slot:default="scope">
+              <table-operators :buttons="versionButtons" :row="scope.row"/>
+            </template>
+          </el-table-column>
+        </el-table>
+        <table-pagination :change="searchVersion" :current-page.sync="versionPage" :page-size.sync="versionPageSize" :total="versionTotal"/>
+      </el-card>
+      <!--Add Sbom version-->
+      <div>
+        <el-drawer
+          size="80%"
+          :title="$t('sbom.version_create')"
+          :append-to-body="true"
+          :before-close="innerVersionClose"
+          :visible.sync="innerAddVersion">
+          <el-form :model="addVersionForm" label-position="right" label-width="150px" size="small" ref="addVersionForm" :rules="rule">
+            <el-form-item :label="$t('sbom.version_name')" ref="name" prop="name">
+              <el-input v-model="addVersionForm.name" autocomplete="off" :placeholder="$t('sbom.version_name')"/>
+            </el-form-item>
+            <el-form-item :label="$t('sbom.version_desc')" ref="name" prop="description">
+              <el-input v-model="addVersionForm.description" autocomplete="off" :placeholder="$t('sbom.version_desc')"/>
+            </el-form-item>
+            <el-form-item>
+              <span style="color: red">{{ $t('sbom.sbom_note2') }}</span>
+            </el-form-item>
+          </el-form>
+          <dialog-footer
+            @cancel="innerAddVersion = false"
+            @confirm="saveVersion()"/>
+        </el-drawer>
+      </div>
+      <!--Add Sbom version-->
+      <!--Edit Sbom version-->
+      <div>
+        <el-drawer
+          size="80%"
+          :title="$t('sbom.version_update')"
+          :append-to-body="true"
+          :before-close="innerVersionClose"
+          :visible.sync="innerEditVersion">
+          <el-form :model="editVersionForm" label-position="right" label-width="150px" size="small" ref="editVersionForm" :rules="rule">
+            <el-form-item :label="$t('sbom.version_name')" ref="name" prop="name">
+              <el-input v-model="editVersionForm.name" autocomplete="off" :placeholder="$t('sbom.version_name')"/>
+            </el-form-item>
+            <el-form-item :label="$t('sbom.version_desc')" ref="name" prop="description">
+              <el-input v-model="editVersionForm.description" autocomplete="off" :placeholder="$t('sbom.version_desc')"/>
+            </el-form-item>
+            <el-form-item>
+              <span style="color: red">{{ $t('sbom.sbom_note2') }}</span>
+            </el-form-item>
+          </el-form>
+          <dialog-footer
+            @cancel="innerEditVersion = false"
+            @confirm="editVersion()"/>
+        </el-drawer>
+      </div>
+      <!--Edit Sbom version-->
+    </el-drawer>
+    <!--Sbom version-->
 
   </main-container>
 </template>
@@ -54,6 +201,7 @@ import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import {SBOM_CONFIGS} from "../../common/components/search/search-components";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
+import VersionTableHeader from "../head/VersionTableHeader";
 
 /* eslint-disable */
 export default {
@@ -65,6 +213,7 @@ export default {
     TablePagination,
     TableOperator,
     DialogFooter,
+    VersionTableHeader,
   },
   data() {
     return {
@@ -76,16 +225,22 @@ export default {
       currentPage: 1,
       pageSize: 10,
       total: 0,
+      versionTableData: [],
+      versionPage: 1,
+      versionPageSize: 10,
+      versionTotal: 0,
       loading: false,
       createVisible: false,
       updateVisible: false,
-      innerDrawer: false,
-      innerDrawerProxy: false,
+      versionVisible: false,
+      innerAddVersion: false,
+      innerEditVersion: false,
       tmpList: [],
       item: {},
       form: {},
-      addAccountForm: [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ],
-      proxyForm: {},
+      addForm: {},
+      addVersionForm: {},
+      editVersionForm: {},
       script: '',
       direction: 'rtl',
       rule: {
@@ -98,11 +253,20 @@ export default {
             trigger: 'blur'
           }
         ],
+        description: [
+          {required: true, message: this.$t('commons.input_name'), trigger: 'blur'},
+          {min: 2, max: 100, message: this.$t('commons.input_limit', [2, 100]), trigger: 'blur'},
+          {
+            required: true,
+            message: this.$t("workspace.special_characters_are_not_supported"),
+            trigger: 'blur'
+          }
+        ],
       },
       buttons: [
         {
-          tip: this.$t('k8s.execute_scan'), icon: "el-icon-s-promotion", type: "success",
-          exec: this.handleScan
+          tip: this.$t('sbom.project_version'), icon: "el-icon-s-grid", type: "success",
+          exec: this.handleVersion
         }, {
           tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
           exec: this.handleEdit
@@ -111,6 +275,22 @@ export default {
           exec: this.handleDelete
         }
       ],
+      versionButtons: [
+        {
+          tip: this.$t('sbom.sbom_scan'), icon: "el-icon-s-promotion", type: "success",
+          exec: this.handleScan
+        }, {
+          tip: this.$t('sbom.sbom_version_setting'), icon: "el-icon-s-flag", type: "warning",
+          exec: this.handleSetting
+        }, {
+          tip: this.$t('sbom.version_update'), icon: "el-icon-edit", type: "primary",
+          exec: this.handleVersionEdit
+        }, {
+          tip: this.$t('sbom.version_delete'), icon: "el-icon-delete", type: "danger",
+          exec: this.handleDeleteVersion
+        }
+      ],
+      sbomId: '',
     }
   },
   watch: {
@@ -118,9 +298,12 @@ export default {
   },
   methods: {
     create() {
-      this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
+      this.addForm = {};
       this.createVisible = true;
-      this.activeProxy();
+    },
+    createVersion() {
+      this.addVersionForm = {};
+      this.innerAddVersion = true;
     },
     //查询列表
     search() {
@@ -133,14 +316,16 @@ export default {
     },
     handleEdit(tmp) {
       this.form = tmp;
-      if (!this.form.proxyId) {
-        this.form.proxyId = "";
-      }
       this.updateVisible = true;
+    },
+    handleVersionEdit(tmp) {
+      this.editVersionForm = tmp;
+      this.innerEditVersion = true;
     },
     handleClose() {
       this.createVisible =  false;
       this.updateVisible =  false;
+      this.versionVisible = false;
     },
     handleDelete(obj) {
       this.$alert(this.$t('commons.delete_confirm') + obj.name + " ？", '', {
@@ -155,8 +340,18 @@ export default {
         }
       });
     },
-    change(e) {
-      this.$forceUpdate();
+    handleDeleteVersion(obj) {
+      this.$alert(this.$t('commons.delete_confirm') + obj.name + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$get("/sbom/deleteSbomVersion/" + obj.id, () => {
+              this.$success(this.$t('commons.delete_success'));
+              this.search();
+            });
+          }
+        }
+      });
     },
     init() {
       this.search();
@@ -169,40 +364,11 @@ export default {
       _filter(filters, this.condition);
       this.init();
     },
-    filterStatus(value, row) {
-      return row.status === value;
-    },
-    //新增Git项目账号信息/选择插件查询Git项目账号信息
-    async changePluginForAdd (form){
-      let url = "/code/plugin";
-      this.result = await this.$get(url, response => {
-        let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
-        form.tmpList = fromJson.data;
-        for (let tmp of form.tmpList) {
-          if (tmp.defaultValue !== undefined) {
-            tmp.input = tmp.defaultValue;
-          }
-        }
-      });
-    },
-    //保存Git项目账号信息
-    saveAccount(addAccountForm, type){
-      for (let item of addAccountForm) {
-        if (!item.tmpList.length) {
-          this.$warning(this.$t('commons.no_plugin_param'));
-          return;
-        }
-        let data = {}, key = {};
-        for (let tmp of item.tmpList) {
-          if(tmp.input) {
-            key[tmp.name] = tmp.input.trim();
-          }
-        }
-        data["name"] = item.name;
-        data["pluginIcon"] = item.pluginIcon;
-        if (item.isProxy) data["proxyId"] = item.proxyId;
-        if (type === 'add') {
-          this.result = this.$post("/code/addCode", data,response => {
+    //保存项目信息
+    save(){
+      this.$refs['addForm'].validate(valid => {
+        if (valid) {
+          this.result = this.$post("/sbom/addSbom", this.addForm, response => {
             if (response.success) {
               this.$success(this.$t('commons.create_success'));
               this.search();
@@ -212,49 +378,54 @@ export default {
             }
           });
         }
-      }
+      });
     },
-    //编辑Git项目账号信息
-    editAccount(item, type){
-      if (!this.tmpList.length) {
-        this.$error(this.$t('account.i18n_account_cloud_plugin_param'));
-        return;
-      }
-      this.$refs['accountForm'].validate(valid => {
+    //编辑项目信息
+    edit(){
+      this.$refs['form'].validate(valid => {
         if (valid) {
-          let data = {}, key = {};
-          for (let tmp of this.tmpList) {
-            key[tmp.name] = tmp.input;
-          }
-          data["name"] = item.name;
-          data["pluginId"] = item.pluginId;
-          if (item.isProxy) data["proxyId"] = item.proxyId;
-
-          if (type === 'add') {
-            this.result = this.$post("/code/addCode", data,response => {
-              if (response.success) {
-                this.$success(this.$t('commons.create_success'));
-                this.search();
-                this.handleClose();
-              } else {
-                this.$error(response.message);
-              }
-            });
-          } else {
-            data["id"] = item.id;
-            this.result = this.$post("/code/updateCode", data,response => {
-              if (response.success) {
-                this.$success(this.$t('commons.update_success'));
-                this.handleClose();
-                this.search();
-              } else {
-                this.$error(response.message);
-              }
-            });
-          }
-        } else {
-          this.$error(this.$t('rule.full_param'));
-          return false;
+          this.result = this.$post("/sbom/updateSbom", this.form, response => {
+            if (response.success) {
+              this.$success(this.$t('commons.update_success'));
+              this.search();
+              this.handleClose();
+            } else {
+              this.$error(response.message);
+            }
+          });
+        }
+      });
+    },
+    //保存项目版本信息
+    saveVersion(){
+      this.$refs['addVersionForm'].validate(valid => {
+        if (valid) {
+          this.addVersionForm.sbomId = this.sbomId;
+          this.result = this.$post("/sbom/addSbomVersion", this.addVersionForm, response => {
+            if (response.success) {
+              this.$success(this.$t('commons.create_success'));
+              this.searchVersion();
+              this.innerVersionClose();
+            } else {
+              this.$error(response.message);
+            }
+          });
+        }
+      });
+    },
+    //编辑项目版本信息
+    editVersion(){
+      this.$refs['editVersionForm'].validate(valid => {
+        if (valid) {
+          this.result = this.$post("/sbom/updateSbomVersion", this.editVersionForm, response => {
+            if (response.success) {
+              this.$success(this.$t('commons.update_success'));
+              this.searchVersion();
+              this.innerVersionClose();
+            } else {
+              this.$error(response.message);
+            }
+          });
         }
       });
     },
@@ -267,17 +438,19 @@ export default {
         return '';
       }
     },
-    addAccount (addAccountForm) {
-      let newParam = { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] };
-      addAccountForm.push(newParam);
+    searchVersion() {
+      let url = "/sbom/sbomVersionList/" + this.versionPage + "/" + this.versionPageSize;
+      let params = {sbomId: this.sbomId};
+      this.result = this.$post(url, params, response => {
+        let data = response.data;
+        this.versionTotal = data.itemCount;
+        this.versionTableData = data.listObject;
+      });
     },
-    deleteAccount (parameter, p) {
-      for (let i in parameter) {
-        if (parameter[i].name === p.name) {
-          parameter.splice(i, 1);
-          return;
-        }
-      }
+    handleVersion(item) {
+      this.sbomId = item.id;
+      this.searchVersion();
+      this.versionVisible = true;
     },
     handleScan(item) {
       this.$alert(this.$t('image.one_scan') + item.name + " ？", '', {
@@ -300,6 +473,13 @@ export default {
           }
         }
       });
+    },
+    innerVersionClose() {
+      this.innerAddVersion = false;
+      this.innerEditVersion = false;
+    },
+    handleSetting() {
+
     },
   },
   activated() {
@@ -347,6 +527,16 @@ export default {
 /deep/ :focus{outline:0;}
 .el-box-card {
   margin: 10px 0;
+}
+.sbom-icon{
+  color: royalblue;
+  font-size: 30px;
+  vertical-align: middle;
+}
+.sbom-icon-2{
+  color: red;
+  font-size: 25px;
+  vertical-align: middle;
 }
 </style>
 
