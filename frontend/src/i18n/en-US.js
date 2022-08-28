@@ -1211,6 +1211,7 @@ export default {
   },
   log: {
     audit: 'Operation audit',
+    event_sync: 'Event synchronization',
     event_query: 'Event query',
     event_analysis: 'Event analysis',
   },

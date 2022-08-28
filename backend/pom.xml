@@ -451,12 +451,45 @@
             <groupId>com.aliyun</groupId>
             <artifactId>actiontrail20171204</artifactId>
             <version>1.0.1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>org.jacoco.agent</artifactId>
+                    <groupId>org.jacoco</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>openapiutil</artifactId>
+                    <groupId>com.aliyun</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>tea</artifactId>
+                    <groupId>com.aliyun</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>tea-util</artifactId>
+                    <groupId>com.aliyun</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
- <!--       <dependency>
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>org.jacoco.agent</artifactId>
+            <version>0.8.4</version>
+        </dependency>
+        <dependency>
             <groupId>com.aliyun</groupId>
-            <artifactId>aliyun-java-sdk-actiontrail</artifactId>
+            <artifactId>openapiutil</artifactId>
+            <version>0.0.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>tea</artifactId>
             <version>1.2.0</version>
-        </dependency>-->
+        </dependency>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>tea-util</artifactId>
+            <version>0.2.9</version>
+        </dependency>
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>aliyun-java-sdk-core</artifactId>
@@ -772,6 +805,10 @@
                 <exclusion>
                     <artifactId>gax</artifactId>
                     <groupId>com.google.api</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>google-cloud-core</artifactId>
+                    <groupId>com.google.cloud</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

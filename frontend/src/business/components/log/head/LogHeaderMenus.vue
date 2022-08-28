@@ -5,7 +5,7 @@
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
           <el-menu-item :index="'/log/event'">
-            {{ $t("log.event_query") }}
+            {{ $t("log.event_sync") }}
           </el-menu-item>
 
           <el-menu-item :index="'/log/audit'">

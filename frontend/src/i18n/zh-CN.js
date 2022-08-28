@@ -1211,6 +1211,7 @@ export default {
   },
   log: {
     audit: '操作审计',
+    event_sync: '事件同步',
     event_query: '事件查询',
     event_analysis: '事件分析',
   },
