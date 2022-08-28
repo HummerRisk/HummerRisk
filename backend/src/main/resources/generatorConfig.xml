@@ -156,5 +156,7 @@
 <!--        <table tableName="code_result_log" domainObjectName="CodeResultLog"/>-->
 <!--        <table tableName="history_code_result" domainObjectName="HistoryCodeResult"/>-->
 <!--        <table tableName="history_code_result_log" domainObjectName="HistoryCodeResultLog"/>-->
+<!--        <table tableName="sbom" domainObjectName="Sbom"/>-->
+<!--        <table tableName="sbom_version" domainObjectName="SbomVersion"/>-->
     </context>
 </generatorConfiguration>
