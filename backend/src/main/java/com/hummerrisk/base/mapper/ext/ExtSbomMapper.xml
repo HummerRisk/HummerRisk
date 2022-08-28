@@ -67,12 +67,6 @@
                 <property name="object" value="${condition}.createTime"/>
             </include>
         </if>
-        <if test="${condition}.status != null">
-            and t.status
-            <include refid="condition">
-                <property name="object" value="${condition}.status"/>
-            </include>
-        </if>
         <if test="${condition}.creator != null">
             and user.id
             <include refid="condition">
@@ -101,8 +95,27 @@
             <if test="request.name != null and request.name != ''">
                 and t.name like CONCAT('%', #{request.name},'%')
             </if>
-            <if test="request.status != null and request.status != ''">
-                and t.status = #{request.status}
+        </where>
+        order by t.update_time desc
+    </select>
+
+    <select id="sbomVersionList" resultType="com.hummerrisk.base.domain.SbomVersion">
+        select
+        t.*
+        from sbom_version as t
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and t.name like CONCAT('%', #{request.name},'%')
             </if>
         </where>
         order by t.update_time desc
