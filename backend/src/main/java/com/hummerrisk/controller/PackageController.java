@@ -39,6 +39,21 @@ PackageController {
         return PageUtils.setPageInfo(page, packageService.packageList(request));
     }
 
+    @I18n
+    @ApiOperation(value = "所有已绑定项目的软件包")
+    @GetMapping("allBindList/{sbomVersionId}")
+    public List<Package> allBindList(@PathVariable String sbomVersionId) {
+        return packageService.allBindList(sbomVersionId);
+    }
+
+    @I18n
+    @ApiOperation(value = "所有未绑定项目的软件包")
+    @GetMapping("unBindList")
+    public List<Package> unBindList() {
+        return packageService.unBindList();
+    }
+
+
     @ApiOperation(value = "添加软件包")
     @PostMapping("addPackage")
     public Package addPackage(@RequestBody Package p) throws Exception {

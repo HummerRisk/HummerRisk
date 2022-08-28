@@ -185,6 +185,38 @@
         </el-drawer>
       </div>
       <!--Edit Sbom version-->
+      <!--Setting Sbom version-->
+      <div>
+        <el-drawer
+          size="80%"
+          :title="$t('sbom.sbom_version_setting')"
+          :append-to-body="true"
+          :before-close="innerVersionClose"
+          :visible.sync="innerSettingVersion">
+          <div style="text-align: center">
+            <p style="text-align: center; margin: 0 0 20px;color: red;">{{ $t('code.code_scan') }}</p>
+            <el-transfer :titles="[$t('sbom.source_code'), $t('sbom.target_code')]" :filter-method="filterMethod" style="text-align: left; display: inline-block"
+                         :filter-placeholder="$t('commons.search_by_name')" filterable v-model="codeValue" :data="codeData">
+            </el-transfer>
+          </div>
+          <div style="text-align: center">
+            <p style="text-align: center; margin: 0 0 20px;color: #893fdc;">{{ $t('image.image_scan') }}</p>
+            <el-transfer :titles="[$t('sbom.source_image'), $t('sbom.target_image')]" :filter-method="filterMethod" style="text-align: left; display: inline-block"
+                         :filter-placeholder="$t('commons.search_by_name')" filterable v-model="imageValue" :data="imageData">
+            </el-transfer>
+          </div>
+          <div style="text-align: center">
+            <p style="text-align: center; margin: 0 0 20px;color: royalblue;">{{ $t('package.package_scan') }}</p>
+            <el-transfer :titles="[$t('sbom.source_package'), $t('sbom.target_package')]" :filter-method="filterMethod" style="text-align: left; display: inline-block"
+                         :filter-placeholder="$t('commons.search_by_name')" filterable v-model="packageValue" :data="packageData">
+            </el-transfer>
+          </div>
+          <dialog-footer
+          @cancel="innerSettingVersion = false"
+          @confirm="settingVersion()"/>
+        </el-drawer>
+      </div>
+      <!--Setting Sbom version-->
     </el-drawer>
     <!--Sbom version-->
 
@@ -235,6 +267,7 @@ export default {
       versionVisible: false,
       innerAddVersion: false,
       innerEditVersion: false,
+      innerSettingVersion: false,
       tmpList: [],
       item: {},
       form: {},
@@ -291,6 +324,13 @@ export default {
         }
       ],
       sbomId: '',
+      sbomVersionId: '',
+      codeValue: [],
+      codeData: [],
+      imageValue: [],
+      imageData: [],
+      packageValue: [],
+      packageData: [],
     }
   },
   watch: {
@@ -461,7 +501,7 @@ export default {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start'));
                 this.$router.push({
-                  path: '/sbom/result',
+                  path: '/sbom/sbom',
                   query: {
                     date:new Date().getTime()
                   },
@@ -477,9 +517,73 @@ export default {
     innerVersionClose() {
       this.innerAddVersion = false;
       this.innerEditVersion = false;
+      this.innerSettingVersion = false;
     },
-    handleSetting() {
-
+    handleSetting(item) {
+      this.sbomVersionId = item.id;
+      this.$get("/code/unBindList",response => {
+        this.codeData = [];
+        for(let data of response.data) {
+          this.codeData.push({
+            key: data.id,
+            label: data.name
+          });
+        }
+      });
+      this.$get("/image/unBindList",response => {
+        this.imageData = [];
+        for(let data of response.data) {
+          this.imageData.push({
+            key: data.id,
+            label: data.name
+          });
+        }
+      });
+      this.$get("/package/unBindList",response => {
+        this.packageData = [];
+        for(let data of response.data) {
+          this.packageData.push({
+            key: data.id,
+            label: data.name
+          });
+        }
+      });
+      this.$get("/code/allBindList/" + item.id,response => {
+        this.codeValue = [];
+        for(let data of response.data) {
+          this.codeValue.push(data.id);
+        }
+      });
+      this.$get("/image/allBindList/" + item.id,response => {
+        this.imageValue = [];
+        for(let data of response.data) {
+          this.imageValue.push(data.id);
+        }
+      });
+      this.$get("/package/allBindList/" + item.id,response => {
+        this.packageValue = [];
+        for(let data of response.data) {
+          this.packageValue.push(data.id);
+        }
+      });
+      this.innerSettingVersion = true;
+    },
+    settingVersion() {
+      let params = {
+        codeValue: this.codeValue,
+        imageValue: this.imageValue,
+        packageValue: this.packageValue,
+        sbomId: this.sbomId,
+        sbomVersionId: this.sbomVersionId,
+      };
+      this.$post("/sbom/settingVersion", params,response => {
+        this.$success(this.$t('organization.integration.successful_operation'));
+        this.innerSettingVersion = false;
+        this.searchVersion();
+      });
+    },
+    filterMethod(query, item) {
+      return item.label.indexOf(query) > -1;
     },
   },
   activated() {

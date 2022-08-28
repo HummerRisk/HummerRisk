@@ -69,6 +69,16 @@ public class CodeService {
         return extCodeMapper.codeList(request);
     }
 
+    public List<Code> allBindList(String sbomVersionId) {
+        CodeExample example = new CodeExample();
+        example.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
+        return codeMapper.selectByExample(example);
+    }
+
+    public List<Code> unBindList() {
+        return codeMapper.selectByExample(null);
+    }
+
     public Code addCode(Code code) throws Exception {
         String id = UUIDUtil.newUUID();
         code.setId(id);

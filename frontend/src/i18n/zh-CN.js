@@ -1217,6 +1217,12 @@ export default {
     sbom_note2: '注: 创建完项目版本信息，即可绑定检测资源。',
     sbom_scan: '执行SBOM项目版本检测',
     sbom_version_setting: '项目版本检测配置',
+    source_code: '未绑定源码',
+    target_code: '已绑定源码',
+    source_image: '未绑定镜像',
+    target_image: '已绑定镜像',
+    source_package: '未绑定软件包',
+    target_package: '已绑定软件包',
   },
   cost: {
     analyze: '费用分析',

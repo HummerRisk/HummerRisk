@@ -42,6 +42,20 @@ public class CodeController {
     }
 
     @I18n
+    @ApiOperation(value = "所有已绑定项目的源码")
+    @GetMapping("allBindList/{sbomVersionId}")
+    public List<Code> allBindList(@PathVariable String sbomVersionId) {
+        return codeService.allBindList(sbomVersionId);
+    }
+
+    @I18n
+    @ApiOperation(value = "所有未绑定项目的源码")
+    @GetMapping("unBindList")
+    public List<Code> unBindList() {
+        return codeService.unBindList();
+    }
+
+    @I18n
     @ApiOperation(value = "添加源码项目")
     @PostMapping(value = "addCode")
     public Code addCode(@RequestBody Code request) throws Exception {

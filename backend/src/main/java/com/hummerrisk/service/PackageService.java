@@ -66,6 +66,16 @@ public class PackageService {
         return extPackageMapper.packageList(request);
     }
 
+    public List<Package> allBindList(String sbomVersionId) {
+        PackageExample example = new PackageExample();
+        example.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
+        return packageMapper.selectByExample(example);
+    }
+
+    public List<Package> unBindList() {
+        return packageMapper.selectByExample(null);
+    }
+
     public Package addPackage(Package p) throws Exception {
         String id = UUIDUtil.newUUID();
         p.setId(id);

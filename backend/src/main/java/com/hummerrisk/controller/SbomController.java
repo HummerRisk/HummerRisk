@@ -11,6 +11,7 @@ import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.code.CodeRequest;
 import com.hummerrisk.controller.request.sbom.SbomRequest;
 import com.hummerrisk.controller.request.sbom.SbomVersionRequest;
+import com.hummerrisk.controller.request.sbom.SettingVersionRequest;
 import com.hummerrisk.dto.CodeDTO;
 import com.hummerrisk.dto.SbomDTO;
 import com.hummerrisk.service.SbomService;
@@ -91,6 +92,13 @@ public class SbomController {
     @GetMapping("deleteSbomVersion/{id}")
     public void deleteSbomVersion(@PathVariable String id) throws Exception {
         sbomService.deleteSbomVersion(id);
+    }
+
+    @I18n
+    @ApiOperation(value = "项目版本检测配置")
+    @PostMapping(value = "settingVersion")
+    public void settingVersion(@RequestBody SettingVersionRequest request) throws Exception {
+        sbomService.settingVersion(request);
     }
 
 }

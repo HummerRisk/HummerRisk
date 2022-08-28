@@ -129,6 +129,16 @@ public class ImageService {
         return extImageMapper.imageList(request);
     }
 
+    public List<Image> allBindList(String sbomVersionId) {
+        ImageExample example = new ImageExample();
+        example.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
+        return imageMapper.selectByExample(example);
+    }
+
+    public List<Image> unBindList() {
+        return imageMapper.selectByExample(null);
+    }
+
     public Image addImage(MultipartFile iconFile, MultipartFile tarFile, Image request) throws Exception {
 
         try {

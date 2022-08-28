@@ -18,6 +18,7 @@ import com.hummerrisk.controller.request.code.CodeResultRequest;
 import com.hummerrisk.controller.request.code.CodeRuleRequest;
 import com.hummerrisk.controller.request.sbom.SbomRequest;
 import com.hummerrisk.controller.request.sbom.SbomVersionRequest;
+import com.hummerrisk.controller.request.sbom.SettingVersionRequest;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.proxy.code.CodeCredential;
@@ -26,6 +27,7 @@ import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -148,6 +150,56 @@ public class SbomService {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    public void settingVersion(SettingVersionRequest request) throws Exception {
+        String sbomId = request.getSbomId();
+        String sbomVersionId = request.getSbomVersionId();
+        //源码
+        CodeExample codeExample = new CodeExample();
+        codeExample.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
+        List<Code> codes = codeMapper.selectByExample(codeExample);
+        for(Code code : codes) {
+            code.setSbomId("");
+            code.setSbomVersionId("");
+            codeMapper.updateByPrimaryKeySelective(code);
+        }
+        for(String id : request.getCodeValue()) {
+            Code code = codeMapper.selectByPrimaryKey(id);
+            code.setSbomId(sbomId);
+            code.setSbomVersionId(sbomVersionId);
+            codeMapper.updateByPrimaryKeySelective(code);
+        }
+        //镜像
+        ImageExample imageExample = new ImageExample();
+        imageExample.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
+        List<Image> images = imageMapper.selectByExample(imageExample);
+        for(Image image : images) {
+            image.setSbomId("");
+            image.setSbomVersionId("");
+            imageMapper.updateByPrimaryKeySelective(image);
+        }
+        for(String id : request.getImageValue()) {
+            Image image = imageMapper.selectByPrimaryKey(id);
+            image.setSbomId(sbomId);
+            image.setSbomVersionId(sbomVersionId);
+            imageMapper.updateByPrimaryKeySelective(image);
+        }
+        //软件包
+        PackageExample packageExample = new PackageExample();
+        packageExample.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
+        List<Package> packages = packageMapper.selectByExample(packageExample);
+        for(Package pg : packages) {
+            pg.setSbomId("");
+            pg.setSbomVersionId("");
+            packageMapper.updateByPrimaryKeySelective(pg);
+        }
+        for(String id : request.getPackageValue()) {
+            Package pg = packageMapper.selectByPrimaryKey(id);
+            pg.setSbomId(sbomId);
+            pg.setSbomVersionId(sbomVersionId);
+            packageMapper.updateByPrimaryKeySelective(pg);
+        }
     }
 
 }

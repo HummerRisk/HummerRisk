@@ -75,6 +75,20 @@ public class ImageController {
     }
 
     @I18n
+    @ApiOperation(value = "所有已绑定项目的镜像")
+    @GetMapping("allBindList/{sbomVersionId}")
+    public List<Image> allBindList(@PathVariable String sbomVersionId) {
+        return imageService.allBindList(sbomVersionId);
+    }
+
+    @I18n
+    @ApiOperation(value = "所有未绑定项目的镜像")
+    @GetMapping("unBindList")
+    public List<Image> unBindList() {
+        return imageService.unBindList();
+    }
+
+    @I18n
     @ApiOperation(value = "添加镜像")
     @PostMapping(value = "addImage", consumes = {"multipart/form-data"})
     public Image addImage(@RequestPart(value = "iconFile", required = false) MultipartFile iconFile,
