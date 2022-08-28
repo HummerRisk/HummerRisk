@@ -189,10 +189,13 @@
             t.scan_type as scan_type,
             t1.regions
         FROM rule t
+        <if test="accountId != null">
+        left join cloud_account account on account.plugin_id = t.plugin_id
+        </if>
             LEFT JOIN rule_account_parameter t1 ON t.id = t1.rule_id
         <where>
             <if test="accountId != null">
-                AND t1.account_id = #{accountId}
+                AND account.id = #{accountId}
             </if>
             <if test="pluginId != null">
                 AND t.plugin_id = #{pluginId}
