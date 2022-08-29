@@ -1,12 +1,12 @@
 <template>
   <div @click="validate(row)">
-    <el-tag size="mini" type="warning" v-if="row.status === 'DELETE'">
+    <el-tag size="mini" type="warning" v-if="row.operatorStatus === 'DELETE'">
     {{ $t('account.DELETE') }}
     </el-tag>
-    <el-tag size="mini" type="success" v-else-if="row.status === 'VALID'">
+    <el-tag size="mini" type="success" v-else-if="row.operatorStatus === 'VALID'">
       {{ $t('account.VALID') }}
     </el-tag>
-    <el-tag size="mini" type="danger" v-else-if="row.status === 'INVALID'">
+    <el-tag size="mini" type="danger" v-else-if="row.operatorStatus === 'INVALID'">
       {{ $t('account.INVALID') }}
     </el-tag>
   </div>
@@ -15,7 +15,7 @@
 <script>
   /* eslint-disable */
   export default {
-    name: "K8sStatus",
+    name: "K8sOperatorStatus",
     props: {
       row: Object
     },
@@ -25,7 +25,7 @@
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.$post("/cloud/native/validate/" + row.id, {}, response => {
+              this.$post("/cloud/native/operatorStatusValidate/" + row.id, {}, response => {
                 if (response.data) {
                   this.$success(this.$t('account.success'));
                 } else {

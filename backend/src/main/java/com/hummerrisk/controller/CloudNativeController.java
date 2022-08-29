@@ -69,6 +69,12 @@ public class CloudNativeController {
         return cloudNativeService.validate(id);
     }
 
+    @ApiOperation(value = "校验云原生Operator状态")
+    @PostMapping("operatorStatusValidate/{id}")
+    public Boolean operatorStatusValidate(@PathVariable String id) throws Exception {
+        return cloudNativeService.operatorStatusValidate(id);
+    }
+
     @I18n
     @ApiOperation(value = "添加云原生账号")
     @PostMapping("add")

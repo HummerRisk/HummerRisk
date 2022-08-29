@@ -193,24 +193,26 @@
           :append-to-body="true"
           :before-close="innerVersionClose"
           :visible.sync="innerSettingVersion">
-          <div style="text-align: center">
-            <p style="text-align: center; margin: 0 0 20px;color: red;">{{ $t('code.code_scan') }}</p>
-            <el-transfer :titles="[$t('sbom.source_code'), $t('sbom.target_code')]" :filter-method="filterMethod" style="text-align: left; display: inline-block"
-                         :filter-placeholder="$t('commons.search_by_name')" filterable v-model="codeValue" :data="codeData">
-            </el-transfer>
-          </div>
-          <div style="text-align: center">
-            <p style="text-align: center; margin: 0 0 20px;color: #893fdc;">{{ $t('image.image_scan') }}</p>
-            <el-transfer :titles="[$t('sbom.source_image'), $t('sbom.target_image')]" :filter-method="filterMethod" style="text-align: left; display: inline-block"
-                         :filter-placeholder="$t('commons.search_by_name')" filterable v-model="imageValue" :data="imageData">
-            </el-transfer>
-          </div>
-          <div style="text-align: center">
-            <p style="text-align: center; margin: 0 0 20px;color: royalblue;">{{ $t('package.package_scan') }}</p>
-            <el-transfer :titles="[$t('sbom.source_package'), $t('sbom.target_package')]" :filter-method="filterMethod" style="text-align: left; display: inline-block"
-                         :filter-placeholder="$t('commons.search_by_name')" filterable v-model="packageValue" :data="packageData">
-            </el-transfer>
-          </div>
+          <el-card class="table-card edit_dev" style="padding: 25px;margin: 25px;">
+            <div style="text-align: center; margin: 25px;">
+              <p style="text-align: center; padding: 10px;margin: 25px;color: red;background-color: aliceblue;">{{ $t('code.code_scan') }}</p>
+              <el-transfer :titles="[$t('sbom.source_code'), $t('sbom.target_code')]" :filter-method="filterMethod" style="text-align: left; display: inline-block"
+                           :filter-placeholder="$t('commons.search_by_name')" filterable v-model="codeValue" :data="codeData">
+              </el-transfer>
+            </div>
+            <div style="text-align: center; margin: 25px;">
+              <p style="text-align: center; padding: 10px;margin: 25px;color: #893fdc;background-color: aliceblue;">{{ $t('image.image_scan') }}</p>
+              <el-transfer :titles="[$t('sbom.source_image'), $t('sbom.target_image')]" :filter-method="filterMethod" style="text-align: left; display: inline-block"
+                           :filter-placeholder="$t('commons.search_by_name')" filterable v-model="imageValue" :data="imageData">
+              </el-transfer>
+            </div>
+            <div style="text-align: center; margin: 25px;">
+              <p style="text-align: center; padding: 10px;margin: 25px;color: royalblue;background-color: aliceblue;">{{ $t('package.package_scan') }}</p>
+              <el-transfer :titles="[$t('sbom.source_package'), $t('sbom.target_package')]" :filter-method="filterMethod" style="text-align: left; display: inline-block"
+                           :filter-placeholder="$t('commons.search_by_name')" filterable v-model="packageValue" :data="packageData">
+              </el-transfer>
+            </div>
+          </el-card>
           <dialog-footer
           @cancel="innerSettingVersion = false"
           @confirm="settingVersion()"/>
@@ -641,6 +643,9 @@ export default {
   color: red;
   font-size: 25px;
   vertical-align: middle;
+}
+.edit_dev >>> .el-transfer-panel {
+  width:350px;
 }
 </style>
 

@@ -33,6 +33,14 @@
             <k8s-status :row="row"/>
           </template>
         </el-table-column>
+        <el-table-column prop="operatorStatus" min-width="10%" :label="$t('k8s.operator_status')"
+                         column-key="status"
+                         :filters="statusFilters"
+                         :filter-method="filterStatus">
+          <template v-slot:default="{row}">
+            <k8s-operator-status :row="row"/>
+          </template>
+        </el-table-column>
         <el-table-column min-width="15%" :label="$t('account.create_time')" sortable
                          prop="createTime">
           <template v-slot:default="scope">
@@ -103,7 +111,7 @@
         </el-form>
         <el-divider><i class="el-icon-first-aid-kit"> {{ (index + 1) }}</i></el-divider>
         <div style="margin: 10px;">
-          <el-popover placement="right-end" title="Example" width="800" trigger="click">
+          <el-popover placement="right-end" title="Notice" width="800" trigger="click">
             <hr-code-edit :read-only="true" width="800px" height="300px" :data.sync="content" :modes="modes" :mode="'html'"/>
             <el-button icon="el-icon-warning" plain size="mini" slot="reference" style="color: red">
               <span>{{ $t('k8s.k8s_note') }}</span>
@@ -147,7 +155,7 @@
         </div>
       </el-form>
       <div style="margin: 10px;">
-        <el-popover placement="right-end" title="Example" width="800" trigger="click">
+        <el-popover placement="right-end" title="Notice" width="800" trigger="click">
           <hr-code-edit :read-only="true" width="800px" height="300px" :data.sync="content" :modes="modes" :mode="'html'"/>
           <el-button icon="el-icon-warning" plain size="mini" slot="reference" style="color: red">
             <span>{{ $t('k8s.k8s_note') }}</span>
@@ -170,6 +178,7 @@ import TableOperator from "../../common/components/TableOperator";
 import Container from "../../common/components/Container";
 import MainContainer from "../../common/components/MainContainer";
 import K8sStatus from "./K8sStatus";
+import K8sOperatorStatus from "./K8sOperatorStatus";
 import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import {K8S_CONFIGS} from "../../common/components/search/search-components";
@@ -191,7 +200,8 @@ export default {
     DialogFooter,
     ProxyDialogFooter,
     ProxyDialogCreateFooter,
-    HrCodeEdit
+    HrCodeEdit,
+    K8sOperatorStatus,
   },
   provide() {
     return {

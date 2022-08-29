@@ -9,6 +9,7 @@ import com.hummerrisk.base.mapper.ProxyMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeSourceMapper;
 import com.hummerrisk.commons.constants.CloudAccountConstants;
+import com.hummerrisk.commons.constants.CloudNativeConstants;
 import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
@@ -30,10 +31,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author harris
@@ -97,6 +95,41 @@ public class CloudNativeService {
         return valid;
     }
 
+    public boolean operatorStatusValidate(String id) throws Exception {
+        CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
+        boolean valid = validateOperatorStatus(cloudNative);
+        if (valid) {
+            cloudNative.setOperatorStatus(CloudAccountConstants.Status.VALID.name());
+        } else {
+            cloudNative.setOperatorStatus(CloudAccountConstants.Status.INVALID.name());
+        }
+        cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
+        return valid;
+    }
+
+    private boolean validateOperatorStatus(CloudNative cloudNative) {
+        try {
+            //检验
+            K8sRequest k8sRequest = new K8sRequest();
+            k8sRequest.setCredential(cloudNative.getCredential());
+            String token = "Bearer " + k8sRequest.getToken();
+            String url = k8sRequest.getUrl();
+            if (url.endsWith("/")) {
+                url = url + CloudNativeConstants.URL6;
+            } else {
+                url = url + CloudNativeConstants.URL5;
+            }
+            Map<String, String> param = new HashMap<>();
+            param.put("Accept", CloudNativeConstants.Accept);
+            param.put("Authorization", token);
+            boolean valid = HttpClientUtil.operatorStatus(url, param);
+            return valid;
+        } catch (Exception e) {
+            LogUtil.error(String.format("HRException in verifying cloud native, cloud native Operator Status: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()), e);
+            return false;
+        }
+    }
+
     private boolean validateAccount(CloudNative cloudNative) {
         try {
             Proxy proxy = new Proxy();
@@ -145,6 +178,13 @@ public class CloudNativeService {
                 } else {
                     account.setStatus(CloudAccountConstants.Status.INVALID.name());
                 }
+                //检验operator
+                boolean operatorStatusValidate = validateOperatorStatus(account);
+                if (operatorStatusValidate) {
+                    account.setOperatorStatus(CloudAccountConstants.Status.VALID.name());
+                } else {
+                    account.setOperatorStatus(CloudAccountConstants.Status.INVALID.name());
+                }
                 cloudNativeMapper.insertSelective(account);
                 addCloudNativeSource(account);
                 OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_create_cloud_native");
@@ -192,6 +232,13 @@ public class CloudNativeService {
                     account.setStatus(CloudAccountConstants.Status.VALID.name());
                 } else {
                     account.setStatus(CloudAccountConstants.Status.INVALID.name());
+                }
+                //检验operator
+                boolean operatorStatusValidate = validateOperatorStatus(account);
+                if (operatorStatusValidate) {
+                    account.setOperatorStatus(CloudAccountConstants.Status.VALID.name());
+                } else {
+                    account.setOperatorStatus(CloudAccountConstants.Status.INVALID.name());
                 }
                 cloudNativeMapper.updateByPrimaryKeySelective(account);
                 account = cloudNativeMapper.selectByPrimaryKey(account.getId());
