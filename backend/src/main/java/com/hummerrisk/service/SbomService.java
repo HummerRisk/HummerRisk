@@ -27,6 +27,7 @@ import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
@@ -58,6 +59,12 @@ public class SbomService {
     private ImageService imageService;
     @Resource
     private PackageService packageService;
+    @Resource
+    private HistoryCodeResultMapper historyCodeResultMapper;
+    @Resource
+    private HistoryImageTaskMapper historyImageTaskMapper;
+    @Resource
+    private HistoryPackageTaskMapper historyPackageTaskMapper;
 
 
     public List<SbomDTO> sbomList(SbomRequest request) {
@@ -92,6 +99,7 @@ public class SbomService {
     public List<SbomVersion> sbomVersionList(SbomVersionRequest request) {
         SbomVersionExample example = new SbomVersionExample();
         example.createCriteria().andSbomIdEqualTo(request.getSbomId());
+        example.setOrderByClause("update_time desc");
         return sbomVersionMapper.selectByExample(example);
     }
 
@@ -200,6 +208,28 @@ public class SbomService {
             pg.setSbomVersionId(sbomVersionId);
             packageMapper.updateByPrimaryKeySelective(pg);
         }
+    }
+
+    public List<ApplicationDTO> applications(SbomRequest request) throws Exception {
+        return extSbomMapper.applications(request);
+    }
+
+    public List<HistoryCodeResult> historyCodeResult(String sbomVersionId) {
+        HistoryCodeResultExample example = new HistoryCodeResultExample();
+        example.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
+        return historyCodeResultMapper.selectByExample(example);
+    }
+
+    public List<HistoryImageTask> historyImageTask(String sbomVersionId) {
+        HistoryImageTaskExample example = new HistoryImageTaskExample();
+        example.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
+        return historyImageTaskMapper.selectByExample(example);
+    }
+
+    public List<HistoryPackageTask> historyPackageTask(String sbomVersionId) {
+        HistoryPackageTaskExample example = new HistoryPackageTaskExample();
+        example.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
+        return historyPackageTaskMapper.selectByExample(example);
     }
 
 }

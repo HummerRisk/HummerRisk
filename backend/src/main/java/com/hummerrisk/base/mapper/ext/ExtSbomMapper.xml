@@ -121,4 +121,31 @@
         order by t.update_time desc
     </select>
 
+    <resultMap id="ApplicationsMap" type="com.hummerrisk.dto.ApplicationDTO"
+               extends="com.hummerrisk.base.mapper.SbomMapper.BaseResultMap">
+        <collection property="sbomVersionList" ofType="com.hummerrisk.dto.SbomVersionDTO" javaType="list" select="getSbomVersionList" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="applications" resultMap="ApplicationsMap">
+        select
+        t.*
+        from sbom as t
+        <where>
+            <if test="request.name != null and request.name != ''">
+                and t.name like CONCAT('%', #{request.name},'%')
+            </if>
+        </where>
+        order by t.update_time desc
+    </select>
+
+    <select id="getSbomVersionList" resultType="com.hummerrisk.dto.SbomVersionDTO" parameterType="java.lang.String">
+        SELECT t.*,
+               t1.name as sbomName,
+               t1.description as sbomDesc
+        FROM sbom_version t
+        left join sbom t1 on t.sbom_id = t1.id
+        WHERE t.sbom_id = #{id}
+        order by t.update_time desc
+    </select>
 </mapper>

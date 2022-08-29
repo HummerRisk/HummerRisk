@@ -31,3 +31,27 @@ ALTER TABLE package ADD sbom_id varchar(50) DEFAULT NULL COMMENT 'SBOM ID';
 
 ALTER TABLE package ADD sbom_version_id varchar(50) DEFAULT NULL COMMENT 'SBOM VERSION ID';
 
+ALTER TABLE code_result ADD sbom_id varchar(50) DEFAULT NULL COMMENT 'SBOM ID';
+
+ALTER TABLE code_result ADD sbom_version_id varchar(50) DEFAULT NULL COMMENT 'SBOM VERSION ID';
+
+ALTER TABLE image_result ADD sbom_id varchar(50) DEFAULT NULL COMMENT 'SBOM ID';
+
+ALTER TABLE image_result ADD sbom_version_id varchar(50) DEFAULT NULL COMMENT 'SBOM VERSION ID';
+
+ALTER TABLE package_result ADD sbom_id varchar(50) DEFAULT NULL COMMENT 'SBOM ID';
+
+ALTER TABLE package_result ADD sbom_version_id varchar(50) DEFAULT NULL COMMENT 'SBOM VERSION ID';
+
+ALTER TABLE history_code_result ADD sbom_id varchar(50) DEFAULT NULL COMMENT 'SBOM ID';
+
+ALTER TABLE history_code_result ADD sbom_version_id varchar(50) DEFAULT NULL COMMENT 'SBOM VERSION ID';
+
+ALTER TABLE history_image_task ADD sbom_id varchar(50) DEFAULT NULL COMMENT 'SBOM ID';
+
+ALTER TABLE history_image_task ADD sbom_version_id varchar(50) DEFAULT NULL COMMENT 'SBOM VERSION ID';
+
+ALTER TABLE history_package_task ADD sbom_id varchar(50) DEFAULT NULL COMMENT 'SBOM ID';
+
+ALTER TABLE history_package_task ADD sbom_version_id varchar(50) DEFAULT NULL COMMENT 'SBOM VERSION ID';
+

@@ -1223,6 +1223,8 @@ export default {
     target_image: '已绑定镜像',
     source_package: '未绑定软件包',
     target_package: '已绑定软件包',
+    applications: '应用',
+    applications_search: '按应用名称搜索',
   },
   cost: {
     analyze: '费用分析',

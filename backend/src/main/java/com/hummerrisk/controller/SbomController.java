@@ -2,9 +2,7 @@ package com.hummerrisk.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummerrisk.base.domain.Code;
-import com.hummerrisk.base.domain.Sbom;
-import com.hummerrisk.base.domain.SbomVersion;
+import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
@@ -12,6 +10,7 @@ import com.hummerrisk.controller.request.code.CodeRequest;
 import com.hummerrisk.controller.request.sbom.SbomRequest;
 import com.hummerrisk.controller.request.sbom.SbomVersionRequest;
 import com.hummerrisk.controller.request.sbom.SettingVersionRequest;
+import com.hummerrisk.dto.ApplicationDTO;
 import com.hummerrisk.dto.CodeDTO;
 import com.hummerrisk.dto.SbomDTO;
 import com.hummerrisk.service.SbomService;
@@ -99,6 +98,34 @@ public class SbomController {
     @PostMapping(value = "settingVersion")
     public void settingVersion(@RequestBody SettingVersionRequest request) throws Exception {
         sbomService.settingVersion(request);
+    }
+
+    @I18n
+    @ApiOperation(value = "项目应用列表")
+    @PostMapping(value = "applications")
+    public List<ApplicationDTO> applications(@RequestBody SbomRequest request) throws Exception {
+        return sbomService.applications(request);
+    }
+
+    @I18n
+    @ApiOperation(value = "所有已绑定项目的源码的检测结果")
+    @GetMapping("historyCodeResult/{sbomVersionId}")
+    public List<HistoryCodeResult> historyCodeResult(@PathVariable String sbomVersionId) {
+        return sbomService.historyCodeResult(sbomVersionId);
+    }
+
+    @I18n
+    @ApiOperation(value = "所有已绑定项目的镜像的检测结果")
+    @GetMapping("historyImageTask/{sbomVersionId}")
+    public List<HistoryImageTask> historyImageTask(@PathVariable String sbomVersionId) {
+        return sbomService.historyImageTask(sbomVersionId);
+    }
+
+    @I18n
+    @ApiOperation(value = "所有已绑定项目的软件包的检测结果")
+    @GetMapping("historyPackageTask/{sbomVersionId}")
+    public List<HistoryPackageTask> historyPackageTask(@PathVariable String sbomVersionId) {
+        return sbomService.historyPackageTask(sbomVersionId);
     }
 
 }
