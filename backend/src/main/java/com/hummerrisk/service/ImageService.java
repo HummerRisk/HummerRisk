@@ -106,6 +106,9 @@ public class ImageService {
     }
 
     public List<Map<String,String>> getHarborImages(String path,String username,String password) throws Exception {
+        if(path.endsWith("/")){
+            path = path.substring(0,path.length()-1);
+        }
         List<Map<String,String>> result = new ArrayList<>();
         Map<String,String> header = new HashMap<>();
         header.put("Authorization","Basic "+ Base64.getUrlEncoder().encodeToString((username + ":" + password).getBytes()));
