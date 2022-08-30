@@ -10,14 +10,12 @@ import com.hummerrisk.controller.request.code.CodeRequest;
 import com.hummerrisk.controller.request.sbom.SbomRequest;
 import com.hummerrisk.controller.request.sbom.SbomVersionRequest;
 import com.hummerrisk.controller.request.sbom.SettingVersionRequest;
-import com.hummerrisk.dto.ApplicationDTO;
-import com.hummerrisk.dto.CodeDTO;
-import com.hummerrisk.dto.HistoryImageTaskDTO;
-import com.hummerrisk.dto.SbomDTO;
+import com.hummerrisk.dto.*;
 import com.hummerrisk.service.SbomService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -128,5 +126,34 @@ public class SbomController {
     public List<HistoryPackageTask> historyPackageTask(@PathVariable String sbomVersionId) {
         return sbomService.historyPackageTask(sbomVersionId);
     }
+
+    @I18n
+    @ApiOperation(value = "源码检测历史日志")
+    @GetMapping(value = "codeLog/{resultId}")
+    public List<HistoryCodeResultLog> getCodeResultLog(@PathVariable String resultId) {
+        return sbomService.getCodeResultLog(resultId);
+    }
+
+    @I18n
+    @ApiOperation(value = "源码检测结果详情")
+    @GetMapping(value = "getCodeResult/{resultId}")
+    public HistoryCodeResult getCodeResult(@PathVariable String resultId) {
+        return sbomService.getCodeResult(resultId);
+    }
+
+    @I18n
+    @ApiOperation(value = "镜像检测历史日志")
+    @GetMapping(value = "imageLog/{resultId}")
+    public List<HistoryImageTaskLog> getImageResultLog(@PathVariable String resultId) {
+        return sbomService.getImageResultLog(resultId);
+    }
+
+    @I18n
+    @ApiOperation(value = "软件包检测历史日志")
+    @GetMapping(value = "packageLog/{resultId}")
+    public List<HistoryPackageTaskLog> getPackageResultLog(@PathVariable String resultId) {
+        return sbomService.getPackageResultLog(resultId);
+    }
+
 
 }

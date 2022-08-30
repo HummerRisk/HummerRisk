@@ -215,7 +215,6 @@ export default {
         let data = response.data;
         this.total = data.itemCount;
         this.tableData = data.listObject;
-        console.log(this.tableData)
       });
     },
     handleClose() {

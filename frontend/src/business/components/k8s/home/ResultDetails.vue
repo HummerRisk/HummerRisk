@@ -119,7 +119,6 @@ import RuleType from "@/business/components/image/home/RuleType";
         let url = "/k8s/resultItemList/" + this.currentPage + "/" + this.pageSize;
         this.condition.resultId = this.resultId;
         this.result = this.$post(url, this.condition, response => {
-          console.log(response.data)
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;

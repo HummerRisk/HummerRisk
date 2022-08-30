@@ -1226,6 +1226,7 @@ export default {
     target_package: '已绑定软件包',
     applications: '应用',
     applications_search: '按应用名称搜索',
+    download: '下载报告',
   },
   cost: {
     analyze: '费用分析',

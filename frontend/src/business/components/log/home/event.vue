@@ -107,7 +107,6 @@ export default {
     },
     changeDateTime(value){
       this.dateTime = value
-      console.log(this.dateTime)
     },
     formatDate: function(value) {
       let dt = new Date(value)

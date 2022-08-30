@@ -454,7 +454,6 @@ export default {
           jsonKeyAndValue.push(map);
         }
       }
-      console.log(jsonKeyAndValue)
       return jsonKeyAndValue;
     },
   },

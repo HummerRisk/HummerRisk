@@ -66,6 +66,12 @@ public class SbomService {
     private HistoryImageTaskMapper historyImageTaskMapper;
     @Resource
     private HistoryPackageTaskMapper historyPackageTaskMapper;
+    @Resource
+    private HistoryCodeResultLogMapper historyCodeResultLogMapper;
+    @Resource
+    private HistoryImageTaskLogMapper historyImageTaskLogMapper;
+    @Resource
+    private HistoryPackageTaskLogMapper historyPackageTaskLogMapper;
 
 
     public List<SbomDTO> sbomList(SbomRequest request) {
@@ -230,9 +236,9 @@ public class SbomService {
         List<HistoryImageTaskDTO> dtos = new LinkedList<>();
         for (HistoryImageTask task : historyImageTasks) {
             HistoryImageTaskDTO dto = new HistoryImageTaskDTO();
-            BeanUtils.copyBean(dto, task);
             Image image = imageMapper.selectByPrimaryKey(task.getImageId());
             BeanUtils.copyBean(dto, image);
+            BeanUtils.copyBean(dto, task);
             dtos.add(dto);
         }
         return dtos;
@@ -244,5 +250,29 @@ public class SbomService {
         example.setOrderByClause("create_time desc");
         return historyPackageTaskMapper.selectByExample(example);
     }
+
+    public List<HistoryCodeResultLog> getCodeResultLog(String resultId) {
+        HistoryCodeResultLogExample example = new HistoryCodeResultLogExample();
+        example.createCriteria().andResultIdEqualTo(resultId);
+        return historyCodeResultLogMapper.selectByExampleWithBLOBs(example);
+    }
+
+    public HistoryCodeResult getCodeResult(String resultId) {
+        HistoryCodeResult codeResult = historyCodeResultMapper.selectByPrimaryKey(resultId);
+        return codeResult;
+    }
+
+    public List<HistoryImageTaskLog> getImageResultLog(String resultId) {
+        HistoryImageTaskLogExample example = new HistoryImageTaskLogExample();
+        example.createCriteria().andResultIdEqualTo(resultId);
+        return historyImageTaskLogMapper.selectByExampleWithBLOBs(example);
+    }
+
+    public List<HistoryPackageTaskLog> getPackageResultLog(String resultId) {
+        HistoryPackageTaskLogExample example = new HistoryPackageTaskLogExample();
+        example.createCriteria().andResultIdEqualTo(resultId);
+        return historyPackageTaskLogMapper.selectByExampleWithBLOBs(example);
+    }
+
 
 }
