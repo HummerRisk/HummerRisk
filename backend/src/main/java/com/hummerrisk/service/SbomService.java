@@ -275,15 +275,15 @@ public class SbomService {
         return historyPackageTaskLogMapper.selectByExampleWithBLOBs(example);
     }
 
-    public Map<String, String> codeMetricChart (String resultId) {
+    public MetricChartDTO codeMetricChart (String resultId) {
         return extSbomMapper.codeMetricChart(resultId);
     }
 
-    public Map<String, String> imageMetricChart (String resultId) {
+    public MetricChartDTO imageMetricChart (String resultId) {
         return extSbomMapper.imageMetricChart(resultId);
     }
 
-    public Map<String, String> packageMetricChart (String resultId) {
+    public MetricChartDTO packageMetricChart (String resultId) {
         return extSbomMapper.packageMetricChart(resultId);
     }
 

@@ -159,21 +159,21 @@ public class SbomController {
     @I18n
     @ApiOperation(value = "源码风险数据信息")
     @GetMapping("codeMetricChart/{resultId}")
-    public Map<String, String> codeMetricChart(@PathVariable String resultId) {
+    public MetricChartDTO codeMetricChart(@PathVariable String resultId) {
         return sbomService.codeMetricChart(resultId);
     }
 
     @I18n
     @ApiOperation(value = "源码风险数据信息")
     @GetMapping("imageMetricChart/{resultId}")
-    public Map<String, String> imageMetricChart(@PathVariable String resultId) {
+    public MetricChartDTO imageMetricChart(@PathVariable String resultId) {
         return sbomService.imageMetricChart(resultId);
     }
 
     @I18n
     @ApiOperation(value = "源码风险数据信息")
     @GetMapping("packageMetricChart/{resultId}")
-    public Map<String, String> packageMetricChart(@PathVariable String resultId) {
+    public MetricChartDTO packageMetricChart(@PathVariable String resultId) {
         return sbomService.packageMetricChart(resultId);
     }
 
