@@ -39,9 +39,9 @@
             <el-card class="table-card">
               <template v-slot:header>
                 <div class="clearfix">
-                  <el-col :span="6">
+                  <el-col :span="24">
                     <span style="color: #215d9a;">
-                       <i class="el-icon-s-grid"></i>  {{ sbomVersion?sbomVersion.sbomName:'N/A' }} -
+                       <i class="el-icon-s-grid"></i>  {{ sbomVersion?sbomVersion.sbomName:'N/A' }} ({{ sbomVersion?sbomVersion.sbomDesc:'N/A' }}) -
                       <span style="color: #0a7be0;">{{ sbomVersion?sbomVersion.name:'N/A' }}</span>
                     </span>
                   </el-col>
@@ -82,7 +82,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="6%">
-                  <el-tooltip effect="dark" :content="$t('history.resource_result')" placement="top">
+                  <el-tooltip effect="dark" :content="$t('history.result')" placement="top">
                     <el-link type="primary" class="text-click" @click="goResource(scope.row)">{{ scope.row.returnSum }}</el-link>
                   </el-tooltip>
                 </el-table-column>
@@ -111,17 +111,8 @@
                     <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column min-width="12%" :label="$t('commons.operating')" fixed="right">
-                  <el-dropdown split-button type="primary" @click="handleClick" size="mini">
-                    <i class="el-icon-download"/> 更多菜单
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>黄金糕</el-dropdown-item>
-                      <el-dropdown-item>狮子头</el-dropdown-item>
-                      <el-dropdown-item>螺蛳粉</el-dropdown-item>
-                      <el-dropdown-item>双皮奶</el-dropdown-item>
-                      <el-dropdown-item>蚵仔煎</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
+                <el-table-column min-width="12%" :label="$t('commons.operating')">
+                  <download/>
                 </el-table-column>
               </el-table>
               <el-table border v-if="tag=='image'" :data="imageData" class="adjust-table table-content" stripe style="min-height: 317px;" max-height="318">
@@ -134,12 +125,12 @@
                     </span>
                   </template>
                 </el-table-column>
-                <el-table-column v-slot:default="scope" :label="$t('image.image_url')" min-width="23%" show-overflow-tooltip>
+                <el-table-column v-slot:default="scope" :label="$t('image.image_url')" min-width="20%" show-overflow-tooltip>
                   <el-row v-if="scope.row.type==='image'">{{ scope.row.imageUrl }}:{{ scope.row.imageTag }}</el-row>
                   <el-row v-if="scope.row.type==='tar'">{{ scope.row.path }}</el-row>
                 </el-table-column>
-                <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="6%">
-                  <el-tooltip effect="dark" :content="$t('history.resource_result')" placement="top">
+                <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="7%">
+                  <el-tooltip effect="dark" :content="$t('history.result')" placement="top">
                     <el-link type="primary" class="text-click" @click="goResource(scope.row)">{{ scope.row.returnSum }}</el-link>
                   </el-tooltip>
                 </el-table-column>
@@ -163,22 +154,13 @@
                     <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
                   </el-button>
                 </el-table-column>
-                <el-table-column prop="updateTime" min-width="15%" :label="$t('image.last_modified')" sortable>
+                <el-table-column prop="updateTime" min-width="14%" :label="$t('image.last_modified')" sortable>
                   <template v-slot:default="scope">
                     <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column min-width="12%" :label="$t('commons.operating')" fixed="right">
-                  <el-dropdown split-button type="primary" @click="handleClick" size="mini">
-                    <i class="el-icon-download"/> 更多菜单
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>黄金糕</el-dropdown-item>
-                      <el-dropdown-item>狮子头</el-dropdown-item>
-                      <el-dropdown-item>螺蛳粉</el-dropdown-item>
-                      <el-dropdown-item>双皮奶</el-dropdown-item>
-                      <el-dropdown-item>蚵仔煎</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
+                <el-table-column min-width="11%" :label="$t('commons.operating')">
+                  <download/>
                 </el-table-column>
               </el-table>
               <el-table border v-if="tag=='package'" :data="packageData" class="adjust-table table-content" stripe style="min-height: 317px;" max-height="318">
@@ -186,7 +168,7 @@
                 <el-table-column prop="name" :label="$t('package.name')" min-width="10%" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="packageName" :label="$t('package.package_name')" min-width="10%" show-overflow-tooltip></el-table-column>
                 <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="6%">
-                  <el-tooltip effect="dark" :content="$t('history.resource_result')" placement="top">
+                  <el-tooltip effect="dark" :content="$t('history.result')" placement="top">
                     <el-link type="primary" class="text-click" @click="goResource(scope.row)">{{ scope.row.returnSum }}</el-link>
                   </el-tooltip>
                 </el-table-column>
@@ -215,17 +197,8 @@
                     <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column min-width="12%" :label="$t('commons.operating')" fixed="right">
-                  <el-dropdown split-button type="primary" @click="handleClick" size="mini">
-                    <i class="el-icon-download"/> 更多菜单
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>黄金糕</el-dropdown-item>
-                      <el-dropdown-item>狮子头</el-dropdown-item>
-                      <el-dropdown-item>螺蛳粉</el-dropdown-item>
-                      <el-dropdown-item>双皮奶</el-dropdown-item>
-                      <el-dropdown-item>蚵仔煎</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
+                <el-table-column min-width="12%" :label="$t('commons.operating')">
+                  <download/>
                 </el-table-column>
               </el-table>
             </el-card>
@@ -243,11 +216,13 @@
 
 <script>
 import MainContainer from "@/business/components/common/components/MainContainer";
+import Download from "@/business/components/sbom/home/Download";
 
 /* eslint-disable */
 export default {
   components: {
     MainContainer,
+    Download,
   },
   data() {
     return {
@@ -305,9 +280,10 @@ export default {
         });
       }
     },
-    handleClick() {},
+    handleClick(item) {
+      console.log(1212,item);
+    },
     selectVersion(item) {
-      console.log(item);
       this.sbomVersion = item;
       this.searchScan();
     },

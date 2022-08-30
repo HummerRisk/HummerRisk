@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -217,18 +218,30 @@ public class SbomService {
     public List<HistoryCodeResult> historyCodeResult(String sbomVersionId) {
         HistoryCodeResultExample example = new HistoryCodeResultExample();
         example.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
+        example.setOrderByClause("create_time desc");
         return historyCodeResultMapper.selectByExample(example);
     }
 
-    public List<HistoryImageTask> historyImageTask(String sbomVersionId) {
+    public List<HistoryImageTaskDTO> historyImageTask(String sbomVersionId) throws Exception {
         HistoryImageTaskExample example = new HistoryImageTaskExample();
         example.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
-        return historyImageTaskMapper.selectByExample(example);
+        example.setOrderByClause("create_time desc");
+        List<HistoryImageTask> historyImageTasks = historyImageTaskMapper.selectByExample(example);
+        List<HistoryImageTaskDTO> dtos = new LinkedList<>();
+        for (HistoryImageTask task : historyImageTasks) {
+            HistoryImageTaskDTO dto = new HistoryImageTaskDTO();
+            BeanUtils.copyBean(dto, task);
+            Image image = imageMapper.selectByPrimaryKey(task.getImageId());
+            BeanUtils.copyBean(dto, image);
+            dtos.add(dto);
+        }
+        return dtos;
     }
 
     public List<HistoryPackageTask> historyPackageTask(String sbomVersionId) {
         HistoryPackageTaskExample example = new HistoryPackageTaskExample();
         example.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
+        example.setOrderByClause("create_time desc");
         return historyPackageTaskMapper.selectByExample(example);
     }
 

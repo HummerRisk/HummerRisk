@@ -20,7 +20,7 @@
         </el-table-column>
         <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
         <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="6%">
-          <el-tooltip effect="dark" :content="$t('history.resource_result')" placement="top">
+          <el-tooltip effect="dark" :content="$t('history.result')" placement="top">
             <el-link type="primary" class="text-click" @click="goResource(scope.row)">{{ scope.row.returnSum }}</el-link>
           </el-tooltip>
         </el-table-column>

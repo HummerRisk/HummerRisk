@@ -12,6 +12,7 @@ import com.hummerrisk.controller.request.sbom.SbomVersionRequest;
 import com.hummerrisk.controller.request.sbom.SettingVersionRequest;
 import com.hummerrisk.dto.ApplicationDTO;
 import com.hummerrisk.dto.CodeDTO;
+import com.hummerrisk.dto.HistoryImageTaskDTO;
 import com.hummerrisk.dto.SbomDTO;
 import com.hummerrisk.service.SbomService;
 import io.swagger.annotations.Api;
@@ -117,7 +118,7 @@ public class SbomController {
     @I18n
     @ApiOperation(value = "所有已绑定项目的镜像的检测结果")
     @GetMapping("historyImageTask/{sbomVersionId}")
-    public List<HistoryImageTask> historyImageTask(@PathVariable String sbomVersionId) {
+    public List<HistoryImageTaskDTO> historyImageTask(@PathVariable String sbomVersionId) throws Exception {
         return sbomService.historyImageTask(sbomVersionId);
     }
 
