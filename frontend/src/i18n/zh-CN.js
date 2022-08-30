@@ -1227,6 +1227,12 @@ export default {
     applications: '应用',
     applications_search: '按应用名称搜索',
     download: '下载报告',
+    critical: '高危风险(Critical)',
+    high: '高风险(High)',
+    low: '低风险(Low)',
+    medium: '中等风险(Medium)',
+    unknown: '无风险(Unknown)',
+    total: '风险总数',
   },
   cost: {
     analyze: '费用分析',

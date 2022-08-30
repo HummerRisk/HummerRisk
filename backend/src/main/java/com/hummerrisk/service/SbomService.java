@@ -34,6 +34,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author harris
@@ -272,6 +273,18 @@ public class SbomService {
         HistoryPackageTaskLogExample example = new HistoryPackageTaskLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
         return historyPackageTaskLogMapper.selectByExampleWithBLOBs(example);
+    }
+
+    public Map<String, String> codeMetricChart (String resultId) {
+        return extSbomMapper.codeMetricChart(resultId);
+    }
+
+    public Map<String, String> imageMetricChart (String resultId) {
+        return extSbomMapper.imageMetricChart(resultId);
+    }
+
+    public Map<String, String> packageMetricChart (String resultId) {
+        return extSbomMapper.packageMetricChart(resultId);
     }
 
 

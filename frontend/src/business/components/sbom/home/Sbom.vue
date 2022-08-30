@@ -73,7 +73,7 @@
               </el-row>
 
               <!-- code -->
-              <el-table border v-if="tag=='code'" :data="codeData" class="adjust-table table-content" stripe style="min-height: 317px;" max-height="318">
+              <el-table border v-if="tag=='code'" :data="codeData" class="adjust-table table-content" stripe style="min-height: 317px;cursor:pointer;" max-height="318" @row-click="selectVuln">
                 <el-table-column type="index" min-width="2%"/>
                 <el-table-column prop="name" :label="$t('code.name')" min-width="10%" show-overflow-tooltip>
                   <template v-slot:default="scope">
@@ -299,7 +299,7 @@
               <!-- code -->
 
               <!-- image -->
-              <el-table border v-if="tag=='image'" :data="imageData" class="adjust-table table-content" stripe style="min-height: 317px;" max-height="318">
+              <el-table border v-if="tag=='image'" :data="imageData" class="adjust-table table-content" stripe style="min-height: 317px;cursor:pointer;" max-height="318" @row-click="selectVuln">
                 <el-table-column type="index" min-width="2%"/>
                 <el-table-column prop="name" :label="$t('image.image_name')" min-width="10%" show-overflow-tooltip>
                   <template v-slot:default="scope">
@@ -620,7 +620,7 @@
               <!-- image -->
 
               <!-- package -->
-              <el-table border v-if="tag=='package'" :data="packageData" class="adjust-table table-content" stripe style="min-height: 317px;" max-height="318">
+              <el-table border v-if="tag=='package'" :data="packageData" class="adjust-table table-content" stripe style="min-height: 317px;cursor:pointer;" max-height="318" @row-click="selectVuln">
                 <el-table-column type="index" min-width="2%"/>
                 <el-table-column prop="name" :label="$t('package.name')" min-width="10%" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="packageName" :label="$t('package.package_name')" min-width="10%" show-overflow-tooltip></el-table-column>
@@ -852,7 +852,23 @@
       </el-row>
       <el-row :gutter="20">
         <el-col :span="24">
-<!--          <task-order :taskOrder="taskOrder"/>-->
+          <main-container class="" v-if="content">
+            <el-card class="table-card">
+              <template v-slot:header>
+                <div slot="header" class="clearfix">
+                  <span>{{ $t('resource.i18n_not_compliance') }}</span>
+                </div>
+              </template>
+              <section class="report-container">
+                <main>
+                  <metric-chart :content="content"/>
+                </main>
+              </section>
+              <code-result-details v-if="codeResultId" :id="codeResultId"/>
+              <image-result-details v-if="imageResultId" :id="imageResultId"/>
+              <package-result-details v-if="packageResultId" :id="packageResultId"/>
+            </el-card>
+          </main-container>
         </el-col>
       </el-row>
     </el-card>
@@ -865,6 +881,7 @@ import Download from "@/business/components/sbom/home/Download";
 import CodeResultDetails from "@/business/components/sbom/home/CodeResultDetails";
 import ImageResultDetails from "@/business/components/sbom/home/ImageResultDetails";
 import PackageResultDetails from "@/business/components/sbom/home/PackageResultDetails";
+import MetricChart from "@/business/components/sbom/head/MetricChart";
 
 /* eslint-disable */
 export default {
@@ -874,6 +891,7 @@ export default {
     CodeResultDetails,
     ImageResultDetails,
     PackageResultDetails,
+    MetricChart,
   },
   data() {
     return {
@@ -908,6 +926,7 @@ export default {
       logPackageData: {},
       logPackageForm: [],
       filterJson: this.filterJsonKeyAndValue,
+      content: {},
     }
   },
   methods: {
@@ -1006,6 +1025,27 @@ export default {
       this.logCodeVisible = false;
       this.logImageVisible = false;
       this.logPackageVisible = false;
+    },
+    selectVuln(item) {
+      this.codeResultId = "";
+      this.imageResultId = "";
+      this.packageResultId = "";
+      if(item.codeId) {
+        this.codeResultId = item.id;
+        this.result = this.$get("/sbom/codeMetricChart/"+ this.codeResultId, response => {
+          this.content = response.data;
+        });
+      } else if(item.imageId) {
+        this.imageResultId = item.id;
+        this.result = this.$get("/sbom/imageMetricChart/"+ this.imageResultId, response => {
+          this.content = response.data;
+        });
+      } else if(item.packageId) {
+        this.packageResultId = item.id;
+        this.result = this.$get("/sbom/packageMetricChart/"+ this.packageResultId, response => {
+          this.content = response.data;
+        });
+      }
     },
     filterJsonKeyAndValue(json) {
       //json is json object , not array -- harris

@@ -1,14 +1,9 @@
 <template>
-    <main-container>
-      <el-card class="table-card" v-loading="result.loading">
+    <div>
 
-        <template v-slot:header>
-          <table-header :condition.sync="condition"
-                        @search="search"
-                        :show-back="true"
-                        @back="back" :backTip="$t('image.back_resource')"
-                        :title="$t('image.result_details_list')"/>
-        </template>
+        <table-header :condition.sync="condition"
+                      @search="search"
+                      :title="$t('image.result_details_list')"/>
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter">
           <el-table-column type="index" min-width="5%"/>
@@ -31,15 +26,8 @@
           </el-table-column>
         </el-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
-      </el-card>
 
-      <!--file-->
-      <el-drawer class="rtl" :title="string2Key" :visible.sync="visible"  size="80%" :before-close="handleClose" :direction="direction" :destroy-on-close="true">
-        <codemirror ref="cmEditor" v-model="string2PrettyFormat" class="code-mirror" :options="cmOptions" />
-      </el-drawer>
-      <!--file-->
-
-    </main-container>
+    </div>
 </template>
 
 <script>
@@ -79,27 +67,12 @@ import RuleType from "@/business/components/image/home/RuleType";
         },
         tagSelect: [],
         resourceTypes: [],
-        direction: 'rtl',
         buttons: [
           {
             tip: this.$t('resource.scan_vuln_search'), icon: "el-icon-share", type: "primary",
             exec: this.handleVuln
           },
         ],
-        string2Key: "",
-        string2PrettyFormat: "",
-        visible: false,
-        cmOptions: {
-          tabSize: 4,
-          mode: {
-            name: 'shell',
-            json: true
-          },
-          theme: 'bespin',
-          lineNumbers: true,
-          line: true,
-          indentWithTabs: true,
-        },
         resultId: "",
       }
     },
@@ -131,9 +104,6 @@ import RuleType from "@/business/components/image/home/RuleType";
 
         this.visible =  true;
       },
-      handleClose() {
-        this.visible =  false;
-      },
       search () {
         let url = "/image/resultItemList/" + this.currentPage + "/" + this.pageSize;
         this.condition.resultId = this.id;
@@ -158,11 +128,6 @@ import RuleType from "@/business/components/image/home/RuleType";
           }).catch(error => error);
         }
       },
-    },
-    computed: {
-      codemirror() {
-        return this.$refs.cmEditor.codemirror
-      }
     },
     created() {
       this.init();

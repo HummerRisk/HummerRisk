@@ -14,7 +14,7 @@ export default {
     },
     {
       path: "k8sImage",
-      name: "K8sImage",
+      name: "K8sImageList",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/k8sImage/home/K8sImage'),
     },
     {

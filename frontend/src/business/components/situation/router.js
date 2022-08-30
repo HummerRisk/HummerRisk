@@ -9,7 +9,7 @@ export default {
   children: [
     {
       path: "situation",
-      name: "Situation",
+      name: "SituationList",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/situation/home/Situation"),
     },
   ]

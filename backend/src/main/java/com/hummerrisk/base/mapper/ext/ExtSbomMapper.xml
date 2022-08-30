@@ -148,4 +148,97 @@
         WHERE t.sbom_id = #{id}
         order by t.update_time desc
     </select>
+
+    <select id="codeMetricChart" resultType="java.util.Map" parameterType="java.lang.String">
+        SELECT count(*) as critical
+        FROM code_result_item t
+        WHERE LOWER(t.severity) = 'critical'
+        AND t.id = #{resultId}
+        UNION ALL
+        SELECT count(*) as high
+        FROM code_result_item t
+        WHERE LOWER(t.severity) = 'high'
+        AND t.id = #{resultId}
+        UNION ALL
+        SELECT count(*) as medium
+        FROM code_result_item t
+        WHERE LOWER(t.severity) = 'medium'
+        AND t.id = #{resultId}
+        UNION ALL
+        SELECT count(*) as low
+        FROM code_result_item t
+        WHERE LOWER(t.severity) = 'low'
+        AND t.id = #{resultId}
+        UNION ALL
+        SELECT count(*) as unknown
+        FROM code_result_item t
+        WHERE LOWER(t.severity) = 'unknown'
+        AND t.id = #{resultId}
+        UNION ALL
+        SELECT count(*) as total
+        FROM code_result_item t
+        WHERE t.id = #{resultId}
+    </select>
+
+    <select id="imageMetricChart" resultType="java.util.Map" parameterType="java.lang.String">
+        SELECT count(*) as critical
+        FROM image_grype_table t
+        WHERE LOWER(t.severity) = 'critical'
+          AND t.id = #{resultId}
+        UNION ALL
+        SELECT count(*) as high
+        FROM image_grype_table t
+        WHERE LOWER(t.severity) = 'high'
+          AND t.id = #{resultId}
+        UNION ALL
+        SELECT count(*) as medium
+        FROM image_grype_table t
+        WHERE LOWER(t.severity) = 'medium'
+          AND t.id = #{resultId}
+        UNION ALL
+        SELECT count(*) as low
+        FROM image_grype_table t
+        WHERE LOWER(t.severity) = 'low'
+          AND t.id = #{resultId}
+        UNION ALL
+        SELECT count(*) as unknown
+        FROM image_grype_table t
+        WHERE LOWER(t.severity) = 'negligible'
+          AND t.id = #{resultId}
+        UNION ALL
+        SELECT count(*) as total
+        FROM image_grype_table t
+        WHERE t.id = #{resultId}
+    </select>
+
+    <select id="packageMetricChart" resultType="java.util.Map" parameterType="java.lang.String">
+        SELECT LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'critical','')) as critical
+        FROM package_dependency_json t
+        WHERE t.id = #{resultId}
+        UNION ALL
+        SELECT LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'high','')) as high
+        FROM package_dependency_json t
+        WHERE t.id = #{resultId}
+        UNION ALL
+        SELECT LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'medium','')) as medium
+        FROM package_dependency_json t
+        WHERE t.id = #{resultId}
+        UNION ALL
+        SELECT LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'low','')) as low
+        FROM package_dependency_json t
+        WHERE t.id = #{resultId}
+        UNION ALL
+        SELECT LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'unknown','')) as unknown
+        FROM package_dependency_json t
+        WHERE t.id = #{resultId}
+        UNION ALL
+        SELECT (LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'critical',''))) +
+               (LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'high',''))) +
+               (LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'medium',''))) +
+               (LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'low',''))) +
+               (LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'unknown','')))
+            as total
+        FROM package_dependency_json t
+        WHERE t.id = #{resultId}
+    </select>
 </mapper>

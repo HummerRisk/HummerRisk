@@ -1,12 +1,9 @@
 <template>
-    <main-container>
-      <el-card class="table-card" v-loading="result.loading">
+    <div>
 
-        <template v-slot:header>
-          <table-header :condition.sync="condition"
-                        @search="search"
-                        :title="$t('package.result_details_list')"/>
-        </template>
+        <table-header :condition.sync="condition"
+                      @search="search"
+                      :title="$t('package.result_details_list')"/>
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter">
           <el-table-column type="index" min-width="3%"/>
@@ -27,9 +24,8 @@
           </el-table-column>
         </el-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
-      </el-card>
 
-    </main-container>
+    </div>
 </template>
 
 <script>

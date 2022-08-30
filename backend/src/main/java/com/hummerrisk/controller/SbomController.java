@@ -19,6 +19,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "SBOM管理")
 @RestController
@@ -153,6 +154,27 @@ public class SbomController {
     @GetMapping(value = "packageLog/{resultId}")
     public List<HistoryPackageTaskLog> getPackageResultLog(@PathVariable String resultId) {
         return sbomService.getPackageResultLog(resultId);
+    }
+
+    @I18n
+    @ApiOperation(value = "源码风险数据信息")
+    @GetMapping("codeMetricChart/{resultId}")
+    public Map<String, String> codeMetricChart(@PathVariable String resultId) {
+        return sbomService.codeMetricChart(resultId);
+    }
+
+    @I18n
+    @ApiOperation(value = "源码风险数据信息")
+    @GetMapping("imageMetricChart/{resultId}")
+    public Map<String, String> imageMetricChart(@PathVariable String resultId) {
+        return sbomService.imageMetricChart(resultId);
+    }
+
+    @I18n
+    @ApiOperation(value = "源码风险数据信息")
+    @GetMapping("packageMetricChart/{resultId}")
+    public Map<String, String> packageMetricChart(@PathVariable String resultId) {
+        return sbomService.packageMetricChart(resultId);
     }
 
 
