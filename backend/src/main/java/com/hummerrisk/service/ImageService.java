@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
 import static com.hummerrisk.service.SysListener.changeFlowFormat;
 
@@ -103,6 +103,47 @@ public class ImageService {
         OperationLogService.log(SessionUtils.getUser(), imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image_repo");
         imageRepoMapper.insertSelective(imageRepo);
         return imageRepo;
+    }
+
+    public List<Map<String,String>> getHarborImages(String path,String username,String password) throws Exception {
+        List<Map<String,String>> result = new ArrayList<>();
+        Map<String,String> header = new HashMap<>();
+        header.put("Authorization","Basic "+ Base64.getUrlEncoder().encodeToString((username + ":" + password).getBytes()));
+        String projectStr = HttpClientUtil.HttpGet(path+"/api/v2.0/projects/",header);
+        JSONArray projects =  JSON.parseArray(projectStr);
+        Iterator<Object> projectsIt = projects.iterator();
+        while (projectsIt.hasNext()){
+            JSONObject project =(JSONObject)projectsIt.next();
+            String name =  project.getString("name");
+            String repositoriesStr = HttpClientUtil.HttpGet(path+"/api/v2.0/projects/"+name+"/repositories",header);
+            JSONArray repositories = JSON.parseArray(repositoriesStr);
+            Iterator<Object> repositoriesIt = repositories.iterator();
+            while (repositoriesIt.hasNext()){
+                JSONObject rep =(JSONObject)repositoriesIt.next();
+                String repName = rep.getString("name");
+                if(repName.indexOf("/")>0){
+                    repName = repName.split("/",-1)[1];
+                }
+                String artifactsStr = HttpClientUtil.HttpGet(path+"/api/v2.0/projects/"+name+"/repositories/"+repName+"/artifacts",header);
+                JSONArray artifacts = JSON.parseArray(artifactsStr);
+                Iterator<Object> artifactsIt = artifacts.iterator();
+                while (artifactsIt.hasNext()){
+                    JSONObject arti = (JSONObject) artifactsIt.next();
+                    JSONArray tags = arti.getJSONArray("tags");
+                    List<JSONObject> tagList =  tags.toJavaList(JSONObject.class);
+                    for(JSONObject tag : tagList){
+                        String tagStr =  tag.getString("name");
+                        Map<String,String> imageMap = new HashMap<>();
+                        imageMap.put("project",name);
+                        imageMap.put("repositories",repName);
+                        imageMap.put("tag",tagStr);
+                        imageMap.put("imagePath",path+"/"+name+"/"+repName+":"+tagStr);
+                        result.add(imageMap);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     public ImageRepo editImageRepo(ImageRepo imageRepo) throws Exception {
