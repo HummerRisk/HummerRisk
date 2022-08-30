@@ -5,8 +5,6 @@
         <template v-slot:header>
           <table-header :condition.sync="condition"
                         @search="search"
-                        :show-back="true"
-                        @back="back" :backTip="$t('package.back_resource')"
                         :title="$t('package.result_details_list')"/>
         </template>
 
@@ -30,12 +28,6 @@
         </el-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
-
-      <!--file-->
-      <el-drawer class="rtl" :title="string2Key" :visible.sync="visible"  size="80%" :before-close="handleClose" :direction="direction" :destroy-on-close="true">
-        <codemirror ref="cmEditor" v-model="string2PrettyFormat" class="code-mirror" :options="cmOptions" />
-      </el-drawer>
-      <!--file-->
 
     </main-container>
 </template>
@@ -77,31 +69,18 @@ import RuleType from "@/business/components/image/home/RuleType";
         },
         tagSelect: [],
         resourceTypes: [],
-        direction: 'rtl',
         buttons: [
           {
             tip: this.$t('resource.scan_vuln_search'), icon: "el-icon-share", type: "primary",
             exec: this.handleVuln
           },
         ],
-        string2Key: "",
-        string2PrettyFormat: "",
-        visible: false,
-        cmOptions: {
-          tabSize: 4,
-          mode: {
-            name: 'shell',
-            json: true
-          },
-          theme: 'bespin',
-          lineNumbers: true,
-          line: true,
-          indentWithTabs: true,
-        },
         resultId: "",
       }
     },
-    props: ["id"],
+    props: {
+      id: String,
+    },
     methods: {
       handleVuln() {
         window.open('http://www.cnnvd.org.cn/web/vulnerability/queryLds.tag','_blank','');
@@ -114,25 +93,12 @@ import RuleType from "@/business/components/image/home/RuleType";
         _filter(filters, this.condition);
         this.init();
       },
-      showInformation (row, details, title) {
-        this.string2Key = title;
-        this.string2PrettyFormat = "";
-        if (row) {
-          this.$post("/resource/string2PrettyFormat", {json: details}, res => {
-            this.string2PrettyFormat = res.data;
-          });
-        } else {
-          this.string2PrettyFormat = details;
-        }
-
-        this.visible =  true;
-      },
       handleClose() {
         this.visible =  false;
       },
       search () {
         let url = "/package/resultItemList/" + this.currentPage + "/" + this.pageSize;
-        this.condition.resultId = this.resultId;
+        this.condition.resultId = this.id;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;
@@ -140,7 +106,6 @@ import RuleType from "@/business/components/image/home/RuleType";
         });
       },
       init() {
-        this.resultId = this.$route.params.id;
         this.search();
       },
       back () {
@@ -155,11 +120,6 @@ import RuleType from "@/business/components/image/home/RuleType";
           }).catch(error => error);
         }
       },
-    },
-    computed: {
-      codemirror() {
-        return this.$refs.cmEditor.codemirror
-      }
     },
     created() {
       this.init();

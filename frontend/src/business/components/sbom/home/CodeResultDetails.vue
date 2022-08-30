@@ -5,24 +5,27 @@
         <template v-slot:header>
           <table-header :condition.sync="condition"
                         @search="search"
-                        :show-back="true"
-                        @back="back" :backTip="$t('package.back_resource')"
-                        :title="$t('package.result_details_list')"/>
+                        :title="$t('code.result_details_list')"/>
         </template>
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter">
-          <el-table-column type="index" min-width="3%"/>
-          <el-table-column prop="fileName" :label="'FileName'" min-width="15%">
+          <el-table-column type="index" min-width="2%"/>
+          <el-table-column :label="'Title'" min-width="17%" prop="title">
           </el-table-column>
-          <el-table-column prop="filePath" :label="'FilePath'" min-width="23%">
+          <el-table-column :label="'InstalledVersion'" min-width="10%" prop="installedVersion">
           </el-table-column>
-          <el-table-column min-width="5%" :label="'IsVirtual'" prop="isVirtual">
+          <el-table-column min-width="7%" :label="'PkgName'" prop="pkgName">
           </el-table-column>
-          <el-table-column min-width="15%" :label="'Md5'" prop="md5">
+          <el-table-column min-width="10%" :label="'VulnerabilityID'" prop="vulnerabilityId">
           </el-table-column>
-          <el-table-column min-width="15%" :label="'Sha1'" prop="sha1">
+          <el-table-column min-width="7%" :label="'Severity'" prop="severity">
           </el-table-column>
-          <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
+          <el-table-column min-width="10%" :label="'SeveritySource'" prop="severitySource">
+          </el-table-column>
+          <el-table-column min-width="12%" :label="'PrimaryURL'" prop="primaryUrl" v-slot:default="scope">
+            <el-link type="primary" style="color: #0000e4;" :href="scope.row.primaryUrl" target="_blank">{{ scope.row.primaryUrl }}</el-link>
+          </el-table-column>
+          <el-table-column min-width="5%" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
@@ -30,12 +33,6 @@
         </el-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
-
-      <!--file-->
-      <el-drawer class="rtl" :title="string2Key" :visible.sync="visible"  size="80%" :before-close="handleClose" :direction="direction" :destroy-on-close="true">
-        <codemirror ref="cmEditor" v-model="string2PrettyFormat" class="code-mirror" :options="cmOptions" />
-      </el-drawer>
-      <!--file-->
 
     </main-container>
 </template>
@@ -77,31 +74,18 @@ import RuleType from "@/business/components/image/home/RuleType";
         },
         tagSelect: [],
         resourceTypes: [],
-        direction: 'rtl',
         buttons: [
           {
             tip: this.$t('resource.scan_vuln_search'), icon: "el-icon-share", type: "primary",
             exec: this.handleVuln
           },
         ],
-        string2Key: "",
-        string2PrettyFormat: "",
-        visible: false,
-        cmOptions: {
-          tabSize: 4,
-          mode: {
-            name: 'shell',
-            json: true
-          },
-          theme: 'bespin',
-          lineNumbers: true,
-          line: true,
-          indentWithTabs: true,
-        },
         resultId: "",
       }
     },
-    props: ["id"],
+    props: {
+      id: String,
+    },
     methods: {
       handleVuln() {
         window.open('http://www.cnnvd.org.cn/web/vulnerability/queryLds.tag','_blank','');
@@ -114,25 +98,9 @@ import RuleType from "@/business/components/image/home/RuleType";
         _filter(filters, this.condition);
         this.init();
       },
-      showInformation (row, details, title) {
-        this.string2Key = title;
-        this.string2PrettyFormat = "";
-        if (row) {
-          this.$post("/resource/string2PrettyFormat", {json: details}, res => {
-            this.string2PrettyFormat = res.data;
-          });
-        } else {
-          this.string2PrettyFormat = details;
-        }
-
-        this.visible =  true;
-      },
-      handleClose() {
-        this.visible =  false;
-      },
       search () {
-        let url = "/package/resultItemList/" + this.currentPage + "/" + this.pageSize;
-        this.condition.resultId = this.resultId;
+        let url = "/code/resultItemList/" + this.currentPage + "/" + this.pageSize;
+        this.condition.resultId = this.id;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;
@@ -140,26 +108,20 @@ import RuleType from "@/business/components/image/home/RuleType";
         });
       },
       init() {
-        this.resultId = this.$route.params.id;
         this.search();
       },
       back () {
         let path = this.$route.path;
-        if (path.indexOf("/package") >= 0) {
+        if (path.indexOf("/code") >= 0) {
           this.$router.push({
-            path: '/package/result',
+            path: '/code/result',
           }).catch(error => error);
         } else if (path.indexOf("/resource") >= 0) {
           this.$router.push({
-            path: '/resource/packageResult',
+            path: '/resource/codeResult',
           }).catch(error => error);
         }
       },
-    },
-    computed: {
-      codemirror() {
-        return this.$refs.cmEditor.codemirror
-      }
     },
     created() {
       this.init();

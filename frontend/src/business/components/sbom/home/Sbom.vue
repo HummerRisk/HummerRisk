@@ -117,6 +117,19 @@
                   <download/>
                 </el-table-column>
               </el-table>
+
+              <!--Result detail-->
+              <el-drawer class="rtl" :title="$t('package.result_details_list')" :visible.sync="codeVisible" size="85%" :before-close="handleClose" :direction="direction"
+                         :destroy-on-close="true">
+                <code-result-details :id="codeResultId"/>
+                <template v-slot:footer>
+                  <dialog-footer
+                    @cancel="codeVisible = false"
+                    @confirm="codeVisible = false"/>
+                </template>
+              </el-drawer>
+              <!--Result detail-->
+
               <!--Result log-->
               <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logCodeVisible" size="85%" :before-close="handleClose" :direction="direction"
                          :destroy-on-close="true">
@@ -282,6 +295,7 @@
                 </template>
               </el-drawer>
               <!--Result log-->
+
               <!-- code -->
 
               <!-- image -->
@@ -333,6 +347,19 @@
                   <download/>
                 </el-table-column>
               </el-table>
+
+              <!--Result detail-->
+              <el-drawer class="rtl" :title="$t('package.result_details_list')" :visible.sync="imageVisible" size="85%" :before-close="handleClose" :direction="direction"
+                         :destroy-on-close="true">
+                <image-result-details :id="imageResultId"/>
+                <template v-slot:footer>
+                  <dialog-footer
+                    @cancel="imageVisible = false"
+                    @confirm="imageVisible = false"/>
+                </template>
+              </el-drawer>
+              <!--Result detail-->
+
               <!--Result log-->
               <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logImageVisible" size="85%" :before-close="handleClose" :direction="direction"
                          :destroy-on-close="true">
@@ -589,6 +616,7 @@
                 </template>
               </el-drawer>
               <!--Result log-->
+
               <!-- image -->
 
               <!-- package -->
@@ -630,6 +658,19 @@
                   <download/>
                 </el-table-column>
               </el-table>
+
+              <!--Result detail-->
+              <el-drawer class="rtl" :title="$t('package.result_details_list')" :visible.sync="packageVisible" size="85%" :before-close="handleClose" :direction="direction"
+                         :destroy-on-close="true">
+                <package-result-details :id="packageResultId"/>
+                <template v-slot:footer>
+                  <dialog-footer
+                    @cancel="packageVisible = false"
+                    @confirm="packageVisible = false"/>
+                </template>
+              </el-drawer>
+              <!--Result detail-->
+
               <!--Result log-->
               <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logPackageVisible" size="85%" :before-close="handleClose" :direction="direction"
                          :destroy-on-close="true">
@@ -803,6 +844,7 @@
                 </template>
               </el-drawer>
               <!--Result log-->
+
               <!-- package -->
             </el-card>
           </main-container>
@@ -820,12 +862,18 @@
 <script>
 import MainContainer from "@/business/components/common/components/MainContainer";
 import Download from "@/business/components/sbom/home/Download";
+import CodeResultDetails from "@/business/components/sbom/home/CodeResultDetails";
+import ImageResultDetails from "@/business/components/sbom/home/ImageResultDetails";
+import PackageResultDetails from "@/business/components/sbom/home/PackageResultDetails";
 
 /* eslint-disable */
 export default {
   components: {
     MainContainer,
     Download,
+    CodeResultDetails,
+    ImageResultDetails,
+    PackageResultDetails,
   },
   data() {
     return {
@@ -844,9 +892,15 @@ export default {
       imageData: [],
       packageData: [],
       direction: 'rtl',
+      codeVisible: false,
+      imageVisible: false,
+      packageVisible: false,
       logCodeVisible: false,
       logImageVisible: false,
       logPackageVisible: false,
+      codeResultId: '',
+      imageResultId: '',
+      packageResultId: '',
       logCodeData: {},
       logCodeForm: [],
       logImageData: {},
@@ -899,9 +953,18 @@ export default {
       this.sbomVersion = item;
       this.searchScan();
     },
-    showCodeResource(item) {},
-    showImageResource(item) {},
-    showPackageResource(item) {},
+    showCodeResource(item) {
+      this.codeResultId = item.id;
+      this.codeVisible = true;
+    },
+    showImageResource(item) {
+      this.imageResultId = item.id;
+      this.imageVisible = true;
+    },
+    showPackageResource(item) {
+      this.packageResultId = item.id;
+      this.packageVisible = true;
+    },
     showCodeResultLog(result) {
       let logUrl = "/sbom/codeLog/";
       this.result = this.$get(logUrl + result.id, response => {
@@ -937,6 +1000,9 @@ export default {
       this.logPackageVisible = true;
     },
     handleClose() {
+      this.codeVisible = false;
+      this.imageVisible = false;
+      this.packageVisible = false;
       this.logCodeVisible = false;
       this.logImageVisible = false;
       this.logPackageVisible = false;

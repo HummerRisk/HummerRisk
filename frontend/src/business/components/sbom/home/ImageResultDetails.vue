@@ -6,23 +6,25 @@
           <table-header :condition.sync="condition"
                         @search="search"
                         :show-back="true"
-                        @back="back" :backTip="$t('package.back_resource')"
-                        :title="$t('package.result_details_list')"/>
+                        @back="back" :backTip="$t('image.back_resource')"
+                        :title="$t('image.result_details_list')"/>
         </template>
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter">
-          <el-table-column type="index" min-width="3%"/>
-          <el-table-column prop="fileName" :label="'FileName'" min-width="15%">
+          <el-table-column type="index" min-width="5%"/>
+          <el-table-column :label="'Name'" min-width="15%" prop="name">
           </el-table-column>
-          <el-table-column prop="filePath" :label="'FilePath'" min-width="23%">
+          <el-table-column :label="'Installed'" min-width="15%" prop="installed">
           </el-table-column>
-          <el-table-column min-width="5%" :label="'IsVirtual'" prop="isVirtual">
+          <el-table-column min-width="10%" :label="'FixedIn'" prop="fixedIn">
           </el-table-column>
-          <el-table-column min-width="15%" :label="'Md5'" prop="md5">
+          <el-table-column min-width="10%" :label="'Type'" prop="type">
           </el-table-column>
-          <el-table-column min-width="15%" :label="'Sha1'" prop="sha1">
+          <el-table-column min-width="15%" :label="'Vulnerability'" prop="vulnerability">
           </el-table-column>
-          <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
+          <el-table-column min-width="15%" :label="'Severity'" prop="severity">
+          </el-table-column>
+          <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
@@ -101,7 +103,9 @@ import RuleType from "@/business/components/image/home/RuleType";
         resultId: "",
       }
     },
-    props: ["id"],
+    props: {
+      id: String,
+    },
     methods: {
       handleVuln() {
         window.open('http://www.cnnvd.org.cn/web/vulnerability/queryLds.tag','_blank','');
@@ -131,8 +135,8 @@ import RuleType from "@/business/components/image/home/RuleType";
         this.visible =  false;
       },
       search () {
-        let url = "/package/resultItemList/" + this.currentPage + "/" + this.pageSize;
-        this.condition.resultId = this.resultId;
+        let url = "/image/resultItemList/" + this.currentPage + "/" + this.pageSize;
+        this.condition.resultId = this.id;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;
@@ -140,18 +144,17 @@ import RuleType from "@/business/components/image/home/RuleType";
         });
       },
       init() {
-        this.resultId = this.$route.params.id;
         this.search();
       },
       back () {
         let path = this.$route.path;
-        if (path.indexOf("/package") >= 0) {
+        if (path.indexOf("/image") >= 0) {
           this.$router.push({
-            path: '/package/result',
+            path: '/image/result',
           }).catch(error => error);
         } else if (path.indexOf("/resource") >= 0) {
           this.$router.push({
-            path: '/resource/packageResult',
+            path: '/resource/imageResult',
           }).catch(error => error);
         }
       },
