@@ -26,7 +26,7 @@ COPY --from=grype-env /grype /usr/bin/grype
 
 COPY --from=syft-env /syft /usr/bin/syft
 
-RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.31.2
+RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.31.3
 
 RUN mkdir -p /opt/apps && \
     curl https://company.hummercloud.com/offline-package/sigar/sigar.zip -o sigar.zip &&  \
