@@ -1233,6 +1233,8 @@ export default {
     medium: '中等风险(Medium)',
     unknown: '无风险(Unknown)',
     total: '风险总数',
+    sbom_project: 'Sbom 项目',
+    sbom_project_version: '项目版本',
   },
   cost: {
     analyze: '费用分析',

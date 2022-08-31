@@ -16,7 +16,7 @@
                 <el-collapse accordion>
                   <el-collapse-item v-for="(application,index) in this.applications" :key="index">
                     <template slot="title">
-                      {{index+1}} <i class="header-icon el-icon-folder-opened"></i>  {{application.name}}
+                      {{index+1}} <i class="header-icon el-icon-folder-opened"></i>  {{ application.name }}
                     </template>
                     <el-table border :data="application.sbomVersionList" class="adjust-table table-content" :show-header="false"
                               style="cursor:pointer;" @row-click="selectVersion">

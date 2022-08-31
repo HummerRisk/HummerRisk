@@ -59,6 +59,30 @@
                :destroy-on-close="true">
       <div v-for="(form, index) in addAccountForm" :key="index">
         <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" :ref="'addAccountForm' + index">
+          <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="form.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(form)">
+              <el-option
+                v-for="item in sboms"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+                <i class="iconfont icon-SBOM sbom-icon"></i>
+                {{ item.name }}
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="$t('sbom.sbom_project_version')" :rules="{required: true, message: $t('sbom.sbom_project_version') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="form.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
+              <el-option
+                v-for="item in versions"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+                <i class="iconfont icon-lianmenglian sbom-icon-2"></i>
+                {{ item.name }}
+              </el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item :label="$t('code.name')" ref="name" prop="name">
             <el-input v-model="form.name" autocomplete="off" :placeholder="$t('code.name')"/>
           </el-form-item>
@@ -116,6 +140,30 @@
     <el-drawer class="rtl" :title="$t('code.code_update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="accountForm">
+        <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-select style="width: 100%;" v-model="form.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(form)">
+            <el-option
+              v-for="item in sboms"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+              <i class="iconfont icon-SBOM sbom-icon"></i>
+              {{ item.name }}
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="$t('sbom.sbom_project_version')" :rules="{required: true, message: $t('sbom.sbom_project_version') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-select style="width: 100%;" v-model="form.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
+            <el-option
+              v-for="item in versions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+              <i class="iconfont icon-lianmenglian sbom-icon-2"></i>
+              {{ item.name }}
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item :label="$t('code.name')"  ref="name" prop="name">
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('code.name')"/>
         </el-form-item>
@@ -264,6 +312,8 @@ export default {
         {id: 'Http', value: "Http"},
         {id: 'Https', value: "Https"},
       ],
+      sboms: [],
+      versions: [],
     }
   },
   watch: {
@@ -274,6 +324,19 @@ export default {
       this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
       this.createVisible = true;
       this.activeProxy();
+    },
+    initSboms() {
+      this.result = this.$post("/sbom/allSbomList", {},response => {
+        this.sboms = response.data;
+      });
+    },
+    changeSbom(item) {
+      let params = {
+        sbomId: item.sbomId
+      };
+      this.result = this.$post("/sbom/allSbomVersionList", params,response => {
+        this.versions = response.data;
+      });
     },
     //查询代理
     activeProxy() {
@@ -360,14 +423,15 @@ export default {
     init() {
       this.selectIds.clear();
       this.search();
+      this.initSboms();
     },
     sort(column) {
       _sort(column, this.condition);
-      this.init();
+      this.search();
     },
     filter(filters) {
       _filter(filters, this.condition);
-      this.init();
+      this.search();
     },
     filterStatus(value, row) {
       return row.status === value;
@@ -425,6 +489,8 @@ export default {
         data["credential"] = JSON.stringify(key);
         data["name"] = item.name;
         data["pluginIcon"] = item.pluginIcon;
+        data["sbomId"] = item.sbomId;
+        data["sbomVersionId"] = item.sbomVersionId;
         if (item.isProxy) data["proxyId"] = item.proxyId;
         if (type === 'add') {
           this.result = this.$post("/code/addCode", data,response => {
@@ -454,6 +520,8 @@ export default {
           data["credential"] = JSON.stringify(key);
           data["name"] = item.name;
           data["pluginId"] = item.pluginId;
+          data["sbomId"] = item.sbomId;
+          data["sbomVersionId"] = item.sbomVersionId;
           if (item.isProxy) data["proxyId"] = item.proxyId;
 
           if (type === 'add') {
@@ -573,6 +641,16 @@ export default {
 /deep/ :focus{outline:0;}
 .el-box-card {
   margin: 10px 0;
+}
+.sbom-icon{
+  color: royalblue;
+  font-size: 30px;
+  vertical-align: middle;
+}
+.sbom-icon-2{
+  color: red;
+  font-size: 25px;
+  vertical-align: middle;
 }
 </style>
 

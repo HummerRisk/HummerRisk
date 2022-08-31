@@ -15,13 +15,13 @@
           <template v-slot:default="scope">
               <span>
                 <i class="iconfont icon-SBOM sbom-icon"></i>
-                <span slot="title">{{ $t(scope.row.name) }}</span>
+                <span slot="title">{{ scope.row.name }}</span>
               </span>
           </template>
         </el-table-column>
         <el-table-column prop="description" :label="$t('sbom.desc')" min-width="20%" show-overflow-tooltip>
           <template v-slot:default="scope">
-              <span slot="title">{{ $t(scope.row.description) }}</span>
+              <span slot="title">{{ scope.row.description }}</span>
           </template>
         </el-table-column>
         <el-table-column min-width="15%" :label="$t('account.create_time')" sortable

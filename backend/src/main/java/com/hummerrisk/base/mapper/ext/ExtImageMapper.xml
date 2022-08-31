@@ -90,6 +90,7 @@
         from image as t
         left join image_repo r on t.repo_id = r.id
         left join user on t.creator = user.id
+        join sbom_version t1 on t.sbom_version_id = t1.id
         <where>
             <if test="request.combine != null">
                 <include refid="combine">

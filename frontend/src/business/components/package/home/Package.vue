@@ -56,10 +56,34 @@
           <el-step :title="$t('package.package')" icon="el-icon-upload"></el-step>
         </el-steps>
         <div v-if="active == 1">
-            <span>
-                <h1>{{ $t('package.package_name') }}</h1>
-            </span>
+          <span>
+            <h1>{{ $t('package.package_name') }}</h1>
+          </span>
           <div class="app">
+            <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-select style="width: 100%;" v-model="addPackageForm.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(addPackageForm)">
+                <el-option
+                  v-for="item in sboms"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                  <i class="iconfont icon-SBOM sbom-icon"></i>
+                  {{ item.name }}
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="$t('sbom.sbom_project_version')" :rules="{required: true, message: $t('sbom.sbom_project_version') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-select style="width: 100%;" v-model="addPackageForm.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
+                <el-option
+                  v-for="item in versions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                  <i class="iconfont icon-lianmenglian sbom-icon-2"></i>
+                  {{ item.name }}
+                </el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item :label="$t('package.name')" ref="name" prop="name">
               <el-input v-model="addPackageForm.name" autocomplete="off" :placeholder="$t('package.name')"/>
             </el-form-item>
@@ -131,6 +155,30 @@
             <h1>{{ $t('package.package_name') }}</h1>
           </span>
           <div class="app">
+            <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-select style="width: 100%;" v-model="editPackageForm.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(editPackageForm)">
+                <el-option
+                  v-for="item in sboms"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                  <i class="iconfont icon-SBOM sbom-icon"></i>
+                  {{ item.name }}
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="$t('sbom.sbom_project_version')" :rules="{required: true, message: $t('sbom.sbom_project_version') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-select style="width: 100%;" v-model="editPackageForm.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
+                <el-option
+                  v-for="item in versions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                  <i class="iconfont icon-lianmenglian sbom-icon-2"></i>
+                  {{ item.name }}
+                </el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item :label="$t('package.name')" ref="name" prop="name">
               <el-input v-model="editPackageForm.name" autocomplete="off" :placeholder="$t('package.name')"/>
             </el-form-item>
@@ -268,6 +316,8 @@ export default {
       ],
       initialSelected: [{id: 'package.png', src: require(`@/assets/img/platform/package.png`), alt: ''}],
       imageSelect: {},
+      sboms: [],
+      versions: [],
     }
   },
   methods: {
@@ -278,6 +328,7 @@ export default {
       this.confirmVisible = false;
       this.nextVisible = true;
       this.addPackageForm = {};
+      this.initSboms();
     },
     save(item, type) {
       if(this.imageSelect.id) {
@@ -303,6 +354,19 @@ export default {
       this.save(item, type);
       this.handleClose();
     },
+    initSboms() {
+      this.result = this.$post("/sbom/allSbomList", {},response => {
+        this.sboms = response.data;
+      });
+    },
+    changeSbom(item) {
+      let params = {
+        sbomId: item.sbomId
+      };
+      this.result = this.$post("/sbom/allSbomVersionList", params,response => {
+        this.versions = response.data;
+      });
+    },
     //查询代理
     activeProxy() {
       let url = "/proxy/list/all";
@@ -323,6 +387,7 @@ export default {
           this.nextVisible = true;
           this.editPackageForm = data;
           this.id = data.id;
+          this.initSboms();
           break;
         case "delete":
           this.delete(data);

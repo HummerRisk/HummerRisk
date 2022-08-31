@@ -177,5 +177,18 @@ public class SbomController {
         return sbomService.packageMetricChart(resultId);
     }
 
+    @I18n
+    @ApiOperation(value = "所有SBOM项目")
+    @PostMapping("allSbomList")
+    public List<SbomDTO> allSbomList(@RequestBody SbomRequest request) {
+        return sbomService.sbomList(request);
+    }
+
+    @I18n
+    @ApiOperation(value = "所有SBOM项目版本")
+    @PostMapping("allSbomVersionList")
+    public List<SbomVersion> allSbomVersionList(@RequestBody SbomVersionRequest request) {
+        return sbomService.sbomVersionList(request);
+    }
 
 }
