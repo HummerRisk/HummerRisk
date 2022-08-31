@@ -190,7 +190,7 @@ CREATE TABLE IF NOT EXISTS `cloud_native_config_result_item` (
     `title`                      varchar(512)        DEFAULT NULL COMMENT 'Title',
     `description`                varchar(512)        DEFAULT NULL COMMENT 'Description',
     `message`                    varchar(256)        DEFAULT NULL COMMENT 'Message',
-    `Namespace`                  varchar(256)        DEFAULT NULL COMMENT 'namespace',
+    `namespace`                  varchar(256)        DEFAULT NULL COMMENT 'Namespace',
     `query`                      varchar(256)        DEFAULT NULL COMMENT 'Query',
     `resolution`                 varchar(512)        DEFAULT NULL COMMENT 'Resolution',
     `severity`                   varchar(50)         DEFAULT NULL COMMENT 'Severity',
