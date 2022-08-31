@@ -13,8 +13,10 @@ CREATE TABLE IF NOT EXISTS `image_repo_item` (
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
-alter table cloud_native_config_result_item modify column `title` varchar(512) DEFAULT NULL COMMENT 'Title';
-alter table cloud_native_config_result_item modify column `namespace` varchar(256) DEFAULT NULL COMMENT 'Namespace';
-alter table cloud_native_config_result_item modify column `query` varchar(256) DEFAULT NULL COMMENT 'Query';
-alter table cloud_native_config_result_item modify column `resolution` varchar(512) DEFAULT NULL COMMENT 'Resolution';
-alter table cloud_native_config_result_item modify column `primary_url` varchar(256) DEFAULT NULL COMMENT 'PrimaryURL';
+ALTER TABLE cloud_native_config_result_item modify COLUMN `title` varchar(512) DEFAULT NULL COMMENT 'Title';
+ALTER TABLE cloud_native_config_result_item modify COLUMN `namespace` varchar(256) DEFAULT NULL COMMENT 'Namespace';
+ALTER TABLE cloud_native_config_result_item modify COLUMN `query` varchar(256) DEFAULT NULL COMMENT 'Query';
+ALTER TABLE cloud_native_config_result_item modify COLUMN `resolution` varchar(512) DEFAULT NULL COMMENT 'Resolution';
+ALTER TABLE cloud_native_config_result_item modify COLUMN `primary_url` varchar(256) DEFAULT NULL COMMENT 'PrimaryURL';
+
+DELETE FROM plugin WHERE id = 'hummer-tsunami-plugin';
