@@ -4,11 +4,11 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
-          <el-menu-item :index="'/log/event'">
+          <el-menu-item :index="'/log/sync'">
             {{ $t("log.event_sync") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/log/audit'">
+          <el-menu-item :index="'/log/event'">
             {{ $t("log.event_analysis") }}
           </el-menu-item>
 

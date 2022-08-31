@@ -11,3 +11,6 @@ CREATE TABLE IF NOT EXISTS `image_repo_item` (
     `push_time`                  bigint(15)         DEFAULT NULL COMMENT '推送时间',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
+
+
+alter table cloud_event_sync_log add column exception   varchar(1024)   DEFAULT NULL COMMENT '异常信息';

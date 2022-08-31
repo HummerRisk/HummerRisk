@@ -3,6 +3,7 @@ package com.hummerrisk.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.CloudEvent;
+import com.hummerrisk.base.domain.CloudEventSyncLog;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
@@ -20,6 +21,13 @@ import java.util.List;
 public class CloudEventController {
     @Resource
     private CloudEventService cloudEventService;
+
+    @ApiOperation(value = "同步日志查询")
+    @PostMapping("sync/log/list/{goPage}/{pageSize}")
+    public Pager<List<CloudEventSyncLog>> listSyncLogs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest){
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, cloudEventService.getCloudEventSyncLog(cloudEventRequest.getAccountId(),cloudEventRequest.getRegion()));
+    }
 
     @ApiOperation(value = "日志同步")
     @PostMapping("sync")
