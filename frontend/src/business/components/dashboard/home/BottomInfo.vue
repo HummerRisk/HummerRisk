@@ -1,24 +1,50 @@
 <template>
-  <container class="container" v-loading="result.loading">
-    <el-col :span="24">
-      <el-card class="table-card" v-loading="result.loading">
-        <template v-slot:header>
-          <span class="title">{{ $t('dashboard.image_statistics') }}</span>
-        </template>
-        <image-chart/>
-      </el-card>
-    </el-col>
-  </container>
+  <div v-loading="result.loading">
+    <container class="container">
+      <el-col :span="24">
+        <el-card class="table-card">
+          <template v-slot:header>
+            <span class="title">{{ $t('dashboard.k8s_statistics') }}</span>
+          </template>
+          <cloud-native-chart/>
+        </el-card>
+      </el-col>
+    </container>
+    <container class="container" >
+      <el-col :span="24">
+        <el-card class="table-card">
+          <template v-slot:header>
+            <span class="title">{{ $t('dashboard.image_statistics') }}</span>
+          </template>
+          <image-chart/>
+        </el-card>
+      </el-col>
+    </container>
+    <container class="container">
+      <el-col :span="24">
+        <el-card class="table-card">
+          <template v-slot:header>
+            <span class="title">{{ $t('dashboard.code_statistics') }}</span>
+          </template>
+          <code-chart/>
+        </el-card>
+      </el-col>
+    </container>
+  </div>
 </template>
 
 <script>
 import ImageChart from "@/business/components/dashboard/head/ImageChart";
+import CodeChart from "@/business/components/dashboard/head/CodeChart";
+import CloudNativeChart from "@/business/components/dashboard/head/CloudNativeChart";
 import Container from "../.././common/components/Container";
 
 /* eslint-disable */
 export default {
   components: {
     ImageChart,
+    CodeChart,
+    CloudNativeChart,
     Container,
   },
   data() {

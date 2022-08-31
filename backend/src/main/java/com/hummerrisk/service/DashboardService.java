@@ -140,6 +140,24 @@ public class DashboardService {
         return imageChartDTO;
     }
 
+    public CodeChartDTO codeChart(Map<String, Object> params) {
+        CodeChartDTO codeChartDTO = new CodeChartDTO();
+        List<String> xAxis = extDashboardMapper.codeChartX(params);
+        List<Integer> yAxis = extDashboardMapper.codeChartY(params);
+        codeChartDTO.setxAxis(xAxis);
+        codeChartDTO.setyAxis(yAxis);
+        return codeChartDTO;
+    }
+
+    public CloudNativeChartDTO cloudNativeChart(Map<String, Object> params) {
+        CloudNativeChartDTO cloudNativeChartDTO = new CloudNativeChartDTO();
+        List<String> xAxis = extDashboardMapper.cloudNativeChartX(params);
+        List<Integer> yAxis = extDashboardMapper.cloudNativeChartY(params);
+        cloudNativeChartDTO.setxAxis(xAxis);
+        cloudNativeChartDTO.setyAxis(yAxis);
+        return cloudNativeChartDTO;
+    }
+
     public List<TaskCalendarVo> taskCalendar() {
         return extDashboardMapper.taskCalendar();
     }

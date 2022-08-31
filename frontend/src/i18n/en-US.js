@@ -475,6 +475,8 @@ export default {
     server_statistics: 'Host detection statistics',
     package_statistics: 'Package detection statistics',
     image_statistics: 'Image detection statistics',
+    k8s_statistics: 'Cloud native detection statistics',
+    code_statistics: 'Source code detection statistics',
     data_task: 'Scan task ✔️',
     scan_analysis: 'Detection analysis',
     type: 'Style',

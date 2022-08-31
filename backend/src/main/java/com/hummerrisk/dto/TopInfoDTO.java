@@ -18,6 +18,8 @@ public class TopInfoDTO {
 
     private String imageAccounts;
 
+    private String codeAccounts;
+
     private String rules;
 
     private String cloudRules;
@@ -30,6 +32,8 @@ public class TopInfoDTO {
 
     private String imageRules;
 
+    private String codeRules;
+
     private String results;
 
     private String cloudResults;
@@ -41,6 +45,8 @@ public class TopInfoDTO {
     private String packageResults;
 
     private String imageResults;
+
+    private String codeResults;
 
     public String getUsers() {
         return users;
@@ -200,5 +206,29 @@ public class TopInfoDTO {
 
     public void setImageResults(String imageResults) {
         this.imageResults = imageResults;
+    }
+
+    public String getCodeAccounts() {
+        return codeAccounts;
+    }
+
+    public void setCodeAccounts(String codeAccounts) {
+        this.codeAccounts = codeAccounts;
+    }
+
+    public String getCodeRules() {
+        return codeRules;
+    }
+
+    public void setCodeRules(String codeRules) {
+        this.codeRules = codeRules;
+    }
+
+    public String getCodeResults() {
+        return codeResults;
+    }
+
+    public void setCodeResults(String codeResults) {
+        this.codeResults = codeResults;
     }
 }

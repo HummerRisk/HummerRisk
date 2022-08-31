@@ -24,6 +24,14 @@ public interface ExtDashboardMapper {
 
     List<Integer> imageChartY(Map<String, Object> params);
 
+    List<String> codeChartX(Map<String, Object> params);
+
+    List<Integer> codeChartY(Map<String, Object> params);
+
+    List<String> cloudNativeChartX(Map<String, Object> params);
+
+    List<Integer> cloudNativeChartY(Map<String, Object> params);
+
     List<TaskCalendarVo> taskCalendar();
 
     List<String> analysisChartX(AnslysisVo anslysisVo);

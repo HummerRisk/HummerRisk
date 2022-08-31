@@ -101,6 +101,20 @@ public class DashboardController {
         return dashboardService.imageChart(params);
     }
 
+    @I18n
+    @ApiOperation(value = "首页源码检测统计")
+    @PostMapping("codeChart")
+    public CodeChartDTO codeChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.codeChart(params);
+    }
+
+    @I18n
+    @ApiOperation(value = "首页云原生检测统计")
+    @PostMapping("cloudNativeChart")
+    public CloudNativeChartDTO cloudNativeChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.cloudNativeChart(params);
+    }
+
     @ApiOperation(value = "首页任务日历")
     @GetMapping("taskCalendar")
     public List<TaskCalendarVo> taskCalendar() {
