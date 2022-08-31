@@ -108,6 +108,8 @@ public class ResourceCreateService {
     private CodeResultMapper codeResultMapper;
     @Resource
     private CodeService codeService;
+    @Resource
+    private HistoryCodeResultMapper historyCodeResultMapper;
 
     @QuartzScheduled(cron = "${cron.expression.local}")
     public void handleTasks() throws Exception {
@@ -456,6 +458,16 @@ public class ResourceCreateService {
                         historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), packageResult, TaskEnum.packageAccount.getType()));
                         historyService.updateScanTaskHistory(historyScanTask);
                     }
+                } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.codeAccount.getType())) {
+                    CodeResult codeResult = codeResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                    if (codeResult != null && historyScanStatus.contains(codeResult.getResultStatus())) {
+                        historyScanTask.setStatus(codeResult.getResultStatus());
+                        historyScanTask.setOutput(jsonArray.toJSONString());
+                        historyScanTask.setResourcesSum(codeResult.getReturnSum()!=null? codeResult.getReturnSum():0);
+                        historyScanTask.setReturnSum(codeResult.getReturnSum()!=null? codeResult.getReturnSum():0);
+                        historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), codeResult, TaskEnum.codeAccount.getType()));
+                        historyService.updateScanTaskHistory(historyScanTask);
+                    }
                 }
             }
             historyScanTaskCriteria.andStatusIn(historyScanStatus);
@@ -526,6 +538,11 @@ public class ResourceCreateService {
                         HistoryPackageTaskExample example = new HistoryPackageTaskExample();
                         example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
                         n = historyPackageTaskMapper.countByExample(example);
+                        i = i + n;
+                    } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.codeAccount.getType())) {
+                        HistoryCodeResultExample example = new HistoryCodeResultExample();
+                        example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
+                        n = historyCodeResultMapper.countByExample(example);
                         i = i + n;
                     }
                     if (n > 0) {//任务结束时插入结束日志，但是只保留一条

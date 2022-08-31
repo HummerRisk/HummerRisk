@@ -282,6 +282,21 @@ public class HistoryService {
             } else {
                 score = 100 - 41;
             }
+        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.codeAccount.getType())) {
+            CodeResult codeResult = (CodeResult) task;
+            if (codeResult.getReturnSum() >= 0 && codeResult.getReturnSum() < 10) {
+                score = 100 - 5;
+            } else if (codeResult.getReturnSum() >= 10 && codeResult.getReturnSum() < 50) {
+                score = 100 - 10;
+            } else if (codeResult.getReturnSum() >= 50 && codeResult.getReturnSum() < 100) {
+                score = 100 - 20;
+            } else if (codeResult.getReturnSum() >= 100 && codeResult.getReturnSum() < 200) {
+                score = 100 - 30;
+            } else if (codeResult.getReturnSum() >= 200 && codeResult.getReturnSum() < 500) {
+                score = 100 - 40;
+            } else {
+                score = 100 - 41;
+            }
         }
 
         return score;

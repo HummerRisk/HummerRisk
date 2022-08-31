@@ -1067,6 +1067,7 @@ export default {
     task_server: 'Host resources',
     task_image: 'Image detection resource',
     task_package: 'Package resource',
+    task_code: 'Source resource',
     add_fav: 'Favorites',
     first_task: 'The first step: select resource information',
     second_task: 'Second step: select detection rules',

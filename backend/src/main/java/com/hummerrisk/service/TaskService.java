@@ -82,13 +82,19 @@ public class TaskService {
     @Resource
     private CloudTaskService cloudTaskService;
     @Resource
-    private UserMapper userMapper;
+    private CodeRuleMapper codeRuleMapper;
+    @Resource
+    private CodeResultMapper codeResultMapper;
+    @Resource
+    private CodeMapper codeMapper;
     @Resource
     private RuleService ruleService;
     @Resource
     private CloudTaskMapper cloudTaskMapper;
     @Resource
     private HistoryService historyService;
+    @Resource
+    private CodeService codeService;
 
 
     public List<Favorite> listFavorites() {
@@ -126,6 +132,11 @@ public class TaskService {
         packageExample.setOrderByClause("create_time desc");
         List<PackageVo> packages = extTaskMapper.selectPackageByExample(packageExample);
         dto.setPackageAccount(packages);
+        //源码
+        CodeExample codeExample = new CodeExample();
+        codeExample.setOrderByClause("create_time desc");
+        List<CodeVo> codeVos = extTaskMapper.selectCodeByExample(codeExample);
+        dto.setCodeAccount(codeVos);
         return dto;
     }
 
@@ -163,6 +174,8 @@ public class TaskService {
             allList = extTaskMapper.imageRuleList(ruleVo);
         } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.packageAccount.getType())) {
             allList = extTaskMapper.packageRuleList(ruleVo);
+        } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.codeAccount.getType())) {
+            allList = extTaskMapper.codeRuleList(ruleVo);
         }
         if(ruleVo.getAccountType()!=null) allList.addAll(extTaskMapper.ruleTagList(ruleVo));
         if(ruleVo.getAccountType()!=null && StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.cloudAccount.getType()))
@@ -181,6 +194,8 @@ public class TaskService {
             return extTaskMapper.imageRuleList(ruleVo);
         } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.packageAccount.getType())) {
             return extTaskMapper.packageRuleList(ruleVo);
+        } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.codeAccount.getType())) {
+            return extTaskMapper.codeRuleList(ruleVo);
         }
         return new LinkedList<>();
     }
@@ -209,6 +224,8 @@ public class TaskService {
             ruleDTO.setImageRuleDTO(extTaskMapper.imageDetailRule(ruleVo));
         } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.packageAccount.getType())) {
             ruleDTO.setPackageRuleDTO(extTaskMapper.packageDetailRule(ruleVo));
+        } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.codeAccount.getType())) {
+            ruleDTO.setCodeRuleDTO(extTaskMapper.codeDetailRule(ruleVo));
         }
         return ruleDTO;
     }
@@ -337,6 +354,11 @@ public class TaskService {
                     ruleId = rule.getId();
                     ruleName = rule.getName();
                     resourceId = this.packageResource(taskItem.getSourceId(), taskItem.getAccountId());
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.codeAccount.getType())) {
+                    CodeRule rule = codeRuleMapper.selectByPrimaryKey(taskItem.getSourceId());
+                    ruleId = rule.getId();
+                    ruleName = rule.getName();
+                    resourceId = this.codeResource(taskItem.getSourceId(), taskItem.getAccountId());
                 }
                 this.insertTaskItemResource(taskItem, ruleId, ruleName, resourceId);
             } else if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.tag.name())) {
@@ -373,25 +395,35 @@ public class TaskService {
                         if(resourceId == null) continue;
                         this.insertTaskItemResource(taskItem, serverRule.getId(), serverRule.getName(), resourceId);
                     }
-                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.packageAccount.getType())) {
                     for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
                         PackageRule packageRule = packageRuleMapper.selectByPrimaryKey(ruleTagMapping.getRuleId());
                         if(packageRule == null){
                             continue;
                         }
-                        resourceId = this.imageResource(packageRule.getId(), taskItem.getAccountId());
+                        resourceId = this.packageResource(packageRule.getId(), taskItem.getAccountId());
                         if(resourceId == null) continue;
                         this.insertTaskItemResource(taskItem, packageRule.getId(), packageRule.getName(), resourceId);
                     }
-                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.packageAccount.getType())) {
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
                     for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
                         ImageRule imageRule = imageRuleMapper.selectByPrimaryKey(ruleTagMapping.getRuleId());
                         if(imageRule == null){
                             continue;
                         }
-                        resourceId = this.packageResource(imageRule.getId(), taskItem.getAccountId());
+                        resourceId = this.imageResource(imageRule.getId(), taskItem.getAccountId());
                         if(resourceId == null) continue;
                         this.insertTaskItemResource(taskItem, imageRule.getId(), imageRule.getName(), resourceId);
+                    }
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.codeAccount.getType())) {
+                    for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
+                        CodeRule codeRule = codeRuleMapper.selectByPrimaryKey(ruleTagMapping.getRuleId());
+                        if(codeRule == null){
+                            continue;
+                        }
+                        resourceId = this.codeResource(codeRule.getId(), taskItem.getAccountId());
+                        if(resourceId == null) continue;
+                        this.insertTaskItemResource(taskItem, codeRule.getId(), codeRule.getName(), resourceId);
                     }
                 }
             } else if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.group.name())) {
@@ -428,6 +460,12 @@ public class TaskService {
                         PackageRule packageRule = packageRuleMapper.selectByPrimaryKey(ruleGroupMapping.getRuleId());
                         resourceId = this.packageResource(packageRule.getId(), taskItem.getAccountId());
                         this.insertTaskItemResource(taskItem, packageRule.getId(), packageRule.getName(), resourceId);
+                    }
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.codeAccount.getType())) {
+                    for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
+                        CodeRule codeRule = codeRuleMapper.selectByPrimaryKey(ruleGroupMapping.getRuleId());
+                        resourceId = this.codeResource(codeRule.getId(), taskItem.getAccountId());
+                        this.insertTaskItemResource(taskItem, codeRule.getId(), codeRule.getName(), resourceId);
                     }
                 }
             }
@@ -473,6 +511,10 @@ public class TaskService {
                         PackageRule rule = packageRuleMapper.selectByPrimaryKey(taskItem.getSourceId());
                         ruleId = rule.getId();
                         resourceId = packageService.reScan(taskItemResource.getResourceId());
+                    } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.codeAccount.getType())) {
+                        CodeRule rule = codeRuleMapper.selectByPrimaryKey(taskItem.getSourceId());
+                        ruleId = rule.getId();
+                        resourceId = codeService.reScan(taskItemResource.getResourceId());
                     }
                     this.updateTaskItemResource(taskItemResource, ruleId, resourceId);
                 } else if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.tag.name())) {
@@ -538,6 +580,18 @@ public class TaskService {
                                 this.updateTaskItemResource(taskItemResource, packageRule.getId(), resourceId);
                             }
                         }
+                    } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.codeAccount.getType())) {
+                        for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
+                            CodeResultExample codeResultExample = new CodeResultExample();
+                            codeResultExample.createCriteria().andRuleIdEqualTo(ruleTagMapping.getRuleId());
+                            List<CodeResult> codeResults = codeResultMapper.selectByExample(codeResultExample);
+                            for (CodeResult codeResult : codeResults) {
+                                CodeRule codeRule = codeRuleMapper.selectByPrimaryKey(codeResult.getRuleId());
+                                resourceId = codeService.reScan(codeRule.getId());
+                                if (resourceId == null) continue;
+                                this.updateTaskItemResource(taskItemResource, codeRule.getId(), resourceId);
+                            }
+                        }
                     }
                 } else if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.group.name())) {
                     String resourceId = "";
@@ -600,6 +654,18 @@ public class TaskService {
                                 resourceId = packageService.reScan(packageResult.getId());
                                 if (resourceId == null) continue;
                                 this.updateTaskItemResource(taskItemResource, packageRule.getId(), resourceId);
+                            }
+                        }
+                    } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.codeAccount.getType())) {
+                        for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
+                            CodeResultExample codeResultExample = new CodeResultExample();
+                            codeResultExample.createCriteria().andRuleIdEqualTo(ruleGroupMapping.getRuleId());
+                            List<CodeResult> codeResults = codeResultMapper.selectByExample(codeResultExample);
+                            for (CodeResult codeResult : codeResults) {
+                                CodeRule codeRule = codeRuleMapper.selectByPrimaryKey(codeResult.getRuleId());
+                                resourceId = codeService.reScan(codeRule.getId());
+                                if (resourceId == null) continue;
+                                this.updateTaskItemResource(taskItemResource, codeRule.getId(), resourceId);
                             }
                         }
                     }
@@ -773,6 +839,43 @@ public class TaskService {
         return "";
     }
 
+    private String dealCodeTask (CodeRule rule, Code code, Integer scanId) {
+        try {
+            if (rule.getStatus()) {
+                CodeResult result = new CodeResult();
+                BeanUtils.copyBean(result, code);
+                result.setId(UUIDUtil.newUUID());
+                result.setCodeId(code.getId());
+                result.setApplyUser(SessionUtils.getUserId());
+                result.setCreateTime(System.currentTimeMillis());
+                result.setUpdateTime(System.currentTimeMillis());
+                result.setRuleId(rule.getId());
+                result.setRuleName(rule.getName());
+                result.setRuleDesc(rule.getDescription());
+                result.setResultStatus(TaskConstants.TASK_STATUS.APPROVED.toString());
+                result.setSeverity(rule.getSeverity());
+                result.setUserName(SessionUtils.getUser().getName());
+                CodeResultExample codeResultExample = new CodeResultExample();
+                codeResultExample.createCriteria().andCodeIdEqualTo(code.getId()).andRuleIdEqualTo(rule.getId());
+                codeResultMapper.deleteByExample(codeResultExample);
+                codeResultMapper.insertSelective(result);
+
+                codeService.saveCodeResultLog(result.getId(), "i18n_start_code_result", "", true);
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.CREATE, "i18n_start_code_result");
+                historyService.insertScanTaskHistory(result, scanId, result.getCodeId(), TaskEnum.codeAccount.getType());
+                historyService.insertHistoryCodeResult(BeanUtils.copyBean(new HistoryCodeResult(), result));
+                return result.getId();
+            } else {
+                LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
+                HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
+            }
+        } catch (Exception e) {
+            LogUtil.error(e);
+            HRException.throwException(e.getMessage());
+        }
+        return "";
+    }
+
     private String dealImageTask (ImageRule rule, Image image, Integer scanId) {
         try {
             if (rule.getStatus()) {
@@ -836,6 +939,13 @@ public class TaskService {
         Package aPackage = packageMapper.selectByPrimaryKey(accountId);
         Integer scanId = historyService.insertScanHistory(aPackage);
         return this.dealPackageTask(packageRule, aPackage, scanId);
+    }
+
+    private String codeResource(String ruleId, String accountId) throws Exception {
+        CodeRule codeRule = codeRuleMapper.selectByPrimaryKey(ruleId);
+        Code code = codeMapper.selectByPrimaryKey(accountId);
+        Integer scanId = historyService.insertScanHistory(code);
+        return this.dealCodeTask(codeRule, code, scanId);
     }
 
     private String imageResource(String ruleId, String accountId) throws Exception {

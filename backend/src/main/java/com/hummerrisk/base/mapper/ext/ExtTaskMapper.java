@@ -1,9 +1,6 @@
 package com.hummerrisk.base.mapper.ext;
 
-import com.hummerrisk.base.domain.AccountExample;
-import com.hummerrisk.base.domain.ImageExample;
-import com.hummerrisk.base.domain.PackageExample;
-import com.hummerrisk.base.domain.ServerExample;
+import com.hummerrisk.base.domain.*;
 import com.hummerrisk.controller.request.task.*;
 import com.hummerrisk.dto.*;
 
@@ -21,6 +18,8 @@ public interface ExtTaskMapper {
 
     List<PackageVo> selectPackageByExample(PackageExample example);
 
+    List<CodeVo> selectCodeByExample(CodeExample example);
+
     List<RuleVo> ruleList(RuleVo ruleVo);
 
     List<RuleVo> cloudRuleList(RuleVo ruleVo);
@@ -32,6 +31,8 @@ public interface ExtTaskMapper {
     List<RuleVo> imageRuleList(RuleVo ruleVo);
 
     List<RuleVo> packageRuleList(RuleVo ruleVo);
+
+    List<RuleVo> codeRuleList(RuleVo ruleVo);
 
     List<RuleVo> ruleTagList(RuleVo ruleVo);
 
@@ -46,6 +47,8 @@ public interface ExtTaskMapper {
     ImageRuleDTO imageDetailRule(RuleVo ruleVo);
 
     PackageRuleDTO packageDetailRule(RuleVo ruleVo);
+
+    CodeRuleDTO codeDetailRule(RuleVo ruleVo);
 
     List<TaskTagGroupDTO> detailTag(RuleVo ruleVo);
 

@@ -22,6 +22,8 @@ public class TaskReportDTO extends Task {
 
     private List<HistoryPackageReportDTO> historyPackageReportDTOList;//软件包检测结果details
 
+    private List<HistoryCodeReportDTO> historyCodeReportDTOList;//软件包检测结果details
+
     public List<HistoryCloudTaskDTO> getHistoryCloudTaskDTOList() {
         return historyCloudTaskDTOList;
     }

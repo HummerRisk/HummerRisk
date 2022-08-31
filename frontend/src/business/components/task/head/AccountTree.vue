@@ -104,6 +104,12 @@ export default {
         return this.$t("task.task_package");
       }
     },
+    codeAccount: {
+      type: String,
+      default() {
+        return this.$t("task.task_code");
+      }
+    },
   },
   watch: {
     treeNodes() {
@@ -135,6 +141,7 @@ export default {
           {name: this.serverAccount, level: 1, type: 'serverAccount', children: this.treeNodes.serverAccount},
           {name: this.imageAccount, level: 1, type: 'imageAccount', children: this.treeNodes.imageAccount},
           {name: this.packageAccount, level: 1, type: 'packageAccount', children: this.treeNodes.packageAccount},
+          {name: this.codeAccount, level: 1, type: 'codeAccount', children: this.treeNodes.codeAccount},
         ],
       });
       if (this.expandedNode.length === 0) {

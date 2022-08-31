@@ -45,6 +45,8 @@ public class DashboardService {
     private HistoryService historyService;
     @Resource
     private SystemParameterMapper systemParameterMapper;
+    @Resource
+    private CodeResultMapper codeResultMapper;
 
     public List<ChartData> vulnDistribution(Map<String, Object> params) {
 
@@ -177,7 +179,14 @@ public class DashboardService {
             sum = sum + historyService.calculateScore(packageResult.getId(), packageResult, TaskEnum.packageAccount.getType());
         }
 
-        count = cloudTasks.size() + serverResults.size() + imageResults.size() + packageResults.size();
+        CodeResultExample codeResultExample = new CodeResultExample();
+        codeResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
+        List<CodeResult> codeResults = codeResultMapper.selectByExample(codeResultExample);
+        for(CodeResult codeResult : codeResults) {
+            sum = sum + historyService.calculateScore(codeResult.getId(), codeResult, TaskEnum.codeAccount.getType());
+        }
+
+        count = cloudTasks.size() + serverResults.size() + imageResults.size() + packageResults.size() + codeResults.size();
 
         if(count != 0) score = Math.round(sum / count);
 

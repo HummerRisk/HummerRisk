@@ -1067,6 +1067,7 @@ export default {
     task_server: '主機資源',
     task_image: '鏡像檢測資源',
     task_package: '軟件包資源',
+    task_code: '源碼資源',
     add_fav: '收藏',
     first_task: '第一步: 選擇資源信息',
     second_task: '第二步: 選擇檢測規則',

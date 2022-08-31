@@ -13,6 +13,8 @@ public class TaskRuleDTO {
 
    private ImageRuleDTO imageRuleDTO;
 
+    private CodeRuleDTO codeRuleDTO;
+
     public RuleDTO getRuleDTO() {
         return ruleDTO;
     }
@@ -43,5 +45,13 @@ public class TaskRuleDTO {
 
     public void setImageRuleDTO(ImageRuleDTO imageRuleDTO) {
         this.imageRuleDTO = imageRuleDTO;
+    }
+
+    public CodeRuleDTO getCodeRuleDTO() {
+        return codeRuleDTO;
+    }
+
+    public void setCodeRuleDTO(CodeRuleDTO codeRuleDTO) {
+        this.codeRuleDTO = codeRuleDTO;
     }
 }

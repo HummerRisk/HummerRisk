@@ -1,9 +1,6 @@
 package com.hummerrisk.dto;
 
-import com.hummerrisk.controller.request.task.AccountVo;
-import com.hummerrisk.controller.request.task.ImageVo;
-import com.hummerrisk.controller.request.task.PackageVo;
-import com.hummerrisk.controller.request.task.ServerVo;
+import com.hummerrisk.controller.request.task.*;
 
 import java.util.List;
 
@@ -19,6 +16,8 @@ public class AccountTreeDTO {
     private List<ImageVo> imageAccount;
 
     private List<PackageVo> packageAccount;
+
+    private List<CodeVo> codeAccount;
 
     public List<AccountVo> getCloudAccount() {
         return cloudAccount;
@@ -58,5 +57,13 @@ public class AccountTreeDTO {
 
     public void setPackageAccount(List<PackageVo> packageAccount) {
         this.packageAccount = packageAccount;
+    }
+
+    public List<CodeVo> getCodeAccount() {
+        return codeAccount;
+    }
+
+    public void setCodeAccount(List<CodeVo> codeAccount) {
+        this.codeAccount = codeAccount;
     }
 }
