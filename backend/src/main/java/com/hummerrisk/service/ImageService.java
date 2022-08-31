@@ -102,9 +102,18 @@ public class ImageService {
 
         OperationLogService.log(SessionUtils.getUser(), imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image_repo");
         imageRepoMapper.insertSelective(imageRepo);
+
         return imageRepo;
     }
 
+    /**
+     * 过去harbor镜像列表
+     * @param path harbor 地址
+     * @param username harbor 用户名
+     * @param password harbor 密码
+     * @return 镜像列表
+     * @throws Exception
+     */
     public List<Map<String,String>> getHarborImages(String path,String username,String password) throws Exception {
         if(path.endsWith("/")){
             path = path.substring(0,path.length()-1);
@@ -114,33 +123,30 @@ public class ImageService {
         header.put("Authorization","Basic "+ Base64.getUrlEncoder().encodeToString((username + ":" + password).getBytes()));
         String projectStr = HttpClientUtil.HttpGet(path+"/api/v2.0/projects/",header);
         JSONArray projects =  JSON.parseArray(projectStr);
-        Iterator<Object> projectsIt = projects.iterator();
-        while (projectsIt.hasNext()){
-            JSONObject project =(JSONObject)projectsIt.next();
-            String name =  project.getString("name");
-            String repositoriesStr = HttpClientUtil.HttpGet(path+"/api/v2.0/projects/"+name+"/repositories",header);
+        for (Object o : projects) {
+            JSONObject project = (JSONObject) o;
+            String projectName = project.getString("name");
+            String repositoriesStr = HttpClientUtil.HttpGet(path + "/api/v2.0/projects/" + projectName + "/repositories", header);
             JSONArray repositories = JSON.parseArray(repositoriesStr);
-            Iterator<Object> repositoriesIt = repositories.iterator();
-            while (repositoriesIt.hasNext()){
-                JSONObject rep =(JSONObject)repositoriesIt.next();
+            for (Object repository : repositories) {
+                JSONObject rep = (JSONObject) repository;
                 String repName = rep.getString("name");
-                if(repName.indexOf("/")>0){
-                    repName = repName.split("/",-1)[1];
+                if (repName.indexOf("/") > 0) {
+                    repName = repName.split("/", -1)[1];
                 }
-                String artifactsStr = HttpClientUtil.HttpGet(path+"/api/v2.0/projects/"+name+"/repositories/"+repName+"/artifacts",header);
+                String artifactsStr = HttpClientUtil.HttpGet(path + "/api/v2.0/projects/" + projectName + "/repositories/" + repName + "/artifacts", header);
                 JSONArray artifacts = JSON.parseArray(artifactsStr);
-                Iterator<Object> artifactsIt = artifacts.iterator();
-                while (artifactsIt.hasNext()){
-                    JSONObject arti = (JSONObject) artifactsIt.next();
+                for (Object artifact : artifacts) {
+                    JSONObject arti = (JSONObject) artifact;
                     JSONArray tags = arti.getJSONArray("tags");
-                    List<JSONObject> tagList =  tags.toJavaList(JSONObject.class);
-                    for(JSONObject tag : tagList){
-                        String tagStr =  tag.getString("name");
-                        Map<String,String> imageMap = new HashMap<>();
-                        imageMap.put("project",name);
-                        imageMap.put("repositories",repName);
-                        imageMap.put("tag",tagStr);
-                        imageMap.put("imagePath",path+"/"+name+"/"+repName+":"+tagStr);
+                    List<JSONObject> tagList = tags.toJavaList(JSONObject.class);
+                    for (JSONObject tag : tagList) {
+                        String tagStr = tag.getString("name");
+                        Map<String, String> imageMap = new HashMap<>();
+                        imageMap.put("project", projectName);
+                        imageMap.put("repositories", repName);
+                        imageMap.put("tag", tagStr);
+                        imageMap.put("imagePath", path + "/" + projectName + "/" + repName + ":" + tagStr);
                         result.add(imageMap);
                     }
                 }
