@@ -8,7 +8,7 @@
     </el-row>
     <el-row type="flex" justify="space-between" align="middle">
       <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"/>
-      <el-select v-model="region" placeholder="请选择区域" @change = "changeRegion">
+      <el-select v-model="region" clearable placeholder="请选择区域" @change = "changeRegion">
         <el-option
           v-for="item in regions"
           :key="item['regionId']"
@@ -19,6 +19,7 @@
 
       <span>
          <el-date-picker
+           v-if="showDate"
            @change="changeDateTime"
            v-model="dateTime2"
            type="datetimerange"
@@ -31,9 +32,9 @@
     </el-date-picker>
       </span>
       <span class="operate-button">
-        <table-button   icon="el-icon-video-play"
+        <table-button   icon="el-icon-video-play" v-if="showSync"
                         :content="syncTip" @click="syncData"/>
-        <table-button   icon="el-icon-video-play"
+        <table-button   icon="el-icon-video-play" v-if="showSearch"
                         :content="searchTip" @click="search"/>
         <slot name="button"></slot>
       </span>
@@ -56,6 +57,24 @@ export default {
         type: String,
         default() {
           return this.$t('commons.name');
+        }
+      },
+      showDate: {
+        type: Boolean,
+        default() {
+          return true;
+        }
+      },
+      showSync: {
+        type: Boolean,
+        default() {
+          return true;
+        }
+      },
+      showSearch: {
+        type: Boolean,
+        default() {
+          return true;
         }
       },
       dateTime: {
@@ -82,6 +101,9 @@ export default {
           return this.$t('commons.search_by_name');
         }
       },
+      initRegion:{
+        String
+      }
     },
     data(){
       return {
@@ -122,8 +144,17 @@ export default {
       account = JSON.parse(account)
       this.regions = JSON.parse(account.regions)
       this.dateTime2 = this.dateTime
+      if(this.initRegion){
+        this.region = this.initRegion
+      }
     },
     methods: {
+      setDateTime(dateTime){
+        this.dateTime2 = dateTime
+      },
+      setRegion(region){
+        this.region = region
+      },
       syncData() {
         this.$emit('syncData');
       },

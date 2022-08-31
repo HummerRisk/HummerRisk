@@ -3,14 +3,17 @@
     <el-card class="table-card" >
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
+                      ref="tableHeader"
                       title="事件列表"
                       :currentAccount="currentAccount"
                       searchTip="查询"
                       :dateTime = "dateTime"
+                      :initRegion="region"
                       @cloudAccountSwitch="cloudAccountSwitch"
                       @changeRegion="changeRegion"
                       @changeDateTime="changeDateTime"
                       @syncData="syncData" :createTip="$t('common.sync')"
+                      :showSync = "false"
                       />
         <el-table border :data="tableData" class="adjust-table table-content">
           <el-table-column
@@ -81,8 +84,20 @@ export default {
     }
   },
   created() {
-    this.currentAccount = localStorage.getItem(ACCOUNT_ID)
-    this.dateTime = [this.formatDate(new Date().getTime()-1000*60*60*24),this.formatDate(new Date().getTime())]
+    let accountId = this.$route.query.accountId;
+    if(!!accountId){
+      let region =  this.$route.query.region;
+      let startTime = this.$route.query.startTime;
+      let endTime = this.$route.query.endTime;
+      this.currentAccount = accountId
+      this.region = region
+      this.dateTime = [this.formatDate(startTime*1),this.formatDate(endTime*1)]
+      this.search()
+    }else{
+      this.currentAccount = localStorage.getItem(ACCOUNT_ID)
+      this.dateTime = [this.formatDate(new Date().getTime()-1000*60*60*24),this.formatDate(new Date().getTime())]
+    }
+
   },
   methods: {
     syncData(){
@@ -104,9 +119,11 @@ export default {
     },
     changeRegion(value){
       this.region = value
+      this.search()
     },
     changeDateTime(value){
       this.dateTime = value
+      this.search()
     },
     formatDate: function(value) {
       let dt = new Date(value)
@@ -119,6 +136,22 @@ export default {
       return `${year}-${month}-${date} ${hour}:${minute}:${second}`;
     }
   },
+  watch: {
+    $route(to, from){
+      let accountId = this.$route.query.accountId;
+      if(!!accountId){
+        let region =  this.$route.query.region;
+        let startTime = this.$route.query.startTime;
+        let endTime = this.$route.query.endTime;
+        this.currentAccount = accountId
+        this.region = region
+        this.dateTime = [this.formatDate(startTime*1),this.formatDate(endTime*1)]
+        this.$refs.tableHeader.setDateTime(this.dateTime)
+        this.$refs.tableHeader.setRegion(this.region)
+        this.search()
+      }
+    },
+  }
 }
 </script>
 

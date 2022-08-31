@@ -14,6 +14,7 @@ import com.hummerrisk.commons.utils.CommonThreadPool;
 import com.hummerrisk.commons.utils.DateUtils;
 import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -52,8 +53,20 @@ public class CloudEventService {
     @Resource
     private PlatformTransactionManager transactionManager;
 
+    public List<CloudEventSyncLog> getCloudEventSyncLog(String accountId,String region){
+        CloudEventSyncLogExample cloudEventSyncLogExample = new CloudEventSyncLogExample();
+        cloudEventSyncLogExample.setOrderByClause(" create_time desc");
+        CloudEventSyncLogExample.Criteria criteria =  cloudEventSyncLogExample.createCriteria().andAccountIdEqualTo(accountId);
+        if(StringUtils.isNotBlank(region)){
+            criteria.andRegionEqualTo(region);
+        }
+        return cloudEventSyncLogMapper.selectByExample(cloudEventSyncLogExample);
+    }
+
+
     public List<CloudEvent> getCloudEvents(CloudEventRequest cloudEventRequest) {
         CloudEventExample cloudEventExample = new CloudEventExample();
+        cloudEventExample.setOrderByClause(" event_time desc ");
         cloudEventExample.createCriteria().andCloudAccountIdEqualTo(cloudEventRequest.getAccountId()).andSyncRegionEqualTo(cloudEventRequest.getRegion())
                 .andEventTimeBetween(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", cloudEventRequest.getStartTime())
                         , DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", cloudEventRequest.getEndTime()));
@@ -125,7 +138,10 @@ public class CloudEventService {
                     for(int i = 0;i<times;i++){
                         List<CloudEvent>
                     }*/
-                    int num = extCloudEventMapper.batchCloudEvents(result);
+                    int num = 0;
+                    if(result.size()>0){
+                        num = extCloudEventMapper.batchCloudEvents(result);
+                    }
                     cloudEventSyncLog.setDataCount(num);
                     cloudEventSyncLog.setStatus(1);
                     cloudEventSyncLogMapper.updateByPrimaryKeySelective(cloudEventSyncLog);
@@ -136,7 +152,7 @@ public class CloudEventService {
             CloudEventSyncLog cloudEventSyncLog = new CloudEventSyncLog();
             cloudEventSyncLog.setId(logId);
             cloudEventSyncLog.setStatus(2);
-            //cloudEventSyncLog.setException(e.getMessage());
+            cloudEventSyncLog.setException("日志同步异常");
             cloudEventSyncLogMapper.updateByPrimaryKeySelective(cloudEventSyncLog);
         }
     }
