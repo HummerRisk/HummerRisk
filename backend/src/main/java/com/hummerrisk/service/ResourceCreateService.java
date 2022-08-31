@@ -407,6 +407,7 @@ public class ResourceCreateService {
             historyScanTaskCriteria.andScanIdEqualTo(historyScan.getId()).andStatusNotIn(historyScanStatus);
             List<HistoryScanTask> historyScanTasks = historyScanTaskMapper.selectByExample(historyScanTaskExample);
             JSONArray jsonArray = new JSONArray();
+            historyScanTaskCriteria.andStatusIn(historyScanStatus);
             for (HistoryScanTask historyScanTask : historyScanTasks) {
                 if (StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.cloudAccount.getType())) {
                     CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(historyScanTask.getTaskId());
@@ -468,9 +469,28 @@ public class ResourceCreateService {
                         historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), codeResult, TaskEnum.codeAccount.getType()));
                         historyService.updateScanTaskHistory(historyScanTask);
                     }
+                } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.k8sAccount.getType())) {
+                    CloudNativeResult cloudNativeResult = cloudNativeResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                    if (cloudNativeResult != null && historyScanStatus.contains(cloudNativeResult.getResultStatus())) {
+                        historyScanTask.setStatus(cloudNativeResult.getResultStatus());
+                        historyScanTask.setOutput(jsonArray.toJSONString());
+                        historyScanTask.setResourcesSum(cloudNativeResult.getReturnSum()!=null? cloudNativeResult.getReturnSum():0);
+                        historyScanTask.setReturnSum(cloudNativeResult.getReturnSum()!=null? cloudNativeResult.getReturnSum():0);
+                        historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), cloudNativeResult, TaskEnum.k8sAccount.getType()));
+                        historyService.updateScanTaskHistory(historyScanTask);
+                    }
+                } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.configAccount.getType())) {
+                    CloudNativeConfigResult cloudNativeConfigResult = cloudNativeConfigResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                    if (cloudNativeConfigResult != null && historyScanStatus.contains(cloudNativeConfigResult.getResultStatus())) {
+                        historyScanTask.setStatus(cloudNativeConfigResult.getResultStatus());
+                        historyScanTask.setOutput(jsonArray.toJSONString());
+                        historyScanTask.setResourcesSum(cloudNativeConfigResult.getReturnSum()!=null? cloudNativeConfigResult.getReturnSum():0);
+                        historyScanTask.setReturnSum(cloudNativeConfigResult.getReturnSum()!=null? cloudNativeConfigResult.getReturnSum():0);
+                        historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), cloudNativeConfigResult, TaskEnum.configAccount.getType()));
+                        historyService.updateScanTaskHistory(historyScanTask);
+                    }
                 }
             }
-            historyScanTaskCriteria.andStatusIn(historyScanStatus);
             long count = historyScanTaskMapper.countByExample(historyScanTaskExample);
             if(historyScanTasks.size() == count) {
                 historyScan.setStatus(TaskConstants.TASK_STATUS.FINISHED.name());

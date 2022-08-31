@@ -19,6 +19,10 @@ public class AccountTreeDTO {
 
     private List<CodeVo> codeAccount;
 
+    private List<K8sVo> k8sAccount;
+
+    private List<ConfigVo> configAccount;
+
     public List<AccountVo> getCloudAccount() {
         return cloudAccount;
     }
@@ -65,5 +69,21 @@ public class AccountTreeDTO {
 
     public void setCodeAccount(List<CodeVo> codeAccount) {
         this.codeAccount = codeAccount;
+    }
+
+    public List<K8sVo> getK8sAccount() {
+        return k8sAccount;
+    }
+
+    public void setK8sAccount(List<K8sVo> k8sAccount) {
+        this.k8sAccount = k8sAccount;
+    }
+
+    public List<ConfigVo> getConfigAccount() {
+        return configAccount;
+    }
+
+    public void setConfigAccount(List<ConfigVo> configAccount) {
+        this.configAccount = configAccount;
     }
 }

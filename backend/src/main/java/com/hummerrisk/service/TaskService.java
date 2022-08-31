@@ -137,6 +137,16 @@ public class TaskService {
         codeExample.setOrderByClause("create_time desc");
         List<CodeVo> codeVos = extTaskMapper.selectCodeByExample(codeExample);
         dto.setCodeAccount(codeVos);
+        //云原生
+        CloudNativeExample cloudNativeExample = new CloudNativeExample();
+        cloudNativeExample.setOrderByClause("create_time desc");
+        List<K8sVo> k8sVos = extTaskMapper.selectK8sByExample(cloudNativeExample);
+        dto.setK8sAccount(k8sVos);
+        //部署
+        CloudNativeConfigExample cloudNativeConfigExample = new CloudNativeConfigExample();
+        cloudNativeConfigExample.setOrderByClause("create_time desc");
+        List<ConfigVo> configVos = extTaskMapper.selectConfigByExample(cloudNativeConfigExample);
+        dto.setConfigAccount(configVos);
         return dto;
     }
 

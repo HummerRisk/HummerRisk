@@ -66,6 +66,9 @@
               <el-option :label="$t('dashboard.server_scan')" :value="'serverAccount'" :key="'serverAccount'"></el-option>
               <el-option :label="$t('dashboard.package_scan')" :value="'packageAccount'" :key="'packageAccount'"></el-option>
               <el-option :label="$t('dashboard.image_scan')" :value="'imageAccount'" :key="'imageAccount'"></el-option>
+              <el-option :label="$t('dashboard.code_scan')" :value="'codeAccount'" :key="'codeAccount'"></el-option>
+              <el-option :label="$t('dashboard.k8s_scan')" :value="'k8sAccount'" :key="'k8sAccount'"></el-option>
+              <el-option :label="$t('dashboard.config_scan')" :value="'configAccount'" :key="'configAccount'"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item size="large">

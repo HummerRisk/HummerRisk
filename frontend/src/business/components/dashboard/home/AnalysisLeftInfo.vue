@@ -16,6 +16,9 @@
                   <div class="_group"><el-radio class="radio_group" border :label="'serverAccount'" name="serverAccount">{{ $t('dashboard.server_scan') }}</el-radio></div>
                   <div class="_group"><el-radio class="radio_group" border :label="'packageAccount'" name="packageAccount">{{ $t('dashboard.package_scan') }}</el-radio></div>
                   <div class="_group"><el-radio class="radio_group" border :label="'imageAccount'" name="imageAccount">{{ $t('dashboard.image_scan') }}</el-radio></div>
+                  <div class="_group"><el-radio class="radio_group" border :label="'codeAccount'" name="imageAccount">{{ $t('dashboard.code_scan') }}</el-radio></div>
+                  <div class="_group"><el-radio class="radio_group" border :label="'k8sAccount'" name="imageAccount">{{ $t('dashboard.k8s_scan') }}</el-radio></div>
+                  <div class="_group"><el-radio class="radio_group" border :label="'configAccount'" name="imageAccount">{{ $t('dashboard.config_scan') }}</el-radio></div>
                 </el-radio-group>
               </el-collapse-item>
               <el-collapse-item :title="$t('dashboard.types_2')" name="2">
@@ -228,6 +231,15 @@ export default {
       }, {
         label: this.$t('dashboard.image_scan'),
         children: []
+      }, {
+        label: this.$t('dashboard.code_scan'),
+        children: []
+      }, {
+        label: this.$t('dashboard.k8s_scan'),
+        children: []
+      }, {
+        label: this.$t('dashboard.config_scan'),
+        children: []
       }],
       defaultProps: {
         children: 'children',
@@ -241,6 +253,9 @@ export default {
       serverAccount: this.$t("task.task_server"),
       imageAccount: this.$t("task.task_image"),
       packageAccount: this.$t("task.task_package"),
+      codeAccount: this.$t("task.task_code"),
+      k8sAccount: this.$t("task.task_k8s"),
+      configAccount: this.$t("task.task_config"),
       expandedNode: [],
     }
   },
@@ -266,6 +281,9 @@ export default {
               {name: this.serverAccount, level: 1, type: 'serverAccount', children: treeNodes.serverAccount},
               {name: this.imageAccount, level: 1, type: 'imageAccount', children: treeNodes.imageAccount},
               {name: this.packageAccount, level: 1, type: 'packageAccount', children: treeNodes.packageAccount},
+              {name: this.codeAccount, level: 1, type: 'codeAccount', children: treeNodes.codeAccount},
+              {name: this.k8sAccount, level: 1, type: 'k8sAccount', children: treeNodes.k8sAccount},
+              {name: this.configAccount, level: 1, type: 'configAccount', children: treeNodes.configAccount},
             ],
           });
         }

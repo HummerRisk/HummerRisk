@@ -121,6 +121,9 @@
         left join server_result t2 on t.account_id = t2.id
         left join image_result t3 on t.account_id = t3.id
         left join package_result t4 on t.account_id = t4.id
+        left join code_result t5 on t.account_id = t5.id
+        left join cloud_native_result t6 on t.account_id = t6.id
+        left join cloud_native_config_result t7 on t.account_id = t7.id
         JOIN (
         SELECT FROM_UNIXTIME( create_time/1000, '%Y-%m-%d') as date,
         MAX( create_time ) max_time
@@ -143,7 +146,7 @@
                     #{item}
                 </foreach>
             </if>
-            AND (t1.name is not null OR t2.server_name is not null OR t3.name is not null OR t4.name is not null)
+            AND (t1.name is not null OR t2.server_name is not null OR t3.name is not null OR t4.name is not null OR t5.name is not null OR t6.name is not null OR t7.name is not null)
         </where>
         ORDER BY t.create_time
         limit #{cycle};
@@ -157,6 +160,9 @@
         left join server_result t2 on t.account_id = t2.id
         left join image_result t3 on t.account_id = t3.id
         left join package_result t4 on t.account_id = t4.id
+        left join code_result t5 on t.account_id = t5.id
+        left join cloud_native_result t6 on t.account_id = t6.id
+        left join cloud_native_config_result t7 on t.account_id = t7.id
         JOIN (
         SELECT FROM_UNIXTIME( create_time/1000, '%Y-%m-%d') as date,
             MAX( create_time ) max_time
@@ -179,7 +185,7 @@
                     #{item}
                 </foreach>
             </if>
-            AND (t1.name is not null OR t2.server_name is not null OR t3.name is not null OR t4.name is not null)
+            AND (t1.name is not null OR t2.server_name is not null OR t3.name is not null OR t4.name is not null OR t5.name is not null OR t6.name is not null OR t7.name is not null)
         </where>
         ORDER BY t.create_time
         limit #{cycle};
@@ -244,14 +250,17 @@
     <select id="historyScanVo" parameterType="com.hummerrisk.controller.request.dashboard.HistoryScanVo" resultType="com.hummerrisk.controller.request.dashboard.HistoryScanVo">
         select
         t.*,
-        IFNULL(t4.name, IFNULL(t3.name, IFNULL(t2.server_name, t1.name))) as accountName,
-        t5.name as userName
+        IFNULL(t7.name, IFNULL(t6.name, IFNULL(t5.name, IFNULL(t4.name, IFNULL(t3.name, IFNULL(t2.server_name, t1.name)))))) as accountName,
+        t8.name as userName
         from history_scan t
         left join cloud_account t1 on t.account_id = t1.id
         left join server_result t2 on t.account_id = t2.id
         left join image_result t3 on t.account_id = t3.id
         left join package_result t4 on t.account_id = t4.id
-        left join user t5 on t.operator = t5.id
+        left join code_result t5 on t.account_id = t5.id
+        left join cloud_native_result t6 on t.account_id = t6.id
+        left join cloud_native_config_result t7 on t.account_id = t7.id
+        left join user t8 on t.operator = t8.id
         <where>
             <if test="combine != null">
                 <include refid="combine">
@@ -270,7 +279,7 @@
             <if test="startTime != null and endTime != null">
                 AND t.create_time between #{startTime} and #{endTime}
             </if>
-            AND (t1.name is not null OR t2.server_name is not null OR t3.name is not null OR t4.name is not null)
+            AND (t1.name is not null OR t2.server_name is not null OR t3.name is not null OR t4.name is not null OR t5.name is not null OR t6.name is not null OR t7.name is not null)
         </where>
         order by t.create_time desc
     </select>

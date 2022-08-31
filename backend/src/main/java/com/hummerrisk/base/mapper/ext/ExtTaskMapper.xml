@@ -239,6 +239,58 @@
         </if>
     </select>
 
+    <resultMap id="K8sBaseResultMap" type="com.hummerrisk.controller.request.task.K8sVo">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
+        <result column="operator_status" jdbcType="VARCHAR" property="operatorStatus" />
+        <result column="favour" jdbcType="BOOLEAN" property="favour" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+    </resultMap>
+
+    <select id="selectK8sByExample" parameterType="com.hummerrisk.base.domain.CloudNativeExample" resultMap="K8sBaseResultMap">
+        select t.*, (f.id is null) as favour, 'k8sAccount' as type
+        from cloud_native t
+        left join favorite f on t.id = f.source_id
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <resultMap id="ConfigBaseResultMap" type="com.hummerrisk.controller.request.task.ConfigVo">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
+        <result column="favour" jdbcType="BOOLEAN" property="favour" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+    </resultMap>
+
+    <select id="selectConfigByExample" parameterType="com.hummerrisk.base.domain.CloudNativeConfigExample" resultMap="ConfigBaseResultMap">
+        select t.*, (f.id is null) as favour, 'configAccount' as type
+        from cloud_native_config t
+        left join favorite f on t.id = f.source_id
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
     <select id="cloudRuleList" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.controller.request.task.RuleVo">
         select
             t.id as sourceId,

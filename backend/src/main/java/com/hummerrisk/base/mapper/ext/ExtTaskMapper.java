@@ -20,6 +20,10 @@ public interface ExtTaskMapper {
 
     List<CodeVo> selectCodeByExample(CodeExample example);
 
+    List<K8sVo> selectK8sByExample(CloudNativeExample example);
+
+    List<ConfigVo> selectConfigByExample(CloudNativeConfigExample example);
+
     List<RuleVo> ruleList(RuleVo ruleVo);
 
     List<RuleVo> cloudRuleList(RuleVo ruleVo);
