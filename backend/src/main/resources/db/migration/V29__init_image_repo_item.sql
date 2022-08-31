@@ -13,6 +13,9 @@ CREATE TABLE IF NOT EXISTS `image_repo_item` (
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
+
+ALTER TABLE cloud_event_sync_log ADD column exception  varchar(1024)   DEFAULT NULL COMMENT '异常信息';
+
 ALTER TABLE cloud_native_config_result_item modify COLUMN `title` varchar(512) DEFAULT NULL COMMENT 'Title';
 ALTER TABLE cloud_native_config_result_item modify COLUMN `namespace` varchar(256) DEFAULT NULL COMMENT 'Namespace';
 ALTER TABLE cloud_native_config_result_item modify COLUMN `query` varchar(256) DEFAULT NULL COMMENT 'Query';
