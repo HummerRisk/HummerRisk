@@ -115,6 +115,13 @@ public class DashboardController {
         return dashboardService.cloudNativeChart(params);
     }
 
+    @I18n
+    @ApiOperation(value = "首页云原生检测统计")
+    @PostMapping("configChart")
+    public CloudNativeChartDTO configChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.configChart(params);
+    }
+
     @ApiOperation(value = "首页任务日历")
     @GetMapping("taskCalendar")
     public List<TaskCalendarVo> taskCalendar() {

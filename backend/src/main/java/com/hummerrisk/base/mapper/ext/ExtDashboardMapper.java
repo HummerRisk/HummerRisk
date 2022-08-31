@@ -32,6 +32,10 @@ public interface ExtDashboardMapper {
 
     List<Integer> cloudNativeChartY(Map<String, Object> params);
 
+    List<String> configChartX(Map<String, Object> params);
+
+    List<Integer> configChartY(Map<String, Object> params);
+
     List<TaskCalendarVo> taskCalendar();
 
     List<String> analysisChartX(AnslysisVo anslysisVo);

@@ -477,6 +477,7 @@ export default {
     image_statistics: '镜像检测统计',
     k8s_statistics: '云原生检测统计',
     code_statistics: '源码检测统计',
+    config_statistics: '部署检测统计',
     data_task: '检测任务✔️',
     scan_analysis: '检测分析',
     type: '样式',

@@ -477,6 +477,7 @@ export default {
     image_statistics: '鏡像檢測統計',
     k8s_statistics: '雲原生檢測統計',
     code_statistics: '源碼檢測統計',
+    config_statistics: '部署檢測統計',
     data_task: '檢測任務✔️',
     scan_analysis: '檢測分析',
     type: '樣式',

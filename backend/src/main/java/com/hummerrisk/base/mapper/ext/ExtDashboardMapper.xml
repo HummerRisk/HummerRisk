@@ -87,6 +87,20 @@
             limit 10;
     </select>
 
+    <select id="configChartX" parameterType="java.util.Map" resultType="java.lang.String">
+        select name
+        from cloud_native_config_result
+        order by update_time desc
+            limit 10;
+    </select>
+
+    <select id="configChartY" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select IFNULL(return_sum, 0) as returnSum
+        from cloud_native_config_result
+        order by update_time desc
+            limit 10;
+    </select>
+
     <select id="taskCalendar" resultType="com.hummerrisk.controller.request.dashboard.TaskCalendarVo">
         select
             'current-month' as 'type',

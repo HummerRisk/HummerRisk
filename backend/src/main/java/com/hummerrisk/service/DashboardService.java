@@ -158,6 +158,15 @@ public class DashboardService {
         return cloudNativeChartDTO;
     }
 
+    public CloudNativeChartDTO configChart(Map<String, Object> params) {
+        CloudNativeChartDTO cloudNativeChartDTO = new CloudNativeChartDTO();
+        List<String> xAxis = extDashboardMapper.configChartX(params);
+        List<Integer> yAxis = extDashboardMapper.configChartY(params);
+        cloudNativeChartDTO.setxAxis(xAxis);
+        cloudNativeChartDTO.setyAxis(yAxis);
+        return cloudNativeChartDTO;
+    }
+
     public List<TaskCalendarVo> taskCalendar() {
         return extDashboardMapper.taskCalendar();
     }
