@@ -29,6 +29,18 @@ public class CloudEventController {
         return PageUtils.setPageInfo(page, cloudEventService.getCloudEventSyncLog(cloudEventRequest.getAccountId(),cloudEventRequest.getRegion()));
     }
 
+    @ApiOperation(value = "删除同步日志")
+    @PostMapping("sync/log/delete/{id}")
+    public void deleteSyncLog(@PathVariable int id){
+        cloudEventService.deleteCloudEventSyncLog(id);
+    }
+
+    @ApiOperation(value = "删除事件")
+    @PostMapping("delete/{id}")
+    public void deleteEvent(@PathVariable String id){
+        cloudEventService.deleteCloudEvent(id);
+    }
+
     @ApiOperation(value = "日志同步")
     @PostMapping("sync")
     public void syncEvents(@RequestBody CloudEventRequest cloudEventRequest){
