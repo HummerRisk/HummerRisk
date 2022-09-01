@@ -114,7 +114,7 @@ public class ImageService {
      * @return 镜像列表
      * @throws Exception
      */
-    public List<Map<String,String>> getHarborImages(String path,String username,String password) throws Exception {
+    public List<Map<String,String>> getHarborImages(String path, String username,String password) throws Exception {
         if(path.endsWith("/")){
             path = path.substring(0,path.length()-1);
         }

@@ -37,7 +37,9 @@ public class TrivyConstants {
 
     public final static String TRIVY_SKIP = " --skip-update ";
 
-    public final static String SECURITY_CHECKS = " --security-checks vuln,config,secret ";
+    public final static String OFFLINE_SCAN = " --offline-scan ";
+
+    public final static String SECURITY_CHECKS = " --security-checks vuln ";
 
     public final static String SKIP_DB_UPDATE = " --skip-db-update ";
 

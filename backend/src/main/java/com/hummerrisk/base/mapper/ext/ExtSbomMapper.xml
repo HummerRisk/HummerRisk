@@ -176,29 +176,12 @@
     <select id="packageMetricChart" resultType="com.hummerrisk.dto.MetricChartDTO" parameterType="java.lang.String">
         SELECT *
         from (
-                 (SELECT LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'critical','')) as critical
-                 FROM package_dependency_json t
-                 WHERE t.result_id = #{resultId}) as critical,
-                 (SELECT LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'high','')) as high
-                 FROM package_dependency_json t
-                 WHERE t.result_id = #{resultId}) as high,
-                 (SELECT LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'medium','')) as medium
-                 FROM package_dependency_json t
-                 WHERE t.result_id = #{resultId}) as medium,
-                 (SELECT LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'low','')) as low
-                 FROM package_dependency_json t
-                 WHERE t.result_id = #{resultId}) as low,
-                 ( SELECT LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'unknown','')) as unknown
-                 FROM package_dependency_json t
-                 WHERE t.result_id = #{resultId}) as unknown,
-                 (SELECT (LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'critical',''))) +
-                 (LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'high',''))) +
-                 (LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'medium',''))) +
-                 (LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'low',''))) +
-                 (LENGTH(LOWER(t.vulnerabilities)) - LENGTH(replace(LOWER(t.vulnerabilities),'unknown','')))
-                 as total
-                 FROM package_dependency_json t
-                 WHERE t.result_id = #{resultId}) as total
+             (SELECT count(*) as critical FROM package_dependency_json_item t WHERE LOWER(t.severity) = 'critical' AND t.result_id = #{resultId}) as critical,
+             (SELECT count(*) as high FROM package_dependency_json_item t WHERE LOWER(t.severity) = 'high' AND t.result_id = #{resultId}) as high,
+             (SELECT count(*) as medium FROM package_dependency_json_item t WHERE LOWER(t.severity) = 'medium' AND t.result_id = #{resultId}) as medium,
+             (SELECT count(*) as low FROM package_dependency_json_item t WHERE LOWER(t.severity) = 'low' AND t.result_id = #{resultId}) as low,
+             (SELECT count(*) as unknown FROM package_dependency_json_item t WHERE LOWER(t.severity) = 'unknown' AND t.result_id = #{resultId}) as unknown,
+             (SELECT count(*) as total FROM package_dependency_json_item t WHERE t.result_id = #{resultId}) as total
              )
     </select>
 </mapper>

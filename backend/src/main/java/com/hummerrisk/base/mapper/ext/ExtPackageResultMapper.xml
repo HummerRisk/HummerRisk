@@ -146,6 +146,8 @@
     <resultMap id="HistoryPackageReportDTOMap" type="com.hummerrisk.dto.HistoryPackageReportDTO" extends="com.hummerrisk.base.mapper.HistoryPackageTaskMapper.BaseResultMap">
         <collection property="packageDependencyJsonList" ofType="com.hummerrisk.base.domain.PackageDependencyJsonWithBLOBs" javaType="list" select="getPackageDependencyJsonList" column="id">
         </collection>
+        <collection property="packageDependencyJsonItemList" ofType="com.hummerrisk.base.domain.PackageDependencyJsonItemWithBLOBs" javaType="list" select="getPackageDependencyJsonItemList" column="id">
+        </collection>
     </resultMap>
 
     <select id="getPackageResultDto" resultMap="HistoryPackageReportDTOMap" parameterType="java.lang.String">
@@ -157,6 +159,12 @@
     <select id="getPackageDependencyJsonList" resultType="com.hummerrisk.base.domain.PackageDependencyJsonWithBLOBs" parameterType="java.lang.String">
         SELECT t.*
         FROM package_dependency_json t
+        WHERE t.result_id = #{id}
+    </select>
+
+    <select id="getPackageDependencyJsonItemList" resultType="com.hummerrisk.base.domain.PackageDependencyJsonItemWithBLOBs" parameterType="java.lang.String">
+        SELECT t.*
+        FROM package_dependency_json_item t
         WHERE t.result_id = #{id}
     </select>
 

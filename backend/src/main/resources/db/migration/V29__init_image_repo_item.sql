@@ -45,3 +45,19 @@ INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('f00222ed-4a39-43b
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('15370452-3ce3-429c-8743-4a344baddb26', 'safety');
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('a1c9a8d3-97d2-4556-abdb-5d77ea46bad5', 'safety');
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('5ca75854-b03c-4e9f-9ec7-4bf77f16d94d', 'safety');
+
+CREATE TABLE IF NOT EXISTS `package_dependency_json_item` (
+    `id`                           int(11)             NOT NULL AUTO_INCREMENT,
+    `result_id`                    varchar(50)         NOT NULL COMMENT 'Result ID',
+    `severity`                     varchar(50)         DEFAULT NULL COMMENT 'severity',
+    `name`                         varchar(50)         DEFAULT NULL COMMENT 'name',
+    `description`                  text                DEFAULT NULL COMMENT 'description',
+    `source`                       varchar(50)         DEFAULT NULL COMMENT 'source',
+    `notes`                        text                DEFAULT NULL COMMENT 'notes',
+    `cvssv3`                       mediumtext          DEFAULT NULL COMMENT 'cvssv3',
+    `references`                   mediumtext          DEFAULT NULL COMMENT 'references',
+    `cvssv2`                       mediumtext          DEFAULT NULL COMMENT 'cvssv2',
+    `cwes`                         mediumtext          DEFAULT NULL COMMENT 'cwes',
+    `vulnerable_software`          mediumtext          DEFAULT NULL COMMENT 'vulnerableSoftware',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;

@@ -12,17 +12,15 @@
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter">
           <el-table-column type="index" min-width="3%"/>
-          <el-table-column prop="fileName" :label="'FileName'" min-width="15%">
+          <el-table-column prop="name" :label="'Name'" min-width="10%">
           </el-table-column>
-          <el-table-column prop="filePath" :label="'FilePath'" min-width="23%">
+          <el-table-column prop="description" :label="'Description'" min-width="60%">
           </el-table-column>
-          <el-table-column min-width="5%" :label="'IsVirtual'" prop="isVirtual">
+          <el-table-column min-width="9%" :label="'Severity'" prop="severity">
           </el-table-column>
-          <el-table-column min-width="15%" :label="'Md5'" prop="md5">
+          <el-table-column min-width="9%" :label="'Source'" prop="source">
           </el-table-column>
-          <el-table-column min-width="15%" :label="'Sha1'" prop="sha1">
-          </el-table-column>
-          <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
+          <el-table-column min-width="9%" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
@@ -31,39 +29,23 @@
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
 
-      <!--file-->
-      <el-drawer class="rtl" :title="string2Key" :visible.sync="visible"  size="80%" :before-close="handleClose" :direction="direction" :destroy-on-close="true">
-        <codemirror ref="cmEditor" v-model="string2PrettyFormat" class="code-mirror" :options="cmOptions" />
-      </el-drawer>
-      <!--file-->
-
     </main-container>
 </template>
 
 <script>
 import TableOperators from "../../common/components/TableOperators";
-import MainContainer from "../../common/components/MainContainer";
-import Container from "../../common/components/Container";
 import TableHeader from "../head/DetailTableHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
-import DialogFooter from "../../common/components/RuleDialogFooter";
-import CenterChart from "../../common/components/CenterChart";
 import {_filter, _sort} from "@/common/js/utils";
-import RuleType from "@/business/components/image/home/RuleType";
 /* eslint-disable */
   export default {
     name: "ResultDetails",
     components: {
       TableOperators,
-      MainContainer,
-      Container,
       TableHeader,
       TablePagination,
       TableOperator,
-      DialogFooter,
-      CenterChart,
-      RuleType,
     },
     data() {
       return {
@@ -77,27 +59,12 @@ import RuleType from "@/business/components/image/home/RuleType";
         },
         tagSelect: [],
         resourceTypes: [],
-        direction: 'rtl',
         buttons: [
           {
             tip: this.$t('resource.scan_vuln_search'), icon: "el-icon-share", type: "primary",
             exec: this.handleVuln
           },
         ],
-        string2Key: "",
-        string2PrettyFormat: "",
-        visible: false,
-        cmOptions: {
-          tabSize: 4,
-          mode: {
-            name: 'shell',
-            json: true
-          },
-          theme: 'bespin',
-          lineNumbers: true,
-          line: true,
-          indentWithTabs: true,
-        },
         resultId: "",
       }
     },
@@ -127,11 +94,8 @@ import RuleType from "@/business/components/image/home/RuleType";
 
         this.visible =  true;
       },
-      handleClose() {
-        this.visible =  false;
-      },
       search () {
-        let url = "/package/resultItemList/" + this.currentPage + "/" + this.pageSize;
+        let url = "/package/resultVulnItemList/" + this.currentPage + "/" + this.pageSize;
         this.condition.resultId = this.resultId;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
@@ -155,11 +119,6 @@ import RuleType from "@/business/components/image/home/RuleType";
           }).catch(error => error);
         }
       },
-    },
-    computed: {
-      codemirror() {
-        return this.$refs.cmEditor.codemirror
-      }
     },
     created() {
       this.init();

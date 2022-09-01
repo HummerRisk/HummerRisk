@@ -731,26 +731,22 @@
                 <el-tabs type="border-card">
                   <el-tab-pane :label="$t('package.result_list_vuln')">
                     <h3>Vuln:&nbsp;</h3>
-                    <el-table :data="logPackageForm.packageDependencyJsonList" border stripe style="width: 100%">
-                      <el-table-column type="index" min-width="5%"/>
-                      <el-table-column :label="'FileName'" min-width="20%" prop="fileName">
+                    <el-table :data="logPackageForm.packageDependencyJsonItemList" border stripe style="width: 100%">
+                      <el-table-column type="index" min-width="3%"/>
+                      <el-table-column prop="name" :label="'Name'" min-width="10%">
                       </el-table-column>
-                      <el-table-column :label="'FilePath'" min-width="25%" prop="filePath">
+                      <el-table-column prop="description" :label="'Description'" min-width="60%">
                       </el-table-column>
-                      <el-table-column min-width="5%" :label="'IsVirtual'" prop="isVirtual">
+                      <el-table-column min-width="9%" :label="'Severity'" prop="severity">
                       </el-table-column>
-                      <el-table-column min-width="10%" :label="'Md5'" prop="md5">
-                      </el-table-column>
-                      <el-table-column min-width="15%" :label="'Sha1'" prop="sha1">
-                      </el-table-column>
-                      <el-table-column min-width="15%" :label="'Sha256'" prop="sha256">
+                      <el-table-column min-width="9%" :label="'Source'" prop="source">
                       </el-table-column>
                     </el-table>
                   </el-tab-pane>
                   <el-tab-pane :label="$t('package.result_list_sbom')" class="el-card">
                     <div style="margin: 10px 0 0 0;" v-if="JSON.stringify(logPackageForm.packageDependencyJsonList) !== '[]'">
                       <div v-for="(packageDependencyJson, index) in logPackageForm.packageDependencyJsonList" :key="index">
-                        <h3>Vuln:&nbsp;{{ index+1 }}</h3>
+                        <h3>{{ index+1 }}</h3>
                         <ul style="margin-left: 60px;">
                           <li><i>FileName</i>: {{ packageDependencyJson.fileName }}</li>
                           <li><i>FilePath</i>: {{ packageDependencyJson.filePath }}</li>
@@ -774,63 +770,6 @@
                             :filter-node-method="filterNode"
                           ></vue-okr-tree>
                         </div>
-                      </div>
-                    </div>
-                  </el-tab-pane>
-                  <el-tab-pane :label="$t('package.result_list_depen')">
-                    <div style="margin: 10px 0 0 0;" v-if="JSON.stringify(logPackageForm.packageDependencyJsonList) !== '[]'">
-                      <div style="margin: 10px 0 0 0;" :key="index" v-for="(packageDependencyJson,index) in logPackageForm.packageDependencyJsonList">
-                        <el-card class="box-card">
-                          <div slot="header" class="clearfix">
-                            <el-row>
-                              <el-col :span="24" style="margin: -7px 0 0 15px;">
-                                <span style="font-size: 24px;font-weight: 500;">{{ packageDependencyJson.fileName }}</span>
-                                <span style="font-size: 20px;color: #888;margin-left: 5px;">- IsVirtual:  {{ packageDependencyJson.isVirtual }}</span>
-                              </el-col>
-                            </el-row>
-                            <el-row style="font-size: 18px;padding: 10px;">
-                              <el-col :span="20">
-                                <span style="color: #888;margin: 5px;">{{ 'SBOM' }}</span>
-                                <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                <span style="color: #444;margin: 5px;">FilePath: {{ packageDependencyJson.filePath }}</span>
-                              </el-col>
-                            </el-row>
-                          </div>
-                          <div class="text div-json">
-                            <el-descriptions :column="2" v-for="(packagex, index) in JSON.parse(packageDependencyJson.packages)" :key="index" :title="'Package'+(index+1)">
-                              <el-descriptions-item v-for="(meta, index) in filterJson(packagex?packagex:{package: 'N/A'})" :key="index" :label="meta.key">
-                                <span v-if="!meta.flag" show-overflow-tooltip>
-                                  <el-tooltip class="item" effect="dark" :content="JSON.stringify(meta.value)" placement="top-start">
-                                    <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
-                                  </el-tooltip>
-                                </span>
-                                <el-tooltip v-if="meta.flag && meta.value" class="item" effect="light" :content="typeof(meta.value) === 'boolean'?meta.value.toString():meta.value" placement="top-start">
-                                  <span class="table-expand-span-value">
-                                      {{ meta.value }}
-                                  </span>
-                                </el-tooltip>
-                                <span v-if="meta.flag && !meta.value"> N/A</span>
-                              </el-descriptions-item>
-                            </el-descriptions>
-                          </div>
-                          <div class="text div-json">
-                            <el-descriptions :column="2" v-for="(vulnerability, index) in JSON.parse(packageDependencyJson.vulnerabilities)" :key="index" :title="'Vulnerabilitie'+(index+1)">
-                              <el-descriptions-item v-for="(meta, index) in filterJson(vulnerability?vulnerability:{vulnerability: 'N/A'})" :key="index" :label="meta.key">
-                                <span v-if="!meta.flag" show-overflow-tooltip>
-                                  <el-tooltip class="item" effect="dark" :content="JSON.stringify(meta.value)" placement="top-start">
-                                    <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
-                                  </el-tooltip>
-                                </span>
-                                <el-tooltip v-if="meta.flag && meta.value" class="item" effect="light" :content="typeof(meta.value) === 'boolean'?meta.value.toString():meta.value" placement="top-start">
-                                  <span class="table-expand-span-value">
-                                    {{ meta.value }}
-                                  </span>
-                                </el-tooltip>
-                                <span v-if="meta.flag && !meta.value"> N/A</span>
-                              </el-descriptions-item>
-                            </el-descriptions>
-                          </div>
-                        </el-card>
                       </div>
                     </div>
                   </el-tab-pane>

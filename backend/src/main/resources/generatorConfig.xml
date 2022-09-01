@@ -134,6 +134,7 @@
 <!--        <table tableName="image_syft_table" domainObjectName="ImageSyftTable"/>-->
 <!--        <table tableName="image_syft_json" domainObjectName="ImageSyftJson"/>-->
 <!--        <table tableName="package_dependency_json" domainObjectName="PackageDependencyJson"/>-->
+<!--        <table tableName="package_dependency_json_item" domainObjectName="PackageDependencyJsonItem"/>-->
 <!--        <table tableName="cloud_native" domainObjectName="CloudNative"/>-->
 <!--        <table tableName="cloud_native_source" domainObjectName="CloudNativeSource"/>-->
 <!--        <table tableName="cloud_native_result" domainObjectName="CloudNativeResult"/>-->

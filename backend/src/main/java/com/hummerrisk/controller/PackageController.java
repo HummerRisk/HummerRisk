@@ -197,4 +197,12 @@ PackageController {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, packageService.resultItemList(request));
     }
+
+    @I18n
+    @ApiOperation(value = "检测结果漏洞详情")
+    @PostMapping("resultVulnItemList/{goPage}/{pageSize}")
+    public Pager<List<PackageDependencyJsonItemWithBLOBs>> resultVulnItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody PackageDependencyJsonItem request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, packageService.resultVulnItemList(request));
+    }
 }

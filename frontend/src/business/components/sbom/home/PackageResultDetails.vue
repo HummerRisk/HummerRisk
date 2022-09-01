@@ -7,17 +7,15 @@
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter">
           <el-table-column type="index" min-width="3%"/>
-          <el-table-column prop="fileName" :label="'FileName'" min-width="15%">
+          <el-table-column prop="name" :label="'Name'" min-width="10%">
           </el-table-column>
-          <el-table-column prop="filePath" :label="'FilePath'" min-width="23%">
+          <el-table-column prop="description" :label="'Description'" min-width="60%">
           </el-table-column>
-          <el-table-column min-width="5%" :label="'IsVirtual'" prop="isVirtual">
+          <el-table-column min-width="9%" :label="'Severity'" prop="severity">
           </el-table-column>
-          <el-table-column min-width="15%" :label="'Md5'" prop="md5">
+          <el-table-column min-width="9%" :label="'Source'" prop="source">
           </el-table-column>
-          <el-table-column min-width="15%" :label="'Sha1'" prop="sha1">
-          </el-table-column>
-          <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
+          <el-table-column min-width="9%" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
@@ -83,7 +81,7 @@ import {_filter, _sort} from "@/common/js/utils";
         this.visible =  false;
       },
       async search () {
-        let url = "/package/resultItemList/" + this.currentPage + "/" + this.pageSize;
+        let url = "/package/resultVulnItemList/" + this.currentPage + "/" + this.pageSize;
         this.condition.resultId = this.id;
         await this.$post(url, this.condition, response => {
           let data = response.data;
