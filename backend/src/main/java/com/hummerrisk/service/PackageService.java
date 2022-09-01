@@ -95,7 +95,7 @@ public class PackageService {
 
         OperationLogService.log(SessionUtils.getUser(), p.getId(), p.getName(), ResourceTypeConstants.PACKAGE.name(), ResourceOperation.UPDATE, "i18n_update_package");
         packageMapper.updateByPrimaryKeySelective(p);
-        return p;
+        return packageMapper.selectByPrimaryKey(p.getId());
     }
 
     public void deletePackage(String id) throws Exception {
@@ -161,7 +161,7 @@ public class PackageService {
         request.setPackageName("");
         request.setPath("");
         request.setSize("");
-        packageMapper.updateByPrimaryKeySelective(request);
+        packageMapper.updateByPrimaryKey(request);
     }
 
     /**

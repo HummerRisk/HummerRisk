@@ -8,10 +8,6 @@
             {{ $t("code.code_setting") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/code/rule'">
-            {{ $t("code.code_rule") }}
-          </el-menu-item>
-
           <el-menu-item :index="'/code/result'">
             {{ $t("code.code_result") }}
           </el-menu-item>

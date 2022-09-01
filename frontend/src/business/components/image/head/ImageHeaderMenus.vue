@@ -12,10 +12,6 @@
             {{ $t("image.image_setting") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/image/rule'">
-            {{ $t("image.image_rule") }}
-          </el-menu-item>
-
           <el-menu-item :index="'/image/result'">
             {{ $t("image.image_result") }}
           </el-menu-item>

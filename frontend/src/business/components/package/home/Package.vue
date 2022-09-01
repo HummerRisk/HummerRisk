@@ -127,7 +127,7 @@
           <div class="app">
             <div class="app">
               <el-form-item :label="$t('package.package')" ref="package" prop="package">
-                <file-upload url="/package/uploadPackage" :param="addPackageForm"/>
+                <file-upload url="/package/uploadPackage" :param="paramsFile"/>
               </el-form-item>
             </div>
           </div>
@@ -222,7 +222,7 @@
           <div class="app">
             <div class="app">
               <el-form-item :label="$t('package.package')" ref="package" prop="package">
-                <file-upload url="/package/uploadPackage" :param="editPackageForm"/>
+                <file-upload url="/package/uploadPackage" :param="paramsFile"/>
               </el-form-item>
             </div>
           </div>
@@ -318,6 +318,7 @@ export default {
       imageSelect: {},
       sboms: [],
       versions: [],
+      paramsFile: {},
     }
   },
   methods: {
@@ -343,7 +344,11 @@ export default {
           });
         }
       } else {
-        this.result = this.$post('/package/editPackage', item, response => {
+        let param = item;
+        param.path = null;
+        param.size = null;
+        param.packageName = null;
+        this.result = this.$post('/package/editPackage', param, response => {
           let data = response.data;
           this.editPackageForm = data;
           this.search();
@@ -380,6 +385,7 @@ export default {
           this.scan(data);
           break;
         case "edit":
+          this.paramsFile = data;
           this.updateVisible = true;
           this.active = 1;
           this.preVisible = false;
@@ -387,6 +393,7 @@ export default {
           this.nextVisible = true;
           this.editPackageForm = data;
           this.id = data.id;
+          this.initialSelected = [{id: data.pluginIcon, src: require(`@/assets/img/platform/` + data.pluginIcon), alt: ''}],
           this.initSboms();
           break;
         case "delete":
@@ -477,7 +484,6 @@ export default {
             this.$warning(this.$t('commons.proxy') + this.$t('commons.cannot_be_empty'));
             return;
           }
-          this.save(this.editPackageForm, 'edit');
         }
         this.active = 2;
       } else if (this.active === 2) {

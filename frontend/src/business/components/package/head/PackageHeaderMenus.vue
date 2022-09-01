@@ -8,10 +8,6 @@
             {{ $t("package.package_setting") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/package/rule'">
-            {{ $t("package.package_rule") }}
-          </el-menu-item>
-
           <el-menu-item :index="'/package/result'">
             {{ $t("package.package_result") }}
           </el-menu-item>

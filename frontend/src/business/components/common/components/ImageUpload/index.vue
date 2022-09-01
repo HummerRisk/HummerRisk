@@ -38,7 +38,7 @@ export default {
   props:['url', 'param'],
   created() {
     this.location = window.location.href.split("#")[0];
-    if(this.param.pluginIcon && this.param.pluginIcon!=='package.png') {
+    if(this.param.pluginIcon && this.param.pluginIcon.indexOf("/") > -1) {
       this.fileList = [
         {name: this.param.pluginIcon, url: this.location + this.param.pluginIcon, pluginIcon: this.param.pluginIcon}
       ];
