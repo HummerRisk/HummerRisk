@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `image_repo_item` (
     `path`                       varchar(256)       DEFAULT NULL COMMENT '镜像地址',
     `size`						 varchar(50)		DEFAULT NULL COMMENT '大小',
     `arch`             			 varchar(64)        DEFAULT NULL COMMENT 'cpu架构',
-    `push_time`                  bigint(15)         DEFAULT NULL COMMENT '推送时间',
+    `push_time`                  varchar(50)        DEFAULT NULL COMMENT '推送时间',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 

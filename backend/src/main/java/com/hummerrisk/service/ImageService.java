@@ -57,7 +57,7 @@ public class ImageService {
     @Resource
     private ImageResultLogMapper imageResultLogMapper;
     @Resource
-    private UserMapper userMapper;
+    private CommonThreadPool commonThreadPool;
     @Resource
     private ImageResultMapper imageResultMapper;
     @Resource
@@ -74,6 +74,10 @@ public class ImageService {
     private ImageSyftJsonMapper imageSyftJsonMapper;
     @Resource
     private HistoryService historyService;
+    @Resource
+    private ImageRepoItemMapper imageRepoItemMapper;
+    @Resource
+    private PackageService packageService;
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
@@ -103,56 +107,85 @@ public class ImageService {
         OperationLogService.log(SessionUtils.getUser(), imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image_repo");
         imageRepoMapper.insertSelective(imageRepo);
 
+        commonThreadPool.addTask(() -> {
+            try {
+                getHarborImages(imageRepo);
+            } catch (Exception e) {
+                LogUtil.error(e);
+            } finally {
+            }
+        });
         return imageRepo;
     }
 
     /**
-     * 过去harbor镜像列表
-     * @param path harbor 地址
-     * @param username harbor 用户名
-     * @param password harbor 密码
+     * harbor镜像列表
      * @return 镜像列表
      * @throws Exception
      */
-    public List<Map<String,String>> getHarborImages(String path, String username,String password) throws Exception {
-        if(path.endsWith("/")){
-            path = path.substring(0,path.length()-1);
-        }
-        List<Map<String,String>> result = new ArrayList<>();
-        Map<String,String> header = new HashMap<>();
-        header.put("Authorization","Basic "+ Base64.getUrlEncoder().encodeToString((username + ":" + password).getBytes()));
-        String projectStr = HttpClientUtil.HttpGet(path+"/api/v2.0/projects/",header);
-        JSONArray projects =  JSON.parseArray(projectStr);
-        for (Object o : projects) {
-            JSONObject project = (JSONObject) o;
-            String projectName = project.getString("name");
-            String repositoriesStr = HttpClientUtil.HttpGet(path + "/api/v2.0/projects/" + projectName + "/repositories", header);
-            JSONArray repositories = JSON.parseArray(repositoriesStr);
-            for (Object repository : repositories) {
-                JSONObject rep = (JSONObject) repository;
-                String repName = rep.getString("name");
-                if (repName.indexOf("/") > 0) {
-                    repName = repName.split("/", -1)[1];
-                }
-                String artifactsStr = HttpClientUtil.HttpGet(path + "/api/v2.0/projects/" + projectName + "/repositories/" + repName + "/artifacts", header);
-                JSONArray artifacts = JSON.parseArray(artifactsStr);
-                for (Object artifact : artifacts) {
-                    JSONObject arti = (JSONObject) artifact;
-                    JSONArray tags = arti.getJSONArray("tags");
-                    List<JSONObject> tagList = tags.toJavaList(JSONObject.class);
-                    for (JSONObject tag : tagList) {
-                        String tagStr = tag.getString("name");
-                        Map<String, String> imageMap = new HashMap<>();
-                        imageMap.put("project", projectName);
-                        imageMap.put("repositories", repName);
-                        imageMap.put("tag", tagStr);
-                        imageMap.put("imagePath", path + "/" + projectName + "/" + repName + ":" + tagStr);
-                        result.add(imageMap);
+    public boolean getHarborImages(ImageRepo imageRepo) throws Exception {
+
+        try{
+            ImageRepoItemExample example = new ImageRepoItemExample();
+            example.createCriteria().andRepoIdEqualTo(imageRepo.getId());
+            imageRepoItemMapper.deleteByExample(example);
+            //* @param path harbor 地址
+            // * @param username harbor 用户名
+            //* @param password harbor 密码
+            String path = imageRepo.getRepo();
+            if(path.endsWith("/")){
+                path = path.substring(0,path.length()-1);
+            }
+            Map<String,String> header = new HashMap<>();
+            header.put("Authorization","Basic "+ Base64.getUrlEncoder().encodeToString((imageRepo.getUserName() + ":" + imageRepo.getPassword()).getBytes()));
+            String projectStr = HttpClientUtil.HttpGet(path+"/api/v2.0/projects/",header);
+            JSONArray projects =  JSON.parseArray(projectStr);
+            for (Object o : projects) {
+                JSONObject project = (JSONObject) o;
+                String projectName = project.getString("name");
+                String repositoriesStr = HttpClientUtil.HttpGet(path + "/api/v2.0/projects/" + projectName + "/repositories", header);
+                JSONArray repositories = JSON.parseArray(repositoriesStr);
+                for (Object repository : repositories) {
+                    JSONObject rep = (JSONObject) repository;
+                    String repName = rep.getString("name");
+                    if (repName.indexOf("/") > 0) {
+                        repName = repName.split("/", -1)[1];
+                    }
+                    String artifactsStr = HttpClientUtil.HttpGet(path + "/api/v2.0/projects/" + projectName + "/repositories/" + repName + "/artifacts", header);
+                    JSONArray artifacts = JSON.parseArray(artifactsStr);
+                    for (Object artifact : artifacts) {
+                        JSONObject arti = (JSONObject) artifact;
+                        String digest = arti.getString("digest");
+                        String push_time = arti.getString("push_time");
+                        long size = (long) arti.get("size");
+                        JSONObject extra_attrs = arti.getJSONObject("extra_attrs");
+                        String architecture = extra_attrs.getString("architecture");
+                        JSONArray tags = arti.getJSONArray("tags");
+                        List<JSONObject> tagList = tags.toJavaList(JSONObject.class);
+                        for (JSONObject tag : tagList) {
+                            String tagStr = tag.getString("name");
+                            ImageRepoItem imageRepoItem = new ImageRepoItem();
+                            imageRepoItem.setId(UUIDUtil.newUUID());
+                            imageRepoItem.setProject(projectName);
+                            imageRepoItem.setRepository(repName);
+                            imageRepoItem.setTag(tagStr);
+                            imageRepoItem.setDigest(digest);
+                            imageRepoItem.setRepoId(imageRepo.getId());
+                            imageRepoItem.setPushTime(push_time);
+                            imageRepoItem.setArch(architecture);
+                            imageRepoItem.setSize(packageService.changeFlowFormat(size));
+                            imageRepoItem.setPath(path.replaceAll("https://", "").replaceAll("http://", "") + "/" + projectName + "/" + repName + ":" + tagStr);
+                            imageRepoItemMapper.insertSelective(imageRepoItem);
+                        }
                     }
                 }
             }
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
+            return false;
         }
-        return result;
+
+        return true;
     }
 
     public ImageRepo editImageRepo(ImageRepo imageRepo) throws Exception {
@@ -167,6 +200,15 @@ public class ImageService {
 
         OperationLogService.log(SessionUtils.getUser(), imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image_repo");
         imageRepoMapper.updateByPrimaryKeySelective(imageRepo);
+
+        commonThreadPool.addTask(() -> {
+            try {
+                getHarborImages(imageRepo);
+            } catch (Exception e) {
+                LogUtil.error(e);
+            } finally {
+            }
+        });
         return imageRepo;
     }
 
