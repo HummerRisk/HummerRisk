@@ -1,3 +1,4 @@
+
 CREATE TABLE IF NOT EXISTS `image_repo_item` (
     `id`                         varchar(50)        NOT NULL COMMENT 'ID',
     `repo_id`                    varchar(50)        DEFAULT NULL COMMENT '镜像仓库ID',
@@ -14,3 +15,10 @@ CREATE TABLE IF NOT EXISTS `image_repo_item` (
 
 
 alter table cloud_event_sync_log add column exception   varchar(1024)   DEFAULT NULL COMMENT '异常信息';
+
+alter table cloud_native_config_result_item modify column `title` varchar(512) DEFAULT NULL COMMENT 'Title';
+alter table cloud_native_config_result_item modify column `namespace` varchar(256) DEFAULT NULL COMMENT 'Namespace';
+alter table cloud_native_config_result_item modify column `query` varchar(256) DEFAULT NULL COMMENT 'Query';
+alter table cloud_native_config_result_item modify column `resolution` varchar(512) DEFAULT NULL COMMENT 'Resolution';
+alter table cloud_native_config_result_item modify column `primary_url` varchar(256) DEFAULT NULL COMMENT 'PrimaryURL';
+
