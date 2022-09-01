@@ -1255,9 +1255,9 @@ export default {
   },
   log: {
     audit: '操作審計',
-    event_sync: '事件同步',
-    event_query: '事件查詢',
-    event_analysis: '事件分析',
+    event_sync: '雲事件同步',
+    event_query: '雲事件查詢',
+    event_analysis: '雲事件分析',
   },
   second: {
     title: '秒',

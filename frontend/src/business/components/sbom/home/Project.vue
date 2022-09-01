@@ -501,13 +501,7 @@ export default {
           if (action === 'confirm') {
             this.$get("/sbom/scan/" + item.id,response => {
               if (response.success) {
-                this.$success(this.$t('schedule.event_start'));
-                this.$router.push({
-                  path: '/sbom/sbom',
-                  query: {
-                    date:new Date().getTime()
-                  },
-                }).catch(error => error);
+                this.$success(this.$t('schedule.event_start') + this.$t('sbom.event_start'));
               } else {
                 this.$error(response.message);
               }

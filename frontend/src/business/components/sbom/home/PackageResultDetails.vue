@@ -30,28 +30,18 @@
 
 <script>
 import TableOperators from "../../common/components/TableOperators";
-import MainContainer from "../../common/components/MainContainer";
-import Container from "../../common/components/Container";
 import TableHeader from "../head/DetailTableHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
-import DialogFooter from "../../common/components/RuleDialogFooter";
-import CenterChart from "../../common/components/CenterChart";
 import {_filter, _sort} from "@/common/js/utils";
-import RuleType from "@/business/components/image/home/RuleType";
 /* eslint-disable */
   export default {
     name: "ResultDetails",
     components: {
       TableOperators,
-      MainContainer,
-      Container,
       TableHeader,
       TablePagination,
       TableOperator,
-      DialogFooter,
-      CenterChart,
-      RuleType,
     },
     data() {
       return {
@@ -92,10 +82,10 @@ import RuleType from "@/business/components/image/home/RuleType";
       handleClose() {
         this.visible =  false;
       },
-      search () {
+      async search () {
         let url = "/package/resultItemList/" + this.currentPage + "/" + this.pageSize;
         this.condition.resultId = this.id;
-        this.result = this.$post(url, this.condition, response => {
+        await this.$post(url, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;
@@ -103,18 +93,6 @@ import RuleType from "@/business/components/image/home/RuleType";
       },
       init() {
         this.search();
-      },
-      back () {
-        let path = this.$route.path;
-        if (path.indexOf("/package") >= 0) {
-          this.$router.push({
-            path: '/package/result',
-          }).catch(error => error);
-        } else if (path.indexOf("/resource") >= 0) {
-          this.$router.push({
-            path: '/resource/packageResult',
-          }).catch(error => error);
-        }
       },
     },
     created() {

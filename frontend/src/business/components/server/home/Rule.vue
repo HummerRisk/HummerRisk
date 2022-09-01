@@ -12,9 +12,9 @@
         </el-tabs>
         <server-rule-header :condition.sync="condition"
                       @search="search"
-                      :title="$t('package.rule_list')"
+                      :title="$t('server.rule_list')"
                       @create="create"
-                      :createTip="$t('package.create_rule')"
+                      :createTip="$t('server.create_rule')"
                       :show-create="true"/>
       </template>
 

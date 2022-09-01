@@ -1255,9 +1255,9 @@ export default {
   },
   log: {
     audit: 'Operation audit',
-    event_sync: 'Event synchronization',
-    event_query: 'Event query',
-    event_analysis: 'Event analysis',
+    event_sync: 'Cloud event synchronization',
+    event_query: 'Cloud event query',
+    event_analysis: 'Cloud event analysis',
   },
   second: {
     title:'seconds',

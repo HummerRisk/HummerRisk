@@ -1244,6 +1244,7 @@ export default {
     total: '风险总数',
     sbom_project: 'Sbom 项目',
     sbom_project_version: '项目版本',
+    event_start: '请在各个检测结果菜单等待检测完成。',
   },
   cost: {
     analyze: '费用分析',
@@ -1255,9 +1256,9 @@ export default {
   },
   log: {
     audit: '操作审计',
-    event_sync: '事件同步',
-    event_query: '事件查询',
-    event_analysis: '事件分析',
+    event_sync: '云事件同步',
+    event_query: '云事件查询',
+    event_analysis: '云事件分析',
   },
   second: {
     title: '秒',
