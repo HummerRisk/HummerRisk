@@ -305,7 +305,7 @@ public class CloudNativeConfigService {
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             cloudNativeConfigResultMapper.updateByPrimaryKeySelective(result);
             historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
-            saveCloudNativeConfigResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
+            saveCloudNativeConfigResultLog(result.getId(), "i18n_operation_ex" + ": " + StringUtils.substring(e.getMessage(), 0, 900) + "...", e.getMessage(), false);
         }
     }
 

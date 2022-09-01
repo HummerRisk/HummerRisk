@@ -151,7 +151,7 @@ public class K8sService {
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             cloudNativeResultMapper.updateByPrimaryKeySelective(result);
             historyService.updateHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
-            saveCloudNativeResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
+            saveCloudNativeResultLog(result.getId(), "i18n_operation_ex" + ": " + StringUtils.substring(e.getMessage(), 0, 900) + "...", e.getMessage(), false);
         }
     }
 
@@ -395,7 +395,7 @@ public class K8sService {
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             imageResultMapper.updateByPrimaryKeySelective(result);
             historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
-            saveImageResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
+            saveImageResultLog(result.getId(), "i18n_operation_ex" + ": " + StringUtils.substring(e.getMessage(), 0, 900) + "...", e.getMessage(), false);
         }
     }
 

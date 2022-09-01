@@ -337,7 +337,7 @@ public class PackageService {
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             packageResultMapper.updateByPrimaryKeySelective(result);
             historyService.updateHistoryPackageTask(BeanUtils.copyBean(new HistoryPackageTaskWithBLOBs(), result));
-            savePackageResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
+            savePackageResultLog(result.getId(), "i18n_operation_ex" + ": " + StringUtils.substring(e.getMessage(), 0, 900) + "...", e.getMessage(), false);
         }
     }
 

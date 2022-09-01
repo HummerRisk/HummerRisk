@@ -419,7 +419,7 @@ public class CloudTaskService {
                     quartzTaskRelaLog.setSourceId(quartzTaskRelation.getSourceId());
                     quartzTaskRelaLog.setQzType(quartzTaskRelation.getQzType());
                     quartzTaskRelaLog.setOperator(SessionUtils.getUser().getName());
-                    quartzTaskRelaLog.setOperation("新建定时任务");
+                    quartzTaskRelaLog.setOperation("i18n_create_qrtz_cloud_task");
                     quartzTaskRelaLogMapper.insertSelective(quartzTaskRelaLog);
                 }
             } else {
@@ -473,7 +473,7 @@ public class CloudTaskService {
                     quartzTaskRelaLog.setSourceId(quartzTaskRelation.getSourceId());
                     quartzTaskRelaLog.setQzType(quartzTaskRelation.getQzType());
                     quartzTaskRelaLog.setOperator(SessionUtils.getUser().getName());
-                    quartzTaskRelaLog.setOperation("新建定时任务");
+                    quartzTaskRelaLog.setOperation("i18n_create_qrtz_cloud_task");
                     quartzTaskRelaLogMapper.insertSelective(quartzTaskRelaLog);
                 }
             }
@@ -591,7 +591,7 @@ public class CloudTaskService {
                 quartzTaskRelaLog.setSourceId(quartzTaskRelation.getSourceId());
                 quartzTaskRelaLog.setQzType(quartzTaskRelation.getQzType());
                 quartzTaskRelaLog.setOperator("System");
-                quartzTaskRelaLog.setOperation(action.equals(QuartzTaskAction.PAUSE) ? "暂停定时任务" : "启动定时任务");
+                quartzTaskRelaLog.setOperation(action.equals(QuartzTaskAction.PAUSE) ? "i18n_pause_qrtz" : "i18n_start_qrtz");
                 quartzTaskRelaLogMapper.insertSelective(quartzTaskRelaLog);
             }
 
