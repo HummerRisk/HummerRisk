@@ -170,7 +170,7 @@ public class ImageService {
                         JSONObject arti = (JSONObject) artifact;
                         String digest = arti.getString("digest");
                         String push_time = arti.getString("push_time");
-                        long size = (long) arti.get("size");
+                        long size = arti.getLong("size");
                         JSONObject extra_attrs = arti.getJSONObject("extra_attrs");
                         String architecture = extra_attrs.getString("architecture");
                         JSONArray tags = arti.getJSONArray("tags");
