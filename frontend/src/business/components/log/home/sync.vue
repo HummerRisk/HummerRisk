@@ -15,6 +15,24 @@
         />
         <el-table border :data="tableData" class="adjust-table table-content">
           <el-table-column
+            label="云账号名称"
+          >
+            <template v-slot:default="scope">
+              <span>{{ getAccountName(scope.row.accountId) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+
+              label="云平台"
+          >
+            <template v-slot:default="scope">
+              <span>
+                <img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.accountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ $t(getPluginName(scope.row.accountId)) }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column
             prop="region"
             label="区域"
           >
@@ -57,6 +75,11 @@
               <span>{{ scope.row.requestStartTime | timestampFormatDate }}---{{ scope.row.requestEndTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
+          <el-table-column :label="$t('commons.operating')" fixed="right">
+            <template v-slot:default="scope">
+              <table-operators :buttons="buttons" :row="scope.row"/>
+            </template>
+          </el-table-column>
         </el-table>
       </template>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
@@ -71,6 +94,7 @@ import Container from "../../common/components/Container";
 import MainContainer from "../../common/components/MainContainer";
 import {CLOUD_EVENT_CONFIGS} from "../../common/components/search/search-components";
 import {ACCOUNT_ID} from "@/common/js/constants";
+import TableOperators from "../../common/components/TableOperators";
 
 /* eslint-disable */
 export default {
@@ -80,6 +104,7 @@ export default {
     TableHeader,
     TablePagination,
     MainContainer,
+    TableOperators
   },
   data() {
     return {
@@ -94,12 +119,17 @@ export default {
       condition: {
         components: CLOUD_EVENT_CONFIGS
       },
+      buttons: [
+        {
+          tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
+          exec: this.handleDelete
+        }
+      ],
     }
   },
   created() {
     this.currentAccount = localStorage.getItem(ACCOUNT_ID)
-    this.dateTime = [this.formatDate(new Date().getTime()-1000*60*60*24),this.formatDate(new Date().getTime())]
-    this.search()
+    this.init()
   },
   activated() {
     this.timer = setInterval(this.getStatus,10000);
@@ -108,6 +138,20 @@ export default {
     clearInterval(this.timer);
   },
   methods: {
+    handleDelete(row){
+      this.$alert(this.$t('account.delete_confirm') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$post("/cloud/event/sync/log/delete/"+row.id, {}, response => {
+              this.$success(this.$t('commons.delete_success'));
+              this.search()
+            });
+          }
+        }
+      });
+
+    },
     showEvents(row){
       this.$router.push({path:"/log/event",query:{
           accountId:row.accountId,
@@ -140,7 +184,7 @@ export default {
     },
     syncData(){
       if(!!!this.currentAccount || !!!this.region){
-        alert("云账号和区域不能为空")
+        this.$error("云账号和区域不能为空")
         return
       }
       let url = "/cloud/event/sync";
@@ -166,6 +210,15 @@ export default {
     changeDateTime(value){
       this.dateTime = value
     },
+    init(){
+      let that = this
+      this.$get("/account/allList", response => {
+        that.accountList = response.data
+
+        //that.dateTime = [this.formatDate(new Date().getTime()-1000*60*60*24),this.formatDate(new Date().getTime())]
+        that.search()
+      })
+    },
     formatDate: function(value) {
       let dt = new Date(value)
       let year = dt.getFullYear();
@@ -175,6 +228,24 @@ export default {
       let minute = dt.getMinutes().toString().padStart(2,'0');
       let second = dt.getSeconds().toString().padStart(2,'0');
       return `${year}-${month}-${date} ${hour}:${minute}:${second}`;
+    },
+    getAccountName(accountId){
+      let result =  this.accountList.filter(item =>{
+        return item.id === accountId
+      })
+      return result.length >0?result[0].name:""
+    },
+    getPluginName(accountId){
+      let result =  this.accountList.filter(item =>{
+        return item.id === accountId
+      })
+      return result.length >0?result[0].pluginName:""
+    },
+    getAccountIcon(accountId){
+      let result =  this.accountList.filter(item =>{
+        return item.id === accountId
+      })
+      return result.length >0?result[0].pluginIcon:""
     }
   },
 }

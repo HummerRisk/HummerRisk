@@ -140,15 +140,20 @@ export default {
       }
     },
     created() {
-      let account = localStorage.getItem(ACCOUNT)
-      account = JSON.parse(account)
-      this.regions = JSON.parse(account.regions)
       this.dateTime2 = this.dateTime
       if(this.initRegion){
         this.region = this.initRegion
       }
+      this.getRegions(this.currentAccount)
     },
     methods: {
+      getRegions(accountId){
+        if(accountId){
+          this.result =  this.$get("/account/getAccount/" + accountId, res => {
+            this.regions = JSON.parse(res.data.regions)
+          })
+        }
+      },
       setDateTime(dateTime){
         this.dateTime2 = dateTime
       },
@@ -163,9 +168,7 @@ export default {
         this.$emit('search', value);
       },
       cloudAccountSwitch(value){
-        let account = localStorage.getItem(ACCOUNT)
-        account = JSON.parse(account)
-        this.regions = JSON.parse(account.regions)
+        this.getRegions(value)
         this.$emit('cloudAccountSwitch',value)
       },
       changeRegion(){

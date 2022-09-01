@@ -56,20 +56,42 @@ public class CloudEventService {
     public List<CloudEventSyncLog> getCloudEventSyncLog(String accountId,String region){
         CloudEventSyncLogExample cloudEventSyncLogExample = new CloudEventSyncLogExample();
         cloudEventSyncLogExample.setOrderByClause(" create_time desc");
-        CloudEventSyncLogExample.Criteria criteria =  cloudEventSyncLogExample.createCriteria().andAccountIdEqualTo(accountId);
+        CloudEventSyncLogExample.Criteria criteria =  cloudEventSyncLogExample.createCriteria();
+        if(StringUtils.isNotBlank(accountId)){
+            criteria.andAccountIdEqualTo(accountId);
+        }
         if(StringUtils.isNotBlank(region)){
             criteria.andRegionEqualTo(region);
         }
         return cloudEventSyncLogMapper.selectByExample(cloudEventSyncLogExample);
     }
 
+    public void deleteCloudEventSyncLog(int id){
+        CloudEventSyncLogExample cloudEventSyncLogExample = new CloudEventSyncLogExample();
+        cloudEventSyncLogExample.createCriteria().andIdEqualTo(id);
+        cloudEventSyncLogMapper.deleteByExample(cloudEventSyncLogExample);
+    }
+
+    public void deleteCloudEvent(String id){
+        CloudEventExample cloudEventExample = new CloudEventExample();
+        cloudEventExample.createCriteria().andEventIdEqualTo(id);
+        cloudEventMapper.deleteByExample(cloudEventExample);
+    }
 
     public List<CloudEvent> getCloudEvents(CloudEventRequest cloudEventRequest) {
         CloudEventExample cloudEventExample = new CloudEventExample();
         cloudEventExample.setOrderByClause(" event_time desc ");
-        cloudEventExample.createCriteria().andCloudAccountIdEqualTo(cloudEventRequest.getAccountId()).andSyncRegionEqualTo(cloudEventRequest.getRegion())
-                .andEventTimeBetween(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", cloudEventRequest.getStartTime())
-                        , DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", cloudEventRequest.getEndTime()));
+        CloudEventExample.Criteria criteria =cloudEventExample.createCriteria();
+        if(StringUtils.isNotBlank(cloudEventRequest.getAccountId())){
+            criteria.andCloudAccountIdEqualTo(cloudEventRequest.getAccountId());
+        }
+        if(StringUtils.isNotBlank(cloudEventRequest.getRegion())){
+            criteria.andSyncRegionEqualTo(cloudEventRequest.getRegion());
+        }
+        if(StringUtils.isNotBlank(cloudEventRequest.getStartTime())){
+            criteria.andEventTimeBetween(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", cloudEventRequest.getStartTime())
+                    , DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", cloudEventRequest.getEndTime()));
+        }
         return cloudEventMapper.selectByExample(cloudEventExample);
     }
 
