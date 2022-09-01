@@ -10,8 +10,8 @@
       <el-table border class="adjust-table" :data="tableData" style="width: 100%" @sort-change="sort" @filter-change="filter"
                 :row-class-name="tableRowClassName">
         <el-table-column type="index" min-width="3%"/>
-        <el-table-column prop="name" :label="$t('image.image_repo_name')" min-width="15%"/>
-        <el-table-column prop="repo" :label="$t('image.image_repo_url')" min-width="15%"/>
+        <el-table-column prop="name" :label="$t('image.image_repo_name')" min-width="18%"/>
+        <el-table-column prop="repo" :label="$t('image.image_repo_url')" min-width="18%"/>
         <el-table-column prop="userName" :label="$t('image.image_repo_user_name')" min-width="12%"/>
         <el-table-column prop="status" min-width="10%" :label="$t('image.image_repo_status')"
                          column-key="status"
@@ -31,7 +31,7 @@
             <span><i class="el-icon-time"></i> {{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="13%" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
@@ -115,6 +115,29 @@
     </el-drawer>
     <!--Update imageRepo-->
 
+    <!--Create imageRepo-->
+    <el-drawer class="rtl" :title="$t('image.image_list')" :visible.sync="imageVisible" size="80%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <el-table border :data="imageData" class="adjust-table table-content">
+        <el-table-column type="index" min-width="3%"/>
+        <el-table-column prop="repository" :label="'Repository'" min-width="15%">
+        </el-table-column>
+        <el-table-column prop="path" :label="'ImagePath'" min-width="40%">
+        </el-table-column>
+        <el-table-column min-width="9%" :label="'Size'" prop="size">
+        </el-table-column>
+        <el-table-column min-width="9%" :label="'Arch'" prop="arch">
+        </el-table-column>
+        <el-table-column min-width="15%" :label="'PushTime'" prop="pushTime">
+        </el-table-column>
+      </el-table>
+      <div style="margin: 10px;">
+        <dialog-footer
+          @cancel="imageVisible = false"
+          @confirm="imageVisible = false"/>
+      </div>
+    </el-drawer>
+    <!--Create imageRepo-->
   </div>
 </template>
 
@@ -145,6 +168,7 @@ export default {
       result: {},
       createVisible: false,
       updateVisible: false,
+      imageVisible: false,
       editPasswordVisible: false,
       btnAddRole: false,
       multipleSelection: [],
@@ -171,6 +195,10 @@ export default {
       },
       buttons: [
         {
+          tip: this.$t('image.image_list'), icon: "el-icon-more", type: "success",
+          exec: this.handleList
+        },
+        {
           tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
           exec: this.handleEdit
         }, {
@@ -188,6 +216,7 @@ export default {
         {value: 'dockerhub.png', id: "DockerHub"},
         {value: 'nexus.png', id: "Nexus"},
       ],
+      imageList: [],
     }
   },
   methods: {
@@ -221,6 +250,7 @@ export default {
       this.form = {};
       this.createVisible =  false;
       this.updateVisible =  false;
+      this.imageVisible = false;
     },
     buildPagePath(path) {
       return path + this.currentPage + "/" + this.pageSize;
@@ -271,6 +301,12 @@ export default {
             });
           }
         }
+      });
+    },
+    handleList(item) {
+      this.$get("/image/repoItemList/" + item.id, response => {
+        this.imageList = response.data;
+        this.imageVisible = true;
       });
     },
   },

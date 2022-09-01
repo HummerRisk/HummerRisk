@@ -66,6 +66,13 @@ public class ImageController {
     }
 
     @I18n
+    @ApiOperation(value = "镜像仓库中的镜像列表")
+    @GetMapping("repoItemList/{id}")
+    public List<ImageRepoItem> repoItemList(@PathVariable String id) {
+        return imageService.repoItemList(id);
+    }
+
+    @I18n
     @ApiOperation(value = "镜像列表")
     @PostMapping("imageList/{goPage}/{pageSize}")
     public Pager<List<ImageDTO>> imageList(

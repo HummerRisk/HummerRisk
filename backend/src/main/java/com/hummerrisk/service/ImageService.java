@@ -19,6 +19,7 @@ import com.hummerrisk.dto.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -89,6 +90,13 @@ public class ImageService {
         return imageRepoMapper.selectByExample(example);
     }
 
+    public List<ImageRepoItem> repoItemList(String id) {
+        ImageRepoItemExample example = new ImageRepoItemExample();
+        example.createCriteria().andRepoIdEqualTo(id);
+        List<ImageRepoItem> repoItemList = imageRepoItemMapper.selectByExample(example);
+        return repoItemList;
+    }
+
     public ImageRepo addImageRepo(ImageRepo imageRepo) throws Exception {
         String id = UUIDUtil.newUUID();
         imageRepo.setId(id);
@@ -96,7 +104,11 @@ public class ImageService {
         imageRepo.setCreateTime(System.currentTimeMillis());
         imageRepo.setUpdateTime(System.currentTimeMillis());
 
-        String dockerLogin = "docker login " + imageRepo.getRepo() + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword();
+        String repo = imageRepo.getRepo().replace("https://", "").replace("http://", "");
+        if(repo.endsWith("/")){
+            repo = repo.substring(0,repo.length()-1);
+        }
+        String dockerLogin = "docker login " + repo + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword();
         String resultStr = CommandUtils.commonExecCmdWithResult(dockerLogin, ImageConstants.DEFAULT_BASE_DIR);
         if(resultStr.contains("Succeeded")) {
             imageRepo.setStatus("VALID");
@@ -137,6 +149,7 @@ public class ImageService {
                 path = path.substring(0,path.length()-1);
             }
             Map<String,String> header = new HashMap<>();
+            header.put("Accept", CloudNativeConstants.Accept);
             header.put("Authorization","Basic "+ Base64.getUrlEncoder().encodeToString((imageRepo.getUserName() + ":" + imageRepo.getPassword()).getBytes()));
             String projectStr = HttpClientUtil.HttpGet(path+"/api/v2.0/projects/",header);
             JSONArray projects =  JSON.parseArray(projectStr);
@@ -190,7 +203,11 @@ public class ImageService {
 
     public ImageRepo editImageRepo(ImageRepo imageRepo) throws Exception {
         imageRepo.setUpdateTime(System.currentTimeMillis());
-        String dockerLogin = "docker login " + imageRepo.getRepo() + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword();
+        String repo = imageRepo.getRepo().replace("https://", "").replace("http://", "");
+        if(repo.endsWith("/")){
+            repo = repo.substring(0,repo.length()-1);
+        }
+        String dockerLogin = "docker login " + repo + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword();
         String resultStr = CommandUtils.commonExecCmdWithResult(dockerLogin, ImageConstants.DEFAULT_BASE_DIR);
         if(resultStr.contains("Succeeded")) {
             imageRepo.setStatus("VALID");
