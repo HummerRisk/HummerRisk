@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS `task` (
     `apply_user`                    varchar(50)           DEFAULT NULL COMMENT '申请人',
     `create_time`                   bigint(13)            DEFAULT NULL COMMENT '创建时间',
     `task_name`                     varchar(256)          DEFAULT NULL COMMENT '任务名称',
-    `description`                   varchar(255)          DEFAULT NULL COMMENT '描述',
+    `description`                   varchar(1024)         DEFAULT NULL COMMENT '描述',
     `cron`                          varchar(128)          DEFAULT NULL COMMENT 'cron表达式',
     `trigger_id`                    varchar(255)          DEFAULT NULL COMMENT '触发ID',
     `prev_fire_time`                bigint(20)            DEFAULT NULL COMMENT '上次执行时间',

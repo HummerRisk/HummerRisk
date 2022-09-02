@@ -901,7 +901,7 @@ export default {
     image_repo_name: 'Image repository name',
     image_repo_status: 'Image repository status',
     image_repo_url: 'Mirror warehouse address',
-    image_repo_url_desc: 'Mirror warehouse address eg: `registry.cn-beijing.aliyuncs.com`',
+    image_repo_url_desc: 'Mirror warehouse address eg: `https://registry.cn-beijing.aliyuncs.com`',
     image_repo_user_name: 'Image repository username',
     image_repo_password: 'image repository password',
     image_setting: 'Image management',

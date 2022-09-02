@@ -901,7 +901,7 @@ export default {
     image_repo_name: '镜像仓库名称',
     image_repo_status: '镜像仓库状态',
     image_repo_url: '镜像仓库地址',
-    image_repo_url_desc: '镜像仓库地址 eg: `registry.cn-beijing.aliyuncs.com`',
+    image_repo_url_desc: '镜像仓库地址 eg: `https://registry.cn-beijing.aliyuncs.com`',
     image_repo_user_name: '镜像仓库用户名',
     image_repo_password: '镜像仓库密码',
     image_setting: '镜像管理',

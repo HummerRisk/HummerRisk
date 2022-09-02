@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `server_rule` (
     `name`                       varchar(50)         DEFAULT NULL UNIQUE COMMENT '规则名称',
     `status`                     tinyint(1)          DEFAULT 1 COMMENT '规则状态(启用1，停用0)',
     `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
-    `description`                varchar(255)        DEFAULT NULL COMMENT '`描述',
+    `description`                varchar(1024)       DEFAULT NULL COMMENT '`描述',
     `script`                     mediumtext          DEFAULT NULL COMMENT '脚本',
     `parameter`                  varchar(1024)       DEFAULT NULL COMMENT '参数',
     `last_modified`              bigint(14)          DEFAULT NULL COMMENT '上次更新时间',

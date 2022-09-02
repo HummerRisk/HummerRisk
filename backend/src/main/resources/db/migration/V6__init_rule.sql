@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS `rule` (
     `name`                       varchar(50)         DEFAULT NULL UNIQUE COMMENT '规则名称',
     `status`                     tinyint(1)          DEFAULT 1 COMMENT '规则状态(启用1，停用0)',
     `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
-    `description`                varchar(255)        DEFAULT NULL COMMENT '`描述',
+    `description`                varchar(1024)       DEFAULT NULL COMMENT '`描述',
     `script`                     mediumtext          DEFAULT NULL COMMENT '脚本',
     `parameter`                  varchar(1024)       DEFAULT NULL COMMENT '参数',
     `plugin_id`                  varchar(64)         DEFAULT NULL COMMENT '插件ID',
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `rule_account_parameter` (
 CREATE TABLE IF NOT EXISTS `rule_group` (
     `id`                         int(10)             NOT NULL AUTO_INCREMENT,
     `name`                       varchar(50)         DEFAULT NULL COMMENT '规则组名称',
-    `description`                varchar(256)        DEFAULT NULL COMMENT '规则组描述',
+    `description`                varchar(1024)       DEFAULT NULL COMMENT '规则组描述',
     `level`                      varchar(64)         DEFAULT NULL COMMENT '风险级别',
     `plugin_id`                  varchar(64)         DEFAULT NULL COMMENT '插件ID',
     `flag`                       tinyint(1)          NOT NULL DEFAULT 0 COMMENT '是否内置',

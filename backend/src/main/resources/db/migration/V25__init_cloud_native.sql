@@ -188,7 +188,7 @@ CREATE TABLE IF NOT EXISTS `cloud_native_config_result_item` (
     `type`                       varchar(50)         DEFAULT NULL COMMENT 'Type',
     `item_id`                    varchar(50)         DEFAULT NULL COMMENT 'ID',
     `title`                      varchar(512)        DEFAULT NULL COMMENT 'Title',
-    `description`                varchar(512)        DEFAULT NULL COMMENT 'Description',
+    `description`                text                DEFAULT NULL COMMENT 'Description',
     `message`                    varchar(256)        DEFAULT NULL COMMENT 'Message',
     `namespace`                  varchar(256)        DEFAULT NULL COMMENT 'Namespace',
     `query`                      varchar(256)        DEFAULT NULL COMMENT 'Query',
