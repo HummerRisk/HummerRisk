@@ -122,7 +122,7 @@
         <el-table-column type="index" min-width="3%"/>
         <el-table-column prop="repository" :label="'Repository'" min-width="15%">
         </el-table-column>
-        <el-table-column prop="path" :label="'ImagePath'" min-width="40%">
+        <el-table-column prop="path" :label="'ImagePath'" min-width="30%">
         </el-table-column>
         <el-table-column min-width="9%" :label="'Size'" prop="size">
         </el-table-column>
@@ -216,7 +216,7 @@ export default {
         {value: 'dockerhub.png', id: "DockerHub"},
         {value: 'nexus.png', id: "Nexus"},
       ],
-      imageList: [],
+      imageData: [],
     }
   },
   methods: {
@@ -305,7 +305,8 @@ export default {
     },
     handleList(item) {
       this.$get("/image/repoItemList/" + item.id, response => {
-        this.imageList = response.data;
+        console.log(response)
+        this.imageData = response.data;
         this.imageVisible = true;
       });
     },
