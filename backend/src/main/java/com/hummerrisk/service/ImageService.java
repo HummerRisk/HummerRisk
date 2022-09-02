@@ -261,6 +261,12 @@ public class ImageService {
                 String iconFilePath = upload(iconFile, ImageConstants.DEFAULT_BASE_DIR);
                 request.setPluginIcon("images/" + iconFilePath);
             }
+            if (StringUtils.equalsIgnoreCase(request.getType(), "repo")) {
+                ImageRepoItem imageRepoItem = imageRepoItemMapper.selectByPrimaryKey(request.getImageUrl());
+                request.setImageUrl(imageRepoItem.getPath().split(":")[0]);
+                request.setImageTag(imageRepoItem.getTag());
+                request.setSize(imageRepoItem.getSize());
+            }
             if (tarFile != null) {
                 String tarFilePath = upload(tarFile, ImageConstants.DEFAULT_BASE_DIR);
                 request.setPath(tarFilePath);
@@ -286,6 +292,12 @@ public class ImageService {
             if (iconFile != null) {
                 String iconFilePath = upload(iconFile, ImageConstants.DEFAULT_BASE_DIR);
                 request.setPluginIcon("images/" + iconFilePath);
+            }
+            if (StringUtils.equalsIgnoreCase(request.getType(), "repo")) {
+                ImageRepoItem imageRepoItem = imageRepoItemMapper.selectByPrimaryKey(request.getImageUrl());
+                request.setImageUrl(imageRepoItem.getPath().split(":")[0]);
+                request.setImageTag(imageRepoItem.getTag());
+                request.setSize(imageRepoItem.getSize());
             }
             if (tarFile != null) {
                 String tarFilePath = upload(tarFile, ImageConstants.DEFAULT_BASE_DIR);

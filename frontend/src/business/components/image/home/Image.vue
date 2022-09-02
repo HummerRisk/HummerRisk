@@ -123,7 +123,7 @@
           <el-switch v-model="form.isImageRepo"></el-switch>
         </el-form-item>
         <el-form-item v-if="form.isImageRepo" :label="$t('image.image_repo')" :rules="{required: true, message: $t('image.image_repo') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.repoId" :placeholder="$t('image.image_repo_url')">
+          <el-select style="width: 100%;" v-model="form.repoId" :placeholder="$t('image.image_repo_url')" @change="changeImage">
             <el-option
               v-for="item in repos"
               :key="item.id"
@@ -162,8 +162,20 @@
           </el-popover>
         </el-form-item>
         <el-form-item :label="$t('image.image_type')" ref="type" prop="type">
+          <el-radio v-model="form.type" label="repo">{{ $t('image.image_rp') }}</el-radio>
           <el-radio v-model="form.type" label="image">{{ $t('image.image_u') }}</el-radio>
           <el-radio v-model="form.type" label="tar">{{ $t('image.image_tar') }}</el-radio>
+        </el-form-item>
+        <el-form-item v-if="form.type==='repo'" :label="$t('image.image_list')" ref="type" prop="type">
+          <el-select style="width: 100%;" v-model="form.imageUrl" :placeholder="$t('image.image_list')">
+            <el-option
+              v-for="item in images"
+              :key="item.id"
+              :label="item.path"
+              :value="item.id">
+              &nbsp;&nbsp; {{ item.path }}
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item v-if="form.type==='image'" :label="$t('image.image_url_tag')" ref="type" prop="type">
           <el-input class="input-inline-i" v-model="form.imageUrl" autocomplete="off" :placeholder="$t('image.image_url')"/>
@@ -220,7 +232,7 @@
           <el-switch v-model="form.isImageRepo"></el-switch>
         </el-form-item>
         <el-form-item v-if="form.isImageRepo" :label="$t('image.image_repo')" :rules="{required: true, message: $t('image.image_repo') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.repoId" :placeholder="$t('image.image_repo_url')">
+          <el-select style="width: 100%;" v-model="form.repoId" :placeholder="$t('image.image_repo_url')" @change="changeImage">
             <el-option
               v-for="item in repos"
               :key="item.id"
@@ -259,8 +271,20 @@
           </el-popover>
         </el-form-item>
         <el-form-item :label="$t('image.image_type')" ref="type" prop="type">
+          <el-radio v-model="form.type" label="repo">{{ $t('image.image_rp') }}</el-radio>
           <el-radio v-model="form.type" label="image">{{ $t('image.image_u') }}</el-radio>
           <el-radio v-model="form.type" label="tar">{{ $t('image.image_tar') }}</el-radio>
+        </el-form-item>
+        <el-form-item v-if="form.type==='repo'" :label="$t('image.image_list')" ref="type" prop="type">
+          <el-select style="width: 100%;" v-model="form.imageUrl" :placeholder="$t('image.image_list')">
+            <el-option
+              v-for="item in images"
+              :key="item.id"
+              :label="item.path"
+              :value="item.id">
+              &nbsp;&nbsp; {{ item.path }}
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item v-if="form.type==='image'" :label="$t('image.image_url_tag')" ref="type" prop="type">
           <el-input class="input-inline-i" v-model="form.imageUrl" autocomplete="off" :placeholder="$t('image.image_url')"/>
@@ -372,6 +396,7 @@ export default {
       tarFile: Object,
       sboms: [],
       versions: [],
+      images: [],
     }
   },
   activated() {
@@ -566,6 +591,11 @@ export default {
     },
     appendTar(file) {
       this.tarFile = file;
+    },
+    changeImage(item) {
+      this.$get("/image/repoItemList/" + item, response => {
+        this.images = response.data;
+      });
     },
   }
 }

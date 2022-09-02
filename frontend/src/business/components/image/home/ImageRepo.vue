@@ -305,7 +305,6 @@ export default {
     },
     handleList(item) {
       this.$get("/image/repoItemList/" + item.id, response => {
-        console.log(response)
         this.imageData = response.data;
         this.imageVisible = true;
       });
