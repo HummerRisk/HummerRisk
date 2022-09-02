@@ -46,7 +46,9 @@
                     </el-tag>
                   </el-col>
                   <el-col :span="data.type==='tar'?5:8" class="cl-data-col">
-                    {{ data.type==='image'?(data.imageUrl + ':' + data.imageTag):data.path }}
+                    <div v-if="data.type==='repo'">{{ data.imageUrl + ':' + data.imageTag }}</div>
+                    <div v-if="data.type==='image'">{{ data.imageUrl + ':' + data.imageTag }}</div>
+                    <div v-if="data.type==='tar'">{{ data.path }}</div>
                   </el-col>
                   <el-col :span="3" v-if="data.type==='tar'" class="cl-data-col">{{ data.size }}</el-col>
                   <el-col :span="5" class="cl-data-col">{{ data.imageRepoName?data.imageRepoName:$t('image.no_image_repo') }}</el-col>
@@ -290,7 +292,7 @@ export default {
   },
   data() {
     return {
-      queryPath: '/image/imageList/',
+      queryPath: '/k8s/imageList/',
       deletePath: '/image/deleteImage/',
       createPath: '/image/addImage',
       updatePath: '/image/updateImage',

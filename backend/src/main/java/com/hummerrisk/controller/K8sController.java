@@ -6,7 +6,9 @@ import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
+import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
+import com.hummerrisk.dto.ImageDTO;
 import com.hummerrisk.service.K8sService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,6 +50,15 @@ public class K8sController {
     @GetMapping("deleteCloudNativeResult/{id}")
     public void deleteCloudNativeResult(@PathVariable String id) throws Exception {
         k8sService.deleteCloudNativeResult(id);
+    }
+
+    @I18n
+    @ApiOperation(value = "镜像列表")
+    @PostMapping("imageList/{goPage}/{pageSize}")
+    public Pager<List<ImageDTO>> imageList(
+            @PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, k8sService.imageList(request));
     }
 
     @I18n

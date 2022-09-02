@@ -44,22 +44,34 @@
     </sql>
 
     <sql id="combine">
-        <if test='${condition}.name != null'>
+        <if test='${condition}.name != null and (${name} == null or ${name} == "")'>
             and t.name
             <include refid="condition">
                 <property name="object" value="${condition}.name"/>
             </include>
         </if>
-        <if test="${condition}.creator != null">
-            and user.id
+        <if test="${condition}.updateTime != null">
+            and t.update_time
             <include refid="condition">
-                <property name="object" value="${condition}.creator"/>
+                <property name="object" value="${condition}.updateTime"/>
             </include>
         </if>
         <if test="${condition}.createTime != null">
             and t.create_time
             <include refid="condition">
                 <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+        <if test="${condition}.status != null">
+            and t.status
+            <include refid="condition">
+                <property name="object" value="${condition}.status"/>
+            </include>
+        </if>
+        <if test="${condition}.creator != null">
+            and u.id
+            <include refid="condition">
+                <property name="object" value="${condition}.creator"/>
             </include>
         </if>
     </sql>
@@ -85,5 +97,39 @@
         ORDER BY t.update_time desc
     </select>
 
+    <resultMap id="ImageMap" type="com.hummerrisk.dto.ImageDTO"
+               extends="com.hummerrisk.base.mapper.ImageMapper.BaseResultMap">
+        <result column="user" property="user"/>
+        <result column="imageRepoName" property="imageRepoName"/>
+    </resultMap>
+
+    <select id="imageList" resultMap="ImageMap">
+        select
+        t.*,
+        r.name as imageRepoName,
+        u.name as userName
+        from image as t
+        left join image_repo r on t.repo_id = r.id
+        left join user u on t.creator = u.id
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and t.name like CONCAT('%', #{request.name},'%')
+            </if>
+            <if test="request.status != null and request.status != ''">
+                and t.status = #{request.status}
+            </if>
+        </where>
+        order by t.update_time desc
+    </select>
 
 </mapper>

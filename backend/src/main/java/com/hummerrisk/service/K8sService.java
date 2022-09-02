@@ -8,7 +8,9 @@ import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeResultMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.utils.*;
+import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
+import com.hummerrisk.dto.ImageDTO;
 import com.hummerrisk.proxy.k8s.K8sRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -252,6 +254,10 @@ public class K8sService {
     public CloudNativeResult getCloudNativeResult(String resultId) {
         CloudNativeResult cloudNativeResult = cloudNativeResultMapper.selectByPrimaryKey(resultId);
         return cloudNativeResult;
+    }
+
+    public List<ImageDTO> imageList(ImageRequest request) {
+        return extCloudNativeResultMapper.imageList(request);
     }
 
     public void deleteCloudNativeResult(String id) throws Exception {
