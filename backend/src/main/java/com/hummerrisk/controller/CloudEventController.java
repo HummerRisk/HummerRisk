@@ -35,6 +35,12 @@ public class CloudEventController {
         cloudEventService.deleteCloudEventSyncLog(id);
     }
 
+    @ApiOperation(value = "删除同步日志")
+    @PostMapping("sync/log/detail/{id}")
+    public CloudEventSyncLog getSyncLog(@PathVariable int id){
+        return cloudEventService.selectCloudEventSyncLog(id);
+    }
+
     @ApiOperation(value = "删除事件")
     @PostMapping("delete/{id}")
     public void deleteEvent(@PathVariable String id){
