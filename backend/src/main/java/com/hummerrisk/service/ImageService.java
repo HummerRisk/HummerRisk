@@ -707,7 +707,7 @@ public class ImageService {
                 dockerLogin = "docker login " + imageRepo.getRepo() + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword() + "\n";
             }
             String fileName = "";
-            if (StringUtils.equalsIgnoreCase("image", image.getType())) {
+            if (StringUtils.equalsIgnoreCase("image", image.getType()) || StringUtils.equalsIgnoreCase("repo", image.getType())) {
                 fileName = image.getImageUrl() + ":" + image.getImageTag();
             } else {
                 fileName = ImageConstants.DEFAULT_BASE_DIR + image.getPath();
