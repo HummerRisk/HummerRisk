@@ -55,7 +55,7 @@
                 </el-radio-group>
               </el-collapse-item>
               <el-collapse-item :title="$t('dashboard.types_5')" name="5">
-                <el-select v-model="condition.users" :placeholder="$t('dashboard.scan_users')" @change="changeSearch">
+                <el-select v-model="condition.users" filterable :clearable="true" :placeholder="$t('dashboard.scan_users')" @change="changeSearch">
                   <el-option
                     v-for="item in users"
                     :key="item.id"

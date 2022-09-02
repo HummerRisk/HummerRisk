@@ -84,7 +84,7 @@
           <el-input v-model="createRuleForm.description" autocomplete="off" :placeholder="$t('rule.rule_description')"/>
         </el-form-item>
         <el-form-item :label="$t('rule.rule_tag')" :rules="{required: true, message: $t('rule.rule_tag'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="createRuleForm.tagKey" :placeholder="$t('rule.please_choose_tag')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="createRuleForm.tagKey" :placeholder="$t('rule.please_choose_tag')">
             <el-option
               v-for="item in tags"
               :key="item.tagKey"
@@ -94,7 +94,7 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('rule.severity')" :rules="{required: true, message: $t('rule.severity'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="createRuleForm.severity" :placeholder="$t('rule.please_choose_severity')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="createRuleForm.severity" :placeholder="$t('rule.please_choose_severity')">
             <el-option
               v-for="item in severityOptions"
               :key="item.value"
@@ -149,7 +149,7 @@
           <el-input v-model="updateRuleForm.description" autocomplete="off" :placeholder="$t('rule.rule_description')"/>
         </el-form-item>
         <el-form-item :label="$t('rule.rule_tag')" :rules="{required: true, message: $t('rule.rule_tag'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="updateRuleForm.tagKey" :placeholder="$t('rule.please_choose_tag')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="updateRuleForm.tagKey" :placeholder="$t('rule.please_choose_tag')">
             <el-option
               v-for="item in tags"
               :key="item.tagKey"
@@ -159,7 +159,7 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('rule.severity')" :rules="{required: true, message: $t('rule.severity'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="updateRuleForm.severity" :placeholder="$t('rule.please_choose_severity')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="updateRuleForm.severity" :placeholder="$t('rule.please_choose_severity')">
             <el-option
               v-for="item in severityOptions"
               :key="item.value"

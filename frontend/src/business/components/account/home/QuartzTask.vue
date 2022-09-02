@@ -90,7 +90,7 @@
               </span>
               <el-input :placeholder="$t('account.please_input_name')" v-model="form.name" clearable>
               </el-input>
-              <el-select style="width: 100%;margin: 50px 0;" v-model="form.qzType" :placeholder="$t('account.please_choose_qztype')">
+              <el-select style="width: 100%;margin: 50px 0;" filterable :clearable="true" v-model="form.qzType" :placeholder="$t('account.please_choose_qztype')">
                 <el-option
                   v-for="item in qzTypes"
                   :key="item.id"

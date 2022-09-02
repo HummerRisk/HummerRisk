@@ -65,7 +65,7 @@
             <el-input v-model="form.name" autocomplete="off" :placeholder="$t('vuln.name')"/>
           </el-form-item>
           <el-form-item :label="$t('vuln.platform')" :rules="{required: true, message: $t('vuln.platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.pluginId" :placeholder="$t('vuln.platform')" @change="changePluginForAdd(form)">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.pluginId" :placeholder="$t('vuln.platform')" @change="changePluginForAdd(form)">
               <el-option
                 v-for="item in plugins"
                 :key="item.id"
@@ -85,7 +85,7 @@
             </el-form-item>
           </div>
           <el-form-item v-if="form.isProxy && form.pluginId" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
               <el-option
                 v-for="item in proxys"
                 :key="item.id"

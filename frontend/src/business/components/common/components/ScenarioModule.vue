@@ -33,7 +33,7 @@
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('account.input_name')"/>
         </el-form-item>
         <el-form-item :label="$t('account.cloud_platform')" :rules="{required: true, message: $t('account.cloud_platform'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePlugin(form.pluginId)">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePlugin(form.pluginId)">
             <el-option
               v-for="item in plugins"
               :key="item.id"

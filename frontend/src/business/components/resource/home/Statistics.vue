@@ -193,7 +193,7 @@
                 <el-input v-model="ruleForm.description" autocomplete="off" :placeholder="$t('rule.rule_description')"/>
               </el-form-item>
               <el-form-item :label="$t('account.cloud_platform')">
-                <el-select style="width: 100%;" v-model="ruleForm.pluginId" :placeholder="$t('account.please_choose_plugin')">
+                <el-select style="width: 100%;" filterable :clearable="true" v-model="ruleForm.pluginId" :placeholder="$t('account.please_choose_plugin')">
                   <el-option
                     v-for="item in plugins"
                     :key="item.id"

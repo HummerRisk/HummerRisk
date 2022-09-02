@@ -48,7 +48,7 @@
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_repo_name')"/>
         </el-form-item>
         <el-form-item :label="$t('image.image_repo_type')" :rules="{required: true, message: $t('image.image_repo_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.pluginIcon" :placeholder="$t('image.image_repo_type')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.pluginIcon" :placeholder="$t('image.image_repo_type')">
             <el-option
               v-for="item in plugins"
               :key="item.value"
@@ -214,8 +214,8 @@ export default {
       ],
       plugins: [
         {value: 'harbor.png', id: "Harbor"},
-        {value: 'dockerhub.png', id: "DockerHub"},
-        {value: 'nexus.png', id: "Nexus"},
+        // {value: 'dockerhub.png', id: "DockerHub"},
+        // {value: 'nexus.png', id: "Nexus"},
       ],
       imageData: [],
     }

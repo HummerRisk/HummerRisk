@@ -108,7 +108,7 @@
               <el-switch v-model="proxyForm.isProxy"></el-switch>
             </el-form-item>
             <el-form-item v-if="proxyForm.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-              <el-select style="width: 100%;" v-model="proxyForm.proxyId" :placeholder="$t('commons.proxy')">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="proxyForm.proxyId" :placeholder="$t('commons.proxy')">
                 <el-option
                   v-for="item in proxys"
                   :key="item.id"
@@ -133,7 +133,7 @@
                  :destroy-on-close="true">
         <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="createServerForm">
           <el-form-item :label="$t('server.server_group_name')" ref="groupId" prop="groupId">
-            <el-select style="width: 100%;" v-model="form.groupId" :placeholder="$t('server.server_group_name')">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.groupId" :placeholder="$t('server.server_group_name')">
               <el-option
                 v-for="item in groups"
                 :key="item.id"
@@ -167,7 +167,7 @@
             <el-switch v-model="form.isProxy"></el-switch>
           </el-form-item>
           <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
               <el-option
                 v-for="item in proxys"
                 :key="item.id"

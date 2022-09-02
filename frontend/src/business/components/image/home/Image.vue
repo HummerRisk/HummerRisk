@@ -94,7 +94,7 @@
                :destroy-on-close="true">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form" :rules="rule">
         <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(form)">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(form)">
             <el-option
               v-for="item in sboms"
               :key="item.id"
@@ -106,7 +106,7 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('sbom.sbom_project_version')" :rules="{required: true, message: $t('sbom.sbom_project_version') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
             <el-option
               v-for="item in versions"
               :key="item.id"
@@ -124,7 +124,7 @@
           <el-switch v-model="form.isImageRepo"></el-switch>
         </el-form-item>
         <el-form-item v-if="form.isImageRepo" :label="$t('image.image_repo')" :rules="{required: true, message: $t('image.image_repo') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.repoId" :placeholder="$t('image.image_repo_url')" @change="changeImage">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.repoId" :placeholder="$t('image.image_repo_url')" @change="changeImage">
             <el-option
               v-for="item in repos"
               :key="item.id"
@@ -138,7 +138,7 @@
           <el-switch v-model="form.isProxy"></el-switch>
         </el-form-item>
         <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
             <el-option
               v-for="item in proxys"
               :key="item.id"
@@ -168,7 +168,7 @@
           <el-radio v-model="form.type" label="tar">{{ $t('image.image_tar') }}</el-radio>
         </el-form-item>
         <el-form-item v-if="form.type==='repo'" :label="$t('image.image_list')" ref="type" prop="type">
-          <el-select style="width: 100%;" filterable v-model="form.imageUrl" :placeholder="$t('image.image_list')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.imageUrl" :placeholder="$t('image.image_list')">
             <el-option
               v-for="item in images"
               :key="item.id"
@@ -203,7 +203,7 @@
                :destroy-on-close="true">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form" :rules="rule">
         <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(form)">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(form)">
             <el-option
               v-for="item in sboms"
               :key="item.id"
@@ -215,7 +215,7 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('sbom.sbom_project_version')" :rules="{required: true, message: $t('sbom.sbom_project_version') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
             <el-option
               v-for="item in versions"
               :key="item.id"
@@ -233,7 +233,7 @@
           <el-switch v-model="form.isImageRepo"></el-switch>
         </el-form-item>
         <el-form-item v-if="form.isImageRepo" :label="$t('image.image_repo')" :rules="{required: true, message: $t('image.image_repo') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.repoId" :placeholder="$t('image.image_repo_url')" @change="changeImage">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.repoId" :placeholder="$t('image.image_repo_url')" @change="changeImage">
             <el-option
               v-for="item in repos"
               :key="item.id"
@@ -247,7 +247,7 @@
           <el-switch v-model="form.isProxy"></el-switch>
         </el-form-item>
         <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
             <el-option
               v-for="item in proxys"
               :key="item.id"
@@ -277,7 +277,7 @@
           <el-radio v-model="form.type" label="tar">{{ $t('image.image_tar') }}</el-radio>
         </el-form-item>
         <el-form-item v-if="form.type==='repo'" :label="$t('image.image_list')" ref="type" prop="type">
-          <el-select style="width: 100%;" filterable v-model="form.imageUrl" :placeholder="$t('image.image_list')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.imageUrl" :placeholder="$t('image.image_list')">
             <el-option
               v-for="item in images"
               :key="item.id"

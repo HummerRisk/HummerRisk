@@ -61,7 +61,7 @@
           </span>
           <div class="app">
             <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-              <el-select style="width: 100%;" v-model="addPackageForm.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(addPackageForm)">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="addPackageForm.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(addPackageForm)">
                 <el-option
                   v-for="item in sboms"
                   :key="item.id"
@@ -73,7 +73,7 @@
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('sbom.sbom_project_version')" :rules="{required: true, message: $t('sbom.sbom_project_version') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-              <el-select style="width: 100%;" v-model="addPackageForm.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="addPackageForm.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
                 <el-option
                   v-for="item in versions"
                   :key="item.id"
@@ -91,7 +91,7 @@
               <el-switch v-model="addPackageForm.isProxy"></el-switch>
             </el-form-item>
             <el-form-item v-if="addPackageForm.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-              <el-select style="width: 100%;" v-model="addPackageForm.proxyId" :placeholder="$t('commons.proxy')">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="addPackageForm.proxyId" :placeholder="$t('commons.proxy')">
                 <el-option
                   v-for="item in proxys"
                   :key="item.id"
@@ -156,7 +156,7 @@
           </span>
           <div class="app">
             <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-              <el-select style="width: 100%;" v-model="editPackageForm.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(editPackageForm)">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="editPackageForm.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(editPackageForm)">
                 <el-option
                   v-for="item in sboms"
                   :key="item.id"
@@ -168,7 +168,7 @@
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('sbom.sbom_project_version')" :rules="{required: true, message: $t('sbom.sbom_project_version') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-              <el-select style="width: 100%;" v-model="editPackageForm.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="editPackageForm.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
                 <el-option
                   v-for="item in versions"
                   :key="item.id"
@@ -186,7 +186,7 @@
               <el-switch v-model="editPackageForm.isProxy"></el-switch>
             </el-form-item>
             <el-form-item v-if="editPackageForm.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-              <el-select style="width: 100%;" v-model="editPackageForm.proxyId" :placeholder="$t('commons.proxy')">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="editPackageForm.proxyId" :placeholder="$t('commons.proxy')">
                 <el-option
                   v-for="item in proxys"
                   :key="item.id"
