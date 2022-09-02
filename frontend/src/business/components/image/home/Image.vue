@@ -169,7 +169,7 @@
           <el-radio v-model="form.type" label="tar">{{ $t('image.image_tar') }}</el-radio>
         </el-form-item>
         <el-form-item v-if="form.type==='repo'" :label="$t('image.image_list')" ref="type" prop="type">
-          <el-select style="width: 100%;" v-model="form.imageUrl" :placeholder="$t('image.image_list')">
+          <el-select style="width: 100%;" filterable v-model="form.imageUrl" :placeholder="$t('image.image_list')">
             <el-option
               v-for="item in images"
               :key="item.id"
@@ -278,7 +278,7 @@
           <el-radio v-model="form.type" label="tar">{{ $t('image.image_tar') }}</el-radio>
         </el-form-item>
         <el-form-item v-if="form.type==='repo'" :label="$t('image.image_list')" ref="type" prop="type">
-          <el-select style="width: 100%;" v-model="form.imageUrl" :placeholder="$t('image.image_list')">
+          <el-select style="width: 100%;" filterable v-model="form.imageUrl" :placeholder="$t('image.image_list')">
             <el-option
               v-for="item in images"
               :key="item.id"
