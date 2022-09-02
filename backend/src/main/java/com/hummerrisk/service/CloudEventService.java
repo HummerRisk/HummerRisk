@@ -1,6 +1,7 @@
 package com.hummerrisk.service;
 
 
+import com.alibaba.fastjson.JSON;
 import com.aliyun.actiontrail20171204.Client;
 import com.aliyun.actiontrail20171204.models.LookupEventsRequest;
 import com.aliyun.actiontrail20171204.models.LookupEventsResponse;
@@ -49,7 +50,7 @@ public class CloudEventService {
     @Lazy
     private CommonThreadPool commonThreadPool;
     private static final int MAX_PAGE_NUM = 1000;
-
+    private static final int MAX_INSERT_SIZE = 30;
     @Resource
     private PlatformTransactionManager transactionManager;
 
@@ -66,6 +67,10 @@ public class CloudEventService {
         return cloudEventSyncLogMapper.selectByExample(cloudEventSyncLogExample);
     }
 
+    public CloudEventSyncLog selectCloudEventSyncLog(int id){
+
+        return cloudEventSyncLogMapper.selectByPrimaryKey(id);
+    }
     public void deleteCloudEventSyncLog(int id){
         CloudEventSyncLogExample cloudEventSyncLogExample = new CloudEventSyncLogExample();
         cloudEventSyncLogExample.createCriteria().andIdEqualTo(id);
@@ -156,13 +161,18 @@ public class CloudEventService {
                         item.setCloudAccountId(accountId);
                         item.setSyncRegion(region);
                     });
-                    /*int times = result.size()%50;
-                    for(int i = 0;i<times;i++){
-                        List<CloudEvent>
-                    }*/
+                    int resultSize = result.size();
                     int num = 0;
-                    if(result.size()>0){
-                        num = extCloudEventMapper.batchCloudEvents(result);
+                    if(resultSize> MAX_INSERT_SIZE){
+                        int times = resultSize/MAX_INSERT_SIZE;
+                        for(int i = 0;i < times;i++){
+                            num += extCloudEventMapper.batchCloudEvents(result.subList(MAX_INSERT_SIZE*i,MAX_INSERT_SIZE*(i+1)));
+                        }
+                        if(MAX_INSERT_SIZE*times < resultSize){
+                            num += extCloudEventMapper.batchCloudEvents(result.subList(MAX_INSERT_SIZE*times,resultSize));
+                        }
+                    }else if(resultSize>0){
+                        num += extCloudEventMapper.batchCloudEvents(result);
                     }
                     cloudEventSyncLog.setDataCount(num);
                     cloudEventSyncLog.setStatus(1);
@@ -174,7 +184,11 @@ public class CloudEventService {
             CloudEventSyncLog cloudEventSyncLog = new CloudEventSyncLog();
             cloudEventSyncLog.setId(logId);
             cloudEventSyncLog.setStatus(2);
-            cloudEventSyncLog.setException("日志同步异常");
+            String exceptionStr = e.getMessage();
+            if(exceptionStr.length()>512){
+                exceptionStr = exceptionStr.substring(0,511);
+            }
+            cloudEventSyncLog.setException(exceptionStr);
             cloudEventSyncLogMapper.updateByPrimaryKeySelective(cloudEventSyncLog);
         }
     }
@@ -230,14 +244,18 @@ public class CloudEventService {
             Map<String,?> userIdentity = (Map)item.get("userIdentity");
 
             return CloudEvent.builder().eventId((String) item.get("eventId"))
-                    .eventName((String) item.get("eventName")).eventRw((String) item.get("eventRW"))
+                    .eventName((String) item.get("eventName")).eventRw((String) item.get("eventRW")).eventType((String)item.get("eventType"))
+                    .eventCategory((String)item.get("eventCategory")).eventVersion("eventVersion").userIdentity(item.get("userIdentity") == null?"": JSON.toJSONString(item.get("userIdentity")))
+                    .additionalEventData(item.get("additionalEventData")==null?"":JSON.toJSONString(item.get("additionalEventData")))
+                    .requestId((String)item.get("requestId")).requestParameters(item.get("requestParameters")==null?"":JSON.toJSONString(item.get("requestParameters")))
+                    .referencedResources(item.get("referencedResources")==null?"":JSON.toJSONString(item.get("referencedResources")))
+                    .apiVersion((String)item.get("apiVersion")).responseElements(item.get("responseElements")==null?"":JSON.toJSONString(item.get("responseElements")))
                     .eventTime(DateUtils.utcTimeStrToLocalDate("yyyy-MM-dd'T'HH:mm:ss'Z'", (String) item.get("eventTime")))
                     .eventMessage((String) item.get("eventMessage")).eventSource((String) item.get("eventSource"))
                     .acsRegion((String) item.get("acsRegion")).userAgent((String) item.get("userAgent"))
                     .sourceIpAddress((String) item.get("sourceIpAddress")).serviceName((String) item.get("serviceName"))
                     .resourceName((String) item.get("resourceName")).resourceType((String) item.get("resourceType"))
                     .userName(userIdentity!=null?(String)userIdentity.get("userName"):"").build();
-
         }).collect(Collectors.toList());
     }
 

@@ -84,6 +84,16 @@
       </template>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
+    <!--Task log-->
+    <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="65%" :before-close="handleClose" direction="rtl"
+               :destroy-on-close="true">
+      <div >
+        <span>
+          {{ syncLog }}
+        </span>
+      </div>
+    </el-drawer>
+    <!--Task log-->
   </main-container>
 </template>
 
@@ -108,6 +118,8 @@ export default {
   },
   data() {
     return {
+      syncLog: '',
+      logVisible: false,
       dateTime: [],
       currentAccount: '',
       region:'',
@@ -152,6 +164,10 @@ export default {
       });
 
     },
+    handleClose() {
+      this.logVisible=false;
+      this.detailVisible=false;
+    },
     showEvents(row){
       this.$router.push({path:"/log/event",query:{
           accountId:row.accountId,
@@ -180,7 +196,19 @@ export default {
       return sum == 0;
     },
     showTaskLog(row){
-      console.log(row)
+      let url = "/cloud/event/sync/log/detail/" + row.id;
+      this.result = this.$post(url, {}, response => {
+        let data = response.data;
+        let status = data.status
+        if(status == 0){
+          this.syncLog = "同步中"
+        }else if(status == 1){
+          this.syncLog = "同步成功"
+        }else{
+          this.syncLog = data.exception
+        }
+        this.logVisible = true
+      });
     },
     syncData(){
       if(!!!this.currentAccount || !!!this.region){
