@@ -712,7 +712,11 @@ public class ImageService {
             }
             if(image.getRepoId()!=null) {
                 ImageRepo imageRepo = imageRepoMapper.selectByPrimaryKey(image.getRepoId());
-                dockerLogin = "docker login " + imageRepo.getRepo() + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword() + "\n";
+                String repo = imageRepo.getRepo().replace("https://", "").replace("http://", "");
+                if(repo.endsWith("/")){
+                    repo = repo.substring(0,repo.length()-1);
+                }
+                dockerLogin = "docker login " + repo + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword() + "\n";
             }
             String fileName = "";
             if (StringUtils.equalsIgnoreCase("image", image.getType()) || StringUtils.equalsIgnoreCase("repo", image.getType())) {
