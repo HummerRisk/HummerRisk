@@ -1,7 +1,6 @@
 <template>
-  <div v-loading="result.loading">
-
-    <el-card class="table-card">
+  <main-container>
+    <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search" @create="create"
                       :create-tip="$t('image.create')" :title="$t('image.image_list')"/>
@@ -260,7 +259,7 @@
     </el-drawer>
     <!--Update image-->
 
-  </div>
+  </main-container>
 </template>
 
 <script>
@@ -274,6 +273,7 @@ import {_filter, _sort} from "@/common/js/utils";
 import HrCodeEdit from "@/business/components/common/components/HrCodeEdit";
 import ImageUpload from "../head/ImageUpload";
 import ImageTarUpload from "../head/ImageTarUpload";
+import MainContainer from "../.././common/components/MainContainer";
 import {IMAGE_CONFIGS, IMAGE_RESULT_CONFIGS} from "../../common/components/search/search-components";
 
 /* eslint-disable */
@@ -289,6 +289,7 @@ export default {
     HrCodeEdit,
     ImageUpload,
     ImageTarUpload,
+    MainContainer,
   },
   data() {
     return {

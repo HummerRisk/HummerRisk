@@ -1,5 +1,5 @@
 <template>
-  <container>
+  <container class="header-menu">
     <aside-container :enable-aside-hidden="false">
       <cloud-native-module
         @nodeSelectEvent="nodeChange"
@@ -88,5 +88,9 @@ export default {
 .hr-main-container {
   padding: 15px;
   height: calc(100vh - 80px);
+}
+.header-menu >>> .main-container {
+  padding: 0;
+  margin: 0 0 0 10px;
 }
 </style>

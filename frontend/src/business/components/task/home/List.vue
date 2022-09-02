@@ -1,7 +1,6 @@
 <template>
-  <div v-loading="result.loading">
-
-    <el-card>
+  <main-container>
+    <el-card v-loading="result.loading">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search" @create="create" :createTip="$t('task.task_add')" :title="$t('task.task_list')"/>
       </template>
@@ -416,7 +415,7 @@
     </el-drawer>
     <!--Task status detail-->
 
-  </div>
+  </main-container>
 </template>
 
 <script>
@@ -431,6 +430,7 @@ import SeverityType from "@/business/components/task/home/SeverityType";
 import Account from "@/business/components/task/home/Account";
 import UpdateRule from "@/business/components/task/home/UpdateRule";
 import AccountType from "@/business/components/task/home/AccountType";
+import MainContainer from "../.././common/components/MainContainer";
 import {TASK_CONFIGS} from "@/business/components/common/components/search/search-components";
 
 /* eslint-disable */
@@ -446,6 +446,7 @@ export default {
     Account,
     UpdateRule,
     AccountType,
+    MainContainer,
   },
   data() {
     return {

@@ -1,7 +1,6 @@
 <template>
-  <div v-loading="result.loading">
-
-    <el-card class="table-card">
+  <main-container>
+    <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search" @create="create"
                       :create-tip="$t('image.repo_create')" :title="$t('image.image_repo_list')"/>
@@ -138,7 +137,7 @@
       </div>
     </el-drawer>
     <!--Create imageRepo-->
-  </div>
+  </main-container>
 </template>
 
 <script>
@@ -148,6 +147,7 @@ import TableOperators from "@/business/components/common/components/TableOperato
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import ImageStatus from "../head/ImageStatus";
 import {_filter, _sort} from "@/common/js/utils";
+import MainContainer from "../.././common/components/MainContainer";
 import {IMAGE_REPO_CONFIGS} from "@/business/components/common/components/search/search-components";
 /* eslint-disable */
 export default {
@@ -158,6 +158,7 @@ export default {
     DialogFooter,
     ImageStatus,
     TableOperators,
+    MainContainer,
   },
   data() {
     return {
