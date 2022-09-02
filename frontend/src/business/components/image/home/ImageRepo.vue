@@ -216,6 +216,7 @@ export default {
         {value: 'harbor.png', id: "Harbor"},
         // {value: 'dockerhub.png', id: "DockerHub"},
         // {value: 'nexus.png', id: "Nexus"},
+        {value: 'other.png', id: "Other"},
       ],
       imageData: [],
     }

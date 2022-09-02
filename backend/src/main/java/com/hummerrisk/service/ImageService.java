@@ -198,6 +198,8 @@ public class ImageService {
 
             } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "nexus.png")) {
 
+            } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "other.png")) {
+
             }
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
