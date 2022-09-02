@@ -12,6 +12,7 @@
         <el-table-column type="index" min-width="3%"/>
         <el-table-column prop="name" :label="$t('image.image_name')" min-width="10%" show-overflow-tooltip></el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('image.image_url')" min-width="23%" show-overflow-tooltip>
+          <el-row v-if="scope.row.type==='repo'">{{ scope.row.imageUrl }}:{{ scope.row.imageTag }}</el-row>
           <el-row v-if="scope.row.type==='image'">{{ scope.row.imageUrl }}:{{ scope.row.imageTag }}</el-row>
           <el-row v-if="scope.row.type==='tar'">{{ scope.row.path }}</el-row>
         </el-table-column>

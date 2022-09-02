@@ -3,6 +3,7 @@ package com.hummerrisk.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.domain.Package;
 import com.hummerrisk.base.mapper.*;
@@ -16,6 +17,7 @@ import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.code.CodeRequest;
 import com.hummerrisk.controller.request.code.CodeResultRequest;
 import com.hummerrisk.controller.request.code.CodeRuleRequest;
+import com.hummerrisk.controller.request.sbom.DownloadRequest;
 import com.hummerrisk.controller.request.sbom.SbomRequest;
 import com.hummerrisk.controller.request.sbom.SbomVersionRequest;
 import com.hummerrisk.controller.request.sbom.SettingVersionRequest;
@@ -35,6 +37,9 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static com.alibaba.fastjson.JSON.parseArray;
+import static com.alibaba.fastjson.JSON.parseObject;
 
 /**
  * @author harris
@@ -287,5 +292,19 @@ public class SbomService {
         return extSbomMapper.packageMetricChart(resultId);
     }
 
+    public String download(DownloadRequest request) throws Exception {
+        String str = "";
+        if (StringUtils.equalsIgnoreCase(request.getType(), "code")) {
+            HistoryCodeResult codeResult = historyCodeResultMapper.selectByPrimaryKey(request.getSourceId());
+            str = codeResult.getReturnJson();
+        } else if (StringUtils.equalsIgnoreCase(request.getType(), "image")) {
+            HistoryImageTaskWithBLOBs imageTask = historyImageTaskMapper.selectByPrimaryKey(request.getSourceId());
+            str = imageTask.getTrivyJson()!=null?imageTask.getTrivyJson():imageTask.getGrypeJson();
+        } else if (StringUtils.equalsIgnoreCase(request.getType(), "package")) {
+            HistoryPackageTaskWithBLOBs packageTaskWithBLOBs = historyPackageTaskMapper.selectByPrimaryKey(request.getSourceId());
+            str = packageTaskWithBLOBs.getReturnJson();
+        }
+        return str;
+    }
 
 }

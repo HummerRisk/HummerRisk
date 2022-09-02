@@ -6,20 +6,21 @@ import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
-import com.hummerrisk.controller.request.code.CodeRequest;
+import com.hummerrisk.controller.request.sbom.DownloadRequest;
 import com.hummerrisk.controller.request.sbom.SbomRequest;
 import com.hummerrisk.controller.request.sbom.SbomVersionRequest;
 import com.hummerrisk.controller.request.sbom.SettingVersionRequest;
-import com.hummerrisk.dto.*;
+import com.hummerrisk.dto.ApplicationDTO;
+import com.hummerrisk.dto.HistoryImageTaskDTO;
+import com.hummerrisk.dto.MetricChartDTO;
+import com.hummerrisk.dto.SbomDTO;
 import com.hummerrisk.service.SbomService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 
 @Api(tags = "SBOM管理")
 @RestController
@@ -189,6 +190,12 @@ public class SbomController {
     @PostMapping("allSbomVersionList")
     public List<SbomVersion> allSbomVersionList(@RequestBody SbomVersionRequest request) {
         return sbomService.sbomVersionList(request);
+    }
+
+    @ApiOperation(value = "下载SBOM检测报告")
+    @PostMapping("download")
+    public String download(@RequestBody DownloadRequest request) throws Exception {
+        return sbomService.download(request);
     }
 
 }

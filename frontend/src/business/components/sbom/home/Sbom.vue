@@ -112,8 +112,8 @@
                   <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
                 </template>
               </el-table-column>
-              <el-table-column min-width="12%" :label="$t('commons.operating')">
-                <download/>
+              <el-table-column min-width="12%" v-slot:default="scope" :label="$t('commons.operating')">
+                <download :params="scope.row"/>
               </el-table-column>
             </el-table>
 
@@ -309,6 +309,7 @@
                 </template>
               </el-table-column>
               <el-table-column v-slot:default="scope" :label="$t('image.image_url')" min-width="18%" show-overflow-tooltip>
+                <el-row v-if="scope.row.type==='repo'">{{ scope.row.imageUrl }}:{{ scope.row.imageTag }}</el-row>
                 <el-row v-if="scope.row.type==='image'">{{ scope.row.imageUrl }}:{{ scope.row.imageTag }}</el-row>
                 <el-row v-if="scope.row.type==='tar'">{{ scope.row.path }}</el-row>
               </el-table-column>
@@ -342,8 +343,8 @@
                   <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
                 </template>
               </el-table-column>
-              <el-table-column min-width="13%" :label="$t('commons.operating')">
-                <download/>
+              <el-table-column min-width="13%" v-slot:default="scope" :label="$t('commons.operating')">
+                <download :params="scope.row"/>
               </el-table-column>
             </el-table>
 
@@ -653,8 +654,8 @@
                   <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
                 </template>
               </el-table-column>
-              <el-table-column min-width="12%" :label="$t('commons.operating')">
-                <download/>
+              <el-table-column min-width="12%" v-slot:default="scope" :label="$t('commons.operating')">
+                <download :params="scope.row"/>
               </el-table-column>
             </el-table>
 
