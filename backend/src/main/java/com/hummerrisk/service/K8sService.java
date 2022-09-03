@@ -412,29 +412,7 @@ public class K8sService {
             String dockerLogin = "";
             if(image.getIsProxy()!=null && image.getIsProxy()) {
                 proxy = proxyMapper.selectByPrimaryKey(image.getProxyId());
-                String proxyType = proxy.getProxyType();
-                String proxyIp = proxy.getProxyIp();
-                String proxyPort = proxy.getProxyPort();
-                String proxyName = proxy.getProxyName();
-                String proxyPassword = proxy.getProxyPassword();
-                if (StringUtils.isNotEmpty(proxyType)) {
-                    if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Http.toString())) {
-                        if (StringUtils.isNotEmpty(proxyName)) {
-                            _proxy = "export http_proxy=http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + ";" + "\n";
-                        } else {
-                            _proxy = "export http_proxy=http://" + proxyIp + ":" + proxyPort + ";" + "\n";
-                        }
-                    } else if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Https.toString())) {
-                        if (StringUtils.isNotEmpty(proxyName)) {
-                            _proxy = "export https_proxy=http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + ";" + "\n";
-                        } else {
-                            _proxy = "export https_proxy=http://" + proxyIp + ":" + proxyPort + ";" + "\n";
-                        }
-                    }
-                } else {
-                    _proxy = "unset http_proxy;" + "\n" +
-                            "unset https_proxy;" + "\n";
-                }
+                _proxy = ProxyUtil.isProxy(proxy);
             }
             if(image.getRepoId()!=null) {
                 ImageRepo imageRepo = imageRepoMapper.selectByPrimaryKey(image.getRepoId());
