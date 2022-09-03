@@ -29,7 +29,8 @@ public class TranslatorKeys {
                     "i18n_cloud_account",
                     "i18n_bug_fix",
                     "i18n_more_resource",
-                    "i18n_end_msg"
+                    "i18n_end_msg",
+                    "i18n_sync_image_error"
             ));
 
 }

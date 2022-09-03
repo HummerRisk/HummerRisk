@@ -160,6 +160,7 @@
 <!--        <table tableName="sbom" domainObjectName="Sbom"/>-->
 <!--        <table tableName="sbom_version" domainObjectName="SbomVersion"/>-->
 <!--        <table tableName="image_repo_item" domainObjectName="ImageRepoItem"/>-->
-
+<!--        <table tableName="image_repo_sync_log" domainObjectName="ImageRepoSyncLog"/>-->
+<!--        <table tableName="cloud_native_source_sync_log" domainObjectName="CloudNativeSourceSyncLog"/>-->
     </context>
 </generatorConfiguration>

@@ -183,6 +183,8 @@ export default {
     no_plugin_param: '請填寫參數:',
     create_success: '創建成功',
     update_success: '編輯成功',
+    success: '成功',
+    error: '失敗',
   },
   workspace: {
     create: '創建工作空間',
@@ -956,6 +958,9 @@ export default {
     k8s_image_manager: '雲原生鏡像管理',
     k8s_image_result: '雲原生鏡像檢測結果',
     search_by_title: '根據PkgName進行搜索',
+    image_sync: '同步鏡像',
+    image_sync_for_repo: '同步鏡像倉庫的鏡像',
+    image_sync_log: '鏡像同步日誌列表',
   },
   package: {
     package_setting: '軟件包管理',

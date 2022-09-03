@@ -79,6 +79,8 @@ public class ImageService {
     private ImageRepoItemMapper imageRepoItemMapper;
     @Resource
     private PackageService packageService;
+    @Resource
+    private ImageRepoSyncLogMapper imageRepoSyncLogMapper;
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
@@ -121,7 +123,7 @@ public class ImageService {
 
         commonThreadPool.addTask(() -> {
             try {
-                getHarborImages(imageRepo);
+                syncImages(imageRepo);
             } catch (Exception e) {
                 LogUtil.error(e);
             } finally {
@@ -131,12 +133,12 @@ public class ImageService {
     }
 
     /**
-     * harbor镜像列表
-     * @return 镜像列表
+     * @return 同步是否成功
      * @throws Exception
      */
-    public boolean getHarborImages(ImageRepo imageRepo) throws Exception {
-
+    public boolean syncImages(ImageRepo imageRepo) throws Exception {
+        long i = 0;
+        ImageRepoSyncLog imageRepoSyncLog = new ImageRepoSyncLog();
         try{
             ImageRepoItemExample example = new ImageRepoItemExample();
             example.createCriteria().andRepoIdEqualTo(imageRepo.getId());
@@ -190,6 +192,7 @@ public class ImageService {
                                 imageRepoItem.setSize(packageService.changeFlowFormat(size));
                                 imageRepoItem.setPath(path.replaceAll("https://", "").replaceAll("http://", "") + "/" + projectName + "/" + repName + ":" + tagStr);
                                 imageRepoItemMapper.insertSelective(imageRepoItem);
+                                i++;
                             }
                         }
                     }
@@ -201,8 +204,24 @@ public class ImageService {
             } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "other.png")) {
 
             }
+            imageRepoSyncLog.setRepoId(imageRepo.getId());
+            imageRepoSyncLog.setCreateTime(System.currentTimeMillis());
+            imageRepoSyncLog.setOperator(SessionUtils.getUser().getName());
+            imageRepoSyncLog.setOperation("i18n_sync_image");
+            imageRepoSyncLog.setOutput("i18n_sync_image_success");
+            imageRepoSyncLog.setResult(true);
+            imageRepoSyncLog.setSum(i);
+            imageRepoSyncLogMapper.insertSelective(imageRepoSyncLog);
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
+            imageRepoSyncLog.setRepoId(imageRepo.getId());
+            imageRepoSyncLog.setCreateTime(System.currentTimeMillis());
+            imageRepoSyncLog.setOperator(SessionUtils.getUser().getName());
+            imageRepoSyncLog.setOperation("i18n_sync_image");
+            imageRepoSyncLog.setOutput("i18n_sync_image_error: " + e.getMessage());
+            imageRepoSyncLog.setResult(false);
+            imageRepoSyncLog.setSum(i);
+            imageRepoSyncLogMapper.insertSelective(imageRepoSyncLog);
             return false;
         }
 
@@ -228,7 +247,7 @@ public class ImageService {
 
         commonThreadPool.addTask(() -> {
             try {
-                getHarborImages(imageRepo);
+                syncImages(imageRepo);
             } catch (Exception e) {
                 LogUtil.error(e);
             } finally {
@@ -812,6 +831,17 @@ public class ImageService {
         ImageGrypeTableExample example = new ImageGrypeTableExample();
         example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
         return imageGrypeTableMapper.selectByExample(example);
+    }
+
+    public List<ImageRepoSyncLog> repoSyncList(String id) {
+        ImageRepoSyncLogExample example = new ImageRepoSyncLogExample();
+        example.createCriteria().andRepoIdEqualTo(id);
+        return imageRepoSyncLogMapper.selectByExampleWithBLOBs(example);
+    }
+
+    public void syncImage(@PathVariable String id) throws Exception {
+        ImageRepo imageRepo = imageRepoMapper.selectByPrimaryKey(id);
+        syncImages(imageRepo);
     }
 
 }

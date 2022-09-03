@@ -183,6 +183,8 @@ export default {
     no_plugin_param: 'Please fill in the parameters:',
     create_success: 'Create success',
     update_success: 'Edit success',
+    success: 'Success',
+    error: 'Failed',
   },
   workspace: {
     create:'Create a workspace',
@@ -956,6 +958,9 @@ export default {
     k8s_image_manager: 'Cloud native image management',
     k8s_image_result: 'Cloud native image detection result',
     search_by_title: 'Search by PkgName',
+    image_sync: 'Sync mirror',
+    image_sync_for_repo: 'Sync the mirror of the mirror warehouse',
+    image_sync_log: 'Mirror synchronization log list',
   },
   package: {
     package_setting: 'Package Management',

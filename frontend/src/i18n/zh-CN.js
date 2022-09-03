@@ -183,6 +183,8 @@ export default {
     no_plugin_param: '请填写参数:',
     create_success: '创建成功',
     update_success: '编辑成功',
+    success: '成功',
+    error: '失败',
   },
   workspace: {
     create: '创建工作空间',
@@ -956,6 +958,9 @@ export default {
     k8s_image_manager: '云原生镜像管理',
     k8s_image_result: '云原生镜像检测结果',
     search_by_title: '根据PkgName进行搜索',
+    image_sync: '同步镜像',
+    image_sync_for_repo: '同步镜像仓库的镜像',
+    image_sync_log: '镜像同步日志列表',
   },
   package: {
     package_setting: '软件包管理',

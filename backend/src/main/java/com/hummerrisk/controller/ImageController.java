@@ -221,4 +221,19 @@ public class ImageController {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, imageService.resultItemList(request));
     }
+
+    @I18n
+    @ApiOperation(value = "镜像仓库同步日志列表")
+    @GetMapping("repoSyncList/{id}")
+    public List<ImageRepoSyncLog> repoSyncList(@PathVariable String id) {
+        return imageService.repoSyncList(id);
+    }
+
+    @I18n
+    @ApiOperation(value = "同步镜像")
+    @GetMapping("syncImage/{id}")
+    public void syncImage(@PathVariable String id) throws Exception {
+        imageService.syncImage(id);
+    }
+
 }

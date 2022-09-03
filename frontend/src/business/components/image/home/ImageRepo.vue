@@ -118,7 +118,9 @@
     <el-drawer class="rtl" :title="$t('image.image_list')" :visible.sync="imageVisible" size="80%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-table border :data="imageData" class="adjust-table table-content">
-        <el-table-column type="index" min-width="3%"/>
+        <el-table-column type="index" min-width="2%"/>
+        <el-table-column prop="project" :label="'Project'" min-width="7%">
+        </el-table-column>
         <el-table-column prop="repository" :label="'Repository'" min-width="15%">
         </el-table-column>
         <el-table-column prop="path" :label="'ImagePath'" min-width="30%">
@@ -137,12 +139,49 @@
       </div>
     </el-drawer>
     <!--Create imageRepo-->
+
+    <!--Sync image-->
+    <el-drawer class="rtl" :title="$t('image.image_sync_for_repo')" :visible.sync="syncVisible" size="80%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <sync-table-header @sync="sync" :sync-tip="$t('image.image_sync')" :title="$t('image.image_sync_log')" style="margin: 0 0 15px 0;"/>
+
+      <el-table border :data="syncData" class="adjust-table table-content">
+        <el-table-column type="index" min-width="2%"/>
+        <el-table-column prop="operation" :label="$t('image.image_sync')" min-width="15%"/>
+        <el-table-column prop="operator" :label="$t('resource.creator')" min-width="15%"/>
+        <el-table-column prop="result" min-width="15%" :label="$t('image.image_repo_status')">
+          <template v-slot:default="scope">
+            <el-tooltip class="item" effect="dark" :content="scope.row.output" placement="top">
+              <el-tag size="mini" type="success" v-if="scope.row.result">
+                {{ $t('commons.success') }}
+              </el-tag>
+              <el-tag size="mini" type="danger" v-else-if="!scope.row.result">
+                {{ $t('commons.error') }}
+              </el-tag>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+        <el-table-column prop="sum" :label="$t('resource.i18n_not_compliance')" min-width="12%"/>
+        <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="20%" sortable>
+          <template v-slot:default="scope">
+            <span>{{ scope.row.createTime | timestampFormatDate }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div style="margin: 10px;">
+        <dialog-footer
+          @cancel="syncVisible = false"
+          @confirm="syncVisible = false"/>
+      </div>
+    </el-drawer>
+    <!--Sync image-->
   </main-container>
 </template>
 
 <script>
 import TablePagination from "@/business/components/common/pagination/TablePagination";
 import TableHeader from "@/business/components/common/components/TableHeader";
+import SyncTableHeader from "../head/SyncTableHeader";
 import TableOperators from "@/business/components/common/components/TableOperators";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import ImageStatus from "../head/ImageStatus";
@@ -159,6 +198,7 @@ export default {
     ImageStatus,
     TableOperators,
     MainContainer,
+    SyncTableHeader,
   },
   data() {
     return {
@@ -196,6 +236,10 @@ export default {
       },
       buttons: [
         {
+          tip: this.$t('image.image_sync'), icon: "el-icon-refresh", type: "warning",
+          exec: this.handleSync
+        },
+        {
           tip: this.$t('image.image_list'), icon: "el-icon-more", type: "success",
           exec: this.handleList
         },
@@ -219,6 +263,9 @@ export default {
         {value: 'other.png', id: "Other"},
       ],
       imageData: [],
+      syncData: [],
+      syncVisible: false,
+      repoId: "",
     }
   },
   methods: {
@@ -253,6 +300,7 @@ export default {
       this.createVisible =  false;
       this.updateVisible =  false;
       this.imageVisible = false;
+      this.syncVisible = false;
     },
     buildPagePath(path) {
       return path + this.currentPage + "/" + this.pageSize;
@@ -311,6 +359,21 @@ export default {
         this.imageVisible = true;
       });
     },
+    handleSync(item) {
+      this.repoId = item.id;
+      this.$get("/image/repoSyncList/" + item.id, response => {
+        this.syncData = response.data;
+        this.syncVisible = true;
+      });
+    },
+    sync() {
+      this.$get("/image/syncImage/" + this.repoId, response => {
+        this.$success(this.$t('commons.success'));
+        this.$get("/image/repoSyncList/" + this.repoId, response => {
+          this.syncData = response.data;
+        });
+      });
+    }
   },
   created() {
     this.search();
