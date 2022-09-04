@@ -6,6 +6,7 @@ import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
+import com.hummerrisk.controller.request.cloudNative.CloudNativeSyncLogRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
 import com.hummerrisk.dto.ImageDTO;
@@ -126,16 +127,23 @@ public class K8sController {
 
     @I18n
     @ApiOperation(value = "资源态势同步日志列表")
-    @GetMapping("syncList")
-    public List<CloudNativeSourceSyncLog> syncList(@PathVariable String id) {
-        return k8sService.syncList(id);
+    @PostMapping("syncList/{goPage}/{pageSize}")
+    public Pager<List<CloudNativeSourceSyncLog>> syncList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudNativeSyncLogRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, k8sService.syncList(request));
     }
 
     @I18n
     @ApiOperation(value = "同步资源态势资源")
-    @GetMapping("syncImage/{id}")
+    @GetMapping("syncSource/{id}")
     public void syncSource(@PathVariable String id) throws Exception {
         k8sService.syncSource(id);
+    }
+
+    @ApiOperation(value = "删除资源态势同步日志")
+    @GetMapping("deleteSyncLog/{id}")
+    public void deleteSyncLog(@PathVariable Integer id) throws Exception {
+        k8sService.deleteSyncLog(id);
     }
 
 

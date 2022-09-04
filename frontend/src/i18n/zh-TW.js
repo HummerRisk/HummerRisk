@@ -1161,7 +1161,11 @@ export default {
     result_list: '雲原生檢測結果列表',
     back_resource: '返回雲原生檢測結果列表',
     result_details_list: '雲原生檢測結果詳情列表',
-    k8s_note: '注: 使用雲原生安全檢測前，需在 K8s 集群上安裝 tirvy-operator!'
+    k8s_note: '注: 使用雲原生安全檢測前，需在 K8s 集群上安裝 tirvy-operator!',
+    sync_log: '同步日誌',
+    sync_log_create: '創建資源同步任務',
+    sync_log_list: '同步日誌列表',
+    notes: '請耐心等待後台處理同步任務!',
   },
   config: {
     config_settings: '部署配置',

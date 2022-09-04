@@ -97,6 +97,26 @@
         ORDER BY t.update_time desc
     </select>
 
+    <select id="syncList" parameterType="com.hummerrisk.controller.request.cloudNative.CloudNativeSyncLogRequest" resultType="com.hummerrisk.base.domain.CloudNativeSourceSyncLog">
+        SELECT
+        t.*
+        FROM cloud_native_source_sync_log t
+        <where>
+            <if test="id != null">
+                AND t.id = #{id}
+            </if>
+            <if test="name != null">
+                AND t.name like CONCAT('%',#{name},'%')
+            </if>
+            <if test="combine != null">
+                <include refid="combine">
+                    <property name="condition" value="combine"/>
+                </include>
+            </if>
+        </where>
+        ORDER BY t.create_time desc
+    </select>
+
     <resultMap id="ImageMap" type="com.hummerrisk.dto.ImageDTO"
                extends="com.hummerrisk.base.mapper.ImageMapper.BaseResultMap">
         <result column="user" property="user"/>

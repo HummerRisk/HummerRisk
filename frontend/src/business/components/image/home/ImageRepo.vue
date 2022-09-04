@@ -55,7 +55,7 @@
               :label="item.id"
               :value="item.value">
               <img :src="require(`@/assets/img/repo/${item.value}`)" style="width: 20px; height: 16px; vertical-align:middle" alt=""/>
-              &nbsp;&nbsp; {{ $t(item.id) }}
+              &nbsp;&nbsp; {{ item.id }}
             </el-option>
           </el-select>
         </el-form-item>
@@ -92,7 +92,7 @@
               :label="item.id"
               :value="item.id">
               <img :src="require(`@/assets/img/repo/${item.value}`)" style="width: 20px; height: 16px; vertical-align:middle" alt=""/>
-              &nbsp;&nbsp; {{ $t(item.id) }}
+              &nbsp;&nbsp; {{ item.id }}
             </el-option>
           </el-select>
         </el-form-item>
@@ -114,7 +114,7 @@
     </el-drawer>
     <!--Update imageRepo-->
 
-    <!--Create imageRepo-->
+    <!--Image list-->
     <el-drawer class="rtl" :title="$t('image.image_list')" :visible.sync="imageVisible" size="80%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-table border :data="imageData" class="adjust-table table-content">
@@ -138,7 +138,7 @@
           @confirm="imageVisible = false"/>
       </div>
     </el-drawer>
-    <!--Create imageRepo-->
+    <!--Image list-->
 
     <!--Sync image-->
     <el-drawer class="rtl" :title="$t('image.image_sync_for_repo')" :visible.sync="syncVisible" size="80%" :before-close="handleClose" :direction="direction"

@@ -1163,7 +1163,9 @@ export default {
     result_details_list: '云原生检测结果详情列表',
     k8s_note: '注: 使用云原生安全检测前，需在 K8s 集群上安装 tirvy-operator!',
     sync_log: '同步日志',
+    sync_log_create: '创建资源同步任务',
     sync_log_list: '同步日志列表',
+    notes: '请耐心等待后台处理同步任务!',
   },
   config: {
     config_settings: '部署配置',

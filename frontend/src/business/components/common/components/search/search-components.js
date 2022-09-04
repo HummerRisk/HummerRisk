@@ -435,6 +435,22 @@ export const SOURCE_TYPE = {
   }
 }
 
+export const SITUATION_LOG_STATUS = {
+  key: "flag",
+  name: 'TableSearchSelect',
+  label: 'commons.status',
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN]
+  },
+  options: [
+    {label: 'commons.success', value: true},
+    {label: 'commons.error', value: false}
+  ],
+  props: { // 尾部控件的props，一般为element ui控件的props
+    multiple: true
+  }
+}
+
 export const ACCOUNT_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const VULN_CONFIGS = [NAME, VULN_PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const RULE_TAG_CONFIGS = [TAG_KEY, TAG_NAME, TAG_FLAG, TAG_INDEX];
@@ -452,6 +468,7 @@ export const IMAGE_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
 export const IMAGE_RESULT_CONFIGS = [NAME, IMAGE_URL, RULE_NAME, RULE_SEVERITY, CREATOR, UPDATE_TIME];
 export const K8S_CONFIGS = [NAME, K8S_PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const SITUATION_CONFIGS = [SOURCE_NAME, SOURCE_NAMESPACE, SOURCE_TYPE, CREATOR, UPDATE_TIME, CREATE_TIME];
+export const SITUATION_LOG_CONFIGS = [SITUATION_LOG_STATUS, CREATE_TIME];
 export const K8S_RESULT_CONFIGS = [NAME, K8S_PLUGIN_NAME, ACCOUNT_STATUS, CREATOR, CREATE_TIME, UPDATE_TIME];
 export const CONFIG_CONFIGS = [NAME, ACCOUNT_STATUS, UPDATE_TIME, CREATE_TIME, CREATOR];
 export const CONFIG_RESULT_CONFIGS = [NAME, CREATOR, UPDATE_TIME];

@@ -1161,7 +1161,11 @@ export default {
     result_list: 'Cloud native detection result list',
     back_resource: 'Return the list of cloud native detection results',
     result_details_list: 'Cloud native detection result details list',
-    k8s_note: 'Note: Before using cloud native security detection, you need to install tirvy-operator on the K8s cluster!'
+    k8s_note: 'Note: Before using cloud native security detection, you need to install tirvy-operator on the K8s cluster!',
+    sync_log: 'Sync log',
+    sync_log_create: 'Create resource synchronization task',
+    sync_log_list: 'Sync log list',
+    notes: 'Please be patient and wait for the background to process the sync task!',
   },
   config: {
     config_settings: 'Deployment configuration',

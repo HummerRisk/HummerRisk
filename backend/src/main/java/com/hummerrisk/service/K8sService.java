@@ -8,6 +8,7 @@ import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeResultMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.utils.*;
+import com.hummerrisk.controller.request.cloudNative.CloudNativeSyncLogRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
 import com.hummerrisk.dto.ImageDTO;
@@ -505,14 +506,18 @@ public class K8sService {
         return cloudNativeSourceMapper.selectByExampleWithBLOBs(example);
     }
 
-    public List<CloudNativeSourceSyncLog> syncList(String id) {
-        CloudNativeSourceSyncLogExample example = new CloudNativeSourceSyncLogExample();
-        example.createCriteria().andCloudNativeIdEqualTo(id);
-        return cloudNativeSourceSyncLogMapper.selectByExampleWithBLOBs(example);
+    public List<CloudNativeSourceSyncLog> syncList(CloudNativeSyncLogRequest request) {
+        return extCloudNativeResultMapper.syncList(request);
     }
 
     public void syncSource(String id) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
         cloudNativeService.addCloudNativeSource(cloudNative);
+    }
+
+    public void deleteSyncLog(Integer id) throws Exception {
+
+        cloudNativeSourceSyncLogMapper.deleteByPrimaryKey(id);
+
     }
 }
