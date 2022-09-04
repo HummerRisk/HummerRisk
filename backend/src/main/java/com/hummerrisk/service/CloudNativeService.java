@@ -2,10 +2,7 @@ package com.hummerrisk.service;
 
 import com.aliyuncs.exceptions.ClientException;
 import com.hummerrisk.base.domain.*;
-import com.hummerrisk.base.mapper.CloudNativeMapper;
-import com.hummerrisk.base.mapper.CloudNativeSourceMapper;
-import com.hummerrisk.base.mapper.PluginMapper;
-import com.hummerrisk.base.mapper.ProxyMapper;
+import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeSourceMapper;
 import com.hummerrisk.commons.constants.CloudAccountConstants;
@@ -54,6 +51,8 @@ public class CloudNativeService {
     private ProxyMapper proxyMapper;
     @Resource
     private CommonThreadPool commonThreadPool;
+    @Resource
+    private CloudNativeSourceSyncLogMapper cloudNativeSourceSyncLogMapper;
 
     public List<CloudNativeDTO> getCloudNativeList(CloudNativeRequest request) {
         return extCloudNativeMapper.getCloudNativeList(request);
@@ -264,6 +263,8 @@ public class CloudNativeService {
 
     public void addCloudNativeSource(CloudNative cloudNative) throws IOException, ApiException {
         commonThreadPool.addTask(() -> {
+            CloudNativeSourceSyncLog record = new CloudNativeSourceSyncLog();
+            long i = 0;
             try {
                 CloudNativeSourceExample example = new CloudNativeSourceExample();
                 example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId());
@@ -294,14 +295,29 @@ public class CloudNativeService {
                 list.addAll(k8sRequest.getNetworkPolicy(cloudNative));
                 for (CloudNativeSource cloudNativeSource : list) {
                     cloudNativeSourceMapper.insertSelective(cloudNativeSource);
+                    i++;
                 }
+                record.setOutput("i18n_sync_k8s_success");
+                record.setResult(true);
             } catch (IOException e) {
                 LogUtil.error(e);
+                record.setOutput("i18n_sync_k8s_error:" + e.getMessage());
+                record.setResult(false);
             } catch (ApiException e) {
                 LogUtil.error(e);
+                record.setOutput("i18n_sync_k8s_error:" + e.getMessage());
+                record.setResult(false);
             } catch (Exception e) {
                 LogUtil.error(e);
+                record.setOutput("i18n_sync_k8s_error:" + e.getMessage());
+                record.setResult(false);
             }
+            record.setSum(i);
+            record.setOperation("i18n_sync_k8s");
+            record.setCloudNativeId(cloudNative.getId());
+            record.setCreateTime(System.currentTimeMillis());
+            record.setOperator(SessionUtils.getUser().getName());
+            cloudNativeSourceSyncLogMapper.insertSelective(record);
         });
     }
 

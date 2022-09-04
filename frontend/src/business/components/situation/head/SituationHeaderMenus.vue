@@ -8,6 +8,10 @@
             {{ $t("commons.resource_situation") }}
           </el-menu-item>
 
+          <el-menu-item :index="'/situation/k8sSyncLog'">
+            {{ $t("k8s.sync_log") }}
+          </el-menu-item>
+
         </el-menu>
       </el-col>
     </el-row>

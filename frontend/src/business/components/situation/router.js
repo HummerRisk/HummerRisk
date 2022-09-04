@@ -12,5 +12,10 @@ export default {
       name: "SituationList",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/situation/home/Situation"),
     },
+    {
+      path: "k8sSyncLog",
+      name: "K8sSyncLog",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/situation/home/SyncLog"),
+    },
   ]
 }

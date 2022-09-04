@@ -124,5 +124,19 @@ public class K8sController {
         return k8sService.allCloudNativeSource2YamlList();
     }
 
+    @I18n
+    @ApiOperation(value = "资源态势同步日志列表")
+    @GetMapping("syncList")
+    public List<CloudNativeSourceSyncLog> syncList(@PathVariable String id) {
+        return k8sService.syncList(id);
+    }
+
+    @I18n
+    @ApiOperation(value = "同步资源态势资源")
+    @GetMapping("syncImage/{id}")
+    public void syncSource(@PathVariable String id) throws Exception {
+        k8sService.syncSource(id);
+    }
+
 
 }

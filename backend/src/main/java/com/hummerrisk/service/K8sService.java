@@ -15,6 +15,7 @@ import com.hummerrisk.proxy.k8s.K8sRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -56,6 +57,10 @@ public class K8sService {
     private ImageRepoMapper imageRepoMapper;
     @Resource
     private CloudNativeSourceMapper cloudNativeSourceMapper;
+    @Resource
+    private CloudNativeSourceSyncLogMapper cloudNativeSourceSyncLogMapper;
+    @Resource
+    private CloudNativeService cloudNativeService;
 
     public void scan(String id) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
@@ -498,5 +503,16 @@ public class K8sService {
         CloudNativeSourceExample example = new CloudNativeSourceExample();
         example.createCriteria().andSourceTypeNotEqualTo("Version").andSourceYamlIsNotNull();
         return cloudNativeSourceMapper.selectByExampleWithBLOBs(example);
+    }
+
+    public List<CloudNativeSourceSyncLog> syncList(String id) {
+        CloudNativeSourceSyncLogExample example = new CloudNativeSourceSyncLogExample();
+        example.createCriteria().andCloudNativeIdEqualTo(id);
+        return cloudNativeSourceSyncLogMapper.selectByExampleWithBLOBs(example);
+    }
+
+    public void syncSource(String id) throws Exception {
+        CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
+        cloudNativeService.addCloudNativeSource(cloudNative);
     }
 }
