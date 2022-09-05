@@ -386,6 +386,7 @@ public class CodeService {
             } else if(codeCredential !=null && !codeCredential.getTag().isEmpty()) {
                 branch = TrivyConstants.TAG + codeCredential.getTag();
             }
+            CommandUtils.commonExecCmdWithResult(TrivyConstants.TRIVY_RM + TrivyConstants.TRIVY_JSON, TrivyConstants.DEFAULT_BASE_DIR);
             String command = _proxy + token + TrivyConstants.TRIVY_REPO + TrivyConstants.SKIP_DB_UPDATE + TrivyConstants.OFFLINE_SCAN + TrivyConstants.SECURITY_CHECKS + branch + " " + codeCredential.getUrl() + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
             LogUtil.info(code.getId() + " {code scan}[command]: " + code.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);

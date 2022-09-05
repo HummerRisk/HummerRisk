@@ -16,6 +16,8 @@ public class TrivyConstants {
     int MB = 1024 * 1024;
     int KB = 1024;
 
+    public final static String TRIVY_RM = "rm -rf ";
+
     /**
      * 默认的文件名最大长度 100
      */
