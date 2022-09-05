@@ -13,10 +13,11 @@ import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
 import com.hummerrisk.dto.ImageDTO;
 import com.hummerrisk.proxy.k8s.K8sRequest;
+import com.hummerrisk.proxy.kubesphere.KubeSphereRequest;
+import com.hummerrisk.proxy.rancher.RancherRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -136,11 +137,53 @@ public class K8sService {
                 String reponse2 = HttpClientUtil.HttpGet(url2, param);
                 result.setVulnerabilityReport(reponse2);
             } else if(StringUtils.equalsIgnoreCase(PlatformUtils.rancher, cloudNative.getPluginId())) {
-
+                RancherRequest rancherRequest = new RancherRequest();
+                rancherRequest.setCredential(cloudNative.getCredential());
+                String token = "Bearer " + rancherRequest.getToken();
+                String url = rancherRequest.getUrl();
+                if (url.endsWith("/")) {
+                    url = url + CloudNativeConstants.URL2;
+                } else {
+                    url = url + CloudNativeConstants.URL1;
+                }
+                Map<String, String> param = new HashMap<>();
+                param.put("Accept", CloudNativeConstants.Accept);
+                param.put("Authorization", token);
+                String reponse1 = HttpClientUtil.HttpGet(url, param);
+                result.setConfigAuditReport(reponse1);
+                String url2 = rancherRequest.getUrl();
+                if (url2.endsWith("/")) {
+                    url2 = url2 + CloudNativeConstants.URL4;
+                } else {
+                    url2 = url2 + CloudNativeConstants.URL3;
+                }
+                String reponse2 = HttpClientUtil.HttpGet(url2, param);
+                result.setVulnerabilityReport(reponse2);
             } else if(StringUtils.equalsIgnoreCase(PlatformUtils.openshift, cloudNative.getPluginId())) {
 
             } else if(StringUtils.equalsIgnoreCase(PlatformUtils.kubesphere, cloudNative.getPluginId())) {
-
+                KubeSphereRequest kubeSphereRequest = new KubeSphereRequest();
+                kubeSphereRequest.setCredential(cloudNative.getCredential());
+                String token = "Bearer " + kubeSphereRequest.getToken();
+                String url = kubeSphereRequest.getUrl();
+                if (url.endsWith("/")) {
+                    url = url + CloudNativeConstants.URL2;
+                } else {
+                    url = url + CloudNativeConstants.URL1;
+                }
+                Map<String, String> param = new HashMap<>();
+                param.put("Accept", CloudNativeConstants.Accept);
+                param.put("Authorization", token);
+                String reponse1 = HttpClientUtil.HttpGet(url, param);
+                result.setConfigAuditReport(reponse1);
+                String url2 = kubeSphereRequest.getUrl();
+                if (url2.endsWith("/")) {
+                    url2 = url2 + CloudNativeConstants.URL4;
+                } else {
+                    url2 = url2 + CloudNativeConstants.URL3;
+                }
+                String reponse2 = HttpClientUtil.HttpGet(url2, param);
+                result.setVulnerabilityReport(reponse2);
             }
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());

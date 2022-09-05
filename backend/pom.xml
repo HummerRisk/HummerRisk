@@ -180,6 +180,17 @@
             <artifactId>commons-exec</artifactId>
             <version>1.3</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.jekkay</groupId>
+            <artifactId>jip-common</artifactId>
+            <version>1.0.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <!-- commons -->
 
         <dependency>
