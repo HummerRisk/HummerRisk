@@ -1,8 +1,5 @@
 package com.hummerrisk.commons.utils;
 
-import cn.easysb.ip.jip.JIPAddress;
-import cn.easysb.ip.jip.JIPAddressUtils;
-import cn.easysb.ip.jip.advanced.JIPAddressIntersecter;
 import com.hummerrisk.dto.IpDTO;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.collections.CollectionUtils;
@@ -134,14 +131,6 @@ public class IpUtil {
             throw new Exception(Translator.get("i18n_start_end_ip_part"));
         }
         return ipv6ToNumber(endIp).subtract(ipv6ToNumber(startIp)).add(BigInteger.valueOf(1));
-    }
-
-    public static JIPAddress jipAddress(String startIp, String endIp){
-        return JIPAddressUtils.toIpObject(startIp + "-" + endIp);
-    }
-
-    public static List<JIPAddress> mixedIpv6(JIPAddress jipAddress1, JIPAddress jipAddress2){
-        return JIPAddressIntersecter.intersect(jipAddress1, jipAddress2);
     }
 
     public static String getIpv6ByIpPart(BigInteger num){

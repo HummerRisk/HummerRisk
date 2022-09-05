@@ -8,11 +8,21 @@ import com.hummerrisk.base.domain.Proxy;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.dto.SshServerDTO;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.sshd.client.SshClient;
+import org.apache.sshd.client.future.AuthFuture;
+import org.apache.sshd.client.session.ClientSession;
+import org.apache.sshd.common.util.GenericUtils;
+import org.apache.sshd.common.util.io.resource.URLResource;
+import org.apache.sshd.common.util.security.SecurityUtils;
 
+import javax.websocket.DeploymentException;
 import java.io.*;
+import java.nio.file.Paths;
+import java.security.KeyPair;
 import java.util.Calendar;
 import java.util.StringTokenizer;
 
+import static org.apache.http.HttpHeaders.TIMEOUT;
 
 
 public class SshUtil {
@@ -54,12 +64,52 @@ public class SshUtil {
             }
 
         } catch (IOException e) {
-            LogUtil.error(String.format(tipStr, "登录失败"));
-            throw new Exception(String.format(tipStr, "登录失败"));
+            LogUtil.error(String.format(tipStr, "登录失败") + e.getMessage());
+            throw new Exception(String.format(tipStr, "登录失败") + e.getMessage());
         }
         long endTime = Calendar.getInstance().getTimeInMillis();
         LogUtil.info("登录用时: " + (endTime - startTime)/1000.0 + "s\n" + splitStr);
         return conn;
+    }
+
+    public static ClientSession loginSshd(SshServerDTO sshServerDTO) throws Exception {
+        SshClient client = SshClient.setUpDefaultClient();
+        ClientSession session = null;
+        client.start();
+        long startTime = Calendar.getInstance().getTimeInMillis();
+        try {
+
+            session = client.connect(sshServerDTO.getSshUserName(), sshServerDTO.getSshIp(), sshServerDTO.getSshPort()).verify(5000).getSession();
+
+            if (sshServerDTO.getIsPublicKey()) {
+                // 密钥模式
+                 String resourceKey = "/Users/lixin/.ssh/id_rsa";
+
+                URLResource idenreplacedy;
+                idenreplacedy = new URLResource(Paths.get(sshServerDTO.getSshUserName(), ".ssh", "id_rsa").toUri().toURL());
+                try (InputStream inputStream = idenreplacedy.openInputStream()) {
+//                    session.addPublicKeyIdentity(GenericUtils.head(SecurityUtils.loadKeyPairIdentities(session, idenreplacedy, inputStream, (s, "resourceKey", retryIndex) -> null)));
+                }
+            } else {
+                // 密码模式
+                session.addPasswordIdentity(sshServerDTO.getSshPassword());
+            }
+
+            AuthFuture auth = session.auth();
+            if (!auth.await(5000)) {
+                throw new DeploymentException("Not authenticated within timeout", null);
+            }
+            if (!auth.isSuccess()) {
+                throw new DeploymentException("Failed to authenticate", auth.getException());
+            }
+            session.close(false);
+        } catch (Exception e) {
+            LogUtil.error(String.format(tipStr, "登录失败") + e.getMessage());
+            throw new Exception(String.format(tipStr, "登录失败") + e.getMessage());
+        }
+        long endTime = Calendar.getInstance().getTimeInMillis();
+        LogUtil.info("登录用时: " + (endTime - startTime)/1000.0 + "s\n" + splitStr);
+        return session;
     }
 
     /**
