@@ -85,11 +85,11 @@
           </el-menu-item>
           <el-menu-item index="/image" onselectstart="return false" v-permission="['admin']">
             <i class="iconfont icon-rongqijingxiangzhongxin"></i>
-            <span slot="title">{{ $t('commons.image_scan') }}</span>
+            <span slot="title">{{ $t('image.image_scan') }}</span>
           </el-menu-item>
           <el-menu-item index="/package" onselectstart="return false" v-permission="['admin']">
             <i class="iconfont icon-ruanjiankaifabao"></i>
-            <span slot="title">{{ $t('commons.package_scan') }}</span>
+            <span slot="title">{{ $t('package.package_scan') }}</span>
           </el-menu-item>
         </el-submenu>
         <el-submenu index="4">

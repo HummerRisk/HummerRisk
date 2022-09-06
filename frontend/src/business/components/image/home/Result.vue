@@ -72,7 +72,7 @@
           <el-row>
             <el-col :span="24">
               <div class="grid-content bg-purple-light">
-                <span class="grid-content-log-span"> {{ logForm.ruleName }} | {{ logForm.name }}</span>
+                <span class="grid-content-log-span"> {{ logForm.name }}</span>
                 <span class="grid-content-log-span">
                   <img :src="require(`@/assets/img/platform/docker.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ logForm.imageName }}
@@ -105,121 +105,110 @@
             </template>
           </el-table-column>
         </el-table>
-        <div style="margin: 10px;">
+        <div style="margin: 10px;" v-if="logForm.trivyJson">
           <h2>Summary:&nbsp;</h2>
           <ul style="margin-left: 60px;">
             <li><i>Scan Name</i>: {{ logForm.name }}</li>
-            <li><i>Rule Name</i>: {{ logForm.ruleDesc }}</li>
             <li><i>Scan User</i>:&nbsp;{{ logForm.userName }}</li>
-            <li><i>Severity</i>:&nbsp;{{ logForm.severity }}</li>
+            <li><i>ArtifactType</i>:&nbsp;{{ logForm.trivyJson.ArtifactType }}</li>
+            <li><i>ArtifactName</i>:&nbsp;{{ logForm.trivyJson.ArtifactName }}</li>
+            <li><i>SchemaVersion</i>:&nbsp;{{ logForm.trivyJson.SchemaVersion }}</li>
+            <li><i>Architecture</i>:&nbsp;{{ logForm.trivyJson.Metadata.ImageConfig.architecture }}</li>
             <li><i>Create Time</i>:&nbsp;{{ logForm.createTime | timestampFormatDate }}</li>
             <li><i>Result Status</i>:&nbsp;{{ logForm.resultStatus }}</li>
             <li><i>Vulnerabilities Found</i>: {{ logForm.returnSum }}</li>
           </ul>
         </div>
-        <el-tabs type="border-card">
-          <el-tab-pane :label="$t('image.grype_table')">
-            <div style="margin: 10px 0 0 0;" v-if="JSON.stringify(logForm.imageGrypeTableList) !== '[]'">
-              <h3>Vuln:&nbsp;</h3>
-              <el-table :data="logForm.imageGrypeTableList" border stripe style="width: 100%">
-                <el-table-column type="index" min-width="5%"/>
-                <el-table-column :label="'Name'" min-width="15%" prop="name">
-                </el-table-column>
-                <el-table-column :label="'Installed'" min-width="15%" prop="installed">
-                </el-table-column>
-                <el-table-column min-width="10%" :label="'FixedIn'" prop="fixedIn">
-                </el-table-column>
-                <el-table-column min-width="10%" :label="'Type'" prop="type">
-                </el-table-column>
-                <el-table-column min-width="15%" :label="'Vulnerability'" prop="vulnerability">
-                </el-table-column>
-                <el-table-column min-width="15%" :label="'Severity'" prop="severity">
-                </el-table-column>
-              </el-table>
-            </div>
-          </el-tab-pane>
-          <el-tab-pane :label="$t('image.grype_json')">
+        <div style="margin: 10px;" v-if="logForm.trivyJson">
+          <div style="margin: 10px 0 0 0;">
+            <h2>Details:&nbsp;</h2>
             <div style="margin: 10px 0 0 0;">
-              <h3>Details:&nbsp;</h3>
-              <div style="margin: 10px 0 0 0;">
-                <div style="margin: 10px 0 0 0;" :key="imageGrypeJson.id" v-for="imageGrypeJson in logForm.imageGrypeJsonList">
+              <div style="margin: 10px 0 0 0;" :key="index" v-for="(result, index) in logForm.trivyJson.Results">
+                <div style="margin: 10px;" v-if="result">
+                  <h3>Summary:&nbsp;</h3>
+                  <ul style="margin-left: 60px;">
+                    <li><i>Target</i>: {{ result.Target }}</li>
+                    <li><i>Class</i>:&nbsp;{{ result.Class }}</li>
+                    <li><i>Type</i>:&nbsp;{{ result.Type }}</li>
+                  </ul>
+                </div>
+                <div style="margin: 10px 0 0 0;" :key="index" v-for="(vulnerabilitiy, index) in result.Vulnerabilities">
                   <el-card class="box-card">
                     <div slot="header" class="clearfix">
                       <el-row>
                         <el-col class="icon-title" :span="3">
-                          <span>{{ imageGrypeJson.severity.substring(0, 1) }}</span>
+                          <span>{{ vulnerabilitiy.Severity.substring(0, 1) }}</span>
                         </el-col>
                         <el-col :span="15" style="margin: -7px 0 0 15px;">
-                          <span style="font-size: 24px;font-weight: 500;">{{ imageGrypeJson.name }}</span>
-                          <span style="font-size: 20px;color: #888;margin-left: 5px;"> - {{ imageGrypeJson.version }}</span>
+                          <span style="font-size: 24px;font-weight: 500;">{{ vulnerabilitiy.Title }}</span>
                         </el-col>
                         <el-col :span="6" style="float: right;">
-                          <span style="font-size: 20px;color: #999;float: right;">{{ 'OTHER RELATED VULNERABILITIES' }}</span>
+                          <span style="font-size: 20px;color: #999;float: right;">{{ 'SEVERITY SOURCE' }}</span>
                         </el-col>
                       </el-row>
                       <el-row style="font-size: 18px;padding: 10px;">
                         <el-col :span="20">
-                          <span style="color: #888;margin: 5px;">{{ 'VULNERABILITY' }}</span>
+                          <span style="margin: 5px;"><a :href="vulnerabilitiy.PrimaryURL">{{ vulnerabilitiy.VulnerabilityID }}</a></span>
                           <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                          <span style="margin: 5px;"><a :href="imageGrypeJson.datasource">{{ imageGrypeJson.cve }}</a></span>
+                          <span style="margin: 5px;"><el-button type="danger" size="mini">{{ vulnerabilitiy.Severity }}</el-button></span>
                           <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                          <span style="margin: 5px;"><el-button type="danger" size="mini">{{ imageGrypeJson.severity }}</el-button></span>
+                          <span style="color: #888;margin: 5px;">INSTALLED VERSION: {{ vulnerabilitiy.InstalledVersion }}</span>
                           <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                          <span style="color: #444;margin: 5px;">TYPE: {{ imageGrypeJson.type }}</span>
-                          <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                          <span style="color: #444;margin: 5px;">NAMESPACE: {{ imageGrypeJson.namespace }}</span>
+                          <span style="color: #444;margin: 5px;">PkgName: {{ vulnerabilitiy.PkgName }}</span>
                         </el-col>
                         <el-col :span="4" style="float: right;">
-                          <span style="font-size: 20px;color: #000;float: right;">{{ JSON.parse(imageGrypeJson.relatedVulnerabilities).length }}</span>
+                          <span style="font-size: 20px;color: #000;float: right;">{{ vulnerabilitiy.SeveritySource }}</span>
                         </el-col>
                       </el-row>
                     </div>
                     <div class="text item div-desc">
                       <el-row>
-                        <i class="el-icon-s-opportunity"></i> {{ imageGrypeJson.datasource }}
+                        <span style="color: red;"><i class="el-icon-s-opportunity"></i>PrimaryURL:</span> &nbsp;{{ vulnerabilitiy.PrimaryURL }}
                       </el-row>
                       <el-row>
-                        {{ imageGrypeJson.description }}
+                        <span style="color: red;">Description:</span> {{ vulnerabilitiy.Description }}
+                      </el-row>
+                      <el-row>
+                        <span style="color: red;">PublishedDate:</span> {{ vulnerabilitiy.PublishedDate }}
+                      </el-row>
+                      <el-row>
+                        <span style="color: red;">LastModifiedDate:</span> {{ vulnerabilitiy.LastModifiedDate }}
+                      </el-row>
+                      <el-row>
+                        <span style="color: red;">FixedVersion:</span> {{ vulnerabilitiy.FixedVersion }}
+                      </el-row>
+                      <el-row>
+                        <span style="color: red;">DataSource:</span> {{ vulnerabilitiy.DataSource.ID }} | {{ vulnerabilitiy.DataSource.Name }} | {{ vulnerabilitiy.DataSource.URL }}
                       </el-row>
                     </div>
                     <div class="text div-json">
-                      <el-descriptions title="Vulnerability" :column="2">
-                        <el-descriptions-item v-for="(vuln, index) in filterJson(imageGrypeJson.vulnerability)" :key="index" :label="vuln.key">
-                                <span v-if="!vuln.flag" show-overflow-tooltip>
-                                  <el-tooltip class="item" effect="dark" :content="JSON.stringify(vuln.value)" placement="top-start">
-                                    <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
-                                  </el-tooltip>
-                                </span>
+                      <el-descriptions title="Layer" :column="2">
+                        <el-descriptions-item v-for="(vuln, index) in filterJson(vulnerabilitiy.Layer)" :key="index" :label="vuln.key">
+                          <span v-if="!vuln.flag" show-overflow-tooltip>
+                            <el-tooltip class="item" effect="dark" :content="JSON.stringify(vuln.value)" placement="top-start">
+                              <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
+                            </el-tooltip>
+                          </span>
                           <el-tooltip v-if="vuln.flag && vuln.value" class="item" effect="light" :content="typeof(vuln.value) === 'boolean'?vuln.value.toString():vuln.value" placement="top-start">
-                                  <span class="table-expand-span-value">
-                                      {{ vuln.value }}
-                                  </span>
+                            <span class="table-expand-span-value">
+                                {{ vuln.value }}
+                            </span>
                           </el-tooltip>
                           <span v-if="vuln.flag && !vuln.value"> N/A</span>
                         </el-descriptions-item>
                       </el-descriptions>
                     </div>
                     <div class="text div-json">
-                      <el-descriptions title="Artifact" :column="2">
-                        <el-descriptions-item v-for="(artifact, index) in filterJson(imageGrypeJson.artifact)" :key="index" :label="artifact.key">
-                                <span v-if="!artifact.flag" show-overflow-tooltip>
-                                  <el-tooltip class="item" effect="dark" :content="JSON.stringify(artifact.value)" placement="top-start">
-                                    <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
-                                  </el-tooltip>
-                                </span>
-                          <el-tooltip v-if="artifact.flag && artifact.value" class="item" effect="light" :content="typeof(artifact.value) === 'boolean'?artifact.value.toString():artifact.value" placement="top-start">
-                                  <span class="table-expand-span-value">
-                                      {{ artifact.value }}
-                                  </span>
-                          </el-tooltip>
-                          <span v-if="artifact.flag && !artifact.value"> N/A</span>
+                      <el-descriptions title="CweIDs" :column="2">
+                        <el-descriptions-item v-for="(CweID, index) in vulnerabilitiy.CweIDs" :key="index" :label="index">
+                          <span> {{ CweID }}</span>
                         </el-descriptions-item>
                       </el-descriptions>
                     </div>
                     <div class="text div-json">
-                      <el-descriptions title="MatchDetails" :column="2">
-                        <el-descriptions-item v-for="(matchDetail, index) in JSON.parse(imageGrypeJson.matchDetails)" :key="index" :label="matchDetail.matcher">
-                          <span> {{ matchDetail.type }}</span>
+                      <el-descriptions title="References" :column="2">
+                        <el-descriptions-item v-for="(Reference, index) in vulnerabilitiy.References" :key="index" :label="index">
+                          <span> {{ Reference }}</span>
                         </el-descriptions-item>
                       </el-descriptions>
                     </div>
@@ -227,88 +216,8 @@
                 </div>
               </div>
             </div>
-          </el-tab-pane>
-          <el-tab-pane :label="$t('image.syft_table')">
-            <div style="margin: 10px 0 0 0;">
-              <h3>Sbom:&nbsp;</h3>
-              <el-table :data="logForm.imageSyftTableList" border stripe style="width: 100%">
-                <el-table-column type="index" min-width="5%"/>
-                <el-table-column :label="'Name'" min-width="35%" prop="name">
-                </el-table-column>
-                <el-table-column :label="'Version'" min-width="35%" prop="version">
-                </el-table-column>
-                <el-table-column min-width="20%" :label="'Type'" prop="type">
-                </el-table-column>
-              </el-table>
-            </div>
-          </el-tab-pane>
-          <el-tab-pane :label="$t('image.syft_json')">
-            <div style="margin: 10px 0 0 0;">
-              <div style="margin: 10px 0 0 0;" :key="index" v-for="(imageSyftJson,index) in logForm.imageSyftJsonList">
-                <el-card class="box-card">
-                  <div slot="header" class="clearfix">
-                    <el-row>
-                      <el-col :span="15" style="margin: -7px 0 0 15px;">
-                        <span style="font-size: 24px;font-weight: 500;">{{ imageSyftJson.name }}</span>
-                        <span style="font-size: 20px;color: #888;margin-left: 5px;">- {{ imageSyftJson.version?imageSyftJson.version:'N/A' }}</span>
-                      </el-col>
-                      <el-col :span="8" style="float: right;">
-                        <span style="font-size: 20px;color: #999;float: right;">{{ 'LANGUAGE' }}</span>
-                      </el-col>
-                    </el-row>
-                    <el-row style="font-size: 18px;padding: 10px;">
-                      <el-col :span="20">
-                        <span style="color: #888;margin: 5px;">{{ 'SBOM' }}</span>
-                        <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                        <span style="color: #444;margin: 5px;">TYPE: {{ imageSyftJson.type }}</span>
-                        <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                        <span style="color: #444;margin: 5px;">FOUNDBY: {{ imageSyftJson.foundBy }}</span>
-                        <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                        <span style="color: #444;margin: 5px;">METADATA TYPE: {{ imageSyftJson.metadataType }}</span>
-                      </el-col>
-                      <el-col :span="4" style="float: right;">
-                        <span style="font-size: 20px;color: #000;float: right;">{{ imageSyftJson.language }}</span>
-                      </el-col>
-                    </el-row>
-                    <el-row style="font-size: 18px;padding: 10px;">
-                      <span style="color: #444;margin: 5px;">PURL: {{ imageSyftJson.purl }}</span>
-                    </el-row>
-                  </div>
-                  <div class="text div-json">
-                    <el-descriptions title="Metadata" :column="2">
-                      <el-descriptions-item v-for="(meta, index) in filterJson(imageSyftJson.metadata)" :key="index" :label="meta.key">
-                                  <span v-if="!meta.flag" show-overflow-tooltip>
-                                    <el-tooltip class="item" effect="dark" :content="JSON.stringify(meta.value)" placement="top-start">
-                                      <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
-                                    </el-tooltip>
-                                  </span>
-                        <el-tooltip v-if="meta.flag && meta.value" class="item" effect="light" :content="typeof(meta.value) === 'boolean'?meta.value.toString():meta.value" placement="top-start">
-                                  <span class="table-expand-span-value">
-                                      {{ meta.value }}
-                                  </span>
-                        </el-tooltip>
-                        <span v-if="meta.flag && !meta.value"> N/A</span>
-                      </el-descriptions-item>
-                    </el-descriptions>
-                  </div>
-                  <div class="text div-json">
-                    <el-descriptions title="Locations" :column="2">
-                      <el-descriptions-item v-for="(location, index) in JSON.parse(imageSyftJson.locations)" :key="index" :label="location.path">
-                        <span> {{ location.layerID }}</span>
-                      </el-descriptions-item>
-                      <el-descriptions-item label="Licenses">
-                        <span> {{ imageSyftJson.licenses }}</span>
-                      </el-descriptions-item>
-                      <el-descriptions-item label="Cpes">
-                        <span> {{ imageSyftJson.cpes }}</span>
-                      </el-descriptions-item>
-                    </el-descriptions>
-                  </div>
-                </el-card>
-              </div>
-            </div>
-          </el-tab-pane>
-        </el-tabs>
+          </div>
+        </div>
       </el-row>
       <template v-slot:footer>
         <dialog-footer
@@ -469,9 +378,10 @@ export default {
       this.result = this.$get(logUrl + result.id, response => {
         this.logData = response.data;
       });
-      let resultUrl = "/image/getImageResultDto/";
+      let resultUrl = "/image/getImageResult/";
       this.result = this.$get(resultUrl + result.id, response => {
         this.logForm = response.data;
+        this.logForm.trivyJson = JSON.parse(this.logForm.trivyJson);
       });
       this.logVisible = true;
     },

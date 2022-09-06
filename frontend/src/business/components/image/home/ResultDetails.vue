@@ -11,20 +11,23 @@
         </template>
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter">
-          <el-table-column type="index" min-width="5%"/>
-          <el-table-column :label="'Name'" min-width="15%" prop="name">
+          <el-table-column type="index" min-width="2%"/>
+          <el-table-column :label="'Title'" min-width="17%" prop="title">
           </el-table-column>
-          <el-table-column :label="'Installed'" min-width="15%" prop="installed">
+          <el-table-column :label="'InstalledVersion'" min-width="10%" prop="installedVersion">
           </el-table-column>
-          <el-table-column min-width="10%" :label="'FixedIn'" prop="fixedIn">
+          <el-table-column min-width="7%" :label="'PkgName'" prop="pkgName">
           </el-table-column>
-          <el-table-column min-width="10%" :label="'Type'" prop="type">
+          <el-table-column min-width="10%" :label="'VulnerabilityID'" prop="vulnerabilityId">
           </el-table-column>
-          <el-table-column min-width="15%" :label="'Vulnerability'" prop="vulnerability">
+          <el-table-column min-width="7%" :label="'Severity'" prop="severity">
           </el-table-column>
-          <el-table-column min-width="15%" :label="'Severity'" prop="severity">
+          <el-table-column min-width="10%" :label="'SeveritySource'" prop="severitySource">
           </el-table-column>
-          <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right">
+          <el-table-column min-width="12%" :label="'PrimaryURL'" prop="primaryUrl" v-slot:default="scope">
+            <el-link type="primary" style="color: #0000e4;" :href="scope.row.primaryUrl" target="_blank">{{ scope.row.primaryUrl }}</el-link>
+          </el-table-column>
+          <el-table-column min-width="5%" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
@@ -32,12 +35,6 @@
         </el-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
-
-      <!--file-->
-      <el-drawer class="rtl" :title="string2Key" :visible.sync="visible"  size="80%" :before-close="handleClose" :direction="direction" :destroy-on-close="true">
-        <codemirror ref="cmEditor" v-model="string2PrettyFormat" class="code-mirror" :options="cmOptions" />
-      </el-drawer>
-      <!--file-->
 
     </main-container>
 </template>
@@ -81,27 +78,12 @@ import RuleType from "@/business/components/image/home/RuleType";
         },
         tagSelect: [],
         resourceTypes: [],
-        direction: 'rtl',
         buttons: [
           {
             tip: this.$t('resource.scan_vuln_search'), icon: "el-icon-share", type: "primary",
             exec: this.handleVuln
           },
         ],
-        string2Key: "",
-        string2PrettyFormat: "",
-        visible: false,
-        cmOptions: {
-          tabSize: 4,
-          mode: {
-            name: 'shell',
-            json: true
-          },
-          theme: 'bespin',
-          lineNumbers: true,
-          line: true,
-          indentWithTabs: true,
-        },
         resultId: "",
       }
     },
@@ -117,22 +99,6 @@ import RuleType from "@/business/components/image/home/RuleType";
       filter(filters) {
         _filter(filters, this.condition);
         this.init();
-      },
-      showInformation (row, details, title) {
-        this.string2Key = title;
-        this.string2PrettyFormat = "";
-        if (row) {
-          this.$post("/resource/string2PrettyFormat", {json: details}, res => {
-            this.string2PrettyFormat = res.data;
-          });
-        } else {
-          this.string2PrettyFormat = details;
-        }
-
-        this.visible =  true;
-      },
-      handleClose() {
-        this.visible =  false;
       },
       search () {
         let url = "/image/resultItemList/" + this.currentPage + "/" + this.pageSize;
@@ -159,11 +125,6 @@ import RuleType from "@/business/components/image/home/RuleType";
           }).catch(error => error);
         }
       },
-    },
-    computed: {
-      codemirror() {
-        return this.$refs.cmEditor.codemirror
-      }
     },
     created() {
       this.init();
