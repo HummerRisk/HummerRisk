@@ -6,10 +6,6 @@ FROM registry.cn-beijing.aliyuncs.com/hummerrisk/dependency-check:v0.3 as depend
 
 FROM registry.cn-beijing.aliyuncs.com/hummerrisk/xray:v0.3 as xray-env
 
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/grype:v0.3 as grype-env
-
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/syft:v0.3 as syft-env
-
 FROM registry.cn-beijing.aliyuncs.com/hummerrisk/cloud-custodian:v0.3.0
 
 WORKDIR /usr
@@ -22,12 +18,4 @@ COPY --from=dependency-env /usr/share/dependency-check /usr/share/dependency-che
 
 COPY --from=xray-env /opt/hummerrisk/xray/ /opt/hummerrisk/xray/
 
-COPY --from=grype-env /grype /usr/bin/grype
-
-COPY --from=syft-env /syft /usr/bin/syft
-
 RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.31.3
-
-RUN mkdir -p /opt/apps && \
-    curl https://company.hummercloud.com/offline-package/sigar/sigar.zip -o sigar.zip &&  \
-    mkdir -p /usr/lib/jvm/java-1.8-openjdk/bin && unzip sigar.zip -d /usr/lib/jvm/java-1.8-openjdk/bin && rm -rf sigar.zip

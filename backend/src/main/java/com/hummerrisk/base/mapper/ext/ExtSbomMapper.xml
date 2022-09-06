@@ -164,12 +164,12 @@
     <select id="imageMetricChart" resultType="com.hummerrisk.dto.MetricChartDTO" parameterType="java.lang.String">
         SELECT *
         from (
-             (SELECT count(*) as critical FROM image_grype_table t WHERE LOWER(t.severity) = 'critical' AND t.result_id = #{resultId}) as critical,
-             (SELECT count(*) as high FROM image_grype_table t WHERE LOWER(t.severity) = 'high' AND t.result_id = #{resultId}) as high,
-             (SELECT count(*) as medium FROM image_grype_table t WHERE LOWER(t.severity) = 'medium' AND t.result_id = #{resultId}) as medium,
-             (SELECT count(*) as low FROM image_grype_table t WHERE LOWER(t.severity) = 'low' AND t.result_id = #{resultId}) as low,
-             (SELECT count(*) as unknown FROM image_grype_table t WHERE LOWER(t.severity) = 'unknown' AND t.result_id = #{resultId}) as unknown,
-             (SELECT count(*) as total FROM image_grype_table t WHERE t.result_id = #{resultId}) as total
+             (SELECT count(*) as critical FROM image_trivy_json t WHERE LOWER(t.severity) = 'critical' AND t.result_id = #{resultId}) as critical,
+             (SELECT count(*) as high FROM image_trivy_json t WHERE LOWER(t.severity) = 'high' AND t.result_id = #{resultId}) as high,
+             (SELECT count(*) as medium FROM image_trivy_json t WHERE LOWER(t.severity) = 'medium' AND t.result_id = #{resultId}) as medium,
+             (SELECT count(*) as low FROM image_trivy_json t WHERE LOWER(t.severity) = 'low' AND t.result_id = #{resultId}) as low,
+             (SELECT count(*) as unknown FROM image_trivy_json t WHERE LOWER(t.severity) = 'unknown' AND t.result_id = #{resultId}) as unknown,
+             (SELECT count(*) as total FROM image_trivy_json t WHERE t.result_id = #{resultId}) as total
              )
     </select>
 

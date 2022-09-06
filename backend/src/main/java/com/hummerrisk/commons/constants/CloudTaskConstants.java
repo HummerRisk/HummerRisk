@@ -10,7 +10,7 @@ public class CloudTaskConstants {
     }
 
     public enum HISTORY_TYPE {
-        Cloud, Vuln
+        Cloud, Vuln, CloudNative, Image, Package, Code, Config
     }
 
     public static final String TASK_ID_PREFIX = "hr";
@@ -25,10 +25,6 @@ public class CloudTaskConstants {
 
     public enum RESULT_TYPE {
         json, yaml, string
-    }
-
-    public enum IMAGE_TYPE {
-        grype, trivy
     }
 
     /**

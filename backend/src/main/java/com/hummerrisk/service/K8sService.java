@@ -10,8 +10,10 @@ import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.cloudNative.CloudNativeSyncLogRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
+import com.hummerrisk.controller.request.image.ImageRuleRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
 import com.hummerrisk.dto.ImageDTO;
+import com.hummerrisk.dto.ImageRuleDTO;
 import com.hummerrisk.proxy.k8s.K8sRequest;
 import com.hummerrisk.proxy.kubesphere.KubeSphereRequest;
 import com.hummerrisk.proxy.rancher.RancherRequest;
@@ -63,6 +65,8 @@ public class K8sService {
     private CloudNativeSourceSyncLogMapper cloudNativeSourceSyncLogMapper;
     @Resource
     private CloudNativeService cloudNativeService;
+    @Resource
+    private ImageService imageService;
 
     public void scan(String id) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
@@ -345,7 +349,6 @@ public class K8sService {
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
             result.setUserName(SessionUtils.getUser().getName());
-            result.setScanType(CloudTaskConstants.IMAGE_TYPE.trivy.name());
             imageResultMapper.insertSelective(result);
 
             saveImageResultLog(result.getId(), "i18n_start_image_result", "", true);
@@ -363,7 +366,6 @@ public class K8sService {
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         result.setUserName(SessionUtils.getUser().getName());
-        result.setScanType(CloudTaskConstants.IMAGE_TYPE.trivy.name());
         imageResultMapper.updateByPrimaryKeySelective(result);
 
         reScanDeleteImageResult(id);
@@ -379,7 +381,7 @@ public class K8sService {
 
     public void deleteResultByImageId(String id) throws Exception {
         ImageResultExample example = new ImageResultExample();
-        example.createCriteria().andImageIdEqualTo(id).andScanTypeEqualTo(CloudTaskConstants.IMAGE_TYPE.trivy.name());
+        example.createCriteria().andImageIdEqualTo(id);
         List<ImageResult> list = imageResultMapper.selectByExample(example);
 
         for (ImageResult result : list) {
@@ -422,6 +424,9 @@ public class K8sService {
 
     public void createImageScan (ImageResultWithBLOBs result) throws Exception {
         try {
+            ImageRuleRequest request = new ImageRuleRequest();
+            request.setId(result.getRuleId());
+            ImageRuleDTO dto = imageService.ruleList(request).get(0);
             Image image = imageMapper.selectByPrimaryKey(result.getImageId());
             String trivyJson = "";
 
@@ -433,6 +438,9 @@ public class K8sService {
 
             result.setReturnLog(log);
             result.setTrivyJson(trivyJson);
+            result.setRuleId(dto.getId());
+            result.setRuleName(dto.getName());
+            result.setRuleDesc(dto.getDescription());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
 

@@ -213,10 +213,10 @@ public class ResourceCreateService {
             });
         }
 
-        //软件检测: 镜像依赖检测
+        //软件检测: 镜像检测
         final ImageResultExample imageResultExample = new ImageResultExample();
         ImageResultExample.Criteria imageCriteria = imageResultExample.createCriteria();
-        imageCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString()).andScanTypeEqualTo(CloudTaskConstants.IMAGE_TYPE.grype.name());
+        imageCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
             imageCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
         }
@@ -246,9 +246,7 @@ public class ResourceCreateService {
             });
         }
 
-        //网络检测
-
-        //云原生检测
+        //云原生K8s检测
         final CloudNativeResultExample cloudNativeResultExample = new CloudNativeResultExample();
         CloudNativeResultExample.Criteria cloudNativeCriteria = cloudNativeResultExample.createCriteria();
         cloudNativeCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
@@ -284,7 +282,7 @@ public class ResourceCreateService {
         //云原生镜像漏洞检测
         final ImageResultExample k8sImageResultExample = new ImageResultExample();
         ImageResultExample.Criteria k8sImageCriteria = k8sImageResultExample.createCriteria();
-        k8sImageCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString()).andScanTypeEqualTo(CloudTaskConstants.IMAGE_TYPE.trivy.name());
+        k8sImageCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
             k8sImageCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
         }

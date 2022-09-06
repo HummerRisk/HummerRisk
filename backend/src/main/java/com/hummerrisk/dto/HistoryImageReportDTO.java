@@ -10,43 +10,13 @@ import java.util.List;
  */
 public class HistoryImageReportDTO extends HistoryImageTask {
 
-    private List<ImageGrypeTable> imageGrypeTableList;//镜像检测grype结果table
+    private List<ImageTrivyJsonWithBLOBs> imageTrivyJsonWithBLOBsList;//镜像检测结果
 
-    private List<ImageGrypeJsonWithBLOBs> imageGrypeJsonList;//镜像检测grype结果json
-
-    private List<ImageSyftTable> imageSyftTableList;//镜像检测syft sbom结果table
-
-    private List<ImageSyftJsonWithBLOBs> imageSyftJsonList;//镜像检测syft sbom结果json
-
-    public List<ImageGrypeTable> getImageGrypeTableList() {
-        return imageGrypeTableList;
+    public List<ImageTrivyJsonWithBLOBs> getImageTrivyJsonWithBLOBsList() {
+        return imageTrivyJsonWithBLOBsList;
     }
 
-    public void setImageGrypeTableList(List<ImageGrypeTable> imageGrypeTableList) {
-        this.imageGrypeTableList = imageGrypeTableList;
-    }
-
-    public List<ImageSyftTable> getImageSyftTableList() {
-        return imageSyftTableList;
-    }
-
-    public void setImageSyftTableList(List<ImageSyftTable> imageSyftTableList) {
-        this.imageSyftTableList = imageSyftTableList;
-    }
-
-    public List<ImageGrypeJsonWithBLOBs> getImageGrypeJsonList() {
-        return imageGrypeJsonList;
-    }
-
-    public void setImageGrypeJsonList(List<ImageGrypeJsonWithBLOBs> imageGrypeJsonList) {
-        this.imageGrypeJsonList = imageGrypeJsonList;
-    }
-
-    public List<ImageSyftJsonWithBLOBs> getImageSyftJsonList() {
-        return imageSyftJsonList;
-    }
-
-    public void setImageSyftJsonList(List<ImageSyftJsonWithBLOBs> imageSyftJsonList) {
-        this.imageSyftJsonList = imageSyftJsonList;
+    public void setImageTrivyJsonWithBLOBsList(List<ImageTrivyJsonWithBLOBs> imageTrivyJsonWithBLOBsList) {
+        this.imageTrivyJsonWithBLOBsList = imageTrivyJsonWithBLOBsList;
     }
 }

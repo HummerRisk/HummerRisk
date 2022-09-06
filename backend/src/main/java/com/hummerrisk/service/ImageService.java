@@ -69,14 +69,6 @@ public class ImageService {
     @Resource
     private NoticeService noticeService;
     @Resource
-    private ImageGrypeTableMapper imageGrypeTableMapper;
-    @Resource
-    private ImageGrypeJsonMapper imageGrypeJsonMapper;
-    @Resource
-    private ImageSyftTableMapper imageSyftTableMapper;
-    @Resource
-    private ImageSyftJsonMapper imageSyftJsonMapper;
-    @Resource
     private HistoryService historyService;
     @Resource
     private ImageRepoItemMapper imageRepoItemMapper;
@@ -84,6 +76,8 @@ public class ImageService {
     private PackageService packageService;
     @Resource
     private ImageRepoSyncLogMapper imageRepoSyncLogMapper;
+    @Resource
+    private ImageTrivyJsonMapper imageTrivyJsonMapper;
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
@@ -453,7 +447,6 @@ public class ImageService {
                 result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
                 result.setSeverity(dto.getSeverity());
                 result.setUserName(SessionUtils.getUser().getName());
-                result.setScanType(CloudTaskConstants.IMAGE_TYPE.grype.name());
                 imageResultMapper.insertSelective(result);
 
                 saveImageResultLog(result.getId(), "i18n_start_image_result", "", true);
@@ -473,37 +466,23 @@ public class ImageService {
             request.setId(result.getRuleId());
             ImageRuleDTO dto = ruleList(request).get(0);
             Image image = imageMapper.selectByPrimaryKey(result.getImageId());
-            String script = dto.getScript();
-            JSONArray jsonArray = JSON.parseArray(dto.getParameter());
-            for (Object o : jsonArray) {
-                JSONObject jsonObject = (JSONObject) o;
-                String key = "${{" + jsonObject.getString("key") + "}}";
-                if (script.contains(key)) {
-                    script = script.replace(key, jsonObject.getString("defaultValue"));
-                }
-            }
-            String grypeTable = "", grypeJson = "", syftTable = "", syftJson = "";
+            String trivyJson = "";
 
-            String log = execute(image, ImageConstants.GRYPE, ImageConstants.TABLE);
+            String log = execute(image);
             if (log.contains("docker login")) {
                 throw new Exception(log);
             }
-            grypeTable = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.GRYPE_TABLE_TXT);
-            execute(image, ImageConstants.GRYPE, ImageConstants.JSON);
-            grypeJson = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.GRYPE_JSON_TXT);
-            execute(image, ImageConstants.SYFT, "");
-            syftTable = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.SYFT_TABLE_TXT);
-            syftJson = ReadFileUtils.readToBuffer(ImageConstants.DEFAULT_BASE_DIR + ImageConstants.SYFT_JSON_TXT);
+            trivyJson = ReadFileUtils.readToBuffer(TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON);
 
             result.setReturnLog(log);
-            result.setGrypeTable(grypeTable);
-            result.setGrypeJson(grypeJson);
-            result.setSyftTable(syftTable);
-            result.setSyftJson(syftJson);
+            result.setTrivyJson(trivyJson);
+            result.setRuleId(dto.getId());
+            result.setRuleName(dto.getName());
+            result.setRuleDesc(dto.getDescription());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
 
-            long count = saveResultItem(result);
+            long count = saveImageResultItem(result);
             result.setReturnSum(count);
             imageResultMapper.updateByPrimaryKeySelective(result);
 
@@ -521,122 +500,44 @@ public class ImageService {
         }
     }
 
-    long saveResultItem(ImageResultWithBLOBs result) throws Exception {
+    long saveImageResultItem(ImageResultWithBLOBs result) throws Exception {
 
-        //插入grypeTables
-        String grypeTables[] = result.getGrypeTable().split("\\r?\\n");
-        for (String line : grypeTables) {
-            if (line.contains("NAME")) {continue;}//去除首行table title
-            line = line.replaceAll(" +"," ");//将多个空格替换为一个
-            String[] newStr = line.split(" ");//截取table
-            ImageGrypeTable imageGrypeTable = new ImageGrypeTable();
-            for (int i = 0; i < newStr.length; i++) {
-                String str = newStr[i];
-                if(!str.isEmpty()) {//FIXED-IN可能为空
-//                    NAME               INSTALLED     FIXED-IN      TYPE  VULNERABILITY   SEVERITY
-//                    apk-tools          2.10.4-r2     2.10.7-r0     apk   CVE-2021-36159  Critical
-//                    apk-tools          2.10.4-r2     2.10.6-r0     apk   CVE-2021-30139  High
-//                    busybox            1.30.1-r2                   apk   CVE-2021-42384  High
-                    if (i == 0) {
-                        imageGrypeTable.setName(str);
-                    } else if (i == 1) {
-                        imageGrypeTable.setInstalled(str);
-                    } else if (i == 2 && newStr.length == 6) {
-                        imageGrypeTable.setFixedIn(str);
-                    } else if (i == 2 && newStr.length == 5) {
-                        imageGrypeTable.setType(str);
-                    } else if (i == 3 && newStr.length == 6) {
-                        imageGrypeTable.setType(str);
-                    } else if (i == 3 && newStr.length == 5) {
-                        imageGrypeTable.setVulnerability(str);
-                    } else if (i == 4 && newStr.length == 6) {
-                        imageGrypeTable.setVulnerability(str);
-                    } else if (i == 4 && newStr.length == 5) {
-                        imageGrypeTable.setSeverity(str);
-                    } else if (i == 5 && newStr.length == 6) {
-                        imageGrypeTable.setSeverity(str);
-                    }
+        //插入trivyJsons
+        JSONObject jsonG = JSONObject.parseObject(result.getTrivyJson());
+        JSONArray trivyJsons = JSONArray.parseArray(jsonG.getString("Results"));
+        int i = 0;
+        if(trivyJsons != null) {
+            for (Object obj : trivyJsons) {
+                JSONObject jsonObject = (JSONObject) obj;
+                JSONArray vulnJsons = JSONArray.parseArray(jsonObject.getString("Vulnerabilities"));
+                for (Object o : vulnJsons) {
+                    JSONObject resultObject = (JSONObject) o;
+                    ImageTrivyJsonWithBLOBs imageTrivyJsonWithBLOBs = new ImageTrivyJsonWithBLOBs();
+                    imageTrivyJsonWithBLOBs.setResultId(result.getId());
+                    imageTrivyJsonWithBLOBs.setVulnerabilityId(resultObject.getString("VulnerabilityID"));
+                    imageTrivyJsonWithBLOBs.setPkgName(resultObject.getString("PkgName"));
+                    imageTrivyJsonWithBLOBs.setInstalledVersion(resultObject.getString("InstalledVersion"));
+                    imageTrivyJsonWithBLOBs.setFixedVersion(resultObject.getString("FixedVersion"));
+                    imageTrivyJsonWithBLOBs.setLayer(resultObject.getString("Layer"));
+                    imageTrivyJsonWithBLOBs.setSeveritySource(resultObject.getString("SeveritySource"));
+                    imageTrivyJsonWithBLOBs.setPrimaryUrl(resultObject.getString("PrimaryURL"));
+                    imageTrivyJsonWithBLOBs.setDataSource(resultObject.getString("DataSource"));
+                    imageTrivyJsonWithBLOBs.setTitle(resultObject.getString("Title"));
+                    imageTrivyJsonWithBLOBs.setDescription(resultObject.getString("Description"));
+                    imageTrivyJsonWithBLOBs.setSeverity(resultObject.getString("Severity"));
+                    imageTrivyJsonWithBLOBs.setCweIds(resultObject.getString("CweIDs"));
+                    imageTrivyJsonWithBLOBs.setCvss(resultObject.getString("CVSS"));
+                    imageTrivyJsonWithBLOBs.setReferences(resultObject.getString("References"));
+                    imageTrivyJsonWithBLOBs.setPublishedDate(resultObject.getString("PublishedDate"));
+                    imageTrivyJsonWithBLOBs.setLastModifiedDate(resultObject.getString("LastModifiedDate"));
+                    imageTrivyJsonMapper.insertSelective(imageTrivyJsonWithBLOBs);
+                    i++;
                 }
+
             }
-            imageGrypeTable.setResultId(result.getId());
-            imageGrypeTableMapper.insertSelective(imageGrypeTable);
         }
 
-        //插入grypeJsons
-        JSONObject jsonG = JSONObject.parseObject(result.getGrypeJson());
-        JSONArray grypeJsons = JSONArray.parseArray(jsonG.getString("matches"));
-        for (Object obj : grypeJsons) {
-            ImageGrypeJsonWithBLOBs imageGrypeJson = new ImageGrypeJsonWithBLOBs();
-            String artifact = ((JSONObject) obj).getString("artifact");
-            String vulnerability = ((JSONObject) obj).getString("vulnerability");
-            imageGrypeJson.setArtifact(artifact);
-            imageGrypeJson.setVulnerability(vulnerability);
-            imageGrypeJson.setRelatedVulnerabilities(((JSONObject) obj).getString("relatedVulnerabilities"));
-            imageGrypeJson.setMatchDetails(((JSONObject) obj).getString("matchDetails"));
-            JSONObject artifactJson = JSONObject.parseObject(artifact);
-            JSONObject vulnerabilityJson = JSONObject.parseObject(vulnerability);
-            imageGrypeJson.setName(artifactJson.getString("name"));
-            imageGrypeJson.setVersion(artifactJson.getString("version"));
-            imageGrypeJson.setType(artifactJson.getString("type"));
-            imageGrypeJson.setCve(vulnerabilityJson.getString("id"));
-            imageGrypeJson.setDatasource(vulnerabilityJson.getString("dataSource"));
-            imageGrypeJson.setNamespace(vulnerabilityJson.getString("namespace"));
-            imageGrypeJson.setSeverity(vulnerabilityJson.getString("severity"));
-            imageGrypeJson.setDescription(vulnerabilityJson.getString("description"));
-            imageGrypeJson.setResultId(result.getId());
-            imageGrypeJsonMapper.insertSelective(imageGrypeJson);
-        }
-
-        //插入syftTables
-        String syftTables[] = result.getSyftTable().split("\\r?\\n");
-        for (String line : syftTables) {
-            if (line.contains("NAME")) {continue;}//去除首行table title
-            line = line.replaceAll(" +"," ");//将多个空格替换为一个
-            String[] newStr = line.split(" ");//截取table
-            ImageSyftTable imageSyftTable = new ImageSyftTable();
-            for (int i = 0; i < newStr.length; i++) {
-                String str = newStr[i];
-                if(!str.isEmpty()) {//version 值可能为空
-//                    NAME                    VERSION        TYPE
-//                    US_export_policy                       java-archive
-//                    alpine-baselayout       3.1.2-r0       apk
-                    if (i == 0) {
-                        imageSyftTable.setName(str);
-                    } else if (i == 1 && newStr.length == 3) {
-                        imageSyftTable.setVersion(str);
-                    } else if (i == 1 && newStr.length == 2) {
-                        imageSyftTable.setType(str);
-                    } else if (i == 2) {
-                        imageSyftTable.setType(str);
-                    }
-                }
-            }
-            imageSyftTable.setResultId(result.getId());
-            imageSyftTableMapper.insertSelective(imageSyftTable);
-        }
-
-        //插入syftJsons
-        JSONObject jsonS = JSONObject.parseObject(result.getSyftJson());
-        JSONArray syftJsons = JSONArray.parseArray(jsonS.getString("artifacts"));
-        for (Object obj : syftJsons) {
-            ImageSyftJsonWithBLOBs imageSyftJson = new ImageSyftJsonWithBLOBs();
-            JSONObject artifact = (JSONObject) obj;
-            imageSyftJson.setName(artifact.getString("name"));
-            imageSyftJson.setVersion(!artifact.getString("version").isEmpty()?artifact.getString("version"):"");
-            imageSyftJson.setType(artifact.getString("type"));
-            imageSyftJson.setFoundBy(artifact.getString("foundBy"));
-            imageSyftJson.setLanguage(artifact.getString("language"));
-            imageSyftJson.setPurl(artifact.getString("purl"));
-            imageSyftJson.setMetadataType(artifact.getString("metadataType"));
-            imageSyftJson.setLocations(artifact.getString("locations"));
-            imageSyftJson.setLicenses(artifact.getString("licenses"));
-            imageSyftJson.setCpes(artifact.getString("cpes"));
-            imageSyftJson.setMetadata(artifact.getString("metadata"));
-            imageSyftJson.setResultId(result.getId());
-            imageSyftJsonMapper.insertSelective(imageSyftJson);
-        }
-
-        return Long.parseLong((grypeTables.length - 1) + "");
+        return i;
     }
 
     public String reScan(String id) throws Exception {
@@ -645,7 +546,6 @@ public class ImageService {
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         result.setUserName(SessionUtils.getUser().getName());
-        result.setScanType(CloudTaskConstants.IMAGE_TYPE.grype.name());
         imageResultMapper.updateByPrimaryKeySelective(result);
 
         this.reScanDeleteImageResult(id);
@@ -661,21 +561,10 @@ public class ImageService {
 
     public void reScanDeleteImageResult(String id) throws Exception {
 
-        ImageSyftTableExample imageSyftTableExample = new ImageSyftTableExample();
-        imageSyftTableExample.createCriteria().andResultIdEqualTo(id);
-        imageSyftTableMapper.deleteByExample(imageSyftTableExample);
+        ImageTrivyJsonExample imageTrivyJsonExample = new ImageTrivyJsonExample();
+        imageTrivyJsonExample.createCriteria().andResultIdEqualTo(id);
+        imageTrivyJsonMapper.deleteByExample(imageTrivyJsonExample);
 
-        ImageSyftJsonExample imageSyftJsonExample = new ImageSyftJsonExample();
-        imageSyftJsonExample.createCriteria().andResultIdEqualTo(id);
-        imageSyftJsonMapper.deleteByExample(imageSyftJsonExample);
-
-        ImageGrypeTableExample imageGrypeTableExample = new ImageGrypeTableExample();
-        imageGrypeTableExample.createCriteria().andResultIdEqualTo(id);
-        imageGrypeTableMapper.deleteByExample(imageGrypeTableExample);
-
-        ImageGrypeJsonExample imageGrypeJsonExample = new ImageGrypeJsonExample();
-        imageGrypeJsonExample.createCriteria().andResultIdEqualTo(id);
-        imageGrypeJsonMapper.deleteByExample(imageGrypeJsonExample);
     }
 
     public void deleteImageResult(String id) throws Exception {
@@ -689,7 +578,7 @@ public class ImageService {
 
     public void deleteResultByImageId(String id) throws Exception {
         ImageResultExample example = new ImageResultExample();
-        example.createCriteria().andImageIdEqualTo(id).andScanTypeEqualTo(CloudTaskConstants.IMAGE_TYPE.grype.name());
+        example.createCriteria().andImageIdEqualTo(id);
         List<ImageResult> list = imageResultMapper.selectByExample(example);
 
         for (ImageResult result : list) {
@@ -701,7 +590,7 @@ public class ImageService {
         imageResultMapper.deleteByExample(example);
     }
 
-    public String execute(Image image, String scanType, String outType) throws Exception {
+    public String execute(Image image) throws Exception {
         try {
             Proxy proxy;
             String _proxy = "";
@@ -722,23 +611,12 @@ public class ImageService {
             if (StringUtils.equalsIgnoreCase("image", image.getType()) || StringUtils.equalsIgnoreCase("repo", image.getType())) {
                 fileName = image.getImageUrl() + ":" + image.getImageTag();
             } else {
-                fileName = ImageConstants.DEFAULT_BASE_DIR + image.getPath();
+                fileName = TrivyConstants.DEFAULT_BASE_DIR + image.getPath();
             }
-            String command = "";
-            if (StringUtils.equalsIgnoreCase(scanType, ImageConstants.GRYPE)) {
-                if (StringUtils.equalsIgnoreCase(outType, ImageConstants.JSON)) {
-                    command = _proxy + dockerLogin + scanType + fileName + ImageConstants.SCOPE + ImageConstants.OUT + outType + ImageConstants._FILE +
-                            ImageConstants.DEFAULT_BASE_DIR + ImageConstants.GRYPE_JSON_TXT;
-                } else if (StringUtils.equalsIgnoreCase(outType, ImageConstants.TABLE)) {
-                    command = _proxy + dockerLogin + scanType + fileName + ImageConstants.SCOPE + ImageConstants.OUT + outType + ImageConstants._FILE +
-                            ImageConstants.DEFAULT_BASE_DIR + ImageConstants.GRYPE_TABLE_TXT;
-                }
-            } else if (StringUtils.equalsIgnoreCase(scanType, ImageConstants.SYFT)) {
-                command = _proxy + dockerLogin + scanType + fileName + ImageConstants.SCOPE + ImageConstants.OUT + ImageConstants.SYFT_JSON + ImageConstants.DEFAULT_BASE_DIR + ImageConstants.SYFT_JSON_TXT +
-                        ImageConstants.OUT + ImageConstants.SYFT_TABLE + ImageConstants.DEFAULT_BASE_DIR + ImageConstants.SYFT_TABLE_TXT;
-            }
-            LogUtil.info(image.getId() + " {image}[command]: " + image.getName() + "   " + command);
-            String resultStr = CommandUtils.commonExecCmdWithResult(command, ImageConstants.DEFAULT_BASE_DIR);
+            CommandUtils.commonExecCmdWithResult(TrivyConstants.TRIVY_RM + TrivyConstants.TRIVY_JSON, TrivyConstants.DEFAULT_BASE_DIR);
+            String command = _proxy + dockerLogin + TrivyConstants.TRIVY_IMAGE + TrivyConstants.TRIVY_SKIP + fileName + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
+            LogUtil.info(image.getId() + " {k8sImage}[command]: " + image.getName() + "   " + command);
+            String resultStr = CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
             if(resultStr.contains("ERROR") || resultStr.contains("error")) {
                 throw new Exception(resultStr);
             }
@@ -750,10 +628,6 @@ public class ImageService {
 
     public List<ImageResultWithBLOBsDTO> resultListWithBLOBs(ImageResultRequest request) {
         List<ImageResultWithBLOBsDTO> list = extImageResultMapper.resultListWithBLOBs(request);
-        for (ImageResultWithBLOBsDTO imageResultWithBLOBsDTO : list) {
-            imageResultWithBLOBsDTO.setGrypeJson(accountService.toJSONString(imageResultWithBLOBsDTO.getGrypeJson()!=null? imageResultWithBLOBsDTO.getGrypeJson():"{}"));
-            imageResultWithBLOBsDTO.setSyftJson(accountService.toJSONString(imageResultWithBLOBsDTO.getSyftJson()!=null? imageResultWithBLOBsDTO.getSyftJson():"{}"));
-        }
         return list;
     }
 
@@ -774,10 +648,6 @@ public class ImageService {
 
     public ImageResultWithBLOBs getImageResultWithBLOBs(String resultId) {
         ImageResultWithBLOBs imageResultWithBLOBs = imageResultMapper.selectByPrimaryKey(resultId);
-        if(imageResultWithBLOBs!=null && !StringUtils.equalsIgnoreCase(imageResultWithBLOBs.getResultStatus(), TaskConstants.TASK_STATUS.APPROVED.toString())) {
-            imageResultWithBLOBs.setGrypeJson(accountService.toJSONString(imageResultWithBLOBs.getGrypeJson()!=null? imageResultWithBLOBs.getGrypeJson():"{}"));
-            imageResultWithBLOBs.setSyftJson(accountService.toJSONString(imageResultWithBLOBs.getSyftJson()!=null? imageResultWithBLOBs.getSyftJson():"{}"));
-        }
         return imageResultWithBLOBs;
     }
 
@@ -808,10 +678,10 @@ public class ImageService {
         historyService.insertHistoryImageTaskLog(BeanUtils.copyBean(new HistoryImageTaskLog(), imageResultLog));
     }
 
-    public List<ImageGrypeTable> resultItemList(ImageGrypeTable resourceRequest) {
-        ImageGrypeTableExample example = new ImageGrypeTableExample();
+    public List<ImageTrivyJsonWithBLOBs> resultItemList(ImageTrivyJson resourceRequest) {
+        ImageTrivyJsonExample example = new ImageTrivyJsonExample();
         example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
-        return imageGrypeTableMapper.selectByExample(example);
+        return imageTrivyJsonMapper.selectByExampleWithBLOBs(example);
     }
 
     public List<ImageRepoSyncLog> repoSyncList(String id) {

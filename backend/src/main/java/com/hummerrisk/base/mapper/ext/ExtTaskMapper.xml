@@ -1179,13 +1179,7 @@
     </select>
 
     <resultMap id="HistoryImageReportDTOMap" type="com.hummerrisk.dto.HistoryImageReportDTO" extends="com.hummerrisk.base.mapper.HistoryImageTaskMapper.BaseResultMap">
-        <collection property="imageGrypeTableList" ofType="com.hummerrisk.base.domain.ImageGrypeTable" javaType="list" select="getImageGrypeTableList" column="id">
-        </collection>
-        <collection property="imageGrypeJsonList" ofType="com.hummerrisk.base.domain.ImageGrypeJson" javaType="list" select="getImageGrypeJsonList" column="id">
-        </collection>
-        <collection property="imageSyftTableList" ofType="com.hummerrisk.base.domain.ImageSyftTable" javaType="list" select="getImageSyftTableList" column="id">
-        </collection>
-        <collection property="imageSyftJsonList" ofType="com.hummerrisk.base.domain.ImageSyftJson" javaType="list" select="getImageSyftJsonList" column="id">
+        <collection property="imageTrivyJsonWithBLOBsList" ofType="com.hummerrisk.base.domain.ImageTrivyJsonWithBLOBs" javaType="list" select="getimageTrivyJsonWithBLOBsList" column="id">
         </collection>
     </resultMap>
 
@@ -1196,32 +1190,10 @@
         WHERE t1.task_id = #{id}
     </select>
 
-    <select id="getImageGrypeTableList" resultType="com.hummerrisk.base.domain.ImageGrypeTable" parameterType="java.lang.String">
+    <select id="getimageTrivyJsonWithBLOBsList" resultType="com.hummerrisk.base.domain.ImageTrivyJsonWithBLOBs" parameterType="java.lang.String">
         SELECT t.*
-        FROM image_grype_table t
-        JOIN history_image_task t1 on t1.id = t.result_id
-        WHERE t1.id = #{id}
-    </select>
-
-    <select id="getImageGrypeJsonList" resultType="com.hummerrisk.base.domain.ImageGrypeJsonWithBLOBs" parameterType="java.lang.String">
-        SELECT t.*
-        FROM image_grype_json t
-        JOIN history_image_task t1 on t1.id = t.result_id
-        WHERE t1.id = #{id}
-    </select>
-
-    <select id="getImageSyftTableList" resultType="com.hummerrisk.base.domain.ImageSyftTable" parameterType="java.lang.String">
-        SELECT t.*
-        FROM image_syft_table t
-        JOIN history_image_task t1 on t1.id = t.result_id
-        WHERE t1.id = #{id}
-    </select>
-
-    <select id="getImageSyftJsonList" resultType="com.hummerrisk.base.domain.ImageSyftJsonWithBLOBs" parameterType="java.lang.String">
-        SELECT t.*
-        FROM image_syft_json t
-        JOIN history_image_task t1 on t1.id = t.result_id
-        WHERE t1.id = #{id}
+        FROM image_trivy_json t
+        WHERE t.result_id = #{id}
     </select>
 
     <resultMap id="HistoryPackageReportDTOMap" type="com.hummerrisk.dto.HistoryPackageReportDTO" extends="com.hummerrisk.base.mapper.HistoryPackageTaskMapper.BaseResultMap">

@@ -283,7 +283,7 @@ public class SbomService {
             str = codeResult.getReturnJson();
         } else if (StringUtils.equalsIgnoreCase(request.getType(), "image")) {
             HistoryImageTaskWithBLOBs imageTask = historyImageTaskMapper.selectByPrimaryKey(request.getSourceId());
-            str = imageTask.getTrivyJson()!=null?imageTask.getTrivyJson():imageTask.getGrypeJson();
+            str = imageTask.getTrivyJson()!=null?imageTask.getTrivyJson():"";
         } else if (StringUtils.equalsIgnoreCase(request.getType(), "package")) {
             HistoryPackageTaskWithBLOBs packageTaskWithBLOBs = historyPackageTaskMapper.selectByPrimaryKey(request.getSourceId());
             str = packageTaskWithBLOBs.getReturnJson();
