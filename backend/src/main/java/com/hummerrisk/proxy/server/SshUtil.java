@@ -18,11 +18,8 @@ import org.apache.sshd.common.util.security.SecurityUtils;
 import javax.websocket.DeploymentException;
 import java.io.*;
 import java.nio.file.Paths;
-import java.security.KeyPair;
 import java.util.Calendar;
 import java.util.StringTokenizer;
-
-import static org.apache.http.HttpHeaders.TIMEOUT;
 
 
 public class SshUtil {
@@ -83,12 +80,12 @@ public class SshUtil {
 
             if (sshServerDTO.getIsPublicKey()) {
                 // 密钥模式
-                 String resourceKey = "/Users/lixin/.ssh/id_rsa";
+//                 String resourceKey = "/opt/hummerrisk/hummer_rsa";
 
                 URLResource idenreplacedy;
                 idenreplacedy = new URLResource(Paths.get(sshServerDTO.getSshUserName(), ".ssh", "id_rsa").toUri().toURL());
                 try (InputStream inputStream = idenreplacedy.openInputStream()) {
-//                    session.addPublicKeyIdentity(GenericUtils.head(SecurityUtils.loadKeyPairIdentities(session, idenreplacedy, inputStream, (s, "resourceKey", retryIndex) -> null)));
+                    session.addPublicKeyIdentity(GenericUtils.head(SecurityUtils.loadKeyPairIdentities(session, idenreplacedy, inputStream, (s, resourceKey, retryIndex) -> null)));
                 }
             } else {
                 // 密码模式

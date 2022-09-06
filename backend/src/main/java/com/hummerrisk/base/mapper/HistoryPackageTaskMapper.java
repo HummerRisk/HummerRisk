@@ -3,8 +3,9 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.HistoryPackageTask;
 import com.hummerrisk.base.domain.HistoryPackageTaskExample;
 import com.hummerrisk.base.domain.HistoryPackageTaskWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface HistoryPackageTaskMapper {
     /**

@@ -3,8 +3,9 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.CloudNativeConfigResultItem;
 import com.hummerrisk.base.domain.CloudNativeConfigResultItemExample;
 import com.hummerrisk.base.domain.CloudNativeConfigResultItemWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface CloudNativeConfigResultItemMapper {
     /**

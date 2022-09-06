@@ -1,45 +1,29 @@
 package com.hummerrisk.service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.domain.Package;
+import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
-import com.hummerrisk.base.mapper.ext.ExtCodeMapper;
-import com.hummerrisk.base.mapper.ext.ExtCodeResultMapper;
-import com.hummerrisk.base.mapper.ext.ExtCodeRuleMapper;
 import com.hummerrisk.base.mapper.ext.ExtSbomMapper;
-import com.hummerrisk.commons.constants.*;
-import com.hummerrisk.commons.exception.HRException;
-import com.hummerrisk.commons.utils.*;
-import com.hummerrisk.controller.request.code.CodeRequest;
-import com.hummerrisk.controller.request.code.CodeResultRequest;
-import com.hummerrisk.controller.request.code.CodeRuleRequest;
+import com.hummerrisk.commons.constants.ResourceOperation;
+import com.hummerrisk.commons.constants.ResourceTypeConstants;
+import com.hummerrisk.commons.utils.BeanUtils;
+import com.hummerrisk.commons.utils.SessionUtils;
+import com.hummerrisk.commons.utils.UUIDUtil;
 import com.hummerrisk.controller.request.sbom.DownloadRequest;
 import com.hummerrisk.controller.request.sbom.SbomRequest;
 import com.hummerrisk.controller.request.sbom.SbomVersionRequest;
 import com.hummerrisk.controller.request.sbom.SettingVersionRequest;
-import com.hummerrisk.dto.*;
-import com.hummerrisk.i18n.Translator;
-import com.hummerrisk.proxy.code.CodeCredential;
-import com.hummerrisk.proxy.code.CodeCredentialRequest;
-import io.kubernetes.client.openapi.ApiException;
+import com.hummerrisk.dto.ApplicationDTO;
+import com.hummerrisk.dto.HistoryImageTaskDTO;
+import com.hummerrisk.dto.MetricChartDTO;
+import com.hummerrisk.dto.SbomDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
-import static com.alibaba.fastjson.JSON.parseArray;
-import static com.alibaba.fastjson.JSON.parseObject;
 
 /**
  * @author harris

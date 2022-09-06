@@ -3,8 +3,6 @@ package com.hummerrisk.dto;
 
 import com.hummerrisk.base.domain.CodeResultItem;
 import com.hummerrisk.base.domain.HistoryCodeResult;
-import com.hummerrisk.base.domain.HistoryPackageTask;
-import com.hummerrisk.base.domain.PackageDependencyJsonWithBLOBs;
 
 import java.util.List;
 

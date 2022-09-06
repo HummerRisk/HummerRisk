@@ -1,7 +1,6 @@
 package com.hummerrisk.dto;
 
 import com.hummerrisk.base.domain.Sbom;
-import com.hummerrisk.base.domain.SbomVersion;
 
 import java.util.List;
 
