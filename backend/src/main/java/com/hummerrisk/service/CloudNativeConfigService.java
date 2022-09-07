@@ -51,6 +51,8 @@ public class CloudNativeConfigService {
     private HistoryService historyService;
     @Resource
     private NoticeService noticeService;
+    @Resource
+    private CloudNativeConfigRuleMapper cloudNativeConfigRuleMapper;
 
     public List<CloudNativeConfigDTO> getCloudNativeConfigList(ConfigRequest request) {
         return extCloudNativeConfigMapper.getCloudNativeConfigList(request);
@@ -191,28 +193,34 @@ public class CloudNativeConfigService {
     public void scan(String id) throws Exception {
         CloudNativeConfig cloudNativeConfig = cloudNativeConfigMapper.selectByPrimaryKey(id);
         Integer scanId = historyService.insertScanHistory(cloudNativeConfig);
-        if(StringUtils.equalsIgnoreCase(cloudNativeConfig.getStatus(), CloudAccountConstants.Status.VALID.name())
-        || StringUtils.equalsIgnoreCase(cloudNativeConfig.getStatus(), CloudAccountConstants.Status.INVALID.name())) {
+        if(StringUtils.equalsIgnoreCase(cloudNativeConfig.getStatus(), CloudAccountConstants.Status.VALID.name())) {
+            List<CloudNativeConfigRule> ruleList = cloudNativeConfigRuleMapper.selectByExample(null);
             CloudNativeConfigResult result = new CloudNativeConfigResult();
 
             deleteResultByCloudNativeConfigId(id);
 
-            BeanUtils.copyBean(result, cloudNativeConfig);
-            result.setId(UUIDUtil.newUUID());
-            result.setConfigId(id);
-            result.setApplyUser(SessionUtils.getUserId());
-            result.setCreateTime(System.currentTimeMillis());
-            result.setUpdateTime(System.currentTimeMillis());
-            result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-            result.setUserName(SessionUtils.getUser().getName());
-            cloudNativeConfigResultMapper.insertSelective(result);
+            for(CloudNativeConfigRule rule : ruleList) {
+                BeanUtils.copyBean(result, cloudNativeConfig);
+                result.setId(UUIDUtil.newUUID());
+                result.setConfigId(id);
+                result.setApplyUser(SessionUtils.getUserId());
+                result.setCreateTime(System.currentTimeMillis());
+                result.setUpdateTime(System.currentTimeMillis());
+                result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+                result.setUserName(SessionUtils.getUser().getName());
+                result.setRuleId(rule.getId());
+                result.setRuleName(rule.getName());
+                result.setRuleDesc(rule.getDescription());
+                result.setSeverity(rule.getSeverity());
+                cloudNativeConfigResultMapper.insertSelective(result);
 
-            saveCloudNativeConfigResultLog(result.getId(), "i18n_start_k8s_result_config", "", true);
-            OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.CREATE, "i18n_start_k8s_result_config");
+                saveCloudNativeConfigResultLog(result.getId(), "i18n_start_k8s_result_config", "", true);
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.CREATE, "i18n_start_k8s_result_config");
 
-            historyService.insertScanTaskHistory(result, scanId, cloudNativeConfig.getId(), TaskEnum.configAccount.getType());
+                historyService.insertScanTaskHistory(result, scanId, cloudNativeConfig.getId(), TaskEnum.configAccount.getType());
 
-            historyService.insertHistoryCloudNativeConfigResult(BeanUtils.copyBean(new HistoryCloudNativeConfigResult(), result));
+                historyService.insertHistoryCloudNativeConfigResult(BeanUtils.copyBean(new HistoryCloudNativeConfigResult(), result));
+            }
         }
     }
 

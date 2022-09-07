@@ -126,7 +126,7 @@ export const VULN_PLUGIN_NAME = {
   }
 }
 
-//云原生检测插件
+//K8s检测插件
 export const K8S_PLUGIN_NAME = {
   key: "pluginId",
   name: 'TableSearchSelect',

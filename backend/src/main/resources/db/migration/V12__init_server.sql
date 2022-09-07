@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `server_result`
     `server_name`                varchar(256)        DEFAULT NULL COMMENT '虚拟机名称',
     `rule_id`                    varchar(50)         DEFAULT NULL COMMENT '虚拟机规则ID',
     `rule_name`                  varchar(50)         DEFAULT NULL COMMENT '虚拟机规则名称',
-    `rule_desc`                  varchar(50)         DEFAULT NULL COMMENT '虚拟机规则描述',
+    `rule_desc`                  varchar(256)        DEFAULT NULL COMMENT '虚拟机规则描述',
     `result_status`              varchar(45)         DEFAULT NULL COMMENT '检测状态',
     `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
     `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',

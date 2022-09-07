@@ -67,31 +67,39 @@ public class K8sService {
     private CloudNativeService cloudNativeService;
     @Resource
     private ImageService imageService;
+    @Resource
+    private CloudNativeRuleMapper cloudNativeRuleMapper;
 
     public void scan(String id) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
         Integer scanId = historyService.insertScanHistory(cloudNative);
         if(StringUtils.equalsIgnoreCase(cloudNative.getStatus(), CloudAccountConstants.Status.VALID.name())) {
+            List<CloudNativeRule> ruleList = cloudNativeRuleMapper.selectByExample(null);
             CloudNativeResultWithBLOBs result = new CloudNativeResultWithBLOBs();
 
             deleteResultByCloudNativeId(id);
+            for(CloudNativeRule rule : ruleList) {
+                BeanUtils.copyBean(result, cloudNative);
+                result.setId(UUIDUtil.newUUID());
+                result.setCloudNativeId(id);
+                result.setApplyUser(SessionUtils.getUserId());
+                result.setCreateTime(System.currentTimeMillis());
+                result.setUpdateTime(System.currentTimeMillis());
+                result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+                result.setUserName(SessionUtils.getUser().getName());
+                result.setRuleId(rule.getId());
+                result.setRuleName(rule.getName());
+                result.setRuleDesc(rule.getDescription());
+                result.setSeverity(rule.getSeverity());
+                cloudNativeResultMapper.insertSelective(result);
 
-            BeanUtils.copyBean(result, cloudNative);
-            result.setId(UUIDUtil.newUUID());
-            result.setCloudNativeId(id);
-            result.setApplyUser(SessionUtils.getUserId());
-            result.setCreateTime(System.currentTimeMillis());
-            result.setUpdateTime(System.currentTimeMillis());
-            result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-            result.setUserName(SessionUtils.getUser().getName());
-            cloudNativeResultMapper.insertSelective(result);
+                saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_result", "", true);
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_start_k8s_result");
 
-            saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_result", "", true);
-            OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_start_k8s_result");
+                historyService.insertScanTaskHistory(result, scanId, cloudNative.getId(), TaskEnum.k8sAccount.getType());
 
-            historyService.insertScanTaskHistory(result, scanId, cloudNative.getId(), TaskEnum.k8sAccount.getType());
-
-            historyService.insertHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
+                historyService.insertHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
+            }
         }
     }
 
