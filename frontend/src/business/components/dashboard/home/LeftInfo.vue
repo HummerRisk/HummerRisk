@@ -42,6 +42,12 @@
           </template>
         </el-calendar>
       </el-card>
+      <el-card class="table-card" v-loading="result.loading">
+        <template v-slot:header>
+          <span class="title">{{ $t('dashboard.k8s_statistics') }}</span>
+        </template>
+        <cloud-native-chart/>
+      </el-card>
     </el-col>
   </container>
 </template>
@@ -51,6 +57,7 @@ import Container from "../.././common/components/Container";
 import CloudChart from "@/business/components/dashboard/head/CloudChart";
 import VulnChart from "@/business/components/dashboard/head/VulnChart";
 import ServerChart from "@/business/components/dashboard/head/ServerChart";
+import CloudNativeChart from "@/business/components/dashboard/head/CloudNativeChart";
 
 /* eslint-disable */
 export default {
@@ -59,6 +66,7 @@ export default {
     CloudChart,
     VulnChart,
     ServerChart,
+    CloudNativeChart,
   },
   data() {
     return {

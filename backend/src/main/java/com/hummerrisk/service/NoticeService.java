@@ -204,26 +204,6 @@ public class NoticeService {
         messageOrderItemMapper.insertSelective(messageOrderItem);
     }
 
-    public void createPackageMessageOrder (PackageResultWithBLOBs result) {
-        MessageOrder messageOrder = new MessageOrder();
-        String uuid = UUIDUtil.newUUID();
-        messageOrder.setId(uuid);
-        messageOrder.setAccountId(result.getPackageId());
-        messageOrder.setAccountName(result.getPackageName());
-        messageOrder.setCreateTime(System.currentTimeMillis());
-        messageOrder.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
-        messageOrder.setScanType(ScanConstants.SCAN_TYPE.PACKAGE.name());
-        messageOrderMapper.insertSelective(messageOrder);
-
-        MessageOrderItem messageOrderItem = new MessageOrderItem();
-        messageOrderItem.setMessageOrderId(uuid);
-        messageOrderItem.setTaskId(result.getId());
-        messageOrderItem.setTaskName(result.getName());
-        messageOrderItem.setCreateTime(System.currentTimeMillis());
-        messageOrderItem.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
-        messageOrderItemMapper.insertSelective(messageOrderItem);
-    }
-
     public void createImageMessageOrder (ImageResultWithBLOBs image) {
         MessageOrder messageOrder = new MessageOrder();
         String uuid = UUIDUtil.newUUID();

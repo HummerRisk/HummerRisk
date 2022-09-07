@@ -116,9 +116,6 @@
                     <property name="condition" value="combine"/>
                 </include>
             </if>
-            <if test="scanType != null and scanType != ''">
-                and t.scan_type = #{scanType}
-            </if>
         </where>
         ORDER BY t.update_time desc
     </select>
@@ -151,9 +148,6 @@
                 <include refid="combine">
                     <property name="condition" value="combine"/>
                 </include>
-            </if>
-            <if test="scanType != null and scanType != ''">
-                and t.scan_type = #{scanType}
             </if>
         </where>
         ORDER BY t.update_time desc

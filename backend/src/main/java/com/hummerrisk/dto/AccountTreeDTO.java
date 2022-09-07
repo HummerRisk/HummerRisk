@@ -15,8 +15,6 @@ public class AccountTreeDTO {
 
     private List<ImageVo> imageAccount;
 
-    private List<PackageVo> packageAccount;
-
     private List<CodeVo> codeAccount;
 
     private List<K8sVo> k8sAccount;
@@ -53,14 +51,6 @@ public class AccountTreeDTO {
 
     public void setImageAccount(List<ImageVo> imageAccount) {
         this.imageAccount = imageAccount;
-    }
-
-    public List<PackageVo> getPackageAccount() {
-        return packageAccount;
-    }
-
-    public void setPackageAccount(List<PackageVo> packageAccount) {
-        this.packageAccount = packageAccount;
     }
 
     public List<CodeVo> getCodeAccount() {

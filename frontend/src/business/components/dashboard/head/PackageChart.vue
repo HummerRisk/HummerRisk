@@ -8,7 +8,7 @@
 import HrChart from "@/business/components/common/chart/HrChart";
 /* eslint-disable */
 export default {
-  name: "CloudNativeChart",
+  name: "PackageChart",
   components: {
     HrChart,
   },
@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     init() {
-      this.$post("/dashboard/cloudNativeChart", {}, response => {
+      this.$post("/dashboard/packageChart", {}, response => {
         let data = response.data;
         this.options = {
           xAxis: {
