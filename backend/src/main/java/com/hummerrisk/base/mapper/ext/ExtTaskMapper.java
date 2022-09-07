@@ -16,8 +16,6 @@ public interface ExtTaskMapper {
 
     List<ImageVo> selectImageByExample(ImageExample example);
 
-    List<PackageVo> selectPackageByExample(PackageExample example);
-
     List<CodeVo> selectCodeByExample(CodeExample example);
 
     List<K8sVo> selectK8sByExample(CloudNativeExample example);
@@ -34,8 +32,6 @@ public interface ExtTaskMapper {
 
     List<RuleVo> imageRuleList(RuleVo ruleVo);
 
-    List<RuleVo> packageRuleList(RuleVo ruleVo);
-
     List<RuleVo> codeRuleList(RuleVo ruleVo);
 
     List<RuleVo> ruleTagList(RuleVo ruleVo);
@@ -49,8 +45,6 @@ public interface ExtTaskMapper {
     ServerRuleDTO serverDetailRule(RuleVo ruleVo);
 
     ImageRuleDTO imageDetailRule(RuleVo ruleVo);
-
-    PackageRuleDTO packageDetailRule(RuleVo ruleVo);
 
     CodeRuleDTO codeDetailRule(RuleVo ruleVo);
 

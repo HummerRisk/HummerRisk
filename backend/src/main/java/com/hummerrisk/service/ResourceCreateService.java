@@ -59,10 +59,6 @@ public class ResourceCreateService {
     @Resource
     private XrayService xrayService;
     @Resource
-    private PackageService packageService;
-    @Resource
-    private PackageResultMapper packageResultMapper;
-    @Resource
     private ServerService serverService;
     @Resource
     private ServerResultMapper serverResultMapper;
@@ -92,8 +88,6 @@ public class ResourceCreateService {
     private HistoryServerTaskMapper historyServerTaskMapper;
     @Resource
     private HistoryImageTaskMapper historyImageTaskMapper;
-    @Resource
-    private HistoryPackageTaskMapper historyPackageTaskMapper;
     @Resource
     private TaskItemResourceLogMapper taskItemResourceLogMapper;
     @Resource
@@ -142,39 +136,6 @@ public class ResourceCreateService {
                         LogUtil.error(e);
                     } finally {
                         processingGroupIdMap.remove(cloudTaskToBeProceed.getId());
-                    }
-                });
-            });
-        }
-
-        //软件包检测
-        final PackageResultExample packageResultExample = new PackageResultExample();
-        PackageResultExample.Criteria packageCriteria = packageResultExample.createCriteria();
-        packageCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
-            packageCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
-        }
-        packageResultExample.setOrderByClause("create_time limit 10");
-        List<PackageResultWithBLOBs> packageResults = packageResultMapper.selectByExampleWithBLOBs(packageResultExample);
-        if (CollectionUtils.isNotEmpty(packageResults)) {
-            packageResults.forEach(packageResult -> {
-                final PackageResultWithBLOBs packageToBeProceed;
-                try {
-                    packageToBeProceed = BeanUtils.copyBean(new PackageResultWithBLOBs(), packageResult);
-                } catch (Exception e) {
-                    throw new RuntimeException(e.getMessage());
-                }
-                if (processingGroupIdMap.get(packageToBeProceed.getId()) != null) {
-                    return;
-                }
-                processingGroupIdMap.put(packageToBeProceed.getId(), packageToBeProceed.getId());
-                commonThreadPool.addTask(() -> {
-                    try {
-                        packageService.createScan(packageToBeProceed);
-                    } catch (Exception e) {
-                        LogUtil.error(e);
-                    } finally {
-                        processingGroupIdMap.remove(packageToBeProceed.getId());
                     }
                 });
             });
@@ -447,16 +408,6 @@ public class ResourceCreateService {
                         historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), imageResult, TaskEnum.imageAccount.getType()));
                         historyService.updateScanTaskHistory(historyScanTask);
                     }
-                } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.packageAccount.getType())) {
-                    PackageResult packageResult = packageResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
-                    if (packageResult != null && historyScanStatus.contains(packageResult.getResultStatus())) {
-                        historyScanTask.setStatus(packageResult.getResultStatus());
-                        historyScanTask.setOutput(jsonArray.toJSONString());
-                        historyScanTask.setResourcesSum(packageResult.getReturnSum()!=null? packageResult.getReturnSum():0);
-                        historyScanTask.setReturnSum(packageResult.getReturnSum()!=null? packageResult.getReturnSum():0);
-                        historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), packageResult, TaskEnum.packageAccount.getType()));
-                        historyService.updateScanTaskHistory(historyScanTask);
-                    }
                 } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.codeAccount.getType())) {
                     CodeResult codeResult = codeResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
                     if (codeResult != null && historyScanStatus.contains(codeResult.getResultStatus())) {
@@ -551,11 +502,6 @@ public class ResourceCreateService {
                         HistoryImageTaskExample example = new HistoryImageTaskExample();
                         example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
                         n = historyImageTaskMapper.countByExample(example);
-                        i = i + n;
-                    } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.packageAccount.getType())) {
-                        HistoryPackageTaskExample example = new HistoryPackageTaskExample();
-                        example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
-                        n = historyPackageTaskMapper.countByExample(example);
                         i = i + n;
                     } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.codeAccount.getType())) {
                         HistoryCodeResultExample example = new HistoryCodeResultExample();

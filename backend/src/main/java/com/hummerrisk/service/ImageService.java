@@ -29,8 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.hummerrisk.service.SysListener.changeFlowFormat;
-
 /**
  * @author harris
  */
@@ -72,8 +70,6 @@ public class ImageService {
     private HistoryService historyService;
     @Resource
     private ImageRepoItemMapper imageRepoItemMapper;
-    @Resource
-    private PackageService packageService;
     @Resource
     private ImageRepoSyncLogMapper imageRepoSyncLogMapper;
     @Resource
@@ -186,7 +182,7 @@ public class ImageService {
                                 imageRepoItem.setRepoId(imageRepo.getId());
                                 imageRepoItem.setPushTime(push_time);
                                 imageRepoItem.setArch(architecture);
-                                imageRepoItem.setSize(packageService.changeFlowFormat(size));
+                                imageRepoItem.setSize(changeFlowFormat(size));
                                 imageRepoItem.setPath(path.replaceAll("https://", "").replaceAll("http://", "") + "/" + projectName + "/" + repName + ":" + tagStr);
                                 imageRepoItemMapper.insertSelective(imageRepoItem);
                                 i++;
@@ -694,5 +690,42 @@ public class ImageService {
         ImageRepo imageRepo = imageRepoMapper.selectByPrimaryKey(id);
         syncImages(imageRepo);
     }
+
+    /**
+     * 转换流量格式为xxGBxxMBxxKB
+     */
+    public String changeFlowFormat(long flows) {
+        flows = flows / 1024;//默认是1024KB
+        if (flows > 0 && flows < 1024) {//小于1M
+            return flows + "KB";
+        } else if (flows >= 1024 && flows < 1048576) {//大于1M小于1G
+            int changeM = (int) Math.floor(flows / 1024);//整M数
+            int surplusM = (int) Math.floor(flows % 1024);//除M后的余数
+            if (surplusM > 0) {//余数大于0KB
+                return changeM + 1 + "MB";
+            } else {//整M，没有余数
+                return changeM + "MB";
+            }
+        } else if (flows >= 1048576) {//大于1G
+            int changeG = (int) Math.floor(flows / 1048576);//整G数
+            int surplusG = (int) Math.floor(flows % 1048576);//除G后的余数
+            if (surplusG >= 1024) {//余数大于大于1M
+                int changeM = (int) Math.floor(surplusG / 1024);
+                int surplusM = (int) Math.floor(surplusG % 1024);
+                if (surplusM > 0) {//余数大于0KB
+                    return changeG + 1 + "GB";
+                } else {//整M，没有余数
+                    return changeG + 1 + "GB";
+                }
+            } else if (surplusG < 1024 && surplusG > 0) {//余数小于1M，大于0K
+                int surplusM = (int) Math.floor(surplusG % 1024);
+                return changeG + 1 + "GB";
+            } else {
+                return changeG + "GB";
+            }
+        }
+        return "i18n_no_data";
+    }
+
 
 }

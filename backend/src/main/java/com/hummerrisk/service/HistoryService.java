@@ -3,7 +3,6 @@ package com.hummerrisk.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hummerrisk.base.domain.Package;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtResourceMapper;
@@ -54,10 +53,6 @@ public class HistoryService {
     private HistoryServerTaskMapper historyServerTaskMapper;
     @Resource @Lazy
     private HistoryServerTaskLogMapper historyServerTaskLogMapper;
-    @Resource @Lazy
-    private HistoryPackageTaskMapper historyPackageTaskMapper;
-    @Resource @Lazy
-    private HistoryPackageTaskLogMapper historyPackageTaskLogMapper;
     @Resource @Lazy
     private HistoryImageTaskMapper historyImageTaskMapper;
     @Resource @Lazy
@@ -155,9 +150,6 @@ public class HistoryService {
             } else if(obj.getClass() == Image.class || obj.getClass() == ImageDTO.class) {
                 accountId = ((Image) obj).getId();
                 map.put("accountType", TaskEnum.imageAccount.getType());
-            } else if(obj.getClass() == Package.class || obj.getClass() == PackageDTO.class) {
-                accountId = ((Package) obj).getId();
-                map.put("accountType", TaskEnum.packageAccount.getType());
             } else if(obj.getClass() == CloudNative.class || obj.getClass() == CloudNativeDTO.class) {
                 accountId = ((CloudNative) obj).getId();
                 map.put("accountType", TaskEnum.k8sAccount.getType());
@@ -185,8 +177,6 @@ public class HistoryService {
                 resultId = ((ServerResult) obj).getId();
             } else if(obj.getClass() == ImageResult.class || obj.getClass() == ImageResultWithBLOBs.class || obj.getClass() == ImageResultDTO.class) {
                 resultId = ((ImageResult) obj).getId();
-            } else if(obj.getClass() == PackageResult.class || obj.getClass() == PackageResultWithBLOBs.class || obj.getClass() == PackageResultDTO.class) {
-                resultId = ((PackageResult) obj).getId();
             }
             return resultId;
         } catch (Exception e) {
@@ -267,21 +257,6 @@ public class HistoryService {
             } else {
                 score = 100 - 41;
             }
-        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.packageAccount.getType())) {
-            PackageResult packageResult = (PackageResult) task;
-            if (packageResult.getReturnSum() >= 0 && packageResult.getReturnSum() < 10) {
-                score = 100 - 5;
-            } else if (packageResult.getReturnSum() >= 10 && packageResult.getReturnSum() < 50) {
-                score = 100 - 10;
-            } else if (packageResult.getReturnSum() >= 50 && packageResult.getReturnSum() < 100) {
-                score = 100 - 20;
-            } else if (packageResult.getReturnSum() >= 100 && packageResult.getReturnSum() < 200) {
-                score = 100 - 30;
-            } else if (packageResult.getReturnSum() >= 200 && packageResult.getReturnSum() < 500) {
-                score = 100 - 40;
-            } else {
-                score = 100 - 41;
-            }
         } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.codeAccount.getType())) {
             CodeResult codeResult = (CodeResult) task;
             if (codeResult.getReturnSum() >= 0 && codeResult.getReturnSum() < 10) {
@@ -293,6 +268,36 @@ public class HistoryService {
             } else if (codeResult.getReturnSum() >= 100 && codeResult.getReturnSum() < 200) {
                 score = 100 - 30;
             } else if (codeResult.getReturnSum() >= 200 && codeResult.getReturnSum() < 500) {
+                score = 100 - 40;
+            } else {
+                score = 100 - 41;
+            }
+        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.k8sAccount.getType())) {
+            CloudNativeResult cloudNativeResult = (CloudNativeResult) task;
+            if (cloudNativeResult.getReturnSum() >= 0 && cloudNativeResult.getReturnSum() < 10) {
+                score = 100 - 5;
+            } else if (cloudNativeResult.getReturnSum() >= 10 && cloudNativeResult.getReturnSum() < 50) {
+                score = 100 - 10;
+            } else if (cloudNativeResult.getReturnSum() >= 50 && cloudNativeResult.getReturnSum() < 100) {
+                score = 100 - 20;
+            } else if (cloudNativeResult.getReturnSum() >= 100 && cloudNativeResult.getReturnSum() < 200) {
+                score = 100 - 30;
+            } else if (cloudNativeResult.getReturnSum() >= 200 && cloudNativeResult.getReturnSum() < 500) {
+                score = 100 - 40;
+            } else {
+                score = 100 - 41;
+            }
+        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.configAccount.getType())) {
+            CloudNativeConfigResult cloudNativeConfigResult = (CloudNativeConfigResult) task;
+            if (cloudNativeConfigResult.getReturnSum() >= 0 && cloudNativeConfigResult.getReturnSum() < 10) {
+                score = 100 - 5;
+            } else if (cloudNativeConfigResult.getReturnSum() >= 10 && cloudNativeConfigResult.getReturnSum() < 50) {
+                score = 100 - 10;
+            } else if (cloudNativeConfigResult.getReturnSum() >= 50 && cloudNativeConfigResult.getReturnSum() < 100) {
+                score = 100 - 20;
+            } else if (cloudNativeConfigResult.getReturnSum() >= 100 && cloudNativeConfigResult.getReturnSum() < 200) {
+                score = 100 - 30;
+            } else if (cloudNativeConfigResult.getReturnSum() >= 200 && cloudNativeConfigResult.getReturnSum() < 500) {
                 score = 100 - 40;
             } else {
                 score = 100 - 41;
@@ -426,18 +431,6 @@ public class HistoryService {
 
     public void insertHistoryServerTaskLog(HistoryServerTaskLog record) {
         historyServerTaskLogMapper.insertSelective(record);
-    }
-
-    public void insertHistoryPackageTask(HistoryPackageTaskWithBLOBs record) {
-        historyPackageTaskMapper.insertSelective(record);
-    }
-
-    public void updateHistoryPackageTask(HistoryPackageTaskWithBLOBs record) {
-        historyPackageTaskMapper.updateByPrimaryKeySelective(record);
-    }
-
-    public void insertHistoryPackageTaskLog(HistoryPackageTaskLog record) {
-        historyPackageTaskLogMapper.insertSelective(record);
     }
 
     public void insertHistoryImageTask(HistoryImageTaskWithBLOBs record) {

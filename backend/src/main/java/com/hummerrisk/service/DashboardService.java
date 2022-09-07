@@ -38,7 +38,9 @@ public class DashboardService {
     @Resource
     private ServerResultMapper serverResultMapper;
     @Resource
-    private PackageResultMapper packageResultMapper;
+    private CloudNativeResultMapper cloudNativeResultMapper;
+    @Resource
+    private CloudNativeConfigResultMapper cloudNativeConfigResultMapper;
     @Resource
     private ImageResultMapper imageResultMapper;
     @Resource
@@ -122,15 +124,6 @@ public class DashboardService {
         return extDashboardMapper.topInfo(params);
     }
 
-    public PackageChartDTO packageChart(Map<String, Object> params) {
-        PackageChartDTO packageChartDTO = new PackageChartDTO();
-        List<String> xAxis = extDashboardMapper.packageChartX(params);
-        List<Integer> yAxis = extDashboardMapper.packageChartY(params);
-        packageChartDTO.setxAxis(xAxis);
-        packageChartDTO.setyAxis(yAxis);
-        return packageChartDTO;
-    }
-
     public ImageChartDTO imageChart(Map<String, Object> params) {
         ImageChartDTO imageChartDTO = new ImageChartDTO();
         List<String> xAxis = extDashboardMapper.imageChartX(params);
@@ -185,6 +178,20 @@ public class DashboardService {
             }
         }
 
+        CloudNativeResultExample cloudNativeResultExample = new CloudNativeResultExample();
+        cloudNativeResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
+        List<CloudNativeResult> cloudNativeResults = cloudNativeResultMapper.selectByExample(cloudNativeResultExample);
+        for(CloudNativeResult cloudNativeResult : cloudNativeResults) {
+            sum = sum + historyService.calculateScore(cloudNativeResult.getId(), cloudNativeResult, TaskEnum.k8sAccount.getType());
+        }
+
+        CloudNativeConfigResultExample cloudNativeConfigResultExample = new CloudNativeConfigResultExample();
+        cloudNativeConfigResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
+        List<CloudNativeConfigResult> cloudNativeConfigResults = cloudNativeConfigResultMapper.selectByExample(cloudNativeConfigResultExample);
+        for(CloudNativeConfigResult cloudNativeConfigResult : cloudNativeConfigResults) {
+            sum = sum + historyService.calculateScore(cloudNativeConfigResult.getId(), cloudNativeConfigResult, TaskEnum.configAccount.getType());
+        }
+
         ServerResultExample serverResultExample = new ServerResultExample();
         serverResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
         List<ServerResult> serverResults = serverResultMapper.selectByExample(serverResultExample);
@@ -199,13 +206,6 @@ public class DashboardService {
             sum = sum + historyService.calculateScore(imageResult.getId(), imageResult, TaskEnum.imageAccount.getType());
         }
 
-        PackageResultExample packageResultExample = new PackageResultExample();
-        packageResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
-        List<PackageResult> packageResults = packageResultMapper.selectByExample(packageResultExample);
-        for(PackageResult packageResult : packageResults) {
-            sum = sum + historyService.calculateScore(packageResult.getId(), packageResult, TaskEnum.packageAccount.getType());
-        }
-
         CodeResultExample codeResultExample = new CodeResultExample();
         codeResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
         List<CodeResult> codeResults = codeResultMapper.selectByExample(codeResultExample);
@@ -213,7 +213,7 @@ public class DashboardService {
             sum = sum + historyService.calculateScore(codeResult.getId(), codeResult, TaskEnum.codeAccount.getType());
         }
 
-        count = cloudTasks.size() + serverResults.size() + imageResults.size() + packageResults.size() + codeResults.size();
+        count = cloudTasks.size() + cloudNativeResults.size() + cloudNativeConfigResults.size() + serverResults.size() + imageResults.size() + codeResults.size();
 
         if(count != 0) score = Math.round(sum / count);
 

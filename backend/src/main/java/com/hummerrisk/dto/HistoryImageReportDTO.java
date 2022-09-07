@@ -1,7 +1,8 @@
 package com.hummerrisk.dto;
 
 
-import com.hummerrisk.base.domain.*;
+import com.hummerrisk.base.domain.HistoryImageTask;
+import com.hummerrisk.base.domain.ImageTrivyJsonWithBLOBs;
 
 import java.util.List;
 

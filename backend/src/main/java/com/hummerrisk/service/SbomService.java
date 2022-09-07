@@ -43,25 +43,17 @@ public class SbomService {
     @Resource
     private ImageMapper imageMapper;
     @Resource
-    private PackageMapper packageMapper;
-    @Resource
     private CodeService codeService;
     @Resource
     private ImageService imageService;
-    @Resource
-    private PackageService packageService;
     @Resource
     private HistoryCodeResultMapper historyCodeResultMapper;
     @Resource
     private HistoryImageTaskMapper historyImageTaskMapper;
     @Resource
-    private HistoryPackageTaskMapper historyPackageTaskMapper;
-    @Resource
     private HistoryCodeResultLogMapper historyCodeResultLogMapper;
     @Resource
     private HistoryImageTaskLogMapper historyImageTaskLogMapper;
-    @Resource
-    private HistoryPackageTaskLogMapper historyPackageTaskLogMapper;
 
 
     public List<SbomDTO> sbomList(SbomRequest request) {
@@ -145,16 +137,6 @@ public class SbomService {
                 throw new RuntimeException(e);
             }
         });
-        PackageExample packageExample = new PackageExample();
-        packageExample.createCriteria().andSbomVersionIdEqualTo(id);
-        List<Package> packages = packageMapper.selectByExample(packageExample);
-        packages.forEach(pg -> {
-            try {
-                packageService.scan(pg.getId());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
     }
 
     public void settingVersion(SettingVersionRequest request) throws Exception {
@@ -190,21 +172,6 @@ public class SbomService {
             image.setSbomVersionId(sbomVersionId);
             imageMapper.updateByPrimaryKeySelective(image);
         }
-        //软件包
-        PackageExample packageExample = new PackageExample();
-        packageExample.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
-        List<Package> packages = packageMapper.selectByExample(packageExample);
-        for(Package pg : packages) {
-            pg.setSbomId("");
-            pg.setSbomVersionId("");
-            packageMapper.updateByPrimaryKeySelective(pg);
-        }
-        for(String id : request.getPackageValue()) {
-            Package pg = packageMapper.selectByPrimaryKey(id);
-            pg.setSbomId(sbomId);
-            pg.setSbomVersionId(sbomVersionId);
-            packageMapper.updateByPrimaryKeySelective(pg);
-        }
     }
 
     public List<ApplicationDTO> applications(SbomRequest request) throws Exception {
@@ -234,13 +201,6 @@ public class SbomService {
         return dtos;
     }
 
-    public List<HistoryPackageTask> historyPackageTask(String sbomVersionId) {
-        HistoryPackageTaskExample example = new HistoryPackageTaskExample();
-        example.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
-        example.setOrderByClause("create_time desc");
-        return historyPackageTaskMapper.selectByExample(example);
-    }
-
     public List<HistoryCodeResultLog> getCodeResultLog(String resultId) {
         HistoryCodeResultLogExample example = new HistoryCodeResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
@@ -256,12 +216,6 @@ public class SbomService {
         HistoryImageTaskLogExample example = new HistoryImageTaskLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
         return historyImageTaskLogMapper.selectByExampleWithBLOBs(example);
-    }
-
-    public List<HistoryPackageTaskLog> getPackageResultLog(String resultId) {
-        HistoryPackageTaskLogExample example = new HistoryPackageTaskLogExample();
-        example.createCriteria().andResultIdEqualTo(resultId);
-        return historyPackageTaskLogMapper.selectByExampleWithBLOBs(example);
     }
 
     public MetricChartDTO codeMetricChart (String resultId) {
@@ -284,9 +238,6 @@ public class SbomService {
         } else if (StringUtils.equalsIgnoreCase(request.getType(), "image")) {
             HistoryImageTaskWithBLOBs imageTask = historyImageTaskMapper.selectByPrimaryKey(request.getSourceId());
             str = imageTask.getTrivyJson()!=null?imageTask.getTrivyJson():"";
-        } else if (StringUtils.equalsIgnoreCase(request.getType(), "package")) {
-            HistoryPackageTaskWithBLOBs packageTaskWithBLOBs = historyPackageTaskMapper.selectByPrimaryKey(request.getSourceId());
-            str = packageTaskWithBLOBs.getReturnJson();
         }
         return str;
     }

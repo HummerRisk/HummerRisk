@@ -20,8 +20,6 @@ public class TaskReportDTO extends Task {
 
     private List<HistoryImageReportDTO> historyImageReportDTOList;//镜像检测结果details
 
-    private List<HistoryPackageReportDTO> historyPackageReportDTOList;//软件包检测结果details
-
     private List<HistoryCodeReportDTO> historyCodeReportDTOList;//软件包检测结果details
 
     public List<HistoryCloudTaskDTO> getHistoryCloudTaskDTOList() {
@@ -72,11 +70,4 @@ public class TaskReportDTO extends Task {
         this.historyImageReportDTOList = historyImageReportDTOList;
     }
 
-    public List<HistoryPackageReportDTO> getHistoryPackageReportDTOList() {
-        return historyPackageReportDTOList;
-    }
-
-    public void setHistoryPackageReportDTOList(List<HistoryPackageReportDTO> historyPackageReportDTOList) {
-        this.historyPackageReportDTOList = historyPackageReportDTOList;
-    }
 }

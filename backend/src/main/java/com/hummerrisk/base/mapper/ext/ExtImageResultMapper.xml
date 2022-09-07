@@ -50,12 +50,6 @@
                 <property name="object" value="${condition}.name"/>
             </include>
         </if>
-        <if test='${condition}.packageName != null'>
-            and t.package_name
-            <include refid="condition">
-                <property name="object" value="${condition}.packageName"/>
-            </include>
-        </if>
         <if test='${condition}.ruleName != null'>
             and t.rule_name
             <include refid="condition">

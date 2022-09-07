@@ -48,17 +48,11 @@ public class NoticeCreateService {
     @Resource
     private AccountMapper accountMapper;
     @Resource
-    private PackageService packageService;
-    @Resource
-    private PackageResultMapper packageResultMapper;
-    @Resource
     private ServerService serverService;
     @Resource
     private ServerResultMapper serverResultMapper;
     @Resource
     private ServerMapper serverMapper;
-    @Resource
-    private PackageMapper packageMapper;
 
     @QuartzScheduled(cron = "${cron.expression.notice}")
     public void handleTasks() {
@@ -174,17 +168,6 @@ public class NoticeCreateService {
                 } else {
                     handleMessageOrderItem(item);
                 }
-            } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.PACKAGE.name(), scanType)) {
-                PackageResult packageResult = packageResultMapper.selectByPrimaryKey(item.getTaskId());
-                if (StringUtils.equalsIgnoreCase(packageResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
-                        || StringUtils.equalsIgnoreCase(packageResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.WARNING.name())
-                        || StringUtils.equalsIgnoreCase(packageResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.ERROR.name())) {
-                    item.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
-                    item.setSendTime(System.currentTimeMillis());
-                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
-                } else {
-                    handleMessageOrderItem(item);
-                }
             } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), scanType)) {
 
             }
@@ -234,8 +217,6 @@ public class NoticeCreateService {
             details =  "i18n_cloud_messageorder_sum" + returnSum  + "/" + resourcesSum;
         } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), messageOrder.getScanType())) {
             subject = "i18n_server_messageorder";
-        } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.PACKAGE.name(), messageOrder.getScanType())) {
-            subject = "i18n_package_messageorder";
         } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), messageOrder.getScanType())) {
             subject = "i18n_image_messageorder";
         }

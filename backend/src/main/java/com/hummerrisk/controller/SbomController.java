@@ -123,13 +123,6 @@ public class SbomController {
     }
 
     @I18n
-    @ApiOperation(value = "所有已绑定项目的软件包的检测结果")
-    @GetMapping("historyPackageTask/{sbomVersionId}")
-    public List<HistoryPackageTask> historyPackageTask(@PathVariable String sbomVersionId) {
-        return sbomService.historyPackageTask(sbomVersionId);
-    }
-
-    @I18n
     @ApiOperation(value = "源码检测历史日志")
     @GetMapping(value = "codeLog/{resultId}")
     public List<HistoryCodeResultLog> getCodeResultLog(@PathVariable String resultId) {
@@ -148,13 +141,6 @@ public class SbomController {
     @GetMapping(value = "imageLog/{resultId}")
     public List<HistoryImageTaskLog> getImageResultLog(@PathVariable String resultId) {
         return sbomService.getImageResultLog(resultId);
-    }
-
-    @I18n
-    @ApiOperation(value = "软件包检测历史日志")
-    @GetMapping(value = "packageLog/{resultId}")
-    public List<HistoryPackageTaskLog> getPackageResultLog(@PathVariable String resultId) {
-        return sbomService.getPackageResultLog(resultId);
     }
 
     @I18n

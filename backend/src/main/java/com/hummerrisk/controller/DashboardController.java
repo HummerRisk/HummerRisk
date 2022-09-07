@@ -88,13 +88,6 @@ public class DashboardController {
     }
 
     @I18n
-    @ApiOperation(value = "首页软件包检测统计")
-    @PostMapping("packageChart")
-    public PackageChartDTO packageChart(@RequestBody Map<String, Object> params) {
-        return dashboardService.packageChart(params);
-    }
-
-    @I18n
     @ApiOperation(value = "首页镜像检测统计")
     @PostMapping("imageChart")
     public ImageChartDTO imageChart(@RequestBody Map<String, Object> params) {

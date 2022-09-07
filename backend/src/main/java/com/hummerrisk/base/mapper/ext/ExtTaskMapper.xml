@@ -183,35 +183,6 @@
         </if>
     </select>
 
-    <resultMap id="PackageBaseResultMap" type="com.hummerrisk.controller.request.task.PackageVo">
-        <id column="id" jdbcType="VARCHAR" property="id" />
-        <result column="name" jdbcType="VARCHAR" property="name" />
-        <result column="package_name" jdbcType="VARCHAR" property="packageName" />
-        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
-        <result column="status" jdbcType="VARCHAR" property="status" />
-        <result column="create_time" jdbcType="BIGINT" property="createTime" />
-        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
-        <result column="creator" jdbcType="VARCHAR" property="creator" />
-        <result column="size" jdbcType="VARCHAR" property="size" />
-        <result column="path" jdbcType="VARCHAR" property="path" />
-        <result column="is_proxy" jdbcType="BIT" property="isProxy" />
-        <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
-        <result column="favour" jdbcType="BOOLEAN" property="favour" />
-        <result column="type" jdbcType="VARCHAR" property="type" />
-    </resultMap>
-
-    <select id="selectPackageByExample" parameterType="com.hummerrisk.base.domain.PackageExample" resultMap="PackageBaseResultMap">
-        select t.*, (f.id is null) as favour, 'packageAccount' as type
-        from package t
-        left join favorite f on t.id = f.source_id
-        <if test="_parameter != null">
-            <include refid="Example_Where_Clause" />
-        </if>
-        <if test="orderByClause != null">
-            order by ${orderByClause}
-        </if>
-    </select>
-
     <resultMap id="CodeBaseResultMap" type="com.hummerrisk.controller.request.task.CodeVo">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
@@ -383,26 +354,6 @@
         order by t.last_modified desc
     </select>
 
-    <select id="packageRuleList" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.controller.request.task.RuleVo">
-        select
-        t.id as sourceId,
-        'rule' as ruleType,
-        t.name as ruleName,
-        t.description as ruleDesc,
-        'package.png' as icon,
-        t.severity,
-        (select id from package where id = #{accountId}) as accountId,
-        (select name from package where id = #{accountId}) as accountName,
-        'packageAccount' as accountType
-        from package_rule t
-        <where>
-            <if test="ruleName != null">
-                AND t.name like CONCAT('%', #{ruleName},'%')
-            </if>
-        </where>
-        order by t.last_modified desc
-    </select>
-
     <select id="codeRuleList" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.controller.request.task.RuleVo">
         select
         t.id as sourceId,
@@ -443,9 +394,6 @@
             <if test="accountType != null and accountType == 'imageAccount'">
                 select id from image where id = #{accountId}
             </if>
-            <if test="accountType != null and accountType == 'packageAccount'">
-                select id from package where id = #{accountId}
-            </if>
             <if test="accountType != null and accountType == 'codeAccount'">
                 select id from code where id = #{accountId}
             </if>
@@ -465,9 +413,6 @@
             <if test="accountType != null and accountType == 'imageAccount'">
                 select name from image where id = #{accountId}
             </if>
-            <if test="accountType != null and accountType == 'packageAccount'">
-                select name from package where id = #{accountId}
-            </if>
             <if test="accountType != null and accountType == 'codeAccount'">
                 select name from code where id = #{accountId}
             </if>
@@ -486,9 +431,6 @@
             </if>
             <if test="accountType != null and accountType == 'imageAccount'">
                 'imageAccount'
-            </if>
-            <if test="accountType != null and accountType == 'packageAccount'">
-                'packageAccount'
             </if>
             <if test="accountType != null and accountType == 'codeAccount'">
                 'codeAccount'
@@ -525,9 +467,6 @@
             <if test="accountType != null and accountType == 'imageAccount'">
                 select id from image where id = #{accountId}
             </if>
-            <if test="accountType != null and accountType == 'packageAccount'">
-                select id from package where id = #{accountId}
-            </if>
             <if test="accountType != null and accountType == 'codeAccount'">
                 select id from code where id = #{accountId}
             </if>
@@ -547,9 +486,6 @@
             <if test="accountType != null and accountType == 'imageAccount'">
                 select name from image where id = #{accountId}
             </if>
-            <if test="accountType != null and accountType == 'packageAccount'">
-                select name from package where id = #{accountId}
-            </if>
             <if test="accountType != null and accountType == 'codeAccount'">
                 select name from code where id = #{accountId}
             </if>
@@ -568,9 +504,6 @@
             </if>
             <if test="accountType != null and accountType == 'imageAccount'">
                 'imageAccount'
-            </if>
-            <if test="accountType != null and accountType == 'packageAccount'">
-                'packageAccount'
             </if>
             <if test="accountType != null and accountType == 'codeAccount'">
                 'codeAccount'
@@ -664,24 +597,6 @@
         t1.tag_key as tagKey,
         t2.tag_name as tagName
         FROM image_rule t
-        left join rule_tag_mapping t1 on t1.rule_id = t.id
-        left join rule_tag t2 on t1.tag_key = t2.tag_key
-
-        <where>
-            <if test="sourceId != null">
-                AND t.id = #{sourceId}
-            </if>
-        </where>
-        ORDER BY t.last_modified desc
-    </select>
-
-    <select id="packageDetailRule" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.dto.PackageRuleDTO">
-        SELECT
-        t.*,
-        'package.png' as pluginIcon,
-        t1.tag_key as tagKey,
-        t2.tag_name as tagName
-        FROM package_rule t
         left join rule_tag_mapping t1 on t1.rule_id = t.id
         left join rule_tag t2 on t1.tag_key = t2.tag_key
 
@@ -792,32 +707,6 @@
         UNION ALL
 
         SELECT
-            DISTINCT
-            t2.id,
-            t2.name,
-            t2.status,
-            t2.severity,
-            t2.description,
-            t2.parameter,
-            t2.last_modified as lastModified,
-            t2.flag,
-            t2.script
-        FROM rule_tag t
-        left join rule_tag_mapping t1 on t.tag_key = t1.tag_key
-        join package_rule t2 on t1.rule_id = t2.id
-
-        <where>
-            <if test="sourceId != null">
-                AND t.tag_key = #{sourceId}
-            </if>
-            <if test="accountType != null and accountType != 'packageAccount'">
-                AND t.tag_key = 'packageAccount'
-            </if>
-        </where>
-
-        UNION ALL
-
-        SELECT
         DISTINCT
         t2.id,
         t2.name,
@@ -904,29 +793,6 @@
         FROM rule_group t
         left join rule_group_mapping t1 on t.id = t1.group_id
         join image_rule t2 on t1.rule_id = t2.id
-
-        <where>
-            <if test="sourceId != null">
-                AND t.id = #{sourceId}
-            </if>
-        </where>
-
-        UNION ALL
-
-        SELECT
-            DISTINCT
-            t2.id,
-            t2.name,
-            t2.status,
-            t2.severity,
-            t2.description,
-            t2.parameter,
-            t2.last_modified as lastModified,
-            t2.flag,
-            t2.script
-        FROM rule_group t
-        left join rule_group_mapping t1 on t.id = t1.group_id
-        join package_rule t2 on t1.rule_id = t2.id
 
         <where>
             <if test="sourceId != null">
@@ -1051,17 +917,6 @@
         UNION ALL
 
         SELECT t.id,
-               concat(t.name, ' | ', t.package_name) as name,
-               t.rule_desc as 'desc',
-               t.result_status as status,
-               t.severity,
-               'package.png' as icon
-        FROM history_package_task t
-        WHERE t.id = #{resource_id}
-
-        UNION ALL
-
-        SELECT t.id,
                t.name as name,
                t.rule_desc as 'desc',
                t.result_status as status,
@@ -1096,8 +951,6 @@
         <collection property="historyServerTaskList" ofType="com.hummerrisk.base.domain.HistoryServerTask" javaType="list" select="getHistoryServerTaskList" column="id">
         </collection>
         <collection property="historyImageReportDTOList" ofType="com.hummerrisk.dto.HistoryImageReportDTO" javaType="list" select="getHistoryImageReportDTOList" column="id">
-        </collection>
-        <collection property="historyPackageReportDTOList" ofType="com.hummerrisk.dto.HistoryPackageReportDTO" javaType="list" select="getHistoryPackageReportDTOList" column="id">
         </collection>
         <collection property="historyCodeReportDTOList" ofType="com.hummerrisk.dto.HistoryCodeReportDTO" javaType="list" select="getHistoryCodeReportDTOList" column="id">
         </collection>
@@ -1194,25 +1047,6 @@
         SELECT t.*
         FROM image_trivy_json t
         WHERE t.result_id = #{id}
-    </select>
-
-    <resultMap id="HistoryPackageReportDTOMap" type="com.hummerrisk.dto.HistoryPackageReportDTO" extends="com.hummerrisk.base.mapper.HistoryPackageTaskMapper.BaseResultMap">
-        <collection property="packageDependencyJsonList" ofType="com.hummerrisk.base.domain.PackageDependencyJsonWithBLOBs" javaType="list" select="getPackageDependencyJsonList" column="id">
-        </collection>
-    </resultMap>
-
-    <select id="getHistoryPackageReportDTOList" resultMap="HistoryPackageReportDTOMap" parameterType="java.lang.String">
-        SELECT t.*
-        FROM history_package_task t
-        JOIN task_item_resource t1 on t1.resource_id = t.id
-        WHERE t1.task_id = #{id}
-    </select>
-
-    <select id="getPackageDependencyJsonList" resultType="com.hummerrisk.base.domain.PackageDependencyJsonWithBLOBs" parameterType="java.lang.String">
-        SELECT t.*
-        FROM package_dependency_json t
-        JOIN history_package_task t1 on t1.id = t.result_id
-        WHERE t1.id = #{id}
     </select>
 
     <resultMap id="HistoryCodeReportDTOMap" type="com.hummerrisk.dto.HistoryCodeReportDTO" extends="com.hummerrisk.base.mapper.HistoryCodeResultMapper.BaseResultMap">

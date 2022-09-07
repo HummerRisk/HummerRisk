@@ -3,7 +3,7 @@
 <mapper namespace="com.hummerrisk.base.mapper.ext.ExtImageRepoMapper">
 
     <resultMap id="ImageRepoResultMap" type="com.hummerrisk.base.domain.ImageRepo"
-               extends="com.hummerrisk.base.mapper.PackageMapper.BaseResultMap">
+               extends="com.hummerrisk.base.mapper.ImageRepoMapper.BaseResultMap">
         <result column="user" property="user"/>
     </resultMap>
 

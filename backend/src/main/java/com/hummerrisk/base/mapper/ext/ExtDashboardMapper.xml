@@ -7,7 +7,6 @@
         from (
               (SELECT IFNULL(count(user.id), 0) as users from user) as users,
               (SELECT IFNULL(count(task.id), 0) as tasks from task) as tasks,
-              (SELECT (SELECT IFNULL(count(t.id), 0) from cloud_account t) + (SELECT IFNULL(count(t.id), 0) from image t) + (SELECT IFNULL(count(t.id), 0) from package t) + (SELECT IFNULL(count(t.id), 0) from server t) + (SELECT IFNULL(count(t.id), 0) from code t) as accounts) as accounts,
               (SELECT IFNULL(count(t.id), 0) as cloudAccounts from cloud_account t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'cloud') as cloudAccounts,
               (SELECT IFNULL(count(t.id), 0) as vulnAccounts from cloud_account t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'vuln') as vulnAccounts,
               (SELECT IFNULL(count(t.id), 0) as serverAccounts from server t) as serverAccounts,

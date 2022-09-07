@@ -9,8 +9,6 @@ public class TaskRuleDTO {
 
    private ServerRuleDTO serverRuleDTO;
 
-   private PackageRuleDTO packageRuleDTO;
-
    private ImageRuleDTO imageRuleDTO;
 
     private CodeRuleDTO codeRuleDTO;
@@ -29,14 +27,6 @@ public class TaskRuleDTO {
 
     public void setServerRuleDTO(ServerRuleDTO serverRuleDTO) {
         this.serverRuleDTO = serverRuleDTO;
-    }
-
-    public PackageRuleDTO getPackageRuleDTO() {
-        return packageRuleDTO;
-    }
-
-    public void setPackageRuleDTO(PackageRuleDTO packageRuleDTO) {
-        this.packageRuleDTO = packageRuleDTO;
     }
 
     public ImageRuleDTO getImageRuleDTO() {

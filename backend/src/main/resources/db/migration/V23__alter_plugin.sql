@@ -14,11 +14,9 @@ UPDATE plugin SET type = 'cloud' WHERE id = 'hummer-huoshan-plugin';
 UPDATE plugin SET type = 'cloud' WHERE id = 'hummer-qingcloud-plugin';
 UPDATE plugin SET type = 'cloud' WHERE id = 'hummer-ucloud-plugin';
 UPDATE plugin SET type = 'cloud' WHERE id = 'hummer-qiniu-plugin';
-
 UPDATE plugin SET type = 'vuln' WHERE id = 'hummer-xray-plugin';
 UPDATE plugin SET type = 'vuln' WHERE id = 'hummer-nuclei-plugin';
 UPDATE plugin SET type = 'vuln' WHERE id = 'hummer-tsunami-plugin';
-
 UPDATE plugin SET type = 'native' WHERE id = 'hummer-k8s-plugin';
 
 INSERT INTO `plugin` (`id`, `name`, `icon`, `update_time`, `scan_type`, `order_`, `type`) VALUES ('hummer-rancher-plugin', 'Rancher', 'rancher.png', concat(unix_timestamp(now()), '001'), 'native', 18, 'native');
