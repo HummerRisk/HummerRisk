@@ -19,7 +19,7 @@ import "../common/css/project-style.css";
 import CKEditor from "@ckeditor/ckeditor5-vue";
 import VueCodemirror from "vue-codemirror";
 import "codemirror/mode/shell/shell.js";
-import VueParticles from 'vue-particles';//登录页面的动态粒子背景
+import VueParticles from 'vue-particles'; //登录页面的动态粒子背景
 import "codemirror/theme/bespin.css";
 // import base style
 import "codemirror/lib/codemirror.css";

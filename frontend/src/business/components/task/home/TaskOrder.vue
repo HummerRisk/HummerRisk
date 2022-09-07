@@ -390,8 +390,6 @@ import SeverityType from "./SeverityType";
                 this.detailForm = data.serverRuleDTO;
               } else if(item.accountType === 'imageAccount') {
                 this.detailForm = data.imageRuleDTO;
-              } else if(item.accountType === 'packageAccount') {
-                this.detailForm = data.packageRuleDTO;
               }
               this.detailVisible = true;
             }

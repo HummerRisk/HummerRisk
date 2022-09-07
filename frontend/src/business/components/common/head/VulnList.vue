@@ -27,8 +27,8 @@
 </template>
 
 <script>
-import {getVulnID, getCurrentUser, hasRoles} from "@/common/js/utils";
-import {VULN_ID, VULN_NAME, ROLE_ADMIN} from "@/common/js/constants";
+import {getCurrentUser, getVulnID, hasRoles} from "@/common/js/utils";
+import {ROLE_ADMIN, VULN_ID, VULN_NAME} from "@/common/js/constants";
 
 /* eslint-disable */
 export default {

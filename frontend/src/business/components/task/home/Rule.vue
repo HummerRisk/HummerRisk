@@ -28,11 +28,6 @@
                   <span v-if="!account.path">{{ account.imageUrl }} : {{ account.imageTag }} </span>
                   <span v-if="account.path">{{ account.path }} </span>
                 </span>
-                <span v-if="account.type==='packageAccount'">
-                  <span style="color: red;">{{ $t('task.task_package') }} : </span>
-                  <img :src="require(`@/assets/img/platform/package.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                  {{ account.name }} {{ account.packageName }}
-                </span>
               </span>
             </el-col>
           </div>
@@ -351,8 +346,6 @@ import SeverityType from "./SeverityType";
                 this.detailForm = data.serverRuleDTO;
               } else if(item.accountType === 'imageAccount') {
                 this.detailForm = data.imageRuleDTO;
-              } else if(item.accountType === 'packageAccount') {
-                this.detailForm = data.packageRuleDTO;
               } else if(item.accountType === 'codeAccount') {
                 this.detailForm = data.codeRuleDTO;
               }

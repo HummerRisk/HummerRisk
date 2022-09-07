@@ -23,11 +23,6 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Rule'),
     },
     {
-      path: "packageRule",
-      name: "packageRuleToRule",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/package/home/Rule'),
-    },
-    {
       path: "imageRule",
       name: "imageRuleToRule",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/Rule'),

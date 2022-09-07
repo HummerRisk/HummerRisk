@@ -28,7 +28,7 @@
 
 <script>
 import {getCurrentAccountID, getCurrentUser, hasRoles} from "@/common/js/utils";
-import {ACCOUNT,ACCOUNT_ID, ACCOUNT_NAME, ROLE_ADMIN} from "@/common/js/constants";
+import {ACCOUNT, ACCOUNT_ID, ACCOUNT_NAME, ROLE_ADMIN} from "@/common/js/constants";
 
 /* eslint-disable */
 export default {

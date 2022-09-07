@@ -48,7 +48,7 @@ import TableSearchBar from '../../common/components/TableSearchBar';
 import TableButton from '../../common/components/TableButton';
 import TableAdvSearchBar from "../../common/components/search/TableAdvSearchBar";
 import AccountChange from "@/business/components/common/head/AccountSwitch";
-import {ACCOUNT, ACCOUNT_NAME} from "@/common/js/constants";
+
 export default {
     name: "TableHeader",
     components: {TableAdvSearchBar, TableSearchBar, TableButton,AccountChange},

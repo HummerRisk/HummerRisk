@@ -61,38 +61,24 @@
             <i class="iconfont icon-a-cskrongqifuwuKubernetesban"></i>
             <span slot="title">{{ $t('commons.k8s_scan') }}</span>
           </el-menu-item>
-          <el-menu-item index="/k8sImage" onselectstart="return false" v-permission="['admin']">
-            <i class="iconfont icon-jingxiang2"></i>
-            <span slot="title">{{ $t('image.image_scan') }}</span>
-          </el-menu-item>
           <el-menu-item index="/config" onselectstart="return false" v-permission="['admin']">
             <i class="iconfont icon-dicengjiagou"></i>
             <span slot="title">{{ $t('commons.deployment_detection') }}</span>
           </el-menu-item>
-        </el-submenu>
-        <el-submenu index="3">
-          <template slot="title">
-            <i class="iconfont icon-erji-xunijianquanjiancha"></i>
-            <span slot="title">{{ $t('commons.software_security') }}</span>
-          </template>
-          <el-menu-item index="/sbom" onselectstart="return false" v-permission="['admin']">
-            <i class="iconfont icon-tongjijieguo"></i>
-            <span slot="title">{{ $t('commons.sbom_dependency') }}</span>
+          <el-menu-item index="/image" onselectstart="return false" v-permission="['admin']">
+            <i class="iconfont icon-jingxiang2"></i>
+            <span slot="title">{{ $t('image.image_scan') }}</span>
           </el-menu-item>
           <el-menu-item index="/code" onselectstart="return false" v-permission="['admin']">
             <i class="iconfont icon-yuandaimaxiayoudaima"></i>
             <span slot="title">{{ $t('commons.code_scan') }}</span>
           </el-menu-item>
-          <el-menu-item index="/image" onselectstart="return false" v-permission="['admin']">
-            <i class="iconfont icon-rongqijingxiangzhongxin"></i>
-            <span slot="title">{{ $t('image.image_scan') }}</span>
-          </el-menu-item>
-          <el-menu-item index="/package" onselectstart="return false" v-permission="['admin']">
-            <i class="iconfont icon-ruanjiankaifabao"></i>
-            <span slot="title">{{ $t('package.package_scan') }}</span>
+          <el-menu-item index="/sbom" onselectstart="return false" v-permission="['admin']">
+            <i class="iconfont icon-tongjijieguo"></i>
+            <span slot="title">{{ $t('commons.sbom_dependency') }}</span>
           </el-menu-item>
         </el-submenu>
-        <el-submenu index="4">
+        <el-submenu index="3">
           <template slot="title">
             <i class="iconfont icon-menu"></i>
             <span slot="title">{{ $t('task.task_setting') }}</span>
@@ -106,7 +92,7 @@
             <span slot="title">{{ $t('task.task_report') }}</span>
           </el-menu-item>
         </el-submenu>
-        <el-submenu index="5">
+        <el-submenu index="4">
           <template slot="title">
             <i class="iconfont icon-xitongcaidan"></i>
             <span slot="title">{{ $t('commons.conf_setting') }}</span>

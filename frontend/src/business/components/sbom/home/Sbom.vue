@@ -619,172 +619,6 @@
 
             <!-- image -->
 
-            <!-- package -->
-            <el-table border v-if="tag=='package'" :data="packageData" class="adjust-table table-content" stripe style="min-height: 317px;cursor:pointer;" max-height="318" @row-click="selectVuln">
-              <el-table-column type="index" min-width="2%"/>
-              <el-table-column prop="name" :label="$t('package.name')" min-width="10%" show-overflow-tooltip></el-table-column>
-              <el-table-column prop="packageName" :label="$t('package.package_name')" min-width="10%" show-overflow-tooltip></el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="6%">
-                <el-tooltip effect="dark" :content="$t('history.result')" placement="top">
-                  <el-link type="primary" class="text-click" @click="showPackageResource(scope.row)">{{ scope.row.returnSum }}</el-link>
-                </el-tooltip>
-              </el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="12%" prop="resultStatus" sortable show-overflow-tooltip>
-                <el-button @click="showPackageResultLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
-                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
-                </el-button>
-                <el-button @click="showPackageResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
-                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
-                </el-button>
-                <el-button @click="showPackageResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
-                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
-                </el-button>
-                <el-button @click="showPackageResultLog(scope.row)" plain size="medium" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
-                  <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
-                </el-button>
-                <el-button @click="showPackageResultLog(scope.row)" plain size="medium" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
-                  <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
-                </el-button>
-                <el-button @click="showPackageResultLog(scope.row)" plain size="medium" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
-                  <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
-                </el-button>
-              </el-table-column>
-              <el-table-column prop="updateTime" min-width="15%" :label="$t('image.last_modified')" sortable>
-                <template v-slot:default="scope">
-                  <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column min-width="12%" v-slot:default="scope" :label="$t('commons.operating')">
-                <download :params="scope.row"/>
-              </el-table-column>
-            </el-table>
-
-            <!--Result detail-->
-            <el-drawer class="rtl" :title="$t('package.result_details_list')" :visible.sync="packageVisible" size="85%" :before-close="handleClose" :direction="direction"
-                       :destroy-on-close="true">
-              <package-result-details :id="packageResultId"/>
-              <template v-slot:footer>
-                <dialog-footer
-                  @cancel="packageVisible = false"
-                  @confirm="packageVisible = false"/>
-              </template>
-            </el-drawer>
-            <!--Result detail-->
-
-            <!--Result log-->
-            <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logPackageVisible" size="85%" :before-close="handleClose" :direction="direction"
-                       :destroy-on-close="true">
-              <el-row class="el-form-item-dev" v-if="logPackageData.length == 0">
-                <span>{{ $t('resource.i18n_no_data') }}<br></span>
-              </el-row>
-              <el-row class="el-form-item-dev" v-if="logPackageData.length > 0">
-                <div>
-                  <el-row>
-                    <el-col :span="24">
-                      <div class="grid-content bg-purple-light">
-                        <span class="grid-content-log-span"> {{ logPackageForm.ruleName }} | {{ logPackageForm.name }}</span>
-                        <span class="grid-content-log-span">
-                          <img :src="require(`@/assets/img/platform/package.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                         &nbsp;&nbsp; {{ logPackageForm.packageName }}
-                        </span>
-                                  <span class="grid-content-status-span" v-if="logPackageForm.resultStatus === 'APPROVED'" style="color: #579df8">
-                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
-                        </span>
-                                  <span class="grid-content-status-span" v-else-if="logPackageForm.resultStatus === 'FINISHED'" style="color: #7ebf50">
-                          <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
-                        </span>
-                                  <span class="grid-content-status-span" v-else-if="logPackageForm.resultStatus === 'ERROR'" style="color: red;">
-                          <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
-                        </span>
-                      </div>
-                    </el-col>
-                  </el-row>
-                </div>
-                <el-table :show-header="false" :data="logPackageData" class="adjust-table table-content">
-                  <el-table-column>
-                    <template v-slot:default="scope">
-                      <div class="bg-purple-div">
-                        <span
-                          v-bind:class="{true: 'color-red', false: ''}[scope.row.result == false]">
-                              {{ scope.row.createTime | timestampFormatDate }}
-                              {{ scope.row.operator }}
-                              {{ scope.row.operation }}
-                              {{ scope.row.output }}<br>
-                        </span>
-                      </div>
-                    </template>
-                  </el-table-column>
-                </el-table>
-                <div style="margin: 10px;">
-                  <h2>Summary:&nbsp;</h2>
-                  <ul style="margin-left: 60px;">
-                    <li><i>Scan Name</i>: {{ logPackageForm.name }}</li>
-                    <li><i>Package Name</i>: {{ logPackageForm.packageName }}</li>
-                    <li><i>Package Size</i>:&nbsp;{{ logPackageForm.size }}</li>
-                    <li><i>Rule Name</i>: {{ logPackageForm.ruleDesc }}</li>
-                    <li><i>Scan User</i>:&nbsp;{{ logPackageForm.userName }}</li>
-                    <li><i>Severity</i>:&nbsp;{{ logPackageForm.severity }}</li>
-                    <li><i>Create Time</i>:&nbsp;{{ logPackageForm.createTime | timestampFormatDate }}</li>
-                    <li><i>Result Status</i>:&nbsp;{{ logPackageForm.resultStatus }}</li>
-                    <li><i>Vulnerabilities Found</i>: {{ logPackageForm.returnSum }}</li>
-                  </ul>
-                </div>
-                <el-tabs type="border-card">
-                  <el-tab-pane :label="$t('package.result_list_vuln')">
-                    <h3>Vuln:&nbsp;</h3>
-                    <el-table :data="logPackageForm.packageDependencyJsonItemList" border stripe style="width: 100%">
-                      <el-table-column type="index" min-width="3%"/>
-                      <el-table-column prop="name" :label="'Name'" min-width="10%">
-                      </el-table-column>
-                      <el-table-column prop="description" :label="'Description'" min-width="60%">
-                      </el-table-column>
-                      <el-table-column min-width="9%" :label="'Severity'" prop="severity">
-                      </el-table-column>
-                      <el-table-column min-width="9%" :label="'Source'" prop="source">
-                      </el-table-column>
-                    </el-table>
-                  </el-tab-pane>
-                  <el-tab-pane :label="$t('package.result_list_sbom')" class="el-card">
-                    <div style="margin: 10px 0 0 0;" v-if="JSON.stringify(logPackageForm.packageDependencyJsonList) !== '[]'">
-                      <div v-for="(packageDependencyJson, index) in logPackageForm.packageDependencyJsonList" :key="index">
-                        <h3>{{ index+1 }}</h3>
-                        <ul style="margin-left: 60px;">
-                          <li><i>FileName</i>: {{ packageDependencyJson.fileName }}</li>
-                          <li><i>FilePath</i>: {{ packageDependencyJson.filePath }}</li>
-                          <li><i>IsVirtual</i>:&nbsp;{{ packageDependencyJson.isVirtual }}</li>
-                          <li><i>Md5</i>: {{ packageDependencyJson.md5 }}</li>
-                          <li><i>Sha1</i>:&nbsp;{{ packageDependencyJson.sha1 }}</li>
-                          <li><i>Sha256</i>:&nbsp;{{ packageDependencyJson.sha256 }}</li>
-                        </ul>
-                        <div style="margin: 10px;">
-                          <vue-okr-tree
-                            ref="tree"
-                            :data="packageDependencyJson.vulnerabilities?packageDependencyJson.vulnerabilities:'[]' | packageDependencyJsonRight"
-                            :left-data="packageDependencyJson.vulnerabilities?packageDependencyJson.vulnerabilities:'[]' | packageDependencyJsonLeft"
-                            only-both-tree
-                            direction="horizontal"
-                            show-collapsable
-                            node-key="id"
-                            label-class-name='no-padding'
-                            default-expand-all
-                            :render-content="renderContent"
-                            :filter-node-method="filterNode"
-                          ></vue-okr-tree>
-                        </div>
-                      </div>
-                    </div>
-                  </el-tab-pane>
-                </el-tabs>
-              </el-row>
-              <template v-slot:footer>
-                <dialog-footer
-                  @cancel="logPackageVisible = false"
-                  @confirm="logPackageVisible = false"/>
-              </template>
-            </el-drawer>
-            <!--Result log-->
-
-            <!-- package -->
           </el-card>
         </el-col>
       </el-row>
@@ -803,7 +637,6 @@
             </section>
             <code-result-details v-if="codeResultId" :id="codeResultId"/>
             <image-result-details v-if="imageResultId" :id="imageResultId"/>
-            <package-result-details v-if="packageResultId" :id="packageResultId"/>
           </el-card>
         </el-col>
       </el-row>
@@ -816,7 +649,6 @@ import MainContainer from "@/business/components/common/components/MainContainer
 import Download from "@/business/components/sbom/home/Download";
 import CodeResultDetails from "@/business/components/sbom/home/CodeResultDetails";
 import ImageResultDetails from "@/business/components/sbom/home/ImageResultDetails";
-import PackageResultDetails from "@/business/components/sbom/home/PackageResultDetails";
 import MetricChart from "@/business/components/sbom/head/MetricChart";
 
 /* eslint-disable */
@@ -826,7 +658,6 @@ export default {
     Download,
     CodeResultDetails,
     ImageResultDetails,
-    PackageResultDetails,
     MetricChart,
   },
   data() {
@@ -839,28 +670,21 @@ export default {
       tags: [
         {id: 'code', name: this.$t('sbom.target_code'), icon: 'iconfont icon-yuandaimaxiayoudaima'},
         {id: 'image', name: this.$t('sbom.target_image'), icon: 'iconfont icon-jingxiang2'},
-        {id: 'package', name: this.$t('sbom.target_package'), icon: 'iconfont icon-ruanjiankaifabao'},
       ],
       tag: 'code',
       codeData: [],
       imageData: [],
-      packageData: [],
       direction: 'rtl',
       codeVisible: false,
       imageVisible: false,
-      packageVisible: false,
       logCodeVisible: false,
       logImageVisible: false,
-      logPackageVisible: false,
       codeResultId: '',
       imageResultId: '',
-      packageResultId: '',
       logCodeData: {},
       logCodeForm: [],
       logImageData: {},
       logImageForm: [],
-      logPackageData: {},
-      logPackageForm: [],
       filterJson: this.filterJsonKeyAndValue,
       content: {
         critical: 0,
@@ -904,9 +728,6 @@ export default {
         this.$get("/sbom/historyImageTask/" + this.sbomVersion.id, response => {
           this.imageData = response.data;
         });
-        this.$get("/sbom/historyPackageTask/" + this.sbomVersion.id, response => {
-          this.packageData = response.data;
-        });
       }
     },
     handleClick(item) {
@@ -922,10 +743,6 @@ export default {
     showImageResource(item) {
       this.imageResultId = item.id;
       this.imageVisible = true;
-    },
-    showPackageResource(item) {
-      this.packageResultId = item.id;
-      this.packageVisible = true;
     },
     showCodeResultLog(result) {
       let logUrl = "/sbom/codeLog/";
@@ -950,28 +767,15 @@ export default {
       });
       this.logImageVisible = true;
     },
-    showPackageResultLog(result) {
-      let url = "/sbom/packageLog/";
-      this.result = this.$get(url + result.id, response => {
-        this.logPackageData = response.data;
-      });
-      this.result = this.$get("/package/getPackageResultDto/"+ result.id, response => {
-        this.logPackageForm = response.data;
-      });
-      this.logPackageVisible = true;
-    },
     handleClose() {
       this.codeVisible = false;
       this.imageVisible = false;
-      this.packageVisible = false;
       this.logCodeVisible = false;
       this.logImageVisible = false;
-      this.logPackageVisible = false;
     },
     selectVuln(item) {
       this.codeResultId = "";
       this.imageResultId = "";
-      this.packageResultId = "";
       if(item.codeId) {
         this.codeResultId = item.id;
         this.result = this.$get("/sbom/codeMetricChart/"+ this.codeResultId, response => {
@@ -980,11 +784,6 @@ export default {
       } else if(item.imageId) {
         this.imageResultId = item.id;
         this.result = this.$get("/sbom/imageMetricChart/"+ this.imageResultId, response => {
-          this.content = response.data;
-        });
-      } else if(item.packageId) {
-        this.packageResultId = item.id;
-        this.result = this.$get("/sbom/packageMetricChart/"+ this.packageResultId, response => {
           this.content = response.data;
         });
       }

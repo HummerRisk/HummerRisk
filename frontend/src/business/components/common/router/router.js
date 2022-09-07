@@ -6,7 +6,6 @@ import Setting from "@/business/components/settings/router";
 import Account from "@/business/components/account/router";
 import Server from "@/business/components/server/router";
 import Image from "@/business/components/image/router";
-import Package from "@/business/components/package/router";
 import Vuln from "@/business/components/vuln/router";
 import Rule from "@/business/components/rule/router";
 import Resource from "@/business/components/resource/router";
@@ -20,7 +19,6 @@ import Situation from "@/business/components/situation/router";
 import Code from "@/business/components/code/router";
 import Sbom from "@/business/components/sbom/router";
 import Log from "@/business/components/log/router";
-import k8sImage from "@/business/components/k8sImage/router";
 import config from "@/business/components/config/router";
 import cost from "@/business/components/cost/router";
 
@@ -39,7 +37,6 @@ const router = new VueRouter({
     Account,
     Server,
     Image,
-    Package,
     Vuln,
     Rule,
     Resource,
@@ -53,7 +50,6 @@ const router = new VueRouter({
     Code,
     Sbom,
     Log,
-    k8sImage,
     config,
     cost
   ]
@@ -71,4 +67,4 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-export default router
+export default router;

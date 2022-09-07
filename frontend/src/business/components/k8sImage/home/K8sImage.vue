@@ -274,7 +274,7 @@ import HrCodeEdit from "@/business/components/common/components/HrCodeEdit";
 import ImageUpload from "../head/ImageUpload";
 import ImageTarUpload from "../head/ImageTarUpload";
 import MainContainer from "../.././common/components/MainContainer";
-import {IMAGE_CONFIGS, IMAGE_RESULT_CONFIGS} from "../../common/components/search/search-components";
+import {IMAGE_CONFIGS} from "../../common/components/search/search-components";
 
 /* eslint-disable */
 export default {

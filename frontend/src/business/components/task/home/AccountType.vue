@@ -12,9 +12,6 @@
     <el-tag size="mini" type="primary" v-else-if="row.accountType === 'imageAccount'">
       {{ $t('task.task_image') }}
     </el-tag>
-    <el-tag size="mini" type="primary" v-else-if="row.accountType === 'packageAccount'">
-      {{ $t('task.task_package') }}
-    </el-tag>
   </div>
 </template>
 

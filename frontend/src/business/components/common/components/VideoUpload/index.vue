@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { deleteFile, importVideoUpload } from '@/api/common/common'
+import {deleteFile, importVideoUpload} from '@/api/common/common'
 
 export default {
   data() {

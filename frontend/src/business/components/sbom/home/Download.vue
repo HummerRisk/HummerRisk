@@ -12,9 +12,9 @@
 
 <script>
 
-  import {saveAs} from "@/common/js/FileSaver";
+import {saveAs} from "@/common/js/FileSaver";
 
-  export default {
+export default {
     name: "Download",
     props: {
       params: Object
@@ -35,9 +35,6 @@
           this.sourceId = this.params.id;
         } else if (this.params.imageId) {
           this.type = 'image';
-          this.sourceId = this.params.id;
-        } else if (this.params.packageId) {
-          this.type = 'package';
           this.sourceId = this.params.id;
         } else {
           return;

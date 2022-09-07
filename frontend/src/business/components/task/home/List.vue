@@ -602,8 +602,6 @@ export default {
               this.ruleDetailForm = data.serverRuleDTO;
             } else if(item.accountType === 'imageAccount') {
               this.ruleDetailForm = data.imageRuleDTO;
-            } else if(item.accountType === 'packageAccount') {
-              this.ruleDetailForm = data.packageRuleDTO;
             }
             this.ruleDetailVisible = true;
           }
@@ -760,10 +758,6 @@ export default {
             } else if(item.accountType === 'imageAccount') {
               this.$router.push({
                 path: '/resource/imageResult',
-              }).catch(error => error);
-            } else if(item.accountType === 'packageAccount') {
-              this.$router.push({
-                path: '/resource/packageResult',
               }).catch(error => error);
             }
           }

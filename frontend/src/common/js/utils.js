@@ -1,4 +1,4 @@
-import {ACCOUNT_ID, VULN_ID, K8S_ID, REFRESH_SESSION_USER_URL, ROLE_ADMIN, TokenKey} from "./constants";
+import {ACCOUNT_ID, K8S_ID, REFRESH_SESSION_USER_URL, ROLE_ADMIN, TokenKey, VULN_ID} from "./constants";
 import axios from "axios";
 
 export function hasRole(role) {

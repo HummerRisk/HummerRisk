@@ -42,12 +42,6 @@
           </template>
         </el-calendar>
       </el-card>
-      <el-card class="table-card" v-loading="result.loading">
-        <template v-slot:header>
-          <span class="title">{{ $t('dashboard.package_statistics') }}</span>
-        </template>
-        <package-chart/>
-      </el-card>
     </el-col>
   </container>
 </template>
@@ -56,7 +50,6 @@
 import Container from "../.././common/components/Container";
 import CloudChart from "@/business/components/dashboard/head/CloudChart";
 import VulnChart from "@/business/components/dashboard/head/VulnChart";
-import PackageChart from "@/business/components/dashboard/head/PackageChart";
 import ServerChart from "@/business/components/dashboard/head/ServerChart";
 
 /* eslint-disable */
@@ -65,7 +58,6 @@ export default {
     Container,
     CloudChart,
     VulnChart,
-    PackageChart,
     ServerChart,
   },
   data() {

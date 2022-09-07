@@ -616,151 +616,6 @@
                 </div>
               </el-collapse-item>
               <!-- 镜像检测 end -->
-              <!-- 软件包检测 start -->
-              <el-collapse-item name="5" v-if="report.historyPackageReportDTOList && JSON.stringify(report.historyPackageReportDTOList) !== '[]'">
-                <template slot="title">
-                  {{ $t('package.package_scan') }} <i class="el-icon-box" style="margin-left: 5px;padding-top: 2px;"></i>
-                </template>
-                <div v-for="historyPackageReport in report.historyPackageReportDTOList" :key="historyPackageReport.id" style="border-style:ridge;padding: 15px;">
-                  <h2>Summary:&nbsp;</h2>
-                  <ul style="margin-left: 60px;">
-                    <li><i>Scan Name</i>: {{ historyPackageReport.name }}</li>
-                    <li><i>Package Name</i>: {{ historyPackageReport.packageName }}</li>
-                    <li><i>Package Size</i>:&nbsp;{{ historyPackageReport.size }}</li>
-                    <li><i>Rule Name</i>: {{ historyPackageReport.ruleDesc }}</li>
-                    <li><i>Scan User</i>:&nbsp;{{ historyPackageReport.userName }}</li>
-                    <li><i>Severity</i>:&nbsp;{{ historyPackageReport.severity }}</li>
-                    <li><i>Create Time</i>:&nbsp;{{ historyPackageReport.createTime | timestampFormatDate }}</li>
-                    <li><i>Result Status</i>:&nbsp;{{ historyPackageReport.resultStatus }}</li>
-                    <li><i>Vulnerabilities Found</i>: {{ historyPackageReport.returnSum }}</li>
-                  </ul>
-                  <div style="margin: 10px 0 0 0;" v-if="JSON.stringify(historyPackageReport.packageDependencyJsonList) !== '[]'">
-                    <h3>Vuln:&nbsp;</h3>
-                    <el-table :data="historyPackageReport.packageDependencyJsonList" border stripe style="width: 100%">
-                      <el-table-column type="index" min-width="5%"/>
-                      <el-table-column :label="'FileName'" min-width="20%" prop="fileName">
-                      </el-table-column>
-                      <el-table-column :label="'FilePath'" min-width="25%" prop="filePath">
-                      </el-table-column>
-                      <el-table-column min-width="5%" :label="'IsVirtual'" prop="isVirtual">
-                      </el-table-column>
-                      <el-table-column min-width="10%" :label="'Md5'" prop="md5">
-                      </el-table-column>
-                      <el-table-column min-width="15%" :label="'Sha1'" prop="sha1">
-                      </el-table-column>
-                      <el-table-column min-width="15%" :label="'Sha256'" prop="sha256">
-                      </el-table-column>
-                    </el-table>
-                  </div>
-                  <div style="margin: 10px 0 0 0;">
-                    <h2>Details:&nbsp;</h2>
-<!--                    <div class="filter-wrapper">-->
-<!--                      <el-input-->
-<!--                        class="search"-->
-<!--                        type="text"-->
-<!--                        size="small"-->
-<!--                        :placeholder="$t('task.filter_okr')"-->
-<!--                        prefix-icon="el-icon-search"-->
-<!--                        maxlength="60"-->
-<!--                        v-model="filterText" clearable/>-->
-<!--                    </div>-->
-                  </div>
-                  <el-tabs v-model="packageActiveName">
-                    <el-tab-pane label="Sbom" name="packageSbom">
-                      <div style="margin: 10px 0 0 0;" v-if="JSON.stringify(historyPackageReport.packageDependencyJsonList) !== '[]'">
-                        <el-collapse-item title="Sbom:" name="8">
-                          <div v-for="(packageDependencyJson, index) in historyPackageReport.packageDependencyJsonList" :key="index">
-                            <h3>Vuln:&nbsp;{{ index+1 }}</h3>
-                            <ul style="margin-left: 60px;">
-                              <li><i>FileName</i>: {{ packageDependencyJson.fileName }}</li>
-                              <li><i>FilePath</i>: {{ packageDependencyJson.filePath }}</li>
-                              <li><i>IsVirtual</i>:&nbsp;{{ packageDependencyJson.isVirtual }}</li>
-                              <li><i>Md5</i>: {{ packageDependencyJson.md5 }}</li>
-                              <li><i>Sha1</i>:&nbsp;{{ packageDependencyJson.sha1 }}</li>
-                              <li><i>Sha256</i>:&nbsp;{{ packageDependencyJson.sha256 }}</li>
-                            </ul>
-                            <div style="margin: 10px;">
-                              <vue-okr-tree
-                                ref="tree"
-                                :data="packageDependencyJson.vulnerabilities | packageDependencyJsonRight"
-                                :left-data="packageDependencyJson.vulnerabilities | packageDependencyJsonLeft"
-                                only-both-tree
-                                direction="horizontal"
-                                show-collapsable
-                                node-key="id"
-                                label-class-name='no-padding'
-                                default-expand-all
-                                :render-content="renderContent"
-                                :filter-node-method="filterNode"
-                              ></vue-okr-tree>
-                            </div>
-                          </div>
-                        </el-collapse-item>
-                      </div>
-                    </el-tab-pane>
-                    <el-tab-pane label="Dependency" name="packageDependency">
-                      <div style="margin: 10px 0 0 0;" v-if="JSON.stringify(historyPackageReport.packageDependencyJsonList) !== '[]'">
-                        <el-collapse-item title="Dependency:" name="9">
-                          <div style="margin: 10px 0 0 0;" :key="index" v-for="(packageDependencyJson,index) in historyPackageReport.packageDependencyJsonList">
-                            <el-card class="box-card">
-                              <div slot="header" class="clearfix">
-                                <el-row>
-                                  <el-col :span="24" style="margin: -7px 0 0 15px;">
-                                    <span style="font-size: 24px;font-weight: 500;">{{ packageDependencyJson.fileName }}</span>
-                                    <span style="font-size: 20px;color: #888;margin-left: 5px;">- IsVirtual:  {{ packageDependencyJson.isVirtual }}</span>
-                                  </el-col>
-                                </el-row>
-                                <el-row style="font-size: 18px;padding: 10px;">
-                                  <el-col :span="20">
-                                    <span style="color: #888;margin: 5px;">{{ 'SBOM' }}</span>
-                                    <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                    <span style="color: #444;margin: 5px;">FilePath: {{ packageDependencyJson.filePath }}</span>
-                                  </el-col>
-                                </el-row>
-                              </div>
-                              <div class="text div-json">
-                                <el-descriptions :column="2" v-for="(packagex, index) in JSON.parse(packageDependencyJson.packages)" :key="index" :title="'Package'+(index+1)">
-                                  <el-descriptions-item v-for="(meta, index) in filterJson(packagex?packagex:{package: 'N/A'})" :key="index" :label="meta.key">
-                                    <span v-if="!meta.flag" show-overflow-tooltip>
-                                      <el-tooltip class="item" effect="dark" :content="JSON.stringify(meta.value)" placement="top-start">
-                                        <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
-                                      </el-tooltip>
-                                    </span>
-                                    <el-tooltip v-if="meta.flag && meta.value" class="item" effect="light" :content="typeof(meta.value) === 'boolean'?meta.value.toString():meta.value" placement="top-start">
-                                      <span class="table-expand-span-value">
-                                          {{ meta.value }}
-                                      </span>
-                                    </el-tooltip>
-                                    <span v-if="meta.flag && !meta.value"> N/A</span>
-                                  </el-descriptions-item>
-                                </el-descriptions>
-                              </div>
-                              <div class="text div-json">
-                                <el-descriptions :column="2" v-for="(vulnerability, index) in JSON.parse(packageDependencyJson.vulnerabilities)" :key="index" :title="'Vulnerabilitie'+(index+1)">
-                                  <el-descriptions-item v-for="(meta, index) in filterJson(vulnerability?vulnerability:{vulnerability: 'N/A'})" :key="index" :label="meta.key">
-                                    <span v-if="!meta.flag" show-overflow-tooltip>
-                                      <el-tooltip class="item" effect="dark" :content="JSON.stringify(meta.value)" placement="top-start">
-                                        <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
-                                      </el-tooltip>
-                                    </span>
-                                    <el-tooltip v-if="meta.flag && meta.value" class="item" effect="light" :content="typeof(meta.value) === 'boolean'?meta.value.toString():meta.value" placement="top-start">
-                                      <span class="table-expand-span-value">
-                                        {{ meta.value }}
-                                      </span>
-                                    </el-tooltip>
-                                    <span v-if="meta.flag && !meta.value"> N/A</span>
-                                  </el-descriptions-item>
-                                </el-descriptions>
-                              </div>
-                            </el-card>
-                          </div>
-                        </el-collapse-item>
-                      </div>
-                    </el-tab-pane>
-                  </el-tabs>
-                </div>
-              </el-collapse-item>
-              <!-- 软件包检测 end -->
               <!-- 源码检测 start -->
               <el-collapse-item name="10" v-if="report.historyCodeReportDTOList && JSON.stringify(report.historyCodeReportDTOList) !== '[]'">
                 <template slot="title">
@@ -935,8 +790,7 @@ export default {
       tagSelect: [],
       resourceTypes: [],
       filterJson: this.filterJsonKeyAndValue,
-      imageJsonActiveName: 'imageGrypeJson',
-      packageActiveName: 'packageSbom',
+      imageJsonActiveName: 'imageTrivyJson',
     }
   },
   watch: {
@@ -998,7 +852,7 @@ export default {
         return (
           <div class={cls}>
             <div class="diy-con-name">
-              Package Scan: {node.data.name}
+              Scan: {node.data.name}
             </div>
             <div class="diy-con-content">
               Description: {node.data.description}

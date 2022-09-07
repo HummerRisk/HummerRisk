@@ -33,11 +33,6 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/Result'),
     },
     {
-      path: "packageResult",
-      name: "packageResultByResource",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/package/home/Result'),
-    },
-    {
       path: "codeResult",
       name: "codeResultByResource",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/code/home/Result'),

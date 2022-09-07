@@ -206,12 +206,6 @@
                            :filter-placeholder="$t('commons.search_by_name')" filterable v-model="imageValue" :data="imageData">
               </el-transfer>
             </div>
-            <div style="text-align: center; margin: 25px;">
-              <p style="text-align: center; padding: 10px;margin: 25px;color: royalblue;background-color: aliceblue;">{{ $t('package.package_scan') }}</p>
-              <el-transfer :titles="[$t('sbom.source_package'), $t('sbom.target_package')]" :filter-method="filterMethod" style="text-align: left; display: inline-block"
-                           :filter-placeholder="$t('commons.search_by_name')" filterable v-model="packageValue" :data="packageData">
-              </el-transfer>
-            </div>
           </el-card>
           <dialog-footer
           @cancel="innerSettingVersion = false"
@@ -331,8 +325,6 @@ export default {
       codeData: [],
       imageValue: [],
       imageData: [],
-      packageValue: [],
-      packageData: [],
     }
   },
   watch: {
@@ -535,15 +527,6 @@ export default {
           });
         }
       });
-      this.$get("/package/unBindList",response => {
-        this.packageData = [];
-        for(let data of response.data) {
-          this.packageData.push({
-            key: data.id,
-            label: data.name
-          });
-        }
-      });
       this.$get("/code/allBindList/" + item.id,response => {
         this.codeValue = [];
         for(let data of response.data) {
@@ -556,19 +539,12 @@ export default {
           this.imageValue.push(data.id);
         }
       });
-      this.$get("/package/allBindList/" + item.id,response => {
-        this.packageValue = [];
-        for(let data of response.data) {
-          this.packageValue.push(data.id);
-        }
-      });
       this.innerSettingVersion = true;
     },
     settingVersion() {
       let params = {
         codeValue: this.codeValue,
         imageValue: this.imageValue,
-        packageValue: this.packageValue,
         sbomId: this.sbomId,
         sbomVersionId: this.sbomVersionId,
       };

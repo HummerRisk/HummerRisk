@@ -58,7 +58,7 @@
 
 <script>
 import Container from "../.././common/components/Container";
-import CurrentUser from  "@/business/components/settings/CurrentUser";
+import CurrentUser from "@/business/components/settings/CurrentUser";
 import {getCurrentUser} from "@/common/js/utils";
 
 /* eslint-disable */

@@ -345,32 +345,6 @@ export const IP = {
   },
 }
 
-export const PACKAGE_NAME = {
-  key: "packageName", // 返回结果Map的key
-  name: "TableSearchInput", // Vue控件名称
-  label: "package.package_name", // 显示名称
-  operator: { // 运算符设置
-    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
-    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
-  },
-}
-
-export const PACKAGE_STATUS = {
-  key: "status",
-  name: 'TableSearchSelect',
-  label: 'commons.status',
-  operator: {
-    options: [OPERATORS.IN, OPERATORS.NOT_IN]
-  },
-  options: [
-    {label: 'account.INVALID', value: 'INVALID'},
-    {label: 'account.VALID', value: 'VALID'},
-  ],
-  props: { // 尾部控件的props，一般为element ui控件的props
-    multiple: true
-  }
-}
-
 export const IMAGE_URL = {
   key: "imageUrl", // 返回结果Map的key
   name: "TableSearchInput", // Vue控件名称
@@ -459,9 +433,6 @@ export const RULE_CONFIGS = [RULE_NAME, RULE_PLUGIN_NAME, RULE_SEVERITY, RULE_RE
 export const SERVER_CONFIGS = [NAME, IP, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const SERVER_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
 export const SERVER_RESULT_CONFIGS = [NAME, IP, RULE_NAME, RULE_SEVERITY, CREATOR, UPDATE_TIME];
-export const PACKAGE_CONFIGS = [NAME, PACKAGE_NAME, PACKAGE_STATUS, CREATOR, UPDATE_TIME];
-export const PACKAGE_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
-export const PACKAGE_RESULT_CONFIGS = [NAME, PACKAGE_NAME, RULE_NAME, RULE_SEVERITY, CREATOR, UPDATE_TIME];
 export const IMAGE_CONFIGS = [NAME, IMAGE_URL, ACCOUNT_STATUS, CREATOR, CREATE_TIME, UPDATE_TIME];
 export const IMAGE_REPO_CONFIGS = [NAME, ACCOUNT_STATUS, CREATOR, UPDATE_TIME];
 export const IMAGE_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
