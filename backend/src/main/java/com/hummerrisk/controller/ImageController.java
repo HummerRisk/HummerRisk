@@ -6,10 +6,7 @@ import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
-import com.hummerrisk.controller.request.image.ImageRepoRequest;
-import com.hummerrisk.controller.request.image.ImageRequest;
-import com.hummerrisk.controller.request.image.ImageResultRequest;
-import com.hummerrisk.controller.request.image.ImageRuleRequest;
+import com.hummerrisk.controller.request.image.*;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.service.ImageService;
 import io.swagger.annotations.Api;
@@ -234,6 +231,13 @@ public class ImageController {
     @GetMapping("syncImage/{id}")
     public void syncImage(@PathVariable String id) throws Exception {
         imageService.syncImage(id);
+    }
+
+    @I18n
+    @ApiOperation(value = "执行镜像仓库中的镜像")
+    @PostMapping("scanImageRepo")
+    public void scanImageRepo(@RequestBody ScanImageRepoRequest request) throws Exception {
+        imageService.scanImageRepo(request);
     }
 
 }

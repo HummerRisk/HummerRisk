@@ -11,15 +11,13 @@ import com.hummerrisk.base.mapper.ext.ExtImageResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtImageRuleMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.utils.*;
-import com.hummerrisk.controller.request.image.ImageRepoRequest;
-import com.hummerrisk.controller.request.image.ImageRequest;
-import com.hummerrisk.controller.request.image.ImageResultRequest;
-import com.hummerrisk.controller.request.image.ImageRuleRequest;
+import com.hummerrisk.controller.request.image.*;
 import com.hummerrisk.dto.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -725,6 +723,48 @@ public class ImageService {
             }
         }
         return "i18n_no_data";
+    }
+
+    public void scanImageRepo(ScanImageRepoRequest request) throws Exception {
+        try {
+            Image image = BeanUtils.copyBean(new Image(), request);
+            image.setStatus("VALID");
+            image.setCreateTime(System.currentTimeMillis());
+            image.setUpdateTime(System.currentTimeMillis());
+            image.setCreator(SessionUtils.getUserId());
+            image.setType("repo");
+            image.setImageUrl(request.getPath().split(":")[0]);
+            image.setImageTag(request.getTag());
+            image.setPluginIcon("docker.png");
+            image.setIsImageRepo(true);
+            image.setIsImageIcon(false);
+
+            ImageExample example = new ImageExample();
+            example.createCriteria().andImageUrlEqualTo(image.getImageUrl()).andImageTagEqualTo(image.getImageTag()).andRepoIdEqualTo(image.getRepoId());
+            List<Image> list = imageMapper.selectByExample(example);
+            if (list.size() == 0) {
+                image.setId(UUIDUtil.newUUID());
+                imageMapper.insertSelective(image);
+                OperationLogService.log(SessionUtils.getUser(), image.getId(), image.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image");
+
+            } else {
+                image.setId(list.get(0).getId());
+                imageMapper.updateByPrimaryKeySelective(image);
+                OperationLogService.log(SessionUtils.getUser(), image.getId(), image.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image_rule");
+
+            }
+            ImageResultExample imageResultExample = new ImageResultExample();
+            imageResultExample.createCriteria().andImageIdEqualTo(image.getId());
+            List<ImageResult> results = imageResultMapper.selectByExample(imageResultExample);
+            if (results.size() > 0) {
+                this.reScan(results.get(0).getId());
+            } else {
+                this.scan(image.getId());
+            }
+
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
 

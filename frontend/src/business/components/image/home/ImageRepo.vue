@@ -9,7 +9,14 @@
       <el-table border class="adjust-table" :data="tableData" style="width: 100%" @sort-change="sort" @filter-change="filter"
                 :row-class-name="tableRowClassName">
         <el-table-column type="index" min-width="3%"/>
-        <el-table-column prop="name" :label="$t('image.image_repo_name')" min-width="18%"/>
+        <el-table-column prop="name" :label="$t('image.image_repo_name')" min-width="18%">
+          <template v-slot:default="scope">
+              <span>
+                <img :src="require(`@/assets/img/repo/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ $t(scope.row.name) }}
+              </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="repo" :label="$t('image.image_repo_url')" min-width="18%"/>
         <el-table-column prop="userName" :label="$t('image.image_repo_user_name')" min-width="12%"/>
         <el-table-column prop="status" min-width="10%" :label="$t('image.image_repo_status')"
@@ -135,7 +142,68 @@
         </el-table-column>
         <el-table-column min-width="15%" :label="'PushTime'" prop="pushTime">
         </el-table-column>
+        <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
+          <template v-slot:default="scope">
+            <table-operators :buttons="buttons3" :row="scope.row"/>
+          </template>
+        </el-table-column>
       </el-table>
+      <div>
+        <el-drawer
+          class="rtl"
+          size="60%"
+          :title="$t('k8s.execute_scan')"
+          :append-to-body="true"
+          :before-close="innerClose"
+          :visible.sync="innerAdd">
+          <el-form :model="addForm" label-position="right" label-width="150px" size="small" ref="addForm" :rules="rule">
+            <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="addForm.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(addForm)">
+                <el-option
+                  v-for="item in sboms"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                  <i class="iconfont icon-SBOM sbom-icon"></i>
+                  {{ item.name }}
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="$t('sbom.sbom_project_version')" :rules="{required: true, message: $t('sbom.sbom_project_version') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="addForm.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
+                <el-option
+                  v-for="item in versions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                  <i class="iconfont icon-lianmenglian sbom-icon-2"></i>
+                  {{ item.name }}
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="$t('image.image_name')" ref="name" prop="name">
+              <el-input v-model="addForm.name" autocomplete="off" :placeholder="$t('image.image_name')"/>
+            </el-form-item>
+            <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-switch v-model="addForm.isProxy"></el-switch>
+            </el-form-item>
+            <el-form-item v-if="addForm.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="addForm.proxyId" :placeholder="$t('commons.proxy')">
+                <el-option
+                  v-for="item in proxys"
+                  :key="item.id"
+                  :label="item.proxyIp"
+                  :value="item.id">
+                  &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
+          <dialog-footer
+            @cancel="innerAdd = false"
+            @confirm="saveAdd()"/>
+        </el-drawer>
+      </div>
       <div style="margin: 10px;">
         <dialog-footer
           @cancel="imageVisible = false"
@@ -145,7 +213,7 @@
     <!--Image list-->
 
     <!--Sync image-->
-    <el-drawer class="rtl" :title="$t('image.image_sync_for_repo')" :visible.sync="syncVisible" size="80%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('image.image_sync_for_repo')" :visible.sync="syncVisible" size="85%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
       <sync-table-header @sync="sync" :sync-tip="$t('image.image_sync')" :title="$t('image.image_sync_log')" style="margin: 0 0 15px 0;"/>
@@ -210,6 +278,7 @@ export default {
       deletePath: '/image/deleteImageRepo/',
       createPath: '/image/addImageRepo/',
       updatePath: '/image/editImageRepo/',
+      scanPath: '/image/scanImageRepo/',
       result: {},
       createVisible: false,
       updateVisible: false,
@@ -240,7 +309,7 @@ export default {
       },
       buttons: [
         {
-          tip: this.$t('image.image_sync'), icon: "el-icon-refresh", type: "warning",
+          tip: this.$t('image.image_sync'), icon: "el-icon-sort-down", type: "warning",
           exec: this.handleSync
         },
         {
@@ -264,6 +333,12 @@ export default {
           exec: this.handleDelete
         }
       ],
+      buttons3: [
+        {
+          tip: this.$t('k8s.execute_scan'), icon: "el-icon-s-promotion", type: "success",
+          exec: this.handleScan
+        }
+      ],
       statusFilters: [
         {text: this.$t('server.INVALID'), value: 'INVALID'},
         {text: this.$t('server.VALID'), value: 'VALID'},
@@ -279,6 +354,11 @@ export default {
       syncData: [],
       syncVisible: false,
       repoId: "",
+      innerAdd: false,
+      addForm: {},
+      sboms: [],
+      versions: [],
+      proxys: [],
     }
   },
   methods: {
@@ -386,7 +466,58 @@ export default {
           this.syncData = response.data;
         });
       });
-    }
+    },
+    innerClose() {
+      this.innerAdd = false;
+    },
+    initSboms() {
+      this.result = this.$post("/sbom/allSbomList", {},response => {
+        this.sboms = response.data;
+      });
+    },
+    changeSbom(item) {
+      let params = {
+        sbomId: item.sbomId
+      };
+      this.result = this.$post("/sbom/allSbomVersionList", params,response => {
+        this.versions = response.data;
+      });
+    },
+    //查询代理
+    activeProxy() {
+      let url = "/proxy/list/all";
+      this.result = this.$get(url, response => {
+        this.proxys = response.data;
+      });
+    },
+    handleScan(item) {
+      this.initSboms();
+      this.activeProxy();
+      this.addForm = item;
+      this.addForm.name = item.path;
+      this.innerAdd = true;
+    },
+    saveAdd() {
+      this.$refs['addForm'].validate(valid => {
+        if (valid) {
+          this.result = this.$post(this.scanPath, this.addForm, response => {
+            if (response.success) {
+              this.$success(this.$t('schedule.event_start'));
+              this.innerAdd = false;
+              this.imageVisible = false;
+              this.$router.push({
+                path: '/image/result',
+                query: {
+                  date: new Date().getTime()
+                },
+              }).catch(error => error);
+            } else {
+              this.$error(this.$t('schedule.event_failed'));
+            }
+          });
+        }
+      });
+    },
   },
   created() {
     this.search();
@@ -408,5 +539,6 @@ export default {
 .rtl >>> .el-form-item__content {
   width: 80%;
 }
+
 /deep/ :focus{outline:0;}
 </style>
