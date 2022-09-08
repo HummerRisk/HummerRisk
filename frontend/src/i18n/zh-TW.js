@@ -961,6 +961,7 @@ export default {
     image_sync: '同步鏡像',
     image_sync_for_repo: '同步鏡像倉庫的鏡像',
     image_sync_log: '鏡像同步日誌列表',
+    image_repo_note: '注：除 Harbor、DockerHub、 Nexus, 其他鏡像倉庫暫時無法同步鏡像, 只用作認證使用。 ',
   },
   package: {
     package_setting: '軟件包管理',
@@ -1149,7 +1150,7 @@ export default {
     add: '新增多個',
     delete_this_k8s: '刪除此 Kubernetes',
     please_choose_k8s: '請選擇 Kubernetes 賬號',
-    all_label: '全部雲原生賬號',
+    all_label: '全部 K8s 賬號',
     source_name: '資源名稱',
     source_namespace: '命名空間',
     source_type: '資源類型',
@@ -1254,6 +1255,7 @@ export default {
     total: '風險總數',
     sbom_project: 'Sbom 項目',
     sbom_project_version: '項目版本',
+    event_start: '請在各個檢測結果菜單等待檢測完成。 ',
   },
   cost: {
     analyze: '費用分析',

@@ -961,6 +961,7 @@ export default {
     image_sync: 'Sync mirror',
     image_sync_for_repo: 'Sync the mirror of the mirror warehouse',
     image_sync_log: 'Mirror synchronization log list',
+    image_repo_note: 'Note: Except Harbor, DockerHub, Nexus, other image repositories cannot synchronize images temporarily, and are only used for authentication. ',
   },
   package: {
     package_setting: 'Package Management',
@@ -1254,6 +1255,7 @@ export default {
     total: 'Total risk',
     sbom_project: 'Sbom Project',
     sbom_project_version: 'Project version',
+    event_start: 'Please wait for the detection to complete in each detection result menu. ',
   },
   cost: {
     analyze: 'Cost analysis',

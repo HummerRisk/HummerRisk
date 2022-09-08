@@ -32,7 +32,8 @@
         </el-table-column>
         <el-table-column min-width="13%" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
-            <table-operators :buttons="buttons" :row="scope.row"/>
+            <table-operators v-if="scope.row.pluginIcon !== 'other.png'" :buttons="buttons" :row="scope.row"/>
+            <table-operators v-if="scope.row.pluginIcon === 'other.png'" :buttons="buttons2" :row="scope.row"/>
           </template>
         </el-table-column>
       </el-table>
@@ -69,6 +70,7 @@
           <el-input v-model="form.password" autocomplete="off" :placeholder="$t('image.image_repo_password')" show-password/>
         </el-form-item>
       </el-form>
+      <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
       <div style="margin: 10px;">
         <dialog-footer
           @cancel="createVisible = false"
@@ -85,12 +87,12 @@
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_repo_name')"/>
         </el-form-item>
         <el-form-item :label="$t('image.image_repo_type')" :rules="{required: true, message: $t('image.image_repo_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" disabled v-model="form.pluginIcon" :placeholder="$t('image.image_repo_type')">
+          <el-select style="width: 100%;" v-model="form.pluginIcon" :placeholder="$t('image.image_repo_type')">
             <el-option
               v-for="item in plugins"
-              :key="item.id"
+              :key="item.value"
               :label="item.id"
-              :value="item.id">
+              :value="item.value">
               <img :src="require(`@/assets/img/repo/${item.value}`)" style="width: 20px; height: 16px; vertical-align:middle" alt=""/>
               &nbsp;&nbsp; {{ item.id }}
             </el-option>
@@ -106,6 +108,7 @@
           <el-input v-model="form.password" autocomplete="off" :placeholder="$t('image.image_repo_password')" show-password/>
         </el-form-item>
       </el-form>
+      <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
       <div style="margin: 10px;">
         <dialog-footer
           @cancel="updateVisible = false"
@@ -117,6 +120,7 @@
     <!--Image list-->
     <el-drawer class="rtl" :title="$t('image.image_list')" :visible.sync="imageVisible" size="80%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
+      <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
       <el-table border :data="imageData" class="adjust-table table-content">
         <el-table-column type="index" min-width="2%"/>
         <el-table-column prop="project" :label="'Project'" min-width="7%">
@@ -143,8 +147,8 @@
     <!--Sync image-->
     <el-drawer class="rtl" :title="$t('image.image_sync_for_repo')" :visible.sync="syncVisible" size="80%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
+      <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
       <sync-table-header @sync="sync" :sync-tip="$t('image.image_sync')" :title="$t('image.image_sync_log')" style="margin: 0 0 15px 0;"/>
-
       <el-table border :data="syncData" class="adjust-table table-content">
         <el-table-column type="index" min-width="2%"/>
         <el-table-column prop="operation" :label="$t('image.image_sync')" min-width="15%"/>
@@ -243,6 +247,15 @@ export default {
           tip: this.$t('image.image_list'), icon: "el-icon-more", type: "success",
           exec: this.handleList
         },
+        {
+          tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
+          exec: this.handleEdit
+        }, {
+          tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
+          exec: this.handleDelete
+        }
+      ],
+      buttons2: [
         {
           tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
           exec: this.handleEdit

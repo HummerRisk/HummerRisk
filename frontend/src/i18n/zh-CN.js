@@ -961,6 +961,7 @@ export default {
     image_sync: '同步镜像',
     image_sync_for_repo: '同步镜像仓库的镜像',
     image_sync_log: '镜像同步日志列表',
+    image_repo_note: '注：除 Harbor、DockerHub、 Nexus, 其他镜像仓库暂时无法同步镜像, 只用作认证使用。',
   },
   package: {
     package_setting: '软件包管理',
@@ -1149,7 +1150,7 @@ export default {
     add: '新增多个',
     delete_this_k8s: '删除此 Kubernetes',
     please_choose_k8s: '请选择 Kubernetes 账号',
-    all_label: '全部云原生账号',
+    all_label: '全部 K8s 账号',
     source_name: '资源名称',
     source_namespace: '命名空间',
     source_type: '资源类型',
