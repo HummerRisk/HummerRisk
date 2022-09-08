@@ -8,6 +8,7 @@ import com.aliyun.actiontrail20171204.models.LookupEventsResponse;
 import com.aliyun.teaopenapi.models.Config;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.CloudEventMapper;
+import com.hummerrisk.base.mapper.CloudEventRegionLogMapper;
 import com.hummerrisk.base.mapper.CloudEventSyncLogMapper;
 import com.hummerrisk.base.mapper.ProxyMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudEventMapper;
@@ -16,6 +17,7 @@ import com.hummerrisk.commons.utils.DateUtils;
 import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -45,6 +47,9 @@ public class CloudEventService {
     private ExtCloudEventMapper extCloudEventMapper;
     @Resource
     private CloudEventSyncLogMapper cloudEventSyncLogMapper;
+
+    @Resource
+    private CloudEventRegionLogMapper cloudEventRegionLogMapper;
     @Resource
     @Lazy
     private CommonThreadPool commonThreadPool;
@@ -99,31 +104,57 @@ public class CloudEventService {
         return cloudEventMapper.selectByExample(cloudEventExample);
     }
 
-    public void syncCloudEvents(String accountId, String region, String startTime, String endTime) {
-        if(accountId==null||region==null||startTime==null||endTime==null){
+    public void syncCloudEvents(String accountId, String[] regions, String startTime, String endTime) {
+        if(accountId==null||regions.length==0||startTime==null||endTime==null){
             throw new RuntimeException("参数为空");
         }
         CloudEventSyncLog cloudEventSyncLog = new CloudEventSyncLog();
         cloudEventSyncLog.setAccountId(accountId);
-        cloudEventSyncLog.setRegion(region);
+        cloudEventSyncLog.setRegion(StringUtils.join(regions,","));
         cloudEventSyncLog.setCreateTime(DateUtils.getNowDate());
         cloudEventSyncLog.setRequestStartTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime));
         cloudEventSyncLog.setRequestEndTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", endTime));
         cloudEventSyncLog.setStatus(0);
         CloudEventSyncLogExample cloudEventSyncLogExample = new CloudEventSyncLogExample();
-        cloudEventSyncLogExample.createCriteria().andStatusEqualTo(0).andAccountIdEqualTo(accountId)
-                .andRegionEqualTo(region);
+        cloudEventSyncLogExample.createCriteria().andStatusEqualTo(0).andAccountIdEqualTo(accountId);
         List<CloudEventSyncLog> cloudEventSyncLogs = cloudEventSyncLogMapper.selectByExample(cloudEventSyncLogExample);
         if (cloudEventSyncLogs.size() > 0) {
             throw new RuntimeException("task running!");
         }
         cloudEventSyncLogMapper.insertSelective(cloudEventSyncLog);
+        for(String region:regions){
+            CloudEventRegionLog cloudEventRegionLog = new CloudEventRegionLog();
+            cloudEventRegionLog.setRegion(region);
+            cloudEventRegionLog.setLogId(cloudEventSyncLog.getId());
+            cloudEventRegionLog.setStatus(0);
+            cloudEventRegionLogMapper.insertSelective(cloudEventRegionLog);
+        }
         commonThreadPool.addTask(() -> {
-            saveCloudEvent(cloudEventSyncLog.getId(), accountId, region, startTime, endTime);
+            CloudEventRegionLogExample cloudEventRegionLogExample = new CloudEventRegionLogExample();
+            cloudEventRegionLogExample.createCriteria().andLogIdEqualTo(cloudEventSyncLog.getId());
+            List<CloudEventRegionLog> cloudEventRegionLogs = cloudEventRegionLogMapper.selectByExample(cloudEventRegionLogExample);
+            int dataCount = 0;
+            int errorCount = 0;
+            for(CloudEventRegionLog cloudEventRegionLog:cloudEventRegionLogs){
+                int num = saveCloudEvent(cloudEventRegionLog.getId(), accountId, cloudEventRegionLog.getRegion(), startTime, endTime);
+                if(num>-1)
+                    dataCount+=num;
+                else
+                    errorCount++;
+            }
+            if(errorCount==cloudEventRegionLogs.size()){
+                cloudEventSyncLog.setStatus(2);
+            }else if(errorCount>0){
+                cloudEventSyncLog.setStatus(3);
+            }else {
+                cloudEventSyncLog.setStatus(1);
+            }
+            cloudEventSyncLog.setDataCount(dataCount);
+            cloudEventSyncLogMapper.updateByPrimaryKeySelective(cloudEventSyncLog);
         });
     }
 
-    public void saveCloudEvent(Integer logId, String accountId, String region, String startTime, String endTime) {
+    public int saveCloudEvent(Integer logId, String accountId, String region, String startTime, String endTime) {
         try {
             AccountWithBLOBs account = accountService.getAccount(accountId);
             Map<String, String> accountMap = PlatformUtils.getAccount(account, region, proxyMapper.selectByPrimaryKey(account.getProxyId()));
@@ -143,7 +174,7 @@ public class CloudEventService {
             template.execute(new TransactionCallbackWithoutResult() {
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus arg0) {
-                    CloudEventSyncLog cloudEventSyncLog = new CloudEventSyncLog();
+                    CloudEventRegionLog cloudEventSyncLog = new CloudEventRegionLog();
                     cloudEventSyncLog.setId(logId);
                     if (result.size() > 0) {
                         cloudEventSyncLog.setStartTime(result.get(result.size() - 1).getEventTime());
@@ -175,12 +206,13 @@ public class CloudEventService {
                     }
                     cloudEventSyncLog.setDataCount(num);
                     cloudEventSyncLog.setStatus(1);
-                    cloudEventSyncLogMapper.updateByPrimaryKeySelective(cloudEventSyncLog);
+                    cloudEventRegionLogMapper.updateByPrimaryKeySelective(cloudEventSyncLog);
                 }
             });
+            return result.size();
         } catch (Exception e) {
             e.printStackTrace();
-            CloudEventSyncLog cloudEventSyncLog = new CloudEventSyncLog();
+            CloudEventRegionLog cloudEventSyncLog = new CloudEventRegionLog();
             cloudEventSyncLog.setId(logId);
             cloudEventSyncLog.setStatus(2);
             String exceptionStr = e.getMessage();
@@ -188,8 +220,9 @@ public class CloudEventService {
                 exceptionStr = exceptionStr.substring(0,511);
             }
             cloudEventSyncLog.setException(exceptionStr);
-            cloudEventSyncLogMapper.updateByPrimaryKeySelective(cloudEventSyncLog);
+            cloudEventRegionLogMapper.updateByPrimaryKeySelective(cloudEventSyncLog);
         }
+        return -1;
     }
 
     public List<CloudEvent> getCloudEvents(String accountId, String region, String startTime, String endTime,

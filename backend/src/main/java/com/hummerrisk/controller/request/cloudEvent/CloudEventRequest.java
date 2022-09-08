@@ -7,6 +7,15 @@ public class CloudEventRequest {
     private String region;
     private String startTime;
     private String endTime;
+    private String[] regions;
+
+    public String[] getRegions() {
+        return regions;
+    }
+
+    public void setRegions(String[] regions) {
+        this.regions = regions;
+    }
 
     private Map<String,Object> combine;
 
