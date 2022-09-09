@@ -51,11 +51,13 @@
           <el-table-column
             prop="resourceType"
             label="资源类型"
+            :formatter="resourceTypeFormat"
            >
           </el-table-column>
           <el-table-column
             prop="resourceName"
             label="资源名称"
+            :formatter="resourceNameFormat"
             >
           </el-table-column>
           <el-table-column :label="$t('commons.operating')" fixed="right">
@@ -140,6 +142,21 @@ export default {
         }
       });
 
+    },
+    resourceTypeFormat(row,column){
+      if(!!row.resourceType){
+        return row.resourceType
+      }else{
+        return "N/A"
+      }
+    },
+
+    resourceNameFormat(row,column){
+      if(!!row.resourceName){
+        return row.resourceName
+      }else{
+        return "N/A"
+      }
     },
     syncData(){
       let url = "/cloud/event/sync";
