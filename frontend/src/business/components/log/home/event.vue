@@ -20,20 +20,11 @@
             label="云账号名称"
           >
             <template v-slot:default="scope">
-              <span>{{ getAccountName(scope.row.cloudAccountId) }}</span>
+              <span><img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.cloudAccountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                {{ getAccountName(scope.row.cloudAccountId) }}</span>
             </template>
           </el-table-column>
-          <el-table-column
 
-            label="云平台"
-          >
-            <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.cloudAccountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ $t(getPluginName(scope.row.cloudAccountId)) }}
-              </span>
-            </template>
-          </el-table-column>
           <el-table-column
             prop="syncRegion"
             label="区域"
@@ -60,11 +51,13 @@
           <el-table-column
             prop="resourceType"
             label="资源类型"
+            :formatter="resourceTypeFormat"
            >
           </el-table-column>
           <el-table-column
             prop="resourceName"
             label="资源名称"
+            :formatter="resourceNameFormat"
             >
           </el-table-column>
           <el-table-column :label="$t('commons.operating')" fixed="right">
@@ -102,7 +95,7 @@ export default {
     return {
       dateTime: [],
       currentAccount: '',
-      region:'',
+      region:[],
       tableData: [],
       currentPage: 1,
       pageSize: 10,
@@ -126,7 +119,7 @@ export default {
       let startTime = this.$route.query.startTime;
       let endTime = this.$route.query.endTime;
       this.currentAccount = accountId
-      this.region = region
+      this.region = region.split(",")
       this.dateTime = [this.formatDate(startTime*1),this.formatDate(endTime*1)]
     }else{
       this.currentAccount = localStorage.getItem(ACCOUNT_ID)
@@ -150,6 +143,21 @@ export default {
       });
 
     },
+    resourceTypeFormat(row,column){
+      if(!!row.resourceType){
+        return row.resourceType
+      }else{
+        return "N/A"
+      }
+    },
+
+    resourceNameFormat(row,column){
+      if(!!row.resourceName){
+        return row.resourceName
+      }else{
+        return "N/A"
+      }
+    },
     syncData(){
       let url = "/cloud/event/sync";
       this.result = this.$post(url, {accountId:this.currentAccount,region:this.region,startTime:this.dateTime[0],endTime:this.dateTime[1]}, response => {
@@ -158,7 +166,7 @@ export default {
     },
     search() {
       let url = "/cloud/event/list/" + this.currentPage + "/" + this.pageSize;
-      this.result = this.$post(url, {accountId:this.currentAccount,region:this.region,startTime:this.dateTime[0],endTime:this.dateTime[1]}, response => {
+      this.result = this.$post(url, {accountId:this.currentAccount,regions:this.region,startTime:this.dateTime[0],endTime:this.dateTime[1]}, response => {
         let data = response.data;
         this.total = data.itemCount;
         this.tableData = data.listObject;
@@ -218,7 +226,7 @@ export default {
         let startTime = this.$route.query.startTime;
         let endTime = this.$route.query.endTime;
         this.currentAccount = accountId
-        this.region = region
+        this.region = region.split(",")
         this.dateTime = [this.formatDate(startTime*1),this.formatDate(endTime*1)]
         this.$refs.tableHeader.setDateTime(this.dateTime)
         this.$refs.tableHeader.setRegion(this.region)

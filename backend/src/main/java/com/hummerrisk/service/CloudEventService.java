@@ -28,6 +28,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,6 +59,11 @@ public class CloudEventService {
     @Resource
     private PlatformTransactionManager transactionManager;
 
+    public List<CloudEventRegionLog> getCloudEventRegionLog(int logId){
+        CloudEventRegionLogExample cloudEventRegionLogExample = new CloudEventRegionLogExample();
+        cloudEventRegionLogExample.createCriteria().andLogIdEqualTo(logId);
+        return cloudEventRegionLogMapper.selectByExample(cloudEventRegionLogExample);
+    }
     public List<CloudEventSyncLog> getCloudEventSyncLog(String accountId,String region){
         CloudEventSyncLogExample cloudEventSyncLogExample = new CloudEventSyncLogExample();
         cloudEventSyncLogExample.setOrderByClause(" create_time desc");
@@ -97,6 +103,9 @@ public class CloudEventService {
         if(StringUtils.isNotBlank(cloudEventRequest.getRegion())){
             criteria.andSyncRegionEqualTo(cloudEventRequest.getRegion());
         }
+        if(cloudEventRequest.getRegions()!=null && cloudEventRequest.getRegions().length>0){
+            criteria.andSyncRegionIn(Arrays.asList(cloudEventRequest.getRegions()));
+        }
         if(StringUtils.isNotBlank(cloudEventRequest.getStartTime())){
             criteria.andEventTimeBetween(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", cloudEventRequest.getStartTime())
                     , DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", cloudEventRequest.getEndTime()));
@@ -127,6 +136,7 @@ public class CloudEventService {
             cloudEventRegionLog.setRegion(region);
             cloudEventRegionLog.setLogId(cloudEventSyncLog.getId());
             cloudEventRegionLog.setStatus(0);
+            cloudEventRegionLog.setCreateTime(DateUtils.getNowDate());
             cloudEventRegionLogMapper.insertSelective(cloudEventRegionLog);
         }
         commonThreadPool.addTask(() -> {
@@ -155,6 +165,9 @@ public class CloudEventService {
     }
 
     public int saveCloudEvent(Integer logId, String accountId, String region, String startTime, String endTime) {
+        CloudEventRegionLog cloudEventSyncLog = new CloudEventRegionLog();
+        cloudEventSyncLog.setId(logId);
+        cloudEventSyncLog.setStartTime(DateUtils.getNowDate());
         try {
             AccountWithBLOBs account = accountService.getAccount(accountId);
             Map<String, String> accountMap = PlatformUtils.getAccount(account, region, proxyMapper.selectByPrimaryKey(account.getProxyId()));
@@ -174,18 +187,12 @@ public class CloudEventService {
             template.execute(new TransactionCallbackWithoutResult() {
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus arg0) {
-                    CloudEventRegionLog cloudEventSyncLog = new CloudEventRegionLog();
-                    cloudEventSyncLog.setId(logId);
+
                     if (result.size() > 0) {
-                        cloudEventSyncLog.setStartTime(result.get(result.size() - 1).getEventTime());
-                        cloudEventSyncLog.setEndTime(result.get(0).getEventTime());
                         CloudEventExample cloudEventExample = new CloudEventExample();
                         cloudEventExample.createCriteria().andCloudAccountIdEqualTo(accountId).andSyncRegionEqualTo(region).andEventTimeBetween(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime)
                                 , DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", endTime));
                         cloudEventMapper.deleteByExample(cloudEventExample);
-                    } else {
-                        cloudEventSyncLog.setStartTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime));
-                        cloudEventSyncLog.setEndTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime));
                     }
                     result.forEach(item -> {
                         item.setCloudAccountId(accountId);
@@ -206,14 +213,13 @@ public class CloudEventService {
                     }
                     cloudEventSyncLog.setDataCount(num);
                     cloudEventSyncLog.setStatus(1);
+                    cloudEventSyncLog.setEndTime(DateUtils.getNowDate());
                     cloudEventRegionLogMapper.updateByPrimaryKeySelective(cloudEventSyncLog);
                 }
             });
             return result.size();
         } catch (Exception e) {
             e.printStackTrace();
-            CloudEventRegionLog cloudEventSyncLog = new CloudEventRegionLog();
-            cloudEventSyncLog.setId(logId);
             cloudEventSyncLog.setStatus(2);
             String exceptionStr = e.getMessage();
             if(exceptionStr.length()>512){
