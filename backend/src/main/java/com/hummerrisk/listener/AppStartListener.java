@@ -1,5 +1,7 @@
 package com.hummerrisk.listener;
 
+import com.hummerrisk.service.impl.ExecEngineFactoryImp;
+import com.hummerrisk.service.impl.IProvider;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -7,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class AppStartListener implements ApplicationListener<ApplicationReadyEvent> {
+public class AppStartListener extends ExecEngineFactoryImp implements ApplicationListener<ApplicationReadyEvent> {
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
@@ -36,7 +38,17 @@ public class AppStartListener implements ApplicationListener<ApplicationReadyEve
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        init();
+    }
 
+    @Override
+    public void init() {
+        try {
+            Collection plugins = getPlugins();
+            this.providers.addAll(plugins);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     void loading(int count) throws InterruptedException {
