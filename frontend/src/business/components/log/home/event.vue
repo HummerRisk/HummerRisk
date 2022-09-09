@@ -20,20 +20,11 @@
             label="云账号名称"
           >
             <template v-slot:default="scope">
-              <span>{{ getAccountName(scope.row.cloudAccountId) }}</span>
+              <span><img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.cloudAccountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                {{ getAccountName(scope.row.cloudAccountId) }}</span>
             </template>
           </el-table-column>
-          <el-table-column
 
-            label="云平台"
-          >
-            <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.cloudAccountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ $t(getPluginName(scope.row.cloudAccountId)) }}
-              </span>
-            </template>
-          </el-table-column>
           <el-table-column
             prop="syncRegion"
             label="区域"
@@ -60,11 +51,13 @@
           <el-table-column
             prop="resourceType"
             label="资源类型"
+            :formatter="resourceTypeFormat"
            >
           </el-table-column>
           <el-table-column
             prop="resourceName"
             label="资源名称"
+            :formatter="resourceNameFormat"
             >
           </el-table-column>
           <el-table-column :label="$t('commons.operating')" fixed="right">
@@ -149,6 +142,21 @@ export default {
         }
       });
 
+    },
+    resourceTypeFormat(row,column){
+      if(!!row.resourceType){
+        return row.resourceType
+      }else{
+        return "N/A"
+      }
+    },
+
+    resourceNameFormat(row,column){
+      if(!!row.resourceName){
+        return row.resourceName
+      }else{
+        return "N/A"
+      }
     },
     syncData(){
       let url = "/cloud/event/sync";
