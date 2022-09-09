@@ -8,7 +8,7 @@
     </el-row>
     <el-row type="flex" justify="space-between" align="middle">
       <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"/>
-      <el-select v-model="region" clearable placeholder="请选择区域" @change = "changeRegion">
+      <el-select v-model="region" v-if="showRegion" clearable placeholder="请选择区域" @change = "changeRegion">
         <el-option
           v-for="item in regions"
           :key="item['regionId']"
@@ -32,10 +32,10 @@
     </el-date-picker>
       </span>
       <span class="operate-button">
-        <table-button   icon="el-icon-video-play" v-if="showSync"
-                        :content="syncTip" @click="syncData"/>
         <table-button   icon="el-icon-video-play" v-if="showSearch"
                         :content="searchTip" @click="search"/>
+        <table-button   icon="el-icon-video-play" v-if="showSync"
+                        :content="syncTip" @click="syncData"/>
         <slot name="button"></slot>
       </span>
     </el-row>
@@ -60,6 +60,12 @@ export default {
         }
       },
       showDate: {
+        type: Boolean,
+        default() {
+          return true;
+        }
+      },
+      showRegion:{
         type: Boolean,
         default() {
           return true;
