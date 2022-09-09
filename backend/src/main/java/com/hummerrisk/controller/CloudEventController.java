@@ -3,6 +3,7 @@ package com.hummerrisk.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.CloudEvent;
+import com.hummerrisk.base.domain.CloudEventRegionLog;
 import com.hummerrisk.base.domain.CloudEventSyncLog;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
@@ -28,6 +29,11 @@ public class CloudEventController {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, cloudEventService.getCloudEventSyncLog(cloudEventRequest.getAccountId(),cloudEventRequest.getRegion()));
     }
+    @ApiOperation(value = "区域同步日志查询")
+    @PostMapping("sync/log/region/list/{logId}")
+    public List<CloudEventRegionLog> listSyncRegionLogs(@PathVariable int logId){
+        return cloudEventService.getCloudEventRegionLog(logId);
+    }
 
     @ApiOperation(value = "删除同步日志")
     @PostMapping("sync/log/delete/{id}")
@@ -35,7 +41,8 @@ public class CloudEventController {
         cloudEventService.deleteCloudEventSyncLog(id);
     }
 
-    @ApiOperation(value = "删除同步日志")
+
+    @ApiOperation(value = "查询同步日志")
     @PostMapping("sync/log/detail/{id}")
     public CloudEventSyncLog getSyncLog(@PathVariable int id){
         return cloudEventService.selectCloudEventSyncLog(id);
@@ -50,7 +57,7 @@ public class CloudEventController {
     @ApiOperation(value = "日志同步")
     @PostMapping("sync")
     public void syncEvents(@RequestBody CloudEventRequest cloudEventRequest){
-        cloudEventService.syncCloudEvents(cloudEventRequest.getAccountId(),cloudEventRequest.getRegion()
+        cloudEventService.syncCloudEvents(cloudEventRequest.getAccountId(),cloudEventRequest.getRegions()
                 ,cloudEventRequest.getStartTime(),cloudEventRequest.getEndTime());
     }
 
