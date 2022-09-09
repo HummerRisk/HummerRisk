@@ -11,27 +11,18 @@
                       @changeRegion="changeRegion"
                       @changeDateTime="changeDateTime"
                       @syncData="syncData" :createTip="$t('common.sync')"
-                      :showSearch = "true" :showDate = "true"
+                      :showSearch = "true" :showDate = "false" :show-region = "false"
         />
         <el-table border :data="tableData" class="adjust-table table-content">
           <el-table-column
             label="云账号名称"
           >
             <template v-slot:default="scope">
-              <span>{{ getAccountName(scope.row.accountId) }}</span>
+              <span> <img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.accountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ getAccountName(scope.row.accountId) }}</span>
             </template>
           </el-table-column>
-          <el-table-column
 
-              label="云平台"
-          >
-            <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.accountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ $t(getPluginName(scope.row.accountId)) }}
-              </span>
-            </template>
-          </el-table-column>
           <el-table-column
             prop="region"
             label="区域"
@@ -57,6 +48,9 @@
             </el-button>
             <el-button @click="showTaskLog(scope.row)" plain size="medium" type="danger" v-else-if="scope.row.status === 2">
               <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+            </el-button>
+            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="warning" v-else-if="scope.row.status === 3">
+              <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
             </el-button>
           </el-table-column>
           <el-table-column
@@ -87,13 +81,58 @@
     <!--Task log-->
     <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="65%" :before-close="handleClose" direction="rtl"
                :destroy-on-close="true">
-      <div >
-        <span>
-          {{ syncLog }}
-        </span>
-      </div>
+      <region-log :row="logForm"></region-log>
     </el-drawer>
     <!--Task log-->
+
+    <!--sync-->
+    <el-drawer class="rtl" title="事件同步" :visible.sync="showSync" size="50%" :before-close="handleClose" direction="rtl"
+               :destroy-on-close="true">
+      <el-form :model="eventFrom" label-position="right" label-width="120px" size="small" >
+        <el-form-item label="云账号" >
+          <el-select style="width: 100%;" v-model="eventFrom.accountId" placeholder="云账号" @change="changeFormRegion">
+            <el-option
+              v-for="item in accountList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+              <img :src="require(`@/assets/img/platform/${item.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/> &nbsp; {{ item.name }}
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="区域" >
+          <el-select multiple style="width: 100%;" v-model="eventFrom.regions" placeholder="区域">
+            <el-option
+              v-for="item in regionList"
+              :key="item.regionId"
+              :label="item.regionName"
+              :value="item.regionId">
+               &nbsp; {{ item.regionName }}
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="时间范围">
+          <el-date-picker
+            @change="changeDateTime"
+            v-model="dateTime"
+            type="datetimerange"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            :picker-options="pickerOptions"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            align="right">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="cancel">{{ $t('commons.cancel') }}</el-button>
+          <el-button type="primary" @click="confirm" @keydown.enter.native.prevent>{{ $t('commons.confirm') }}</el-button>
+        </el-form-item>
+       </el-form>
+
+    </el-drawer>
+    <!--sync-->
+
   </main-container>
 </template>
 
@@ -105,6 +144,7 @@ import MainContainer from "../../common/components/MainContainer";
 import {CLOUD_EVENT_CONFIGS} from "../../common/components/search/search-components";
 import {ACCOUNT_ID} from "@/common/js/constants";
 import TableOperators from "../../common/components/TableOperators";
+import RegionLog from "@/business/components/log/home/RegionLog";
 
 /* eslint-disable */
 export default {
@@ -114,16 +154,24 @@ export default {
     TableHeader,
     TablePagination,
     MainContainer,
-    TableOperators
+    TableOperators,
+    RegionLog
   },
   data() {
     return {
+      eventFrom:{
+        accountId: "",
+        region: ""
+      },
+      showSync: false,
       syncLog: '',
       logVisible: false,
       dateTime: [],
       currentAccount: '',
       region:'',
+      accountList:[],
       tableData: [],
+      regionList: [],
       currentPage: 1,
       pageSize: 10,
       total: 0,
@@ -131,12 +179,40 @@ export default {
       condition: {
         components: CLOUD_EVENT_CONFIGS
       },
+      logForm: {regionLogs: []},
       buttons: [
         {
           tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
           exec: this.handleDelete
         }
       ],
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近一周',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近一个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+            picker.$emit('pick', [start, end]);
+          }
+        }]
+      },
     }
   },
   created() {
@@ -150,6 +226,27 @@ export default {
     clearInterval(this.timer);
   },
   methods: {
+    cancel(){
+      this.showSync = false
+    },
+    confirm(){
+      if(!!this.dateTime){
+        this.eventFrom.startTime = this.dateTime[0]
+        this.eventFrom.endTime = this.dateTime[1]
+      }else{
+        this.$error("云账号和区域还有日期范围不能为空")
+        return
+      }
+      if(!!!this.eventFrom.accountId||!!!this.eventFrom.regions||this.eventFrom.regions.length===0||!!!this.eventFrom.startTime||!!!this.eventFrom.endTime){
+        this.$error("云账号和区域还有日期范围不能为空")
+        return
+      }
+      let url = "/cloud/event/sync";
+      this.result = this.$post(url, this.eventFrom, response => {
+        this.showSync = false
+        this.search()
+      })
+    },
     handleDelete(row){
       this.$alert(this.$t('account.delete_confirm') + " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
@@ -166,6 +263,7 @@ export default {
     },
     handleClose() {
       this.logVisible=false;
+      this.showSync=false;
       this.detailVisible=false;
     },
     showEvents(row){
@@ -195,7 +293,7 @@ export default {
       }
       return sum == 0;
     },
-    showTaskLog(row){
+    showTaskLog2(row){
       let url = "/cloud/event/sync/log/detail/" + row.id;
       this.result = this.$post(url, {}, response => {
         let data = response.data;
@@ -211,14 +309,15 @@ export default {
       });
     },
     syncData(){
-      if(!!!this.currentAccount || !!!this.region){
+      this.showSync = true
+    /*  if(!!!this.currentAccount || !!!this.region){
         this.$error("云账号和区域不能为空")
         return
       }
       let url = "/cloud/event/sync";
       this.result = this.$post(url, {accountId:this.currentAccount,region:this.region,startTime:this.dateTime[0],endTime:this.dateTime[1]}, response => {
         this.search()
-      });
+      });*/
     },
     search() {
       let url = "/cloud/event/sync/log/list/" + this.currentPage + "/" + this.pageSize;
@@ -230,22 +329,43 @@ export default {
     },
     cloudAccountSwitch(accountId){
       this.currentAccount = accountId
+      this.search()
     },
     changeRegion(value){
       this.region = value
       this.search()
     },
+    changeFormRegion(){
+      let account = this.accountList.filter(item =>{
+        return item.id === this.eventFrom.accountId
+      })
+      if(account.length > 0){
+        this.regionList = JSON.parse(account[0].regions)
+      }
+    },
     changeDateTime(value){
       this.dateTime = value
     },
     init(){
-      let that = this
       this.$get("/account/allList", response => {
-        that.accountList = response.data
-
+        let accountList = response.data
+        this.accountList = accountList.filter(item=>{
+          return item.pluginId === "hummer-aliyun-plugin"
+        })
         //that.dateTime = [this.formatDate(new Date().getTime()-1000*60*60*24),this.formatDate(new Date().getTime())]
-        that.search()
+        this.search()
       })
+    },
+    showTaskLog(row){
+      let logId = row.id
+      this.logForm.regionLogs = []
+      this.logForm.showLogTaskId = logId
+      let url = "/cloud/event/sync/log/region/list/" + logId;
+      this.result = this.$post(url, {}, response => {
+        this.logForm.regionLogs = response.data;
+        console.log(response.data)
+        this.logVisible = true
+      });
     },
     formatDate: function(value) {
       let dt = new Date(value)
