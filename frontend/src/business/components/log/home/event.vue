@@ -20,20 +20,11 @@
             label="云账号名称"
           >
             <template v-slot:default="scope">
-              <span>{{ getAccountName(scope.row.cloudAccountId) }}</span>
+              <span><img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.cloudAccountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                {{ getAccountName(scope.row.cloudAccountId) }}</span>
             </template>
           </el-table-column>
-          <el-table-column
 
-            label="云平台"
-          >
-            <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.cloudAccountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ $t(getPluginName(scope.row.cloudAccountId)) }}
-              </span>
-            </template>
-          </el-table-column>
           <el-table-column
             prop="syncRegion"
             label="区域"
