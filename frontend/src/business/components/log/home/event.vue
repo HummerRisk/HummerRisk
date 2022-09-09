@@ -102,7 +102,7 @@ export default {
     return {
       dateTime: [],
       currentAccount: '',
-      region:'',
+      region:[],
       tableData: [],
       currentPage: 1,
       pageSize: 10,
@@ -126,7 +126,7 @@ export default {
       let startTime = this.$route.query.startTime;
       let endTime = this.$route.query.endTime;
       this.currentAccount = accountId
-      this.region = region
+      this.region = region.split(",")
       this.dateTime = [this.formatDate(startTime*1),this.formatDate(endTime*1)]
     }else{
       this.currentAccount = localStorage.getItem(ACCOUNT_ID)
@@ -158,7 +158,7 @@ export default {
     },
     search() {
       let url = "/cloud/event/list/" + this.currentPage + "/" + this.pageSize;
-      this.result = this.$post(url, {accountId:this.currentAccount,region:this.region,startTime:this.dateTime[0],endTime:this.dateTime[1]}, response => {
+      this.result = this.$post(url, {accountId:this.currentAccount,regions:this.region,startTime:this.dateTime[0],endTime:this.dateTime[1]}, response => {
         let data = response.data;
         this.total = data.itemCount;
         this.tableData = data.listObject;
@@ -218,7 +218,7 @@ export default {
         let startTime = this.$route.query.startTime;
         let endTime = this.$route.query.endTime;
         this.currentAccount = accountId
-        this.region = region
+        this.region = region.split(",")
         this.dateTime = [this.formatDate(startTime*1),this.formatDate(endTime*1)]
         this.$refs.tableHeader.setDateTime(this.dateTime)
         this.$refs.tableHeader.setRegion(this.region)

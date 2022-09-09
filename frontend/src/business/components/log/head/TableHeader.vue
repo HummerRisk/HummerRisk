@@ -8,7 +8,7 @@
     </el-row>
     <el-row type="flex" justify="space-between" align="middle">
       <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"/>
-      <el-select v-model="region" v-if="showRegion" clearable placeholder="请选择区域" @change = "changeRegion">
+      <el-select v-model="region"  multiple collapse-tags v-if="showRegion" clearable placeholder="请选择区域" @change = "changeRegion">
         <el-option
           v-for="item in regions"
           :key="item['regionId']"
@@ -210,6 +210,10 @@ export default {
 
   .search-bar {
     width: 200px
+  }
+
+  .el-select{
+    width: 250px;
   }
 
 </style>
