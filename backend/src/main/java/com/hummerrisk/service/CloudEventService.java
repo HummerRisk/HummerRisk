@@ -28,6 +28,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -101,6 +102,9 @@ public class CloudEventService {
         }
         if(StringUtils.isNotBlank(cloudEventRequest.getRegion())){
             criteria.andSyncRegionEqualTo(cloudEventRequest.getRegion());
+        }
+        if(cloudEventRequest.getRegions()!=null && cloudEventRequest.getRegions().length>0){
+            criteria.andSyncRegionIn(Arrays.asList(cloudEventRequest.getRegions()));
         }
         if(StringUtils.isNotBlank(cloudEventRequest.getStartTime())){
             criteria.andEventTimeBetween(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", cloudEventRequest.getStartTime())
