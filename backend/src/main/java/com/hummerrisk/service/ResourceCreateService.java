@@ -174,7 +174,7 @@ public class ResourceCreateService {
             });
         }
 
-        //软件检测: 镜像检测
+        //镜像检测
         final ImageResultExample imageResultExample = new ImageResultExample();
         ImageResultExample.Criteria imageCriteria = imageResultExample.createCriteria();
         imageCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
@@ -235,39 +235,6 @@ public class ResourceCreateService {
                         LogUtil.error(e);
                     } finally {
                         processingGroupIdMap.remove(cloudNativeToBeProceed.getId());
-                    }
-                });
-            });
-        }
-
-        //云原生镜像漏洞检测
-        final ImageResultExample k8sImageResultExample = new ImageResultExample();
-        ImageResultExample.Criteria k8sImageCriteria = k8sImageResultExample.createCriteria();
-        k8sImageCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
-            k8sImageCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
-        }
-        k8sImageResultExample.setOrderByClause("create_time limit 10");
-        List<ImageResultWithBLOBs> k8sImageResults = imageResultMapper.selectByExampleWithBLOBs(k8sImageResultExample);
-        if (CollectionUtils.isNotEmpty(k8sImageResults)) {
-            k8sImageResults.forEach(k8sImageResult -> {
-                final ImageResultWithBLOBs k8sImageToBeProceed;
-                try {
-                    k8sImageToBeProceed = BeanUtils.copyBean(new ImageResultWithBLOBs(), k8sImageResult);
-                } catch (Exception e) {
-                    throw new RuntimeException(e.getMessage());
-                }
-                if (processingGroupIdMap.get(k8sImageToBeProceed.getId()) != null) {
-                    return;
-                }
-                processingGroupIdMap.put(k8sImageToBeProceed.getId(), k8sImageToBeProceed.getId());
-                commonThreadPool.addTask(() -> {
-                    try {
-                        k8sService.createImageScan(k8sImageToBeProceed);
-                    } catch (Exception e) {
-                        LogUtil.error(e);
-                    } finally {
-                        processingGroupIdMap.remove(k8sImageToBeProceed.getId());
                     }
                 });
             });

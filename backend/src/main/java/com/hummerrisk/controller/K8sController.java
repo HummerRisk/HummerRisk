@@ -91,33 +91,6 @@ public class K8sController {
         return k8sService.getCloudNativeResultLog(resultId);
     }
 
-    @ApiOperation(value = "云原生镜像检测")
-    @GetMapping("imageScan/{id}")
-    public void imageScan(@PathVariable String id) throws Exception {
-        k8sService.imageScan(id);
-    }
-
-    @ApiOperation(value = "重新云原生镜像检测")
-    @GetMapping("imageReScan/{id}")
-    public void imageReScan(@PathVariable String id) throws Exception {
-        k8sService.imageReScan(id);
-    }
-
-    @I18n
-    @ApiOperation(value = "原生镜像检测结果详情")
-    @PostMapping("k8sImageResultItemList/{goPage}/{pageSize}")
-    public Pager<List<ImageTrivyJsonWithBLOBs>> k8sImageResultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageTrivyJson request) {
-        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, k8sService.k8sImageResultItemList(request));
-    }
-
-    @I18n
-    @ApiIgnore
-    @GetMapping(value = "getImageResult/{resultId}")
-    public ImageResultWithBLOBs getImageResult(@PathVariable String resultId) {
-        return k8sService.getImageResult(resultId);
-    }
-
     @I18n
     @ApiOperation(value = "所有带有 YAML 的云原生资源信息")
     @GetMapping("allCloudNativeSource2YamlList")
