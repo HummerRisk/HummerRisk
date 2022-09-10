@@ -19,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -589,7 +588,7 @@ public class ImageService {
     }
 
     public String execute(Image image) throws Exception {
-        Proxy proxy = null;
+        Proxy proxy = new Proxy();
         ImageRepo imageRepo = null;
         if (image.getIsProxy() && image.getProxyId()!=null) {
             proxy = proxyMapper.selectByPrimaryKey(image.getProxyId());

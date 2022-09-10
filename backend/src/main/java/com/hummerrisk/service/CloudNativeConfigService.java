@@ -14,6 +14,8 @@ import com.hummerrisk.controller.request.config.ConfigRequest;
 import com.hummerrisk.controller.request.config.ConfigResultRequest;
 import com.hummerrisk.dto.CloudNativeConfigDTO;
 import com.hummerrisk.i18n.Translator;
+import com.hummerrisk.service.impl.ExecEngineFactoryImp;
+import com.hummerrisk.service.impl.IProvider;
 import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -53,6 +55,8 @@ public class CloudNativeConfigService {
     private NoticeService noticeService;
     @Resource
     private CloudNativeConfigRuleMapper cloudNativeConfigRuleMapper;
+    @Resource
+    private ExecEngineFactoryImp execEngineFactoryImp;
 
     public List<CloudNativeConfigDTO> getCloudNativeConfigList(ConfigRequest request) {
         return extCloudNativeConfigMapper.getCloudNativeConfigList(request);
@@ -318,25 +322,12 @@ public class CloudNativeConfigService {
     }
 
     public String execute(CloudNativeConfig cloudNativeConfig) throws Exception {
-        try {
-            Proxy proxy;
-            String _proxy = "";
-            if(cloudNativeConfig.getProxyId()!=null) {
-                proxy = proxyMapper.selectByPrimaryKey(cloudNativeConfig.getProxyId());
-                _proxy = ProxyUtil.isProxy(proxy);
-            }
-            CommandUtils.saveAsFile(cloudNativeConfig.getConfigYaml(), TrivyConstants.DEFAULT_BASE_DIR, "trivy.yaml");
-            CommandUtils.commonExecCmdWithResult(TrivyConstants.TRIVY_RM + TrivyConstants.TRIVY_JSON, TrivyConstants.DEFAULT_BASE_DIR);
-            String command = _proxy + TrivyConstants.TRIVY_CONFIG + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_YAML + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
-            LogUtil.info(cloudNativeConfig.getId() + " {k8sConfig}[command]: " + cloudNativeConfig.getName() + "   " + command);
-            String resultStr = CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
-            if(resultStr.contains("ERROR") || resultStr.contains("error")) {
-                throw new Exception(resultStr);
-            }
-            return resultStr;
-        } catch (Exception e) {
-            return "";
+        Proxy proxy = new Proxy();
+        if (cloudNativeConfig.getProxyId()!=null) {
+            proxy = proxyMapper.selectByPrimaryKey(cloudNativeConfig.getProxyId());
         }
+        IProvider cp = execEngineFactoryImp.getProvider("configProvider");
+        return (String) execEngineFactoryImp.executeMethod(cp, "execute", cloudNativeConfig, proxy);
     }
 
     long saveCloudNativeConfigResultItem(CloudNativeConfigResult result) throws Exception {

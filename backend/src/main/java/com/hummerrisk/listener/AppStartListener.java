@@ -1,7 +1,6 @@
 package com.hummerrisk.listener;
 
 import com.hummerrisk.service.impl.ExecEngineFactoryImp;
-import com.hummerrisk.service.impl.IProvider;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
