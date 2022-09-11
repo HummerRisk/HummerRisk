@@ -7,36 +7,17 @@
       </slot>
     </el-row>
     <el-row type="flex" justify="space-between" align="middle">
-      <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"/>
-      <el-select v-model="region"  multiple collapse-tags v-if="showRegion" clearable placeholder="请选择区域" @change = "changeRegion">
-        <el-option
-          v-for="item in regions"
-          :key="item['regionId']"
-          :label="item['regionName']"
-          :value="item['regionId']">
-        </el-option>
-      </el-select>
-
-      <span>
-         <el-date-picker
-           v-if="showDate"
-           @change="changeDateTime"
-           v-model="dateTime2"
-           type="datetimerange"
-           value-format="yyyy-MM-dd HH:mm:ss"
-           :picker-options="pickerOptions"
-           range-separator="至"
-           start-placeholder="开始日期"
-           end-placeholder="结束日期"
-           align="right">
-    </el-date-picker>
-      </span>
       <span class="operate-button">
-        <table-button   icon="el-icon-video-play" v-if="showSearch"
-                        :content="searchTip" @click="search"/>
-        <table-button   icon="el-icon-video-play" v-if="showSync"
-                        :content="syncTip" @click="syncData"/>
+        <table-button  v-if="showSync" icon="el-icon-video-play"
+                         :content="syncTip" @click="syncData"/>
+
+
+
         <slot name="button"></slot>
+      </span>
+      <span>
+        <table-search-bar :condition.sync="condition" @change="search" class="search-bar" :tip="tip"/>
+        <table-adv-search-bar :condition.sync="condition" @search="search" v-if="isCombine"/>
       </span>
     </el-row>
   </div>
@@ -47,11 +28,10 @@
 import TableSearchBar from '../../common/components/TableSearchBar';
 import TableButton from '../../common/components/TableButton';
 import TableAdvSearchBar from "../../common/components/search/TableAdvSearchBar";
-import AccountChange from "@/business/components/common/head/AccountSwitch";
 
 export default {
     name: "TableHeader",
-    components: {TableAdvSearchBar, TableSearchBar, TableButton,AccountChange},
+    components: {TableAdvSearchBar, TableSearchBar, TableButton},
     props: {
       title: {
         type: String,
@@ -59,32 +39,9 @@ export default {
           return this.$t('commons.name');
         }
       },
-      showDate: {
-        type: Boolean,
-        default() {
-          return true;
-        }
-      },
-      showRegion:{
-        type: Boolean,
-        default() {
-          return true;
-        }
-      },
       showSync: {
         type: Boolean,
-        default() {
-          return true;
-        }
-      },
-      showSearch: {
-        type: Boolean,
-        default() {
-          return true;
-        }
-      },
-      dateTime: {
-        type: Array,
+        default: false
       },
       condition: {
         type: Object
@@ -92,97 +49,25 @@ export default {
       syncTip: {
         type: String,
         default() {
-          return this.$t('commons.sync');
+          return this.$t('commons.create');
         }
       },
-      searchTip: {
-        type: String,
-      },
-      currentAccount: {
-        type: String,
-      },
+
       tip: {
         String,
         default() {
           return this.$t('commons.search_by_name');
         }
-      },
-      initRegion:{
-        String
       }
-    },
-    data(){
-      return {
-        dateTime2:'',
-        regions: [],
-        region: '',
-        pickerOptions: {
-          shortcuts: [{
-            text: '最近一周',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '最近一个月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '最近三个月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit('pick', [start, end]);
-            }
-          }]
-        },
-      }
-    },
-    created() {
-      this.dateTime2 = this.dateTime
-      if(this.initRegion){
-        this.region = this.initRegion
-      }
-      this.getRegions(this.currentAccount)
     },
     methods: {
-      getRegions(accountId){
-        if(accountId){
-          this.result =  this.$get("/account/getAccount/" + accountId, res => {
-            this.regions = JSON.parse(res.data.regions)
-          })
-        }
-      },
-      setDateTime(dateTime){
-        this.dateTime2 = dateTime
-      },
-      setRegion(region){
-        this.region = region
-      },
-      syncData() {
-        this.$emit('syncData');
-      },
       search(value) {
         this.$emit('update:condition', this.condition);
         this.$emit('search', value);
       },
-      cloudAccountSwitch(value){
-        this.getRegions(value)
-        this.$emit('cloudAccountSwitch',value)
+      syncData() {
+        this.$emit('syncData');
       },
-      changeRegion(){
-        this.$emit('changeRegion', this.region);
-      },
-      changeDateTime(){
-        this.$emit('changeDateTime', this.dateTime2);
-      }
     },
     computed: {
       isCombine() {
@@ -210,10 +95,6 @@ export default {
 
   .search-bar {
     width: 200px
-  }
-
-  .el-select{
-    width: 250px;
   }
 
 </style>
