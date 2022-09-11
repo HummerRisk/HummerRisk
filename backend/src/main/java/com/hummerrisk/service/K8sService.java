@@ -64,8 +64,6 @@ public class K8sService {
     @Resource
     private CloudNativeService cloudNativeService;
     @Resource
-    private ImageService imageService;
-    @Resource
     private CloudNativeRuleMapper cloudNativeRuleMapper;
 
     public void scan(String id) throws Exception {

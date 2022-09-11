@@ -54,18 +54,17 @@ public class SshUtil {
             }
 
             if(isAuthenticated){
-                LogUtil.info(String.format(tipStr, "认证成功"));
+                LogUtil.info(String.format(tipStr, "ssh2 认证成功"));
             } else {
-                LogUtil.error(String.format(tipStr, "认证失败"));
-                throw new Exception(String.format(tipStr, "认证失败"));
+                LogUtil.error(String.format(tipStr, "ssh2 认证失败"));
+                loginSshd(sshServerDTO);
             }
 
         } catch (IOException e) {
-            LogUtil.error(String.format(tipStr, "登录失败") + e.getMessage());
-            throw new Exception(String.format(tipStr, "登录失败") + e.getMessage());
+            loginSshd(sshServerDTO);
         }
         long endTime = Calendar.getInstance().getTimeInMillis();
-        LogUtil.info("登录用时: " + (endTime - startTime)/1000.0 + "s\n" + splitStr);
+        LogUtil.info("ssh2 登录用时: " + (endTime - startTime)/1000.0 + "s\n" + splitStr);
         return conn;
     }
 
@@ -76,14 +75,11 @@ public class SshUtil {
         long startTime = Calendar.getInstance().getTimeInMillis();
         try {
 
-            session = client.connect(sshServerDTO.getSshUserName(), sshServerDTO.getSshIp(), sshServerDTO.getSshPort()).verify(5000).getSession();
+            session = client.connect(sshServerDTO.getSshUserName(), sshServerDTO.getSshIp(), sshServerDTO.getSshPort()).verify(50000).getSession();
 
             if (sshServerDTO.getIsPublicKey()) {
                 // 密钥模式
-//                 String resourceKey = "/opt/hummerrisk/hummer_rsa";
-
-                URLResource idenreplacedy;
-                idenreplacedy = new URLResource(Paths.get(sshServerDTO.getSshUserName(), ".ssh", "id_rsa").toUri().toURL());
+                URLResource idenreplacedy = new URLResource(Paths.get("/opt/hummerrisk/hummer_rsa").toUri().toURL());
                 try (InputStream inputStream = idenreplacedy.openInputStream()) {
                     session.addPublicKeyIdentity(GenericUtils.head(SecurityUtils.loadKeyPairIdentities(session, idenreplacedy, inputStream, (s, resourceKey, retryIndex) -> null)));
                 }
@@ -94,9 +90,11 @@ public class SshUtil {
 
             AuthFuture auth = session.auth();
             if (!auth.await(5000)) {
+                LogUtil.error(String.format(tipStr, "sshd 认证失败"));
                 throw new DeploymentException("Not authenticated within timeout", null);
             }
             if (!auth.isSuccess()) {
+                LogUtil.error(String.format(tipStr, "sshd 认证失败"));
                 throw new DeploymentException("Failed to authenticate", auth.getException());
             }
             session.close(false);
@@ -105,7 +103,7 @@ public class SshUtil {
             throw new Exception(String.format(tipStr, "登录失败") + e.getMessage());
         }
         long endTime = Calendar.getInstance().getTimeInMillis();
-        LogUtil.info("登录用时: " + (endTime - startTime)/1000.0 + "s\n" + splitStr);
+        LogUtil.info("sshd 登录用时: " + (endTime - startTime)/1000.0 + "s\n" + splitStr);
         return session;
     }
 

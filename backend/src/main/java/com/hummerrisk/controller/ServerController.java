@@ -45,6 +45,12 @@ public class ServerController {
         return PageUtils.setPageInfo(page, serverService.getServerList(server));
     }
 
+    @ApiOperation(value = "查询虚拟机")
+    @GetMapping("getServer/{id}")
+    public Server getServer(@PathVariable String id) throws Exception {
+        return serverService.getServer(id);
+    }
+
     @ApiOperation(value = "批量校验虚拟机连通性")
     @PostMapping("validate")
     public Boolean validate(@RequestBody List<String> selectIds) {

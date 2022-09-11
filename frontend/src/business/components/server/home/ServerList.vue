@@ -480,11 +480,10 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
         });
       },
     },
-    created() {
+    created () {
       this.init();
       this.activeProxy();
-    }
-
+    },
   }
 </script>
 

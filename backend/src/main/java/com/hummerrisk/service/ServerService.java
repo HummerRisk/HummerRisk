@@ -248,6 +248,10 @@ public class ServerService {
         return extServerMapper.getServerList(server);
     }
 
+    public Server getServer(String id) {
+        return serverMapper.selectByPrimaryKey(id);
+    }
+
     public int addServerGroup(ServerGroup serverGroup) {
         serverGroup.setId(UUIDUtil.newUUID());
         serverGroup.setCreator(SessionUtils.getUserId());
