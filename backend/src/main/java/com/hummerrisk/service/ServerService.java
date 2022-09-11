@@ -340,16 +340,16 @@ public class ServerService {
     }
 
     public String execute(Server server, String cmd, Proxy proxy) throws Exception {
+        SshServerDTO sshServerDTO = new SshServerDTO();
+        sshServerDTO.setSshIp(server.getIp());
+        sshServerDTO.setSshPort(Integer.valueOf(server.getPort()));
+        sshServerDTO.setSshUserName(server.getUserName());
+        sshServerDTO.setSshPassword(server.getPassword());
+        sshServerDTO.setIsPublicKey(server.getIsPublicKey());
+        sshServerDTO.setPublicKey(server.getPublicKey());
+        sshServerDTO.setSshPassword(server.getPassword());
+        sshServerDTO.setProxy(proxy);
         try {
-            SshServerDTO sshServerDTO = new SshServerDTO();
-            sshServerDTO.setSshIp(server.getIp());
-            sshServerDTO.setSshPort(Integer.valueOf(server.getPort()));
-            sshServerDTO.setSshUserName(server.getUserName());
-            sshServerDTO.setSshPassword(server.getPassword());
-            sshServerDTO.setIsPublicKey(server.getIsPublicKey());
-            sshServerDTO.setPublicKey(server.getPublicKey());
-            sshServerDTO.setSshPassword(server.getPassword());
-            sshServerDTO.setProxy(proxy);
             return SshUtil.execute(SshUtil.login(sshServerDTO), cmd);
         }catch (Exception e) {
             return "";

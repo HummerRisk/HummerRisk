@@ -160,8 +160,16 @@
           <el-form-item :label="$t('server.is_public_key')" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-switch v-model="form.isPublicKey"></el-switch>
           </el-form-item>
-          <el-form-item v-if="form.isPublicKey" :label="$t('server.public_key')" ref="password">
+          <el-form-item :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-radio v-model="form.isPublicKey" label="no">{{ $t('server.no_public_key') }}</el-radio>
+            <el-radio v-model="form.isPublicKey" label="str">{{ $t('server.str_public_key') }}</el-radio>
+            <el-radio v-model="form.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
+          </el-form-item>
+          <el-form-item v-if="form.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
             <el-input type="textarea" :rows="10" v-model="form.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
+          </el-form-item>
+          <el-form-item v-if="form.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
+            <server-key-upload v-on:appendTar="append" v-model="form.path" :param="form.path"/>
           </el-form-item>
           <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-switch v-model="form.isProxy"></el-switch>
@@ -198,6 +206,7 @@ import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import {SERVER_CONFIGS} from "../../common/components/search/search-components";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
+import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
 
 /* eslint-disable */
   export default {
@@ -210,6 +219,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
       TablePagination,
       TableOperator,
       DialogFooter,
+      ServerKeyUpload,
     },
     provide() {
       return {
@@ -264,6 +274,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
         groups: [],
         proxyForm: {isProxy: false, proxyId: 0},
         proxys: [],
+        keyFile: Object,
       }
     },
     props: {
@@ -478,6 +489,9 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
           this.updateVisible = false;
           this.search();
         });
+      },
+      append(file) {
+        this.keyFile = file;
       },
     },
     created () {

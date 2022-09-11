@@ -9,6 +9,8 @@ import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.dto.SshServerDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sshd.client.SshClient;
+import org.apache.sshd.client.channel.ChannelExec;
+import org.apache.sshd.client.channel.ClientChannelEvent;
 import org.apache.sshd.client.future.AuthFuture;
 import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.common.util.GenericUtils;
@@ -19,7 +21,10 @@ import javax.websocket.DeploymentException;
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.Calendar;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.TimeUnit;
 
 
 public class SshUtil {
@@ -140,8 +145,6 @@ public class SshUtil {
             result = result + s + " ";
         }
         result = result.trim();
-//        StringBuffer str = new StringBuffer(result);
-//        result = replaceSpace(str);
         return result;
     }
 
@@ -168,6 +171,52 @@ public class SshUtil {
             throw new Exception("解析脚本出错：" + e.getMessage());
         }
         return buffer.toString();
+    }
+
+    /**
+     * 远程执行shell脚本或者命令
+     * @param cmd 即将执行的命令
+     * @return 命令执行完后返回的结果值
+     */
+    public static String sshExecute(ClientSession session, String cmd) throws Exception {
+        String result = "";
+        try {
+            if(session != null){
+                ChannelExec ce = session.createExecChannel(cmd);
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                ByteArrayOutputStream err = new ByteArrayOutputStream();
+                ce.setOut(out);
+                ce.setErr(err);
+
+                ce.open();
+                Set<ClientChannelEvent> events =
+                        ce.waitFor(EnumSet.of(ClientChannelEvent.CLOSED), TimeUnit.SECONDS.toMillis(60000));
+                session.close(false);
+
+
+                if (events.contains(ClientChannelEvent.TIMEOUT)) {
+                    throw new Exception("【执行命令失败超时】\n执行的命令如下：\n" + cmd + "\n" + ClientChannelEvent.TIMEOUT);
+                }
+                //如果为得到标准输出为空，说明脚本执行出错了
+                if(StringUtils.isBlank(out.toString())){
+                    LogUtil.info("【得到标准输出为空】\n执行的命令如下：\n" + cmd);
+                    result = out.toString();
+                }else{
+                    LogUtil.info("【执行命令成功】\n执行的命令如下：\n" + cmd);
+                }
+            }
+        } catch (IOException e) {
+            LogUtil.error("【执行命令失败】\n执行的命令如下：\n" + cmd + "\n" + e.getMessage());
+            throw new Exception("【执行命令失败】\n执行的命令如下：\n" + cmd + "\n" + e.getMessage());
+        }
+        StringTokenizer pas = new StringTokenizer(result, " ");
+        result = "";
+        while (pas.hasMoreTokens()) {
+            String s = pas.nextToken();
+            result = result + s + " ";
+        }
+        result = result.trim();
+        return result;
     }
 
     //将空格替换成‘;’
