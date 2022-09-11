@@ -892,6 +892,7 @@ export default {
     server_4: 'Storage',
     server_5: 'Firewall',
     server_6: 'operating system',
+    upload_tip: 'Key file size does not exceed {0}',
   },
   image: {
     image_repo: 'Mirror repository',
