@@ -892,6 +892,7 @@ export default {
     server_4: '存储',
     server_5: '防火墙',
     server_6: '操作系统',
+    upload_tip: '大小不超过 {0} 的密钥文件',
   },
   image: {
     image_repo: '镜像仓库',

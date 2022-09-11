@@ -5,6 +5,7 @@ import ch.ethz.ssh2.HTTPProxyData;
 import ch.ethz.ssh2.Session;
 import ch.ethz.ssh2.StreamGobbler;
 import com.hummerrisk.base.domain.Proxy;
+import com.hummerrisk.base.domain.Server;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.dto.SshServerDTO;
 import org.apache.commons.lang3.StringUtils;
@@ -37,60 +38,67 @@ public class SshUtil {
      * 登录主机
      * @return 登录成功返回true，否则返回false
      */
-    public static Connection login(SshServerDTO sshServerDTO) throws Exception {
+    public static Connection login(Server server, Proxy proxy) throws Exception {
         boolean isAuthenticated = false;
         Connection conn = null;
         long startTime = Calendar.getInstance().getTimeInMillis();
         try {
-            Proxy proxy = sshServerDTO.getProxy();
-            if(sshServerDTO.getProxy().getProxyIp() != null) {
+            if(proxy.getProxyIp() != null) {
                 HTTPProxyData httpProxyData = new HTTPProxyData(proxy.getProxyIp(), Integer.valueOf(proxy.getProxyPort()), proxy.getProxyName(), proxy.getProxyPassword());
-                conn = new Connection(sshServerDTO.getSshIp(), sshServerDTO.getSshPort(), httpProxyData);
+                conn = new Connection(server.getIp(), Integer.valueOf(server.getPort()), httpProxyData);
             } else {
-                conn = new Connection(sshServerDTO.getSshIp(), sshServerDTO.getSshPort());
+                conn = new Connection(server.getIp(), Integer.valueOf(server.getPort()));
             }
 
             conn.connect(); // 连接主机
 
-            if (sshServerDTO.getIsPublicKey()) {
-                isAuthenticated = conn.authenticateWithPublicKey(sshServerDTO.getSshUserName(), sshServerDTO.getPublicKey().toCharArray(), sshServerDTO.getSshPassword());
-            } else {
-                isAuthenticated = conn.authenticateWithPassword(sshServerDTO.getSshUserName(), sshServerDTO.getSshPassword()); // 认证
+            if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
+                isAuthenticated = conn.authenticateWithPublicKey(server.getUserName(), server.getPublicKey().toCharArray(), server.getPassword());
+            } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
+                isAuthenticated = conn.authenticateWithPublicKey(server.getUserName(), server.getPublicKey().toCharArray(), server.getPassword());
+            } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "no")) {
+                isAuthenticated = conn.authenticateWithPassword(server.getUserName(), server.getPassword()); // 认证
             }
 
             if(isAuthenticated){
                 LogUtil.info(String.format(tipStr, "ssh2 认证成功"));
             } else {
                 LogUtil.error(String.format(tipStr, "ssh2 认证失败"));
-                loginSshd(sshServerDTO);
             }
 
         } catch (IOException e) {
-            loginSshd(sshServerDTO);
+            LogUtil.error(String.format(tipStr, "登录失败") + e.getMessage());
+            throw new Exception(String.format(tipStr, "登录失败") + e.getMessage());
         }
         long endTime = Calendar.getInstance().getTimeInMillis();
         LogUtil.info("ssh2 登录用时: " + (endTime - startTime)/1000.0 + "s\n" + splitStr);
         return conn;
     }
 
-    public static ClientSession loginSshd(SshServerDTO sshServerDTO) throws Exception {
+    public static ClientSession loginSshd(Server server, Proxy proxy) throws Exception {
         SshClient client = SshClient.setUpDefaultClient();
         ClientSession session = null;
         client.start();
         long startTime = Calendar.getInstance().getTimeInMillis();
         try {
 
-            session = client.connect(sshServerDTO.getSshUserName(), sshServerDTO.getSshIp(), sshServerDTO.getSshPort()).verify(50000).getSession();
+            session = client.connect(server.getUserName(), server.getIp(), Integer.valueOf(server.getPort())).verify(50000).getSession();
 
-            if (sshServerDTO.getIsPublicKey()) {
+            if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
                 // 密钥模式
-                URLResource idenreplacedy = new URLResource(Paths.get("/opt/hummerrisk/hummer_rsa").toUri().toURL());
+                URLResource idenreplacedy = new URLResource(Paths.get(server.getPublicKeyPath()).toUri().toURL());
                 try (InputStream inputStream = idenreplacedy.openInputStream()) {
                     session.addPublicKeyIdentity(GenericUtils.head(SecurityUtils.loadKeyPairIdentities(session, idenreplacedy, inputStream, (s, resourceKey, retryIndex) -> null)));
                 }
-            } else {
+            } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
+                // 密钥模式
+                URLResource idenreplacedy = new URLResource(Paths.get(server.getPublicKeyPath()).toUri().toURL());
+                try (InputStream inputStream = idenreplacedy.openInputStream()) {
+                    session.addPublicKeyIdentity(GenericUtils.head(SecurityUtils.loadKeyPairIdentities(session, idenreplacedy, inputStream, (s, resourceKey, retryIndex) -> null)));
+                }
+            } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "no")) {
                 // 密码模式
-                session.addPasswordIdentity(sshServerDTO.getSshPassword());
+                session.addPasswordIdentity(server.getPassword());
             }
 
             AuthFuture auth = session.auth();
@@ -178,7 +186,7 @@ public class SshUtil {
      * @param cmd 即将执行的命令
      * @return 命令执行完后返回的结果值
      */
-    public static String sshExecute(ClientSession session, String cmd) throws Exception {
+    public static String executeSshd(ClientSession session, String cmd) throws Exception {
         String result = "";
         try {
             if(session != null){

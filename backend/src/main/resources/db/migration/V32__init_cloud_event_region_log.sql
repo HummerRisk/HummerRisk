@@ -15,6 +15,8 @@ ALTER TABLE `cloud_event_sync_log` MODIFY column `region` varchar(255) DEFAULT N
 
 ALTER TABLE `cloud_event_sync_log` MODIFY column `status` int(1) DEFAULT NULL COMMENT '状态：0 同步中，1成功，2失败，3告警';
 
+ALTER TABLE `server` MODIFY column `is_public_key` varchar(32) DEFAULT NULL COMMENT '密钥类型';
+
 ALTER TABLE `server` ADD `auth_type` varchar(32) DEFAULT NULL COMMENT 'ssh类型';
 
 ALTER TABLE `server` ADD `public_key_path` varchar(128) DEFAULT NULL COMMENT '密钥路径';

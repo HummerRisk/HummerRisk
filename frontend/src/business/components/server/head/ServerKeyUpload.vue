@@ -6,7 +6,7 @@
                ref="path" :file-list="fileList" :limit="1">
       <i class="el-icon-upload"></i>
       <div class="el-upload__text">{{ $t('package.upload_text1') }}<em>{{ $t('package.upload_text2') }}</em></div>
-      <div class="el-upload__tip" slot="tip">{{ $t('image.upload_tip2', ['500M']) }}</div>
+      <div class="el-upload__tip" slot="tip">{{ $t('server.upload_tip', ['50M']) }}</div>
       <div class="el-upload__tip content" slot="tip">
         <span>{{ 'Tar archive format (*.tar)' }}</span>
       </div>
@@ -24,7 +24,7 @@ export default {
       // Tar archive format (*.gem);
       fileType: ['gem'],
       // 大小限制(MB)
-      fileSize: 500,
+      fileSize: 50,
       fileList: [],
       headers: {
         'Content-Type': 'multipart/form-data'
