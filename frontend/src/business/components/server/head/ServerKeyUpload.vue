@@ -8,7 +8,7 @@
       <div class="el-upload__text">{{ $t('package.upload_text1') }}<em>{{ $t('package.upload_text2') }}</em></div>
       <div class="el-upload__tip" slot="tip">{{ $t('server.upload_tip', ['50M']) }}</div>
       <div class="el-upload__tip content" slot="tip">
-        <span>{{ 'Tar archive format (*.tar)' }}</span>
+        <span>{{ 'Tar archive format (*.gem/*rsa)' }}</span>
       </div>
     </el-upload>
 
@@ -22,7 +22,7 @@ export default {
       loading:false,
       // 文件类型, 例如
       // Tar archive format (*.gem);
-      fileType: ['gem'],
+      fileType: ['gem', ""],
       // 大小限制(MB)
       fileSize: 50,
       fileList: [],

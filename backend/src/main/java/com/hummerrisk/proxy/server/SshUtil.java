@@ -7,7 +7,6 @@ import ch.ethz.ssh2.StreamGobbler;
 import com.hummerrisk.base.domain.Proxy;
 import com.hummerrisk.base.domain.Server;
 import com.hummerrisk.commons.utils.LogUtil;
-import com.hummerrisk.dto.SshServerDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.channel.ChannelExec;
@@ -64,6 +63,7 @@ public class SshUtil {
                 LogUtil.info(String.format(tipStr, "ssh2 认证成功"));
             } else {
                 LogUtil.error(String.format(tipStr, "ssh2 认证失败"));
+                throw new Exception(String.format(tipStr, "ssh2 认证失败"));
             }
 
         } catch (IOException e) {
@@ -144,8 +144,6 @@ public class SshUtil {
         } catch (IOException e) {
             LogUtil.error("【执行命令失败】\n执行的命令如下：\n" + cmd + "\n" + e.getMessage());
             throw new Exception("【执行命令失败】\n执行的命令如下：\n" + cmd + "\n" + e.getMessage());
-        } finally {
-            session.close();
         }
         StringTokenizer pas = new StringTokenizer(result, " ");
         result = "";

@@ -299,8 +299,9 @@ public class ServerService {
             server.setPublicKeyPath(keyFilePath);
             server.setPublicKey(publicKey);
         } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
-            CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY, ServerConstants.HUMMER_RSA);
-            server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + ServerConstants.HUMMER_RSA);
+            String uuid = UUIDUtil.newUUID();
+            CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA);
+            server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
         }
 
         server = login(server, proxy);
@@ -322,8 +323,9 @@ public class ServerService {
             server.setPublicKeyPath(keyFilePath);
             server.setPublicKey(publicKey);
         } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
-            CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY, ServerConstants.HUMMER_RSA);
-            server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + ServerConstants.HUMMER_RSA);
+            String uuid = UUIDUtil.newUUID();
+            CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA);
+            server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
         }
 
         server = login(server, proxy);

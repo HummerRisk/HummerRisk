@@ -218,6 +218,7 @@ export default {
             let result = response.data;
             if (data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
+              data.returnLog = result.returnLog;
             }
           });
         }
@@ -267,6 +268,9 @@ export default {
       this.$get(url + result.id, response => {
         this.logData = response.data;
         this.logVisible = true;
+      });
+      this.$get("/server/getServerResult/" + result.id, response => {
+        this.logForm = response.data;
       });
     },
     handleClose() {
