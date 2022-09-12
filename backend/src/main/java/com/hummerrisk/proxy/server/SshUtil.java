@@ -110,7 +110,6 @@ public class SshUtil {
                 LogUtil.error(String.format(tipStr, "sshd 认证失败"));
                 throw new DeploymentException("Failed to authenticate", auth.getException());
             }
-            session.close(false);
         } catch (Exception e) {
             LogUtil.error(String.format(tipStr, "登录失败") + e.getMessage());
             throw new Exception(String.format(tipStr, "登录失败") + e.getMessage());
@@ -138,13 +137,15 @@ public class SshUtil {
                 if(StringUtils.isBlank(result)){
                     LogUtil.info("【得到标准输出为空】\n执行的命令如下：\n" + cmd);
                     result = processStdout(session.getStderr(), DEFAULT_CHAR_SET);
-                }else{
+                } else{
                     LogUtil.info("【执行命令成功】\n执行的命令如下：\n" + cmd);
                 }
             }
         } catch (IOException e) {
             LogUtil.error("【执行命令失败】\n执行的命令如下：\n" + cmd + "\n" + e.getMessage());
             throw new Exception("【执行命令失败】\n执行的命令如下：\n" + cmd + "\n" + e.getMessage());
+        } finally {
+            session.close();
         }
         StringTokenizer pas = new StringTokenizer(result, " ");
         result = "";
@@ -199,8 +200,6 @@ public class SshUtil {
                 ce.open();
                 Set<ClientChannelEvent> events =
                         ce.waitFor(EnumSet.of(ClientChannelEvent.CLOSED), TimeUnit.SECONDS.toMillis(60000));
-                session.close(false);
-
 
                 if (events.contains(ClientChannelEvent.TIMEOUT)) {
                     throw new Exception("【执行命令失败超时】\n执行的命令如下：\n" + cmd + "\n" + ClientChannelEvent.TIMEOUT);
@@ -208,14 +207,16 @@ public class SshUtil {
                 //如果为得到标准输出为空，说明脚本执行出错了
                 if(StringUtils.isBlank(out.toString())){
                     LogUtil.info("【得到标准输出为空】\n执行的命令如下：\n" + cmd);
-                    result = out.toString();
-                }else{
+                } else{
                     LogUtil.info("【执行命令成功】\n执行的命令如下：\n" + cmd);
                 }
+                result = out.toString();
             }
         } catch (IOException e) {
             LogUtil.error("【执行命令失败】\n执行的命令如下：\n" + cmd + "\n" + e.getMessage());
             throw new Exception("【执行命令失败】\n执行的命令如下：\n" + cmd + "\n" + e.getMessage());
+        } finally {
+            session.close(false);
         }
         StringTokenizer pas = new StringTokenizer(result, " ");
         result = "";
