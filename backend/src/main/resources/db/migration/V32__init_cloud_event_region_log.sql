@@ -31,3 +31,14 @@ INSERT INTO `server_rule` (`id`, `name`, `status`, `severity`, `description`, `s
 INSERT INTO `server_rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `last_modified`, `flag`) VALUES ('bb389762-8756-405d-b37c-fc789d1cc9cc', 'Linex 查看audit规则', 1, 'LowRisk', '查看服务器审计规则', 'auditctl -l', '[]', concat(unix_timestamp(now()), '005'), 1);
 INSERT INTO `server_rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `last_modified`, `flag`) VALUES ('f45cc8e2-867f-4e97-8998-ce7f0c070d2d', 'Linux 检查日志运行', 1, 'MediumRisk', '查看日志是否运行', 'systemctl status rsyslog', '[]', concat(unix_timestamp(now()), '005'), 1);
 INSERT INTO `server_rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `last_modified`, `flag`) VALUES ('18365786-1f24-4a42-b5a5-291b9274205a', 'Linux 查看是否开启审计日志', 1, 'MediumRisk', '查看 Linux 是否开启审计日志服务', 'service auditd status', '[]', concat(unix_timestamp(now()), '005'), 1);
+
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('11c940a7-24e0-4f9d-a9a9-9e6811b12ad6', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('161b15b6-b5e3-420d-b0fc-de172553df74', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('18365786-1f24-4a42-b5a5-291b9274205a', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('1feaf989-836f-4f90-975d-8caac4b18692', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('26cf695f-fca6-4097-bf02-f9cb30f79c0d', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('562fd271-6484-42db-b72b-08d679cb4e03', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('691efd98-419d-4643-a001-ed0faaa3defa', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('87ecea8f-3ba1-48d0-8fcd-b3d74e1dae60', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('bb389762-8756-405d-b37c-fc789d1cc9cc', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('f45cc8e2-867f-4e97-8998-ce7f0c070d2d', 'safety');
