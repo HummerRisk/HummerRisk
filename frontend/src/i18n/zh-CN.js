@@ -1296,7 +1296,9 @@ export default {
     week:"最近一周",
     month:"最近一个月",
     error:"云账号和区域还有日期范围不能为空",
-
+    middle_level: "中风险",
+    high_level: "高风险",
+    low_level: "低风险"
   },
   second: {
     title: '秒',
