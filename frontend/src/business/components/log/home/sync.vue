@@ -134,7 +134,7 @@ import TablePagination from "../../common/pagination/TablePagination";
 import TableHeader from "../head/TableHeader";
 import Container from "../../common/components/Container";
 import MainContainer from "../../common/components/MainContainer";
-import {CLOUD_EVENT_CONFIGS} from "../../common/components/search/search-components";
+import {CLOUD_EVENT_SYNC_CONFIGS} from "../../common/components/search/search-components";
 import TableOperators from "../../common/components/TableOperators";
 import RegionLog from "@/business/components/log/home/RegionLog";
 import ProxyDialogFooter from "@/business/components/log/head/ProxyDialogFooter";
@@ -171,7 +171,7 @@ export default {
       total: 0,
       loading: false,
       condition: {
-        components: CLOUD_EVENT_CONFIGS
+        components: CLOUD_EVENT_SYNC_CONFIGS
       },
       logForm: {regionLogs: []},
       buttons: [
@@ -291,7 +291,7 @@ export default {
     },
     search() {
       let url = "/cloud/event/sync/log/list/" + this.currentPage + "/" + this.pageSize;
-      this.result = this.$post(url, {accountId:this.currentAccount,region:this.region}, response => {
+      this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
         this.tableData = data.listObject;
