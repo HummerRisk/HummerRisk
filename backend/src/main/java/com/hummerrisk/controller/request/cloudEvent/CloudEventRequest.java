@@ -4,10 +4,22 @@ import java.util.Map;
 
 public class CloudEventRequest {
     private String accountId;
+
+    private String name;
     private String region;
     private String startTime;
     private String endTime;
     private String[] regions;
+    private Map<String, Object> combine;
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String[] getRegions() {
         return regions;
@@ -16,8 +28,6 @@ public class CloudEventRequest {
     public void setRegions(String[] regions) {
         this.regions = regions;
     }
-
-    private Map<String,Object> combine;
 
     public String getAccountId() {
         return accountId;

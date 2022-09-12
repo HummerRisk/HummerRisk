@@ -12,6 +12,7 @@ import com.hummerrisk.base.mapper.CloudEventRegionLogMapper;
 import com.hummerrisk.base.mapper.CloudEventSyncLogMapper;
 import com.hummerrisk.base.mapper.ProxyMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudEventMapper;
+import com.hummerrisk.base.mapper.ext.ExtCloudEventSyncLogMapper;
 import com.hummerrisk.commons.utils.CommonThreadPool;
 import com.hummerrisk.commons.utils.DateUtils;
 import com.hummerrisk.commons.utils.PlatformUtils;
@@ -49,6 +50,9 @@ public class CloudEventService {
     private CloudEventSyncLogMapper cloudEventSyncLogMapper;
 
     @Resource
+    private ExtCloudEventSyncLogMapper extCloudEventSyncLogMapper;
+
+    @Resource
     private CloudEventRegionLogMapper cloudEventRegionLogMapper;
     @Resource
     @Lazy
@@ -76,6 +80,10 @@ public class CloudEventService {
         return cloudEventSyncLogMapper.selectByExample(cloudEventSyncLogExample);
     }
 
+    public List<CloudEventSyncLog> getCloudEventSyncLog(CloudEventRequest cloudEventRequest){
+        return extCloudEventSyncLogMapper.getCloudEventSyncLog(cloudEventRequest);
+    }
+
     public CloudEventSyncLog selectCloudEventSyncLog(int id){
 
         return cloudEventSyncLogMapper.selectByPrimaryKey(id);
@@ -93,23 +101,7 @@ public class CloudEventService {
     }
 
     public List<CloudEvent> getCloudEvents(CloudEventRequest cloudEventRequest) {
-        CloudEventExample cloudEventExample = new CloudEventExample();
-        cloudEventExample.setOrderByClause(" event_time desc ");
-        CloudEventExample.Criteria criteria =cloudEventExample.createCriteria();
-        if(StringUtils.isNotBlank(cloudEventRequest.getAccountId())){
-            criteria.andCloudAccountIdEqualTo(cloudEventRequest.getAccountId());
-        }
-        if(StringUtils.isNotBlank(cloudEventRequest.getRegion())){
-            criteria.andSyncRegionEqualTo(cloudEventRequest.getRegion());
-        }
-        if(cloudEventRequest.getRegions()!=null && cloudEventRequest.getRegions().length>0){
-            criteria.andSyncRegionIn(Arrays.asList(cloudEventRequest.getRegions()));
-        }
-        if(StringUtils.isNotBlank(cloudEventRequest.getStartTime())){
-            criteria.andEventTimeBetween(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", cloudEventRequest.getStartTime())
-                    , DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", cloudEventRequest.getEndTime()));
-        }
-        return cloudEventMapper.selectByExample(cloudEventExample);
+        return extCloudEventMapper.getCloudEventList(cloudEventRequest);
     }
 
     public void syncCloudEvents(String accountId, String[] regions, String startTime, String endTime) {

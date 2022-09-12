@@ -2,6 +2,7 @@ import TableSearchInput from "./TableSearchInput";
 import TableSearchDateTimePicker from "./TableSearchDateTimePicker";
 import TableSearchDatePicker from "./TableSearchDatePicker";
 import TableSearchSelect from "./TableSearchSelect";
+import {ACCOUNT_ID} from "@/common/js/constants";
 
 /* eslint-disable */
 export default {
@@ -145,6 +146,80 @@ export const K8S_PLUGIN_NAME = {
   props: { // 尾部控件的props，一般为element ui控件的props
     multiple: true
   }
+}
+
+export const EVENT_ACCOUNT = {
+  key: "accountId",
+  name: "TableSearchSelect",
+  label: "log.cloud_account",
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN]
+  },
+  options: { // 异步获取候选项
+    url: "/account/allList",
+    labelKey: "name",
+    valueKey: "id",
+
+  },
+  props:{
+    multiple: true
+  }
+}
+
+export const REGION = {
+  key: "region",
+  name: "TableSearchInput",
+  label: "log.region",
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+export const USER = {
+  key: "userName",
+  name: "TableSearchInput",
+  label: "log.user_name",
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
+export const EVENT_NAME = {
+  key: "eventName",
+  name: "TableSearchInput",
+  label: "log.event_name",
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
+export const RESOURCE_NAME = {
+  key: "resourceName",
+  name: "TableSearchInput",
+  label: "log.resource_name",
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+export const RESOURCE_TYPE = {
+  key: "resourceType",
+  name: "TableSearchInput",
+  label: "log.resource_type",
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+export const EVENT_TIME = {
+  key: "eventTime",
+  name: 'TableSearchDateTimePicker',
+  label: 'log.event_time',
+  operator: {
+    options: [OPERATORS.BETWEEN, OPERATORS.GT, OPERATORS.GE, OPERATORS.LT, OPERATORS.LE, OPERATORS.EQ]
+  },
 }
 
 export const CREATE_TIME = {
@@ -447,5 +522,6 @@ export const TASK_CONFIGS = [NAME, CREATOR, CREATE_TIME, UPDATE_TIME];
 export const CODE_CONFIGS = [NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const CODE_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
 export const CODE_RESULT_CONFIGS = [NAME, RULE_NAME, RULE_SEVERITY, CREATOR, UPDATE_TIME];
-export const CLOUD_EVENT_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
+export const CLOUD_EVENT_SYNC_CONFIGS = [EVENT_ACCOUNT, REGION, CREATE_TIME];
+export const CLOUD_EVENT_CONFIGS = [EVENT_ACCOUNT, REGION, EVENT_TIME,USER,EVENT_NAME,RESOURCE_TYPE,RESOURCE_NAME];
 export const SBOM_CONFIGS = [NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];

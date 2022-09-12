@@ -1,23 +1,24 @@
 <template>
   <main-container>
-    <el-card class="table-card" >
+    <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
-                      ref="tableHeader"
-                      title="事件列表"
-                      :currentAccount="currentAccount"
-                      searchTip="查询"
-                      :dateTime = "dateTime"
-                      :initRegion="region"
-                      @cloudAccountSwitch="cloudAccountSwitch"
-                      @changeRegion="changeRegion"
-                      @changeDateTime="changeDateTime"
-                      @syncData="syncData" :createTip="$t('common.sync')"
-                      :showSync = "false"
-                      />
-        <el-table border :data="tableData" class="adjust-table table-content">
+                      :title="$t('log.event_analysis')"
+                      @syncData="syncData" :syncTip="$t('log.sync')"
+                      :show-sync="false"/>
+      </template>
+        <el-table  border :data="tableData" class="adjust-table table-content">
+          <el-table-column type="expand">
+            <template v-slot:default="props">
+              <el-divider><i class="el-icon-folder-opened"></i></el-divider>
+              <el-form>
+                <result-read-only :row="typeof(props.row) === 'string'?JSON.parse(props.row):props.row"></result-read-only>
+                <el-divider><i class="el-icon-document-checked"></i></el-divider>
+              </el-form>
+            </template>
+          </el-table-column>
           <el-table-column
-            label="云账号名称"
+            min-width="10%" :label="$t('log.cloud_account_name')"
           >
             <template v-slot:default="scope">
               <span><img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.cloudAccountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -27,12 +28,14 @@
 
           <el-table-column
             prop="syncRegion"
-            label="区域"
+            :label="$t('log.region')"
+            min-width="15%"
           >
           </el-table-column>
           <el-table-column
             prop="eventTime"
-            label="事件时间"
+            :label="$t('log.event_time')"
+            min-width="10%"
             >
             <template v-slot:default="scope">
               <span>{{ scope.row.eventTime | timestampFormatDate }}</span>
@@ -40,33 +43,37 @@
           </el-table-column>
           <el-table-column
             prop="userName"
-            label="用户名"
+            :label="$t('log.user_name')"
+            min-width="5%"
            >
           </el-table-column>
           <el-table-column
             prop="eventName"
-            label="事件名称"
+            :label="$t('log.event_name')"
+            min-width="10%"
           >
           </el-table-column>
           <el-table-column
             prop="resourceType"
-            label="资源类型"
+            :label="$t('log.resource_type')"
+            min-width="10%"
             :formatter="resourceTypeFormat"
            >
           </el-table-column>
           <el-table-column
             prop="resourceName"
-            label="资源名称"
+            :label="$t('log.resource_name')"
+            min-width="10%"
             :formatter="resourceNameFormat"
             >
           </el-table-column>
-          <el-table-column :label="$t('commons.operating')" fixed="right">
-            <template v-slot:default="scope">
-              <table-operators :buttons="buttons" :row="scope.row"/>
-            </template>
+          <el-table-column
+            :label="$t('log.risk_level')"
+            min-width="10%"
+          >
           </el-table-column>
         </el-table>
-      </template>
+
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
   </main-container>
@@ -80,11 +87,12 @@ import MainContainer from "../../common/components/MainContainer";
 import {CLOUD_EVENT_CONFIGS} from "../../common/components/search/search-components";
 import {ACCOUNT_ID} from "@/common/js/constants";
 import TableOperators from "../../common/components/TableOperators";
-
+import ResultReadOnly from "@/business/components/log/home/ResultReadOnly";
 /* eslint-disable */
 export default {
   name: "Event",
   components: {
+    ResultReadOnly,
     Container,
     TableHeader,
     TablePagination,
@@ -93,6 +101,7 @@ export default {
   },
   data() {
     return {
+      result: {},
       dateTime: [],
       currentAccount: '',
       region:[],
@@ -166,7 +175,7 @@ export default {
     },
     search() {
       let url = "/cloud/event/list/" + this.currentPage + "/" + this.pageSize;
-      this.result = this.$post(url, {accountId:this.currentAccount,regions:this.region,startTime:this.dateTime[0],endTime:this.dateTime[1]}, response => {
+      this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
         this.tableData = data.listObject;
@@ -174,6 +183,7 @@ export default {
     },
     cloudAccountSwitch(accountId){
       this.currentAccount = accountId
+      this.search()
     },
     changeRegion(value){
       this.region = value
@@ -238,6 +248,12 @@ export default {
 </script>
 
 <style scoped>
+.table-content {
+  width: 100%;
+}
 
+.el-table {
+  cursor: pointer;
+}
 </style>
 
