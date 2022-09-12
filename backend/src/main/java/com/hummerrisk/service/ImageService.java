@@ -236,7 +236,30 @@ public class ImageService {
                 }
 
             } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "nexus.png")) {
-
+                String url = imageRepo.getRepo();
+                if(url.endsWith("/")){
+                    url = url.substring(0,url.length()-1);
+                }
+                HttpHeaders httpHeaders = new HttpHeaders();
+                httpHeaders.add("Authorization","Basic "+ Base64.getUrlEncoder().encodeToString((imageRepo.getUserName() + ":" + imageRepo.getPassword()).getBytes()));
+                ResponseEntity<JSONObject> repositoriesResponse = RestTemplateUtils.getForEntity(url+"/v2/_catalog", httpHeaders, JSONObject.class);
+                List<String> repositories = repositoriesResponse.getBody().getJSONArray("repositories").toJavaList(String.class);
+                for(String repository : repositories){
+                    ResponseEntity<JSONObject> tagsResponse = RestTemplateUtils.getForEntity(url + "/v2/" + repository + "/tags/list", httpHeaders, JSONObject.class);
+                    List<String> tags = tagsResponse.getBody().getJSONArray("tags").toJavaList(String.class);
+                    String name = tagsResponse.getBody().getString("name");
+                    for(String tag:tags){
+                        String path = url.replaceAll("https://","").replaceAll("http://","") + "/"+name+":"+tag;
+                        ImageRepoItem imageRepoItem = new ImageRepoItem();
+                        imageRepoItem.setId(UUIDUtil.newUUID());
+                        imageRepoItem.setRepository(name);
+                        imageRepoItem.setTag(tag);
+                        imageRepoItem.setRepoId(imageRepo.getId());
+                        imageRepoItem.setPath(path);
+                        imageRepoItemMapper.insertSelective(imageRepoItem);
+                        i++;
+                    }
+                }
             } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "other.png")) {
 
             }
