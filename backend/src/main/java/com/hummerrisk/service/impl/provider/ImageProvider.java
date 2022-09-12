@@ -3,6 +3,7 @@ package com.hummerrisk.service.impl.provider;
 import com.hummerrisk.base.domain.Image;
 import com.hummerrisk.base.domain.ImageRepo;
 import com.hummerrisk.base.domain.Proxy;
+import com.hummerrisk.commons.constants.ImageConstants;
 import com.hummerrisk.commons.constants.TrivyConstants;
 import com.hummerrisk.commons.utils.CommandUtils;
 import com.hummerrisk.commons.utils.LogUtil;
@@ -50,6 +51,26 @@ public class ImageProvider implements IProvider {
             if(resultStr.contains("ERROR") || resultStr.contains("error")) {
                 throw new Exception(resultStr);
             }
+            return resultStr;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    public String dockerLogin(Object obj) {
+        try {
+            ImageRepo imageRepo = (ImageRepo) obj;
+            String repo = imageRepo.getRepo().replace("https://", "").replace("http://", "");
+            if (repo.endsWith("/")) {
+                repo = repo.substring(0, repo.length()-1);
+            }
+            String dockerLogin = "";
+            if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "dockerhub.png")) {
+                dockerLogin = "docker login " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword();
+            } else {
+                dockerLogin = "docker login " + repo + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword();
+            }
+            String resultStr = CommandUtils.commonExecCmdWithResult(dockerLogin, ImageConstants.DEFAULT_BASE_DIR);
             return resultStr;
         } catch (Exception e) {
             return "";

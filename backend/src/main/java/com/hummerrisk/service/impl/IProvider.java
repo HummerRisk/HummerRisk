@@ -6,4 +6,6 @@ public interface IProvider {
 
     String execute(Object ...obj);
 
+    String dockerLogin(Object obj);
+
 }

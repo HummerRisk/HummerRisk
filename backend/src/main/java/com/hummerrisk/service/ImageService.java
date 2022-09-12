@@ -100,12 +100,8 @@ public class ImageService {
         imageRepo.setCreateTime(System.currentTimeMillis());
         imageRepo.setUpdateTime(System.currentTimeMillis());
 
-        String repo = imageRepo.getRepo().replace("https://", "").replace("http://", "");
-        if(repo.endsWith("/")){
-            repo = repo.substring(0,repo.length()-1);
-        }
-        String dockerLogin = "docker login " + repo + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword();
-        String resultStr = CommandUtils.commonExecCmdWithResult(dockerLogin, ImageConstants.DEFAULT_BASE_DIR);
+        IProvider cp = execEngineFactoryImp.getProvider("imageProvider");
+        String resultStr = (String) execEngineFactoryImp.executeMethod(cp, "dockerLogin", imageRepo);
         if(resultStr.contains("Succeeded")) {
             imageRepo.setStatus("VALID");
         } else {
@@ -237,8 +233,8 @@ public class ImageService {
 
             } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "nexus.png")) {
                 String url = imageRepo.getRepo();
-                if(url.endsWith("/")){
-                    url = url.substring(0,url.length()-1);
+                if (url.endsWith("/")) {
+                    url = url.substring(0, url.length()-1);
                 }
                 HttpHeaders httpHeaders = new HttpHeaders();
                 httpHeaders.add("Authorization","Basic "+ Base64.getUrlEncoder().encodeToString((imageRepo.getUserName() + ":" + imageRepo.getPassword()).getBytes()));
@@ -289,12 +285,10 @@ public class ImageService {
 
     public ImageRepo editImageRepo(ImageRepo imageRepo) throws Exception {
         imageRepo.setUpdateTime(System.currentTimeMillis());
-        String repo = imageRepo.getRepo().replace("https://", "").replace("http://", "");
-        if(repo.endsWith("/")){
-            repo = repo.substring(0,repo.length()-1);
-        }
-        String dockerLogin = "docker login " + repo + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword();
-        String resultStr = CommandUtils.commonExecCmdWithResult(dockerLogin, ImageConstants.DEFAULT_BASE_DIR);
+
+        IProvider cp = execEngineFactoryImp.getProvider("imageProvider");
+        String resultStr = (String) execEngineFactoryImp.executeMethod(cp, "dockerLogin", imageRepo);
+
         if(resultStr.contains("Succeeded")) {
             imageRepo.setStatus("VALID");
         } else {

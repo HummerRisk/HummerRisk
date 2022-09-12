@@ -17,4 +17,11 @@ public class CloudProvider implements IProvider {
         return str;
     }
 
+    public String dockerLogin(Object obj) {
+        try {
+            return "";
+        } catch (Exception e) {
+            return "";
+        }
+    }
 }
