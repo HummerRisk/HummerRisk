@@ -27,7 +27,7 @@ public class CloudEventController {
     @PostMapping("sync/log/list/{goPage}/{pageSize}")
     public Pager<List<CloudEventSyncLog>> listSyncLogs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest){
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, cloudEventService.getCloudEventSyncLog(cloudEventRequest.getAccountId(),cloudEventRequest.getRegion()));
+        return PageUtils.setPageInfo(page, cloudEventService.getCloudEventSyncLog(cloudEventRequest));
     }
     @ApiOperation(value = "区域同步日志查询")
     @PostMapping("sync/log/region/list/{logId}")
