@@ -17,6 +17,8 @@ public class ServerResultDTO extends ServerResult {
 
     private String groupName;
 
+    private String rule;
+
     public String getName() {
         return name;
     }
@@ -55,5 +57,13 @@ public class ServerResultDTO extends ServerResult {
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
+    }
+
+    public String getRule() {
+        return rule;
+    }
+
+    public void setRule(String rule) {
+        this.rule = rule;
     }
 }

@@ -19,16 +19,16 @@
         </el-table-column >
         <!-- 展开 end -->
         <el-table-column type="index" min-width="3%"/>
-        <el-table-column prop="serverGroupName" :label="$t('server.server_group_name')" min-width="11%" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="serverGroupName" :label="$t('server.server_group_name')" min-width="10%" show-overflow-tooltip></el-table-column>
         <el-table-column prop="serverName" :label="$t('server.server_name')" min-width="11%" show-overflow-tooltip></el-table-column>
         <el-table-column prop="ip" :label="'IP'" min-width="10%" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="ruleName" :label="$t('server.rule_name')" min-width="11%" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="ruleName" :label="$t('server.rule_name')" min-width="15%" show-overflow-tooltip></el-table-column>
         <el-table-column min-width="8%" :label="$t('server.severity')" column-key="severity">
           <template v-slot:default="{row}">
             <rule-type :row="row"/>
           </template>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('server.result_status')" min-width="15%" prop="resultStatus" sortable show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" :label="$t('server.result_status')" min-width="14%" prop="resultStatus" sortable show-overflow-tooltip>
           <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
           </el-button>
@@ -48,7 +48,7 @@
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
-        <el-table-column prop="updateTime" min-width="20%" :label="$t('server.last_modified')" sortable>
+        <el-table-column prop="updateTime" min-width="18%" :label="$t('server.last_modified')" sortable>
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
@@ -115,8 +115,13 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-form>
-          <codemirror ref="cmEditor" v-model="logForm.returnLog" class="code-mirror" :options="cmOptions" />
+        <el-form style="margin: 15px 0 0 0">
+          <el-form-item :label="$t('server.server_rule')">
+            <codemirror ref="cmEditor" v-model="logForm.rule" class="code-mirror" :options="cmOptions" />
+          </el-form-item>
+          <el-form-item :label="$t('server.server_result')">
+            <codemirror ref="cmEditor" v-model="logForm.returnLog" class="code-mirror" :options="cmOptions" />
+          </el-form-item>
         </el-form>
       </el-row>
       <template v-slot:footer>
@@ -307,7 +312,7 @@ export default {
   },
   computed: {
     codemirror() {
-      return this.$refs.cmEditor.codemirror
+      return this.$refs.cmEditor.codemirror;
     }
   },
   created() {
@@ -405,6 +410,9 @@ export default {
   margin-bottom: 0;
   padding: 10px 2%;
   width: 46%;
+}
+.code-mirror {
+  width: 100%;
 }
 /deep/ :focus{outline:0;}
 </style>

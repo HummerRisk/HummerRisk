@@ -213,8 +213,6 @@ public class SshUtil {
         } catch (IOException e) {
             LogUtil.error("【执行命令失败】\n执行的命令如下：\n" + cmd + "\n" + e.getMessage());
             throw new Exception("【执行命令失败】\n执行的命令如下：\n" + cmd + "\n" + e.getMessage());
-        } finally {
-            session.close(false);
         }
         StringTokenizer pas = new StringTokenizer(result, " ");
         result = "";
