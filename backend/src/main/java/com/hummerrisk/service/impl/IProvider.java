@@ -4,6 +4,6 @@ public interface IProvider {
 
     String getName();
 
-    String execute(Object obj);
+    String execute(Object ...obj);
 
 }

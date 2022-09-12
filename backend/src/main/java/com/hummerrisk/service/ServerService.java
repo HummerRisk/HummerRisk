@@ -10,10 +10,7 @@ import com.hummerrisk.base.mapper.ext.ExtServerResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtServerRuleMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
-import com.hummerrisk.commons.utils.BeanUtils;
-import com.hummerrisk.commons.utils.LogUtil;
-import com.hummerrisk.commons.utils.SessionUtils;
-import com.hummerrisk.commons.utils.UUIDUtil;
+import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.server.ServerRequest;
 import com.hummerrisk.controller.request.server.ServerResultRequest;
 import com.hummerrisk.controller.request.server.ServerRuleRequest;
@@ -26,6 +23,7 @@ import com.hummerrisk.proxy.server.SshUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -63,6 +61,8 @@ public class ServerService {
     private NoticeService noticeService;
     @Resource
     private HistoryService historyService;
+    @Resource
+    private ImageService imageService;
 
     public boolean validate(List<String> ids) {
         ids.forEach(id -> {
@@ -233,7 +233,7 @@ public class ServerService {
             if(server.getIsProxy()!=null && server.getIsProxy()) {
                 proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
             }
-            return login(server, proxy);
+            return StringUtils.equalsIgnoreCase(login(server, proxy).getStatus(),  CloudAccountConstants.Status.VALID.name());
         } catch (Exception e) {
             LogUtil.error(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), e.getMessage()), e);
             return false;
@@ -246,6 +246,10 @@ public class ServerService {
 
     public List<ServerDTO> getServerList(ServerRequest server) {
         return extServerMapper.getServerList(server);
+    }
+
+    public Server getServer(String id) {
+        return serverMapper.selectByPrimaryKey(id);
     }
 
     public int addServerGroup(ServerGroup serverGroup) {
@@ -278,7 +282,7 @@ public class ServerService {
 
     }
 
-    public int addServer(Server server) throws Exception {
+    public int addServer(MultipartFile keyFile, Server server) throws Exception {
         String id = UUIDUtil.newUUID();
         server.setId(id);
         server.setCreator(SessionUtils.getUserId());
@@ -288,25 +292,41 @@ public class ServerService {
         if(server.getIsProxy()!=null && server.getIsProxy()) {
             proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
         }
-        server.setStatus(
-                login(server, proxy)?
-                        CloudAccountConstants.Status.VALID.name():
-                        CloudAccountConstants.Status.INVALID.name());
+
+        if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
+            String keyFilePath = imageService.upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
+            String publicKey = ReadFileUtils.readToBuffer(keyFilePath);
+            server.setPublicKeyPath(keyFilePath);
+            server.setPublicKey(publicKey);
+        } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
+            CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY, ServerConstants.HUMMER_RSA);
+            server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + ServerConstants.HUMMER_RSA);
+        }
+
+        server = login(server, proxy);
 
         OperationLogService.log(SessionUtils.getUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_create_server");
         return serverMapper.insertSelective(server);
     }
 
-    public int editServer(Server server) throws Exception {
+    public int editServer(MultipartFile keyFile, Server server) throws Exception {
         server.setUpdateTime(System.currentTimeMillis());
         Proxy proxy = new Proxy();
         if(server.getIsProxy()!=null && server.getIsProxy()) {
             proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
         }
-        server.setStatus(
-                login(server, proxy)?
-                        CloudAccountConstants.Status.VALID.name():
-                        CloudAccountConstants.Status.INVALID.name());
+
+        if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
+            String keyFilePath = imageService.upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
+            String publicKey = ReadFileUtils.readToBuffer(keyFilePath);
+            server.setPublicKeyPath(keyFilePath);
+            server.setPublicKey(publicKey);
+        } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
+            CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY, ServerConstants.HUMMER_RSA);
+            server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + ServerConstants.HUMMER_RSA);
+        }
+
+        server = login(server, proxy);
 
         OperationLogService.log(SessionUtils.getUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "i18n_update_server");
         return serverMapper.updateByPrimaryKeySelective(server);
@@ -317,37 +337,33 @@ public class ServerService {
         OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server");
     }
 
-    public boolean login(Server server, Proxy proxy) throws Exception {
+
+    public Server login(Server server, Proxy proxy) throws Exception {
         try {
-            SshServerDTO sshServerDTO = new SshServerDTO();
-            sshServerDTO.setSshIp(server.getIp());
-            sshServerDTO.setSshPort(Integer.valueOf(server.getPort()));
-            sshServerDTO.setSshUserName(server.getUserName());
-            sshServerDTO.setSshPassword(server.getPassword());
-            sshServerDTO.setIsPublicKey(server.getIsPublicKey());
-            sshServerDTO.setPublicKey(server.getPublicKey());
-            sshServerDTO.setSshPassword(server.getPassword());
-            sshServerDTO.setProxy(proxy);
-            SshUtil.login(sshServerDTO);
-        }catch (Exception e) {
-            return false;
+            SshUtil.login(server, proxy);
+            server.setStatus(CloudAccountConstants.Status.VALID.name());
+            server.setAuthType("ssh2");
+        } catch (Exception e) {
+            try {
+                SshUtil.loginSshd(server, proxy);
+                server.setStatus(CloudAccountConstants.Status.VALID.name());
+                server.setAuthType("sshd");
+            } catch (Exception ex) {
+                server.setStatus(CloudAccountConstants.Status.INVALID.name());
+                server.setAuthType("sshd");
+            }
         }
-        return true;
+        return server;
     }
 
     public String execute(Server server, String cmd, Proxy proxy) throws Exception {
         try {
-            SshServerDTO sshServerDTO = new SshServerDTO();
-            sshServerDTO.setSshIp(server.getIp());
-            sshServerDTO.setSshPort(Integer.valueOf(server.getPort()));
-            sshServerDTO.setSshUserName(server.getUserName());
-            sshServerDTO.setSshPassword(server.getPassword());
-            sshServerDTO.setIsPublicKey(server.getIsPublicKey());
-            sshServerDTO.setPublicKey(server.getPublicKey());
-            sshServerDTO.setSshPassword(server.getPassword());
-            sshServerDTO.setProxy(proxy);
-            return SshUtil.execute(SshUtil.login(sshServerDTO), cmd);
-        }catch (Exception e) {
+            if (StringUtils.equalsIgnoreCase(server.getAuthType(), "ssh2")) {
+                return SshUtil.execute(SshUtil.login(server, proxy), cmd);
+            } else {
+                return SshUtil.executeSshd(SshUtil.loginSshd(server, proxy), cmd);
+            }
+        } catch (Exception e) {
             return "";
         }
     }

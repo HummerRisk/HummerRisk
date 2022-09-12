@@ -2,10 +2,7 @@ package com.hummerrisk.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummerrisk.base.domain.Server;
-import com.hummerrisk.base.domain.ServerGroup;
-import com.hummerrisk.base.domain.ServerResultLog;
-import com.hummerrisk.base.domain.ServerRule;
+import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
@@ -19,6 +16,7 @@ import com.hummerrisk.service.ServerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -43,6 +41,12 @@ public class ServerController {
             @PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerRequest server) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, serverService.getServerList(server));
+    }
+
+    @ApiOperation(value = "查询虚拟机")
+    @GetMapping("getServer/{id}")
+    public Server getServer(@PathVariable String id) throws Exception {
+        return serverService.getServer(id);
     }
 
     @ApiOperation(value = "批量校验虚拟机连通性")
@@ -82,15 +86,17 @@ public class ServerController {
     }
 
     @ApiOperation(value = "添加虚拟机")
-    @PostMapping("addServer")
-    public int addServer(@RequestBody Server server) throws Exception {
-        return serverService.addServer(server);
+    @PostMapping(value = "addServer", consumes = {"multipart/form-data"})
+    public int addServer(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
+                         @RequestPart("request") Server request) throws Exception {
+        return serverService.addServer(keyFile, request);
     }
 
     @ApiOperation(value = "编辑虚拟机")
-    @PostMapping("editServer")
-    public int editServer(@RequestBody Server server) throws Exception {
-        return serverService.editServer(server);
+    @PostMapping(value = "editServer", consumes = {"multipart/form-data"})
+    public int editServer(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
+                          @RequestPart("request") Server request) throws Exception {
+        return serverService.editServer(keyFile, request);
     }
 
     @ApiOperation(value = "删除虚拟机")

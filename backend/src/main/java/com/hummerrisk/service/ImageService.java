@@ -13,6 +13,8 @@ import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.image.*;
 import com.hummerrisk.dto.*;
+import com.hummerrisk.service.impl.ExecEngineFactoryImp;
+import com.hummerrisk.service.impl.IProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -20,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -72,6 +73,8 @@ public class ImageService {
     private ImageRepoSyncLogMapper imageRepoSyncLogMapper;
     @Resource
     private ImageTrivyJsonMapper imageTrivyJsonMapper;
+    @Resource
+    private ExecEngineFactoryImp execEngineFactoryImp;
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
@@ -627,39 +630,16 @@ public class ImageService {
     }
 
     public String execute(Image image) throws Exception {
-        try {
-            Proxy proxy;
-            String _proxy = "";
-            String dockerLogin = "";
-            if(image.getIsProxy()!=null && image.getIsProxy()) {
-                proxy = proxyMapper.selectByPrimaryKey(image.getProxyId());
-                _proxy = ProxyUtil.isProxy(proxy);
-            }
-            if(image.getRepoId()!=null) {
-                ImageRepo imageRepo = imageRepoMapper.selectByPrimaryKey(image.getRepoId());
-                String repo = imageRepo.getRepo().replace("https://", "").replace("http://", "");
-                if(repo.endsWith("/")){
-                    repo = repo.substring(0,repo.length()-1);
-                }
-                dockerLogin = "docker login " + repo + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword() + "\n";
-            }
-            String fileName = "";
-            if (StringUtils.equalsIgnoreCase("image", image.getType()) || StringUtils.equalsIgnoreCase("repo", image.getType())) {
-                fileName = image.getImageUrl() + ":" + image.getImageTag();
-            } else {
-                fileName = TrivyConstants.DEFAULT_BASE_DIR + image.getPath();
-            }
-            CommandUtils.commonExecCmdWithResult(TrivyConstants.TRIVY_RM + TrivyConstants.TRIVY_JSON, TrivyConstants.DEFAULT_BASE_DIR);
-            String command = _proxy + dockerLogin + TrivyConstants.TRIVY_IMAGE + TrivyConstants.TRIVY_SKIP + fileName + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
-            LogUtil.info(image.getId() + " {k8sImage}[command]: " + image.getName() + "   " + command);
-            String resultStr = CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
-            if(resultStr.contains("ERROR") || resultStr.contains("error")) {
-                throw new Exception(resultStr);
-            }
-            return resultStr;
-        } catch (Exception e) {
-            return "";
+        Proxy proxy = new Proxy();
+        ImageRepo imageRepo = null;
+        if (image.getIsProxy() && image.getProxyId()!=null) {
+            proxy = proxyMapper.selectByPrimaryKey(image.getProxyId());
         }
+        if(image.getRepoId()!=null) {
+            imageRepo = imageRepoMapper.selectByPrimaryKey(image.getRepoId());
+        }
+        IProvider cp = execEngineFactoryImp.getProvider("imageProvider");
+        return (String) execEngineFactoryImp.executeMethod(cp, "execute", image, proxy, imageRepo);
     }
 
     public List<ImageResultWithBLOBsDTO> resultListWithBLOBs(ImageResultRequest request) {

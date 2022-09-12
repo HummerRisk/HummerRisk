@@ -118,6 +118,17 @@
                 </el-option>
               </el-select>
             </el-form-item>
+            <el-form-item :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-radio v-model="form.isPublicKey" label="no">{{ $t('server.no_public_key') }}</el-radio>
+              <el-radio v-model="form.isPublicKey" label="str">{{ $t('server.str_public_key') }}</el-radio>
+              <el-radio v-model="form.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
+            </el-form-item>
+            <el-form-item v-if="form.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
+              <el-input type="textarea" :rows="10" v-model="form.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
+            </el-form-item>
+            <el-form-item v-if="form.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
+              <server-key-upload v-on:appendTar="append" v-model="form.publicKeyPath" :param="form.publicKeyPath"/>
+            </el-form-item>
           </el-form>
         </div>
         <div style="margin: 10px;">
@@ -157,11 +168,16 @@
           <el-form-item :label="$t('commons.password')" ref="password" prop="password">
             <el-input type="password" v-model="form.password" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
           </el-form-item>
-          <el-form-item :label="$t('server.is_public_key')" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-switch v-model="form.isPublicKey"></el-switch>
+          <el-form-item :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-radio v-model="form.isPublicKey" label="no">{{ $t('server.no_public_key') }}</el-radio>
+            <el-radio v-model="form.isPublicKey" label="str">{{ $t('server.str_public_key') }}</el-radio>
+            <el-radio v-model="form.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
           </el-form-item>
-          <el-form-item v-if="form.isPublicKey" :label="$t('server.public_key')" ref="password">
+          <el-form-item v-if="form.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
             <el-input type="textarea" :rows="10" v-model="form.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
+          </el-form-item>
+          <el-form-item v-if="form.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
+            <server-key-upload v-on:appendTar="append" v-model="form.publicKeyPath" :param="form.publicKeyPath"/>
           </el-form-item>
           <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-switch v-model="form.isProxy"></el-switch>
@@ -198,6 +214,7 @@ import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import {SERVER_CONFIGS} from "../../common/components/search/search-components";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
+import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
 
 /* eslint-disable */
   export default {
@@ -210,6 +227,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
       TablePagination,
       TableOperator,
       DialogFooter,
+      ServerKeyUpload,
     },
     provide() {
       return {
@@ -232,7 +250,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
         createVisible: false,
         updateVisible: false,
         item: {},
-        form: {},
+        form: {isPublicKey: "no"},
         script: '',
         direction: 'rtl',
         rule: {
@@ -264,6 +282,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
         groups: [],
         proxyForm: {isProxy: false, proxyId: 0},
         proxys: [],
+        keyFile: Object,
       }
     },
     props: {
@@ -463,9 +482,23 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
               server.isProxy = false;
               server.proxyId = null;
             }
-            this.result = this.$post('/server/addServer', server, response => {
-              this.createVisible = false;
+            let formData = new FormData();
+            if (this.keyFile) {
+              formData.append("keyFile", this.keyFile);
+            }
+            formData.append("request", new Blob([JSON.stringify(server)], {type: "application/json"}));
+            let axiosRequestConfig = {
+              method: "POST",
+              url: "/server/addServer",
+              data: formData,
+              headers: {
+                "Content-Type": 'multipart/form-data'
+              }
+            };
+            this.result = this.$request(axiosRequestConfig, () => {
+              this.$success(this.$t('commons.save_success'));
               this.search();
+              this.createVisible = false;
             });
           }
         }
@@ -474,17 +507,35 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
         if (!server.isProxy) {
           server.proxyId = null;
         }
-        this.result = this.$post('/server/editServer', server, response => {
-          this.updateVisible = false;
-          this.search();
+        let formData = new FormData();
+        if (this.keyFile) {
+          formData.append("keyFile", this.keyFile);
+        }
+        formData.append("request", new Blob([JSON.stringify(server)], {type: "application/json"}));
+        let axiosRequestConfig = {
+          method: "POST",
+          url: "/server/editServer",
+          data: formData,
+          headers: {
+            "Content-Type": 'multipart/form-data'
+          }
+        };
+        this.result = this.$request(axiosRequestConfig, (res) => {
+          if (res.success) {
+            this.$success(this.$t('commons.save_success'));
+            this.search();
+            this.updateVisible = false;
+          }
         });
       },
+      append(file) {
+        this.keyFile = file;
+      },
     },
-    created() {
+    created () {
       this.init();
       this.activeProxy();
-    }
-
+    },
   }
 </script>
 

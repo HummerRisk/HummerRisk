@@ -13,7 +13,7 @@ public class SshServerDTO {
 
     private int sshPort;
 
-    private Boolean isPublicKey;
+    private String isPublicKey;
 
     private String publicKey;
 
@@ -51,12 +51,12 @@ public class SshServerDTO {
         this.sshPort = sshPort;
     }
 
-    public void setIsPublicKey(Boolean publicKey) {
-        isPublicKey = publicKey;
+    public String getIsPublicKey() {
+        return isPublicKey;
     }
 
-    public Boolean getIsPublicKey() {
-        return isPublicKey;
+    public void setIsPublicKey(String isPublicKey) {
+        this.isPublicKey = isPublicKey;
     }
 
     public void setPublicKey(String publicKey) {
