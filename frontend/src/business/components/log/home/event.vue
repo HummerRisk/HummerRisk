@@ -70,6 +70,7 @@
           <el-table-column
             :label="$t('log.risk_level')"
             min-width="10%"
+            :formatter="riskLevelFormat"
           >
           </el-table-column>
         </el-table>
@@ -167,12 +168,13 @@ export default {
         return "N/A"
       }
     },
-    syncData(){
-      let url = "/cloud/event/sync";
-      this.result = this.$post(url, {accountId:this.currentAccount,region:this.region,startTime:this.dateTime[0],endTime:this.dateTime[1]}, response => {
-        alert("同步中")
-      });
+    riskLevelFormat(row,column){
+      if(!!row.resourceName){
+        return this.$t('log.middle_level')
+      }
+      return this.$t('log.low_level')
     },
+
     search() {
       let url = "/cloud/event/list/" + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
