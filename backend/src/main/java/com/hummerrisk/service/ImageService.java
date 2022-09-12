@@ -14,6 +14,9 @@ import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.image.*;
 import com.hummerrisk.dto.*;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,10 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author harris
@@ -189,6 +189,48 @@ public class ImageService {
                     }
                 }
             } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "dockerhub.png")) {
+                String loginUrl = "https://hub.docker.com/v2/users/login";
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("username",imageRepo.getUserName());
+                jsonObject.put("password",imageRepo.getPassword());
+                HttpHeaders httpHeaders = new HttpHeaders();
+                // 设置请求类型
+                httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+                // 封装参数和头信息
+                ResponseEntity<JSONObject> tokenResult = RestTemplateUtils.postForEntity(loginUrl,jsonObject,httpHeaders, JSONObject.class);
+                if(tokenResult == null){
+                    throw new RuntimeException("dockerhub认证失败");
+                }
+                String token = Objects.requireNonNull(tokenResult.getBody()).getString("token");
+                httpHeaders.add("Authorization","Bearer "+token);
+                ResponseEntity<JSONObject> repositoriesResult = RestTemplateUtils.getForEntity("https://hub.docker.com/v2/namespaces/" + imageRepo.getUserName()+ "/repositories/", httpHeaders, JSONObject.class);
+                List<JSONObject> repositories = repositoriesResult.getBody().getJSONArray("results").toJavaList(JSONObject.class);
+                for(JSONObject repository:repositories){
+                    String repositoryName = repository.getString("name");
+                    String namespace = repository.getString("namespace");
+                    ResponseEntity<JSONObject> tagsResponse = RestTemplateUtils.getForEntity("https://hub.docker.com/v2/namespaces/"+namespace+"/repositories/"+repositoryName+"/tags", httpHeaders, JSONObject.class);
+                    List<JSONObject> tags = tagsResponse.getBody().getJSONArray("results").toJavaList(JSONObject.class);
+                    for(JSONObject tag:tags){
+                        JSONArray images = tag.getJSONArray("images");
+                        String tagStr = tag.getString("name");
+                        ImageRepoItem imageRepoItem = new ImageRepoItem();
+                        imageRepoItem.setId(UUIDUtil.newUUID());
+                        imageRepoItem.setProject(namespace);
+                        imageRepoItem.setRepository(repositoryName);
+                        imageRepoItem.setTag(tagStr);
+                        if(images.size()>0){
+                            imageRepoItem.setDigest(images.getJSONObject(0).getString("digest"));
+                            imageRepoItem.setPushTime(images.getJSONObject(0).getString("last_pushed"));
+                            imageRepoItem.setArch(images.getJSONObject(0).getString("architecture"));
+                            imageRepoItem.setSize(changeFlowFormat(images.getJSONObject(0).getLong("size")));
+                        }
+                        imageRepoItem.setRepoId(imageRepo.getId());
+
+                        imageRepoItem.setPath("hub.docker.com" + "/" + namespace + "/" + repositoryName + ":" + tagStr);
+                        imageRepoItemMapper.insertSelective(imageRepoItem);
+                        i++;
+                    }
+                }
 
             } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "nexus.png")) {
 
