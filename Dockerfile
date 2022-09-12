@@ -1,4 +1,4 @@
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/hummerrisk-base:v0.3.0
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/hummerrisk-base:v0.3.1
 
 COPY backend/target/backend-1.0.jar /opt/apps
 
