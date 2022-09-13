@@ -9,6 +9,10 @@ public class TaskRuleDTO {
 
    private ServerRuleDTO serverRuleDTO;
 
+    private K8sRuleDTO k8sRuleDTO;
+
+    private ConfigRuleDTO configRuleDTO;
+
    private ImageRuleDTO imageRuleDTO;
 
     private CodeRuleDTO codeRuleDTO;
@@ -43,5 +47,21 @@ public class TaskRuleDTO {
 
     public void setCodeRuleDTO(CodeRuleDTO codeRuleDTO) {
         this.codeRuleDTO = codeRuleDTO;
+    }
+
+    public K8sRuleDTO getK8sRuleDTO() {
+        return k8sRuleDTO;
+    }
+
+    public void setK8sRuleDTO(K8sRuleDTO k8sRuleDTO) {
+        this.k8sRuleDTO = k8sRuleDTO;
+    }
+
+    public ConfigRuleDTO getConfigRuleDTO() {
+        return configRuleDTO;
+    }
+
+    public void setConfigRuleDTO(ConfigRuleDTO configRuleDTO) {
+        this.configRuleDTO = configRuleDTO;
     }
 }

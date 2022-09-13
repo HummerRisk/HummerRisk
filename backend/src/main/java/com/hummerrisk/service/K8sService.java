@@ -46,18 +46,6 @@ public class K8sService {
     @Resource
     private CloudNativeResultItemMapper cloudNativeResultItemMapper;
     @Resource
-    private ImageMapper imageMapper;
-    @Resource
-    private ImageResultMapper imageResultMapper;
-    @Resource
-    private ImageTrivyJsonMapper imageTrivyJsonMapper;
-    @Resource
-    private ImageResultLogMapper imageResultLogMapper;
-    @Resource
-    private ProxyMapper proxyMapper;
-    @Resource
-    private ImageRepoMapper imageRepoMapper;
-    @Resource
     private CloudNativeSourceMapper cloudNativeSourceMapper;
     @Resource
     private CloudNativeSourceSyncLogMapper cloudNativeSourceSyncLogMapper;

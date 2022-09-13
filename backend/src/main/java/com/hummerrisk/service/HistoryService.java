@@ -175,6 +175,12 @@ public class HistoryService {
                 resultId = ((CloudTask) obj).getId();
             } else if(obj.getClass() == ServerResult.class || obj.getClass() == ServerResultDTO.class) {
                 resultId = ((ServerResult) obj).getId();
+            } else if(obj.getClass() == CloudNativeResult.class) {
+                resultId = ((CloudNativeResult) obj).getId();
+            } else if(obj.getClass() == CloudNativeConfigResult.class) {
+                resultId = ((CloudNativeConfigResult) obj).getId();
+            } else if(obj.getClass() == CodeResult.class || obj.getClass() == CodeResultDTO.class) {
+                resultId = ((CodeResult) obj).getId();
             } else if(obj.getClass() == ImageResult.class || obj.getClass() == ImageResultWithBLOBs.class || obj.getClass() == ImageResultDTO.class) {
                 resultId = ((ImageResult) obj).getId();
             }

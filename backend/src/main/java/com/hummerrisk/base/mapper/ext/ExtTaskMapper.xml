@@ -334,6 +334,46 @@
         order by t.last_modified desc
     </select>
 
+    <select id="k8sRuleList" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.controller.request.task.RuleVo">
+        select
+        t.id as sourceId,
+        'rule' as ruleType,
+        t.name as ruleName,
+        t.description as ruleDesc,
+        'k8s.png' as icon,
+        t.severity,
+        (select id from cloud_native where id = #{accountId}) as accountId,
+        (select name from cloud_native where id = #{accountId}) as accountName,
+        'k8sAccount' as accountType
+        from cloud_native_rule t
+        <where>
+            <if test="ruleName != null">
+                AND t.name like CONCAT('%', #{ruleName},'%')
+            </if>
+        </where>
+        order by t.last_modified desc
+    </select>
+
+    <select id="configRuleList" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.controller.request.task.RuleVo">
+        select
+        t.id as sourceId,
+        'rule' as ruleType,
+        t.name as ruleName,
+        t.description as ruleDesc,
+        'yaml.png' as icon,
+        t.severity,
+        (select id from cloud_native_config where id = #{accountId}) as accountId,
+        (select name from cloud_native_config where id = #{accountId}) as accountName,
+        'configAccount' as accountType
+        from cloud_native_config_rule t
+        <where>
+            <if test="ruleName != null">
+                AND t.name like CONCAT('%', #{ruleName},'%')
+            </if>
+        </where>
+        order by t.last_modified desc
+    </select>
+
     <select id="imageRuleList" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.controller.request.task.RuleVo">
         select
         t.id as sourceId,
@@ -391,6 +431,12 @@
             <if test="accountType != null and accountType == 'serverAccount'">
                 select id from server where id = #{accountId}
             </if>
+            <if test="accountType != null and accountType == 'k8sAccount'">
+                select id from cloud_native where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'configAccount'">
+                select id from cloud_native_config where id = #{accountId}
+            </if>
             <if test="accountType != null and accountType == 'imageAccount'">
                 select id from image where id = #{accountId}
             </if>
@@ -410,6 +456,12 @@
             <if test="accountType != null and accountType == 'serverAccount'">
                 select name from server where id = #{accountId}
             </if>
+            <if test="accountType != null and accountType == 'k8sAccount'">
+                select id from cloud_native where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'configAccount'">
+                select id from cloud_native_config where id = #{accountId}
+            </if>
             <if test="accountType != null and accountType == 'imageAccount'">
                 select name from image where id = #{accountId}
             </if>
@@ -428,6 +480,12 @@
             </if>
             <if test="accountType != null and accountType == 'serverAccount'">
                 'serverAccount'
+            </if>
+            <if test="accountType != null and accountType == 'k8sAccount'">
+                'k8sAccount'
+            </if>
+            <if test="accountType != null and accountType == 'configAccount'">
+                'configAccount'
             </if>
             <if test="accountType != null and accountType == 'imageAccount'">
                 'imageAccount'
@@ -464,6 +522,12 @@
             <if test="accountType != null and accountType == 'serverAccount'">
                 select id from server where id = #{accountId}
             </if>
+            <if test="accountType != null and accountType == 'k8sAccount'">
+                select id from cloud_native where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'configAccount'">
+                select id from cloud_native_config where id = #{accountId}
+            </if>
             <if test="accountType != null and accountType == 'imageAccount'">
                 select id from image where id = #{accountId}
             </if>
@@ -483,6 +547,12 @@
             <if test="accountType != null and accountType == 'serverAccount'">
                 select name from server where id = #{accountId}
             </if>
+            <if test="accountType != null and accountType == 'k8sAccount'">
+                select id from cloud_native where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'configAccount'">
+                select id from cloud_native_config where id = #{accountId}
+            </if>
             <if test="accountType != null and accountType == 'imageAccount'">
                 select name from image where id = #{accountId}
             </if>
@@ -501,6 +571,12 @@
             </if>
             <if test="accountType != null and accountType == 'serverAccount'">
                 'serverAccount'
+            </if>
+            <if test="accountType != null and accountType == 'k8sAccount'">
+                'k8sAccount'
+            </if>
+            <if test="accountType != null and accountType == 'configAccount'">
+                'configAccount'
             </if>
             <if test="accountType != null and accountType == 'imageAccount'">
                 'imageAccount'
@@ -580,6 +656,40 @@
         t1.tag_key as tagKey,
         t2.tag_name as tagName
         FROM server_rule t
+        left join rule_tag_mapping t1 on t1.rule_id = t.id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+        ORDER BY t.last_modified desc
+    </select>
+
+    <select id="k8sDetailRule" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.dto.K8sRuleDTO">
+        SELECT
+        t.*,
+        'k8s.png' as pluginIcon,
+        t1.tag_key as tagKey,
+        t2.tag_name as tagName
+        FROM cloud_native_rule t
+        left join rule_tag_mapping t1 on t1.rule_id = t.id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+        ORDER BY t.last_modified desc
+    </select>
+
+    <select id="configDetailRule" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.dto.ConfigRuleDTO">
+        SELECT
+        t.*,
+        'yaml.png' as pluginIcon,
+        t1.tag_key as tagKey,
+        t2.tag_name as tagName
+        FROM cloud_native_config_rule t
         left join rule_tag_mapping t1 on t1.rule_id = t.id
         left join rule_tag t2 on t1.tag_key = t2.tag_key
         <where>
@@ -675,6 +785,58 @@
             </if>
             <if test="accountType != null and accountType != 'serverAccount'">
                 AND t.tag_key = 'serverAccount'
+            </if>
+        </where>
+
+        UNION ALL
+
+        SELECT
+        DISTINCT
+        t2.id,
+        t2.name,
+        t2.status,
+        t2.severity,
+        t2.description,
+        t2.parameter,
+        t2.last_modified as lastModified,
+        t2.flag,
+        t2.script
+        FROM rule_tag t
+        left join rule_tag_mapping t1 on t.tag_key = t1.tag_key
+        join cloud_native_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.tag_key = #{sourceId}
+            </if>
+            <if test="accountType != null and accountType != 'k8sAccount'">
+                AND t.tag_key = 'k8sAccount'
+            </if>
+        </where>
+
+        UNION ALL
+
+        SELECT
+        DISTINCT
+        t2.id,
+        t2.name,
+        t2.status,
+        t2.severity,
+        t2.description,
+        t2.parameter,
+        t2.last_modified as lastModified,
+        t2.flag,
+        t2.script
+        FROM rule_tag t
+        left join rule_tag_mapping t1 on t.tag_key = t1.tag_key
+        join cloud_native_config_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.tag_key = #{sourceId}
+            </if>
+            <if test="accountType != null and accountType != 'configAccount'">
+                AND t.tag_key = 'configAccount'
             </if>
         </where>
 

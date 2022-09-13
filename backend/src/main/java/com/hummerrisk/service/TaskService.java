@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtTaskMapper;
-import com.hummerrisk.commons.constants.ResourceOperation;
-import com.hummerrisk.commons.constants.ResourceTypeConstants;
-import com.hummerrisk.commons.constants.TaskConstants;
-import com.hummerrisk.commons.constants.TaskEnum;
+import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.task.*;
@@ -86,6 +83,22 @@ public class TaskService {
     private HistoryService historyService;
     @Resource
     private CodeService codeService;
+    @Resource
+    private CloudNativeMapper cloudNativeMapper;
+    @Resource
+    private CloudNativeConfigMapper cloudNativeConfigMapper;
+    @Resource
+    private CloudNativeRuleMapper cloudNativeRuleMapper;
+    @Resource
+    private CloudNativeConfigRuleMapper cloudNativeConfigRuleMapper;
+    @Resource
+    private CloudNativeResultMapper cloudNativeResultMapper;
+    @Resource
+    private CloudNativeConfigResultMapper cloudNativeConfigResultMapper;
+    @Resource
+    private K8sService k8sService;
+    @Resource
+    private CloudNativeConfigService cloudNativeConfigService;
 
 
     public List<Favorite> listFavorites() {
@@ -166,6 +179,10 @@ public class TaskService {
             allList = extTaskMapper.vulnRuleList(ruleVo);
         } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.serverAccount.getType())) {
             allList = extTaskMapper.serverRuleList(ruleVo);
+        }  else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.k8sAccount.getType())) {
+            allList = extTaskMapper.k8sRuleList(ruleVo);
+        }  else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.configAccount.getType())) {
+            allList = extTaskMapper.configRuleList(ruleVo);
         } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.imageAccount.getType())) {
             allList = extTaskMapper.imageRuleList(ruleVo);
         } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.codeAccount.getType())) {
@@ -186,6 +203,10 @@ public class TaskService {
             return extTaskMapper.serverRuleList(ruleVo);
         } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.imageAccount.getType())) {
             return extTaskMapper.imageRuleList(ruleVo);
+        }  else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.k8sAccount.getType())) {
+            return extTaskMapper.k8sRuleList(ruleVo);
+        }  else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.configAccount.getType())) {
+            return extTaskMapper.configRuleList(ruleVo);
         } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.codeAccount.getType())) {
             return extTaskMapper.codeRuleList(ruleVo);
         }
@@ -212,6 +233,10 @@ public class TaskService {
             ruleDTO.setRuleDTO(extTaskMapper.vulnDetailRule(ruleVo));
         } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.serverAccount.getType())) {
             ruleDTO.setServerRuleDTO(extTaskMapper.serverDetailRule(ruleVo));
+        } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.k8sAccount.getType())) {
+            ruleDTO.setK8sRuleDTO(extTaskMapper.k8sDetailRule(ruleVo));
+        } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.configAccount.getType())) {
+            ruleDTO.setConfigRuleDTO(extTaskMapper.configDetailRule(ruleVo));
         } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.imageAccount.getType())) {
             ruleDTO.setImageRuleDTO(extTaskMapper.imageDetailRule(ruleVo));
         } else if(StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.codeAccount.getType())) {
@@ -334,6 +359,16 @@ public class TaskService {
                     ruleId = rule.getId();
                     ruleName = rule.getName();
                     resourceId = this.serverResource(taskItem.getSourceId(), taskItem.getAccountId());
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.k8sAccount.getType())) {
+                    CloudNativeRule rule = cloudNativeRuleMapper.selectByPrimaryKey(taskItem.getSourceId());
+                    ruleId = rule.getId();
+                    ruleName = rule.getName();
+                    resourceId = this.k8sResource(taskItem.getSourceId(), taskItem.getAccountId());
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.configAccount.getType())) {
+                    CloudNativeConfigRule rule = cloudNativeConfigRuleMapper.selectByPrimaryKey(taskItem.getSourceId());
+                    ruleId = rule.getId();
+                    ruleName = rule.getName();
+                    resourceId = this.configResource(taskItem.getSourceId(), taskItem.getAccountId());
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
                     ImageRule rule = imageRuleMapper.selectByPrimaryKey(taskItem.getSourceId());
                     ruleId = rule.getId();
@@ -380,6 +415,26 @@ public class TaskService {
                         if(resourceId == null) continue;
                         this.insertTaskItemResource(taskItem, serverRule.getId(), serverRule.getName(), resourceId);
                     }
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.k8sAccount.getType())) {
+                    for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
+                        CloudNativeRule cloudNativeRule = cloudNativeRuleMapper.selectByPrimaryKey(ruleTagMapping.getRuleId());
+                        if(cloudNativeRule == null){
+                            continue;
+                        }
+                        resourceId = this.k8sResource(cloudNativeRule.getId(), taskItem.getAccountId());
+                        if(resourceId == null) continue;
+                        this.insertTaskItemResource(taskItem, cloudNativeRule.getId(), cloudNativeRule.getName(), resourceId);
+                    }
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.configAccount.getType())) {
+                    for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
+                        CloudNativeConfigRule cloudNativeConfigRule = cloudNativeConfigRuleMapper.selectByPrimaryKey(ruleTagMapping.getRuleId());
+                        if(cloudNativeConfigRule == null){
+                            continue;
+                        }
+                        resourceId = this.configResource(cloudNativeConfigRule.getId(), taskItem.getAccountId());
+                        if(resourceId == null) continue;
+                        this.insertTaskItemResource(taskItem, cloudNativeConfigRule.getId(), cloudNativeConfigRule.getName(), resourceId);
+                    }
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
                     for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
                         ImageRule imageRule = imageRuleMapper.selectByPrimaryKey(ruleTagMapping.getRuleId());
@@ -423,6 +478,18 @@ public class TaskService {
                         ServerRule serverRule = serverRuleMapper.selectByPrimaryKey(ruleGroupMapping.getRuleId());
                         resourceId = this.serverResource(serverRule.getId(), taskItem.getAccountId());
                         this.insertTaskItemResource(taskItem, serverRule.getId(), serverRule.getName(), resourceId);
+                    }
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.k8sAccount.getType())) {
+                    for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
+                        CloudNativeRule cloudNativeRule = cloudNativeRuleMapper.selectByPrimaryKey(ruleGroupMapping.getRuleId());
+                        resourceId = this.k8sResource(cloudNativeRule.getId(), taskItem.getAccountId());
+                        this.insertTaskItemResource(taskItem, cloudNativeRule.getId(), cloudNativeRule.getName(), resourceId);
+                    }
+                } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.configAccount.getType())) {
+                    for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
+                        CloudNativeConfigRule cloudNativeConfigRule = cloudNativeConfigRuleMapper.selectByPrimaryKey(ruleGroupMapping.getRuleId());
+                        resourceId = this.configResource(cloudNativeConfigRule.getId(), taskItem.getAccountId());
+                        this.insertTaskItemResource(taskItem, cloudNativeConfigRule.getId(), cloudNativeConfigRule.getName(), resourceId);
                     }
                 } else if(StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
                     for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
@@ -472,6 +539,14 @@ public class TaskService {
                         ServerRule rule = serverRuleMapper.selectByPrimaryKey(taskItem.getSourceId());
                         ruleId = rule.getId();
                         resourceId = serverService.rescan(taskItemResource.getResourceId());
+                    } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.k8sAccount.getType())) {
+                        CloudNativeRule rule = cloudNativeRuleMapper.selectByPrimaryKey(taskItem.getSourceId());
+                        ruleId = rule.getId();
+                        resourceId = k8sService.reScan(taskItemResource.getResourceId());
+                    } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.configAccount.getType())) {
+                        CloudNativeConfigRule rule = cloudNativeConfigRuleMapper.selectByPrimaryKey(taskItem.getSourceId());
+                        ruleId = rule.getId();
+                        resourceId = cloudNativeConfigService.reScan(taskItemResource.getResourceId());
                     } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
                         ImageRule rule = imageRuleMapper.selectByPrimaryKey(taskItem.getSourceId());
                         ruleId = rule.getId();
@@ -519,6 +594,30 @@ public class TaskService {
                                 resourceId = serverService.rescan(serverResult.getId());
                                 if (resourceId == null) continue;
                                 this.updateTaskItemResource(taskItemResource, serverRule.getId(), resourceId);
+                            }
+                        }
+                    } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.k8sAccount.getType())) {
+                        for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
+                            CloudNativeResultExample cloudNativeResultExample = new CloudNativeResultExample();
+                            cloudNativeResultExample.createCriteria().andRuleIdEqualTo(ruleTagMapping.getRuleId());
+                            List<CloudNativeResult> cloudNativeResults = cloudNativeResultMapper.selectByExample(cloudNativeResultExample);
+                            for (CloudNativeResult cloudNativeResult : cloudNativeResults) {
+                                CloudNativeRule cloudNativeRule = cloudNativeRuleMapper.selectByPrimaryKey(cloudNativeResult.getRuleId());
+                                resourceId = k8sService.reScan(cloudNativeResult.getId());
+                                if (resourceId == null) continue;
+                                this.updateTaskItemResource(taskItemResource, cloudNativeRule.getId(), resourceId);
+                            }
+                        }
+                    } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.configAccount.getType())) {
+                        for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
+                            CloudNativeConfigResultExample cloudNativeConfigResultExample = new CloudNativeConfigResultExample();
+                            cloudNativeConfigResultExample.createCriteria().andRuleIdEqualTo(ruleTagMapping.getRuleId());
+                            List<CloudNativeConfigResult> cloudNativeConfigResults = cloudNativeConfigResultMapper.selectByExample(cloudNativeConfigResultExample);
+                            for (CloudNativeConfigResult cloudNativeConfigResult : cloudNativeConfigResults) {
+                                CloudNativeConfigRule cloudNativeConfigRule = cloudNativeConfigRuleMapper.selectByPrimaryKey(cloudNativeConfigResult.getRuleId());
+                                resourceId = cloudNativeConfigService.reScan(cloudNativeConfigResult.getId());
+                                if (resourceId == null) continue;
+                                this.updateTaskItemResource(taskItemResource, cloudNativeConfigRule.getId(), resourceId);
                             }
                         }
                     } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
@@ -583,6 +682,30 @@ public class TaskService {
                                 resourceId = serverService.rescan(serverResult.getId());
                                 if (resourceId == null) continue;
                                 this.updateTaskItemResource(taskItemResource, serverRule.getId(), resourceId);
+                            }
+                        }
+                    } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.k8sAccount.getType())) {
+                        for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
+                            CloudNativeResultExample cloudNativeResultExample = new CloudNativeResultExample();
+                            cloudNativeResultExample.createCriteria().andRuleIdEqualTo(ruleGroupMapping.getRuleId());
+                            List<CloudNativeResult> cloudNativeResults = cloudNativeResultMapper.selectByExample(cloudNativeResultExample);
+                            for (CloudNativeResult cloudNativeResult : cloudNativeResults) {
+                                CloudNativeRule cloudNativeRule = cloudNativeRuleMapper.selectByPrimaryKey(cloudNativeResult.getRuleId());
+                                resourceId = k8sService.reScan(cloudNativeResult.getId());
+                                if (resourceId == null) continue;
+                                this.updateTaskItemResource(taskItemResource, cloudNativeRule.getId(), resourceId);
+                            }
+                        }
+                    } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.configAccount.getType())) {
+                        for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
+                            CloudNativeConfigResultExample cloudNativeConfigResultExample = new CloudNativeConfigResultExample();
+                            cloudNativeConfigResultExample.createCriteria().andRuleIdEqualTo(ruleGroupMapping.getRuleId());
+                            List<CloudNativeConfigResult> cloudNativeConfigResults = cloudNativeConfigResultMapper.selectByExample(cloudNativeConfigResultExample);
+                            for (CloudNativeConfigResult cloudNativeConfigResult : cloudNativeConfigResults) {
+                                CloudNativeConfigRule cloudNativeConfigRule = cloudNativeConfigRuleMapper.selectByPrimaryKey(cloudNativeConfigResult.getRuleId());
+                                resourceId = cloudNativeConfigService.reScan(cloudNativeConfigResult.getId());
+                                if (resourceId == null) continue;
+                                this.updateTaskItemResource(taskItemResource, cloudNativeConfigRule.getId(), resourceId);
                             }
                         }
                     } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
@@ -743,6 +866,82 @@ public class TaskService {
         return "";
     }
 
+    private String dealK8sTask (CloudNativeRule rule, CloudNative cloudNative, Integer scanId) {
+        try {
+            if (rule.getStatus()) {
+                CloudNativeResultWithBLOBs result = new CloudNativeResultWithBLOBs();
+                BeanUtils.copyBean(result, cloudNative);
+                result.setId(UUIDUtil.newUUID());
+                result.setCloudNativeId(cloudNative.getId());
+                result.setApplyUser(SessionUtils.getUserId());
+                result.setCreateTime(System.currentTimeMillis());
+                result.setUpdateTime(System.currentTimeMillis());
+                result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+                result.setUserName(SessionUtils.getUser().getName());
+                result.setRuleId(rule.getId());
+                result.setRuleName(rule.getName());
+                result.setRuleDesc(rule.getDescription());
+                result.setSeverity(rule.getSeverity());
+                CloudNativeResultExample cloudNativeResultExample = new CloudNativeResultExample();
+                cloudNativeResultExample.createCriteria().andRuleIdEqualTo(rule.getId()).andCloudNativeIdEqualTo(cloudNative.getId());
+                cloudNativeResultMapper.deleteByExample(cloudNativeResultExample);
+                cloudNativeResultMapper.insertSelective(result);
+
+                k8sService.saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_result", "", true);
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_start_k8s_result");
+                historyService.insertScanTaskHistory(result, scanId, result.getCloudNativeId(), TaskEnum.k8sAccount.getType());
+
+                historyService.insertHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
+                return result.getId();
+            } else {
+                LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
+                HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
+            }
+        } catch (Exception e) {
+            LogUtil.error(e);
+            HRException.throwException(e.getMessage());
+        }
+        return "";
+    }
+
+    private String dealConfigTask (CloudNativeConfigRule rule, CloudNativeConfig config, Integer scanId) {
+        try {
+            if (rule.getStatus()) {
+                CloudNativeConfigResult result = new CloudNativeConfigResult();
+                BeanUtils.copyBean(result, config);
+                result.setId(UUIDUtil.newUUID());
+                result.setConfigId(config.getId());
+                result.setApplyUser(SessionUtils.getUserId());
+                result.setCreateTime(System.currentTimeMillis());
+                result.setUpdateTime(System.currentTimeMillis());
+                result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+                result.setUserName(SessionUtils.getUser().getName());
+                result.setRuleId(rule.getId());
+                result.setRuleName(rule.getName());
+                result.setRuleDesc(rule.getDescription());
+                result.setSeverity(rule.getSeverity());
+                CloudNativeConfigResultExample example = new CloudNativeConfigResultExample();
+                example.createCriteria().andRuleIdEqualTo(rule.getId()).andConfigIdEqualTo(config.getId());
+                cloudNativeConfigResultMapper.deleteByExample(example);
+                cloudNativeConfigResultMapper.insertSelective(result);
+
+                cloudNativeConfigService.saveCloudNativeConfigResultLog(result.getId(), "i18n_start_config_result", "", true);
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.CREATE, "i18n_start_config_result");
+                historyService.insertScanTaskHistory(result, scanId, result.getConfigId(), TaskEnum.configAccount.getType());
+
+                historyService.insertHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
+                return result.getId();
+            } else {
+                LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
+                HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
+            }
+        } catch (Exception e) {
+            LogUtil.error(e);
+            HRException.throwException(e.getMessage());
+        }
+        return "";
+    }
+
     private String dealCodeTask (CodeRule rule, Code code, Integer scanId) {
         try {
             if (rule.getStatus()) {
@@ -836,6 +1035,20 @@ public class TaskService {
         Server server = serverMapper.selectByPrimaryKey(accountId);
         Integer scanId = historyService.insertScanHistory(server);
         return this.dealServerTask(serverRule, server, scanId);
+    }
+
+    private String k8sResource(String ruleId, String accountId) throws Exception {
+        CloudNativeRule cloudNativeRule = cloudNativeRuleMapper.selectByPrimaryKey(ruleId);
+        CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(accountId);
+        Integer scanId = historyService.insertScanHistory(cloudNative);
+        return this.dealK8sTask(cloudNativeRule, cloudNative, scanId);
+    }
+
+    private String configResource(String ruleId, String accountId) throws Exception {
+        CloudNativeConfigRule configRule = cloudNativeConfigRuleMapper.selectByPrimaryKey(ruleId);
+        CloudNativeConfig config = cloudNativeConfigMapper.selectByPrimaryKey(accountId);
+        Integer scanId = historyService.insertScanHistory(config);
+        return this.dealConfigTask(configRule, config, scanId);
     }
 
     private String codeResource(String ruleId, String accountId) throws Exception {

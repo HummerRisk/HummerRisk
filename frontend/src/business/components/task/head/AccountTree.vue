@@ -92,6 +92,18 @@ export default {
         return this.$t("task.task_server");
       }
     },
+    k8sAccount: {
+      type: String,
+      default() {
+        return this.$t("task.task_k8s");
+      }
+    },
+    configAccount: {
+      type: String,
+      default() {
+        return this.$t("task.task_config");
+      }
+    },
     imageAccount: {
       type: String,
       default() {
@@ -133,6 +145,8 @@ export default {
           {name: this.cloudAccount, level: 1, type: 'cloudAccount', children: this.treeNodes.cloudAccount},
           {name: this.vulnAccount, level: 1, type: 'vulnAccount', children: this.treeNodes.vulnAccount},
           {name: this.serverAccount, level: 1, type: 'serverAccount', children: this.treeNodes.serverAccount},
+          {name: this.k8sAccount, level: 1, type: 'k8sAccount', children: this.treeNodes.k8sAccount},
+          {name: this.configAccount, level: 1, type: 'configAccount', children: this.treeNodes.configAccount},
           {name: this.imageAccount, level: 1, type: 'imageAccount', children: this.treeNodes.imageAccount},
           {name: this.codeAccount, level: 1, type: 'codeAccount', children: this.treeNodes.codeAccount},
         ],

@@ -30,6 +30,10 @@ public interface ExtTaskMapper {
 
     List<RuleVo> serverRuleList(RuleVo ruleVo);
 
+    List<RuleVo> k8sRuleList(RuleVo ruleVo);
+
+    List<RuleVo> configRuleList(RuleVo ruleVo);
+
     List<RuleVo> imageRuleList(RuleVo ruleVo);
 
     List<RuleVo> codeRuleList(RuleVo ruleVo);
@@ -43,6 +47,10 @@ public interface ExtTaskMapper {
     RuleDTO vulnDetailRule(RuleVo ruleVo);
 
     ServerRuleDTO serverDetailRule(RuleVo ruleVo);
+
+    K8sRuleDTO k8sDetailRule(RuleVo ruleVo);
+
+    ConfigRuleDTO configDetailRule(RuleVo ruleVo);
 
     ImageRuleDTO imageDetailRule(RuleVo ruleVo);
 
