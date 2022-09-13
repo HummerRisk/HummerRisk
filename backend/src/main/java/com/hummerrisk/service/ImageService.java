@@ -648,7 +648,7 @@ public class ImageService {
 
     public String execute(Image image) throws Exception {
         Proxy proxy = new Proxy();
-        ImageRepo imageRepo = null;
+        ImageRepo imageRepo = new ImageRepo();
         if (image.getIsProxy() && image.getProxyId()!=null) {
             proxy = proxyMapper.selectByPrimaryKey(image.getProxyId());
         }

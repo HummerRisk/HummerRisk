@@ -51,4 +51,6 @@ public class TrivyConstants {
 
     public final static String TAG = " --tag ";
 
+    public final static String INPUT = "--input ";
+
 }

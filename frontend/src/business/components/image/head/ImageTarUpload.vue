@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div v-loading="result.loading">
     <!--文件上传入口-->
     <!-- 上传组件 -->
-    <el-upload action drag :auto-upload="true" :on-change="handleChange"
+    <el-upload action drag :auto-upload="false" :on-change="handleChange"
                ref="path" :file-list="fileList" :limit="1">
       <i class="el-icon-upload"></i>
       <div class="el-upload__text">{{ $t('package.upload_text1') }}<em>{{ $t('package.upload_text2') }}</em></div>
@@ -20,6 +20,7 @@ export default {
   data(){
     return {
       loading:false,
+      result: {},
       // 文件类型, 例如
       // Tar archive format (*.tar);
       fileType: ['tar'],
@@ -35,7 +36,7 @@ export default {
   created() {
     if(this.param) {
       this.fileList = [
-        {name: this.param, path: this.param.path}
+        {name: this.param, path: this.param}
       ];
     }
   },
@@ -48,6 +49,7 @@ export default {
     uploadValidate(file) {
       // 校检文件类型
       if (this.fileType) {
+        this.result.loading = true;
         let fileExtension = "";
         if (file.name.lastIndexOf(".") > -1) {
           fileExtension = file.name.slice(file.name.lastIndexOf(".") + 1);
@@ -72,12 +74,24 @@ export default {
         }
       }
       this.$emit('appendTar', file.raw);
+      this.result.loading = false;
     },
   }
 }
 </script>
 <style scoped>
-
+.progress-box {
+  box-sizing: border-box;
+  width: 360px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding: 8px 10px;
+  background-color: #ecf5ff;
+  font-size: 14px;
+  border-radius: 4px;
+}
 .content {
   color: red;
 }

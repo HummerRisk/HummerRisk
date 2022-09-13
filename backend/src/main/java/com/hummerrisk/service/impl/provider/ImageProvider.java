@@ -42,7 +42,7 @@ public class ImageProvider implements IProvider {
             if (StringUtils.equalsIgnoreCase("image", image.getType()) || StringUtils.equalsIgnoreCase("repo", image.getType())) {
                 fileName = image.getImageUrl() + ":" + image.getImageTag();
             } else {
-                fileName = TrivyConstants.DEFAULT_BASE_DIR + image.getPath();
+                fileName = TrivyConstants.INPUT + ImageConstants.DEFAULT_BASE_DIR + image.getPath();
             }
             CommandUtils.commonExecCmdWithResult(TrivyConstants.TRIVY_RM + TrivyConstants.TRIVY_JSON, TrivyConstants.DEFAULT_BASE_DIR);
             String command = _proxy + dockerLogin + TrivyConstants.TRIVY_IMAGE + TrivyConstants.TRIVY_SKIP + fileName + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
