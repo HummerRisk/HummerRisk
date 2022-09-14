@@ -20,6 +20,10 @@ public class SourceDTO extends Account {
 
     private String resultStatus;
 
+    private String overRules;
+
+    private String allRules;
+
     public String getReturnSum() {
         return returnSum;
     }
@@ -66,5 +70,21 @@ public class SourceDTO extends Account {
 
     public void setCloudTaskList(List<CloudTask> cloudTaskList) {
         this.cloudTaskList = cloudTaskList;
+    }
+
+    public String getOverRules() {
+        return overRules;
+    }
+
+    public void setOverRules(String overRules) {
+        this.overRules = overRules;
+    }
+
+    public String getAllRules() {
+        return allRules;
+    }
+
+    public void setAllRules(String allRules) {
+        this.allRules = allRules;
     }
 }
