@@ -14,11 +14,13 @@ public class TopInfoDTO {
 
     private String serverAccounts;
 
-    private String packageAccounts;
-
     private String imageAccounts;
 
     private String codeAccounts;
+
+    private String k8sAccounts;
+
+    private String configAccounts;
 
     private String rules;
 
@@ -28,7 +30,9 @@ public class TopInfoDTO {
 
     private String serverRules;
 
-    private String packageRules;
+    private String k8sRules;
+
+    private String configRules;
 
     private String imageRules;
 
@@ -42,7 +46,9 @@ public class TopInfoDTO {
 
     private String serverResults;
 
-    private String packageResults;
+    private String k8sResults;
+
+    private String configResults;
 
     private String imageResults;
 
@@ -96,14 +102,6 @@ public class TopInfoDTO {
         this.serverAccounts = serverAccounts;
     }
 
-    public String getPackageAccounts() {
-        return packageAccounts;
-    }
-
-    public void setPackageAccounts(String packageAccounts) {
-        this.packageAccounts = packageAccounts;
-    }
-
     public String getImageAccounts() {
         return imageAccounts;
     }
@@ -142,14 +140,6 @@ public class TopInfoDTO {
 
     public void setServerRules(String serverRules) {
         this.serverRules = serverRules;
-    }
-
-    public String getPackageRules() {
-        return packageRules;
-    }
-
-    public void setPackageRules(String packageRules) {
-        this.packageRules = packageRules;
     }
 
     public String getImageRules() {
@@ -192,14 +182,6 @@ public class TopInfoDTO {
         this.serverResults = serverResults;
     }
 
-    public String getPackageResults() {
-        return packageResults;
-    }
-
-    public void setPackageResults(String packageResults) {
-        this.packageResults = packageResults;
-    }
-
     public String getImageResults() {
         return imageResults;
     }
@@ -230,5 +212,53 @@ public class TopInfoDTO {
 
     public void setCodeResults(String codeResults) {
         this.codeResults = codeResults;
+    }
+
+    public String getK8sAccounts() {
+        return k8sAccounts;
+    }
+
+    public void setK8sAccounts(String k8sAccounts) {
+        this.k8sAccounts = k8sAccounts;
+    }
+
+    public String getConfigAccounts() {
+        return configAccounts;
+    }
+
+    public void setConfigAccounts(String configAccounts) {
+        this.configAccounts = configAccounts;
+    }
+
+    public String getK8sRules() {
+        return k8sRules;
+    }
+
+    public void setK8sRules(String k8sRules) {
+        this.k8sRules = k8sRules;
+    }
+
+    public String getConfigRules() {
+        return configRules;
+    }
+
+    public void setConfigRules(String configRules) {
+        this.configRules = configRules;
+    }
+
+    public String getK8sResults() {
+        return k8sResults;
+    }
+
+    public void setK8sResults(String k8sResults) {
+        this.k8sResults = k8sResults;
+    }
+
+    public String getConfigResults() {
+        return configResults;
+    }
+
+    public void setConfigResults(String configResults) {
+        this.configResults = configResults;
     }
 }
