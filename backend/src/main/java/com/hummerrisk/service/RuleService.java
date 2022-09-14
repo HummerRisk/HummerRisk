@@ -9,10 +9,7 @@ import com.hummerrisk.base.mapper.ext.ExtRuleGroupMapper;
 import com.hummerrisk.base.mapper.ext.ExtRuleMapper;
 import com.hummerrisk.base.mapper.ext.ExtRuleTagMapper;
 import com.hummerrisk.base.mapper.ext.ExtRuleTypeMapper;
-import com.hummerrisk.commons.constants.ResourceOperation;
-import com.hummerrisk.commons.constants.ResourceTypeConstants;
-import com.hummerrisk.commons.constants.ScanTypeConstants;
-import com.hummerrisk.commons.constants.TaskEnum;
+import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.rule.CreateRuleRequest;
@@ -89,6 +86,8 @@ public class RuleService {
     private NoticeService noticeService;
     @Resource @Lazy
     private HistoryService historyService;
+    @Resource @Lazy
+    private CloudTaskMapper cloudTaskMapper;
 
     public List<RuleDTO> cloudList(CreateRuleRequest ruleRequest) {
         return extRuleMapper.cloudList(ruleRequest);
@@ -555,8 +554,13 @@ public class RuleService {
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
     public void reScans(String accountId) throws Exception {
-        AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
-        this.scan(account);
+        CloudTaskExample example = new CloudTaskExample();
+        example.createCriteria().andAccountIdEqualTo(accountId);
+        List<CloudTask> cloudTaskList = cloudTaskMapper.selectByExample(example);
+        for (CloudTask cloudTask : cloudTaskList) {
+            cloudTask.setStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+            cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
+        }
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
