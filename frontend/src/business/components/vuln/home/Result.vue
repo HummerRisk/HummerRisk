@@ -67,10 +67,10 @@
             <el-col :span="8">
                     <span>
                       <span style="color: #579df8;" v-if="source.resultStatus === 'APPROVED'">
-                        <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                        <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                       </span>
                       <span style="color: #579df8;" v-else-if="source.resultStatus === 'PROCESSING'">
-                        <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                        <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                       </span>
                       <span style="color: #7ebf59;" v-else-if="source.resultStatus === 'FINISHED'">
                         <i class="el-icon-success"></i> {{ $t('resource.no_risk') }}
@@ -171,13 +171,13 @@
         </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="13%" prop="status" sortable show-overflow-tooltip>
           <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.status === 'UNCHECKED'">
-            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
           <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.status === 'APPROVED'">
-            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
           <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
-            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
           <el-button @click="showTaskLog(scope.row)" plain size="medium" type="success" v-else-if="scope.row.status === 'FINISHED'">
             <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
@@ -274,13 +274,13 @@
                 </el-form-item>
                 <el-form-item :label="$t('resource.status')">
                   <el-button plain size="mini" type="primary" v-if="detailForm.status === 'UNCHECKED'">
-                    <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                    <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                   </el-button>
                   <el-button plain size="mini" type="primary" v-else-if="detailForm.status === 'APPROVED'">
-                    <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                    <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                   </el-button>
                   <el-button plain size="mini" type="primary" v-else-if="detailForm.status === 'PROCESSING'">
-                    <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                    <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                   </el-button>
                   <el-button plain size="mini" type="success" v-else-if="detailForm.status === 'FINISHED'">
                     <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}

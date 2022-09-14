@@ -34,7 +34,7 @@
           <el-table-column v-slot:default="scope" :label="$t('log.sync_status')" min-width="10%"
           >
             <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.status === 0">
-              <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+              <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
             <el-button @click="showTaskLog(scope.row)" plain size="medium" type="success" v-else-if="scope.row.status === 1">
               <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}

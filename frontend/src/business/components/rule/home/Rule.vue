@@ -73,14 +73,10 @@
               <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
             </template>
           </el-table-column>
-          <el-table-column prop="lastModified" min-width="14%" :label="$t('rule.last_modified')" sortable>
+          <el-table-column min-width="10%" :label="$t('commons.operating')">
             <template v-slot:default="scope">
-              <span>{{ scope.row.lastModified | timestampFormatDate }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column min-width="15%" :label="$t('commons.operating')">
-            <template v-slot:default="scope">
-              <table-operators :buttons="buttons" :row="scope.row"/>
+              <table-operators v-if="!scope.row.flag" :buttons="buttons" :row="scope.row"/>
+              <table-operators v-if="scope.row.flag" :buttons="buttons2" :row="scope.row"/>
             </template>
           </el-table-column>
         </el-table>
@@ -473,6 +469,16 @@ import {RULE_CONFIGS} from "../../common/components/search/search-components";
             tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
             exec: this.handleEdit
           },
+          {
+            tip: this.$t('commons.copy'), icon: "el-icon-document-copy", type: "success",
+            exec: this.handleCopy
+          },
+          {
+            tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
+            exec: this.handleDelete
+          }
+        ],
+        buttons2: [
           {
             tip: this.$t('commons.copy'), icon: "el-icon-document-copy", type: "success",
             exec: this.handleCopy

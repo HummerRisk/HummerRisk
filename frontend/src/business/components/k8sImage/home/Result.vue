@@ -23,13 +23,13 @@
         </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="12%" prop="resultStatus" sortable show-overflow-tooltip>
           <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
-            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
           <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
-            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
           <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
-            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
           <el-button @click="showResultLog(scope.row)" plain size="medium" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
             <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
@@ -72,7 +72,7 @@
                  &nbsp;&nbsp; {{ logForm.imageName }}
                 </span>
                 <span class="grid-content-status-span" v-if="logForm.resultStatus === 'APPROVED'" style="color: #579df8">
-                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                 </span>
                 <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'FINISHED'" style="color: #7ebf50">
                   <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}

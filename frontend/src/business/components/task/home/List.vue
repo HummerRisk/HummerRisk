@@ -28,13 +28,13 @@
         </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="13%" prop="status" sortable show-overflow-tooltip>
           <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.status === 'UNCHECKED'">
-            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
           <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.status === 'APPROVED'">
-            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
           <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
-            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
           <el-button @click="showTaskLog(scope.row)" plain size="medium" type="success" v-else-if="scope.row.status === 'FINISHED'">
             <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
@@ -357,7 +357,7 @@
                   {{ taskLogTable.accountName }}
                 </span>
                 <span class="grid-content-status-span" v-if="taskLogTable.taskResourceVo.status === 'APPROVED'" style="color: #579df8">
-                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                 </span>
                 <span class="grid-content-status-span" v-else-if="taskLogTable.taskResourceVo.status === 'FINISHED'" style="color: #7ebf50">
                   <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}

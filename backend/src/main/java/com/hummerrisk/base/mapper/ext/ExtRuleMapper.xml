@@ -106,6 +106,17 @@
                 </when>
             </choose>
         </if>
+        <if test='${condition}.groupId != null'>
+            and #{${condition}.groupId.value}
+            <choose>
+                <when test='${condition}.groupId.operator == "in"'>
+                    in (select group_id from rule_group_mapping where rule_id = t.id)
+                </when>
+                <when test='${condition}.groupId.operator == "not in"'>
+                    not in (select group_id from rule_group_mapping where rule_id = t.id)
+                </when>
+            </choose>
+        </if>
         <if test='${condition}.resourceType != null'>
             and #{${condition}.resourceType.value}
             <choose>

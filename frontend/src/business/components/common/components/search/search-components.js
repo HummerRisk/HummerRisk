@@ -353,6 +353,26 @@ export const RULE_PLUGIN_NAME = {
   }
 }
 
+export const RULE_GROUP = {
+  key: "groupId",
+  name: 'TableSearchSelect',
+  label: 'commons.adv_search.plugin',
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN]
+  },
+  options: { // 异步获取候选项
+    url: "/rule/allRuleGroups",
+    labelKey: "name",
+    valueKey: "id",
+    showLabel: option => {
+      return option.label;
+    }
+  },
+  props: { // 尾部控件的props，一般为element ui控件的props
+    multiple: false
+  }
+}
+
 export const RULE_SEVERITY = {
   key: "severity",
   name: 'TableSearchSelect',
@@ -504,7 +524,7 @@ export const ACCOUNT_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACC
 export const VULN_CONFIGS = [NAME, VULN_PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const RULE_TAG_CONFIGS = [TAG_KEY, TAG_NAME, TAG_FLAG, TAG_INDEX];
 export const RULE_GROUP_CONFIGS = [NAME, DESCRIPTION, RULE_PLUGIN_NAME];
-export const RULE_CONFIGS = [RULE_NAME, RULE_PLUGIN_NAME, RULE_SEVERITY, RULE_RESOURCE_TYPE];
+export const RULE_CONFIGS = [RULE_NAME, RULE_PLUGIN_NAME, RULE_SEVERITY, RULE_RESOURCE_TYPE, RULE_GROUP];
 export const SERVER_CONFIGS = [NAME, IP, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const SERVER_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
 export const SERVER_RESULT_CONFIGS = [NAME, IP, RULE_NAME, RULE_SEVERITY, CREATOR, UPDATE_TIME];

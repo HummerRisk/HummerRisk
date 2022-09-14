@@ -15,7 +15,7 @@
                        云账号: {{ row.account.name }}
                     </span>
                     <span class="grid-content-status-span" v-if="scope.row.status === 0" style="color: #579df8">
-                      <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                      <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                     </span>
                     <span class="grid-content-status-span" v-else-if="scope.row.status === 1" style="color: #7ebf50">
                       <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}

@@ -65,6 +65,13 @@ public class RuleController {
     }
 
     @I18n
+    @ApiOperation(value = "所有规则组")
+    @GetMapping(value = "allRuleGroups")
+    public List<RuleGroupDTO> allrRuleGroups() {
+        return ruleService.ruleGroupList(new RuleGroupRequest());
+    }
+
+    @I18n
     @ApiOperation(value = "规则标签")
     @GetMapping(value = "ruleTags")
     public List<RuleTagDTO> getRuleTags() throws Exception {
