@@ -73,34 +73,11 @@
 
     <el-row>
       <el-col class="version">
-        <el-link :underline="false" href="https://docs.hummerrisk.com/question/grype" target="_blank">
-          <img class="logo github-icon" src="../../../../assets/img/engine/grype.png"/>
+        <el-link :underline="false" href="https://github.com/aquasecurity/trivy" target="_blank">
+          <img class="logo github-icon" src="../../../../assets/img/engine/trivy.png"/>
         </el-link>
-        <el-link class="url" href="https://docs.hummerrisk.com/question/grype" target="_blank">
-          <span>{{ 'https://docs.hummerrisk.com/question/grype' }}</span>
-        </el-link>
-      </el-col>
-    </el-row>
-
-
-    <el-row>
-      <el-col class="version">
-        <el-link :underline="false" href="https://docs.hummerrisk.com/question/syft" target="_blank">
-          <img class="logo github-icon" src="../../../../assets/img/engine/syft.png"/>
-        </el-link>
-        <el-link class="url" href="https://docs.hummerrisk.com/question/syft" target="_blank">
-          <span>{{ 'https://docs.hummerrisk.com/question/syft' }}</span>
-        </el-link>
-      </el-col>
-    </el-row>
-
-    <el-row>
-      <el-col class="version">
-        <el-link :underline="false" href="https://docs.hummerrisk.com/question/dependency" target="_blank">
-          <img class="logo github-icon" src="../../../../assets/img/engine/dependency.png"/>
-        </el-link>
-        <el-link class="url" href="https://docs.hummerrisk.com/question/dependency" target="_blank">
-          <span>{{ 'https://docs.hummerrisk.com/question/dependency' }}</span>
+        <el-link class="url" href="https://docs.hummerrisk.com/question/trivy" target="_blank">
+          <span>{{ 'https://docs.hummerrisk.com/question/trivy' }}</span>
         </el-link>
       </el-col>
     </el-row>
