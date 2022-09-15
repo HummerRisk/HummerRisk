@@ -11,7 +11,11 @@ CREATE TABLE `cloud_event_region_log` (
       PRIMARY KEY (`id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
-ALTER TABLE `cloud_event_sync_log` MODIFY column `region` varchar(255) DEFAULT NULL COMMENT '区域';
+ALTER TABLE `cloud_event_sync_log` MODIFY column `region` varchar(512) DEFAULT NULL COMMENT '区域';
+
+ALTER TABLE `cloud_event_sync_log` MODIFY column `create_time` bigint(13) DEFAULT NULL COMMENT '创建时间';
+
+ALTER TABLE `cloud_event` MODIFY column `event_time` bigint(13) DEFAULT NULL COMMENT '事件时间';
 
 ALTER TABLE `cloud_event_sync_log` MODIFY column `status` int(1) DEFAULT NULL COMMENT '状态：0 同步中，1成功，2失败，3告警';
 
