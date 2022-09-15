@@ -412,6 +412,7 @@ export default {
   dashboard: {
     dashboard: '首頁',
     overview: '總覽',
+    panel: '面板',
     i18n_opt_unit: "單位：個",
     i18n_opt_total: "總量",
     i18n_compliance_ratio: "合規比例",

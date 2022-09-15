@@ -4,6 +4,10 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
+          <el-menu-item :index="'/dashboard/panel'">
+            {{ $t("dashboard.panel") }}
+          </el-menu-item>
+
           <el-menu-item :index="'/dashboard/dashboard'">
             {{ $t("dashboard.overview") }}
           </el-menu-item>

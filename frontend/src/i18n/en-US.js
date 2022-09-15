@@ -412,6 +412,7 @@ export default {
   dashboard: {
     dashboard:'Homepage',
     overview:'Overview',
+    panel: 'Panel',
     i18n_opt_unit: "Unit: Unit",
     i18n_opt_total: "Total",
     i18n_compliance_ratio: "Compliance Ratio",

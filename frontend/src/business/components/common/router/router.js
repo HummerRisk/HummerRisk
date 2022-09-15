@@ -26,7 +26,7 @@ Vue.use(VueRouter);
 /* eslint-disable */
 const router = new VueRouter({
   routes: [
-    {path: "/", redirect: '/setting/personsetting'},
+    {path: "/", redirect: '/dashboard/panel'},
     {
       path: "/sidebar",
       components: {
