@@ -29,15 +29,10 @@
         </el-table-column>
         <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="15%" sortable>
           <template v-slot:default="scope">
-            <span>{{ scope.row.createTime | timestampFormatDate }}</span>
+            <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="updateTime" :label="$t('commons.update_time')" min-width="15%" sortable>
-          <template v-slot:default="scope">
-            <span><i class="el-icon-time"></i> {{ scope.row.updateTime | timestampFormatDate }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="13%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators v-if="scope.row.pluginIcon !== 'other.png'" :buttons="buttons" :row="scope.row"/>
             <table-operators v-if="scope.row.pluginIcon === 'other.png'" :buttons="buttons2" :row="scope.row"/>
@@ -130,17 +125,21 @@
       <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
       <el-table border :data="imageData" class="adjust-table table-content">
         <el-table-column type="index" min-width="2%"/>
-        <el-table-column prop="project" :label="'Project'" min-width="7%">
+        <el-table-column prop="project" :label="'Project'" min-width="7%" v-slot:default="scope">
+          {{ scope.row.project?scope.row.project:'N/A' }}
         </el-table-column>
         <el-table-column prop="repository" :label="'Repository'" min-width="15%">
         </el-table-column>
         <el-table-column prop="path" :label="'ImagePath'" min-width="30%">
         </el-table-column>
-        <el-table-column min-width="9%" :label="'Size'" prop="size">
+        <el-table-column min-width="9%" :label="'Size'" prop="size" v-slot:default="scope">
+          {{ scope.row.size?scope.row.size:'--' }}
         </el-table-column>
-        <el-table-column min-width="9%" :label="'Arch'" prop="arch">
+        <el-table-column min-width="9%" :label="'Arch'" prop="arch" v-slot:default="scope">
+          {{ scope.row.arch?scope.row.arch:'--' }}
         </el-table-column>
-        <el-table-column min-width="15%" :label="'PushTime'" prop="pushTime">
+        <el-table-column min-width="15%" :label="'PushTime'" prop="pushTime" v-slot:default="scope">
+          {{ scope.row.pushTime?scope.row.pushTime:'--' }}
         </el-table-column>
         <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
