@@ -173,15 +173,4 @@
              )
     </select>
 
-    <select id="packageMetricChart" resultType="com.hummerrisk.dto.MetricChartDTO" parameterType="java.lang.String">
-        SELECT *
-        from (
-             (SELECT count(*) as critical FROM package_dependency_json_item t WHERE LOWER(t.severity) = 'critical' AND t.result_id = #{resultId}) as critical,
-             (SELECT count(*) as high FROM package_dependency_json_item t WHERE LOWER(t.severity) = 'high' AND t.result_id = #{resultId}) as high,
-             (SELECT count(*) as medium FROM package_dependency_json_item t WHERE LOWER(t.severity) = 'medium' AND t.result_id = #{resultId}) as medium,
-             (SELECT count(*) as low FROM package_dependency_json_item t WHERE LOWER(t.severity) = 'low' AND t.result_id = #{resultId}) as low,
-             (SELECT count(*) as unknown FROM package_dependency_json_item t WHERE LOWER(t.severity) = 'unknown' AND t.result_id = #{resultId}) as unknown,
-             (SELECT count(*) as total FROM package_dependency_json_item t WHERE t.result_id = #{resultId}) as total
-             )
-    </select>
 </mapper>

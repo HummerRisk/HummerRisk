@@ -225,10 +225,6 @@ public class SbomService {
         return extSbomMapper.imageMetricChart(resultId);
     }
 
-    public MetricChartDTO packageMetricChart (String resultId) {
-        return extSbomMapper.packageMetricChart(resultId);
-    }
-
     public String download(DownloadRequest request) throws Exception {
         String str = "";
         if (StringUtils.equalsIgnoreCase(request.getType(), "code")) {

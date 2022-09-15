@@ -158,13 +158,6 @@ public class SbomController {
     }
 
     @I18n
-    @ApiOperation(value = "源码风险数据信息")
-    @GetMapping("packageMetricChart/{resultId}")
-    public MetricChartDTO packageMetricChart(@PathVariable String resultId) {
-        return sbomService.packageMetricChart(resultId);
-    }
-
-    @I18n
     @ApiOperation(value = "所有SBOM项目")
     @PostMapping("allSbomList")
     public List<SbomDTO> allSbomList(@RequestBody SbomRequest request) {
