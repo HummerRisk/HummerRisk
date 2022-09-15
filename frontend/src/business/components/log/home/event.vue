@@ -7,7 +7,7 @@
                       @syncData="syncData" :syncTip="$t('log.sync')"
                       :show-sync="false"/>
       </template>
-        <el-table  border :data="tableData" class="adjust-table table-content">
+        <el-table   border :data="tableData" class="adjust-table table-content">
           <el-table-column type="expand">
             <template v-slot:default="props">
               <el-divider><i class="el-icon-folder-opened"></i></el-divider>
@@ -29,7 +29,7 @@
           <el-table-column
             prop="syncRegion"
             :label="$t('log.region')"
-            min-width="15%"
+            min-width="10%"
           >
           </el-table-column>
           <el-table-column
@@ -43,8 +43,9 @@
           </el-table-column>
           <el-table-column
             prop="userName"
+            :show-overflow-tooltip="true"
             :label="$t('log.user_name')"
-            min-width="5%"
+            min-width="10%"
            >
           </el-table-column>
           <el-table-column
@@ -55,15 +56,17 @@
           </el-table-column>
           <el-table-column
             prop="resourceType"
+            :show-overflow-tooltip="true"
             :label="$t('log.resource_type')"
-            min-width="10%"
+            min-width="15%"
             :formatter="resourceTypeFormat"
            >
           </el-table-column>
           <el-table-column
             prop="resourceName"
+            :show-overflow-tooltip="true"
             :label="$t('log.resource_name')"
-            min-width="10%"
+            min-width="15%"
             :formatter="resourceNameFormat"
             >
           </el-table-column>
