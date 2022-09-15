@@ -4,7 +4,7 @@
     </a>
 </p>
 <h3 align="center">
-    云安全治理平台 
+    云原生安全平台 
     <a href="https://github.com/hummerrisk/hummerrisk/blob/master/README_EN.md" style="color: #df913c;">[英文版]</a>
 </h3>
 
@@ -19,13 +19,13 @@
 
 ## HummerRisk 是什么
 
-> HummerRisk 是开源的云安全治理平台，以非侵入的方式解决混合云的安全和治理问题。核心能力包括混合云的安全态势，K8S容器云安全检测。
+> HummerRisk 是开源的云原生安全平台，以非侵入的方式解决云原生的安全和治理问题。核心能力包括混合云的安全治理和K8S容器云安全检测。
 
 ![架构](./frontend/src/assets/img/readme/architecturev.png)
 
 ## HummerRisk 能做什么
 
-### **混合云安全**
+### **混合云安全治理**
 * 混合云安全合规检测：
   对主流的公(私)有云资源进行安全合规检测，例如等保2.0预检、CIS 合规检查、各种基线检测，同时可自定义检测规则；
 * 漏洞检测：
@@ -112,7 +112,6 @@ curl -sSL https://github.com/HummerRisk/HummerRisk/releases/latest/download/quic
 - [Nuclei](https://nuclei.projectdiscovery.io/)：使用了 Nuclei 作为漏洞检测引擎
 - [Xray](https://xray.cool/)：使用了 Xray 作为漏洞检测引擎
 - [Trivy](https://github.com/aquasecurity/trivy)：使用了 Trivy 作为云原生检测引擎
-- [Dependency Check](https://jeremylong.github.io/DependencyCheck/)：使用了 Dependency Check 作为软件依赖检查引擎
 - [Element](https://element.eleme.cn/#/)：使用了 Element 提供的优秀组件库
 
 ## License & Copyright
