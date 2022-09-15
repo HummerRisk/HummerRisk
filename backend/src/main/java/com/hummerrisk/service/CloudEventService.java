@@ -112,7 +112,7 @@ public class CloudEventService {
         CloudEventSyncLog cloudEventSyncLog = new CloudEventSyncLog();
         cloudEventSyncLog.setAccountId(accountId);
         cloudEventSyncLog.setRegion(StringUtils.join(regions, ","));
-        cloudEventSyncLog.setCreateTime(DateUtils.getNowDate());
+        cloudEventSyncLog.setCreateTime(DateUtils.getNowDate().getTime());
         cloudEventSyncLog.setRequestStartTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime));
         cloudEventSyncLog.setRequestEndTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", endTime));
         cloudEventSyncLog.setStatus(0);
@@ -182,8 +182,8 @@ public class CloudEventService {
 
                     if (result.size() > 0) {
                         CloudEventExample cloudEventExample = new CloudEventExample();
-                        cloudEventExample.createCriteria().andCloudAccountIdEqualTo(accountId).andSyncRegionEqualTo(region).andEventTimeBetween(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime)
-                                , DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", endTime));
+                        cloudEventExample.createCriteria().andCloudAccountIdEqualTo(accountId).andSyncRegionEqualTo(region).andEventTimeBetween(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime).getTime()
+                                , DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", endTime).getTime());
                         cloudEventMapper.deleteByExample(cloudEventExample);
                     }
                     result.forEach(item -> {
@@ -280,7 +280,7 @@ public class CloudEventService {
                     .requestId((String) item.get("requestId")).requestParameters(item.get("requestParameters") == null ? "" : JSON.toJSONString(item.get("requestParameters")))
                     .referencedResources(item.get("referencedResources") == null ? "" : JSON.toJSONString(item.get("referencedResources")))
                     .apiVersion((String) item.get("apiVersion")).responseElements(item.get("responseElements") == null ? "" : JSON.toJSONString(item.get("responseElements")))
-                    .eventTime(DateUtils.utcTimeStrToLocalDate("yyyy-MM-dd'T'HH:mm:ss'Z'", (String) item.get("eventTime")))
+                    .eventTime(DateUtils.utcTimeStrToLocalDate("yyyy-MM-dd'T'HH:mm:ss'Z'", (String) item.get("eventTime")).getTime())
                     .eventMessage((String) item.get("eventMessage")).eventSource((String) item.get("eventSource"))
                     .acsRegion((String) item.get("acsRegion")).userAgent((String) item.get("userAgent"))
                     .sourceIpAddress((String) item.get("sourceIpAddress")).serviceName((String) item.get("serviceName"))

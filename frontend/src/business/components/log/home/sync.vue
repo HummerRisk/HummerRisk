@@ -211,6 +211,15 @@ export default {
     clearInterval(this.timer);
   },
   methods: {
+    reset(){
+      this.dateTime=[]
+      this.eventFrom={
+        accountId: "",
+        region: "",
+        startTime: "",
+        endTime: "",
+      }
+    },
     cancel(){
       this.showSync = false
     },
@@ -279,15 +288,8 @@ export default {
       return sum == 0;
     },
     syncData(){
+      this.reset()
       this.showSync = true
-    /*  if(!!!this.currentAccount || !!!this.region){
-        this.$error("云账号和区域不能为空")
-        return
-      }
-      let url = "/cloud/event/sync";
-      this.result = this.$post(url, {accountId:this.currentAccount,region:this.region,startTime:this.dateTime[0],endTime:this.dateTime[1]}, response => {
-        this.search()
-      });*/
     },
     search() {
       let url = "/cloud/event/sync/log/list/" + this.currentPage + "/" + this.pageSize;
