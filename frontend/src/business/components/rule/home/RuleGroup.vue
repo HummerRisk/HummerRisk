@@ -4,13 +4,13 @@
         <template v-slot:header>
           <table-header :condition.sync="condition" @search="search"
                         :title="$t('rule.rule_set_list')"
-                        @create="create"
+                        @create="create" @list="list" @menu="menu"
                         :createTip="$t('rule.create_rule_set')"
                         :show-create="true"/>
 
         </template>
 
-        <el-table :border="true" :stripe="true" :data="tableData" class="adjust-table table-content" @sort-change="sort"
+        <el-table v-if="listStatus === 1" :border="true" :stripe="true" :data="tableData" class="adjust-table table-content" @sort-change="sort"
                   @filter-change="filter" @select-all="select" @select="select">
           <el-table-column type="index" min-width="5%"/>
           <el-table-column prop="name" :label="$t('rule.rule_set_name')" min-width="15%" show-overflow-tooltip></el-table-column>
@@ -40,7 +40,68 @@
             </template>
           </el-table-column>
         </el-table>
+
+        <el-row :gutter="20" class="el-row-body" v-if="listStatus === 2">
+          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in tableData"
+                  :key="index" class="el-col el-col-su">
+            <el-card :body-style="{ padding: '10px' }">
+              <div style="height: 130px;">
+                <el-row :gutter="20">
+                  <el-col :span="3">
+                    <el-image style="border-radius: 50%;width: 16px; height: 16px; vertical-align:middle;" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
+                      <div slot="error" class="image-slot">
+                        <i class="el-icon-picture-outline"></i>
+                      </div>
+                    </el-image>
+                  </el-col>
+                  <el-col :span="21">
+                    <el-row class="plugin">{{ data.pluginName }}</el-row>
+                    <el-row class="desc">{{ data.description }}</el-row>
+                  </el-col>
+                </el-row>
+              </div>
+              <el-divider></el-divider>
+              <div style="padding: 0 14px 14px 14px;">
+                <el-row>
+                  <el-col :span="19">
+                    <span class="da-na">{{ data.name }}</span>
+                  </el-col>
+                  <el-col :span="5">
+                    <el-button size="medium" type="danger" class="round" round v-if="data.flag === true">
+                      {{ $t('rule.tag_flag_true') }}
+                    </el-button>
+                    <el-button size="medium" type="success" class="round" round v-else-if="data.flag === false">
+                      {{ $t('rule.tag_flag_false') }}
+                    </el-button>
+                  </el-col>
+                </el-row>
+                <span class="button time pa-na">
+              </span>
+                <div class="bottom clearfix">
+                  <time class="time pa-time">{{ data.level }}</time>
+                  <el-dropdown class="button button-drop" @command="(command)=>{handleCommand(command, data)}">
+                  <span class="el-dropdown-link">
+                    {{ $t('package.operate') }}
+                    <i class="el-icon-arrow-down el-icon--right"></i>
+                  </span>
+                    <el-dropdown-menu slot="dropdown" v-if="!!data.flag">
+                      <el-dropdown-item command="handleInfo">{{ $t('commons.detail') }}</el-dropdown-item>
+                      <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
+                    </el-dropdown-menu>
+                    <el-dropdown-menu slot="dropdown" v-if="!data.flag">
+                      <el-dropdown-item command="handleEdit">{{ $t('commons.edit') }}</el-dropdown-item>
+                      <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
+                      <el-dropdown-item command="handleDelete">{{ $t('commons.delete') }}</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </div>
+              </div>
+            </el-card>
+          </el-col>
+        </el-row>
+
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
+
       </el-card>
 
       <!--Create group-->
@@ -175,7 +236,7 @@
 import TableOperators from "../../common/components/TableOperators";
 import MainContainer from "../../common/components/MainContainer";
 import Container from "../../common/components/Container";
-import TableHeader from "../../common/components/TableHeader";
+import TableHeader from "../head/GroupTableHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/DialogFooter";
@@ -263,6 +324,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         ruleListPageSize: 10,
         ruleListTotal: 0,
         itemId: "",
+        listStatus: 1,
       }
     },
 
@@ -274,6 +336,10 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
       create() {
         this.createForm = {};
         this.createVisible = true;
+      },
+      handleEdit(item) {
+        this.infoForm = item;
+        this.updateVisible = true;
       },
       handleList(item) {
         this.ruleListPage = 1;
@@ -297,7 +363,6 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         });
       },
       handleInfo(item) {
-        this.infoForm = {};
         this.infoForm = item;
         this.infoVisible = true;
       },
@@ -381,6 +446,30 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
           return '';
         }
       },
+      list() {
+        this.listStatus = 1;
+      },
+      menu() {
+        this.listStatus = 2;
+      },
+      handleCommand(command, data) {
+        switch (command) {
+          case "handleInfo":
+            this.handleInfo(data);
+            break;
+          case "handleEdit":
+            this.handleEdit(data);
+            break;
+          case "handleList":
+            this.handleList(data);
+            break;
+          case "handleDelete":
+            this.handleDelete(data);
+            break;
+          default:
+            break;
+        }
+      }
     },
     created() {
       this.init();
@@ -393,7 +482,63 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
   .table-content {
     width: 100%;
   }
-
+  .el-row-body {
+    line-height: 1.15;
+  }
+  .time {
+    font-size: 13px;
+    color: #999;
+  }
+  .round {
+    font-size: 13px;
+    margin: 0 0 0 5px;
+    padding: 1px 3px 1px 3px;
+    float: right;
+  }
+  .bottom {
+    margin-top: 13px;
+    line-height: 13px;
+  }
+  .button {
+    padding: 0;
+    float: right;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    -o-text-overflow:ellipsis;
+    overflow:hidden;
+  }
+  .da-na {
+    width: 100%;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    overflow:hidden;
+    float: left;
+  }
+  .pa-na {
+    max-width: 60%;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    -o-text-overflow:ellipsis;
+    overflow:hidden;
+  }
+  .pa-time {
+    display:inline-block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: #1e6427;
+    float: left;
+  }
+  .button-drop {
+    float: right;
+  }
+  .el-dropdown-link {
+    cursor: pointer;
+    color: #409EFF;
+  }
+  .el-icon-arrow-down {
+    font-size: 12px;
+  }
   .demo-table-expand {
     font-size: 0;
   }
@@ -407,7 +552,6 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
     padding: 10px 10%;
     width: 47%;
   }
-
   .rtl >>> .el-drawer__body {
     overflow-y: auto;
     padding: 20px;
@@ -420,6 +564,26 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
   }
   .rtl >>> .el-form-item__content {
     width: 60%;
+  }
+  .el-col-su >>> .el-card {
+    margin: 10px 0;
+  }
+  .vue-select-image >>> .vue-select-image__img {
+    width: 120px;
+    height: 100px;
+  }
+  .el-row-body >>> .el-card__body >>> .el-divider {
+    margin: 5px 0;
+  }
+  .plugin {
+    color: #215d9a;
+    font-size: 16px;
+  }
+  .desc {
+    color: #888888;
+    font-size: 13px;
+    margin-top: 10px;
+    line-height: 20px;
   }
   /deep/ :focus{outline:0;}
 </style>
