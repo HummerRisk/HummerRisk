@@ -601,6 +601,7 @@ export default {
     rule_list_bind: '規則組綁定規則',
     source_rule: '未綁定規則',
     target_rule: '已綁定規則',
+    rule_group: '雲檢測規則組',
   },
   resource: {
     statistics: '合規報告',

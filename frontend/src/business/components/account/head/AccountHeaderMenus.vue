@@ -16,6 +16,10 @@
             {{ $t("account.quartz_task") }}
           </el-menu-item>
 
+          <el-menu-item :index="'/account/rulegroup'">
+            {{ $t("rule.rule_group") }}
+          </el-menu-item>
+
           <el-menu-item :index="'/account/rule'">
             {{ $t("rule.cloud_rule") }}
           </el-menu-item>

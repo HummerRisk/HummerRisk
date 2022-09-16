@@ -44,7 +44,7 @@
         <el-row :gutter="20" class="el-row-body" v-if="listStatus === 2">
           <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in tableData"
                   :key="index" class="el-col el-col-su">
-            <el-card :body-style="{ padding: '10px' }">
+            <el-card :body-style="{ padding: '15px' }">
               <div style="height: 130px;">
                 <el-row :gutter="20">
                   <el-col :span="3">
@@ -86,10 +86,12 @@
                   </span>
                     <el-dropdown-menu slot="dropdown" v-if="!!data.flag">
                       <el-dropdown-item command="handleInfo">{{ $t('commons.detail') }}</el-dropdown-item>
+                      <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
                       <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
                     </el-dropdown-menu>
                     <el-dropdown-menu slot="dropdown" v-if="!data.flag">
                       <el-dropdown-item command="handleEdit">{{ $t('commons.edit') }}</el-dropdown-item>
+                      <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
                       <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
                       <el-dropdown-item command="handleDelete">{{ $t('commons.delete') }}</el-dropdown-item>
                     </el-dropdown-menu>
@@ -489,6 +491,9 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
             break;
           case "handleEdit":
             this.handleEdit(data);
+            break;
+          case "handleBind":
+            this.handleBind(data);
             break;
           case "handleList":
             this.handleList(data);

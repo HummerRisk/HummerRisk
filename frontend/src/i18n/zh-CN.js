@@ -601,6 +601,7 @@ export default {
     rule_list_bind: '规则组绑定规则',
     source_rule: '未绑定规则',
     target_rule: '已绑定规则',
+    rule_group: '云检测规则组',
   },
   resource: {
     statistics: '合规报告',

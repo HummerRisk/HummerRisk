@@ -47,5 +47,10 @@ export default {
       name: "cloudStatistics",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/resource/home/Statistics"),
     },
+    {
+      path: "ruleGroup",
+      name: "CloudRuleGroup",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/rule/home/RuleGroup"),
+    },
   ]
 }

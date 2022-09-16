@@ -601,6 +601,7 @@ export default {
     rule_list_bind: 'Rule group binding rules',
     source_rule: 'Unbound rule',
     target_rule: 'Bound rules',
+    rule_group: 'Cloud detection rule group',
   },
   resource: {
     statistics:'Compliance Report',
