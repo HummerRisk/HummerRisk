@@ -597,6 +597,10 @@ export default {
     full_param: '請填寫完整參數',
     tag_key_pattern: '只能匹配英文字母',
     info: '查看',
+    bind: '綁定',
+    rule_list_bind: '規則組綁定規則',
+    source_rule: '未綁定規則',
+    target_rule: '已綁定規則',
   },
   resource: {
     statistics: '合規報告',

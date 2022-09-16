@@ -597,6 +597,10 @@ export default {
     full_param:'Please fill in the complete parameters',
     tag_key_pattern:'Can only match English letters',
     info:'View',
+    bind: 'Bind',
+    rule_list_bind: 'Rule group binding rules',
+    source_rule: 'Unbound rule',
+    target_rule: 'Bound rules',
   },
   resource: {
     statistics:'Compliance Report',

@@ -6,6 +6,7 @@ import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
+import com.hummerrisk.controller.request.rule.BindRuleRequest;
 import com.hummerrisk.controller.request.rule.CreateRuleRequest;
 import com.hummerrisk.controller.request.rule.RuleGroupRequest;
 import com.hummerrisk.controller.request.rule.RuleTagRequest;
@@ -222,5 +223,26 @@ public class RuleController {
     @PostMapping("groups")
     public List<GroupDTO> groups(@RequestPart(value = "selectIds") List<String> ids) {
         return ruleService.groups(ids);
+    }
+
+    @I18n
+    @ApiOperation(value = "所有已绑定规则组的规则")
+    @GetMapping("allBindList/{id}")
+    public List<Rule> allBindList(@PathVariable String id) {
+        return ruleService.allBindList(id);
+    }
+
+    @I18n
+    @ApiOperation(value = "所有未绑定规则组的规则")
+    @GetMapping("unBindList/{id}")
+    public List<Rule> unBindList(@PathVariable Integer id) {
+        return ruleService.unBindList(id);
+    }
+
+    @I18n
+    @ApiOperation(value = "规则组绑定规则")
+    @PostMapping(value = "bindRule")
+    public void bindRule(@RequestBody BindRuleRequest request) throws Exception {
+        ruleService.bindRule(request);
     }
 }

@@ -12,9 +12,11 @@ import com.hummerrisk.base.mapper.ext.ExtRuleTypeMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
+import com.hummerrisk.controller.request.rule.BindRuleRequest;
 import com.hummerrisk.controller.request.rule.CreateRuleRequest;
 import com.hummerrisk.controller.request.rule.RuleGroupRequest;
 import com.hummerrisk.controller.request.rule.RuleTagRequest;
+import com.hummerrisk.controller.request.sbom.SettingVersionRequest;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
@@ -670,7 +672,42 @@ public class RuleService {
             groupDTO.setGroups(extRuleGroupMapper.list(request));
             groupDTOS.add(groupDTO);
         }
-
         return groupDTOS;
+    }
+
+    public List<Rule> allBindList(String id) {
+        List<String> ids = new ArrayList<>();
+        RuleGroupMappingExample example = new RuleGroupMappingExample();
+        example.createCriteria().andGroupIdEqualTo(id);
+        List<RuleGroupMapping> list = ruleGroupMappingMapper.selectByExample(example);
+        for (RuleGroupMapping groupMapping : list) {
+            ids.add(groupMapping.getRuleId());
+        }
+        RuleExample ruleExample = new RuleExample();
+        if (ids.size()>0) {
+            ruleExample.createCriteria().andIdIn(ids);
+            return ruleMapper.selectByExample(ruleExample);
+        }
+        return new ArrayList<>();
+    }
+
+    public List<Rule> unBindList(Integer id) {
+        RuleGroup ruleGroup = ruleGroupMapper.selectByPrimaryKey(id);
+        RuleExample ruleExample = new RuleExample();
+        ruleExample.createCriteria().andPluginIdEqualTo(ruleGroup.getPluginId());
+        return ruleMapper.selectByExample(ruleExample);
+    }
+
+    public void bindRule(BindRuleRequest request) throws Exception {
+        String groupId = request.getGroupId();
+        RuleGroupMappingExample example = new RuleGroupMappingExample();
+        example.createCriteria().andGroupIdEqualTo(groupId);
+        ruleGroupMappingMapper.deleteByExample(example);
+        for (String id : request.getCloudValue()) {
+            RuleGroupMapping record = new RuleGroupMapping();
+            record.setRuleId(id);
+            record.setGroupId(groupId);
+            ruleGroupMappingMapper.insertSelective(record);
+        }
     }
 }

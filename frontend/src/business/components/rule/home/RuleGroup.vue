@@ -14,7 +14,7 @@
                   @filter-change="filter" @select-all="select" @select="select">
           <el-table-column type="index" min-width="5%"/>
           <el-table-column prop="name" :label="$t('rule.rule_set_name')" min-width="15%" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="description" :label="$t('commons.description')" min-width="50%" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="description" :label="$t('commons.description')" min-width="48%" show-overflow-tooltip></el-table-column>
           <el-table-column :label="$t('account.cloud_platform')" min-width="10%" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
@@ -23,7 +23,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('rule.tag_flag')" min-width="10%" show-overflow-tooltip>
+          <el-table-column :label="$t('rule.tag_flag')" min-width="9%" show-overflow-tooltip>
             <template v-slot:default="scope">
               <el-tag size="mini" type="danger" v-if="scope.row.flag === true">
                 {{ $t('rule.tag_flag_true') }}
@@ -33,7 +33,7 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
+          <el-table-column min-width="16%" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators v-if="!!scope.row.flag" :buttons="buttonsN" :row="scope.row"/>
               <table-operators v-if="!scope.row.flag" :buttons="buttons" :row="scope.row"/>
@@ -109,10 +109,13 @@
                  :destroy-on-close="true">
         <el-form :model="createForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createForm">
           <el-form-item :label="$t('rule.rule_set')" prop="name">
-            <el-input v-model="createForm.name" autocomplete="off" :placeholder="$t('commons.please_input')"/>
+            <el-input v-model="createForm.name" autocomplete="off" :placeholder="$t('rule.rule_set')"/>
           </el-form-item>
           <el-form-item :label="$t('commons.description')" prop="description">
-            <el-input v-model="createForm.description" autocomplete="off" :placeholder="$t('commons.please_input')"/>
+            <el-input v-model="createForm.description" autocomplete="off" :placeholder="$t('commons.description')"/>
+          </el-form-item>
+          <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
+            <el-input v-model="createForm.level" autocomplete="off" :placeholder="$t('resource.equal_guarantee_level')"/>
           </el-form-item>
           <el-form-item :label="$t('account.cloud_platform')" prop="pluginId" :rules="{required: true, message: $t('account.cloud_platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-select style="width: 100%;" v-model="createForm.pluginId" :placeholder="$t('account.please_choose_plugin')">
@@ -137,12 +140,15 @@
       <el-drawer class="rtl" :title="$t('rule.update_group')" :visible.sync="updateVisible" size="45%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
-            <el-form-item :label="$t('rule.rule_set')" prop="name">
-              <el-input v-model="infoForm.name" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
-            </el-form-item>
-            <el-form-item :label="$t('commons.description')" prop="description">
-              <el-input v-model="infoForm.description" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
-            </el-form-item>
+          <el-form-item :label="$t('rule.rule_set')" prop="name">
+            <el-input v-model="infoForm.name" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
+          </el-form-item>
+          <el-form-item :label="$t('commons.description')" prop="description">
+            <el-input v-model="infoForm.description" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
+          </el-form-item>
+          <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
+            <el-input v-model="infoForm.level" autocomplete="off" :placeholder="$t('resource.equal_guarantee_level')"/>
+          </el-form-item>
           <el-form-item :label="$t('account.cloud_platform')" prop="pluginId" :rules="{required: true, message: $t('account.cloud_platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-select style="width: 100%;" v-model="infoForm.pluginId" :disabled="infoForm.flag" :placeholder="$t('account.please_choose_plugin')">
               <el-option
@@ -172,24 +178,18 @@
           <el-form-item :label="$t('commons.description')" prop="description">
             {{ infoForm.description }}
           </el-form-item>
+          <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
+            {{ infoForm.level }}
+          </el-form-item>
           <el-form-item :label="$t('account.cloud_platform')">
-            <el-select style="width: 100%;" v-model="infoForm.pluginId" :disabled="infoForm.flag" :placeholder="$t('account.please_choose_plugin')">
-              <el-option
-                v-for="item in plugins"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-                <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                &nbsp;&nbsp; {{ $t(item.name) }}
-              </el-option>
-            </el-select>
+         &nbsp;&nbsp; {{ infoForm.pluginName }}
           </el-form-item>
         </el-form>
       </el-drawer>
       <!--Info group-->
 
       <!--rule list-->
-      <el-drawer class="rtl" :title="$t('rule.rule_list')" :visible.sync="listVisible" size="80%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="rtl" :title="$t('rule.rule_list')" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-table border :data="ruleForm" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                   @filter-change="filter" @select-all="select" @select="select">
@@ -228,6 +228,23 @@
         <table-pagination :change="handleListSearch" :current-page.sync="ruleListPage" :page-size.sync="ruleListPageSize" :total="ruleListTotal"/>
       </el-drawer>
       <!--rule list-->
+
+      <!--rule bind-->
+      <el-drawer class="rtl" :title="$t('rule.rule_list_bind')" :visible.sync="bindVisible" size="85%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true">
+        <el-card class="table-card edit_dev" style="padding: 25px;margin: 25px;">
+          <div style="text-align: center; margin: 25px;">
+            <p style="text-align: center; padding: 10px;margin: 25px;color: red;background-color: aliceblue;">{{ $t('rule.rule_list_bind') }}</p>
+            <el-transfer :titles="[$t('rule.source_rule'), $t('rule.target_rule')]" :filter-method="filterMethod" style="text-align: left; display: inline-block"
+                         :filter-placeholder="$t('commons.search_by_name')" filterable v-model="cloudValue" :data="cloudData">
+            </el-transfer>
+          </div>
+        </el-card>
+        <dialog-footer
+          @cancel="bindVisible = false"
+          @confirm="bind()"/>
+      </el-drawer>
+      <!--rule bind-->
 
     </main-container>
 </template>
@@ -270,6 +287,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         updateVisible: false,
         infoVisible: false,
         listVisible: false,
+        bindVisible: false,
         currentPage: 1,
         pageSize: 10,
         total: 0,
@@ -302,6 +320,10 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
             exec: this.handleInfo
           },
           {
+            tip: this.$t('rule.bind'), icon: "el-icon-plus", type: "warning",
+            exec: this.handleBind
+          },
+          {
             tip: this.$t('rule.rule_list'), icon: "el-icon-tickets", type: "success",
             exec: this.handleList
           },
@@ -310,6 +332,10 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
           {
             tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
             exec: this.handleEdit
+          },
+          {
+            tip: this.$t('rule.bind'), icon: "el-icon-plus", type: "warning",
+            exec: this.handleBind
           },
           {
             tip: this.$t('rule.rule_list'), icon: "el-icon-tickets", type: "success",
@@ -325,6 +351,9 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         ruleListTotal: 0,
         itemId: "",
         listStatus: 1,
+        cloudValue: [],
+        cloudData: [],
+        groupId: '',
       }
     },
 
@@ -367,10 +396,11 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         this.infoVisible = true;
       },
       handleClose() {
-        this.createVisible =  false;
-        this.updateVisible =  false;
-        this.infoVisible =  false;
-        this.listVisible =  false;
+        this.createVisible = false;
+        this.updateVisible = false;
+        this.infoVisible = false;
+        this.listVisible = false;
+        this.bindVisible = false;
         this.search();
       },
       handleDelete(item) {
@@ -469,7 +499,40 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
           default:
             break;
         }
-      }
+      },
+      handleBind(item) {
+        this.groupId = item.id;
+        this.$get("/rule/unBindList/" + item.id,response => {
+          this.cloudData = [];
+          for(let data of response.data) {
+            this.cloudData.push({
+              key: data.id,
+              label: data.name
+            });
+          }
+          this.bindVisible = true;
+        });
+        this.$get("/rule/allBindList/" + item.id,response => {
+          this.cloudValue = [];
+          for(let data of response.data) {
+            this.cloudValue.push(data.id);
+          }
+        });
+      },
+      bind() {
+        let params = {
+          cloudValue: this.cloudValue,
+          groupId: this.groupId,
+        };
+        this.$post("/rule/bindRule", params,response => {
+          this.$success(this.$t('organization.integration.successful_operation'));
+          this.bindVisible = false;
+          this.search();
+        });
+      },
+      filterMethod(query, item) {
+        return item.label.indexOf(query) > -1;
+      },
     },
     created() {
       this.init();
@@ -584,6 +647,9 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
     font-size: 13px;
     margin-top: 10px;
     line-height: 20px;
+  }
+  .edit_dev >>> .el-transfer-panel {
+    width:350px;
   }
   /deep/ :focus{outline:0;}
 </style>

@@ -597,6 +597,10 @@ export default {
     full_param: '请填写完整参数',
     tag_key_pattern: '只能匹配英文字母',
     info: '查看',
+    bind: '绑定',
+    rule_list_bind: '规则组绑定规则',
+    source_rule: '未绑定规则',
+    target_rule: '已绑定规则',
   },
   resource: {
     statistics: '合规报告',
