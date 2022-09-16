@@ -356,7 +356,7 @@ export const RULE_PLUGIN_NAME = {
 export const RULE_GROUP = {
   key: "groupId",
   name: 'TableSearchSelect',
-  label: 'commons.adv_search.plugin',
+  label: 'rule.rule_set',
   operator: {
     options: [OPERATORS.IN, OPERATORS.NOT_IN]
   },

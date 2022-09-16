@@ -123,13 +123,18 @@
 
     <el-card class="table-card">
       <template v-slot:header>
+        <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
+          <el-tab-pane :label="$t('resource.result_list')" name="first"></el-tab-pane>
+          <el-tab-pane :label="$t('resource.cloud_resource_detail_result')" name="second"></el-tab-pane>
+        </el-tabs>
         <table-header :condition.sync="condition"
                       @search="search"
+                      v-if="activeName === 'first'"
                       :title="$t('resource.result_list')"/>
       </template>
 
       <el-table class="adjust-table table-content"
-                border
+                border v-if="activeName === 'first'"
                 :data="tableData"
                 :row-class-name="tableRowClassName"
                 @sort-change="sort"
@@ -235,7 +240,59 @@
         </el-table-column>
       </el-table>
 
-      <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
+      <table-pagination v-if="activeName === 'first'" :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
+
+      <el-row :gutter="20" class="el-row-body" v-if="activeName === 'second'">
+        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="el-col el-col-su">
+          <el-card :body-style="{ padding: '15px' }">
+            <div slot="header" class="clearfix">
+                <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('resource.status') }}</span>
+                <table-search-bar :condition.sync="condition" @change="searchStatus" style="float: right;width: 70%" class="search-bar"/>
+            </div>
+            <div style="height: 130px;">
+              <el-table :data="statusData" style="width: 100%" :show-header="false">
+                <el-table-column prop="date" label="日期" max-width="70%" fixed="left" align="left">
+                </el-table-column>
+                <el-table-column prop="name" label="姓名" max-width="30%" fixed="right" align="right">
+                </el-table-column>
+              </el-table>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="el-col el-col-su">
+          <el-card :body-style="{ padding: '15px' }">
+            <div slot="header" class="clearfix">
+              <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('resource.status') }}</span>
+              <table-search-bar :condition.sync="condition" @change="searchStatus" style="float: right;width: 70%" class="search-bar"/>
+            </div>
+            <div style="height: 130px;">
+
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="el-col el-col-su">
+          <el-card :body-style="{ padding: '15px' }">
+            <div slot="header" class="clearfix">
+              <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('resource.status') }}</span>
+              <table-search-bar :condition.sync="condition" @change="searchStatus" style="float: right;width: 70%" class="search-bar"/>
+            </div>
+            <div style="height: 130px;">
+
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="el-col el-col-su">
+          <el-card :body-style="{ padding: '15px' }">
+            <div slot="header" class="clearfix">
+              <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('resource.status') }}</span>
+              <table-search-bar :condition.sync="condition" @change="searchStatus" style="float: right;width: 70%" class="search-bar"/>
+            </div>
+            <div style="height: 130px;">
+
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
     </el-card>
 
     <!--Task log-->
@@ -359,6 +416,7 @@ import ResultLog from "./ResultLog";
 import {_filter, _sort, getCurrentAccountID} from "@/common/js/utils";
 import {ACCOUNT_ID} from "@/common/js/constants";
 import AccountChange from "@/business/components/common/head/AccountSwitch";
+import TableSearchBar from '@/business/components/common/components/TableSearchBar';
 
 /* eslint-disable */
 export default {
@@ -373,6 +431,7 @@ export default {
     CenterChart,
     ResultLog,
     AccountChange,
+    TableSearchBar,
   },
   data() {
     return {
@@ -464,6 +523,16 @@ export default {
         line: true,
         indentWithTabs: true,
       },
+      activeName: 'first',
+      statusData: [{
+        date: '2016-05-02',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-04',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1517 弄'
+      }],
     }
   },
   methods: {
@@ -651,7 +720,13 @@ export default {
       setTimeout(() => {
         this.$refs.cmEditor.codemirror.refresh();
       }, 50);
-    }
+    },
+    handleClick(tab, event) {
+      this.activeName = tab.name;
+    },
+    searchStatus(query, item) {
+      return item.name.indexOf(query) > -1;
+    },
   },
   computed: {
     codemirror() {
@@ -768,6 +843,14 @@ export default {
 
 .icon-loading {
   font-size: 100px;
+}
+
+.el-row-body {
+  line-height: 1.15;
+}
+
+.el-col-su >>> .el-card {
+  margin: 10px 0;
 }
 
 /deep/ :focus {
