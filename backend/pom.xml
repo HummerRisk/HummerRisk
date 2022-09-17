@@ -561,6 +561,21 @@
         </dependency>
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
+            <artifactId>huaweicloud-sdk-cts</artifactId>
+            <version>3.0.99</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-lang3</artifactId>
+                    <groupId>org.apache.commons</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-iam</artifactId>
             <version>3.0.99</version>
             <exclusions>

@@ -6,6 +6,15 @@ import com.aliyun.actiontrail20171204.Client;
 import com.aliyun.actiontrail20171204.models.LookupEventsRequest;
 import com.aliyun.actiontrail20171204.models.LookupEventsResponse;
 import com.aliyun.teaopenapi.models.Config;
+import com.huaweicloud.sdk.core.auth.BasicCredentials;
+import com.huaweicloud.sdk.core.auth.ICredential;
+import com.huaweicloud.sdk.core.exception.ConnectionException;
+import com.huaweicloud.sdk.core.exception.RequestTimeoutException;
+import com.huaweicloud.sdk.core.exception.ServiceResponseException;
+import com.huaweicloud.sdk.cts.v3.CtsClient;
+import com.huaweicloud.sdk.cts.v3.model.ListTracesRequest;
+import com.huaweicloud.sdk.cts.v3.model.ListTracesResponse;
+import com.huaweicloud.sdk.cts.v3.region.CtsRegion;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.CloudEventMapper;
 import com.hummerrisk.base.mapper.CloudEventRegionLogMapper;
@@ -247,6 +256,27 @@ public class CloudEventService {
 
     private List<CloudEvent> getHuaweiCloudEvents(Map<String, String> accountMap, String startTime
             , String endTime, int pageNum, int maxResult) {
+        String ak = accountMap.get("accessKey");
+        String sk = accountMap.get("secretKey");
+        ICredential auth = new BasicCredentials()
+                .withAk(ak)
+                .withSk(sk);
+        CtsClient client = CtsClient.newBuilder()
+                .withCredential(auth)
+                .withRegion(CtsRegion.valueOf(accountMap.get("region")))
+                .build();
+        ListTracesRequest request = new ListTracesRequest();
+        request.withTraceType(ListTracesRequest.TraceTypeEnum.fromValue("data"));
+        try {
+            ListTracesResponse response = client.listTraces(request);
+            System.out.println(response.toString());
+        } catch (ConnectionException e) {
+            e.printStackTrace();
+        } catch (RequestTimeoutException e) {
+            e.printStackTrace();
+        } catch (ServiceResponseException e) {
+            e.printStackTrace();
+        }
         return new ArrayList<>();
     }
 
