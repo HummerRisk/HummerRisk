@@ -96,27 +96,6 @@ import {_filter, _sort} from "@/common/js/utils";
         resourceTypes: [],
         taskId: "",
         direction: 'rtl',
-        buttons: [
-          {
-            tip: this.$t('resource.scan'), icon: "el-icon-refresh-right", type: "success",
-            exec: this.scanAgain
-          }
-        ],
-        platforms: [
-          {text: this.$t('account.aliyun'), value: 'hummer-aliyun-plugin'},
-          {text: this.$t('account.tencent'), value: 'hummer-qcloud-plugin'},
-          {text: this.$t('account.huawei'), value: 'hummer-huawei-plugin'},
-          {text: this.$t('account.aws'), value: 'hummer-aws-plugin'},
-          {text: this.$t('account.azure'), value: 'hummer-azure-plugin'},
-          {text: this.$t('account.vsphere'), value: 'hummer-vsphere-plugin'},
-          {text: this.$t('account.openstack'), value: 'hummer-openstack-plugin'},
-          {text: this.$t('account.huoshan'), value: 'hummer-huoshan-plugin'},
-          {text: this.$t('account.baidu'), value: 'hummer-baidu-plugin'},
-          {text: this.$t('account.qiniu'), value: 'hummer-qiniu-plugin'},
-          {text: this.$t('account.qingcloud'), value: 'hummer-qingcloud-plugin'},
-          {text: this.$t('account.ucloud'), value: 'hummer-ucloud-plugin'},
-          {text: this.$t('account.k8s'), value: 'hummer-k8s-plugin'}
-        ],
         string2Key: "",
         string2PrettyFormat: "",
         visible: false,
@@ -138,8 +117,6 @@ import {_filter, _sort} from "@/common/js/utils";
       '$route': 'init'
     },
     methods: {
-      scanAgain() {
-      },
       sort(column) {
         _sort(column, this.condition);
         this.init();
@@ -189,11 +166,6 @@ import {_filter, _sort} from "@/common/js/utils";
       back () {
         this.$router.push({
           path: '/resource/result',
-        }).catch(error => error);
-      },
-      goRule (ruleId) {
-        this.$router.push({
-          path: '/rule/rule',
         }).catch(error => error);
       },
     },

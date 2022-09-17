@@ -34,7 +34,7 @@
         <el-col :span="1">
           <div class="split"></div>
         </el-col>
-        <el-col :span="15">
+        <el-col :span="15" class="el-cloud-row">
           <!-- 第一行 -->
           <el-row>
             <el-col :span="4">
@@ -173,9 +173,7 @@
                          :sort-by="['HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
                          show-overflow-tooltip>
           <span v-if="scope.row.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
-          <span v-else-if="scope.row.severity == 'MediumRisk'" style="color: #fe9636;"> {{
-              $t('rule.MediumRisk')
-            }}</span>
+          <span v-else-if="scope.row.severity == 'MediumRisk'" style="color: #fe9636;">{{ $t('rule.MediumRisk') }}</span>
           <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
           <span v-else> N/A</span>
         </el-table-column>
@@ -352,6 +350,65 @@
         <!--rule-->
 
       </el-row>
+
+      <el-card class="table-card" v-if="activeName === 'second'">
+
+        <template v-slot:header>
+          <table-header :condition.sync="resourceCondition"
+                        @search="resourceSearch"
+                        :show-back="false"
+                        :title="$t('resource.result_details_list')"/>
+        </template>
+
+        <el-table border :data="resourceTableData" class="adjust-table table-content" @sort-change="resourceSort" @filter-change="resourceFilter" :row-class-name="tableRowClassName">
+          <!-- 展开 start -->
+          <el-table-column type="expand">
+            <template v-slot:default="props">
+
+              <el-divider><i class="el-icon-folder-opened"></i></el-divider>
+              <el-form v-if="props.row.resource !== '[]'">
+                <result-read-only :row="typeof(props.row.resource) === 'string'?JSON.parse(props.row.resource):props.row.resource"></result-read-only>
+                <el-divider><i class="el-icon-document-checked"></i></el-divider>
+              </el-form>
+            </template>
+          </el-table-column>
+          <!-- 展开 end -->
+          <el-table-column type="index" min-width="3%"/>
+          <el-table-column v-slot:default="scope" :label="$t('resource.Hummer_ID')" min-width="15%">
+            {{ scope.row.hummerId }}
+          </el-table-column>
+          <el-table-column v-slot:default="scope" :label="$t('rule.resource_type')" min-width="15%">
+            {{ scope.row.resourceType }}
+          </el-table-column>
+          <el-table-column prop="regionName" :label="$t('account.regions')" min-width="15%">
+            <template v-slot:default="scope">
+              <span>
+                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                {{ scope.row.regionName }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="12%"
+                           :sort-by="['HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
+                           show-overflow-tooltip>
+            <span v-if="scope.row.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
+            <span v-else-if="scope.row.severity == 'MediumRisk'" style="color: #fe9636;">{{ $t('rule.MediumRisk') }}</span>
+            <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
+            <span v-else> N/A</span>
+          </el-table-column>
+          <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="20%" show-overflow-tooltip>
+              {{ scope.row.ruleName }}
+          </el-table-column>
+        </el-table>
+        <table-pagination :change="resourceSearch" :current-page.sync="resourcePage" :page-size.sync="resourceSize" :total="resourceTotal"/>
+
+        <!--file-->
+        <el-drawer class="rtl" :title="string2Key" :visible.sync="visible"  size="80%" :before-close="handleClose" :direction="direction" :destroy-on-close="true">
+          <codemirror ref="cmEditor" v-model="string2PrettyFormat" class="code-mirror" :options="cmOptions" />
+        </el-drawer>
+        <!--file-->
+
+      </el-card>
     </el-card>
 
     <!--Task log-->
@@ -476,6 +533,7 @@ import {_filter, _sort, getCurrentAccountID} from "@/common/js/utils";
 import {ACCOUNT_ID} from "@/common/js/constants";
 import AccountChange from "@/business/components/common/head/AccountSwitch";
 import TableSearchBar from '@/business/components/common/components/TableSearchBar';
+import ResultReadOnly from "./ResultReadOnly";
 
 /* eslint-disable */
 export default {
@@ -491,6 +549,7 @@ export default {
     ResultLog,
     AccountChange,
     TableSearchBar,
+    ResultReadOnly,
   },
   data() {
     return {
@@ -531,21 +590,6 @@ export default {
           tip: this.$t('resource.scan'), icon: "el-icon-refresh-right", type: "primary",
           exec: this.handleScan
         }
-      ],
-      platforms: [
-        {text: this.$t('account.aliyun'), value: 'hummer-aliyun-plugin'},
-        {text: this.$t('account.tencent'), value: 'hummer-qcloud-plugin'},
-        {text: this.$t('account.huawei'), value: 'hummer-huawei-plugin'},
-        {text: this.$t('account.aws'), value: 'hummer-aws-plugin'},
-        {text: this.$t('account.azure'), value: 'hummer-azure-plugin'},
-        {text: this.$t('account.vsphere'), value: 'hummer-vsphere-plugin'},
-        {text: this.$t('account.openstack'), value: 'hummer-openstack-plugin'},
-        {text: this.$t('account.huoshan'), value: 'hummer-huoshan-plugin'},
-        {text: this.$t('account.baidu'), value: 'hummer-baidu-plugin'},
-        {text: this.$t('account.qiniu'), value: 'hummer-qiniu-plugin'},
-        {text: this.$t('account.qingcloud'), value: 'hummer-qingcloud-plugin'},
-        {text: this.$t('account.ucloud'), value: 'hummer-ucloud-plugin'},
-        {text: this.$t('account.k8s'), value: 'hummer-k8s-plugin'}
       ],
       logVisible: false,
       detailVisible: false,
@@ -591,6 +635,14 @@ export default {
       severityCondition: {},
       resourceTypeCondition: {},
       ruleCondition: {},
+      resourceTableData: [],
+      resourcePage: 1,
+      resourceSize: 10,
+      resourceTotal: 0,
+      string2Key: "",
+      string2PrettyFormat: "",
+      visible: false,
+      resourceCondition: {},
     }
   },
   methods: {
@@ -600,6 +652,14 @@ export default {
     },
     filter(filters) {
       _filter(filters, this.condition);
+      this.init();
+    },
+    resourceSort(column) {
+      _sort(column, this.resourceCondition);
+      this.init();
+    },
+    resourceFilter(filters) {
+      _filter(filters, this.resourceCondition);
       this.init();
     },
     handleDelete(obj) {
@@ -633,6 +693,18 @@ export default {
         let data = response.data;
         this.total = data.itemCount;
         this.tableData = data.listObject;
+      });
+    },
+    resourceSearch() {
+      let url = "/resource/list/" + this.resourcePage + "/" + this.resourceSize;
+      if (this.taskId) {
+        this.resourceCondition.taskId = this.taskId;
+      }
+      this.resourceCondition.accountId = this.accountId;
+      this.result = this.$post(url, this.resourceCondition, response => {
+        let data = response.data;
+        this.resourceTotal = data.itemCount;
+        this.resourceTableData = data.listObject;
       });
     },
     async initSelect() {
@@ -670,6 +742,7 @@ export default {
       this.severityDataSearch();
       this.resourceTypeDataSearch();
       this.ruleDataSearch();
+      this.resourceSearch();
     },
     getStatus() {
       if (this.checkStatus(this.tableData)) {
@@ -749,6 +822,7 @@ export default {
     handleClose() {
       this.logVisible = false;
       this.detailVisible = false;
+      this.visible =  false;
     },
     handleScans(item) {
       this.$alert(this.$t('resource.handle_scans'), '', {
@@ -826,6 +900,19 @@ export default {
         this.ruleData = data;
       });
     },
+    showInformation (row, details, title) {
+      this.string2Key = title;
+      this.string2PrettyFormat = "";
+      if (row) {
+        this.$post("/resource/string2PrettyFormat", {json: details}, res => {
+          this.string2PrettyFormat = res.data;
+        });
+      } else {
+        this.string2PrettyFormat = details;
+      }
+
+      this.visible =  true;
+    },
   },
   computed: {
     codemirror() {
@@ -843,7 +930,7 @@ export default {
 </script>
 
 <style scoped>
-.el-row {
+.el-cloud-row >>> .el-row {
   margin-bottom: 20px;
 }
 
@@ -935,8 +1022,12 @@ export default {
   margin: 30px 0 0 0;
 }
 
-.el-row-card >>> .el-card__body >>> .el-card__header {
-  padding: 10px;
+.el-row-body >>> .el-card__header {
+  padding: 15px;
+}
+
+.el-row-body >>> .el-row {
+  margin-bottom: 0;
 }
 
 .split {

@@ -173,6 +173,12 @@
             <if test="taskId != null">
                 AND t4.id like CONCAT('%',#{taskId},'%')
             </if>
+            <if test="accountId != null">
+                AND t.account_id like CONCAT('%',#{accountId},'%')
+            </if>
+            <if test="regionId != null">
+                AND t.region_id like CONCAT('%',#{regionId},'%')
+            </if>
             <if test="taskName != null">
                 AND t4.task_name like CONCAT('%',#{taskName},'%')
             </if>
