@@ -91,6 +91,11 @@
             resultType="com.hummerrisk.dto.ImageResultWithBLOBsDTO">
         SELECT
         t.*,
+        (select count(*) from image_trivy_json tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
+        (select count(*) from image_trivy_json tj where tj.result_id = t.id and severity = 'HIGH') as high,
+        (select count(*) from image_trivy_json tj where tj.result_id = t.id and severity = 'MEDIUM') as medium,
+        (select count(*) from image_trivy_json tj where tj.result_id = t.id and severity = 'LOW') as low,
+        (select count(*) from image_trivy_json tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown,
         t1.tag_key as tagKey,
         t2.tag_name as tagName,
         u.name as user,
@@ -124,6 +129,11 @@
             resultType="com.hummerrisk.dto.ImageResultDTO">
         SELECT
         t.*,
+        (select count(*) from image_trivy_json tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
+        (select count(*) from image_trivy_json tj where tj.result_id = t.id and severity = 'HIGH') as high,
+        (select count(*) from image_trivy_json tj where tj.result_id = t.id and severity = 'MEDIUM') as medium,
+        (select count(*) from image_trivy_json tj where tj.result_id = t.id and severity = 'LOW') as low,
+        (select count(*) from image_trivy_json tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown,
         t1.tag_key as tagKey,
         t2.tag_name as tagName,
         u.name as user,

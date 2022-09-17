@@ -18,14 +18,16 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('image.image_url')" min-width="23%" show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" :label="$t('image.image_url')" min-width="20%" show-overflow-tooltip>
           <el-row v-if="scope.row.type==='repo'">{{ scope.row.imageUrl }}:{{ scope.row.imageTag }}</el-row>
           <el-row v-if="scope.row.type==='image'">{{ scope.row.imageUrl }}:{{ scope.row.imageTag }}</el-row>
           <el-row v-if="scope.row.type==='tar'">{{ scope.row.path }}</el-row>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="6%">
-          <el-tooltip effect="dark" :content="$t('history.result')" placement="top">
-            <el-link type="primary" class="text-click" @click="goResource(scope.row)">{{ scope.row.returnSum }}</el-link>
+        <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="16%">
+          <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown" placement="top">
+            <el-link type="primary" class="text-click" @click="goResource(scope.row)">
+              {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown}}
+            </el-link>
           </el-tooltip>
         </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="12%" prop="resultStatus" sortable show-overflow-tooltip>
@@ -311,7 +313,6 @@ export default {
     //查询列表
     search() {
       let url = "/image/resultList/" + this.currentPage + "/" + this.pageSize;
-      this.condition.scanType = 'grype';
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
