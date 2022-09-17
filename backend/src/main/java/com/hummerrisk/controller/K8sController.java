@@ -9,6 +9,7 @@ import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.cloudNative.CloudNativeSyncLogRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
+import com.hummerrisk.dto.CloudNativeResultDTO;
 import com.hummerrisk.dto.ImageDTO;
 import com.hummerrisk.service.K8sService;
 import io.swagger.annotations.Api;
@@ -42,7 +43,7 @@ public class K8sController {
     @I18n
     @ApiOperation(value = "云原生检测结果列表")
     @PostMapping(value = "resultList/{goPage}/{pageSize}")
-    public Pager<List<CloudNativeResult>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sResultRequest request) {
+    public Pager<List<CloudNativeResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, k8sService.resultList(request));
     }

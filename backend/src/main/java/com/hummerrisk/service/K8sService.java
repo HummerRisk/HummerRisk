@@ -11,6 +11,7 @@ import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.cloudNative.CloudNativeSyncLogRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
+import com.hummerrisk.dto.CloudNativeResultDTO;
 import com.hummerrisk.dto.ImageDTO;
 import com.hummerrisk.proxy.k8s.K8sRequest;
 import com.hummerrisk.proxy.kubesphere.KubeSphereRequest;
@@ -281,8 +282,8 @@ public class K8sService {
         return i;
     }
 
-    public List<CloudNativeResult> resultList(K8sResultRequest request) {
-        List<CloudNativeResult> list = extCloudNativeResultMapper.resultList(request);
+    public List<CloudNativeResultDTO> resultList(K8sResultRequest request) {
+        List<CloudNativeResultDTO> list = extCloudNativeResultMapper.resultList(request);
         return list;
     }
 
