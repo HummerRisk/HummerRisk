@@ -250,9 +250,10 @@
             </div>
             <div style="height: 130px;">
               <el-table :data="regionData" :show-header="false"
-                        :row-style="{height:'20px'}"
+                        :row-style="{height:'20px', cursor:'pointer'}"
                         :cell-style="{padding:'0px'}"
-                        height="130"
+                        height="130" @row-click="handleRegionRow"
+                        :highlight-current-row="true"
                         style="font-size: 14px">
                 <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
                   <span style="color: #215d9a">{{ scope.row.name }}</span>
@@ -277,9 +278,10 @@
             </div>
             <div style="height: 130px;">
               <el-table :data="severityData" :show-header="false"
-                        :row-style="{height:'20px'}"
+                        :row-style="{height:'20px', cursor:'pointer'}"
                         :cell-style="{padding:'0px'}"
-                        height="130"
+                        height="130" @row-click="handleSeverityRow"
+                        :highlight-current-row="true"
                         style="font-size: 14px">
                 <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
                   <span style="color: #215d9a">{{ scope.row.name }}</span>
@@ -304,9 +306,10 @@
             </div>
             <div style="height: 130px;">
               <el-table :data="resourceTypeData" :show-header="false"
-                        :row-style="{height:'20px'}"
+                        :row-style="{height:'20px', cursor:'pointer'}"
                         :cell-style="{padding:'0px'}"
-                        height="130"
+                        height="130" @row-click="handleResourceTypeRow"
+                        :highlight-current-row="true"
                         style="font-size: 14px">
                 <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
                   <span style="color: #215d9a">{{ scope.row.name }}</span>
@@ -331,9 +334,10 @@
             </div>
             <div style="height: 130px;">
               <el-table :data="ruleData" :show-header="false"
-                        :row-style="{height:'20px'}"
+                        :row-style="{height:'20px', cursor:'pointer'}"
                         :cell-style="{padding:'0px'}"
-                        height="130"
+                        height="130" @row-click="handleRuleRow"
+                        :highlight-current-row="true"
                         style="font-size: 14px">
                 <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
                   <span style="color: #215d9a">{{ scope.row.name }}</span>
@@ -626,7 +630,7 @@ export default {
         line: true,
         indentWithTabs: true,
       },
-      activeName: 'second',
+      activeName: 'first',
       regionData: [],
       severityData: [],
       resourceTypeData: [],
@@ -910,8 +914,15 @@ export default {
       } else {
         this.string2PrettyFormat = details;
       }
-
       this.visible =  true;
+    },
+    handleRegionRow(row) {
+    },
+    handleSeverityRow(row) {
+    },
+    handleResourceTypeRow(row) {
+    },
+    handleRuleRow(row) {
     },
   },
   computed: {
