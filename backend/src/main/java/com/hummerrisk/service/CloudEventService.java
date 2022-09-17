@@ -8,12 +8,11 @@ import com.aliyun.actiontrail20171204.models.LookupEventsResponse;
 import com.aliyun.teaopenapi.models.Config;
 import com.huaweicloud.sdk.core.auth.BasicCredentials;
 import com.huaweicloud.sdk.core.auth.ICredential;
-import com.huaweicloud.sdk.core.exception.ConnectionException;
-import com.huaweicloud.sdk.core.exception.RequestTimeoutException;
-import com.huaweicloud.sdk.core.exception.ServiceResponseException;
 import com.huaweicloud.sdk.cts.v3.CtsClient;
 import com.huaweicloud.sdk.cts.v3.model.ListTracesRequest;
 import com.huaweicloud.sdk.cts.v3.model.ListTracesResponse;
+import com.huaweicloud.sdk.cts.v3.model.Traces;
+import com.huaweicloud.sdk.cts.v3.model.UserInfo;
 import com.huaweicloud.sdk.cts.v3.region.CtsRegion;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.CloudEventMapper;
@@ -232,13 +231,6 @@ public class CloudEventService {
         return -1;
     }
 
-    public List<CloudEvent> getCloudEvents(String accountId, String region, String startTime, String endTime,
-                                           int pageNum, int maxResult) throws Exception {
-        AccountWithBLOBs account = accountService.getAccount(accountId);
-        Map<String, String> accountMap = PlatformUtils.getAccount(account, region, proxyMapper.selectByPrimaryKey(account.getProxyId()));
-        return getCloudEvents(account, accountMap, startTime, endTime, pageNum, maxResult);
-    }
-
     public List<CloudEvent> getCloudEvents(AccountWithBLOBs account, Map<String, String> accountMap, String startTime, String endTime,
                                            int pageNum, int maxResult) throws Exception {
         List<CloudEvent> result;
@@ -248,6 +240,7 @@ public class CloudEventService {
                 break;
             case PlatformUtils.huawei:
                 result = getHuaweiCloudEvents(accountMap, startTime, endTime, pageNum, maxResult);
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + account.getPluginId());
         }
@@ -266,18 +259,35 @@ public class CloudEventService {
                 .withRegion(CtsRegion.valueOf(accountMap.get("region")))
                 .build();
         ListTracesRequest request = new ListTracesRequest();
-        request.withTraceType(ListTracesRequest.TraceTypeEnum.fromValue("data"));
-        try {
-            ListTracesResponse response = client.listTraces(request);
-            System.out.println(response.toString());
-        } catch (ConnectionException e) {
-            e.printStackTrace();
-        } catch (RequestTimeoutException e) {
-            e.printStackTrace();
-        } catch (ServiceResponseException e) {
-            e.printStackTrace();
+        request.setFrom(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss",startTime).getTime());
+        request.setTo(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss",endTime).getTime());
+        request.setLimit(maxResult);
+        if(accountMap.get("marker") != null){
+            request.setNext(accountMap.get("marker") );
         }
-        return new ArrayList<>();
+        request.withTraceType(ListTracesRequest.TraceTypeEnum.fromValue("system"));
+        ListTracesResponse response = client.listTraces(request);
+        String marker = response.getMetaData().getMarker();
+        accountMap.put("marker",marker);
+        List<Traces> traces = response.getTraces();
+        return traces.stream().map(trace->{
+            int eventLevel = -1;
+            if(Traces.TraceRatingEnum.NORMAL == trace.getTraceRating()){
+                eventLevel = 0;
+            }else if(Traces.TraceRatingEnum.WARNING == trace.getTraceRating()){
+                eventLevel = 1;
+            }else if(Traces.TraceRatingEnum.INCIDENT == trace.getTraceRating()){
+                eventLevel = 2;
+            }
+            UserInfo user = trace.getUser();
+            return CloudEvent.builder().eventId(trace.getTraceId()).eventName(trace.getTraceName()).eventRating(eventLevel)
+                    .resourceId(trace.getResourceId()).eventType(trace.getTraceType()).requestParameters(trace.getRequest())
+                    .responseElements(trace.getResponse()).apiVersion(trace.getApiVersion()).eventMessage(trace.getMessage())
+                    .eventTime(trace.getTime()).userIdentity(user==null?"{}":JSON.toJSONString(user)).userName(user==null?"":user.getName())
+                    .serviceName(trace.getServiceType()).resourceType(trace.getResourceType()).resourceName(trace.getResourceName())
+                    .sourceIpAddress(trace.getSourceIp()).requestId(trace.getRequestId()).endpoint(trace.getEndpoint())
+                    .resourceUrl(trace.getResourceUrl()).locationInfo(trace.getLocationInfo()).build();
+        }).collect(Collectors.toList());
     }
 
     private List<CloudEvent> getTencentEvents(Map<String, String> accountMap, String startTime
@@ -302,7 +312,6 @@ public class CloudEventService {
         List<Map<String, ?>> events = lookupEventsResponse.getBody().events;
         return events.stream().map(item -> {
             Map<String, ?> userIdentity = (Map) item.get("userIdentity");
-
             return CloudEvent.builder().eventId((String) item.get("eventId"))
                     .eventName((String) item.get("eventName")).eventRw((String) item.get("eventRW")).eventType((String) item.get("eventType"))
                     .eventCategory((String) item.get("eventCategory")).eventVersion("eventVersion").userIdentity(item.get("userIdentity") == null ? "" : JSON.toJSONString(item.get("userIdentity")))
@@ -318,30 +327,4 @@ public class CloudEventService {
                     .userName(userIdentity != null ? (String) userIdentity.get("userName") : "").build();
         }).collect(Collectors.toList());
     }
-
-    /*public List<CloudEvent> getAliyunCloudEvents(Map<String, String> accountMap, String startTime, String endTime,
-                                                 int pageNum, int maxResult) throws Exception {
-        startTime = DateUtils.localDateStrToUtcDateStr("yyyy-MM-dd HH:mm:ss", startTime).replace(" ", "T") + "Z";
-        endTime = DateUtils.localDateStrToUtcDateStr("yyyy-MM-dd HH:mm:ss", endTime).replace(" ", "T") + "Z";
-        DefaultProfile profile = DefaultProfile.getProfile(accountMap.get("region"), accountMap.get("accessKey"), accountMap.get("secretKey"));
-        IAcsClient client = new DefaultAcsClient(profile);
-        LookupEventsRequest lookupEventsRequest = new LookupEventsRequest();
-        lookupEventsRequest.setStartTime(startTime);
-        lookupEventsRequest.setEndTime(endTime);
-        lookupEventsRequest.setNextToken((pageNum - 1) * maxResult + "");
-        lookupEventsRequest.setMaxResults(maxResult + "");
-        //lookupEventsRequest.setEventRW("All");
-        LookupEventsResponse lookupEventsResponse = client.getAcsResponse(lookupEventsRequest);
-        List<Map<Object, Object>> events = lookupEventsResponse.getEvents();
-        return events.stream().map(item -> {
-            return CloudEvent.builder().eventId((String) item.get("eventId"))
-                    .eventName((String) item.get("eventName")).eventRw((String) item.get("eventRw"))
-                    .eventTime(DateUtils.utcTimeStrToLocalDate("yyyy-MM-dd'T'HH:mm:ss'Z'", (String) item.get("eventTime")))
-                    .eventMessage((String) item.get("eventMessage")).eventSource((String) item.get("eventSource"))
-                    .acsRegion((String) item.get("acsRegion")).userAgent((String) item.get("userAgent"))
-                    .sourceIpAddress((String) item.get("sourceIpAddress")).serviceName((String) item.get("serviceName")).build();
-
-        }).collect(Collectors.toList());
-    }*/
-
 }
