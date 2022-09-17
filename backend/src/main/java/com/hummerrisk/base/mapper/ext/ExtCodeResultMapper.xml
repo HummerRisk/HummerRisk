@@ -124,7 +124,12 @@
     <select id="resultList" parameterType="com.hummerrisk.controller.request.code.CodeResultRequest"
             resultType="com.hummerrisk.dto.CodeResultDTO">
         SELECT
-        t.*
+        t.*,
+        (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
+        (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'HIGH') as high,
+        (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'MEDIUM') as medium,
+        (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'LOW') as low,
+        (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown
         FROM code_result t
 
         <where>
