@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
@@ -737,5 +738,21 @@ public class ResourceService {
             count++;
         }
         return count;
+    }
+
+    public List<Map<String, Object>> regionData(Map<String, Object> map) {
+        return extResourceMapper.regionData(map);
+    }
+
+    public List<Map<String, Object>> severityData(Map<String, Object> map) {
+        return extResourceMapper.severityData(map);
+    }
+
+    public List<Map<String, Object>> resourceTypeData(Map<String, Object> map) {
+        return extResourceMapper.resourceTypeData(map);
+    }
+
+    public List<Map<String, Object>> ruleData(Map<String, Object> map) {
+        return extResourceMapper.ruleData(map);
     }
 }

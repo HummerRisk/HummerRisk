@@ -154,4 +154,32 @@ public class ResourceController {
     public ResourceWithBLOBs resource(@RequestBody CloudTaskItem cloudTaskItem) {
         return resourceService.resource(cloudTaskItem);
     }
+
+    @I18n
+    @ApiOperation(value = "区域统计")
+    @PostMapping("regionData")
+    public List<Map<String, Object>> regionData(@RequestBody Map<String, Object> map) {
+        return resourceService.regionData(map);
+    }
+
+    @I18n
+    @ApiOperation(value = "风险统计")
+    @PostMapping("severityData")
+    public List<Map<String, Object>> severityData(@RequestBody Map<String, Object> map) {
+        return resourceService.severityData(map);
+    }
+
+    @I18n
+    @ApiOperation(value = "资源类型统计")
+    @PostMapping("resourceTypeData")
+    public List<Map<String, Object>> resourceTypeData(@RequestBody Map<String, Object> map) {
+        return resourceService.resourceTypeData(map);
+    }
+
+    @I18n
+    @ApiOperation(value = "规则统计")
+    @PostMapping("ruleData")
+    public List<Map<String, Object>> ruleData(@RequestBody Map<String, Object> map) {
+        return resourceService.ruleData(map);
+    }
 }

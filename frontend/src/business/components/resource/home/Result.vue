@@ -243,55 +243,114 @@
       <table-pagination v-if="activeName === 'first'" :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
 
       <el-row :gutter="20" class="el-row-body" v-if="activeName === 'second'">
+        <!--regions-->
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="el-col el-col-su">
           <el-card :body-style="{ padding: '15px' }">
             <div slot="header" class="clearfix">
-                <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('resource.status') }}</span>
-                <table-search-bar :condition.sync="condition" @change="searchStatus" style="float: right;width: 70%" class="search-bar"/>
+                <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('account.regions') }}</span>
+                <table-search-bar :condition.sync="regionCondition" @change="regionFilter" style="float: right;width: 70%" class="search-bar"/>
             </div>
             <div style="height: 130px;">
-              <el-table :data="statusData" style="width: 100%" :show-header="false">
-                <el-table-column prop="date" label="日期" max-width="70%" fixed="left" align="left">
+              <el-table :data="regionData" :show-header="false"
+                        :row-style="{height:'20px'}"
+                        :cell-style="{padding:'0px'}"
+                        height="130"
+                        style="font-size: 14px">
+                <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
+                  <span style="color: #215d9a">{{ scope.row.name }}</span>
                 </el-table-column>
-                <el-table-column prop="name" label="姓名" max-width="30%" fixed="right" align="right">
+                <el-table-column prop="sum" min-width="20%" align="right" v-slot:default="scope">
+                  <el-button size="medium" type="success" class="round" round>
+                    {{ scope.row.sum }}
+                  </el-button>
                 </el-table-column>
               </el-table>
             </div>
           </el-card>
         </el-col>
+        <!--regions-->
+
+        <!--severity-->
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="el-col el-col-su">
           <el-card :body-style="{ padding: '15px' }">
             <div slot="header" class="clearfix">
-              <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('resource.status') }}</span>
-              <table-search-bar :condition.sync="condition" @change="searchStatus" style="float: right;width: 70%" class="search-bar"/>
+              <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.severity') }}</span>
+              <table-search-bar :condition.sync="severityCondition" @change="severityFilter" style="float: right;width: 70%" class="search-bar"/>
             </div>
             <div style="height: 130px;">
-
+              <el-table :data="severityData" :show-header="false"
+                        :row-style="{height:'20px'}"
+                        :cell-style="{padding:'0px'}"
+                        height="130"
+                        style="font-size: 14px">
+                <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
+                  <span style="color: #215d9a">{{ scope.row.name }}</span>
+                </el-table-column>
+                <el-table-column prop="sum" min-width="20%" align="right" v-slot:default="scope">
+                  <el-button size="medium" type="danger" class="round" round>
+                    {{ scope.row.sum }}
+                  </el-button>
+                </el-table-column>
+              </el-table>
             </div>
           </el-card>
         </el-col>
+        <!--severity-->
+
+        <!--resource type-->
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="el-col el-col-su">
           <el-card :body-style="{ padding: '15px' }">
             <div slot="header" class="clearfix">
-              <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('resource.status') }}</span>
-              <table-search-bar :condition.sync="condition" @change="searchStatus" style="float: right;width: 70%" class="search-bar"/>
+              <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.resource_type') }}</span>
+              <table-search-bar :condition.sync="resourceTypeCondition" @change="resourceTypeFilter" style="float: right;width: 70%" class="search-bar"/>
             </div>
             <div style="height: 130px;">
-
+              <el-table :data="resourceTypeData" :show-header="false"
+                        :row-style="{height:'20px'}"
+                        :cell-style="{padding:'0px'}"
+                        height="130"
+                        style="font-size: 14px">
+                <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
+                  <span style="color: #215d9a">{{ scope.row.name }}</span>
+                </el-table-column>
+                <el-table-column prop="sum" min-width="20%" align="right" v-slot:default="scope">
+                  <el-button size="medium" type="primary" class="round" round>
+                    {{ scope.row.sum }}
+                  </el-button>
+                </el-table-column>
+              </el-table>
             </div>
           </el-card>
         </el-col>
+        <!--resource type-->
+
+        <!--rule-->
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="el-col el-col-su">
           <el-card :body-style="{ padding: '15px' }">
             <div slot="header" class="clearfix">
-              <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('resource.status') }}</span>
-              <table-search-bar :condition.sync="condition" @change="searchStatus" style="float: right;width: 70%" class="search-bar"/>
+              <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.rule') }}</span>
+              <table-search-bar :condition.sync="ruleCondition" @change="ruleFilter" style="float: right;width: 70%" class="search-bar"/>
             </div>
             <div style="height: 130px;">
-
+              <el-table :data="ruleData" :show-header="false"
+                        :row-style="{height:'20px'}"
+                        :cell-style="{padding:'0px'}"
+                        height="130"
+                        style="font-size: 14px">
+                <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
+                  <span style="color: #215d9a">{{ scope.row.name }}</span>
+                </el-table-column>
+                <el-table-column prop="sum" min-width="20%" align="right" v-slot:default="scope">
+                  <el-button size="medium" type="warning" class="round" round>
+                    {{ scope.row.sum }}
+                  </el-button>
+                </el-table-column>
+              </el-table>
             </div>
           </el-card>
         </el-col>
+        <!--rule-->
+
       </el-row>
     </el-card>
 
@@ -523,16 +582,15 @@ export default {
         line: true,
         indentWithTabs: true,
       },
-      activeName: 'first',
-      statusData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }],
+      activeName: 'second',
+      regionData: [],
+      severityData: [],
+      resourceTypeData: [],
+      ruleData: [],
+      regionCondition: {},
+      severityCondition: {},
+      resourceTypeCondition: {},
+      ruleCondition: {},
     }
   },
   methods: {
@@ -608,6 +666,10 @@ export default {
     init() {
       this.initSelect();
       this.search();
+      this.regionDataSearch();
+      this.severityDataSearch();
+      this.resourceTypeDataSearch();
+      this.ruleDataSearch();
     },
     getStatus() {
       if (this.checkStatus(this.tableData)) {
@@ -724,8 +786,45 @@ export default {
     handleClick(tab, event) {
       this.activeName = tab.name;
     },
-    searchStatus(query, item) {
-      return item.name.indexOf(query) > -1;
+    regionFilter() {
+      this.regionDataSearch();
+    },
+    regionDataSearch() {
+      this.regionCondition.id = this.accountId;
+      this.$post('/resource/regionData', this.regionCondition, response => {
+        let data = response.data;
+        this.regionData = data;
+      });
+    },
+    severityFilter() {
+      this.severityDataSearch();
+    },
+    severityDataSearch() {
+      this.severityCondition.id = this.accountId;
+      this.$post('/resource/severityData', this.severityCondition, response => {
+        let data = response.data;
+        this.severityData = data;
+      });
+    },
+    resourceTypeFilter() {
+      this.resourceTypeDataSearch();
+    },
+    resourceTypeDataSearch() {
+      this.resourceTypeCondition.id = this.accountId;
+      this.$post('/resource/resourceTypeData', this.resourceTypeCondition, response => {
+        let data = response.data;
+        this.resourceTypeData = data;
+      });
+    },
+    ruleFilter() {
+      this.ruleDataSearch();
+    },
+    ruleDataSearch() {
+      this.ruleCondition.id = this.accountId;
+      this.$post('/resource/ruleData', this.ruleCondition, response => {
+        let data = response.data;
+        this.ruleData = data;
+      });
     },
   },
   computed: {
@@ -836,6 +935,10 @@ export default {
   margin: 30px 0 0 0;
 }
 
+.el-row-card >>> .el-card__body >>> .el-card__header {
+  padding: 10px;
+}
+
 .split {
   height: 120px;
   border-left: 1px solid #D8DBE1;
@@ -851,6 +954,13 @@ export default {
 
 .el-col-su >>> .el-card {
   margin: 10px 0;
+}
+
+.round {
+  font-size: 13px;
+  margin: 0 0 0 5px;
+  padding: 1px 3px 1px 3px;
+  float: right;
 }
 
 /deep/ :focus {

@@ -44,4 +44,12 @@ public interface ExtResourceMapper {
 
     ResourceWithBLOBs resource(CloudTaskItem cloudTaskItem);
 
+    List<Map<String, Object>> regionData(Map<String, Object> map);
+
+    List<Map<String, Object>> severityData(Map<String, Object> map);
+
+    List<Map<String, Object>> resourceTypeData(Map<String, Object> map);
+
+    List<Map<String, Object>> ruleData(Map<String, Object> map);
+
 }

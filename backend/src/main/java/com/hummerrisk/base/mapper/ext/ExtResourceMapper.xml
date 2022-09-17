@@ -476,4 +476,59 @@
         ORDER BY t.create_time desc
         limit 1
     </select>
+
+    <select id="regionData" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT t.region_id as id,
+               t.region_name as name,
+               sum(IFNULL(t.return_sum, 0)) as sum
+        FROM resource t
+        WHERE t.account_id = #{id}
+        <if test="name != null">
+            AND t.region_name like CONCAT('%',#{name},'%')
+        </if>
+        GROUP BY t.region_id,t.region_name
+        ORDER BY sum desc
+    </select>
+
+    <select id="severityData" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT t.severity as id,
+               t.severity as name,
+               sum(IFNULL(t.return_sum, 0)) as sum
+        FROM resource t
+        WHERE t.account_id = #{id}
+        <if test="name != null">
+            AND t.severity like CONCAT('%',#{name},'%')
+        </if>
+        GROUP BY t.severity
+        ORDER BY sum desc
+    </select>
+
+    <select id="resourceTypeData" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT t.resource_type as id,
+               t.resource_type as name,
+               sum(IFNULL(t.return_sum, 0)) as sum
+        FROM resource t
+        WHERE t.account_id = #{id}
+        <if test="name != null">
+            AND t.resource_type like CONCAT('%',#{name},'%')
+        </if>
+        GROUP BY t.resource_type
+        ORDER BY sum desc
+    </select>
+
+    <select id="ruleData" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT t.rule_id as id,
+               t2.name as name,
+               sum(IFNULL(t1.return_sum, 0)) as sum
+        FROM resource_rule t
+        LEFT JOIN resource t1 ON t.resource_id = t1.id
+        LEFT JOIN rule t2 ON t.rule_id = t2.id
+        WHERE t1.account_id = #{id}
+        <if test="name != null">
+            AND t2.name like CONCAT('%',#{name},'%')
+        </if>
+        GROUP BY t.rule_id
+        ORDER BY sum desc
+    </select>
+
 </mapper>

@@ -697,6 +697,7 @@ export default {
     merge_resource: '合併報告',
     desc: '注：請選擇需要合併的雲賬號一起導出報告，若不合併請直接下載報告即可。 ',
     scan_vuln_search: '登錄國家信息安全漏洞庫，查詢檢測出的漏洞',
+    cloud_resource_detail_result: '資源詳情列表',
   },
   account: {
     cloud_account_setting: '雲賬號設置',
