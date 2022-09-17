@@ -23,11 +23,6 @@
           <el-row v-if="scope.row.type==='image'">{{ scope.row.imageUrl }}:{{ scope.row.imageTag }}</el-row>
           <el-row v-if="scope.row.type==='tar'">{{ scope.row.path }}</el-row>
         </el-table-column>
-        <el-table-column min-width="10%" :label="$t('image.severity')" column-key="severity">
-          <template v-slot:default="{row}">
-            <rule-type :row="row"/>
-          </template>
-        </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="6%">
           <el-tooltip effect="dark" :content="$t('history.result')" placement="top">
             <el-link type="primary" class="text-click" @click="goResource(scope.row)">{{ scope.row.returnSum }}</el-link>
