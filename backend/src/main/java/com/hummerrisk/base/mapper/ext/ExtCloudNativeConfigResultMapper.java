@@ -1,12 +1,12 @@
 package com.hummerrisk.base.mapper.ext;
 
-import com.hummerrisk.base.domain.CloudNativeConfigResult;
 import com.hummerrisk.controller.request.config.ConfigResultRequest;
+import com.hummerrisk.dto.CloudNativeConfigResultDTO;
 
 import java.util.List;
 
 public interface ExtCloudNativeConfigResultMapper {
 
-    List<CloudNativeConfigResult> resultList(ConfigResultRequest request);
+    List<CloudNativeConfigResultDTO> resultList(ConfigResultRequest request);
 
 }

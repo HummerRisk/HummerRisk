@@ -13,6 +13,7 @@ import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.config.ConfigRequest;
 import com.hummerrisk.controller.request.config.ConfigResultRequest;
 import com.hummerrisk.dto.CloudNativeConfigDTO;
+import com.hummerrisk.dto.CloudNativeConfigResultDTO;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.service.impl.ExecEngineFactoryImp;
 import com.hummerrisk.service.impl.IProvider;
@@ -370,8 +371,8 @@ public class CloudNativeConfigService {
         return i;
     }
 
-    public List<CloudNativeConfigResult> resultList(ConfigResultRequest request) {
-        List<CloudNativeConfigResult> list = extCloudNativeConfigResultMapper.resultList(request);
+    public List<CloudNativeConfigResultDTO> resultList(ConfigResultRequest request) {
+        List<CloudNativeConfigResultDTO> list = extCloudNativeConfigResultMapper.resultList(request);
         return list;
     }
 

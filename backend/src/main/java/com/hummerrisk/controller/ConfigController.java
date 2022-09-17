@@ -12,6 +12,7 @@ import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.config.ConfigRequest;
 import com.hummerrisk.controller.request.config.ConfigResultRequest;
 import com.hummerrisk.dto.CloudNativeConfigDTO;
+import com.hummerrisk.dto.CloudNativeConfigResultDTO;
 import com.hummerrisk.service.CloudNativeConfigService;
 import io.kubernetes.client.openapi.ApiException;
 import io.swagger.annotations.Api;
@@ -93,7 +94,7 @@ public class ConfigController {
     @I18n
     @ApiOperation(value = "云原生部署配置检测结果列表")
     @PostMapping(value = "resultList/{goPage}/{pageSize}")
-    public Pager<List<CloudNativeConfigResult>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ConfigResultRequest request) {
+    public Pager<List<CloudNativeConfigResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ConfigResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, cloudNativeConfigService.resultList(request));
     }
