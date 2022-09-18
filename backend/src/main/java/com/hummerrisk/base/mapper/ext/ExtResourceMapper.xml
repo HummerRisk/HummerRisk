@@ -523,17 +523,17 @@
     </select>
 
     <select id="ruleData" resultType="java.util.Map" parameterType="java.util.Map">
-        SELECT t.rule_id as id,
-               t2.name as name,
+        SELECT t.task_id as id,
+               t2.task_name as name,
                sum(IFNULL(t1.return_sum, 0)) as sum
-        FROM resource_rule t
+        FROM cloud_task_item_resource t
         LEFT JOIN resource t1 ON t.resource_id = t1.id
-        LEFT JOIN rule t2 ON t.rule_id = t2.id
-        WHERE t1.account_id = #{id}
+        LEFT JOIN cloud_task t2 ON t.task_id = t2.id
+        WHERE t2.account_id = #{id}
         <if test="name != null">
-            AND t2.name like CONCAT('%',#{name},'%')
+            AND t2.task_name like CONCAT('%',#{name},'%')
         </if>
-        GROUP BY t.rule_id
+        GROUP BY t.task_id
         ORDER BY sum desc
     </select>
 

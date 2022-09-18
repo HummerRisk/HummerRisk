@@ -40,21 +40,14 @@ export default {
       tip: {
         String,
         default() {
-          let path = this.$route.path;
-          if (path.indexOf("/resource/result") >= 0) {
-            return this.$t('commons.search_by_name');
-          } else if (path.indexOf("/resource/ResultDetails") >= 0) {
-            return this.$t('resource.search_by_hummerid');
-          } else {
-            return this.$t('resource.search_by_report_name');
-          }
+          return this.$t('resource.search_by_hummerid');
         }
       }
     },
     methods: {
       search(value) {
-        this.$emit('update:condition', this.condition);
-        this.$emit('search', value);
+        this.$emit('update:resourceCondition', this.condition);
+        this.$emit('resourceSearch', value);
       },
     },
     computed: {

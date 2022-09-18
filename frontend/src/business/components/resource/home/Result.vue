@@ -257,7 +257,7 @@
                         :cell-style="{padding:'0px'}"
                         height="130" @row-click="handleRegionRow"
                         :highlight-current-row="highRegionRow"
-                        style="font-size: 14px">
+                        style="font-size: 12px">
                 <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
                   <span style="color: #215d9a">{{ scope.row.name }}</span>
                 </el-table-column>
@@ -282,14 +282,14 @@
             <div style="height: 130px;">
               <el-table :data="ruleData" :show-header="false"
                         :row-style="{height:'20px', cursor:'pointer'}"
-                        :cell-style="{padding:'0px'}"
+                        :cell-style="{padding:'0px'}" :row-class-name="ruleTableRowClassName"
                         height="130" @row-click="handleRuleRow"
                         :highlight-current-row="highRuleRow"
                         style="font-size: 14px">
-                <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
-                  <span style="color: #215d9a">{{ scope.row.name }}</span>
+                <el-table-column prop="name" min-width="85%" align="left" v-slot:default="scope">
+                  <span style="color: #215d9a;font-size: 9px;">{{ scope.row.name }}</span>
                 </el-table-column>
-                <el-table-column prop="sum" min-width="20%" align="right" v-slot:default="scope">
+                <el-table-column prop="sum" min-width="15%" align="right" v-slot:default="scope">
                   <el-button size="medium" type="warning" class="round" round>
                     {{ scope.row.sum }}
                   </el-button>
@@ -313,7 +313,7 @@
                         :cell-style="{padding:'0px'}"
                         height="130" @row-click="handleResourceTypeRow"
                         :highlight-current-row="highResourceTypeRow"
-                        style="font-size: 14px">
+                        style="font-size: 12px">
                 <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
                   <span style="color: #215d9a">{{ scope.row.name }}</span>
                 </el-table-column>
@@ -341,7 +341,7 @@
                         :cell-style="{padding:'0px'}"
                         height="130" @row-click="handleSeverityRow"
                         :highlight-current-row="highSeverityRow"
-                        style="font-size: 14px">
+                        style="font-size: 12px">
                 <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
                   <span style="color: #215d9a">{{ scope.row.name }}</span>
                 </el-table-column>
@@ -367,9 +367,11 @@
                         :title="$t('resource.result_details_list')"/>
         </template>
 
-        <el-table border :data="resourceTableData" class="adjust-table table-content" @sort-change="resourceSort" @filter-change="resourceFilter" :row-class-name="tableRowClassName">
+        <el-table border :data="resourceTableData" class="adjust-table table-content"
+                  @sort-change="resourceSort" @filter-change="resourceFilter"
+                  :row-class-name="tableRowClassName">
           <!-- 展开 start -->
-          <el-table-column type="expand">
+          <el-table-column type="expand" min-width="2%">
             <template v-slot:default="props">
 
               <el-divider><i class="el-icon-folder-opened"></i></el-divider>
@@ -380,7 +382,7 @@
             </template>
           </el-table-column>
           <!-- 展开 end -->
-          <el-table-column type="index" min-width="3%"/>
+          <el-table-column type="index" min-width="2%"/>
           <el-table-column v-slot:default="scope" :label="$t('resource.Hummer_ID')" min-width="15%">
             {{ scope.row.hummerId }}
           </el-table-column>
@@ -692,6 +694,7 @@ export default {
       highRuleRow: true,
       regulationData: [],
       regulationVisible: false,
+      rowIndex: '',
     }
   },
   methods: {
@@ -779,10 +782,18 @@ export default {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      let p = '/resource/resultdetails/' + params.id;
-      this.$router.push({
-        path: p
-      }).catch(error => error);
+      this.activeName = 'second';
+      this.highRuleRow = true;
+      this.resourceCondition.taskId = params.taskId;
+      for (let i=0; i <= this.ruleData.length; i++) {
+        if (params.taskId === this.ruleData[i].id) {
+          this.rowIndex = i;
+          break;
+        } else {
+          this.rowIndex = '';
+        }
+      }
+      this.resourceSearch();
     },
     init() {
       this.initSelect();
@@ -842,6 +853,16 @@ export default {
         return 'success-row';
       } else if (rowIndex % 2 === 0) {
         return 'warning-row';
+      } else {
+        return '';
+      }
+    },
+    ruleTableRowClassName({row, rowIndex}) {
+      if (this.rowIndex) {
+        if(this.rowIndex === rowIndex) {
+          return 'current-row';
+        }
+        return '';
       } else {
         return '';
       }
@@ -909,6 +930,7 @@ export default {
     },
     handleClick(tab, event) {
       this.activeName = tab.name;
+      this.rowIndex = '';
     },
     regionFilter() {
       this.regionDataSearch();
@@ -993,17 +1015,17 @@ export default {
       this.resourceSearch();
     },
     handleRuleRow(row) {
-      if (this.resourceCondition.ruleId) {
+      if (this.resourceCondition.taskId) {
         this.highRuleRow = false;
-        this.resourceCondition.ruleId = null;
+        this.resourceCondition.taskId = null;
       } else {
         this.highRuleRow = true;
-        this.resourceCondition.ruleId = row.id;
+        this.resourceCondition.taskId = row.id;
       }
       this.resourceSearch();
     },
     showSeverityDetail(item) {
-      this.$get("/resource/regulation/" + 'e054787c-5826-4242-8450-b0daa926ea40', response => {
+      this.$get("/resource/regulation/" + item.ruleId, response => {
         if (response.success) {
           this.regulationData = response.data;
           this.regulationVisible = true;
