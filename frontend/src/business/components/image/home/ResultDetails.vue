@@ -58,7 +58,7 @@ import CenterChart from "../../common/components/CenterChart";
 import ResultReadOnly from "./ResultReadOnly";
 import {_filter, _sort} from "@/common/js/utils";
 import RuleType from "@/business/components/image/home/RuleType";
-import MetricChart from "../head/MetricChart";
+import MetricChart from "@/business/components/common/chart/MetricChart";
 
 /* eslint-disable */
   export default {

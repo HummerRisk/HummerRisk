@@ -649,7 +649,7 @@ import MainContainer from "@/business/components/common/components/MainContainer
 import Download from "@/business/components/sbom/home/Download";
 import CodeResultDetails from "@/business/components/sbom/home/CodeResultDetails";
 import ImageResultDetails from "@/business/components/sbom/home/ImageResultDetails";
-import MetricChart from "@/business/components/sbom/head/MetricChart";
+import MetricChart from "@/business/components/common/chart/MetricChart";
 
 /* eslint-disable */
 export default {
