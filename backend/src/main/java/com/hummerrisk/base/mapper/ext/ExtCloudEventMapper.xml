@@ -33,6 +33,11 @@
     <result column="api_version" jdbcType="VARCHAR" property="apiVersion" />
     <result column="response_elements" jdbcType="VARCHAR" property="responseElements" />
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="event_rating" jdbcType="INTEGER" property="eventRating" />
+    <result column="resource_id" jdbcType="VARCHAR" property="resourceId" />
+    <result column="location_info" jdbcType="VARCHAR" property="locationInfo" />
+    <result column="endpoint" jdbcType="VARCHAR" property="endpoint" />
+    <result column="resource_url" jdbcType="VARCHAR" property="resourceUrl" />
   </resultMap>
 
   <sql id="condition">
@@ -126,7 +131,7 @@
     t.event_version, t.event_rw, t.event_message, t.event_source, t.event_time, t.source_ip_address,
     t.user_agent, t.user_identity, t.service_name, t.additional_event_data, t.request_id, t.request_parameters,
     t.resource_type, t.resource_name, t.referenced_resources, t.api_version, t.response_elements,
-    t.user_name from cloud_event t
+    t.user_name, event_rating, resource_id, location_info, endpoint, resource_url , cloud_audit_event from cloud_event t
     where
     1=1
     <if test="request.combine != null">
@@ -143,25 +148,28 @@
   </select>
 
   <insert id="batchCloudEvents">
-    insert into cloud_event(event_id, sync_region, acs_region,
-    event_name, event_type, event_category,
-    event_version, event_rw, event_message,
-    event_source, event_time, source_ip_address,
-    user_agent, user_identity, service_name,
-    additional_event_data, request_id, request_parameters,
-    resource_type, resource_name, referenced_resources,
-    api_version, response_elements, cloud_account_id,user_name
+    insert into cloud_event (event_id, cloud_account_id, sync_region,
+    acs_region, event_name, event_type,
+    event_category, event_version, event_rw,
+    event_message, event_source, event_time,
+    source_ip_address, user_agent, user_identity,
+    service_name, additional_event_data, request_id,
+    request_parameters, resource_type, resource_name,
+    referenced_resources, api_version, response_elements,
+    user_name, event_rating, resource_id,
+    location_info, endpoint, resource_url
     ) values
     <foreach item="item" index="index" collection="list" separator=",">
-      (#{item.eventId,jdbcType=VARCHAR}, #{item.syncRegion,jdbcType=VARCHAR}, #{item.acsRegion,jdbcType=VARCHAR},
-      #{item.eventName,jdbcType=VARCHAR}, #{item.eventType,jdbcType=VARCHAR}, #{item.eventCategory,jdbcType=VARCHAR},
-      #{item.eventVersion,jdbcType=VARCHAR}, #{item.eventRw,jdbcType=VARCHAR}, #{item.eventMessage,jdbcType=VARCHAR},
-      #{item.eventSource,jdbcType=VARCHAR}, #{item.eventTime,jdbcType=TIMESTAMP}, #{item.sourceIpAddress,jdbcType=VARCHAR},
-      #{item.userAgent,jdbcType=VARCHAR}, #{item.userIdentity,jdbcType=VARCHAR}, #{item.serviceName,jdbcType=VARCHAR},
-      #{item.additionalEventData,jdbcType=VARCHAR}, #{item.requestId,jdbcType=VARCHAR}, #{item.requestParameters,jdbcType=VARCHAR},
-      #{item.resourceType,jdbcType=VARCHAR}, #{item.resourceName,jdbcType=VARCHAR}, #{item.referencedResources,jdbcType=VARCHAR},
-      #{item.apiVersion,jdbcType=VARCHAR}, #{item.responseElements,jdbcType=VARCHAR}, #{item.cloudAccountId,jdbcType=VARCHAR}
-      , #{item.userName,jdbcType=VARCHAR}
+      (#{item.eventId,jdbcType=VARCHAR}, #{item.cloudAccountId,jdbcType=VARCHAR}, #{item.syncRegion,jdbcType=VARCHAR},
+      #{item.acsRegion,jdbcType=VARCHAR}, #{item.eventName,jdbcType=VARCHAR}, #{item.eventType,jdbcType=VARCHAR},
+      #{item.eventCategory,jdbcType=VARCHAR}, #{item.eventVersion,jdbcType=VARCHAR}, #{item.eventRw,jdbcType=VARCHAR},
+      #{item.eventMessage,jdbcType=VARCHAR}, #{item.eventSource,jdbcType=VARCHAR}, #{item.eventTime,jdbcType=BIGINT},
+      #{item.sourceIpAddress,jdbcType=VARCHAR}, #{item.userAgent,jdbcType=VARCHAR}, #{item.userIdentity,jdbcType=VARCHAR},
+      #{item.serviceName,jdbcType=VARCHAR}, #{item.additionalEventData,jdbcType=VARCHAR}, #{item.requestId,jdbcType=VARCHAR},
+      #{item.requestParameters,jdbcType=VARCHAR}, #{item.resourceType,jdbcType=VARCHAR}, #{item.resourceName,jdbcType=VARCHAR},
+      #{item.referencedResources,jdbcType=VARCHAR}, #{item.apiVersion,jdbcType=VARCHAR}, #{item.responseElements,jdbcType=VARCHAR},
+      #{item.userName,jdbcType=VARCHAR}, #{item.eventRating,jdbcType=INTEGER}, #{item.resourceId,jdbcType=VARCHAR},
+      #{item.locationInfo,jdbcType=VARCHAR}, #{item.endpoint,jdbcType=VARCHAR}, #{item.resourceUrl,jdbcType=VARCHAR}
       )
     </foreach>
   </insert>

@@ -156,6 +156,7 @@ export default {
         accountId: "",
         region: ""
       },
+      supportCloud:["hummer-aliyun-plugin","hummer-huawei-plugin","hummer-qcloud-plugin"],
       checkAll: false,
       showSync: false,
       syncLog: '',
@@ -322,7 +323,7 @@ export default {
       this.$get("/account/allList", response => {
         let accountList = response.data
         this.accountList = accountList.filter(item=>{
-          return item.pluginId === "hummer-aliyun-plugin"
+          return this.supportCloud.includes(item.pluginId )
         })
         //that.dateTime = [this.formatDate(new Date().getTime()-1000*60*60*24),this.formatDate(new Date().getTime())]
         this.search()
