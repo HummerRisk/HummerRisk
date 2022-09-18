@@ -537,4 +537,12 @@
         ORDER BY sum desc
     </select>
 
+    <select id="regulation" resultType="com.hummerrisk.base.domain.RuleInspectionReport" parameterType="java.lang.String">
+        SELECT t.*
+        FROM rule_inspection_report t
+        left join rule_inspection_report_mapping t1 on t.id = t1.report_id
+        WHERE t1.rule_id = #{ruleId}
+        ORDER BY id
+    </select>
+
 </mapper>

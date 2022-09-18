@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.CloudTaskItem;
 import com.hummerrisk.base.domain.ResourceWithBLOBs;
+import com.hummerrisk.base.domain.RuleInspectionReport;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
@@ -181,5 +182,12 @@ public class ResourceController {
     @PostMapping("ruleData")
     public List<Map<String, Object>> ruleData(@RequestBody Map<String, Object> map) {
         return resourceService.ruleData(map);
+    }
+
+    @I18n
+    @ApiOperation(value = "风险条例")
+    @GetMapping("regulation/{ruleId}")
+    public List<RuleInspectionReport> regulation(@PathVariable String ruleId) {
+        return resourceService.regulation(ruleId);
     }
 }

@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
@@ -754,5 +755,9 @@ public class ResourceService {
 
     public List<Map<String, Object>> ruleData(Map<String, Object> map) {
         return extResourceMapper.ruleData(map);
+    }
+
+    public List<RuleInspectionReport> regulation(String ruleId) {
+        return extResourceMapper.regulation(ruleId);
     }
 }

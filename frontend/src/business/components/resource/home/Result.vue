@@ -133,6 +133,7 @@
                       :title="$t('resource.result_list')"/>
       </template>
 
+      <!-- result first -->
       <el-table class="adjust-table table-content"
                 border v-if="activeName === 'first'"
                 :data="tableData"
@@ -239,7 +240,9 @@
       </el-table>
 
       <table-pagination v-if="activeName === 'first'" :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
+      <!-- result first -->
 
+      <!-- result second -->
       <el-row :gutter="20" class="el-row-body" v-if="activeName === 'second'">
         <!--regions-->
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="el-col el-col-su">
@@ -253,7 +256,7 @@
                         :row-style="{height:'20px', cursor:'pointer'}"
                         :cell-style="{padding:'0px'}"
                         height="130" @row-click="handleRegionRow"
-                        :highlight-current-row="true"
+                        :highlight-current-row="highRegionRow"
                         style="font-size: 14px">
                 <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
                   <span style="color: #215d9a">{{ scope.row.name }}</span>
@@ -269,25 +272,25 @@
         </el-col>
         <!--regions-->
 
-        <!--severity-->
+        <!--rule-->
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="el-col el-col-su">
           <el-card :body-style="{ padding: '15px' }">
             <div slot="header" class="clearfix">
-              <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.severity') }}</span>
-              <table-search-bar :condition.sync="severityCondition" @change="severityFilter" style="float: right;width: 70%" class="search-bar"/>
+              <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.rule') }}</span>
+              <table-search-bar :condition.sync="ruleCondition" @change="ruleFilter" style="float: right;width: 70%" class="search-bar"/>
             </div>
             <div style="height: 130px;">
-              <el-table :data="severityData" :show-header="false"
+              <el-table :data="ruleData" :show-header="false"
                         :row-style="{height:'20px', cursor:'pointer'}"
                         :cell-style="{padding:'0px'}"
-                        height="130" @row-click="handleSeverityRow"
-                        :highlight-current-row="true"
+                        height="130" @row-click="handleRuleRow"
+                        :highlight-current-row="highRuleRow"
                         style="font-size: 14px">
                 <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
                   <span style="color: #215d9a">{{ scope.row.name }}</span>
                 </el-table-column>
                 <el-table-column prop="sum" min-width="20%" align="right" v-slot:default="scope">
-                  <el-button size="medium" type="danger" class="round" round>
+                  <el-button size="medium" type="warning" class="round" round>
                     {{ scope.row.sum }}
                   </el-button>
                 </el-table-column>
@@ -295,7 +298,7 @@
             </div>
           </el-card>
         </el-col>
-        <!--severity-->
+        <!--rule-->
 
         <!--resource type-->
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="el-col el-col-su">
@@ -309,7 +312,7 @@
                         :row-style="{height:'20px', cursor:'pointer'}"
                         :cell-style="{padding:'0px'}"
                         height="130" @row-click="handleResourceTypeRow"
-                        :highlight-current-row="true"
+                        :highlight-current-row="highResourceTypeRow"
                         style="font-size: 14px">
                 <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
                   <span style="color: #215d9a">{{ scope.row.name }}</span>
@@ -325,25 +328,25 @@
         </el-col>
         <!--resource type-->
 
-        <!--rule-->
+        <!--severity-->
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="el-col el-col-su">
           <el-card :body-style="{ padding: '15px' }">
             <div slot="header" class="clearfix">
-              <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.rule') }}</span>
-              <table-search-bar :condition.sync="ruleCondition" @change="ruleFilter" style="float: right;width: 70%" class="search-bar"/>
+              <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.severity') }}</span>
+              <table-search-bar :condition.sync="severityCondition" @change="severityFilter" style="float: right;width: 70%" class="search-bar"/>
             </div>
             <div style="height: 130px;">
-              <el-table :data="ruleData" :show-header="false"
+              <el-table :data="severityData" :show-header="false"
                         :row-style="{height:'20px', cursor:'pointer'}"
                         :cell-style="{padding:'0px'}"
-                        height="130" @row-click="handleRuleRow"
-                        :highlight-current-row="true"
+                        height="130" @row-click="handleSeverityRow"
+                        :highlight-current-row="highSeverityRow"
                         style="font-size: 14px">
                 <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
                   <span style="color: #215d9a">{{ scope.row.name }}</span>
                 </el-table-column>
                 <el-table-column prop="sum" min-width="20%" align="right" v-slot:default="scope">
-                  <el-button size="medium" type="warning" class="round" round>
+                  <el-button size="medium" type="danger" class="round" round>
                     {{ scope.row.sum }}
                   </el-button>
                 </el-table-column>
@@ -351,7 +354,7 @@
             </div>
           </el-card>
         </el-col>
-        <!--rule-->
+        <!--severity-->
 
       </el-row>
 
@@ -403,6 +406,11 @@
           <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="20%" show-overflow-tooltip>
               {{ scope.row.ruleName }}
           </el-table-column>
+          <el-table-column min-width="6%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <table-operators :buttons="resource_buttons" :row="scope.row"/>
+            </template>
+          </el-table-column>
         </el-table>
         <table-pagination :change="resourceSearch" :current-page.sync="resourcePage" :page-size.sync="resourceSize" :total="resourceTotal"/>
 
@@ -413,6 +421,8 @@
         <!--file-->
 
       </el-card>
+      <!-- result second -->
+
     </el-card>
 
     <!--Task log-->
@@ -520,6 +530,29 @@
     </el-drawer>
     <!--Task detail-->
 
+    <!--regulation report-->
+    <el-drawer class="rtl" :title="$t('resource.regulation')" :visible.sync="regulationVisible"  size="60%" :before-close="handleClose" :direction="direction" :destroy-on-close="true">
+      <el-card class="table-card" :body-style="{ padding: '15px', margin: '15px' }" v-for="(data, index) in regulationData" :key="data.id">
+        <el-row class="el-row-c">
+          <el-col :span="8"><span style="color: #215d9a;">{{ '(' + (index + 1) +') ' + $t('resource.basic_requirements_for_grade_protection') }}</span></el-col>
+          <el-col :span="16"><span>{{ data.project }}</span></el-col>
+        </el-row>
+        <el-row class="el-row-c">
+          <el-col :span="8"><span style="color: #215d9a;">{{ $t('resource.security_level') }}</span></el-col>
+          <el-col :span="16"><span>{{ data.itemSortFirstLevel }}</span></el-col>
+        </el-row>
+        <el-row class="el-row-c">
+          <el-col :span="8"><span style="color: #215d9a;">{{ $t('resource.control_point') }}</span></el-col>
+          <el-col :span="16"><span>{{ data.itemSortSecondLevel }}</span></el-col>
+        </el-row>
+        <el-row class="el-row-c">
+          <el-col :span="8"><span style="color: #215d9a;">{{ $t('resource.suggestions_for_improvement') }} <i class="el-icon-question"></i></span></el-col>
+          <el-col :span="16"><span>{{ data.improvement }}</span></el-col>
+        </el-row>
+      </el-card>
+    </el-drawer>
+    <!--regulation report-->
+
   </main-container>
 </template>
 
@@ -583,8 +616,8 @@ export default {
       ],
       rule_buttons: [
         {
-          tip: this.$t('resource.i18n_detail'), icon: "el-icon-document", type: "info",
-          exec: this.showTaskDetail
+          tip: this.$t('resource.regulation'), icon: "el-icon-document", type: "warning",
+          exec: this.showSeverityDetail
         },
         {
           tip: this.$t('resource.result_details_list'), icon: "el-icon-edit-outline", type: "success",
@@ -594,6 +627,12 @@ export default {
           tip: this.$t('resource.scan'), icon: "el-icon-refresh-right", type: "primary",
           exec: this.handleScan
         }
+      ],
+      resource_buttons: [
+        {
+          tip: this.$t('resource.regulation'), icon: "el-icon-document", type: "warning",
+          exec: this.showSeverityDetail
+        },
       ],
       logVisible: false,
       detailVisible: false,
@@ -647,6 +686,12 @@ export default {
       string2PrettyFormat: "",
       visible: false,
       resourceCondition: {},
+      highRegionRow: true,
+      highSeverityRow: true,
+      highResourceTypeRow: true,
+      highRuleRow: true,
+      regulationData: [],
+      regulationVisible: false,
     }
   },
   methods: {
@@ -827,6 +872,7 @@ export default {
       this.logVisible = false;
       this.detailVisible = false;
       this.visible =  false;
+      this.regulationVisible = false;
     },
     handleScans(item) {
       this.$alert(this.$t('resource.handle_scans'), '', {
@@ -917,12 +963,52 @@ export default {
       this.visible =  true;
     },
     handleRegionRow(row) {
+      if (this.resourceCondition.regionId) {
+        this.highRegionRow = false;
+        this.resourceCondition.regionId = null;
+      } else {
+        this.highRegionRow = true;
+        this.resourceCondition.regionId = row.id;
+      }
+      this.resourceSearch();
     },
     handleSeverityRow(row) {
+      if (this.resourceCondition.severity) {
+        this.highSeverityRow = false;
+        this.resourceCondition.severity = null;
+      } else {
+        this.highSeverityRow = true;
+        this.resourceCondition.severity = row.id;
+      }
+      this.resourceSearch();
     },
     handleResourceTypeRow(row) {
+      if (this.resourceCondition.resourceType) {
+        this.highResourceTypeRow = false;
+        this.resourceCondition.resourceType = null;
+      } else {
+        this.highResourceTypeRow = true;
+        this.resourceCondition.resourceType = row.id;
+      }
+      this.resourceSearch();
     },
     handleRuleRow(row) {
+      if (this.resourceCondition.ruleId) {
+        this.highRuleRow = false;
+        this.resourceCondition.ruleId = null;
+      } else {
+        this.highRuleRow = true;
+        this.resourceCondition.ruleId = row.id;
+      }
+      this.resourceSearch();
+    },
+    showSeverityDetail(item) {
+      this.$get("/resource/regulation/" + 'e054787c-5826-4242-8450-b0daa926ea40', response => {
+        if (response.success) {
+          this.regulationData = response.data;
+          this.regulationVisible = true;
+        }
+      });
     },
   },
   computed: {
@@ -1063,6 +1149,10 @@ export default {
   margin: 0 0 0 5px;
   padding: 1px 3px 1px 3px;
   float: right;
+}
+
+.el-row-c {
+  margin: 10px;
 }
 
 /deep/ :focus {
