@@ -17,7 +17,39 @@
       </el-row>
       <el-row :gutter="20">
         <div class="welcome">
-          {{$t('commons.welcome')}}
+          <div><h1>{{ $t('commons.cloud_mix_scan') }}</h1></div>
+          <div class="border"></div>
+          <div class="cloud_scan_desc">{{ $t('commons.cloud_scan_desc') }}</div>
+          <div class="cloud-first-div">
+            <el-row :gutter="20">
+              <el-col :span="8">
+                <img src="@/assets/img/panel/first.png" class="cloud-first" alt="">
+              </el-col>
+              <el-col :span="8">
+                <img src="@/assets/img/panel/second.png" class="cloud-second" alt="">
+              </el-col>
+              <el-col :span="8">
+                <img src="@/assets/img/panel/third.png" class="cloud-third" alt="">
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="8">
+                <div class="cloud-desc-div1">
+                  <p>{{ $t('commons.cloud_first') }}</p>
+                </div>
+              </el-col>
+              <el-col :span="8">
+                <div class="cloud-desc-div2">
+                  <p>{{ $t('commons.cloud_second') }}</p>
+                </div>
+              </el-col>
+              <el-col :span="8">
+                <div class="cloud-desc-div3">
+                  <p>{{ $t('commons.cloud_third') }}</p>
+                </div>
+              </el-col>
+            </el-row>
+          </div>
         </div>
         <div class="title">
           <img src="@/assets/img/panel/cloud.png" class="title-img" alt="">
@@ -78,18 +110,18 @@ export default {
   float: right;
   font-size: 32px;
   letter-spacing: 0;
-  width: 50%;
+  width: 48%;
 }
 
 .welcome {
   float: left;
-  margin-top: 50px;
-  font-size: 14px;
-  color: #999999;
+  margin: 60px 0 0 50px;
+  font-size: 16px;
+  color: #171d2c;
   letter-spacing: 0;
   line-height: 18px;
   text-align: center;
-  width: 50%;
+  width: 48%;
 }
 
 .image {
@@ -121,7 +153,44 @@ export default {
 .title-img {
   width: 70%;
   text-align: center;
-  margin: 5% 0 5% 5%;
+  margin: 5% 0 5% 15%;
+}
+.border {
+  height: 2px;
+  margin: 20px auto 20px;
+  width: 180px;
+  background: #df913c;
+}
+.cloud-first {
+  width: 153px;
+}
+.cloud-second {
+  width: 130px;
+}
+.cloud-third {
+  width: 144px;
+}
+.cloud-first-div {
+  margin-top: 50px;
+}
+.cloud-desc-div1 {
+  margin: 25px 0 0 0;
+  color: #215d9a;
+  text-align: center;
+}
+.cloud-desc-div2 {
+  margin: 25px 0 0 0;
+  color: #215d9a;
+  text-align: center;
+}
+.cloud-desc-div3 {
+  margin: 25px 0 0 0;
+  color: #215d9a;
+  text-align: center;
+}
+.cloud_scan_desc {
+  font-size: 15px;
+  line-height: 28px;
 }
 </style>
 
