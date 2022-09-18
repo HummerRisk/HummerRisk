@@ -55,6 +55,54 @@
           <img src="@/assets/img/panel/cloud.png" class="title-img" alt="">
         </div>
       </el-row>
+      <el-row :gutter="20">
+        <div class="title2">
+          <img src="@/assets/img/panel/native.png" class="title-img2" alt="">
+        </div>
+        <div class="welcome2">
+          <div><h1>{{ $t('commons.cloud_native') }}</h1></div>
+          <div class="border"></div>
+          <div class="cloud_scan_desc">{{ $t('commons.cloud_native_scan_desc') }}</div>
+          <div class="cloud-first-div">
+            <el-row :gutter="20">
+              <el-col :span="6">
+                <img src="@/assets/img/panel/native1.png" class="cloud-native-rule" alt="">
+              </el-col>
+              <el-col :span="6">
+                <img src="@/assets/img/panel/native2.png" class="cloud-native-rule" alt="">
+              </el-col>
+              <el-col :span="6">
+                <img src="@/assets/img/panel/native3.png" class="cloud-native-rule" alt="">
+              </el-col>
+              <el-col :span="6">
+                <img src="@/assets/img/panel/native4.png" class="cloud-native-rule" alt="">
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="6">
+                <div class="cloud-desc-div1">
+                  <p>{{ $t('commons.cloud_native_first') }}</p>
+                </div>
+              </el-col>
+              <el-col :span="6">
+                <div class="cloud-desc-div2">
+                  <p>{{ $t('commons.cloud_native_second') }}</p>
+                </div>
+              </el-col>
+              <el-col :span="6">
+                <div class="cloud-desc-div3">
+                  <p>{{ $t('commons.cloud_native_third') }}</p>
+                </div>
+              </el-col>
+              <el-col :span="6">
+                <div class="cloud-desc-div3">
+                  <p>{{ $t('commons.cloud_native_fourth') }}</p>
+                </div>
+              </el-col>
+            </el-row>
+          </div>
+        </div>
+      </el-row>
     </el-card>
   </main-container>
 </template>
@@ -112,7 +160,12 @@ export default {
   letter-spacing: 0;
   width: 48%;
 }
-
+.title2 {
+  float: left;
+  font-size: 32px;
+  letter-spacing: 0;
+  width: 48%;
+}
 .welcome {
   float: left;
   margin: 60px 0 0 50px;
@@ -123,7 +176,16 @@ export default {
   text-align: center;
   width: 48%;
 }
-
+.welcome2 {
+  float: right;
+  margin: 60px 50px 0 0;
+  font-size: 16px;
+  color: #171d2c;
+  letter-spacing: 0;
+  line-height: 18px;
+  text-align: center;
+  width: 48%;
+}
 .image {
   background: url(../../../../assets/img/panel/panel.png);
   background-size:cover;
@@ -151,6 +213,11 @@ export default {
   height: 360px;
 }
 .title-img {
+  width: 70%;
+  text-align: center;
+  margin: 5% 0 5% 15%;
+}
+.title-img2 {
   width: 70%;
   text-align: center;
   margin: 5% 0 5% 15%;
@@ -191,6 +258,10 @@ export default {
 .cloud_scan_desc {
   font-size: 15px;
   line-height: 28px;
+}
+.cloud-native-rule {
+  width: 75px;
+  background-color: #215d9a;
 }
 </style>
 
