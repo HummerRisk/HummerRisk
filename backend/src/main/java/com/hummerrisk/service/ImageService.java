@@ -558,41 +558,42 @@ public class ImageService {
 
     long saveImageResultItem(ImageResultWithBLOBs result) throws Exception {
 
+        int i = 0;
         //插入trivyJsons
         JSONObject jsonG = JSONObject.parseObject(result.getTrivyJson());
-        JSONArray trivyJsons = JSONArray.parseArray(jsonG.getString("Results"));
-        int i = 0;
-        if(trivyJsons != null) {
-            for (Object obj : trivyJsons) {
-                JSONObject jsonObject = (JSONObject) obj;
-                JSONArray vulnJsons = JSONArray.parseArray(jsonObject.getString("Vulnerabilities"));
-                for (Object o : vulnJsons) {
-                    JSONObject resultObject = (JSONObject) o;
-                    ImageTrivyJsonWithBLOBs imageTrivyJsonWithBLOBs = new ImageTrivyJsonWithBLOBs();
-                    imageTrivyJsonWithBLOBs.setResultId(result.getId());
-                    imageTrivyJsonWithBLOBs.setVulnerabilityId(resultObject.getString("VulnerabilityID"));
-                    imageTrivyJsonWithBLOBs.setPkgName(resultObject.getString("PkgName"));
-                    imageTrivyJsonWithBLOBs.setInstalledVersion(resultObject.getString("InstalledVersion"));
-                    imageTrivyJsonWithBLOBs.setFixedVersion(resultObject.getString("FixedVersion"));
-                    imageTrivyJsonWithBLOBs.setLayer(resultObject.getString("Layer"));
-                    imageTrivyJsonWithBLOBs.setSeveritySource(resultObject.getString("SeveritySource"));
-                    imageTrivyJsonWithBLOBs.setPrimaryUrl(resultObject.getString("PrimaryURL"));
-                    imageTrivyJsonWithBLOBs.setDataSource(resultObject.getString("DataSource"));
-                    imageTrivyJsonWithBLOBs.setTitle(resultObject.getString("Title"));
-                    imageTrivyJsonWithBLOBs.setDescription(resultObject.getString("Description"));
-                    imageTrivyJsonWithBLOBs.setSeverity(resultObject.getString("Severity"));
-                    imageTrivyJsonWithBLOBs.setCweIds(resultObject.getString("CweIDs"));
-                    imageTrivyJsonWithBLOBs.setCvss(resultObject.getString("CVSS"));
-                    imageTrivyJsonWithBLOBs.setReferences(resultObject.getString("References"));
-                    imageTrivyJsonWithBLOBs.setPublishedDate(resultObject.getString("PublishedDate"));
-                    imageTrivyJsonWithBLOBs.setLastModifiedDate(resultObject.getString("LastModifiedDate"));
-                    imageTrivyJsonMapper.insertSelective(imageTrivyJsonWithBLOBs);
-                    i++;
-                }
+        if(jsonG != null) {
+            JSONArray trivyJsons = JSONArray.parseArray(jsonG.getString("Results"));
+            if(trivyJsons != null) {
+                for (Object obj : trivyJsons) {
+                    JSONObject jsonObject = (JSONObject) obj;
+                    JSONArray vulnJsons = JSONArray.parseArray(jsonObject.getString("Vulnerabilities"));
+                    for (Object o : vulnJsons) {
+                        JSONObject resultObject = (JSONObject) o;
+                        ImageTrivyJsonWithBLOBs imageTrivyJsonWithBLOBs = new ImageTrivyJsonWithBLOBs();
+                        imageTrivyJsonWithBLOBs.setResultId(result.getId());
+                        imageTrivyJsonWithBLOBs.setVulnerabilityId(resultObject.getString("VulnerabilityID"));
+                        imageTrivyJsonWithBLOBs.setPkgName(resultObject.getString("PkgName"));
+                        imageTrivyJsonWithBLOBs.setInstalledVersion(resultObject.getString("InstalledVersion"));
+                        imageTrivyJsonWithBLOBs.setFixedVersion(resultObject.getString("FixedVersion"));
+                        imageTrivyJsonWithBLOBs.setLayer(resultObject.getString("Layer"));
+                        imageTrivyJsonWithBLOBs.setSeveritySource(resultObject.getString("SeveritySource"));
+                        imageTrivyJsonWithBLOBs.setPrimaryUrl(resultObject.getString("PrimaryURL"));
+                        imageTrivyJsonWithBLOBs.setDataSource(resultObject.getString("DataSource"));
+                        imageTrivyJsonWithBLOBs.setTitle(resultObject.getString("Title"));
+                        imageTrivyJsonWithBLOBs.setDescription(resultObject.getString("Description"));
+                        imageTrivyJsonWithBLOBs.setSeverity(resultObject.getString("Severity"));
+                        imageTrivyJsonWithBLOBs.setCweIds(resultObject.getString("CweIDs"));
+                        imageTrivyJsonWithBLOBs.setCvss(resultObject.getString("CVSS"));
+                        imageTrivyJsonWithBLOBs.setReferences(resultObject.getString("References"));
+                        imageTrivyJsonWithBLOBs.setPublishedDate(resultObject.getString("PublishedDate"));
+                        imageTrivyJsonWithBLOBs.setLastModifiedDate(resultObject.getString("LastModifiedDate"));
+                        imageTrivyJsonMapper.insertSelective(imageTrivyJsonWithBLOBs);
+                        i++;
+                    }
 
+                }
             }
         }
-
         return i;
     }
 
