@@ -373,40 +373,42 @@ public class CodeService {
 
     long saveResultItem(CodeResult result) throws Exception {
 
+        int i = 0;
         //插入returnJson
         JSONObject jsonG = JSONObject.parseObject(result.getReturnJson());
-        JSONArray returnJson = JSONArray.parseArray(jsonG.getString("Results"));
-        int i = 0;
-        if(returnJson != null) {
-            for (Object obj : returnJson) {
-                JSONObject jsonObject = (JSONObject) obj;
-                JSONArray vulnerabilities = JSONArray.parseArray(jsonObject.getString("Vulnerabilities"));
-                if(vulnerabilities == null) continue;
-                for (Object o : vulnerabilities) {
-                    JSONObject resultObject = (JSONObject) o;
-                    CodeResultItemWithBLOBs codeResultItem = new CodeResultItemWithBLOBs();
-                    codeResultItem.setId(UUIDUtil.newUUID());
-                    codeResultItem.setResultId(result.getId());
-                    codeResultItem.setVulnerabilityId(resultObject.getString("VulnerabilityID"));
-                    codeResultItem.setPkgName(resultObject.getString("PkgName"));
-                    codeResultItem.setInstalledVersion(resultObject.getString("InstalledVersion"));
-                    codeResultItem.setFixedVersion(resultObject.getString("FixedVersion"));
-                    codeResultItem.setLayer(resultObject.getString("Layer"));
-                    codeResultItem.setSeveritySource(resultObject.getString("SeveritySource"));
-                    codeResultItem.setPrimaryUrl(resultObject.getString("PrimaryURL"));
-                    codeResultItem.setDataSource(resultObject.getString("DataSource"));
-                    codeResultItem.setTitle(resultObject.getString("Title"));
-                    codeResultItem.setDescription(resultObject.getString("Description"));
-                    codeResultItem.setSeverity(resultObject.getString("Severity"));
-                    codeResultItem.setCweIds(resultObject.getString("CweIDs"));
-                    codeResultItem.setCvss(resultObject.getString("CVSS"));
-                    codeResultItem.setReferences(resultObject.getString("References"));
-                    codeResultItem.setPublishedDate(resultObject.getString("PublishedDate"));
-                    codeResultItem.setLastModifiedDate(resultObject.getString("LastModifiedDate"));
-                    codeResultItemMapper.insertSelective(codeResultItem);
-                    i++;
-                }
+        if (jsonG != null) {
+            JSONArray returnJson = JSONArray.parseArray(jsonG.getString("Results"));
+            if(returnJson != null) {
+                for (Object obj : returnJson) {
+                    JSONObject jsonObject = (JSONObject) obj;
+                    JSONArray vulnerabilities = JSONArray.parseArray(jsonObject.getString("Vulnerabilities"));
+                    if(vulnerabilities == null) continue;
+                    for (Object o : vulnerabilities) {
+                        JSONObject resultObject = (JSONObject) o;
+                        CodeResultItemWithBLOBs codeResultItem = new CodeResultItemWithBLOBs();
+                        codeResultItem.setId(UUIDUtil.newUUID());
+                        codeResultItem.setResultId(result.getId());
+                        codeResultItem.setVulnerabilityId(resultObject.getString("VulnerabilityID"));
+                        codeResultItem.setPkgName(resultObject.getString("PkgName"));
+                        codeResultItem.setInstalledVersion(resultObject.getString("InstalledVersion"));
+                        codeResultItem.setFixedVersion(resultObject.getString("FixedVersion"));
+                        codeResultItem.setLayer(resultObject.getString("Layer"));
+                        codeResultItem.setSeveritySource(resultObject.getString("SeveritySource"));
+                        codeResultItem.setPrimaryUrl(resultObject.getString("PrimaryURL"));
+                        codeResultItem.setDataSource(resultObject.getString("DataSource"));
+                        codeResultItem.setTitle(resultObject.getString("Title"));
+                        codeResultItem.setDescription(resultObject.getString("Description"));
+                        codeResultItem.setSeverity(resultObject.getString("Severity"));
+                        codeResultItem.setCweIds(resultObject.getString("CweIDs"));
+                        codeResultItem.setCvss(resultObject.getString("CVSS"));
+                        codeResultItem.setReferences(resultObject.getString("References"));
+                        codeResultItem.setPublishedDate(resultObject.getString("PublishedDate"));
+                        codeResultItem.setLastModifiedDate(resultObject.getString("LastModifiedDate"));
+                        codeResultItemMapper.insertSelective(codeResultItem);
+                        i++;
+                    }
 
+                }
             }
         }
 
