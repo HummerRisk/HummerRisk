@@ -11,6 +11,7 @@ import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
 import com.hummerrisk.dto.CloudNativeResultDTO;
 import com.hummerrisk.dto.ImageDTO;
+import com.hummerrisk.dto.MetricChartDTO;
 import com.hummerrisk.service.K8sService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -120,5 +121,11 @@ public class K8sController {
         k8sService.deleteSyncLog(id);
     }
 
+    @I18n
+    @ApiOperation(value = "风险数据信息")
+    @GetMapping("metricChart/{resultId}")
+    public MetricChartDTO metricChart(@PathVariable String resultId) {
+        return k8sService.metricChart(resultId);
+    }
 
 }

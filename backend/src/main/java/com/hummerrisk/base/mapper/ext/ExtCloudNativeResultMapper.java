@@ -6,6 +6,7 @@ import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
 import com.hummerrisk.dto.CloudNativeResultDTO;
 import com.hummerrisk.dto.ImageDTO;
+import com.hummerrisk.dto.MetricChartDTO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -17,5 +18,7 @@ public interface ExtCloudNativeResultMapper {
     List<ImageDTO> imageList(@Param("request") ImageRequest request);
 
     List<CloudNativeSourceSyncLog> syncList(CloudNativeSyncLogRequest request);
+
+    MetricChartDTO metricChart (String resultId);
 
 }

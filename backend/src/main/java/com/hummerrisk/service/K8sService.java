@@ -13,6 +13,7 @@ import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
 import com.hummerrisk.dto.CloudNativeResultDTO;
 import com.hummerrisk.dto.ImageDTO;
+import com.hummerrisk.dto.MetricChartDTO;
 import com.hummerrisk.proxy.k8s.K8sRequest;
 import com.hummerrisk.proxy.kubesphere.KubeSphereRequest;
 import com.hummerrisk.proxy.rancher.RancherRequest;
@@ -342,8 +343,10 @@ public class K8sService {
     }
 
     public void deleteSyncLog(Integer id) throws Exception {
-
         cloudNativeSourceSyncLogMapper.deleteByPrimaryKey(id);
+    }
 
+    public MetricChartDTO metricChart (String resultId) {
+        return extCloudNativeResultMapper.metricChart(resultId);
     }
 }
