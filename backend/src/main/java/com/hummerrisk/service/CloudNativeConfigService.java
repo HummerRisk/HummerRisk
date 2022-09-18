@@ -14,6 +14,7 @@ import com.hummerrisk.controller.request.config.ConfigRequest;
 import com.hummerrisk.controller.request.config.ConfigResultRequest;
 import com.hummerrisk.dto.CloudNativeConfigDTO;
 import com.hummerrisk.dto.CloudNativeConfigResultDTO;
+import com.hummerrisk.dto.MetricChartDTO;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.service.impl.ExecEngineFactoryImp;
 import com.hummerrisk.service.impl.IProvider;
@@ -404,5 +405,9 @@ public class CloudNativeConfigService {
         cloudNativeConfigResultLogMapper.deleteByExample(logExample);
 
         cloudNativeConfigResultMapper.deleteByPrimaryKey(id);
+    }
+
+    public MetricChartDTO metricChart (String resultId) {
+        return extCloudNativeConfigResultMapper.metricChart(resultId);
     }
 }

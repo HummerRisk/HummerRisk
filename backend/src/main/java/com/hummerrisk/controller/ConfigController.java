@@ -13,6 +13,7 @@ import com.hummerrisk.controller.request.config.ConfigRequest;
 import com.hummerrisk.controller.request.config.ConfigResultRequest;
 import com.hummerrisk.dto.CloudNativeConfigDTO;
 import com.hummerrisk.dto.CloudNativeConfigResultDTO;
+import com.hummerrisk.dto.MetricChartDTO;
 import com.hummerrisk.service.CloudNativeConfigService;
 import io.kubernetes.client.openapi.ApiException;
 import io.swagger.annotations.Api;
@@ -127,5 +128,11 @@ public class ConfigController {
         cloudNativeConfigService.deleteCloudNativeConfigResult(id);
     }
 
+    @I18n
+    @ApiOperation(value = "风险数据信息")
+    @GetMapping("metricChart/{resultId}")
+    public MetricChartDTO metricChart(@PathVariable String resultId) {
+        return cloudNativeConfigService.metricChart(resultId);
+    }
 
 }

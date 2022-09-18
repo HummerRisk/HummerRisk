@@ -90,5 +90,16 @@
         ORDER BY t.update_time desc
     </select>
 
+    <select id="metricChart" resultType="com.hummerrisk.dto.MetricChartDTO" parameterType="java.lang.String">
+        SELECT *
+        from (
+                 (SELECT count(*) as critical FROM cloud_native_config_result_item t WHERE LOWER(t.severity) = 'critical' AND t.result_id = #{resultId}) as critical,
+                 (SELECT count(*) as high FROM cloud_native_config_result_item t WHERE LOWER(t.severity) = 'high' AND t.result_id = #{resultId}) as high,
+                 (SELECT count(*) as medium FROM cloud_native_config_result_item t WHERE LOWER(t.severity) = 'medium' AND t.result_id = #{resultId}) as medium,
+                 (SELECT count(*) as low FROM cloud_native_config_result_item t WHERE LOWER(t.severity) = 'low' AND t.result_id = #{resultId}) as low,
+                 (SELECT count(*) as unknown FROM cloud_native_config_result_item t WHERE LOWER(t.severity) = 'unknown' AND t.result_id = #{resultId}) as unknown,
+                 (SELECT count(*) as total FROM cloud_native_config_result_item t WHERE t.result_id = #{resultId}) as total
+             )
+    </select>
 
 </mapper>

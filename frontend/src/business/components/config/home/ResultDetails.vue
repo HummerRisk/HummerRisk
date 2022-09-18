@@ -2,6 +2,12 @@
     <main-container>
       <el-card class="table-card" v-loading="result.loading">
 
+        <section class="report-container">
+          <main>
+            <metric-chart :content="content"/>
+          </main>
+        </section>
+
         <template v-slot:header>
           <table-header :condition.sync="condition"
                         @search="search"
@@ -50,6 +56,8 @@ import DialogFooter from "../../common/components/RuleDialogFooter";
 import CenterChart from "../../common/components/CenterChart";
 import {_filter, _sort} from "@/common/js/utils";
 import RuleType from "@/business/components/image/home/RuleType";
+import MetricChart from "@/business/components/common/chart/MetricChart";
+
 /* eslint-disable */
   export default {
     name: "ResultDetails",
@@ -63,6 +71,7 @@ import RuleType from "@/business/components/image/home/RuleType";
       DialogFooter,
       CenterChart,
       RuleType,
+      MetricChart,
     },
     data() {
       return {
@@ -91,6 +100,14 @@ import RuleType from "@/business/components/image/home/RuleType";
           indentWithTabs: true,
         },
         resultId: "",
+        content: {
+          critical: 0,
+          high: 0,
+          medium: 0,
+          low: 0,
+          unknown: 0,
+          total: 0,
+        },
       }
     },
     props: ["id"],
@@ -110,6 +127,9 @@ import RuleType from "@/business/components/image/home/RuleType";
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;
+        });
+        this.result = this.$get("/config/metricChart/"+ this.resultId, response => {
+          this.content = response.data;
         });
       },
       init() {
