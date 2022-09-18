@@ -2,6 +2,12 @@
     <main-container>
       <el-card class="table-card" v-loading="result.loading">
 
+        <section class="report-container">
+          <main>
+            <metric-chart :content="content"/>
+          </main>
+        </section>
+
         <template v-slot:header>
           <table-header :condition.sync="condition"
                         @search="search"
@@ -12,7 +18,8 @@
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter">
           <el-table-column type="index" min-width="2%"/>
-          <el-table-column :label="'Title'" min-width="17%" prop="title">
+          <el-table-column :label="'Title'" min-width="17%" prop="title" v-slot:default="scope">
+            {{ scope.row.title?scope.row.title:'N/A' }}
           </el-table-column>
           <el-table-column :label="'InstalledVersion'" min-width="10%" prop="installedVersion">
           </el-table-column>
@@ -51,6 +58,8 @@ import CenterChart from "../../common/components/CenterChart";
 import ResultReadOnly from "./ResultReadOnly";
 import {_filter, _sort} from "@/common/js/utils";
 import RuleType from "@/business/components/image/home/RuleType";
+import MetricChart from "../head/MetricChart";
+
 /* eslint-disable */
   export default {
     name: "ResultDetails",
@@ -65,6 +74,7 @@ import RuleType from "@/business/components/image/home/RuleType";
       ResultReadOnly,
       CenterChart,
       RuleType,
+      MetricChart,
     },
     data() {
       return {
@@ -85,6 +95,14 @@ import RuleType from "@/business/components/image/home/RuleType";
           },
         ],
         resultId: "",
+        content: {
+          critical: 0,
+          high: 0,
+          medium: 0,
+          low: 0,
+          unknown: 0,
+          total: 0,
+        },
       }
     },
     props: ["id"],
@@ -107,6 +125,9 @@ import RuleType from "@/business/components/image/home/RuleType";
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;
+        });
+        this.result = this.$get("/sbom/imageMetricChart/"+ this.resultId, response => {
+          this.content = response.data;
         });
       },
       init() {
