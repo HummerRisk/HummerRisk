@@ -25,6 +25,14 @@ import com.hummerrisk.commons.utils.CommonThreadPool;
 import com.hummerrisk.commons.utils.DateUtils;
 import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
+import com.tencentcloudapi.cloudaudit.v20190319.CloudauditClient;
+import com.tencentcloudapi.cloudaudit.v20190319.models.DescribeEventsRequest;
+import com.tencentcloudapi.cloudaudit.v20190319.models.DescribeEventsResponse;
+import com.tencentcloudapi.cloudaudit.v20190319.models.Event;
+import com.tencentcloudapi.common.Credential;
+import com.tencentcloudapi.common.exception.TencentCloudSDKException;
+import com.tencentcloudapi.common.profile.ClientProfile;
+import com.tencentcloudapi.common.profile.HttpProfile;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -36,6 +44,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -241,6 +250,9 @@ public class CloudEventService {
             case PlatformUtils.huawei:
                 result = getHuaweiCloudEvents(accountMap, startTime, endTime, pageNum, maxResult);
                 break;
+            case PlatformUtils.tencent:
+                result = getTencentEvents(accountMap,startTime,endTime,pageNum,maxResult);
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + account.getPluginId());
         }
@@ -249,8 +261,8 @@ public class CloudEventService {
 
     private List<CloudEvent> getHuaweiCloudEvents(Map<String, String> accountMap, String startTime
             , String endTime, int pageNum, int maxResult) {
-        String ak = accountMap.get("accessKey");
-        String sk = accountMap.get("secretKey");
+        String ak = accountMap.get("ak");
+        String sk = accountMap.get("sk");
         ICredential auth = new BasicCredentials()
                 .withAk(ak)
                 .withSk(sk);
@@ -291,8 +303,40 @@ public class CloudEventService {
     }
 
     private List<CloudEvent> getTencentEvents(Map<String, String> accountMap, String startTime
-            , String endTime, int pageNum, int maxResult) {
-        return new ArrayList<>();
+            , String endTime, int pageNum, int maxResult) throws TencentCloudSDKException {
+        Credential cred = new Credential(accountMap.get("secretId"), accountMap.get("secretKey"));
+        // 实例化一个http选项，可选的，没有特殊需求可以跳过
+        HttpProfile httpProfile = new HttpProfile();
+        httpProfile.setEndpoint("cloudaudit.tencentcloudapi.com");
+        // 实例化一个client选项，可选的，没有特殊需求可以跳过
+        ClientProfile clientProfile = new ClientProfile();
+        clientProfile.setHttpProfile(httpProfile);
+        // 实例化要请求产品的client对象,clientProfile是可选的
+        CloudauditClient client = new CloudauditClient(cred, accountMap.get("region"), clientProfile);
+        // 实例化一个请求对象,每个接口都会对应一个request对象
+        DescribeEventsRequest req = new DescribeEventsRequest();
+        req.setStartTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss",startTime).getTime()/1000);
+        req.setEndTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss",endTime).getTime()/1000);
+        req.setMaxResults((long) maxResult);
+        if(accountMap.get("marker") != null){
+            req.setNextToken(Long.parseLong(accountMap.get("marker")));
+        }
+        // 返回的resp是一个DescribeEventsResponse的实例，与请求对象对应
+        DescribeEventsResponse resp = client.DescribeEvents(req);
+        Long nextToken = resp.getNextToken();
+        if(nextToken != null){
+            accountMap.put("marker",nextToken+"");
+        }
+        Event[] events = resp.getEvents();
+        return Arrays.stream(events).map(event->{
+            com.tencentcloudapi.cloudaudit.v20190319.models.Resource resource = event.getResources();
+            return CloudEvent.builder().eventId(event.getEventId()).userName(event.getUsername())
+                    .eventTime(Long.parseLong(event.getEventTime())*1000).resourceType(event.getResourceTypeCn())
+                    .eventName(event.getEventNameCn()).cloudAuditEvent(event.getCloudAuditEvent()).eventSource(event.getEventSource())
+                    .requestId(event.getRequestID()).acsRegion(event.getResourceRegion()).sourceIpAddress(event.getSourceIPAddress())
+                    .referencedResources(resource == null?"{}":JSON.toJSONString(resource)).build();
+        }).collect(Collectors.toList());
+
     }
 
     public List<CloudEvent> getAliyunCloudEvents(Map<String, String> accountMap, String startTime, String endTime,
