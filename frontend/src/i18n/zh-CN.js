@@ -185,6 +185,10 @@ export default {
     update_success: '编辑成功',
     success: '成功',
     error: '失败',
+    cloud_native_platform: '云原生安全平台',
+    cloud_native_platform_desc: '混合云安全治理和容器云安全检测',
+    cloud_desc: '进入混合云安全治理',
+    cloud_native_desc: '进入容器云安全检测',
   },
   workspace: {
     create: '创建工作空间',
