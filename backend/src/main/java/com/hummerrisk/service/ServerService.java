@@ -79,16 +79,22 @@ public class ServerService {
 
 
     public boolean validate(String id) {
-        Server server = serverMapper.selectByPrimaryKey(id);
-        //检验虚拟机的有效性
-        boolean valid = validateAccount(server);
-        if (valid) {
-            server.setStatus(CloudAccountConstants.Status.VALID.name());
-        } else {
-            server.setStatus(CloudAccountConstants.Status.INVALID.name());
+        try {
+            Server server = serverMapper.selectByPrimaryKey(id);
+            //检验虚拟机的有效性
+            boolean valid = validateAccount(server);
+            if (valid) {
+                server.setStatus(CloudAccountConstants.Status.VALID.name());
+            } else {
+                server.setStatus(CloudAccountConstants.Status.INVALID.name());
+            }
+            serverMapper.updateByPrimaryKeyWithBLOBs(server);
+            return valid;
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
+            return false;
         }
-        serverMapper.updateByPrimaryKeySelective(server);
-        return valid;
+
     }
 
     public Boolean scan(List<String> ids) {
@@ -331,7 +337,7 @@ public class ServerService {
         server = login(server, proxy);
 
         OperationLogService.log(SessionUtils.getUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "i18n_update_server");
-        return serverMapper.updateByPrimaryKeySelective(server);
+        return serverMapper.updateByPrimaryKeyWithBLOBs(server);
     }
 
     public void deleteServer(String id) throws Exception {
