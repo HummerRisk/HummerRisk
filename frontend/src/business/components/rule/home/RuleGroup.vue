@@ -10,37 +10,6 @@
 
         </template>
 
-        <el-table v-if="listStatus === 1" :border="true" :stripe="true" :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                  @filter-change="filter" @select-all="select" @select="select">
-          <el-table-column type="index" min-width="5%"/>
-          <el-table-column prop="name" :label="$t('rule.rule_set_name')" min-width="15%" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="description" :label="$t('commons.description')" min-width="48%" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" min-width="10%" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.pluginName }}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('rule.tag_flag')" min-width="9%" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <el-tag size="mini" type="danger" v-if="scope.row.flag === true">
-                {{ $t('rule.tag_flag_true') }}
-              </el-tag>
-              <el-tag size="mini" type="success" v-else-if="scope.row.flag === false">
-                {{ $t('rule.tag_flag_false') }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column min-width="16%" :label="$t('commons.operating')" fixed="right">
-            <template v-slot:default="scope">
-              <table-operators v-if="!!scope.row.flag" :buttons="buttonsN" :row="scope.row"/>
-              <table-operators v-if="!scope.row.flag" :buttons="buttons" :row="scope.row"/>
-            </template>
-          </el-table-column>
-        </el-table>
-
         <el-row :gutter="20" class="el-row-body" v-if="listStatus === 2">
           <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in tableData"
                   :key="index" class="el-col el-col-su">
@@ -101,6 +70,37 @@
             </el-card>
           </el-col>
         </el-row>
+
+        <el-table v-if="listStatus === 1" :border="true" :stripe="true" :data="tableData" class="adjust-table table-content" @sort-change="sort"
+                  @filter-change="filter" @select-all="select" @select="select">
+          <el-table-column type="index" min-width="5%"/>
+          <el-table-column prop="name" :label="$t('rule.rule_set_name')" min-width="15%" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="description" :label="$t('commons.description')" min-width="48%" show-overflow-tooltip></el-table-column>
+          <el-table-column :label="$t('account.cloud_platform')" min-width="10%" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <span>
+                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ scope.row.pluginName }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('rule.tag_flag')" min-width="9%" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <el-tag size="mini" type="danger" v-if="scope.row.flag === true">
+                {{ $t('rule.tag_flag_true') }}
+              </el-tag>
+              <el-tag size="mini" type="success" v-else-if="scope.row.flag === false">
+                {{ $t('rule.tag_flag_false') }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column min-width="16%" :label="$t('commons.operating')" fixed="right">
+            <template v-slot:default="scope">
+              <table-operators v-if="!!scope.row.flag" :buttons="buttonsN" :row="scope.row"/>
+              <table-operators v-if="!scope.row.flag" :buttons="buttons" :row="scope.row"/>
+            </template>
+          </el-table-column>
+        </el-table>
 
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
 
@@ -352,7 +352,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         ruleListPageSize: 10,
         ruleListTotal: 0,
         itemId: "",
-        listStatus: 1,
+        listStatus: 2,
         cloudValue: [],
         cloudData: [],
         groupId: '',
