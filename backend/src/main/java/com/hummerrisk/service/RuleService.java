@@ -77,10 +77,6 @@ public class RuleService {
     @Resource @Lazy
     private RuleInspectionReportMappingMapper ruleInspectionReportMappingMapper;
     @Resource @Lazy
-    private OrderService orderService;
-    @Resource @Lazy
-    private HistoryScanMapper historyScanMapper;
-    @Resource @Lazy
     private ExtRuleGroupMapper extRuleGroupMapper;
     @Resource @Lazy
     private CloudTaskItemMapper cloudTaskItemMapper;
@@ -541,17 +537,23 @@ public class RuleService {
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
     public void scan(List<String> scanCheckedGroups) throws Exception {
-        List<String> accountIds = new ArrayList<>();
-        Integer scanId = 0;
-        for (String scan : scanCheckedGroups) {
-            String[] str = scan.split("/");
-            AccountWithBLOBs account = accountMapper.selectByPrimaryKey(str[0]);
-            if (!accountIds.contains(account.getId())) {
-                accountIds.add(account.getId());
-                scanId = historyService.insertScanHistory(account);
+        commonThreadPool.addTask(() -> {
+            try {
+                List<String> accountIds = new ArrayList<>();
+                Integer scanId = 0;
+                for (String scan : scanCheckedGroups) {
+                    String[] str = scan.split("/");
+                    AccountWithBLOBs account = accountMapper.selectByPrimaryKey(str[0]);
+                    if (!accountIds.contains(account.getId())) {
+                        accountIds.add(account.getId());
+                        scanId = historyService.insertScanHistory(account);
+                    }
+                    this.scanGroups(account, scanId, str[1]);
+                }
+            } catch (Exception e) {
+                LogUtil.error(e.getMessage());
             }
-            this.scanGroups(account, scanId, str[1]);
-        }
+        });
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})

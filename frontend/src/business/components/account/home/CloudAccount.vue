@@ -727,6 +727,15 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
       },
       openScanGroup() {
         this.scanVisible = true;
+        for (let item of this.tableData) {
+          for (let id of this.selectIds) {
+            if (id===item.id) {
+              localStorage.setItem(ACCOUNT_ID, item.id);
+              localStorage.setItem(ACCOUNT_NAME, item.name);
+              break;
+            }
+          }
+        }
         this.initGroups();
       },
       scanGroup () {
@@ -751,15 +760,6 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
                   'Content-Type': undefined
                 }
               }, () => {
-                for (let item of this.tableData) {
-                  for (let id of this.selectIds) {
-                    if (id===item.id) {
-                      localStorage.setItem(ACCOUNT_ID, item.id);
-                      localStorage.setItem(ACCOUNT_NAME, item.name);
-                      break;
-                    }
-                  }
-                }
                 this.$success(this.$t('account.i18n_hr_create_success'));
                 this.scanVisible = false;
                 this.$router.push({
