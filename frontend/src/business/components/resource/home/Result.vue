@@ -24,7 +24,7 @@
                         <center-chart v-if="!!source.scanScore" :row="source.scanScore"></center-chart>
                       </el-tooltip>
                     </span>
-                <span v-else>
+                    <span v-else>
                       <img style="width: 150px;height: 100px;" :src="require(`@/assets/img/gif/loading.gif`)" alt=""/>
                     </span>
               </el-col>
@@ -103,22 +103,22 @@
               <span style="color: #909090;font-size: 16px;">{{ $t('commons.operating') }}</span>
             </el-col>
             <el-col :span="8">
-                    <span style="font-size: 16px;">
-                       <el-tooltip class="item" effect="dark" :content="$t('resource.scan')" placement="top">
-                          <el-button type="primary" size="mini" @click="handleScans(source)" circle><i
-                            class="el-icon-refresh-right"></i></el-button>
-                       </el-tooltip>
-                      <el-tooltip class="item" effect="dark" :content="$t('resource.delete_result')" placement="top">
-                        <el-button type="danger" size="mini" @click="handleDelete(source)" circle><i
-                          class="el-icon-delete"></i></el-button>
-                      </el-tooltip>
-                    </span>
+              <span style="font-size: 16px;">
+                 <el-tooltip class="item" effect="dark" :content="$t('resource.scan')" placement="top">
+                    <el-button type="primary" size="mini" @click="handleScans(source)" circle><i
+                      class="el-icon-refresh-right"></i></el-button>
+                 </el-tooltip>
+                <el-tooltip class="item" effect="dark" :content="$t('resource.delete_result')" placement="top">
+                  <el-button type="danger" size="mini" @click="handleDelete(source)" circle><i
+                    class="el-icon-delete"></i></el-button>
+                </el-tooltip>
+              </span>
             </el-col>
           </el-row>
         </el-col>
       </el-row>
       <el-progress v-if="source.overRules!==source.allRules" :text-inside="true"
-                   :stroke-width="26" :percentage="(source.overRules/source.allRules) * 100"></el-progress>
+                   :stroke-width="26" :percentage="parseFloat(source.overRules/source.allRules).toFixed(2) * 100"></el-progress>
     </el-card>
 
     <el-card class="table-card">
@@ -573,6 +573,7 @@ import {ACCOUNT_ID} from "@/common/js/constants";
 import AccountChange from "@/business/components/common/head/AccountSwitch";
 import TableSearchBar from '@/business/components/common/components/TableSearchBar';
 import ResultReadOnly from "./ResultReadOnly";
+import {RESOURCE_CONFIGS, RULE_CONFIGS} from "../../common/components/search/search-components";
 
 /* eslint-disable */
 export default {
@@ -599,7 +600,9 @@ export default {
       pageSize: 10,
       total: 0,
       loading: false,
-      condition: {},
+      condition: {
+        components: RESOURCE_CONFIGS
+      },
       accountId: localStorage.getItem(ACCOUNT_ID),
       direction: 'rtl',
       tagSelect: [],
@@ -696,6 +699,9 @@ export default {
       regulationVisible: false,
       rowIndex: '',
     }
+  },
+  watch: {
+    '$route': 'init'
   },
   methods: {
     sort(column) {

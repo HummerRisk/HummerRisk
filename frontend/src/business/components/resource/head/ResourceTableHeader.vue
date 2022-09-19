@@ -40,7 +40,7 @@ export default {
       tip: {
         String,
         default() {
-          return this.$t('resource.search_by_hummerid');
+          return this.$t('commons.search_by_name');
         }
       }
     },

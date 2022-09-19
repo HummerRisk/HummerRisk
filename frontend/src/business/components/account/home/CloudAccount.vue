@@ -434,11 +434,9 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
         iamStrategyNotSupport: ['hummer-openstack-plugin', 'hummer-vsphere-plugin', 'hummer-nuclei-plugin', 'hummer-server-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin'],
       }
     },
-
     watch: {
       '$route': 'init'
     },
-
     methods: {
       create() {
         this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
