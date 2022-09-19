@@ -1,4 +1,4 @@
-import {ACCOUNT_ID, K8S_ID, REFRESH_SESSION_USER_URL, ROLE_ADMIN, TokenKey, VULN_ID} from "./constants";
+import {ACCOUNT_ID, K8S_ID, REFRESH_SESSION_USER_URL, ROLE_ADMIN, TokenKey, VULN_ID, IsCollapse} from "./constants";
 import axios from "axios";
 
 export function hasRole(role) {
@@ -55,6 +55,11 @@ export function getVulnID() {
 
 export function getK8sID() {
   return localStorage.getItem(K8S_ID);
+}
+
+export function getIsCollapse() {
+  let isCollapse = sessionStorage.getItem(IsCollapse);
+  return isCollapse === 'true';
 }
 
 export function saveLocalStorage(response) {
