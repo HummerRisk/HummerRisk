@@ -232,12 +232,12 @@
       <!--rule list-->
 
       <!--rule bind-->
-      <el-drawer class="rtl" :title="$t('rule.rule_list_bind')" :visible.sync="bindVisible" size="85%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="rtl edit-dev-drawer" :title="$t('rule.rule_list_bind')" :visible.sync="bindVisible" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <el-card class="table-card edit_dev" style="padding: 25px;margin: 25px;">
+        <el-card class="table-card edit_dev" style="">
           <div style="text-align: center; margin: 25px;">
             <p style="text-align: center; padding: 10px;margin: 25px;color: red;background-color: aliceblue;">{{ $t('rule.rule_list_bind') }}</p>
-            <el-transfer :titles="[$t('rule.source_rule'), $t('rule.target_rule')]" :filter-method="filterMethod" style="text-align: left; display: inline-block"
+            <el-transfer :titles="[$t('rule.source_rule'), $t('rule.target_rule')]" :filter-method="filterMethod" class="el-trans"
                          :filter-placeholder="$t('commons.search_by_name')" filterable v-model="cloudValue" :data="cloudData">
             </el-transfer>
           </div>
@@ -654,7 +654,22 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
     line-height: 20px;
   }
   .edit_dev >>> .el-transfer-panel {
-    width:350px;
+    width: 40%;
+    text-align: left;
+  }
+  .edit-dev-drawer >>> .el-drawer__header {
+    margin-bottom: 0;
+  }
+  .edit-dev-drawer >>> .el-transfer-panel__body{
+    height: 500px;
+  }
+  .edit-dev-drawer >>> .el-transfer-panel__list{
+    height: 500px;
+  }
+  .el-trans {
+    width: 100%;
+    text-align: center;
+    display: inline-block;
   }
   /deep/ :focus{outline:0;}
 </style>
