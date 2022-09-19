@@ -5,7 +5,7 @@ ALTER TABLE `cloud_event` MODIFY column `event_time` bigint(13) DEFAULT NULL COM
 
 ALTER TABLE `cloud_event` MODIFY column `source_ip_address` varchar(64) DEFAULT NULL COMMENT '访问源地址';
 
-ALTER TABLE `cloud_event` ADD `event_rating` int(2) DEFAULT NULL COMMENT '事件级别 0 正常 1 警告 3 事故';
+ALTER TABLE `cloud_event` ADD `event_rating` int(2) DEFAULT NULL COMMENT '事件级别 0 正常 1 警告 2 事故';
 
 ALTER TABLE `cloud_event` ADD `resource_id` varchar(64) DEFAULT NULL COMMENT '资源id';
 
