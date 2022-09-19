@@ -55,7 +55,7 @@
           <img src="@/assets/img/panel/cloud.png" class="title-img" alt="">
         </div>
       </el-row>
-      <el-row :gutter="20">
+      <el-row :gutter="20" class="el-row2">
         <div class="title2">
           <img src="@/assets/img/panel/native.png" class="title-img2" alt="">
         </div>
@@ -139,20 +139,7 @@ export default {
 
 <style scoped>
 .main-container {
-  padding: 5px;
-}
-.container {
-  width: 30%;
-  min-width: 600px;
-  max-width: 740px;
-  height: 560px;
-  /*background-color: #fff;*/
-  margin: auto;
-  position: absolute;
-  top: 17%;
-  left: 10%;
-  right: 10%;
-  box-shadow: #dddddd 0 0 10px;
+  padding: 15px;
 }
 .title {
   float: right;
@@ -168,23 +155,23 @@ export default {
 }
 .welcome {
   float: left;
-  margin: 60px 0 0 50px;
+  margin: 6% 0 0 4%;
   font-size: 16px;
   color: #171d2c;
   letter-spacing: 0;
   line-height: 18px;
   text-align: center;
-  width: 48%;
+  width: 47%;
 }
 .welcome2 {
   float: right;
-  margin: 60px 50px 0 0;
+  margin: 6% 4% 0 0;
   font-size: 16px;
   color: #171d2c;
   letter-spacing: 0;
   line-height: 18px;
   text-align: center;
-  width: 48%;
+  width: 47%;
 }
 .image {
   background: url(../../../../assets/img/panel/panel.png);
@@ -214,11 +201,13 @@ export default {
 }
 .title-img {
   width: 70%;
+  height: 70%;
   text-align: center;
   margin: 5% 0 5% 15%;
 }
 .title-img2 {
   width: 70%;
+  height: 70%;
   text-align: center;
   margin: 5% 0 5% 15%;
 }
@@ -262,6 +251,9 @@ export default {
 .cloud-native-rule {
   width: 75px;
   background-color: #215d9a;
+}
+.el-row2 {
+  background-color: #dddddd;
 }
 </style>
 
