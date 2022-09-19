@@ -195,21 +195,17 @@ export default {
 .main-container >>> .lb-row-txt-white {
   padding: 15px 35px 0 120px;
 }
-.cloud {
-  width: 100%;
-  height: 360px;
-}
 .title-img {
   width: 70%;
   height: 70%;
   text-align: center;
-  margin: 5% 0 5% 15%;
+  margin: 7% 0 5% 15%;
 }
 .title-img2 {
   width: 70%;
   height: 70%;
   text-align: center;
-  margin: 5% 0 5% 15%;
+  margin: 7% 0 5% 15%;
 }
 .border {
   height: 2px;
@@ -227,20 +223,20 @@ export default {
   width: 144px;
 }
 .cloud-first-div {
-  margin-top: 50px;
+  margin-top: 5%;
 }
 .cloud-desc-div1 {
-  margin: 25px 0 0 0;
+  margin: 2% 0 0 0;
   color: #215d9a;
   text-align: center;
 }
 .cloud-desc-div2 {
-  margin: 25px 0 0 0;
+  margin: 2% 0 0 0;
   color: #215d9a;
   text-align: center;
 }
 .cloud-desc-div3 {
-  margin: 25px 0 0 0;
+  margin: 2% 0 0 0;
   color: #215d9a;
   text-align: center;
 }
@@ -253,7 +249,7 @@ export default {
   background-color: #215d9a;
 }
 .el-row2 {
-  background-color: #dddddd;
+  background-color: #F9F9F9;
 }
 </style>
 
