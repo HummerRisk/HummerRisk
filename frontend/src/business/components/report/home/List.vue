@@ -499,7 +499,8 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
         ];
       },
       ruleSetOptionsFnc () {
-        this.$get("/rule/ruleGroups/" + null, res => {
+
+        this.$post("/resource/rule/groups" , {"accountId":this.accountId}, res => {
           this.ruleSetOptions = res.data;
         });
       },
