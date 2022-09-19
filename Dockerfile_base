@@ -15,7 +15,7 @@ COPY --from=prowler-env /prowler /prowler
 COPY --from=xray-env /opt/hummerrisk/xray/ /opt/hummerrisk/xray/
 
 RUN apk add docker && \
-    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.31.3
+    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.32.0
 
 RUN mkdir -p /opt/apps
 
