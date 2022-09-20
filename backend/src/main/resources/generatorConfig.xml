@@ -152,6 +152,8 @@
 <!--        <table tableName="cloud_native_source_sync_log" domainObjectName="CloudNativeSourceSyncLog"/>-->
 <!--        <table tableName="cloud_native_rule" domainObjectName="CloudNativeRule"/>-->
 <!--        <table tableName="cloud_native_config_rule" domainObjectName="CloudNativeConfigRule"/>-->
-        <table tableName="cloud_event_sync_log" domainObjectName="CloudEventSyncLog"/>
+<!--        <table tableName="cloud_event_sync_log" domainObjectName="CloudEventSyncLog"/>-->
+<!--        <table tableName="cloud_event_region_log" domainObjectName="CloudEventRegionLog"/>-->
+<!--        <table tableName="cloud_event" domainObjectName="CloudEvent"/>-->
     </context>
 </generatorConfiguration>
