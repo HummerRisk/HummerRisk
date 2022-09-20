@@ -73,8 +73,12 @@
           <el-table-column
             :label="$t('log.risk_level')"
             min-width="10%"
-            :formatter="riskLevelFormat"
           >
+            <template v-slot:default="scope">
+              <el-tag v-if="!!!scope.row.eventRating || scope.row.eventRating === 0 " type="success">低风险</el-tag>
+              <el-tag  v-if="scope.row.eventRating=== 1" type="warning">中风险</el-tag>
+              <el-tag  v-if="scope.row.eventRating === 2" type="danger">高风险</el-tag>
+            </template>
           </el-table-column>
         </el-table>
 
@@ -171,12 +175,7 @@ export default {
         return "N/A"
       }
     },
-    riskLevelFormat(row,column){
-      if(!!row.resourceName){
-        return this.$t('log.middle_level')
-      }
-      return this.$t('log.low_level')
-    },
+
 
     search() {
       let url = "/cloud/event/list/" + this.currentPage + "/" + this.pageSize;
