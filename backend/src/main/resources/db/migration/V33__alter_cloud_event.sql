@@ -7,6 +7,8 @@ ALTER TABLE `cloud_event_sync_log` MODIFY column `create_time` bigint(13) DEFAUL
 
 ALTER TABLE `cloud_event_sync_log` ADD `proxy_id` int(11) DEFAULT NULL COMMENT '代理ID';
 
+ALTER TABLE `cloud_event_sync_log` ADD `region_name` varchar(1024) DEFAULT NULL COMMENT '区域名称';
+
 ALTER TABLE `cloud_event` MODIFY column `event_time` bigint(13) DEFAULT NULL COMMENT '事件时间';
 
 ALTER TABLE `cloud_event` MODIFY column `source_ip_address` varchar(64) DEFAULT NULL COMMENT '访问源地址';
@@ -71,3 +73,5 @@ CREATE TABLE IF NOT EXISTS `server_certificate` (
     `last_modified`              bigint(14)          DEFAULT NULL COMMENT '上次更新时间',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
+
+ALTER TABLE `server` ADD `certificate_id` varchar(50) DEFAULT NULL COMMENT 'certificate id';
