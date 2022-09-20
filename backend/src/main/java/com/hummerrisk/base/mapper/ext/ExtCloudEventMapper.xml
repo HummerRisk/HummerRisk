@@ -95,7 +95,7 @@
         <property name="object" value="${condition}.region"/>
       </include>
           or
-      t.sync_region
+      t.region_name
       <include refid="condition">
         <property name="object" value="${condition}.region"/>
       </include>
