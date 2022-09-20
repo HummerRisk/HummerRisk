@@ -34,6 +34,7 @@ import com.hummerrisk.base.mapper.ext.ExtCloudEventMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudEventSyncLogMapper;
 import com.hummerrisk.commons.utils.CommonThreadPool;
 import com.hummerrisk.commons.utils.DateUtils;
+import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
 import com.tencentcloudapi.cloudaudit.v20190319.CloudauditClient;
@@ -163,27 +164,35 @@ public class CloudEventService {
             cloudEventRegionLogMapper.insertSelective(cloudEventRegionLog);
         }
         commonThreadPool.addTask(() -> {
-            CloudEventRegionLogExample cloudEventRegionLogExample = new CloudEventRegionLogExample();
-            cloudEventRegionLogExample.createCriteria().andLogIdEqualTo(cloudEventSyncLog.getId());
-            List<CloudEventRegionLog> cloudEventRegionLogs = cloudEventRegionLogMapper.selectByExample(cloudEventRegionLogExample);
-            int dataCount = 0;
-            int errorCount = 0;
-            for (CloudEventRegionLog cloudEventRegionLog : cloudEventRegionLogs) {
-                int num = saveCloudEvent(cloudEventRegionLog.getId(), account, cloudEventRegionLog.getRegion(), startTime, endTime);
-                if (num > -1)
-                    dataCount += num;
-                else
-                    errorCount++;
-            }
-            if (errorCount == cloudEventRegionLogs.size()) {
+            try{
+                CloudEventRegionLogExample cloudEventRegionLogExample = new CloudEventRegionLogExample();
+                cloudEventRegionLogExample.createCriteria().andLogIdEqualTo(cloudEventSyncLog.getId());
+                List<CloudEventRegionLog> cloudEventRegionLogs = cloudEventRegionLogMapper.selectByExample(cloudEventRegionLogExample);
+                int dataCount = 0;
+                int errorCount = 0;
+                for (CloudEventRegionLog cloudEventRegionLog : cloudEventRegionLogs) {
+                    int num = saveCloudEvent(cloudEventRegionLog.getId(), account, cloudEventRegionLog.getRegion(), startTime, endTime);
+                    if (num > -1)
+                        dataCount += num;
+                    else
+                        errorCount++;
+                }
+                if (errorCount == cloudEventRegionLogs.size()) {
+                    cloudEventSyncLog.setStatus(2);
+                } else if (errorCount > 0) {
+                    cloudEventSyncLog.setStatus(3);
+                } else {
+                    cloudEventSyncLog.setStatus(1);
+                }
+                cloudEventSyncLog.setDataCount(dataCount);
+                cloudEventSyncLogMapper.updateByPrimaryKeySelective(cloudEventSyncLog);
+            }catch (Exception e){
+                e.printStackTrace();
+                LogUtil.error("syncEventLog"+e.getMessage());
                 cloudEventSyncLog.setStatus(2);
-            } else if (errorCount > 0) {
-                cloudEventSyncLog.setStatus(3);
-            } else {
-                cloudEventSyncLog.setStatus(1);
+                cloudEventSyncLogMapper.updateByPrimaryKeySelective(cloudEventSyncLog);
             }
-            cloudEventSyncLog.setDataCount(dataCount);
-            cloudEventSyncLogMapper.updateByPrimaryKeySelective(cloudEventSyncLog);
+
         });
     }
 
@@ -245,6 +254,7 @@ public class CloudEventService {
             return result.size();
         } catch (Exception e) {
             e.printStackTrace();
+            LogUtil.error("saveCloudEvent{}"+e.getMessage());
             cloudEventSyncLog.setStatus(2);
             String exceptionStr = e.getMessage();
             if (exceptionStr.length() > 512) {
