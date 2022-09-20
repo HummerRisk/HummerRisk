@@ -409,7 +409,7 @@ public class CloudTaskService {
                     }
 
                     quartzTaskRelation.setTaskIds(jsonArray.toJSONString());
-                    quartzTaskRelationMapper.updateByPrimaryKeySelective(quartzTaskRelation);
+                    quartzTaskRelationMapper.updateByPrimaryKeyWithBLOBs(quartzTaskRelation);
 
                     CloudAccountQuartzTaskRelaLog quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLog();
                     quartzTaskRelaLog.setCreateTime(System.currentTimeMillis());
@@ -463,7 +463,7 @@ public class CloudTaskService {
 
                     jsonArray.add(cloudTask.getId());
                     quartzTaskRelation.setTaskIds(jsonArray.toJSONString());
-                    quartzTaskRelationMapper.updateByPrimaryKeySelective(quartzTaskRelation);
+                    quartzTaskRelationMapper.updateByPrimaryKeyWithBLOBs(quartzTaskRelation);
 
                     CloudAccountQuartzTaskRelaLog quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLog();
                     quartzTaskRelaLog.setCreateTime(System.currentTimeMillis());

@@ -95,7 +95,7 @@ public class K8sService {
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         result.setUserName(SessionUtils.getUser().getName());
-        cloudNativeResultMapper.updateByPrimaryKeySelective(result);
+        cloudNativeResultMapper.updateByPrimaryKeyWithBLOBs(result);
 
         reScanDeleteCloudNativeResult(id);
 

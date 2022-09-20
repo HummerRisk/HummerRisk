@@ -172,7 +172,7 @@ public class ServerService {
             result.setReturnLog(returnLog);
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
-            serverResultMapper.updateByPrimaryKeySelective(result);
+            serverResultMapper.updateByPrimaryKeyWithBLOBs(result);
 
             noticeService.createServerMessageOrder(result);
 
@@ -183,7 +183,7 @@ public class ServerService {
             LogUtil.error(e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
-            serverResultMapper.updateByPrimaryKeySelective(result);
+            serverResultMapper.updateByPrimaryKeyWithBLOBs(result);
             historyService.updateHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
             saveServerResultLog(result.getId(), "i18n_operation_ex" + ": " + StringUtils.substring(e.getMessage(), 0, 900) + "...", e.getMessage(), false);
         }
@@ -194,7 +194,7 @@ public class ServerService {
         saveServerResultLog(result.getId(), "i18n_restart_server_result", "", true);
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-        serverResultMapper.updateByPrimaryKeySelective(result);
+        serverResultMapper.updateByPrimaryKeyWithBLOBs(result);
         OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.RESCAN, "i18n_restart_server_result");
         return result.getId();
     }
@@ -418,7 +418,7 @@ public class ServerService {
         BeanUtils.copyBean(record, request);
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
-        return serverRuleMapper.updateByPrimaryKeySelective(record);
+        return serverRuleMapper.updateByPrimaryKeyWithBLOBs(record);
     }
 
     public void deleteServerRule(String id) throws Exception {
@@ -427,7 +427,7 @@ public class ServerService {
     }
 
     public int changeStatus(ServerRule rule) throws Exception {
-        return serverRuleMapper.updateByPrimaryKeySelective(rule);
+        return serverRuleMapper.updateByPrimaryKeyWithBLOBs(rule);
     }
 
     public List<ServerResultDTO> resultList(ServerResultRequest request) {

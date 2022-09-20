@@ -25,7 +25,7 @@ public class SSLSocketFactoryImp extends SSLSocketFactory {
     }
 
     public X509TrustManager getTrustManager() {
-        return (X509TrustManager)trustManager;
+        return (X509TrustManager) trustManager;
     }
 
     public SSLSocketFactoryImp(KeyStore keyStore) throws NoSuchAlgorithmException, KeyManagementException {

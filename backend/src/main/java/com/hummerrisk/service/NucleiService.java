@@ -154,7 +154,7 @@ public class NucleiService {
 
                         sc = yaml.dump(map);
                         taskItemWithBLOBs.setDetails(sc);
-                        cloudTaskItemMapper.updateByPrimaryKeySelective(taskItemWithBLOBs);
+                        cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItemWithBLOBs);
 
                         try {
                             historyService.updateHistoryVulnTaskItem(BeanUtils.copyBean(new HistoryVulnTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
@@ -400,7 +400,7 @@ public class NucleiService {
             }
 
             if (resourceWithBLOBs.getId() != null) {
-                resourceMapper.updateByPrimaryKeySelective(resourceWithBLOBs);
+                resourceMapper.updateByPrimaryKeyWithBLOBs(resourceWithBLOBs);
             } else {
                 resourceWithBLOBs.setId(UUIDUtil.newUUID());
                 resourceMapper.insertSelective(resourceWithBLOBs);
@@ -435,7 +435,7 @@ public class NucleiService {
             List<ResourceItem> resourceItems = resourceItemMapper.selectByExampleWithBLOBs(example);
             if (!resourceItems.isEmpty()) {
                 resourceItem.setId(resourceItems.get(0).getId());
-                resourceItemMapper.updateByPrimaryKeySelective(resourceItem);
+                resourceItemMapper.updateByPrimaryKeyWithBLOBs(resourceItem);
             } else {
                 resourceItem.setId(UUIDUtil.newUUID());
                 resourceItem.setCreateTime(System.currentTimeMillis());
@@ -450,7 +450,7 @@ public class NucleiService {
 
     private void insertTaskItemResource(CloudTaskItemResourceWithBLOBs taskItemResource) throws Exception {
         if (taskItemResource.getId() != null) {
-            cloudTaskItemResourceMapper.updateByPrimaryKeySelective(taskItemResource);
+            cloudTaskItemResourceMapper.updateByPrimaryKeyWithBLOBs(taskItemResource);
 
             historyService.updateHistoryVulnTaskResource(BeanUtils.copyBean(new HistoryVulnTaskResourceWithBLOBs(), taskItemResource));
         } else {

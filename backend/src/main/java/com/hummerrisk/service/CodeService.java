@@ -99,7 +99,7 @@ public class CodeService {
         code.setStatus("VALID");
 
         OperationLogService.log(SessionUtils.getUser(), code.getId(), code.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.UPDATE, "i18n_update_code");
-        codeMapper.updateByPrimaryKeySelective(code);
+        codeMapper.updateByPrimaryKeyWithBLOBs(code);
         return code;
     }
 

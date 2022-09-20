@@ -42,49 +42,71 @@ import static com.alibaba.fastjson.JSON.parseArray;
 @Transactional(rollbackFor = Exception.class)
 public class RuleService {
 
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private RuleMapper ruleMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private RuleTagMapper ruleTagMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private RuleTagMappingMapper ruleTagMappingMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private PluginMapper pluginMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private ExtRuleMapper extRuleMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private RuleTypeMapper ruleTypeMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private ExtRuleTagMapper extRuleTagMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private ExtRuleTypeMapper extRuleTypeMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private CloudTaskService cloudTaskService;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private ResourceRuleMapper resourceRuleMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private CommonThreadPool commonThreadPool;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private AccountMapper accountMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private AccountService accountService;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private RuleGroupMapper ruleGroupMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private RuleGroupMappingMapper ruleGroupMappingMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private RuleInspectionReportMapper ruleInspectionReportMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private RuleInspectionReportMappingMapper ruleInspectionReportMappingMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private ExtRuleGroupMapper extRuleGroupMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private CloudTaskItemMapper cloudTaskItemMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private NoticeService noticeService;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private HistoryService historyService;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private CloudTaskMapper cloudTaskMapper;
 
     public List<RuleDTO> cloudList(CreateRuleRequest ruleRequest) {
@@ -178,7 +200,7 @@ public class RuleService {
                         }
                     }
                 }
-            } else if(StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.nuclei.name())){
+            } else if (StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.nuclei.name())) {
                 String resourceType = "nuclei";
                 example.createCriteria().andRuleIdEqualTo(ruleRequest.getId()).andResourceTypeEqualTo(resourceType);
                 List<RuleType> ruleTypes = ruleTypeMapper.selectByExample(example);
@@ -187,7 +209,7 @@ public class RuleService {
                     ruleType.setResourceType(resourceType);
                     ruleTypeMapper.insertSelective(ruleType);
                 }
-            }  else if(StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.xray.name())){
+            } else if (StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.xray.name())) {
                 String groupName = "xss";
                 JSONArray jsonArray = JSON.parseArray(ruleRequest.getParameter());
                 for (Object o : jsonArray) {
@@ -201,7 +223,7 @@ public class RuleService {
                     ruleType.setResourceType(groupName);
                     ruleTypeMapper.insertSelective(ruleType);
                 }
-            }  else if(StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.tsunami.name())){
+            } else if (StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.tsunami.name())) {
                 String resourceType = "tsunami";
                 example.createCriteria().andRuleIdEqualTo(ruleRequest.getId()).andResourceTypeEqualTo(resourceType);
                 List<RuleType> ruleTypes = ruleTypeMapper.selectByExample(example);
@@ -210,7 +232,7 @@ public class RuleService {
                     ruleType.setResourceType(resourceType);
                     ruleTypeMapper.insertSelective(ruleType);
                 }
-            } else if(StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.prowler.name())){
+            } else if (StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.prowler.name())) {
                 String resourceType = "prowler";
                 example.createCriteria().andRuleIdEqualTo(ruleRequest.getId()).andResourceTypeEqualTo(resourceType);
                 List<RuleType> ruleTypes = ruleTypeMapper.selectByExample(example);
@@ -520,10 +542,13 @@ public class RuleService {
     public List<RuleInspectionReport> getRuleInspectionReport(RuleInspectionReport ruleInspectionReport) {
         RuleInspectionReportExample example = new RuleInspectionReportExample();
         RuleInspectionReportExample.Criteria criteria = example.createCriteria();
-        if(ruleInspectionReport.getProject()!=null) criteria.andProjectLike(ruleInspectionReport.getProject());
-        if(ruleInspectionReport.getItemSortFirstLevel()!=null) criteria.andItemSortFirstLevelLike(ruleInspectionReport.getItemSortFirstLevel());
-        if(ruleInspectionReport.getItemSortSecondLevel()!=null) criteria.andItemSortSecondLevelLike(ruleInspectionReport.getItemSortSecondLevel());
-        if(ruleInspectionReport.getImprovement()!=null) criteria.andImprovementLike(ruleInspectionReport.getImprovement());
+        if (ruleInspectionReport.getProject() != null) criteria.andProjectLike(ruleInspectionReport.getProject());
+        if (ruleInspectionReport.getItemSortFirstLevel() != null)
+            criteria.andItemSortFirstLevelLike(ruleInspectionReport.getItemSortFirstLevel());
+        if (ruleInspectionReport.getItemSortSecondLevel() != null)
+            criteria.andItemSortSecondLevelLike(ruleInspectionReport.getItemSortSecondLevel());
+        if (ruleInspectionReport.getImprovement() != null)
+            criteria.andImprovementLike(ruleInspectionReport.getImprovement());
         return ruleInspectionReportMapper.selectByExample(example);
     }
 
@@ -608,7 +633,7 @@ public class RuleService {
         }
     }
 
-    private String dealTask (RuleDTO rule, AccountWithBLOBs account, Integer scanId, String messageOrderId) {
+    private String dealTask(RuleDTO rule, AccountWithBLOBs account, Integer scanId, String messageOrderId) {
         try {
             if (rule.getStatus()) {
                 QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
@@ -616,7 +641,7 @@ public class RuleService {
                 List<SelectTag> selectTags = new LinkedList<>();
                 SelectTag s = new SelectTag();
                 s.setAccountId(account.getId());
-                JSONArray array = parseArray(rule.getRegions()!=null?rule.getRegions():account.getRegions());
+                JSONArray array = parseArray(rule.getRegions() != null ? rule.getRegions() : account.getRegions());
                 JSONObject object;
                 List<String> regions = new ArrayList<>();
                 for (int i = 0; i < array.size(); i++) {
@@ -686,7 +711,7 @@ public class RuleService {
             ids.add(groupMapping.getRuleId());
         }
         RuleExample ruleExample = new RuleExample();
-        if (ids.size()>0) {
+        if (ids.size() > 0) {
             ruleExample.createCriteria().andIdIn(ids);
             return ruleMapper.selectByExample(ruleExample);
         }

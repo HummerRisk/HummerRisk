@@ -113,7 +113,7 @@ public class VulnService {
     public List<Map<String, Object>> historyList(Map<String, Object> params) {
         List<Map<String, Object>> list = extVulnMapper.historyList(params);
         for (Map<String, Object> map : list) {
-            if(map.get("rsources") != null) {
+            if (map.get("rsources") != null) {
                 map.put("rsources", toJSONString2(map.get("rsources").toString()));
             }
         }
@@ -123,7 +123,7 @@ public class VulnService {
     public List<Map<String, Object>> historyDiffList(Map<String, Object> params) {
         List<Map<String, Object>> list = extVulnMapper.historyDiffList(params);
         for (Map<String, Object> map : list) {
-            if(map.get("rsources") != null) {
+            if (map.get("rsources") != null) {
                 map.put("rsources", toJSONString2(map.get("rsources").toString()));
             }
         }

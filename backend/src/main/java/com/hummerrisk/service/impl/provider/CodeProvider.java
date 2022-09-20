@@ -22,12 +22,12 @@ public class CodeProvider implements IProvider {
         return name;
     }
 
-    public String execute(Object ...obj) {
+    public String execute(Object... obj) {
         Code code = (Code) obj[0];
         try {
             Proxy proxy;
             String _proxy = "";
-            if(code.getProxyId()!=null) {
+            if (code.getProxyId() != null) {
                 proxy = (Proxy) obj[1];
                 _proxy = ProxyUtil.isProxy(proxy);
             }
@@ -35,25 +35,25 @@ public class CodeProvider implements IProvider {
             codeRequest.setCredential(code.getCredential());
             CodeCredential codeCredential = codeRequest.getCodeClient();
             String token = "", branch = "";
-            if(codeCredential !=null && !codeCredential.getToken().isEmpty()) {
+            if (codeCredential != null && codeCredential.getToken() != null) {
                 if (StringUtils.equals(code.getPluginIcon(), CodeConstants.GITHUB_TOKEN)) {
                     token = "export GITHUB_TOKEN=" + codeCredential.getToken() + "\n";
                 } else if (StringUtils.equals(code.getPluginIcon(), CodeConstants.GITLAB_TOKEN)) {
                     token = "export GITLAB_TOKEN=" + codeCredential.getToken() + "\n";
                 }
             }
-            if(codeCredential !=null && !codeCredential.getBranch().isEmpty()) {
+            if (codeCredential != null && codeCredential.getBranch() != null) {
                 branch = TrivyConstants.BRANCH + codeCredential.getBranch();
-            } else if(codeCredential !=null && !codeCredential.getCommit().isEmpty()) {
+            } else if (codeCredential != null && codeCredential.getCommit() != null) {
                 branch = TrivyConstants.COMMIT + codeCredential.getCommit();
-            } else if(codeCredential !=null && !codeCredential.getTag().isEmpty()) {
+            } else if (codeCredential != null && codeCredential.getTag() != null) {
                 branch = TrivyConstants.TAG + codeCredential.getTag();
             }
             CommandUtils.commonExecCmdWithResult(TrivyConstants.TRIVY_RM + TrivyConstants.TRIVY_JSON, TrivyConstants.DEFAULT_BASE_DIR);
             String command = _proxy + token + TrivyConstants.TRIVY_REPO + TrivyConstants.SKIP_DB_UPDATE + TrivyConstants.OFFLINE_SCAN + TrivyConstants.SECURITY_CHECKS + branch + " " + codeCredential.getUrl() + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
             LogUtil.info(code.getId() + " {code scan}[command]: " + code.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
-            if(resultStr.contains("ERROR") || resultStr.contains("error")) {
+            if (resultStr.contains("ERROR") || resultStr.contains("error")) {
                 throw new Exception(resultStr);
             }
             return resultStr;

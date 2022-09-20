@@ -134,7 +134,7 @@ public class XrayService {
                     }
 
                     taskItemWithBLOBs.setDetails(finalScript);
-                    cloudTaskItemMapper.updateByPrimaryKeySelective(taskItemWithBLOBs);
+                    cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItemWithBLOBs);
 
                     try {
                         historyService.updateHistoryVulnTaskItem(BeanUtils.copyBean(new HistoryVulnTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
@@ -410,7 +410,7 @@ public class XrayService {
             }
 
             if (resourceWithBLOBs.getId() != null) {
-                resourceMapper.updateByPrimaryKeySelective(resourceWithBLOBs);
+                resourceMapper.updateByPrimaryKeyWithBLOBs(resourceWithBLOBs);
             } else {
                 resourceWithBLOBs.setId(UUIDUtil.newUUID());
                 resourceMapper.insertSelective(resourceWithBLOBs);
@@ -425,7 +425,7 @@ public class XrayService {
 
     private void insertTaskItemResource(CloudTaskItemResourceWithBLOBs taskItemResource) throws Exception {
         if (taskItemResource.getId() != null) {
-            cloudTaskItemResourceMapper.updateByPrimaryKeySelective(taskItemResource);
+            cloudTaskItemResourceMapper.updateByPrimaryKeyWithBLOBs(taskItemResource);
 
             historyService.updateHistoryVulnTaskResource(BeanUtils.copyBean(new HistoryVulnTaskResourceWithBLOBs(), taskItemResource));
         } else {

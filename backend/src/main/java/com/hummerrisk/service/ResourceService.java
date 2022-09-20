@@ -194,7 +194,7 @@ public class ResourceService {
             List<ResourceItem> resourceItems = resourceItemMapper.selectByExampleWithBLOBs(example);
             if (!resourceItems.isEmpty()) {
                 resourceItem.setId(resourceItems.get(0).getId());
-                resourceItemMapper.updateByPrimaryKeySelective(resourceItem);
+                resourceItemMapper.updateByPrimaryKeyWithBLOBs(resourceItem);
             } else {
                 resourceItem.setId(UUIDUtil.newUUID());
                 resourceItem.setCreateTime(System.currentTimeMillis());
@@ -221,7 +221,7 @@ public class ResourceService {
             }
 
             if (resourceWithBLOBs.getId() != null) {
-                resourceMapper.updateByPrimaryKeySelective(resourceWithBLOBs);
+                resourceMapper.updateByPrimaryKeyWithBLOBs(resourceWithBLOBs);
             } else {
                 resourceWithBLOBs.setId(UUIDUtil.newUUID());
                 resourceMapper.insertSelective(resourceWithBLOBs);
@@ -273,7 +273,7 @@ public class ResourceService {
 
     private void insertTaskItemResource(CloudTaskItemResourceWithBLOBs taskItemResource) throws Exception {
         if (taskItemResource.getId() != null) {
-            cloudTaskItemResourceMapper.updateByPrimaryKeySelective(taskItemResource);
+            cloudTaskItemResourceMapper.updateByPrimaryKeyWithBLOBs(taskItemResource);
 
             historyService.updateHistoryCloudTaskResource(BeanUtils.copyBean(new HistoryCloudTaskResourceWithBLOBs(), taskItemResource));
         } else {
@@ -340,11 +340,11 @@ public class ResourceService {
             } else {
                 resourceWithBLOBs.setResourceStatus(ResourceConstants.RESOURCE_STATUS.NotNeedFix.name());
             }
-            resourceMapper.updateByPrimaryKeySelective(resourceWithBLOBs);
+            resourceMapper.updateByPrimaryKeyWithBLOBs(resourceWithBLOBs);
             cloudTaskService.syncTaskSum();//资源（检测结果）数量变化的话要更新任务表的数据
         } catch (Exception e) {
             resourceWithBLOBs.setResourceStatus(ResourceConstants.RESOURCE_STATUS.Error.name());
-            resourceMapper.updateByPrimaryKeySelective(resourceWithBLOBs);
+            resourceMapper.updateByPrimaryKeyWithBLOBs(resourceWithBLOBs);
             HRException.throwException(e.getMessage());
         }
         return resourceWithBLOBs;

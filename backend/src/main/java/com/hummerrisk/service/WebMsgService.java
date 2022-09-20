@@ -23,7 +23,7 @@ public class WebMsgService {
         String orderClause = " create_time desc";
         WebMsgExample example = new WebMsgExample();
         WebMsgExample.Criteria criteria = example.createCriteria();
-        if(webMsg.getStatus()!=null) {
+        if (webMsg.getStatus() != null) {
             criteria.andStatusEqualTo(webMsg.getStatus());
         }
         example.setOrderByClause(orderClause);
@@ -35,7 +35,7 @@ public class WebMsgService {
         String orderClause = " create_time desc";
         WebMsgExample example = new WebMsgExample();
         WebMsgExample.Criteria criteria = example.createCriteria();
-        if(webMsg.getStatus()!=null) {
+        if (webMsg.getStatus() != null) {
             criteria.andStatusEqualTo(webMsg.getStatus());
         }
         example.setOrderByClause(orderClause);

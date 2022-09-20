@@ -157,7 +157,7 @@ public class NoticeCreateService {
                         handleMessageOrderItem(item);
                     }
                 }
-            } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), scanType)) {
+            } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), scanType)) {
                 ServerResult serverResult = serverResultMapper.selectByPrimaryKey(item.getTaskId());
                 if (StringUtils.equalsIgnoreCase(serverResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
                         || StringUtils.equalsIgnoreCase(serverResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.WARNING.name())
@@ -168,7 +168,7 @@ public class NoticeCreateService {
                 } else {
                     handleMessageOrderItem(item);
                 }
-            } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), scanType)) {
+            } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), scanType)) {
 
             }
 
@@ -209,15 +209,15 @@ public class NoticeCreateService {
             subject = "i18n_cloud_messageorder";
             returnSum = extCloudTaskMapper.getReturnSumForEmail(messageOrder);
             resourcesSum = extCloudTaskMapper.getResourcesSumForEmail(messageOrder);
-            details =  "i18n_cloud_messageorder_sum" + returnSum  + "/" + resourcesSum;
-        } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.VULN.name(), messageOrder.getScanType())) {
+            details = "i18n_cloud_messageorder_sum" + returnSum + "/" + resourcesSum;
+        } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.VULN.name(), messageOrder.getScanType())) {
             subject = "i18n_vuln_messageorder";
             returnSum = extCloudTaskMapper.getReturnSumForEmail(messageOrder);
             resourcesSum = extCloudTaskMapper.getResourcesSumForEmail(messageOrder);
-            details =  "i18n_cloud_messageorder_sum" + returnSum  + "/" + resourcesSum;
-        } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), messageOrder.getScanType())) {
+            details = "i18n_cloud_messageorder_sum" + returnSum + "/" + resourcesSum;
+        } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), messageOrder.getScanType())) {
             subject = "i18n_server_messageorder";
-        } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), messageOrder.getScanType())) {
+        } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), messageOrder.getScanType())) {
             subject = "i18n_image_messageorder";
         }
 
@@ -241,7 +241,7 @@ public class NoticeCreateService {
         msg.setStatus(false);
         msg.setType(subject);
         msg.setCreateTime(System.currentTimeMillis());
-        msg.setContent(subject + "【" + messageOrder.getAccountName() + "】" +  messageOrder.getStatus() + details);
+        msg.setContent(subject + "【" + messageOrder.getAccountName() + "】" + messageOrder.getStatus() + details);
         msg.setScanType(messageOrder.getScanType());
         webMsgMapper.insertSelective(msg);
         LogUtil.debug(Translator.get("i18n_end_msg") + messageOrder.getAccountName());

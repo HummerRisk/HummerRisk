@@ -21,20 +21,20 @@ public class ImageProvider implements IProvider {
         return name;
     }
 
-    public String execute(Object ...obj) {
+    public String execute(Object... obj) {
         Image image = (Image) obj[0];
         try {
             String _proxy = "";
             String dockerLogin = "";
-            if(image.getIsProxy()!=null && image.getIsProxy()) {
+            if (image.getIsProxy() != null && image.getIsProxy()) {
                 Proxy proxy = (Proxy) obj[1];
                 _proxy = ProxyUtil.isProxy(proxy);
             }
-            if(image.getRepoId()!=null) {
+            if (image.getRepoId() != null) {
                 ImageRepo imageRepo = (ImageRepo) obj[2];
                 String repo = imageRepo.getRepo().replace("https://", "").replace("http://", "");
-                if(repo.endsWith("/")){
-                    repo = repo.substring(0,repo.length()-1);
+                if (repo.endsWith("/")) {
+                    repo = repo.substring(0, repo.length() - 1);
                 }
                 dockerLogin = "docker login " + repo + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword() + "\n";
             }
@@ -48,7 +48,7 @@ public class ImageProvider implements IProvider {
             String command = _proxy + dockerLogin + TrivyConstants.TRIVY_IMAGE + TrivyConstants.UNFIXED + TrivyConstants.TRIVY_SKIP + fileName + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
             LogUtil.info(image.getId() + " {k8sImage}[command]: " + image.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
-            if(resultStr.contains("ERROR") || resultStr.contains("error")) {
+            if (resultStr.contains("ERROR") || resultStr.contains("error")) {
                 throw new Exception(resultStr);
             }
             return resultStr;
@@ -62,7 +62,7 @@ public class ImageProvider implements IProvider {
             ImageRepo imageRepo = (ImageRepo) obj;
             String repo = imageRepo.getRepo().replace("https://", "").replace("http://", "");
             if (repo.endsWith("/")) {
-                repo = repo.substring(0, repo.length()-1);
+                repo = repo.substring(0, repo.length() - 1);
             }
             String dockerLogin = "";
             if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "dockerhub.png")) {

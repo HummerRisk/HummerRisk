@@ -32,7 +32,7 @@ public class PluginService {
         PluginExample example = new PluginExample();
         example.setOrderByClause("order_");
         PluginExample.Criteria criteria = example.createCriteria();
-        if (scanType!=null) {
+        if (scanType != null) {
             if (StringUtils.equalsIgnoreCase(scanType, ScanTypeConstants.prowler.name())) {
                 criteria.andIdEqualTo(PlatformUtils.aws).andTypeNotEqualTo(PlatformUtils.native_);
             } else {
@@ -80,7 +80,7 @@ public class PluginService {
 
         PluginExample example = new PluginExample();
         example.setOrderByClause("order_");
-        if(request.getName()!=null) {
+        if (request.getName() != null) {
             PluginExample.Criteria criteria = example.createCriteria();
             criteria.andNameLike(request.getName());
         }

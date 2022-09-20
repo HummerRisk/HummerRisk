@@ -16,7 +16,7 @@ public class K8sProvider implements IProvider {
         return name;
     }
 
-    public String execute(Object ...obj) {
+    public String execute(Object... obj) {
         String str = "";
         return str;
     }

@@ -54,7 +54,7 @@ public class ProxyService {
     public List<Proxy> getProxyListWithRequest(Proxy request) {
         ProxyExample example = new ProxyExample();
         example.setOrderByClause("update_time desc");
-        if(request.getProxyIp() != null) example.createCriteria().andProxyIpLike("%" + request.getProxyIp() + "%");
+        if (request.getProxyIp() != null) example.createCriteria().andProxyIpLike("%" + request.getProxyIp() + "%");
         return proxyMapper.selectByExample(example);
     }
 

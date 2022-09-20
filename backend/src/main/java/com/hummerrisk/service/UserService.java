@@ -238,7 +238,7 @@ public class UserService {
 
     public void deleteUser(String userId) {
         SessionUser user = SessionUtils.getUser();
-        if(user == null) return;
+        if (user == null) return;
         if (StringUtils.equals(user.getId(), userId)) {
             HRException.throwException(Translator.get("cannot_delete_current_user"));
         }

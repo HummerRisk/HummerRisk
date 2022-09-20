@@ -162,13 +162,13 @@
         t7.name as accountName,
         t.*
         FROM resource_item t
-        LEFT JOIN resource t1 ON t1.id = t.resource_id
-        LEFT JOIN cloud_task_item_resource t2 ON t1.id = t2.resource_id
-        LEFT JOIN cloud_task_item t3 ON t3.id = t2.task_item_id
-        LEFT JOIN cloud_task t4 ON t3.task_id = t4.id
-        LEFT JOIN resource_rule t5 ON t1.id = t5.resource_id
-        LEFT JOIN rule t6 ON t5.rule_id = t6.id
-        LEFT JOIN cloud_account t7 ON t.account_id = t7.id
+        JOIN resource t1 ON t1.id = t.resource_id
+        JOIN cloud_task_item_resource t2 ON t1.id = t2.resource_id
+        JOIN cloud_task_item t3 ON t3.id = t2.task_item_id
+        JOIN cloud_task t4 ON t3.task_id = t4.id
+        JOIN resource_rule t5 ON t1.id = t5.resource_id
+        JOIN rule t6 ON t5.rule_id = t6.id
+        JOIN cloud_account t7 ON t.account_id = t7.id
         <where>
             <if test="taskId != null">
                 AND t4.id like CONCAT('%',#{taskId},'%')
@@ -527,8 +527,8 @@
                t2.task_name as name,
                sum(IFNULL(t1.return_sum, 0)) as sum
         FROM cloud_task_item_resource t
-        LEFT JOIN resource t1 ON t.resource_id = t1.id
-        LEFT JOIN cloud_task t2 ON t.task_id = t2.id
+        JOIN resource t1 ON t.resource_id = t1.id
+        JOIN cloud_task t2 ON t.task_id = t2.id
         WHERE t2.account_id = #{id}
         <if test="name != null">
             AND t2.task_name like CONCAT('%',#{name},'%')
@@ -540,7 +540,7 @@
     <select id="regulation" resultType="com.hummerrisk.base.domain.RuleInspectionReport" parameterType="java.lang.String">
         SELECT t.*
         FROM rule_inspection_report t
-        left join rule_inspection_report_mapping t1 on t.id = t1.report_id
+        JOIN rule_inspection_report_mapping t1 ON t.id = t1.report_id
         WHERE t1.rule_id = #{ruleId}
         ORDER BY id
     </select>

@@ -145,12 +145,12 @@ public class SbomService {
         CodeExample codeExample = new CodeExample();
         codeExample.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
         List<Code> codes = codeMapper.selectByExample(codeExample);
-        for(Code code : codes) {
+        for (Code code : codes) {
             code.setSbomId("");
             code.setSbomVersionId("");
             codeMapper.updateByPrimaryKeySelective(code);
         }
-        for(String id : request.getCodeValue()) {
+        for (String id : request.getCodeValue()) {
             Code code = codeMapper.selectByPrimaryKey(id);
             code.setSbomId(sbomId);
             code.setSbomVersionId(sbomVersionId);
@@ -160,12 +160,12 @@ public class SbomService {
         ImageExample imageExample = new ImageExample();
         imageExample.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
         List<Image> images = imageMapper.selectByExample(imageExample);
-        for(Image image : images) {
+        for (Image image : images) {
             image.setSbomId("");
             image.setSbomVersionId("");
             imageMapper.updateByPrimaryKeySelective(image);
         }
-        for(String id : request.getImageValue()) {
+        for (String id : request.getImageValue()) {
             Image image = imageMapper.selectByPrimaryKey(id);
             image.setSbomId(sbomId);
             image.setSbomVersionId(sbomVersionId);
@@ -217,11 +217,11 @@ public class SbomService {
         return historyImageTaskLogMapper.selectByExampleWithBLOBs(example);
     }
 
-    public MetricChartDTO codeMetricChart (String resultId) {
+    public MetricChartDTO codeMetricChart(String resultId) {
         return extSbomMapper.codeMetricChart(resultId);
     }
 
-    public MetricChartDTO imageMetricChart (String resultId) {
+    public MetricChartDTO imageMetricChart(String resultId) {
         return extSbomMapper.imageMetricChart(resultId);
     }
 
@@ -232,7 +232,7 @@ public class SbomService {
             str = codeResult.getReturnJson();
         } else if (StringUtils.equalsIgnoreCase(request.getType(), "image")) {
             HistoryImageTaskWithBLOBs imageTask = historyImageTaskMapper.selectByPrimaryKey(request.getSourceId());
-            str = imageTask.getTrivyJson()!=null?imageTask.getTrivyJson():"";
+            str = imageTask.getTrivyJson() != null ? imageTask.getTrivyJson() : "";
         }
         return str;
     }

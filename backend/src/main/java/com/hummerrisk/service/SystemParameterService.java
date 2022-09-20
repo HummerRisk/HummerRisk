@@ -364,7 +364,7 @@ public class SystemParameterService {
 
     public void updateSystem() throws Exception {
         ConcurrentHashMap<String, String> maps = sysListener.getMaps();
-        maps.forEach((key,value)-> {
+        maps.forEach((key, value) -> {
             if (!value.isEmpty() && !value.contains("null") && !value.contains("NaN")) {
                 SystemParameterExample example = new SystemParameterExample();
                 example.createCriteria().andParamKeyEqualTo(key);

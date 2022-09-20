@@ -18,12 +18,12 @@ public class ConfigProvider implements IProvider {
         return name;
     }
 
-    public String execute(Object ...obj) {
+    public String execute(Object... obj) {
         CloudNativeConfig cloudNativeConfig = (CloudNativeConfig) obj[0];
         try {
             Proxy proxy;
             String _proxy = "";
-            if(cloudNativeConfig.getProxyId()!=null) {
+            if (cloudNativeConfig.getProxyId() != null) {
                 proxy = (Proxy) obj[1];
                 _proxy = ProxyUtil.isProxy(proxy);
             }
@@ -32,7 +32,7 @@ public class ConfigProvider implements IProvider {
             String command = _proxy + TrivyConstants.TRIVY_CONFIG + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_YAML + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
             LogUtil.info(cloudNativeConfig.getId() + " {k8sConfig}[command]: " + cloudNativeConfig.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
-            if(resultStr.contains("ERROR") || resultStr.contains("error")) {
+            if (resultStr.contains("ERROR") || resultStr.contains("error")) {
                 throw new Exception(resultStr);
             }
             return resultStr;

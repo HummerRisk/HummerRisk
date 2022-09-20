@@ -100,7 +100,7 @@ public class HistoryService {
         historyScan.setResourcesSum(Long.valueOf(extResourceMapper.sumResourcesSum(historyScan.getId())));
         historyScan.setReturnSum(Long.valueOf(extResourceMapper.sumReturnSum(historyScan.getId())));
         historyScan.setScanScore(extResourceMapper.sumScanScore(historyScan.getId()));
-        historyScanMapper.updateByPrimaryKeySelective(historyScan);
+        historyScanMapper.updateByPrimaryKeyWithBLOBs(historyScan);
         return historyScan.getId();
     }
 
@@ -117,7 +117,7 @@ public class HistoryService {
 
     public void updateScanTaskHistory (HistoryScanTask historyScanTask) throws Exception {
         try{
-            historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
+            historyScanTaskMapper.updateByPrimaryKeyWithBLOBs(historyScanTask);
         }catch (Exception e){
             throw new Exception(e.getMessage());
         }
@@ -339,7 +339,7 @@ public class HistoryService {
 
     public void updateHistoryCloudTaskItem(HistoryCloudTaskItemWithBLOBs historyCloudTaskItem) throws Exception {
         try {
-            historyCloudTaskItemMapper.updateByPrimaryKeySelective(historyCloudTaskItem);
+            historyCloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(historyCloudTaskItem);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -364,7 +364,7 @@ public class HistoryService {
 
     public void updateHistoryCloudTaskResource(HistoryCloudTaskResourceWithBLOBs historyCloudTaskResource) throws Exception {
         try {
-            historyCloudTaskResourceMapper.updateByPrimaryKeySelective(historyCloudTaskResource);
+            historyCloudTaskResourceMapper.updateByPrimaryKeyWithBLOBs(historyCloudTaskResource);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -396,7 +396,7 @@ public class HistoryService {
 
     public void updateHistoryVulnTaskItem(HistoryVulnTaskItemWithBLOBs historyVulnTaskItemWithBLOBs) throws Exception {
         try {
-            historyVulnTaskItemMapper.updateByPrimaryKeySelective(historyVulnTaskItemWithBLOBs);
+            historyVulnTaskItemMapper.updateByPrimaryKeyWithBLOBs(historyVulnTaskItemWithBLOBs);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -421,7 +421,7 @@ public class HistoryService {
 
     public void updateHistoryVulnTaskResource(HistoryVulnTaskResourceWithBLOBs historyVulnTaskResource) throws Exception {
         try {
-            historyVulnTaskResourceMapper.updateByPrimaryKeySelective(historyVulnTaskResource);
+            historyVulnTaskResourceMapper.updateByPrimaryKeyWithBLOBs(historyVulnTaskResource);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -432,7 +432,7 @@ public class HistoryService {
     }
 
     public void updateHistoryServerTask(HistoryServerTask record) {
-        historyServerTaskMapper.updateByPrimaryKeySelective(record);
+        historyServerTaskMapper.updateByPrimaryKeyWithBLOBs(record);
     }
 
     public void insertHistoryServerTaskLog(HistoryServerTaskLog record) {
@@ -444,7 +444,7 @@ public class HistoryService {
     }
 
     public void updateHistoryImageTask(HistoryImageTaskWithBLOBs record) {
-        historyImageTaskMapper.updateByPrimaryKeySelective(record);
+        historyImageTaskMapper.updateByPrimaryKeyWithBLOBs(record);
     }
 
     public void insertHistoryImageTaskLog(HistoryImageTaskLog record) {
@@ -456,7 +456,7 @@ public class HistoryService {
     }
 
     public void updateHistoryCloudNativeResult(HistoryCloudNativeResultWithBLOBs record) {
-        historyCloudNativeResultMapper.updateByPrimaryKeySelective(record);
+        historyCloudNativeResultMapper.updateByPrimaryKeyWithBLOBs(record);
     }
 
     public void insertHistoryCloudNativeResultItem(HistoryCloudNativeResultItem historyCloudNativeResultItem) throws Exception {
@@ -469,7 +469,7 @@ public class HistoryService {
 
     public void updateHistoryCloudNativeResultItem(HistoryCloudNativeResultItem historyCloudNativeResultItem) throws Exception {
         try {
-            historyCloudNativeResultItemMapper.updateByPrimaryKeySelective(historyCloudNativeResultItem);
+            historyCloudNativeResultItemMapper.updateByPrimaryKeyWithBLOBs(historyCloudNativeResultItem);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -484,7 +484,7 @@ public class HistoryService {
     }
 
     public void updateHistoryCloudNativeConfigResult(HistoryCloudNativeConfigResult record) {
-        historyCloudNativeConfigResultMapper.updateByPrimaryKeySelective(record);
+        historyCloudNativeConfigResultMapper.updateByPrimaryKeyWithBLOBs(record);
     }
 
     public void insertHistoryCloudNativeConfigResultLog(HistoryCloudNativeConfigResultLog record) {
@@ -496,7 +496,7 @@ public class HistoryService {
     }
 
     public void updateHistoryCodeResult(HistoryCodeResult record) {
-        historyCodeResultMapper.updateByPrimaryKeySelective(record);
+        historyCodeResultMapper.updateByPrimaryKeyWithBLOBs(record);
     }
 
     public void insertHistoryCodeResultLog(HistoryCodeResultLog record) {

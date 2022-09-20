@@ -410,7 +410,7 @@ public class ResourceCreateService {
             long count = historyScanTaskMapper.countByExample(historyScanTaskExample);
             if(historyScanTasks.size() == count) {
                 historyScan.setStatus(TaskConstants.TASK_STATUS.FINISHED.name());
-                historyScanMapper.updateByPrimaryKeySelective(historyScan);
+                historyScanMapper.updateByPrimaryKeyWithBLOBs(historyScan);
                 historyService.updateScanHistory(historyScan);
             }
             historyIdMap.remove(historyScanToBeProceed.getId());

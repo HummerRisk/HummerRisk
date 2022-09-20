@@ -100,7 +100,7 @@ public class DashboardService {
     public List<HistoryScanDTO> history(Map<String, Object> params) {
         List<HistoryScanDTO> historyList = extVulnMapper.history(params);
         for (HistoryScanDTO scanHistory : historyList) {
-            scanHistory.setOutput(toJSONString2(scanHistory.getOutput()!=null?scanHistory.getOutput():"[]"));
+            scanHistory.setOutput(toJSONString2(scanHistory.getOutput() != null ? scanHistory.getOutput() : "[]"));
         }
         return historyList;
     }
@@ -108,7 +108,7 @@ public class DashboardService {
     public List<HistoryScanDTO> vulnHistory(Map<String, Object> params) {
         List<HistoryScanDTO> historyList = extVulnMapper.vulnHistory(params);
         for (HistoryScanDTO scanHistory : historyList) {
-            scanHistory.setOutput(toJSONString2(scanHistory.getOutput()!=null?scanHistory.getOutput():"[]"));
+            scanHistory.setOutput(toJSONString2(scanHistory.getOutput() != null ? scanHistory.getOutput() : "[]"));
         }
         return historyList;
     }
@@ -170,7 +170,7 @@ public class DashboardService {
         CloudTaskExample cloudTaskExample = new CloudTaskExample();
         cloudTaskExample.createCriteria().andStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
         List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(cloudTaskExample);
-        for(CloudTask cloudTask : cloudTasks) {
+        for (CloudTask cloudTask : cloudTasks) {
             if (PlatformUtils.isSupportVuln(cloudTask.getPluginId())) {
                 sum = sum + historyService.calculateScore(cloudTask.getId(), cloudTask, TaskEnum.vulnAccount.getType());
             } else {
@@ -181,41 +181,41 @@ public class DashboardService {
         CloudNativeResultExample cloudNativeResultExample = new CloudNativeResultExample();
         cloudNativeResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
         List<CloudNativeResult> cloudNativeResults = cloudNativeResultMapper.selectByExample(cloudNativeResultExample);
-        for(CloudNativeResult cloudNativeResult : cloudNativeResults) {
+        for (CloudNativeResult cloudNativeResult : cloudNativeResults) {
             sum = sum + historyService.calculateScore(cloudNativeResult.getId(), cloudNativeResult, TaskEnum.k8sAccount.getType());
         }
 
         CloudNativeConfigResultExample cloudNativeConfigResultExample = new CloudNativeConfigResultExample();
         cloudNativeConfigResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
         List<CloudNativeConfigResult> cloudNativeConfigResults = cloudNativeConfigResultMapper.selectByExample(cloudNativeConfigResultExample);
-        for(CloudNativeConfigResult cloudNativeConfigResult : cloudNativeConfigResults) {
+        for (CloudNativeConfigResult cloudNativeConfigResult : cloudNativeConfigResults) {
             sum = sum + historyService.calculateScore(cloudNativeConfigResult.getId(), cloudNativeConfigResult, TaskEnum.configAccount.getType());
         }
 
         ServerResultExample serverResultExample = new ServerResultExample();
         serverResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
         List<ServerResult> serverResults = serverResultMapper.selectByExample(serverResultExample);
-        for(ServerResult serverResult : serverResults) {
+        for (ServerResult serverResult : serverResults) {
             sum = sum + historyService.calculateScore(serverResult.getId(), serverResult, TaskEnum.serverAccount.getType());
         }
 
         ImageResultExample imageResultExample = new ImageResultExample();
         imageResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
         List<ImageResult> imageResults = imageResultMapper.selectByExample(imageResultExample);
-        for(ImageResult imageResult : imageResults) {
+        for (ImageResult imageResult : imageResults) {
             sum = sum + historyService.calculateScore(imageResult.getId(), imageResult, TaskEnum.imageAccount.getType());
         }
 
         CodeResultExample codeResultExample = new CodeResultExample();
         codeResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
         List<CodeResult> codeResults = codeResultMapper.selectByExample(codeResultExample);
-        for(CodeResult codeResult : codeResults) {
+        for (CodeResult codeResult : codeResults) {
             sum = sum + historyService.calculateScore(codeResult.getId(), codeResult, TaskEnum.codeAccount.getType());
         }
 
         count = cloudTasks.size() + cloudNativeResults.size() + cloudNativeConfigResults.size() + serverResults.size() + imageResults.size() + codeResults.size();
 
-        if(count != 0) score = Math.round(sum / count);
+        if (count != 0) score = Math.round(sum / count);
 
         return score;
     }
@@ -273,18 +273,18 @@ public class DashboardService {
 
     public AnslysisVo queryAnalysis() {
         AnslysisVo anslysisVo = new AnslysisVo();
-        anslysisVo.setColor(getValue(ParamConstants.ANALYSIS.COLOR.getKey()) != null?getValue(ParamConstants.ANALYSIS.COLOR.getKey()):ParamConstants.ANALYSIS.color);
-        anslysisVo.setCycle(getValue(ParamConstants.ANALYSIS.CYCLE.getKey()) != null?Integer.valueOf(getValue(ParamConstants.ANALYSIS.CYCLE.getKey())): ParamConstants.ANALYSIS.cycle);
+        anslysisVo.setColor(getValue(ParamConstants.ANALYSIS.COLOR.getKey()) != null ? getValue(ParamConstants.ANALYSIS.COLOR.getKey()) : ParamConstants.ANALYSIS.color);
+        anslysisVo.setCycle(getValue(ParamConstants.ANALYSIS.CYCLE.getKey()) != null ? Integer.valueOf(getValue(ParamConstants.ANALYSIS.CYCLE.getKey())) : ParamConstants.ANALYSIS.cycle);
         List<Boolean> list = new ArrayList<Boolean>();
-        if(getValue(ParamConstants.ANALYSIS.IDS.getKey()) != null) {
+        if (getValue(ParamConstants.ANALYSIS.IDS.getKey()) != null) {
             String[] strs = getValue(ParamConstants.ANALYSIS.IDS.getKey()).split(",");
             for (String s : strs) {
                 list.add(Boolean.parseBoolean(s.trim()));
             }
         }
-        anslysisVo.setIds(getValue(ParamConstants.ANALYSIS.IDS.getKey()) != null?list: ParamConstants.ANALYSIS.ids);
-        anslysisVo.setTypes(getValue(ParamConstants.ANALYSIS.TYPES.getKey()) != null?Arrays.asList(getValue(ParamConstants.ANALYSIS.TYPES.getKey()).replace(" ", "").split(",")): ParamConstants.ANALYSIS.types);
-        anslysisVo.setUsers(getValue(ParamConstants.ANALYSIS.USERS.getKey()) != null?Arrays.asList(getValue(ParamConstants.ANALYSIS.USERS.getKey()).replace(" ", "").split(",")):ParamConstants.ANALYSIS.users);
+        anslysisVo.setIds(getValue(ParamConstants.ANALYSIS.IDS.getKey()) != null ? list : ParamConstants.ANALYSIS.ids);
+        anslysisVo.setTypes(getValue(ParamConstants.ANALYSIS.TYPES.getKey()) != null ? Arrays.asList(getValue(ParamConstants.ANALYSIS.TYPES.getKey()).replace(" ", "").split(",")) : ParamConstants.ANALYSIS.types);
+        anslysisVo.setUsers(getValue(ParamConstants.ANALYSIS.USERS.getKey()) != null ? Arrays.asList(getValue(ParamConstants.ANALYSIS.USERS.getKey()).replace(" ", "").split(",")) : ParamConstants.ANALYSIS.users);
         return anslysisVo;
     }
 

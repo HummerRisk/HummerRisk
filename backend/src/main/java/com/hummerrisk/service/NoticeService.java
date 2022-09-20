@@ -144,7 +144,7 @@ public class NoticeService {
         return messageTaskMapper.deleteByExample(example);
     }
 
-    public String createMessageOrder (Account account) {
+    public String createMessageOrder(Account account) {
         MessageOrder messageOrder = new MessageOrder();
         String uuid = UUIDUtil.newUUID();
         messageOrder.setId(uuid);
@@ -162,13 +162,13 @@ public class NoticeService {
         return uuid;
     }
 
-    public void finishMessageOrder (MessageOrder messageOrder) {
+    public void finishMessageOrder(MessageOrder messageOrder) {
         messageOrder.setSendTime(System.currentTimeMillis());
         messageOrder.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
         messageOrderMapper.updateByPrimaryKeySelective(messageOrder);
     }
 
-    public void createMessageOrderItem (String messageOrderId, CloudTask cloudTask) {
+    public void createMessageOrderItem(String messageOrderId, CloudTask cloudTask) {
         MessageOrderItem messageOrderItem = new MessageOrderItem();
         messageOrderItem.setMessageOrderId(messageOrderId);
         messageOrderItem.setTaskId(cloudTask.getId());
@@ -178,13 +178,13 @@ public class NoticeService {
         messageOrderItemMapper.insertSelective(messageOrderItem);
     }
 
-    public void finishMessageOrderItem (MessageOrderItem messageOrderItem) {
+    public void finishMessageOrderItem(MessageOrderItem messageOrderItem) {
         messageOrderItem.setSendTime(System.currentTimeMillis());
         messageOrderItem.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
         messageOrderItemMapper.updateByPrimaryKeySelective(messageOrderItem);
     }
 
-    public void createServerMessageOrder (ServerResult result) {
+    public void createServerMessageOrder(ServerResult result) {
         MessageOrder messageOrder = new MessageOrder();
         String uuid = UUIDUtil.newUUID();
         messageOrder.setId(uuid);
@@ -204,7 +204,7 @@ public class NoticeService {
         messageOrderItemMapper.insertSelective(messageOrderItem);
     }
 
-    public void createImageMessageOrder (ImageResultWithBLOBs image) {
+    public void createImageMessageOrder(ImageResultWithBLOBs image) {
         MessageOrder messageOrder = new MessageOrder();
         String uuid = UUIDUtil.newUUID();
         messageOrder.setId(uuid);
@@ -224,7 +224,7 @@ public class NoticeService {
         messageOrderItemMapper.insertSelective(messageOrderItem);
     }
 
-    public void createCloudNativeMessageOrder (CloudNativeResult cloudNativeResult) {
+    public void createCloudNativeMessageOrder(CloudNativeResult cloudNativeResult) {
         MessageOrder messageOrder = new MessageOrder();
         String uuid = UUIDUtil.newUUID();
         messageOrder.setId(uuid);
@@ -244,7 +244,7 @@ public class NoticeService {
         messageOrderItemMapper.insertSelective(messageOrderItem);
     }
 
-    public void createCloudNativeConfigMessageOrder (CloudNativeConfigResult result) {
+    public void createCloudNativeConfigMessageOrder(CloudNativeConfigResult result) {
         MessageOrder messageOrder = new MessageOrder();
         String uuid = UUIDUtil.newUUID();
         messageOrder.setId(uuid);
@@ -264,7 +264,7 @@ public class NoticeService {
         messageOrderItemMapper.insertSelective(messageOrderItem);
     }
 
-    public void createCodeMessageOrder (CodeResult result) {
+    public void createCodeMessageOrder(CodeResult result) {
         MessageOrder messageOrder = new MessageOrder();
         String uuid = UUIDUtil.newUUID();
         messageOrder.setId(uuid);

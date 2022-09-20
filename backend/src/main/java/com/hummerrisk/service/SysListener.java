@@ -114,6 +114,7 @@ public class SysListener {
             e.printStackTrace();
         }
     }
+
     public static void printCpuPerc(CpuPerc cpu) {
         maps.put("system.cpuUse", "CPU用户使用率:    " + CpuPerc.format(cpu.getUser()));// 用户使用率
         maps.put("system.cpuSys", "CPU系统使用率:    " + CpuPerc.format(cpu.getSys()));// 系统使用率
@@ -254,7 +255,7 @@ public class SysListener {
         }
     }
 
-    public static ConcurrentHashMap<String, String> getMaps () throws Exception {
+    public static ConcurrentHashMap<String, String> getMaps() throws Exception {
         try {
 //            memory();
 //            readRAM();
@@ -529,8 +530,8 @@ public class SysListener {
         } finally {
             try {
                 assert buffer != null;
-                if(buffer != null) buffer.close();
-                if(inputs != null) inputs.close();
+                if (buffer != null) buffer.close();
+                if (inputs != null) inputs.close();
             } catch (Exception e2) {
                 e2.printStackTrace();
                 LogUtil.error(e2.getMessage());
