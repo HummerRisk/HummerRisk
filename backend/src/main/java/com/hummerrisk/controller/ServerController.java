@@ -6,9 +6,11 @@ import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
+import com.hummerrisk.controller.request.server.ServerCertificateRequest;
 import com.hummerrisk.controller.request.server.ServerRequest;
 import com.hummerrisk.controller.request.server.ServerResultRequest;
 import com.hummerrisk.controller.request.server.ServerRuleRequest;
+import com.hummerrisk.dto.ServerCertificateDTO;
 import com.hummerrisk.dto.ServerDTO;
 import com.hummerrisk.dto.ServerResultDTO;
 import com.hummerrisk.dto.ServerRuleDTO;
@@ -170,6 +172,41 @@ public class ServerController {
     @GetMapping("deleteServerResult/{id}")
     public void deleteServerResult(@PathVariable String id) throws Exception {
         serverService.deleteServerResult(id);
+    }
+
+    @ApiOperation(value = "所有虚拟机凭据")
+    @GetMapping("allCertificateList")
+    public List<ServerCertificate> allCertificateList() {
+        return serverService.allCertificateList();
+    }
+
+    @I18n
+    @ApiOperation(value = "虚拟机凭据列表")
+    @PostMapping("certificateList/{goPage}/{pageSize}")
+    public Pager<List<ServerCertificateDTO>> certificateList(
+            @PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerCertificateRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, serverService.certificateList(request));
+    }
+
+    @ApiOperation(value = "添加虚拟机凭据")
+    @PostMapping(value = "addCertificate", consumes = {"multipart/form-data"})
+    public int addCertificate(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
+                         @RequestPart("request") ServerCertificate request) throws Exception {
+        return serverService.addCertificate(keyFile, request);
+    }
+
+    @ApiOperation(value = "编辑虚拟机凭据")
+    @PostMapping(value = "editCertificate", consumes = {"multipart/form-data"})
+    public int editCertificate(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
+                          @RequestPart("request") ServerCertificate request) throws Exception {
+        return serverService.editCertificate(keyFile, request);
+    }
+
+    @ApiOperation(value = "删除虚拟机")
+    @GetMapping("deleteCertificate/{id}")
+    public void deleteCertificate(@PathVariable String id) throws Exception {
+        serverService.deleteCertificate(id);
     }
 
 }

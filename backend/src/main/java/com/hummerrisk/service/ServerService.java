@@ -5,19 +5,18 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
+import com.hummerrisk.base.mapper.ext.ExtServerCertificateMapper;
 import com.hummerrisk.base.mapper.ext.ExtServerMapper;
 import com.hummerrisk.base.mapper.ext.ExtServerResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtServerRuleMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
+import com.hummerrisk.controller.request.server.ServerCertificateRequest;
 import com.hummerrisk.controller.request.server.ServerRequest;
 import com.hummerrisk.controller.request.server.ServerResultRequest;
 import com.hummerrisk.controller.request.server.ServerRuleRequest;
-import com.hummerrisk.dto.ServerDTO;
-import com.hummerrisk.dto.ServerResultDTO;
-import com.hummerrisk.dto.ServerRuleDTO;
-import com.hummerrisk.dto.SshServerDTO;
+import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.proxy.server.SshUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -63,6 +62,10 @@ public class ServerService {
     private HistoryService historyService;
     @Resource
     private ImageService imageService;
+    @Resource
+    private ServerCertificateMapper serverCertificateMapper;
+    @Resource
+    private ExtServerCertificateMapper extServerCertificateMapper;
 
     public boolean validate(List<String> ids) {
         ids.forEach(id -> {
@@ -445,4 +448,56 @@ public class ServerService {
         example.createCriteria().andResultIdEqualTo(resultId);
         return serverResultLogMapper.selectByExampleWithBLOBs(example);
     }
+
+    public List<ServerCertificate> allCertificateList() {
+        return serverCertificateMapper.selectByExample(null);
+    }
+
+    public List<ServerCertificateDTO> certificateList(ServerCertificateRequest request) {
+        return extServerCertificateMapper.certificateList(request);
+    }
+
+    public int addCertificate(MultipartFile keyFile, ServerCertificate certificate) throws Exception {
+        String id = UUIDUtil.newUUID();
+        certificate.setId(id);
+        certificate.setCreator(SessionUtils.getUserId());
+        certificate.setLastModified(System.currentTimeMillis());
+
+        if (StringUtils.equalsIgnoreCase(certificate.getIsPublicKey(), "file")) {
+            String keyFilePath = imageService.upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
+            String publicKey = ReadFileUtils.readToBuffer(keyFilePath);
+            certificate.setPublicKeyPath(keyFilePath);
+            certificate.setPublicKey(publicKey);
+        } else if (StringUtils.equalsIgnoreCase(certificate.getIsPublicKey(), "str")) {
+            String uuid = UUIDUtil.newUUID();
+            CommandUtils.saveAsFile(certificate.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA);
+            certificate.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
+        }
+
+        OperationLogService.log(SessionUtils.getUser(), certificate.getId(), certificate.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_create_server");
+        return serverCertificateMapper.insertSelective(certificate);
+    }
+
+    public int editCertificate(MultipartFile keyFile, ServerCertificate certificate) throws Exception {
+        certificate.setLastModified(System.currentTimeMillis());
+        if (StringUtils.equalsIgnoreCase(certificate.getIsPublicKey(), "file")) {
+            String keyFilePath = imageService.upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
+            String publicKey = ReadFileUtils.readToBuffer(keyFilePath);
+            certificate.setPublicKeyPath(keyFilePath);
+            certificate.setPublicKey(publicKey);
+        } else if (StringUtils.equalsIgnoreCase(certificate.getIsPublicKey(), "str")) {
+            String uuid = UUIDUtil.newUUID();
+            CommandUtils.saveAsFile(certificate.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA);
+            certificate.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
+        }
+
+        OperationLogService.log(SessionUtils.getUser(), certificate.getId(), certificate.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "i18n_update_server");
+        return serverCertificateMapper.updateByPrimaryKeyWithBLOBs(certificate);
+    }
+
+    public void deleteCertificate(String id) throws Exception {
+        serverCertificateMapper.deleteByPrimaryKey(id);
+        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server");
+    }
+
 }
