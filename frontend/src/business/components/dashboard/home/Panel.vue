@@ -52,12 +52,12 @@
           </div>
         </div>
         <div class="title">
-          <img src="@/assets/img/panel/cloud.png" class="title-img" alt="">
+          <img src="@/assets/img/panel/cloud2.png" class="title-img" alt="">
         </div>
       </el-row>
       <el-row :gutter="20" class="el-row2">
         <div class="title2">
-          <img src="@/assets/img/panel/native.png" class="title-img2" alt="">
+          <img src="@/assets/img/panel/cloud3.png" class="title-img2" alt="">
         </div>
         <div class="welcome2">
           <div><h1>{{ $t('commons.cloud_native') }}</h1></div>

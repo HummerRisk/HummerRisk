@@ -245,7 +245,7 @@
       <!-- result second -->
       <el-row :gutter="20" class="el-row-body" v-if="activeName === 'second'">
         <!--regions-->
-        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="el-col el-col-su">
+        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
           <el-card :body-style="{ padding: '15px' }">
             <div slot="header" class="clearfix">
                 <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('account.regions') }}</span>
@@ -273,7 +273,7 @@
         <!--regions-->
 
         <!--rule-->
-        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="el-col el-col-su">
+        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
           <el-card :body-style="{ padding: '15px' }">
             <div slot="header" class="clearfix">
               <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.rule') }}</span>
@@ -301,7 +301,7 @@
         <!--rule-->
 
         <!--resource type-->
-        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="el-col el-col-su">
+        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
           <el-card :body-style="{ padding: '15px' }">
             <div slot="header" class="clearfix">
               <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.resource_type') }}</span>
@@ -329,7 +329,7 @@
         <!--resource type-->
 
         <!--severity-->
-        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="el-col el-col-su">
+        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
           <el-card :body-style="{ padding: '15px' }">
             <div slot="header" class="clearfix">
               <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.severity') }}</span>
@@ -755,9 +755,6 @@ export default {
     },
     resourceSearch() {
       let url = "/resource/list/" + this.resourcePage + "/" + this.resourceSize;
-      if (this.taskId) {
-        this.resourceCondition.taskId = this.taskId;
-      }
       this.resourceCondition.accountId = this.accountId;
       this.result = this.$post(url, this.resourceCondition, response => {
         let data = response.data;
@@ -843,6 +840,7 @@ export default {
           }
         });
       });
+      this.resourceSearch();
     },
     //是否是结束状态，返回false代表都在运行中，true代表已结束
     checkStatus(tableData) {
@@ -935,6 +933,7 @@ export default {
       }, 50);
     },
     handleClick(tab, event) {
+      this.resourceCondition.taskId = null;
       this.activeName = tab.name;
       this.rowIndex = '';
     },

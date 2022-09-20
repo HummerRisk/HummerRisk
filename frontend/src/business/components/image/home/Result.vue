@@ -332,6 +332,11 @@ export default {
             if (data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
               data.returnSum = result.returnSum;
+              data.critical = result.critical;
+              data.high = result.high;
+              data.medium = result.medium;
+              data.low = result.low;
+              data.unknown = result.unknown;
             }
           });
         }
