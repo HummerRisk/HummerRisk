@@ -20,6 +20,11 @@
             :label="$t('log.region')"
             min-width="15%"
           >
+            <template v-slot:default="scope">
+              <div v-if="!!scope.row.regionName">
+                <el-tag v-for="item in scope.row.regionName.split(',')" :key="item" type="success">{{item}}</el-tag>
+              </div>
+            </template>
           </el-table-column>
           <el-table-column
             prop="createTime"
@@ -406,6 +411,10 @@ export default {
 }
 .rtl >>> .el-form-item__content {
   width: 75%;
+}
+.el-tag {
+  margin: 2px;
+  font-size: 5px;
 }
 </style>
 

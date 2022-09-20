@@ -361,7 +361,15 @@ public class CloudEventService {
         Event[] events = resp.getEvents();
         return Arrays.stream(events).map(event -> {
             com.tencentcloudapi.cloudaudit.v20190319.models.Resource resource = event.getResources();
+            String eventName = event.getEventNameCn();
+            int eventLevel = -1;
+            if(eventName!=null && (eventName.indexOf("查")>-1||eventName.indexOf("Get")>-1)){
+                eventLevel = 0;
+            }else{
+                eventLevel = 1;
+            }
             CloudEvent cloudEvent = new CloudEvent();
+            cloudEvent.setEventRating(eventLevel);
             cloudEvent.setEventId(event.getEventId());cloudEvent.setUserName(event.getUsername())
             ;cloudEvent.setEventTime(Long.parseLong(event.getEventTime()) * 1000);
             cloudEvent.setResourceType(event.getResourceTypeCn());
@@ -403,7 +411,15 @@ public class CloudEventService {
         List<Map<String, ?>> events = lookupEventsResponse.getBody().events;
         return events.stream().map(item -> {
             Map<String, ?> userIdentity = (Map) item.get("userIdentity");
+            String eventName = (String)item.get("eventName");
+            int eventLevel = -1;
+            if(eventName!=null && eventName.indexOf("ConsoleSign")>-1){
+                eventLevel = 0;
+            }else{
+                eventLevel = 1;
+            }
             CloudEvent cloudEvent = new CloudEvent();
+            cloudEvent.setEventRating(eventLevel);
             cloudEvent.setEventId((String) item.get("eventId"))
                     ; cloudEvent.setEventName((String) item.get("eventName")); cloudEvent.setEventRw((String) item.get("eventRW")); cloudEvent.setEventType((String) item.get("eventType"))
             ;cloudEvent.setEventCategory((String) item.get("eventCategory")); cloudEvent.setEventVersion("eventVersion"); cloudEvent.setUserIdentity(item.get("userIdentity") == null ? "" : JSON.toJSONString(item.get("userIdentity")))
