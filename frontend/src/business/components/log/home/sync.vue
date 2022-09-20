@@ -18,7 +18,7 @@
           <el-table-column
             prop="regionName"
             :label="$t('log.region')"
-            min-width="15%"
+            min-width="25%"
           >
             <template v-slot:default="scope">
               <div v-if="!!scope.row.regionName">
