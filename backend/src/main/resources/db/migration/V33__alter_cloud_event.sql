@@ -25,6 +25,8 @@ ALTER TABLE `cloud_event` ADD `resource_url` varchar(255) DEFAULT NULL COMMENT '
 
 ALTER TABLE `cloud_event` ADD `cloud_audit_event` text DEFAULT NULL COMMENT '日志详情';
 
+ALTER TABLE `cloud_event` ADD `region_name` varchar(255) DEFAULT NULL COMMENT '区域名称';
+
 -- ----------------------------
 -- Table sbom default value
 -- ----------------------------
@@ -86,4 +88,3 @@ ALTER TABLE `code_result` ADD `serverty` varchar(255) DEFAULT '["CRITICAL", "HIG
 
 ALTER TABLE `history_code_result` ADD `serverty` varchar(255) DEFAULT '["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"]' COMMENT 'serverty: CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN';
 
-ALTER TABLE `cloud_event` ADD `region_name` varchar(255) DEFAULT NULL COMMENT '区域名称';
