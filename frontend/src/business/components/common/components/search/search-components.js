@@ -2,7 +2,6 @@ import TableSearchInput from "./TableSearchInput";
 import TableSearchDateTimePicker from "./TableSearchDateTimePicker";
 import TableSearchDatePicker from "./TableSearchDatePicker";
 import TableSearchSelect from "./TableSearchSelect";
-import {ACCOUNT_ID} from "@/common/js/constants";
 
 /* eslint-disable */
 export default {
@@ -80,6 +79,15 @@ export const UPDATE_TIME = {
   key: "updateTime",
   name: "TableSearchDateTimePicker",
   label: "commons.update_time",
+  operator: {
+    options: [OPERATORS.BETWEEN, OPERATORS.GT, OPERATORS.GE, OPERATORS.LT, OPERATORS.LE, OPERATORS.EQ]
+  },
+}
+
+export const LAST_MODIFIED = {
+  key: "lastModified",
+  name: "TableSearchDateTimePicker",
+  label: "rule.last_modified",
   operator: {
     options: [OPERATORS.BETWEEN, OPERATORS.GT, OPERATORS.GE, OPERATORS.LT, OPERATORS.LE, OPERATORS.EQ]
   },
@@ -527,6 +535,7 @@ export const RULE_GROUP_CONFIGS = [NAME, DESCRIPTION, RULE_PLUGIN_NAME];
 export const RULE_CONFIGS = [RULE_NAME, RULE_PLUGIN_NAME, RULE_SEVERITY, RULE_RESOURCE_TYPE, RULE_GROUP];
 export const RESOURCE_CONFIGS = [NAME, RULE_NAME, RULE_SEVERITY, CREATOR];
 export const SERVER_CONFIGS = [NAME, IP, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
+export const SERVER_CERTIFICATE_CONFIGS = [NAME, DESCRIPTION, CREATOR, LAST_MODIFIED];
 export const SERVER_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
 export const SERVER_RESULT_CONFIGS = [NAME, IP, RULE_NAME, RULE_SEVERITY, CREATOR, UPDATE_TIME];
 export const IMAGE_CONFIGS = [NAME, IMAGE_URL, ACCOUNT_STATUS, CREATOR, CREATE_TIME, UPDATE_TIME];

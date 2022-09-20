@@ -13,6 +13,11 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Server'),
     },
     {
+      path: "certificate",
+      name: "certificate",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Certificate'),
+    },
+    {
       path: "rule",
       name: "serverRule",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Rule'),
