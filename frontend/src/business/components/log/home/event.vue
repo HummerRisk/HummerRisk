@@ -27,7 +27,7 @@
           </el-table-column>
 
           <el-table-column
-            prop="syncRegion"
+            prop="regionName"
             :label="$t('log.region')"
             min-width="10%"
           >

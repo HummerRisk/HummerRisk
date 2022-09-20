@@ -85,3 +85,5 @@ ALTER TABLE `code` ADD `serverty` varchar(255) DEFAULT '["CRITICAL", "HIGH", "ME
 ALTER TABLE `code_result` ADD `serverty` varchar(255) DEFAULT '["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"]' COMMENT 'serverty: CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN';
 
 ALTER TABLE `history_code_result` ADD `serverty` varchar(255) DEFAULT '["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"]' COMMENT 'serverty: CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN';
+
+ALTER TABLE `cloud_event` ADD `region_name` varchar(255) DEFAULT NULL COMMENT '区域名称';
