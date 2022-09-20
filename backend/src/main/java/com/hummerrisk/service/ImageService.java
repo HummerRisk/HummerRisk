@@ -144,49 +144,13 @@ public class ImageService {
                 Map<String, String> header = new HashMap<>();
                 header.put("Accept", CloudNativeConstants.Accept);
                 header.put("Authorization", "Basic " + Base64.getUrlEncoder().encodeToString((imageRepo.getUserName() + ":" + imageRepo.getPassword()).getBytes()));
-                String projectStr = HttpClientUtil.HttpGet(path + "/api/v2.0/projects/", header);
-                JSONArray projects = JSON.parseArray(projectStr);
-                for (Object o : projects) {
-                    JSONObject project = (JSONObject) o;
-                    String projectName = project.getString("name");
-                    String repositoriesStr = HttpClientUtil.HttpGet(path + "/api/v2.0/projects/" + projectName + "/repositories", header);
-                    JSONArray repositories = JSON.parseArray(repositoriesStr);
-                    for (Object repository : repositories) {
-                        JSONObject rep = (JSONObject) repository;
-                        String repName = rep.getString("name");
-                        if (repName.indexOf("/") > 0) {
-                            repName = repName.split("/", -1)[1];
-                        }
-                        String artifactsStr = HttpClientUtil.HttpGet(path + "/api/v2.0/projects/" + projectName + "/repositories/" + repName + "/artifacts", header);
-                        JSONArray artifacts = JSON.parseArray(artifactsStr);
-                        for (Object artifact : artifacts) {
-                            JSONObject arti = (JSONObject) artifact;
-                            String digest = arti.getString("digest");
-                            String push_time = arti.getString("push_time");
-                            long size = arti.getLong("size");
-                            JSONObject extra_attrs = arti.getJSONObject("extra_attrs");
-                            String architecture = extra_attrs.getString("architecture");
-                            JSONArray tags = arti.getJSONArray("tags");
-                            List<JSONObject> tagList = tags.toJavaList(JSONObject.class);
-                            for (JSONObject tag : tagList) {
-                                String tagStr = tag.getString("name");
-                                ImageRepoItem imageRepoItem = new ImageRepoItem();
-                                imageRepoItem.setId(UUIDUtil.newUUID());
-                                imageRepoItem.setProject(projectName);
-                                imageRepoItem.setRepository(repName);
-                                imageRepoItem.setTag(tagStr);
-                                imageRepoItem.setDigest(digest);
-                                imageRepoItem.setRepoId(imageRepo.getId());
-                                imageRepoItem.setPushTime(push_time);
-                                imageRepoItem.setArch(architecture);
-                                imageRepoItem.setSize(changeFlowFormat(size));
-                                imageRepoItem.setPath(path.replaceAll("https://", "").replaceAll("http://", "") + "/" + projectName + "/" + repName + ":" + tagStr);
-                                imageRepoItemMapper.insertSelective(imageRepoItem);
-                                i++;
-                            }
-                        }
-                    }
+                int version =  this.getHarborVersion(path);
+                if(version == 1){
+                    i = this.saveHarborV1(path,header,imageRepo);
+                }else if(version == 2){
+                    i = this.saveHarborV2(path,header,imageRepo);
                 }
+
             } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "dockerhub.png")) {
                 String loginUrl = "https://hub.docker.com/v2/users/login";
                 JSONObject jsonObject = new JSONObject();
@@ -802,6 +766,111 @@ public class ImageService {
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
+    }
+
+    public int saveHarborV2(String path,Map<String,String> header,ImageRepo imageRepo) throws Exception {
+        int i =0 ;
+        String projectStr = HttpClientUtil.HttpGet(path + "/api/v2.0/projects/", header);
+        JSONArray projects = JSON.parseArray(projectStr);
+        for (Object o : projects) {
+            JSONObject project = (JSONObject) o;
+            String projectName = project.getString("name");
+            String repositoriesStr = HttpClientUtil.HttpGet(path + "/api/v2.0/projects/" + projectName + "/repositories", header);
+            JSONArray repositories = JSON.parseArray(repositoriesStr);
+            for (Object repository : repositories) {
+                JSONObject rep = (JSONObject) repository;
+                String repName = rep.getString("name");
+                if (repName.indexOf("/") > 0) {
+                    repName = repName.split("/", -1)[1];
+                }
+                String artifactsStr = HttpClientUtil.HttpGet(path + "/api/v2.0/projects/" + projectName + "/repositories/" + repName + "/artifacts", header);
+                JSONArray artifacts = JSON.parseArray(artifactsStr);
+                for (Object artifact : artifacts) {
+                    JSONObject arti = (JSONObject) artifact;
+                    String digest = arti.getString("digest");
+                    String push_time = arti.getString("push_time");
+                    long size = arti.getLong("size");
+                    JSONObject extra_attrs = arti.getJSONObject("extra_attrs");
+                    String architecture = extra_attrs.getString("architecture");
+                    JSONArray tags = arti.getJSONArray("tags");
+                    List<JSONObject> tagList = tags.toJavaList(JSONObject.class);
+                    for (JSONObject tag : tagList) {
+                        String tagStr = tag.getString("name");
+                        ImageRepoItem imageRepoItem = new ImageRepoItem();
+                        imageRepoItem.setId(UUIDUtil.newUUID());
+                        imageRepoItem.setProject(projectName);
+                        imageRepoItem.setRepository(repName);
+                        imageRepoItem.setTag(tagStr);
+                        imageRepoItem.setDigest(digest);
+                        imageRepoItem.setRepoId(imageRepo.getId());
+                        imageRepoItem.setPushTime(push_time);
+                        imageRepoItem.setArch(architecture);
+                        imageRepoItem.setSize(changeFlowFormat(size));
+                        imageRepoItem.setPath(path.replaceAll("https://", "").replaceAll("http://", "") + "/" + projectName + "/" + repName + ":" + tagStr);
+                        imageRepoItemMapper.insertSelective(imageRepoItem);
+                        i++;
+                    }
+                }
+            }
+        }
+        return i;
+    }
+
+    public int saveHarborV1(String path,Map<String,String> header,ImageRepo imageRepo) throws Exception {
+        int i =0 ;
+        String projectStr = HttpClientUtil.HttpGet(path + "/api/projects/", header);
+        if("null".equals(projectStr)){
+            return i;
+        }
+        JSONArray projects = JSON.parseArray(projectStr);
+        for (Object o : projects) {
+            JSONObject project = (JSONObject) o;
+            String projectName = project.getString("name");
+            String repositoriesStr = HttpClientUtil.HttpGet(path + "/api/repositories?project_id="+project.getString("project_id"), header);
+            JSONArray repositories = JSON.parseArray(repositoriesStr);
+            for (Object repository : repositories) {
+                JSONObject rep = (JSONObject) repository;
+                String repName = rep.getString("name");
+                if (repName.indexOf("/") > 0) {
+                    repName = repName.split("/", -1)[1];
+                }
+                String artifactsStr = HttpClientUtil.HttpGet(path + "/api/repositories/"+rep.getString("name")+"/tags", header);
+                JSONArray artifacts = JSON.parseArray(artifactsStr);
+                for (Object artifact : artifacts) {
+                    JSONObject arti = (JSONObject) artifact;
+                    String digest = arti.getString("digest");
+                    String push_time = arti.getString("push_time");
+                    long size = arti.getLong("size");
+                    String architecture = arti.getString("architecture");
+                    String tagStr = arti.getString("name");
+                    ImageRepoItem imageRepoItem = new ImageRepoItem();
+                    imageRepoItem.setId(UUIDUtil.newUUID());
+                    imageRepoItem.setProject(projectName);
+                    imageRepoItem.setRepository(repName);
+                    imageRepoItem.setTag(tagStr);
+                    imageRepoItem.setDigest(digest);
+                    imageRepoItem.setRepoId(imageRepo.getId());
+                    imageRepoItem.setPushTime(push_time);
+                    imageRepoItem.setArch(architecture);
+                    imageRepoItem.setSize(changeFlowFormat(size));
+                    imageRepoItem.setPath(path.replaceAll("https://", "").replaceAll("http://", "") + "/" + rep.getString("name") + ":" + tagStr);
+                    imageRepoItemMapper.insertSelective(imageRepoItem);
+                    i++;
+                }
+            }
+        }
+        return i;
+    }
+
+    private int getHarborVersion(String path){
+        Map<String, String> header = new HashMap<>();
+        header.put("Accept", CloudNativeConstants.Accept);
+        try {
+            HttpClientUtil.HttpGet(path + "/api/v2.0/projects/", header);
+        } catch (Exception e) {
+            return 1;
+        }
+        return 2;
     }
 
 
