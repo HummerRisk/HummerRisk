@@ -45,15 +45,15 @@ ALTER TABLE `cloud_task` ADD `suggestion` varchar(255) DEFAULT NULL COMMENT '优
 -- Table image
 -- ----------------------------
 
-ALTER TABLE `image` ADD `unfixed` tinyint(1) DEFAULT NULL COMMENT 'unfixed: true/false';
+ALTER TABLE `image` ADD `unfixed` tinyint(1) DEFAULT true COMMENT 'unfixed: true/false';
 
 ALTER TABLE `image` ADD `serverty` varchar(255) DEFAULT '["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"]' COMMENT 'serverty: CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN';
 
-ALTER TABLE `image_result` ADD `unfixed` tinyint(1) DEFAULT NULL COMMENT 'unfixed: true/false';
+ALTER TABLE `image_result` ADD `unfixed` tinyint(1) DEFAULT true COMMENT 'unfixed: true/false';
 
 ALTER TABLE `image_result` ADD `serverty` varchar(255) DEFAULT '["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"]' COMMENT 'serverty: CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN';
 
-ALTER TABLE `history_image_task` ADD `unfixed` tinyint(1) DEFAULT NULL COMMENT 'unfixed: true/false';
+ALTER TABLE `history_image_task` ADD `unfixed` tinyint(1) DEFAULT true COMMENT 'unfixed: true/false';
 
 ALTER TABLE `history_image_task` ADD `serverty` varchar(255) DEFAULT '["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"]' COMMENT 'serverty: CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN';
 

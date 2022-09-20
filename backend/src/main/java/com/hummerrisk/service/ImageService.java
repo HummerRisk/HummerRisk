@@ -102,7 +102,7 @@ public class ImageService {
 
         IProvider cp = execEngineFactoryImp.getProvider("imageProvider");
         String resultStr = (String) execEngineFactoryImp.executeMethod(cp, "dockerLogin", imageRepo);
-        if(resultStr.contains("Succeeded")) {
+        if (resultStr.contains("Succeeded")) {
             imageRepo.setStatus("VALID");
         } else {
             imageRepo.setStatus("INVALID");
@@ -129,7 +129,7 @@ public class ImageService {
     public boolean syncImages(ImageRepo imageRepo) throws Exception {
         long i = 0;
         ImageRepoSyncLog imageRepoSyncLog = new ImageRepoSyncLog();
-        try{
+        try {
             ImageRepoItemExample example = new ImageRepoItemExample();
             example.createCriteria().andRepoIdEqualTo(imageRepo.getId());
             imageRepoItemMapper.deleteByExample(example);
@@ -138,14 +138,14 @@ public class ImageService {
                 // * @param username harbor 用户名
                 //* @param password harbor 密码
                 String path = imageRepo.getRepo();
-                if(path.endsWith("/")){
-                    path = path.substring(0,path.length()-1);
+                if (path.endsWith("/")) {
+                    path = path.substring(0, path.length() - 1);
                 }
-                Map<String,String> header = new HashMap<>();
+                Map<String, String> header = new HashMap<>();
                 header.put("Accept", CloudNativeConstants.Accept);
-                header.put("Authorization","Basic "+ Base64.getUrlEncoder().encodeToString((imageRepo.getUserName() + ":" + imageRepo.getPassword()).getBytes()));
-                String projectStr = HttpClientUtil.HttpGet(path+"/api/v2.0/projects/",header);
-                JSONArray projects =  JSON.parseArray(projectStr);
+                header.put("Authorization", "Basic " + Base64.getUrlEncoder().encodeToString((imageRepo.getUserName() + ":" + imageRepo.getPassword()).getBytes()));
+                String projectStr = HttpClientUtil.HttpGet(path + "/api/v2.0/projects/", header);
+                JSONArray projects = JSON.parseArray(projectStr);
                 for (Object o : projects) {
                     JSONObject project = (JSONObject) o;
                     String projectName = project.getString("name");
@@ -190,26 +190,26 @@ public class ImageService {
             } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "dockerhub.png")) {
                 String loginUrl = "https://hub.docker.com/v2/users/login";
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("username",imageRepo.getUserName());
-                jsonObject.put("password",imageRepo.getPassword());
+                jsonObject.put("username", imageRepo.getUserName());
+                jsonObject.put("password", imageRepo.getPassword());
                 HttpHeaders httpHeaders = new HttpHeaders();
                 // 设置请求类型
                 httpHeaders.setContentType(MediaType.APPLICATION_JSON);
                 // 封装参数和头信息
-                ResponseEntity<JSONObject> tokenResult = RestTemplateUtils.postForEntity(loginUrl,jsonObject,httpHeaders, JSONObject.class);
-                if(tokenResult == null){
+                ResponseEntity<JSONObject> tokenResult = RestTemplateUtils.postForEntity(loginUrl, jsonObject, httpHeaders, JSONObject.class);
+                if (tokenResult == null) {
                     throw new RuntimeException("dockerhub认证失败");
                 }
                 String token = Objects.requireNonNull(tokenResult.getBody()).getString("token");
-                httpHeaders.add("Authorization","Bearer "+token);
-                ResponseEntity<JSONObject> repositoriesResult = RestTemplateUtils.getForEntity("https://hub.docker.com/v2/namespaces/" + imageRepo.getUserName()+ "/repositories/", httpHeaders, JSONObject.class);
+                httpHeaders.add("Authorization", "Bearer " + token);
+                ResponseEntity<JSONObject> repositoriesResult = RestTemplateUtils.getForEntity("https://hub.docker.com/v2/namespaces/" + imageRepo.getUserName() + "/repositories/", httpHeaders, JSONObject.class);
                 List<JSONObject> repositories = repositoriesResult.getBody().getJSONArray("results").toJavaList(JSONObject.class);
-                for(JSONObject repository:repositories){
+                for (JSONObject repository : repositories) {
                     String repositoryName = repository.getString("name");
                     String namespace = repository.getString("namespace");
-                    ResponseEntity<JSONObject> tagsResponse = RestTemplateUtils.getForEntity("https://hub.docker.com/v2/namespaces/"+namespace+"/repositories/"+repositoryName+"/tags", httpHeaders, JSONObject.class);
+                    ResponseEntity<JSONObject> tagsResponse = RestTemplateUtils.getForEntity("https://hub.docker.com/v2/namespaces/" + namespace + "/repositories/" + repositoryName + "/tags", httpHeaders, JSONObject.class);
                     List<JSONObject> tags = tagsResponse.getBody().getJSONArray("results").toJavaList(JSONObject.class);
-                    for(JSONObject tag:tags){
+                    for (JSONObject tag : tags) {
                         JSONArray images = tag.getJSONArray("images");
                         String tagStr = tag.getString("name");
                         ImageRepoItem imageRepoItem = new ImageRepoItem();
@@ -217,7 +217,7 @@ public class ImageService {
                         imageRepoItem.setProject(namespace);
                         imageRepoItem.setRepository(repositoryName);
                         imageRepoItem.setTag(tagStr);
-                        if(images.size()>0){
+                        if (images.size() > 0) {
                             imageRepoItem.setDigest(images.getJSONObject(0).getString("digest"));
                             imageRepoItem.setPushTime(images.getJSONObject(0).getString("last_pushed"));
                             imageRepoItem.setArch(images.getJSONObject(0).getString("architecture"));
@@ -234,18 +234,18 @@ public class ImageService {
             } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "nexus.png")) {
                 String url = imageRepo.getRepo();
                 if (url.endsWith("/")) {
-                    url = url.substring(0, url.length()-1);
+                    url = url.substring(0, url.length() - 1);
                 }
                 HttpHeaders httpHeaders = new HttpHeaders();
-                httpHeaders.add("Authorization","Basic "+ Base64.getUrlEncoder().encodeToString((imageRepo.getUserName() + ":" + imageRepo.getPassword()).getBytes()));
-                ResponseEntity<JSONObject> repositoriesResponse = RestTemplateUtils.getForEntity(url+"/v2/_catalog", httpHeaders, JSONObject.class);
+                httpHeaders.add("Authorization", "Basic " + Base64.getUrlEncoder().encodeToString((imageRepo.getUserName() + ":" + imageRepo.getPassword()).getBytes()));
+                ResponseEntity<JSONObject> repositoriesResponse = RestTemplateUtils.getForEntity(url + "/v2/_catalog", httpHeaders, JSONObject.class);
                 List<String> repositories = repositoriesResponse.getBody().getJSONArray("repositories").toJavaList(String.class);
-                for(String repository : repositories){
+                for (String repository : repositories) {
                     ResponseEntity<JSONObject> tagsResponse = RestTemplateUtils.getForEntity(url + "/v2/" + repository + "/tags/list", httpHeaders, JSONObject.class);
                     List<String> tags = tagsResponse.getBody().getJSONArray("tags").toJavaList(String.class);
                     String name = tagsResponse.getBody().getString("name");
-                    for(String tag:tags){
-                        String path = url.replaceAll("https://","").replaceAll("http://","") + "/"+name+":"+tag;
+                    for (String tag : tags) {
+                        String path = url.replaceAll("https://", "").replaceAll("http://", "") + "/" + name + ":" + tag;
                         ImageRepoItem imageRepoItem = new ImageRepoItem();
                         imageRepoItem.setId(UUIDUtil.newUUID());
                         imageRepoItem.setRepository(name);
@@ -289,7 +289,7 @@ public class ImageService {
         IProvider cp = execEngineFactoryImp.getProvider("imageProvider");
         String resultStr = (String) execEngineFactoryImp.executeMethod(cp, "dockerLogin", imageRepo);
 
-        if(resultStr.contains("Succeeded")) {
+        if (resultStr.contains("Succeeded")) {
             imageRepo.setStatus("VALID");
         } else {
             imageRepo.setStatus("INVALID");
@@ -383,7 +383,7 @@ public class ImageService {
                 String tarFilePath = upload(tarFile, ImageConstants.DEFAULT_BASE_DIR);
                 request.setPath(tarFilePath);
             }
-            if(!request.getIsImageRepo()) {
+            if (!request.getIsImageRepo()) {
                 request.setRepoId("");
             }
 
@@ -409,18 +409,14 @@ public class ImageService {
      * @return 文件名称
      * @throws Exception
      */
-    public static final String upload(MultipartFile file, String dir) throws IOException
-    {
-        try
-        {
+    public static final String upload(MultipartFile file, String dir) throws IOException {
+        try {
             String fileName = file.getOriginalFilename();
-            String extension = StringUtils.isNotBlank(fileName)?fileName.split("\\.")[fileName.split("\\.").length-1]:"";
+            String extension = StringUtils.isNotBlank(fileName) ? fileName.split("\\.")[fileName.split("\\.").length - 1] : "";
             //png、html等小文件存放路径，页面需要显示，项目内目录
             //jar包等大文件存放路径，项目外目录
             return FileUploadUtils.upload(dir, file, "." + extension);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new IOException(e.getMessage(), e);
         }
     }
@@ -482,15 +478,15 @@ public class ImageService {
         return imageRuleMapper.updateByPrimaryKeyWithBLOBs(rule);
     }
 
-    public void scan(String id) throws Exception{
+    public void scan(String id) throws Exception {
         Image image = imageMapper.selectByPrimaryKey(id);
         Integer scanId = historyService.insertScanHistory(image);
-        if(StringUtils.equalsIgnoreCase(image.getStatus(), CloudAccountConstants.Status.VALID.name())) {
+        if (StringUtils.equalsIgnoreCase(image.getStatus(), CloudAccountConstants.Status.VALID.name())) {
             List<ImageRuleDTO> ruleList = ruleList(null);
             ImageResultWithBLOBs result = new ImageResultWithBLOBs();
 
             deleteResultByImageId(id);
-            for(ImageRuleDTO dto : ruleList) {
+            for (ImageRuleDTO dto : ruleList) {
                 BeanUtils.copyBean(result, image);
                 result.setId(UUIDUtil.newUUID());
                 result.setImageId(id);
@@ -516,7 +512,7 @@ public class ImageService {
 
     }
 
-    public void createScan (ImageResultWithBLOBs result) throws Exception {
+    public void createScan(ImageResultWithBLOBs result) throws Exception {
         try {
             ImageRuleRequest request = new ImageRuleRequest();
             request.setId(result.getRuleId());
@@ -561,36 +557,37 @@ public class ImageService {
         int i = 0;
         //插入trivyJsons
         JSONObject jsonG = JSONObject.parseObject(result.getTrivyJson());
-        if(jsonG != null) {
+        if (jsonG != null) {
             JSONArray trivyJsons = JSONArray.parseArray(jsonG.getString("Results"));
-            if(trivyJsons != null) {
+            if (trivyJsons != null) {
                 for (Object obj : trivyJsons) {
                     JSONObject jsonObject = (JSONObject) obj;
                     JSONArray vulnJsons = JSONArray.parseArray(jsonObject.getString("Vulnerabilities"));
-                    for (Object o : vulnJsons) {
-                        JSONObject resultObject = (JSONObject) o;
-                        ImageTrivyJsonWithBLOBs imageTrivyJsonWithBLOBs = new ImageTrivyJsonWithBLOBs();
-                        imageTrivyJsonWithBLOBs.setResultId(result.getId());
-                        imageTrivyJsonWithBLOBs.setVulnerabilityId(resultObject.getString("VulnerabilityID"));
-                        imageTrivyJsonWithBLOBs.setPkgName(resultObject.getString("PkgName"));
-                        imageTrivyJsonWithBLOBs.setInstalledVersion(resultObject.getString("InstalledVersion"));
-                        imageTrivyJsonWithBLOBs.setFixedVersion(resultObject.getString("FixedVersion"));
-                        imageTrivyJsonWithBLOBs.setLayer(resultObject.getString("Layer"));
-                        imageTrivyJsonWithBLOBs.setSeveritySource(resultObject.getString("SeveritySource"));
-                        imageTrivyJsonWithBLOBs.setPrimaryUrl(resultObject.getString("PrimaryURL"));
-                        imageTrivyJsonWithBLOBs.setDataSource(resultObject.getString("DataSource"));
-                        imageTrivyJsonWithBLOBs.setTitle(resultObject.getString("Title"));
-                        imageTrivyJsonWithBLOBs.setDescription(resultObject.getString("Description"));
-                        imageTrivyJsonWithBLOBs.setSeverity(resultObject.getString("Severity"));
-                        imageTrivyJsonWithBLOBs.setCweIds(resultObject.getString("CweIDs"));
-                        imageTrivyJsonWithBLOBs.setCvss(resultObject.getString("CVSS"));
-                        imageTrivyJsonWithBLOBs.setReferences(resultObject.getString("References"));
-                        imageTrivyJsonWithBLOBs.setPublishedDate(resultObject.getString("PublishedDate"));
-                        imageTrivyJsonWithBLOBs.setLastModifiedDate(resultObject.getString("LastModifiedDate"));
-                        imageTrivyJsonMapper.insertSelective(imageTrivyJsonWithBLOBs);
-                        i++;
+                    if (vulnJsons != null) {
+                        for (Object o : vulnJsons) {
+                            JSONObject resultObject = (JSONObject) o;
+                            ImageTrivyJsonWithBLOBs imageTrivyJsonWithBLOBs = new ImageTrivyJsonWithBLOBs();
+                            imageTrivyJsonWithBLOBs.setResultId(result.getId());
+                            imageTrivyJsonWithBLOBs.setVulnerabilityId(resultObject.getString("VulnerabilityID"));
+                            imageTrivyJsonWithBLOBs.setPkgName(resultObject.getString("PkgName"));
+                            imageTrivyJsonWithBLOBs.setInstalledVersion(resultObject.getString("InstalledVersion"));
+                            imageTrivyJsonWithBLOBs.setFixedVersion(resultObject.getString("FixedVersion"));
+                            imageTrivyJsonWithBLOBs.setLayer(resultObject.getString("Layer"));
+                            imageTrivyJsonWithBLOBs.setSeveritySource(resultObject.getString("SeveritySource"));
+                            imageTrivyJsonWithBLOBs.setPrimaryUrl(resultObject.getString("PrimaryURL"));
+                            imageTrivyJsonWithBLOBs.setDataSource(resultObject.getString("DataSource"));
+                            imageTrivyJsonWithBLOBs.setTitle(resultObject.getString("Title"));
+                            imageTrivyJsonWithBLOBs.setDescription(resultObject.getString("Description"));
+                            imageTrivyJsonWithBLOBs.setSeverity(resultObject.getString("Severity"));
+                            imageTrivyJsonWithBLOBs.setCweIds(resultObject.getString("CweIDs"));
+                            imageTrivyJsonWithBLOBs.setCvss(resultObject.getString("CVSS"));
+                            imageTrivyJsonWithBLOBs.setReferences(resultObject.getString("References"));
+                            imageTrivyJsonWithBLOBs.setPublishedDate(resultObject.getString("PublishedDate"));
+                            imageTrivyJsonWithBLOBs.setLastModifiedDate(resultObject.getString("LastModifiedDate"));
+                            imageTrivyJsonMapper.insertSelective(imageTrivyJsonWithBLOBs);
+                            i++;
+                        }
                     }
-
                 }
             }
         }
@@ -650,10 +647,10 @@ public class ImageService {
     public String execute(Image image) throws Exception {
         Proxy proxy = new Proxy();
         ImageRepo imageRepo = new ImageRepo();
-        if (image.getIsProxy() && image.getProxyId()!=null) {
+        if (image.getIsProxy() && image.getProxyId() != null) {
             proxy = proxyMapper.selectByPrimaryKey(image.getProxyId());
         }
-        if(image.getRepoId()!=null) {
+        if (image.getRepoId() != null) {
             imageRepo = imageRepoMapper.selectByPrimaryKey(image.getRepoId());
         }
         IProvider cp = execEngineFactoryImp.getProvider("imageProvider");
