@@ -251,7 +251,7 @@ public class CloudEventService {
                 result = getHuaweiCloudEvents(accountMap, startTime, endTime, pageNum, maxResult);
                 break;
             case PlatformUtils.tencent:
-                result = getTencentEvents(accountMap,startTime,endTime,pageNum,maxResult);
+                result = getTencentEvents(accountMap, startTime, endTime, pageNum, maxResult);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + account.getPluginId());
@@ -271,31 +271,31 @@ public class CloudEventService {
                 .withRegion(CtsRegion.valueOf(accountMap.get("region")))
                 .build();
         ListTracesRequest request = new ListTracesRequest();
-        request.setFrom(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss",startTime).getTime());
-        request.setTo(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss",endTime).getTime());
+        request.setFrom(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime).getTime());
+        request.setTo(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", endTime).getTime());
         request.setLimit(maxResult);
-        if(accountMap.get("marker") != null){
-            request.setNext(accountMap.get("marker") );
+        if (accountMap.get("marker") != null) {
+            request.setNext(accountMap.get("marker"));
         }
         request.withTraceType(ListTracesRequest.TraceTypeEnum.fromValue("system"));
         ListTracesResponse response = client.listTraces(request);
         String marker = response.getMetaData().getMarker();
-        accountMap.put("marker",marker);
+        accountMap.put("marker", marker);
         List<Traces> traces = response.getTraces();
-        return traces.stream().map(trace->{
+        return traces.stream().map(trace -> {
             int eventLevel = -1;
-            if(Traces.TraceRatingEnum.NORMAL == trace.getTraceRating()){
+            if (Traces.TraceRatingEnum.NORMAL == trace.getTraceRating()) {
                 eventLevel = 0;
-            }else if(Traces.TraceRatingEnum.WARNING == trace.getTraceRating()){
+            } else if (Traces.TraceRatingEnum.WARNING == trace.getTraceRating()) {
                 eventLevel = 1;
-            }else if(Traces.TraceRatingEnum.INCIDENT == trace.getTraceRating()){
+            } else if (Traces.TraceRatingEnum.INCIDENT == trace.getTraceRating()) {
                 eventLevel = 2;
             }
             UserInfo user = trace.getUser();
             return CloudEvent.builder().eventId(trace.getTraceId()).eventName(trace.getTraceName()).eventRating(eventLevel)
                     .resourceId(trace.getResourceId()).eventType(trace.getTraceType()).requestParameters(trace.getRequest())
                     .responseElements(trace.getResponse()).apiVersion(trace.getApiVersion()).eventMessage(trace.getMessage())
-                    .eventTime(trace.getTime()).userIdentity(user==null?"{}":JSON.toJSONString(user)).userName(user==null?"":user.getName())
+                    .eventTime(trace.getTime()).userIdentity(user == null ? "{}" : JSON.toJSONString(user)).userName(user == null ? "" : user.getName())
                     .serviceName(trace.getServiceType()).resourceType(trace.getResourceType()).resourceName(trace.getResourceName())
                     .sourceIpAddress(trace.getSourceIp()).requestId(trace.getRequestId()).endpoint(trace.getEndpoint())
                     .resourceUrl(trace.getResourceUrl()).locationInfo(trace.getLocationInfo()).build();
@@ -315,26 +315,26 @@ public class CloudEventService {
         CloudauditClient client = new CloudauditClient(cred, accountMap.get("region"), clientProfile);
         // 实例化一个请求对象,每个接口都会对应一个request对象
         DescribeEventsRequest req = new DescribeEventsRequest();
-        req.setStartTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss",startTime).getTime()/1000);
-        req.setEndTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss",endTime).getTime()/1000);
+        req.setStartTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime).getTime() / 1000);
+        req.setEndTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", endTime).getTime() / 1000);
         req.setMaxResults((long) maxResult);
-        if(accountMap.get("marker") != null){
+        if (accountMap.get("marker") != null) {
             req.setNextToken(Long.parseLong(accountMap.get("marker")));
         }
         // 返回的resp是一个DescribeEventsResponse的实例，与请求对象对应
         DescribeEventsResponse resp = client.DescribeEvents(req);
         Long nextToken = resp.getNextToken();
-        if(nextToken != null){
-            accountMap.put("marker",nextToken+"");
+        if (nextToken != null) {
+            accountMap.put("marker", nextToken + "");
         }
         Event[] events = resp.getEvents();
-        return Arrays.stream(events).map(event->{
+        return Arrays.stream(events).map(event -> {
             com.tencentcloudapi.cloudaudit.v20190319.models.Resource resource = event.getResources();
             return CloudEvent.builder().eventId(event.getEventId()).userName(event.getUsername())
-                    .eventTime(Long.parseLong(event.getEventTime())*1000).resourceType(event.getResourceTypeCn())
+                    .eventTime(Long.parseLong(event.getEventTime()) * 1000).resourceType(event.getResourceTypeCn())
                     .eventName(event.getEventNameCn()).cloudAuditEvent(event.getCloudAuditEvent()).eventSource(event.getEventSource())
                     .requestId(event.getRequestID()).acsRegion(event.getResourceRegion()).sourceIpAddress(event.getSourceIPAddress())
-                    .referencedResources(resource == null?"{}":JSON.toJSONString(resource)).build();
+                    .referencedResources(resource == null ? "{}" : JSON.toJSONString(resource)).build();
         }).collect(Collectors.toList());
 
     }

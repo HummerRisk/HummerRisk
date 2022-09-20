@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CloudEventDto {
+public class CloudEventDTO {
     private String eventId;
     private String eventMessage;
     private String eventSource;
