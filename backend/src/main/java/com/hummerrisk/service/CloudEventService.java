@@ -387,7 +387,7 @@ public class CloudEventService {
                                                  int pageNum, int maxResult){
         AWSAuditManager awsAuditManager = AWSAuditManagerClient.builder().build();
         GetEvidenceRequest getEvidenceRequest = new GetEvidenceRequest();
-        AWSCredentials awsCredentials = new BasicAWSCredentials("AKIARUL5RFOMTDGMRCOB","KPkKT7c98CUj6utJwUtMQnCuvagjD/ePdbYxVt2k");
+        AWSCredentials awsCredentials = new BasicAWSCredentials("","");
         AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials);
         getEvidenceRequest.setRequestCredentialsProvider(awsCredentialsProvider);
         GetEvidenceResult evidence = awsAuditManager.getEvidence(getEvidenceRequest);
