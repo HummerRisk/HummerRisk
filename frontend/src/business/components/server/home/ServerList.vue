@@ -165,13 +165,13 @@
           <el-form-item :label="$t('server.server_user_name')" ref="userName" prop="userName">
             <el-input v-model="form.userName" autocomplete="off" :placeholder="$t('server.server_user_name')"/>
           </el-form-item>
-          <el-form-item :label="$t('commons.password')" ref="password" prop="password">
-            <el-input type="password" v-model="form.password" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
-          </el-form-item>
           <el-form-item :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-radio v-model="form.isPublicKey" label="no">{{ $t('server.no_public_key') }}</el-radio>
             <el-radio v-model="form.isPublicKey" label="str">{{ $t('server.str_public_key') }}</el-radio>
             <el-radio v-model="form.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
+          </el-form-item>
+          <el-form-item v-if="form.isPublicKey === 'no'" :label="$t('commons.password')" ref="password" prop="password">
+            <el-input type="password" v-model="form.password" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
           </el-form-item>
           <el-form-item v-if="form.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
             <el-input type="textarea" :rows="10" v-model="form.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>

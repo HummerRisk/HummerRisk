@@ -23,9 +23,23 @@
         </el-table-column >
         <!-- 展开 end -->
         <el-table-column type="index" min-width="2%"/>
-        <el-table-column prop="name" :label="$t('package.rule_name')" min-width="18%" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="description" :label="$t('package.description')" min-width="24%" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="lastModified" min-width="14%" :label="$t('package.last_modified')" sortable>
+        <el-table-column prop="name" :label="$t('commons.name')" min-width="18%" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="description" :label="$t('commons.description')" min-width="20%" show-overflow-tooltip></el-table-column>
+        <el-table-column v-slot:default="scope" :label="$t('server.is_public_key')" min-width="10%" show-overflow-tooltip>
+          <el-tag size="mini" type="danger" v-if="scope.row.isPublicKey === 'no'">
+            {{ $t('rule.no_public_key') | $t('commons.password') }}
+          </el-tag>
+          <el-tag size="mini" type="warning" v-else-if="scope.row.isPublicKey === 'files'">
+            {{ $t('rule.file_public_key') }}
+          </el-tag>
+          <el-tag size="mini" type="success" v-else-if="scope.row.isPublicKey === 'str'">
+            {{ $t('rule.str_public_key') }}
+          </el-tag>
+        </el-table-column>
+        <el-table-column v-slot:default="scope" :label="$t('account.creator')" min-width="10%" show-overflow-tooltip>
+          {{ scope.row.user }}
+        </el-table-column>
+        <el-table-column prop="lastModified" min-width="15%" :label="$t('package.last_modified')" sortable>
           <template v-slot:default="scope">
             <span>{{ scope.row.lastModified | timestampFormatDate }}</span>
           </template>
@@ -39,115 +53,81 @@
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
-    <!--Create rule-->
-    <el-drawer class="rtl" :title="$t('rule.create')" :visible.sync="createVisible" size="70%" :before-close="handleClose" :direction="direction"
+    <!--Create Certificate-->
+    <el-drawer class="rtl" :title="$t('server.create_certificate')" :visible.sync="createVisible" size="70%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
-      <el-form :model="createRuleForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createRuleForm">
-        <el-form-item :label="$t('rule.rule_name')" prop="name">
-          <el-input v-model="createRuleForm.name" autocomplete="off" :placeholder="$t('rule.rule_name')"/>
+      <el-form :model="createForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createForm">
+        <el-form-item :label="$t('commons.name')" prop="name">
+          <el-input v-model="createForm.name" autocomplete="off" :placeholder="$t('commons.name')"/>
         </el-form-item>
-        <el-form-item :label="$t('rule.rule_description')" prop="description">
-          <el-input v-model="createRuleForm.description" autocomplete="off" :placeholder="$t('rule.rule_description')"/>
+        <el-form-item :label="$t('commons.description')" prop="description">
+          <el-input v-model="createForm.description" autocomplete="off" :placeholder="$t('commons.description')"/>
         </el-form-item>
-        <el-form-item :label="$t('rule.severity')" :rules="{required: true, message: $t('rule.severity'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="createRuleForm.severity" :placeholder="$t('rule.please_choose_severity')">
-            <el-option
-              v-for="item in severityOptions"
-              :key="item.value"
-              :label="item.key"
-              :value="item.value">
-            </el-option>
-          </el-select>
+        <el-form-item :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-radio v-model="createForm.isPublicKey" label="no">{{ $t('server.no_public_key') }}</el-radio>
+          <el-radio v-model="createForm.isPublicKey" label="str">{{ $t('server.str_public_key') }}</el-radio>
+          <el-radio v-model="createForm.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
         </el-form-item>
-        <el-form-item :label="$t('rule.rule_yml')" :rules="{required: true, message: $t('rule.rule_yml'), trigger: 'change'}">
-          <codemirror ref="cmEditor" v-model="createRuleForm.script" class="code-mirror" :options="cmOptions" />
+        <el-form-item v-if="createForm.isPublicKey === 'no'" :label="$t('commons.password')" ref="password">
+          <el-input type="password" v-model="createForm.password" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
         </el-form-item>
-        <el-form-item :label="$t('rule.middleware_parameter')" :rules="{required: true, message: $t('rule.middleware_parameter'), trigger: 'change'}">
-          <span style="color: red;margin-right: 20px;">{{ "${" + "{Key}" + "}" }}</span>
-          <el-button type="primary" plain @click="addParam(createRuleForm)">{{ $t('rule.middleware_parameter_add') }}</el-button>
+        <el-form-item v-if="createForm.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
+          <el-input type="textarea" :rows="10" v-model="createForm.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
         </el-form-item>
-        <el-form-item>
-          <el-table
-            :data="createRuleForm.parameter"
-            style="width: 100%">
-            <el-table-column v-slot:default="scope" label="Key" min-width="20%">
-              <el-input v-model="scope.row.key" :placeholder="$t('commons.input_content')"></el-input>
-            </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('rule.middleware_name')" min-width="25%">
-              <el-input v-model="scope.row.name" :placeholder="$t('commons.input_content')"></el-input>
-            </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('rule.middleware_parameter_default')" min-width="25%">
-              <el-input v-model="scope.row.defaultValue" :placeholder="$t('commons.input_content')"></el-input>
-            </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('rule.required')" min-width="20%">
-              <el-switch v-model="scope.row.required" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
-            </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('rule.clear')" min-width="10%">
-              <i class="el-icon-close" @click="removeParam(createRuleForm.parameter, scope.row)"></i>
-            </el-table-column>
-          </el-table>
+        <el-form-item v-if="createForm.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
+          <server-key-upload v-on:appendTar="append" v-model="createForm.publicKeyPath" :param="createForm.publicKeyPath"/>
         </el-form-item>
+<!--        <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">-->
+<!--          <el-switch v-model="form.isProxy"></el-switch>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">-->
+<!--          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyId" :placeholder="$t('commons.proxy')">-->
+<!--            <el-option-->
+<!--              v-for="item in proxys"-->
+<!--              :key="item.id"-->
+<!--              :label="item.proxyIp"-->
+<!--              :value="item.id">-->
+<!--              &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}-->
+<!--            </el-option>-->
+<!--          </el-select>-->
+<!--        </el-form-item>-->
       </el-form>
       <dialog-footer
         @cancel="createVisible = false"
-        @confirm="saveRule(createRuleForm, 'add')"/>
+        @confirm="saveCertificate(createForm, 'createForm')"/>
     </el-drawer>
-    <!--Create rule-->
+    <!--Create Certificate-->
 
-    <!--Update rule-->
-    <el-drawer class="rtl" :title="$t('rule.update')" :visible.sync="updateVisible" size="70%" :before-close="handleClose" :direction="direction"
+    <!--Update Certificate-->
+    <el-drawer class="rtl" :title="$t('server.update_certificate')" :visible.sync="updateVisible" size="70%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
-      <el-form :model="updateRuleForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="updateRuleForm">
-        <el-form-item :label="$t('rule.rule_name')" prop="name">
-          <el-input v-model="updateRuleForm.name" autocomplete="off" :placeholder="$t('rule.rule_name')"/>
+      <el-form :model="updateForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="updateForm">
+        <el-form-item :label="$t('commons.name')" prop="name">
+          <el-input v-model="updateForm.name" autocomplete="off" :placeholder="$t('commons.name')"/>
         </el-form-item>
-        <el-form-item :label="$t('rule.rule_description')" prop="description">
-          <el-input v-model="updateRuleForm.description" autocomplete="off" :placeholder="$t('rule.rule_description')"/>
+        <el-form-item :label="$t('commons.description')" prop="description">
+          <el-input v-model="updateForm.description" autocomplete="off" :placeholder="$t('commons.description')"/>
         </el-form-item>
-        <el-form-item :label="$t('rule.severity')" :rules="{required: true, message: $t('rule.severity'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="updateRuleForm.severity" :placeholder="$t('rule.please_choose_severity')">
-            <el-option
-              v-for="item in severityOptions"
-              :key="item.value"
-              :label="item.key"
-              :value="item.value">
-            </el-option>
-          </el-select>
+        <el-form-item :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-radio v-model="updateForm.isPublicKey" label="no">{{ $t('server.no_public_key') }}</el-radio>
+          <el-radio v-model="updateForm.isPublicKey" label="str">{{ $t('server.str_public_key') }}</el-radio>
+          <el-radio v-model="updateForm.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
         </el-form-item>
-        <el-form-item :label="$t('rule.rule_yml')" :rules="{required: true, message: $t('rule.rule_yml'), trigger: 'change'}">
-          <codemirror ref="cmEditor" v-model="updateRuleForm.script" class="code-mirror" :options="cmOptions" />
+        <el-form-item v-if="updateForm.isPublicKey === 'no'" :label="$t('commons.password')" ref="password">
+          <el-input type="password" v-model="updateForm.password" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
         </el-form-item>
-        <el-form-item :label="$t('rule.middleware_parameter')" :rules="{required: true, message: $t('rule.middleware_parameter'), trigger: 'change'}">
-          <span style="color: red;margin-right: 20px;">{{ "${" + "{Key}" + "}" }}</span>
-          <el-button type="primary" plain @click="addParam(updateRuleForm)">{{ $t('rule.middleware_parameter_add') }}</el-button>
+        <el-form-item v-if="updateForm.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
+          <el-input type="textarea" :rows="10" v-model="updateForm.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
         </el-form-item>
-        <el-form-item>
-          <el-table
-            :data="updateRuleForm.parameter"
-            style="width: 100%">
-            <el-table-column v-slot:default="scope" label="Key" min-width="20%">
-              <el-input v-model="scope.row.key" :placeholder="$t('commons.input_content')"></el-input>
-            </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('rule.middleware_name')" min-width="25%">
-              <el-input v-model="scope.row.name" :placeholder="$t('commons.input_content')"></el-input>
-            </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('rule.middleware_parameter_default')" min-width="25%">
-              <el-input v-model="scope.row.defaultValue" :placeholder="$t('commons.input_content')"></el-input>
-            </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('rule.required')" min-width="20%">
-              <el-switch v-model="scope.row.required" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
-            </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('rule.clear')" min-width="10%">
-              <i class="el-icon-close" @click="removeParam(updateRuleForm.parameter, scope.row)"></i>
-            </el-table-column>
-          </el-table>
+        <el-form-item v-if="updateForm.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
+          <server-key-upload v-on:appendTar="append" v-model="updateForm.publicKeyPath" :param="updateForm.publicKeyPath"/>
         </el-form-item>
       </el-form>
       <dialog-footer
         @cancel="updateVisible = false"
-        @confirm="saveRule(updateRuleForm, 'edit')"/>
+        @confirm="saveCertificate(updateForm, 'updateForm')"/>
     </el-drawer>
-    <!--Update rule-->
+    <!--Update Certificate-->
 
   </main-container>
 </template>
@@ -161,8 +141,8 @@ import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../head/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
-import RuleType from "./RuleType";
 import {SERVER_CERTIFICATE_CONFIGS} from "../../common/components/search/search-components";
+import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
 
 /* eslint-disable */
 export default {
@@ -174,7 +154,7 @@ export default {
     TablePagination,
     TableOperator,
     DialogFooter,
-    RuleType
+    ServerKeyUpload,
   },
   data() {
     return {
@@ -187,9 +167,8 @@ export default {
       pageSize: 10,
       total: 0,
       loading: false,
-      plugins: [],
-      createRuleForm: { parameter: [] },
-      updateRuleForm: { parameter: [] },
+      createForm: {},
+      updateForm: {},
       createVisible: false,
       updateVisible: false,
       severityOptions: [],
@@ -235,6 +214,7 @@ export default {
         line: true,
         indentWithTabs: true,
       },
+      keyFile: Object,
     }
   },
 
@@ -244,12 +224,11 @@ export default {
 
   methods: {
     create() {
-      this.createRuleForm = { parameter: [], script : "" };
+      this.createForm = { isPublicKey: 'no' };
       this.createVisible = true;
     },
     handleEdit(item) {
-      if (typeof(item.parameter) == 'string') item.parameter = JSON.parse(item.parameter);
-      this.updateRuleForm = Object.assign({}, item);
+      this.updateForm = Object.assign({}, item);
       this.updateVisible = true;
     },
     handleClose() {
@@ -261,7 +240,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/server/deleteServerRule/" + item.id, () => {
+            this.result = this.$get("/server/deleteCertificate/" + item.id, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -289,71 +268,6 @@ export default {
       _filter(filters, this.condition);
       this.init();
     },
-    addParam(form) {
-      let newParam = {"key": "", "name": "", "defaultValue": "", "required": true};
-      form.parameter.push(newParam);
-    },
-    removeParam (parameter, p) {
-      for (let i in parameter) {
-        if (parameter[i].key === p.key) {
-          parameter.splice(i, 1);
-          return;
-        }
-      }
-    },
-    saveRule (mdObj, type) {
-      let url = '';
-      let form = '';
-      if (type === 'add') {
-        url = '/server/addServerRule';
-        form = 'createRuleForm';
-      } else if (type === 'edit') {
-        url = '/server/updateServerRule';
-        form = 'updateRuleForm';
-        if (mdObj.flag == 1) {
-          this.$warning(this.$t('rule.rule_flag'));
-          return;
-        }
-      }
-      this.$refs[form].validate(valid => {
-        if (valid) {
-          if (!mdObj.script) {
-            this.$error(this.$t('rule.script_require'));
-            return false;
-          }
-          if (mdObj.parameter.length > 0) {
-            let ary = [];
-            for (let i in mdObj.parameter) {
-              ary.push(mdObj.parameter[i].key);
-            }
-            let nary = ary.sort();
-            for (let i = 0; i < nary.length - 1; i++) {
-              if (nary[i] === nary[i + 1]) {
-                this.$info(this.$t('rule.repeat_key'));
-                return;
-              }
-            }
-          } else {
-            mdObj.parameter = [];
-          }
-          let param = Object.assign({}, mdObj);
-          param.parameter = JSON.stringify(param.parameter);
-          param.type = type;
-
-          if (url === '') {
-            this.$error(this.$t('rule.ex_request_parameter_error'));
-          }
-          this.$post(url, param, res => {
-            this.handleClose();
-            this.$success(this.$t('commons.opt_success'));
-            this.search();
-          });
-        } else {
-          this.$error(this.$t('rule.full_param'));
-          return false;
-        }
-      });
-    },
     tableRowClassName({row, rowIndex}) {
       if (rowIndex%4 === 0) {
         return 'success-row';
@@ -363,14 +277,62 @@ export default {
         return '';
       }
     },
-    changeStatus (item) {
-      this.result = this.$post('/rule/changeStatus', {id: item.id, status: item.status?1:0}, response => {
-        if (item.status == 1) {
-          this.$success(this.$t('rule.change_status_on'));
-        } else if (item.status == 0) {
-          this.$success(this.$t('rule.change_status_off'));
+    append(file) {
+      this.keyFile = file;
+    },
+    saveCertificate(form, type) {
+      this.$refs[type].validate(valid => {
+        if (valid) {
+          if(type === 'createForm') {
+            if (!form.isProxy) {
+              form.proxyId = null;
+            }
+            let formData = new FormData();
+            if (this.keyFile) {
+              formData.append("keyFile", this.keyFile);
+            }
+            formData.append("request", new Blob([JSON.stringify(form)], {type: "application/json"}));
+            let axiosRequestConfig = {
+              method: "POST",
+              url: "/server/addCertificate",
+              data: formData,
+              headers: {
+                "Content-Type": 'multipart/form-data'
+              }
+            };
+            this.result = this.$request(axiosRequestConfig, (res) => {
+              if (res.success) {
+                this.$success(this.$t('commons.save_success'));
+                this.search();
+                this.createVisible = false;
+              }
+            });
+          } else {
+            if (!form.isProxy) {
+              form.proxyId = null;
+            }
+            let formData = new FormData();
+            if (this.keyFile) {
+              formData.append("keyFile", this.keyFile);
+            }
+            formData.append("request", new Blob([JSON.stringify(form)], {type: "application/json"}));
+            let axiosRequestConfig = {
+              method: "POST",
+              url: "/server/editCertificate",
+              data: formData,
+              headers: {
+                "Content-Type": 'multipart/form-data'
+              }
+            };
+            this.result = this.$request(axiosRequestConfig, (res) => {
+              if (res.success) {
+                this.$success(this.$t('commons.save_success'));
+                this.search();
+                this.updateVisible = false;
+              }
+            });
+          }
         }
-        this.search();
       });
     },
   },

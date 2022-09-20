@@ -203,7 +203,7 @@ public class ServerController {
         return serverService.editCertificate(keyFile, request);
     }
 
-    @ApiOperation(value = "删除虚拟机")
+    @ApiOperation(value = "删除虚拟机凭据")
     @GetMapping("deleteCertificate/{id}")
     public void deleteCertificate(@PathVariable String id) throws Exception {
         serverService.deleteCertificate(id);
