@@ -47,15 +47,15 @@ ALTER TABLE `cloud_task` ADD `suggestion` varchar(255) DEFAULT NULL COMMENT '优
 
 ALTER TABLE `image` ADD `unfixed` tinyint(1) DEFAULT NULL COMMENT 'unfixed: true/false';
 
-ALTER TABLE `image` ADD `serverty` varchar(255) DEFAULT NULL COMMENT 'serverty: CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN';
+ALTER TABLE `image` ADD `serverty` varchar(255) DEFAULT '["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"]' COMMENT 'serverty: CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN';
 
 ALTER TABLE `image_result` ADD `unfixed` tinyint(1) DEFAULT NULL COMMENT 'unfixed: true/false';
 
-ALTER TABLE `image_result` ADD `serverty` varchar(255) DEFAULT NULL COMMENT 'serverty: CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN';
+ALTER TABLE `image_result` ADD `serverty` varchar(255) DEFAULT '["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"]' COMMENT 'serverty: CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN';
 
 ALTER TABLE `history_image_task` ADD `unfixed` tinyint(1) DEFAULT NULL COMMENT 'unfixed: true/false';
 
-ALTER TABLE `history_image_task` ADD `serverty` varchar(255) DEFAULT NULL COMMENT 'serverty: CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN';
+ALTER TABLE `history_image_task` ADD `serverty` varchar(255) DEFAULT '["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"]' COMMENT 'serverty: CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN';
 
 -- ----------------------------
 -- Table server
@@ -75,3 +75,13 @@ CREATE TABLE IF NOT EXISTS `server_certificate` (
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
 ALTER TABLE `server` ADD `certificate_id` varchar(50) DEFAULT NULL COMMENT 'certificate id';
+
+-- ----------------------------
+-- Table code
+-- ----------------------------
+
+ALTER TABLE `code` ADD `serverty` varchar(255) DEFAULT '["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"]' COMMENT 'serverty: CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN';
+
+ALTER TABLE `code_result` ADD `serverty` varchar(255) DEFAULT '["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"]' COMMENT 'serverty: CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN';
+
+ALTER TABLE `history_code_result` ADD `serverty` varchar(255) DEFAULT '["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"]' COMMENT 'serverty: CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN';
