@@ -2,10 +2,21 @@ package com.hummerrisk.service;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.aliyun.actiontrail20171204.Client;
 import com.aliyun.actiontrail20171204.models.LookupEventsRequest;
 import com.aliyun.actiontrail20171204.models.LookupEventsResponse;
 import com.aliyun.teaopenapi.models.Config;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.auditmanager.AWSAuditManager;
+import com.amazonaws.services.auditmanager.AWSAuditManagerClient;
+import com.amazonaws.services.auditmanager.model.Evidence;
+import com.amazonaws.services.auditmanager.model.GetEvidenceRequest;
+import com.amazonaws.services.auditmanager.model.GetEvidenceResult;
 import com.huaweicloud.sdk.core.auth.BasicCredentials;
 import com.huaweicloud.sdk.core.auth.ICredential;
 import com.huaweicloud.sdk.cts.v3.CtsClient;
@@ -126,9 +137,12 @@ public class CloudEventService {
         if (accountId == null || regions.length == 0 || startTime == null || endTime == null) {
             throw new RuntimeException("参数为空");
         }
+        AccountWithBLOBs account = accountService.getAccount(accountId);
+        JSONArray jsonArray = JSON.parseArray(account.getRegions());
         CloudEventSyncLog cloudEventSyncLog = new CloudEventSyncLog();
         cloudEventSyncLog.setAccountId(accountId);
         cloudEventSyncLog.setRegion(StringUtils.join(regions, ","));
+        cloudEventSyncLog.setRegionName(getRegionName(regions,jsonArray.toJavaList(JSONObject.class)));
         cloudEventSyncLog.setCreateTime(DateUtils.getNowDate().getTime());
         cloudEventSyncLog.setRequestStartTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime));
         cloudEventSyncLog.setRequestEndTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", endTime));
@@ -139,7 +153,7 @@ public class CloudEventService {
         if (cloudEventSyncLogs.size() > 0) {
             throw new RuntimeException("task running!");
         }
-        cloudEventSyncLogMapper.insertSelective(cloudEventSyncLog);
+        extCloudEventSyncLogMapper.insertSelective(cloudEventSyncLog);
         for (String region : regions) {
             CloudEventRegionLog cloudEventRegionLog = new CloudEventRegionLog();
             cloudEventRegionLog.setRegion(region);
@@ -155,7 +169,7 @@ public class CloudEventService {
             int dataCount = 0;
             int errorCount = 0;
             for (CloudEventRegionLog cloudEventRegionLog : cloudEventRegionLogs) {
-                int num = saveCloudEvent(cloudEventRegionLog.getId(), accountId, cloudEventRegionLog.getRegion(), startTime, endTime);
+                int num = saveCloudEvent(cloudEventRegionLog.getId(), account, cloudEventRegionLog.getRegion(), startTime, endTime);
                 if (num > -1)
                     dataCount += num;
                 else
@@ -173,13 +187,15 @@ public class CloudEventService {
         });
     }
 
-    public int saveCloudEvent(Integer logId, String accountId, String region, String startTime, String endTime) {
+    public int saveCloudEvent(Integer logId, AccountWithBLOBs account, String region, String startTime, String endTime) {
         CloudEventRegionLog cloudEventSyncLog = new CloudEventRegionLog();
         cloudEventSyncLog.setId(logId);
         cloudEventSyncLog.setStartTime(DateUtils.getNowDate());
         try {
-            AccountWithBLOBs account = accountService.getAccount(accountId);
+
             Map<String, String> accountMap = PlatformUtils.getAccount(account, region, proxyMapper.selectByPrimaryKey(account.getProxyId()));
+            JSONArray jsonArray = JSON.parseArray(account.getRegions());
+            accountMap.put("regionName",getRegionName(new String[]{region},jsonArray.toJavaList(JSONObject.class)));
             List<CloudEvent> result = new ArrayList<>();
             int pageNum = 1;
             int maxNum = 20;
@@ -199,12 +215,12 @@ public class CloudEventService {
 
                     if (result.size() > 0) {
                         CloudEventExample cloudEventExample = new CloudEventExample();
-                        cloudEventExample.createCriteria().andCloudAccountIdEqualTo(accountId).andSyncRegionEqualTo(region).andEventTimeBetween(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime).getTime()
+                        cloudEventExample.createCriteria().andCloudAccountIdEqualTo(account.getId()).andSyncRegionEqualTo(region).andEventTimeBetween(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime).getTime()
                                 , DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", endTime).getTime());
                         cloudEventMapper.deleteByExample(cloudEventExample);
                     }
                     result.forEach(item -> {
-                        item.setCloudAccountId(accountId);
+                        item.setCloudAccountId(account.getId());
                         item.setSyncRegion(region);
                     });
                     int resultSize = result.size();
@@ -292,14 +308,29 @@ public class CloudEventService {
                 eventLevel = 2;
             }
             UserInfo user = trace.getUser();
-            return CloudEvent.builder().eventId(trace.getTraceId()).eventName(trace.getTraceName()).eventRating(eventLevel)
-                    .resourceId(trace.getResourceId()).eventType(trace.getTraceType()).requestParameters(trace.getRequest())
-                    .responseElements(trace.getResponse()).apiVersion(trace.getApiVersion()).eventMessage(trace.getMessage())
-                    .eventTime(trace.getTime()).userIdentity(user == null ? "{}" : JSON.toJSONString(user)).userName(user == null ? "" : user.getName())
-                    .serviceName(trace.getServiceType()).resourceType(trace.getResourceType()).resourceName(trace.getResourceName())
-                    .sourceIpAddress(trace.getSourceIp()).requestId(trace.getRequestId()).endpoint(trace.getEndpoint())
-                    .resourceUrl(trace.getResourceUrl()).locationInfo(trace.getLocationInfo()).build();
-        }).collect(Collectors.toList());
+            CloudEvent cloudEvent = new CloudEvent();
+            cloudEvent.setEventId(trace.getTraceId());
+            cloudEvent.setEventName(trace.getTraceName());
+            cloudEvent.setEventRating(eventLevel);
+            cloudEvent.setResourceId(trace.getResourceId());
+            cloudEvent.setEventType(trace.getTraceType());
+            cloudEvent.setRequestParameters(trace.getRequest());
+            cloudEvent.setResponseElements(trace.getResponse());
+            cloudEvent.setApiVersion(trace.getApiVersion());
+            cloudEvent.setEventMessage(trace.getMessage());
+            cloudEvent.setEventTime(trace.getTime());
+            cloudEvent.setUserIdentity(user == null ? "{}" : JSON.toJSONString(user));
+            cloudEvent.setUserName(user == null ? "" : user.getName());
+            cloudEvent.setServiceName(trace.getServiceType());
+            cloudEvent.setResourceType(trace.getResourceType());
+            cloudEvent.setResourceName(trace.getResourceName());
+            cloudEvent.setSourceIpAddress(trace.getSourceIp());
+            cloudEvent.setRequestId(trace.getRequestId());
+            cloudEvent.setEndpoint(trace.getEndpoint());
+            cloudEvent.setResourceUrl(trace.getResourceUrl());
+            cloudEvent.setLocationInfo(trace.getLocationInfo());
+            cloudEvent.setRegionName(accountMap.get("regionName"));
+            return cloudEvent;        }).collect(Collectors.toList());
     }
 
     private List<CloudEvent> getTencentEvents(Map<String, String> accountMap, String startTime
@@ -330,15 +361,31 @@ public class CloudEventService {
         Event[] events = resp.getEvents();
         return Arrays.stream(events).map(event -> {
             com.tencentcloudapi.cloudaudit.v20190319.models.Resource resource = event.getResources();
-            return CloudEvent.builder().eventId(event.getEventId()).userName(event.getUsername())
-                    .eventTime(Long.parseLong(event.getEventTime()) * 1000).resourceType(event.getResourceTypeCn())
-                    .eventName(event.getEventNameCn()).cloudAuditEvent(event.getCloudAuditEvent()).eventSource(event.getEventSource())
-                    .requestId(event.getRequestID()).acsRegion(event.getResourceRegion()).sourceIpAddress(event.getSourceIPAddress())
-                    .referencedResources(resource == null ? "{}" : JSON.toJSONString(resource)).build();
+            CloudEvent cloudEvent = new CloudEvent();
+            cloudEvent.setEventId(event.getEventId());cloudEvent.setUserName(event.getUsername())
+            ;cloudEvent.setEventTime(Long.parseLong(event.getEventTime()) * 1000);
+            cloudEvent.setResourceType(event.getResourceTypeCn());
+            cloudEvent.setEventName(event.getEventNameCn());cloudEvent.setEventSource(event.getEventSource())
+                    ;cloudEvent.setRequestId(event.getRequestID());cloudEvent.setAcsRegion(event.getResourceRegion());
+                    cloudEvent.setSourceIpAddress(event.getSourceIPAddress());
+            cloudEvent.setReferencedResources(resource == null ? "{}" : JSON.toJSONString(resource));
+            cloudEvent.setRegionName(accountMap.get("regionName"));
+            return cloudEvent;
         }).collect(Collectors.toList());
 
     }
 
+    public List<CloudEvent> getAwsEvents(Map<String, String> accountMap, String startTime, String endTime,
+                                                 int pageNum, int maxResult){
+        AWSAuditManager awsAuditManager = AWSAuditManagerClient.builder().build();
+        GetEvidenceRequest getEvidenceRequest = new GetEvidenceRequest();
+        AWSCredentials awsCredentials = new BasicAWSCredentials("AKIARUL5RFOMTDGMRCOB","KPkKT7c98CUj6utJwUtMQnCuvagjD/ePdbYxVt2k");
+        AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials);
+        getEvidenceRequest.setRequestCredentialsProvider(awsCredentialsProvider);
+        GetEvidenceResult evidence = awsAuditManager.getEvidence(getEvidenceRequest);
+        Evidence evidence1 = evidence.getEvidence();
+        return null;
+    }
     public List<CloudEvent> getAliyunCloudEvents(Map<String, String> accountMap, String startTime, String endTime,
                                                  int pageNum, int maxResult) throws Exception {
         startTime = DateUtils.localDateStrToUtcDateStr("yyyy-MM-dd HH:mm:ss", startTime).replace(" ", "T") + "Z";
@@ -356,19 +403,33 @@ public class CloudEventService {
         List<Map<String, ?>> events = lookupEventsResponse.getBody().events;
         return events.stream().map(item -> {
             Map<String, ?> userIdentity = (Map) item.get("userIdentity");
-            return CloudEvent.builder().eventId((String) item.get("eventId"))
-                    .eventName((String) item.get("eventName")).eventRw((String) item.get("eventRW")).eventType((String) item.get("eventType"))
-                    .eventCategory((String) item.get("eventCategory")).eventVersion("eventVersion").userIdentity(item.get("userIdentity") == null ? "" : JSON.toJSONString(item.get("userIdentity")))
-                    .additionalEventData(item.get("additionalEventData") == null ? "" : JSON.toJSONString(item.get("additionalEventData")))
-                    .requestId((String) item.get("requestId")).requestParameters(item.get("requestParameters") == null ? "" : JSON.toJSONString(item.get("requestParameters")))
-                    .referencedResources(item.get("referencedResources") == null ? "" : JSON.toJSONString(item.get("referencedResources")))
-                    .apiVersion((String) item.get("apiVersion")).responseElements(item.get("responseElements") == null ? "" : JSON.toJSONString(item.get("responseElements")))
-                    .eventTime(DateUtils.utcTimeStrToLocalDate("yyyy-MM-dd'T'HH:mm:ss'Z'", (String) item.get("eventTime")).getTime())
-                    .eventMessage((String) item.get("eventMessage")).eventSource((String) item.get("eventSource"))
-                    .acsRegion((String) item.get("acsRegion")).userAgent((String) item.get("userAgent"))
-                    .sourceIpAddress((String) item.get("sourceIpAddress")).serviceName((String) item.get("serviceName"))
-                    .resourceName((String) item.get("resourceName")).resourceType((String) item.get("resourceType"))
-                    .userName(userIdentity != null ? (String) userIdentity.get("userName") : "").build();
+            CloudEvent cloudEvent = new CloudEvent();
+            cloudEvent.setEventId((String) item.get("eventId"))
+                    ; cloudEvent.setEventName((String) item.get("eventName")); cloudEvent.setEventRw((String) item.get("eventRW")); cloudEvent.setEventType((String) item.get("eventType"))
+            ;cloudEvent.setEventCategory((String) item.get("eventCategory")); cloudEvent.setEventVersion("eventVersion"); cloudEvent.setUserIdentity(item.get("userIdentity") == null ? "" : JSON.toJSONString(item.get("userIdentity")))
+            ;cloudEvent.setAdditionalEventData(item.get("additionalEventData") == null ? "" : JSON.toJSONString(item.get("additionalEventData")))
+                    ; cloudEvent.setRequestId((String) item.get("requestId")); cloudEvent.setRequestParameters(item.get("requestParameters") == null ? "" : JSON.toJSONString(item.get("requestParameters")))
+                    ; cloudEvent.setReferencedResources(item.get("referencedResources") == null ? "" : JSON.toJSONString(item.get("referencedResources")))
+                    ; cloudEvent.setApiVersion((String) item.get("apiVersion")); cloudEvent.setResponseElements(item.get("responseElements") == null ? "" : JSON.toJSONString(item.get("responseElements")))
+                    ; cloudEvent.setEventTime(DateUtils.utcTimeStrToLocalDate("yyyy-MM-dd'T'HH:mm:ss'Z'", (String) item.get("eventTime")).getTime())
+                    ; cloudEvent.setEventMessage((String) item.get("eventMessage")); cloudEvent.setEventSource((String) item.get("eventSource"))
+                    ; cloudEvent.setAcsRegion((String) item.get("acsRegion")); cloudEvent.setUserAgent((String) item.get("userAgent"))
+                    ; cloudEvent.setSourceIpAddress((String) item.get("sourceIpAddress")); cloudEvent.setServiceName((String) item.get("serviceName"))
+                    ; cloudEvent.setResourceName((String) item.get("resourceName")); cloudEvent.setResourceType((String) item.get("resourceType"))
+                    ; cloudEvent.setUserName(userIdentity != null ? (String) userIdentity.get("userName") : ""); cloudEvent.setRegionName(accountMap.get("regionName"));
+                    return cloudEvent;
         }).collect(Collectors.toList());
+    }
+
+    private String getRegionName(String[] regionArr, List<JSONObject> regionList){
+        String[] regionNameArr = new String[regionArr.length];
+        for(int i = 0;i< regionArr.length;i++){
+            for(JSONObject regionObj:regionList){
+                if(regionArr[i].equals(regionObj.getString("regionId"))){
+                    regionNameArr[i]= regionObj.getString("regionName");
+                }
+            }
+        }
+        return StringUtils.join(regionNameArr,",");
     }
 }

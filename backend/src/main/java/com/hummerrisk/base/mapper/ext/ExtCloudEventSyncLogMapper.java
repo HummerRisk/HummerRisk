@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface ExtCloudEventSyncLogMapper {
     List<CloudEventSyncLog> getCloudEventSyncLog(@Param("request")CloudEventRequest cloudEventRequest);
+
+    int insertSelective(CloudEventSyncLog record);
 }
