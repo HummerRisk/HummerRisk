@@ -155,5 +155,6 @@
 <!--        <table tableName="cloud_event_sync_log" domainObjectName="CloudEventSyncLog"/>-->
 <!--        <table tableName="cloud_event_region_log" domainObjectName="CloudEventRegionLog"/>-->
 <!--        <table tableName="cloud_event" domainObjectName="CloudEvent"/>-->
+<!--        <table tableName="server_certificate" domainObjectName="ServerCertificate"/>-->
     </context>
 </generatorConfiguration>
