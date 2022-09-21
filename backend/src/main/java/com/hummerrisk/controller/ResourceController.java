@@ -54,8 +54,7 @@ public class ResourceController {
     @ApiOperation(value = "资源列表")
     @PostMapping("list/{goPage}/{pageSize}")
     public Pager<List<ResourceDTO>> list(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {
-        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, resourceService.search(request));
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);return PageUtils.setPageInfo(page, resourceService.search(request));
     }
 
     @I18n

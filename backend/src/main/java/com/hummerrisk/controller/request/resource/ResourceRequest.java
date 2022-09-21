@@ -3,6 +3,8 @@ package com.hummerrisk.controller.request.resource;
 import com.hummerrisk.base.domain.Resource;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.Map;
+
 /**
  * @author harris
  */
@@ -23,6 +25,16 @@ public class ResourceRequest extends Resource {
 
     @ApiModelProperty(hidden = true)
     private String sort;
+
+    private Map<String, Object> combine;
+
+    public Map<String, Object> getCombine() {
+        return combine;
+    }
+
+    public void setCombine(Map<String, Object> combine) {
+        this.combine = combine;
+    }
 
     public String getTaskId() {
         return taskId;

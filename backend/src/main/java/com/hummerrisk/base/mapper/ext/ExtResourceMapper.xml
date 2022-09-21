@@ -23,6 +23,47 @@
         <result column="resultStatus" jdbcType="VARCHAR" property="resultStatus"/>
     </resultMap>
 
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
     <select id="source" parameterType="java.lang.String" resultMap="ResultMap">
         SELECT
         t.*,
@@ -151,6 +192,33 @@
         WHERE t.id = #{resource_id}
     </select>
 
+    <sql id="combine">
+        <if test='${condition}.name != null'>
+            and t.hummer_id
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test='${condition}.ruleName != null'>
+            and t6.name
+            <include refid="condition">
+                <property name="object" value="${condition}.ruleName"/>
+            </include>
+        </if>
+        <if test='${condition}.severity != null'>
+            and t.severity
+            <include refid="condition">
+                <property name="object" value="${condition}.severity"/>
+            </include>
+        </if>
+        <if test='${condition}.applyUser != null'>
+            and t4.applyUser
+            <include refid="condition">
+                <property name="object" value="${condition}.applyUser"/>
+            </include>
+        </if>
+    </sql>
+
     <select id="getComplianceResult" parameterType="com.hummerrisk.controller.request.resource.ResourceRequest" resultMap="BaseResultMap">
         SELECT
         t4.task_name as taskName,
@@ -170,14 +238,19 @@
         JOIN rule t6 ON t5.rule_id = t6.id
         JOIN cloud_account t7 ON t.account_id = t7.id
         <where>
+            <if test="combine != null">
+                <include refid="combine">
+                    <property name="condition" value="combine"/>
+                </include>
+            </if>
             <if test="taskId != null">
-                AND t4.id like CONCAT('%',#{taskId},'%')
+                AND t4.id = #{taskId}
             </if>
             <if test="accountId != null">
-                AND t.account_id like CONCAT('%',#{accountId},'%')
+                AND t.account_id = #{accountId}
             </if>
             <if test="regionId != null">
-                AND t.region_id like CONCAT('%',#{regionId},'%')
+                AND t.region_id = #{regionId}
             </if>
             <if test="taskName != null">
                 AND t4.task_name like CONCAT('%',#{taskName},'%')
@@ -202,9 +275,6 @@
             </if>
             <if test="ruleId != null">
                 AND t5.rule_id = #{ruleId}
-            </if>
-            <if test="ruleName != null">
-                AND t6.name like CONCAT('%',#{ruleName},'%')
             </if>
             <if test="ruleName != null">
                 AND t6.name like CONCAT('%',#{ruleName},'%')

@@ -165,7 +165,7 @@
                   </span>
                 </span>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="20%" show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="18%" show-overflow-tooltip>
           <el-link type="primary" :underline="false" class="md-primary text-click" @click="showTaskDetail(scope.row)">
             {{ scope.row.taskName }}
           </el-link>
@@ -178,7 +178,7 @@
           <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
           <span v-else> N/A</span>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="10%" prop="status" sortable
+        <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="12%" prop="status" sortable
                          show-overflow-tooltip>
           <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary"
                      v-if="scope.row.status === 'UNCHECKED'">
@@ -210,13 +210,13 @@
           <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
             <span v-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
             <span v-if="(scope.row.returnSum != null) && (scope.row.returnSum == 0)">
-                  {{ scope.row.returnSum }}/{{ scope.row.resourcesSum }}
-                </span>
+              {{ scope.row.returnSum }}/{{ scope.row.resourcesSum }}
+            </span>
             <span v-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)">
-                  <el-link type="primary" class="text-click" @click="goResource(scope.row)">{{
-                      scope.row.returnSum
-                    }}/{{ scope.row.resourcesSum }}</el-link>
-                </span>
+              <el-link type="primary" class="text-click" @click="goResource(scope.row)">
+                {{scope.row.returnSum }}/{{ scope.row.resourcesSum }}
+              </el-link>
+            </span>
           </el-tooltip>
         </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" sortable
@@ -232,7 +232,7 @@
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="11%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
+        <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
           <template v-slot:default="scope">
             <table-operators :buttons="rule_buttons" :row="scope.row"/>
           </template>
@@ -573,7 +573,7 @@ import {ACCOUNT_ID} from "@/common/js/constants";
 import AccountChange from "@/business/components/common/head/AccountSwitch";
 import TableSearchBar from '@/business/components/common/components/TableSearchBar';
 import ResultReadOnly from "./ResultReadOnly";
-import {RESOURCE_CONFIGS, RULE_CONFIGS} from "../../common/components/search/search-components";
+import {RESOURCE_CONFIGS} from "../../common/components/search/search-components";
 
 /* eslint-disable */
 export default {
@@ -623,10 +623,6 @@ export default {
         {
           tip: this.$t('resource.regulation'), icon: "el-icon-document", type: "warning",
           exec: this.showSeverityDetail
-        },
-        {
-          tip: this.$t('resource.result_details_list'), icon: "el-icon-edit-outline", type: "success",
-          exec: this.goResource
         },
         {
           tip: this.$t('resource.scan'), icon: "el-icon-refresh-right", type: "primary",
@@ -690,7 +686,9 @@ export default {
       string2Key: "",
       string2PrettyFormat: "",
       visible: false,
-      resourceCondition: {},
+      resourceCondition: {
+        components: RESOURCE_CONFIGS
+      },
       highRegionRow: true,
       highSeverityRow: true,
       highResourceTypeRow: true,
@@ -787,9 +785,9 @@ export default {
       }
       this.activeName = 'second';
       this.highRuleRow = true;
-      this.resourceCondition.taskId = params.taskId;
-      for (let i=0; i <= this.ruleData.length; i++) {
-        if (params.taskId === this.ruleData[i].id) {
+      this.resourceCondition.taskId = params.id;
+      for (let i=0; i < this.ruleData.length; i++) {
+        if (params.id === this.ruleData[i].id) {
           this.rowIndex = i;
           break;
         } else {
