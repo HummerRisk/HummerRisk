@@ -385,7 +385,7 @@ export default {
       this.result = this.$get(logUrl + result.id, response => {
         this.logData = response.data;
       });
-      let resultUrl = "/image/getImageResult/";
+      let resultUrl = "/image/getImageResultWithBLOBs/";
       this.result = this.$get(resultUrl + result.id, response => {
         this.logForm = response.data;
         this.logForm.trivyJson = JSON.parse(this.logForm.trivyJson);

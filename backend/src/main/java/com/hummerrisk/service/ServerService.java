@@ -312,6 +312,15 @@ public class ServerService {
                     CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA);
                     server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
                 }
+            } else {
+                ServerCertificate serverCertificate = serverCertificateMapper.selectByPrimaryKey(server.getCertificateId());
+                server.setIsPublicKey(serverCertificate.getIsPublicKey());
+                if (StringUtils.equalsIgnoreCase(serverCertificate.getIsPublicKey(), "no")) {
+                    server.setPassword(serverCertificate.getPassword());
+                } else {
+                    server.setPublicKey(serverCertificate.getPublicKey());
+                    server.setPublicKeyPath(serverCertificate.getPublicKeyPath());
+                }
             }
         } else {
             server.setIsCertificate(false);
@@ -341,6 +350,15 @@ public class ServerService {
                     String uuid = UUIDUtil.newUUID();
                     CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA);
                     server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
+                }
+            } else {
+                ServerCertificate serverCertificate = serverCertificateMapper.selectByPrimaryKey(server.getCertificateId());
+                server.setIsPublicKey(serverCertificate.getIsPublicKey());
+                if (StringUtils.equalsIgnoreCase(serverCertificate.getIsPublicKey(), "no")) {
+                    server.setPassword(serverCertificate.getPassword());
+                } else {
+                    server.setPublicKey(serverCertificate.getPublicKey());
+                    server.setPublicKeyPath(serverCertificate.getPublicKeyPath());
                 }
             }
         } else {

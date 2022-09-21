@@ -604,11 +604,12 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
       },
       saveServer(servers) {
         for (let server of servers) {
+          console.log(server)
           if(!server.name || !server.ip || !server.userName || !server.groupId) {
             this.$warning('Value will not be null');
             return;
           } else {
-            if (!server.isPublicKey) {
+            if (server.isPublicKey !== "no") {
               if(!server.password) this.$warning('Password will not be null');
               return;
             }
