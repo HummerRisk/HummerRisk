@@ -20,7 +20,7 @@
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ $t(scope.row.name) }}
+                 &nbsp;&nbsp; {{ scope.row.name }}
               </span>
             </template>
           </el-table-column>
@@ -98,38 +98,60 @@
                     </el-button>
                     <el-button type="danger" icon="el-icon-delete" size="mini" v-show="!scope.row.isSet"
                                @click.native.prevent="deleteRowServer(scope.$index, scope.row)"></el-button>
+                    <!--bind Certificate-->
+                    <div>
+                      <el-drawer
+                        size="60%"
+                        :title="$t('server.bind_certificate')"
+                        :append-to-body="true"
+                        :before-close="innerCertificateClose"
+                        :visible.sync="innerAddCertificate">
+                        <el-form :model="addCertificateForm" label-position="right" label-width="150px" size="small" ref="addCertificateForm" :rules="rule" style="padding: 5px 5% 5px 5px;">
+                          <el-form-item :label="$t('server.bind_certificate')" ref="type" prop="type" :rules="{required: true, message: $t('server.bind_certificate') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                            <el-radio v-model="addCertificateForm.isCertificate" :label="false">{{ $t('server.menu_certificate') }}</el-radio>
+                            <el-radio v-model="addCertificateForm.isCertificate" :label="true">{{ $t('server.public_certificate') }}</el-radio>
+                          </el-form-item>
+                          <el-form-item v-if="addCertificateForm.isCertificate" :label="$t('server.public_certificate')">
+                            <el-select style="width: 100%;" filterable :clearable="true" v-model="addCertificateForm.certificateId" :placeholder="$t('server.public_certificate')">
+                              <el-option
+                                v-for="item in certificates"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                                &nbsp;&nbsp; {{ item.name }}
+                              </el-option>
+                            </el-select>
+                          </el-form-item>
+                          <el-form-item v-if="addCertificateForm.isCertificate !==null && !addCertificateForm.isCertificate" :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                            <el-radio v-model="addCertificateForm.isPublicKey" label="no">{{ $t('server.no_public_key') }}</el-radio>
+                            <el-radio v-model="addCertificateForm.isPublicKey" label="str">{{ $t('server.str_public_key') }}</el-radio>
+                            <el-radio v-model="addCertificateForm.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
+                          </el-form-item>
+                          <el-form-item v-if="!addCertificateForm.isCertificate && addCertificateForm.isPublicKey === 'no'" :label="$t('commons.password')" ref="password" prop="password">
+                            <el-input type="password" v-model="addCertificateForm.password" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
+                          </el-form-item>
+                          <el-form-item v-if="!addCertificateForm.isCertificate && addCertificateForm.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
+                            <el-input type="textarea" :rows="10" v-model="addCertificateForm.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
+                          </el-form-item>
+                          <el-form-item v-if="!addCertificateForm.isCertificate && addCertificateForm.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
+                            <server-key-upload v-on:append="append" v-model="addCertificateForm.publicKeyPath" :param="addCertificateForm.publicKeyPath"/>
+                          </el-form-item>
+                          <el-form-item>
+                            <span style="color: red">{{ $t('server.certificate_note') }}</span>
+                          </el-form-item>
+                        </el-form>
+                        <dialog-footer
+                          @cancel="innerAddCertificate = false"
+                          @confirm="saveCertificate(addCertificateForm, scope.row)"/>
+                      </el-drawer>
+                    </div>
+                    <!--bind Certificate-->
                   </template>
                 </el-table-column>
               </el-table>
             </el-col>
           </el-row>
-          <el-form :model="proxyForm" label-position="right" label-width="150px" size="small" ref="accountForm">
-            <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-              <el-switch v-model="proxyForm.isProxy"></el-switch>
-            </el-form-item>
-            <el-form-item v-if="proxyForm.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-              <el-select style="width: 100%;" filterable :clearable="true" v-model="proxyForm.proxyId" :placeholder="$t('commons.proxy')">
-                <el-option
-                  v-for="item in proxys"
-                  :key="item.id"
-                  :label="item.proxyIp"
-                  :value="item.id">
-                  &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-              <el-radio v-model="form.isPublicKey" label="no">{{ $t('server.no_public_key') }}</el-radio>
-              <el-radio v-model="form.isPublicKey" label="str">{{ $t('server.str_public_key') }}</el-radio>
-              <el-radio v-model="form.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
-            </el-form-item>
-            <el-form-item v-if="form.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
-              <el-input type="textarea" :rows="10" v-model="form.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
-            </el-form-item>
-            <el-form-item v-if="form.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
-              <server-key-upload v-on:append="append" v-model="form.publicKeyPath" :param="form.publicKeyPath"/>
-            </el-form-item>
-          </el-form>
+
         </div>
         <div style="margin: 10px;">
           <dialog-footer
@@ -140,7 +162,7 @@
       <!--Create server-->
 
       <!--Update server-->
-      <el-drawer class="rtl" :title="$t('server.server_update')" :visible.sync="updateVisible" size="50%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="rtl" :title="$t('server.server_update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="createServerForm">
           <el-form-item :label="$t('server.server_group_name')" ref="groupId" prop="groupId">
@@ -165,34 +187,49 @@
           <el-form-item :label="$t('server.server_user_name')" ref="userName" prop="userName">
             <el-input v-model="form.userName" autocomplete="off" :placeholder="$t('server.server_user_name')"/>
           </el-form-item>
-          <el-form-item :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-form-item :label="$t('server.bind_certificate')" ref="type" prop="type" :rules="{required: true, message: $t('server.bind_certificate') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-radio v-model="form.isCertificate" :label="false">{{ $t('server.menu_certificate') }}</el-radio>
+            <el-radio v-model="form.isCertificate" :label="true">{{ $t('server.public_certificate') }}</el-radio>
+          </el-form-item>
+          <el-form-item v-if="form.isCertificate" :label="$t('server.public_certificate')">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="addCertificateForm.certificateId" :placeholder="$t('server.public_certificate')">
+              <el-option
+                v-for="item in certificates"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+                &nbsp;&nbsp; {{ item.name }}
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="form.isCertificate !==null && !form.isCertificate" :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-radio v-model="form.isPublicKey" label="no">{{ $t('server.no_public_key') }}</el-radio>
             <el-radio v-model="form.isPublicKey" label="str">{{ $t('server.str_public_key') }}</el-radio>
             <el-radio v-model="form.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
           </el-form-item>
-          <el-form-item v-if="form.isPublicKey === 'no'" :label="$t('commons.password')" ref="password" prop="password">
+          <el-form-item v-if="form.isCertificate && form.isPublicKey === 'no'" :label="$t('commons.password')" ref="password" prop="password">
             <el-input type="password" v-model="form.password" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
           </el-form-item>
-          <el-form-item v-if="form.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
+          <el-form-item v-if="form.isCertificate && form.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
             <el-input type="textarea" :rows="10" v-model="form.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
           </el-form-item>
-          <el-form-item v-if="form.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
+          <el-form-item v-if="form.isCertificate && form.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
             <server-key-upload v-on:append="append" v-model="form.publicKeyPath" :param="form.publicKeyPath"/>
           </el-form-item>
-          <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-switch v-model="form.isProxy"></el-switch>
-          </el-form-item>
-          <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
-              <el-option
-                v-for="item in proxys"
-                :key="item.id"
-                :label="item.proxyIp"
-                :value="item.id">
-                &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
-              </el-option>
-            </el-select>
-          </el-form-item>
+<!--          <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">-->
+<!--            <el-switch v-model="form.isProxy"></el-switch>-->
+<!--          </el-form-item>-->
+<!--          <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">-->
+<!--            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyId" :placeholder="$t('commons.proxy')">-->
+<!--              <el-option-->
+<!--                v-for="item in proxys"-->
+<!--                :key="item.id"-->
+<!--                :label="item.proxyIp"-->
+<!--                :value="item.id">-->
+<!--                &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}-->
+<!--              </el-option>-->
+<!--            </el-select>-->
+<!--          </el-form-item>-->
         </el-form>
         <dialog-footer
           @cancel="updateVisible = false"
@@ -282,7 +319,10 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
         groups: [],
         proxyForm: {isProxy: false, proxyId: 0},
         proxys: [],
+        certificates: [],
         keyFile: Object,
+        innerAddCertificate: false,
+        addCertificateForm: {},
       }
     },
     props: {
@@ -305,6 +345,13 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
         let url = "/proxy/list/all";
         this.result = this.$get(url, response => {
           this.proxys = response.data;
+        });
+      },
+      //查询代理
+      activeCertificates() {
+        let url = "/server/allCertificateList";
+        this.result = this.$get(url, response => {
+          this.certificates = response.data;
         });
       },
       download() {},
@@ -358,6 +405,7 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;
+          console.log(this.tableData)
         });
       },
       handleEdit(tmp) {
@@ -472,23 +520,24 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
         this.servers.splice(index, 1);
       },
       bindCertificate(index, data) {
-
+        this.addCertificateForm = data;
+        this.innerAddCertificate = true;
       },
       saveServer(servers) {
         for (let server of servers) {
           if(!server.name || !server.ip || !server.userName || !server.password || !server.groupId) {
             this.$warning('value will not be null');
           } else {
-            if (this.proxyForm.isProxy) {
-              server.isProxy = true;
-              server.proxyId = this.proxyForm.proxyId;
-            } else {
-              server.isProxy = false;
-              server.proxyId = null;
-            }
+            // if (this.proxyForm.isProxy) {
+            //   server.isProxy = true;
+            //   server.proxyId = this.proxyForm.proxyId;
+            // } else {
+            //   server.isProxy = false;
+            //   server.proxyId = null;
+            // }
             let formData = new FormData();
             if (this.keyFile) {
-              formData.append("keyFile", this.keyFile);
+              formData.append("keyFile", server.keyFile);
             }
             formData.append("request", new Blob([JSON.stringify(server)], {type: "application/json"}));
             let axiosRequestConfig = {
@@ -538,10 +587,24 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
       batchBind() {
 
       },
+      innerCertificateClose() {
+        this.innerAddCertificate = false;
+      },
+      saveCertificate(item, row) {
+        row.isCertificate = item.isCertificate;
+        row.certificateId = item.certificateId;
+        row.isPublicKey = item.isPublicKey;
+        row.password = item.password;
+        row.publicKey = item.publicKey;
+        row.publicKeyPath = item.publicKeyPath;
+        row.keyFile = this.keyFile;
+        this.innerCertificateClose();
+      },
     },
     created () {
       this.init();
       this.activeProxy();
+      this.activeCertificates();
     },
   }
 </script>

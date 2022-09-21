@@ -82,7 +82,7 @@ public class SshUtil {
         long startTime = Calendar.getInstance().getTimeInMillis();
         try {
 
-            session = client.connect(server.getUserName(), server.getIp(), Integer.valueOf(server.getPort())).verify(50000).getSession();
+            session = client.connect(server.getUserName(), server.getIp(), Integer.valueOf(server.getPort())).verify(5000).getSession();
 
             if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
                 // 密钥模式

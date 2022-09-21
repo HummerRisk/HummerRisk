@@ -140,7 +140,7 @@
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)"
                      style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ $t(scope.row.accountName) }}
+                 &nbsp;&nbsp; {{ scope.row.accountName }}
               </span>
           </template>
         </el-table-column>

@@ -14,7 +14,7 @@
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/config/yaml.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ $t(scope.row.name) }}
+                 &nbsp;&nbsp; {{ scope.row.name }}
               </span>
           </template>
         </el-table-column>

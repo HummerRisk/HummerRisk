@@ -283,7 +283,7 @@
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ $t(scope.row.pluginName) }}
+                 &nbsp;&nbsp; {{ scope.row.pluginName }}
               </span>
             </template>
           </el-table-column>

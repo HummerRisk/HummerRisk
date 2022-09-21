@@ -50,7 +50,7 @@
               <template v-slot:default="scope">
                 <span>
                   <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                   &nbsp;&nbsp; {{ $t(scope.row.resourceName) }}
+                   &nbsp;&nbsp; {{ scope.row.resourceName }}
                 </span>
               </template>
             </el-table-column>
@@ -118,7 +118,7 @@
               <template v-slot:default="scope">
                 <span>
                   <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                   &nbsp;&nbsp; {{ $t(scope.row.resourceName) }}
+                   &nbsp;&nbsp; {{ scope.row.resourceName }}
                 </span>
               </template>
             </el-table-column>

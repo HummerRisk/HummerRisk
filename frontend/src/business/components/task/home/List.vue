@@ -12,7 +12,7 @@
           <template v-slot:default="scope">
             <el-link type="primary" :underline="false" class="md-primary text-click"  @click="showTaskDetail(scope.row)">
               <span>
-             &nbsp;&nbsp; {{ $t(scope.row.taskName) }}
+             &nbsp;&nbsp; {{ scope.row.taskName }}
               </span>
             </el-link>
           </template>
@@ -74,7 +74,7 @@
             <el-link type="primary" :underline="false" class="md-primary text-click"  @click="showTaskRuleDetail(scope.row)">
               <span>
                 <img v-if="scope.row.icon" :src="require(`@/assets/img/platform/${scope.row.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ $t(scope.row.accountName) }}
+                 &nbsp;&nbsp; {{ scope.row.accountName }}
               </span>
             </el-link>
           </template>
@@ -300,7 +300,7 @@
                   <template v-slot:default="scope">
               <span>
                 <img v-if="scope.row.icon" :src="require(`@/assets/img/platform/${scope.row.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ $t(scope.row.accountName) }}
+                 &nbsp;&nbsp; {{ scope.row.accountName }}
               </span>
                   </template>
                 </el-table-column>

@@ -79,6 +79,8 @@ CREATE TABLE IF NOT EXISTS `server_certificate` (
 
 ALTER TABLE `server` ADD `certificate_id` varchar(50) DEFAULT NULL COMMENT 'certificate id';
 
+ALTER TABLE `server` ADD `is_certificate` tinyint(1) DEFAULT 0 COMMENT '是否绑定凭证';
+
 -- ----------------------------
 -- Table code
 -- ----------------------------
