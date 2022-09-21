@@ -932,6 +932,7 @@ export default {
     },
     handleClick(tab, event) {
       this.resourceCondition.taskId = null;
+      this.resourceSearch();
       this.activeName = tab.name;
       this.rowIndex = '';
     },
