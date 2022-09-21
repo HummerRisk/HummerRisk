@@ -278,24 +278,26 @@
                  :title="$t('account.scan_group_quick')"
                  :visible.sync="scanVisible"
                  class="" width="70%">
-        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAll">{{ $t('account.i18n_sync_all') }}</el-checkbox>
-        <el-card class="box-card el-box-card" v-for="(accountGroup, index) in accountGroups" :key="index">
-          <div slot="header" class="clearfix">
-            <span>
-              <img :src="require(`@/assets/img/platform/${accountGroup.accountWithBLOBs.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-               &nbsp;&nbsp; {{ accountGroup.accountWithBLOBs.pluginName }} {{ $t('rule.rule_set') }} | {{accountGroup.accountWithBLOBs.name}}
-            </span>
-            <el-button style="float: right; padding: 3px 0" type="text"  @click="handleCheckAllByAccount(accountGroup, index)">{{ $t('account.i18n_sync_all') }}</el-button>
-          </div>
-          <el-checkbox-group v-model="checkedGroups" @change="handleCheckedGroupsChange(accountGroup)">
-            <el-checkbox v-for="(group,index) in accountGroup.groups" :label="accountGroup.accountWithBLOBs.id + '/' + group.id" :value="accountGroup.accountWithBLOBs.id + '/' + group.id" :key="index" border >
-                {{ group.name }}
-            </el-checkbox>
-          </el-checkbox-group>
-        </el-card>
-        <dialog-footer
-          @cancel="scanVisible = false"
-          @confirm="scanGroup()"/>
+        <div v-loading="groupResult.loading">
+          <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAll">{{ $t('account.i18n_sync_all') }}</el-checkbox>
+          <el-card class="box-card el-box-card" v-for="(accountGroup, index) in accountGroups" :key="index">
+            <div slot="header" class="clearfix">
+              <span>
+                <img :src="require(`@/assets/img/platform/${accountGroup.accountWithBLOBs.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ accountGroup.accountWithBLOBs.pluginName }} {{ $t('rule.rule_set') }} | {{accountGroup.accountWithBLOBs.name}}
+              </span>
+              <el-button style="float: right; padding: 3px 0" type="text"  @click="handleCheckAllByAccount(accountGroup, index)">{{ $t('account.i18n_sync_all') }}</el-button>
+            </div>
+            <el-checkbox-group v-model="checkedGroups" @change="handleCheckedGroupsChange(accountGroup)">
+              <el-checkbox v-for="(group,index) in accountGroup.groups" :label="accountGroup.accountWithBLOBs.id + '/' + group.id" :value="accountGroup.accountWithBLOBs.id + '/' + group.id" :key="index" border >
+                  {{ group.name }}
+              </el-checkbox>
+            </el-checkbox-group>
+          </el-card>
+          <dialog-footer
+            @cancel="scanVisible = false"
+            @confirm="scanGroup()"/>
+        </div>
       </el-dialog>
       <!-- 一键检测选择检测组 -->
 
@@ -340,6 +342,7 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
       return {
         credential: {},
         result: {},
+        groupResult: {},
         condition: {
           components: ACCOUNT_CONFIGS
         },
@@ -750,7 +753,7 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
               formData.append('scanCheckedGroups', new Blob([JSON.stringify(Array.from(this.checkedGroups))], {
                 type: "application/json"
               }));
-              this.result = this.$request({
+              this.groupResult = this.$request({
                 method: 'POST',
                 url: "/rule/scan",
                 data: formData,
