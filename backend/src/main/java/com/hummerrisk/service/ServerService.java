@@ -374,7 +374,7 @@ public class ServerService {
             if (StringUtils.equalsIgnoreCase(server.getAuthType(), "ssh2")) {
                 return SshUtil.execute(SshUtil.login(server, proxy), cmd);
             } else {
-                return SshUtil.executeSshd(SshUtil.loginSshd(server, proxy), cmd);
+                return SshUtil.executeSshd(SshUtil.loginExecute(server, proxy), cmd);
             }
         } catch (Exception e) {
             return "";

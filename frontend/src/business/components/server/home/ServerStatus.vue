@@ -16,7 +16,6 @@
   /* eslint-disable */
   export default {
     name: "ServerStatus",
-    inject:['search'],
     props: {
       row: Object
     },
@@ -33,6 +32,7 @@
                   this.$error(this.$t('server.error'));
                 }
                 this.$parent.search;
+                this.$emit('search');
               });
             }
           }

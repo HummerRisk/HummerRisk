@@ -75,7 +75,52 @@ public class SshUtil {
         return conn;
     }
 
-    public static ClientSession loginSshd(Server server, Proxy proxy) throws Exception {
+    public static void loginSshd(Server server, Proxy proxy) throws Exception {
+        SshClient client = SshClient.setUpDefaultClient();
+        ClientSession session = null;
+        client.start();
+        long startTime = Calendar.getInstance().getTimeInMillis();
+        try {
+
+            session = client.connect(server.getUserName(), server.getIp(), Integer.valueOf(server.getPort())).verify(5000).getSession();
+
+            if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
+                // 密钥模式
+                URLResource idenreplacedy = new URLResource(Paths.get(server.getPublicKeyPath()).toUri().toURL());
+                try (InputStream inputStream = idenreplacedy.openInputStream()) {
+                    session.addPublicKeyIdentity(GenericUtils.head(SecurityUtils.loadKeyPairIdentities(session, idenreplacedy, inputStream, (s, resourceKey, retryIndex) -> null)));
+                }
+            } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
+                // 密钥模式
+                URLResource idenreplacedy = new URLResource(Paths.get(server.getPublicKeyPath()).toUri().toURL());
+                try (InputStream inputStream = idenreplacedy.openInputStream()) {
+                    session.addPublicKeyIdentity(GenericUtils.head(SecurityUtils.loadKeyPairIdentities(session, idenreplacedy, inputStream, (s, resourceKey, retryIndex) -> null)));
+                }
+            } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "no")) {
+                // 密码模式
+                session.addPasswordIdentity(server.getPassword());
+            }
+
+            AuthFuture auth = session.auth();
+            if (!auth.await(5000)) {
+                LogUtil.error(String.format(tipStr, "sshd 认证失败"));
+                throw new DeploymentException("Not authenticated within timeout", null);
+            }
+            if (!auth.isSuccess()) {
+                LogUtil.error(String.format(tipStr, "sshd 认证失败"));
+                throw new DeploymentException("Failed to authenticate", auth.getException());
+            }
+        } catch (Exception e) {
+            LogUtil.error(String.format(tipStr, "sshd登录失败") + e.getMessage());
+            throw new Exception(String.format(tipStr, "sshd登录失败") + e.getMessage());
+        } finally {
+            session.close();
+        }
+        long endTime = Calendar.getInstance().getTimeInMillis();
+        LogUtil.info("sshd 登录用时: " + (endTime - startTime)/1000.0 + "s\n" + splitStr);
+    }
+
+    public static ClientSession loginExecute(Server server, Proxy proxy) throws Exception {
         SshClient client = SshClient.setUpDefaultClient();
         ClientSession session = null;
         client.start();
