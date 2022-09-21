@@ -198,6 +198,7 @@ export default {
     cloud_native_second: '檢測準確高',
     cloud_native_third: '響應速度快',
     cloud_native_fourth: '隨時隨地查',
+    batch_settings: '批量設置',
   },
   workspace: {
     create: '創建工作空間',

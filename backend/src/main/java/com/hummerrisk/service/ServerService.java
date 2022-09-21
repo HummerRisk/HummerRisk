@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -60,8 +61,6 @@ public class ServerService {
     private NoticeService noticeService;
     @Resource
     private HistoryService historyService;
-    @Resource
-    private ImageService imageService;
     @Resource
     private ServerCertificateMapper serverCertificateMapper;
     @Resource
@@ -303,9 +302,9 @@ public class ServerService {
         }
 
         if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
-            String keyFilePath = imageService.upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
-            String publicKey = ReadFileUtils.readToBuffer(keyFilePath);
-            server.setPublicKeyPath(keyFilePath);
+            String keyFilePath = upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
+            String publicKey = ReadFileUtils.readToBuffer(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+            server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
             server.setPublicKey(publicKey);
         } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
             String uuid = UUIDUtil.newUUID();
@@ -327,9 +326,9 @@ public class ServerService {
         }
 
         if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
-            String keyFilePath = imageService.upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
-            String publicKey = ReadFileUtils.readToBuffer(keyFilePath);
-            server.setPublicKeyPath(keyFilePath);
+            String keyFilePath = upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
+            String publicKey = ReadFileUtils.readToBuffer(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+            server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
             server.setPublicKey(publicKey);
         } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
             String uuid = UUIDUtil.newUUID();
@@ -464,9 +463,9 @@ public class ServerService {
         certificate.setLastModified(System.currentTimeMillis());
 
         if (StringUtils.equalsIgnoreCase(certificate.getIsPublicKey(), "file")) {
-            String keyFilePath = imageService.upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
-            String publicKey = ReadFileUtils.readToBuffer(keyFilePath);
-            certificate.setPublicKeyPath(keyFilePath);
+            String keyFilePath = upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
+            String publicKey = ReadFileUtils.readToBuffer(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+            certificate.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
             certificate.setPublicKey(publicKey);
         } else if (StringUtils.equalsIgnoreCase(certificate.getIsPublicKey(), "str")) {
             String uuid = UUIDUtil.newUUID();
@@ -481,9 +480,9 @@ public class ServerService {
     public int editCertificate(MultipartFile keyFile, ServerCertificate certificate) throws Exception {
         certificate.setLastModified(System.currentTimeMillis());
         if (StringUtils.equalsIgnoreCase(certificate.getIsPublicKey(), "file")) {
-            String keyFilePath = imageService.upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
-            String publicKey = ReadFileUtils.readToBuffer(keyFilePath);
-            certificate.setPublicKeyPath(keyFilePath);
+            String keyFilePath = upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
+            String publicKey = ReadFileUtils.readToBuffer(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+            certificate.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
             certificate.setPublicKey(publicKey);
         } else if (StringUtils.equalsIgnoreCase(certificate.getIsPublicKey(), "str")) {
             String uuid = UUIDUtil.newUUID();
@@ -498,6 +497,25 @@ public class ServerService {
     public void deleteCertificate(String id) throws Exception {
         serverCertificateMapper.deleteByPrimaryKey(id);
         OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server");
+    }
+
+    /**
+     * 以默认配置进行文件上传
+     *
+     * @param file 上传的文件
+     * @return 文件名称
+     * @throws Exception
+     */
+    public static final String upload(MultipartFile file, String dir) throws IOException {
+        try {
+            String fileName = file.getOriginalFilename();
+            String extension = StringUtils.isNotBlank(fileName) && fileName.contains(".") ? fileName.split("\\.")[fileName.split("\\.").length - 1] : "";
+            //png、html等小文件存放路径，页面需要显示，项目内目录
+            //jar包等大文件存放路径，项目外目录
+            return FileUploadUtils.uploadCertificate(dir, file, extension.contains(".")?"." + extension:"");
+        } catch (Exception e) {
+            throw new IOException(e.getMessage(), e);
+        }
     }
 
 }

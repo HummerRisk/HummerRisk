@@ -23,17 +23,17 @@
         </el-table-column >
         <!-- 展开 end -->
         <el-table-column type="index" min-width="2%"/>
-        <el-table-column prop="name" :label="$t('commons.name')" min-width="18%" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="description" :label="$t('commons.description')" min-width="20%" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="name" :label="$t('commons.name')" min-width="15%" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="description" :label="$t('commons.description')" min-width="18%" show-overflow-tooltip></el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('server.is_public_key')" min-width="10%" show-overflow-tooltip>
-          <el-tag size="mini" type="danger" v-if="scope.row.isPublicKey === 'no'">
-            {{ $t('rule.no_public_key') | $t('commons.password') }}
+          <el-tag size="mini" type="success" v-if="scope.row.isPublicKey === 'no'">
+            {{ $t('server.no_public_key') + '(' +  $t('commons.password') + ')'}}
           </el-tag>
-          <el-tag size="mini" type="warning" v-else-if="scope.row.isPublicKey === 'files'">
-            {{ $t('rule.file_public_key') }}
+          <el-tag size="mini" type="success" v-else-if="scope.row.isPublicKey === 'file'">
+            {{ $t('server.file_public_key') }}
           </el-tag>
           <el-tag size="mini" type="success" v-else-if="scope.row.isPublicKey === 'str'">
-            {{ $t('rule.str_public_key') }}
+            {{ $t('server.str_public_key') }}
           </el-tag>
         </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('account.creator')" min-width="10%" show-overflow-tooltip>
@@ -63,7 +63,7 @@
         <el-form-item :label="$t('commons.description')" prop="description">
           <el-input v-model="createForm.description" autocomplete="off" :placeholder="$t('commons.description')"/>
         </el-form-item>
-        <el-form-item :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+        <el-form-item :label="$t('server.is_public_key')" ref="type" prop="type">
           <el-radio v-model="createForm.isPublicKey" label="no">{{ $t('server.no_public_key') }}</el-radio>
           <el-radio v-model="createForm.isPublicKey" label="str">{{ $t('server.str_public_key') }}</el-radio>
           <el-radio v-model="createForm.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
@@ -75,7 +75,7 @@
           <el-input type="textarea" :rows="10" v-model="createForm.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
         </el-form-item>
         <el-form-item v-if="createForm.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
-          <server-key-upload v-on:appendTar="append" v-model="createForm.publicKeyPath" :param="createForm.publicKeyPath"/>
+          <server-key-upload v-on:append="append" v-model="createForm.publicKeyPath" :param="createForm.publicKeyPath"/>
         </el-form-item>
 <!--        <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">-->
 <!--          <el-switch v-model="form.isProxy"></el-switch>-->
@@ -108,7 +108,7 @@
         <el-form-item :label="$t('commons.description')" prop="description">
           <el-input v-model="updateForm.description" autocomplete="off" :placeholder="$t('commons.description')"/>
         </el-form-item>
-        <el-form-item :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+        <el-form-item :label="$t('server.is_public_key')" ref="type" prop="type">
           <el-radio v-model="updateForm.isPublicKey" label="no">{{ $t('server.no_public_key') }}</el-radio>
           <el-radio v-model="updateForm.isPublicKey" label="str">{{ $t('server.str_public_key') }}</el-radio>
           <el-radio v-model="updateForm.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
@@ -120,7 +120,7 @@
           <el-input type="textarea" :rows="10" v-model="updateForm.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
         </el-form-item>
         <el-form-item v-if="updateForm.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
-          <server-key-upload v-on:appendTar="append" v-model="updateForm.publicKeyPath" :param="updateForm.publicKeyPath"/>
+          <server-key-upload v-on:append="append" v-model="updateForm.publicKeyPath" :param="updateForm.publicKeyPath"/>
         </el-form-item>
       </el-form>
       <dialog-footer

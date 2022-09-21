@@ -198,6 +198,7 @@ export default {
     cloud_native_second: 'The detection accuracy is high',
     cloud_native_third: 'Fast response',
     cloud_native_fourth: 'Check anytime, anywhere',
+    batch_settings: 'Batch settings',
   },
   workspace: {
     create:'Create a workspace',

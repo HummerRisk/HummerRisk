@@ -55,11 +55,12 @@
                  :destroy-on-close="true">
         <div style="margin: 10px;">
           <el-row>
-            <el-col :span="10">
-              <el-button icon="el-icon-circle-plus-outline" plain size="mini" @click="handleAddServerModel">
-                {{ $t('server.server_add') }}
-              </el-button>
-            </el-col>
+            <el-button type="primary" icon="el-icon-circle-plus-outline" plain size="mini" @click="handleAddServerModel">
+              {{ $t('server.server_add') }}
+            </el-button>
+            <el-button type="warning" icon="el-icon-circle-plus-outline" plain size="mini" @click="batchBind">
+              {{ $t('commons.batch_settings') }}
+            </el-button>
           </el-row>
         </div>
         <div>
@@ -93,8 +94,7 @@
                 </el-table-column>
                 <el-table-column :label="$t('commons.operating')" fixed="right" min-width="15%" prop="result">
                   <template v-slot:default="scope">
-                    <el-button type="primary" size="mini" @click="handleAddServerModel(scope.$index, scope.row)">
-                      {{ $t('commons.add') }}
+                    <el-button type="primary" size="mini" @click="bindCertificate(scope.$index, scope.row)" icon="el-icon-tickets">
                     </el-button>
                     <el-button type="danger" icon="el-icon-delete" size="mini" v-show="!scope.row.isSet"
                                @click.native.prevent="deleteRowServer(scope.$index, scope.row)"></el-button>
@@ -127,7 +127,7 @@
               <el-input type="textarea" :rows="10" v-model="form.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
             </el-form-item>
             <el-form-item v-if="form.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
-              <server-key-upload v-on:appendTar="append" v-model="form.publicKeyPath" :param="form.publicKeyPath"/>
+              <server-key-upload v-on:append="append" v-model="form.publicKeyPath" :param="form.publicKeyPath"/>
             </el-form-item>
           </el-form>
         </div>
@@ -177,7 +177,7 @@
             <el-input type="textarea" :rows="10" v-model="form.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
           </el-form-item>
           <el-form-item v-if="form.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
-            <server-key-upload v-on:appendTar="append" v-model="form.publicKeyPath" :param="form.publicKeyPath"/>
+            <server-key-upload v-on:append="append" v-model="form.publicKeyPath" :param="form.publicKeyPath"/>
           </el-form-item>
           <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-switch v-model="form.isProxy"></el-switch>
@@ -471,6 +471,9 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
       deleteRowServer(index, data) { //删除
         this.servers.splice(index, 1);
       },
+      bindCertificate(index, data) {
+
+      },
       saveServer(servers) {
         for (let server of servers) {
           if(!server.name || !server.ip || !server.userName || !server.password || !server.groupId) {
@@ -532,6 +535,9 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
       append(file) {
         this.keyFile = file;
       },
+      batchBind() {
+
+      },
     },
     created () {
       this.init();
@@ -543,6 +549,9 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
 <style scoped>
   .table-content {
     width: 100%;
+  }
+  .rtl >>> .el-drawer__header {
+    margin-bottom: 0;
   }
 
   .el-table {

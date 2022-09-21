@@ -207,4 +207,31 @@ public class FileUploadUtils
         }
     }
 
+    public static final String uploadCertificate(String baseDir, MultipartFile file, String extension)
+            throws FileSizeLimitExceededException, IOException, FileNameLengthLimitExceededException
+    {
+
+        int fileNamelength = file.getOriginalFilename().length();
+        if (fileNamelength > PackageConstants.DEFAULT_FILE_NAME_LENGTH)
+        {
+            throw new FileNameLengthLimitExceededException(PackageConstants.DEFAULT_FILE_NAME_LENGTH);
+        }
+
+        assertAllowed(file);
+
+        String fileName = extractCertificateName(file, extension);
+
+        File desc = getAbsoluteFile(baseDir, fileName);
+        file.transferTo(desc.toPath().toAbsolutePath());
+
+        return fileName;
+    }
+
+    public static final String extractCertificateName(MultipartFile file, String extension)
+    {
+        String filename = file.getOriginalFilename();
+        filename = DateUtils.datePath() + "/" + encodingFilename(filename) + extension;
+        return filename;
+    }
+
 }
