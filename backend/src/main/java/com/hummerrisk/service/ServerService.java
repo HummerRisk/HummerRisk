@@ -90,7 +90,7 @@ public class ServerService {
             } else {
                 server.setStatus(CloudAccountConstants.Status.INVALID.name());
             }
-            serverMapper.updateByPrimaryKeyWithBLOBs(server);
+            serverMapper.updateByPrimaryKeySelective(server);
             return valid;
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
@@ -174,7 +174,7 @@ public class ServerService {
             result.setReturnLog(returnLog);
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
-            serverResultMapper.updateByPrimaryKeyWithBLOBs(result);
+            serverResultMapper.updateByPrimaryKeySelective(result);
 
             noticeService.createServerMessageOrder(result);
 
@@ -185,7 +185,7 @@ public class ServerService {
             LogUtil.error(e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
-            serverResultMapper.updateByPrimaryKeyWithBLOBs(result);
+            serverResultMapper.updateByPrimaryKeySelective(result);
             historyService.updateHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
             saveServerResultLog(result.getId(), "i18n_operation_ex" + ": " + StringUtils.substring(e.getMessage(), 0, 900) + "...", e.getMessage(), false);
         }
@@ -196,7 +196,7 @@ public class ServerService {
         saveServerResultLog(result.getId(), "i18n_restart_server_result", "", true);
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-        serverResultMapper.updateByPrimaryKeyWithBLOBs(result);
+        serverResultMapper.updateByPrimaryKeySelective(result);
         OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.RESCAN, "i18n_restart_server_result");
         return result.getId();
     }
@@ -342,7 +342,7 @@ public class ServerService {
         server = login(server, proxy);
 
         OperationLogService.log(SessionUtils.getUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "i18n_update_server");
-        return serverMapper.updateByPrimaryKeyWithBLOBs(server);
+        return serverMapper.updateByPrimaryKeySelective(server);
     }
 
     public void deleteServer(String id) throws Exception {
@@ -423,7 +423,7 @@ public class ServerService {
         BeanUtils.copyBean(record, request);
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
-        return serverRuleMapper.updateByPrimaryKeyWithBLOBs(record);
+        return serverRuleMapper.updateByPrimaryKeySelective(record);
     }
 
     public void deleteServerRule(String id) throws Exception {
@@ -432,7 +432,7 @@ public class ServerService {
     }
 
     public int changeStatus(ServerRule rule) throws Exception {
-        return serverRuleMapper.updateByPrimaryKeyWithBLOBs(rule);
+        return serverRuleMapper.updateByPrimaryKeySelective(rule);
     }
 
     public List<ServerResultDTO> resultList(ServerResultRequest request) {
@@ -494,7 +494,7 @@ public class ServerService {
         }
 
         OperationLogService.log(SessionUtils.getUser(), certificate.getId(), certificate.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "i18n_update_server");
-        return serverCertificateMapper.updateByPrimaryKeyWithBLOBs(certificate);
+        return serverCertificateMapper.updateByPrimaryKeySelective(certificate);
     }
 
     public void deleteCertificate(String id) throws Exception {

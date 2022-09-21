@@ -131,7 +131,7 @@ public class ProwlerService {
                     }
 
                     taskItemWithBLOBs.setDetails(finalScript);
-                    cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItemWithBLOBs);
+                    cloudTaskItemMapper.updateByPrimaryKeySelective(taskItemWithBLOBs);
 
                     try {
                         historyService.updateHistoryCloudTaskItem(BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据

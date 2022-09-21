@@ -89,7 +89,7 @@ public class AccountService {
         } else {
             account.setStatus(CloudAccountConstants.Status.INVALID.name());
         }
-        accountMapper.updateByPrimaryKeyWithBLOBs(account);
+        accountMapper.updateByPrimaryKeySelective(account);
         return valid;
     }
 
@@ -179,7 +179,7 @@ public class AccountService {
                 account.setPluginIcon(plugin.getIcon());
                 account.setPluginName(plugin.getName());
                 account.setUpdateTime(System.currentTimeMillis());
-                accountMapper.updateByPrimaryKeyWithBLOBs(account);
+                accountMapper.updateByPrimaryKeySelective(account);
                 account = accountMapper.selectByPrimaryKey(account.getId());
                 updateRegions(account);
 
@@ -244,7 +244,7 @@ public class AccountService {
             JSONArray jsonArray = PlatformUtils._getRegions(account, proxy, validate(account.getId()));
             if (!jsonArray.isEmpty()) {
                 account.setRegions(jsonArray.toJSONString());
-                accountMapper.updateByPrimaryKeyWithBLOBs(account);
+                accountMapper.updateByPrimaryKeySelective(account);
             }
         }
         catch (Exception e) {

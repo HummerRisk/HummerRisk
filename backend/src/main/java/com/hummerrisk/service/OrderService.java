@@ -183,7 +183,7 @@ public class OrderService {
                         map.put("policies", list);
                         sc = yaml.dump(map);
                         taskItemWithBLOBs.setDetails(sc);
-                        cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItemWithBLOBs);
+                        cloudTaskItemMapper.updateByPrimaryKeySelective(taskItemWithBLOBs);
 
                         try {
                             historyService.updateHistoryCloudTaskItem(BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
@@ -333,7 +333,7 @@ public class OrderService {
         CloudTaskItemWithBLOBs taskItem = new CloudTaskItemWithBLOBs();
         taskItem.setId(taskItemId);
         taskItem.setStatus(status.name());
-        cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItem);
+        cloudTaskItemMapper.updateByPrimaryKeySelective(taskItem);
     }
 
     public void updateTaskStatus(String id, String status) {

@@ -429,7 +429,7 @@ public class ImageService {
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
         OperationLogService.log(SessionUtils.getUser(), record.getId(), record.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image_rule");
-        return imageRuleMapper.updateByPrimaryKeyWithBLOBs(record);
+        return imageRuleMapper.updateByPrimaryKeySelective(record);
     }
 
     public void deleteImageRule(String id) throws Exception {
@@ -439,7 +439,7 @@ public class ImageService {
     }
 
     public int changeStatus(ImageRule rule) throws Exception {
-        return imageRuleMapper.updateByPrimaryKeyWithBLOBs(rule);
+        return imageRuleMapper.updateByPrimaryKeySelective(rule);
     }
 
     public void scan(String id) throws Exception {
@@ -500,7 +500,7 @@ public class ImageService {
 
             long count = saveImageResultItem(result);
             result.setReturnSum(count);
-            imageResultMapper.updateByPrimaryKeyWithBLOBs(result);
+            imageResultMapper.updateByPrimaryKeySelective(result);
 
             noticeService.createImageMessageOrder(result);
             saveImageResultLog(result.getId(), "i18n_end_image_result", "", true);
@@ -510,7 +510,7 @@ public class ImageService {
             LogUtil.error("create ImageResult: " + e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
-            imageResultMapper.updateByPrimaryKeyWithBLOBs(result);
+            imageResultMapper.updateByPrimaryKeySelective(result);
             historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
             saveImageResultLog(result.getId(), "i18n_operation_ex" + ": " + StringUtils.substring(e.getMessage(), 0, 900) + "...", e.getMessage(), false);
         }
@@ -564,7 +564,7 @@ public class ImageService {
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         result.setUserName(SessionUtils.getUser().getName());
-        imageResultMapper.updateByPrimaryKeyWithBLOBs(result);
+        imageResultMapper.updateByPrimaryKeySelective(result);
 
         this.reScanDeleteImageResult(id);
 

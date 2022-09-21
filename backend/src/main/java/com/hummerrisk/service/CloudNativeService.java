@@ -89,7 +89,7 @@ public class CloudNativeService {
         } else {
             cloudNative.setStatus(CloudAccountConstants.Status.INVALID.name());
         }
-        cloudNativeMapper.updateByPrimaryKeyWithBLOBs(cloudNative);
+        cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
         addCloudNativeSource(cloudNative);
         return valid;
     }
@@ -102,7 +102,7 @@ public class CloudNativeService {
         } else {
             cloudNative.setOperatorStatus(CloudAccountConstants.Status.INVALID.name());
         }
-        cloudNativeMapper.updateByPrimaryKeyWithBLOBs(cloudNative);
+        cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
         return valid;
     }
 
@@ -239,7 +239,7 @@ public class CloudNativeService {
                 } else {
                     account.setOperatorStatus(CloudAccountConstants.Status.INVALID.name());
                 }
-                cloudNativeMapper.updateByPrimaryKeyWithBLOBs(account);
+                cloudNativeMapper.updateByPrimaryKeySelective(account);
                 account = cloudNativeMapper.selectByPrimaryKey(account.getId());
                 addCloudNativeSource(account);
                 //检验账号已更新状态

@@ -57,7 +57,7 @@ public class ScheduleService {
     }
 
     public int editSchedule(Schedule schedule) {
-        return scheduleMapper.updateByPrimaryKeyWithBLOBs(schedule);
+        return scheduleMapper.updateByPrimaryKeySelective(schedule);
     }
 
     public Schedule getScheduleByResource(String resourceId, String group) {

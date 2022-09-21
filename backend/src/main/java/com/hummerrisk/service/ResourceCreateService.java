@@ -16,6 +16,7 @@ import com.hummerrisk.i18n.Translator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -48,7 +49,7 @@ public class ResourceCreateService {
     private AccountMapper accountMapper;
     @Resource
     private ResourceMapper resourceMapper;
-    @Resource
+    @Resource @Lazy
     private OrderService orderService;
     @Resource
     private ProxyMapper proxyMapper;
@@ -410,7 +411,7 @@ public class ResourceCreateService {
             long count = historyScanTaskMapper.countByExample(historyScanTaskExample);
             if(historyScanTasks.size() == count) {
                 historyScan.setStatus(TaskConstants.TASK_STATUS.FINISHED.name());
-                historyScanMapper.updateByPrimaryKeyWithBLOBs(historyScan);
+                historyScanMapper.updateByPrimaryKeySelective(historyScan);
                 historyService.updateScanHistory(historyScan);
             }
             historyIdMap.remove(historyScanToBeProceed.getId());

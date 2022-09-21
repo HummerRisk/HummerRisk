@@ -86,7 +86,7 @@ public class CloudNativeConfigService {
         } else {
             cloudNativeConfig.setStatus(CloudAccountConstants.Status.INVALID.name());
         }
-        cloudNativeConfigMapper.updateByPrimaryKeyWithBLOBs(cloudNativeConfig);
+        cloudNativeConfigMapper.updateByPrimaryKeySelective(cloudNativeConfig);
         return valid;
     }
 
