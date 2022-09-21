@@ -18,7 +18,7 @@
           <el-table-column
             prop="regionName"
             :label="$t('log.region')"
-            min-width="25%"
+            min-width="10%"
           >
             <template v-slot:default="scope">
               <regions :logId="scope.row.id" :accountId="scope.row.accountId"></regions>
