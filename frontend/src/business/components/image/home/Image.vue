@@ -32,7 +32,9 @@
                   <el-col :span="5" class="cl-span-col">{{ $t('commons.update_time') }}</el-col>
                 </el-row>
                 <el-row class="cl-mid-row">
-                  <el-col :span="3" class="cl-data-col">{{ data.name }}</el-col>
+                  <el-col :span="3" class="cl-data-col">
+                    <span style="word-wrap:break-word;">{{ data.name }}</span>
+                  </el-col>
                   <el-col :span="3" class="cl-data-col">
                     <el-tag size="mini" type="warning" v-if="data.status === 'DELETE'">
                       {{ $t('server.DELETE') }}
@@ -45,9 +47,15 @@
                     </el-tag>
                   </el-col>
                   <el-col :span="data.type==='tar'?5:8" class="cl-data-col">
-                    <div v-if="data.type==='repo'">{{ data.imageUrl + ':' + data.imageTag }}</div>
-                    <div v-if="data.type==='image'">{{ data.imageUrl + ':' + data.imageTag }}</div>
-                    <div v-if="data.type==='tar'">{{ data.path }}</div>
+                    <div v-if="data.type==='repo'">
+                      <span style="word-wrap:break-word;">{{ data.imageUrl + ':' + data.imageTag }}</span>
+                    </div>
+                    <div v-if="data.type==='image'">
+                      <span style="word-wrap:break-word;">{{ data.imageUrl + ':' + data.imageTag }}</span>
+                    </div>
+                    <div v-if="data.type==='tar'">
+                      <span style="word-wrap:break-word;">{{ data.path }}</span>
+                    </div>
                   </el-col>
                   <el-col :span="3" v-if="data.type==='tar'" class="cl-data-col">{{ data.size }}</el-col>
                   <el-col :span="5" class="cl-data-col">{{ data.imageRepoName?data.imageRepoName:$t('image.no_image_repo') }}</el-col>
