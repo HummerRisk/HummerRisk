@@ -150,7 +150,7 @@ public class CodeController {
     @I18n
     @ApiOperation(value = "源码检测结果详情")
     @GetMapping(value = "getCodeResult/{resultId}")
-    public CodeResult getCodeResult(@PathVariable String resultId) {
+    public CodeResultDTO getCodeResult(@PathVariable String resultId) {
         return codeService.getCodeResult(resultId);
     }
 

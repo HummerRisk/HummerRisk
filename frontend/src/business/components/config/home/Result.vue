@@ -328,11 +328,11 @@ export default {
             if (data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
               data.returnSum = result.returnSum;
-              data.critical = result.critical;
-              data.high = result.high;
-              data.medium = result.medium;
-              data.low = result.low;
-              data.unknown = result.unknown;
+              data.critical = result.critical?result.critical:0;
+              data.high = result.high?result.high:0;
+              data.medium = result.medium?result.medium:0;
+              data.low = result.low?result.low:0;
+              data.unknown = result.unknown?result.unknown:0;
             }
           });
         }

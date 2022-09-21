@@ -387,8 +387,8 @@ public class CloudNativeConfigService {
         return cloudNativeConfigResultItemMapper.selectByExample(example);
     }
 
-    public CloudNativeConfigResult getCloudNativeConfigResult(String resultId) {
-        CloudNativeConfigResult cloudNativeConfigResult = cloudNativeConfigResultMapper.selectByPrimaryKey(resultId);
+    public CloudNativeConfigResultDTO getCloudNativeConfigResult(String resultId) {
+        CloudNativeConfigResultDTO cloudNativeConfigResult = extCloudNativeConfigResultMapper.getCloudNativeConfigResult(resultId);
         return cloudNativeConfigResult;
     }
 

@@ -187,7 +187,7 @@ public class ImageController {
     @I18n
     @ApiIgnore
     @GetMapping(value = "getImageResult/{resultId}")
-    public ImageResultWithBLOBs getImageResult(@PathVariable String resultId) {
+    public ImageResultDTO getImageResult(@PathVariable String resultId) {
         return imageService.getImageResult(resultId);
     }
 

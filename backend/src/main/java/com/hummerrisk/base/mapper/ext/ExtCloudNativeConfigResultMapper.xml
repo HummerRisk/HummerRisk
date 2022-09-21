@@ -90,6 +90,23 @@
         ORDER BY t.update_time desc
     </select>
 
+    <select id="getCloudNativeConfigResult" parameterType="java.lang.String" resultType="com.hummerrisk.dto.CloudNativeConfigResultDTO">
+        SELECT
+        t.*,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'HIGH') as high,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'MEDIUM') as medium,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'LOW') as low,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown
+        FROM cloud_native_config_result t
+        left join user u on t.apply_user = u.id
+        <where>
+            <if test="resultId != null">
+                AND t.id = #{resultId}
+            </if>
+        </where>
+    </select>
+
     <select id="metricChart" resultType="com.hummerrisk.dto.MetricChartDTO" parameterType="java.lang.String">
         SELECT *
         from (

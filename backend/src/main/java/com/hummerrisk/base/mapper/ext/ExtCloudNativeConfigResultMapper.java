@@ -12,4 +12,6 @@ public interface ExtCloudNativeConfigResultMapper {
 
     MetricChartDTO metricChart (String resultId);
 
+    CloudNativeConfigResultDTO getCloudNativeConfigResult(String resultId);
+
 }

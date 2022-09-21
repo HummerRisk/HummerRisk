@@ -15,4 +15,6 @@ public interface ExtImageResultMapper {
 
     HistoryImageReportDTO getImageResultDto(String resultId);
 
+    ImageResultDTO getImageResult(String resultId);
+
 }

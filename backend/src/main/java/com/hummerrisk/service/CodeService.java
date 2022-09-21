@@ -201,8 +201,8 @@ public class CodeService {
         return list;
     }
 
-    public CodeResult getCodeResult(String resultId) {
-        CodeResult codeResult = codeResultMapper.selectByPrimaryKey(resultId);
+    public CodeResultDTO getCodeResult(String resultId) {
+        CodeResultDTO codeResult = extCodeResultMapper.getCodeResult(resultId);
         return codeResult;
     }
 

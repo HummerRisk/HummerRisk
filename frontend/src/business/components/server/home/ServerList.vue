@@ -122,7 +122,7 @@
                               </el-option>
                             </el-select>
                           </el-form-item>
-                          <el-form-item v-if="addCertificateForm.isCertificate !==null && !addCertificateForm.isCertificate" :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                          <el-form-item v-if="!addCertificateForm.isCertificate !==null && !addCertificateForm.isCertificate" :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
                             <el-radio v-model="addCertificateForm.isPublicKey" label="no">{{ $t('server.no_public_key') }}</el-radio>
                             <el-radio v-model="addCertificateForm.isPublicKey" label="str">{{ $t('server.str_public_key') }}</el-radio>
                             <el-radio v-model="addCertificateForm.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
@@ -202,18 +202,18 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item v-if="form.isCertificate !==null && !form.isCertificate" :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-form-item v-if="!form.isCertificate !==null && !form.isCertificate" :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-radio v-model="form.isPublicKey" label="no">{{ $t('server.no_public_key') }}</el-radio>
             <el-radio v-model="form.isPublicKey" label="str">{{ $t('server.str_public_key') }}</el-radio>
             <el-radio v-model="form.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
           </el-form-item>
-          <el-form-item v-if="form.isCertificate && form.isPublicKey === 'no'" :label="$t('commons.password')" ref="password" prop="password">
+          <el-form-item v-if="!form.isCertificate && form.isPublicKey === 'no'" :label="$t('commons.password')" ref="password" prop="password">
             <el-input type="password" v-model="form.password" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
           </el-form-item>
-          <el-form-item v-if="form.isCertificate && form.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
+          <el-form-item v-if="!form.isCertificate && form.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
             <el-input type="textarea" :rows="10" v-model="form.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
           </el-form-item>
-          <el-form-item v-if="form.isCertificate && form.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
+          <el-form-item v-if="!form.isCertificate && form.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
             <server-key-upload v-on:append="append" v-model="form.publicKeyPath" :param="form.publicKeyPath"/>
           </el-form-item>
 <!--          <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">-->

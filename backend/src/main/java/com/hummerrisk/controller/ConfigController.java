@@ -111,7 +111,7 @@ public class ConfigController {
     @I18n
     @ApiOperation(value = "云原生部署配置检测结果详情")
     @GetMapping(value = "getCloudNativeConfigResult/{resultId}")
-    public CloudNativeConfigResult getCloudNativeConfigResult(@PathVariable String resultId) {
+    public CloudNativeConfigResultDTO getCloudNativeConfigResult(@PathVariable String resultId) {
         return cloudNativeConfigService.getCloudNativeConfigResult(resultId);
     }
 

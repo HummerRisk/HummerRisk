@@ -636,8 +636,8 @@ public class ImageService {
         return dto;
     }
 
-    public ImageResultWithBLOBs getImageResult(String resultId) {
-        ImageResultWithBLOBs imageResult = imageResultMapper.selectByPrimaryKey(resultId);
+    public ImageResultDTO getImageResult(String resultId) {
+        ImageResultDTO imageResult = extImageResultMapper.getImageResult(resultId);
         return imageResult;
     }
 

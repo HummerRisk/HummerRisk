@@ -12,4 +12,6 @@ public interface ExtCodeResultMapper {
 
     List<CodeResultDTO> resultList(CodeResultRequest request);
 
+    CodeResultDTO getCodeResult(String resultId);
+
 }
