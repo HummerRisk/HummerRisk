@@ -18,12 +18,10 @@
           <el-table-column
             prop="regionName"
             :label="$t('log.region')"
-            min-width="25%"
+            min-width="10%"
           >
             <template v-slot:default="scope">
-              <div v-if="!!scope.row.regionName">
-                <el-tag v-for="item in scope.row.regionName.split(',')" :key="item" type="success">{{item}}</el-tag>
-              </div>
+              <regions :logId="scope.row.id" :accountId="scope.row.accountId"></regions>
             </template>
           </el-table-column>
           <el-table-column
@@ -143,6 +141,8 @@ import {CLOUD_EVENT_SYNC_CONFIGS} from "../../common/components/search/search-co
 import TableOperators from "../../common/components/TableOperators";
 import RegionLog from "@/business/components/log/home/RegionLog";
 import ProxyDialogFooter from "@/business/components/log/head/ProxyDialogFooter";
+import Regions from "@/business/components/log/home/Regions";
+
 /* eslint-disable */
 export default {
   name: "Event",
@@ -153,7 +153,8 @@ export default {
     MainContainer,
     TableOperators,
     RegionLog,
-    ProxyDialogFooter
+    ProxyDialogFooter,
+    Regions
   },
   data() {
     return {
@@ -345,7 +346,6 @@ export default {
       let url = "/cloud/event/sync/log/region/list/" + logId;
       this.result = this.$post(url, {}, response => {
         this.logForm.regionLogs = response.data;
-        console.log(response.data)
         this.logVisible = true
       });
     },

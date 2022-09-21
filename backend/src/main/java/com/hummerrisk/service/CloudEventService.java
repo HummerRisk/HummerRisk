@@ -245,6 +245,7 @@ public class CloudEventService {
                     } else if (resultSize > 0) {
                         num += extCloudEventMapper.batchCloudEvents(result);
                     }
+                    cloudEventSyncLog.setRegionName(accountMap.get("regionName"));
                     cloudEventSyncLog.setDataCount(num);
                     cloudEventSyncLog.setStatus(1);
                     cloudEventSyncLog.setEndTime(DateUtils.getNowDate());
