@@ -70,7 +70,7 @@
 
 仅需两步快速安装 HummerRisk：
 
-1.  准备一台不小于 4 核 8 G 内存的 64 位 Linux (建议首选 CentOS 7 以上) 主机；
+1.  准备一台不小于 4 核 8 G 内存的 64 位 Linux 主机；
 2.  以 root 用户执行如下命令一键安装 HummerRisk。
 
 ```sh
