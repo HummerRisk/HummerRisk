@@ -11,7 +11,7 @@
       <el-button size="mini" :disabled="selectIds.length===0" @click="deleteBatch">{{ $t('commons.delete') }}</el-button>
     </el-row>
 
-    <el-table border class="adjust-table" :data="tableData" style="width: 100%" :row-class-name="tableRowClassName"
+    <el-table border class="adjust-table" :data="tableData" style="width: 100%;padding: 1%;" :row-class-name="tableRowClassName"
               @select-all="select" @select="select">
       <el-table-column type="selection" min-width="5%">
       </el-table-column>
@@ -172,7 +172,6 @@ export default {
     text-decoration: underline !important;
     color: #0a7be0 !important;
     cursor: pointer !important;
-
 }
 
 </style>
