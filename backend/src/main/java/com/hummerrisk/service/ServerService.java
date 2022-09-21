@@ -300,17 +300,21 @@ public class ServerService {
         if(server.getIsProxy()!=null && server.getIsProxy()) {
             proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
         }
-        if(!server.getIsCertificate()) {
-            if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
-                String keyFilePath = upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
-                String publicKey = ReadFileUtils.readToBuffer(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
-                server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
-                server.setPublicKey(publicKey);
-            } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
-                String uuid = UUIDUtil.newUUID();
-                CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA);
-                server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
+        if (server.getIsCertificate()!=null) {
+            if(!server.getIsCertificate()) {
+                if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
+                    String keyFilePath = upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
+                    String publicKey = ReadFileUtils.readToBuffer(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+                    server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+                    server.setPublicKey(publicKey);
+                } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
+                    String uuid = UUIDUtil.newUUID();
+                    CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA);
+                    server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
+                }
             }
+        } else {
+            server.setIsCertificate(false);
         }
 
         server = login(server, proxy);
@@ -326,17 +330,21 @@ public class ServerService {
             proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
         }
 
-        if(!server.getIsCertificate()) {
-            if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
-                String keyFilePath = upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
-                String publicKey = ReadFileUtils.readToBuffer(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
-                server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
-                server.setPublicKey(publicKey);
-            } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
-                String uuid = UUIDUtil.newUUID();
-                CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA);
-                server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
+        if (server.getIsCertificate()!=null) {
+            if (!server.getIsCertificate()) {
+                if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
+                    String keyFilePath = upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
+                    String publicKey = ReadFileUtils.readToBuffer(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+                    server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+                    server.setPublicKey(publicKey);
+                } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
+                    String uuid = UUIDUtil.newUUID();
+                    CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA);
+                    server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
+                }
             }
+        } else {
+            server.setIsCertificate(false);
         }
 
         server = login(server, proxy);

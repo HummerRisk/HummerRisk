@@ -605,8 +605,13 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
       saveServer(servers) {
         for (let server of servers) {
           if(!server.name || !server.ip || !server.userName || !server.groupId) {
-            this.$warning('value will not be null');
+            this.$warning('Value will not be null');
+            return;
           } else {
+            if (!server.isPublicKey) {
+              if(!server.password) this.$warning('Password will not be null');
+              return;
+            }
             // if (this.proxyForm.isProxy) {
             //   server.isProxy = true;
             //   server.proxyId = this.proxyForm.proxyId;
