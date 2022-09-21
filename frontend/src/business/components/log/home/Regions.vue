@@ -35,7 +35,7 @@
   export default {
     name: "Regions",
     props: {
-      logId: Object,
+      logId: Number,
       accountId: String,
     },
     data() {
