@@ -4,7 +4,7 @@
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('log.event_analysis')"
-                      @syncData="syncData" :syncTip="$t('log.sync')"
+                      :syncTip="$t('log.sync')"
                       :show-sync="false"/>
       </template>
         <el-table   border :data="tableData" class="adjust-table table-content">
@@ -135,6 +135,9 @@ export default {
       let region =  this.$route.query.region;
       let startTime = this.$route.query.startTime;
       let endTime = this.$route.query.endTime;
+      this.condition["combine"] = {accountId:{operator:"in",value:[accountId]}
+        ,region:{operator:"in",value:[...region.split(",")]}
+        ,eventTime: {operator: "between", value: [startTime, endTime]}}
       this.currentAccount = accountId
       this.region = region.split(",")
       this.dateTime = [this.formatDate(startTime*1),this.formatDate(endTime*1)]
@@ -239,11 +242,13 @@ export default {
         let region =  this.$route.query.region;
         let startTime = this.$route.query.startTime;
         let endTime = this.$route.query.endTime;
+        this.condition["combine"] = {accountId:{operator:"in",value:[accountId]}
+          ,region:{operator:"in",value:[...region.split(",")]}
+          ,eventTime: {operator: "between", value: [startTime, endTime]}}
+        console.log(this.condition)
         this.currentAccount = accountId
         this.region = region.split(",")
         this.dateTime = [this.formatDate(startTime*1),this.formatDate(endTime*1)]
-        this.$refs.tableHeader.setDateTime(this.dateTime)
-        this.$refs.tableHeader.setRegion(this.region)
         this.search()
       }
     },

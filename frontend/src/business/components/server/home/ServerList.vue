@@ -31,7 +31,17 @@
                            :filters="statusFilters"
                            :filter-method="filterStatus">
             <template v-slot:default="{row}">
-              <server-status :row="row" :search="search"/>
+              <div @click="validateStatus(row)">
+                <el-tag size="mini" type="warning" v-if="row.status === 'DELETE'">
+                  {{ $t('server.DELETE') }}
+                </el-tag>
+                <el-tag size="mini" type="success" v-else-if="row.status === 'VALID'">
+                  {{ $t('server.VALID') }}
+                </el-tag>
+                <el-tag size="mini" type="danger" v-else-if="row.status === 'INVALID'">
+                  {{ $t('server.INVALID') }}
+                </el-tag>
+              </div>
             </template>
           </el-table-column>
           <el-table-column min-width="18%" :label="$t('account.update_time')" sortable
@@ -250,7 +260,6 @@ import ServerTableHeader from "../head/ServerTableHeader";
 import TableOperator from "../../common/components/TableOperator";
 import Container from "../../common/components/Container";
 import MainContainer from "../../common/components/MainContainer";
-import ServerStatus from "./ServerStatus";
 import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import {SERVER_CONFIGS} from "../../common/components/search/search-components";
@@ -261,7 +270,6 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
   export default {
     components: {
       TableOperators,
-      ServerStatus,
       MainContainer,
       Container,
       ServerTableHeader,
@@ -395,6 +403,23 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
         this.selectIds.clear();
         selection.forEach(s => {
           this.selectIds.add(s.id)
+        });
+      },
+      validateStatus(row) {
+        this.$alert(this.$t('server.validate') + this.$t('server.server_status') + ' : ' + row.name +  " ？", '', {
+          confirmButtonText: this.$t('commons.confirm'),
+          callback: (action) => {
+            if (action === 'confirm') {
+              this.result = this.$post("/server/validate/" + row.id, {}, response => {
+                if (response.data) {
+                  this.$success(this.$t('server.success'));
+                } else {
+                  this.$error(this.$t('server.error'));
+                }
+                this.search();
+              });
+            }
+          }
         });
       },
       //查询列表
