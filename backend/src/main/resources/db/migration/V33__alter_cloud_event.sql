@@ -9,6 +9,8 @@ ALTER TABLE `cloud_event_sync_log` ADD `proxy_id` int(11) DEFAULT NULL COMMENT '
 
 ALTER TABLE `cloud_event_sync_log` ADD `region_name` varchar(1024) DEFAULT NULL COMMENT '区域名称';
 
+ALTER TABLE `cloud_event_region_log` ADD `region_name` varchar(64) DEFAULT NULL COMMENT '区域名称';
+
 ALTER TABLE `cloud_event` MODIFY column `event_time` bigint(13) DEFAULT NULL COMMENT '事件时间';
 
 ALTER TABLE `cloud_event` MODIFY column `source_ip_address` varchar(64) DEFAULT NULL COMMENT '访问源地址';
