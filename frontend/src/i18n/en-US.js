@@ -923,6 +923,8 @@ export default {
     server_5: 'Firewall',
     server_6: 'operating system',
     upload_tip: 'Key file size does not exceed {0}',
+    batch_success: 'Batch setting is successful, the voucher has been automatically assigned',
+    batch_error: 'Batch setup failed, there is no host that needs to be assigned',
   },
   image: {
     image_repo: 'Mirror repository',
