@@ -6,20 +6,24 @@
                       :title="$t('image.result_details_list')"/>
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter">
-          <el-table-column type="index" min-width="5%"/>
-          <el-table-column :label="'Name'" min-width="15%" prop="name">
+          <el-table-column type="index" min-width="2%"/>
+          <el-table-column :label="'Title'" min-width="17%" prop="title" v-slot:default="scope">
+            {{ scope.row.title?scope.row.title:'N/A' }}
           </el-table-column>
-          <el-table-column :label="'Installed'" min-width="15%" prop="installed">
+          <el-table-column :label="'InstalledVersion'" min-width="10%" prop="installedVersion">
           </el-table-column>
-          <el-table-column min-width="10%" :label="'FixedIn'" prop="fixedIn">
+          <el-table-column min-width="7%" :label="'PkgName'" prop="pkgName">
           </el-table-column>
-          <el-table-column min-width="10%" :label="'Type'" prop="type">
+          <el-table-column min-width="10%" :label="'VulnerabilityID'" prop="vulnerabilityId">
           </el-table-column>
-          <el-table-column min-width="15%" :label="'Vulnerability'" prop="vulnerability">
+          <el-table-column min-width="7%" :label="'Severity'" prop="severity">
           </el-table-column>
-          <el-table-column min-width="15%" :label="'Severity'" prop="severity">
+          <el-table-column min-width="10%" :label="'SeveritySource'" prop="severitySource">
           </el-table-column>
-          <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right">
+          <el-table-column min-width="12%" :label="'PrimaryURL'" prop="primaryUrl" v-slot:default="scope">
+            <el-link type="primary" style="color: #0000e4;" :href="scope.row.primaryUrl" target="_blank">{{ scope.row.primaryUrl }}</el-link>
+          </el-table-column>
+          <el-table-column min-width="5%" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
