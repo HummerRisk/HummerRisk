@@ -572,10 +572,10 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
         });
       },
       rowClass() {
-        return "text-align:center"
+        return "text-align:center";
       },
       headClass() {
-        return "text-align:center;background:'#ededed'"
+        return "text-align:center;background:'#ededed'";
       },
       removeServer(index, data) { //移除
         if (!data[index].id) {
@@ -600,17 +600,24 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
       },
       bindCertificate(index, data) {
         this.addCertificateForm = data;
+        this.activeCertificates();
         this.innerAddCertificate = true;
       },
       saveServer(servers) {
         for (let server of servers) {
+          console.log(111, server)
           if(!server.name || !server.ip || !server.userName || !server.groupId) {
             this.$warning('Value will not be null');
             return;
           } else {
             if (!server.isCertificate && server.isPublicKey !== "no") {
-              if(!server.password) this.$warning('Password will not be null');
-              return;
+              if (!server.password) {
+                this.$warning('Password will not be null');
+                return;
+              }
+              if (server.isPublicKey === null && server.password) {
+                server.isPublicKey = "no";
+              }
             }
             // if (this.proxyForm.isProxy) {
             //   server.isProxy = true;
@@ -620,9 +627,10 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
             //   server.proxyId = null;
             // }
             let formData = new FormData();
-            if (this.keyFile) {
+            if (server.keyFile) {
               formData.append("keyFile", server.keyFile);
             }
+            console.log(222, server)
             formData.append("request", new Blob([JSON.stringify(server)], {type: "application/json"}));
             let axiosRequestConfig = {
               method: "POST",
@@ -670,6 +678,7 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
       },
       batchBind() {
         this.batchBindForm = {};
+        this.activeCertificates();
         this.batchBindCertificate = true;
       },
       innerCertificateClose() {
