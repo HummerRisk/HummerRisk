@@ -253,7 +253,7 @@
               <el-radio v-model="form.isCertificate" :label="true">{{ $t('server.public_certificate') }}</el-radio>
             </el-form-item>
             <el-form-item v-if="form.isCertificate" :label="$t('server.public_certificate')">
-              <el-select style="width: 100%;" filterable :clearable="true" v-model="addCertificateForm.certificateId" :placeholder="$t('server.public_certificate')">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="form.certificateId" :placeholder="$t('server.public_certificate')">
                 <el-option
                   v-for="item in certificates"
                   :key="item.id"

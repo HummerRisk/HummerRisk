@@ -175,7 +175,7 @@ export default {
       direction: 'rtl',
       rule: {
         name: [
-          {required: true, message: this.$t('rule.input_name'), trigger: 'blur'},
+          {required: true, message: this.$t('commons.input_name'), trigger: 'blur'},
           {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
           {
             required: true,
@@ -184,7 +184,7 @@ export default {
           }
         ],
         description: [
-          {required: true, message: this.$t('rule.input_description'), trigger: 'blur'},
+          {required: true, message: this.$t('commons.input_description'), trigger: 'blur'},
           {min: 2, max: 100, message: this.$t('commons.input_limit', [2, 100]), trigger: 'blur'},
           {
             required: true,

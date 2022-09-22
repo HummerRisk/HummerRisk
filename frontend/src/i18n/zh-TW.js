@@ -106,6 +106,7 @@ export default {
     login_username: 'ID 或 郵箱',
     input_login_username: '請輸入用戶 ID 或 郵箱',
     input_name: '請輸入名稱',
+    input_description: '請輸入描述',
     please_upload: '請上傳文件',
     formatErr: '格式錯誤',
     please_save: '請先保存',

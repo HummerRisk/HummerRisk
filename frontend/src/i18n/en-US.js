@@ -106,6 +106,7 @@ export default {
     login_username:'ID or email',
     input_login_username:'Please enter user ID or email',
     input_name:'Please enter a name',
+    input_description: 'Please enter a description',
     please_upload:'Please upload files',
     formatErr:'format error',
     please_save:'Please save first',
