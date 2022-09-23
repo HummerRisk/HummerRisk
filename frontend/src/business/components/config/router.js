@@ -22,6 +22,16 @@ export default {
       name: "ConfigResultDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/config/home/ResultDetails"),
     },
+    {
+      path: "overview",
+      name: "ConfigOverview",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/config/home/Overview"),
+    },
+    {
+      path: "history",
+      name: "ConfigHistory",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/config/home/History"),
+    },
   ]
 }
 

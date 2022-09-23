@@ -1210,6 +1210,8 @@ export default {
     config_settings_list: '部署配置列表',
     config_create: '創建部署配置信息',
     config_update: '更新部署配置信息',
+    overview: '部署概览',
+    history: '部署检测历史记录',
     name: '部署配置名稱',
     status: '狀態',
     config_type: '配置類型',

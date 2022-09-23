@@ -4,12 +4,20 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
+          <el-menu-item :index="'/config/overview'">
+            {{ $t("config.overview") }}
+          </el-menu-item>
+
           <el-menu-item :index="'/config/config'">
             {{ $t("config.config_settings") }}
           </el-menu-item>
 
           <el-menu-item :index="'/config/result'">
             {{ $t("config.config_result") }}
+          </el-menu-item>
+
+          <el-menu-item :index="'/config/history'">
+            {{ $t("config.history") }}
           </el-menu-item>
 
         </el-menu>

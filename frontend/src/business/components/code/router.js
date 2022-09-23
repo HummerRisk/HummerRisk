@@ -9,7 +9,7 @@ export default {
   children: [
     {
       path: "overview",
-      name: "codeOverview",
+      name: "CodeOverview",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/code/home/Overview"),
     },
     {
@@ -34,7 +34,7 @@ export default {
     },
     {
       path: "history",
-      name: "codeHistory",
+      name: "CodeHistory",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/code/home/History"),
     },
   ]

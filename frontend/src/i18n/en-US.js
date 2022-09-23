@@ -1210,6 +1210,8 @@ export default {
     config_settings_list: 'Deployment configuration list',
     config_create: 'Create deployment configuration information',
     config_update: 'Update deployment configuration information',
+    overview: 'Deployment overview',
+    history: 'Deployment detection history',
     name: 'Deployment configuration name',
     status: 'Status',
     config_type: 'Configuration type',
