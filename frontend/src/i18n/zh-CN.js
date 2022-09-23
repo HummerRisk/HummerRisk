@@ -853,6 +853,8 @@ export default {
     server_create: '创建主机',
     server_add: '新增主机',
     server_update: '编辑主机',
+    overview: '主机概览',
+    history: '主机检测历史记录',
     download: '下载',
     upload: '上传',
     one_download: '下载模板',

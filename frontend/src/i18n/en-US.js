@@ -853,6 +853,8 @@ export default {
     server_create: 'Create a host',
     server_add: 'Add a host',
     server_update: 'Edit host',
+    overview: 'Host overview',
+    history: 'Host detection history',
     download: 'Download',
     upload: 'Upload',
     one_download: 'Download template',

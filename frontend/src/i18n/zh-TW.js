@@ -853,6 +853,8 @@ export default {
     server_create: '創建主機',
     server_add: '新增主機',
     server_update: '編輯主機',
+    overview: '主機概覽',
+    history: '主機檢測歷史記錄',
     download: '下載',
     upload: '上傳',
     one_download: '下載模板',

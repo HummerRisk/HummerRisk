@@ -4,6 +4,10 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
+          <el-menu-item :index="'/server/overview'">
+            {{ $t("server.overview") }}
+          </el-menu-item>
+
           <el-menu-item :index="'/server/certificate'">
             {{ $t("server.certificate") }}
           </el-menu-item>
@@ -18,6 +22,10 @@
 
           <el-menu-item :index="'/server/result'">
             {{ $t("server.server_result") }}
+          </el-menu-item>
+
+          <el-menu-item :index="'/server/history'">
+            {{ $t("server.history") }}
           </el-menu-item>
 
         </el-menu>

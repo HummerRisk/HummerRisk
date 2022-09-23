@@ -19,13 +19,23 @@ export default {
     },
     {
       path: "rule",
-      name: "serverRule",
+      name: "ServerRule",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Rule'),
     },
     {
       path: "result",
-      name: "serverResult",
+      name: "ServerResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Result'),
+    },
+    {
+      path: "overview",
+      name: "ServerOverview",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/server/home/Overview"),
+    },
+    {
+      path: "history",
+      name: "ServerHistory",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/server/home/History"),
     },
   ]
 }
