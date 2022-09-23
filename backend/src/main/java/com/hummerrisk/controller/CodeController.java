@@ -9,10 +9,7 @@ import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.code.CodeRequest;
 import com.hummerrisk.controller.request.code.CodeResultRequest;
 import com.hummerrisk.controller.request.code.CodeRuleRequest;
-import com.hummerrisk.dto.CodeDTO;
-import com.hummerrisk.dto.CodeResultDTO;
-import com.hummerrisk.dto.CodeResultWithBLOBsDTO;
-import com.hummerrisk.dto.CodeRuleDTO;
+import com.hummerrisk.dto.*;
 import com.hummerrisk.service.CodeService;
 import io.kubernetes.client.openapi.ApiException;
 import io.swagger.annotations.Api;
@@ -23,6 +20,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "源码管理")
 @RestController
@@ -179,5 +177,12 @@ public class CodeController {
     @GetMapping("plugin")
     public String getCredential() {
         return codeService.getCredential();
+    }
+
+    @I18n
+    @ApiOperation(value = "源码概览TOP统计")
+    @PostMapping("topInfo")
+    public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
+        return codeService.topInfo(params);
     }
 }

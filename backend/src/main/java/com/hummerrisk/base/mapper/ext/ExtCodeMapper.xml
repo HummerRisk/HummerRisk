@@ -108,4 +108,16 @@
         order by t.update_time desc
     </select>
 
+    <select id="topInfo" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT *
+        from (
+              (SELECT IFNULL(count(*), 0) as codes from code) as codes,
+              (SELECT IFNULL(count(t.id), 0) as critical from code_result_item t join code_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'critical') as critical,
+              (SELECT IFNULL(count(t.id), 0) as high from code_result_item t join code_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'high') as high,
+              (SELECT IFNULL(count(t.id), 0) as medium from code_result_item t join code_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'medium') as medium,
+              (SELECT IFNULL(count(t.id), 0) as low from code_result_item t join code_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'low') as low,
+              (SELECT IFNULL(count(t.id), 0) as unknown from code_result_item t join code_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'unknown') as unknown
+                 )
+    </select>
+
 </mapper>

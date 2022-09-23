@@ -14,10 +14,7 @@ import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.code.CodeRequest;
 import com.hummerrisk.controller.request.code.CodeResultRequest;
 import com.hummerrisk.controller.request.code.CodeRuleRequest;
-import com.hummerrisk.dto.CodeDTO;
-import com.hummerrisk.dto.CodeResultDTO;
-import com.hummerrisk.dto.CodeResultWithBLOBsDTO;
-import com.hummerrisk.dto.CodeRuleDTO;
+import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.service.impl.ExecEngineFactoryImp;
 import com.hummerrisk.service.impl.IProvider;
@@ -29,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author harris
@@ -427,6 +425,10 @@ public class CodeService {
             HRException.throwException(Translator.get("i18n_ex_plugin_get"));
         }
         return Translator.get("i18n_ex_plugin_get");
+    }
+
+    public Map<String, Object> topInfo(Map<String, Object> params) {
+        return extCodeMapper.topInfo(params);
     }
 
 }

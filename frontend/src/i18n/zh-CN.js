@@ -1264,6 +1264,12 @@ export default {
     last_modified: '最后更新时间',
     result_details_list: '源码检测结果详情列表',
     back_resource: '返回源码检测结果列表',
+    code_project: '源码项目',
+    overview_critical: '高危风险',
+    overview_high: '高风险',
+    overview_low: '低风险',
+    overview_medium: '中等风险',
+    overview_unknown: '无风险',
   },
   sbom: {
     project: '项目管理',
