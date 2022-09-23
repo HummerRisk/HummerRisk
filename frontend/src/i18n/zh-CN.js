@@ -934,6 +934,8 @@ export default {
     repo_create: '创建镜像仓库',
     repo_update: '编辑镜像仓库',
     repo_delete: '删除镜像仓库',
+    overview: '镜像概览',
+    history: '镜像检测历史记录',
     create: '创建镜像',
     update: '编辑镜像',
     delete: '删除镜像',

@@ -934,6 +934,8 @@ export default {
     repo_create: 'Create a mirror warehouse',
     repo_update: 'Edit mirror repository',
     repo_delete: 'Delete mirror repository',
+    overview: 'Image overview',
+    history: 'Image history',
     create: 'Create image',
     update: 'Edit image',
     delete: 'Delete image',

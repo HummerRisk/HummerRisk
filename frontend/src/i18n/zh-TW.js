@@ -934,6 +934,8 @@ export default {
     repo_create: '創建鏡像倉庫',
     repo_update: '編輯鏡像倉庫',
     repo_delete: '刪除鏡像倉庫',
+    overview: '鏡像概覽',
+    history: '鏡像檢測歷史記錄',
     create: '創建鏡像',
     update: '編輯鏡像',
     delete: '刪除鏡像',
