@@ -41,12 +41,6 @@
             <k8s-operator-status :row="row"/>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('account.create_time')" sortable
-                         prop="createTime">
-          <template v-slot:default="scope">
-            <span>{{ scope.row.createTime | timestampFormatDate }}</span>
-          </template>
-        </el-table-column>
         <el-table-column min-width="15%" :label="$t('account.update_time')" sortable
                          prop="updateTime">
           <template v-slot:default="scope">
