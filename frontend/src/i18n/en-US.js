@@ -1180,6 +1180,8 @@ export default {
     k8s_settings_list: 'Kubernetes account list',
     k8s_create: 'Create a Kubernetes account',
     k8s_update: 'Update Kubernetes account',
+    overview: 'K8s overview',
+    history: 'K8s detection history',
     name: 'Kubernetes name',
     platform: 'Cloud native platform',
     status: 'Status',
