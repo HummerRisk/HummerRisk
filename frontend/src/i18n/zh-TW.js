@@ -1234,6 +1234,8 @@ export default {
     code_settings_list: '項目源碼列表',
     code_create: '創建項目',
     code_update: '更新項目',
+    overview: '源码概览',
+    history: '源码检测历史记录',
     name: '項目名稱',
     status: '狀態',
     add: '新增多個',

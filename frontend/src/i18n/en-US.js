@@ -1234,6 +1234,8 @@ export default {
     code_settings_list: 'Project source code list',
     code_create: 'Create project',
     code_update: 'Update project',
+    overview: 'Source code overview',
+    history: 'Source code detection history',
     name: 'Project name',
     status: 'Status',
     add: 'Add multiple',

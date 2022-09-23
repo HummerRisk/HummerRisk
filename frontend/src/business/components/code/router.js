@@ -8,6 +8,11 @@ export default {
   },
   children: [
     {
+      path: "overview",
+      name: "codeOverview",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/code/home/Overview"),
+    },
+    {
       path: "code",
       name: "code",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/code/home/Code"),
@@ -26,6 +31,11 @@ export default {
       path: "resultdetails/:id",
       name: "CodeResultDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/code/home/ResultDetails"),
+    },
+    {
+      path: "history",
+      name: "codeHistory",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/code/home/History"),
     },
   ]
 }
