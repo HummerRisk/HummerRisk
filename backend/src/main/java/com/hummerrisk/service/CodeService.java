@@ -14,6 +14,7 @@ import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.code.CodeRequest;
 import com.hummerrisk.controller.request.code.CodeResultRequest;
 import com.hummerrisk.controller.request.code.CodeRuleRequest;
+import com.hummerrisk.controller.request.code.Overview;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.service.impl.ExecEngineFactoryImp;
@@ -429,6 +430,14 @@ public class CodeService {
 
     public Map<String, Object> topInfo(Map<String, Object> params) {
         return extCodeMapper.topInfo(params);
+    }
+
+    public List<Map<String, Object>> projectChart() {
+        return extCodeMapper.projectChart();
+    }
+
+    public List<Map<String, Object>> severityChart() {
+        return extCodeMapper.severityChart();
     }
 
 }

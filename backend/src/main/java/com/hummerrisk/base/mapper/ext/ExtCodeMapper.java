@@ -16,4 +16,8 @@ public interface ExtCodeMapper {
     List<CodeDTO> codeList(@Param("request") CodeRequest request);
 
     Map<String, Object> topInfo(Map<String, Object> params);
+
+    List<Map<String, Object>> projectChart();
+
+    List<Map<String, Object>> severityChart();
 }

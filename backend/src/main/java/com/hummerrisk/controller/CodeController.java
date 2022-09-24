@@ -9,6 +9,7 @@ import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.code.CodeRequest;
 import com.hummerrisk.controller.request.code.CodeResultRequest;
 import com.hummerrisk.controller.request.code.CodeRuleRequest;
+import com.hummerrisk.controller.request.code.Overview;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.service.CodeService;
 import io.kubernetes.client.openapi.ApiException;
@@ -184,5 +185,19 @@ public class CodeController {
     @PostMapping("topInfo")
     public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
         return codeService.topInfo(params);
+    }
+
+    @I18n
+    @ApiOperation(value = "源码项目统计")
+    @GetMapping("projectChart")
+    public List<Map<String, Object>> projectChart() {
+        return codeService.projectChart();
+    }
+
+    @I18n
+    @ApiOperation(value = "源码风险统计")
+    @GetMapping("severityChart")
+    public List<Map<String, Object>> severityChart() {
+        return codeService.severityChart();
     }
 }

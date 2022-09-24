@@ -1265,6 +1265,8 @@ export default {
     result_details_list: '源码检测结果详情列表',
     back_resource: '返回源码检测结果列表',
     code_project: '源码项目',
+    code_project_chart: '源码项目统计',
+    code_project_chart_vuln: '源码漏洞统计',
     overview_critical: '高危风险',
     overview_high: '高风险',
     overview_low: '低风险',

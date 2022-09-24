@@ -4,25 +4,22 @@
       <top-info/>
     </el-row>
     <el-row :gutter="20">
-      <el-col :span="18" style="padding-right: 0">
-      </el-col>
-      <el-col :span="6" style="padding-left: 0">
-      </el-col>
-    </el-row>
-    <el-row :gutter="20">
+      <bottom-info/>
     </el-row>
   </main-container>
 </template>
 
 <script>
 import MainContainer from "../../common/components/MainContainer";
-import TopInfo from "./TopInfo";
+import TopInfo from "@/business/components/code/home/TopInfo";
+import BottomInfo from "@/business/components/code/home/BottomInfo";
 
 /* eslint-disable */
 export default {
   components: {
     MainContainer,
     TopInfo,
+    BottomInfo,
   },
   data() {
     return {
