@@ -3,7 +3,7 @@
     <el-col :span="24">
       <el-card class="box-card" shadow="always">
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                  @filter-change="filter" @select-all="select" @select="select">
+                  @filter-change="filter">
           <el-table-column type="index" min-width="5%"/>
           <el-table-column prop="name" :label="$t('code.name')" min-width="15%" show-overflow-tooltip>
             <template v-slot:default="scope">
@@ -61,54 +61,55 @@
         <div>
           <el-table border :data="outputListData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
             <el-table-column type="index" min-width="2%"/>
-            <el-table-column min-width="17%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
+            <el-table-column prop="name" :label="$t('code.name')" min-width="15%" show-overflow-tooltip>
               <template v-slot:default="scope">
-                <table-operators :buttons="listButtons" :row="scope.row"/>
+              <span>
+                <img :src="require(`@/assets/img/code/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ scope.row.name }}
+              </span>
               </template>
             </el-table-column>
-          </el-table>
-          <table-pagination :change="outputListDataSearch" :current-page.sync="outputListPage" :page-size.sync="outputListPageSize" :total="outputListTotal"/>
-        </div>
-        <!--History output-->
-        <el-drawer class="rtl"
-                   :title="$t('dashboard.history')"
-                   :visible.sync="visible"
-                   size="60%"
-                   :append-to-body="true"
-                   :before-close="innerDrawerClose">
-          <el-form label-position="right">
-            <el-form-item style="margin: 1%;">
-              <codemirror ref="cmEditor" v-model="script" class="code-mirror" :options="cmOptions" />
-            </el-form-item>
-          </el-form>
-        </el-drawer>
-        <!--History output-->
-        <!--History result-->
-        <el-drawer class="rtl"
-                   :title="$t('dashboard.history')"
-                   :visible.sync="diffVisible"
-                   size="80%"
-                   :append-to-body="true"
-                   :before-close="innerDrawerClose">
-          <el-table border :data="historys" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
-            <el-table-column type="index" min-width="2%"/>
-            <el-table-column min-width="17%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
+            <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="16%">
+                {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown}}
+            </el-table-column>
+            <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="11%" prop="resultStatus" sortable show-overflow-tooltip>
+              <el-button plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
+                <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+              </el-button>
+              <el-button plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
+                <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+              </el-button>
+              <el-button plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
+                <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+              </el-button>
+              <el-button plain size="mini" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
+                <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+              </el-button>
+              <el-button plain size="mini" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+                <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+              </el-button>
+              <el-button plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+                <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+              </el-button>
+            </el-table-column>
+            <el-table-column prop="updateTime" min-width="14%" :label="$t('image.last_modified')" sortable>
+              <template v-slot:default="scope">
+                <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
               <template v-slot:default="scope">
                 <table-operators :buttons="diffButtons" :row="scope.row"/>
               </template>
             </el-table-column>
           </el-table>
-          <table-pagination :change="codeDiffListSearch" :current-page.sync="historyPage" :page-size.sync="historyPageSize" :total="historyTotal"/>
-        </el-drawer>
-        <!--History result-->
-        <dialog-footer
-          @cancel="visibleList = false"
-          @confirm="handleClose"/>
+          <table-pagination :change="outputListDataSearch" :current-page.sync="outputListPage" :page-size.sync="outputListPageSize" :total="outputListTotal"/>
+        </div>
       </el-drawer>
       <!--History output list-->
 
       <!--History Compared-->
-      <el-dialog :title="$t('dashboard.online_comparison')" width="80%" :visible.sync="innerDrawer" :close-on-click-modal="false">
+      <el-dialog :title="$t('dashboard.online_comparison')" width="90%" :visible.sync="innerDrawer" :close-on-click-modal="false">
         <el-form>
           <code-diff
             :old-string="oldStr"
@@ -148,8 +149,6 @@ import CodeDiff from 'vue-code-diff';
       selectNodeIds() {
         this.search();
       },
-      batchReportId() {
-      }
     },
     data() {
       return {
@@ -163,26 +162,7 @@ import CodeDiff from 'vue-code-diff';
           components: Object
         },
         direction: 'rtl',
-        plugins: [],
-        cmOptions: {
-          tabSize: 4,
-          mode: {
-            name: 'shell',
-            json: true
-          },
-          theme: 'bespin',
-          lineNumbers: true,
-          line: true,
-          indentWithTabs: true,
-        },
-        visible: false,
         visibleList: false,
-        diffVisible: false,
-        radio: '',
-        historys: [],
-        historyPage: 1,
-        historyPageSize: 10,
-        historyTotal: 0,
         oldStr: 'old code',
         newStr: 'new code',
         innerDrawer: false,
@@ -197,15 +177,6 @@ import CodeDiff from 'vue-code-diff';
             exec: this.handleDelete
           }
         ],
-        listButtons: [
-          {
-            tip: this.$t('resource.resource_result'), icon: "el-icon-data-board", type: "success",
-            exec: this.handleOpenJson
-          }, {
-            tip: this.$t('dashboard.history'), icon: "el-icon-guide", type: "primary",
-            exec: this.codeDiffListOpen
-          }
-        ],
         diffButtons: [
           {
             tip: this.$t('commons.diff'), icon: "el-icon-sort", type: "primary",
@@ -217,23 +188,13 @@ import CodeDiff from 'vue-code-diff';
         outputListPageSize: 10,
         outputListTotal: 0,
         outputListSearchData: {},
-        codeDiffData: {},
       }
     },
     computed: {
     },
     methods: {
       init() {
-        this.activePlugin();
         this.search();
-      },
-      //查询插件
-      activePlugin() {
-        let url = "/plugin/cloud";
-        this.result = this.$get(url, response => {
-          let data = response.data;
-          this.plugins =  data;
-        });
       },
       //查询列表
       async search() {
@@ -266,19 +227,10 @@ import CodeDiff from 'vue-code-diff';
           return '';
         }
       },
-      select(selection) {
-        this.selection = selection.map(s => s.id);
-        this.$emit('selection', selection);
-      },
-      isSelect(row) {
-        return this.selection.includes(row.id)
-      },
-      edit(row) {
-        this.$emit('edit', row);
-      },
       handleOpen(item) {
         this.outputListSearchData = item;
         this.outputListDataSearch();
+        this.oldStr = item.returnJson;
         this.visibleList =  true;
       },
       handleDelete(obj) {
@@ -296,45 +248,23 @@ import CodeDiff from 'vue-code-diff';
       },
       async outputListDataSearch() {
         let item = this.outputListSearchData;
-        await this.$post("/account/historyList/" + this.outputListPage + "/" + this.outputListPageSize, item, response => {
+        await this.$post("/code/history/" + this.outputListPage + "/" + this.outputListPageSize, {codeId: item.codeId}, response => {
           let data = response.data;
           this.outputListTotal = data.itemCount;
           this.outputListData = data.listObject;
         });
-      },
-      handleOpenJson(item) {
-        this.script = item.resources;
-        this.visible =  true;
-      },
-      async codeDiffListSearch() {
-        let item = this.codeDiffData;
-        let url = "/account/historyDiffList/" + this.historyPage + "/" + this.historyPageSize;
-        await this.$post(url, item, response => {
-          let data = response.data;
-          this.historyTotal = data.itemCount;
-          this.historys = data.listObject;
-        });
-      },
-      codeDiffListOpen(item) {
-        this.oldStr = item.resources;
-        this.codeDiffData = item;
-        this.codeDiffListSearch();
-        this.diffVisible = true;
       },
       codeDiffOpen(item) {
         this.innerDrawerComparison(item);
       },
       handleClose() {
         this.visibleList = false;
-        this.diffVisible =  false;
       },
       innerDrawerClose() {
-        this.visible = false;
-        this.diffVisible = false;
         this.innerDrawer = false;
       },
       innerDrawerComparison(item) {
-        this.newStr = item.resources?item.resources:"[]";
+        this.newStr = item.returnJson?item.returnJson:"[]";
         this.innerDrawer = true;
       },
     },
