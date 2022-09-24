@@ -304,7 +304,7 @@ export default {
 
   methods: {
     handleVuln() {
-      window.open('http://www.cnnvd.org.cn/web/vulnerability/queryLds.tag','_blank','');
+      window.open('https://www.cnnvd.org.cn/home/loophole','_blank','');
     },
     //查询列表
     search() {

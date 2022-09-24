@@ -122,7 +122,7 @@ import MetricChart from "@/business/components/common/chart/MetricChart";
     props: ["id"],
     methods: {
       handleVuln() {
-        window.open('http://www.cnnvd.org.cn/web/vulnerability/queryLds.tag','_blank','');
+        window.open('https://www.cnnvd.org.cn/home/loophole','_blank','');
       },
       sort(column) {
         _sort(column, this.condition);
