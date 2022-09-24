@@ -23,6 +23,7 @@ import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -64,10 +65,16 @@ public class CodeService {
     private NoticeService noticeService;
     @Resource
     private ExecEngineFactoryImp execEngineFactoryImp;
+    @Resource
+    private HistoryCodeResultMapper historyCodeResultMapper;
 
 
     public List<CodeDTO> codeList(CodeRequest request) {
         return extCodeMapper.codeList(request);
+    }
+
+    public List<Code> allList() {
+        return codeMapper.selectByExample(null);
     }
 
     public List<Code> allBindList(String sbomVersionId) {
@@ -438,6 +445,12 @@ public class CodeService {
 
     public List<Map<String, Object>> severityChart() {
         return extCodeMapper.severityChart();
+    }
+
+    public String download(Map<String, Object> map) {
+        HistoryCodeResult codeResult = historyCodeResultMapper.selectByPrimaryKey(map.get("id").toString());
+        String str = codeResult.getReturnJson();
+        return str;
     }
 
 }

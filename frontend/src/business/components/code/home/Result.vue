@@ -240,6 +240,7 @@ import DialogFooter from "../head/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import RuleType from "./RuleType";
 import {CODE_RESULT_CONFIGS} from "../../common/components/search/search-components";
+import {saveAs} from "@/common/js/FileSaver";
 
 /* eslint-disable */
 export default {
@@ -279,6 +280,10 @@ export default {
         {
           tip: this.$t('resource.scan'), icon: "el-icon-refresh-right", type: "success",
           exec: this.handleScans
+        },
+        {
+          tip: this.$t('resource.download_report'), icon: "el-icon-bottom", type: "warning",
+          exec: this.handleDownload
         },
         {
           tip: this.$t('resource.delete_result'), icon: "el-icon-delete", type: "danger",
@@ -463,6 +468,18 @@ export default {
         }
       }
       return jsonKeyAndValue;
+    },
+    handleDownload(item) {
+      this.$post("/code/download", {
+        id: item.id
+      }, response => {
+        if (response.success) {
+          let blob = new Blob([response.data], { type: "application/json" });
+          saveAs(blob, item.name + ".json");
+        }
+      }, error => {
+        console.log("下载报错", error);
+      });
     },
   },
   computed: {

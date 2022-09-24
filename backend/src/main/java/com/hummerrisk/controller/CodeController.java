@@ -10,6 +10,7 @@ import com.hummerrisk.controller.request.code.CodeRequest;
 import com.hummerrisk.controller.request.code.CodeResultRequest;
 import com.hummerrisk.controller.request.code.CodeRuleRequest;
 import com.hummerrisk.controller.request.code.Overview;
+import com.hummerrisk.controller.request.sbom.DownloadRequest;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.service.CodeService;
 import io.kubernetes.client.openapi.ApiException;
@@ -38,6 +39,13 @@ public class CodeController {
             @PathVariable int goPage, @PathVariable int pageSize, @RequestBody CodeRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, codeService.codeList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "所有项目源码")
+    @GetMapping("allList")
+    public List<Code> allList() {
+        return codeService.allList();
     }
 
     @I18n
@@ -199,5 +207,11 @@ public class CodeController {
     @GetMapping("severityChart")
     public List<Map<String, Object>> severityChart() {
         return codeService.severityChart();
+    }
+
+    @ApiOperation(value = "下载检测报告")
+    @PostMapping("download")
+    public String download(@RequestBody Map<String, Object> map) throws Exception {
+        return codeService.download(map);
     }
 }
