@@ -465,4 +465,10 @@ public class CodeService {
         historyCodeResultMapper.deleteByPrimaryKey(id);
     }
 
+    public List<CodeResultItemWithBLOBs> historyResultItemList(CodeResultItem codeResultItem) {
+        CodeResultItemExample example = new CodeResultItemExample();
+        example.createCriteria().andResultIdEqualTo(codeResultItem.getResultId());
+        return codeResultItemMapper.selectByExampleWithBLOBs(example);
+    }
+
 }

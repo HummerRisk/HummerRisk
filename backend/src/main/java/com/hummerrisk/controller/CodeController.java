@@ -226,4 +226,11 @@ public class CodeController {
     public void deleteHistoryCodeResult(@PathVariable String id) throws Exception {
         codeService.deleteHistoryCodeResult(id);
     }
+
+    @I18n
+    @ApiOperation(value = "检测结果历史详情")
+    @PostMapping("historyResultItemList")
+    public List<CodeResultItemWithBLOBs> historyResultItemList(@RequestBody CodeResultItem request) {
+        return codeService.historyResultItemList(request);
+    }
 }
