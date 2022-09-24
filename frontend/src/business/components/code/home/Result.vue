@@ -413,7 +413,7 @@ export default {
       });
     },
     handleDelete(obj) {
-      this.$alert(this.$t('image.delete_confirm') + this.$t('image.result') + " ？", '', {
+      this.$alert(this.$t('code.delete_confirm') + this.$t('code.result') + " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {

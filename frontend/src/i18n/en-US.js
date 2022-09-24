@@ -1272,6 +1272,7 @@ export default {
     overview_low: 'Low risk',
     overview_medium: 'Medium risk',
     overview_unknown: 'No risk',
+    all_label: 'All project source code',
   },
   sbom: {
     project: 'Project Management',

@@ -14,7 +14,6 @@ import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.code.CodeRequest;
 import com.hummerrisk.controller.request.code.CodeResultRequest;
 import com.hummerrisk.controller.request.code.CodeRuleRequest;
-import com.hummerrisk.controller.request.code.Overview;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.service.impl.ExecEngineFactoryImp;
@@ -23,7 +22,6 @@ import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -67,6 +65,8 @@ public class CodeService {
     private ExecEngineFactoryImp execEngineFactoryImp;
     @Resource
     private HistoryCodeResultMapper historyCodeResultMapper;
+    @Resource
+    private HistoryCodeResultLogMapper historyCodeResultLogMapper;
 
 
     public List<CodeDTO> codeList(CodeRequest request) {
@@ -451,6 +451,18 @@ public class CodeService {
         HistoryCodeResult codeResult = historyCodeResultMapper.selectByPrimaryKey(map.get("id").toString());
         String str = codeResult.getReturnJson();
         return str;
+    }
+
+    public List<HistoryCodeResultDTO> history(Map<String, Object> params) {
+        List<HistoryCodeResultDTO> historyList = extCodeResultMapper.history(params);
+        return historyList;
+    }
+
+    public void deleteHistoryCodeResult(String id) throws Exception {
+        HistoryCodeResultLogExample logExample = new HistoryCodeResultLogExample();
+        logExample.createCriteria().andResultIdEqualTo(id);
+        historyCodeResultLogMapper.deleteByExample(logExample);
+        historyCodeResultMapper.deleteByPrimaryKey(id);
     }
 
 }

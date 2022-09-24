@@ -9,8 +9,6 @@ import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.code.CodeRequest;
 import com.hummerrisk.controller.request.code.CodeResultRequest;
 import com.hummerrisk.controller.request.code.CodeRuleRequest;
-import com.hummerrisk.controller.request.code.Overview;
-import com.hummerrisk.controller.request.sbom.DownloadRequest;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.service.CodeService;
 import io.kubernetes.client.openapi.ApiException;
@@ -213,5 +211,19 @@ public class CodeController {
     @PostMapping("download")
     public String download(@RequestBody Map<String, Object> map) throws Exception {
         return codeService.download(map);
+    }
+
+    @I18n
+    @ApiOperation(value = "源码检测历史记录")
+    @PostMapping("history/{goPage}/{pageSize}")
+    public Pager<List<HistoryCodeResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, codeService.history(params));
+    }
+
+    @ApiOperation(value = "删除源码检测历史记录")
+    @GetMapping("deleteHistoryCodeResult/{id}")
+    public void deleteHistoryCodeResult(@PathVariable String id) throws Exception {
+        codeService.deleteHistoryCodeResult(id);
     }
 }

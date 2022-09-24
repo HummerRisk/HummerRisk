@@ -1272,6 +1272,7 @@ export default {
     overview_low: '低风险',
     overview_medium: '中等风险',
     overview_unknown: '无风险',
+    all_label: '所有项目源码',
   },
   sbom: {
     project: '项目管理',
