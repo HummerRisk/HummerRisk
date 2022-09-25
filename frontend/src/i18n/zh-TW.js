@@ -933,6 +933,8 @@ export default {
     image_repo: '鏡像倉庫',
     image_repo_type: '鏡像倉庫類型',
     image_repo_list: '鏡像倉庫列表',
+    image_repo_chart: '鏡像倉庫統計',
+    image_repo_chart_images: '鏡像倉庫已同步鏡像統計',
     repo_create: '創建鏡像倉庫',
     repo_update: '編輯鏡像倉庫',
     repo_delete: '刪除鏡像倉庫',

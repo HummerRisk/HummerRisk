@@ -881,5 +881,17 @@ public class ImageService {
         return str;
     }
 
+    public Map<String, Object> topInfo(Map<String, Object> params) {
+        return extImageMapper.topInfo(params);
+    }
+
+    public List<Map<String, Object>> imageRepoChart() {
+        return extImageMapper.imageRepoChart();
+    }
+
+    public List<Map<String, Object>> severityChart() {
+        return extImageMapper.severityChart();
+    }
+
 
 }

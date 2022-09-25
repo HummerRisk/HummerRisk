@@ -933,6 +933,8 @@ export default {
     image_repo: 'Mirror repository',
     image_repo_type: 'Image repository type',
     image_repo_list: 'image repository list',
+    image_repo_chart: 'Image repository statistics',
+    image_repo_chart_images: 'The mirror warehouse has synchronized mirror statistics',
     repo_create: 'Create a mirror warehouse',
     repo_update: 'Edit mirror repository',
     repo_delete: 'Delete mirror repository',

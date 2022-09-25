@@ -112,4 +112,38 @@
         order by t.update_time desc
     </select>
 
+    <select id="topInfo" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT *
+        from (
+              (SELECT IFNULL(count(*), 0) as images from image) as images,
+              (SELECT IFNULL(count(t.id), 0) as critical from image_trivy_json t join image_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'critical') as critical,
+              (SELECT IFNULL(count(t.id), 0) as high from image_trivy_json t join image_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'high') as high,
+              (SELECT IFNULL(count(t.id), 0) as medium from image_trivy_json t join image_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'medium') as medium,
+              (SELECT IFNULL(count(t.id), 0) as low from image_trivy_json t join image_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'low') as low,
+              (SELECT IFNULL(count(t.id), 0) as unknown from image_trivy_json t join image_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'unknown') as unknown
+                 )
+    </select>
+
+    <select id="imageRepoChart" resultType="java.util.Map">
+        SELECT
+            t.name as 'name',
+            (SELECT IFNULL(count(t1.id), 0) as 'value' from image_repo_item t1 where t1.repo_id = t.id) as 'value'
+        FROM image_repo as t
+        ORDER BY t.update_time DESC
+            Limit 10;
+    </select>
+
+    <select id="severityChart" resultType="java.util.Map">
+        SELECT
+            t.name as 'product',
+            (SELECT IFNULL(count(t1.id), 0) as Critical from image_trivy_json t1 where t1.result_id = t.id and LOWER(t1.severity) = 'critical') as Critical,
+            (SELECT IFNULL(count(t1.id), 0) as High from image_trivy_json t1 where t1.result_id = t.id and LOWER(t1.severity) = 'high') as High,
+            (SELECT IFNULL(count(t1.id), 0) as Medium from image_trivy_json t1 where t1.result_id = t.id and LOWER(t1.severity) = 'medium') as Medium,
+            (SELECT IFNULL(count(t1.id), 0) as Low from image_trivy_json t1 where t1.result_id = t.id and LOWER(t1.severity) = 'low') as Low,
+            (SELECT IFNULL(count(t1.id), 0) as Unknown from image_trivy_json t1 where t1.result_id = t.id and LOWER(t1.severity) = 'unknown') as Unknown
+        FROM image_result as t
+        ORDER BY t.update_time DESC
+            Limit 10;
+    </select>
+
 </mapper>

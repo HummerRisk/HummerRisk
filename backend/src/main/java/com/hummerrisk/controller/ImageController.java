@@ -247,4 +247,25 @@ public class ImageController {
         return imageService.download(map);
     }
 
+    @I18n
+    @ApiOperation(value = "概览TOP统计")
+    @PostMapping("topInfo")
+    public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
+        return imageService.topInfo(params);
+    }
+
+    @I18n
+    @ApiOperation(value = "镜像仓库统计")
+    @GetMapping("imageRepoChart")
+    public List<Map<String, Object>> imageRepoChart() {
+        return imageService.imageRepoChart();
+    }
+
+    @I18n
+    @ApiOperation(value = "源码风险统计")
+    @GetMapping("severityChart")
+    public List<Map<String, Object>> severityChart() {
+        return imageService.severityChart();
+    }
+
 }

@@ -933,6 +933,8 @@ export default {
     image_repo: '镜像仓库',
     image_repo_type: '镜像仓库类型',
     image_repo_list: '镜像仓库列表',
+    image_repo_chart: '镜像仓库统计',
+    image_repo_chart_images: '镜像仓库已同步镜像统计',
     repo_create: '创建镜像仓库',
     repo_update: '编辑镜像仓库',
     repo_delete: '删除镜像仓库',
