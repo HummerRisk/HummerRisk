@@ -9,7 +9,7 @@
 
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                 @filter-change="filter">
-        <el-table-column type="index" min-width="3%"/>
+        <el-table-column type="index" min-width="2%"/>
         <el-table-column prop="name" :label="$t('image.image_name')" min-width="10%" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
@@ -23,7 +23,7 @@
           <el-row v-if="scope.row.type==='image'">{{ scope.row.imageUrl }}:{{ scope.row.imageTag }}</el-row>
           <el-row v-if="scope.row.type==='tar'">{{ scope.row.path }}</el-row>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="16%">
+        <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="15%">
           <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown" placement="top">
             <el-link type="primary" class="text-click" @click="goResource(scope.row)">
               {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown}}
@@ -50,12 +50,12 @@
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
-        <el-table-column prop="updateTime" min-width="15%" :label="$t('image.last_modified')" sortable>
+        <el-table-column prop="updateTime" min-width="14%" :label="$t('image.last_modified')" sortable>
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="12%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="14%" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
@@ -244,6 +244,7 @@ import DialogFooter from "../head/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import RuleType from "./RuleType";
 import {IMAGE_RESULT_CONFIGS} from "../../common/components/search/search-components";
+import {saveAs} from "@/common/js/FileSaver";
 
 /* eslint-disable */
 export default {
@@ -283,6 +284,10 @@ export default {
         {
           tip: this.$t('resource.scan'), icon: "el-icon-refresh-right", type: "success",
           exec: this.handleScans
+        },
+        {
+          tip: this.$t('resource.download_report'), icon: "el-icon-bottom", type: "warning",
+          exec: this.handleDownload
         },
         {
           tip: this.$t('resource.delete_result'), icon: "el-icon-delete", type: "danger",
@@ -466,6 +471,18 @@ export default {
         }
       }
       return jsonKeyAndValue;
+    },
+    handleDownload(item) {
+      this.$post("/image/download", {
+        id: item.id
+      }, response => {
+        if (response.success) {
+          let blob = new Blob([response.data], { type: "application/json" });
+          saveAs(blob, item.name + ".json");
+        }
+      }, error => {
+        console.log("下载报错", error);
+      });
     },
   },
   computed: {

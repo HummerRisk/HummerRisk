@@ -17,6 +17,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "镜像管理")
 @RestController
@@ -238,6 +239,12 @@ public class ImageController {
     @PostMapping("scanImageRepo")
     public void scanImageRepo(@RequestBody ScanImageRepoRequest request) throws Exception {
         imageService.scanImageRepo(request);
+    }
+
+    @ApiOperation(value = "下载检测报告")
+    @PostMapping("download")
+    public String download(@RequestBody Map<String, Object> map) throws Exception {
+        return imageService.download(map);
     }
 
 }

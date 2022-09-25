@@ -75,6 +75,8 @@ public class ImageService {
     private ImageTrivyJsonMapper imageTrivyJsonMapper;
     @Resource
     private ExecEngineFactoryImp execEngineFactoryImp;
+    @Resource
+    private HistoryImageTaskMapper historyImageTaskMapper;
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
@@ -871,6 +873,12 @@ public class ImageService {
             return 1;
         }
         return 2;
+    }
+
+    public String download(Map<String, Object> map) {
+        HistoryImageTaskWithBLOBs imageTaskWithBLOBs = historyImageTaskMapper.selectByPrimaryKey(map.get("id").toString());
+        String str = imageTaskWithBLOBs.getTrivyJson();
+        return str;
     }
 
 
