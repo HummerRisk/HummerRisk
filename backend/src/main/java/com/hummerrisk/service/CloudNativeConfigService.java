@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -59,6 +60,8 @@ public class CloudNativeConfigService {
     private CloudNativeConfigRuleMapper cloudNativeConfigRuleMapper;
     @Resource
     private ExecEngineFactoryImp execEngineFactoryImp;
+    @Resource
+    private HistoryCloudNativeConfigResultMapper historyCloudNativeConfigResultMapper;
 
     public List<CloudNativeConfigDTO> getCloudNativeConfigList(ConfigRequest request) {
         return extCloudNativeConfigMapper.getCloudNativeConfigList(request);
@@ -312,13 +315,13 @@ public class CloudNativeConfigService {
             noticeService.createCloudNativeConfigMessageOrder(result);
             saveCloudNativeConfigResultLog(result.getId(), "i18n_end_k8s_result_config", "", true);
 
-            historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
+            historyService.updateHistoryCloudNativeConfigResult(BeanUtils.copyBean(new HistoryCloudNativeConfigResult(), result));
         } catch (Exception e) {
             LogUtil.error("create K8sConfigResult: " + e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             cloudNativeConfigResultMapper.updateByPrimaryKeySelective(result);
-            historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
+            historyService.updateHistoryCloudNativeConfigResult(BeanUtils.copyBean(new HistoryCloudNativeConfigResult(), result));
             saveCloudNativeConfigResultLog(result.getId(), "i18n_operation_ex" + ": " + StringUtils.substring(e.getMessage(), 0, 900) + "...", e.getMessage(), false);
         }
     }
@@ -409,5 +412,11 @@ public class CloudNativeConfigService {
 
     public MetricChartDTO metricChart (String resultId) {
         return extCloudNativeConfigResultMapper.metricChart(resultId);
+    }
+
+    public String download(Map<String, Object> map) {
+        HistoryCloudNativeConfigResult historyCloudNativeConfigResult = historyCloudNativeConfigResultMapper.selectByPrimaryKey(map.get("id").toString());
+        String str = historyCloudNativeConfigResult.getResultJson();
+        return str;
     }
 }

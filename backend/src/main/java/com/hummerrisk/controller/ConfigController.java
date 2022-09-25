@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "Config")
 @RestController
@@ -133,6 +134,12 @@ public class ConfigController {
     @GetMapping("metricChart/{resultId}")
     public MetricChartDTO metricChart(@PathVariable String resultId) {
         return cloudNativeConfigService.metricChart(resultId);
+    }
+
+    @ApiOperation(value = "下载检测报告")
+    @PostMapping("download")
+    public String download(@RequestBody Map<String, Object> map) throws Exception {
+        return cloudNativeConfigService.download(map);
     }
 
 }
