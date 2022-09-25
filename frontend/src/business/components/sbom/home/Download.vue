@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-dropdown split-button type="primary" @click="handleClick" size="mini" @command="(command)=>{handleEdit(command)}">
-      <i class="el-icon-download"/> {{ $t('sbom.download') }}
+      <i class="el-icon-download"/> {{ $t('server.download') }}
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item command="json">JSON</el-dropdown-item>
         <el-dropdown-item command="txt">TXT</el-dropdown-item>
