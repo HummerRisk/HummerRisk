@@ -20,6 +20,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "K8s")
 @RestController
@@ -126,6 +127,12 @@ public class K8sController {
     @GetMapping("metricChart/{resultId}")
     public MetricChartDTO metricChart(@PathVariable String resultId) {
         return k8sService.metricChart(resultId);
+    }
+
+    @ApiOperation(value = "下载检测报告")
+    @PostMapping("download")
+    public String download(@RequestBody Map<String, Object> map) throws Exception {
+        return k8sService.download(map);
     }
 
 }

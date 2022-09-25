@@ -55,6 +55,8 @@ public class K8sService {
     private CloudNativeService cloudNativeService;
     @Resource
     private CloudNativeRuleMapper cloudNativeRuleMapper;
+    @Resource
+    private HistoryCloudNativeResultMapper historyCloudNativeResultMapper;
 
     public void scan(String id) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
@@ -348,5 +350,11 @@ public class K8sService {
 
     public MetricChartDTO metricChart (String resultId) {
         return extCloudNativeResultMapper.metricChart(resultId);
+    }
+
+    public String download(Map<String, Object> map) {
+        HistoryCloudNativeResultWithBLOBs historyCloudNativeResultWithBLOBs = historyCloudNativeResultMapper.selectByPrimaryKey(map.get("id").toString());
+        String str = historyCloudNativeResultWithBLOBs.getVulnerabilityReport();
+        return str;
     }
 }
