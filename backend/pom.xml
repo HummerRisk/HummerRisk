@@ -14,10 +14,11 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <shiro.version>1.7.1</shiro.version>
-        <java.version>1.8</java.version>
+        <flyway.version>7.15.0</flyway.version>
+        <shiro.version>1.9.1</shiro.version>
+        <java.version>11</java.version>
         <graalvm.version>20.1.0</graalvm.version>
-        <knife4j.version>2.0.9</knife4j.version>
+        <knife4j.version>3.0.3</knife4j.version>
         <skipAntRunForJenkins>false</skipAntRunForJenkins>
     </properties>
 
@@ -252,7 +253,7 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-parser</artifactId>
-            <version>1.0.51</version>
+            <version>2.0.24</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -343,7 +344,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.8.7</version>
+            <version>2.9.0</version>
         </dependency>
 
         <dependency>
@@ -1013,6 +1014,10 @@
                     <artifactId>bcprov-jdk15on</artifactId>
                     <groupId>org.bouncycastle</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>zookeeper</artifactId>
+                    <groupId>org.apache.zookeeper</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <!-- 百度云 -->
@@ -1126,7 +1131,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>3.17</version>
+            <version>5.2.1</version>
             <exclusions>
                 <exclusion>
                     <artifactId>poi</artifactId>
