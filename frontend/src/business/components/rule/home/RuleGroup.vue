@@ -114,7 +114,7 @@
             <el-input v-model="createForm.name" autocomplete="off" :placeholder="$t('rule.rule_set')"/>
           </el-form-item>
           <el-form-item :label="$t('commons.description')" prop="description">
-            <el-input v-model="createForm.description" autocomplete="off" :placeholder="$t('commons.description')"/>
+            <el-input type="textarea" :rows="5" v-model="createForm.description" autocomplete="off" :placeholder="$t('commons.description')"/>
           </el-form-item>
           <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
             <el-input v-model="createForm.level" autocomplete="off" :placeholder="$t('resource.equal_guarantee_level')"/>
@@ -146,7 +146,7 @@
             <el-input v-model="infoForm.name" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
           </el-form-item>
           <el-form-item :label="$t('commons.description')" prop="description">
-            <el-input v-model="infoForm.description" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
+            <el-input type="textarea" :rows="5" v-model="infoForm.description" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
           </el-form-item>
           <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
             <el-input v-model="infoForm.level" autocomplete="off" :placeholder="$t('resource.equal_guarantee_level')"/>
@@ -308,7 +308,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
           ],
           description: [
             {required: true, message: this.$t('rule.description') + this.$t('commons.cannot_be_empty'), trigger: 'blur'},
-            {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+            {min: 2, max: 100, message: this.$t('commons.input_limit', [2, 100]), trigger: 'blur'},
             {
               required: true,
               message: this.$t('rule.special_characters_are_not_supported'),
@@ -365,7 +365,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
 
     methods: {
       create() {
-        this.createForm = {};
+        this.createForm = { level: '等保三级' };
         this.createVisible = true;
       },
       handleEdit(item) {
