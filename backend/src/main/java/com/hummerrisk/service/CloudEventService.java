@@ -374,11 +374,14 @@ public class CloudEventService {
             com.tencentcloudapi.cloudaudit.v20190319.models.Resource resource = event.getResources();
             String eventName = event.getEventNameCn();
             int eventLevel = -1;
-            if(eventName!=null && (eventName.indexOf("查")>-1||eventName.indexOf("Get")>-1)){
+            if(eventName!=null && (eventName.indexOf("查")>-1||eventName.indexOf("Get")>-1)||eventName.indexOf("获取")>-1){
                 eventLevel = 0;
+            }else if(eventName!=null&&(eventName.indexOf("删")>-1||eventName.toUpperCase().indexOf("DELETE")>-1)){
+                eventLevel = 2;
             }else{
                 eventLevel = 1;
             }
+
             CloudEvent cloudEvent = new CloudEvent();
             cloudEvent.setEventRating(eventLevel);
             cloudEvent.setEventId(event.getEventId());cloudEvent.setUserName(event.getUsername())
@@ -426,6 +429,8 @@ public class CloudEventService {
             int eventLevel = -1;
             if(eventName!=null && eventName.indexOf("ConsoleSign")>-1){
                 eventLevel = 0;
+            }else if(eventName!=null&&(eventName.toUpperCase().indexOf("DELETE")>-1)){
+                eventLevel = 2;
             }else{
                 eventLevel = 1;
             }

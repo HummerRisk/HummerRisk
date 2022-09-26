@@ -1350,7 +1350,8 @@ export default {
     error: "The cloud account, region and date range cannot be empty",
     middle_level: "Medium Risk",
     high_level: "High Risk",
-    low_level: "Low Risk"
+    low_level: "Low Risk",
+    source_ip: "Source Ip"
   },
   second: {
     title:'seconds',

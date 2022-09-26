@@ -101,6 +101,12 @@
       </include>
           )
     </if>
+    <if test="${condition}.eventRating != null">
+      and t.event_rating
+      <include refid="condition">
+        <property name="object" value="${condition}.eventRating"/>
+      </include>
+    </if>
     <if test="${condition}.eventTime != null">
       and t.event_time
       <include refid="condition">
