@@ -142,4 +142,25 @@ public class ConfigController {
         return cloudNativeConfigService.download(map);
     }
 
+    @I18n
+    @ApiOperation(value = "概览TOP统计")
+    @PostMapping("topInfo")
+    public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
+        return cloudNativeConfigService.topInfo(params);
+    }
+
+    @I18n
+    @ApiOperation(value = "config 统计")
+    @GetMapping("configChart")
+    public List<Map<String, Object>> configChart() {
+        return cloudNativeConfigService.configChart();
+    }
+
+    @I18n
+    @ApiOperation(value = "风险统计")
+    @GetMapping("severityChart")
+    public List<Map<String, Object>> severityChart() {
+        return cloudNativeConfigService.severityChart();
+    }
+
 }

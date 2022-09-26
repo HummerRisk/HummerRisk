@@ -419,4 +419,16 @@ public class CloudNativeConfigService {
         String str = historyCloudNativeConfigResult.getResultJson();
         return str;
     }
+
+    public Map<String, Object> topInfo(Map<String, Object> params) {
+        return extCloudNativeConfigMapper.topInfo(params);
+    }
+
+    public List<Map<String, Object>> configChart() {
+        return extCloudNativeConfigMapper.configChart();
+    }
+
+    public List<Map<String, Object>> severityChart() {
+        return extCloudNativeConfigMapper.severityChart();
+    }
 }

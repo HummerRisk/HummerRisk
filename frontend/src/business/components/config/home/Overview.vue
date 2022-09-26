@@ -1,19 +1,29 @@
 <template>
-  <el-col>
-    <el-empty :image-size="500" description="正在开发中······敬请期待"></el-empty>
-  </el-col>
+  <main-container class="main-container" v-loading="result.loading">
+    <el-row :gutter="20">
+      <top-info/>
+    </el-row>
+    <el-row :gutter="20">
+      <bottom-info/>
+    </el-row>
+  </main-container>
 </template>
 
 <script>
-import Container from "../.././common/components/Container";
+import MainContainer from "../../common/components/MainContainer";
+import TopInfo from "@/business/components/config/home/TopInfo";
+import BottomInfo from "@/business/components/config/home/BottomInfo";
 
 /* eslint-disable */
 export default {
   components: {
-    Container,
+    MainContainer,
+    TopInfo,
+    BottomInfo,
   },
   data() {
     return {
+      result: {},
     }
   },
   methods: {
@@ -22,6 +32,8 @@ export default {
 </script>
 
 <style scoped>
-
+.main-container {
+  padding: 5px;
+}
 </style>
 

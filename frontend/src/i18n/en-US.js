@@ -1238,6 +1238,8 @@ export default {
     search_by_title: 'Search by Title name',
     config_result_details_list: 'Deployment detection result details list',
     back_resource: 'Return the list of deployment detection results',
+    config_chart: 'Deployment detection statistics',
+    config_chart_vuln: 'Deployment configuration detection statistics',
   },
   code: {
     code_scan: 'Source code detection',

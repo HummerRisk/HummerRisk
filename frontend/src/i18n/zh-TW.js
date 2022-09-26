@@ -1238,6 +1238,8 @@ export default {
     search_by_title: '根據 Title 名稱搜索',
     config_result_details_list: '部署檢測結果詳情列表',
     back_resource: '返回部署檢測結果列表',
+    config_chart: '部署檢測統計',
+    config_chart_vuln: '部署配置檢測統計',
   },
   code: {
     code_scan: '源碼檢測',
