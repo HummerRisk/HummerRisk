@@ -135,4 +135,25 @@ public class K8sController {
         return k8sService.download(map);
     }
 
+    @I18n
+    @ApiOperation(value = "概览TOP统计")
+    @PostMapping("topInfo")
+    public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
+        return k8sService.topInfo(params);
+    }
+
+    @I18n
+    @ApiOperation(value = "K8s 统计")
+    @GetMapping("k8sChart")
+    public List<Map<String, Object>> k8sChart() {
+        return k8sService.k8sChart();
+    }
+
+    @I18n
+    @ApiOperation(value = "风险统计")
+    @GetMapping("severityChart")
+    public List<Map<String, Object>> severityChart() {
+        return k8sService.severityChart();
+    }
+
 }

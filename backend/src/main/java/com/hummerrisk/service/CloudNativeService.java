@@ -329,5 +329,4 @@ public class CloudNativeService {
         return extCloudNativeSourceMapper.situationInfo(params);
     }
 
-
 }

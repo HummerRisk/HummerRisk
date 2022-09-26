@@ -200,6 +200,7 @@ export default {
     cloud_native_third: 'Fast response',
     cloud_native_fourth: 'Check anytime, anywhere',
     batch_settings: 'Batch settings',
+    severity: 'Risk level',
   },
   workspace: {
     create:'Create a workspace',
@@ -1212,6 +1213,8 @@ export default {
     sync_log_create: 'Create resource synchronization task',
     sync_log_list: 'Sync log list',
     notes: 'Please be patient and wait for the background to process the sync task!',
+    k8s_chart: 'K8s Statistics',
+    k8s_chart_vuln: 'K8s Vulnerability Statistics',
   },
   config: {
     config_settings: 'Deployment configuration',

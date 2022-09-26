@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
+import com.hummerrisk.base.mapper.ext.ExtCloudNativeMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeResultMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.utils.*;
@@ -57,6 +58,8 @@ public class K8sService {
     private CloudNativeRuleMapper cloudNativeRuleMapper;
     @Resource
     private HistoryCloudNativeResultMapper historyCloudNativeResultMapper;
+    @Resource
+    private ExtCloudNativeMapper extCloudNativeMapper;
 
     public void scan(String id) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
@@ -356,5 +359,17 @@ public class K8sService {
         HistoryCloudNativeResultWithBLOBs historyCloudNativeResultWithBLOBs = historyCloudNativeResultMapper.selectByPrimaryKey(map.get("id").toString());
         String str = historyCloudNativeResultWithBLOBs.getVulnerabilityReport();
         return str;
+    }
+
+    public Map<String, Object> topInfo(Map<String, Object> params) {
+        return extCloudNativeMapper.topInfo(params);
+    }
+
+    public List<Map<String, Object>> k8sChart() {
+        return extCloudNativeMapper.k8sChart();
+    }
+
+    public List<Map<String, Object>> severityChart() {
+        return extCloudNativeMapper.severityChart();
     }
 }

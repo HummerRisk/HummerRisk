@@ -200,6 +200,7 @@ export default {
     cloud_native_third: '響應速度快',
     cloud_native_fourth: '隨時隨地查',
     batch_settings: '批量設置',
+    severity: '風險等級',
   },
   workspace: {
     create: '創建工作空間',
@@ -1212,6 +1213,8 @@ export default {
     sync_log_create: '創建資源同步任務',
     sync_log_list: '同步日誌列表',
     notes: '請耐心等待後台處理同步任務!',
+    k8s_chart: 'K8s 統計',
+    k8s_chart_vuln: 'K8s 漏洞統計',
   },
   config: {
     config_settings: '部署配置',

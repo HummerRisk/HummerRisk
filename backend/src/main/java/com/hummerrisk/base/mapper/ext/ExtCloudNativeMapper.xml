@@ -129,4 +129,38 @@
         order by t.update_time desc
     </select>
 
+    <select id="topInfo" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT *
+        from (
+              (SELECT IFNULL(count(*), 0) as k8s from cloud_native) as k8s,
+              (SELECT IFNULL(count(t.id), 0) as critical from cloud_native_result_item t join cloud_native_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'critical') as critical,
+              (SELECT IFNULL(count(t.id), 0) as high from cloud_native_result_item t join cloud_native_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'high') as high,
+              (SELECT IFNULL(count(t.id), 0) as medium from cloud_native_result_item t join cloud_native_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'medium') as medium,
+              (SELECT IFNULL(count(t.id), 0) as low from cloud_native_result_item t join cloud_native_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'low') as low,
+              (SELECT IFNULL(count(t.id), 0) as unknown from cloud_native_result_item t join cloud_native_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'unknown') as unknown
+                 )
+    </select>
+
+    <select id="k8sChart" resultType="java.util.Map">
+        SELECT
+            t.name as 'name',
+            t.return_sum as 'value'
+        FROM cloud_native_result as t
+        ORDER BY t.update_time DESC
+        Limit 10;
+    </select>
+
+    <select id="severityChart" resultType="java.util.Map">
+        SELECT
+            t.name as 'product',
+            (SELECT IFNULL(count(t1.id), 0) as Critical from cloud_native_result_item t1 where t1.result_id = t.id and LOWER(t1.severity) = 'critical') as Critical,
+            (SELECT IFNULL(count(t1.id), 0) as High from cloud_native_result_item t1 where t1.result_id = t.id and LOWER(t1.severity) = 'high') as High,
+            (SELECT IFNULL(count(t1.id), 0) as Medium from cloud_native_result_item t1 where t1.result_id = t.id and LOWER(t1.severity) = 'medium') as Medium,
+            (SELECT IFNULL(count(t1.id), 0) as Low from cloud_native_result_item t1 where t1.result_id = t.id and LOWER(t1.severity) = 'low') as Low,
+            (SELECT IFNULL(count(t1.id), 0) as Unknown from cloud_native_result_item t1 where t1.result_id = t.id and LOWER(t1.severity) = 'unknown') as Unknown
+        FROM cloud_native_result as t
+        ORDER BY t.update_time DESC
+        Limit 10;
+    </select>
+
 </mapper>
