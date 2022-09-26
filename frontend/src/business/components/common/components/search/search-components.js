@@ -212,6 +212,23 @@ export const RESOURCE_NAME = {
     options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
   },
 }
+
+export const EVENT_RATING = {
+  key: "eventRating",
+  name: "TableSearchSelect",
+  label: "log.risk_level",
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN]
+  },
+  options: [
+    {label: 'log.low_level', value: '0'},
+    {label: 'log.middle_level', value: '1'},
+    {label: 'log.high_level', value: '2'}
+  ],
+  props: { // 尾部控件的props，一般为element ui控件的props
+    multiple: true
+  }
+}
 export const RESOURCE_TYPE = {
   key: "resourceType",
   name: "TableSearchInput",
@@ -553,5 +570,5 @@ export const CODE_CONFIGS = [NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CRE
 export const CODE_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
 export const CODE_RESULT_CONFIGS = [NAME, RULE_NAME, RULE_SEVERITY, CREATOR, UPDATE_TIME];
 export const CLOUD_EVENT_SYNC_CONFIGS = [EVENT_ACCOUNT, REGION, CREATE_TIME];
-export const CLOUD_EVENT_CONFIGS = [EVENT_ACCOUNT, REGION, EVENT_TIME,USER,EVENT_NAME,RESOURCE_TYPE,RESOURCE_NAME];
+export const CLOUD_EVENT_CONFIGS = [EVENT_ACCOUNT, REGION, EVENT_TIME,USER,EVENT_NAME,RESOURCE_TYPE,RESOURCE_NAME,EVENT_RATING];
 export const SBOM_CONFIGS = [NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];

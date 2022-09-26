@@ -49,6 +49,13 @@
            >
           </el-table-column>
           <el-table-column
+            prop="sourceIpAddress"
+            :show-overflow-tooltip="true"
+            :label="$t('log.source_ip')"
+            min-width="10%"
+          >
+          </el-table-column>
+          <el-table-column
             prop="eventName"
             :label="$t('log.event_name')"
             min-width="10%"
@@ -58,7 +65,7 @@
             prop="resourceType"
             :show-overflow-tooltip="true"
             :label="$t('log.resource_type')"
-            min-width="15%"
+            min-width="10%"
             :formatter="resourceTypeFormat"
            >
           </el-table-column>
