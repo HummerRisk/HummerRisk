@@ -1359,7 +1359,9 @@ export default {
     middle_level: "Medium Risk",
     high_level: "High Risk",
     low_level: "Low Risk",
-    source_ip: "Source Ip"
+    source_ip: "Source Ip",
+    overview: 'Cloud event overview',
+    group: 'Cloud event aggregation',
   },
   second: {
     title:'seconds',

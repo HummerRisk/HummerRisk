@@ -4,6 +4,10 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
+          <el-menu-item :index="'/sbom/sbomTopology'">
+            {{ $t("account.cloud_topology") }}
+          </el-menu-item>
+
           <el-menu-item :index="'/sbom/project'">
             {{ $t("sbom.project") }}
           </el-menu-item>

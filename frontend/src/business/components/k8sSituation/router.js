@@ -13,6 +13,11 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8sSituation/home/K8sSituation"),
     },
     {
+      path: "k8sTopology",
+      name: "K8sTopology",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8sSituation/home/K8sTopology"),
+    },
+    {
       path: "k8sSyncLog",
       name: "K8sSyncLog",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8sSituation/home/K8sSyncLog"),

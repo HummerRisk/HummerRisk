@@ -1359,7 +1359,9 @@ export default {
     middle_level: "中风险",
     high_level: "高风险",
     low_level: "低风险",
-    source_ip: "源地址"
+    source_ip: "源地址",
+    overview: '云事件概览',
+    group: '云事件聚合',
   },
   second: {
     title: '秒',

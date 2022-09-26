@@ -8,6 +8,10 @@
             {{ $t("commons.resource_situation") }}
           </el-menu-item>
 
+          <el-menu-item :index="'/k8sSituation/k8sTopology'">
+            {{ $t("account.cloud_topology") }}
+          </el-menu-item>
+
           <el-menu-item :index="'/k8sSituation/k8sSyncLog'">
             {{ $t("k8s.sync_log") }}
           </el-menu-item>

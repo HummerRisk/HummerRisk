@@ -17,6 +17,16 @@ export default {
       name: "event",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/log/home/event'),
     },
+    {
+      path: "overview",
+      name: "EventOverview",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/log/home/Overview"),
+    },
+    {
+      path: "group",
+      name: "EventGroup",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/log/home/Group"),
+    },
   ]
 }
 
