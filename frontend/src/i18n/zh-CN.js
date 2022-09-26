@@ -1355,7 +1355,8 @@ export default {
     error:"云账号和区域还有日期范围不能为空",
     middle_level: "中风险",
     high_level: "高风险",
-    low_level: "低风险"
+    low_level: "低风险",
+    source_ip: "源地址"
   },
   second: {
     title: '秒',
