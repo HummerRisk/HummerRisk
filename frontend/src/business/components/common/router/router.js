@@ -15,12 +15,13 @@ import TaskReport from "@/business/components/taskReport/router";
 import Oss from "@/business/components/oss/router";
 import Report from "@/business/components/report/router";
 import K8s from "@/business/components/k8s/router";
-import Situation from "@/business/components/situation/router";
+import K8sSituation from "@/business/components/k8sSituation/router";
+import CloudSituation from "@/business/components/cloudSituation/router";
 import Code from "@/business/components/code/router";
 import Sbom from "@/business/components/sbom/router";
 import Log from "@/business/components/log/router";
-import config from "@/business/components/config/router";
-import cost from "@/business/components/cost/router";
+import Config from "@/business/components/config/router";
+import Cost from "@/business/components/cost/router";
 
 Vue.use(VueRouter);
 /* eslint-disable */
@@ -46,12 +47,13 @@ const router = new VueRouter({
     Dashboard,
     Report,
     K8s,
-    Situation,
+    K8sSituation,
+    CloudSituation,
     Code,
     Sbom,
     Log,
-    config,
-    cost
+    Config,
+    Cost
   ]
 });
 

@@ -847,6 +847,7 @@ export default {
     overview: '雲資源概覽',
     history: '雲資源歷史記錄',
     cloud_result_list: '雲資源檢測結果列表',
+    cloud_topology: '拓撲圖',
   },
   server: {
     server_setting: '主機檢測',

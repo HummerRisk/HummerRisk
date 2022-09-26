@@ -19,6 +19,10 @@
             <i class="iconfont icon-guanyuyunguanjia"></i>
             <span slot="title">{{ $t('commons.cloud_mix_scan') }}</span>
           </template>
+          <el-menu-item index="/cloudSituation" onselectstart="return false" v-permission="['admin']">
+            <i class="iconfont icon-taishifenxi_0"></i>
+            <span slot="title">{{ $t('commons.resource_situation') }}</span>
+          </el-menu-item>
           <el-menu-item index="/account" onselectstart="return false" v-permission="['admin']">
             <i class="iconfont icon-gongyouyunzengzhifuwushenqingliucheng-06"></i>
             <span slot="title">{{ $t('commons.cloud_scan') }}</span>
@@ -49,7 +53,7 @@
             <i class="iconfont icon-adsyunyuanshengshujuku"></i>
             <span slot="title">{{ $t('commons.cloud_native') }}</span>
           </template>
-          <el-menu-item index="/situation" onselectstart="return false" v-permission="['admin']">
+          <el-menu-item index="/k8sSituation" onselectstart="return false" v-permission="['admin']">
             <i class="iconfont icon-taishiganzhi"></i>
             <span slot="title">{{ $t('commons.resource_situation') }}</span>
           </el-menu-item>

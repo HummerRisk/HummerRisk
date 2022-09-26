@@ -847,6 +847,7 @@ export default {
     overview: '云资源概览',
     history: '云资源历史记录',
     cloud_result_list: '云资源检测结果列表',
+    cloud_topology: '拓扑图',
   },
   server: {
     server_setting: '主机检测',

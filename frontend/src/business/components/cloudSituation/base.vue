@@ -15,11 +15,11 @@
 import SituationHeaderMenus from "./head/SituationHeaderMenus";
 
 export default {
-    name: "situation",
+    name: "cloudSituation",
     components: {SituationHeaderMenus},
     data() {
       return {
-        baseUrl: "situation"
+        baseUrl: "cloudSituation"
       }
     }
   }

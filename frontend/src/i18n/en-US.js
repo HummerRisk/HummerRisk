@@ -847,6 +847,7 @@ export default {
     overview: 'Cloud resource overview',
     history: 'Cloud resource history',
     cloud_result_list: 'Cloud resource detection result list',
+    cloud_topology: 'Topology map',
   },
   server: {
     server_setting: 'Host scan',

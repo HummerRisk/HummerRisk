@@ -4,11 +4,11 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
-          <el-menu-item :index="'/situation/situation'">
+          <el-menu-item :index="'/k8sSituation/k8sSituation'">
             {{ $t("commons.resource_situation") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/situation/k8sSyncLog'">
+          <el-menu-item :index="'/k8sSituation/k8sSyncLog'">
             {{ $t("k8s.sync_log") }}
           </el-menu-item>
 
