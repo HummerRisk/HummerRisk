@@ -190,7 +190,7 @@ public class ExcelExportUtils {
         Font font = workbook.createFont();
         // 表头样式
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        style.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+        style.setFillForegroundColor(HSSFColor.HSSFColorPredefined.GREY_25_PERCENT.getIndex());
         font.setFontHeightInPoints((short) 12);
         font.setBold(true);
         // 把字体应用到当前的样式
