@@ -36,7 +36,7 @@ import java.util.Objects;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class CloudNativeConfigService {
+public class ConfigService {
 
     @Resource
     private ExtCloudNativeConfigMapper extCloudNativeConfigMapper;
@@ -387,6 +387,7 @@ public class CloudNativeConfigService {
         } else {
             example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
         }
+        example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
         return cloudNativeConfigResultItemMapper.selectByExample(example);
     }
 

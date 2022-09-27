@@ -98,7 +98,7 @@ public class TaskService {
     @Resource
     private K8sService k8sService;
     @Resource
-    private CloudNativeConfigService cloudNativeConfigService;
+    private ConfigService configService;
 
 
     public List<Favorite> listFavorites() {
@@ -546,7 +546,7 @@ public class TaskService {
                     } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.configAccount.getType())) {
                         CloudNativeConfigRule rule = cloudNativeConfigRuleMapper.selectByPrimaryKey(taskItem.getSourceId());
                         ruleId = rule.getId();
-                        resourceId = cloudNativeConfigService.reScan(taskItemResource.getResourceId());
+                        resourceId = configService.reScan(taskItemResource.getResourceId());
                     } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.imageAccount.getType())) {
                         ImageRule rule = imageRuleMapper.selectByPrimaryKey(taskItem.getSourceId());
                         ruleId = rule.getId();
@@ -615,7 +615,7 @@ public class TaskService {
                             List<CloudNativeConfigResult> cloudNativeConfigResults = cloudNativeConfigResultMapper.selectByExample(cloudNativeConfigResultExample);
                             for (CloudNativeConfigResult cloudNativeConfigResult : cloudNativeConfigResults) {
                                 CloudNativeConfigRule cloudNativeConfigRule = cloudNativeConfigRuleMapper.selectByPrimaryKey(cloudNativeConfigResult.getRuleId());
-                                resourceId = cloudNativeConfigService.reScan(cloudNativeConfigResult.getId());
+                                resourceId = configService.reScan(cloudNativeConfigResult.getId());
                                 if (resourceId == null) continue;
                                 this.updateTaskItemResource(taskItemResource, cloudNativeConfigRule.getId(), resourceId);
                             }
@@ -703,7 +703,7 @@ public class TaskService {
                             List<CloudNativeConfigResult> cloudNativeConfigResults = cloudNativeConfigResultMapper.selectByExample(cloudNativeConfigResultExample);
                             for (CloudNativeConfigResult cloudNativeConfigResult : cloudNativeConfigResults) {
                                 CloudNativeConfigRule cloudNativeConfigRule = cloudNativeConfigRuleMapper.selectByPrimaryKey(cloudNativeConfigResult.getRuleId());
-                                resourceId = cloudNativeConfigService.reScan(cloudNativeConfigResult.getId());
+                                resourceId = configService.reScan(cloudNativeConfigResult.getId());
                                 if (resourceId == null) continue;
                                 this.updateTaskItemResource(taskItemResource, cloudNativeConfigRule.getId(), resourceId);
                             }
@@ -925,7 +925,7 @@ public class TaskService {
                 cloudNativeConfigResultMapper.deleteByExample(example);
                 cloudNativeConfigResultMapper.insertSelective(result);
 
-                cloudNativeConfigService.saveCloudNativeConfigResultLog(result.getId(), "i18n_start_config_result", "", true);
+                configService.saveCloudNativeConfigResultLog(result.getId(), "i18n_start_config_result", "", true);
                 OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.CREATE, "i18n_start_config_result");
                 historyService.insertScanTaskHistory(result, scanId, result.getConfigId(), TaskEnum.configAccount.getType());
 

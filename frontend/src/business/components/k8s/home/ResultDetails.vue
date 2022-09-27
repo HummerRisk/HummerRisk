@@ -18,26 +18,29 @@
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter">
           <el-table-column type="index" min-width="2%"/>
-          <el-table-column :label="'Title'" min-width="20%" prop="title" v-slot:default="scope">
-            {{ scope.row.title?scope.row.title:'N/A' }}
+          <el-table-column min-width="10%" :label="'Resource'" prop="resource" v-slot:default="scope">
+            <span style="font-weight:bold;color: #000000;">{{ scope.row.resource }}</span>
           </el-table-column>
-          <el-table-column :label="'VulnerabilityID'" min-width="13%" prop="vulnerabilityId" v-slot:default="scope">
-            {{ scope.row.vulnerabilityId?scope.row.vulnerabilityId:'N/A' }}
+          <el-table-column min-width="10%" :label="'VulnerabilityID'" prop="vulnerabilityId">
           </el-table-column>
-          <el-table-column min-width="8%" :label="'Severity'" prop="severity" v-slot:default="scope">
-            {{ scope.row.severity?scope.row.severity:'N/A' }}
+          <el-table-column min-width="7%" :label="'Severity'" prop="severity" v-slot:default="scope">
+            <span v-if="scope.row.severity === 'CRITICAL'" style="color: #8B0000;">{{ scope.row.severity }}</span>
+            <span v-if="scope.row.severity === 'HIGH'" style="color: #FF4D4D;">{{ scope.row.severity }}</span>
+            <span v-if="scope.row.severity === 'MEDIUM'" style="color: #FF8000;">{{ scope.row.severity }}</span>
+            <span v-if="scope.row.severity === 'LOW'" style="color: #336D9F;">{{ scope.row.severity }}</span>
+            <span v-if="scope.row.severity === 'UNKNOWN'" style="color: #67C23A;">{{ scope.row.severity }}</span>
           </el-table-column>
-          <el-table-column min-width="8%" :label="'Score'" prop="score" v-slot:default="scope">
+          <el-table-column min-width="5%" :label="'Score'" prop="score" v-slot:default="scope">
             {{ scope.row.score?scope.row.score:'N/A' }}
           </el-table-column>
-          <el-table-column min-width="20%" :label="'PrimaryLink'" prop="primaryLink" v-slot:default="scope">
-            <el-link type="primary" style="color: #0000e4;" :href="scope.row.primaryLink" target="_blank">{{ scope.row.primaryLink?scope.row.primaryLink:'N/A' }}</el-link>
+          <el-table-column :label="'InstalledVersion'" min-width="10%" prop="installedVersion">
           </el-table-column>
-          <el-table-column min-width="15%" :label="'InstalledVersion'" prop="installedVersion" v-slot:default="scope">
-            {{ scope.row.installedVersion?scope.row.installedVersion:'N/A' }}
+          <el-table-column min-width="10%" :label="'FixedVersion'" prop="fixedVersion">
           </el-table-column>
-          <el-table-column min-width="15%" :label="'FixedVersion'" prop="fixedVersion" v-slot:default="scope">
-            {{ scope.row.fixedVersion?scope.row.fixedVersion:'N/A' }}
+          <el-table-column min-width="25%" :label="'PrimaryURL'" prop="primaryUrl" v-slot:default="scope">
+            <span>{{ scope.row.title }}</span>
+            <br>
+            <el-link type="primary" style="color: #0000e4;" :href="scope.row.primaryUrl" target="_blank">{{ scope.row.primaryUrl }}</el-link>
           </el-table-column>
           <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">

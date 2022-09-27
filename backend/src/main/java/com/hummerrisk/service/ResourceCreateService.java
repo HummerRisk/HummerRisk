@@ -98,7 +98,7 @@ public class ResourceCreateService {
     @Resource
     private K8sService k8sService;
     @Resource
-    private CloudNativeConfigService cloudNativeConfigService;
+    private ConfigService configService;
     @Resource
     private CodeResultMapper codeResultMapper;
     @Resource
@@ -264,7 +264,7 @@ public class ResourceCreateService {
                 processingGroupIdMap.put(cloudNativeConfigToBeProceed.getId(), cloudNativeConfigToBeProceed.getId());
                 commonThreadPool.addTask(() -> {
                     try {
-                        cloudNativeConfigService.createScan(cloudNativeConfigToBeProceed);
+                        configService.createScan(cloudNativeConfigToBeProceed);
                     } catch (Exception e) {
                         LogUtil.error(e);
                     } finally {

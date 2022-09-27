@@ -19,25 +19,28 @@
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter">
           <el-table-column type="index" min-width="2%"/>
           <el-table-column :label="'ID'" min-width="5%" prop="itemId" v-slot:default="scope">
-            {{ scope.row.itemId?scope.row.itemId:'N/A' }}
-          </el-table-column>
-          <el-table-column :label="'Title'" min-width="19%" prop="title" v-slot:default="scope">
-            {{ scope.row.title?scope.row.title:'N/A' }}
+            <span style="font-weight:bold;color: #000000;">{{ scope.row.itemId?scope.row.itemId:'N/A' }}</span>
           </el-table-column>
           <el-table-column :label="'Type'" min-width="11%" prop="type" v-slot:default="scope">
             {{ scope.row.type?scope.row.type:'N/A' }}
           </el-table-column>
-          <el-table-column :label="'Namespace'" min-width="13%" prop="namespace" v-slot:default="scope">
-            {{ scope.row.namespace?scope.row.namespace:'N/A' }}
-          </el-table-column>
-          <el-table-column min-width="6%" :label="'Severity'" prop="severity" v-slot:default="scope">
-            {{ scope.row.severity?scope.row.severity:'N/A' }}
+          <el-table-column min-width="7%" :label="'Severity'" prop="severity" v-slot:default="scope">
+            <span v-if="scope.row.severity === 'CRITICAL'" style="color: #8B0000;">{{ scope.row.severity }}</span>
+            <span v-if="scope.row.severity === 'HIGH'" style="color: #FF4D4D;">{{ scope.row.severity }}</span>
+            <span v-if="scope.row.severity === 'MEDIUM'" style="color: #FF8000;">{{ scope.row.severity }}</span>
+            <span v-if="scope.row.severity === 'LOW'" style="color: #336D9F;">{{ scope.row.severity }}</span>
+            <span v-if="scope.row.severity === 'UNKNOWN'" style="color: #67C23A;">{{ scope.row.severity }}</span>
           </el-table-column>
           <el-table-column min-width="5%" :label="'Status'" prop="status" v-slot:default="scope">
             {{ scope.row.status?scope.row.status:'N/A' }}
           </el-table-column>
-          <el-table-column min-width="20%" :label="'PrimaryURL'" prop="primaryUrl" v-slot:default="scope">
-            <el-link type="primary" style="color: #0000e4;" :href="scope.row.primaryUrl" target="_blank">{{ scope.row.primaryUrl?scope.row.primaryUrl:'N/A' }}</el-link>
+          <el-table-column :label="'Title'" min-width="15%" prop="title" v-slot:default="scope">
+            {{ scope.row.title?scope.row.title:'N/A' }}
+          </el-table-column>
+          <el-table-column min-width="25%" :label="'PrimaryURL'" prop="primaryUrl" v-slot:default="scope">
+            <span>{{ scope.row.resolution }}</span>
+            <br>
+            <el-link type="primary" style="color: #0000e4;" :href="scope.row.primaryUrl" target="_blank">{{ scope.row.primaryUrl }}</el-link>
           </el-table-column>
         </el-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>

@@ -36,6 +36,7 @@
           </el-table-column>
           <el-table-column min-width="25%" :label="'PrimaryURL'" prop="primaryUrl" v-slot:default="scope">
             <span>{{ scope.row.title }}</span>
+            <br>
             <el-link type="primary" style="color: #0000e4;" :href="scope.row.primaryUrl" target="_blank">{{ scope.row.primaryUrl }}</el-link>
           </el-table-column>
           <el-table-column min-width="5%" :label="$t('commons.operating')" fixed="right">

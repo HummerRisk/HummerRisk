@@ -3,7 +3,6 @@ package com.hummerrisk.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.CloudNativeConfig;
-import com.hummerrisk.base.domain.CloudNativeConfigResult;
 import com.hummerrisk.base.domain.CloudNativeConfigResultItem;
 import com.hummerrisk.base.domain.CloudNativeConfigResultLog;
 import com.hummerrisk.commons.utils.PageUtils;
@@ -14,7 +13,7 @@ import com.hummerrisk.controller.request.config.ConfigResultRequest;
 import com.hummerrisk.dto.CloudNativeConfigDTO;
 import com.hummerrisk.dto.CloudNativeConfigResultDTO;
 import com.hummerrisk.dto.MetricChartDTO;
-import com.hummerrisk.service.CloudNativeConfigService;
+import com.hummerrisk.service.ConfigService;
 import io.kubernetes.client.openapi.ApiException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,7 +30,7 @@ import java.util.Map;
 @RequestMapping(value = "config")
 public class ConfigController {
     @Resource
-    private CloudNativeConfigService cloudNativeConfigService;
+    private ConfigService configService;
 
     @I18n
     @ApiOperation(value = "云原生部署配置列表")
@@ -39,58 +38,58 @@ public class ConfigController {
     public Pager<List<CloudNativeConfigDTO>> getCloudNativeConfigList(
             @PathVariable int goPage, @PathVariable int pageSize, @RequestBody ConfigRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, cloudNativeConfigService.getCloudNativeConfigList(request));
+        return PageUtils.setPageInfo(page, configService.getCloudNativeConfigList(request));
     }
 
     @ApiOperation(value = "批量校验云原生部署配置")
     @PostMapping("validate")
     public Boolean validate(@RequestBody List<String> selectIds) {
-        return cloudNativeConfigService.validate(selectIds);
+        return configService.validate(selectIds);
     }
 
     @ApiOperation(value = "校验云原生部署配置")
     @PostMapping("validate/{id}")
     public Boolean validate(@PathVariable String id) throws IOException, ApiException {
-        return cloudNativeConfigService.validate(id);
+        return configService.validate(id);
     }
 
     @I18n
     @ApiOperation(value = "添加云原生部署配置")
     @PostMapping("add")
     public CloudNativeConfig addCloudNative(@RequestBody CloudNativeConfig request) {
-        return cloudNativeConfigService.addCloudNativeConfig(request);
+        return configService.addCloudNativeConfig(request);
     }
 
     @I18n
     @ApiOperation(value = "更新云原生部署配置")
     @PostMapping("update")
     public CloudNativeConfig editCloudNativeConfig(@RequestBody CloudNativeConfig request) throws Exception {
-        return cloudNativeConfigService.editCloudNativeConfig(request);
+        return configService.editCloudNativeConfig(request);
     }
 
     @ApiOperation(value = "删除云原生部署配置")
     @GetMapping(value = "delete/{accountId}")
     public void deleteAccount(@PathVariable String accountId) {
-        cloudNativeConfigService.delete(accountId);
+        configService.delete(accountId);
     }
 
     @ApiOperation(value = "上传YAML文件")
     @PostMapping(value = "uploadYaml", consumes = {"multipart/form-data"})
     public String uploadYaml(@RequestPart(value = "file", required = true) MultipartFile file) throws Exception {
-        return cloudNativeConfigService.uploadYaml(file);
+        return configService.uploadYaml(file);
     }
 
     @I18n
     @ApiOperation(value = "云原生部署配置检测")
     @GetMapping("scan/{id}")
     public void scan(@PathVariable String id) throws Exception {
-        cloudNativeConfigService.scan(id);
+        configService.scan(id);
     }
 
     @ApiOperation(value = "重新云原生部署配置检测")
     @GetMapping("reScan/{id}")
     public void reScan(@PathVariable String id) throws Exception {
-        cloudNativeConfigService.reScan(id);
+        configService.reScan(id);
     }
 
     @I18n
@@ -98,7 +97,7 @@ public class ConfigController {
     @PostMapping(value = "resultList/{goPage}/{pageSize}")
     public Pager<List<CloudNativeConfigResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ConfigResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, cloudNativeConfigService.resultList(request));
+        return PageUtils.setPageInfo(page, configService.resultList(request));
     }
 
     @I18n
@@ -106,61 +105,61 @@ public class ConfigController {
     @PostMapping("resultItemList/{goPage}/{pageSize}")
     public Pager<List<CloudNativeConfigResultItem>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ConfigResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, cloudNativeConfigService.resultItemList(request));
+        return PageUtils.setPageInfo(page, configService.resultItemList(request));
     }
 
     @I18n
     @ApiOperation(value = "云原生部署配置检测结果详情")
     @GetMapping(value = "getCloudNativeConfigResult/{resultId}")
     public CloudNativeConfigResultDTO getCloudNativeConfigResult(@PathVariable String resultId) {
-        return cloudNativeConfigService.getCloudNativeConfigResult(resultId);
+        return configService.getCloudNativeConfigResult(resultId);
     }
 
     @I18n
     @ApiOperation(value = "云原生部署配置检测日志")
     @GetMapping(value = "log/{resultId}")
     public List<CloudNativeConfigResultLog> getCloudNativeConfigResultLog(@PathVariable String resultId) {
-        return cloudNativeConfigService.getCloudNativeConfigResultLog(resultId);
+        return configService.getCloudNativeConfigResultLog(resultId);
     }
 
     @ApiOperation(value = "删除云原生部署配置检测记录")
     @GetMapping("deleteCloudNativeConfigResult/{id}")
     public void deleteCloudNativeConfigResult(@PathVariable String id) throws Exception {
-        cloudNativeConfigService.deleteCloudNativeConfigResult(id);
+        configService.deleteCloudNativeConfigResult(id);
     }
 
     @I18n
     @ApiOperation(value = "风险数据信息")
     @GetMapping("metricChart/{resultId}")
     public MetricChartDTO metricChart(@PathVariable String resultId) {
-        return cloudNativeConfigService.metricChart(resultId);
+        return configService.metricChart(resultId);
     }
 
     @ApiOperation(value = "下载检测报告")
     @PostMapping("download")
     public String download(@RequestBody Map<String, Object> map) throws Exception {
-        return cloudNativeConfigService.download(map);
+        return configService.download(map);
     }
 
     @I18n
     @ApiOperation(value = "概览TOP统计")
     @PostMapping("topInfo")
     public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
-        return cloudNativeConfigService.topInfo(params);
+        return configService.topInfo(params);
     }
 
     @I18n
     @ApiOperation(value = "config 统计")
     @GetMapping("configChart")
     public List<Map<String, Object>> configChart() {
-        return cloudNativeConfigService.configChart();
+        return configService.configChart();
     }
 
     @I18n
     @ApiOperation(value = "风险统计")
     @GetMapping("severityChart")
     public List<Map<String, Object>> severityChart() {
-        return cloudNativeConfigService.severityChart();
+        return configService.severityChart();
     }
 
 }

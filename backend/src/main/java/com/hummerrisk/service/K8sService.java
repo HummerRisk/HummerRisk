@@ -300,6 +300,7 @@ public class K8sService {
         } else {
             example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
         }
+        example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
         return cloudNativeResultItemMapper.selectByExample(example);
     }
 
