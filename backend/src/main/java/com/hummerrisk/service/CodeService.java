@@ -228,6 +228,7 @@ public class CodeService {
     public List<CodeResultItemWithBLOBs> resultItemList(CodeResultItem codeResultItem) {
         CodeResultItemExample example = new CodeResultItemExample();
         example.createCriteria().andResultIdEqualTo(codeResultItem.getResultId());
+        example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
         return codeResultItemMapper.selectByExampleWithBLOBs(example);
     }
 
@@ -468,6 +469,7 @@ public class CodeService {
     public List<CodeResultItemWithBLOBs> historyResultItemList(CodeResultItem codeResultItem) {
         CodeResultItemExample example = new CodeResultItemExample();
         example.createCriteria().andResultIdEqualTo(codeResultItem.getResultId());
+        example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
         return codeResultItemMapper.selectByExampleWithBLOBs(example);
     }
 

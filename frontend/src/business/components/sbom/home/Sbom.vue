@@ -118,7 +118,7 @@
             </el-table>
 
             <!--Result detail-->
-            <el-drawer class="rtl" :title="$t('package.result_details_list')" :visible.sync="codeVisible" size="85%" :before-close="handleClose" :direction="direction"
+            <el-drawer class="rtl" :title="$t('code.result_details_list')" :visible.sync="codeVisible" size="85%" :before-close="handleClose" :direction="direction"
                        :destroy-on-close="true">
               <code-result-details :id="codeResultId"/>
               <template v-slot:footer>
@@ -349,7 +349,7 @@
             </el-table>
 
             <!--Result detail-->
-            <el-drawer class="rtl" :title="$t('package.result_details_list')" :visible.sync="imageVisible" size="85%" :before-close="handleClose" :direction="direction"
+            <el-drawer class="rtl" :title="$t('code.result_details_list')" :visible.sync="imageVisible" size="85%" :before-close="handleClose" :direction="direction"
                        :destroy-on-close="true">
               <image-result-details :id="imageResultId"/>
               <template v-slot:footer>
@@ -844,7 +844,7 @@ export default {
 }
 .rtl >>> .el-drawer__body {
   overflow-y: auto;
-  padding: 20px;
+  padding: 0 20px 20px 20px;
 }
 .rtl >>> input {
   width: 100%;
@@ -915,19 +915,6 @@ export default {
 .tag-v{
   margin: 10px;
   cursor:pointer;
-}
-.rtl >>> .el-drawer__body {
-  overflow-y: auto;
-  padding: 20px;
-}
-.rtl >>> input {
-  width: 100%;
-}
-.rtl >>> .el-select {
-  width: 80%;
-}
-.rtl >>> .el-form-item__content {
-  width: 75%;
 }
 .bg-purple-dark {
   background: #99a9bf;
