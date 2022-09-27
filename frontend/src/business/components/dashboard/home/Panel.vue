@@ -52,12 +52,12 @@
           </div>
         </div>
         <div class="title">
-          <img src="@/assets/img/panel/cloud.png" class="title-img" alt="">
+          <img src="@/assets/img/panel/cloud4.png" class="title-img" alt="">
         </div>
       </el-row>
       <el-row :gutter="20" class="el-row2">
         <div class="title2">
-          <img src="@/assets/img/panel/native.png" class="title-img2" alt="">
+          <img src="@/assets/img/panel/cloud3.png" class="title-img2" alt="">
         </div>
         <div class="welcome2">
           <div><h1>{{ $t('commons.cloud_native') }}</h1></div>
@@ -155,7 +155,7 @@ export default {
 }
 .welcome {
   float: left;
-  margin: 6% 0 0 4%;
+  margin: 6% 0 0 3%;
   font-size: 16px;
   color: #171d2c;
   letter-spacing: 0;
@@ -165,7 +165,7 @@ export default {
 }
 .welcome2 {
   float: right;
-  margin: 6% 4% 0 0;
+  margin: 6% 3% 0 0;
   font-size: 16px;
   color: #171d2c;
   letter-spacing: 0;
@@ -183,12 +183,12 @@ export default {
   padding:  0;
 }
 .main-container >>> .lb1-txt-white {
-  color: white;
+  color: #193f67;
   font-size: 48px;
   padding: 45px 35px 0 120px;
 }
 .main-container >>> .lb5-txt-white {
-  color: white;
+  color: #215d9a;
   font-size: 18px;
   padding: 5px 35px 0 120px;
 }
@@ -198,14 +198,16 @@ export default {
 .title-img {
   width: 70%;
   height: 70%;
+  min-height: 390px;
   text-align: center;
-  margin: 7% 0 5% 15%;
+  margin: 15% 0 10% 15%;
 }
 .title-img2 {
   width: 70%;
   height: 70%;
+  min-height: 390px;
   text-align: center;
-  margin: 7% 0 5% 15%;
+  margin: 15% 0 10% 15%;
 }
 .border {
   height: 2px;
@@ -249,7 +251,7 @@ export default {
   background-color: #215d9a;
 }
 .el-row2 {
-  background-color: #F9F9F9;
+  background-color: #fafafa;
 }
 </style>
 
