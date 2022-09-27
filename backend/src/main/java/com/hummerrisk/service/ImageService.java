@@ -678,6 +678,7 @@ public class ImageService {
     public List<ImageTrivyJsonWithBLOBs> resultItemList(ImageTrivyJson resourceRequest) {
         ImageTrivyJsonExample example = new ImageTrivyJsonExample();
         example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
+        example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
         return imageTrivyJsonMapper.selectByExampleWithBLOBs(example);
     }
 

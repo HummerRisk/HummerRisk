@@ -349,7 +349,7 @@
             </el-table>
 
             <!--Result detail-->
-            <el-drawer class="rtl" :title="$t('code.result_details_list')" :visible.sync="imageVisible" size="85%" :before-close="handleClose" :direction="direction"
+            <el-drawer class="rtl" :title="$t('image.result_details_list')" :visible.sync="imageVisible" size="85%" :before-close="handleClose" :direction="direction"
                        :destroy-on-close="true">
               <image-result-details :id="imageResultId"/>
               <template v-slot:footer>
