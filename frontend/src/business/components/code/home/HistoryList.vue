@@ -77,9 +77,8 @@
             </el-table-column>
             <el-table-column min-width="10%" :label="'FixedVersion'" prop="fixedVersion">
             </el-table-column>
-            <el-table-column :label="'Title'" min-width="17%" prop="title">
-            </el-table-column>
-            <el-table-column min-width="12%" :label="'PrimaryURL'" prop="primaryUrl" v-slot:default="scope">
+            <el-table-column min-width="25%" :label="'PrimaryURL'" prop="primaryUrl" v-slot:default="scope">
+              <span>{{ scope.row.title }}</span>
               <el-link type="primary" style="color: #0000e4;" :href="scope.row.primaryUrl" target="_blank">{{ scope.row.primaryUrl }}</el-link>
             </el-table-column>
           </el-table>
