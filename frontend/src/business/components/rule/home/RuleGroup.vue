@@ -308,7 +308,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
           ],
           description: [
             {required: true, message: this.$t('rule.description') + this.$t('commons.cannot_be_empty'), trigger: 'blur'},
-            {min: 2, max: 100, message: this.$t('commons.input_limit', [2, 100]), trigger: 'blur'},
+            {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
             {
               required: true,
               message: this.$t('rule.special_characters_are_not_supported'),
@@ -365,8 +365,9 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
 
     methods: {
       create() {
-        this.createForm = { level: '等保三级' };
+        this.createForm = { level: '最佳实践' };
         this.createVisible = true;
+
       },
       handleEdit(item) {
         this.infoForm = item;
@@ -652,6 +653,11 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
     font-size: 13px;
     margin-top: 10px;
     line-height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:6;
   }
   .edit_dev >>> .el-transfer-panel {
     width: 40%;

@@ -96,7 +96,7 @@
                 and t.plugin_id = #{request.pluginId}
             </if>
         </where>
-        order by t.id
+        order by t.name
     </select>
 
     <select id="getRules" resultMap="com.hummerrisk.base.mapper.ext.ExtRuleMapper.BaseResultMap2">
