@@ -65,6 +65,11 @@
 > * 独立性: 中立产品，客观检测；
 > * 无侵入：无侵入式检测。
 
+## UI 展示
+
+![UI 展示](./frontend/src/assets/img/gif/hummerrisk.gif)
+
+> 更多优质功能持续迭代中...
 
 ## 快速开始
 
@@ -76,6 +81,7 @@
 ```sh
 curl -sSL https://github.com/HummerRisk/HummerRisk/releases/latest/download/quick_start.sh | sh
 ```
+
 ## 帮助文档
 获取更多的产品信息和使用说明，可以访问我们的在线帮助文档
 > [帮助文档](https://docs.hummercloud.com)
