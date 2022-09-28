@@ -262,10 +262,39 @@ public class ImageController {
     }
 
     @I18n
-    @ApiOperation(value = "源码风险统计")
+    @ApiOperation(value = "风险统计")
     @GetMapping("severityChart")
     public List<Map<String, Object>> severityChart() {
         return imageService.severityChart();
     }
+
+    @I18n
+    @ApiOperation(value = "所有镜像")
+    @GetMapping("allList")
+    public List<Image> allList() {
+        return imageService.allList();
+    }
+
+    @I18n
+    @ApiOperation(value = "镜像检测历史记录")
+    @PostMapping("history/{goPage}/{pageSize}")
+    public Pager<List<HistoryImageTaskDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, imageService.history(params));
+    }
+
+    @I18n
+    @ApiOperation(value = "检测结果历史详情")
+    @PostMapping("historyResultItemList")
+    public List<ImageTrivyJsonWithBLOBs> historyResultItemList(@RequestBody ImageTrivyJson request) {
+        return imageService.historyResultItemList(request);
+    }
+
+    @ApiOperation(value = "删除源码检测历史记录")
+    @GetMapping("deleteHistoryImageResult/{id}")
+    public void deleteHistoryImageResult(@PathVariable String id) throws Exception {
+        imageService.deleteHistoryImageResult(id);
+    }
+
 
 }

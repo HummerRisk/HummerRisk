@@ -5,10 +5,10 @@
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                   @filter-change="filter">
           <el-table-column type="index" min-width="2%"/>
-          <el-table-column prop="name" :label="$t('code.name')" min-width="15%" show-overflow-tooltip>
+          <el-table-column prop="name" :label="$t('image.image_name')" min-width="15%" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
-                <img :src="require(`@/assets/img/code/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
+               <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.name }}
               </span>
             </template>
@@ -79,6 +79,7 @@
             </el-table-column>
             <el-table-column min-width="25%" :label="'PrimaryURL'" prop="primaryUrl" v-slot:default="scope">
               <span>{{ scope.row.title }}</span>
+              <br>
               <el-link type="primary" style="color: #0000e4;" :href="scope.row.primaryUrl" target="_blank">{{ scope.row.primaryUrl }}</el-link>
             </el-table-column>
           </el-table>
@@ -130,25 +131,25 @@
               </template>
             </el-table-column>
           </el-table>
-          <div style="margin: 10px;" v-if="logForm.returnJson">
+          <div style="margin: 10px;" v-if="logForm.trivyJson">
             <h2>Summary:&nbsp;</h2>
             <ul style="margin-left: 60px;">
               <li><i>Scan Name</i>: {{ logForm.name }}</li>
               <li><i>Scan User</i>:&nbsp;{{ logForm.userName }}</li>
-              <li><i>ArtifactType</i>:&nbsp;{{ logForm.returnJson.ArtifactType }}</li>
-              <li><i>ArtifactName</i>:&nbsp;{{ logForm.returnJson.ArtifactName }}</li>
-              <li><i>SchemaVersion</i>:&nbsp;{{ logForm.returnJson.SchemaVersion }}</li>
-              <li><i>Architecture</i>:&nbsp;{{ logForm.returnJson.Metadata.ImageConfig.architecture }}</li>
+              <li><i>ArtifactType</i>:&nbsp;{{ logForm.trivyJson.ArtifactType }}</li>
+              <li><i>ArtifactName</i>:&nbsp;{{ logForm.trivyJson.ArtifactName }}</li>
+              <li><i>SchemaVersion</i>:&nbsp;{{ logForm.trivyJson.SchemaVersion }}</li>
+              <li><i>Architecture</i>:&nbsp;{{ logForm.trivyJson.Metadata.ImageConfig.architecture }}</li>
               <li><i>Create Time</i>:&nbsp;{{ logForm.createTime | timestampFormatDate }}</li>
               <li><i>Result Status</i>:&nbsp;{{ logForm.resultStatus }}</li>
               <li><i>Vulnerabilities Found</i>: {{ logForm.returnSum }}</li>
             </ul>
           </div>
-          <div style="margin: 10px;" v-if="logForm.returnJson">
+          <div style="margin: 10px;" v-if="logForm.trivyJson">
             <div style="margin: 10px 0 0 0;">
               <h2>Details:&nbsp;</h2>
               <div style="margin: 10px 0 0 0;">
-                <div style="margin: 10px 0 0 0;" :key="index" v-for="(result, index) in logForm.returnJson.Results">
+                <div style="margin: 10px 0 0 0;" :key="index" v-for="(result, index) in logForm.trivyJson.Results">
                   <div style="margin: 10px;" v-if="result">
                     <h3>Summary:&nbsp;</h3>
                     <ul style="margin-left: 60px;">
@@ -258,16 +259,16 @@
         <div>
           <el-table border :data="outputListData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
             <el-table-column type="index" min-width="2%"/>
-            <el-table-column prop="name" :label="$t('code.name')" min-width="15%" show-overflow-tooltip>
+            <el-table-column prop="name" :label="$t('image.image_name')" min-width="15%" show-overflow-tooltip>
               <template v-slot:default="scope">
               <span>
-                <img :src="require(`@/assets/img/code/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
+               <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.name }}
               </span>
               </template>
             </el-table-column>
             <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="16%">
-                {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown}}
+              {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown}}
             </el-table-column>
             <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="11%" prop="resultStatus" sortable show-overflow-tooltip>
               <el-button plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
@@ -377,7 +378,7 @@ import CodeDiff from 'vue-code-diff';
         diffButtons: [
           {
             tip: this.$t('commons.diff'), icon: "el-icon-sort", type: "primary",
-            exec: this.codeDiffOpen
+            exec: this.imageDiffOpen
           }
         ],
         outputListData: [],
@@ -401,7 +402,7 @@ import CodeDiff from 'vue-code-diff';
       },
       //查询列表
       async search() {
-        let url = "/code/history/" + this.currentPage + "/" + this.pageSize;
+        let url = "/image/history/" + this.currentPage + "/" + this.pageSize;
         if (!!this.selectNodeIds) {
           this.condition.codeId = this.selectNodeIds[0];
         } else {
@@ -431,17 +432,18 @@ import CodeDiff from 'vue-code-diff';
         }
       },
       handleOpen(item) {
+        console.log(item)
         this.outputListSearchData = item;
         this.outputListDataSearch();
-        this.oldStr = item.returnJson;
+        this.oldStr = item.trivyJson;
         this.visibleList =  true;
       },
       handleDelete(obj) {
-        this.$alert(this.$t('code.delete_confirm') + this.$t('code.result') + " ？", '', {
+        this.$alert(this.$t('image.delete_confirm') + this.$t('image.result') + " ？", '', {
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get("/code/deleteHistoryCodeResult/" + obj.id,  res => {
+              this.result = this.$get("/image/deleteHistoryImageResult/" + obj.id,  res => {
                 setTimeout(function () {window.location.reload()}, 2000);
                 this.$success(this.$t('commons.delete_success'));
               });
@@ -451,13 +453,13 @@ import CodeDiff from 'vue-code-diff';
       },
       async outputListDataSearch() {
         let item = this.outputListSearchData;
-        await this.$post("/code/history/" + this.outputListPage + "/" + this.outputListPageSize, {codeId: item.codeId}, response => {
+        await this.$post("/image/history/" + this.outputListPage + "/" + this.outputListPageSize, {imageId: item.imageId}, response => {
           let data = response.data;
           this.outputListTotal = data.itemCount;
           this.outputListData = data.listObject;
         });
       },
-      codeDiffOpen(item) {
+      imageDiffOpen(item) {
         this.innerDrawerComparison(item);
       },
       handleClose() {
@@ -469,7 +471,8 @@ import CodeDiff from 'vue-code-diff';
         this.innerDrawer = false;
       },
       innerDrawerComparison(item) {
-        this.newStr = item.returnJson?item.returnJson:"[]";
+        console.log(112,item)
+        this.newStr = item.trivyJson?item.trivyJson:"[]";
         this.innerDrawer = true;
       },
       goResource(params) {
@@ -477,25 +480,25 @@ import CodeDiff from 'vue-code-diff';
           this.$warning(this.$t('resource.no_resources_allowed'));
           return;
         }
-        let url = "/code/historyResultItemList";
+        let url = "/image/historyResultItemList";
         this.result = this.$post(url, {resultId: params.id}, response => {
           let data = response.data;
           this.statisticsData = data;
           this.statisticsList = true;
         });
-        this.result = this.$get("/sbom/codeMetricChart/"+ this.resultId, response => {
+        this.result = this.$get("/sbom/imageMetricChart/"+ this.resultId, response => {
           this.content = response.data;
         });
       },
       showResultLog (result) {
-        let logUrl = "/code/log/";
+        let logUrl = "/image/log/";
         this.result = this.$get(logUrl + result.id, response => {
           this.logData = response.data;
         });
-        let resultUrl = "/code/getCodeResult/";
+        let resultUrl = "/image/getImageResultWithBLOBs/";
         this.result = this.$get(resultUrl + result.id, response => {
           this.logForm = response.data;
-          this.logForm.returnJson = JSON.parse(this.logForm.returnJson);
+          this.logForm.trivyJson = JSON.parse(this.logForm.trivyJson);
         });
         this.logVisible = true;
       },

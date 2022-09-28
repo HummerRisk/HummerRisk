@@ -1,9 +1,7 @@
 package com.hummerrisk.base.mapper.ext;
 
 import com.hummerrisk.base.domain.CloudEvent;
-import com.hummerrisk.controller.request.account.CloudAccountRequest;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
-import com.hummerrisk.dto.AccountDTO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

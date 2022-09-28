@@ -201,6 +201,7 @@ export default {
     cloud_native_fourth: '隨時隨地查',
     batch_settings: '批量設置',
     severity: '風險等級',
+    history: '歷史記錄',
   },
   workspace: {
     create: '創建工作空間',
@@ -1006,7 +1007,8 @@ export default {
     image_sync: '同步鏡像',
     image_sync_for_repo: '同步鏡像倉庫的鏡像',
     image_sync_log: '鏡像同步日誌列表',
-    image_repo_note: '注：除 Harbor、DockerHub、 Nexus, 其他鏡像倉庫暫時無法同步鏡像, 只用作認證使用。 ',
+    image_repo_note: '注：除 Harbor、DockerHub、 Nexus, 其他鏡像倉庫暫時無法同步鏡像, 只用作認證使用。',
+    all_label: '所有鏡像',
   },
   package: {
     package_setting: '軟件包管理',

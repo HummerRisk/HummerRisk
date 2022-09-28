@@ -54,8 +54,6 @@ public class ImageService {
     @Resource
     private ExtImageResultMapper extImageResultMapper;
     @Resource
-    private AccountService accountService;
-    @Resource
     private ImageResultLogMapper imageResultLogMapper;
     @Resource
     private CommonThreadPool commonThreadPool;
@@ -77,6 +75,8 @@ public class ImageService {
     private ExecEngineFactoryImp execEngineFactoryImp;
     @Resource
     private HistoryImageTaskMapper historyImageTaskMapper;
+    @Resource
+    private HistoryImageTaskLogMapper historyImageTaskLogMapper;
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
@@ -892,6 +892,29 @@ public class ImageService {
 
     public List<Map<String, Object>> severityChart() {
         return extImageMapper.severityChart();
+    }
+
+    public List<Image> allList() {
+        return imageMapper.selectByExample(null);
+    }
+
+    public List<HistoryImageTaskDTO> history(Map<String, Object> params) {
+        List<HistoryImageTaskDTO> historyList = extImageResultMapper.history(params);
+        return historyList;
+    }
+
+    public List<ImageTrivyJsonWithBLOBs> historyResultItemList(ImageTrivyJson imageTrivyJson) {
+        ImageTrivyJsonExample example = new ImageTrivyJsonExample();
+        example.createCriteria().andResultIdEqualTo(imageTrivyJson.getResultId());
+        example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
+        return imageTrivyJsonMapper.selectByExampleWithBLOBs(example);
+    }
+
+    public void deleteHistoryImageResult(String id) throws Exception {
+        HistoryImageTaskLogExample logExample = new HistoryImageTaskLogExample();
+        logExample.createCriteria().andResultIdEqualTo(id);
+        historyImageTaskLogMapper.deleteByExample(logExample);
+        historyImageTaskMapper.deleteByPrimaryKey(id);
     }
 
 

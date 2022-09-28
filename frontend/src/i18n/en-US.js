@@ -201,6 +201,7 @@ export default {
     cloud_native_fourth: 'Check anytime, anywhere',
     batch_settings: 'Batch settings',
     severity: 'Risk level',
+    history: 'History',
   },
   workspace: {
     create:'Create a workspace',
@@ -1006,7 +1007,8 @@ export default {
     image_sync: 'Sync mirror',
     image_sync_for_repo: 'Sync the mirror of the mirror warehouse',
     image_sync_log: 'Mirror synchronization log list',
-    image_repo_note: 'Note: Except Harbor, DockerHub, Nexus, other image repositories cannot synchronize images temporarily, and are only used for authentication. ',
+    image_repo_note: 'Note: Except Harbor, DockerHub, Nexus, other image repositories cannot synchronize images temporarily, and are only used for authentication.',
+    all_label: 'All images',
   },
   package: {
     package_setting: 'Package Management',

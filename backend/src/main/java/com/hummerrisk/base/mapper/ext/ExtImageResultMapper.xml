@@ -208,4 +208,28 @@
         WHERE t.result_id = #{id}
     </select>
 
+    <select id="history" parameterType="java.util.Map" resultType="com.hummerrisk.dto.HistoryImageTaskDTO">
+        SELECT
+        t.*,
+        (select count(*) from image_trivy_json tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
+        (select count(*) from image_trivy_json tj where tj.result_id = t.id and severity = 'HIGH') as high,
+        (select count(*) from image_trivy_json tj where tj.result_id = t.id and severity = 'MEDIUM') as medium,
+        (select count(*) from image_trivy_json tj where tj.result_id = t.id and severity = 'LOW') as low,
+        (select count(*) from image_trivy_json tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown
+        FROM history_image_task t
+
+        <where>
+            <if test="id != null">
+                AND t.id = #{id}
+            </if>
+            <if test="imageId != null">
+                AND t.image_id = #{imageId}
+            </if>
+            <if test="name != null">
+                AND t.name like CONCAT('%',#{name},'%')
+            </if>
+        </where>
+        ORDER BY t.update_time desc
+    </select>
+
 </mapper>
