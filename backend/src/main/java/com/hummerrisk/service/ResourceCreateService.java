@@ -134,7 +134,7 @@ public class ResourceCreateService {
                     try {
                         handleTask(cloudTaskToBeProceed);
                     } catch (Exception e) {
-                        LogUtil.error(e);
+                        LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(cloudTaskToBeProceed.getId());
                     }
@@ -167,7 +167,7 @@ public class ResourceCreateService {
                     try {
                         serverService.createScan(serverToBeProceed);
                     } catch (Exception e) {
-                        LogUtil.error(e);
+                        LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(serverToBeProceed.getId());
                     }
@@ -200,7 +200,7 @@ public class ResourceCreateService {
                     try {
                         imageService.createScan(imageToBeProceed);
                     } catch (Exception e) {
-                        LogUtil.error(e);
+                        LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(imageToBeProceed.getId());
                     }
@@ -233,7 +233,7 @@ public class ResourceCreateService {
                     try {
                         k8sService.createScan(cloudNativeToBeProceed);
                     } catch (Exception e) {
-                        LogUtil.error(e);
+                        LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(cloudNativeToBeProceed.getId());
                     }
@@ -266,7 +266,7 @@ public class ResourceCreateService {
                     try {
                         configService.createScan(cloudNativeConfigToBeProceed);
                     } catch (Exception e) {
-                        LogUtil.error(e);
+                        LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(cloudNativeConfigToBeProceed.getId());
                     }
@@ -299,7 +299,7 @@ public class ResourceCreateService {
                     try {
                         codeService.createScan(codeToBeProceed);
                     } catch (Exception e) {
-                        LogUtil.error(e);
+                        LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(codeToBeProceed.getId());
                     }

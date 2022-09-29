@@ -41,7 +41,7 @@ public class MailNoticeSender extends AbstractNoticeSender {
             sendMail(messageDetail, context, noticeModel);
             LogUtil.info("发送邮件结束");
         } catch (Exception e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
     }
 }

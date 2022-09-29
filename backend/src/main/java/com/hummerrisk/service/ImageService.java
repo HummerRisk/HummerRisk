@@ -117,7 +117,7 @@ public class ImageService {
             try {
                 syncImages(imageRepo);
             } catch (Exception e) {
-                LogUtil.error(e);
+                LogUtil.error(e.getMessage());
             } finally {
             }
         });
@@ -268,7 +268,7 @@ public class ImageService {
             try {
                 syncImages(imageRepo);
             } catch (Exception e) {
-                LogUtil.error(e);
+                LogUtil.error(e.getMessage());
             } finally {
             }
         });

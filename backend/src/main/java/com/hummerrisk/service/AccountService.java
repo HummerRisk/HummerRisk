@@ -81,16 +81,20 @@ public class AccountService {
 
 
     public boolean validate(String id) {
-        AccountWithBLOBs account = accountMapper.selectByPrimaryKey(id);
-        //检验账号的有效性
-        boolean valid = validateAccount(account);
-        if (valid) {
-            account.setStatus(CloudAccountConstants.Status.VALID.name());
-        } else {
-            account.setStatus(CloudAccountConstants.Status.INVALID.name());
+        try {
+            AccountWithBLOBs account = accountMapper.selectByPrimaryKey(id);
+            //检验账号的有效性
+            boolean valid = validateAccount(account);
+            if (valid) {
+                account.setStatus(CloudAccountConstants.Status.VALID.name());
+            } else {
+                account.setStatus(CloudAccountConstants.Status.INVALID.name());
+            }
+            accountMapper.updateByPrimaryKeySelective(account);
+            return valid;
+        } catch (Exception e) {
+            throw new HRException(e.getMessage());
         }
-        accountMapper.updateByPrimaryKeySelective(account);
-        return valid;
     }
 
     private boolean validateAccount(AccountWithBLOBs account) {
@@ -104,7 +108,7 @@ public class AccountService {
         }
     }
 
-    public AccountWithBLOBs addAccount(CreateCloudAccountRequest request) {
+    public AccountWithBLOBs addAccount(CreateCloudAccountRequest request) throws Exception {
         try{
             //参数校验
             if (StringUtils.isEmpty(request.getCredential())
@@ -139,8 +143,10 @@ public class AccountService {
                 OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "i18n_create_cloud_account");
                 return getCloudAccountById(account.getId());
             }
-        } catch (Exception e) {
+        } catch (HRException | ClientException e) {
             HRException.throwException(e.getMessage());
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
         }
         return null;
     }

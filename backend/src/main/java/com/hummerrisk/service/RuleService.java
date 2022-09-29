@@ -662,7 +662,7 @@ public class RuleService {
                 HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
             }
         } catch (Exception e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
         return "";

@@ -94,9 +94,9 @@ public class K8sRequest extends Request {
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -118,9 +118,9 @@ public class K8sRequest extends Request {
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -140,9 +140,9 @@ public class K8sRequest extends Request {
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -162,9 +162,9 @@ public class K8sRequest extends Request {
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -184,9 +184,9 @@ public class K8sRequest extends Request {
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -206,9 +206,9 @@ public class K8sRequest extends Request {
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -228,9 +228,9 @@ public class K8sRequest extends Request {
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -250,9 +250,9 @@ public class K8sRequest extends Request {
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -272,9 +272,9 @@ public class K8sRequest extends Request {
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -294,9 +294,9 @@ public class K8sRequest extends Request {
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -316,9 +316,9 @@ public class K8sRequest extends Request {
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -338,9 +338,9 @@ public class K8sRequest extends Request {
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -360,9 +360,9 @@ public class K8sRequest extends Request {
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -382,9 +382,9 @@ public class K8sRequest extends Request {
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -404,9 +404,9 @@ public class K8sRequest extends Request {
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -426,9 +426,9 @@ public class K8sRequest extends Request {
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -448,9 +448,9 @@ public class K8sRequest extends Request {
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -470,9 +470,9 @@ public class K8sRequest extends Request {
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -492,9 +492,9 @@ public class K8sRequest extends Request {
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -510,9 +510,9 @@ public class K8sRequest extends Request {
             cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Version.name());
             list.add(cloudNativeSource);
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         } catch (ApiException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return list;
     }

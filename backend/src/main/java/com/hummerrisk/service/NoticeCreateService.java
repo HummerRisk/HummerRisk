@@ -82,7 +82,7 @@ public class NoticeCreateService {
                     try {
                         handleMessageOrder(messageOrderToBeProceed);
                     } catch (Exception e) {
-                        LogUtil.error(e);
+                        LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(messageOrderToBeProceed.getId());
                     }

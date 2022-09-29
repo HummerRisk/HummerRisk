@@ -91,7 +91,7 @@ public class AccountController {
     @I18n
     @ApiOperation(value = "添加云账号")
     @PostMapping("add")
-    public AccountWithBLOBs addAccount(@RequestBody CreateCloudAccountRequest request) {
+    public AccountWithBLOBs addAccount(@RequestBody CreateCloudAccountRequest request) throws Exception {
         return accountService.addAccount(request);
     }
 

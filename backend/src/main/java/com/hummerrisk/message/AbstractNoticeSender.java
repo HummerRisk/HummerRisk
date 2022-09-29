@@ -85,7 +85,7 @@ public abstract class AbstractNoticeSender implements NoticeSender {
                     break;
             }
         } catch (IOException e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
         }
         return getContent(context, noticeModel.getParamMap());
     }

@@ -951,8 +951,7 @@ public class PlatformUtils {
                     }
                     return true;
                 } catch (Exception e) {
-                    LogUtil.error("Account verification failed : " + e.getMessage());
-                    break;
+                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case azure:
                 try {
@@ -961,8 +960,7 @@ public class PlatformUtils {
                     AzureClient azureClient = req.getAzureClient(proxy);
                     return azureClient.getCurrentSubscription() != null;
                 } catch (Exception e) {
-                    LogUtil.error("Account verification failed : " + e.getMessage());
-                    break;
+                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case aliyun:
                 AliyunRequest aliyunRequest = new AliyunRequest();
@@ -975,8 +973,7 @@ public class PlatformUtils {
                     describeRegionsResponse.getRegions();
                     return true;
                 } catch (Exception e) {
-                    LogUtil.error("Account verification failed : " + e.getMessage());
-                    break;
+                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 } finally {
                     aliyunClient.shutdown();
                 }
@@ -988,8 +985,7 @@ public class PlatformUtils {
                     ShowCredential showCredential = AuthUtil.validate(iamClient, huaweiCloudCredential.getAk());
                     return null != showCredential;
                 } catch (Exception e) {
-                    LogUtil.error("Account verification failed : " + e.getMessage());
-                    break;
+                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case tencent:
                 com.tencentcloudapi.cvm.v20170312.models.DescribeRegionsRequest request = new com.tencentcloudapi.cvm.v20170312.models.DescribeRegionsRequest();
@@ -1000,8 +996,7 @@ public class PlatformUtils {
                     client.DescribeRegions(request);
                     return true;
                 } catch (Exception e) {
-                    LogUtil.error("Account verification failed : " + e.getMessage());
-                    break;
+                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case openstack:
                 try {
@@ -1029,7 +1024,7 @@ public class PlatformUtils {
                     if (e instanceof PluginException) {
                         throw (PluginException) e;
                     }
-                    throw new PluginException("Verify that the account has an error!", e);
+                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 } finally {
                     if (vsphereClient != null) {
                         vsphereClient.closeConnection();
@@ -1044,7 +1039,7 @@ public class PlatformUtils {
                     gcpClient = gcpBaseRequest.getGcpClient();
                     return gcpClient.authExplicit(gcpBaseRequest.getGcpCredential());
                 } catch (Exception e) {
-                    throw new PluginException("Verify that the account has an error!", e);
+                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case nuclei:
                 return true;
@@ -1065,7 +1060,7 @@ public class PlatformUtils {
                     iamService.listUsers(listUsersRequest);
                     return true;
                 } catch (Exception e) {
-                    throw new PluginException("Verify that the account has an error!", e);
+                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case baidu:
                 BaiduCredential baiduCredential = new Gson().fromJson(account.getCredential(), BaiduCredential.class);
@@ -1076,7 +1071,7 @@ public class PlatformUtils {
                     config.setEndpoint(baiduCredential.getEndpoint());
                     return new BccClient(config)!=null;
                 } catch (Exception e) {
-                    throw new PluginException("Verify that the account has an error!", e);
+                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case qiniu:
                 QiniuCredential qiniuCredential = new Gson().fromJson(account.getCredential(), QiniuCredential.class);
@@ -1086,7 +1081,7 @@ public class PlatformUtils {
                     String upToken = auth.uploadToken(qiniuCredential.getBucket());
                     return upToken!=null;
                 } catch (Exception e) {
-                    throw new PluginException("Verify that the account has an error!", e);
+                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case qingcloud:
                 QingCloudCredential qingCloudCredential = new Gson().fromJson(account.getCredential(), QingCloudCredential.class);
@@ -1106,7 +1101,7 @@ public class PlatformUtils {
                     InstanceService.DescribeInstancesOutput output = service.describeInstances(input);
                     return output!=null;
                 } catch (Exception e) {
-                    throw new PluginException("Verify that the account has an error!", e);
+                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case ucloud:
                 UCloudCredential uCloudCredential = new Gson().fromJson(account.getCredential(), UCloudCredential.class);
@@ -1120,7 +1115,7 @@ public class PlatformUtils {
                     ));
                     return ucloudClient!=null;
                 } catch (Exception e) {
-                    throw new PluginException("Verify that the account has an error!", e);
+                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case k8s:
                 /**创建默认 Api 客户端**/
@@ -1135,15 +1130,14 @@ public class PlatformUtils {
                             null, null, null, null, null, null, null);
                     return result != null;
                 } catch (Exception e) {
-                    throw new PluginException("Verify that the account has an error!", e);
+                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             default:
                 throw new IllegalStateException("Unexpected value: " + account.getPluginId());
         }
-        return false;
     }
 
-    public static boolean validateCloudNative(CloudNative cloudNative, Proxy proxy) throws IOException, PluginException {
+    public static boolean validateCloudNative(CloudNative cloudNative, Proxy proxy) throws Exception {
         switch (cloudNative.getPluginId()) {
             case k8s:
                 /**创建默认 Api 客户端**/
@@ -1158,7 +1152,8 @@ public class PlatformUtils {
                             null, null, null, null, null, null, null);
                     return result != null;
                 } catch (Exception e) {
-                    throw new PluginException("Verify that the cloud native has an error!", e);
+                    LogUtil.error(String.format("HRException in verifying cloud native has an error, cloud native: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()), e);
+                    return false;
                 }
             case openshift:
                 try {
@@ -1168,12 +1163,37 @@ public class PlatformUtils {
                     NamespaceList ns = openShiftClient.namespaces().list();
                     return ns != null;
                 } catch (Exception e) {
-                    throw new PluginException("Verify that the cloud native has an error!", e);
+                    LogUtil.error(String.format("HRException in verifying cloud native has an error, cloud native: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()), e);
+                    return false;
                 }
             case rancher:
-                return true;
+                try {
+                    K8sRequest k8sRequest = new K8sRequest();
+                    k8sRequest.setCredential(cloudNative.getCredential());
+                    ApiClient client = k8sRequest.getK8sClient(proxy);
+                    CoreV1Api apiInstance = new CoreV1Api(client);
+                    String pretty = "true";
+                    V1NamespaceList result = apiInstance.listNamespace(pretty, true, null,
+                            null, null, null, null, null, null, null);
+                    return result != null;
+                } catch (Exception e) {
+                    LogUtil.error(String.format("HRException in verifying cloud native has an error, cloud native: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()), e);
+                    return false;
+                }
             case kubesphere:
-                return true;
+                try {
+                    K8sRequest k8sRequest = new K8sRequest();
+                    k8sRequest.setCredential(cloudNative.getCredential());
+                    ApiClient client = k8sRequest.getK8sClient(proxy);
+                    CoreV1Api apiInstance = new CoreV1Api(client);
+                    String pretty = "true";
+                    V1NamespaceList result = apiInstance.listNamespace(pretty, true, null,
+                            null, null, null, null, null, null, null);
+                    return result != null;
+                } catch (Exception e) {
+                    LogUtil.error(String.format("HRException in verifying cloud native has an error, cloud native: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()), e);
+                    return false;
+                }
             default:
                 throw new IllegalStateException("Unexpected value: " + cloudNative.getPluginId());
         }

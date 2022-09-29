@@ -778,7 +778,7 @@ public class TaskService {
                 HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
             }
         } catch (Exception e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
         return "";
@@ -819,7 +819,7 @@ public class TaskService {
                 HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
             }
         } catch (Exception e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
         return "";
@@ -860,7 +860,7 @@ public class TaskService {
                 HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
             }
         } catch (Exception e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
         return "";
@@ -898,7 +898,7 @@ public class TaskService {
                 HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
             }
         } catch (Exception e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
         return "";
@@ -936,7 +936,7 @@ public class TaskService {
                 HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
             }
         } catch (Exception e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
         return "";
@@ -973,7 +973,7 @@ public class TaskService {
                 HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
             }
         } catch (Exception e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
         return "";
@@ -1010,7 +1010,7 @@ public class TaskService {
                 HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
             }
         } catch (Exception e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
         return "";

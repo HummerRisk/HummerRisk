@@ -29,7 +29,7 @@
                 if (response.data) {
                   this.$success(this.$t('account.success'));
                 } else {
-                  this.$error(this.$t('account.error'));
+                  this.$error(this.$t('account.error'), 10000);
                 }
                 this.$parent.search;
               });

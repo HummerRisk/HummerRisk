@@ -300,15 +300,15 @@ public class CloudNativeService {
                 record.setOutput("i18n_sync_k8s_success");
                 record.setResult(true);
             } catch (IOException e) {
-                LogUtil.error(e);
+                LogUtil.error(e.getMessage());
                 record.setOutput("i18n_sync_k8s_error:" + e.getMessage());
                 record.setResult(false);
             } catch (ApiException e) {
-                LogUtil.error(e);
+                LogUtil.error(e.getMessage());
                 record.setOutput("i18n_sync_k8s_error:" + e.getMessage());
                 record.setResult(false);
             } catch (Exception e) {
-                LogUtil.error(e);
+                LogUtil.error(e.getMessage());
                 record.setOutput("i18n_sync_k8s_error:" + e.getMessage());
                 record.setResult(false);
             }
