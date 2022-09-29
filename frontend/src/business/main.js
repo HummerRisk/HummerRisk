@@ -32,6 +32,8 @@ import 'vue-select-image/dist/vue-select-image.css';
 import 'vue-okr-tree/dist/vue-okr-tree.css';
 //阿里矢量图标样式
 import '@/common/css/iconfont/iconfont.css';
+//拓扑图
+import "vis/dist/vis.css";
 
 
 // you can set default global options and events when Vue.use
