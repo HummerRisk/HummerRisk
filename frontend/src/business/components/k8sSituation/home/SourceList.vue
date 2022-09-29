@@ -151,11 +151,11 @@ export default {
       if (!!this.selectNodeIds) {
         param.cloudNativeId = this.selectNodeIds[0];
       }
-      this.result = this.$post("/cloud/native/situation", param, response => {
+      this.result = this.$post("/k8s/situation", param, response => {
         let data = response.data;
         this.situationInfo = data;
       });
-      let url = "/cloud/native/cloudNativeSourceList/" + this.currentPage + "/" + this.pageSize;
+      let url = "/k8s/cloudNativeSourceList/" + this.currentPage + "/" + this.pageSize;
       if (!!this.selectNodeIds) {
         this.condition.cloudNativeId = this.selectNodeIds[0];
       } else {

@@ -325,7 +325,7 @@ export default {
             let formData = new FormData();
             this.result = this.$request({
               method: 'POST',
-              url: "/cloud/native/validate",
+              url: "/k8s/validate",
               data: Array.from(this.selectIds),
               headers: {
                 'Content-Type': undefined

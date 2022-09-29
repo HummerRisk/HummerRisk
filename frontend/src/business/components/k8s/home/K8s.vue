@@ -332,7 +332,7 @@ export default {
             let formData = new FormData();
             this.result = this.$request({
               method: 'POST',
-              url: "/cloud/native/validate",
+              url: "/k8s/validate",
               data: Array.from(this.selectIds),
               headers: {
                 'Content-Type': undefined
@@ -357,7 +357,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/cloud/native/list/" + this.currentPage + "/" + this.pageSize;
+      let url = "/k8s/list/" + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -384,7 +384,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$post("/cloud/native/delete/" + obj.id, {}, () => {
+            this.result = this.$post("/k8s/delete/" + obj.id, {}, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -468,7 +468,7 @@ export default {
         if (item.isProxy) data["proxyId"] = item.proxyId;
 
         if (type === 'add') {
-          this.result = this.$post("/cloud/native/add", data,response => {
+          this.result = this.$post("/k8s/add", data,response => {
             if (response.success) {
               this.$success(this.$t('commons.create_success'));
               this.search();
@@ -498,7 +498,7 @@ export default {
           if (item.isProxy) data["proxyId"] = item.proxyId;
 
           if (type === 'add') {
-            this.result = this.$post("/cloud/native/add", data,response => {
+            this.result = this.$post("/k8s/add", data,response => {
               if (response.success) {
                 this.$success(this.$t('commons.create_success'));
                 this.search();
@@ -509,7 +509,7 @@ export default {
             });
           } else {
             data["id"] = item.id;
-            this.result = this.$post("/cloud/native/update", data,response => {
+            this.result = this.$post("/k8s/update", data,response => {
               if (response.success) {
                 this.$success(this.$t('commons.update_success'));
                 this.handleClose();

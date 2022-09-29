@@ -290,7 +290,7 @@ public class ImageController {
         return imageService.historyResultItemList(request);
     }
 
-    @ApiOperation(value = "删除源码检测历史记录")
+    @ApiOperation(value = "删除检测历史记录")
     @GetMapping("deleteHistoryImageResult/{id}")
     public void deleteHistoryImageResult(@PathVariable String id) throws Exception {
         imageService.deleteHistoryImageResult(id);

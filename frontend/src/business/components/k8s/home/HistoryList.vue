@@ -5,14 +5,15 @@
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                   @filter-change="filter">
           <el-table-column type="index" min-width="2%"/>
-          <el-table-column prop="name" :label="$t('image.image_name')" min-width="15%" show-overflow-tooltip>
+          <el-table-column prop="name" :label="$t('k8s.name')" min-width="15%" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
-               <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
+                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.name }}
               </span>
             </template>
           </el-table-column>
+          <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
           <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="16%">
             <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown" placement="top">
               <el-link type="primary" class="text-click" @click="goResource(scope.row)">
@@ -61,8 +62,8 @@
         <div>
           <el-table border :data="statisticsData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
             <el-table-column type="index" min-width="2%"/>
-            <el-table-column min-width="10%" :label="'PkgName'" prop="pkgName" v-slot:default="scope">
-              <span style="font-weight:bold;color: #000000;">{{ scope.row.pkgName }}</span>
+            <el-table-column min-width="10%" :label="'Resource'" prop="resource" v-slot:default="scope">
+              <span style="font-weight:bold;color: #000000;">{{ scope.row.resource }}</span>
             </el-table-column>
             <el-table-column min-width="10%" :label="'VulnerabilityID'" prop="vulnerabilityId">
             </el-table-column>
@@ -72,6 +73,9 @@
               <span v-if="scope.row.severity === 'MEDIUM'" style="color: #FF8000;">{{ scope.row.severity }}</span>
               <span v-if="scope.row.severity === 'LOW'" style="color: #336D9F;">{{ scope.row.severity }}</span>
               <span v-if="scope.row.severity === 'UNKNOWN'" style="color: #67C23A;">{{ scope.row.severity }}</span>
+            </el-table-column>
+            <el-table-column min-width="5%" :label="'Score'" prop="score" v-slot:default="scope">
+              {{ scope.row.score?scope.row.score:'N/A' }}
             </el-table-column>
             <el-table-column :label="'InstalledVersion'" min-width="10%" prop="installedVersion">
             </el-table-column>
@@ -100,8 +104,7 @@
                 <div class="grid-content bg-purple-light">
                   <span class="grid-content-log-span"> {{ logForm.name }}</span>
                   <span class="grid-content-log-span">
-                  <img :src="require(`@/assets/img/platform/docker.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ logForm.imageName }}
+                  <img :src="require(`@/assets/img/platform/${logForm.pluginIcon?logForm.pluginIcon:'k8s.png'}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                 </span>
                   <span class="grid-content-status-span" v-if="logForm.resultStatus === 'APPROVED'" style="color: #579df8">
                   <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
@@ -131,118 +134,142 @@
               </template>
             </el-table-column>
           </el-table>
-          <div style="margin: 10px;" v-if="logForm.trivyJson">
-            <h2>Summary:&nbsp;</h2>
-            <ul style="margin-left: 60px;">
-              <li><i>Scan Name</i>: {{ logForm.name }}</li>
-              <li><i>Scan User</i>:&nbsp;{{ logForm.userName }}</li>
-              <li><i>ArtifactType</i>:&nbsp;{{ logForm.trivyJson.ArtifactType }}</li>
-              <li><i>ArtifactName</i>:&nbsp;{{ logForm.trivyJson.ArtifactName }}</li>
-              <li><i>SchemaVersion</i>:&nbsp;{{ logForm.trivyJson.SchemaVersion }}</li>
-              <li><i>Architecture</i>:&nbsp;{{ logForm.trivyJson.Metadata.ImageConfig.architecture }}</li>
-              <li><i>Create Time</i>:&nbsp;{{ logForm.createTime | timestampFormatDate }}</li>
-              <li><i>Result Status</i>:&nbsp;{{ logForm.resultStatus }}</li>
-              <li><i>Vulnerabilities Found</i>: {{ logForm.returnSum }}</li>
-            </ul>
-          </div>
-          <div style="margin: 10px;" v-if="logForm.trivyJson">
-            <div style="margin: 10px 0 0 0;">
-              <h2>Details:&nbsp;</h2>
-              <div style="margin: 10px 0 0 0;">
-                <div style="margin: 10px 0 0 0;" :key="index" v-for="(result, index) in logForm.trivyJson.Results">
-                  <div style="margin: 10px;" v-if="result">
-                    <h3>Summary:&nbsp;</h3>
-                    <ul style="margin-left: 60px;">
-                      <li><i>Target</i>: {{ result.Target }}</li>
-                      <li><i>Class</i>:&nbsp;{{ result.Class }}</li>
-                      <li><i>Type</i>:&nbsp;{{ result.Type }}</li>
-                    </ul>
-                  </div>
-                  <div style="margin: 10px 0 0 0;" :key="index" v-for="(vulnerabilitiy, index) in result.Vulnerabilities">
-                    <el-card class="box-card">
-                      <div slot="header" class="clearfix">
-                        <el-row>
-                          <el-col class="icon-title" :span="3">
-                            <span>{{ vulnerabilitiy.Severity.substring(0, 1) }}</span>
-                          </el-col>
-                          <el-col :span="15" style="margin: -7px 0 0 15px;">
-                            <span style="font-size: 24px;font-weight: 500;">{{ vulnerabilitiy.Title }}</span>
-                          </el-col>
-                          <el-col :span="6" style="float: right;">
-                            <span style="font-size: 20px;color: #999;float: right;">{{ 'SEVERITY SOURCE' }}</span>
-                          </el-col>
-                        </el-row>
-                        <el-row style="font-size: 18px;padding: 10px;">
-                          <el-col :span="20">
-                            <span style="margin: 5px;"><a :href="vulnerabilitiy.PrimaryURL">{{ vulnerabilitiy.VulnerabilityID }}</a></span>
-                            <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                            <span style="margin: 5px;"><el-button type="danger" size="mini">{{ vulnerabilitiy.Severity }}</el-button></span>
-                            <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                            <span style="color: #888;margin: 5px;">INSTALLED VERSION: {{ vulnerabilitiy.InstalledVersion }}</span>
-                            <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                            <span style="color: #444;margin: 5px;">PkgName: {{ vulnerabilitiy.PkgName }}</span>
-                          </el-col>
-                          <el-col :span="4" style="float: right;">
-                            <span style="font-size: 20px;color: #000;float: right;">{{ vulnerabilitiy.SeveritySource }}</span>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="text item div-desc">
-                        <el-row>
-                          <span style="color: red;"><i class="el-icon-s-opportunity"></i>PrimaryURL:</span> &nbsp;{{ vulnerabilitiy.PrimaryURL }}
-                        </el-row>
-                        <el-row>
-                          <span style="color: red;">Description:</span> {{ vulnerabilitiy.Description }}
-                        </el-row>
-                        <el-row>
-                          <span style="color: red;">PublishedDate:</span> {{ vulnerabilitiy.PublishedDate }}
-                        </el-row>
-                        <el-row>
-                          <span style="color: red;">LastModifiedDate:</span> {{ vulnerabilitiy.LastModifiedDate }}
-                        </el-row>
-                        <el-row>
-                          <span style="color: red;">FixedVersion:</span> {{ vulnerabilitiy.FixedVersion }}
-                        </el-row>
-                        <el-row>
-                          <span style="color: red;">DataSource:</span> {{ vulnerabilitiy.DataSource.ID }} | {{ vulnerabilitiy.DataSource.Name }} | {{ vulnerabilitiy.DataSource.URL }}
-                        </el-row>
-                      </div>
-                      <div class="text div-json">
-                        <el-descriptions title="Layer" :column="2">
-                          <el-descriptions-item v-for="(vuln, index) in filterJson(vulnerabilitiy.Layer)" :key="index" :label="vuln.key">
-                          <span v-if="!vuln.flag" show-overflow-tooltip>
-                            <el-tooltip class="item" effect="dark" :content="JSON.stringify(vuln.value)" placement="top-start">
-                              <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
-                            </el-tooltip>
-                          </span>
-                            <el-tooltip v-if="vuln.flag && vuln.value" class="item" effect="light" :content="typeof(vuln.value) === 'boolean'?vuln.value.toString():vuln.value" placement="top-start">
-                            <span class="table-expand-span-value">
-                                {{ vuln.value }}
-                            </span>
-                            </el-tooltip>
-                            <span v-if="vuln.flag && !vuln.value"> N/A</span>
-                          </el-descriptions-item>
-                        </el-descriptions>
-                      </div>
-                      <div class="text div-json">
-                        <el-descriptions title="CweIDs" :column="2">
-                          <el-descriptions-item v-for="(CweID, index) in vulnerabilitiy.CweIDs" :key="index" :label="index">
-                            <span> {{ CweID }}</span>
-                          </el-descriptions-item>
-                        </el-descriptions>
-                      </div>
-                      <div class="text div-json">
-                        <el-descriptions title="References" :column="2">
-                          <el-descriptions-item v-for="(Reference, index) in vulnerabilitiy.References" :key="index" :label="index">
-                            <span> {{ Reference }}</span>
-                          </el-descriptions-item>
-                        </el-descriptions>
-                      </div>
-                    </el-card>
+
+          <div style="margin: 10px;" v-if="logForm.vulnerabilityReport">
+            <el-tabs type="border-card">
+              <el-tab-pane label="VulnerabilityReport">
+                <div style="margin: 10px 0 0 0;">
+                  <h2>Details:&nbsp;</h2>
+                  <ul style="margin-left: 60px;">
+                    <li><i>Api Version</i>: {{ logForm.vulnerabilityReport.apiVersion }}</li>
+                    <li><i>Kind</i>: {{ logForm.vulnerabilityReport.kind }}</li>
+                  </ul>
+                  <div style="margin: 10px 0 0 0;">
+                    <div style="margin: 10px 0 0 0;" :key="index" v-for="(item, index) in logForm.vulnerabilityReport.items">
+                      <el-card class="box-card">
+                        <div style="margin: 10px;">
+                          <h3>Summary:&nbsp;</h3>
+                          <ul style="margin-left: 60px;">
+                            <li><i>Name</i>: {{ item.metadata.name }}</li>
+                            <li><i>Namespace</i>: {{ item.metadata.namespace }}</li>
+                            <li><i>Repository</i>: {{ item.report.artifact.repository }}</li>
+                            <li><i>Critical Count</i>: {{ item.report.summary.criticalCount }}</li>
+                            <li><i>High Count</i>: {{ item.report.summary.highCount }}</li>
+                            <li><i>Low Count</i>:&nbsp;{{ item.report.summary.lowCount }}</li>
+                            <li><i>Medium Count</i>:&nbsp;{{ item.report.summary.mediumCount }}</li>
+                            <li><i>Unknown Count</i>:&nbsp;{{ item.report.summary.unknownCount }}</li>
+                          </ul>
+                        </div>
+                        <div style="margin: 10px 0 0 0;box-shadow: 1px 1px 1px 1px #e8e8e8;" :key="index" v-for="(vulnerability, index) in item.report.vulnerabilities">
+                          <div slot="header" class="clearfix clearfix-dev">
+                            <el-row>
+                              <el-col class="icon-title" :span="3">
+                                <span>{{ vulnerability.severity.substring(0, 1) }}</span>
+                              </el-col>
+                              <el-col :span="15" style="margin: -7px 0 0 15px;">
+                                <span style="font-size: 24px;font-weight: 500;">{{ vulnerability.title }}</span>
+                              </el-col>
+                              <el-col :span="6" style="float: right;">
+                                <span style="font-size: 20px;color: #999;float: right;">{{ 'SCORE' }}</span>
+                              </el-col>
+                            </el-row>
+                            <el-row style="font-size: 18px;padding: 10px;">
+                              <el-col :span="20">
+                                <span style="color: #888;margin: 5px;">{{ 'VULNERABILITY' }}</span>
+                                <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                                <span style="margin: 5px;"><a :href="vulnerability.primaryLink">{{ vulnerability.vulnerabilityID }}</a></span>
+                                <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                                <span style="margin: 5px;"><el-button type="danger" size="mini">{{ vulnerability.severity }}</el-button></span>
+                                <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                                <span style="color: #444;margin: 5px;">RESOURCE: {{ vulnerability.resource }}</span>
+                              </el-col>
+                              <el-col :span="4" style="float: right;">
+                                <span style="font-size: 20px;color: #000;float: right;">{{ vulnerability.score }}</span>
+                              </el-col>
+                            </el-row>
+                          </div>
+                          <div class="text item div-desc">
+                            <el-row>
+                              <i class="el-icon-s-opportunity"></i> {{ vulnerability.primaryLink }}
+                            </el-row>
+                          </div>
+                          <div class="text div-json">
+                            <el-descriptions title="Vulnerability" :column="2">
+                              <el-descriptions-item label="fixedVersion">
+                                {{ vulnerability.fixedVersion }}
+                              </el-descriptions-item>
+                              <el-descriptions-item label="installedVersion">
+                                {{ vulnerability.installedVersion }}
+                              </el-descriptions-item>
+                            </el-descriptions>
+                          </div>
+                        </div>
+                      </el-card>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </el-tab-pane>
+              <el-tab-pane label="ConfigAuditReport">
+                <div style="margin: 10px 0 0 0;">
+                  <h2>Details:&nbsp;</h2>
+                  <ul style="margin-left: 60px;">
+                    <li><i>Api Version</i>: {{ logForm.configAuditReport.apiVersion }}</li>
+                    <li><i>Kind</i>: {{ logForm.configAuditReport.kind }}</li>
+                  </ul>
+                  <div style="margin: 10px 0 0 0;">
+                    <div style="margin: 10px 0 0 0;" :key="index" v-for="(item, index) in logForm.configAuditReport.items">
+                      <el-card class="box-card">
+                        <div style="margin: 10px;">
+                          <h3>Summary:&nbsp;</h3>
+                          <ul style="margin-left: 60px;">
+                            <li><i>Name</i>: {{ item.metadata.name }}</li>
+                            <li><i>Namespace</i>: {{ item.metadata.namespace }}</li>
+                            <li><i>Critical Count</i>: {{ item.report.summary.criticalCount }}</li>
+                            <li><i>High Count</i>: {{ item.report.summary.highCount }}</li>
+                            <li><i>Low Count</i>:&nbsp;{{ item.report.summary.lowCount }}</li>
+                            <li><i>Medium Count</i>:&nbsp;{{ item.report.summary.mediumCount }}</li>
+                          </ul>
+                        </div>
+                        <div style="margin: 10px 0 10px 0;padding: 5px; box-shadow: 1px 1px 1px 1px #e8e8e8;" :key="index" v-for="(check, index) in item.report.checks">
+                          <div slot="header" class="clearfix clearfix-dev">
+                            <el-row>
+                              <el-col class="icon-title" :span="3">
+                                <span>{{ check.severity.substring(0, 1) }}</span>
+                              </el-col>
+                              <el-col :span="15" style="margin: -7px 0 0 15px;">
+                                <span style="font-size: 24px;font-weight: 500;">{{ check.title }}</span>
+                              </el-col>
+                              <el-col :span="6" style="float: right;">
+                                <span style="font-size: 20px;color: #999;float: right;">{{ 'CHECKID' }}</span>
+                              </el-col>
+                            </el-row>
+                            <el-row style="font-size: 18px;padding: 10px;">
+                              <el-col :span="20">
+                                <span style="color: #888;margin: 5px;">{{ 'CHECKS' }}</span>
+                                <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                                <span style="margin: 5px;">{{ check.category }}</span>
+                                <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                                <span style="margin: 5px;"><el-button type="danger" size="mini">{{ check.severity }}</el-button></span>
+                                <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                                <span style="color: #444;margin: 5px;">SUCCESS: {{ check.success }}</span>
+                              </el-col>
+                              <el-col :span="4" style="float: right;">
+                                <span style="font-size: 20px;color: #000;float: right;">{{ check.checkID }}</span>
+                              </el-col>
+                            </el-row>
+                          </div>
+                          <div class="text item div-desc">
+                            <el-row>
+                              <i class="el-icon-s-opportunity"></i> {{ check.description }}
+                            </el-row>
+                          </div>
+                        </div>
+                      </el-card>
+                    </div>
+                  </div>
+                </div>
+              </el-tab-pane>
+            </el-tabs>
           </div>
         </el-row>
         <template v-slot:footer>
@@ -258,15 +285,15 @@
                  :destroy-on-close="true">
         <div>
           <el-table border :data="outputListData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
-            <el-table-column type="index" min-width="2%"/>
-            <el-table-column prop="name" :label="$t('image.image_name')" min-width="15%" show-overflow-tooltip>
+            <el-table-column prop="name" :label="$t('k8s.name')" min-width="15%" show-overflow-tooltip>
               <template v-slot:default="scope">
               <span>
-               <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
+                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.name }}
               </span>
               </template>
             </el-table-column>
+            <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
             <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="16%">
               {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown}}
             </el-table-column>
@@ -402,7 +429,7 @@ import CodeDiff from 'vue-code-diff';
       },
       //查询列表
       async search() {
-        let url = "/image/history/" + this.currentPage + "/" + this.pageSize;
+        let url = "/k8s/history/" + this.currentPage + "/" + this.pageSize;
         if (!!this.selectNodeIds) {
           this.condition.codeId = this.selectNodeIds[0];
         } else {
@@ -432,17 +459,18 @@ import CodeDiff from 'vue-code-diff';
         }
       },
       handleOpen(item) {
+        console.log(item)
         this.outputListSearchData = item;
         this.outputListDataSearch();
         this.oldStr = item.trivyJson;
         this.visibleList =  true;
       },
       handleDelete(obj) {
-        this.$alert(this.$t('image.delete_confirm') + this.$t('image.result') + " ？", '', {
+        this.$alert(this.$t('k8s.delete_confirm') + this.$t('k8s.result') + " ？", '', {
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get("/image/deleteHistoryImageResult/" + obj.id,  res => {
+              this.result = this.$get("/k8s/deleteHistoryK8sResult/" + obj.id,  res => {
                 setTimeout(function () {window.location.reload()}, 2000);
                 this.$success(this.$t('commons.delete_success'));
               });
@@ -452,7 +480,7 @@ import CodeDiff from 'vue-code-diff';
       },
       async outputListDataSearch() {
         let item = this.outputListSearchData;
-        await this.$post("/image/history/" + this.outputListPage + "/" + this.outputListPageSize, {imageId: item.imageId}, response => {
+        await this.$post("/k8s/history/" + this.outputListPage + "/" + this.outputListPageSize, {cloudNativeId: item.cloudNativeId}, response => {
           let data = response.data;
           this.outputListTotal = data.itemCount;
           this.outputListData = data.listObject;
@@ -470,7 +498,7 @@ import CodeDiff from 'vue-code-diff';
         this.innerDrawer = false;
       },
       innerDrawerComparison(item) {
-        this.newStr = item.trivyJson?item.trivyJson:"[]";
+        this.newStr = item.vulnerabilityReport?item.vulnerabilityReport:"[]";
         this.innerDrawer = true;
       },
       goResource(params) {
@@ -478,25 +506,25 @@ import CodeDiff from 'vue-code-diff';
           this.$warning(this.$t('resource.no_resources_allowed'));
           return;
         }
-        let url = "/image/historyResultItemList";
+        let url = "/k8s/historyResultItemList";
         this.result = this.$post(url, {resultId: params.id}, response => {
           let data = response.data;
           this.statisticsData = data;
           this.statisticsList = true;
         });
-        this.result = this.$get("/sbom/imageMetricChart/"+ this.resultId, response => {
+        this.result = this.$get("/k8s/metricChart/"+ this.resultId, response => {
           this.content = response.data;
         });
       },
       showResultLog (result) {
-        let logUrl = "/image/log/";
+        let logUrl = "/k8s/log/";
         this.result = this.$get(logUrl + result.id, response => {
           this.logData = response.data;
         });
-        let resultUrl = "/image/getImageResultWithBLOBs/";
+        let resultUrl = "/k8s/getCloudNativeResultWithBLOBs/";
         this.result = this.$get(resultUrl + result.id, response => {
           this.logForm = response.data;
-          this.logForm.trivyJson = JSON.parse(this.logForm.trivyJson);
+          this.logForm.vulnerabilityReport = JSON.parse(this.logForm.vulnerabilityReport);
         });
         this.logVisible = true;
       },

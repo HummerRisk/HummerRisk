@@ -5,11 +5,13 @@ import com.hummerrisk.controller.request.cloudNative.CloudNativeSyncLogRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
 import com.hummerrisk.dto.CloudNativeResultDTO;
+import com.hummerrisk.dto.HistoryCloudNativeResultDTO;
 import com.hummerrisk.dto.ImageDTO;
 import com.hummerrisk.dto.MetricChartDTO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ExtCloudNativeResultMapper {
 
@@ -20,5 +22,9 @@ public interface ExtCloudNativeResultMapper {
     List<CloudNativeSourceSyncLog> syncList(CloudNativeSyncLogRequest request);
 
     MetricChartDTO metricChart (String resultId);
+
+    List<HistoryCloudNativeResultDTO> history(Map<String, Object> params);
+
+    CloudNativeResultDTO getCloudNativeResult(String resultId);
 
 }

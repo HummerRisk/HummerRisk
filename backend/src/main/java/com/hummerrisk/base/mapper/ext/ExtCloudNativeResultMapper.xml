@@ -169,4 +169,44 @@
          )
     </select>
 
+    <select id="history" parameterType="java.util.Map" resultType="com.hummerrisk.dto.HistoryCloudNativeResultDTO">
+        SELECT
+        t.*,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and severity = 'HIGH') as high,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and severity = 'MEDIUM') as medium,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and severity = 'LOW') as low,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown
+        FROM history_cloud_native_result t
+
+        <where>
+            <if test="id != null">
+                AND t.id = #{id}
+            </if>
+            <if test="cloudNativeId != null">
+                AND t.cloud_native_id = #{cloudNativeId}
+            </if>
+            <if test="name != null">
+                AND t.name like CONCAT('%',#{name},'%')
+            </if>
+        </where>
+        ORDER BY t.update_time desc
+    </select>
+
+    <select id="getCloudNativeResult" parameterType="java.lang.String" resultType="com.hummerrisk.dto.CloudNativeResultDTO">
+        SELECT
+        t.*,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and severity = 'HIGH') as high,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and severity = 'MEDIUM') as medium,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and severity = 'LOW') as low,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown
+        FROM cloud_native_result t
+        <where>
+            <if test="resultId != null">
+                AND t.id = #{resultId}
+            </if>
+        </where>
+    </select>
+
 </mapper>

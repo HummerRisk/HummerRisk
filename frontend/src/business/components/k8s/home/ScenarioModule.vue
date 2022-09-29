@@ -6,16 +6,11 @@
     <node-tree
       v-loading="result.loading"
       :tree-nodes="data"
-      :type="isReadOnly ? 'view' : 'edit'"
-      @add="add"
-      @edit="edit"
-      @drag="drag"
-      @remove="remove"
       @nodeSelectEvent="nodeChange"
       ref="nodeTree">
 
       <template v-slot:header>
-        <el-input class="module-input" :placeholder="$t('commons.search_by_name')" v-model="condition.filterText"
+        <el-input class="module-input" :placeholder="$t('k8s.search_by_name')" v-model="condition.filterText"
                   size="small">
           <template v-slot:append>
             <el-button icon="el-icon-folder"/>
@@ -30,16 +25,14 @@
 </template>
 
 <script>
-import {getK8sID} from "@/common/js/utils";
-import NodeTree from "./NodeTree";
+import NodeTree from "@/business/components/k8s/head/NodeTree";
 import {buildNodePath} from "@/common/js/NodeTree";
-import DialogFooter from "../../common/components/DialogFooter";
+
 /* eslint-disable */
   export default {
     name: 'ScenarioModule',
     components: {
       NodeTree,
-      DialogFooter,
     },
     props: {
       isReadOnly: {
@@ -63,28 +56,10 @@ import DialogFooter from "../../common/components/DialogFooter";
         accountId: "",
         data: [],
         currentModule: undefined,
-        createVisible: false,
-        form: {},
-        tmpList: [],
-        direction: 'rtl',
-        plugins: [],
-        rule: {
-          name: [
-            {required: true, message: this.$t('commons.input_name'), trigger: 'blur'},
-            {min: 2, max: 100, message: this.$t('commons.input_limit', [2, 100]), trigger: 'blur'},
-            {
-              required: true,
-              message: this.$t("workspace.special_characters_are_not_supported"),
-              trigger: 'blur'
-            }
-          ]
-        },
       }
     },
-    created() {
-      this.accountId = getK8sID();
+    mounted() {
       this.list();
-      this.activePlugin();
     },
     watch: {
       'condition.filterText'(val) {
@@ -101,16 +76,8 @@ import DialogFooter from "../../common/components/DialogFooter";
       }
     },
     methods: {
-      //查询插件
-      activePlugin() {
-        let url = "/plugin/native";
-        this.result = this.$get(url, response => {
-          let data = response.data;
-          this.plugins =  data;
-        });
-      },
       list() {
-        let url = "/k8s/allCloudNativeList";
+        let url = "/k8s/allList";
         this.result = this.$get(url, response => {
           if (response.data != undefined && response.data != null) {
             this.data = response.data;
@@ -122,14 +89,6 @@ import DialogFooter from "../../common/components/DialogFooter";
           }
         });
       },
-      edit(param) {
-      },
-      add(param) {
-      },
-      remove(nodeIds) {
-      },
-      drag(param, list) {
-      },
       nodeChange(node, nodeIds, pNodes) {
         this.currentModule = node.data;
         this.condition.trashEnable = false;
@@ -138,9 +97,6 @@ import DialogFooter from "../../common/components/DialogFooter";
         } else {
           this.$emit("nodeSelectEvent", node, nodeIds, pNodes);
         }
-      },
-      saveAsEdit(data) {
-        this.$emit('saveAsEdit', data);
       },
       refresh() {
         this.$emit("refreshTable");
@@ -199,18 +155,5 @@ import DialogFooter from "../../common/components/DialogFooter";
     margin: 6px;
   }
 
-  .rtl >>> .el-drawer__body {
-    overflow-y: auto;
-    padding: 20px;
-  }
-  .rtl >>> input {
-    width: 100%;
-  }
-  .rtl >>> .el-select {
-    width: 80%;
-  }
-  .rtl >>> .el-form-item__content {
-    width: 60%;
-  }
   /deep/ :focus{outline:0;}
 </style>

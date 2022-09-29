@@ -25,7 +25,7 @@
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.$post("/cloud/native/validate/" + row.id, {}, response => {
+              this.$post("/k8s/validate/" + row.id, {}, response => {
                 if (response.data) {
                   this.$success(this.$t('account.success'));
                 } else {
