@@ -1152,8 +1152,7 @@ public class PlatformUtils {
                             null, null, null, null, null, null, null);
                     return result != null;
                 } catch (Exception e) {
-                    LogUtil.error(String.format("HRException in verifying cloud native has an error, cloud native: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()), e);
-                    return false;
+                    throw new PluginException(String.format("HRException in verifying cloud native has an error, cloud native: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()));
                 }
             case openshift:
                 try {
@@ -1163,8 +1162,7 @@ public class PlatformUtils {
                     NamespaceList ns = openShiftClient.namespaces().list();
                     return ns != null;
                 } catch (Exception e) {
-                    LogUtil.error(String.format("HRException in verifying cloud native has an error, cloud native: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()), e);
-                    return false;
+                    throw new PluginException(String.format("HRException in verifying cloud native has an error, cloud native: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()));
                 }
             case rancher:
                 try {
@@ -1177,8 +1175,7 @@ public class PlatformUtils {
                             null, null, null, null, null, null, null);
                     return result != null;
                 } catch (Exception e) {
-                    LogUtil.error(String.format("HRException in verifying cloud native has an error, cloud native: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()), e);
-                    return false;
+                    throw new PluginException(String.format("HRException in verifying cloud native has an error, cloud native: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()));
                 }
             case kubesphere:
                 try {
@@ -1191,8 +1188,7 @@ public class PlatformUtils {
                             null, null, null, null, null, null, null);
                     return result != null;
                 } catch (Exception e) {
-                    LogUtil.error(String.format("HRException in verifying cloud native has an error, cloud native: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()), e);
-                    return false;
+                    throw new PluginException(String.format("HRException in verifying cloud native has an error, cloud native: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()));
                 }
             default:
                 throw new IllegalStateException("Unexpected value: " + cloudNative.getPluginId());

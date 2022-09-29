@@ -1218,6 +1218,7 @@ export default {
     notes: '請耐心等待後台處理同步任務!',
     k8s_chart: 'K8s 統計',
     k8s_chart_vuln: 'K8s 漏洞統計',
+    search_by_name: '根據 K8s 名稱搜索',
   },
   config: {
     config_settings: '部署配置',

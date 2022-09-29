@@ -1218,6 +1218,7 @@ export default {
     notes: 'Please be patient and wait for the background to process the sync task!',
     k8s_chart: 'K8s Statistics',
     k8s_chart_vuln: 'K8s Vulnerability Statistics',
+    search_by_name: 'Search by K8s name',
   },
   config: {
     config_settings: 'Deployment configuration',
