@@ -404,9 +404,9 @@ import CodeDiff from 'vue-code-diff';
       async search() {
         let url = "/image/history/" + this.currentPage + "/" + this.pageSize;
         if (!!this.selectNodeIds) {
-          this.condition.codeId = this.selectNodeIds[0];
+          this.condition.imageId = this.selectNodeIds[0];
         } else {
-          this.condition.codeId = null;
+          this.condition.imageId = null;
         }
         this.result = await this.$post(url, this.condition, response => {
           let data = response.data;

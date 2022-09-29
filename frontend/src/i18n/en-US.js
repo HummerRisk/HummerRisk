@@ -1244,6 +1244,7 @@ export default {
     back_resource: 'Return the list of deployment detection results',
     config_chart: 'Deployment detection statistics',
     config_chart_vuln: 'Deployment configuration detection statistics',
+    all_label: 'All deployment configurations',
   },
   code: {
     code_scan: 'Source code detection',

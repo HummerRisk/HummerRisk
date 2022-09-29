@@ -134,7 +134,6 @@ export default {
     initK8s() {
       this.result = this.$get("/k8s/allCloudNativeList",response => {
         this.k8s = response.data;
-        console.log(this.k8s)
       });
     },
     saveSync() {

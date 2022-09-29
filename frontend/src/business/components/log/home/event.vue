@@ -252,7 +252,6 @@ export default {
         this.condition["combine"] = {accountId:{operator:"in",value:[accountId]}
           ,region:{operator:"in",value:[...region.split(",")]}
           ,eventTime: {operator: "between", value: [startTime, endTime]}}
-        console.log(this.condition)
         this.currentAccount = accountId
         this.region = region.split(",")
         this.dateTime = [this.formatDate(startTime*1),this.formatDate(endTime*1)]

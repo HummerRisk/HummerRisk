@@ -1,9 +1,12 @@
 package com.hummerrisk.dto;
 
-import com.hummerrisk.base.domain.CloudNativeConfigResultItemWithBLOBs;
 
+import com.hummerrisk.base.domain.HistoryCloudNativeConfigResult;
 
-public class CloudNativeConfigResultDTO extends CloudNativeConfigResultItemWithBLOBs {
+/**
+ * @author harris
+ */
+public class HistoryCloudNativeConfigResultDTO extends HistoryCloudNativeConfigResult {
 
     private String critical;
 

@@ -9,7 +9,7 @@
 
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                 @filter-change="filter">
-        <el-table-column type="index" min-width="3%"/>
+        <el-table-column type="index" min-width="2%"/>
         <el-table-column prop="name" :label="$t('config.name')" min-width="10%" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>

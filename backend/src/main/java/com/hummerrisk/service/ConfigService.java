@@ -14,6 +14,7 @@ import com.hummerrisk.controller.request.config.ConfigRequest;
 import com.hummerrisk.controller.request.config.ConfigResultRequest;
 import com.hummerrisk.dto.CloudNativeConfigDTO;
 import com.hummerrisk.dto.CloudNativeConfigResultDTO;
+import com.hummerrisk.dto.HistoryCloudNativeConfigResultDTO;
 import com.hummerrisk.dto.MetricChartDTO;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.service.impl.ExecEngineFactoryImp;
@@ -431,5 +432,28 @@ public class ConfigService {
 
     public List<Map<String, Object>> severityChart() {
         return extCloudNativeConfigMapper.severityChart();
+    }
+
+    public List<CloudNativeConfig> allList() {
+        return cloudNativeConfigMapper.selectByExample(null);
+    }
+
+    public List<HistoryCloudNativeConfigResultDTO> history(Map<String, Object> params) {
+        List<HistoryCloudNativeConfigResultDTO> historyList = extCloudNativeConfigResultMapper.history(params);
+        return historyList;
+    }
+
+    public List<CloudNativeConfigResultItemWithBLOBs> historyResultItemList(CloudNativeConfigResultItem item) {
+        CloudNativeConfigResultItemExample example = new CloudNativeConfigResultItemExample();
+        example.createCriteria().andResultIdEqualTo(item.getResultId());
+        example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
+        return cloudNativeConfigResultItemMapper.selectByExampleWithBLOBs(example);
+    }
+
+    public void deleteHistoryConfigResult(String id) throws Exception {
+        CloudNativeConfigResultLogExample logExample = new CloudNativeConfigResultLogExample();
+        logExample.createCriteria().andResultIdEqualTo(id);
+        cloudNativeConfigResultLogMapper.deleteByExample(logExample);
+        historyCloudNativeConfigResultMapper.deleteByPrimaryKey(id);
     }
 }

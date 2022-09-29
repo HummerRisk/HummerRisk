@@ -1244,6 +1244,7 @@ export default {
     back_resource: '返回部署檢測結果列表',
     config_chart: '部署檢測統計',
     config_chart_vuln: '部署配置檢測統計',
+    all_label: '全部部署配置',
   },
   code: {
     code_scan: '源碼檢測',

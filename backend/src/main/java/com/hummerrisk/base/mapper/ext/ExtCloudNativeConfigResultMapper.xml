@@ -119,4 +119,28 @@
              )
     </select>
 
+    <select id="history" parameterType="java.util.Map" resultType="com.hummerrisk.dto.HistoryCloudNativeResultDTO">
+        SELECT
+        t.*,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'HIGH') as high,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'MEDIUM') as medium,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'LOW') as low,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown
+        FROM history_cloud_native_config_result t
+
+        <where>
+            <if test="id != null">
+                AND t.id = #{id}
+            </if>
+            <if test="configId != null">
+                AND t.config_id = #{configId}
+            </if>
+            <if test="name != null">
+                AND t.name like CONCAT('%',#{name},'%')
+            </if>
+        </where>
+        ORDER BY t.update_time desc
+    </select>
+
 </mapper>

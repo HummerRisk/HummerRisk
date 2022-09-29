@@ -605,7 +605,6 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
       },
       saveServer(servers) {
         for (let server of servers) {
-          console.log(111, server)
           if(!server.name || !server.ip || !server.userName || !server.groupId) {
             this.$warning('Value will not be null');
             return;
@@ -630,7 +629,6 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
             if (server.keyFile) {
               formData.append("keyFile", server.keyFile);
             }
-            console.log(222, server)
             formData.append("request", new Blob([JSON.stringify(server)], {type: "application/json"}));
             let axiosRequestConfig = {
               method: "POST",

@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.CloudNativeConfig;
 import com.hummerrisk.base.domain.CloudNativeConfigResultItem;
+import com.hummerrisk.base.domain.CloudNativeConfigResultItemWithBLOBs;
 import com.hummerrisk.base.domain.CloudNativeConfigResultLog;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
@@ -12,6 +13,7 @@ import com.hummerrisk.controller.request.config.ConfigRequest;
 import com.hummerrisk.controller.request.config.ConfigResultRequest;
 import com.hummerrisk.dto.CloudNativeConfigDTO;
 import com.hummerrisk.dto.CloudNativeConfigResultDTO;
+import com.hummerrisk.dto.HistoryCloudNativeConfigResultDTO;
 import com.hummerrisk.dto.MetricChartDTO;
 import com.hummerrisk.service.ConfigService;
 import io.kubernetes.client.openapi.ApiException;
@@ -160,6 +162,34 @@ public class ConfigController {
     @GetMapping("severityChart")
     public List<Map<String, Object>> severityChart() {
         return configService.severityChart();
+    }
+
+    @I18n
+    @ApiOperation(value = "所有部署配置")
+    @GetMapping("allList")
+    public List<CloudNativeConfig> allList() {
+        return configService.allList();
+    }
+
+    @I18n
+    @ApiOperation(value = "部署检测历史记录")
+    @PostMapping("history/{goPage}/{pageSize}")
+    public Pager<List<HistoryCloudNativeConfigResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, configService.history(params));
+    }
+
+    @I18n
+    @ApiOperation(value = "检测结果历史详情")
+    @PostMapping("historyResultItemList")
+    public List<CloudNativeConfigResultItemWithBLOBs> historyResultItemList(@RequestBody CloudNativeConfigResultItem request) {
+        return configService.historyResultItemList(request);
+    }
+
+    @ApiOperation(value = "删除检测历史记录")
+    @GetMapping("deleteHistoryConfigResult/{id}")
+    public void deleteHistoryConfigResult(@PathVariable String id) throws Exception {
+        configService.deleteHistoryConfigResult(id);
     }
 
 }
