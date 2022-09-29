@@ -86,11 +86,11 @@ public class CloudNativeService {
         boolean valid = validateAccount(cloudNative);
         if (valid) {
             cloudNative.setStatus(CloudAccountConstants.Status.VALID.name());
+            addCloudNativeSource(cloudNative);
         } else {
             cloudNative.setStatus(CloudAccountConstants.Status.INVALID.name());
         }
         cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
-        addCloudNativeSource(cloudNative);
         return valid;
     }
 
@@ -174,6 +174,7 @@ public class CloudNativeService {
                 boolean valid = validateAccount(account);
                 if (valid) {
                     account.setStatus(CloudAccountConstants.Status.VALID.name());
+                    addCloudNativeSource(account);
                 } else {
                     account.setStatus(CloudAccountConstants.Status.INVALID.name());
                 }
@@ -185,7 +186,6 @@ public class CloudNativeService {
                     account.setOperatorStatus(CloudAccountConstants.Status.INVALID.name());
                 }
                 cloudNativeMapper.insertSelective(account);
-                addCloudNativeSource(account);
                 OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_create_cloud_native");
                 return account;
             }
@@ -229,6 +229,7 @@ public class CloudNativeService {
                 boolean valid = validateAccount(account);
                 if (valid) {
                     account.setStatus(CloudAccountConstants.Status.VALID.name());
+                    addCloudNativeSource(account);
                 } else {
                     account.setStatus(CloudAccountConstants.Status.INVALID.name());
                 }
@@ -241,7 +242,6 @@ public class CloudNativeService {
                 }
                 cloudNativeMapper.updateByPrimaryKeySelective(account);
                 account = cloudNativeMapper.selectByPrimaryKey(account.getId());
-                addCloudNativeSource(account);
                 //检验账号已更新状态
                 OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.UPDATE, "i18n_update_cloud_native");
                 return account;
