@@ -289,4 +289,20 @@
              )
     </select>
 
+    <select id="k8sTopology" resultType="java.util.Map">
+        SELECT
+            t.id as 'id',
+            t.source_name as 'label',
+            CAST('{"background":"yellow"}' as json) as 'color',
+            t.source_type as 'type'
+        FROM cloud_native_source as t
+        <where>
+            <if test="cloudNativeId != null and cloudNativeId != ''">
+                and t.cloud_native_id = #{cloudNativeId}
+            </if>
+            and t.source_type in ('Namespace', 'Pod', 'Node', 'Deployment', 'Service')
+        </where>
+        ORDER BY t.update_time DESC
+    </select>
+
 </mapper>

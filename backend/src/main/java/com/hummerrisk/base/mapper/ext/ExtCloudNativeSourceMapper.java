@@ -14,4 +14,6 @@ public interface ExtCloudNativeSourceMapper {
 
     SituationDTO situationInfo(Map<String, Object> params);
 
+    List<Map<String, Object>> k8sTopology(String cloudNativeId);
+
 }

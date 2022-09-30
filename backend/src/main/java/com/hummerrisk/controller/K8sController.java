@@ -30,7 +30,6 @@ public class K8sController {
     @Resource
     private K8sService k8sService;
 
-
     @I18n
     @ApiOperation(value = "云原生账号列表")
     @PostMapping("list/{goPage}/{pageSize}")
@@ -263,6 +262,13 @@ public class K8sController {
     @GetMapping("deleteHistoryK8sResult/{id}")
     public void deleteHistoryK8sResult(@PathVariable String id) throws Exception {
         k8sService.deleteHistoryK8sResult(id);
+    }
+
+    @I18n
+    @ApiOperation(value = "拓扑图资源")
+    @GetMapping("k8sTopology/{cloudNativeId}")
+    public List<Map<String, Object>> k8sTopology(@PathVariable String cloudNativeId) {
+        return k8sService.k8sTopology(cloudNativeId);
     }
 
 }
