@@ -573,7 +573,7 @@ INSERT INTO rule_type(id, rule_id, resource_type) VALUES ('0663e58a-ce96-4687-97
 INSERT INTO rule_type(id, rule_id, resource_type) VALUES ('0ab08df9-e628-4dc2-ad51-3789a16c6bc8', 'f744fdd9-166d-40a7-ad91-9e933ad514cc', 'huawei.rds');
 INSERT INTO rule_type(id, rule_id, resource_type) VALUES ('1f681a6a-21c6-4cef-8574-8ce741949866', '3ce82502-1c03-4ab0-b8ed-83f631a20805', 'huawei.redis');
 INSERT INTO rule_type(id, rule_id, resource_type) VALUES ('22f28cd2-d06d-48fa-ae36-0c95e1925be9', '332ce586-70de-4053-a922-f76d6340a03c', 'huawei.rds');
-INSERT INTO rule_type(id, rule_id, resource_type) VALUES ('3e50ec86-1a2a-486e-920b-39572eb8d193', '2677aa0f-6796-4138-902b-f736e0c3d8da', 'huawei.oss');
+INSERT INTO rule_type(id, rule_id, resource_type) VALUES ('3e50ec86-1a2a-486e-920b-39572eb8d193', '2677aa0f-6796-4138-902b-f736e0c3d8da', 'huawei.obs');
 INSERT INTO rule_type(id, rule_id, resource_type) VALUES ('421ae776-4b20-4f80-89f6-4133f1a6a62e', '36908c29-c15e-4c73-a964-5fb97bbb27fa', 'huawei.disk');
 INSERT INTO rule_type(id, rule_id, resource_type) VALUES ('6955ae5d-75a3-4ed8-9636-295938a0b55b', 'b1260ecf-47fa-4613-8ed4-71417f29441b', 'huawei.rds');
 INSERT INTO rule_type(id, rule_id, resource_type) VALUES ('6a77f9da-a452-4052-adbd-cd005b2f8c58', '108c875b-bf3c-4034-b07d-15faa8715257', 'huawei.ecs');
