@@ -1,13 +1,29 @@
 <template>
   <main-container>
     <el-card class="table-card" v-loading="result.loading">
+      <el-menu class="header-menu" :unique-opened="true" mode="horizontal" default-active="1" router background-color="aliceblue" active-text-color="red">
+        <!-- 不激活项目路由-->
+        <el-menu-item index="1" v-show="false">Placeholder</el-menu-item>
+        <el-submenu index="2" popper-class="submenu">
+          <template v-slot:title>
+        <span class="account-name" :title="currentAccount" style="width: 250px;">
+          {{ $t('account.cloud_account') }}: {{ currentAccount }}
+        </span>
+          </template>
+          <search-list @cloudAccountSwitch="cloudAccountSwitch"/>
+        </el-submenu>
+
+      </el-menu>
+
+      <el-divider><i class="el-icon-tickets"></i></el-divider>
+
       <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
       <div id="network_id" class="network" style="height:80vh"></div>
-      <el-dialog title="测试框" :visible.sync="dialogVisible" width="width">
-        <div>xxxxxx</div>
+      <el-dialog :title="$t('vis.edit')" :visible.sync="dialogVisible" width="width">
+        <span style="color: red;">{{ $t('vis.unedit') }}</span>
         <div slot="footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+          <el-button @click="dialogVisible = false">{{ $t('commons.cancel') }}</el-button>
+          <el-button type="primary" @click="dialogVisible = false">{{ $t('commons.confirm') }}</el-button>
         </div>
       </el-dialog>
     </el-card>
@@ -17,11 +33,14 @@
 <script>
 import MainContainer from "../../common/components/MainContainer";
 import Vis from "vis";
+import SearchList from "@/business/components/common/head/SearchList";
+import {ACCOUNT_NAME} from "../../../../common/js/constants";
 
 /* eslint-disable */
 export default {
   components: {
     MainContainer,
+    SearchList,
     Vis,
   },
   data() {
@@ -109,19 +128,19 @@ export default {
         locales: {
           cn: {
             //工具栏中文翻译
-            edit: "编辑",
-            del: "删除当前节点或关系",
-            back: "返回",
-            addNode: "添加节点",
-            addEdge: "添加连线",
-            editNode: "编辑节点",
-            editEdge: "编辑连线",
-            addDescription: "点击空白处可添加节点",
-            edgeDescription: "点击某个节点拖拽连线可连接另一个节点",
-            editEdgeDescription: "可拖拽连线改变关系",
-            createEdgeError: "无法将边连接到集群",
-            deleteClusterError: "无法删除集群.",
-            editClusterError: "无法编辑群集'"
+            edit: this.$t('vis.edit'),
+            del: this.$t('vis.del'),
+            back: this.$t('vis.back'),
+            addNode: this.$t('vis.addNode'),
+            addEdge: this.$t('vis.addEdge'),
+            editNode: this.$t('vis.editNode'),
+            editEdge: this.$t('vis.editEdge'),
+            addDescription: this.$t('vis.addDescription'),
+            edgeDescription: this.$t('vis.edgeDescription'),
+            editEdgeDescription: this.$t('vis.editEdgeDescription'),
+            createEdgeError: this.$t('vis.createEdgeError'),
+            deleteClusterError: this.$t('vis.deleteClusterError'),
+            editClusterError: this.$t('vis.editClusterError'),
           }
         },
 
@@ -182,7 +201,6 @@ export default {
         },
         //用于所有用户与网络的交互。处理鼠标和触摸事件以及导航按钮和弹出窗口
         interaction: {
-          hover: true,
           dragNodes: true, //是否能拖动节点
           dragView: true, //是否能拖动画布
           hover: true, //鼠标移过后加粗该节点和连接线
@@ -210,7 +228,6 @@ export default {
         _this.options
       );
     },
-
     resetAllNodes() {
       let _this = this;
       _this.nodes.clear();
@@ -233,19 +250,23 @@ export default {
       _this.resetAllNodes();
       _this.network.stabilize();
     },
+    cloudAccountSwitch(accountId) {
+      this.accountId = accountId;
+      this.search();
+    },
+    search() {
 
+    },
   },
 
   mounted() {
     this.init();
     // 点击事件
     this.network.on("click", params => {
-      console.log("点击", params.nodes);
-      // this.network.addEdgeMode();
+      this.network.addEdgeMode();
     });
     // 点击鼠标右键事件
     this.network.on("oncontext", params => {
-      console.log("右击", params);
       this.dialogVisible = true;
     });
   }
@@ -254,6 +275,21 @@ export default {
 </script>
 
 <style scoped>
-
+.table-card >>> .vis-edit-mode {
+  width: 60px;
+}
+.account-name {
+  display: inline-block;
+  width: 130px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.header-menu {
+  margin: 15px 0 15px 0;
+}
+.el-divider--horizontal {
+  margin: 0;
+}
 </style>
 

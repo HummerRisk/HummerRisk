@@ -1461,15 +1461,6 @@ export default {
     native: '雲原生',
     user: '用戶列表',
   },
-  '阿里云': '阿里雲',
-  '腾讯云': '騰訊雲',
-  '华为云': '華為雲',
-  '管理员': '管理員',
-  '安全': '安全',
-  '费用': '費用',
-  '标签': '標籤',
-  '实例': '實例',
-  '镜像': '鏡像',
   ACCOUNT: '雲賬號',
   RULE: '規則',
   // element組件翻譯
@@ -1586,5 +1577,20 @@ export default {
     pageHeader: {
       title: '返回'
     }
+  },
+  vis: {
+    edit: '編輯',
+    del: '刪除當前節點或關係',
+    back: '返回',
+    addNode: '添加節點',
+    addEdge: '添加連線',
+    editNode: '編輯節點',
+    editEdge: '編輯連線',
+    addDescription: '點擊空白處可添加節點。 ',
+    edgeDescription: '點擊某個節點拖拽連線可連接另一個節點。 ',
+    editEdgeDescription: '可拖拽連線改變關係。 ',
+    createEdgeError: '無法將邊連接到集群。 ',
+    deleteClusterError: '無法刪除集群。 ',
+    editClusterError: '無法編輯群集。 ',
   },
 };

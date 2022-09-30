@@ -1461,15 +1461,6 @@ export default {
     native: 'Cloud native',
     user: 'User list',
   },
-  '阿里云': 'Aliyun',
-  '腾讯云': 'Tencent',
-  '华为云': 'Huawei',
-  '管理员': 'Admin',
-  '安全': 'Security',
-  '费用': 'Cost',
-  '标签': 'Label',
-  '实例': 'Server',
-  '镜像': 'Image',
   ACCOUNT: 'Cloud account',
   RULE: 'Rule',
   // element组件翻译
@@ -1586,5 +1577,20 @@ export default {
     pageHeader: {
       title: 'Back' // to be translated
     }
+  },
+  vis: {
+    edit: 'Edit',
+    del: 'Delete selected',
+    back: 'Back',
+    addNode: 'Add Node',
+    addEdge: 'Add Edge',
+    editNode: 'Edit Node',
+    editEdge: 'Edit Edge',
+    addDescription: 'Click in an empty space to place a new node.',
+    edgeDescription: 'Click on a node and drag the edge to another node to connect them.',
+    editEdgeDescription: 'Click on the control points and drag them to a node to connect to it.',
+    createEdgeError: 'Cannot link edges to a cluster.',
+    deleteClusterError: 'Clusters cannot be deleted.',
+    editClusterError: 'Clusters cannot be edited.',
   },
 };

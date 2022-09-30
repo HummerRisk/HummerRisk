@@ -1461,15 +1461,6 @@ export default {
     native: '云原生',
     user: '用户列表',
   },
-  '阿里云': '阿里云',
-  '腾讯云': '腾讯云',
-  '华为云': '华为云',
-  '管理员': '管理员',
-  '安全': '安全',
-  '费用': '费用',
-  '标签': '标签',
-  '实例': '实例',
-  '镜像': '镜像',
   ACCOUNT: '云账号',
   RULE: '规则',
   // element组件翻译
@@ -1586,5 +1577,21 @@ export default {
     pageHeader: {
       title: '返回'
     }
+  },
+  vis: {
+    edit: '编辑',
+    del: '删除当前节点或关系',
+    back: '返回',
+    addNode: '添加节点',
+    addEdge: '添加连线',
+    editNode: '编辑节点',
+    editEdge: '编辑连线',
+    addDescription: '点击空白处可添加节点。',
+    edgeDescription: '点击某个节点拖拽连线可连接另一个节点。',
+    editEdgeDescription: '可拖拽连线改变关系。',
+    createEdgeError: '无法将边连接到集群。',
+    deleteClusterError: '无法删除集群。',
+    editClusterError: '无法编辑群集。',
+    unedit: '数据暂时不可修改',
   },
 };
