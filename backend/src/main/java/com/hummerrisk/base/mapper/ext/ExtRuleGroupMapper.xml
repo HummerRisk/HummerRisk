@@ -128,6 +128,7 @@
 
     <select id="getRulesByGroupIds" resultMap="com.hummerrisk.base.mapper.ext.ExtRuleMapper.BaseResultMap2">
         SELECT
+           DISTINCT
             t.id,
             t.name,
             t.status,
@@ -148,8 +149,7 @@
         FROM rule t
                  LEFT JOIN rule_account_parameter t1 ON t.id = t1.rule_id AND t1.account_id = #{accountId}
                  LEFT JOIN rule_group_mapping t2 ON t.id = t2.rule_id
-                 LEFT JOIN rule_group t3 ON t2.group_id = t3.id
-        WHERE t3.id in
+        WHERE t2.group_id in
              <foreach collection="groupIds" item="groupId" separator="," open="(" close=")">
                  #{groupId}
             </foreach>
