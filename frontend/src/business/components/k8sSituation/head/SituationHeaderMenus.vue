@@ -5,11 +5,11 @@
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
           <el-menu-item :index="'/k8sSituation/k8sSituation'">
-            {{ $t("commons.resource_situation") }}
+            {{ $t("k8s.resource_situation") }}
           </el-menu-item>
 
           <el-menu-item :index="'/k8sSituation/k8sTopology'">
-            {{ $t("account.cloud_topology") }}
+            {{ $t("k8s.cloud_topology") }}
           </el-menu-item>
 
           <el-menu-item :index="'/k8sSituation/k8sSyncLog'">

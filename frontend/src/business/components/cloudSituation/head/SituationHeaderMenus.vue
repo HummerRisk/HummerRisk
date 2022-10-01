@@ -5,7 +5,7 @@
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
           <el-menu-item :index="'/cloudSituation/cloudSituation'">
-            {{ $t("commons.resource_situation") }}
+            {{ $t("account.resource_situation") }}
           </el-menu-item>
 
           <el-menu-item :index="'/cloudSituation/cloudTopology'">
@@ -13,7 +13,7 @@
           </el-menu-item>
 
           <el-menu-item :index="'/cloudSituation/cloudSyncLog'">
-            {{ $t("k8s.sync_log") }}
+            {{ $t("account.sync_log") }}
           </el-menu-item>
 
         </el-menu>
