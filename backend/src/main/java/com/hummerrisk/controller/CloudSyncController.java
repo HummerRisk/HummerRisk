@@ -1,14 +1,19 @@
 package com.hummerrisk.controller;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.hummerrisk.base.domain.CloudResourceSync;
+import com.hummerrisk.commons.utils.PageUtils;
+import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
+import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
+import com.hummerrisk.controller.request.cloudResource.CloudResourceSyncRequest;
 import com.hummerrisk.service.CloudSyncService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @ApiIgnore
 @RestController
@@ -23,5 +28,10 @@ public class CloudSyncController {
         cloudSyncService.sync(accountId);
     }
 
-
+    @I18n
+    @PostMapping(value = "log/list/{goPage}/{pageSize}")
+    public Pager<List<CloudResourceSync>> listResourceSync(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudResourceSyncRequest cloudResourceSyncRequest) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, cloudSyncService.getCloudResourceSyncLogs(cloudResourceSyncRequest));
+    }
 }

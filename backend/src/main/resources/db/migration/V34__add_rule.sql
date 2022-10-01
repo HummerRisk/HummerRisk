@@ -210,3 +210,19 @@ CREATE TABLE IF NOT EXISTS `cloud_resource_item` (
     `resource`                   longtext            DEFAULT NULL COMMENT '资源JSON',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `cloud_resource_amount_history` (
+    `id`                            varchar(50)           NOT NULL COMMENT 'ID',
+    `sync_id`                       varchar(50)           DEFAULT NULL COMMENT '任务ID',
+    `sync_time`                     bigint(13)            DEFAULT NULL COMMENT '同步时间',
+    `create_time`                   bigint(13)            DEFAULT NULL COMMENT '创建时间',
+    `account_id`                    varchar(50)           DEFAULT NULL COMMENT '云账号ID',
+    `plugin_id`                     varchar(40)           DEFAULT NULL COMMENT '插件ID',
+    `plugin_name`                   varchar(128)          DEFAULT NULL COMMENT '云平台名称',
+    `plugin_icon`                   varchar(128)          DEFAULT NULL COMMENT '云平台图标',
+    `resource_type`                 varchar(64)           DEFAULT NULL COMMENT '资源类型',
+    `region_id`                     varchar(128)          DEFAULT NULL COMMENT '区域标识',
+    `region_name`                   varchar(128)          DEFAULT NULL COMMENT '区域名称',
+    `count`                         int(11)               DEFAULT 0 COMMENT '资源同步量',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
