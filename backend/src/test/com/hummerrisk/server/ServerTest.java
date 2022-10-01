@@ -1,6 +1,7 @@
 package com.hummerrisk.server;
 
-import com.hummerrisk.dto.SshServerDTO;
+import com.hummerrisk.base.domain.Proxy;
+import com.hummerrisk.base.domain.Server;
 import com.hummerrisk.proxy.server.SshUtil;
 import com.hummerrisk.service.SysListener;
 import org.junit.runner.RunWith;
@@ -14,7 +15,7 @@ public class ServerTest {
     @org.junit.Test
     public void Test() throws Exception {
         try{
-            SshUtil.login(new SshServerDTO());//通过ssh连接到服务器
+            SshUtil.login(new Server(), new Proxy());//通过ssh连接到服务器
             SysListener.property();
         } catch (Exception e) {
             System.out.println(e.getMessage());
