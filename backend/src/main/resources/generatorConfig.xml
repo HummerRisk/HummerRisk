@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
 <generatorConfiguration>
     <!--配置数据库连接的位置-->
-    <properties url="file:///opt/hummerrisk/conf/hummerrisk.properties"/>
+    <properties url="file:///opt/hummerrisk/conf/hummerrisk2.properties"/>
     <!-- 设置mysql驱动路径 -->
     <!--<classPathEntry location="/Users/liuruibin/.m2/repository/mysql/mysql-connector-java/5.1.34/mysql-connector-java-5.1.34.jar"/>-->
     <!-- 此处指定生成针对MyBatis3的DAO -->
@@ -61,7 +61,6 @@
                              targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
-
         <!--要生成的数据库表 -->
 <!--        <table tableName="user"/>-->
 <!--        <table tableName="schedule"/>-->
@@ -161,5 +160,6 @@
 <!--        <table tableName="cloud_resource_sync_item_log" domainObjectName="CloudResourceSyncItemLog"/>-->
 <!--        <table tableName="cloud_resource" domainObjectName="CloudResource"/>-->
 <!--        <table tableName="cloud_resource_item" domainObjectName="CloudResourceItem"/>-->
+<!--        <table tableName="cloud_resource_amount_history" domainObjectName="CloudResourceAmountHistory"/>-->
     </context>
 </generatorConfiguration>
