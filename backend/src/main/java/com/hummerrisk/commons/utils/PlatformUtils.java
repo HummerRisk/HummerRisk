@@ -1383,6 +1383,41 @@ public class PlatformUtils {
         return true;
     }
 
+    public static String[] checkoutResourceType(String pluginId) {
+        switch (pluginId) {
+            case aws:
+                return CloudTaskConstants.AWS_RESOURCE_TYPE;
+            case azure:
+                return CloudTaskConstants.AZURE_RESOURCE_TYPE;
+            case aliyun:
+                return CloudTaskConstants.ALIYUN_RESOURCE_TYPE;
+            case huawei:
+                return CloudTaskConstants.HUAWEI_RESOURCE_TYPE;
+            case tencent:
+                return CloudTaskConstants.TENCENT_RESOURCE_TYPE;
+            case vsphere:
+                return CloudTaskConstants.VSPHERE_RESOURCE_TYPE;
+            case openstack:
+                return CloudTaskConstants.OPENSTACK_RESOURCE_TYPE;
+            case gcp:
+                return CloudTaskConstants.GCP_RESOURCE_TYPE;
+            case huoshan:
+                return CloudTaskConstants.VOLC_RESOURCE_TYPE;
+            case baidu:
+                return CloudTaskConstants.BAIDU_RESOURCE_TYPE;
+            case qiniu:
+                return CloudTaskConstants.QINIU_RESOURCE_TYPE;
+            case qingcloud:
+                return CloudTaskConstants.QINGCLOUD_RESOURCE_TYPE;
+            case ucloud:
+                return CloudTaskConstants.UCLOUD_RESOURCE_TYPE;
+            case k8s:
+                return null;
+            default:
+                throw new IllegalStateException("Unexpected value: " + pluginId);
+        }
+    }
+
     /**
      * 检查返回值里是否包含用户被禁止的关键字
      * @param result

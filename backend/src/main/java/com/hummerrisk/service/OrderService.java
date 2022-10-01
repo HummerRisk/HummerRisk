@@ -67,12 +67,6 @@ public class OrderService {
     @Resource @Lazy
     private RuleTagMappingMapper ruleTagMappingMapper;
     @Resource @Lazy
-    private ExtResourceMapper extResourceMapper;
-    @Resource @Lazy
-    private HistoryScanMapper historyScanMapper;
-    @Resource @Lazy
-    private HistoryScanTaskMapper historyScanTaskMapper;
-    @Resource @Lazy
     private NoticeService noticeService;
     @Resource @Lazy
     private CloudAccountQuartzTaskMapper quartzTaskMapper;

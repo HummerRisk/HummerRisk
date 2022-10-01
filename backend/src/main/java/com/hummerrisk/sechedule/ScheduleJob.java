@@ -1,7 +1,9 @@
 package com.hummerrisk.sechedule;
 
+import com.hummer.quartz.anno.QuartzScheduled;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.service.AccountService;
+import com.hummerrisk.service.CloudSyncService;
 import com.hummerrisk.service.CloudTaskService;
 import com.hummerrisk.service.SystemParameterService;
 import org.quartz.*;
@@ -22,6 +24,8 @@ public abstract class ScheduleJob implements Job {
     private AccountService accountService;
     @Resource
     private SystemParameterService systemParameterService;
+    @Resource
+    private CloudSyncService cloudSyncService;
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -54,5 +58,11 @@ public abstract class ScheduleJob implements Job {
 //    public void SyncSystem() throws Exception {
 //        systemParameterService.updateSystem();
 //    }
+
+    //每天自动同步云资源
+    @QuartzScheduled(cron = "${cron.system.sync}")
+    public void SyncResources() throws Exception {
+        cloudSyncService.SyncResources();
+    }
 
 }

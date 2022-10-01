@@ -21,4 +21,5 @@ public enum ResourceTypeConstants {
     CODE,
     SBOM,
     SBOM_VERSION,
+    SYNC,
 }
