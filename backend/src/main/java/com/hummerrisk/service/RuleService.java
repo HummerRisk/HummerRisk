@@ -12,11 +12,7 @@ import com.hummerrisk.base.mapper.ext.ExtRuleTypeMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
-import com.hummerrisk.controller.request.rule.BindRuleRequest;
-import com.hummerrisk.controller.request.rule.CreateRuleRequest;
-import com.hummerrisk.controller.request.rule.RuleGroupRequest;
-import com.hummerrisk.controller.request.rule.RuleTagRequest;
-import com.hummerrisk.controller.request.sbom.SettingVersionRequest;
+import com.hummerrisk.controller.request.rule.*;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
@@ -28,7 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import static com.alibaba.fastjson.JSON.parseArray;
 
@@ -558,27 +557,11 @@ public class RuleService {
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
-    public void scan(List<String> scanCheckedGroups) throws Exception {
-        List<String> accountIds = new ArrayList<>();
-        Integer scanId = 0;
-        Map<String,List<String>> accountGroupMap = new HashMap<>();
-        for (String scan : scanCheckedGroups) {
-            String[] str = scan.split("/");
-            List<String> groupList = accountGroupMap.get(str[0]);
-            if(groupList == null){
-                groupList = new ArrayList<>();
-                groupList.add(str[1]);
-                accountGroupMap.put(str[0],groupList);
-            }else{
-                groupList.add(str[1]);
-            }
-        }
-        Set<String> keySet = accountGroupMap.keySet();
-        for (String key : keySet){
-            List<String> groupIds = accountGroupMap.get(key);
-            AccountWithBLOBs account = accountMapper.selectByPrimaryKey(key);
-            scanId = historyService.insertScanHistory(account);
-            this.scanGroups(account, scanId, groupIds);
+    public void scan(ScanGroupRequest request) throws Exception {
+        AccountWithBLOBs account = accountMapper.selectByPrimaryKey(request.getAccountId());
+        Integer scanId = historyService.insertScanHistory(account);
+        for (Integer groupId : request.getGroups()) {
+            this.scanGroups(request.getAccountId(), scanId, groupId.toString());
         }
     }
 
@@ -605,31 +588,18 @@ public class RuleService {
         return this.dealTask(rule, account, scanId, null);
     }
 
-    private void scanGroups(AccountWithBLOBs account, Integer scanId, String groupId) {
+    private void scanGroups(String accountId, Integer scanId, String groupId) {
         try {
-
+            AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
             String messageOrderId = noticeService.createMessageOrder(account);
 
-            List<RuleDTO> ruleDTOS = extRuleGroupMapper.getRules(account.getId(), groupId);
+            List<RuleDTO> ruleDTOS = extRuleGroupMapper.getRules(accountId, groupId);
             for (RuleDTO rule : ruleDTOS) {
                 this.dealTask(rule, account, scanId, messageOrderId);
             }
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
-    }
-
-    private void scanGroups(AccountWithBLOBs account, Integer scanId, List<String> groupIds){
-        try {
-            String messageOrderId = noticeService.createMessageOrder(account);
-            List<RuleDTO> ruleDTOS = extRuleGroupMapper.getRulesByGroupIds(account.getId(), groupIds);
-            for (RuleDTO rule : ruleDTOS) {
-                this.dealTask(rule, account, scanId, messageOrderId);
-            }
-        } catch (Exception e) {
-            LogUtil.error(e.getMessage());
-        }
-
     }
 
     private void scan(AccountWithBLOBs account) throws Exception {
@@ -714,6 +684,13 @@ public class RuleService {
             groupDTOS.add(groupDTO);
         }
         return groupDTOS;
+    }
+
+    public List<RuleGroup> groupsByAccountId(String pluginId) {
+        RuleGroupExample example = new RuleGroupExample();
+        example.createCriteria().andPluginIdEqualTo(pluginId);
+        List<RuleGroup> groups = ruleGroupMapper.selectByExample(example);
+        return groups;
     }
 
     public List<Rule> allBindList(String id) {

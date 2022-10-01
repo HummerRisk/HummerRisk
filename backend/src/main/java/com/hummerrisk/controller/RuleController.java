@@ -6,10 +6,7 @@ import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
-import com.hummerrisk.controller.request.rule.BindRuleRequest;
-import com.hummerrisk.controller.request.rule.CreateRuleRequest;
-import com.hummerrisk.controller.request.rule.RuleGroupRequest;
-import com.hummerrisk.controller.request.rule.RuleTagRequest;
+import com.hummerrisk.controller.request.rule.*;
 import com.hummerrisk.dto.GroupDTO;
 import com.hummerrisk.dto.RuleDTO;
 import com.hummerrisk.dto.RuleGroupDTO;
@@ -194,8 +191,8 @@ public class RuleController {
 
     @ApiOperation(value = "批量检测")
     @PostMapping("scan")
-    public void scan(@RequestPart(value = "scanCheckedGroups") List<String> scanCheckedGroups) throws Exception {
-        ruleService.scan(scanCheckedGroups);
+    public void scan(@RequestBody ScanGroupRequest request) throws Exception {
+        ruleService.scan(request);
     }
 
     @I18n
@@ -223,6 +220,13 @@ public class RuleController {
     @PostMapping("groups")
     public List<GroupDTO> groups(@RequestPart(value = "selectIds") List<String> ids) {
         return ruleService.groups(ids);
+    }
+
+    @I18n
+    @ApiIgnore
+    @GetMapping("groupsByAccountId/{pluginId}")
+    public List<RuleGroup> groupsByAccountId(@PathVariable String pluginId) {
+        return ruleService.groupsByAccountId(pluginId);
     }
 
     @I18n
