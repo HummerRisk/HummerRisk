@@ -156,5 +156,10 @@
 <!--        <table tableName="cloud_event_region_log" domainObjectName="CloudEventRegionLog"/>-->
 <!--        <table tableName="cloud_event" domainObjectName="CloudEvent"/>-->
 <!--        <table tableName="server_certificate" domainObjectName="ServerCertificate"/>-->
+<!--        <table tableName="cloud_resource_sync" domainObjectName="CloudResourceSync"/>-->
+<!--        <table tableName="cloud_resource_sync_item" domainObjectName="CloudResourceSyncItem"/>-->
+<!--        <table tableName="cloud_resource_sync_item_log" domainObjectName="CloudResourceSyncItemLog"/>-->
+<!--        <table tableName="cloud_resource" domainObjectName="CloudResource"/>-->
+<!--        <table tableName="cloud_resource_item" domainObjectName="CloudResourceItem"/>-->
     </context>
 </generatorConfiguration>
