@@ -88,6 +88,7 @@ import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.V1Namespace;
 import io.kubernetes.client.openapi.models.V1NamespaceList;
+import io.kubernetes.client.openapi.models.V1NodeList;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openstack4j.api.OSClient;
@@ -1146,9 +1147,9 @@ public class PlatformUtils {
                     K8sRequest k8sRequest = new K8sRequest();
                     k8sRequest.setCredential(cloudNative.getCredential());
                     ApiClient client = k8sRequest.getK8sClient(proxy);
-                    CoreV1Api apiInstance = new CoreV1Api(client);
                     String pretty = "true";
-                    V1NamespaceList result = apiInstance.listNamespace(pretty, true, null,
+                    CoreV1Api apiInstance = new CoreV1Api(client);
+                    V1NodeList result = apiInstance.listNode(pretty, true, null,
                             null, null, null, null, null, null, null);
                     return result != null;
                 } catch (Exception e) {
@@ -1171,7 +1172,7 @@ public class PlatformUtils {
                     ApiClient client = k8sRequest.getK8sClient(proxy);
                     CoreV1Api apiInstance = new CoreV1Api(client);
                     String pretty = "true";
-                    V1NamespaceList result = apiInstance.listNamespace(pretty, true, null,
+                    V1NodeList result = apiInstance.listNode(pretty, true, null,
                             null, null, null, null, null, null, null);
                     return result != null;
                 } catch (Exception e) {
@@ -1184,7 +1185,7 @@ public class PlatformUtils {
                     ApiClient client = k8sRequest.getK8sClient(proxy);
                     CoreV1Api apiInstance = new CoreV1Api(client);
                     String pretty = "true";
-                    V1NamespaceList result = apiInstance.listNamespace(pretty, true, null,
+                    V1NodeList result = apiInstance.listNode(pretty, true, null,
                             null, null, null, null, null, null, null);
                     return result != null;
                 } catch (Exception e) {
