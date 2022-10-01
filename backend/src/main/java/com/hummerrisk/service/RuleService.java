@@ -28,10 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.alibaba.fastjson.JSON.parseArray;
 
@@ -564,14 +561,24 @@ public class RuleService {
     public void scan(List<String> scanCheckedGroups) throws Exception {
         List<String> accountIds = new ArrayList<>();
         Integer scanId = 0;
+        Map<String,List<String>> accountGroupMap = new HashMap<>();
         for (String scan : scanCheckedGroups) {
             String[] str = scan.split("/");
-            AccountWithBLOBs account = accountMapper.selectByPrimaryKey(str[0]);
-            if (!accountIds.contains(account.getId())) {
-                accountIds.add(account.getId());
-                scanId = historyService.insertScanHistory(account);
+            List<String> groupList = accountGroupMap.get(str[0]);
+            if(groupList == null){
+                groupList = new ArrayList<>();
+                groupList.add(str[1]);
+                accountGroupMap.put(str[0],groupList);
+            }else{
+                groupList.add(str[1]);
             }
-            this.scanGroups(account, scanId, str[1]);
+        }
+        Set<String> keySet = accountGroupMap.keySet();
+        for (String key : keySet){
+            List<String> groupIds = accountGroupMap.get(key);
+            AccountWithBLOBs account = accountMapper.selectByPrimaryKey(key);
+            scanId = historyService.insertScanHistory(account);
+            this.scanGroups(account, scanId, groupIds);
         }
     }
 
@@ -610,6 +617,19 @@ public class RuleService {
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
+    }
+
+    private void scanGroups(AccountWithBLOBs account, Integer scanId, List<String> groupIds){
+        try {
+            String messageOrderId = noticeService.createMessageOrder(account);
+            List<RuleDTO> ruleDTOS = extRuleGroupMapper.getRulesByGroupIds(account.getId(), groupIds);
+            for (RuleDTO rule : ruleDTOS) {
+                this.dealTask(rule, account, scanId, messageOrderId);
+            }
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
+        }
+
     }
 
     private void scan(AccountWithBLOBs account) throws Exception {

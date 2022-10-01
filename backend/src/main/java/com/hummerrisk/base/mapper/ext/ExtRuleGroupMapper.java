@@ -13,6 +13,8 @@ public interface ExtRuleGroupMapper {
 
     List<RuleDTO> getRules(@Param("accountId") String accountId, @Param("groupId") String groupId);
 
+    List<RuleDTO> getRulesByGroupIds(@Param("accountId") String accountId, @Param("groupIds") List<String> groupIds);
+
     List<String> getRuleGroup(@Param("accountId") String accountId);
 
 }
