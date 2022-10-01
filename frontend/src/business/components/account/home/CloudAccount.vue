@@ -5,18 +5,17 @@
           <table-header :condition.sync="condition" @search="search"
                            :title="$t('account.cloud_account_list')"
                            @create="create" :createTip="$t('account.create')"
-                           @scan="scan" :scanTip="$t('account.one_scan')"
-                           @validate="validate" :runTip="$t('account.one_validate')"
-                           :show-run="true" :show-scan="true" :show-create="true"/>
+                           @validate="validate" :validateTip="$t('account.one_validate')"
+                           :show-validate="true" :show-create="true"/>
 
         </template>
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
                   :row-class-name="tableRowClassName"
                   @filter-change="filter" @select-all="select" @select="select">
-          <el-table-column type="selection" min-width="5%">
+          <el-table-column type="selection" min-width="2%">
           </el-table-column>
-          <el-table-column type="index" min-width="5%"/>
+          <el-table-column type="index" min-width="2%"/>
           <el-table-column prop="name" :label="$t('account.name')" min-width="12%" show-overflow-tooltip></el-table-column>
           <el-table-column :label="$t('account.cloud_platform')" min-width="10%" show-overflow-tooltip>
             <template v-slot:default="scope">
@@ -279,17 +278,16 @@
                  :visible.sync="scanVisible"
                  class="" width="70%">
         <div v-loading="groupResult.loading">
-          <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAll">{{ $t('account.i18n_sync_all') }}</el-checkbox>
-          <el-card class="box-card el-box-card" v-for="(accountGroup, index) in accountGroups" :key="index">
+          <el-card class="box-card el-box-card">
             <div slot="header" class="clearfix">
               <span>
-                <img :src="require(`@/assets/img/platform/${accountGroup.accountWithBLOBs.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ accountGroup.accountWithBLOBs.pluginName }} {{ $t('rule.rule_set') }} | {{accountGroup.accountWithBLOBs.name}}
+                <img :src="require(`@/assets/img/platform/${accountWithGroup.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+             &nbsp;&nbsp; {{ accountWithGroup.pluginName }} {{ $t('rule.rule_set') }} | {{ accountWithGroup.name }}
               </span>
-              <el-button style="float: right; padding: 3px 0" type="text"  @click="handleCheckAllByAccount(accountGroup, index)">{{ $t('account.i18n_sync_all') }}</el-button>
+              <el-button style="float: right; padding: 3px 0" type="text"  @click="handleCheckAllByAccount">{{ $t('account.i18n_sync_all') }}</el-button>
             </div>
-            <el-checkbox-group v-model="checkedGroups" @change="handleCheckedGroupsChange(accountGroup)">
-              <el-checkbox v-for="(group,index) in accountGroup.groups" :label="accountGroup.accountWithBLOBs.id + '/' + group.id" :value="accountGroup.accountWithBLOBs.id + '/' + group.id" :key="index" border >
+            <el-checkbox-group v-model="checkedGroups">
+              <el-checkbox v-for="(group, index) in groups" :label="group.id" :value="group.id" :key="index" border >
                   {{ group.name }}
               </el-checkbox>
             </el-checkbox-group>
@@ -396,7 +394,11 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
         },
         buttons: [
           {
-            tip: this.$t('account.tuning'), icon: "el-icon-setting", type: "success",
+            tip: this.$t('account.one_scan'), icon: "el-icon-s-promotion", type: "success",
+            exec: this.openScanGroup
+          },
+          {
+            tip: this.$t('account.tuning'), icon: "el-icon-setting", type: "warning",
             exec: this.handleScan
           }, {
             tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
@@ -422,18 +424,13 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
           line: true,
           indentWithTabs: true,
         },
-        checkAll: false,
-        //选中的规则组的acccount/id集合
-        checkedGroups: [],
-        //云账号规则组list分组
-        accountGroups: [],
-        isIndeterminate: true,
-        //云账号规则组拼接可用类型： [acccount/id]
-        groupsSelect: [],
         proxyType: [
           {id: 'Http', value: "Http"},
           {id: 'Https', value: "Https"},
         ],
+        accountWithGroup: {pluginIcon: 'aliyun.png'},
+        checkedGroups: [],
+        groups: [],
         iamStrategyNotSupport: ['hummer-openstack-plugin', 'hummer-vsphere-plugin', 'hummer-nuclei-plugin', 'hummer-server-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin'],
       }
     },
@@ -709,35 +706,12 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
           return '';
         }
       },
-      scan (){
-        if (this.selectIds.size === 0) {
-          this.$warning(this.$t('account.please_choose_account'));
-          return;
-        }
-        for (let accountId of this.selectIds) {
-          for (let item of this.tableData) {
-            if (accountId === item.id) {
-              if (item.status === "INVALID") {
-                this.$warning(this.$t('account.invalid_cloud_account'));
-                return;
-              }
-            }
-          }
-        }
-        this.openScanGroup();
-      },
-      openScanGroup() {
+      openScanGroup(account) {
+        this.accountWithGroup = account;
+        localStorage.setItem(ACCOUNT_ID, account.id);
+        localStorage.setItem(ACCOUNT_NAME, account.name);
+        this.initGroups(account.pluginId);
         this.scanVisible = true;
-        for (let item of this.tableData) {
-          for (let id of this.selectIds) {
-            if (id===item.id) {
-              localStorage.setItem(ACCOUNT_ID, item.id);
-              localStorage.setItem(ACCOUNT_NAME, item.name);
-              break;
-            }
-          }
-        }
-        this.initGroups();
       },
       scanGroup () {
         let account = this.$t('account.one_scan') + this.$t('account.cloud_account');
@@ -745,22 +719,15 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              let formData = new FormData();
               if (this.checkedGroups.length === 0) {
                 this.$warning(this.$t('account.please_choose_rule_group'));
                 return;
               }
-              formData.append('scanCheckedGroups', new Blob([JSON.stringify(Array.from(this.checkedGroups))], {
-                type: "application/json"
-              }));
-              this.groupResult = this.$request({
-                method: 'POST',
-                url: "/rule/scan",
-                data: formData,
-                headers: {
-                  'Content-Type': undefined
-                }
-              }, () => {
+              let params = {
+                accountId: this.accountWithGroup.id,
+                groups: this.checkedGroups
+              }
+              this.groupResult = this.$post("/rule/scan", params, () => {
                 this.$success(this.$t('account.i18n_hr_create_success'));
                 this.scanVisible = false;
                 this.$router.push({
@@ -796,64 +763,10 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
           }
         })
       },
-      handleCheckAllByAccount(val, index) {
-        let arr = [];
-        if (val) {
-          for (let obj of val.groups) {
-            arr.push(val.accountWithBLOBs.id + "/" + obj.id);
-          }
-        }
-        let concatArr = this.checkedGroups.concat(arr);
-        this.checkedGroups = !this.isContain(this.checkedGroups, arr) ? Array.from(concatArr) : this.checkedGroups.filter(n => !arr.toString().includes(n));
-        this.checkAll = this.checkedGroups.length === this.groupsSelect.length;
-        this.isIndeterminate = this.checkedGroups.length > 0 && this.checkedGroups.length < this.groupsSelect.length;
-      },
-      handleCheckAll() {
-        this.checkedGroups = this.checkedGroups.length === 0 ? this.groupsSelect : [];
-        this.checkAll = this.checkedGroups.length === this.groupsSelect.length;
-        this.isIndeterminate = this.checkedGroups.length > 0 && this.checkedGroups.length < this.groupsSelect.length;
-      },
-      handleCheckedGroupsChange(value) {
-        let checkedCount = value.checkedGroups.length;
-        this.checkAll = checkedCount === this.groupsSelect.length;
-        this.isIndeterminate = checkedCount > 0 && checkedCount < this.groupsSelect.length;
-      },
-      initGroups() {
-        let formData = new FormData();
-        formData.append('selectIds', new Blob([JSON.stringify(Array.from(this.selectIds))], {
-          type: "application/json"
-        }));
-        this.result = this.$request({
-          method: 'POST',
-          url: "/rule/groups",
-          data: formData,
-          headers: {
-            'Content-Type': undefined
-          }
-        }, (res) => {
-          this.accountGroups = res.data;
-          for (let item of this.accountGroups) {
-            let accountGroup = {accountId: item.accountWithBLOBs.id, checkedGroups: []};
-            let checkedGroups = [];
-            for(let group of item.groups) {
-              checkedGroups.push(item.accountWithBLOBs.id + "/" + group.id);
-              this.checkedGroups.push(item.accountWithBLOBs.id + "/" + group.id);
-              this.groupsSelect.push(item.accountWithBLOBs.id + "/" + group.id);
-            }
-            accountGroup.checkedGroups = checkedGroups;
-            item.checkedGroups = checkedGroups;
-          }
+      initGroups(pluginId) {
+        this.result = this.$get("/rule/groupsByAccountId/" + pluginId,response => {
+          this.groups = response.data;
         });
-      },
-      isContain (arr1, arr2) {
-        for (var i = arr2.length - 1; i >= 0; i--) {
-          for (let obj of arr1) {
-            if(obj === arr2[i]){
-              return true;
-            }
-          }
-        }
-        return false;
       },
       addAccount (addAccountForm) {
         let newParam = { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] };
@@ -865,6 +778,19 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
             parameter.splice(i, 1);
             return;
           }
+        }
+      },
+      handleCheckAllByAccount() {
+        if (this.checkedGroups.length === this.groups.length) {
+          this.checkedGroups = [];
+        } else {
+          let arr = [];
+          this.checkedGroups = [];
+          for (let group of this.groups) {
+            arr.push(group.id);
+          }
+          let concatArr = this.checkedGroups.concat(arr);
+          this.checkedGroups = Array.from(concatArr);
         }
       },
     },
@@ -921,5 +847,8 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
   /deep/ :focus{outline:0;}
   .el-box-card {
     margin: 10px 0;
+  }
+  .el-box-card >>> .el-checkbox {
+    margin: 5px 0;
   }
 </style>

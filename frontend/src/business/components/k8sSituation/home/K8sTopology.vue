@@ -130,7 +130,17 @@ export default {
         let k8sTopology = response.data.k8sTopology;
         let edgesTopology = response.data.edgesTopology;
         for(let obj of k8sTopology){
-          obj = Object.assign(obj, {color: { background: "#2458ae" }});
+          if (obj.type === 'Namespace') {
+            obj = Object.assign(obj, {shape: "image", image: require(`@/assets/img/vis/k8s/namespace.png`)});
+          } else if (obj.type === 'Pod') {
+            obj = Object.assign(obj, {shape: "image", image: require(`@/assets/img/vis/k8s/pod.png`)});
+          } else if (obj.type === 'Node') {
+            obj = Object.assign(obj, {shape: "image", image: require(`@/assets/img/vis/k8s/node.png`)});
+          } else if (obj.type === 'Deployment') {
+            obj = Object.assign(obj, {shape: "image", image: require(`@/assets/img/vis/k8s/deployment.png`)});
+          } else if (obj.type === 'Service') {
+            obj = Object.assign(obj, {shape: "image", image: require(`@/assets/img/vis/k8s/service.png`)});
+          }
         }
         this.nodesArray = this.nodesArray.concat(k8sTopology);
         let k8sNode = [

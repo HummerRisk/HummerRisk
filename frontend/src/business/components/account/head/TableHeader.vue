@@ -10,12 +10,9 @@
       <span class="operate-button">
         <table-button  v-if="showCreate" icon="el-icon-circle-plus-outline"
                          :content="createTip" @click="create"/>
-        <table-button v-if="showScan" icon="el-icon-video-play"
-                         type="success"
-                         :content="scanTip" @click="scan"/>
-        <table-button v-if="showRun" icon="el-icon-circle-check"
+        <table-button v-if="showValidate" icon="el-icon-circle-check"
                       type="primary"
-                      :content="runTip" @click="validate"/>
+                      :content="validateTip" @click="validate"/>
 
         <slot name="button"></slot>
       </span>
@@ -47,11 +44,7 @@ export default {
         type: Boolean,
         default: false
       },
-      showScan: {
-        type: Boolean,
-        default: false
-      },
-      showRun: {
+      showValidate: {
         type: Boolean,
         default: false
       },
@@ -64,13 +57,7 @@ export default {
           return this.$t('commons.create');
         }
       },
-      scanTip: {
-        type: String,
-        default() {
-          return this.$t('account.scan');
-        }
-      },
-      runTip: {
+      validateTip: {
         type: String,
         default() {
           return this.$t('account.validate');
@@ -90,9 +77,6 @@ export default {
       },
       create() {
         this.$emit('create');
-      },
-      scan() {
-        this.$emit('scan');
       },
       validate() {
         this.$emit('validate')

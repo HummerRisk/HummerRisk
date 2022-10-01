@@ -126,36 +126,6 @@
         ORDER BY t.id desc
     </select>
 
-    <select id="getRulesByGroupIds" resultMap="com.hummerrisk.base.mapper.ext.ExtRuleMapper.BaseResultMap2">
-        SELECT
-           DISTINCT
-            t.id,
-            t.name,
-            t.status,
-            t.severity,
-            t.description,
-            t.script,
-            IFNULL (t1.`parameter`, t.`parameter`) as parameter,
-            CASE WHEN t1.`parameter` IS NOT NULL
-                     THEN true
-                 ELSE false
-                END AS isSaveParam,
-            t.plugin_id as plugin_id,
-            t.plugin_name as plugin_name,
-            t.plugin_icon as plugin_icon,
-            t.last_modified as last_modified,
-            t.scan_type as scan_type,
-            t1.regions
-        FROM rule t
-                 LEFT JOIN rule_account_parameter t1 ON t.id = t1.rule_id AND t1.account_id = #{accountId}
-                 LEFT JOIN rule_group_mapping t2 ON t.id = t2.rule_id
-        WHERE t2.group_id in
-             <foreach collection="groupIds" item="groupId" separator="," open="(" close=")">
-                 #{groupId}
-            </foreach>
-        ORDER BY t.id desc
-    </select>
-
     <select id="getPluginId">
         SELECT t.plugin_id
         FROM rule t
