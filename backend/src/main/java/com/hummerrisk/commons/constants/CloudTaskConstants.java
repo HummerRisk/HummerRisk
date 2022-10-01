@@ -78,8 +78,8 @@ public class CloudTaskConstants {
     public final static String[] BAIDU_RESOURCE_TYPE = {"", "", ""};
 
     public final static String policy = "policies:\n" +
-            "    - name: all-resources\n" +
-            "      resource: {resourceType}";
+                                        "    - name: all-resources\n" +
+                                        "      resource: {resourceType}";
 
     public final static String CUSTODIAN_RUN_RESULT_FILE = "custodian-run.log";
     public final static String METADATA_RESULT_FILE = "metadata.json";

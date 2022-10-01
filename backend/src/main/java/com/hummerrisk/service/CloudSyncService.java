@@ -47,6 +47,10 @@ public class CloudSyncService {
     private ProxyMapper proxyMapper;
 
     public void sync(String accountId) throws Exception {
+
+        //先清理后插入
+        deleteResourceSync(accountId);
+
         CloudResourceSync cloudResourceSync = new CloudResourceSync();
         AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
         String id = UUIDUtil.newUUID();
@@ -189,7 +193,25 @@ public class CloudSyncService {
     }
 
     public void deleteResourceSync(String accountId) throws Exception {
-        //先清理后删除
+        CloudResourceSyncExample cloudResourceSyncExample = new CloudResourceSyncExample();
+        cloudResourceSyncExample.createCriteria().andAccountIdEqualTo(accountId);
+        cloudResourceSyncMapper.deleteByExample(cloudResourceSyncExample);
+
+        CloudResourceSyncItemExample cloudResourceSyncItemExample = new CloudResourceSyncItemExample();
+        cloudResourceSyncItemExample.createCriteria().andAccountIdEqualTo(accountId);
+        cloudResourceSyncItemMapper.deleteByExample(cloudResourceSyncItemExample);
+
+        CloudResourceSyncItemLogExample cloudResourceSyncItemLogExample = new CloudResourceSyncItemLogExample();
+        cloudResourceSyncItemLogExample.createCriteria().andAccountIdEqualTo(accountId);
+        cloudResourceSyncItemLogMapper.deleteByExample(cloudResourceSyncItemLogExample);
+
+        CloudResourceExample cloudResourceExample = new CloudResourceExample();
+        cloudResourceExample.createCriteria().andAccountIdEqualTo(accountId);
+        cloudResourceMapper.deleteByExample(cloudResourceExample);
+
+        CloudResourceItemExample cloudResourceItemExample = new CloudResourceItemExample();
+        cloudResourceItemExample.createCriteria().andAccountIdEqualTo(accountId);
+        cloudResourceItemMapper.deleteByExample(cloudResourceItemExample);
     }
 
     public void SyncResources () throws Exception {

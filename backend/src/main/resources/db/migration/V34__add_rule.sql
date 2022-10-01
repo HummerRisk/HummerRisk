@@ -166,6 +166,7 @@ CREATE TABLE IF NOT EXISTS `cloud_resource_sync_item` (
 CREATE TABLE IF NOT EXISTS `cloud_resource_sync_item_log` (
     `id`                           int(11)             NOT NULL AUTO_INCREMENT,
     `sync_item_id`                 varchar(50)         DEFAULT NULL COMMENT '任务项ID',
+    `account_id`                   varchar(50)         DEFAULT NULL COMMENT '云账号ID',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
     `operation`                    varchar(1024)       DEFAULT NULL COMMENT '操作内容',
