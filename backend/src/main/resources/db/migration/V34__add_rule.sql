@@ -134,3 +134,81 @@ INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('44343a84-39e2-
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('7d323895-f07b-4845-8b3d-01c78180f270', @groupId8);
 
 
+CREATE TABLE IF NOT EXISTS `cloud_resource_sync` (
+    `id`                            varchar(50)           NOT NULL COMMENT '任务ID',
+    `status`                        varchar(20)           DEFAULT NULL COMMENT '状态',
+    `apply_user`                    varchar(50)           DEFAULT NULL COMMENT '申请人',
+    `create_time`                   bigint(13)            DEFAULT NULL COMMENT '创建时间',
+    `account_id`                    varchar(50)           DEFAULT NULL COMMENT '云账号ID',
+    `plugin_id`                     varchar(40)           DEFAULT NULL COMMENT '插件ID',
+    `plugin_name`                   varchar(128)          DEFAULT NULL COMMENT '云平台名称',
+    `plugin_icon`                   varchar(128)          DEFAULT NULL COMMENT '云平台图标',
+    `resource_types`                varchar(256)          DEFAULT NULL COMMENT '资源类型',
+    `resources_sum`                 bigint(13)            DEFAULT 0 COMMENT '资源总量',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `cloud_resource_sync_item` (
+    `id`                           varchar(50)         NOT NULL,
+    `sync_id`                      varchar(50)         DEFAULT NULL COMMENT '任务ID',
+    `details`                      longtext            DEFAULT NULL COMMENT 'policy内容',
+    `status`                       varchar(20)         DEFAULT NULL COMMENT '状态',
+    `count`                        int(11)             DEFAULT '1'  COMMENT '数量',
+    `region_id`                    varchar(128)        DEFAULT NULL COMMENT '区域标识',
+    `region_name`                  varchar(128)        DEFAULT NULL COMMENT '区域名称',
+    `account_id`                   varchar(50)         DEFAULT NULL COMMENT '云账号ID',
+    `account_url`                  varchar(128)        DEFAULT NULL COMMENT '云账号图标',
+    `account_label`                varchar(128)        DEFAULT NULL COMMENT '云账号名称',
+    `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `cloud_resource_sync_item_log` (
+    `id`                           int(11)             NOT NULL AUTO_INCREMENT,
+    `sync_item_id`                 varchar(50)         DEFAULT NULL COMMENT '任务项ID',
+    `resource_id`                  varchar(50)         DEFAULT NULL COMMENT '资源ID',
+    `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
+    `operation`                    varchar(1024)       DEFAULT NULL COMMENT '操作内容',
+    `output`                       mediumtext          DEFAULT NULL COMMENT '输出',
+    `result`                       tinyint(1)          DEFAULT NULL COMMENT '结果',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `cloud_resource` (
+    `id`                         varchar(50)         NOT NULL,
+    `resource_name`              varchar(256)        DEFAULT NULL COMMENT '资源名称',
+    `dir_name`                   varchar(128)        DEFAULT NULL COMMENT '目录名称',
+    `resource_status`            varchar(45)         DEFAULT NULL COMMENT '资源状态',
+    `resource_type`              varchar(64)         DEFAULT NULL COMMENT '资源类型',
+    `custodian_run_log`          longtext            DEFAULT NULL COMMENT 'custodian-run.log',
+    `metadata`                   longtext            DEFAULT NULL COMMENT 'metadata.json',
+    `resources`                  longtext            DEFAULT NULL COMMENT 'resources.json',
+    `resources_sum`              bigint(13)          DEFAULT 0 COMMENT '资源总量',
+    `plugin_id`                  varchar(40)         DEFAULT NULL COMMENT '插件名称',
+    `plugin_name`                varchar(40)         DEFAULT NULL COMMENT '云平台名称',
+    `plugin_icon`                varchar(128)        DEFAULT NULL COMMENT '云平台图标',
+    `account_id`                 varchar(50)         DEFAULT NULL COMMENT '云账号ID',
+    `region_id`                  varchar(128)        DEFAULT NULL COMMENT '区域标识',
+    `region_name`                varchar(128)        DEFAULT NULL COMMENT '区域名称',
+    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `cloud_resource_item` (
+    `id`                         varchar(50)         NOT NULL,
+    `resource_id`                varchar(50)         DEFAULT NULL COMMENT 'resource主键ID',
+    `hummer_id`                  varchar(256)        DEFAULT NULL COMMENT '资源ID（唯一标识）',
+    `resource_type`              varchar(64)         DEFAULT NULL COMMENT '资源类型',
+    `plugin_id`                  varchar(40)         DEFAULT NULL COMMENT '插件名称',
+    `plugin_name`                varchar(40)         DEFAULT NULL COMMENT '云平台名称',
+    `plugin_icon`                varchar(128)        DEFAULT NULL COMMENT '云平台图标',
+    `account_id`                 varchar(50)         DEFAULT NULL COMMENT '云账号ID',
+    `region_id`                  varchar(128)        DEFAULT NULL COMMENT '区域标识',
+    `region_name`                varchar(128)        DEFAULT NULL COMMENT '区域名称',
+    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
+    `resource`                   longtext            DEFAULT NULL COMMENT '资源JSON',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
