@@ -6,11 +6,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
+import com.hummerrisk.base.mapper.ext.ExtCloudResourceSyncMapper;
 import com.hummerrisk.commons.constants.CloudTaskConstants;
 import com.hummerrisk.commons.constants.CommandEnum;
 import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.utils.*;
+import com.hummerrisk.controller.request.cloudResource.CloudResourceSyncRequest;
 import com.hummerrisk.i18n.Translator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,8 @@ public class CloudSyncService {
     @Resource
     private CloudResourceSyncMapper cloudResourceSyncMapper;
     @Resource
+    private ExtCloudResourceSyncMapper extCloudResourceSyncMapper;
+    @Resource
     private CloudResourceSyncItemMapper cloudResourceSyncItemMapper;
     @Resource
     private CloudResourceSyncItemLogMapper cloudResourceSyncItemLogMapper;
@@ -45,6 +49,11 @@ public class CloudSyncService {
     private CommonThreadPool commonThreadPool;
     @Resource
     private ProxyMapper proxyMapper;
+
+
+    public List<CloudResourceSync> getCloudResourceSyncLogs(CloudResourceSyncRequest resourceSyncRequest){
+        return extCloudResourceSyncMapper.selectByRequest(resourceSyncRequest);
+    }
 
     public void sync(String accountId) throws Exception {
 
