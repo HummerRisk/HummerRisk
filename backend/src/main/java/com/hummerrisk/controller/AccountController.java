@@ -2,6 +2,7 @@ package com.hummerrisk.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.hummerrisk.base.domain.Account;
 import com.hummerrisk.base.domain.AccountWithBLOBs;
 import com.hummerrisk.base.domain.RuleAccountParameter;
 import com.hummerrisk.commons.constants.CloudAccountConstants;
@@ -47,6 +48,13 @@ public class AccountController {
         CloudAccountRequest request = new CloudAccountRequest();
         request.setStatus(CloudAccountConstants.Status.VALID.name());
         return accountService.getCloudAccountList(request);
+    }
+
+    @I18n
+    @ApiOperation(value = "规则组获取云账号")
+    @GetMapping("listByGroup/{pluginId}")
+    public List<Account> listByGroup(@PathVariable String pluginId) {
+        return accountService.listByGroup(pluginId);
     }
 
     @I18n
@@ -203,6 +211,13 @@ public class AccountController {
     public Pager<List<Map<String, Object>>> historyDiffList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, accountService.historyDiffList(params));
+    }
+
+    @I18n
+    @ApiOperation(value = "规则组检测云账号")
+    @GetMapping("scanByGroup/{groupId}/{accountId}")
+    public void scanByGroup(@PathVariable String groupId, @PathVariable String accountId) {
+        accountService.scanByGroup(groupId, accountId);
     }
 
 }

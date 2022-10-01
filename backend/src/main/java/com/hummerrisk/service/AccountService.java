@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -56,6 +57,13 @@ public class AccountService {
 
     public List<AccountDTO> getCloudAccountList(CloudAccountRequest request) {
         return extAccountMapper.getCloudAccountList(request);
+    }
+
+    public List<Account> listByGroup(String pluginId) {
+        AccountExample example = new AccountExample();
+        example.createCriteria().andPluginIdEqualTo(pluginId).andStatusEqualTo("VALID");
+        List<Account> accounts = accountMapper.selectByExample(example);
+        return accounts;
     }
 
     public List<AccountDTO> vulnList(CloudAccountRequest request) {
@@ -375,6 +383,10 @@ public class AccountService {
             }
         }
         return list;
+    }
+
+    public void scanByGroup(String groupId, String accountId){
+
     }
 
 }

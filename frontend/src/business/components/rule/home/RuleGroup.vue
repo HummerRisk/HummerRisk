@@ -54,11 +54,13 @@
                     <i class="el-icon-arrow-down el-icon--right"></i>
                   </span>
                     <el-dropdown-menu slot="dropdown" v-if="!!data.flag">
+                      <el-dropdown-item command="handleScan">{{ $t('account.scan') }}</el-dropdown-item>
                       <el-dropdown-item command="handleInfo">{{ $t('commons.detail') }}</el-dropdown-item>
                       <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
                       <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
                     </el-dropdown-menu>
                     <el-dropdown-menu slot="dropdown" v-if="!data.flag">
+                      <el-dropdown-item command="handleScan">{{ $t('account.scan') }}</el-dropdown-item>
                       <el-dropdown-item command="handleEdit">{{ $t('commons.edit') }}</el-dropdown-item>
                       <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
                       <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
@@ -248,6 +250,31 @@
       </el-drawer>
       <!--rule bind-->
 
+      <!--Create sync-->
+      <el-drawer class="rtl" :title="$t('account.scan_group_quick')" :visible.sync="scanVisible" size="60%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true">
+        <el-form :model="scanForm" label-position="right" label-width="150px" size="small" ref="form">
+          <el-form-item :label="$t('account.cloud_account')" :rules="{required: true, message: $t('account.cloud_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="scanForm.id" :placeholder="$t('account.please_choose_account')">
+              <el-option
+                v-for="item in accounts"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+                <img :src="require(`@/assets/img/platform/${item.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                &nbsp;&nbsp; {{ item.name }}
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <div style="margin: 10px;">
+          <dialog-footer
+            @cancel="scanVisible = false"
+            @confirm="saveScan"/>
+        </div>
+      </el-drawer>
+      <!--Create sync-->
+
     </main-container>
 </template>
 
@@ -318,6 +345,10 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         },
         buttonsN: [
           {
+            tip: this.$t('account.scan'), icon: "el-icon-s-promotion", type: "danger",
+            exec: this.handleScan
+          },
+          {
             tip: this.$t('commons.detail'), icon: "el-icon-edit-outline", type: "primary",
             exec: this.handleInfo
           },
@@ -331,6 +362,10 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
           },
         ],
         buttons: [
+          {
+            tip: this.$t('account.scan'), icon: "el-icon-s-promotion", type: "danger",
+            exec: this.handleScan
+          },
           {
             tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
             exec: this.handleEdit
@@ -356,6 +391,9 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         cloudValue: [],
         cloudData: [],
         groupId: '',
+        scanVisible: false,
+        scanForm: {},
+        accounts: [],
       }
     },
 
@@ -404,6 +442,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         this.infoVisible = false;
         this.listVisible = false;
         this.bindVisible = false;
+        this.scanVisible = false;
         this.search();
       },
       handleDelete(item) {
@@ -487,6 +526,9 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
       },
       handleCommand(command, data) {
         switch (command) {
+          case "handleScan":
+            this.handleScan(data);
+            break;
           case "handleInfo":
             this.handleInfo(data);
             break;
@@ -538,6 +580,28 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
       },
       filterMethod(query, item) {
         return item.label.indexOf(query) > -1;
+      },
+      handleScan(item) {
+        let url = "/account/listByGroup/" + item.pluginId;
+        this.result = this.$get(url, response => {
+          if (response.data != undefined && response.data != null) {
+            this.accounts = response.data;
+            this.groupId = item.id;
+            this.scanVisible = true;
+          }
+        });
+      },
+      saveScan() {
+        let url = "/account/scanByGroup/" + this.groupId + "/" + this.scanForm.id;
+        this.result = this.$get(url, response => {
+          if (response.data != undefined && response.data != null) {
+            this.scanVisible = false;
+            this.$success(this.$t('account.i18n_hr_create_success'));
+            this.$router.push({
+              path: '/account/result',
+            }).catch(error => error);
+          }
+        });
       },
     },
     created() {
