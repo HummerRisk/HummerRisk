@@ -267,7 +267,7 @@ public class K8sController {
     @I18n
     @ApiOperation(value = "拓扑图资源")
     @GetMapping("k8sTopology/{cloudNativeId}")
-    public List<Map<String, Object>> k8sTopology(@PathVariable String cloudNativeId) {
+    public K8sTopologyDTO k8sTopology(@PathVariable String cloudNativeId) {
         return k8sService.k8sTopology(cloudNativeId);
     }
 

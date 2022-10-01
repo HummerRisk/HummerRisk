@@ -56,27 +56,27 @@ export default {
       //   节点数组
       nodesArray: [
         {
-          id: 15,
+          id: 1,
           label: "Namespace",
           color: { background: "pink" },
         },
         {
-          id: 16,
+          id: 2,
           label: "Pod",
           color: { background: "pink" },
         },
         {
-          id: 17,
+          id: 3,
           label: "Node",
           color: { background: "pink" },
         },
         {
-          id: 18,
+          id: 4,
           label: "Deployment",
           color: { background: "pink" },
         },
         {
-          id: 19,
+          id: 5,
           label: "Service",
           color: { background: "pink" },
         },
@@ -94,144 +94,8 @@ export default {
         this.accountId = this.items[0].id;
         this.currentAccount = this.items[0].name;
         this.pluginIcon = this.items[0].pluginIcon;
-        let url = "/k8s/k8sTopology/" + this.accountId;
-        this.$get(url,response => {
-          let data = response.data;
-          this.nodesArray = this.nodesArray.concat(data);
-          let k8sNode = [
-            {
-              id: this.accountId,
-              label: this.currentAccount,
-              shape: "image",
-              image: require(`@/assets/img/platform/k8s.png`)
-            }
-          ];
-          this.nodesArray = this.nodesArray.concat(k8sNode);
-          this.edgesArray = [
-            { from: this.accountId, to: 15, label: "step2" },
-            { from: this.accountId, to: 16, label: "ddd" },
-            { from: this.accountId, to: 17, label: "ddd" },
-            { from: this.accountId, to: 18, label: "step1" },
-            { from: this.accountId, to: 19, label: "step1" },
-          ];
-          let _this = this;
-          //1.创建一个nodes数组
-          _this.nodes = new Vis.DataSet(_this.nodesArray);
-          //2.创建一个edges数组
-          _this.edges = new Vis.DataSet(_this.edgesArray);
-          _this.container = document.getElementById("network_id");
-          _this.data = {
-            nodes: _this.nodes,
-            edges: _this.edges
-          };
-          _this.options = {
-            autoResize: true, //网络将自动检测其容器的大小调整，并相应地重绘自身
-            locale: "cn", //语言设置：工具栏显示中文
-            //设置语言
-            locales: {
-              cn: {
-                //工具栏中文翻译
-                edit: this.$t('vis.edit'),
-                del: this.$t('vis.del'),
-                back: this.$t('vis.back'),
-                addNode: this.$t('vis.addNode'),
-                addEdge: this.$t('vis.addEdge'),
-                editNode: this.$t('vis.editNode'),
-                editEdge: this.$t('vis.editEdge'),
-                addDescription: this.$t('vis.addDescription'),
-                edgeDescription: this.$t('vis.edgeDescription'),
-                editEdgeDescription: this.$t('vis.editEdgeDescription'),
-                createEdgeError: this.$t('vis.createEdgeError'),
-                deleteClusterError: this.$t('vis.deleteClusterError'),
-                editClusterError: this.$t('vis.editClusterError'),
-              }
-            },
-
-            // 设置节点样式
-            nodes: {
-              shape: "circle",
-              size: 50,
-              font: {
-                //字体配置
-                size: 32
-              },
-              color: {
-                // border: "#2B7CE9", //节点边框颜色
-                background: "#97C2FC", //节点背景颜色
-                highlight: {
-                  //节点选中时状态颜色
-                  border: "#2B7CE9",
-                  background: "#D2E5FF"
-                },
-                hover: {
-                  //节点鼠标滑过时状态颜色
-                  border: "#2B7CE9",
-                  background: "#D2E5FF"
-                }
-              },
-              borderWidth: 0, //节点边框宽度，单位为px
-              borderWidthSelected: 2 //节点被选中时边框的宽度，单位为px
-            },
-            // 边线配置
-            edges: {
-              width: 1,
-              length: 260,
-              color: {
-                color: "#848484",
-                highlight: "#848484",
-                hover: "#848484",
-                inherit: "from",
-                opacity: 1.0
-              },
-              shadow: true,
-              smooth: {
-                //设置两个节点之前的连线的状态
-                enabled: true //默认是true，设置为false之后，两个节点之前的连线始终为直线，不会出现贝塞尔曲线
-              },
-              arrows: { to: true } //箭头指向to
-            },
-            //计算节点之前斥力，进行自动排列的属性
-            physics: {
-              enabled: true, //默认是true，设置为false后，节点将不会自动改变，拖动谁谁动。不影响其他的节点
-              barnesHut: {
-                gravitationalConstant: -4000,
-                centralGravity: 0.3,
-                springLength: 120,
-                springConstant: 0.04,
-                damping: 0.09,
-                avoidOverlap: 0
-              }
-            },
-            //用于所有用户与网络的交互。处理鼠标和触摸事件以及导航按钮和弹出窗口
-            interaction: {
-              dragNodes: true, //是否能拖动节点
-              dragView: true, //是否能拖动画布
-              hover: true, //鼠标移过后加粗该节点和连接线
-              multiselect: true, //按 ctrl 多选
-              selectable: true, //是否可以点击选择
-              selectConnectedEdges: true, //选择节点后是否显示连接线
-              hoverConnectedEdges: true, //鼠标滑动节点后是否显示连接线
-              zoomView: true //是否能缩放画布
-            },
-            //操作模块:包括 添加、删除、获取选中点、设置选中点、拖拽系列、点击等等
-            manipulation: {
-              enabled: true, //该属性表示可以编辑，出现编辑操作按钮
-              addNode: true,
-              addEdge: true,
-              // editNode: undefined,
-              editEdge: true,
-              deleteNode: true,
-              deleteEdge: true
-            }
-          };
-          _this.network = new Vis.Network(
-            _this.container,
-            _this.data,
-            _this.options
-          );
-        });
+        this.search();
       })
-      this.search();
     },
     resetAllNodes() {
       let _this = this;
@@ -261,6 +125,147 @@ export default {
       this.pluginIcon = pluginIcon;
     },
     async search() {
+      let url = "/k8s/k8sTopology/" + this.accountId;
+      await this.$get(url,response => {
+        let k8sTopology = response.data.k8sTopology;
+        let edgesTopology = response.data.edgesTopology;
+        for(let obj of k8sTopology){
+          obj = Object.assign(obj, {color: { background: "#2458ae" }});
+        }
+        this.nodesArray = this.nodesArray.concat(k8sTopology);
+        let k8sNode = [
+          {
+            id: this.accountId,
+            label: this.currentAccount,
+            shape: "image",
+            image: require(`@/assets/img/platform/k8s.png`)
+          }
+        ];
+        this.nodesArray = this.nodesArray.concat(k8sNode);
+        this.edgesArray = [
+          { from: this.accountId, to: 1, label: "关联" },
+          { from: this.accountId, to: 2, label: "关联" },
+          { from: this.accountId, to: 3, label: "关联" },
+          { from: this.accountId, to: 4, label: "关联" },
+          { from: this.accountId, to: 5, label: "关联" },
+        ];
+        this.edgesArray = this.edgesArray.concat(edgesTopology);
+        let _this = this;
+        //1.创建一个nodes数组
+        _this.nodes = new Vis.DataSet(_this.nodesArray);
+        //2.创建一个edges数组
+        _this.edges = new Vis.DataSet(_this.edgesArray);
+        _this.container = document.getElementById("network_id");
+        _this.data = {
+          nodes: _this.nodes,
+          edges: _this.edges
+        };
+        _this.options = {
+          autoResize: true, //网络将自动检测其容器的大小调整，并相应地重绘自身
+          locale: "cn", //语言设置：工具栏显示中文
+          //设置语言
+          locales: {
+            cn: {
+              //工具栏中文翻译
+              edit: this.$t('vis.edit'),
+              del: this.$t('vis.del'),
+              back: this.$t('vis.back'),
+              addNode: this.$t('vis.addNode'),
+              addEdge: this.$t('vis.addEdge'),
+              editNode: this.$t('vis.editNode'),
+              editEdge: this.$t('vis.editEdge'),
+              addDescription: this.$t('vis.addDescription'),
+              edgeDescription: this.$t('vis.edgeDescription'),
+              editEdgeDescription: this.$t('vis.editEdgeDescription'),
+              createEdgeError: this.$t('vis.createEdgeError'),
+              deleteClusterError: this.$t('vis.deleteClusterError'),
+              editClusterError: this.$t('vis.editClusterError'),
+            }
+          },
+
+          // 设置节点样式
+          nodes: {
+            shape: "circle",
+            size: 50,
+            font: {
+              //字体配置
+              size: 32
+            },
+            color: {
+              // border: "#2B7CE9", //节点边框颜色
+              background: "#97C2FC", //节点背景颜色
+              highlight: {
+                //节点选中时状态颜色
+                border: "#2B7CE9",
+                background: "#D2E5FF"
+              },
+              hover: {
+                //节点鼠标滑过时状态颜色
+                border: "#2B7CE9",
+                background: "#D2E5FF"
+              }
+            },
+            borderWidth: 0, //节点边框宽度，单位为px
+            borderWidthSelected: 2 //节点被选中时边框的宽度，单位为px
+          },
+          // 边线配置
+          edges: {
+            width: 1,
+            length: 260,
+            color: {
+              color: "#848484",
+              highlight: "#848484",
+              hover: "#848484",
+              inherit: "from",
+              opacity: 1.0
+            },
+            shadow: true,
+            smooth: {
+              //设置两个节点之前的连线的状态
+              enabled: true //默认是true，设置为false之后，两个节点之前的连线始终为直线，不会出现贝塞尔曲线
+            },
+            arrows: { to: true } //箭头指向to
+          },
+          //计算节点之前斥力，进行自动排列的属性
+          physics: {
+            enabled: true, //默认是true，设置为false后，节点将不会自动改变，拖动谁谁动。不影响其他的节点
+            barnesHut: {
+              gravitationalConstant: -4000,
+              centralGravity: 0.3,
+              springLength: 120,
+              springConstant: 0.04,
+              damping: 0.09,
+              avoidOverlap: 0
+            }
+          },
+          //用于所有用户与网络的交互。处理鼠标和触摸事件以及导航按钮和弹出窗口
+          interaction: {
+            dragNodes: true, //是否能拖动节点
+            dragView: true, //是否能拖动画布
+            hover: true, //鼠标移过后加粗该节点和连接线
+            multiselect: true, //按 ctrl 多选
+            selectable: true, //是否可以点击选择
+            selectConnectedEdges: true, //选择节点后是否显示连接线
+            hoverConnectedEdges: true, //鼠标滑动节点后是否显示连接线
+            zoomView: true //是否能缩放画布
+          },
+          //操作模块:包括 添加、删除、获取选中点、设置选中点、拖拽系列、点击等等
+          manipulation: {
+            enabled: false, //该属性表示可以编辑，出现编辑操作按钮
+            addNode: false,
+            addEdge: false,
+            // editNode: undefined,
+            editEdge: false,
+            deleteNode: false,
+            deleteEdge: false
+          }
+        };
+        _this.network = new Vis.Network(
+          _this.container,
+          _this.data,
+          _this.options
+        );
+      });
     },
   },
 
@@ -268,14 +273,14 @@ export default {
     this.init();
   },
   created() {
-    // 点击事件
+/*    // 点击事件
     this.network.on("click", params => {
       this.network.addEdgeMode();
     });
     // 点击鼠标右键事件
     this.network.on("oncontext", params => {
       this.dialogVisible = true;
-    });
+    });*/
   }
 }
 </script>

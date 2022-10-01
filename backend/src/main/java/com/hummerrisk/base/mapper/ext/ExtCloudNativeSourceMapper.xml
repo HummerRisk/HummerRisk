@@ -293,8 +293,29 @@
         SELECT
             t.id as 'id',
             t.source_name as 'label',
-            CAST('{"background":"yellow"}' as json) as 'color',
             t.source_type as 'type'
+        FROM cloud_native_source as t
+        <where>
+            <if test="cloudNativeId != null and cloudNativeId != ''">
+                and t.cloud_native_id = #{cloudNativeId}
+            </if>
+            and t.source_type in ('Namespace', 'Pod', 'Node', 'Deployment', 'Service')
+        </where>
+        ORDER BY t.update_time DESC
+    </select>
+
+    <select id="edgesTopology" resultType="java.util.Map">
+        SELECT
+        CASE
+            WHEN t.source_type = 'Namespace' THEN 1
+            WHEN t.source_type = 'Pod' THEN 2
+            WHEN t.source_type = 'Node' THEN 3
+            WHEN t.source_type = 'Deployment' THEN 4
+            WHEN t.source_type = 'Service' THEN 5
+        ELSE 1
+        END AS 'from',
+        t.id as 'to',
+        t.source_type as 'label'
         FROM cloud_native_source as t
         <where>
             <if test="cloudNativeId != null and cloudNativeId != ''">

@@ -16,4 +16,6 @@ public interface ExtCloudNativeSourceMapper {
 
     List<Map<String, Object>> k8sTopology(String cloudNativeId);
 
+    List<Map<String, Object>> edgesTopology(String cloudNativeId);
+
 }

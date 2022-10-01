@@ -686,8 +686,11 @@ public class K8sService {
         historyCloudNativeResultMapper.deleteByPrimaryKey(id);
     }
 
-    public List<Map<String, Object>> k8sTopology(String cloudNativeId) {
-        return extCloudNativeSourceMapper.k8sTopology(cloudNativeId);
+    public K8sTopologyDTO k8sTopology(String cloudNativeId) {
+        K8sTopologyDTO dto = new K8sTopologyDTO();
+        dto.setK8sTopology(extCloudNativeSourceMapper.k8sTopology(cloudNativeId));
+        dto.setEdgesTopology(extCloudNativeSourceMapper.edgesTopology(cloudNativeId));
+        return dto;
     }
 
 }
