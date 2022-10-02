@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummerrisk.base.mapper.ext.ExtCloudResourceItemMapper">
+    <resultMap id="BaseResultMap" type="com.hummerrisk.base.domain.CloudResourceItem">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="resource_id" jdbcType="VARCHAR" property="resourceId" />
+        <result column="hummer_id" jdbcType="VARCHAR" property="hummerId" />
+        <result column="resource_type" jdbcType="VARCHAR" property="resourceType" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+        <result column="region_id" jdbcType="VARCHAR" property="regionId" />
+        <result column="region_name" jdbcType="VARCHAR" property="regionName" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+    </resultMap>
+
+    <resultMap id="SummaryResultMap" type="com.hummerrisk.base.domain.CloudResourceSummary">
+        <result column="resource_type" jdbcType="VARCHAR" property="resourceType" />
+        <result column="count" jdbcType="INTEGER" property="count" />
+    </resultMap>
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.pluginId != null'>
+            and t.plugin_id
+            <include refid="condition">
+                <property name="object" value="${condition}.pluginId"/>
+            </include>
+        </if>
+        <if test='${condition}.accountId != null'>
+            and t.account_id
+            <include refid="condition">
+                <property name="object" value="${condition}.accountId"/>
+            </include>
+        </if>
+        <if test='${condition}.pluginName != null'>
+            and t.plugin_name
+            <include refid="condition">
+                <property name="object" value="${condition}.pluginName"/>
+            </include>
+        </if>
+        <if test='${condition}.pluginId != null'>
+            and t.pluginId
+            <include refid="condition">
+                <property name="object" value="${condition}.pluginId"/>
+            </include>
+        </if>
+        <if test='${condition}.resourceType != null'>
+            and t.resource_type
+            <include refid="condition">
+                <property name="object" value="${condition}.resourceType"/>
+            </include>
+        </if>
+    </sql>
+    
+    <select id="selectResourceSummary" resultMap="SummaryResultMap">
+        select resource_type , count(id) as count from cloud_resource_item
+        where 1=1
+        <if test="accountId != null and accountId != ''">
+            and account_id = #{accountId}
+        </if>
+        group by resource_type
+    </select>
+
+    <select id="selectByRequest" resultMap="BaseResultMap" >
+        select id, resource_id, hummer_id, resource_type, plugin_id, plugin_name, plugin_icon, account_id,
+    region_id, region_name, create_time, update_time from cloud_resource_item t
+        where 1=1
+        <if test="request.combine != null">
+            <include refid="combine">
+                <property name="condition" value="request.combine"/>
+                <property name="name" value="request.name"/>
+            </include>
+        </if>
+        <if test="request.name != null and request.name != ''">
+            and t.resource_type like CONCAT('%', #{request.name},'%')
+        </if>
+        order by create_time desc
+    </select>
+</mapper>
