@@ -12,21 +12,42 @@
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
                 :row-class-name="tableRowClassName" @filter-change="filter">
         <el-table-column type="index" min-width="2%"/>
-        <el-table-column prop="operation" :label="$t('k8s.sync_log')" min-width="15%"/>
-        <el-table-column prop="operator" :label="$t('resource.creator')" min-width="15%"/>
-        <el-table-column prop="status" min-width="10%" :label="$t('code.status')">
+        <el-table-column prop="accountId" :label="$t('log.cloud_account_name')" min-width="15%">
           <template v-slot:default="scope">
-            <el-tooltip class="item" effect="dark" :content="scope.row.output" placement="top">
-              <el-tag size="mini" type="success" v-if="scope.row.result">
-                {{ $t('commons.success') }}
-              </el-tag>
-              <el-tag size="mini" type="danger" v-else-if="!scope.row.result">
-                {{ $t('commons.error') }}
-              </el-tag>
-            </el-tooltip>
+              <span><img :src="require(`@/assets/img/platform/${ scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                {{ getAccountName(scope.row.accountId) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="sum" :label="$t('resource.i18n_not_compliance')" min-width="12%"/>
+        <el-table-column prop="resourceTypes" :label="$t('dashboard.resource_type')" min-width="15%"/>
+        <el-table-column prop="status" min-width="10%" :label="$t('code.status')">
+          <template v-slot:default="scope">
+            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary"
+                       v-if="scope.row.status === 'UNCHECKED'">
+              <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+            </el-button>
+            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary"
+                       v-else-if="scope.row.status === 'APPROVED'">
+              <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+            </el-button>
+            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary"
+                       v-else-if="scope.row.status === 'PROCESSING'">
+              <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+            </el-button>
+            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="success"
+                       v-else-if="scope.row.status === 'FINISHED'">
+              <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+            </el-button>
+            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="danger"
+                       v-else-if="scope.row.status === 'ERROR'">
+              <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+            </el-button>
+            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="warning"
+                       v-else-if="scope.row.status === 'WARNING'">
+              <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+            </el-button>
+          </template>
+        </el-table-column>
+        <el-table-column prop="sum" :label="$t('log.data_count')" min-width="12%"/>
         <el-table-column prop="createTime" :label="$t('k8s.sync_time')" min-width="20%" sortable>
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
@@ -45,10 +66,10 @@
     <el-drawer class="rtl" :title="$t('k8s.sync_log_create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
-        <el-form-item :label="$t('k8s.platform')" :rules="{required: true, message: $t('k8s.platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.id" :placeholder="$t('k8s.please_choose_k8s')">
+        <el-form-item :label="$t('log.cloud_account')" :rules="{required: true, message: $t('log.cloud_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.id" :placeholder="$t('log.cloud_account')">
             <el-option
-              v-for="item in k8s"
+              v-for="item in accountList"
               :key="item.id"
               :label="item.name"
               :value="item.id">
@@ -124,6 +145,7 @@ export default {
         }
       ],
       k8s: [],
+      accountList: []
     }
   },
   methods: {
@@ -131,21 +153,27 @@ export default {
       this.form = {};
       this.createVisible = true;
     },
-    initK8s() {
-      this.result = this.$get("/k8s/allCloudNativeList",response => {
-        this.k8s = response.data;
-      });
+    getAccountName(accountId){
+      let result =  this.accountList.filter(item =>{
+        return item.id === accountId
+      })
+      return result.length >0?result[0].name:""
+    },
+    initAccount() {
+      this.$get("/account/allList", response => {
+        this.accountList = response.data
+        this.search()
+      })
     },
     saveSync() {
-      this.result = this.$get("/k8s/syncSource/" + this.form.id,response => {
-        this.$success(this.$t('k8s.notes'));
+      this.result = this.$get("/cloud/sync/sync/" + this.form.id,response => {
         this.search();
         this.handleClose();
       });
     },
     //查询列表
     search() {
-      let url = "/k8s/syncList/" + this.currentPage + "/" + this.pageSize;
+      let url = "/cloud/sync/log/list/" + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -170,7 +198,7 @@ export default {
     },
     init() {
       this.search();
-      this.initK8s();
+      this.initAccount();
     },
     sort(column) {
       _sort(column, this.condition);
