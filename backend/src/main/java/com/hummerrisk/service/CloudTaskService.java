@@ -22,6 +22,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.alibaba.fastjson.JSON.parseArray;
 
@@ -333,6 +334,12 @@ public class CloudTaskService {
 
     }
 
+    public boolean checkRuleTaskStatus(String accountId,String ruleId,String[] status){
+        CloudTaskExample cloudTaskExample = new CloudTaskExample();
+        cloudTaskExample.createCriteria().andAccountIdEqualTo(accountId).andRuleIdEqualTo(ruleId).andStatusIn(Arrays.stream(status).collect(Collectors.toList()));
+        long count = cloudTaskMapper.countByExample(cloudTaskExample);
+        return count>0;
+    }
     public List<CloudAccountQuartzTask> selectQuartzTasks(Map<String, Object> params) {
 
         CloudAccountQuartzTaskExample example = new CloudAccountQuartzTaskExample();

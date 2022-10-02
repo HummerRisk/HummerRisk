@@ -619,7 +619,7 @@ public class RuleService {
 
     private String dealTask(RuleDTO rule, AccountWithBLOBs account, Integer scanId, String messageOrderId) {
         try {
-            if (rule.getStatus()) {
+            if (rule.getStatus()&&!cloudTaskService.checkRuleTaskStatus(account.getId(),rule.getId(),new String[]{CloudTaskConstants.TASK_STATUS.APPROVED.name(),CloudTaskConstants.TASK_STATUS.PROCESSING.name()})){
                 QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
                 BeanUtils.copyBean(quartzTaskDTO, rule);
                 List<SelectTag> selectTags = new LinkedList<>();
