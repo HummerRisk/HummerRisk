@@ -24,21 +24,22 @@ export default {
   },
   methods: {
     init() {
-      this.$get("/image/severityChart", response => {
+      this.$get("/server/severityChart", response => {
         let data = response.data;
+        console.log(data)
         this.options = {
           legend: {},
           tooltip: {},
           dataset: {
-            dimensions: ['product', 'Critical', 'High', 'Medium', 'Low', 'Unknown'],
+            dimensions: ['product', 'High', 'Medium', 'Low'],
             source: data
           },
           xAxis: { type: 'category' },
           yAxis: {},
           // Declare several bar series, each will be mapped
           // to a column of dataset.source by default.
-          series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }, { type: 'bar' }, { type: 'bar' }],
-          color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4', '#8B0000', '#FF4D4D', '#FF8000', '#336D9F']
+          series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }],
+          color: ['#11cfae', '#009ef0', '#627dec', '#893fdc']
         };
       });
     },

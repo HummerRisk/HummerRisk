@@ -934,6 +934,7 @@ export default {
     batch_success: 'Batch setting is successful, the voucher has been automatically assigned',
     batch_error: 'Batch setup failed, there is no host that needs to be assigned',
     is_severity: 'Is it safe',
+    server_group: 'Host group',
   },
   image: {
     image_repo: 'Mirror repository',

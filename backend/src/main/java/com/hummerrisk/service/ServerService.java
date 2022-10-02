@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author harris
@@ -552,6 +553,27 @@ public class ServerService {
         } catch (Exception e) {
             throw new IOException(e.getMessage(), e);
         }
+    }
+
+    public Map<String, Object> topInfo(Map<String, Object> params) {
+        return extServerMapper.topInfo(params);
+    }
+
+    public List<Map<String, Object>> serverChart() {
+        return extServerResultMapper.serverChart();
+    }
+
+    public List<Map<String, Object>> severityChart() {
+        return extServerResultMapper.severityChart();
+    }
+
+    public CodeChartDTO serverLineChart(Map<String, Object> params) {
+        CodeChartDTO codeChartDTO = new CodeChartDTO();
+        List<String> xAxis = extServerResultMapper.serverChartX(params);
+        List<Integer> yAxis = extServerResultMapper.serverChartY(params);
+        codeChartDTO.setxAxis(xAxis);
+        codeChartDTO.setyAxis(yAxis);
+        return codeChartDTO;
     }
 
 }

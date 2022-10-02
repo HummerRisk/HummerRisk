@@ -9,7 +9,7 @@ import echarts from 'echarts';
 import HrChart from "@/business/components/common/chart/HrChart";
 /* eslint-disable */
 export default {
-  name: "VulnPieChart",
+  name: "LeftChart",
   components: {
     HrChart,
     echarts,
@@ -24,44 +24,27 @@ export default {
   },
   methods: {
     init() {
-      this.$post("/dashboard/distribution", {group: "vulnList", limit: 5}, response => {
-        let legendData = [];
-        let seriesData = [];
-        for (let obj of response.data) {
-          legendData.push(obj.groupName + ' ' + obj.xAxis + ' 分(' + obj.yAxis + '/' + obj.yAxis2 + ')');
-          seriesData.push({
-            name: obj.groupName + ' ' + obj.xAxis + ' 分(' + obj.yAxis + '/' + obj.yAxis2 + ')',
-            value: obj.yAxis
-          });
-        }
+      this.$get("/server/serverChart", response => {
+        let data = response.data;
         this.options = {
           title: {
-            text: this.$t('vuln.cloud_account_statistics_top'),
-            subtext: this.$t('resource.resource_result_score'),
+            text: this.$t('server.server_risk_chart'),
+            subtext: this.$t('server.server_risk_chart_vuln'),
             left: 'center'
           },
           tooltip: {
-            trigger: 'item',
-            formatter: '{a} <br/>{b} : {c} ({d}%)'
+            trigger: 'item'
           },
           legend: {
-            type: 'scroll',
             orient: 'vertical',
-            right: 10,
-            top: 20,
-            bottom: 20,
-            data: legendData,
-
+            left: 'left'
           },
           series: [
             {
-
-              name: this.$t('resource.resource_result_score'),
+              name: 'Access From',
               type: 'pie',
-              radius: '55%',
-              center: ['40%', '50%'],
-              data: seriesData,
-              // data: this.sycData("seriesData"),
+              radius: '50%',
+              data: data,
               emphasis: {
                 itemStyle: {
                   shadowBlur: 10,

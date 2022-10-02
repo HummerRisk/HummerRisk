@@ -10,10 +10,7 @@ import com.hummerrisk.controller.request.server.ServerCertificateRequest;
 import com.hummerrisk.controller.request.server.ServerRequest;
 import com.hummerrisk.controller.request.server.ServerResultRequest;
 import com.hummerrisk.controller.request.server.ServerRuleRequest;
-import com.hummerrisk.dto.ServerCertificateDTO;
-import com.hummerrisk.dto.ServerDTO;
-import com.hummerrisk.dto.ServerResultDTO;
-import com.hummerrisk.dto.ServerRuleDTO;
+import com.hummerrisk.dto.*;
 import com.hummerrisk.service.ServerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "虚拟机管理")
 @RestController
@@ -207,6 +205,34 @@ public class ServerController {
     @GetMapping("deleteCertificate/{id}")
     public void deleteCertificate(@PathVariable String id) throws Exception {
         serverService.deleteCertificate(id);
+    }
+
+    @I18n
+    @ApiOperation(value = "概览TOP统计")
+    @PostMapping("topInfo")
+    public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
+        return serverService.topInfo(params);
+    }
+
+    @I18n
+    @ApiOperation(value = "主机统计")
+    @GetMapping("serverChart")
+    public List<Map<String, Object>> serverChart() {
+        return serverService.serverChart();
+    }
+
+    @I18n
+    @ApiOperation(value = "主机风险统计")
+    @GetMapping("severityChart")
+    public List<Map<String, Object>> severityChart() {
+        return serverService.severityChart();
+    }
+
+    @I18n
+    @ApiOperation(value = "检测统计")
+    @PostMapping("serverLineChart")
+    public CodeChartDTO serverLineChart(@RequestBody Map<String, Object> params) {
+        return serverService.serverLineChart(params);
     }
 
 }

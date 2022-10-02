@@ -38,7 +38,7 @@ export default {
           // Declare several bar series, each will be mapped
           // to a column of dataset.source by default.
           series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }, { type: 'bar' }, { type: 'bar' }],
-          color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4' ]
+          color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4', '#8B0000', '#FF4D4D', '#FF8000', '#336D9F']
         };
       });
     },

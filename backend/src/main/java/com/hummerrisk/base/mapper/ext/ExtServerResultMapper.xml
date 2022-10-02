@@ -108,4 +108,41 @@
         ORDER BY FIELD(t.severity, 'HighRisk', 'MediumRisk', 'LowRisk'),t.server_name, t.update_time desc
     </select>
 
+    <select id="serverChart" resultType="java.util.Map">
+        SELECT
+            t.server_name as 'name',
+            count(t.id) as 'value'
+        FROM server_result as t
+        GROUP BY t.server_name
+        Limit 10;
+    </select>
+
+    <select id="severityChart" resultType="java.util.Map">
+        SELECT
+            t.server_name as 'product',
+            (SELECT IFNULL(count(t1.id), 0) as High from server_result t1 where t1.server_name = t.server_name and LOWER(t1.severity) = 'highrisk' and t1.is_severity = false) as High,
+            (SELECT IFNULL(count(t1.id), 0) as Medium from server_result t1 where t1.server_name = t.server_name and LOWER(t1.severity) = 'mediumrisk' and t1.is_severity = false) as Medium,
+            (SELECT IFNULL(count(t1.id), 0) as Low from server_result t1 where t1.server_name = t.server_name and LOWER(t1.severity) = 'lowrisk' and t1.is_severity = false) as Low
+        FROM server_result as t
+        GROUP BY t.server_name
+        Limit 10;
+    </select>
+
+    <select id="serverChartX" parameterType="java.util.Map" resultType="java.lang.String">
+        SELECT
+        server_name as name
+        FROM server_result
+        GROUP BY server_name
+        LIMIT 10;
+    </select>
+
+    <select id="serverChartY" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select
+        count(t.id) as returnSum
+        FROM server_result t
+        WHERE t.is_severity = false
+        GROUP BY t.server_name
+        LIMIT 10;
+    </select>
+
 </mapper>

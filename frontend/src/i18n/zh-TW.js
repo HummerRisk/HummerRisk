@@ -934,6 +934,7 @@ export default {
     batch_success: '批量設置成功, 憑證已自動賦值',
     batch_error: '批量設置失敗, 沒有需要賦值的主機',
     is_severity: '是否安全',
+    server_group: '主機分組',
   },
   image: {
     image_repo: '鏡像倉庫',

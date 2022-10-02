@@ -935,6 +935,10 @@ export default {
     batch_success: '批量设置成功, 凭证已自动赋值',
     batch_error: '批量设置失败, 没有需要赋值的主机',
     is_severity: '是否安全',
+    server_group: '主机分组',
+    server_risk: '主机风险',
+    server_risk_chart: '主机风险统计',
+    server_risk_chart_vuln: '主机检测结果风险统计',
   },
   image: {
     image_repo: '镜像仓库',
