@@ -154,6 +154,7 @@ CREATE TABLE IF NOT EXISTS `cloud_resource_sync_item` (
     `details`                      longtext            DEFAULT NULL COMMENT 'policy内容',
     `status`                       varchar(20)         DEFAULT NULL COMMENT '状态',
     `count`                        int(11)             DEFAULT '1'  COMMENT '数量',
+    `resource_type`                varchar(128)        DEFAULT NULL COMMENT '资源类型',
     `region_id`                    varchar(128)        DEFAULT NULL COMMENT '区域标识',
     `region_name`                  varchar(128)        DEFAULT NULL COMMENT '区域名称',
     `account_id`                   varchar(50)         DEFAULT NULL COMMENT '云账号ID',

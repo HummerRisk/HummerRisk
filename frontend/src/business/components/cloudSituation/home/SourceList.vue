@@ -3,21 +3,7 @@
     <el-col :span="24">
       <el-card class="content" shadow="always">
         <el-descriptions :title="$t('k8s.source_sum')" :column="8" border direction="vertical">
-          <el-descriptions-item label="DaemonSet" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.daemonsets }}</el-descriptions-item>
-          <el-descriptions-item label="Ingress" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.ingress }}</el-descriptions-item>
-          <el-descriptions-item label="Role" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.roles }}</el-descriptions-item>
-          <el-descriptions-item label="Secret" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.secrets }}</el-descriptions-item>
-          <el-descriptions-item label="ConfigMap" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.configmaps }}</el-descriptions-item>
-          <el-descriptions-item label="StatefulSet" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.statefulSets }}</el-descriptions-item>
-          <el-descriptions-item label="CronJob" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.cronJobs }}</el-descriptions-item>
-          <el-descriptions-item label="Job" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.jobs }}</el-descriptions-item>
-          <el-descriptions-item label="PV" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.pvs }}</el-descriptions-item>
-          <el-descriptions-item label="PVC" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.pvcs }}</el-descriptions-item>
-          <el-descriptions-item label="Lease" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.leases }}</el-descriptions-item>
-          <el-descriptions-item label="EndpointSlice" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.endpointSlices }}</el-descriptions-item>
-          <el-descriptions-item label="Event" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.events }}</el-descriptions-item>
-          <el-descriptions-item label="NetworkPolicy" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.networkPolicies }}</el-descriptions-item>
-          <el-descriptions-item label="Version" label-class-name="my-label" content-class-name="my-content">{{ situationInfo.versions }}</el-descriptions-item>
+          <el-descriptions-item v-for="item in resourceSummary" :label="item.resourceType" :key="item.resourceType" label-class-name="my-label" content-class-name="my-content">{{ item.count }}</el-descriptions-item>
         </el-descriptions>
 
         <el-card class="table-card" v-loading="result.loading">
@@ -75,6 +61,7 @@ export default {
       result: {},
       loading: false,
       situationInfo: {},
+      resourceSummary:[],
       condition: {
         components: SITUATION_CONFIGS
       },
@@ -99,20 +86,18 @@ export default {
       this.search();
     },
     search() {
-      let param = {};
-      if (!!this.selectNodeIds) {
-        param.cloudNativeId = this.selectNodeIds[0];
+      let accountId = ""
+      if (!!this.selectNodeIds[0]) {
+       accountId = this.selectNodeIds[0];
       }
-      this.result = this.$post("/k8s/situation", param, response => {
+      this.result = this.$get("/cloud/resource/summary?accountId="+accountId, response => {
         let data = response.data;
-        this.situationInfo = data;
+        this.resourceSummary = data;
       });
-      let url = "/k8s/cloudNativeSourceList/" + this.currentPage + "/" + this.pageSize;
-      if (!!this.selectNodeIds) {
-        this.condition.cloudNativeId = this.selectNodeIds[0];
-      } else {
-        this.condition.cloudNativeId = null;
-      }
+      let url = "/cloud/resource/list/" + this.currentPage + "/" + this.pageSize;
+
+      this.condition.accountId = accountId;
+
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
