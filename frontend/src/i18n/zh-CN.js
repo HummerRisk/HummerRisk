@@ -851,6 +851,7 @@ export default {
     cloud_topology: '云资源拓扑图',
     resource_situation: '云资源态势',
     sync_log: '云资源同步日志',
+    sync_log_list: '云资源同步日志列表',
   },
   server: {
     server_setting: '主机检测',
@@ -1215,7 +1216,7 @@ export default {
     result_details_list: 'K8s 检测结果详情列表',
     k8s_note: '注: 使用 K8s 安全检测前，需在 K8s 集群上安装 tirvy-operator!',
     sync_log_create: '创建资源同步任务',
-    sync_log_list: '同步日志列表',
+    sync_log_list: 'K8s 资源同步日志列表',
     notes: '请耐心等待后台处理同步任务!',
     k8s_chart: 'K8s 统计',
     k8s_chart_vuln: 'K8s 漏洞统计',

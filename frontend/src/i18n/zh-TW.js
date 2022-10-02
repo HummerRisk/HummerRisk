@@ -1215,7 +1215,7 @@ export default {
     result_details_list: 'K8s 檢測結果詳情列表',
     k8s_note: '注: 使用 K8s 安全檢測前，需在 K8s 集群上安裝 tirvy-operator!',
     sync_log_create: '創建資源同步任務',
-    sync_log_list: '同步日誌列表',
+    sync_log_list: 'K8s 資源同步日誌列表',
     notes: '請耐心等待後台處理同步任務!',
     k8s_chart: 'K8s 統計',
     k8s_chart_vuln: 'K8s 漏洞統計',

@@ -1215,7 +1215,7 @@ export default {
     result_details_list: 'K8s detection result details list',
     k8s_note: 'Note: Before using K8s security detection, you need to install tirvy-operator on the K8s cluster!',
     sync_log_create: 'Create resource synchronization task',
-    sync_log_list: 'Sync log list',
+    sync_log_list: 'K8s resource synchronization log list',
     notes: 'Please be patient and wait for the background to process the sync task!',
     k8s_chart: 'K8s Statistics',
     k8s_chart_vuln: 'K8s Vulnerability Statistics',

@@ -3,8 +3,8 @@
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
-                      :title="$t('k8s.sync_log_list')"
-                      @create="create" :createTip="$t('commons.sync')"
+                      :title="$t('account.sync_log_list')"
+                      @create="create" :createTip="$t('k8s.sync_log_create')"
                       :show-create="true"/>
 
       </template>
