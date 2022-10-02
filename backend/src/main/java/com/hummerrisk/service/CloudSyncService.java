@@ -14,6 +14,7 @@ import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.cloudResource.CloudResourceSyncRequest;
 import com.hummerrisk.i18n.Translator;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,7 +85,7 @@ public class CloudSyncService {
         cloudResourceSync.setAccountId(accountId);
         cloudResourceSync.setCreateTime(System.currentTimeMillis());
         cloudResourceSync.setApplyUser(Objects.requireNonNull(SessionUtils.getUser()).getId());
-        cloudResourceSync.setResourceTypes(resourceTypes.toString());
+        cloudResourceSync.setResourceTypes(StringUtils.join(resourceTypes,","));
         cloudResourceSync.setStatus(CloudTaskConstants.TASK_STATUS.APPROVED.name());
         //云资源同步主表
         cloudResourceSyncMapper.insertSelective(cloudResourceSync);
@@ -99,6 +100,7 @@ public class CloudSyncService {
                 cloudResourceSyncItem.setAccountId(accountId);
                 cloudResourceSyncItem.setAccountUrl(account.getPluginIcon());
                 cloudResourceSyncItem.setAccountLabel(account.getName());
+                cloudResourceSyncItem.setResourceType(resourceType);
                 cloudResourceSyncItem.setRegionId(region);
                 cloudResourceSyncItem.setRegionName(PlatformUtils.tranforRegionId2RegionName(region, account.getPluginId()));
                 //云资源同步子表（区分区域与资源类型）
@@ -153,6 +155,7 @@ public class CloudSyncService {
                             JSONObject jsonObject = parseObject(obj.toString());
                             String fid = jsonObject.getString("hummerId") != null ? jsonObject.getString("hummerId") : jsonObject.getString("id");
                             CloudResourceItem cloudResourceItem = new CloudResourceItem();
+                            cloudResourceItem.setId(UUIDUtil.newUUID());
                             cloudResourceItem.setAccountId(accountId);
                             cloudResourceItem.setUpdateTime(System.currentTimeMillis());
                             cloudResourceItem.setPluginIcon(account.getPluginIcon());
@@ -172,6 +175,7 @@ public class CloudSyncService {
                         saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "", true);
 
                     } catch (Exception e) {
+                        e.printStackTrace();
                         LogUtil.error("Sync Resources error :{}", uuid + "/" + region, e.getMessage());
                     }
 
@@ -190,6 +194,7 @@ public class CloudSyncService {
                 operator = SessionUtils.getUser().getId();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             //防止单元测试无session
         }
         log.setOperator(operator);

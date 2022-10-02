@@ -93,7 +93,7 @@
         </if>
     </sql>
 
-    <select id="selectByRequest">
+    <select id="selectByRequest" resultMap="BaseResultMap">
         select id, `status`, apply_user, create_time, account_id, plugin_id, plugin_name, plugin_icon,
                resource_types, resources_sum
         from cloud_resource_sync t
