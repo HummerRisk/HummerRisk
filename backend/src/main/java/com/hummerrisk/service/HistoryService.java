@@ -123,6 +123,14 @@ public class HistoryService {
         }
     }
 
+    public void deleyeScanTaskHistory (Integer id) throws Exception {
+        try{
+            historyScanTaskMapper.deleteByPrimaryKey(id);
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
     private boolean isJson(String str){
         try {
             JSONObject.parseObject(str);

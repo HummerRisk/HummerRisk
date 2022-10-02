@@ -24,10 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.alibaba.fastjson.JSON.parseArray;
 
@@ -567,8 +565,9 @@ public class RuleService {
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
     public void reScans(String accountId) throws Exception {
+        List<String> status = Arrays.stream(new String[]{CloudTaskConstants.TASK_STATUS.APPROVED.name(), CloudTaskConstants.TASK_STATUS.PROCESSING.name()}).collect(Collectors.toList());
         CloudTaskExample example = new CloudTaskExample();
-        example.createCriteria().andAccountIdEqualTo(accountId);
+        example.createCriteria().andAccountIdEqualTo(accountId).andStatusNotIn(status);
         List<CloudTask> cloudTaskList = cloudTaskMapper.selectByExample(example);
         for (CloudTask cloudTask : cloudTaskList) {
             cloudTask.setStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
@@ -619,7 +618,8 @@ public class RuleService {
 
     private String dealTask(RuleDTO rule, AccountWithBLOBs account, Integer scanId, String messageOrderId) {
         try {
-            if (rule.getStatus()&&!cloudTaskService.checkRuleTaskStatus(account.getId(),rule.getId(),new String[]{CloudTaskConstants.TASK_STATUS.APPROVED.name(),CloudTaskConstants.TASK_STATUS.PROCESSING.name()})){
+            if (rule.getStatus() && !cloudTaskService.checkRuleTaskStatus(account.getId(),rule.getId(),
+                            new String[]{CloudTaskConstants.TASK_STATUS.APPROVED.name(), CloudTaskConstants.TASK_STATUS.PROCESSING.name()})){
                 QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
                 BeanUtils.copyBean(quartzTaskDTO, rule);
                 List<SelectTag> selectTags = new LinkedList<>();
@@ -648,8 +648,8 @@ public class RuleService {
                 if(scanId!=null) historyService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.cloudAccount.getType());
                 return cloudTask.getId();
             } else {
+                historyService.deleyeScanTaskHistory(scanId);
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
-                HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
             }
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
