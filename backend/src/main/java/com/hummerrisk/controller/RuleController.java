@@ -249,4 +249,11 @@ public class RuleController {
     public void bindRule(@RequestBody BindRuleRequest request) throws Exception {
         ruleService.bindRule(request);
     }
+
+    @I18n
+    @ApiOperation(value = "规则组检测云账号")
+    @GetMapping("scanByGroup/{groupId}/{accountId}")
+    public void scanByGroup(@PathVariable String groupId, @PathVariable String accountId) {
+        ruleService.scanByGroup(groupId, accountId);
+    }
 }

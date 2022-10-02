@@ -213,11 +213,4 @@ public class AccountController {
         return PageUtils.setPageInfo(page, accountService.historyDiffList(params));
     }
 
-    @I18n
-    @ApiOperation(value = "规则组检测云账号")
-    @GetMapping("scanByGroup/{groupId}/{accountId}")
-    public void scanByGroup(@PathVariable String groupId, @PathVariable String accountId) {
-        accountService.scanByGroup(groupId, accountId);
-    }
-
 }

@@ -592,7 +592,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         });
       },
       saveScan() {
-        let url = "/account/scanByGroup/" + this.groupId + "/" + this.scanForm.id;
+        let url = "/rule/scanByGroup/" + this.groupId + "/" + this.scanForm.id;
         this.result = this.$get(url, response => {
           if (response.data != undefined && response.data != null) {
             this.scanVisible = false;
