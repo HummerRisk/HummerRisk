@@ -226,3 +226,6 @@ CREATE TABLE IF NOT EXISTS `cloud_resource_amount_history` (
     `count`                         int(11)               DEFAULT 0 COMMENT '资源同步量',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+
+ALTER TABLE `server_result` ADD `is_severity` tinyint(1) DEFAULT 1 COMMENT '是否有风险';

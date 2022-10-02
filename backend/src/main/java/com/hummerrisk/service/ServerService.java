@@ -70,7 +70,7 @@ public class ServerService {
         ids.forEach(id -> {
             try {
                 boolean validate = validate(id);
-                if(!validate) throw new HRException(Translator.get("failed_server"));
+                if (!validate) throw new HRException(Translator.get("failed_server"));
             } catch (Exception e) {
                 LogUtil.error(e.getMessage());
                 throw new HRException(e.getMessage());
@@ -111,42 +111,42 @@ public class ServerService {
         return true;
     }
 
-    public Boolean scan(String id) throws Exception{
-            ServerRequest request = new ServerRequest();
-            request.setId(id);//serverId
-            Server server = BeanUtils.copyBean(new Server(), getServerList(request).get(0));
-            Integer scanId = historyService.insertScanHistory(server);
-            if(StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.VALID.name())) {
-                deleteServerResult(id);
-                List<ServerRuleDTO> ruleList = ruleList(null);
-                ServerResult result = new ServerResult();
-                String serverGroupName = serverGroupMapper.selectByPrimaryKey(server.getServerGroupId()).getName();
-                for(ServerRuleDTO dto : ruleList) {
-                    BeanUtils.copyBean(result, server);
-                    result.setId(UUIDUtil.newUUID());
-                    result.setServerId(id);
-                    result.setServerGroupId(server.getServerGroupId());
-                    result.setServerGroupName(serverGroupName);
-                    result.setApplyUser(SessionUtils.getUserId());
-                    result.setCreateTime(System.currentTimeMillis());
-                    result.setUpdateTime(System.currentTimeMillis());
-                    result.setServerName(server.getName());
-                    result.setRuleId(dto.getId());
-                    result.setRuleName(dto.getName());
-                    result.setRuleDesc(dto.getDescription());
-                    result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-                    result.setSeverity(dto.getSeverity());
-                    serverResultMapper.insertSelective(result);
+    public Boolean scan(String id) throws Exception {
+        ServerRequest request = new ServerRequest();
+        request.setId(id);//serverId
+        Server server = BeanUtils.copyBean(new Server(), getServerList(request).get(0));
+        Integer scanId = historyService.insertScanHistory(server);
+        if (StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.VALID.name())) {
+            deleteServerResult(id);
+            List<ServerRuleDTO> ruleList = ruleList(null);
+            ServerResult result = new ServerResult();
+            String serverGroupName = serverGroupMapper.selectByPrimaryKey(server.getServerGroupId()).getName();
+            for (ServerRuleDTO dto : ruleList) {
+                BeanUtils.copyBean(result, server);
+                result.setId(UUIDUtil.newUUID());
+                result.setServerId(id);
+                result.setServerGroupId(server.getServerGroupId());
+                result.setServerGroupName(serverGroupName);
+                result.setApplyUser(SessionUtils.getUserId());
+                result.setCreateTime(System.currentTimeMillis());
+                result.setUpdateTime(System.currentTimeMillis());
+                result.setServerName(server.getName());
+                result.setRuleId(dto.getId());
+                result.setRuleName(dto.getName());
+                result.setRuleDesc(dto.getDescription());
+                result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+                result.setSeverity(dto.getSeverity());
+                serverResultMapper.insertSelective(result);
 
-                    saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
+                saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
 
-                    OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.SCAN, "i18n_start_server_result");
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.SCAN, "i18n_start_server_result");
 
-                    historyService.insertScanTaskHistory(result, scanId, server.getId(), TaskEnum.serverAccount.getType());
+                historyService.insertScanTaskHistory(result, scanId, server.getId(), TaskEnum.serverAccount.getType());
 
-                    historyService.insertHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
-                }
+                historyService.insertHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
             }
+        }
         return true;
     }
 
@@ -166,11 +166,18 @@ public class ServerService {
                 }
             }
             Proxy proxy = new Proxy();
-            if(server.getIsProxy()!=null && server.getIsProxy()) {
+            if (server.getIsProxy() != null && server.getIsProxy()) {
                 proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
             }
-            LogUtil.info(server.getId() + " {server}[command]: " + server.getName() + "   "  + script);
             String returnLog = execute(server, script, proxy);
+            if (returnLog.contains(ServerConstants.HUMMER_SUCCESS)) {
+                result.setIsSeverity(true);
+            } else if (returnLog.contains(ServerConstants.HUMMER_ERROR)) {
+                result.setIsSeverity(false);
+            } else if (returnLog == null) {
+                returnLog = ServerConstants.HUMMER_ERROR + ": 没有获取到返回值";
+                result.setIsSeverity(false);
+            }
             result.setReturnLog(returnLog);
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
@@ -182,7 +189,7 @@ public class ServerService {
 
             historyService.updateHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
+            LogUtil.error(result.getServerName() + "{}" + result.getIp() + "[error]: " + e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             serverResultMapper.updateByPrimaryKeySelective(result);
@@ -208,7 +215,7 @@ public class ServerService {
 
         for (ServerResult result : list) {
             ServerResultLogExample logExample = new ServerResultLogExample();
-            logExample.createCriteria().andResultIdEqualTo(result.getRuleId());
+            logExample.createCriteria().andResultIdEqualTo(result.getId());
             serverResultLogMapper.deleteByExample(logExample);
         }
         serverResultMapper.deleteByExample(example);
@@ -238,10 +245,10 @@ public class ServerService {
     private boolean validateAccount(Server server) {
         try {
             Proxy proxy = new Proxy();
-            if(server.getIsProxy()!=null && server.getIsProxy()) {
+            if (server.getIsProxy() != null && server.getIsProxy()) {
                 proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
             }
-            return StringUtils.equalsIgnoreCase(login(server, proxy).getStatus(),  CloudAccountConstants.Status.VALID.name());
+            return StringUtils.equalsIgnoreCase(login(server, proxy).getStatus(), CloudAccountConstants.Status.VALID.name());
         } catch (Exception e) {
             LogUtil.error(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), e.getMessage()), e);
             return false;
@@ -297,11 +304,11 @@ public class ServerService {
         server.setCreateTime(System.currentTimeMillis());
         server.setUpdateTime(System.currentTimeMillis());
         Proxy proxy = new Proxy();
-        if(server.getIsProxy()!=null && server.getIsProxy()) {
+        if (server.getIsProxy() != null && server.getIsProxy()) {
             proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
         }
-        if (server.getIsCertificate()!=null) {
-            if(!server.getIsCertificate()) {
+        if (server.getIsCertificate() != null) {
+            if (!server.getIsCertificate()) {
                 if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
                     String keyFilePath = upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
                     String publicKey = ReadFileUtils.readToBuffer(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
@@ -335,11 +342,11 @@ public class ServerService {
     public int editServer(MultipartFile keyFile, Server server) throws Exception {
         server.setUpdateTime(System.currentTimeMillis());
         Proxy proxy = new Proxy();
-        if(server.getIsProxy()!=null && server.getIsProxy()) {
+        if (server.getIsProxy() != null && server.getIsProxy()) {
             proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
         }
 
-        if (server.getIsCertificate()!=null) {
+        if (server.getIsCertificate() != null) {
             if (!server.getIsCertificate()) {
                 if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
                     String keyFilePath = upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
@@ -468,7 +475,7 @@ public class ServerService {
     public ServerResultDTO getServerResult(String resultId) {
         ServerResultRequest request = new ServerResultRequest();
         request.setId(resultId);
-        return extServerResultMapper.resultList(request) !=null?extServerResultMapper.resultList(request).get(0):new ServerResultDTO();
+        return extServerResultMapper.resultList(request) != null ? extServerResultMapper.resultList(request).get(0) : new ServerResultDTO();
     }
 
     public List<ServerResultLog> getServerResultLog(String resultId) {
@@ -541,7 +548,7 @@ public class ServerService {
             String extension = StringUtils.isNotBlank(fileName) && fileName.contains(".") ? fileName.split("\\.")[fileName.split("\\.").length - 1] : "";
             //png、html等小文件存放路径，页面需要显示，项目内目录
             //jar包等大文件存放路径，项目外目录
-            return FileUploadUtils.uploadCertificate(dir, file, extension.contains(".")?"." + extension:"");
+            return FileUploadUtils.uploadCertificate(dir, file, extension.contains(".") ? "." + extension : "");
         } catch (Exception e) {
             throw new IOException(e.getMessage(), e);
         }

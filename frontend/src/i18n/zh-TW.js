@@ -933,6 +933,7 @@ export default {
     upload_tip: '大小不超过 {0} 的密钥文件',
     batch_success: '批量設置成功, 憑證已自動賦值',
     batch_error: '批量設置失敗, 沒有需要賦值的主機',
+    is_severity: '是否安全',
   },
   image: {
     image_repo: '鏡像倉庫',

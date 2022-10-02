@@ -934,6 +934,7 @@ export default {
     upload_tip: '大小不超过 {0} 的密钥文件',
     batch_success: '批量设置成功, 凭证已自动赋值',
     batch_error: '批量设置失败, 没有需要赋值的主机',
+    is_severity: '是否安全',
   },
   image: {
     image_repo: '镜像仓库',

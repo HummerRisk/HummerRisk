@@ -933,6 +933,7 @@ export default {
     upload_tip: 'Key file size does not exceed {0}',
     batch_success: 'Batch setting is successful, the voucher has been automatically assigned',
     batch_error: 'Batch setup failed, there is no host that needs to be assigned',
+    is_severity: 'Is it safe',
   },
   image: {
     image_repo: 'Mirror repository',

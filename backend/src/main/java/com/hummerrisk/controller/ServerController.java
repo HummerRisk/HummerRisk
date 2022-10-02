@@ -163,8 +163,8 @@ public class ServerController {
     }
 
     @ApiOperation(value = "重新检测虚拟机规则")
-    @GetMapping("restart/{id}")
-    public void restartResource(@PathVariable String id) throws Exception {
+    @GetMapping("rescan/{id}")
+    public void rescan(@PathVariable String id) throws Exception {
         serverService.rescan(id);
     }
 
