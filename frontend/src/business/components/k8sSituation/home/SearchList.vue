@@ -54,8 +54,7 @@ export default {
   },
   methods: {
     init() {
-      console.log(this.items)
-      this.searchArray = this.items;
+      this.searchArray = this .items;
     },
     query(queryString) {
       this.items = queryString ? this.searchArray.filter(this.createFilter(queryString)) : this.searchArray;

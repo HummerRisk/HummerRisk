@@ -79,7 +79,7 @@ import {_filter, _sort} from "@/common/js/utils";
     },
     methods: {
       handleVuln() {
-        window.open('https://www.cnnvd.org.cn/home/loophole','_blank','');
+        window.open('http://www.cnnvd.org.cn/web/vulnerability/querylist.tag','_blank','');
       },
       sort(column) {
         _sort(column, this.condition);

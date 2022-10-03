@@ -309,7 +309,7 @@ export default {
 
   methods: {
     handleVuln() {
-      window.open('https://www.cnnvd.org.cn/home/loophole','_blank','');
+      window.open('http://www.cnnvd.org.cn/web/vulnerability/querylist.tag','_blank','');
     },
     //查询列表
     search() {
