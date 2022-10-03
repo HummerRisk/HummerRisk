@@ -621,6 +621,7 @@ export default {
     rule_group: 'Cloud detection rule group',
   },
   resource: {
+    resource_id: 'resourceId',
     statistics:'Compliance Report',
     cloud_statistics: 'Cloud resource compliance report',
     resource_result:'Scan Result',

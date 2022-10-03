@@ -621,6 +621,7 @@ export default {
     rule_group: '雲檢測規則組',
   },
   resource: {
+    resource_id: '資源ID',
     statistics: '合規報告',
     cloud_statistics: '雲資源合規報告',
     resource_result: '檢測結果',

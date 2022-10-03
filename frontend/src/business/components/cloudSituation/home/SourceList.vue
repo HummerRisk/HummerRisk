@@ -3,7 +3,7 @@
     <el-col :span="24">
       <el-card class="content" shadow="always">
         <el-descriptions :title="$t('k8s.source_sum')" :column="8" border direction="vertical">
-          <el-descriptions-item v-for="item in resourceSummary" :label="item.resourceType" :key="item.resourceType" label-class-name="my-label" content-class-name="my-content">{{ item.count }}</el-descriptions-item>
+          <el-descriptions-item v-for="item in resourceSummary" :label="item.resourceType" :key="item.resourceType" label-class-name="my-label" content-class-name="my-content" ><a href="#" @click="resourceTypeClick(item.resourceType)">{{ item.count }}</a></el-descriptions-item>
         </el-descriptions>
 
         <el-card class="table-card" v-loading="result.loading">
@@ -14,25 +14,31 @@
           <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
                     :row-class-name="tableRowClassName"
                     @filter-change="filter">
+            <el-table-column type="expand">
+              <template v-slot:default="scope">
+                <el-divider><i class="el-icon-folder-opened"></i></el-divider>
+                <el-form>
+                  <result-read-only :row="typeof(scope.row.resource) === 'string'?JSON.parse(scope.row.resource):scope.row.resource"></result-read-only>
+                  <el-divider><i class="el-icon-document-checked"></i></el-divider>
+                </el-form>
+              </template>
+            </el-table-column>
             <el-table-column type="index" min-width="3%"/>
-            <el-table-column :label="$t('k8s.platform')" min-width="15%" show-overflow-tooltip>
+            <el-table-column :label="$t('log.cloud_account_name')" min-width="15%" show-overflow-tooltip>
               <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.cloudNativeName }}
-              </span>
+              <span><img :src="require(`@/assets/img/platform/${ scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                {{ getAccountName(scope.row.accountId) }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="sourceName" :label="$t('k8s.source_name')" min-width="23%" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="sourceNamespace" :label="$t('k8s.source_namespace')" min-width="16%" show-overflow-tooltip sortable></el-table-column>
-            <el-table-column prop="sourceType" :label="$t('k8s.source_type')" min-width="13%" show-overflow-tooltip sortable></el-table-column>
-            <el-table-column min-width="18%" :label="$t('k8s.sync_time')" sortable
-                             prop="createTime">
+            <el-table-column prop="regionName" :label="$t('log.region')" min-width="23%"  show-overflow-tooltip sortable></el-table-column>
+            <el-table-column prop="resourceType" :label="$t('dashboard.resource_type')" min-width="16%" show-overflow-tooltip sortable></el-table-column>
+            <el-table-column prop="hummerId" :label="$t('resource.resource_id')" min-width="13%" show-overflow-tooltip sortable></el-table-column>
+            <el-table-column min-width="18%" :label="$t('account.update_time')" sortable
+                             prop="updateTime">
               <template v-slot:default="scope">
-                <span>{{ scope.row.createTime | timestampFormatDate }}</span>
+                <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="userName" :label="$t('account.creator')" min-width="12%" show-overflow-tooltip/>
           </el-table>
           <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
         </el-card>
@@ -48,13 +54,15 @@ import TablePagination from "../../common/pagination/TablePagination";
 import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import {SITUATION_CONFIGS} from "../../common/components/search/search-components";
+import ResultReadOnly from "@/business/components/cloudSituation/home/ResultReadOnly";
 /* eslint-disable */
 export default {
   components: {
     Container,
     TableHeader,
     TablePagination,
-    TableOperators
+    TableOperators,
+    ResultReadOnly
   },
   data() {
     return {
@@ -83,8 +91,10 @@ export default {
   },
   methods: {
     init() {
-      this.search();
+      this.initAccount()
+      
     },
+
     search() {
       let accountId = ""
       if (!!this.selectNodeIds[0]) {
@@ -94,16 +104,29 @@ export default {
         let data = response.data;
         this.resourceSummary = data;
       });
+      if(!!accountId){
+        this.condition["combine"] = {"accountId":{"value":accountId}}
+      }else {
+        this.condition["combine"] = {}
+      }
+      this.getList()
+    },
+
+    resourceTypeClick(resourceType){
+      this.condition["combine"]["resourceType"]={"value":resourceType}
+      this.condition.resourceType = resourceType;
+      this.getList()
+    },
+
+    getList() {
       let url = "/cloud/resource/list/" + this.currentPage + "/" + this.pageSize;
-
-      this.condition.accountId = accountId;
-
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
         this.tableData = data.listObject;
       });
     },
+
     sort(column) {
       _sort(column, this.condition);
       this.init();
@@ -111,6 +134,18 @@ export default {
     filter(filters) {
       _filter(filters, this.condition);
       this.init();
+    },
+    getAccountName(accountId){
+      let result =  this.accountList.filter(item =>{
+        return item.id === accountId
+      })
+      return result.length >0?result[0].name:""
+    },
+    initAccount() {
+      this.$get("/account/allList", response => {
+        this.accountList = response.data
+        this.search()
+      })
     },
     tableRowClassName({row, rowIndex}) {
       if (rowIndex % 4 === 0) {
