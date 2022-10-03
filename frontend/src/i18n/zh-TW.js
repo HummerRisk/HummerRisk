@@ -1226,6 +1226,7 @@ export default {
     cloud_topology: 'K8s 資源拓撲圖',
     resource_situation: 'K8s 資源態勢',
     sync_log: 'K8s 資源同步日誌',
+    k8s_resource_type: 'K8s 資源類型',
   },
   config: {
     config_settings: '部署配置',
@@ -1599,5 +1600,7 @@ export default {
     createEdgeError: '無法將邊連接到集群。 ',
     deleteClusterError: '無法刪除集群。 ',
     editClusterError: '無法編輯群集。 ',
+    linked: '關聯',
+    belong: '所屬',
   },
 };

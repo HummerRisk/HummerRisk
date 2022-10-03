@@ -54,7 +54,7 @@ export default {
   },
   methods: {
     init() {
-      this.searchArray = this .items;
+      this.searchArray = this.items;
     },
     query(queryString) {
       this.items = queryString ? this.searchArray.filter(this.createFilter(queryString)) : this.searchArray;
@@ -71,7 +71,7 @@ export default {
       if (accountId) {
         let account = this.searchArray.filter(p => p.id === accountId);
         if (account.length > 0) {
-          this.$emit("cloudAccountSwitch", accountId, !!this.currentAccount?this.currentAccount:account[0].name, account[0].pluginIcon);
+          this.$emit("cloudAccountSwitch", accountId, !!this.currentAccount?this.currentAccount:account[0].name);
         }
       }
     }

@@ -1226,6 +1226,7 @@ export default {
     cloud_topology: 'K8s resource topology',
     resource_situation: 'K8s resource situation',
     sync_log: 'K8s resource synchronization log',
+    k8s_resource_type: 'K8s resource type',
   },
   config: {
     config_settings: 'Deployment configuration',
@@ -1599,5 +1600,7 @@ export default {
     createEdgeError: 'Cannot link edges to a cluster.',
     deleteClusterError: 'Clusters cannot be deleted.',
     editClusterError: 'Clusters cannot be edited.',
+    linked: 'Associated',
+    belong: 'belonging to',
   },
 };

@@ -10,44 +10,55 @@
           {{ $t('k8s.name') }}: {{ currentAccount }}
         </span>
           </template>
-          <search-list :items="items" @cloudAccountSwitch="cloudAccountSwitch"/>
+          <search-list v-if="items.length>0" :items="items" @cloudAccountSwitch="cloudAccountSwitch"/>
         </el-submenu>
 
       </el-menu>
 
       <el-divider><i class="el-icon-tickets"></i></el-divider>
 
-      <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-      <div id="network_id" class="network" style="height:80vh"></div>
-      <el-dialog :title="$t('vis.edit')" :visible.sync="dialogVisible" width="width">
-        <span style="color: red;">{{ $t('vis.unedit') }}</span>
-        <div slot="footer">
-          <el-button @click="dialogVisible = false">{{ $t('commons.cancel') }}</el-button>
-          <el-button type="primary" @click="dialogVisible = false">{{ $t('commons.confirm') }}</el-button>
-        </div>
-      </el-dialog>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-card class="table-card" v-loading="result.loading">
+            <template v-slot:header>
+              <span class="title">{{ $t('k8s.k8s_resource_type') }}</span>
+            </template>
+            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
+            <k8s v-if="accountId" :key="timeRefusr" :accountId="accountId" :currentAccount="currentAccount"/>
+          </el-card>
+        </el-col>
+        <el-col :span="12">
+          <el-card class="table-card" v-loading="result.loading">
+            <template v-slot:header>
+              <span class="title">{{ 'NameSpace' }}</span>
+            </template>
+            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
+<!--            <div id="network_id1" class="network" style="height:80vh"></div>-->
+          </el-card>
+        </el-col>
+      </el-row>
+
     </el-card>
   </main-container>
 </template>
 
 <script>
 import MainContainer from "../../common/components/MainContainer";
-import Vis from "vis";
 import SearchList from "@/business/components/k8sSituation/home/SearchList";
+import K8s from "@/business/components/k8sSituation/topology/K8s";
 
 /* eslint-disable */
 export default {
   components: {
     MainContainer,
     SearchList,
-    Vis,
+    K8s,
   },
   data() {
     return {
       result: {},
       dialogVisible: false,
       currentAccount: "",
-      pluginIcon: "k8s.png",
       items: [],
       nodes: [],
       edges: [],
@@ -85,15 +96,16 @@ export default {
       edgesArray: [],
       options: {},
       data: {},
+      accountId: "",
+      timeRefusr: new Date().getTime(),
     };
   },
   methods: {
-    async init() {
-      await this.$get("/k8s/allList", response => {
+    init() {
+      this.$get("/k8s/allList", response => {
         this.items = response.data;
         this.accountId = this.items[0].id;
         this.currentAccount = this.items[0].name;
-        this.pluginIcon = this.items[0].pluginIcon;
         this.search();
       })
     },
@@ -119,178 +131,46 @@ export default {
       _this.resetAllNodes();
       _this.network.stabilize();
     },
-    cloudAccountSwitch(accountId, accountName, pluginIcon) {
+    cloudAccountSwitch(accountId, accountName) {
       this.accountId = accountId;
       this.currentAccount = accountName;
-      this.pluginIcon = pluginIcon;
     },
     async search() {
       let url = "/k8s/k8sTopology/" + this.accountId;
       await this.$get(url,response => {
-        let k8sTopology = response.data.k8sTopology;
-        let edgesTopology = response.data.edgesTopology;
-        for(let obj of k8sTopology){
-          if (obj.type === 'Namespace') {
-            obj = Object.assign(obj, {shape: "image", image: require(`@/assets/img/vis/k8s/namespace.png`)});
-          } else if (obj.type === 'Pod') {
-            obj = Object.assign(obj, {shape: "image", image: require(`@/assets/img/vis/k8s/pod.png`)});
-          } else if (obj.type === 'Node') {
-            obj = Object.assign(obj, {shape: "image", image: require(`@/assets/img/vis/k8s/node.png`)});
-          } else if (obj.type === 'Deployment') {
-            obj = Object.assign(obj, {shape: "image", image: require(`@/assets/img/vis/k8s/deployment.png`)});
-          } else if (obj.type === 'Service') {
-            obj = Object.assign(obj, {shape: "image", image: require(`@/assets/img/vis/k8s/service.png`)});
-          }
-        }
-        this.nodesArray = this.nodesArray.concat(k8sTopology);
-        let k8sNode = [
-          {
-            id: this.accountId,
-            label: this.currentAccount,
-            shape: "image",
-            image: require(`@/assets/img/platform/k8s.png`)
-          }
-        ];
-        this.nodesArray = this.nodesArray.concat(k8sNode);
-        this.edgesArray = [
-          { from: this.accountId, to: 1, label: "关联" },
-          { from: this.accountId, to: 2, label: "关联" },
-          { from: this.accountId, to: 3, label: "关联" },
-          { from: this.accountId, to: 4, label: "关联" },
-          { from: this.accountId, to: 5, label: "关联" },
-        ];
-        this.edgesArray = this.edgesArray.concat(edgesTopology);
-        let _this = this;
-        //1.创建一个nodes数组
-        _this.nodes = new Vis.DataSet(_this.nodesArray);
-        //2.创建一个edges数组
-        _this.edges = new Vis.DataSet(_this.edgesArray);
-        _this.container = document.getElementById("network_id");
-        _this.data = {
-          nodes: _this.nodes,
-          edges: _this.edges
-        };
-        _this.options = {
-          autoResize: true, //网络将自动检测其容器的大小调整，并相应地重绘自身
-          locale: "cn", //语言设置：工具栏显示中文
-          //设置语言
-          locales: {
-            cn: {
-              //工具栏中文翻译
-              edit: this.$t('vis.edit'),
-              del: this.$t('vis.del'),
-              back: this.$t('vis.back'),
-              addNode: this.$t('vis.addNode'),
-              addEdge: this.$t('vis.addEdge'),
-              editNode: this.$t('vis.editNode'),
-              editEdge: this.$t('vis.editEdge'),
-              addDescription: this.$t('vis.addDescription'),
-              edgeDescription: this.$t('vis.edgeDescription'),
-              editEdgeDescription: this.$t('vis.editEdgeDescription'),
-              createEdgeError: this.$t('vis.createEdgeError'),
-              deleteClusterError: this.$t('vis.deleteClusterError'),
-              editClusterError: this.$t('vis.editClusterError'),
-            }
-          },
+        // let k8sTopology = response.data.k8sTopology;
+        // let edgesTopology = response.data.edgesTopology;
+        // for(let obj of k8sTopology){
+        //   if (obj.type === 'Namespace') {
+        //     obj = Object.assign(obj, {shape: "image", image: require(`@/assets/img/vis/k8s/namespace.png`)});
+        //   } else if (obj.type === 'Pod') {
+        //     obj = Object.assign(obj, {shape: "image", image: require(`@/assets/img/vis/k8s/pod.png`)});
+        //   } else if (obj.type === 'Node') {
+        //     obj = Object.assign(obj, {shape: "image", image: require(`@/assets/img/vis/k8s/node.png`)});
+        //   } else if (obj.type === 'Deployment') {
+        //     obj = Object.assign(obj, {shape: "image", image: require(`@/assets/img/vis/k8s/deployment.png`)});
+        //   } else if (obj.type === 'Service') {
+        //     obj = Object.assign(obj, {shape: "image", image: require(`@/assets/img/vis/k8s/service.png`)});
+        //   }
+        // }
+        // this.nodesArray = this.nodesArray.concat(k8sTopology);
+        // let k8sNode = [
+        //   {
+        //     id: this.accountId,
+        //     label: this.currentAccount,
+        //     shape: "image",
+        //     image: require(`@/assets/img/platform/k8s.png`)
+        //   }
+        // ];
+        // this.nodesArray = this.nodesArray.concat(k8sNode);
 
-          // 设置节点样式
-          nodes: {
-            shape: "circle",
-            size: 50,
-            font: {
-              //字体配置
-              size: 32
-            },
-            color: {
-              // border: "#2B7CE9", //节点边框颜色
-              background: "#97C2FC", //节点背景颜色
-              highlight: {
-                //节点选中时状态颜色
-                border: "#2B7CE9",
-                background: "#D2E5FF"
-              },
-              hover: {
-                //节点鼠标滑过时状态颜色
-                border: "#2B7CE9",
-                background: "#D2E5FF"
-              }
-            },
-            borderWidth: 0, //节点边框宽度，单位为px
-            borderWidthSelected: 2 //节点被选中时边框的宽度，单位为px
-          },
-          // 边线配置
-          edges: {
-            width: 1,
-            length: 260,
-            color: {
-              color: "#848484",
-              highlight: "#848484",
-              hover: "#848484",
-              inherit: "from",
-              opacity: 1.0
-            },
-            shadow: true,
-            smooth: {
-              //设置两个节点之前的连线的状态
-              enabled: true //默认是true，设置为false之后，两个节点之前的连线始终为直线，不会出现贝塞尔曲线
-            },
-            arrows: { to: true } //箭头指向to
-          },
-          //计算节点之前斥力，进行自动排列的属性
-          physics: {
-            enabled: true, //默认是true，设置为false后，节点将不会自动改变，拖动谁谁动。不影响其他的节点
-            barnesHut: {
-              gravitationalConstant: -4000,
-              centralGravity: 0.3,
-              springLength: 120,
-              springConstant: 0.04,
-              damping: 0.09,
-              avoidOverlap: 0
-            }
-          },
-          //用于所有用户与网络的交互。处理鼠标和触摸事件以及导航按钮和弹出窗口
-          interaction: {
-            dragNodes: true, //是否能拖动节点
-            dragView: true, //是否能拖动画布
-            hover: true, //鼠标移过后加粗该节点和连接线
-            multiselect: true, //按 ctrl 多选
-            selectable: true, //是否可以点击选择
-            selectConnectedEdges: true, //选择节点后是否显示连接线
-            hoverConnectedEdges: true, //鼠标滑动节点后是否显示连接线
-            zoomView: true //是否能缩放画布
-          },
-          //操作模块:包括 添加、删除、获取选中点、设置选中点、拖拽系列、点击等等
-          manipulation: {
-            enabled: false, //该属性表示可以编辑，出现编辑操作按钮
-            addNode: false,
-            addEdge: false,
-            // editNode: undefined,
-            editEdge: false,
-            deleteNode: false,
-            deleteEdge: false
-          }
-        };
-        _this.network = new Vis.Network(
-          _this.container,
-          _this.data,
-          _this.options
-        );
       });
     },
   },
-
   mounted() {
     this.init();
   },
   created() {
-/*    // 点击事件
-    this.network.on("click", params => {
-      this.network.addEdgeMode();
-    });
-    // 点击鼠标右键事件
-    this.network.on("oncontext", params => {
-      this.dialogVisible = true;
-    });*/
   }
 }
 </script>

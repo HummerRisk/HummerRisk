@@ -1230,6 +1230,7 @@ export default {
     cloud_topology: 'K8s 资源拓扑图',
     resource_situation: 'K8s 资源态势',
     sync_log: 'K8s 资源同步日志',
+    k8s_resource_type: 'K8s 资源类型',
   },
   config: {
     config_settings: '部署配置',
@@ -1604,5 +1605,7 @@ export default {
     deleteClusterError: '无法删除集群。',
     editClusterError: '无法编辑群集。',
     unedit: '数据暂时不可修改',
+    linked: '关联',
+    belong: '所属',
   },
 };
