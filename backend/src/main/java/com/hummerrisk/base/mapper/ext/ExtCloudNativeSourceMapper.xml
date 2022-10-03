@@ -299,29 +299,22 @@
             <if test="cloudNativeId != null and cloudNativeId != ''">
                 and t.cloud_native_id = #{cloudNativeId}
             </if>
-            and t.source_type in ('Namespace', 'Pod', 'Node', 'Deployment', 'Service')
+            and t.source_type = #{name}
         </where>
         ORDER BY t.update_time DESC
     </select>
 
     <select id="edgesTopology" resultType="java.util.Map">
         SELECT
-        CASE
-            WHEN t.source_type = 'Namespace' THEN 1
-            WHEN t.source_type = 'Pod' THEN 2
-            WHEN t.source_type = 'Node' THEN 3
-            WHEN t.source_type = 'Deployment' THEN 4
-            WHEN t.source_type = 'Service' THEN 5
-        ELSE 1
-        END AS 'from',
+        1 AS 'from',
         t.id as 'to',
-        t.source_type as 'label'
+        '所属' as 'label'
         FROM cloud_native_source as t
         <where>
             <if test="cloudNativeId != null and cloudNativeId != ''">
                 and t.cloud_native_id = #{cloudNativeId}
             </if>
-            and t.source_type in ('Namespace', 'Pod', 'Node', 'Deployment', 'Service')
+            and t.source_type = #{name}
         </where>
         ORDER BY t.update_time DESC
     </select>

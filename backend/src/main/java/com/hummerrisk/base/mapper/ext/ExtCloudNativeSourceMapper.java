@@ -10,12 +10,12 @@ import java.util.Map;
 
 public interface ExtCloudNativeSourceMapper {
 
-    List<CloudNativeSourceDTO> getCloudNativeSourceList(@Param("request")  CloudNativeSourceRequest request);
+    List<CloudNativeSourceDTO> getCloudNativeSourceList(@Param("request") CloudNativeSourceRequest request);
 
     SituationDTO situationInfo(Map<String, Object> params);
 
-    List<Map<String, Object>> k8sTopology(String cloudNativeId);
+    List<Map<String, Object>> k8sTopology(@Param("cloudNativeId") String cloudNativeId, @Param("name") String name);
 
-    List<Map<String, Object>> edgesTopology(String cloudNativeId);
+    List<Map<String, Object>> edgesTopology(@Param("cloudNativeId") String cloudNativeId, @Param("name") String name);
 
 }
