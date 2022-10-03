@@ -14,6 +14,7 @@
         <result column="region_name" jdbcType="VARCHAR" property="regionName" />
         <result column="create_time" jdbcType="BIGINT" property="createTime" />
         <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="resource" jdbcType="VARCHAR" property="resource" />
     </resultMap>
 
     <resultMap id="SummaryResultMap" type="com.hummerrisk.base.domain.CloudResourceSummary">
@@ -105,7 +106,7 @@
 
     <select id="selectByRequest" resultMap="BaseResultMap" >
         select id, resource_id, hummer_id, resource_type, plugin_id, plugin_name, plugin_icon, account_id,
-    region_id, region_name, create_time, update_time from cloud_resource_item t
+    region_id, region_name, create_time, update_time,resource from cloud_resource_item t
         where 1=1
         <if test="request.combine != null">
             <include refid="combine">
