@@ -15,9 +15,9 @@
 
       </el-menu>
 
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-card class="table-card" v-loading="result.loading">
+      <el-row :gutter="20" class="el-row-body">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ $t('k8s.k8s_resource_type') }}</span>
             </template>
@@ -25,8 +25,8 @@
             <k8s v-if="accountId" :key="timeRefusr" :accountId="accountId" :currentAccount="currentAccount"/>
           </el-card>
         </el-col>
-        <el-col :span="12">
-          <el-card class="table-card" v-loading="result.loading">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'NameSpace' }}</span>
             </template>
@@ -34,11 +34,8 @@
             <name-space v-if="k8sTopology.k8sNameSpace" :key="timeRefusr" :k8sNameSpace="k8sTopology.k8sNameSpace" :edgesNameSpace="k8sTopology.edgesNameSpace"/>
           </el-card>
         </el-col>
-      </el-row>
-
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-card class="table-card" v-loading="result.loading">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'Node' }}</span>
             </template>
@@ -46,13 +43,31 @@
             <node v-if="k8sTopology.k8sNode" :key="timeRefusr" :k8sLink="k8sTopology.k8sNode" :edgesBelong="k8sTopology.edgesNode"/>
           </el-card>
         </el-col>
-        <el-col :span="12">
-          <el-card class="table-card" v-loading="result.loading">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'Pod' }}</span>
             </template>
             <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
             <pod v-if="k8sTopology.k8sPod" :key="timeRefusr" :k8sLink="k8sTopology.k8sPod" :edgesBelong="k8sTopology.edgesPod"/>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
+            <template v-slot:header>
+              <span class="title">{{ 'Deployment' }}</span>
+            </template>
+            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
+            <deployment v-if="k8sTopology.k8sDeployment" :key="timeRefusr" :k8sLink="k8sTopology.k8sDeployment" :edgesBelong="k8sTopology.edgesDeployment"/>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
+            <template v-slot:header>
+              <span class="title">{{ 'Service' }}</span>
+            </template>
+            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
+            <service v-if="k8sTopology.k8sService" :key="timeRefusr" :k8sLink="k8sTopology.k8sService" :edgesBelong="k8sTopology.edgesService"/>
           </el-card>
         </el-col>
       </el-row>
@@ -68,6 +83,8 @@ import K8s from "@/business/components/k8sSituation/topology/K8s";
 import NameSpace from "@/business/components/k8sSituation/topology/NameSpace";
 import Node from "@/business/components/k8sSituation/topology/Node";
 import Pod from "@/business/components/k8sSituation/topology/Pod";
+import Deployment from "@/business/components/k8sSituation/topology/Deployment";
+import Service from "@/business/components/k8sSituation/topology/Service";
 
 /* eslint-disable */
 export default {
@@ -78,6 +95,8 @@ export default {
     NameSpace,
     Node,
     Pod,
+    Deployment,
+    Service,
   },
   data() {
     return {
@@ -156,6 +175,12 @@ export default {
 }
 .el-divider--horizontal {
   margin: 0;
+}
+.el-row-body {
+  line-height: 1.15;
+}
+.el-col-su >>> .el-card {
+  margin: 5px 0;
 }
 </style>
 
