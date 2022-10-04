@@ -13,6 +13,26 @@
           <search-list v-if="items.length>0" :items="items" @cloudAccountSwitch="cloudAccountSwitch"/>
         </el-submenu>
 
+        <div style="float: right;margin: 10px 15px 10px 0;">
+          <span class="title-account">{{ data }}</span>
+          <el-divider direction="vertical"></el-divider>
+          <el-dropdown @command="handleCommand">
+            <span class="el-dropdown-link">
+              {{ $t('k8s.k8s_resource_type') }}<i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item
+                v-for="item in types"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+                :command="item">
+                {{ item.name }}
+              </el-dropdown-item>
+              <el-dropdown-item divided :command="{id: 'all', name: $t('rule.all')}">{{ $t('rule.all') }}</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </div>
       </el-menu>
 
       <el-row :gutter="20" class="el-row-body">
@@ -25,7 +45,7 @@
             <k8s v-if="accountId" :key="timeRefusr" :accountId="accountId" :currentAccount="currentAccount"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='NameSpace' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'NameSpace' }}</span>
@@ -34,7 +54,7 @@
             <name-space v-if="k8sTopology.k8sNameSpace" :key="timeRefusr" :k8sNameSpace="k8sTopology.k8sNameSpace" :edgesNameSpace="k8sTopology.edgesNameSpace"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Node' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'Node' }}</span>
@@ -43,7 +63,7 @@
             <node v-if="k8sTopology.k8sNode" :key="timeRefusr" :k8sLink="k8sTopology.k8sNode" :edgesBelong="k8sTopology.edgesNode"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Pod' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'Pod' }}</span>
@@ -52,7 +72,7 @@
             <pod v-if="k8sTopology.k8sPod" :key="timeRefusr" :k8sLink="k8sTopology.k8sPod" :edgesBelong="k8sTopology.edgesPod"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Deployment' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'Deployment' }}</span>
@@ -61,7 +81,7 @@
             <deployment v-if="k8sTopology.k8sDeployment" :key="timeRefusr" :k8sLink="k8sTopology.k8sDeployment" :edgesBelong="k8sTopology.edgesDeployment"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Service' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'Service' }}</span>
@@ -70,7 +90,7 @@
             <service v-if="k8sTopology.k8sService" :key="timeRefusr" :k8sLink="k8sTopology.k8sService" :edgesBelong="k8sTopology.edgesService"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='DaemonSet' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'DaemonSet' }}</span>
@@ -79,7 +99,7 @@
             <daemon-set v-if="k8sTopology.k8sDaemonSet" :key="timeRefusr" :k8sLink="k8sTopology.k8sDaemonSet" :edgesBelong="k8sTopology.edgesDaemonSet"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Ingress' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'Ingress' }}</span>
@@ -88,7 +108,7 @@
             <ingress v-if="k8sTopology.k8sIngress" :key="timeRefusr" :k8sLink="k8sTopology.k8sIngress" :edgesBelong="k8sTopology.edgesIngress"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Role' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'Role' }}</span>
@@ -97,7 +117,7 @@
             <role v-if="k8sTopology.k8sRole" :key="timeRefusr" :k8sLink="k8sTopology.k8sRole" :edgesBelong="k8sTopology.edgesRole"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Secret' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'Secret' }}</span>
@@ -106,7 +126,7 @@
             <secret v-if="k8sTopology.k8sSecret" :key="timeRefusr" :k8sLink="k8sTopology.k8sSecret" :edgesBelong="k8sTopology.edgesSecret"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='ConfigMap' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'ConfigMap' }}</span>
@@ -115,7 +135,7 @@
             <config-map v-if="k8sTopology.k8sConfigMap" :key="timeRefusr" :k8sLink="k8sTopology.k8sConfigMap" :edgesBelong="k8sTopology.edgesConfigMap"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='StatefulSet' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'StatefulSet' }}</span>
@@ -124,7 +144,7 @@
             <stateful-set v-if="k8sTopology.k8sStatefulSet" :key="timeRefusr" :k8sLink="k8sTopology.k8sStatefulSet" :edgesBelong="k8sTopology.edgesStatefulSet"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='CronJob' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'CronJob' }}</span>
@@ -133,7 +153,7 @@
             <cron-job v-if="k8sTopology.k8sCronJob" :key="timeRefusr" :k8sLink="k8sTopology.k8sCronJob" :edgesBelong="k8sTopology.edgesCronJob"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Job' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'Job' }}</span>
@@ -142,7 +162,7 @@
             <job v-if="k8sTopology.k8sJob" :key="timeRefusr" :k8sLink="k8sTopology.k8sJob" :edgesBelong="k8sTopology.edgesJob"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='PV' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'PV' }}</span>
@@ -151,7 +171,7 @@
             <p-v v-if="k8sTopology.k8sPV" :key="timeRefusr" :k8sLink="k8sTopology.k8sPV" :edgesBelong="k8sTopology.edgesPV"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='PVC' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'PVC' }}</span>
@@ -160,7 +180,7 @@
             <p-v-c v-if="k8sTopology.k8sPVC" :key="timeRefusr" :k8sLink="k8sTopology.k8sPVC" :edgesBelong="k8sTopology.edgesPVC"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Lease' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'Lease' }}</span>
@@ -169,7 +189,7 @@
             <lease v-if="k8sTopology.k8sLease" :key="timeRefusr" :k8sLink="k8sTopology.k8sLease" :edgesBelong="k8sTopology.edgesLease"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='EndpointSlice' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'EndpointSlice' }}</span>
@@ -178,7 +198,7 @@
             <endpoint-slice v-if="k8sTopology.k8sEndpointSlice" :key="timeRefusr" :k8sLink="k8sTopology.k8sEndpointSlice" :edgesBelong="k8sTopology.edgesEndpointSlice"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Event' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'Event' }}</span>
@@ -187,7 +207,7 @@
             <event v-if="k8sTopology.k8sEvent" :key="timeRefusr" :k8sLink="k8sTopology.k8sEvent" :edgesBelong="k8sTopology.edgesEvent"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='NetworkPolicy' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'NetworkPolicy' }}</span>
@@ -196,7 +216,7 @@
             <network-policy v-if="k8sTopology.k8sNetworkPolicy" :key="timeRefusr" :k8sLink="k8sTopology.k8sNetworkPolicy" :edgesBelong="k8sTopology.edgesNetworkPolicy"/>
           </el-card>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Version' || data===$t('rule.all')">
           <el-card class="table-card">
             <template v-slot:header>
               <span class="title">{{ 'Version' }}</span>
@@ -271,6 +291,29 @@ export default {
       accountId: "",
       timeRefusr: new Date().getTime(),
       k8sTopology: {},
+      types: [
+        {id: 'NameSpace', name: 'NameSpace'},
+        {id: 'Pod', name: 'Pod'},
+        {id: 'Node', name: 'Node'},
+        {id: 'Deployment', name: 'Deployment'},
+        {id: 'Service', name: 'Service'},
+        {id: 'DaemonSet', name: 'DaemonSet'},
+        {id: 'Ingress', name: 'Ingress'},
+        {id: 'Role', name: 'Role'},
+        {id: 'Secret', name: 'Secret'},
+        {id: 'ConfigMap', name: 'ConfigMap'},
+        {id: 'StatefulSet', name: 'StatefulSet'},
+        {id: 'CronJob', name: 'CronJob'},
+        {id: 'Job', name: 'Job'},
+        {id: 'PV', name: 'PV'},
+        {id: 'PVC', name: 'PVC'},
+        {id: 'Lease', name: 'Lease'},
+        {id: 'EndpointSlice', name: 'EndpointSlice'},
+        {id: 'Event', name: 'Event'},
+        {id: 'NetworkPolicy', name: 'NetworkPolicy'},
+        {id: 'Version', name: 'Version'},
+      ],
+      data: this.$t('rule.all'),
     };
   },
   methods: {
@@ -314,6 +357,9 @@ export default {
         this.k8sTopology = response.data;
       });
     },
+    handleCommand(command) {
+      this.data = command.name;
+    },
   },
   mounted() {
     this.init();
@@ -345,6 +391,16 @@ export default {
 }
 .el-col-su >>> .el-card {
   margin: 5px 0;
+}
+.el-dropdown-link {
+  cursor: pointer;
+  color: #409EFF;
+}
+.el-icon-arrow-down {
+  font-size: 12px;
+}
+.title-account{
+  color: #e43235;
 }
 </style>
 
