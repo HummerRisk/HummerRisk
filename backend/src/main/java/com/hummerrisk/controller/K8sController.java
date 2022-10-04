@@ -43,9 +43,7 @@ public class K8sController {
     @ApiOperation(value = "所有云原生账号")
     @GetMapping("allCloudNativeList")
     public List<CloudNativeDTO> allCloudNativeList() {
-        CloudNativeRequest request = new CloudNativeRequest();
-        request.setStatus(CloudAccountConstants.Status.VALID.name());
-        return k8sService.allCloudNativeList(request);
+        return k8sService.allCloudNativeList(new CloudNativeRequest());
     }
 
     @I18n

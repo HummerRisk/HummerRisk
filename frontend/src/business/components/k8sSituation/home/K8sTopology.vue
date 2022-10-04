@@ -350,6 +350,8 @@ export default {
     cloudAccountSwitch(accountId, accountName) {
       this.accountId = accountId;
       this.currentAccount = accountName;
+      this.k8sTopology = {};
+      this.search();
     },
     async search() {
       let url = "/k8s/k8sTopology/" + this.accountId;
