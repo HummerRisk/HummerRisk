@@ -6,9 +6,9 @@
         <el-menu-item index="1" v-show="false">Placeholder</el-menu-item>
         <el-submenu index="2" popper-class="submenu">
           <template v-slot:title>
-        <span class="account-name" :title="currentAccount" style="width: 250px;">
-          {{ $t('k8s.name') }}: {{ currentAccount }}
-        </span>
+            <span class="account-name" :title="currentAccount" style="width: 250px;">
+              {{ $t('k8s.name') }}: {{ currentAccount }}
+            </span>
           </template>
           <search-list v-if="items.length>0" :items="items" @cloudAccountSwitch="cloudAccountSwitch"/>
         </el-submenu>
@@ -70,8 +70,142 @@
             <service v-if="k8sTopology.k8sService" :key="timeRefusr" :k8sLink="k8sTopology.k8sService" :edgesBelong="k8sTopology.edgesService"/>
           </el-card>
         </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
+            <template v-slot:header>
+              <span class="title">{{ 'DaemonSet' }}</span>
+            </template>
+            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
+            <daemon-set v-if="k8sTopology.k8sDaemonSet" :key="timeRefusr" :k8sLink="k8sTopology.k8sDaemonSet" :edgesBelong="k8sTopology.edgesDaemonSet"/>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
+            <template v-slot:header>
+              <span class="title">{{ 'Ingress' }}</span>
+            </template>
+            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
+            <ingress v-if="k8sTopology.k8sIngress" :key="timeRefusr" :k8sLink="k8sTopology.k8sIngress" :edgesBelong="k8sTopology.edgesIngress"/>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
+            <template v-slot:header>
+              <span class="title">{{ 'Role' }}</span>
+            </template>
+            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
+            <role v-if="k8sTopology.k8sRole" :key="timeRefusr" :k8sLink="k8sTopology.k8sRole" :edgesBelong="k8sTopology.edgesRole"/>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
+            <template v-slot:header>
+              <span class="title">{{ 'Secret' }}</span>
+            </template>
+            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
+            <secret v-if="k8sTopology.k8sSecret" :key="timeRefusr" :k8sLink="k8sTopology.k8sSecret" :edgesBelong="k8sTopology.edgesSecret"/>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
+            <template v-slot:header>
+              <span class="title">{{ 'ConfigMap' }}</span>
+            </template>
+            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
+            <config-map v-if="k8sTopology.k8sConfigMap" :key="timeRefusr" :k8sLink="k8sTopology.k8sConfigMap" :edgesBelong="k8sTopology.edgesConfigMap"/>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
+            <template v-slot:header>
+              <span class="title">{{ 'StatefulSet' }}</span>
+            </template>
+            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
+            <stateful-set v-if="k8sTopology.k8sStatefulSet" :key="timeRefusr" :k8sLink="k8sTopology.k8sStatefulSet" :edgesBelong="k8sTopology.edgesStatefulSet"/>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
+            <template v-slot:header>
+              <span class="title">{{ 'CronJob' }}</span>
+            </template>
+            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
+            <cron-job v-if="k8sTopology.k8sCronJob" :key="timeRefusr" :k8sLink="k8sTopology.k8sCronJob" :edgesBelong="k8sTopology.edgesCronJob"/>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
+            <template v-slot:header>
+              <span class="title">{{ 'Job' }}</span>
+            </template>
+            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
+            <job v-if="k8sTopology.k8sJob" :key="timeRefusr" :k8sLink="k8sTopology.k8sJob" :edgesBelong="k8sTopology.edgesJob"/>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
+            <template v-slot:header>
+              <span class="title">{{ 'PV' }}</span>
+            </template>
+            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
+            <p-v v-if="k8sTopology.k8sPV" :key="timeRefusr" :k8sLink="k8sTopology.k8sPV" :edgesBelong="k8sTopology.edgesPV"/>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
+            <template v-slot:header>
+              <span class="title">{{ 'PVC' }}</span>
+            </template>
+            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
+            <p-v-c v-if="k8sTopology.k8sPVC" :key="timeRefusr" :k8sLink="k8sTopology.k8sPVC" :edgesBelong="k8sTopology.edgesPVC"/>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
+            <template v-slot:header>
+              <span class="title">{{ 'Lease' }}</span>
+            </template>
+            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
+            <lease v-if="k8sTopology.k8sLease" :key="timeRefusr" :k8sLink="k8sTopology.k8sLease" :edgesBelong="k8sTopology.edgesLease"/>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
+            <template v-slot:header>
+              <span class="title">{{ 'EndpointSlice' }}</span>
+            </template>
+            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
+            <endpoint-slice v-if="k8sTopology.k8sEndpointSlice" :key="timeRefusr" :k8sLink="k8sTopology.k8sEndpointSlice" :edgesBelong="k8sTopology.edgesEndpointSlice"/>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
+            <template v-slot:header>
+              <span class="title">{{ 'Event' }}</span>
+            </template>
+            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
+            <event v-if="k8sTopology.k8sEvent" :key="timeRefusr" :k8sLink="k8sTopology.k8sEvent" :edgesBelong="k8sTopology.edgesEvent"/>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
+            <template v-slot:header>
+              <span class="title">{{ 'NetworkPolicy' }}</span>
+            </template>
+            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
+            <network-policy v-if="k8sTopology.k8sNetworkPolicy" :key="timeRefusr" :k8sLink="k8sTopology.k8sNetworkPolicy" :edgesBelong="k8sTopology.edgesNetworkPolicy"/>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
+          <el-card class="table-card">
+            <template v-slot:header>
+              <span class="title">{{ 'Version' }}</span>
+            </template>
+            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
+            <version v-if="k8sTopology.k8sVersion" :key="timeRefusr" :k8sLink="k8sTopology.k8sVersion" :edgesBelong="k8sTopology.edgesVersion"/>
+          </el-card>
+        </el-col>
       </el-row>
-
     </el-card>
   </main-container>
 </template>
@@ -85,6 +219,21 @@ import Node from "@/business/components/k8sSituation/topology/Node";
 import Pod from "@/business/components/k8sSituation/topology/Pod";
 import Deployment from "@/business/components/k8sSituation/topology/Deployment";
 import Service from "@/business/components/k8sSituation/topology/Service";
+import DaemonSet from "@/business/components/k8sSituation/topology/DaemonSet";
+import Ingress from "@/business/components/k8sSituation/topology/Ingress";
+import Role from "@/business/components/k8sSituation/topology/Role";
+import ConfigMap from "@/business/components/k8sSituation/topology/ConfigMap";
+import StatefulSet from "@/business/components/k8sSituation/topology/StatefulSet";
+import Secret from "@/business/components/k8sSituation/topology/Secret";
+import CronJob from "@/business/components/k8sSituation/topology/CronJob";
+import Job from "@/business/components/k8sSituation/topology/Job";
+import PV from "@/business/components/k8sSituation/topology/PV";
+import PVC from "@/business/components/k8sSituation/topology/PVC";
+import Lease from "@/business/components/k8sSituation/topology/Lease";
+import EndpointSlice from "@/business/components/k8sSituation/topology/EndpointSlice";
+import Event from "@/business/components/k8sSituation/topology/Event";
+import NetworkPolicy from "@/business/components/k8sSituation/topology/NetworkPolicy";
+import Version from "@/business/components/k8sSituation/topology/Version";
 
 /* eslint-disable */
 export default {
@@ -97,6 +246,21 @@ export default {
     Pod,
     Deployment,
     Service,
+    DaemonSet,
+    Ingress,
+    Role,
+    ConfigMap,
+    StatefulSet,
+    Secret,
+    CronJob,
+    Job,
+    PV,
+    PVC,
+    Lease,
+    EndpointSlice,
+    Event,
+    NetworkPolicy,
+    Version,
   },
   data() {
     return {
