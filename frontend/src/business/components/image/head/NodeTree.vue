@@ -26,7 +26,7 @@
         </span>
 
         <span v-if="!data.isEdit" class="node-icon">
-          <i class="el-icon-folder"/>
+          <i class="iconfont icon-jingxiang"/>
         </span>
         <span v-if="!data.isEdit" class="node-title" v-text="data.name"/>
 

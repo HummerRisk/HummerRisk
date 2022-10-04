@@ -936,6 +936,7 @@ export default {
     batch_error: '批量設置失敗, 沒有需要賦值的主機',
     is_severity: '是否安全',
     server_group: '主機分組',
+    all_label: '所有主機',
   },
   image: {
     image_repo: '鏡像倉庫',

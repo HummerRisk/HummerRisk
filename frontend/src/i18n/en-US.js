@@ -936,6 +936,7 @@ export default {
     batch_error: 'Batch setup failed, there is no host that needs to be assigned',
     is_severity: 'Is it safe',
     server_group: 'Host group',
+    all_label: 'All hosts',
   },
   image: {
     image_repo: 'Mirror repository',

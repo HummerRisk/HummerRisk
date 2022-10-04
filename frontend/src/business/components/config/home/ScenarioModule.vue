@@ -13,7 +13,7 @@
         <el-input class="module-input" :placeholder="$t('config.search_by_name')" v-model="condition.filterText"
                   size="small">
           <template v-slot:append>
-            <el-button icon="el-icon-folder"/>
+            <el-button><i class="iconfont icon-rongqiyun"/></el-button>
           </template>
         </el-input>
       </template>
