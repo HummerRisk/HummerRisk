@@ -84,7 +84,7 @@ public class ServerService {
     public boolean validate(String id) {
         try {
             Server server = serverMapper.selectByPrimaryKey(id);
-            //检验虚拟机的有效性
+            //检验主机的有效性
             boolean valid = validateAccount(server);
             if (valid) {
                 server.setStatus(CloudAccountConstants.Status.VALID.name());
@@ -258,6 +258,10 @@ public class ServerService {
 
     public List<ServerGroup> getServerGroupList() {
         return serverGroupMapper.selectByExample(null);
+    }
+
+    public List<Server> allServerList() {
+        return serverMapper.selectByExample(null);
     }
 
     public List<ServerDTO> getServerList(ServerRequest server) {
@@ -574,6 +578,11 @@ public class ServerService {
         codeChartDTO.setxAxis(xAxis);
         codeChartDTO.setyAxis(yAxis);
         return codeChartDTO;
+    }
+
+    public List<HistoryServerResultDTO> history(Map<String, Object> params) {
+        List<HistoryServerResultDTO> historyList = extServerResultMapper.history(params);
+        return historyList;
     }
 
 }

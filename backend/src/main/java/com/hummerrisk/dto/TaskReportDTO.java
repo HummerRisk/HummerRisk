@@ -16,7 +16,7 @@ public class TaskReportDTO extends Task {
 
     private List<HistoryResourceReportDTO> historyVulnResourceReportDTOList;//漏洞检测结果details
 
-    private List<HistoryServerTask> historyServerTaskList;//虚拟机检测结果table
+    private List<HistoryServerTask> historyServerTaskList;//主机检测结果table
 
     private List<HistoryImageReportDTO> historyImageReportDTOList;//镜像检测结果details
 

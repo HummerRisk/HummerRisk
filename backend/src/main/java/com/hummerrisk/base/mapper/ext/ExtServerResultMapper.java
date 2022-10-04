@@ -1,6 +1,8 @@
 package com.hummerrisk.base.mapper.ext;
 
+import com.hummerrisk.base.domain.HistoryServerTask;
 import com.hummerrisk.controller.request.server.ServerResultRequest;
+import com.hummerrisk.dto.HistoryServerResultDTO;
 import com.hummerrisk.dto.ServerResultDTO;
 
 import java.util.List;
@@ -17,5 +19,7 @@ public interface ExtServerResultMapper {
     List<String> serverChartX(Map<String, Object> params);
 
     List<Integer> serverChartY(Map<String, Object> params);
+
+    List<HistoryServerResultDTO> history(Map<String, Object> params);
 
 }

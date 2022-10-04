@@ -121,7 +121,7 @@ public class TaskService {
         vulnExample.setOrderByClause("create_time desc");
         List<AccountVo> vluns = extTaskMapper.selectVulnByExample(vulnExample);
         dto.setVulnAccount(vluns);
-        //虚拟机
+        //主机
         ServerExample serverExample = new ServerExample();
         serverExample.setOrderByClause("create_time desc");
         List<ServerVo> servers = extTaskMapper.selectServerByExample(serverExample);

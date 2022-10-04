@@ -230,3 +230,7 @@ CREATE TABLE IF NOT EXISTS `cloud_resource_amount_history` (
 
 
 ALTER TABLE `server_result` ADD `is_severity` tinyint(1) DEFAULT 1 COMMENT '是否有风险';
+
+ALTER TABLE `history_server_task` ADD `is_severity` tinyint(1) DEFAULT 1 COMMENT '是否有风险';
+
+

@@ -142,7 +142,7 @@ public class ResourceCreateService {
             });
         }
 
-        //虚拟机检测
+        //主机检测
         final ServerResultExample serverResultExample = new ServerResultExample();
         ServerResultExample.Criteria serverCriteria = serverResultExample.createCriteria();
         serverCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());

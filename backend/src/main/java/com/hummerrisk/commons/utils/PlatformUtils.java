@@ -125,7 +125,7 @@ public class PlatformUtils {
     public final static String nuclei = "hummer-nuclei-plugin";
     public final static String xray = "hummer-xray-plugin";
     public final static String tsunami = "hummer-tsunami-plugin";
-    //虚拟机插件
+    //主机插件
     public final static String server = "hummer-server-plugin";
     //云原生检测插件
     public final static String k8s = "hummer-k8s-plugin";
