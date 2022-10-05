@@ -211,7 +211,7 @@ public class NoticeService {
         messageOrder.setAccountId(image.getId());
         messageOrder.setAccountName(image.getName());
         messageOrder.setCreateTime(System.currentTimeMillis());
-        messageOrder.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
+        messageOrder.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
         messageOrder.setScanType(ScanConstants.SCAN_TYPE.IMAGE.name());
         messageOrderMapper.insertSelective(messageOrder);
 
@@ -231,8 +231,8 @@ public class NoticeService {
         messageOrder.setAccountId(cloudNativeResult.getId());
         messageOrder.setAccountName(cloudNativeResult.getName());
         messageOrder.setCreateTime(System.currentTimeMillis());
-        messageOrder.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
-        messageOrder.setScanType(ScanConstants.SCAN_TYPE.CLOUD_NATIVE.name());
+        messageOrder.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
+        messageOrder.setScanType(ScanConstants.SCAN_TYPE.K8S.name());
         messageOrderMapper.insertSelective(messageOrder);
 
         MessageOrderItem messageOrderItem = new MessageOrderItem();
@@ -251,8 +251,8 @@ public class NoticeService {
         messageOrder.setAccountId(result.getId());
         messageOrder.setAccountName(result.getName());
         messageOrder.setCreateTime(System.currentTimeMillis());
-        messageOrder.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
-        messageOrder.setScanType(ScanConstants.SCAN_TYPE.CLOUD_NATIVE_CONFIG.name());
+        messageOrder.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
+        messageOrder.setScanType(ScanConstants.SCAN_TYPE.CONFIG.name());
         messageOrderMapper.insertSelective(messageOrder);
 
         MessageOrderItem messageOrderItem = new MessageOrderItem();
@@ -271,7 +271,7 @@ public class NoticeService {
         messageOrder.setAccountId(result.getId());
         messageOrder.setAccountName(result.getName());
         messageOrder.setCreateTime(System.currentTimeMillis());
-        messageOrder.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
+        messageOrder.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
         messageOrder.setScanType(ScanConstants.SCAN_TYPE.CODE.name());
         messageOrderMapper.insertSelective(messageOrder);
 
