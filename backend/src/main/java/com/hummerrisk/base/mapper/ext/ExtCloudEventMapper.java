@@ -12,6 +12,7 @@ public interface ExtCloudEventMapper {
 
     /**
      * 批量插入云事件
+     *
      * @param cloudEvents
      * @return
      */

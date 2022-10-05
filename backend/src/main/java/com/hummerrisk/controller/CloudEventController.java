@@ -23,14 +23,14 @@ public class CloudEventController {
     @Resource
     private CloudEventService cloudEventService;
 
-    @ApiOperation(value = "同步日志查询")
+    @ApiOperation(value = "同步任务列表")
     @PostMapping("sync/log/list/{goPage}/{pageSize}")
     public Pager<List<CloudEventSyncLog>> listSyncLogs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, cloudEventService.getCloudEventSyncLog(cloudEventRequest));
     }
 
-    @ApiOperation(value = "区域同步日志查询")
+    @ApiOperation(value = "区域同步日志")
     @PostMapping("sync/log/region/list/{logId}")
     public List<CloudEventRegionLog> listSyncRegionLogs(@PathVariable int logId) {
         return cloudEventService.getCloudEventRegionLog(logId);
@@ -43,26 +43,26 @@ public class CloudEventController {
     }
 
 
-    @ApiOperation(value = "查询同步日志")
+    @ApiOperation(value = "查询同步日志详情")
     @PostMapping("sync/log/detail/{id}")
     public CloudEventSyncLog getSyncLog(@PathVariable int id) {
         return cloudEventService.selectCloudEventSyncLog(id);
     }
 
-    @ApiOperation(value = "删除事件")
+    @ApiOperation(value = "删除云事件")
     @PostMapping("delete/{id}")
     public void deleteEvent(@PathVariable String id) {
         cloudEventService.deleteCloudEvent(id);
     }
 
-    @ApiOperation(value = "日志同步")
+    @ApiOperation(value = "云事件同步")
     @PostMapping("sync")
     public void syncEvents(@RequestBody CloudEventRequest cloudEventRequest) {
         cloudEventService.syncCloudEvents(cloudEventRequest.getAccountId(), cloudEventRequest.getRegions()
                 , cloudEventRequest.getStartTime(), cloudEventRequest.getEndTime());
     }
 
-    @ApiOperation(value = "日志查询")
+    @ApiOperation(value = "云事件分析列表")
     @PostMapping("list/{goPage}/{pageSize}")
     public Pager<List<CloudEvent>> listEvents(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
