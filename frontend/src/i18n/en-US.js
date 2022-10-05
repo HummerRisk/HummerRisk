@@ -852,6 +852,7 @@ export default {
     cloud_topology: 'Cloud resource topology',
     resource_situation: 'Cloud resource situation',
     sync_log: 'Cloud resource synchronization log',
+    sync_log_list: 'Cloud resource synchronization log list',
   },
   server: {
     server_setting: 'Host scan',
@@ -936,6 +937,9 @@ export default {
     batch_error: 'Batch setup failed, there is no host that needs to be assigned',
     is_severity: 'Is it safe',
     server_group: 'Host group',
+    server_risk: 'Host risk',
+    server_risk_chart: 'Host risk statistics',
+    server_risk_chart_vuln: 'Host detection result risk statistics',
     all_label: 'All hosts',
   },
   image: {
@@ -1344,6 +1348,7 @@ export default {
   },
   event: {
     audit: 'Operation audit',
+    event: 'Cloud event',
     event_sync: 'Cloud event synchronization',
     event_sync_list: 'Sync list',
     event_list: 'Event list',
@@ -1601,6 +1606,7 @@ export default {
     createEdgeError: 'Cannot link edges to a cluster.',
     deleteClusterError: 'Clusters cannot be deleted.',
     editClusterError: 'Clusters cannot be edited.',
+    unedit: 'Data cannot be modified temporarily',
     linked: 'Associated',
     belong: 'belonging to',
   },

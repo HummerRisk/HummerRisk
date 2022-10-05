@@ -852,6 +852,7 @@ export default {
     cloud_topology: '雲資源拓撲圖',
     resource_situation: '雲資源態勢',
     sync_log: '雲資源同步日誌',
+    sync_log_list: '雲資源同步日誌列表',
   },
   server: {
     server_setting: '主機檢測',
@@ -936,6 +937,9 @@ export default {
     batch_error: '批量設置失敗, 沒有需要賦值的主機',
     is_severity: '是否安全',
     server_group: '主機分組',
+    server_risk: '主機風險',
+    server_risk_chart: '主機風險統計',
+    server_risk_chart_vuln: '主機檢測結果風險統計',
     all_label: '所有主機',
   },
   image: {
@@ -1344,6 +1348,7 @@ export default {
   },
   event: {
     audit: '操作審計',
+    event: '雲事件',
     event_sync: '雲事件同步',
     event_sync_list: '同步列表',
     event_list: '事件列表',
@@ -1601,6 +1606,7 @@ export default {
     createEdgeError: '無法將邊連接到集群。 ',
     deleteClusterError: '無法刪除集群。 ',
     editClusterError: '無法編輯群集。 ',
+    unedit: '數據暫時不可修改',
     linked: '關聯',
     belong: '所屬',
   },

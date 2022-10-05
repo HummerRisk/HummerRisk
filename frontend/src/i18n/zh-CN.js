@@ -1348,6 +1348,7 @@ export default {
   },
   event: {
     audit: '操作审计',
+    event: '云事件',
     event_sync: '云事件同步',
     event_sync_list: '同步列表',
     event_list: '事件列表',
