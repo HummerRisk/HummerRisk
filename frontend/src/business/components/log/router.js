@@ -10,12 +10,12 @@ export default {
     {
       path: "sync",
       name: "sync",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/log/home/sync'),
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/log/home/Sync'),
     },
     {
       path: "event",
       name: "event",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/log/home/event'),
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/log/home/Event'),
     },
     {
       path: "overview",
