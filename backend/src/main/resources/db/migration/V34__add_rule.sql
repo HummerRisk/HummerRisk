@@ -1,6 +1,6 @@
--------------------
-----UCloud Rule----
--------------------
+-- ----------------------------
+-- UCloud Rule
+-- ----------------------------
 
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('351684f0-1464-428e-a66d-4dbcfb1839b0', 'UCloud SecurityGroup安全组配置检测', 1, 'HighRisk', 'UCloud  账号下安全组配置不为“0.0.0.0/0”，视为“合规”，否则属于“不合规”', 'policies:\n    # 账号下安全组配置不为“0.0.0.0/0”，视为“合规”。\n    - name: ucloud-sg-source-cidr-ip\n      resource: ucloud.securitygroup\n      filters:\n        - type: source-cidr-ip\n          value: ${{value}}', '[{\"key\":\"value\",\"name\":\"目标IP地址段\",\"defaultValue\":\"\\\"0.0.0.0/0\\\"\",\"required\":true}]', 'hummer-ucloud-plugin', 'UCloud 优刻得', 'ucloud.png', concat(unix_timestamp(now()), '001'), '1', 'custodian', NULL);
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('3b61a7cf-e3b4-4120-86c1-ffe92c3a6d66', 'UCloud SecurityGroup安全组端口访问检测', 1, 'HighRisk', 'UCloud  账号下安全组配置允许所有端口访问视为”不合规“，否则为”合规“', 'policies:\n  # 账号下安全组配置允许所有端口访问视为”不合规“，否则为”合规“\n  - name: ucloud-sg-ports\n    resource: ucloud.securitygroup\n    filters:\n      - type: source-ports\n        SourceCidrIp: ${{SourceCidrIp}}\n        PortRange: ${{PortRange}}', '[{\"key\":\"SourceCidrIp\",\"name\":\"目标IP地址段\",\"defaultValue\":\"\\\"0.0.0.0/0\\\"\",\"required\":true},{\"key\":\"PortRange\",\"name\":\"端口号\",\"defaultValue\":\"”-1/-1“\",\"required\":true}]', 'hummer-ucloud-plugin', 'UCloud 优刻得', 'ucloud.png', concat(unix_timestamp(now()), '001'), '1', 'custodian', NULL);
@@ -233,4 +233,5 @@ ALTER TABLE `server_result` ADD `is_severity` tinyint(1) DEFAULT 1 COMMENT '是�
 
 ALTER TABLE `history_server_task` ADD `is_severity` tinyint(1) DEFAULT 1 COMMENT '是否有风险';
 
+UPDATE rule_type SET resource_type = 'huawei.obs' WHERE id = '3e50ec86-1a2a-486e-920b-39572eb8d193';
 
