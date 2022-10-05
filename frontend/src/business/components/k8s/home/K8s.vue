@@ -60,13 +60,78 @@
     <!--Create k8s-->
     <el-drawer class="rtl" :title="$t('k8s.k8s_create')" :visible.sync="createVisible" size="50%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
-      <div v-for="(form, index) in addAccountForm" :key="index">
-        <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" :ref="'addAccountForm' + index">
-          <el-form-item :label="$t('k8s.name')" ref="name" prop="name">
+      <div v-loading="k8sResult.loading">
+        <div v-for="(form, index) in addAccountForm" :key="index">
+          <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" :ref="'addAccountForm' + index">
+            <el-form-item :label="$t('k8s.name')" ref="name" prop="name">
+              <el-input v-model="form.name" autocomplete="off" :placeholder="$t('k8s.name')"/>
+            </el-form-item>
+            <el-form-item :label="$t('k8s.platform')" :rules="{required: true, message: $t('k8s.platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-select style="width: 100%;" v-model="form.pluginId" :placeholder="$t('k8s.platform')" @change="changePluginForAdd(form)">
+                <el-option
+                  v-for="item in plugins"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                  <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                  &nbsp;&nbsp; {{ $t(item.name) }}
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <div v-for="(tmp, index) in form.tmpList" :key="index">
+              <el-form-item v-if="tmp.inputType === 'password'" :label="tmp.label" style="margin-bottom: 29px">
+                <el-input :type="tmp.inputType" v-model="tmp.input" autocomplete="new-password" show-password :placeholder="tmp.description"/>
+              </el-form-item>
+              <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean'" :label="tmp.label">
+                <el-input :type="tmp.inputType" v-model="tmp.input" autocomplete="off" :placeholder="tmp.description"/>
+              </el-form-item>
+            </div>
+            <el-form-item v-if="form.isProxy && form.pluginId" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+                <el-option
+                  v-for="item in proxys"
+                  :key="item.id"
+                  :label="item.proxyIp"
+                  :value="item.id">
+                  &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item v-if="form.pluginId" :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-switch v-model="form.isProxy"></el-switch>
+            </el-form-item>
+            <el-form-item v-if="index > 0" :label="$t('k8s.delete_this_k8s')">
+              <el-button type="danger" icon="el-icon-delete" plain size="small" @click="deleteAccount(addAccountForm, form)">{{ $t('commons.delete') }}</el-button>
+            </el-form-item>
+          </el-form>
+          <el-divider><i class="el-icon-first-aid-kit"> {{ (index + 1) }}</i></el-divider>
+          <div style="margin: 10px;">
+            <el-popover placement="right-end" title="Notice" width="800" trigger="click">
+              <hr-code-edit :read-only="true" width="800px" height="300px" :data.sync="content" :modes="modes" :mode="'html'"/>
+              <el-button icon="el-icon-warning" plain size="mini" slot="reference" style="color: red">
+                <span>{{ $t('k8s.k8s_note') }}</span>
+              </el-button>
+            </el-popover>
+          </div>
+        </div>
+        <proxy-dialog-create-footer
+          @cancel="createVisible = false"
+          @addAccount="addAccount(addAccountForm)"
+          @confirm="saveAccount(addAccountForm, 'add')"/>
+      </div>
+    </el-drawer>
+    <!--Create k8s-->
+
+    <!--Update k8s-->
+    <el-drawer class="rtl" :title="$t('k8s.k8s_update')" :visible.sync="updateVisible" size="50%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <div v-loading="k8sResult.loading">
+        <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="accountForm">
+          <el-form-item :label="$t('k8s.name')"  ref="name" prop="name">
             <el-input v-model="form.name" autocomplete="off" :placeholder="$t('k8s.name')"/>
           </el-form-item>
           <el-form-item :label="$t('k8s.platform')" :rules="{required: true, message: $t('k8s.platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.pluginId" :placeholder="$t('k8s.platform')" @change="changePluginForAdd(form)">
+            <el-select style="width: 100%;" disabled v-model="form.pluginId" :placeholder="$t('k8s.platform')" @change="changePlugin(form.pluginId)">
               <el-option
                 v-for="item in plugins"
                 :key="item.id"
@@ -77,33 +142,15 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <div v-for="(tmp, index) in form.tmpList" :key="index">
+          <div v-for="(tmp, index) in tmpList" :key="index">
             <el-form-item v-if="tmp.inputType === 'password'" :label="tmp.label" style="margin-bottom: 29px">
-              <el-input :type="tmp.inputType" v-model="tmp.input" autocomplete="new-password" show-password :placeholder="tmp.description"/>
+              <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="new-password" show-password :placeholder="tmp.description"/>
             </el-form-item>
             <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean'" :label="tmp.label">
-              <el-input :type="tmp.inputType" v-model="tmp.input" autocomplete="off" :placeholder="tmp.description"/>
+              <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="off" :placeholder="tmp.description"/>
             </el-form-item>
           </div>
-          <el-form-item v-if="form.isProxy && form.pluginId" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
-              <el-option
-                v-for="item in proxys"
-                :key="item.id"
-                :label="item.proxyIp"
-                :value="item.id">
-                &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item v-if="form.pluginId" :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-switch v-model="form.isProxy"></el-switch>
-          </el-form-item>
-          <el-form-item v-if="index > 0" :label="$t('k8s.delete_this_k8s')">
-            <el-button type="danger" icon="el-icon-delete" plain size="small" @click="deleteAccount(addAccountForm, form)">{{ $t('commons.delete') }}</el-button>
-          </el-form-item>
         </el-form>
-        <el-divider><i class="el-icon-first-aid-kit"> {{ (index + 1) }}</i></el-divider>
         <div style="margin: 10px;">
           <el-popover placement="right-end" title="Notice" width="800" trigger="click">
             <hr-code-edit :read-only="true" width="800px" height="300px" :data.sync="content" :modes="modes" :mode="'html'"/>
@@ -112,53 +159,10 @@
             </el-button>
           </el-popover>
         </div>
+        <proxy-dialog-footer
+          @cancel="updateVisible = false"
+          @confirm="editAccount(form, 'update')"/>
       </div>
-      <proxy-dialog-create-footer
-        @cancel="createVisible = false"
-        @addAccount="addAccount(addAccountForm)"
-        @confirm="saveAccount(addAccountForm, 'add')"/>
-    </el-drawer>
-    <!--Create k8s-->
-
-    <!--Update k8s-->
-    <el-drawer class="rtl" :title="$t('k8s.k8s_update')" :visible.sync="updateVisible" size="50%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
-      <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="accountForm">
-        <el-form-item :label="$t('k8s.name')"  ref="name" prop="name">
-          <el-input v-model="form.name" autocomplete="off" :placeholder="$t('k8s.name')"/>
-        </el-form-item>
-        <el-form-item :label="$t('k8s.platform')" :rules="{required: true, message: $t('k8s.platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" disabled v-model="form.pluginId" :placeholder="$t('k8s.platform')" @change="changePlugin(form.pluginId)">
-            <el-option
-              v-for="item in plugins"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-              <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-              &nbsp;&nbsp; {{ $t(item.name) }}
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <div v-for="(tmp, index) in tmpList" :key="index">
-          <el-form-item v-if="tmp.inputType === 'password'" :label="tmp.label" style="margin-bottom: 29px">
-            <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="new-password" show-password :placeholder="tmp.description"/>
-          </el-form-item>
-          <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean'" :label="tmp.label">
-            <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="off" :placeholder="tmp.description"/>
-          </el-form-item>
-        </div>
-      </el-form>
-      <div style="margin: 10px;">
-        <el-popover placement="right-end" title="Notice" width="800" trigger="click">
-          <hr-code-edit :read-only="true" width="800px" height="300px" :data.sync="content" :modes="modes" :mode="'html'"/>
-          <el-button icon="el-icon-warning" plain size="mini" slot="reference" style="color: red">
-            <span>{{ $t('k8s.k8s_note') }}</span>
-          </el-button>
-        </el-popover>
-      </div>
-      <proxy-dialog-footer
-        @cancel="updateVisible = false"
-        @confirm="editAccount(form, 'update')"/>
     </el-drawer>
     <!--Update k8s-->
 
@@ -206,6 +210,7 @@ export default {
     return {
       credential: {},
       result: {},
+      k8sResult: {},
       condition: {
         components: K8S_CONFIGS
       },
@@ -468,7 +473,7 @@ export default {
         if (item.isProxy) data["proxyId"] = item.proxyId;
 
         if (type === 'add') {
-          this.result = this.$post("/k8s/add", data,response => {
+          this.k8sResult = this.$post("/k8s/add", data,response => {
             if (response.success) {
               this.$success(this.$t('commons.create_success'));
               this.search();
@@ -498,7 +503,7 @@ export default {
           if (item.isProxy) data["proxyId"] = item.proxyId;
 
           if (type === 'add') {
-            this.result = this.$post("/k8s/add", data,response => {
+            this.k8sResult = this.$post("/k8s/add", data,response => {
               if (response.success) {
                 this.$success(this.$t('commons.create_success'));
                 this.search();
@@ -509,7 +514,7 @@ export default {
             });
           } else {
             data["id"] = item.id;
-            this.result = this.$post("/k8s/update", data,response => {
+            this.k8sResult = this.$post("/k8s/update", data,response => {
               if (response.success) {
                 this.$success(this.$t('commons.update_success'));
                 this.handleClose();

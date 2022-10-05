@@ -63,8 +63,9 @@
       <!--Create account-->
       <el-drawer class="rtl" :title="$t('account.create')" :visible.sync="createVisible" size="50%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <div v-for="(form, index) in addAccountForm" :key="index">
-          <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" :ref="'addAccountForm' + index">
+        <div v-loading="cloudResult.loading">
+          <div v-for="(form, index) in addAccountForm" :key="index">
+            <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" :ref="'addAccountForm' + index">
               <el-form-item :label="$t('account.name')" ref="name" prop="name">
                 <el-input v-model="form.name" autocomplete="off" :placeholder="$t('account.input_name')"/>
               </el-form-item>
@@ -120,154 +121,157 @@
               <el-form-item v-if="index > 0" :label="$t('account.delete_this_cloud_account')">
                 <el-button type="danger" icon="el-icon-delete" plain size="small" @click="deleteAccount(addAccountForm, form)">{{ $t('commons.delete') }}</el-button>
               </el-form-item>
-          </el-form>
-          <el-divider><i class="el-icon-cloudy"> {{ (index + 1) }}</i></el-divider>
-        </div>
-        <div>
-          <el-drawer
-            size="45%"
-            :title="$t('proxy.add_proxy')"
-            :append-to-body="true"
-            :before-close="innerDrawerProxyClose"
-            :visible.sync="innerDrawerProxy">
-            <el-form :model="proxyForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createProxyForm">
-              <el-form-item :label="$t('commons.proxy_type')" :rules="{required: true, message: $t('commons.proxy_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-                <el-select style="width: 100%;" filterable :clearable="true" v-model="proxyForm.proxyType" :placeholder="$t('commons.proxy_type')">
-                  <el-option
-                    v-for="item in proxyType"
-                    :key="item.id"
-                    :label="item.value"
-                    :value="item.id">
-                    &nbsp;&nbsp; {{ item.value }}
-                  </el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="Proxy IP" prop="proxyIp">
-                <el-input v-model="proxyForm.proxyIp" autocomplete="off" :placeholder="$t('proxy.proxy_ip')"/>
-              </el-form-item>
-              <el-form-item :label="$t('commons.proxy_port')" prop="proxyPort">
-                <el-input type="number" v-model="proxyForm.proxyPort" autocomplete="off" :placeholder="$t('proxy.proxy_port')"/>
-              </el-form-item>
-              <el-form-item :label="$t('commons.proxy_name')" prop="proxyName">
-                <el-input v-model="proxyForm.proxyName" autocomplete="off" :placeholder="$t('proxy.proxy_name')"/>
-              </el-form-item>
-              <el-form-item :label="$t('commons.proxy_password')" prop="proxyPassword" style="margin-bottom: 29px">
-                <el-input v-model="proxyForm.proxyPassword" autocomplete="new-password" show-password
-                          :placeholder="$t('proxy.proxy_password')"/>
-              </el-form-item>
             </el-form>
-            <dialog-footer
-              @cancel="innerDrawerProxy = false"
-              @confirm="createProxy('createProxyForm')"/>
-          </el-drawer>
+            <el-divider><i class="el-icon-cloudy"> {{ (index + 1) }}</i></el-divider>
+          </div>
+          <div>
+            <el-drawer
+              size="45%"
+              :title="$t('proxy.add_proxy')"
+              :append-to-body="true"
+              :before-close="innerDrawerProxyClose"
+              :visible.sync="innerDrawerProxy">
+              <el-form :model="proxyForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createProxyForm">
+                <el-form-item :label="$t('commons.proxy_type')" :rules="{required: true, message: $t('commons.proxy_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                  <el-select style="width: 100%;" filterable :clearable="true" v-model="proxyForm.proxyType" :placeholder="$t('commons.proxy_type')">
+                    <el-option
+                      v-for="item in proxyType"
+                      :key="item.id"
+                      :label="item.value"
+                      :value="item.id">
+                      &nbsp;&nbsp; {{ item.value }}
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="Proxy IP" prop="proxyIp">
+                  <el-input v-model="proxyForm.proxyIp" autocomplete="off" :placeholder="$t('proxy.proxy_ip')"/>
+                </el-form-item>
+                <el-form-item :label="$t('commons.proxy_port')" prop="proxyPort">
+                  <el-input type="number" v-model="proxyForm.proxyPort" autocomplete="off" :placeholder="$t('proxy.proxy_port')"/>
+                </el-form-item>
+                <el-form-item :label="$t('commons.proxy_name')" prop="proxyName">
+                  <el-input v-model="proxyForm.proxyName" autocomplete="off" :placeholder="$t('proxy.proxy_name')"/>
+                </el-form-item>
+                <el-form-item :label="$t('commons.proxy_password')" prop="proxyPassword" style="margin-bottom: 29px">
+                  <el-input v-model="proxyForm.proxyPassword" autocomplete="new-password" show-password
+                            :placeholder="$t('proxy.proxy_password')"/>
+                </el-form-item>
+              </el-form>
+              <dialog-footer
+                @cancel="innerDrawerProxy = false"
+                @confirm="createProxy('createProxyForm')"/>
+            </el-drawer>
+          </div>
+          <proxy-dialog-create-footer
+            @cancel="createVisible = false"
+            @add="innerDrawerProxy = true"
+            @addAccount="addAccount(addAccountForm)"
+            @confirm="saveAccount(addAccountForm, 'add')"/>
         </div>
-        <proxy-dialog-create-footer
-          @cancel="createVisible = false"
-          @add="innerDrawerProxy = true"
-          @addAccount="addAccount(addAccountForm)"
-          @confirm="saveAccount(addAccountForm, 'add')"/>
       </el-drawer>
       <!--Create account-->
 
       <!--Update account-->
       <el-drawer class="rtl" :title="$t('account.update')" :visible.sync="updateVisible" size="50%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="accountForm">
-          <el-form-item :label="$t('account.name')"  ref="name" prop="name">
-            <el-input v-model="form.name" autocomplete="off" :placeholder="$t('account.input_name')"/>
-          </el-form-item>
-          <el-form-item :label="$t('account.cloud_platform')" :rules="{required: true, message: $t('account.cloud_platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" disabled v-model="form.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePlugin(form.pluginId)">
-              <el-option
-                v-for="item in plugins"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-                <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                &nbsp;&nbsp; {{ $t(item.name) }}
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <div v-for="(tmp, index) in tmpList" :key="index">
-            <el-form-item v-if="tmp.inputType === 'password'" :label="tmp.label" style="margin-bottom: 29px">
-              <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="new-password" show-password :placeholder="tmp.description"/>
+        <div v-loading="cloudResult.loading">
+          <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="accountForm">
+            <el-form-item :label="$t('account.name')"  ref="name" prop="name">
+              <el-input v-model="form.name" autocomplete="off" :placeholder="$t('account.input_name')"/>
             </el-form-item>
-            <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean'" :label="tmp.label">
-              <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="off" :placeholder="tmp.description"/>
+            <el-form-item :label="$t('account.cloud_platform')" :rules="{required: true, message: $t('account.cloud_platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-select style="width: 100%;" disabled v-model="form.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePlugin(form.pluginId)">
+                <el-option
+                  v-for="item in plugins"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                  <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                  &nbsp;&nbsp; {{ $t(item.name) }}
+                </el-option>
+              </el-select>
             </el-form-item>
-          </div>
-          <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
-              <el-option
-                v-for="item in proxys"
-                :key="item.id"
-                :label="item.proxyIp"
-                :value="item.id">
-                &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item v-if="iamStrategyNotSupport.indexOf(form.pluginId) === -1" :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-switch v-model="form.isProxy"></el-switch>
-          </el-form-item>
-          <el-form-item v-if="script">
-            <el-link v-if="iamStrategyNotSupport.indexOf(form.pluginId) === -1" type="danger" @click="innerDrawer = true">{{ $t('account.iam_strategy') }}</el-link>
-            <div v-if="iamStrategyNotSupport.indexOf(form.pluginId) === -1">
-              <el-drawer
-                size="45%"
-                :title="$t('account.iam_strategy')"
-                :append-to-body="true"
-                :before-close="innerDrawerClose"
-                :visible.sync="innerDrawer">
-                <el-form-item>
-                  <codemirror ref="cmEditor" v-model="script" class="code-mirror" :options="cmOptions" />
-                </el-form-item>
-              </el-drawer>
+            <div v-for="(tmp, index) in tmpList" :key="index">
+              <el-form-item v-if="tmp.inputType === 'password'" :label="tmp.label" style="margin-bottom: 29px">
+                <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="new-password" show-password :placeholder="tmp.description"/>
+              </el-form-item>
+              <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean'" :label="tmp.label">
+                <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="off" :placeholder="tmp.description"/>
+              </el-form-item>
             </div>
-            <div>
-              <el-drawer
-                size="45%"
-                :title="$t('proxy.add_proxy')"
-                :append-to-body="true"
-                :before-close="innerDrawerProxyClose"
-                :visible.sync="innerDrawerProxy">
-                <el-form :model="proxyForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="updateProxyForm">
-                  <el-form-item :label="$t('commons.proxy_type')" :rules="{required: true, message: $t('commons.proxy_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-                    <el-select style="width: 100%;" v-model="proxyForm.proxyType" :placeholder="$t('commons.proxy_type')">
-                      <el-option
-                        v-for="item in proxyType"
-                        :key="item.id"
-                        :label="item.value"
-                        :value="item.id">
-                        &nbsp;&nbsp; {{ item.value }}
-                      </el-option>
-                    </el-select>
+            <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+                <el-option
+                  v-for="item in proxys"
+                  :key="item.id"
+                  :label="item.proxyIp"
+                  :value="item.id">
+                  &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item v-if="iamStrategyNotSupport.indexOf(form.pluginId) === -1" :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-switch v-model="form.isProxy"></el-switch>
+            </el-form-item>
+            <el-form-item v-if="script">
+              <el-link v-if="iamStrategyNotSupport.indexOf(form.pluginId) === -1" type="danger" @click="innerDrawer = true">{{ $t('account.iam_strategy') }}</el-link>
+              <div v-if="iamStrategyNotSupport.indexOf(form.pluginId) === -1">
+                <el-drawer
+                  size="45%"
+                  :title="$t('account.iam_strategy')"
+                  :append-to-body="true"
+                  :before-close="innerDrawerClose"
+                  :visible.sync="innerDrawer">
+                  <el-form-item>
+                    <codemirror ref="cmEditor" v-model="script" class="code-mirror" :options="cmOptions" />
                   </el-form-item>
-                  <el-form-item label="Proxy IP" prop="proxyIp">
-                    <el-input v-model="proxyForm.proxyIp" autocomplete="off" :placeholder="$t('proxy.proxy_ip')"/>
-                  </el-form-item>
-                  <el-form-item :label="$t('commons.proxy_port')" prop="proxyPort">
-                    <el-input type="number" v-model="proxyForm.proxyPort" autocomplete="off" :placeholder="$t('proxy.proxy_port')"/>
-                  </el-form-item>
-                  <el-form-item :label="$t('commons.proxy_name')" prop="proxyName">
-                    <el-input v-model="proxyForm.proxyName" autocomplete="off" :placeholder="$t('proxy.proxy_name')"/>
-                  </el-form-item>
-                  <el-form-item :label="$t('commons.proxy_password')" prop="proxyPassword" style="margin-bottom: 29px">
-                    <el-input v-model="proxyForm.proxyPassword" autocomplete="new-password" show-password
-                              :placeholder="$t('proxy.proxy_password')"/>
-                  </el-form-item>
-                </el-form>
-                <dialog-footer
-                  @cancel="innerDrawerProxy = false"
-                  @confirm="createProxy('updateProxyForm')"/>
-              </el-drawer>
-            </div>
-          </el-form-item>
-        </el-form>
-        <proxy-dialog-footer
+                </el-drawer>
+              </div>
+              <div>
+                <el-drawer
+                  size="45%"
+                  :title="$t('proxy.add_proxy')"
+                  :append-to-body="true"
+                  :before-close="innerDrawerProxyClose"
+                  :visible.sync="innerDrawerProxy">
+                  <el-form :model="proxyForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="updateProxyForm">
+                    <el-form-item :label="$t('commons.proxy_type')" :rules="{required: true, message: $t('commons.proxy_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                      <el-select style="width: 100%;" v-model="proxyForm.proxyType" :placeholder="$t('commons.proxy_type')">
+                        <el-option
+                          v-for="item in proxyType"
+                          :key="item.id"
+                          :label="item.value"
+                          :value="item.id">
+                          &nbsp;&nbsp; {{ item.value }}
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item label="Proxy IP" prop="proxyIp">
+                      <el-input v-model="proxyForm.proxyIp" autocomplete="off" :placeholder="$t('proxy.proxy_ip')"/>
+                    </el-form-item>
+                    <el-form-item :label="$t('commons.proxy_port')" prop="proxyPort">
+                      <el-input type="number" v-model="proxyForm.proxyPort" autocomplete="off" :placeholder="$t('proxy.proxy_port')"/>
+                    </el-form-item>
+                    <el-form-item :label="$t('commons.proxy_name')" prop="proxyName">
+                      <el-input v-model="proxyForm.proxyName" autocomplete="off" :placeholder="$t('proxy.proxy_name')"/>
+                    </el-form-item>
+                    <el-form-item :label="$t('commons.proxy_password')" prop="proxyPassword" style="margin-bottom: 29px">
+                      <el-input v-model="proxyForm.proxyPassword" autocomplete="new-password" show-password
+                                :placeholder="$t('proxy.proxy_password')"/>
+                    </el-form-item>
+                  </el-form>
+                  <dialog-footer
+                    @cancel="innerDrawerProxy = false"
+                    @confirm="createProxy('updateProxyForm')"/>
+                </el-drawer>
+              </div>
+            </el-form-item>
+          </el-form>
+          <proxy-dialog-footer
           @cancel="updateVisible = false"
           @add="innerDrawerProxy = true"
           @confirm="editAccount(form, 'update')"/>
+        </div>
       </el-drawer>
       <!--Update account-->
 
@@ -340,6 +344,7 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
       return {
         credential: {},
         result: {},
+        cloudResult: {},
         groupResult: {},
         condition: {
           components: ACCOUNT_CONFIGS
@@ -634,7 +639,7 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
           if (item.isProxy) data["proxyId"] = item.proxyId;
 
           if (type === 'add') {
-            this.result = this.$post("/account/add", data,response => {
+            this.cloudResult = this.$post("/account/add", data,response => {
               if (response.success) {
                 this.$success(this.$t('account.i18n_hr_create_success'));
                 this.search();
@@ -669,7 +674,7 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
             if (item.isProxy) data["proxyId"] = item.proxyId;
 
             if (type === 'add') {
-              this.result = this.$post("/account/add", data,response => {
+              this.cloudResult = this.$post("/account/add", data,response => {
                 if (response.success) {
                   this.$success(this.$t('account.i18n_hr_create_success'));
                   this.search();
@@ -681,7 +686,7 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
               });
             } else {
               data["id"] = item.id;
-              this.result = this.$post("/account/update", data,response => {
+              this.cloudResult = this.$post("/account/update", data,response => {
                 if (response.success) {
                   this.$success(this.$t('account.i18n_hr_update_success'));
                   this.handleClose();
