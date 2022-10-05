@@ -236,6 +236,8 @@ public class NoticeCreateService {
         String subject = "i18n_cloud_messageorder";
         String event = NoticeConstants.Event.EXECUTE_SUCCESSFUL;
         String details = "";
+        int returnSum = 0;
+        int resourcesSum = 0;
 
         if (StringUtils.equals(ScanConstants.SCAN_TYPE.CLOUD.name(), messageOrder.getScanType())) {
             subject = "i18n_cloud_messageorder";
@@ -248,8 +250,6 @@ public class NoticeCreateService {
                 }
             }
 
-            int returnSum = 0;
-            int resourcesSum = 0;
             returnSum = extCloudTaskMapper.getReturnSumForEmail(messageOrder);
             resourcesSum = extCloudTaskMapper.getResourcesSumForEmail(messageOrder);
             details = "i18n_cloud_messageorder_sum" + returnSum + "/" + resourcesSum;
@@ -281,8 +281,6 @@ public class NoticeCreateService {
                 }
             }
 
-            int returnSum = 0;
-            int resourcesSum = 0;
             returnSum = extCloudTaskMapper.getReturnSumForEmail(messageOrder);
             resourcesSum = extCloudTaskMapper.getResourcesSumForEmail(messageOrder);
             details = "i18n_cloud_messageorder_sum" + returnSum + "/" + resourcesSum;

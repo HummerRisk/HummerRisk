@@ -17,7 +17,7 @@
       </el-table-column>
       <el-table-column prop="content" :label="$t('webmsg.content')" min-width="55%">
         <template slot-scope="scope">
-          <span style="display: flex;flex: 1;">
+          <span style="display: flex;flex: 1;" @click="setReaded(scope.row)">
             <span>
               <i v-if="!scope.row.status" class="el-icon-message" style="color: red;" />
               <i v-else class="el-icon-message"/>
@@ -110,7 +110,7 @@ export default {
     },
     // 设置已读
     setReaded(row) {
-      this.$post('/webmsg/setReaded/' + row.id, {}, response => {
+      this.$get('/webmsg/setReaded/' + row.id, response => {
         bus.$emit('refresh-top-notification');
         this.selectIds = [];
         this.search();

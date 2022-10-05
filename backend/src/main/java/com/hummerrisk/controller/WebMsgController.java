@@ -38,7 +38,7 @@ public class WebMsgController {
     }
 
     @ApiOperation("设置已读")
-    @PostMapping("/setReaded/{msgId}")
+    @GetMapping("/setReaded/{msgId}")
     public void setReaded(@PathVariable Long msgId) {
         webMsgService.setReaded(msgId);
     }
