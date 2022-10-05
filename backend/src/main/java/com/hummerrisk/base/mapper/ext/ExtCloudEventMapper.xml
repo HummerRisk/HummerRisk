@@ -148,5 +148,17 @@
     </foreach>
   </insert>
 
+  <select id="topInfo" parameterType="java.util.Map" resultType="java.util.Map">
+    SELECT *
+    from (
+            (SELECT IFNULL(COUNT(*), 0) as accounts FROM (SELECT t.account_id from cloud_event_sync_log t group by t.account_id) as tt) as accounts,
+            (SELECT IFNULL(count(*), 0) as regions FROM (SELECT t.region from cloud_event_region_log t group by t.region) as tt) as regions,
+            (SELECT IFNULL(count(t.event_id), 0) as events from cloud_event t) as events,
+            (SELECT IFNULL(count(t.event_id), 0) as success from cloud_event t where t.event_rating = 0) as success,
+            (SELECT IFNULL(count(t.event_id), 0) as warning from cloud_event t where t.event_rating = 1) as warning,
+            (SELECT IFNULL(count(t.event_id), 0) as danger from cloud_event t where t.event_rating = 2) as danger
+         )
+  </select>
+
 
 </mapper>

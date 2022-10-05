@@ -5,6 +5,7 @@ import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ExtCloudEventMapper {
 
@@ -17,4 +18,6 @@ public interface ExtCloudEventMapper {
      * @return
      */
     int batchCloudEvents(List<CloudEvent> cloudEvents);
+
+    Map<String, Object> topInfo(Map<String, Object> params);
 }

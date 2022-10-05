@@ -7,6 +7,7 @@ import com.hummerrisk.base.domain.CloudEventRegionLog;
 import com.hummerrisk.base.domain.CloudEventSyncLog;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
+import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
 import com.hummerrisk.service.CloudEventService;
 import io.swagger.annotations.Api;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "云审计")
 @RestController
@@ -67,5 +69,12 @@ public class CloudEventController {
     public Pager<List<CloudEvent>> listEvents(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, cloudEventService.getCloudEvents(cloudEventRequest));
+    }
+
+    @I18n
+    @ApiOperation(value = "操作审计概览TOP统计")
+    @PostMapping("topInfo")
+    public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
+        return cloudEventService.topInfo(params);
     }
 }

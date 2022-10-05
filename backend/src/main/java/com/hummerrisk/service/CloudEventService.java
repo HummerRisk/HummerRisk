@@ -203,8 +203,7 @@ public class CloudEventService {
         try {
 
             Map<String, String> accountMap = PlatformUtils.getAccount(account, region, proxyMapper.selectByPrimaryKey(account.getProxyId()));
-            JSONArray jsonArray = JSON.parseArray(account.getRegions());
-            accountMap.put("regionName", getRegionName(new String[]{region}, jsonArray.toJavaList(JSONObject.class)));
+            accountMap.put("regionName", PlatformUtils.tranforRegionId2RegionName(region, account.getPluginId()));
             List<CloudEvent> result = new ArrayList<>();
             int pageNum = 1;
             int maxNum = 20;
@@ -386,13 +385,11 @@ public class CloudEventService {
             CloudEvent cloudEvent = new CloudEvent();
             cloudEvent.setEventRating(eventLevel);
             cloudEvent.setEventId(event.getEventId());
-            cloudEvent.setUserName(event.getUsername())
-            ;
+            cloudEvent.setUserName(event.getUsername());
             cloudEvent.setEventTime(Long.parseLong(event.getEventTime()) * 1000);
             cloudEvent.setResourceType(event.getResourceTypeCn());
             cloudEvent.setEventName(event.getEventNameCn());
-            cloudEvent.setEventSource(event.getEventSource())
-            ;
+            cloudEvent.setEventSource(event.getEventSource());
             cloudEvent.setRequestId(event.getRequestID());
             cloudEvent.setAcsRegion(event.getResourceRegion());
             cloudEvent.setSourceIpAddress(event.getSourceIPAddress());
@@ -481,5 +478,9 @@ public class CloudEventService {
             }
         }
         return StringUtils.join(regionNameArr, ",");
+    }
+
+    public Map<String, Object> topInfo(Map<String, Object> params) {
+        return extCloudEventMapper.topInfo(params);
     }
 }

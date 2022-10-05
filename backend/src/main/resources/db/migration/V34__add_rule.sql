@@ -235,3 +235,5 @@ ALTER TABLE `history_server_task` ADD `is_severity` tinyint(1) DEFAULT 1 COMMENT
 
 UPDATE rule_type SET resource_type = 'huawei.obs' WHERE id = '3e50ec86-1a2a-486e-920b-39572eb8d193';
 
+ALTER TABLE `cloud_event` ADD PRIMARY KEY ( `event_id` );
+
