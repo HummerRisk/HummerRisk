@@ -3,12 +3,12 @@
     <el-card class="table-card" >
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
-                      :title="$t('log.event_sync')"
-                      @syncData="syncData" :syncTip="$t('log.sync')"
+                      :title="$t('event.event_sync')"
+                      @syncData="syncData" :syncTip="$t('event.sync')"
                       :show-sync="true"/>
       </template>
         <el-table border :data="tableData" class="adjust-table table-content">
-          <el-table-column  min-width="10%" :label="$t('log.cloud_account_name')">
+          <el-table-column  min-width="10%" :label="$t('event.cloud_account_name')">
             <template v-slot:default="scope">
               <span> <img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.accountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ getAccountName(scope.row.accountId) }}</span>
@@ -17,7 +17,7 @@
 
           <el-table-column
             prop="regionName"
-            :label="$t('log.region')"
+            :label="$t('event.region')"
             min-width="10%"
           >
             <template v-slot:default="scope">
@@ -26,7 +26,7 @@
           </el-table-column>
           <el-table-column
             prop="createTime"
-            :label="$t('log.sync_time')"
+            :label="$t('event.sync_time')"
             min-width="10%"
           >
             <template v-slot:default="scope">
@@ -34,7 +34,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column v-slot:default="scope" :label="$t('log.sync_status')" min-width="10%"
+          <el-table-column v-slot:default="scope" :label="$t('event.sync_status')" min-width="10%"
           >
             <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.status === 0">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
@@ -51,7 +51,7 @@
           </el-table-column>
           <el-table-column
             prop="dataCount"
-            :label="$t('log.data_count')"
+            :label="$t('event.data_count')"
             min-width="5%"
             v-slot:default="scope"
           >
@@ -60,7 +60,7 @@
             </el-link>
           </el-table-column>
           <el-table-column
-            :label="$t('log.sync_time_section')" min-width="20%"
+            :label="$t('event.sync_time_section')" min-width="20%"
           >
             <template v-slot:default="scope">
               <span>{{ scope.row.requestStartTime | timestampFormatDate }}-{{ scope.row.requestEndTime | timestampFormatDate }}</span>
@@ -82,11 +82,11 @@
     <!--Task log-->
 
     <!--sync-->
-    <el-drawer class="rtl" :title="$t('log.event_sync')" :visible.sync="showSync" size="50%" :before-close="handleClose" direction="rtl"
+    <el-drawer class="rtl" :title="$t('event.event_sync')" :visible.sync="showSync" size="50%" :before-close="handleClose" direction="rtl"
                :destroy-on-close="true">
       <el-form :model="eventFrom" label-position="right" label-width="120px" size="small" >
-        <el-form-item :label="$t('log.cloud_account')"  ref="accountId" prop="accountId">
-          <el-select filterable :clearable="true"  style="width: 100%;" v-model="eventFrom.accountId" :placeholder="$t('log.cloud_account')" @change="changeFormRegion">
+        <el-form-item :label="$t('event.cloud_account')"  ref="accountId" prop="accountId">
+          <el-select filterable :clearable="true"  style="width: 100%;" v-model="eventFrom.accountId" :placeholder="$t('event.cloud_account')" @change="changeFormRegion">
             <el-option
               v-for="item in accountList"
               :key="item.id"
@@ -96,8 +96,8 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('log.region')" ref="regions" prop="regions" >
-          <el-select filterable :clearable="true"  multiple style="width: 100%;" v-model="eventFrom.regions" :placeholder="$t('log.region')">
+        <el-form-item :label="$t('event.region')" ref="regions" prop="regions" >
+          <el-select filterable :clearable="true"  multiple style="width: 100%;" v-model="eventFrom.regions" :placeholder="$t('event.region')">
             <el-checkbox v-model="checkAll" @change="selectOnChangeAll(checkAll, null)">{{ $t('account.i18n_sync_all') }}</el-checkbox>
             <el-option
               v-for="item in regionList"
@@ -108,16 +108,16 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('log.sync_time_section')" ref="dateTime" prop="dateTime">
+        <el-form-item :label="$t('event.sync_time_section')" ref="dateTime" prop="dateTime">
           <el-date-picker
             @change="changeDateTime"
             v-model="dateTime"
             type="datetimerange"
             value-format="yyyy-MM-dd HH:mm:ss"
             :picker-options="pickerOptions"
-            :range-separator="$t('log.to')"
-            :start-placeholder="$t('log.start_time')"
-            :end-placeholder="$t('log.end_time')"
+            :range-separator="$t('event.to')"
+            :start-placeholder="$t('event.start_time')"
+            :end-placeholder="$t('event.end_time')"
             align="right">
           </el-date-picker>
         </el-form-item>
@@ -139,9 +139,9 @@ import Container from "../../common/components/Container";
 import MainContainer from "../../common/components/MainContainer";
 import {CLOUD_EVENT_SYNC_CONFIGS} from "../../common/components/search/search-components";
 import TableOperators from "../../common/components/TableOperators";
-import RegionLog from "@/business/components/log/home/RegionLog";
-import ProxyDialogFooter from "@/business/components/log/head/ProxyDialogFooter";
-import Regions from "@/business/components/log/home/Regions";
+import RegionLog from "@/business/components/event/home/RegionLog";
+import ProxyDialogFooter from "@/business/components/event/head/ProxyDialogFooter";
+import Regions from "@/business/components/event/home/Regions";
 
 /* eslint-disable */
 export default {
@@ -189,7 +189,7 @@ export default {
       ],
       pickerOptions: {
         shortcuts: [{
-          text: this.$t('log.week'),
+          text: this.$t('event.week'),
           onClick(picker) {
             const end = new Date();
             const start = new Date();
@@ -197,7 +197,7 @@ export default {
             picker.$emit('pick', [start, end]);
           }
         }, {
-          text: this.$t('log.month'),
+          text: this.$t('event.month'),
           onClick(picker) {
             const end = new Date();
             const start = new Date();
@@ -235,11 +235,11 @@ export default {
         this.eventFrom.startTime = this.dateTime[0]
         this.eventFrom.endTime = this.dateTime[1]
       }else{
-        this.$error(this.$t('log.error'))
+        this.$error(this.$t('event.error'))
         return
       }
       if(!!!this.eventFrom.accountId||!!!this.eventFrom.regions||this.eventFrom.regions.length===0||!!!this.eventFrom.startTime||!!!this.eventFrom.endTime){
-        this.$error(this.$t('log.error'))
+        this.$error(this.$t('event.error'))
         return
       }
       let url = "/cloud/event/sync";

@@ -9,7 +9,7 @@
           <el-table-column type="index" min-width="10%"/>
           <el-table-column prop="region" :label="$t('account.region_id')" min-width="25%"></el-table-column>
           <el-table-column prop="regionName" :label="$t('account.region_name')" min-width="25%"></el-table-column>
-          <el-table-column prop="dataCount" :label="$t('log.data_count')" min-width="25%"></el-table-column>
+          <el-table-column prop="dataCount" :label="$t('event.data_count')" min-width="25%"></el-table-column>
       </el-table>
       <el-button slot="reference" size="mini" type="primary" plain @click="showRegions">
         {{ $t('account.regions') }}
@@ -23,7 +23,7 @@
         <el-table-column type="index" min-width="10%"/>
         <el-table-column prop="region" :label="$t('account.region_id')" min-width="45%"></el-table-column>
         <el-table-column prop="regionName" :label="$t('account.region_name')" min-width="45%"></el-table-column>
-        <el-table-column prop="dataCount" :label="$t('log.data_count')" min-width="45%"></el-table-column>
+        <el-table-column prop="dataCount" :label="$t('event.data_count')" min-width="45%"></el-table-column>
       </el-table>
     </el-drawer>
     <!--regions-->

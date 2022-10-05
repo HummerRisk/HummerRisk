@@ -3,8 +3,8 @@
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
-                      :title="$t('log.event_analysis')"
-                      :syncTip="$t('log.sync')"
+                      :title="$t('event.event_analysis')"
+                      :syncTip="$t('event.sync')"
                       :show-sync="false"/>
       </template>
         <el-table   border :data="tableData" class="adjust-table table-content">
@@ -18,7 +18,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            min-width="10%" :label="$t('log.cloud_account_name')"
+            min-width="10%" :label="$t('event.cloud_account_name')"
           >
             <template v-slot:default="scope">
               <span><img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.cloudAccountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -28,13 +28,13 @@
 
           <el-table-column
             prop="regionName"
-            :label="$t('log.region')"
+            :label="$t('event.region')"
             min-width="10%"
           >
           </el-table-column>
           <el-table-column
             prop="eventTime"
-            :label="$t('log.event_time')"
+            :label="$t('event.event_time')"
             min-width="10%"
             >
             <template v-slot:default="scope">
@@ -44,27 +44,27 @@
           <el-table-column
             prop="userName"
             :show-overflow-tooltip="true"
-            :label="$t('log.user_name')"
+            :label="$t('event.user_name')"
             min-width="10%"
            >
           </el-table-column>
           <el-table-column
             prop="sourceIpAddress"
             :show-overflow-tooltip="true"
-            :label="$t('log.source_ip')"
+            :label="$t('event.source_ip')"
             min-width="10%"
           >
           </el-table-column>
           <el-table-column
             prop="eventName"
-            :label="$t('log.event_name')"
+            :label="$t('event.event_name')"
             min-width="10%"
           >
           </el-table-column>
           <el-table-column
             prop="resourceType"
             :show-overflow-tooltip="true"
-            :label="$t('log.resource_type')"
+            :label="$t('event.resource_type')"
             min-width="10%"
             :formatter="resourceTypeFormat"
            >
@@ -72,13 +72,13 @@
           <el-table-column
             prop="resourceName"
             :show-overflow-tooltip="true"
-            :label="$t('log.resource_name')"
+            :label="$t('event.resource_name')"
             min-width="15%"
             :formatter="resourceNameFormat"
             >
           </el-table-column>
           <el-table-column
-            :label="$t('log.risk_level')"
+            :label="$t('event.risk_level')"
             min-width="10%"
           >
             <template v-slot:default="scope">
@@ -102,7 +102,7 @@ import MainContainer from "../../common/components/MainContainer";
 import {CLOUD_EVENT_CONFIGS} from "../../common/components/search/search-components";
 import {ACCOUNT_ID} from "@/common/js/constants";
 import TableOperators from "../../common/components/TableOperators";
-import ResultReadOnly from "@/business/components/log/home/ResultReadOnly";
+import ResultReadOnly from "@/business/components/event/home/ResultReadOnly";
 /* eslint-disable */
 export default {
   name: "Event",

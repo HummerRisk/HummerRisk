@@ -12,7 +12,7 @@
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
                 :row-class-name="tableRowClassName" @filter-change="filter">
         <el-table-column type="index" min-width="2%"/>
-        <el-table-column prop="accountId" :label="$t('log.cloud_account_name')" min-width="15%">
+        <el-table-column prop="accountId" :label="$t('event.cloud_account_name')" min-width="15%">
           <template v-slot:default="scope">
               <span><img :src="require(`@/assets/img/platform/${ scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                 {{ getAccountName(scope.row.accountId) }}</span>
@@ -47,7 +47,7 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="sum" :label="$t('log.data_count')" min-width="12%"/>
+        <el-table-column prop="sum" :label="$t('event.data_count')" min-width="12%"/>
         <el-table-column prop="createTime" :label="$t('k8s.sync_time')" min-width="20%" sortable>
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
@@ -66,8 +66,8 @@
     <el-drawer class="rtl" :title="$t('k8s.sync_log_create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
-        <el-form-item :label="$t('log.cloud_account')" :rules="{required: true, message: $t('log.cloud_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.id" :placeholder="$t('log.cloud_account')">
+        <el-form-item :label="$t('event.cloud_account')" :rules="{required: true, message: $t('event.cloud_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.id" :placeholder="$t('event.cloud_account')">
             <el-option
               v-for="item in accountList"
               :key="item.id"

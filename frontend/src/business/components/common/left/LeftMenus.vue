@@ -37,7 +37,7 @@
           </el-menu-item>
           <el-menu-item index="/log" onselectstart="return false" v-permission="['admin']">
             <i class="iconfont icon-anquanhegui"></i>
-            <span slot="title">{{ $t('log.audit') }}</span>
+            <span slot="title">{{ $t('event.audit') }}</span>
           </el-menu-item>
 <!--          <el-menu-item index="/cost" onselectstart="return false" v-permission="['admin']">-->
 <!--            <i class="iconfont icon-feiyongbaohan"></i>-->

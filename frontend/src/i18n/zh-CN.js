@@ -1346,7 +1346,7 @@ export default {
     trend: '趋势分析',
     optimization: '成本优化',
   },
-  log: {
+  event: {
     audit: '操作审计',
     event_sync: '云事件同步',
     event_sync_list: '同步列表',

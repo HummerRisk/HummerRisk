@@ -1342,7 +1342,7 @@ export default {
     trend: 'Trend analysis',
     optimization: 'Cost optimization',
   },
-  log: {
+  event: {
     audit: 'Operation audit',
     event_sync: 'Cloud event synchronization',
     event_sync_list: 'Sync list',

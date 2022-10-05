@@ -1342,7 +1342,7 @@ export default {
     trend: '趨勢分析',
     optimization: '成本優化',
   },
-  log: {
+  event: {
     audit: '操作審計',
     event_sync: '雲事件同步',
     event_sync_list: '同步列表',

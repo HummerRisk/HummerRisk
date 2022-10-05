@@ -19,7 +19,7 @@ import K8sSituation from "@/business/components/k8sSituation/router";
 import CloudSituation from "@/business/components/cloudSituation/router";
 import Code from "@/business/components/code/router";
 import Sbom from "@/business/components/sbom/router";
-import Log from "@/business/components/log/router";
+import Log from "@/business/components/event/router";
 import Config from "@/business/components/config/router";
 import Cost from "@/business/components/cost/router";
 
