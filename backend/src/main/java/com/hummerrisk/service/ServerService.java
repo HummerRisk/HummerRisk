@@ -66,6 +66,10 @@ public class ServerService {
     private ServerCertificateMapper serverCertificateMapper;
     @Resource
     private ExtServerCertificateMapper extServerCertificateMapper;
+    @Resource
+    private HistoryServerTaskLogMapper historyServerTaskLogMapper;
+    @Resource
+    private HistoryServerTaskMapper historyServerTaskMapper;
 
     public boolean validate(List<String> ids) {
         ids.forEach(id -> {
@@ -583,6 +587,13 @@ public class ServerService {
     public List<HistoryServerResultDTO> history(Map<String, Object> params) {
         List<HistoryServerResultDTO> historyList = extServerResultMapper.history(params);
         return historyList;
+    }
+
+    public void deleteHistoryServerTask(String id) throws Exception {
+        HistoryServerTaskLogExample logExample = new HistoryServerTaskLogExample();
+        logExample.createCriteria().andResultIdEqualTo(id);
+        historyServerTaskLogMapper.deleteByExample(logExample);
+        historyServerTaskMapper.deleteByPrimaryKey(id);
     }
 
 }

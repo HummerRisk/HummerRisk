@@ -250,4 +250,10 @@ public class ServerController {
         return PageUtils.setPageInfo(page, serverService.history(params));
     }
 
+    @ApiOperation(value = "删除主机检测历史记录")
+    @GetMapping("deleteHistoryServerTask/{id}")
+    public void deleteHistoryServerTask(@PathVariable String id) throws Exception {
+        serverService.deleteHistoryServerTask(id);
+    }
+
 }

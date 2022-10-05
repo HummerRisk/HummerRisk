@@ -365,9 +365,6 @@ export default {
 .rtl >>> .el-select {
   width: 80%;
 }
-.rtl >>> .el-form-item__content {
-  width: 75%;
-}
 .bg-purple-dark {
   background: #99a9bf;
 }

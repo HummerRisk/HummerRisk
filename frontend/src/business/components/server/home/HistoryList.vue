@@ -87,8 +87,8 @@
       </el-drawer>
       <!--History statistics-->
 
-      <!--History status-->
-      <el-drawer class="rtl" :title="$t('resource.i18n_resource_scanning_log')" :visible.sync="logVisible" size="85%" :before-close="handleClose" :direction="direction"
+      <!--Result log-->
+      <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="65%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-row class="el-form-item-dev" v-if="logData.length == 0">
           <span>{{ $t('resource.i18n_no_data') }}<br></span>
@@ -98,19 +98,28 @@
             <el-row>
               <el-col :span="24">
                 <div class="grid-content bg-purple-light">
-                  <span class="grid-content-log-span"> {{ logForm.name }}</span>
+                  <span class="grid-content-log-span"> {{ logForm.ruleName }}</span>
                   <span class="grid-content-log-span">
-                  <img :src="require(`@/assets/img/platform/docker.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ logForm.imageName }}
-                </span>
+                      <img :src="require(`@/assets/img/platform/${logForm.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                       &nbsp;&nbsp; {{ logForm.serverGroupName }} : {{ logForm.serverName }}
+                      </span>
                   <span class="grid-content-status-span" v-if="logForm.resultStatus === 'APPROVED'" style="color: #579df8">
-                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
-                </span>
+                        <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                      </span>
                   <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'FINISHED'" style="color: #7ebf50">
-                  <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
-                </span>
+                        <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+                      </span>
                   <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'ERROR'" style="color: red;">
-                  <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+                        <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+                      </span>
+                </div>
+              </el-col>
+              <el-col :span="24">
+                <div class="grid-content bg-purple-light">
+                  <span class="grid-content-log-span"> {{ logForm.ruleDesc }}</span>
+                  <span class="grid-content-log-span"> {{ logForm.ip }}</span>
+                  <span class="grid-content-status-span">
+                  <rule-type :row="logForm"/>
                 </span>
                 </div>
               </el-col>
@@ -131,119 +140,14 @@
               </template>
             </el-table-column>
           </el-table>
-          <div style="margin: 10px;" v-if="logForm.returnJson">
-            <h2>Summary:&nbsp;</h2>
-            <ul style="margin-left: 60px;">
-              <li><i>Scan Name</i>: {{ logForm.name }}</li>
-              <li><i>Scan User</i>:&nbsp;{{ logForm.userName }}</li>
-              <li><i>ArtifactType</i>:&nbsp;{{ logForm.returnJson.ArtifactType }}</li>
-              <li><i>ArtifactName</i>:&nbsp;{{ logForm.returnJson.ArtifactName }}</li>
-              <li><i>SchemaVersion</i>:&nbsp;{{ logForm.returnJson.SchemaVersion }}</li>
-              <li><i>Architecture</i>:&nbsp;{{ logForm.returnJson.Metadata.ImageConfig.architecture }}</li>
-              <li><i>Create Time</i>:&nbsp;{{ logForm.createTime | timestampFormatDate }}</li>
-              <li><i>Result Status</i>:&nbsp;{{ logForm.resultStatus }}</li>
-              <li><i>Vulnerabilities Found</i>: {{ logForm.returnSum }}</li>
-            </ul>
-          </div>
-          <div style="margin: 10px;" v-if="logForm.returnJson">
-            <div style="margin: 10px 0 0 0;">
-              <h2>Details:&nbsp;</h2>
-              <div style="margin: 10px 0 0 0;">
-                <div style="margin: 10px 0 0 0;" :key="index" v-for="(result, index) in logForm.returnJson.Results">
-                  <div style="margin: 10px;" v-if="result">
-                    <h3>Summary:&nbsp;</h3>
-                    <ul style="margin-left: 60px;">
-                      <li><i>Target</i>: {{ result.Target }}</li>
-                      <li><i>Class</i>:&nbsp;{{ result.Class }}</li>
-                      <li><i>Type</i>:&nbsp;{{ result.Type }}</li>
-                    </ul>
-                  </div>
-                  <div style="margin: 10px 0 0 0;" :key="index" v-for="(vulnerabilitiy, index) in result.Vulnerabilities">
-                    <el-card class="box-card">
-                      <div slot="header" class="clearfix">
-                        <el-row>
-                          <el-col class="icon-title" :span="3">
-                            <span>{{ vulnerabilitiy.Severity.substring(0, 1) }}</span>
-                          </el-col>
-                          <el-col :span="15" style="margin: -7px 0 0 15px;">
-                            <span style="font-size: 24px;font-weight: 500;">{{ vulnerabilitiy.Title }}</span>
-                          </el-col>
-                          <el-col :span="6" style="float: right;">
-                            <span style="font-size: 20px;color: #999;float: right;">{{ 'SEVERITY SOURCE' }}</span>
-                          </el-col>
-                        </el-row>
-                        <el-row style="font-size: 18px;padding: 10px;">
-                          <el-col :span="20">
-                            <span style="margin: 5px;"><a :href="vulnerabilitiy.PrimaryURL">{{ vulnerabilitiy.VulnerabilityID }}</a></span>
-                            <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                            <span style="margin: 5px;"><el-button type="danger" size="mini">{{ vulnerabilitiy.Severity }}</el-button></span>
-                            <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                            <span style="color: #888;margin: 5px;">INSTALLED VERSION: {{ vulnerabilitiy.InstalledVersion }}</span>
-                            <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                            <span style="color: #444;margin: 5px;">PkgName: {{ vulnerabilitiy.PkgName }}</span>
-                          </el-col>
-                          <el-col :span="4" style="float: right;">
-                            <span style="font-size: 20px;color: #000;float: right;">{{ vulnerabilitiy.SeveritySource }}</span>
-                          </el-col>
-                        </el-row>
-                      </div>
-                      <div class="text item div-desc">
-                        <el-row>
-                          <span style="color: red;"><i class="el-icon-s-opportunity"></i>PrimaryURL:</span> &nbsp;{{ vulnerabilitiy.PrimaryURL }}
-                        </el-row>
-                        <el-row>
-                          <span style="color: red;">Description:</span> {{ vulnerabilitiy.Description }}
-                        </el-row>
-                        <el-row>
-                          <span style="color: red;">PublishedDate:</span> {{ vulnerabilitiy.PublishedDate }}
-                        </el-row>
-                        <el-row>
-                          <span style="color: red;">LastModifiedDate:</span> {{ vulnerabilitiy.LastModifiedDate }}
-                        </el-row>
-                        <el-row>
-                          <span style="color: red;">FixedVersion:</span> {{ vulnerabilitiy.FixedVersion }}
-                        </el-row>
-                        <el-row>
-                          <span style="color: red;">DataSource:</span> {{ vulnerabilitiy.DataSource.ID }} | {{ vulnerabilitiy.DataSource.Name }} | {{ vulnerabilitiy.DataSource.URL }}
-                        </el-row>
-                      </div>
-                      <div class="text div-json">
-                        <el-descriptions title="Layer" :column="2">
-                          <el-descriptions-item v-for="(vuln, index) in filterJson(vulnerabilitiy.Layer)" :key="index" :label="vuln.key">
-                          <span v-if="!vuln.flag" show-overflow-tooltip>
-                            <el-tooltip class="item" effect="dark" :content="JSON.stringify(vuln.value)" placement="top-start">
-                              <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
-                            </el-tooltip>
-                          </span>
-                            <el-tooltip v-if="vuln.flag && vuln.value" class="item" effect="light" :content="typeof(vuln.value) === 'boolean'?vuln.value.toString():vuln.value" placement="top-start">
-                            <span class="table-expand-span-value">
-                                {{ vuln.value }}
-                            </span>
-                            </el-tooltip>
-                            <span v-if="vuln.flag && !vuln.value"> N/A</span>
-                          </el-descriptions-item>
-                        </el-descriptions>
-                      </div>
-                      <div class="text div-json">
-                        <el-descriptions title="CweIDs" :column="2">
-                          <el-descriptions-item v-for="(CweID, index) in vulnerabilitiy.CweIDs" :key="index" :label="index">
-                            <span> {{ CweID }}</span>
-                          </el-descriptions-item>
-                        </el-descriptions>
-                      </div>
-                      <div class="text div-json">
-                        <el-descriptions title="References" :column="2">
-                          <el-descriptions-item v-for="(Reference, index) in vulnerabilitiy.References" :key="index" :label="index">
-                            <span> {{ Reference }}</span>
-                          </el-descriptions-item>
-                        </el-descriptions>
-                      </div>
-                    </el-card>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <el-form style="margin: 15px 0 0 0">
+            <el-form-item :label="$t('server.server_rule')">
+              <codemirror ref="cmEditor" v-model="logForm.rule" class="code-mirror" :options="cmOptions" />
+            </el-form-item>
+            <el-form-item :label="$t('server.server_result')">
+              <codemirror ref="cmEditor" v-model="logForm.returnLog" class="code-mirror" :options="cmOptions" />
+            </el-form-item>
+          </el-form>
         </el-row>
         <template v-slot:footer>
           <dialog-footer
@@ -251,26 +155,31 @@
             @confirm="logVisible = false"/>
         </template>
       </el-drawer>
-      <!--History status-->
+      <!--Result log-->
 
       <!--History output list-->
       <el-drawer class="rtl" :title="$t('commons.history')" :visible.sync="visibleList" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <div>
           <el-table border :data="outputListData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
-            <el-table-column type="index" min-width="2%"/>
-            <el-table-column prop="name" :label="$t('code.name')" min-width="15%" show-overflow-tooltip>
-              <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/code/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.name }}
-              </span>
+            <!-- 展开 start -->
+            <el-table-column type="expand" min-width="1%">
+              <template slot-scope="props">
+                <el-form>
+                  <codemirror ref="cmEditor" v-model="props.row.returnLog" class="code-mirror" :options="cmOptions" />
+                </el-form>
               </template>
+            </el-table-column >
+            <!-- 展开 end -->
+            <el-table-column type="index" min-width="1%"/>
+            <el-table-column prop="serverName" :label="$t('server.server_name')" min-width="10%" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="ip" :label="'IP'" min-width="10%" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="ruleName" :label="$t('server.rule_name')" min-width="15%" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="isSeverity" :label="$t('server.is_severity')" min-width="10%" show-overflow-tooltip v-slot:default="scope">
+              <span v-if="scope.row.isSeverity" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
+              <span v-if="!scope.row.isSeverity" style="color: #f84846">{{ $t('resource.risky') }}</span>
             </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="16%">
-                {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown}}
-            </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="11%" prop="resultStatus" sortable show-overflow-tooltip>
+            <el-table-column v-slot:default="scope" :label="$t('server.result_status')" min-width="14%" prop="resultStatus" sortable show-overflow-tooltip>
               <el-button plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
                 <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
               </el-button>
@@ -290,7 +199,7 @@
                 <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
               </el-button>
             </el-table-column>
-            <el-table-column prop="updateTime" min-width="14%" :label="$t('image.last_modified')" sortable>
+            <el-table-column prop="updateTime" min-width="14%" :label="$t('commons.create_time')" sortable>
               <template v-slot:default="scope">
                 <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
               </template>
@@ -330,6 +239,7 @@ import {_filter, _sort} from "@/common/js/utils";
 import TablePagination from "../../common/pagination/TablePagination";
 import DialogFooter from "../../common/components/DialogFooter";
 import TableOperators from "../../common/components/TableOperators";
+import RuleType from "./RuleType";
 import CodeDiff from 'vue-code-diff';
 /* eslint-disable */
   export default {
@@ -338,6 +248,7 @@ import CodeDiff from 'vue-code-diff';
       TablePagination,
       DialogFooter,
       TableOperators,
+      RuleType,
       CodeDiff,
     },
     props: {
@@ -391,10 +302,18 @@ import CodeDiff from 'vue-code-diff';
         statisticsData: [],
         logForm: {},
         logData: [],
-        filterJson: this.filterJsonKeyAndValue,
+        cmOptions: {
+          tabSize: 4,
+          mode: {
+            name: 'shell',
+            json: true
+          },
+          theme: 'bespin',
+          lineNumbers: true,
+          line: true,
+          indentWithTabs: true,
+        },
       }
-    },
-    computed: {
     },
     methods: {
       init() {
@@ -434,7 +353,7 @@ import CodeDiff from 'vue-code-diff';
       handleOpen(item) {
         this.outputListSearchData = item;
         this.outputListDataSearch();
-        this.oldStr = item.returnJson;
+        this.oldStr = item.returnLog;
         this.visibleList =  true;
       },
       handleDelete(obj) {
@@ -442,7 +361,7 @@ import CodeDiff from 'vue-code-diff';
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get("/code/deleteHistoryCodeResult/" + obj.id,  res => {
+              this.result = this.$get("/server/deleteHistoryServerTask/" + obj.id,  res => {
                 setTimeout(function () {window.location.reload()}, 2000);
                 this.$success(this.$t('commons.delete_success'));
               });
@@ -452,7 +371,7 @@ import CodeDiff from 'vue-code-diff';
       },
       async outputListDataSearch() {
         let item = this.outputListSearchData;
-        await this.$post("/code/history/" + this.outputListPage + "/" + this.outputListPageSize, {codeId: item.codeId}, response => {
+        await this.$post("/server/history/" + this.outputListPage + "/" + this.outputListPageSize, {serverId: item.serverId}, response => {
           let data = response.data;
           this.outputListTotal = data.itemCount;
           this.outputListData = data.listObject;
@@ -470,70 +389,25 @@ import CodeDiff from 'vue-code-diff';
         this.innerDrawer = false;
       },
       innerDrawerComparison(item) {
-        this.newStr = item.returnJson?item.returnJson:"[]";
+        this.newStr = item.returnLog?item.returnLog:"[]";
         this.innerDrawer = true;
       },
-      goResource(params) {
-        if (params.returnSum == 0) {
-          this.$warning(this.$t('resource.no_resources_allowed'));
-          return;
-        }
-        let url = "/code/historyResultItemList";
-        this.result = this.$post(url, {resultId: params.id}, response => {
-          let data = response.data;
-          this.statisticsData = data;
-          this.statisticsList = true;
-        });
-        this.result = this.$get("/sbom/codeMetricChart/"+ this.resultId, response => {
-          this.content = response.data;
-        });
-      },
       showResultLog (result) {
-        let logUrl = "/code/log/";
-        this.result = this.$get(logUrl + result.id, response => {
+        let url = "/server/log/";
+        this.logForm = result;
+        this.$get(url + result.id, response => {
           this.logData = response.data;
+          this.logVisible = true;
         });
-        let resultUrl = "/code/getCodeResult/";
-        this.result = this.$get(resultUrl + result.id, response => {
+        this.$get("/server/getServerResult/" + result.id, response => {
           this.logForm = response.data;
-          this.logForm.returnJson = JSON.parse(this.logForm.returnJson);
         });
-        this.logVisible = true;
       },
-      filterJsonKeyAndValue(json) {
-        //json is json object , not array -- harris
-        let list = json;
-        if(typeof json === 'object') {
-          list = json;
-        } else {
-          list = JSON.parse(json);
-        }
-
-        let jsonKeyAndValue = [];
-
-        for (let item in list) {
-          let flag = true;
-          let value = list[item];
-          //string && boolean的值直接显示, object是[{}]
-          if (typeof (value) === 'number') {
-            value = String(value);
-          }
-          if (typeof (value) === 'object') {
-            if (value !== null && JSON.stringify(value) !== '[]' && JSON.stringify(value) !== '{}') {
-              flag = false;
-            }
-            if (JSON.stringify(value) === '[]' || JSON.stringify(value) === '{}') {
-              value = "";
-            }
-          }
-
-          if (item.indexOf('$$') === -1 && item !== 'show') {
-            let map = {key: item, value: value, flag: flag};
-            jsonKeyAndValue.push(map);
-          }
-        }
-        return jsonKeyAndValue;
-      },
+    },
+    computed: {
+      codemirror() {
+        return this.$refs.cmEditor.codemirror;
+      }
     },
     created() {
       this.init();
