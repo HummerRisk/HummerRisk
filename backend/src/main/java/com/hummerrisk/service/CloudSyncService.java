@@ -4,6 +4,7 @@ package com.hummerrisk.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.hummer.quartz.anno.QuartzScheduled;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCloudResourceSyncMapper;
@@ -13,16 +14,14 @@ import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.cloudResource.CloudResourceSyncRequest;
+import com.hummerrisk.dto.CloudResourceSyncItemDto;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static com.alibaba.fastjson.JSON.parseArray;
 import static com.alibaba.fastjson.JSON.parseObject;
@@ -52,8 +51,86 @@ public class CloudSyncService {
     private ProxyMapper proxyMapper;
 
 
+
+    /**
+     * 同步状态更新
+     */
+    @QuartzScheduled(cron = "${cron.system.sync.status}")
+    public void updateResourceSyncStatus(){
+        CloudResourceSyncExample cloudResourceSyncExample = new CloudResourceSyncExample();
+        List<String> statusList = new ArrayList<>();
+        statusList.add(CloudTaskConstants.TASK_STATUS.APPROVED.name());
+        statusList.add(CloudTaskConstants.TASK_STATUS.RUNNING.name());
+        cloudResourceSyncExample.createCriteria().andStatusIn(statusList);
+        List<CloudResourceSync> cloudResourceSyncs = cloudResourceSyncMapper.selectByExample(cloudResourceSyncExample);
+        cloudResourceSyncs.forEach(cloudResourceSync -> {
+            String id = cloudResourceSync.getId();
+            CloudResourceSyncItemExample cloudResourceSyncItemExample = new CloudResourceSyncItemExample();
+            cloudResourceSyncItemExample.createCriteria().andSyncIdEqualTo(id);
+            List<CloudResourceSyncItem> cloudResourceSyncItems = cloudResourceSyncItemMapper.selectByExample(cloudResourceSyncItemExample);
+            int errorCount = 0;
+            int successCount = 0;
+            int runningCount = 0;
+            long resourceSum = 0;
+            for (CloudResourceSyncItem cloudResourceSyncItem : cloudResourceSyncItems) {
+                resourceSum += cloudResourceSyncItem.getCount()==null?0:cloudResourceSyncItem.getCount();
+                if(CloudTaskConstants.TASK_STATUS.APPROVED.name().equals(cloudResourceSyncItem.getStatus())
+                        ||CloudTaskConstants.TASK_STATUS.RUNNING.name().equals(cloudResourceSyncItem.getStatus())
+                        ||CloudTaskConstants.TASK_STATUS.UNCHECKED.name().equals(cloudResourceSyncItem.getStatus())) {
+                    runningCount++;
+                }else if (CloudTaskConstants.TASK_STATUS.ERROR.name().equals(cloudResourceSyncItem.getStatus())){
+                    errorCount++;
+                } else if (CloudTaskConstants.TASK_STATUS.FINISHED.name().equals(cloudResourceSyncItem.getStatus())) {
+                    successCount++;
+                }
+            }
+            String status = CloudTaskConstants.TASK_STATUS.RUNNING.name();
+            if(cloudResourceSyncItems.size() == 0){
+                status =  CloudTaskConstants.TASK_STATUS.FINISHED.name();
+            } else if (runningCount == 0 && errorCount>0 && successCount > 0){
+                status = CloudTaskConstants.TASK_STATUS.WARNING.name();
+            } else if (runningCount == 0 && errorCount > 0) {
+                status = CloudTaskConstants.TASK_STATUS.ERROR.name();
+            }
+            CloudResourceSync cloudResourceSync1 = new CloudResourceSync();
+            cloudResourceSync1.setId(cloudResourceSync.getId());
+            cloudResourceSync1.setStatus(status);
+            cloudResourceSync1.setResourcesSum(resourceSum);
+            cloudResourceSyncMapper.updateByPrimaryKeySelective(cloudResourceSync1);
+        });
+    }
+
+    /**
+     * 获取同步日志
+     * @param resourceSyncRequest
+     * @return
+     */
     public List<CloudResourceSync> getCloudResourceSyncLogs(CloudResourceSyncRequest resourceSyncRequest){
         return extCloudResourceSyncMapper.selectByRequest(resourceSyncRequest);
+    }
+
+    public List<CloudResourceSyncItemDto> getCloudResourceSyncItem(String syncId){
+        //TODO 数据量大查询速度待优化
+        CloudResourceSyncItemExample cloudResourceSyncItemExample = new CloudResourceSyncItemExample();
+        cloudResourceSyncItemExample.createCriteria().andSyncIdEqualTo(syncId);
+        cloudResourceSyncItemExample.setOrderByClause(" resource_type ");
+        List<CloudResourceSyncItem> cloudResourceSyncItems = cloudResourceSyncItemMapper.selectByExample(cloudResourceSyncItemExample);
+        List<CloudResourceSyncItemDto> cloudResourceSyncItemDtos = new ArrayList<>();
+        cloudResourceSyncItems.forEach(cloudResourceSyncItem -> {
+            CloudResourceSyncItemLogExample cloudResourceSyncItemLogExample = new CloudResourceSyncItemLogExample();
+            cloudResourceSyncItemLogExample.createCriteria().andSyncItemIdEqualTo(cloudResourceSyncItem.getId());
+            List<CloudResourceSyncItemLog> cloudResourceSyncItemLogs = cloudResourceSyncItemLogMapper.selectByExampleWithBLOBs(cloudResourceSyncItemLogExample);
+            CloudResourceSyncItemDto cloudResourceSyncItemDto = new CloudResourceSyncItemDto();
+            try {
+                BeanUtils.copyBean(cloudResourceSyncItemDto,cloudResourceSyncItem);
+                cloudResourceSyncItemDto.setCloudResourceSyncItemLogs(cloudResourceSyncItemLogs);
+                cloudResourceSyncItemDtos.add(cloudResourceSyncItemDto);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+        });
+        return cloudResourceSyncItemDtos;
     }
 
     public void sync(String accountId) throws Exception {
@@ -95,6 +172,7 @@ public class CloudSyncService {
                 CloudResourceSyncItem cloudResourceSyncItem = new CloudResourceSyncItem();
                 String uuid = UUIDUtil.newUUID();
                 cloudResourceSyncItem.setId(uuid);
+                cloudResourceSyncItem.setSyncId(id);
                 cloudResourceSyncItem.setStatus(CloudTaskConstants.TASK_STATUS.UNCHECKED.name());
                 cloudResourceSyncItem.setCreateTime(System.currentTimeMillis());
                 cloudResourceSyncItem.setAccountId(accountId);
@@ -106,7 +184,7 @@ public class CloudSyncService {
                 //云资源同步子表（区分区域与资源类型）
                 cloudResourceSyncItemMapper.insertSelective(cloudResourceSyncItem);
 
-                saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_start_sync_resource", "", true);
+                saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_start_sync_resource", "", true,accountId);
 
                 final String finalScript = CloudTaskConstants.policy.replace("{resourceType}", resourceType);
 
@@ -143,6 +221,8 @@ public class CloudSyncService {
                         cloudResourceWithBLOBs.setResourceType(resourceType);
                         cloudResourceWithBLOBs.setAccountId(accountId);
                         cloudResourceWithBLOBs.setRegionId(region);
+                        cloudResourceWithBLOBs.setCreateTime(new Date().getTime());
+                        cloudResourceWithBLOBs.setUpdateTime(new Date().getTime());
                         cloudResourceWithBLOBs.setRegionName(cloudResourceSyncItem.getRegionName());
                         JSONArray resourcesArr = parseArray(resources);
                         cloudResourceWithBLOBs.setResourcesSum((long) resourcesArr.size());
@@ -171,11 +251,16 @@ public class CloudSyncService {
                             //云资源同步资源详情表
                             cloudResourceItemMapper.insertSelective(cloudResourceItem);
                         }
-
-                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "", true);
+                        cloudResourceSyncItem.setCount(resourcesArr.size());
+                        cloudResourceSyncItem.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());
+                        cloudResourceSyncItemMapper.updateByPrimaryKey(cloudResourceSyncItem);
+                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "", true,accountId);
 
                     } catch (Exception e) {
                         e.printStackTrace();
+                        cloudResourceSyncItem.setStatus(CloudTaskConstants.TASK_STATUS.ERROR.name());
+                        cloudResourceSyncItemMapper.updateByPrimaryKey(cloudResourceSyncItem);
+                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_error_sync_resource", e.getMessage(), true,accountId);
                         LogUtil.error("Sync Resources error :{}", uuid + "/" + region, e.getMessage());
                     }
 
@@ -186,7 +271,7 @@ public class CloudSyncService {
         }
     }
 
-    void saveCloudResourceSyncItemLog(String syncItemId, String operation, String output, boolean result) throws Exception {
+    void saveCloudResourceSyncItemLog(String syncItemId, String operation, String output, boolean result,String accountId)  {
         CloudResourceSyncItemLog log = new CloudResourceSyncItemLog();
         String operator = "system";
         try {
@@ -203,6 +288,7 @@ public class CloudSyncService {
         log.setOperation(operation);
         log.setOutput(output);
         log.setResult(result);
+        log.setAccountId(accountId);
         cloudResourceSyncItemLogMapper.insertSelective(log);
     }
 
@@ -235,5 +321,17 @@ public class CloudSyncService {
         for (Account account : accounts) {
             sync(account.getId());
         }
+    }
+
+    public void deleteSync(String id) {
+        CloudResourceSync cloudResourceSync = cloudResourceSyncMapper.selectByPrimaryKey(id);
+        cloudResourceSyncMapper.deleteByPrimaryKey(id);
+        CloudResourceSyncItemExample cloudResourceSyncItemExample = new CloudResourceSyncItemExample();
+        cloudResourceSyncItemExample.createCriteria().andSyncIdEqualTo(id);
+        cloudResourceSyncItemMapper.deleteByExample(cloudResourceSyncItemExample);
+        CloudResourceSyncItemLogExample cloudResourceSyncItemLogExample = new CloudResourceSyncItemLogExample();
+        cloudResourceSyncItemLogExample.createCriteria().andAccountIdEqualTo(cloudResourceSync.getAccountId());
+        cloudResourceSyncItemLogMapper.deleteByExample(cloudResourceSyncItemLogExample);
+
     }
 }

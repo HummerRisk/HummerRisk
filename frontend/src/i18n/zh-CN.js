@@ -621,6 +621,7 @@ export default {
     rule_group: '云检测规则组',
   },
   resource: {
+    sync_log: '资源同步日志',
     resource_id: '资源ID',
     statistics: '合规报告',
     cloud_statistics: '云资源合规报告',
