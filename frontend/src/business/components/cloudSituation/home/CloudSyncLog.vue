@@ -18,7 +18,11 @@
                 {{ getAccountName(scope.row.accountId) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="resourceTypes" :label="$t('dashboard.resource_type')" min-width="15%"/>
+        <el-table-column prop="resourceTypes" :label="$t('dashboard.resource_type')" min-width="15%">
+          <template v-slot:default="scope">
+            <ResourceType :resourceTypes="scope.row.resourceTypes" ></ResourceType>
+          </template>
+        </el-table-column>
         <el-table-column prop="status" min-width="10%" :label="$t('code.status')">
           <template v-slot:default="scope">
             <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary"
@@ -27,6 +31,10 @@
             </el-button>
             <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary"
                        v-else-if="scope.row.status === 'APPROVED'">
+              <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+            </el-button>
+            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary"
+                       v-else-if="scope.row.status === 'RUNNING'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
             <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary"
@@ -47,7 +55,7 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="sum" :label="$t('event.data_count')" min-width="12%"/>
+        <el-table-column prop="resourcesSum" :label="$t('event.data_count')" min-width="12%"/>
         <el-table-column prop="createTime" :label="$t('k8s.sync_time')" min-width="20%" sortable>
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
@@ -87,6 +95,19 @@
     </el-drawer>
     <!--Create sync-->
 
+    <!--Task log-->
+    <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="65%"
+               :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <result-log :row="logForm"></result-log>
+      <template v-slot:footer>
+        <dialog-footer
+          @cancel="logVisible = false"
+          @confirm="logVisible = false"/>
+      </template>
+    </el-drawer>
+    <!--Task log-->
+
   </main-container>
 </template>
 
@@ -100,7 +121,8 @@ import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import {SITUATION_LOG_CONFIGS} from "../../common/components/search/search-components";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
-
+import ResultLog from "./ResultLog";
+import ResourceType from "./ResourceType";
 /* eslint-disable */
 export default {
   components: {
@@ -111,10 +133,14 @@ export default {
     TablePagination,
     TableOperator,
     DialogFooter,
+    ResultLog,
+    ResourceType
   },
   data() {
     return {
+      logVisible: false,
       credential: {},
+      logForm: {cloudTaskItemLogDTOs: []},
       result: {},
       condition: {
         components: SITUATION_LOG_CONFIGS
@@ -159,6 +185,19 @@ export default {
       })
       return result.length >0?result[0].name:""
     },
+    showTaskLog(task) {
+      let showLogTaskId = task.id;
+      let url = "";
+      if (showLogTaskId) {
+        url = "/cloud/sync/log/item/list/";
+      }
+      this.logForm.cloudTaskItemLogDTOs = [];
+      this.logForm.showLogTaskId = showLogTaskId;
+      this.$get(url + showLogTaskId, response => {
+        this.logForm.cloudTaskItemLogDTOs = response.data;
+        this.logVisible = true;
+      });
+    },
     initAccount() {
       this.$get("/account/allList", response => {
         this.accountList = response.data
@@ -181,14 +220,15 @@ export default {
       });
     },
     handleClose() {
-      this.createVisible =  false;
+      this.logVisible =  false;
+      this.createVisible = false;
     },
     handleDelete(obj) {
-      this.$alert(this.$t('commons.delete_confirm') + this.$t('k8s.sync_log') + " ？", '', {
+      this.$alert(this.$t('commons.delete_confirm') + this.$t('resource.sync_log') + " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/k8s/deleteSyncLog/" + obj.id, () => {
+            this.result = this.$get("/cloud/sync/delete/" + obj.id, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
