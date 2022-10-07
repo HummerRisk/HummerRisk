@@ -32,10 +32,7 @@ import com.hummerrisk.base.mapper.CloudEventSyncLogMapper;
 import com.hummerrisk.base.mapper.ProxyMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudEventMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudEventSyncLogMapper;
-import com.hummerrisk.commons.utils.CommonThreadPool;
-import com.hummerrisk.commons.utils.DateUtils;
-import com.hummerrisk.commons.utils.LogUtil;
-import com.hummerrisk.commons.utils.PlatformUtils;
+import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
 import com.hummerrisk.dto.CloudEventGroupDTO;
 import com.tencentcloudapi.cloudaudit.v20190319.CloudauditClient;
@@ -56,10 +53,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -209,33 +203,41 @@ public class CloudEventService {
 
             Map<String, String> accountMap = PlatformUtils.getAccount(account, region, proxyMapper.selectByPrimaryKey(account.getProxyId()));
             accountMap.put("regionName", PlatformUtils.tranforRegionId2RegionName(region, account.getPluginId()));
-            List<CloudEvent> result = new ArrayList<>();
+            List<CloudEvent> result1 = new ArrayList<>();
             int pageNum = 1;
             int maxNum = 20;
             boolean haveNextPage = true;
             while (haveNextPage) {
                 List<CloudEvent> pageResult = getCloudEvents(account, accountMap, startTime, endTime, pageNum, maxNum);
-                result.addAll(pageResult);
+                result1.addAll(pageResult);
                 if (pageResult.size() < maxNum || pageNum > MAX_PAGE_NUM) {
                     haveNextPage = false;
                 }
                 pageNum++;
             }
             TransactionTemplate template = new TransactionTemplate(transactionManager);
+            Map<String,CloudEvent> cloudEventMap = new HashMap<>();
+            result1.forEach(item -> {
+                item.setCloudAccountId(account.getId());
+                item.setSyncRegion(region);
+                if(StringUtils.isBlank(item.getEventId())){
+                    item.setEventId(UUIDUtil.newUUID());
+                }
+                cloudEventMap.put(item.getEventId(),item);
+            });
+
+            List<CloudEvent> result  = new ArrayList<>(cloudEventMap.values());
             template.execute(new TransactionCallbackWithoutResult() {
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus arg0) {
 
-                    if (result.size() > 0) {
+                    if (result1.size() > 0) {
                         CloudEventExample cloudEventExample = new CloudEventExample();
                         cloudEventExample.createCriteria().andCloudAccountIdEqualTo(account.getId()).andSyncRegionEqualTo(region).andEventTimeBetween(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime).getTime()
                                 , DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", endTime).getTime());
                         cloudEventMapper.deleteByExample(cloudEventExample);
                     }
-                    result.forEach(item -> {
-                        item.setCloudAccountId(account.getId());
-                        item.setSyncRegion(region);
-                    });
+
                     int resultSize = result.size();
                     int num = 0;
                     if (resultSize > MAX_INSERT_SIZE) {
