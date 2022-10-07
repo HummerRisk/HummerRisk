@@ -59,6 +59,7 @@
             prop="serviceName"
             :label="$t('event.service_name')"
             min-width="10%"
+            :formatter="serviceNameFormat"
           />
         <el-table-column
           prop="eventName"
@@ -167,7 +168,13 @@ export default {
       }
     },
 
-
+    serviceNameFormat(row, column) {
+      if (!!row.serviceName) {
+        return row.serviceName
+      } else {
+        return "N/A"
+      }
+    },
     search() {
       let url = "/cloud/event/group/list/" + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
