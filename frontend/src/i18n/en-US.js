@@ -1348,6 +1348,9 @@ export default {
     optimization: 'Cost optimization',
   },
   event: {
+    event_sum: 'Call amount',
+    service_name: 'Service name',
+    event_date: 'Event date',
     audit: 'Operation audit',
     event: 'Cloud event',
     event_sync: 'Cloud event synchronization',
