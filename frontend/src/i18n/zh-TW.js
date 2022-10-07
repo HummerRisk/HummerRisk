@@ -1348,6 +1348,9 @@ export default {
     optimization: '成本優化',
   },
   event: {
+    event_sum: '调用量',
+    service_name: '服務名稱',
+    event_date: '事件日期',
     audit: '操作審計',
     event: '雲事件',
     event_sync: '雲事件同步',

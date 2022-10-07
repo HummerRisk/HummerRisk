@@ -159,7 +159,7 @@ export const K8S_PLUGIN_NAME = {
 export const EVENT_ACCOUNT = {
   key: "accountId",
   name: "TableSearchSelect",
-  label: "log.cloud_account",
+  label: "event.cloud_account",
   operator: {
     options: [OPERATORS.IN, OPERATORS.NOT_IN]
   },
@@ -177,7 +177,7 @@ export const EVENT_ACCOUNT = {
 export const REGION = {
   key: "region",
   name: "TableSearchInput",
-  label: "log.region",
+  label: "event.region",
   operator: { // 运算符设置
     value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
     options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
@@ -186,7 +186,7 @@ export const REGION = {
 export const USER = {
   key: "userName",
   name: "TableSearchInput",
-  label: "log.user_name",
+  label: "event.user_name",
   operator: { // 运算符设置
     value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
     options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
@@ -196,7 +196,7 @@ export const USER = {
 export const EVENT_NAME = {
   key: "eventName",
   name: "TableSearchInput",
-  label: "log.event_name",
+  label: "event.event_name",
   operator: { // 运算符设置
     value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
     options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
@@ -206,7 +206,7 @@ export const EVENT_NAME = {
 export const RESOURCE_NAME = {
   key: "resourceName",
   name: "TableSearchInput",
-  label: "log.resource_name",
+  label: "event.resource_name",
   operator: { // 运算符设置
     value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
     options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
@@ -216,14 +216,14 @@ export const RESOURCE_NAME = {
 export const EVENT_RATING = {
   key: "eventRating",
   name: "TableSearchSelect",
-  label: "log.risk_level",
+  label: "event.risk_level",
   operator: {
     options: [OPERATORS.IN, OPERATORS.NOT_IN]
   },
   options: [
-    {label: 'log.low_level', value: '0'},
-    {label: 'log.middle_level', value: '1'},
-    {label: 'log.high_level', value: '2'}
+    {label: 'event.low_level', value: '0'},
+    {label: 'event.middle_level', value: '1'},
+    {label: 'event.high_level', value: '2'}
   ],
   props: { // 尾部控件的props，一般为element ui控件的props
     multiple: true
@@ -232,7 +232,7 @@ export const EVENT_RATING = {
 export const RESOURCE_TYPE = {
   key: "resourceType",
   name: "TableSearchInput",
-  label: "log.resource_type",
+  label: "event.resource_type",
   operator: { // 运算符设置
     value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
     options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
@@ -241,7 +241,7 @@ export const RESOURCE_TYPE = {
 export const EVENT_TIME = {
   key: "eventTime",
   name: 'TableSearchDateTimePicker',
-  label: 'log.event_time',
+  label: 'event.event_time',
   operator: {
     options: [OPERATORS.BETWEEN, OPERATORS.GT, OPERATORS.GE, OPERATORS.LT, OPERATORS.LE, OPERATORS.EQ]
   },

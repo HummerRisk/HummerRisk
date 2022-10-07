@@ -37,6 +37,7 @@ import com.hummerrisk.commons.utils.DateUtils;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
+import com.hummerrisk.dto.CloudEventGroupDTO;
 import com.tencentcloudapi.cloudaudit.v20190319.CloudauditClient;
 import com.tencentcloudapi.cloudaudit.v20190319.models.DescribeEventsRequest;
 import com.tencentcloudapi.cloudaudit.v20190319.models.DescribeEventsResponse;
@@ -132,6 +133,10 @@ public class CloudEventService {
 
     public List<CloudEvent> getCloudEvents(CloudEventRequest cloudEventRequest) {
         return extCloudEventMapper.getCloudEventList(cloudEventRequest);
+    }
+
+    public List<CloudEventGroupDTO> getCloudEventGroup(CloudEventRequest cloudEventRequest){
+        return extCloudEventMapper.selectEventGroup(cloudEventRequest);
     }
 
     public void syncCloudEvents(String accountId, String[] regions, String startTime, String endTime) {
