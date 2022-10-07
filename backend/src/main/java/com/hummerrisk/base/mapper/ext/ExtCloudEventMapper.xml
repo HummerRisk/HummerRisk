@@ -160,5 +160,26 @@
          )
   </select>
 
+  <select id="selectEventGroup" resultType="com.hummerrisk.dto.CloudEventGroupDTO">
+    select event_group.* from (
+    SELECT FROM_UNIXTIME(event_time/1000,'%Y-%m-%d') as event_date, cloud_account_id,region_name
+    ,event_name,user_name,service_name,source_ip_address,resource_name,
+    count(*) as event_sum
+    FROM cloud_event t
+    <where>
+      <if test="request.combine != null">
+        <include refid="combine">
+          <property name="condition" value="request.combine"/>
+          <property name="name" value="request.name"/>
+        </include>
+      </if>
+      <if test="request.name != null and request.name != ''">
+        and t.event_name like CONCAT('%', #{request.name},'%')
+      </if>
+    </where>
+    group by region_name
+    ,event_name,user_name,service_name,source_ip_address,resource_name,cloud_account_id,FROM_UNIXTIME(event_time/1000,'%Y-%m-%d')
+    ) event_group order by event_group.event_date desc
+  </select>
 
 </mapper>
