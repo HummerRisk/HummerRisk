@@ -410,7 +410,8 @@
           </el-table-column>
           <el-table-column min-width="6%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
             <template v-slot:default="scope">
-              <table-operators :buttons="resource_buttons" :row="scope.row"/>
+              <table-operators v-if="!!scope.row.suggestion" :buttons="resource_buttons2" :row="scope.row"/>
+              <table-operators v-if="!scope.row.suggestion" :buttons="resource_buttons" :row="scope.row"/>
             </template>
           </el-table-column>
         </el-table>
@@ -635,6 +636,16 @@ export default {
           exec: this.showSeverityDetail
         },
       ],
+      resource_buttons2: [
+        {
+          tip: this.$t('rule.suggestion'), icon: "el-icon-share", type: "primary",
+          exec: this.handleSuggestion
+        },
+        {
+          tip: this.$t('resource.regulation'), icon: "el-icon-document", type: "warning",
+          exec: this.showSeverityDetail
+        },
+      ],
       logVisible: false,
       detailVisible: false,
       logForm: {cloudTaskItemLogDTOs: []},
@@ -717,6 +728,9 @@ export default {
     resourceFilter(filters) {
       _filter(filters, this.resourceCondition);
       this.init();
+    },
+    handleSuggestion(item) {
+      window.open(item.suggestion,'_blank','');
     },
     handleDelete(obj) {
       this.$alert(this.$t('account.delete_confirm') + obj.name + this.$t('resource.resource_result') + " ？", '', {
