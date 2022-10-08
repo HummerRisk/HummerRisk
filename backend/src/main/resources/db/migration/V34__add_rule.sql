@@ -535,3 +535,17 @@ UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/ucloud/uho
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/ucloud/uhost-public-network-ip.md' where id = '001400f0-0a52-43c5-945e-d9e28c6a74f9';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/ucloud/uhost-network-type.md' where id = '32d7aec8-265e-4ae8-916c-85bd2798b568';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/ucloud/uhost-disk-encryption.md' where id = '844fd144-0e31-419f-adf7-d6f89673faaa';
+
+-- -----------------
+-- update vmware vsphere rule suggestion
+-- -----------------
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/vsphere/cluster.md' where id = 'd004829c-b359-4993-84fd-0441c1ea9c6b';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/vsphere/datacenter.md' where id = '7b494857-7010-446f-9deb-aab10262160e';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/vsphere/datastore-available.md' where id = 'eab382c4-49db-420c-b4e1-987b47bf6661';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/vsphere/datastore.md' where id = 'e9d801ab-3790-415e-9565-bd7208cb1b54';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/vsphere/datastore-config.md' where id = 'faa53ae5-f534-4a3c-85e2-22398dadd468';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/vsphere/host.md' where id = '6503123d-6442-49f4-8118-883c354ac868';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/vsphere/host-connect-status.md' where id = '82d95569-e9be-4a26-a18e-f1590bac97fb';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/vsphere/network-status.md' where id = 'b62df3f7-581b-4591-9373-581dd3dcdd88';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/vsphere/resource-pool.md' where id = '8dccd008-f79b-4460-9b55-539f488e009a';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/vsphere/vm-status.md' where id = 'b798aa33-bd01-47ac-8cec-64f4f5d02866';
