@@ -411,7 +411,7 @@
                 AND t.item_sort_second_level = #{itemSortSecondLevel}
             </if>
             <if test="name != null">
-                AND t.project like CONCAT('%',#{name},'%')
+                AND LOWER(t.project) like CONCAT('%',#{name},'%')
             </if>
         </where>
         ORDER BY FIELD(status, 'risky','risk_free'), t.id
@@ -560,7 +560,7 @@
         FROM resource t
         WHERE t.account_id = #{id}
         <if test="name != null">
-            AND t.region_name like CONCAT('%',#{name},'%')
+            AND LOWER(t.region_name) like CONCAT('%',#{name},'%')
         </if>
         GROUP BY t.region_id,t.region_name
         ORDER BY sum desc
@@ -573,7 +573,7 @@
         FROM resource t
         WHERE t.account_id = #{id}
         <if test="name != null">
-            AND t.severity like CONCAT('%',#{name},'%')
+            AND LOWER(t.severity) like CONCAT('%',#{name},'%')
         </if>
         GROUP BY t.severity
         ORDER BY sum desc
@@ -586,7 +586,7 @@
         FROM resource t
         WHERE t.account_id = #{id}
         <if test="name != null">
-            AND t.resource_type like CONCAT('%',#{name},'%')
+            AND LOWER(t.resource_type) like CONCAT('%',#{name},'%')
         </if>
         GROUP BY t.resource_type
         ORDER BY sum desc
@@ -601,7 +601,7 @@
         JOIN cloud_task t2 ON t.task_id = t2.id
         WHERE t2.account_id = #{id}
         <if test="name != null">
-            AND t2.task_name like CONCAT('%',#{name},'%')
+            AND LOWER(t2.task_name) like CONCAT('%',#{name},'%')
         </if>
         GROUP BY t.task_id
         ORDER BY sum desc

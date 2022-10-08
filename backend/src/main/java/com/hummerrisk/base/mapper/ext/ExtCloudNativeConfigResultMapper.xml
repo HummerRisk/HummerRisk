@@ -79,7 +79,7 @@
                 AND t.id = #{id}
             </if>
             <if test="name != null">
-                AND t.name like CONCAT('%',#{name},'%')
+                AND LOWER(t.name) like CONCAT('%',#{name},'%')
             </if>
             <if test="combine != null">
                 <include refid="combine">
@@ -137,7 +137,7 @@
                 AND t.config_id = #{configId}
             </if>
             <if test="name != null">
-                AND t.name like CONCAT('%',#{name},'%')
+                AND LOWER(t.name) like CONCAT('%',#{name},'%')
             </if>
         </where>
         ORDER BY t.update_time desc
