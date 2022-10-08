@@ -410,3 +410,17 @@ UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/baidu/secu
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/baidu/alb-public-network-ip.md' where id = 'ca3f9cfa-892e-43ce-abfc-4373329926f3';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/baidu/common-public-network-ip.md' where id = '73b0db2f-b946-4d03-a4bd-95ee7d4c9108';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/baidu/disk-encryption.md' where id = '862db318-ce25-41ed-85fa-fc1ea4d691ec';
+
+-- -----------------
+-- update gcp rule suggestion
+-- -----------------
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/gcp/gcp-dns-managed-zones.md' where id = 'd2288b78-bab7-4195-9c16-79ae29b9f292';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/gcp/gcp-dns-policies-if-logging-disabled.md' where id = '3a1a0fc7-98f3-4f8e-a434-76460ef2009b';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/gcp/gcp-sql-backup-run.md' where id = '34c7e619-6815-4c20-af8e-8d11b16a770c';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/gcp/gcp-appengine-certificate.md' where id = 'd147a425-ddd5-4826-b685-e3b3842ae253';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/gcp/gcp-appengine-blacklist.md' where id = '6939910d-a7f1-4347-9238-abce1111f45d';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/gcp/gcp-instance-template.md' where id = '95e46474-5611-4d82-a9c5-5da3398ad3a4';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/gcp/gcp-load-balancing-ssl-policies.md' where id = '6923bc7a-fb4f-4c1c-ae70-dc6aac407e11';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/gcp/gcp-expired-deployments.md' where id = '1f3ef6ec-17ab-409d-9051-ea5c543312d1';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/gcp/gcp-appengine-firewall-ingress.md' where id = '9312ca46-1ce9-4e42-86b2-7f9b5c0db090';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/gcp/gcp-appengine-firewall-rules.md' where id = '7557ce1b-aacf-4cd7-bb19-6e411621daf3';
