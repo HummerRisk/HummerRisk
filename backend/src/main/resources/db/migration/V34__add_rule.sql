@@ -424,3 +424,42 @@ UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/gcp/gcp-lo
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/gcp/gcp-expired-deployments.md' where id = '1f3ef6ec-17ab-409d-9051-ea5c543312d1';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/gcp/gcp-appengine-firewall-ingress.md' where id = '9312ca46-1ce9-4e42-86b2-7f9b5c0db090';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/gcp/gcp-appengine-firewall-rules.md' where id = '7557ce1b-aacf-4cd7-bb19-6e411621daf3';
+
+-- -----------------
+-- update huawei rule suggestion
+-- -----------------
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/dds-public-network.md' where id = 'bb878650-b62b-4980-a6aa-4d61c1a429a0';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/disk-encrypted.md' where id = '36908c29-c15e-4c73-a964-5fb97bbb27fa';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/ecs-public-ip.md' where id = '108c875b-bf3c-4034-b07d-15faa8715257';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/ecs-network-type.md' where id = 'f7e8d1c4-16f7-4079-b110-b60db0cd91bf';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/eip-bandwidth.md' where id = '3b3a76cf-78e4-4c48-84da-baf2af6be696';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/elb-bind-ecs.md' where id = '5c681b76-fea3-4cb9-b6d4-a92d0d2d44fa';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/elb-public-ip.md' where id = '7e7b3463-c7da-4545-bbc7-f97c83f429e4';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/elb-https-listener.md' where id = '3c4f6db4-6f8d-4e42-9c7e-d209fe5489fb';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/gauss-db-for-nosql-cost-type.md' where id = '776f0a66-25d4-4aee-bbdc-6f30a2c4652e';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/gauss-db-for-nosql-public-network.md' where id = '8e50d813-0d65-474c-951a-4abacbf381cc';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/gauss-db-for-nosql-disk.md' where id = 'fcd416f0-e58c-417a-8795-a99748d6f4ce';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/gauss-db-for-nosql-network-type.md' where id = '4eed4751-16fc-4827-a3aa-12865b6c5c73';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/gauss-db-for-nosql-ha.md' where id = '77e50110-e477-4b24-a3c2-a9f5e7e41715';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/gauss-db-for-open-gauss-internet-access.md' where id = '8048b411-967a-47b3-b4f1-d7d7880eb79c';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/gauss-db-for-open-gauss-disk.md' where id = '86415c99-3215-4f11-a62b-fa4c7b2ac298';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/gauss-db-for-open-gauss-network-type.md' where id = '1abf0c53-b4ac-4b45-b528-8f47b8d7d533';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/gauss-db-for-open-gauss-cost-type.md' where id = 'f393ba0b-23ca-435b-b922-62c77a9437f7';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/gauss-db-for-open-gauss-ha.md' where id = '86254202-388c-4c55-bba2-a3053c16fe3b';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/gauss-db-internet-access.md' where id = 'cc1f97e7-73c5-4f4f-91e9-1155d47ed24e';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/gauss-db-disk.md' where id = 'c61ae072-e614-47d6-b0ee-07f50360032e';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/gauss-db-network-type.md' where id = 'fa800f05-b7ac-4009-86f9-413d26bbc368';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/gauss-db-cost-type.md' where id = 'e1b193de-9b9f-41de-89d5-62a731d2f212';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/gauss-db-ha.md' where id = 'b4620c46-795f-4d13-9139-2055849ec7b9';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/iam-login.md' where id = 'e58a3395-aee8-40bb-8f2f-d7156c0435cb';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/obs-read.md' where id = '2677aa0f-6796-4138-902b-f736e0c3d8da';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/obs-write.md' where id = '968837c3-25f2-4848-8174-5413c859f1f1';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/rds-public-network.md' where id = 'b1260ecf-47fa-4613-8ed4-71417f29441b';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/rds-disk.md' where id = '33a70278-c772-4ef0-93c9-4b9d3df1e242';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/rds-network-type.md' where id = 'ce805504-de52-4ecc-a86a-4905d2a558f3';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/rds-network-type.md' where id = '332ce586-70de-4053-a922-f76d6340a03c';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/rds-ha.md' where id = 'f744fdd9-166d-40a7-ad91-9e933ad514cc';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/redis-unencrypt.md' where id = '3ce82502-1c03-4ab0-b8ed-83f631a20805';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/redis-internet-access.md' where id = '0cf1e428-3c37-4aa6-b651-acb46c4838c0';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/security-group-config.md' where id = '8f3f7596-569b-4cde-97a2-1d565b8224e1';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/security-group-high-risk-port.md' where id = '99e762e7-766f-4e55-9133-773593497b44';
