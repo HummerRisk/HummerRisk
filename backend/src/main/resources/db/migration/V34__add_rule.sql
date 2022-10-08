@@ -549,3 +549,16 @@ UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/vsphere/ho
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/vsphere/network-status.md' where id = 'b62df3f7-581b-4591-9373-581dd3dcdd88';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/vsphere/resource-pool.md' where id = '8dccd008-f79b-4460-9b55-539f488e009a';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/vsphere/vm-status.md' where id = 'b798aa33-bd01-47ac-8cec-64f4f5d02866';
+
+-- -----------------
+-- update volcengine rule suggestion
+-- -----------------
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/volc/cdn-https.md' where id = '0f134720-4de8-4ef0-855a-4f0b2a2017bd';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/volc/ecs-vpc.md' where id = '59898c82-c456-40df-b62d-edf140548735';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/volc/ecs-public-ip.md' where id = '221de04f-0e7c-4bd6-9ef0-2ca34ae80767';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/volc/ecs-net-type.md' where id = 'e0b4465d-ff7f-4bc5-946e-da723a8d0be9';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/volc/eip-bandwidth.md' where id = 'd7de14df-62e4-46b5-8bac-7dec053f84be';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/volc/mongodb-public-ip.md' where id = 'f02172dd-2514-45f5-85e1-c20c71ce19a5';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/volc/mongodb-net-type.md' where id = '6882449f-5140-4aa0-8338-ef1689cafa38';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/volc/securitygroup-port.md' where id = '5d7e3fce-4e13-43b3-8b30-d33528fd1fbd';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/volc/securitygroup-high-risk-port.md' where id = '05689a7f-f584-441a-ad6e-006df5d4cca1';
