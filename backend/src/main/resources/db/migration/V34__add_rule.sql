@@ -376,3 +376,22 @@ UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aliyun/slb
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aliyun/security-group-port.md' where id = '4d427c93-5645-445a-93a3-0c536d6865ab';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aliyun/security-group-config.md' where id = '083d24e2-881f-488b-b120-8f2cd961707f';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aliyun/security-group-high-risk-port.md' where id = 'df4fb45c-f9bc-4c8e-996d-036c9d2f1800';
+
+-- -----------------
+-- update azure rule suggestion
+-- -----------------
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/azure/azure-app-cors.md' where id = '6873838e-3a47-4255-b49e-af5fbf5cb454';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/azure/azure-cosmosdb.md' where id = 'dd11251a-7fd4-499c-857b-c7dcf4c98958';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/azure/azure-unused-disk.md' where id = '94d168d0-8e62-4173-96fd-326eb267273e';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/azure/azure-loadbalancer-publicip.md' where id = '618a61bb-eecc-4109-b387-4a313f10c1a9';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/azure/azure-sqlserver-usage.md' where id = 'c3259122-ac07-4256-83da-b6361c9d3abb';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/azure/azure-sql-database.md' where id = '5870d5df-7674-4f40-ae06-0408c935acd6';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/azure/azure-vm-usage.md' where id = '6967e834-ace6-48d2-9f95-f541b614810d';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/azure/azure-vm-publicip.md' where id = '4852857f-b454-4375-b405-0033fed73f09';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/azure/azure-stopped-vm.md' where id = '802fbf6c-92ac-4153-bea3-42b7720d8124';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/azure/azure-publicip-ddos.md' where id = '29ee6650-3e4f-44e3-aadd-0ae15618afa9';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/azure/azure-storage-public-access.md' where id = '77ac25d5-0a66-4890-aa7e-5b276fce299a';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/azure/azure-storage-allowip.md' where id = 'f7c03491-fc0a-4ae7-87ed-6423748b2372';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/azure/azure-network-securitygroup.md' where id = '3e324555-83e2-4ac9-8ac2-1dae350d52ff';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/azure/azure-network-interface.md' where id = 'f6c72297-33db-49dd-a106-06cf2ff47069';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/azure/azure-rg-empty.md' where id = '6a71a114-ba92-4e0b-bd9d-2f6c8ecee88d';
