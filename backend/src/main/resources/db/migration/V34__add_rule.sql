@@ -395,3 +395,18 @@ UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/azure/azur
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/azure/azure-network-securitygroup.md' where id = '3e324555-83e2-4ac9-8ac2-1dae350d52ff';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/azure/azure-network-interface.md' where id = 'f6c72297-33db-49dd-a106-06cf2ff47069';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/azure/azure-rg-empty.md' where id = '6a71a114-ba92-4e0b-bd9d-2f6c8ecee88d';
+
+-- -----------------
+-- update baidu rule suggestion
+-- -----------------
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/baidu/bbc-public-network-ip.md' where id = 'bb8e4fea-a238-4231-87b8-3aac5c2c2323';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/baidu/bbc-bandwidth.md' where id = 'd3b291c0-e8b5-4560-84b2-4f23d0235401';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/baidu/bcc-vpc.md' where id = '98a56ff2-03fd-49a9-b52c-982ce0f04f70';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/baidu/bcc-public-network-ip-monitoring.md' where id = '2fc93189-2ebe-40c7-b5cb-61d52d9184d8';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/baidu/bcc-network-type.md' where id = '45a0e76a-2f12-4681-b955-4d0eab099dce';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/baidu/cdn-domain-https-monitoring.md' where id = '09b1030c-e094-4d23-a75b-e3d876f55a67';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/baidu/eip-bandwidth.md' where id = '77001a71-f984-4fea-9883-44c566ca13fb';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/baidu/securityGroup-port-access.md' where id = 'fe93c715-8803-4a9b-b2f0-522571b162fb';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/baidu/alb-public-network-ip.md' where id = 'ca3f9cfa-892e-43ce-abfc-4373329926f3';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/baidu/common-public-network-ip.md' where id = '73b0db2f-b946-4d03-a4bd-95ee7d4c9108';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/baidu/disk-encryption.md' where id = '862db318-ce25-41ed-85fa-fc1ea4d691ec';
