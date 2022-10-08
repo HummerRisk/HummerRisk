@@ -84,8 +84,6 @@ public class CloudTaskService {
                 return prowlerService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId);
             } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.xray.name())) {
                 return xrayService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId);
-            } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.tsunami.name())) {
-                return null;
             } else {
                 return orderService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId);
             }
@@ -209,7 +207,6 @@ public class CloudTaskService {
             //  获得区域 -- nuclei的区域为all 因为当前方法是判断当前规则是否正确,所以任意取一个区域只要执行没有问题则证明规则没有问题
             JSONObject regionObj = quartzTaskDTO.getScanType().equals(ScanTypeConstants.nuclei.name())
                     || quartzTaskDTO.getScanType().equals(ScanTypeConstants.xray.name())
-                    || quartzTaskDTO.getScanType().equals(ScanTypeConstants.tsunami.name())
                     ? new JSONObject() {{
                 put("regionId", "ALL");
             }} : Optional.ofNullable(PlatformUtils._getRegions(account, proxy, true)).filter(s -> {
@@ -233,9 +230,6 @@ public class CloudTaskService {
             } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.xray.name())) {
                 fileName = groupName;
                 commandEnum = CommandEnum.xray.getCommand();
-            } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.tsunami.name())) {
-                fileName = "";
-                commandEnum = CommandEnum.tsunami.getCommand();
             } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.prowler.name())) {
                 JSONArray objects = JSONObject.parseArray(quartzTaskDTO.getParameter());
                 if (objects.isEmpty()) HRException.throwException(Translator.get("error_lang_invalid"));
@@ -273,10 +267,6 @@ public class CloudTaskService {
                 HRException.throwException(Translator.get("i18n_has_resource_failed"));
             }
         } else if (type.equals(ScanTypeConstants.xray.name())) {
-            if (resultStr.contains("ERR") || resultStr.contains("error")) {
-                HRException.throwException(Translator.get("i18n_has_resource_failed"));
-            }
-        } else if (type.equals(ScanTypeConstants.tsunami.name())) {
             if (resultStr.contains("ERR") || resultStr.contains("error")) {
                 HRException.throwException(Translator.get("i18n_has_resource_failed"));
             }
