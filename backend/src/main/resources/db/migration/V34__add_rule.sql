@@ -495,3 +495,27 @@ UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/qingcloud/
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/qingcloud/mysql-public-network-access.md' where id = '4e60b929-2158-4459-abc8-81afb99eead9';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/qingcloud/mysql-network-type.md' where id = '13b6dfef-b003-4a9f-9eee-6eb30f78cd21';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/qingcloud/mysql-ha.md' where id = '5afd9902-e319-4282-b9e7-1748ecf47c7e';
+
+-- -----------------
+-- update tencent rule suggestion
+-- -----------------
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/cdb-public-network-access.md' where id = 'cb9320af-4ee6-4c11-8840-8ec4b9cc8276';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/cdb-multiAZ.md' where id = '68363ad8-cce8-4458-b8f1-9bd1d1af54a7';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/cdb-network-type.md' where id = '2c4de559-7182-44e7-9657-b97412f0f0a7';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/cdb-ha-status.md' where id = '4cffcef8-be1e-44e0-8057-892e2cf588d5';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/clb-public-network-access.md' where id = '525d0b91-ca93-4d3d-8679-195aef136e0b';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/clb-bandwidth.md' where id = 'a0dca246-563a-49c3-8a43-3c537ba1fb36';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/clb-associated-with-vpc.md' where id = '59a95d30-30d7-45bf-ac47-80afed002ade';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/public-write-access-permission.md' where id = 'f8badb51-4a56-48cc-993f-6eb6698ea0ea';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/public-read-access-permission.md' where id = '77eab07c-1e3c-4713-acf1-ed1bede0531d';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/cos-bucket-encryption.md' where id = '3e66d418-3e47-475b-a863-03a9653940ed';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/cos-antileech.md' where id = 'ca991f61-49a4-49b2-9d14-16ca338d8149';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/cvm-public-network-ip.md' where id = '17dbe1a1-e9e7-4513-aa07-597ae932ff73';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/cvm-billing.md' where id = '159e19e9-e956-4c52-92fc-c9746372e448';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/disk-encryption.md' where id = 'bfbf6be1-69f8-448e-9c23-c5267530d573';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/eip-bandwidth.md' where id = '1240a2b8-f7ef-47c3-8048-2dd95d6d5b54';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/mongo-public-network-status.md' where id = 'c95be861-6e0e-4404-9b21-5ccfcd94ee3f';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/mongo-instance-network-type.md' where id = 'c1b41cbc-1263-4d67-a7c6-cf064999c6f8';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/redis-network-type.md' where id = '21fc2518-3b2b-475a-8398-4b1d9f68cfdb';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/securitygroup-configuration.md' where id = '2631d8a3-e5d8-4ef3-88c9-a8176fae110b';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/securitygroup-highrisk-configuration.md' where id = 'f9d3db46-d340-4487-ae9b-82b827108912';
