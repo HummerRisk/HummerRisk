@@ -235,5 +235,48 @@ ALTER TABLE `history_server_task` ADD `is_severity` tinyint(1) DEFAULT 1 COMMENT
 
 UPDATE rule_type SET resource_type = 'huawei.obs' WHERE id = '3e50ec86-1a2a-486e-920b-39572eb8d193';
 
-ALTER TABLE `cloud_event` ADD PRIMARY KEY ( `event_id` );
+ALTER TABLE `cloud_event` ADD `id` varchar(64) NOT NULL COMMENT 'ID';
 
+ALTER TABLE `cloud_event` ADD PRIMARY KEY ( `id` );
+
+-- -----------------
+-- Aliyun
+-- -----------------
+
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('0fab953a-c392-493d-9ef8-238cf5651d40', 'Aliyun MSE VPC 检测', 1, 'HighRisk', 'Aliyun  账号下的 MSE 实例指定属于哪些 VPC, 符合视为“合规”，否则视为“不合规”', 'policies:\n  # 检测您账号下的Mse实例指定属于哪些VPC, 属于则合规，不属于则\"不合规\"。\n  - name: aliyun-mse-vpc-type\n    resource: aliyun.mse\n    filters:\n      - type: vpc-type\n        vpcIds: [${{value1}}, ${{value2}}]', '[{\"defaultValue\":\"\\\"vpcId1\\\"\",\"name\":\"vpcId1\",\"key\":\"value1\",\"required\":true},{\"defaultValue\":\"\\\"vpcId2\\\"\",\"name\":\"vpcId2\",\"key\":\"value2\",\"required\":true}]', 'hummer-aliyun-plugin', '阿里云', 'aliyun.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('8810fc51-d234-4454-836a-95a9b1dec196', 'Aliyun ACK 删除保护检测', 1, 'HighRisk', 'Aliyun  ACK 集群开启删除保护，符合视为“合规”，否则视为“不合规”', 'policies:\n    # ACK 集群开启删除保护，符合视为“合规”，否则视为“不合规”。\n    - name: aliyun-ack-deletion-protection\n      resource: aliyun.ack\n      filters:\n        - type: deletion-protection\n          value: ${{value}}', '[{\"defaultValue\":\"true\",\"name\":\"是否开启删除保护\",\"key\":\"value\",\"required\":true}]', 'hummer-aliyun-plugin', '阿里云', 'aliyun.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('b9ff94b8-8959-4eac-86e9-983d8e6d7db6', 'Aliyun NAS 带宽峰值检测', 1, 'HighRisk', 'Aliyun 检测您账号下的 NAS 是否达到最低带宽要求，符合视为“合规”，否则视为“不合规”', 'policies:\n    # 检测您账号下的 NAS 是否达到最低带宽要求，是视为“合规”，否则视为“不合规”\n    - name: aliyun-nas-bandwidth\n      resource: aliyun.nas\n      filters:\n        - type: bandwidth\n          value: ${{value}}', '[{\"defaultValue\":\"100\",\"name\":\"带宽\",\"key\":\"value\",\"required\":true}]', 'hummer-aliyun-plugin', '阿里云', 'aliyun.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('deede37b-2991-40b3-b8b5-089914e4cd43', 'Aliyun NAS 磁盘加密状态检测', 1, 'HighRisk', 'Aliyun 账号下 NAS 磁盘均已加密，符合视为“合规”，否则视为“不合规”', 'policies:\n    # 账号下 NAS 磁盘均已加密，视为“合规”，否则视为“不合规”\n    - name: aliyun-nas-encrypted\n      resource: aliyun.nas\n      filters:\n        - type: encrypted\n          value: ${{value}}', '[{\"defaultValue\":\"0\",\"name\":\"加密状态 0:未加密 1:NAS托管密钥 2:用户管理密钥\",\"key\":\"value\",\"required\":true}]', 'hummer-aliyun-plugin', '阿里云', 'aliyun.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL);
+
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('0fab953a-c392-493d-9ef8-238cf5651d40', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('8810fc51-d234-4454-836a-95a9b1dec196', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('b9ff94b8-8959-4eac-86e9-983d8e6d7db6', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('deede37b-2991-40b3-b8b5-089914e4cd43', 'safety');
+
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('139c93ee-c821-44d6-89fe-e41e558bee41', '8810fc51-d234-4454-836a-95a9b1dec196', 'aliyun.ack');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('143615d5-a9ca-4df3-b253-90a9f94b01f2', 'b9ff94b8-8959-4eac-86e9-983d8e6d7db6', 'aliyun.nas');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('293b16e4-a07c-4c18-b758-e6abeaa7b0df', 'deede37b-2991-40b3-b8b5-089914e4cd43', 'aliyun.nas');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('47ac4a8b-a16e-46ef-89e4-f46cfd1979cf', '0fab953a-c392-493d-9ef8-238cf5651d40', 'aliyun.mse');
+
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('0fab953a-c392-493d-9ef8-238cf5651d40', '10');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('0fab953a-c392-493d-9ef8-238cf5651d40', '13');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('0fab953a-c392-493d-9ef8-238cf5651d40', '92');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('0fab953a-c392-493d-9ef8-238cf5651d40', '93');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('0fab953a-c392-493d-9ef8-238cf5651d40', '95');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('b9ff94b8-8959-4eac-86e9-983d8e6d7db6', '2');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('deede37b-2991-40b3-b8b5-089914e4cd43', '53');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('deede37b-2991-40b3-b8b5-089914e4cd43', '94');
+
+SELECT id INTO @groupId11 from rule_group where name = 'Aliyun 等保预检';
+SELECT id INTO @groupId12 from rule_group where name = 'Aliyun MSE 最佳安全实践';
+SELECT id INTO @groupId13 from rule_group where name = 'Aliyun ACK 最佳安全实践';
+SELECT id INTO @groupId14 from rule_group where name = 'Aliyun NAS 最佳安全实践';
+
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('0fab953a-c392-493d-9ef8-238cf5651d40', @groupId12);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('0fab953a-c392-493d-9ef8-238cf5651d40', @groupId11);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('8810fc51-d234-4454-836a-95a9b1dec196', @groupId13);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('8810fc51-d234-4454-836a-95a9b1dec196', @groupId11);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('b9ff94b8-8959-4eac-86e9-983d8e6d7db6', @groupId14);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('b9ff94b8-8959-4eac-86e9-983d8e6d7db6', @groupId11);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('deede37b-2991-40b3-b8b5-089914e4cd43', @groupId14);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('deede37b-2991-40b3-b8b5-089914e4cd43', @groupId11);
