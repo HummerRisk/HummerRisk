@@ -182,4 +182,34 @@
     ) event_group order by event_group.event_date desc
   </select>
 
+  <select id="cloudChart" resultType="java.util.Map">
+    SELECT
+    t1.name as 'name',
+    IFNULL(count(t.id), 0) as 'value'
+    FROM cloud_event as t
+    LEFT JOIN cloud_account t1 ON t.cloud_account_id = t1.id
+    GROUP BY t.cloud_account_id
+    Limit 10;
+  </select>
+
+  <select id="regionChart" resultType="java.util.Map">
+    SELECT
+    t.region_name as 'name',
+    IFNULL(count(t.id), 0) as 'value'
+    FROM cloud_event as t
+    GROUP BY t.region_name
+    Limit 10;
+  </select>
+
+  <select id="severityChart" resultType="java.util.Map">
+    SELECT
+      a.name as 'product',
+      (SELECT IFNULL(count(t1.id), 0) as High from cloud_event t1 where t1.cloud_account_id = t.account_id and t1.event_rating = 2) as High,
+      (SELECT IFNULL(count(t1.id), 0) as Medium from cloud_event t1 where t1.cloud_account_id = t.account_id and t1.event_rating = 1) as Medium,
+      (SELECT IFNULL(count(t1.id), 0) as Low from cloud_event t1 where t1.cloud_account_id = t.account_id and t1.event_rating = 0) as Low
+    FROM cloud_event_sync_log as t
+    LEFT JOIN cloud_account a on t.account_id = a.id
+    Limit 10;
+  </select>
+
 </mapper>

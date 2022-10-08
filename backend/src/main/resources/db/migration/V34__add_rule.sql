@@ -239,6 +239,8 @@ ALTER TABLE `cloud_event` ADD `id` varchar(64) NOT NULL COMMENT 'ID';
 
 ALTER TABLE `cloud_event` ADD PRIMARY KEY ( `id` );
 
+DELETE FROM `cloud_account` WHERE id = '6953e0fd-57f3-4ca8-915f-e8b97725fcd7';
+
 -- -----------------
 -- Aliyun
 -- -----------------

@@ -22,4 +22,10 @@ public interface ExtCloudEventMapper {
     int batchCloudEvents(List<CloudEvent> cloudEvents);
 
     Map<String, Object> topInfo(Map<String, Object> params);
+
+    List<Map<String, Object>> cloudChart();
+
+    List<Map<String, Object>> regionChart();
+
+    List<Map<String, Object>> severityChart();
 }

@@ -4,7 +4,7 @@
       <el-col :span="12">
         <el-card class="table-card">
           <template v-slot:header>
-            <span class="title">{{ $t('code.code_project') }}</span>
+            <span class="title">{{ $t('dashboard.cloud_account_statistics') }}</span>
           </template>
           <left-chart/>
         </el-card>
@@ -12,7 +12,7 @@
       <el-col :span="12">
         <el-card class="table-card">
           <template v-slot:header>
-            <span class="title">{{ $t('code.severity') }}</span>
+            <span class="title">{{ $t('dashboard.regions_statistics') }}</span>
           </template>
           <right-chart/>
         </el-card>
@@ -22,9 +22,9 @@
       <el-col :span="24">
         <el-card class="table-card">
           <template v-slot:header>
-            <span class="title">{{ $t('dashboard.code_statistics') }}</span>
+            <span class="title">{{ $t('rule.severity') }}</span>
           </template>
-          <code-chart/>
+          <buttom-chart/>
         </el-card>
       </el-col>
     </container>
@@ -33,9 +33,9 @@
 
 <script>
 import Container from "../.././common/components/Container";
-import LeftChart from "@/business/components/code/head/LeftChart";
-import RightChart from "@/business/components/code/head/RightChart";
-import CodeChart from "@/business/components/dashboard/head/CodeChart";
+import LeftChart from "@/business/components/event/head/LeftChart";
+import RightChart from "@/business/components/event/head/RightChart";
+import ButtomChart from "@/business/components/event/head/ButtomChart";
 
 /* eslint-disable */
 export default {
@@ -43,7 +43,7 @@ export default {
     Container,
     LeftChart,
     RightChart,
-    CodeChart,
+    ButtomChart,
   },
   data() {
     return {

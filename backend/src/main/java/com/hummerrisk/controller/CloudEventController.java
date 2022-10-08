@@ -84,4 +84,25 @@ public class CloudEventController {
     public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
         return cloudEventService.topInfo(params);
     }
+
+    @I18n
+    @ApiOperation(value = "云账号统计")
+    @GetMapping("cloudChart")
+    public List<Map<String, Object>> cloudChart() {
+        return cloudEventService.cloudChart();
+    }
+
+    @I18n
+    @ApiOperation(value = "区域统计")
+    @GetMapping("regionChart")
+    public List<Map<String, Object>> regionChart() {
+        return cloudEventService.regionChart();
+    }
+
+    @I18n
+    @ApiOperation(value = "风险统计")
+    @GetMapping("severityChart")
+    public List<Map<String, Object>> severityChart() {
+        return cloudEventService.severityChart();
+    }
 }

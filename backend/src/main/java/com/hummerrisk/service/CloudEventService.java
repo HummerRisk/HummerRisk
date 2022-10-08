@@ -491,4 +491,16 @@ public class CloudEventService {
     public Map<String, Object> topInfo(Map<String, Object> params) {
         return extCloudEventMapper.topInfo(params);
     }
+
+    public List<Map<String, Object>> cloudChart() {
+        return extCloudEventMapper.cloudChart();
+    }
+
+    public List<Map<String, Object>> regionChart() {
+        return extCloudEventMapper.regionChart();
+    }
+
+    public List<Map<String, Object>> severityChart() {
+        return extCloudEventMapper.severityChart();
+    }
 }
