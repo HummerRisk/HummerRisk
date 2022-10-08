@@ -463,3 +463,22 @@ UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/red
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/redis-internet-access.md' where id = '0cf1e428-3c37-4aa6-b651-acb46c4838c0';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/security-group-config.md' where id = '8f3f7596-569b-4cde-97a2-1d565b8224e1';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/huawei/security-group-high-risk-port.md' where id = '99e762e7-766f-4e55-9133-773593497b44';
+
+-- -----------------
+-- update openstack rule suggestion
+-- -----------------
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/openstack/volume-encrypt.md' where id = '5673475f-c43d-432c-a6a6-f29479493b4d';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/openstack/volume-status.md' where id = '6bbd42bc-a251-498a-8b19-8de8c55e32aa';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/openstack/server-time.md' where id = '5c4d5e15-ce0a-4322-8406-47e8bcb10bf4';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/openstack/server-tag.md' where id = 'ab3306d0-e734-4977-a462-42de0e1cf263';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/openstack/server-type.md' where id = 'ccf64ae6-7f99-40fe-b45f-d86a4b63bdcc';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/openstack/server-image.md' where id = '6359bdcd-0d1d-4e43-817c-cc338f07a065';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/openstack/flavor-type.md' where id = '311daee9-3c15-4b19-8fb7-97823c57eb23';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/openstack/user-role.md' where id = '5f6c1aed-8c46-48e6-b48d-2cf06568831f';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/openstack/user-project.md' where id = '1aab5692-85a5-4151-b67c-8c2c93353916';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/openstack/network-status.md' where id = 'b8e09c5a-fecc-4400-b831-d7f75f9cee01';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/openstack/router-status.md' where id = '63dedb65-0237-4402-8a5c-1d2137840fdd';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/openstack/image-status.md' where id = 'f7b906de-63e0-479b-b766-2e50df8fbe19';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/openstack/project-member.md' where id = 'bf9a87c9-f709-4f84-8a86-5afde3eb40c3';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/openstack/security-groups-config.md' where id = 'c9162947-90f2-41c9-8df8-2d2244bb6f1d';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/openstack/security-groups-high-risk-port.md' where id = '701ae534-4c13-45a2-8a72-e78afdea4d2b';
