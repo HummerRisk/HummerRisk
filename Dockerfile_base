@@ -1,8 +1,8 @@
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/nuclei:v0.3 as nuclei-env
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/nuclei:v0.4 as nuclei-env
 
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/prowler:v0.3 as prowler-env
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/prowler:v0.4 as prowler-env
 
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/xray:v0.3 as xray-env
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/xray:v0.4 as xray-env
 
 FROM registry.cn-beijing.aliyuncs.com/hummerrisk/cloud-custodian:v0.4.0
 
@@ -15,7 +15,7 @@ COPY --from=prowler-env /prowler /prowler
 COPY --from=xray-env /opt/hummerrisk/xray/ /opt/hummerrisk/xray/
 
 RUN apk add docker && \
-    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.32.0
+    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.32.1
 
 RUN mkdir -p /opt/apps
 
