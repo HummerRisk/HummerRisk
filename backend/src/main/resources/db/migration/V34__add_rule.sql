@@ -280,3 +280,52 @@ INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('b9ff94b8-8959-
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('b9ff94b8-8959-4eac-86e9-983d8e6d7db6', @groupId11);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('deede37b-2991-40b3-b8b5-089914e4cd43', @groupId14);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('deede37b-2991-40b3-b8b5-089914e4cd43', @groupId11);
+
+-- -----------------
+-- update aws rule suggestion
+-- -----------------
+
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-ebs-unattached.md' where id = 'a90a1ba1-b392-4bf2-af31-20ecbefe5811';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-ebs-encrypted.md' where id = 'befc89d7-1811-404a-9226-f8ecc22820e0';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-ec2-usage.md' where id = 'fa5e89e3-417d-4296-9d17-ca51ed914be5';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-stopped-instance.md' where id = 'bd1a0479-ef54-4208-a520-50caf6acfe87';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-ec2-tagged.md' where id = 'b57cbdba-b4d7-4da7-84db-25b9f2d5324b';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-ec2-runnningtime.md' where id = '5c47228c-7fe1-484b-a5b6-7c1968074f69';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-eip-unattached.md' where id = '35b5c651-5bd6-44b8-85ee-ae6adfa42dc3';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-elb-sslblacklist.md' where id = '07eb95ef-6d78-4b9a-8555-a42b6a16de99';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-elb-unattached.md' where id = '0be7f5d4-766c-4b2b-910d-bec0f3aac977';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-rds-public-access.md' where id = '0dda84c1-794b-4977-bb66-6f12695c6c51';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-rds-encrypted.md' where id = 'a6c513a8-8e18-4341-94b7-b6588fdcd1f4';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-rds-unused.md' where id = 'b1491f69-f3b8-40ae-9659-4242dbc30a0b';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-s3-global-grants.md' where id = 'c30779c4-44b8-4c7b-b2ec-29ff3a96033b';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-s3-public-access.md' where id = 'd0f3f4b0-000a-4407-85ee-ed4a2f9dac44';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-securitygroup-check.md' where id = '43a1556b-5417-4efb-88fc-33e8eeb68f71';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-iam-cis.md' where id = 'ebc80d1e-5dd9-4b86-8037-fb7c9727084a';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-logging-cis.md' where id = '9929cc2a-7a9b-4643-a813-0e4359b09eb0';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-monitoring-cis.md' where id = '8ad73e84-141a-40c4-bd56-1813535e8e92';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-networking-cis.md' where id = 'ee74d071-d39e-4b0e-b4a3-e7ad24fbce12';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-cis-level1.md' where id = '0dc8ae24-71f8-449a-8834-d59f8fbdf991';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-cis-level2.md' where id = '1fbd8c76-90e7-48e4-8281-ef597bb484e8';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-cis-extras.md' where id = '6bb291bd-fcdf-4aa9-8fdf-69e761c9c4e0';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-forensics.md' where id = '350a097a-dfeb-4fd0-a3af-49049da5c025';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-gdpr.md' where id = 'fa60960a-0e38-4502-9834-1ab1277e9aaa';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-hippa.md' where id = '39c87069-a3c6-4ab3-9974-f844a89872b5';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-secrets-check.md' where id = '10754933-241e-42db-bb3c-42e13cb40b0f';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-api-gateway.md' where id = '7c37887f-0b8d-444c-bad7-e43cd2b41578';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-rds-security.md' where id = '197e41e7-cbc3-4eef-b5ad-5153c9232449';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-elasticseatch.md' where id = '4a64e90e-92ea-4d5a-a753-3c5ca92a2b95';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-pcidss.md' where id = '72af2230-8555-4e0c-a06a-721436a0644e';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-trustboundaries.md' where id = '0a5a7796-6b53-408a-ba49-7fd9e51d82f4';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-internet-exposed.md' where id = 'a944a483-c23f-4d62-bdd8-d2a20a4aaeca';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-iso27001.md' where id = '9b1d1a9c-6c7e-44db-a15c-c0c82b1040eb';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-eks-cis.md' where id = '0d51321e-e26c-4147-b730-5b1403384487';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-ffiec.md' where id = '0d6270fc-3744-42cd-a850-65ac0b8ef514';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-soc2.md' where id = 'c1375dfe-c0b1-4e53-9c2b-6a0f29258a08';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-sagemaker.md' where id = '1ab302fb-1b06-410a-b17a-fdf7843d6182';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-ens.md' where id = 'f38d83c9-c4b9-47b8-8135-f9bdf96cf8ec';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aws/aws-glue.md' where id = 'e86583b9-12dd-4316-980a-5eeeba86f9ca';
+
+-- -----------------
+-- update aliyun rule suggestion
+-- -----------------
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/aliyun/ack-deletion-protection.md' where id = '8810fc51-d234-4454-836a-95a9b1dec196';
