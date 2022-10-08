@@ -519,3 +519,19 @@ UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/mo
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/redis-network-type.md' where id = '21fc2518-3b2b-475a-8398-4b1d9f68cfdb';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/securitygroup-configuration.md' where id = '2631d8a3-e5d8-4ef3-88c9-a8176fae110b';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/securitygroup-highrisk-configuration.md' where id = 'f9d3db46-d340-4487-ae9b-82b827108912';
+
+-- -----------------
+-- update ucloud rule suggestion
+-- -----------------
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/ucloud/eip-bandwidth.md' where id = '5fb3ca1d-2a8d-46c7-8549-403139a10fbd';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/ucloud/sg-ports.md' where id = '3b61a7cf-e3b4-4120-86c1-ffe92c3a6d66';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/ucloud/sg-source-cidr-ip.md' where id = '351684f0-1464-428e-a66d-4dbcfb1839b0';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/ucloud/sg-high-risk-port.md' where id = '6cbe7b32-d431-4fcb-9c47-4ba1411cb52c';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/ucloud/ulb-vpc-type.md' where id = '91bdd835-1071-4d6a-825a-4afdf58dce71';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/ucloud/ulb-bandwidth.md' where id = 'b85e5722-fd4a-471e-af94-b9d38cc23b22';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/ucloud/ulb-listener.md' where id = '6008cc3c-0adb-48ba-86b8-7ad2fc8efdca';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/ucloud/ulb-listener-type.md' where id = 'b285f285-10cc-45cc-b59e-7b84fd229815';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/ucloud/uhost-vpc.md' where id = '155f44ef-b0c6-4881-b2c2-ac1daffa04da';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/ucloud/uhost-public-network-ip.md' where id = '001400f0-0a52-43c5-945e-d9e28c6a74f9';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/ucloud/uhost-network-type.md' where id = '32d7aec8-265e-4ae8-916c-85bd2798b568';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/ucloud/uhost-disk-encryption.md' where id = '844fd144-0e31-419f-adf7-d6f89673faaa';
