@@ -482,3 +482,16 @@ UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/openstack/
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/openstack/project-member.md' where id = 'bf9a87c9-f709-4f84-8a86-5afde3eb40c3';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/openstack/security-groups-config.md' where id = 'c9162947-90f2-41c9-8df8-2d2244bb6f1d';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/openstack/security-groups-high-risk-port.md' where id = '701ae534-4c13-45a2-8a72-e78afdea4d2b';
+
+-- -----------------
+-- update qingcloud rule suggestion
+-- -----------------
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/qingcloud/ecs-vpc.md' where id = '4223f09d-b455-4b35-9e9a-07953df5f290';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/qingcloud/ecs-network-type.md' where id = 'd83c8434-e0ca-4250-b7c0-e5add655262d';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/qingcloud/ecs-network-type.md' where id = 'd83c8434-e0ca-4250-b7c0-e5add655262d';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/qingcloud/eip-bandwidth.md' where id = 'c8977309-8b5b-48db-bf16-3380832d4ebb';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/qingcloud/mongodb-public-network-status.md' where id = 'ceecc38d-5c98-4cc4-aeef-028ab653c26b';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/qingcloud/mongodb-network-type.md' where id = 'e8df5a37-a78d-4115-9db2-145d3ebda280';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/qingcloud/mysql-public-network-access.md' where id = '4e60b929-2158-4459-abc8-81afb99eead9';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/qingcloud/mysql-network-type.md' where id = '13b6dfef-b003-4a9f-9eee-6eb30f78cd21';
+UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/qingcloud/mysql-ha.md' where id = '5afd9902-e319-4282-b9e7-1748ecf47c7e';
