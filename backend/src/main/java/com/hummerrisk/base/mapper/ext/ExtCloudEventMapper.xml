@@ -121,7 +121,7 @@
 
   <insert id="batchCloudEvents">
     insert into cloud_event
-    (event_id, cloud_account_id, sync_region,
+    (id,event_id, cloud_account_id, sync_region,
     acs_region, event_name, event_type,
     event_category, event_version, event_rw,
     event_message, event_source, event_time,
@@ -133,7 +133,7 @@
     location_info, endpoint, resource_url,region_name
     ) values
     <foreach item="item" index="index" collection="list" separator=",">
-      (
+      (#{item.id,jdbcType=VARCHAR},
       #{item.eventId,jdbcType=VARCHAR}, #{item.cloudAccountId,jdbcType=VARCHAR}, #{item.syncRegion,jdbcType=VARCHAR},
       #{item.acsRegion,jdbcType=VARCHAR}, #{item.eventName,jdbcType=VARCHAR}, #{item.eventType,jdbcType=VARCHAR},
       #{item.eventCategory,jdbcType=VARCHAR}, #{item.eventVersion,jdbcType=VARCHAR}, #{item.eventRw,jdbcType=VARCHAR},

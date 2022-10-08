@@ -220,6 +220,7 @@ public class CloudEventService {
             result1.forEach(item -> {
                 item.setCloudAccountId(account.getId());
                 item.setSyncRegion(region);
+                item.setId(UUIDUtil.newUUID());
                 if(StringUtils.isBlank(item.getEventId())){
                     item.setEventId(UUIDUtil.newUUID());
                 }
