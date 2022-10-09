@@ -41,7 +41,7 @@ export default {
           },
           series: [
             {
-              name: 'Access From',
+              name: 'K8s',
               type: 'pie',
               radius: '50%',
               data: data,
