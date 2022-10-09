@@ -1300,6 +1300,14 @@ public class PlatformUtils {
                     stringArray = new String[]{"cn-fuzhou"};
                     tempList = Arrays.asList(stringArray);
                     return !tempList.contains(region);
+                } else if (StringUtils.contains(resource,"aliyun.mse")){
+                    stringArray = new String[]{"cn-fuzhou","cn-nanjing","me-east-1"};
+                    tempList = Arrays.asList(stringArray);
+                    return !tempList.contains(region);
+                }else if (StringUtils.contains(resource,"aliyun.nas")){
+                    stringArray = new String[]{"ap-southeast-7","cn-fuzhou","cn-nanjing"};
+                    tempList = Arrays.asList(stringArray);
+                    return !tempList.contains(region);
                 }
                 break;
             case huawei:
