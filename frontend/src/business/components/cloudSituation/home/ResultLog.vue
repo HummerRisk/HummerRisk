@@ -34,7 +34,9 @@
                     <span class="grid-content-status-span" v-else-if="scope.row.status === 'WARNING'" style="color: #dda450">
                       <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
                     </span>
+
                 </div>
+
                 </el-col>
               </el-row>
             </div>
@@ -65,7 +67,8 @@
                     {{ logItem.createTime | timestampFormatDate }}
                     {{ logItem.operator }}
                     {{ logItem.operation }}
-                    {{ logItem.output }}<br>
+                    {{ logItem.output }}
+                    <br>
               </span>
               <div v-if="(scope.row.status === 'FINISHED' || scope.row.status === 'ERROR' || scope.row.status === 'WARNING')
                       && (scope.row.cloudResourceSyncItemLogs.length === 0)">
@@ -218,6 +221,9 @@
   }
   .code-mirror {
     height: 600px !important;
+  }
+  .error-log{
+    color: #dd4444;
   }
   .code-mirror >>> .CodeMirror {
     /* Set height, width, borders, and global font properties here */
