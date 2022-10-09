@@ -14,6 +14,7 @@ import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.constants.ScanTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
+import com.hummerrisk.controller.request.cloudResource.CloudResourceItemRequest;
 import com.hummerrisk.dto.CloudTaskCopyDTO;
 import com.hummerrisk.dto.CloudTaskDTO;
 import com.hummerrisk.dto.CloudTaskItemLogDTO;
@@ -50,6 +51,8 @@ public class OrderService {
     private ExtCloudTaskMapper extCloudTaskMapper;
     @Resource @Lazy
     private CloudTaskItemLogMapper cloudTaskItemLogMapper;
+    @Resource @Lazy
+    private CloudResourceItemMapper cloudResourceItemMapper;
     @Resource @Lazy
     private CommonThreadPool commonThreadPool;
     @Resource @Lazy
@@ -184,7 +187,11 @@ public class OrderService {
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
-
+                        CloudResourceItemExample cloudResourceItemExample = new CloudResourceItemExample();
+                        cloudResourceItemExample.createCriteria().andAccountIdEqualTo(quartzTaskDTO.getAccountId());
+                        cloudResourceItemExample.createCriteria().andResourceTypeIn(resourceTypes);
+                        long resourceSum = cloudResourceItemMapper.countByExample(cloudResourceItemExample);
+                        cloudTask.setResourcesSum(resourceSum);
                         cloudTask.setResourceTypes(new HashSet<>(resourceTypes).toString());
                         cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
 
