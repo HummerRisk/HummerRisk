@@ -26,7 +26,6 @@ export default {
     init() {
       this.$get("/server/severityChart", response => {
         let data = response.data;
-        console.log(data)
         this.options = {
           legend: {},
           tooltip: {},
