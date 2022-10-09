@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.hummer.quartz.anno.QuartzScheduled;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
+import com.hummerrisk.base.mapper.ext.ExtCloudResourceSyncItemMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudResourceSyncMapper;
 import com.hummerrisk.commons.constants.CloudTaskConstants;
 import com.hummerrisk.commons.constants.CommandEnum;
@@ -22,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.alibaba.fastjson.JSON.parseArray;
 import static com.alibaba.fastjson.JSON.parseObject;
@@ -49,7 +52,8 @@ public class CloudSyncService {
     private CommonThreadPool commonThreadPool;
     @Resource
     private ProxyMapper proxyMapper;
-
+    @Resource
+    private ExtCloudResourceSyncItemMapper extCloudResourceSyncItemMapper;
 
 
     /**
@@ -112,26 +116,20 @@ public class CloudSyncService {
     }
 
     public List<CloudResourceSyncItemDto> getCloudResourceSyncItem(String syncId){
-        //TODO 数据量大查询速度待优化
-        CloudResourceSyncItemExample cloudResourceSyncItemExample = new CloudResourceSyncItemExample();
-        cloudResourceSyncItemExample.createCriteria().andSyncIdEqualTo(syncId);
-        cloudResourceSyncItemExample.setOrderByClause(" resource_type ");
-        List<CloudResourceSyncItem> cloudResourceSyncItems = cloudResourceSyncItemMapper.selectByExample(cloudResourceSyncItemExample);
-        List<CloudResourceSyncItemDto> cloudResourceSyncItemDtos = new ArrayList<>();
-        cloudResourceSyncItems.forEach(cloudResourceSyncItem -> {
-            CloudResourceSyncItemLogExample cloudResourceSyncItemLogExample = new CloudResourceSyncItemLogExample();
-            cloudResourceSyncItemLogExample.createCriteria().andSyncItemIdEqualTo(cloudResourceSyncItem.getId());
-            List<CloudResourceSyncItemLog> cloudResourceSyncItemLogs = cloudResourceSyncItemLogMapper.selectByExampleWithBLOBs(cloudResourceSyncItemLogExample);
-            CloudResourceSyncItemDto cloudResourceSyncItemDto = new CloudResourceSyncItemDto();
-            try {
-                BeanUtils.copyBean(cloudResourceSyncItemDto,cloudResourceSyncItem);
-                cloudResourceSyncItemDto.setCloudResourceSyncItemLogs(cloudResourceSyncItemLogs);
-                cloudResourceSyncItemDtos.add(cloudResourceSyncItemDto);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+        List<CloudResourceSyncItemDto> cloudResourceSyncItemDtos = extCloudResourceSyncItemMapper.selectBySyncId(syncId);
+        List<CloudResourceSyncItemLog> cloudResourceSyncItemLogs = extCloudResourceSyncItemMapper.selectSyncItemLogBySyncId(syncId);
+        Map<String,CloudResourceSyncItemDto> cloudResourceSyncItemDtoMap = cloudResourceSyncItemDtos.stream().collect(Collectors.toMap(CloudResourceSyncItemDto::getId, Function.identity()));
+        for(CloudResourceSyncItemLog cloudResourceSyncItemLog:cloudResourceSyncItemLogs){
+            CloudResourceSyncItemDto cloudResourceSyncItemDto = cloudResourceSyncItemDtoMap.get(cloudResourceSyncItemLog.getSyncItemId());
+            if(cloudResourceSyncItemDto!=null){
+                List<CloudResourceSyncItemLog> cloudResourceSyncItemLogs1 = cloudResourceSyncItemDto.getCloudResourceSyncItemLogs();
+                if(cloudResourceSyncItemLogs1 == null){
+                    cloudResourceSyncItemLogs1 = new ArrayList<>();
+                    cloudResourceSyncItemDto.setCloudResourceSyncItemLogs(cloudResourceSyncItemLogs1);
+                }
+                cloudResourceSyncItemLogs1.add(cloudResourceSyncItemLog);
             }
-
-        });
+        }
         return cloudResourceSyncItemDtos;
     }
 
