@@ -52,6 +52,7 @@
     "@vue/cli-plugin-eslint": "^4.1.0",
     "@vue/cli-service": "^4.1.0",
     "babel-eslint": "^10.0.3",
+    "d3": "^7.6.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "file-writer": "^1.0.2",
