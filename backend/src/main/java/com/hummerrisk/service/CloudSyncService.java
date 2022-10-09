@@ -189,6 +189,13 @@ public class CloudSyncService {
                 final String finalScript = CloudTaskConstants.policy.replace("{resourceType}", resourceType);
 
                 commonThreadPool.addTask(() -> {
+                    if (!PlatformUtils.checkAvailableRegion(account.getPluginId(), resourceType, region)) {
+                        cloudResourceSyncItem.setCount(0);
+                        cloudResourceSyncItem.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());
+                        cloudResourceSyncItemMapper.updateByPrimaryKey(cloudResourceSyncItem);
+                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "不支持该区域", true,accountId);
+                        return;
+                    }
                     String dirPath = "", resultStr = "", fileName = "policy.yml";
                     boolean readResource = true;
                     try {
