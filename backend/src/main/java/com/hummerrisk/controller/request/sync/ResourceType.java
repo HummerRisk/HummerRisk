@@ -11,6 +11,10 @@ public class ResourceType {
 
     private String name;
 
+    private String accountId;
+
+    private String regionId;
+
     private String resourceType;
 
     public List<Resource> getChildren() {
@@ -35,5 +39,21 @@ public class ResourceType {
 
     public void setResourceType(String resourceType) {
         this.resourceType = resourceType;
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
+    }
+
+    public String getRegionId() {
+        return regionId;
+    }
+
+    public void setRegionId(String regionId) {
+        this.regionId = regionId;
     }
 }

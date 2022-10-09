@@ -12,6 +12,8 @@ public class Region {
 
     private String name;
 
+    private String accountId;
+
     private String regionId;
 
     public List<ResourceType> getChildren() {
@@ -36,5 +38,13 @@ public class Region {
 
     public void setRegionId(String regionId) {
         this.regionId = regionId;
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
     }
 }

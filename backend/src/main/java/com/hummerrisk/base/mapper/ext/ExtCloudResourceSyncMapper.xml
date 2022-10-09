@@ -104,20 +104,35 @@
     <resultMap id="D3BaseResultMap" type="com.hummerrisk.controller.request.sync.D3">
         <result column="name" jdbcType="VARCHAR" property="name" />
         <collection property="children" ofType="com.hummerrisk.controller.request.sync.Cloud" javaType="list" select="selectCloudAccount" column="name">
+        </collection>
+    </resultMap>
+
+    <resultMap id="CloudBaseResultMap" type="com.hummerrisk.controller.request.sync.Cloud">
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="accountId" jdbcType="VARCHAR" property="accountId" />
+        <collection property="children" ofType="com.hummerrisk.controller.request.sync.Region" javaType="list"
+                    select="selectRegion" column="accountId">
+        </collection>
+    </resultMap>
+
+    <resultMap id="RegionBaseResultMap" type="com.hummerrisk.controller.request.sync.Region">
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="regionId" jdbcType="VARCHAR" property="regionId" />
+        <result column="accountId" jdbcType="VARCHAR" property="accountId" />
+        <collection property="children" ofType="com.hummerrisk.controller.request.sync.ResourceType" javaType="list"
+                    select="selectResourceType" column="{regionId=regionId, accountId=accountId}">
+        </collection>
+    </resultMap>
+
+    <resultMap id="ResourceBaseResultMap" type="com.hummerrisk.controller.request.sync.ResourceType">
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="regionId" jdbcType="VARCHAR" property="regionId" />
+        <result column="accountId" jdbcType="VARCHAR" property="accountId" />
+        <result column="resourceType" jdbcType="VARCHAR" property="resourceType" />
+        <collection property="children" ofType="com.hummerrisk.controller.request.sync.Resource" javaType="list"
+                    select="selectResource" column="{regionId=regionId, accountId=accountId, resourceType=resourceType}">
             <result column="name" jdbcType="VARCHAR" property="name" />
-            <result column="accountId" jdbcType="VARCHAR" property="accountId" />
-            <collection property="children" ofType="com.hummerrisk.controller.request.sync.Region" javaType="list" select="selectRegion" column="accountId">
-                <result column="name" jdbcType="VARCHAR" property="name" />
-                <result column="regionId" jdbcType="VARCHAR" property="regionId" />
-                <collection property="children" ofType="com.hummerrisk.controller.request.sync.ResourceType" javaType="list" select="selectResourceType" column="regionId">
-                    <result column="name" jdbcType="VARCHAR" property="name" />
-                    <result column="resourceType" jdbcType="VARCHAR" property="resourceType" />
-                    <collection property="children" ofType="com.hummerrisk.controller.request.sync.Resource" javaType="list" select="selectResource" column="resourceType">
-                        <result column="name" jdbcType="VARCHAR" property="name" />
-                        <result column="value" jdbcType="VARCHAR" property="value" />
-                    </collection>
-                </collection>
-            </collection>
+            <result column="value" jdbcType="VARCHAR" property="value" />
         </collection>
     </resultMap>
 
@@ -125,7 +140,7 @@
         select 'Cloud' as name
     </select>
 
-    <select id="selectCloudAccount" resultType="com.hummerrisk.controller.request.sync.Cloud">
+    <select id="selectCloudAccount" resultMap="CloudBaseResultMap">
         select
         t1.name as name,
         t1.id as accountId
@@ -134,29 +149,32 @@
         group by t.account_id
     </select>
 
-    <select id="selectRegion" resultType="com.hummerrisk.controller.request.sync.Region" parameterType="java.lang.String">
+    <select id="selectRegion" resultMap="RegionBaseResultMap">
         select
         t.region_name as name,
+        t.account_id as accountId,
         t.region_id as regionId
         from cloud_resource_item t
         where t.account_id = #{accountId}
-        group by t.region_id, t.region_name
+        group by t.region_id, t.region_name, t.account_id
     </select>
 
-    <select id="selectResourceType" resultType="com.hummerrisk.controller.request.sync.ResourceType" parameterType="java.lang.String">
+    <select id="selectResourceType" resultMap="ResourceBaseResultMap">
         select
         t.resource_type as name,
+        t.account_id as accountId,
+        t.region_id as regionId,
         t.resource_type as resourceType
         from cloud_resource_item t
-        where t.region_id = #{regionId}
-        group by t.resource_type
+        where t.region_id = #{regionId} and t.account_id = #{accountId}
+        group by t.resource_type, t.region_id, t.account_id
     </select>
 
-    <select id="selectResource" resultType="com.hummerrisk.controller.request.sync.Resource" parameterType="java.lang.String">
+    <select id="selectResource" resultType="com.hummerrisk.controller.request.sync.Resource">
         select
-        t.hummer_id as name,
-        t.resource_type as value
+        CONCAT(t.hummer_id, '(', t.resource_type, ')') as name,
+        1 as value
         from cloud_resource_item t
-        where t.resource_type = #{resourceType}
+        where t.resource_type = #{resourceType} and t.region_id = #{regionId} and t.account_id = #{accountId}
     </select>
 </mapper>
