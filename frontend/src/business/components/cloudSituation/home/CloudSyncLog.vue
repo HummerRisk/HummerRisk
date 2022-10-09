@@ -166,6 +166,10 @@ export default {
       },
       buttons: [
         {
+          tip: this.$t('resource.resync'), icon: "el-icon-s-promotion", type: "success",
+          exec: this.reSync
+        },
+        {
           tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
           exec: this.handleDelete
         }
@@ -203,6 +207,18 @@ export default {
         this.accountList = response.data
         this.search()
       })
+    },
+    reSync(obj){
+      this.$alert( this.$t('resource.resync'), '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$get("/cloud/sync/sync/" +  obj.accountId,response => {
+              this.search();
+            });
+          }
+        }
+      });
     },
     saveSync() {
       this.result = this.$get("/cloud/sync/sync/" + this.form.id,response => {
