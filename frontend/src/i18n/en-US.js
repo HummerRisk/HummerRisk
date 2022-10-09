@@ -622,6 +622,7 @@ export default {
     suggestion: 'Optimization suggestion',
   },
   resource: {
+    resync: 'Resync',
     sync_log: 'Resource synchronization log',
     resource_id: 'resourceId',
     statistics:'Compliance Report',

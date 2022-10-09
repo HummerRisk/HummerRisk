@@ -622,6 +622,7 @@ export default {
     suggestion: '优化建议',
   },
   resource: {
+    resync: '重新同步',
     sync_log: '资源同步日志',
     resource_id: '资源ID',
     statistics: '合规报告',
