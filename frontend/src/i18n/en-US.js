@@ -621,6 +621,7 @@ export default {
     rule_group: 'Cloud detection rule group',
   },
   resource: {
+    resync: 'Resync',
     sync_log: 'Resource synchronization log',
     resource_id: 'resourceId',
     statistics:'Compliance Report',

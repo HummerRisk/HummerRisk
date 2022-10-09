@@ -621,6 +621,7 @@ export default {
     rule_group: '云检测规则组',
   },
   resource: {
+    resync: '重新同步',
     sync_log: '资源同步日志',
     resource_id: '资源ID',
     statistics: '合规报告',
