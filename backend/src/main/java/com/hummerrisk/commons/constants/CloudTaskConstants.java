@@ -63,19 +63,19 @@ public class CloudTaskConstants {
         EMAIL, SMS, ANNOUNCEMENT
     }
 
-    public final static String[] ALIYUN_RESOURCE_TYPE = {"aliyun.cdn", "aliyun.disk", "aliyun.ecs", "aliyun.eip", "aliyun.mongodb", "aliyun.oss", "aliyun.polardb", "aliyun.ram", "aliyun.rds", "aliyun.redis", "aliyun.security-group", "aliyun.slb"};
-    public final static String[] HUAWEI_RESOURCE_TYPE = {"", "", ""};
-    public final static String[] TENCENT_RESOURCE_TYPE = {"", "", ""};
-    public final static String[] AWS_RESOURCE_TYPE = {"", "", ""};
-    public final static String[] AZURE_RESOURCE_TYPE = {"", "", ""};
-    public final static String[] GCP_RESOURCE_TYPE = {"", "", ""};
-    public final static String[] QINGCLOUD_RESOURCE_TYPE = {"", "", ""};
-    public final static String[] UCLOUD_RESOURCE_TYPE = {"", "", ""};
+    public final static String[] ALIYUN_RESOURCE_TYPE = {"aliyun.cdn", "aliyun.disk", "aliyun.ecs", "aliyun.eip", "aliyun.mongodb", "aliyun.oss", "aliyun.polardb", "aliyun.ram", "aliyun.rds", "aliyun.redis", "aliyun.security-group", "aliyun.slb", "aliyun.nas", "aliyun.mse", "aliyun.ack"};
+    public final static String[] HUAWEI_RESOURCE_TYPE = {"huawei.dds","huawei.disk","huawei.ecs","huawei.eip","huawei.elb","huawei.gaussdb","huawei.gaussdbfornosql","huawei.gaussdbforopengauss","huawei.iam","huawei.obs","huawei.rds","huawei.redis","huawei.security-group"};
+    public final static String[] TENCENT_RESOURCE_TYPE = {"tencent.cdb","tencent.clb","tencent.cos","tencent.cvm","tencent.disk","tencent.eip","tencent.mongodb","tencent.redis","tencent.security-group"};
+    public final static String[] AWS_RESOURCE_TYPE = {"aws.ebs","aws.ec2","aws.elb","aws.network-addr","aws.rds","aws.s3","aws.security-group"};
+    public final static String[] AZURE_RESOURCE_TYPE = {"azure.cosmosdb","azure.disk","azure.loadbalancer","azure.networkinterface","azure.networksecuritygroup","azure.publicip","azure.resourcegroup","azure.sqldatabase","azure.sqlserver","azure.storage","azure.vm","azure.webapp"};
+    public final static String[] GCP_RESOURCE_TYPE = {"gcp.app-engine-certificate","gcp.app-engine-domain","gcp.app-engine-firewall-ingress-rule","gcp.dm-deployment","gcp.dns-managed-zone","gcp.dns-policy","gcp.instance-template","gcp.loadbalancer-ssl-policy","gcp.sql-backup-run"};
+    public final static String[] QINGCLOUD_RESOURCE_TYPE = {"qingcloud.ecs","qingcloud.eip","qingcloud.mongodb","qingcloud.mysql"};
+    public final static String[] UCLOUD_RESOURCE_TYPE = {"ucloud.eip","ucloud.securitygroup","ucloud.uhost","ucloud.ulb"};
     public final static String[] QINIU_RESOURCE_TYPE = {"", "", ""};
-    public final static String[] VOLC_RESOURCE_TYPE = {"", "", ""};
-    public final static String[] VSPHERE_RESOURCE_TYPE = {"", "", ""};
-    public final static String[] OPENSTACK_RESOURCE_TYPE = {"", "", ""};
-    public final static String[] BAIDU_RESOURCE_TYPE = {"", "", ""};
+    public final static String[] VOLC_RESOURCE_TYPE = {"volc.cdn","volc.ecs","volc.eip","volc.mongodb","volc.securitygroup"};
+    public final static String[] VSPHERE_RESOURCE_TYPE = {"vsphere.cluster","vsphere.datacenter","vsphere.datastore","vsphere.host","vsphere.network","vsphere.resourcepool","vsphere.vm"};
+    public final static String[] OPENSTACK_RESOURCE_TYPE = {"openstack.flavor","openstack.image","openstack.network","openstack.project","openstack.router","openstack.security-group","openstack.security-groups","openstack.server","openstack.user","openstack.volume"};
+    public final static String[] BAIDU_RESOURCE_TYPE = {"baidu.app-blb","baidu.bbc","baidu.blb","baidu.cdn","baidu.eip","baidu.instance","baidu.security-group","baidu.volume"};
 
     public final static String policy = "policies:\n" +
                                         "    - name: all-resources\n" +
