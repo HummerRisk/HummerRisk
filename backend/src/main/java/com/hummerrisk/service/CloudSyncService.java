@@ -91,6 +91,8 @@ public class CloudSyncService {
                 status = CloudTaskConstants.TASK_STATUS.WARNING.name();
             } else if (runningCount == 0 && errorCount > 0) {
                 status = CloudTaskConstants.TASK_STATUS.ERROR.name();
+            }else if (runningCount == 0){
+                status =  CloudTaskConstants.TASK_STATUS.FINISHED.name();
             }
             CloudResourceSync cloudResourceSync1 = new CloudResourceSync();
             cloudResourceSync1.setId(cloudResourceSync.getId());
@@ -254,13 +256,13 @@ public class CloudSyncService {
                         cloudResourceSyncItem.setCount(resourcesArr.size());
                         cloudResourceSyncItem.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());
                         cloudResourceSyncItemMapper.updateByPrimaryKey(cloudResourceSyncItem);
-                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "", true,accountId);
+                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "资源总数:"+resourcesArr.size(), true,accountId);
 
                     } catch (Exception e) {
                         e.printStackTrace();
                         cloudResourceSyncItem.setStatus(CloudTaskConstants.TASK_STATUS.ERROR.name());
                         cloudResourceSyncItemMapper.updateByPrimaryKey(cloudResourceSyncItem);
-                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_error_sync_resource", e.getMessage(), true,accountId);
+                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_error_sync_resource", e.getMessage(), false,accountId);
                         LogUtil.error("Sync Resources error :{}", uuid + "/" + region, e.getMessage());
                     }
 
