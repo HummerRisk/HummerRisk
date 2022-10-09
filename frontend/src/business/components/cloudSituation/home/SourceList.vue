@@ -84,7 +84,7 @@ export default {
   },
   watch: {
     selectNodeIds() {
-      this.search();
+      this.searchByAccount();
     },
     batchReportId() {
     }
@@ -92,10 +92,9 @@ export default {
   methods: {
     init() {
       this.initAccount()
-
     },
 
-    search() {
+    searchByAccount() {
       let accountId = ""
       if (!!this.selectNodeIds[0]) {
        accountId = this.selectNodeIds[0];
@@ -109,16 +108,24 @@ export default {
       }else {
         this.condition["combine"] = {}
       }
-      this.getList()
+      this.search()
     },
+
 
     resourceTypeClick(resourceType){
+      let accountId = ""
+      if (!!this.selectNodeIds[0]) {
+        accountId = this.selectNodeIds[0];
+      }
+      if(!!accountId){
+        this.condition["combine"]["accountId"]= {"value":accountId}
+      }
       this.condition["combine"]["resourceType"]={"value":resourceType}
       this.condition.resourceType = resourceType;
-      this.getList()
+      this.search()
     },
 
-    getList() {
+    search() {
       let url = "/cloud/resource/list/" + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
@@ -144,7 +151,7 @@ export default {
     initAccount() {
       this.$get("/account/allList", response => {
         this.accountList = response.data
-        this.search()
+        this.searchByAccount()
       })
     },
     tableRowClassName({row, rowIndex}) {
