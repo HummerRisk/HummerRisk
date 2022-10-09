@@ -129,8 +129,7 @@
         </el-tabs>
         <table-header :condition.sync="condition"
                       @search="search"
-                      v-if="activeName === 'first'"
-                      :title="$t('resource.result_list')"/>
+                      v-if="activeName === 'first'"/>
       </template>
 
       <!-- result first -->
@@ -364,7 +363,7 @@
           <table-header :condition.sync="resourceCondition"
                         @search="resourceSearch"
                         :show-back="false"
-                        :title="$t('resource.result_details_list')"/>
+                       />
         </template>
 
         <el-table border :data="resourceTableData" class="adjust-table table-content"
