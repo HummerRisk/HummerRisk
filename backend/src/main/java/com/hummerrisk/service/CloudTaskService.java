@@ -545,9 +545,9 @@ public class CloudTaskService {
         List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(example);
         cloudTasks.forEach(task -> {
             if (task.getResourcesSum() != null && task.getReturnSum() != null) {
-                int resourceSum = extCloudTaskMapper.getResourceSum(task.getId());
+                //int resourceSum = extCloudTaskMapper.getResourceSum(task.getId());
                 int returnSum = extCloudTaskMapper.getReturnSum(task.getId());
-                task.setResourcesSum((long) resourceSum);
+                //task.setResourcesSum((long) resourceSum);
                 task.setReturnSum((long) returnSum);
                 cloudTaskMapper.updateByPrimaryKeySelective(task);
             }
