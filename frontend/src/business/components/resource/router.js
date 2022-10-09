@@ -28,6 +28,16 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Result'),
     },
     {
+      path: "k8sResult",
+      name: "k8sResultByResource",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/k8s/home/Result'),
+    },
+    {
+      path: "configResult",
+      name: "configResultByResource",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/config/home/Result'),
+    },
+    {
       path: "imageResult",
       name: "imageResultByResource",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/Result'),
