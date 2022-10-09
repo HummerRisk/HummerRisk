@@ -40,7 +40,7 @@
                 </el-col>
               </el-row>
             </div>
-            <div>
+<!--            <div>
                 <el-button plain size="small" @click="showInformation(scope.row, $t('resource.i18n_resource_scanning_log'))">
                   <i class="el-icon-tickets"></i> {{ $t('resource.i18n_resource_scanning_log') }}
                 </el-button>
@@ -50,7 +50,7 @@
                 <el-button plain size="small" @click="showInformation(scope.row, $t('resource.i18n_resource_scanning_return'))">
                   <i class="el-icon-document"></i> {{ $t('resource.i18n_resource_scanning_return') }}
                 </el-button>
-            </div>
+            </div>-->
             <div>
               <el-drawer
                 size="55%"
