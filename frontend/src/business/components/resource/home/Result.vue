@@ -404,10 +404,10 @@
             <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
             <span v-else> N/A</span>
           </el-table-column>
-          <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="20%" show-overflow-tooltip>
+          <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="16%" show-overflow-tooltip>
               {{ scope.row.ruleName }}
           </el-table-column>
-          <el-table-column min-width="6%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
+          <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
             <template v-slot:default="scope">
               <table-operators v-if="!!scope.row.suggestion" :buttons="resource_buttons2" :row="scope.row"/>
               <table-operators v-if="!scope.row.suggestion" :buttons="resource_buttons" :row="scope.row"/>
