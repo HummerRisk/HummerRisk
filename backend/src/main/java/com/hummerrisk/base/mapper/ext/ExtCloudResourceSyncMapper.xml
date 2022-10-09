@@ -79,12 +79,7 @@
                 <property name="object" value="${condition}.pluginName"/>
             </include>
         </if>
-        <if test='${condition}.pluginId != null'>
-            and t.pluginId
-            <include refid="condition">
-                <property name="object" value="${condition}.pluginId"/>
-            </include>
-        </if>
+
         <if test='${condition}.resourceTypes != null'>
             and t.resource_types
             <include refid="condition">

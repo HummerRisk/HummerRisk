@@ -63,11 +63,16 @@
     </sql>
 
     <sql id="combine">
-        <if test='${condition}.pluginId != null'>
-            and t.plugin_id
+        <if test='${condition}.regionId != null'>
+            and (t.region_id
             <include refid="condition">
-                <property name="object" value="${condition}.pluginId"/>
+                <property name="object" value="${condition}.regionId"/>
             </include>
+                or t.region_name
+            <include refid="condition">
+                <property name="object" value="${condition}.regionId"/>
+            </include>
+              )
         </if>
         <if test='${condition}.accountId != null'>
             and t.account_id
@@ -82,7 +87,7 @@
             </include>
         </if>
         <if test='${condition}.pluginId != null'>
-            and t.pluginId
+            and t.plugin_id
             <include refid="condition">
                 <property name="object" value="${condition}.pluginId"/>
             </include>
