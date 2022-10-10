@@ -448,7 +448,7 @@ import CodeDiff from 'vue-code-diff';
       handleOpen(item) {
         this.outputListSearchData = item;
         this.outputListDataSearch();
-        this.oldStr = item.trivyJson;
+        this.oldStr = item.resultJson;
         this.visibleList =  true;
       },
       handleDelete(obj) {
