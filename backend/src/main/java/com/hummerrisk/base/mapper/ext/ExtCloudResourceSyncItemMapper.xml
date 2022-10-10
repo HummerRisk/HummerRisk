@@ -49,4 +49,9 @@
     where sync_id = #{syncId,jdbcType=VARCHAR}
     order by resource_type,region_id
   </select>
+
+  <select id="selectResourceTypeBySyncId" resultType="Map" parameterType="String">
+    select resource_type "resourceType",sum(count) as "count" FROM cloud_resource_sync_item where sync_id = #{syncId} group by resource_type
+    order by resource_type
+  </select>
 </mapper>

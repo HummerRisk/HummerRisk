@@ -116,6 +116,10 @@ public class CloudSyncService {
         return extCloudResourceSyncMapper.selectByRequest(resourceSyncRequest);
     }
 
+    public List<Map<String,Object>> getResourceType(String syncId){
+        return extCloudResourceSyncItemMapper.selectResourceTypeBySyncId(syncId);
+    }
+
     public List<CloudResourceSyncItemDto> getCloudResourceSyncItem(String syncId){
         List<CloudResourceSyncItemDto> cloudResourceSyncItemDtos = extCloudResourceSyncItemMapper.selectBySyncId(syncId);
         List<CloudResourceSyncItemLog> cloudResourceSyncItemLogs = extCloudResourceSyncItemMapper.selectSyncItemLogBySyncId(syncId);

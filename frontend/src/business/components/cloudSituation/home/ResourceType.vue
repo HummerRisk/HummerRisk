@@ -1,25 +1,15 @@
 <template>
   <div>
-    <el-popover
-      ref="popover"
-      placement="left"
-      width="400"
-      trigger="hover">
-      <el-table :border="true" :stripe="true" :data="string2PrettyFormat" class="adjust-table table-content">
-          <el-table-column type="index" min-width="10%"/>
-        <el-table-column prop="resourceType" :label="$t('rule.resource_type')" min-width="25%"></el-table-column>
-      </el-table>
-      <el-button slot="reference" size="mini" type="primary" plain @click="showRegions">
-        {{ $t('rule.resource_type') }}
-      </el-button>
-    </el-popover>
-
+    <el-button slot="reference" size="mini" type="primary" plain @click="showRegions">
+      {{ $t('rule.resource_type') }}
+    </el-button>
     <!--regions-->
     <el-drawer class="rtl" :title="$t('rule.resource_type')" :visible.sync="regionsVisible" size="45%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-table :border="true" :stripe="true" :data="string2PrettyFormat" class="adjust-table table-content">
         <el-table-column type="index" min-width="10%"/>
         <el-table-column prop="resourceType" :label="$t('rule.resource_type')" min-width="45%"></el-table-column>
+        <el-table-column prop="count" :label="$t('event.data_count')" min-width="45%"></el-table-column>
       </el-table>
     </el-drawer>
     <!--regions-->
@@ -31,7 +21,7 @@
   export default {
     name: "ResourceType",
     props: {
-      resourceTypes: String,
+      syncId: String,
     },
     data() {
       return {
@@ -41,15 +31,13 @@
       }
     },
     created() {
-      if(!!this.resourceTypes){
-        this.string2PrettyFormat = this.resourceTypes.split(",").map(item=>{
-          return {resourceType:item}
-        })
-      }
     },
     methods: {
       showRegions() {
-        this.regionsVisible =  true;
+        this.result = this.$get("/cloud/sync/resourceType/list/" +  this.syncId,response => {
+          this.string2PrettyFormat = response.data
+          this.regionsVisible =  true;
+        });
       },
       handleClose() {
         this.regionsVisible =  false;

@@ -20,7 +20,7 @@
         </el-table-column>
         <el-table-column prop="resourceTypes" :label="$t('dashboard.resource_type')" min-width="10%">
           <template v-slot:default="scope">
-            <ResourceType :resourceTypes="scope.row.resourceTypes" ></ResourceType>
+            <ResourceType :sync-id="scope.row.id" ></ResourceType>
           </template>
         </el-table-column>
         <el-table-column prop="status" min-width="10%" :label="$t('code.status')">
