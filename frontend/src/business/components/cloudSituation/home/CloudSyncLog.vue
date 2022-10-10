@@ -166,7 +166,7 @@ export default {
       },
       buttons: [
         {
-          tip: this.$t('resource.resync'), icon: "el-icon-s-promotion", type: "success",
+          tip: this.$t('resource.resync'), icon: "el-icon-refresh-right", type: "primary",
           exec: this.reSync
         },
         {
