@@ -594,13 +594,11 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
       saveScan() {
         let url = "/rule/scanByGroup/" + this.groupId + "/" + this.scanForm.id;
         this.result = this.$get(url, response => {
-          if (response.data != undefined && response.data != null) {
-            this.scanVisible = false;
-            this.$success(this.$t('account.i18n_hr_create_success'));
-            this.$router.push({
-              path: '/account/result',
-            }).catch(error => error);
-          }
+          this.scanVisible = false;
+          this.$success(this.$t('account.i18n_hr_create_success'));
+          this.$router.push({
+            path: '/account/result',
+          }).catch(error => error);
         });
       },
     },

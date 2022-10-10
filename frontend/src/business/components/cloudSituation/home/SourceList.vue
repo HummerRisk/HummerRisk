@@ -6,7 +6,7 @@
           <el-descriptions-item v-for="item in resourceSummary" :label="item.resourceType" :key="item.resourceType" label-class-name="my-label" content-class-name="my-content" ><a href="#" @click="resourceTypeClick(item.resourceType)">{{ item.count }}</a></el-descriptions-item>
         </el-descriptions>
 
-        <el-card class="table-card" v-loading="result.loading">
+        <el-card class="table-card" v-loading="result.loading" style="margin-top: 10px;">
           <template v-slot:header>
             <table-header :condition.sync="condition" @search="search"
                           :title="$t('k8s.source_list')"/>
