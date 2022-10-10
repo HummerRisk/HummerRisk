@@ -41,7 +41,7 @@ export default {
           },
           series: [
             {
-              name: 'Access From',
+              name: 'Server',
               type: 'pie',
               radius: '50%',
               data: data,

@@ -5,7 +5,6 @@ import com.hummerrisk.i18n.Translator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.util.SubnetUtils;
-import sun.net.util.IPAddressUtil;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -119,10 +118,10 @@ public class IpUtil {
     }
 
     public static boolean isValidIpv6Addr(String ipStr){
-        boolean iPv6LiteralAddress = IPAddressUtil.isIPv6LiteralAddress(ipStr);
-        if (!iPv6LiteralAddress){
-            return false;
-        }
+//        boolean iPv6LiteralAddress = IPAddressUtil.isIPv6LiteralAddress(ipStr);
+//        if (!iPv6LiteralAddress){
+//            return false;
+//        }
         return true;
     }
 

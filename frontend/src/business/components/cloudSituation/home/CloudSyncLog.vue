@@ -18,45 +18,45 @@
                 {{ getAccountName(scope.row.accountId) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="resourceTypes" :label="$t('dashboard.resource_type')" min-width="15%">
+        <el-table-column prop="resourceTypes" :label="$t('dashboard.resource_type')" min-width="10%">
           <template v-slot:default="scope">
             <ResourceType :sync-id="scope.row.id" ></ResourceType>
           </template>
         </el-table-column>
         <el-table-column prop="status" min-width="10%" :label="$t('code.status')">
           <template v-slot:default="scope">
-            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary"
+            <el-button @click="showTaskLog(scope.row)" plain size="mini" type="primary"
                        v-if="scope.row.status === 'UNCHECKED'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
-            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary"
+            <el-button @click="showTaskLog(scope.row)" plain size="mini" type="primary"
                        v-else-if="scope.row.status === 'APPROVED'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
-            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary"
+            <el-button @click="showTaskLog(scope.row)" plain size="mini" type="primary"
                        v-else-if="scope.row.status === 'RUNNING'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
-            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary"
+            <el-button @click="showTaskLog(scope.row)" plain size="mini" type="primary"
                        v-else-if="scope.row.status === 'PROCESSING'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
-            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="success"
+            <el-button @click="showTaskLog(scope.row)" plain size="mini" type="success"
                        v-else-if="scope.row.status === 'FINISHED'">
               <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
             </el-button>
-            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="danger"
+            <el-button @click="showTaskLog(scope.row)" plain size="mini" type="danger"
                        v-else-if="scope.row.status === 'ERROR'">
               <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
             </el-button>
-            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="warning"
+            <el-button @click="showTaskLog(scope.row)" plain size="mini" type="warning"
                        v-else-if="scope.row.status === 'WARNING'">
               <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="resourcesSum" :label="$t('event.data_count')" min-width="12%"/>
-        <el-table-column prop="createTime" :label="$t('k8s.sync_time')" min-width="20%" sortable>
+        <el-table-column prop="resourcesSum" :label="$t('event.data_count')" min-width="10%"/>
+        <el-table-column prop="createTime" :label="$t('k8s.sync_time')" min-width="15%" sortable>
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
