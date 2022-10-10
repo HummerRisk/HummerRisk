@@ -21,7 +21,10 @@
       <template v-slot:default="{node,data}">
       <span class="custom-tree-node father" @click="handleNodeSelect(node)">
 
-        <span class="node-icon">
+        <span v-if="data.pluginIcon">
+          <img :src="require(`@/assets/img/platform/${data.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+        </span>
+        <span class="node-icon" v-else>
           <i class="iconfont icon-fuwuqi1"/>
         </span>
         <span class="node-title" v-text="data.name"/>

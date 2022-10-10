@@ -25,7 +25,10 @@
           <el-input  @blur.stop="save(node, data)" v-model="data.name" class="name-input" size="mini" ref="nameInput"/>
         </span>
 
-       <span class="node-icon">
+        <span v-if="data.pluginIcon">
+          <img :src="require(`@/assets/img/platform/${data.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+        </span>
+        <span class="node-icon" v-else>
           <i class="iconfont icon-loudongsaomiao"/>
         </span>
         <span v-if="!data.isEdit" class="node-title" v-text="data.name"/>

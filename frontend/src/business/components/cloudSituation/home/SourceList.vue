@@ -26,7 +26,7 @@
             <el-table-column type="index" min-width="3%"/>
             <el-table-column :label="$t('event.cloud_account_name')" min-width="10%" show-overflow-tooltip>
               <template v-slot:default="scope">
-              <span><img :src="require(`@/assets/img/platform/${ scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+              <span><img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                 {{ getAccountName(scope.row.accountId) }}</span>
               </template>
             </el-table-column>

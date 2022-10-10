@@ -25,10 +25,10 @@
           <el-input  @blur.stop="save(node, data)" v-model="data.name" class="name-input" size="mini" ref="nameInput"/>
         </span>
 
-        <span v-if="!data.isEdit" class="node-icon">
+        <span class="node-icon">
           <i class="iconfont icon-daimawenjian"/>
         </span>
-        <span v-if="!data.isEdit" class="node-title" v-text="data.name"/>
+        <span class="node-title" v-text="data.name"/>
 
         <span v-if="!disabled" class="node-operate child">
           <el-tooltip

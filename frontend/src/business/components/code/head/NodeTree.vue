@@ -21,13 +21,13 @@
       <template v-slot:default="{node,data}">
       <span class="custom-tree-node father" @click="handleNodeSelect(node)">
 
-        <span v-if="data.isEdit" @click.stop>
-          <el-input  @blur.stop="save(node, data)" v-model="data.name" class="name-input" size="mini" ref="nameInput"/>
+       <span v-if="data.pluginIcon">
+          <img :src="require(`@/assets/img/code/${data.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
         </span>
-
-        <span class="node-icon">
+        <span class="node-icon" v-else>
           <i class="iconfont icon-ruanjiankaifabao"/>
         </span>
+
         <span class="node-title" v-text="data.name"/>
 
         <span v-if="!disabled" class="node-operate child">

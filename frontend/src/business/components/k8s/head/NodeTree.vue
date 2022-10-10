@@ -25,10 +25,13 @@
           <el-input  @blur.stop="save(node, data)" v-model="data.name" class="name-input" size="mini" ref="nameInput"/>
         </span>
 
-        <span v-if="!data.isEdit" class="node-icon">
-          <i class="iconfont icon-a-cskrongqifuwuKubernetesban"></i>
+        <span v-if="data.pluginIcon">
+          <img :src="require(`@/assets/img/platform/${data.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
         </span>
-        <span v-if="!data.isEdit" class="node-title" v-text="data.name"/>
+        <span class="node-icon" v-else>
+          <i class="iconfont icon-a-cskrongqifuwuKubernetesban"/>
+        </span>
+        <span class="node-title" v-text="data.name"/>
 
         <span v-if="!disabled" class="node-operate child">
           <el-tooltip
