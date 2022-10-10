@@ -370,7 +370,7 @@
                   @sort-change="resourceSort" @filter-change="resourceFilter"
                   :row-class-name="tableRowClassName">
           <!-- 展开 start -->
-          <el-table-column type="expand" min-width="2%">
+          <el-table-column type="expand" min-width="1%">
             <template v-slot:default="props">
 
               <el-divider><i class="el-icon-folder-opened"></i></el-divider>
@@ -388,7 +388,7 @@
           <el-table-column v-slot:default="scope" :label="$t('rule.resource_type')" min-width="15%">
             {{ scope.row.resourceType }}
           </el-table-column>
-          <el-table-column prop="regionName" :label="$t('account.regions')" min-width="15%">
+          <el-table-column prop="regionName" :label="$t('account.regions')" min-width="12%">
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -407,7 +407,7 @@
           <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="16%" show-overflow-tooltip>
               {{ scope.row.ruleName }}
           </el-table-column>
-          <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
+          <el-table-column min-width="10%" :label="$t('commons.operating')" show-overflow-tooltip>
             <template v-slot:default="scope">
               <table-operators v-if="!!scope.row.suggestion" :buttons="resource_buttons2" :row="scope.row"/>
               <table-operators v-if="!scope.row.suggestion" :buttons="resource_buttons" :row="scope.row"/>

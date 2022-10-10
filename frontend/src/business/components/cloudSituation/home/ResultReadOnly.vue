@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="read-only">
     <el-form label-position="left" inline class="el-table-expand">
       <el-form-item :key="element.key" v-for="element in elements" :label="element.key + ' : '">
         <span v-if="!element.flag" show-overflow-tooltip>
@@ -118,7 +118,7 @@
   .el-table-expand .el-form-item {
     margin-right: 0;
     margin-bottom: 0;
-    padding: 10px 20px 10px 50px;
+    padding: 0 20px 0 50px;
     width: 47%;
     white-space: nowrap;
     /*overflow: hidden;*/
@@ -153,5 +153,11 @@
   .code-mirror >>> .CodeMirror {
     /* Set height, width, borders, and global font properties here */
     height: 600px !important;
+  }
+  .read-only >>> .el-form-item__label {
+    color: #1e6427;
+  }
+  .read-only >>> .el-form-item__content {
+    color: #11365d;
   }
 </style>
