@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     init() {
-      this.$post("/dashboard/distribution", {group: "accountList"}, response => {
+      this.$post("/dashboard/distribution", {group: "vulnList"}, response => {
         let legendData = [];
         let seriesData = [];
         for (let obj of response.data) {
@@ -36,7 +36,7 @@ export default {
         }
         this.options = {
           title: {
-            text: this.$t('dashboard.cloud_account_statistics'),
+            text: this.$t('dashboard.vuln_statistics'),
             subtext: this.$t('resource.resource_result_score'),
             left: 'center'
           },

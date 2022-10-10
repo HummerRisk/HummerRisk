@@ -49,7 +49,7 @@ export default {
     },
     init () {
       let data=[];
-      this.$post("/dashboard/distribution", {group: "ruleList", limit: 10}, response => {
+      this.$post("/dashboard/distribution", {group: "vulnRuleList", limit: 10}, response => {
         for (let obj of response.data) {
           let param = {
             code: obj.groupName,
