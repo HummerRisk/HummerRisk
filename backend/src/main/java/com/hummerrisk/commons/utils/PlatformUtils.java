@@ -1344,6 +1344,18 @@ public class PlatformUtils {
                     stringArray = new String[]{"la-south-2", "sa-brazil-1", "na-mexico-1"};
                     tempList = Arrays.asList(stringArray);
                     return !tempList.contains(region);
+                } else if (StringUtils.contains(resource, "huawei.gaussdb")) {
+                    stringArray = new String[]{"cn-north-1"};
+                    tempList = Arrays.asList(stringArray);
+                    return !tempList.contains(region);
+                } else if (StringUtils.contains(resource, "huawei.gaussdbfornosql")) {
+                    stringArray = new String[]{"cn-north-1"};
+                    tempList = Arrays.asList(stringArray);
+                    return !tempList.contains(region);
+                } else if (StringUtils.contains(resource, "huawei.gaussdbforopengauss")) {
+                    stringArray = new String[]{"cn-north-1"};
+                    tempList = Arrays.asList(stringArray);
+                    return !tempList.contains(region);
                 }
                 break;
             case tencent:
