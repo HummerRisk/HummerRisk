@@ -749,6 +749,10 @@ export default {
     cloudAccountSwitch(accountId) {
       this.accountId = accountId;
       this.search();
+      this.regionDataSearch();
+      this.ruleDataSearch();
+      this.resourceTypeDataSearch();
+      this.severityDataSearch();
     },
     async search() {
       await this.$get("/resource/source/" + this.accountId, response => {
