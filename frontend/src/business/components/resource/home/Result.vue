@@ -1036,6 +1036,7 @@ export default {
       this.resourceSearch();
     },
     handleRuleRow(row) {
+      this.rowIndex = '';
       if (this.resourceCondition.taskId) {
         this.highRuleRow = false;
         this.resourceCondition.taskId = null;
