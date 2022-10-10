@@ -619,8 +619,10 @@ export default {
     source_rule: '未綁定規則',
     target_rule: '已綁定規則',
     rule_group: '雲檢測規則組',
+    suggestion: '優化建議',
   },
   resource: {
+    resync: '重新同步',
     sync_log: '資源同步日誌',
     resource_id: '資源ID',
     statistics: '合規報告',

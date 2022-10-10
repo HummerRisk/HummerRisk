@@ -1,11 +1,6 @@
 <template>
 
   <div>
-    <el-row class="table-title" type="flex" justify="space-between" align="middle">
-      <slot name="title">
-        {{ title }}
-      </slot>
-    </el-row>
     <el-row type="flex" justify="space-between" align="middle">
       <span class="operate-button">
         <slot name="button"></slot>
@@ -31,7 +26,7 @@ export default {
       title: {
         type: String,
         default() {
-          return this.$t('commons.name');
+          return '';
         }
       },
       condition: {

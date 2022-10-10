@@ -619,8 +619,10 @@ export default {
     source_rule: 'Unbound rule',
     target_rule: 'Bound rules',
     rule_group: 'Cloud detection rule group',
+    suggestion: 'Optimization suggestion',
   },
   resource: {
+    resync: 'Resync',
     sync_log: 'Resource synchronization log',
     resource_id: 'resourceId',
     statistics:'Compliance Report',

@@ -173,6 +173,15 @@ export const EVENT_ACCOUNT = {
     multiple: true
   }
 }
+export const REGIONID = {
+  key: "regionId",
+  name: "TableSearchInput",
+  label: "event.region",
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
 
 export const REGION = {
   key: "region",
@@ -495,6 +504,8 @@ export const SOURCE_NAMESPACE = {
   },
 }
 
+
+
 export const SOURCE_TYPE = {
   key: "sourceType",
   name: 'TableSearchSelect',
@@ -560,8 +571,8 @@ export const IMAGE_REPO_CONFIGS = [NAME, ACCOUNT_STATUS, CREATOR, UPDATE_TIME];
 export const IMAGE_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
 export const IMAGE_RESULT_CONFIGS = [NAME, IMAGE_URL, RULE_NAME, RULE_SEVERITY, CREATOR, UPDATE_TIME];
 export const K8S_CONFIGS = [NAME, K8S_PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
-export const SITUATION_CONFIGS = [SOURCE_NAME, SOURCE_NAMESPACE, SOURCE_TYPE, CREATOR, UPDATE_TIME, CREATE_TIME];
-export const SITUATION_LOG_CONFIGS = [SITUATION_LOG_STATUS, CREATE_TIME];
+export const SITUATION_CONFIGS = [EVENT_ACCOUNT, PLUGIN_NAME, REGIONID, RULE_RESOURCE_TYPE, UPDATE_TIME, CREATE_TIME];
+export const SITUATION_LOG_CONFIGS = [EVENT_ACCOUNT, PLUGIN_NAME ,CREATE_TIME];
 export const K8S_RESULT_CONFIGS = [NAME, K8S_PLUGIN_NAME, ACCOUNT_STATUS, CREATOR, CREATE_TIME, UPDATE_TIME];
 export const CONFIG_CONFIGS = [NAME, ACCOUNT_STATUS, UPDATE_TIME, CREATE_TIME, CREATOR];
 export const CONFIG_RESULT_CONFIGS = [NAME, CREATOR, UPDATE_TIME];

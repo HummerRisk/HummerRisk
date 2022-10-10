@@ -21,6 +21,9 @@
       <template v-slot:default="{node,data}">
       <span class="custom-tree-node father" @click="handleNodeSelect(node)">
 
+        <span class="node-icon">
+          <i class="iconfont icon-fuwuqi1"/>
+        </span>
         <span class="node-title" v-text="data.name"/>
 
       </span>
@@ -338,5 +341,9 @@ export default {
 .name-input >>> .el-input__inner {
   height: 25px;
   line-height: 25px;
+}
+
+.node-icon {
+  color: #409eff;
 }
 </style>

@@ -15,6 +15,14 @@
             {{ $t("server.server_result") }}
           </el-menu-item>
 
+          <el-menu-item :index="'/resource/k8sResult'">
+            {{ $t("k8s.result") }}
+          </el-menu-item>
+
+          <el-menu-item :index="'/resource/configResult'">
+            {{ $t("config.config_result") }}
+          </el-menu-item>
+
           <el-menu-item :index="'/resource/imageResult'">
             {{ $t("image.image_result") }}
           </el-menu-item>

@@ -9,6 +9,7 @@
         <result column="applyUser" jdbcType="VARCHAR" property="applyUser"/>
         <result column="ruleId" jdbcType="VARCHAR" property="ruleId"/>
         <result column="ruleName" jdbcType="VARCHAR" property="ruleName"/>
+        <result column="suggestion" jdbcType="VARCHAR" property="suggestion"/>
         <result column="accountName" jdbcType="VARCHAR" property="accountName"/>
         <association property="resourceWithBLOBs" column="resource_id" select="getResourceList">
         </association>
@@ -228,6 +229,7 @@
         t5.rule_id as ruleId,
         t6.name as ruleName,
         t7.name as accountName,
+        t6.suggestion,
         t.*
         FROM resource_item t
         JOIN resource t1 ON t1.id = t.resource_id

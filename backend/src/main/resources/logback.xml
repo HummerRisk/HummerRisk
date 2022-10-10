@@ -158,6 +158,16 @@
 		<appender-ref ref="errorAsyncAppender"/>
 	</logger>
 
+<!-- 本地打印sql控制台输出 -->
+<!--	<logger name="com.hummerrisk.base.mapper" level="${logger.sql.level}">-->
+<!--		<appender-ref ref="console"/>-->
+<!--	</logger>-->
+
+<!--	<logger name="com.hummerrisk.base.mapper.ext" level="${logger.sql.level}">-->
+<!--		<appender-ref ref="console"/>-->
+<!--	</logger>-->
+<!-- 本地打印sql控制台输出 -->
+
 	<logger name="com.hummerrisk.Application" additivity="false" level="${logger.level:INFO}">
 		<appender-ref ref="infoAsyncAppender"/>
 	</logger>

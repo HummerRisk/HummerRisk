@@ -18,7 +18,7 @@
         <el-input class="module-input" :placeholder="$t('commons.search_by_name')" v-model="condition.filterText"
                   size="small">
           <template v-slot:append>
-            <el-button icon="el-icon-folder"/>
+            <el-button><i icon="iconfont icon-guanyuyunguanjia"></i></el-button>
           </template>
         </el-input>
       </template>

@@ -129,8 +129,7 @@
         </el-tabs>
         <table-header :condition.sync="condition"
                       @search="search"
-                      v-if="activeName === 'first'"
-                      :title="$t('resource.result_list')"/>
+                      v-if="activeName === 'first'"/>
       </template>
 
       <!-- result first -->
@@ -364,7 +363,7 @@
           <table-header :condition.sync="resourceCondition"
                         @search="resourceSearch"
                         :show-back="false"
-                        :title="$t('resource.result_details_list')"/>
+                       />
         </template>
 
         <el-table border :data="resourceTableData" class="adjust-table table-content"
@@ -405,12 +404,13 @@
             <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
             <span v-else> N/A</span>
           </el-table-column>
-          <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="20%" show-overflow-tooltip>
+          <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="16%" show-overflow-tooltip>
               {{ scope.row.ruleName }}
           </el-table-column>
-          <el-table-column min-width="6%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
+          <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
             <template v-slot:default="scope">
-              <table-operators :buttons="resource_buttons" :row="scope.row"/>
+              <table-operators v-if="!!scope.row.suggestion" :buttons="resource_buttons2" :row="scope.row"/>
+              <table-operators v-if="!scope.row.suggestion" :buttons="resource_buttons" :row="scope.row"/>
             </template>
           </el-table-column>
         </el-table>
@@ -635,6 +635,16 @@ export default {
           exec: this.showSeverityDetail
         },
       ],
+      resource_buttons2: [
+        {
+          tip: this.$t('rule.suggestion'), icon: "el-icon-share", type: "primary",
+          exec: this.handleSuggestion
+        },
+        {
+          tip: this.$t('resource.regulation'), icon: "el-icon-document", type: "warning",
+          exec: this.showSeverityDetail
+        },
+      ],
       logVisible: false,
       detailVisible: false,
       logForm: {cloudTaskItemLogDTOs: []},
@@ -717,6 +727,9 @@ export default {
     resourceFilter(filters) {
       _filter(filters, this.resourceCondition);
       this.init();
+    },
+    handleSuggestion(item) {
+      window.open(item.suggestion,'_blank','');
     },
     handleDelete(obj) {
       this.$alert(this.$t('account.delete_confirm') + obj.name + this.$t('resource.resource_result') + " ？", '', {

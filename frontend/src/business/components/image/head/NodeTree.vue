@@ -375,4 +375,8 @@ export default {
 .el-input-group{
   margin: 6px;
 }
+
+.node-icon {
+  color: #409eff;
+}
 </style>

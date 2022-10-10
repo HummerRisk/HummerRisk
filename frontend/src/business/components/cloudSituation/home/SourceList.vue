@@ -24,15 +24,15 @@
               </template>
             </el-table-column>
             <el-table-column type="index" min-width="3%"/>
-            <el-table-column :label="$t('event.cloud_account_name')" min-width="15%" show-overflow-tooltip>
+            <el-table-column :label="$t('event.cloud_account_name')" min-width="10%" show-overflow-tooltip>
               <template v-slot:default="scope">
               <span><img :src="require(`@/assets/img/platform/${ scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                 {{ getAccountName(scope.row.accountId) }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="regionName" :label="$t('event.region')" min-width="23%"  show-overflow-tooltip sortable></el-table-column>
+            <el-table-column prop="hummerId" :label="$t('resource.resource_id')" min-width="23%" show-overflow-tooltip sortable></el-table-column>
+            <el-table-column prop="regionName" :label="$t('event.region')" min-width="18%"  show-overflow-tooltip sortable></el-table-column>
             <el-table-column prop="resourceType" :label="$t('dashboard.resource_type')" min-width="16%" show-overflow-tooltip sortable></el-table-column>
-            <el-table-column prop="hummerId" :label="$t('resource.resource_id')" min-width="13%" show-overflow-tooltip sortable></el-table-column>
             <el-table-column min-width="18%" :label="$t('account.update_time')" sortable
                              prop="updateTime">
               <template v-slot:default="scope">
@@ -84,7 +84,7 @@ export default {
   },
   watch: {
     selectNodeIds() {
-      this.search();
+      this.searchByAccount();
     },
     batchReportId() {
     }
@@ -92,10 +92,9 @@ export default {
   methods: {
     init() {
       this.initAccount()
-
     },
 
-    search() {
+    searchByAccount() {
       let accountId = ""
       if (!!this.selectNodeIds[0]) {
        accountId = this.selectNodeIds[0];
@@ -109,16 +108,24 @@ export default {
       }else {
         this.condition["combine"] = {}
       }
-      this.getList()
+      this.search()
     },
+
 
     resourceTypeClick(resourceType){
+      let accountId = ""
+      if (!!this.selectNodeIds[0]) {
+        accountId = this.selectNodeIds[0];
+      }
+      if(!!accountId){
+        this.condition["combine"]["accountId"]= {"value":accountId}
+      }
       this.condition["combine"]["resourceType"]={"value":resourceType}
       this.condition.resourceType = resourceType;
-      this.getList()
+      this.search()
     },
 
-    getList() {
+    search() {
       let url = "/cloud/resource/list/" + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
@@ -144,7 +151,7 @@ export default {
     initAccount() {
       this.$get("/account/allList", response => {
         this.accountList = response.data
-        this.search()
+        this.searchByAccount()
       })
     },
     tableRowClassName({row, rowIndex}) {

@@ -17,6 +17,7 @@ public class ResourceDTO extends ResourceDetailDTO implements Serializable {
     private String ruleId;
     private String ruleName;
     private String accountName;
+    private String suggestion;
 
     public String getTaskId() {
         return taskId;
@@ -80,5 +81,13 @@ public class ResourceDTO extends ResourceDetailDTO implements Serializable {
 
     public void setAccountName(String accountName) {
         this.accountName = accountName;
+    }
+
+    public String getSuggestion() {
+        return suggestion;
+    }
+
+    public void setSuggestion(String suggestion) {
+        this.suggestion = suggestion;
     }
 }

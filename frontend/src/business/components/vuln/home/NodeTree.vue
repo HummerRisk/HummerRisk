@@ -25,8 +25,8 @@
           <el-input  @blur.stop="save(node, data)" v-model="data.name" class="name-input" size="mini" ref="nameInput"/>
         </span>
 
-        <span v-if="!data.isEdit" class="node-icon">
-          <i class="el-icon-folder"/>
+       <span class="node-icon">
+          <i class="iconfont icon-loudongsaomiao"/>
         </span>
         <span v-if="!data.isEdit" class="node-title" v-text="data.name"/>
 
@@ -370,5 +370,9 @@ export default {
 .name-input >>> .el-input__inner {
   height: 25px;
   line-height: 25px;
+}
+
+.node-icon {
+  color: red;
 }
 </style>
