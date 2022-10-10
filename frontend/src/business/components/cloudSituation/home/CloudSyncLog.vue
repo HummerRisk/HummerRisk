@@ -240,7 +240,7 @@ export default {
       this.createVisible = false;
     },
     handleDelete(obj) {
-      this.$alert(this.$t('workspace.delete_confirm') + this.$t('resource.sync_log') + " ？", '', {
+      this.$alert(this.$t('workspace.delete_confirm'), '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
