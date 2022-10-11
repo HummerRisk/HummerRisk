@@ -58,6 +58,10 @@
                     <artifactId>snakeyaml</artifactId>
                     <groupId>org.yaml</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>log4j-to-slf4j</artifactId>
+                    <groupId>org.apache.logging.log4j</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -405,10 +409,12 @@
             <artifactId>resteasy-client</artifactId>
             <version>6.2.0.Final</version>
         </dependency>
+
+        <!-- okhttp3 -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>5.0.0-alpha.10</version>
+            <version>4.9.3</version>
             <exclusions>
                 <exclusion>
                     <artifactId>kotlin-stdlib</artifactId>
@@ -416,12 +422,15 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- okhttp3 -->
+
         <!-- tool -->
 
         <!-- AWS -->
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-ec2</artifactId>
+            <version>1.12.319</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
@@ -460,10 +469,6 @@
                 <exclusion>
                     <groupId>net.minidev</groupId>
                     <artifactId>json-smart</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.squareup.okhttp3</groupId>
-                    <artifactId>okhttp</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>com.google.guava</groupId>
@@ -511,10 +516,6 @@
                 <exclusion>
                     <artifactId>joda-time</artifactId>
                     <groupId>joda-time</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>okhttp</artifactId>
-                    <groupId>com.squareup.okhttp3</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -616,7 +617,7 @@
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-core</artifactId>
-            <version>3.0.99</version>
+            <version>3.1.5</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -631,7 +632,7 @@
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-vpc</artifactId>
-            <version>3.0.99</version>
+            <version>3.1.5</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -640,17 +641,13 @@
                 <exclusion>
                     <artifactId>commons-lang3</artifactId>
                     <groupId>org.apache.commons</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>okhttp</artifactId>
-                    <groupId>com.squareup.okhttp3</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-cts</artifactId>
-            <version>3.0.99</version>
+            <version>3.1.5</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -659,17 +656,13 @@
                 <exclusion>
                     <artifactId>commons-lang3</artifactId>
                     <groupId>org.apache.commons</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>okhttp</artifactId>
-                    <groupId>com.squareup.okhttp3</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-iam</artifactId>
-            <version>3.0.99</version>
+            <version>3.1.5</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -678,17 +671,13 @@
                 <exclusion>
                     <artifactId>commons-lang3</artifactId>
                     <groupId>org.apache.commons</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>okhttp</artifactId>
-                    <groupId>com.squareup.okhttp3</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-ecs</artifactId>
-            <version>3.0.99</version>
+            <version>3.1.5</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -697,17 +686,13 @@
                 <exclusion>
                     <artifactId>commons-lang3</artifactId>
                     <groupId>org.apache.commons</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>okhttp</artifactId>
-                    <groupId>com.squareup.okhttp3</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-evs</artifactId>
-            <version>3.0.99</version>
+            <version>3.1.5</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -716,17 +701,13 @@
                 <exclusion>
                     <artifactId>commons-lang3</artifactId>
                     <groupId>org.apache.commons</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>okhttp</artifactId>
-                    <groupId>com.squareup.okhttp3</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-ims</artifactId>
-            <version>3.0.99</version>
+            <version>3.1.5</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -735,17 +716,13 @@
                 <exclusion>
                     <artifactId>commons-lang3</artifactId>
                     <groupId>org.apache.commons</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>okhttp</artifactId>
-                    <groupId>com.squareup.okhttp3</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-ces</artifactId>
-            <version>3.0.99</version>
+            <version>3.1.5</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -754,10 +731,6 @@
                 <exclusion>
                     <artifactId>commons-lang3</artifactId>
                     <groupId>org.apache.commons</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>okhttp</artifactId>
-                    <groupId>com.squareup.okhttp3</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -786,15 +759,10 @@
             <version>3.1.558</version>
             <exclusions>
                 <exclusion>
-                    <groupId>com.squareup.okio</groupId>
                     <artifactId>okio</artifactId>
+                    <groupId>com.squareup.okio</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.okio</groupId>
-            <artifactId>okio</artifactId>
-            <version>1.17.2</version>
         </dependency>
         <!-- tencent -->
 
@@ -903,7 +871,7 @@
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-core</artifactId>
-            <version>2.8.1</version>
+            <version>2.8.21</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.guava</groupId>
@@ -1036,10 +1004,6 @@
                 <exclusion>
                     <artifactId>snakeyaml</artifactId>
                     <groupId>org.yaml</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>okhttp</artifactId>
-                    <groupId>com.squareup.okhttp3</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1175,10 +1139,6 @@
                     <artifactId>kotlin-stdlib</artifactId>
                     <groupId>org.jetbrains.kotlin</groupId>
                 </exclusion>
-                <exclusion>
-                    <artifactId>okhttp</artifactId>
-                    <groupId>com.squareup.okhttp3</groupId>
-                </exclusion>
             </exclusions>
         </dependency>
         <!-- 青云 -->
@@ -1270,6 +1230,10 @@
                     <artifactId>commons-collections4</artifactId>
                     <groupId>org.apache.commons</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>log4j-api</artifactId>
+                    <groupId>org.apache.logging.log4j</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -1289,6 +1253,10 @@
                 <exclusion>
                     <artifactId>commons-collections4</artifactId>
                     <groupId>org.apache.commons</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>log4j-api</artifactId>
+                    <groupId>org.apache.logging.log4j</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
