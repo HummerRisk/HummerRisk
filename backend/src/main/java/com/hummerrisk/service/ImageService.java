@@ -484,16 +484,16 @@ public class ImageService {
             request.setId(result.getRuleId());
             ImageRuleDTO dto = ruleList(request).get(0);
             Image image = imageMapper.selectByPrimaryKey(result.getImageId());
-            String trivyJson = "";
+            String resultJson = "";
 
             String log = execute(image);
             if (log.contains("docker login")) {
                 throw new Exception(log);
             }
-            trivyJson = ReadFileUtils.readToBuffer(TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON);
+            resultJson = ReadFileUtils.readToBuffer(TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON);
 
             result.setReturnLog(log);
-            result.setTrivyJson(trivyJson);
+            result.setResultJson(resultJson);
             result.setRuleId(dto.getId());
             result.setRuleName(dto.getName());
             result.setRuleDesc(dto.getDescription());
@@ -521,12 +521,12 @@ public class ImageService {
     long saveImageResultItem(ImageResultWithBLOBs result) throws Exception {
 
         int i = 0;
-        //插入trivyJsons
-        JSONObject jsonG = JSONObject.parseObject(result.getTrivyJson());
+        //插入resultJsons
+        JSONObject jsonG = JSONObject.parseObject(result.getResultJson());
         if (jsonG != null) {
-            JSONArray trivyJsons = JSONArray.parseArray(jsonG.getString("Results"));
-            if (trivyJsons != null) {
-                for (Object obj : trivyJsons) {
+            JSONArray resultJsons = JSONArray.parseArray(jsonG.getString("Results"));
+            if (resultJsons != null) {
+                for (Object obj : resultJsons) {
                     JSONObject jsonObject = (JSONObject) obj;
                     JSONArray vulnJsons = JSONArray.parseArray(jsonObject.getString("Vulnerabilities"));
                     if (vulnJsons != null) {
@@ -878,7 +878,7 @@ public class ImageService {
 
     public String download(Map<String, Object> map) {
         HistoryImageResultWithBLOBs imageTaskWithBLOBs = historyImageResultMapper.selectByPrimaryKey(map.get("id").toString());
-        String str = imageTaskWithBLOBs.getTrivyJson();
+        String str = imageTaskWithBLOBs.getResultJson();
         return str;
     }
 

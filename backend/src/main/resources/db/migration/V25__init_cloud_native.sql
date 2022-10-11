@@ -117,11 +117,11 @@ CREATE TABLE IF NOT EXISTS `history_cloud_native_result_log` (
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
-ALTER TABLE image_result ADD scan_type varchar(32) DEFAULT 'grype' COMMENT '镜像检测类型';
-ALTER TABLE image_result ADD trivy_json longtext DEFAULT NULL COMMENT 'trivy json';
+ALTER TABLE `image_result` ADD `scan_type` varchar(32) DEFAULT 'grype' COMMENT '镜像检测类型';
+ALTER TABLE `image_result` ADD `trivy_json` longtext DEFAULT NULL COMMENT 'trivy json';
 
-ALTER TABLE history_image_task ADD scan_type varchar(32) DEFAULT 'grype' COMMENT '镜像检测类型';
-ALTER TABLE history_image_task ADD trivy_json longtext DEFAULT NULL COMMENT 'trivy json';
+ALTER TABLE `history_image_task` ADD `scan_type` varchar(32) DEFAULT 'grype' COMMENT '镜像检测类型';
+ALTER TABLE `history_image_task` ADD `trivy_json` longtext DEFAULT NULL COMMENT 'trivy json';
 
 CREATE TABLE IF NOT EXISTS `image_trivy_json` (
     `id`                           int(11)             NOT NULL AUTO_INCREMENT,

@@ -11,3 +11,7 @@ ALTER TABLE `history_image_task` RENAME TO `history_image_result`;
 ALTER TABLE `history_image_task_log` RENAME TO `history_image_result_log`;
 
 ALTER TABLE `image_trivy_json` RENAME TO `image_result_item`;
+
+ALTER TABLE `image_result` change `trivy_json` `result_json` longtext DEFAULT NULL COMMENT 'result json';
+
+ALTER TABLE `history_image_result` change `trivy_json` `result_json` longtext DEFAULT NULL COMMENT 'result json';

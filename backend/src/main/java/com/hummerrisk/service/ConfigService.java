@@ -299,13 +299,13 @@ public class ConfigService {
     public void createScan (CloudNativeConfigResult result) throws Exception {
         try {
             CloudNativeConfig cloudNativeConfig = cloudNativeConfigMapper.selectByPrimaryKey(result.getConfigId());
-            String trivyJson = "";
+            String resultJson = "";
 
             execute(cloudNativeConfig);
 
-            trivyJson = ReadFileUtils.readToBuffer(TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON);
+            resultJson = ReadFileUtils.readToBuffer(TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON);
 
-            result.setResultJson(trivyJson);
+            result.setResultJson(resultJson);
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
 
@@ -338,12 +338,12 @@ public class ConfigService {
 
     long saveCloudNativeConfigResultItem(CloudNativeConfigResult result) throws Exception {
 
-        //插入trivyJsons
+        //插入resultJsons
         JSONObject jsonG = JSONObject.parseObject(result.getResultJson());
-        JSONArray trivyJsons = JSONArray.parseArray(jsonG.getString("Results"));
+        JSONArray resultJsons = JSONArray.parseArray(jsonG.getString("Results"));
         int i = 0;
-        if(trivyJsons != null) {
-            for (Object obj : trivyJsons) {
+        if(resultJsons != null) {
+            for (Object obj : resultJsons) {
                 JSONObject jsonObject = (JSONObject) obj;
                 JSONArray misconfigurations = JSONArray.parseArray(jsonObject.getString("Misconfigurations"));
                 for (Object o : misconfigurations) {

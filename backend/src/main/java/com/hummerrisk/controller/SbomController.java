@@ -117,9 +117,9 @@ public class SbomController {
 
     @I18n
     @ApiOperation(value = "所有已绑定项目的镜像的检测结果")
-    @GetMapping("historyImageTask/{sbomVersionId}")
-    public List<HistoryImageResultDTO> historyImageTask(@PathVariable String sbomVersionId) throws Exception {
-        return sbomService.historyImageTask(sbomVersionId);
+    @GetMapping("historyImageResult/{sbomVersionId}")
+    public List<HistoryImageResultDTO> historyImageResult(@PathVariable String sbomVersionId) throws Exception {
+        return sbomService.historyImageResult(sbomVersionId);
     }
 
     @I18n

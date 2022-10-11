@@ -1110,7 +1110,7 @@
         </collection>
         <collection property="historyVulnResourceReportDTOList" ofType="com.hummerrisk.base.domain.HistoryResourceReportDTO" javaType="list" select="getHistoryVulnResourceReportDTOList" column="id">
         </collection>
-        <collection property="historyServerResultList" ofType="com.hummerrisk.base.domain.HistoryServerTask" javaType="list" select="getHistoryServerResultList" column="id">
+        <collection property="historyServerResultList" ofType="com.hummerrisk.base.domain.HistoryServerResult" javaType="list" select="getHistoryServerResultList" column="id">
         </collection>
         <collection property="historyImageReportDTOList" ofType="com.hummerrisk.dto.HistoryImageReportDTO" javaType="list" select="getHistoryImageReportDTOList" column="id">
         </collection>

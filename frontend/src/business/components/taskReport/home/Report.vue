@@ -353,7 +353,7 @@
               </el-collapse-item>
               <!-- 漏洞检测 end -->
               <!-- 虚拟机 start -->
-              <el-collapse-item name="3" v-if="report.historyServerTaskList && JSON.stringify(report.historyServerTaskList) !== '[]'">
+              <el-collapse-item name="3" v-if="report.historyServerResultList && JSON.stringify(report.historyServerResultList) !== '[]'">
                 <template slot="title">
                   {{ $t('server.server_setting') }} <i class="el-icon-monitor" style="margin-left: 5px;padding-top: 2px;"></i>
                 </template>
@@ -425,25 +425,25 @@
                           <el-collapse-item title="Vuln:" name="6">
                             <div style="margin: 10px 0 0 0;" :key="imageJson.id" v-for="imageJson in historyImageReport.imageResultItemWithBLOBsList">
                               <el-card class="box-card">
-                                <div style="margin: 10px;" v-if="imageJson.trivyJson">
+                                <div style="margin: 10px;" v-if="imageJson.resultJson">
                                   <h2>Summary:&nbsp;</h2>
                                   <ul style="margin-left: 60px;">
                                     <li><i>Scan Name</i>: {{ imageJson.name }}</li>
                                     <li><i>Scan User</i>:&nbsp;{{ imageJson.userName }}</li>
-                                    <li><i>ArtifactType</i>:&nbsp;{{ imageJson.trivyJson.ArtifactType }}</li>
-                                    <li><i>ArtifactName</i>:&nbsp;{{ imageJson.trivyJson.ArtifactName }}</li>
-                                    <li><i>SchemaVersion</i>:&nbsp;{{ imageJson.trivyJson.SchemaVersion }}</li>
-                                    <li><i>Architecture</i>:&nbsp;{{ imageJson.trivyJson.Metadata.ImageConfig.architecture }}</li>
+                                    <li><i>ArtifactType</i>:&nbsp;{{ imageJson.resultJson.ArtifactType }}</li>
+                                    <li><i>ArtifactName</i>:&nbsp;{{ imageJson.resultJson.ArtifactName }}</li>
+                                    <li><i>SchemaVersion</i>:&nbsp;{{ imageJson.resultJson.SchemaVersion }}</li>
+                                    <li><i>Architecture</i>:&nbsp;{{ imageJson.resultJson.Metadata.ImageConfig.architecture }}</li>
                                     <li><i>Create Time</i>:&nbsp;{{ imageJson.createTime | timestampFormatDate }}</li>
                                     <li><i>Result Status</i>:&nbsp;{{ imageJson.resultStatus }}</li>
                                     <li><i>Vulnerabilities Found</i>: {{ imageJson.returnSum }}</li>
                                   </ul>
                                 </div>
-                                <div style="margin: 10px;" v-if="imageJson.trivyJson">
+                                <div style="margin: 10px;" v-if="imageJson.resultJson">
                                   <div style="margin: 10px 0 0 0;">
                                     <h2>Details:&nbsp;</h2>
                                     <div style="margin: 10px 0 0 0;">
-                                      <div style="margin: 10px 0 0 0;" :key="index" v-for="(result, index) in imageJson.trivyJson.Results">
+                                      <div style="margin: 10px 0 0 0;" :key="index" v-for="(result, index) in imageJson.resultJson.Results">
                                         <div style="margin: 10px;" v-if="result">
                                           <h3>Summary:&nbsp;</h3>
                                           <ul style="margin-left: 60px;">
@@ -790,7 +790,6 @@ export default {
       tagSelect: [],
       resourceTypes: [],
       filterJson: this.filterJsonKeyAndValue,
-      imageJsonActiveName: 'imageTrivyJson',
     }
   },
   watch: {

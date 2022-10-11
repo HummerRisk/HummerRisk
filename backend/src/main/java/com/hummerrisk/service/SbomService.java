@@ -184,13 +184,13 @@ public class SbomService {
         return historyCodeResultMapper.selectByExample(example);
     }
 
-    public List<HistoryImageResultDTO> historyImageTask(String sbomVersionId) throws Exception {
+    public List<HistoryImageResultDTO> historyImageResult(String sbomVersionId) throws Exception {
         HistoryImageResultExample example = new HistoryImageResultExample();
         example.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
         example.setOrderByClause("create_time desc");
-        List<HistoryImageResult> historyImageTasks = historyImageResultMapper.selectByExample(example);
+        List<HistoryImageResult> historyImageResults = historyImageResultMapper.selectByExample(example);
         List<HistoryImageResultDTO> dtos = new LinkedList<>();
-        for (HistoryImageResult task : historyImageTasks) {
+        for (HistoryImageResult task : historyImageResults) {
             HistoryImageResultDTO dto = new HistoryImageResultDTO();
             Image image = imageMapper.selectByPrimaryKey(task.getImageId());
             BeanUtils.copyBean(dto, image);
@@ -232,7 +232,7 @@ public class SbomService {
             str = codeResult.getReturnJson();
         } else if (StringUtils.equalsIgnoreCase(request.getType(), "image")) {
             HistoryImageResultWithBLOBs imageTask = historyImageResultMapper.selectByPrimaryKey(request.getSourceId());
-            str = imageTask.getTrivyJson() != null ? imageTask.getTrivyJson() : "";
+            str = imageTask.getResultJson() != null ? imageTask.getResultJson() : "";
         }
         return str;
     }

@@ -725,7 +725,7 @@ export default {
         this.$get("/sbom/historyCodeResult/" + this.sbomVersion.id, response => {
           this.codeData = response.data;
         });
-        this.$get("/sbom/historyImageTask/" + this.sbomVersion.id, response => {
+        this.$get("/sbom/historyImageResult/" + this.sbomVersion.id, response => {
           this.imageData = response.data;
         });
       }
