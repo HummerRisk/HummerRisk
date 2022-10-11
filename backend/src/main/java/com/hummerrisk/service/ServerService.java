@@ -67,9 +67,9 @@ public class ServerService {
     @Resource
     private ExtServerCertificateMapper extServerCertificateMapper;
     @Resource
-    private HistoryServerTaskLogMapper historyServerTaskLogMapper;
+    private HistoryServerResultLogMapper historyServerResultLogMapper;
     @Resource
-    private HistoryServerTaskMapper historyServerTaskMapper;
+    private HistoryServerResultMapper historyServerResultMapper;
 
     public boolean validate(List<String> ids) {
         ids.forEach(id -> {
@@ -149,7 +149,7 @@ public class ServerService {
 
                 historyService.insertScanTaskHistory(result, scanId, server.getId(), TaskEnum.serverAccount.getType());
 
-                historyService.insertHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
+                historyService.insertHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
             }
         }
         return true;
@@ -192,13 +192,13 @@ public class ServerService {
 
             saveServerResultLog(result.getId(), "i18n_end_server_result", returnLog, true);
 
-            historyService.updateHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
+            historyService.updateHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
         } catch (Exception e) {
             LogUtil.error(result.getServerName() + "{}" + result.getIp() + "[error]: " + e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             serverResultMapper.updateByPrimaryKeySelective(result);
-            historyService.updateHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
+            historyService.updateHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
             saveServerResultLog(result.getId(), "i18n_operation_ex" + ": " + StringUtils.substring(e.getMessage(), 0, 900) + "...", e.getMessage(), false);
         }
     }
@@ -244,7 +244,7 @@ public class ServerService {
         serverResultLog.setResult(result);
         serverResultLogMapper.insertSelective(serverResultLog);
 
-        historyService.insertHistoryServerTaskLog(BeanUtils.copyBean(new HistoryServerTaskLog(), serverResultLog));
+        historyService.insertHistoryServerResultLog(BeanUtils.copyBean(new HistoryServerResultLog(), serverResultLog));
     }
 
     private boolean validateAccount(Server server) {
@@ -589,11 +589,11 @@ public class ServerService {
         return historyList;
     }
 
-    public void deleteHistoryServerTask(String id) throws Exception {
-        HistoryServerTaskLogExample logExample = new HistoryServerTaskLogExample();
+    public void deleteHistoryServerResult(String id) throws Exception {
+        HistoryServerResultLogExample logExample = new HistoryServerResultLogExample();
         logExample.createCriteria().andResultIdEqualTo(id);
-        historyServerTaskLogMapper.deleteByExample(logExample);
-        historyServerTaskMapper.deleteByPrimaryKey(id);
+        historyServerResultLogMapper.deleteByExample(logExample);
+        historyServerResultMapper.deleteByPrimaryKey(id);
     }
 
 }

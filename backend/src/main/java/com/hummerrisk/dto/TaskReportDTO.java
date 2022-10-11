@@ -1,6 +1,6 @@
 package com.hummerrisk.dto;
 
-import com.hummerrisk.base.domain.HistoryServerTask;
+import com.hummerrisk.base.domain.HistoryServerResult;
 import com.hummerrisk.base.domain.Task;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public class TaskReportDTO extends Task {
 
     private List<HistoryResourceReportDTO> historyVulnResourceReportDTOList;//漏洞检测结果details
 
-    private List<HistoryServerTask> historyServerTaskList;//主机检测结果table
+    private List<HistoryServerResult> historyServerResultList;//主机检测结果table
 
     private List<HistoryImageReportDTO> historyImageReportDTOList;//镜像检测结果details
 
@@ -54,12 +54,20 @@ public class TaskReportDTO extends Task {
         this.historyVulnResourceReportDTOList = historyVulnResourceReportDTOList;
     }
 
-    public List<HistoryServerTask> getHistoryServerTaskList() {
-        return historyServerTaskList;
+    public List<HistoryServerResult> getHistoryServerResultList() {
+        return historyServerResultList;
     }
 
-    public void setHistoryServerTaskList(List<HistoryServerTask> historyServerTaskList) {
-        this.historyServerTaskList = historyServerTaskList;
+    public void setHistoryServerResultList(List<HistoryServerResult> historyServerResultList) {
+        this.historyServerResultList = historyServerResultList;
+    }
+
+    public List<HistoryCodeReportDTO> getHistoryCodeReportDTOList() {
+        return historyCodeReportDTOList;
+    }
+
+    public void setHistoryCodeReportDTOList(List<HistoryCodeReportDTO> historyCodeReportDTOList) {
+        this.historyCodeReportDTOList = historyCodeReportDTOList;
     }
 
     public List<HistoryImageReportDTO> getHistoryImageReportDTOList() {

@@ -86,9 +86,9 @@ public class ResourceCreateService {
     @Resource
     private HistoryVulnTaskMapper historyVulnTaskMapper;
     @Resource
-    private HistoryServerTaskMapper historyServerTaskMapper;
+    private HistoryServerResultMapper historyServerResultMapper;
     @Resource
-    private HistoryImageTaskMapper historyImageTaskMapper;
+    private HistoryImageResultMapper historyImageResultMapper;
     @Resource
     private TaskItemResourceLogMapper taskItemResourceLogMapper;
     @Resource
@@ -462,14 +462,14 @@ public class ResourceCreateService {
                         n = historyVulnTaskMapper.countByExample(example);
                         i = i + n;
                     } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.serverAccount.getType())) {
-                        HistoryServerTaskExample example = new HistoryServerTaskExample();
+                        HistoryServerResultExample example = new HistoryServerResultExample();
                         example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
-                        n = historyServerTaskMapper.countByExample(example);
+                        n = historyServerResultMapper.countByExample(example);
                         i = i + n;
                     } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.imageAccount.getType())) {
-                        HistoryImageTaskExample example = new HistoryImageTaskExample();
+                        HistoryImageResultExample example = new HistoryImageResultExample();
                         example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
-                        n = historyImageTaskMapper.countByExample(example);
+                        n = historyImageResultMapper.countByExample(example);
                         i = i + n;
                     } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.codeAccount.getType())) {
                         HistoryCodeResultExample example = new HistoryCodeResultExample();

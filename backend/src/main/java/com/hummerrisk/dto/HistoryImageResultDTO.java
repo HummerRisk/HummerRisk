@@ -1,12 +1,12 @@
 package com.hummerrisk.dto;
 
 
-import com.hummerrisk.base.domain.HistoryImageTaskWithBLOBs;
+import com.hummerrisk.base.domain.HistoryImageResultWithBLOBs;
 
 /**
  * @author harris
  */
-public class HistoryImageTaskDTO extends HistoryImageTaskWithBLOBs {
+public class HistoryImageResultDTO extends HistoryImageResultWithBLOBs {
 
     private String type;
 

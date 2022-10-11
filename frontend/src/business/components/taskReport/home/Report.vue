@@ -360,7 +360,7 @@
                 <div>
                   <h2>Details:&nbsp;</h2>
                   <div style="margin: 10px 0 0 0;">
-                    <el-table :data="report.historyServerTaskList" border stripe style="width: 100%">
+                    <el-table :data="report.historyServerResultList" border stripe style="width: 100%">
                       <el-table-column type="index" min-width="3%"/>
                       <el-table-column prop="serverGroupName" :label="$t('server.server_group_name')" min-width="11%" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="serverName" :label="$t('server.server_name')" min-width="11%" show-overflow-tooltip></el-table-column>
@@ -423,7 +423,7 @@
                       <div style="margin: 10px 0 0 0;">
                         <el-collapse v-model="activeNames">
                           <el-collapse-item title="Vuln:" name="6">
-                            <div style="margin: 10px 0 0 0;" :key="imageJson.id" v-for="imageJson in historyImageReport.imageTrivyJsonWithBLOBsList">
+                            <div style="margin: 10px 0 0 0;" :key="imageJson.id" v-for="imageJson in historyImageReport.imageResultItemWithBLOBsList">
                               <el-card class="box-card">
                                 <div style="margin: 10px;" v-if="imageJson.trivyJson">
                                   <h2>Summary:&nbsp;</h2>

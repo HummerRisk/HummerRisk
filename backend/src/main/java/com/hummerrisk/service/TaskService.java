@@ -853,7 +853,7 @@ public class TaskService {
                 OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_start_server_result");
                 historyService.insertScanTaskHistory(result, scanId, result.getServerId(), TaskEnum.serverAccount.getType());
 
-                historyService.insertHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
+                historyService.insertHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
                 return result.getId();
             } else {
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
@@ -891,7 +891,7 @@ public class TaskService {
                 OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_start_k8s_result");
                 historyService.insertScanTaskHistory(result, scanId, result.getCloudNativeId(), TaskEnum.k8sAccount.getType());
 
-                historyService.insertHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
+                historyService.insertHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
                 return result.getId();
             } else {
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
@@ -929,7 +929,7 @@ public class TaskService {
                 OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.CREATE, "i18n_start_config_result");
                 historyService.insertScanTaskHistory(result, scanId, result.getConfigId(), TaskEnum.configAccount.getType());
 
-                historyService.insertHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
+                historyService.insertHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
                 return result.getId();
             } else {
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
@@ -1003,7 +1003,7 @@ public class TaskService {
                 imageService.saveImageResultLog(result.getId(), "i18n_start_image_result", "", true);
                 OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_start_image_result");
                 historyService.insertScanTaskHistory(result, scanId, result.getImageId(), TaskEnum.imageAccount.getType());
-                historyService.insertHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
+                historyService.insertHistoryImageResult(BeanUtils.copyBean(new HistoryImageResultWithBLOBs(), result));
                 return result.getId();
             } else {
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));

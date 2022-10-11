@@ -1062,7 +1062,7 @@
                t.result_status as status,
                t.severity,
                t.plugin_icon as icon
-        FROM history_server_task t
+        FROM history_server_result t
         WHERE t.id = #{resource_id}
 
         UNION ALL
@@ -1073,7 +1073,7 @@
                t.result_status as status,
                t.severity,
                'docker.png' as icon
-        FROM history_image_task t
+        FROM history_image_result t
         WHERE t.id = #{resource_id}
 
         UNION ALL
@@ -1110,7 +1110,7 @@
         </collection>
         <collection property="historyVulnResourceReportDTOList" ofType="com.hummerrisk.base.domain.HistoryResourceReportDTO" javaType="list" select="getHistoryVulnResourceReportDTOList" column="id">
         </collection>
-        <collection property="historyServerTaskList" ofType="com.hummerrisk.base.domain.HistoryServerTask" javaType="list" select="getHistoryServerTaskList" column="id">
+        <collection property="historyServerResultList" ofType="com.hummerrisk.base.domain.HistoryServerTask" javaType="list" select="getHistoryServerResultList" column="id">
         </collection>
         <collection property="historyImageReportDTOList" ofType="com.hummerrisk.dto.HistoryImageReportDTO" javaType="list" select="getHistoryImageReportDTOList" column="id">
         </collection>
@@ -1186,28 +1186,28 @@
         WHERE t3.task_id = #{id}
     </select>
 
-    <select id="getHistoryServerTaskList" resultType="com.hummerrisk.base.domain.HistoryServerTask" parameterType="java.lang.String">
+    <select id="getHistoryServerResultList" resultType="com.hummerrisk.base.domain.HistoryServerResult" parameterType="java.lang.String">
         SELECT t.*
-        FROM history_server_task t
+        FROM history_server_result t
         JOIN task_item_resource t1 on t1.resource_id = t.id
         WHERE t1.task_id = #{id}
     </select>
 
-    <resultMap id="HistoryImageReportDTOMap" type="com.hummerrisk.dto.HistoryImageReportDTO" extends="com.hummerrisk.base.mapper.HistoryImageTaskMapper.BaseResultMap">
-        <collection property="imageTrivyJsonWithBLOBsList" ofType="com.hummerrisk.base.domain.ImageTrivyJsonWithBLOBs" javaType="list" select="getimageTrivyJsonWithBLOBsList" column="id">
+    <resultMap id="HistoryImageReportDTOMap" type="com.hummerrisk.dto.HistoryImageReportDTO" extends="com.hummerrisk.base.mapper.HistoryImageResultMapper.BaseResultMap">
+        <collection property="imageResultItemWithBLOBsList" ofType="com.hummerrisk.base.domain.ImageResultItemWithBLOBs" javaType="list" select="getimageResultItemWithBLOBsList" column="id">
         </collection>
     </resultMap>
 
     <select id="getHistoryImageReportDTOList" resultMap="HistoryImageReportDTOMap" parameterType="java.lang.String">
         SELECT t.*
-        FROM history_image_task t
+        FROM history_image_result t
         JOIN task_item_resource t1 on t1.resource_id = t.id
         WHERE t1.task_id = #{id}
     </select>
 
-    <select id="getimageTrivyJsonWithBLOBsList" resultType="com.hummerrisk.base.domain.ImageTrivyJsonWithBLOBs" parameterType="java.lang.String">
+    <select id="getimageResultItemWithBLOBsList" resultType="com.hummerrisk.base.domain.ImageResultItemWithBLOBs" parameterType="java.lang.String">
         SELECT t.*
-        FROM image_trivy_json t
+        FROM image_result_item t
         WHERE t.result_id = #{id}
     </select>
 

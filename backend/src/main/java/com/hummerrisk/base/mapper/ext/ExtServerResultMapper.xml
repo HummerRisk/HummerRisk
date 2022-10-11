@@ -153,7 +153,7 @@
         u.name as user,
         sg.name as groupName,
         t3.script as rule
-        FROM history_server_task t
+        FROM history_server_result t
         left join rule_tag_mapping t1 on t1.rule_id = t.rule_id
         left join rule_tag t2 on t1.tag_key = t2.tag_key
         left join server_rule t3 on t.rule_id = t3.id

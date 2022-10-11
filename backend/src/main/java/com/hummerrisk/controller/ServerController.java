@@ -251,9 +251,9 @@ public class ServerController {
     }
 
     @ApiOperation(value = "删除主机检测历史记录")
-    @GetMapping("deleteHistoryServerTask/{id}")
-    public void deleteHistoryServerTask(@PathVariable String id) throws Exception {
-        serverService.deleteHistoryServerTask(id);
+    @GetMapping("deleteHistoryServerResult/{id}")
+    public void deleteHistoryServerResult(@PathVariable String id) throws Exception {
+        serverService.deleteHistoryServerResult(id);
     }
 
 }

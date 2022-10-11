@@ -11,7 +11,7 @@ import com.hummerrisk.controller.request.sbom.SbomRequest;
 import com.hummerrisk.controller.request.sbom.SbomVersionRequest;
 import com.hummerrisk.controller.request.sbom.SettingVersionRequest;
 import com.hummerrisk.dto.ApplicationDTO;
-import com.hummerrisk.dto.HistoryImageTaskDTO;
+import com.hummerrisk.dto.HistoryImageResultDTO;
 import com.hummerrisk.dto.MetricChartDTO;
 import com.hummerrisk.dto.SbomDTO;
 import com.hummerrisk.service.SbomService;
@@ -118,7 +118,7 @@ public class SbomController {
     @I18n
     @ApiOperation(value = "所有已绑定项目的镜像的检测结果")
     @GetMapping("historyImageTask/{sbomVersionId}")
-    public List<HistoryImageTaskDTO> historyImageTask(@PathVariable String sbomVersionId) throws Exception {
+    public List<HistoryImageResultDTO> historyImageTask(@PathVariable String sbomVersionId) throws Exception {
         return sbomService.historyImageTask(sbomVersionId);
     }
 
@@ -139,7 +139,7 @@ public class SbomController {
     @I18n
     @ApiOperation(value = "镜像检测历史日志")
     @GetMapping(value = "imageLog/{resultId}")
-    public List<HistoryImageTaskLog> getImageResultLog(@PathVariable String resultId) {
+    public List<HistoryImageResultLog> getImageResultLog(@PathVariable String resultId) {
         return sbomService.getImageResultLog(resultId);
     }
 

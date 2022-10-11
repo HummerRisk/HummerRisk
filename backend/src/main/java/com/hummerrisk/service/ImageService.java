@@ -70,13 +70,13 @@ public class ImageService {
     @Resource
     private ImageRepoSyncLogMapper imageRepoSyncLogMapper;
     @Resource
-    private ImageTrivyJsonMapper imageTrivyJsonMapper;
+    private ImageResultItemMapper imageResultItemMapper;
     @Resource
     private ExecEngineFactoryImp execEngineFactoryImp;
     @Resource
-    private HistoryImageTaskMapper historyImageTaskMapper;
+    private HistoryImageResultMapper historyImageResultMapper;
     @Resource
-    private HistoryImageTaskLogMapper historyImageTaskLogMapper;
+    private HistoryImageResultLogMapper historyImageResultLogMapper;
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
@@ -472,7 +472,7 @@ public class ImageService {
 
                 historyService.insertScanTaskHistory(result, scanId, image.getId(), TaskEnum.imageAccount.getType());
 
-                historyService.insertHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
+                historyService.insertHistoryImageResult(BeanUtils.copyBean(new HistoryImageResultWithBLOBs(), result));
             }
         }
 
@@ -507,13 +507,13 @@ public class ImageService {
             noticeService.createImageMessageOrder(result);
             saveImageResultLog(result.getId(), "i18n_end_image_result", "", true);
 
-            historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
+            historyService.updateHistoryImageResult(BeanUtils.copyBean(new HistoryImageResultWithBLOBs(), result));
         } catch (Exception e) {
             LogUtil.error("create ImageResult: " + e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             imageResultMapper.updateByPrimaryKeySelective(result);
-            historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
+            historyService.updateHistoryImageResult(BeanUtils.copyBean(new HistoryImageResultWithBLOBs(), result));
             saveImageResultLog(result.getId(), "i18n_operation_ex" + ": " + StringUtils.substring(e.getMessage(), 0, 900) + "...", e.getMessage(), false);
         }
     }
@@ -532,25 +532,25 @@ public class ImageService {
                     if (vulnJsons != null) {
                         for (Object o : vulnJsons) {
                             JSONObject resultObject = (JSONObject) o;
-                            ImageTrivyJsonWithBLOBs imageTrivyJsonWithBLOBs = new ImageTrivyJsonWithBLOBs();
-                            imageTrivyJsonWithBLOBs.setResultId(result.getId());
-                            imageTrivyJsonWithBLOBs.setVulnerabilityId(resultObject.getString("VulnerabilityID"));
-                            imageTrivyJsonWithBLOBs.setPkgName(resultObject.getString("PkgName"));
-                            imageTrivyJsonWithBLOBs.setInstalledVersion(resultObject.getString("InstalledVersion"));
-                            imageTrivyJsonWithBLOBs.setFixedVersion(resultObject.getString("FixedVersion"));
-                            imageTrivyJsonWithBLOBs.setLayer(resultObject.getString("Layer"));
-                            imageTrivyJsonWithBLOBs.setSeveritySource(resultObject.getString("SeveritySource"));
-                            imageTrivyJsonWithBLOBs.setPrimaryUrl(resultObject.getString("PrimaryURL"));
-                            imageTrivyJsonWithBLOBs.setDataSource(resultObject.getString("DataSource"));
-                            imageTrivyJsonWithBLOBs.setTitle(resultObject.getString("Title"));
-                            imageTrivyJsonWithBLOBs.setDescription(resultObject.getString("Description"));
-                            imageTrivyJsonWithBLOBs.setSeverity(resultObject.getString("Severity"));
-                            imageTrivyJsonWithBLOBs.setCweIds(resultObject.getString("CweIDs"));
-                            imageTrivyJsonWithBLOBs.setCvss(resultObject.getString("CVSS"));
-                            imageTrivyJsonWithBLOBs.setReferences(resultObject.getString("References"));
-                            imageTrivyJsonWithBLOBs.setPublishedDate(resultObject.getString("PublishedDate"));
-                            imageTrivyJsonWithBLOBs.setLastModifiedDate(resultObject.getString("LastModifiedDate"));
-                            imageTrivyJsonMapper.insertSelective(imageTrivyJsonWithBLOBs);
+                            ImageResultItemWithBLOBs imageResultItemWithBLOBs = new ImageResultItemWithBLOBs();
+                            imageResultItemWithBLOBs.setResultId(result.getId());
+                            imageResultItemWithBLOBs.setVulnerabilityId(resultObject.getString("VulnerabilityID"));
+                            imageResultItemWithBLOBs.setPkgName(resultObject.getString("PkgName"));
+                            imageResultItemWithBLOBs.setInstalledVersion(resultObject.getString("InstalledVersion"));
+                            imageResultItemWithBLOBs.setFixedVersion(resultObject.getString("FixedVersion"));
+                            imageResultItemWithBLOBs.setLayer(resultObject.getString("Layer"));
+                            imageResultItemWithBLOBs.setSeveritySource(resultObject.getString("SeveritySource"));
+                            imageResultItemWithBLOBs.setPrimaryUrl(resultObject.getString("PrimaryURL"));
+                            imageResultItemWithBLOBs.setDataSource(resultObject.getString("DataSource"));
+                            imageResultItemWithBLOBs.setTitle(resultObject.getString("Title"));
+                            imageResultItemWithBLOBs.setDescription(resultObject.getString("Description"));
+                            imageResultItemWithBLOBs.setSeverity(resultObject.getString("Severity"));
+                            imageResultItemWithBLOBs.setCweIds(resultObject.getString("CweIDs"));
+                            imageResultItemWithBLOBs.setCvss(resultObject.getString("CVSS"));
+                            imageResultItemWithBLOBs.setReferences(resultObject.getString("References"));
+                            imageResultItemWithBLOBs.setPublishedDate(resultObject.getString("PublishedDate"));
+                            imageResultItemWithBLOBs.setLastModifiedDate(resultObject.getString("LastModifiedDate"));
+                            imageResultItemMapper.insertSelective(imageResultItemWithBLOBs);
                             i++;
                         }
                     }
@@ -574,16 +574,16 @@ public class ImageService {
 
         OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.RESCAN, "i18n_restart_image_result");
 
-        historyService.updateHistoryImageTask(BeanUtils.copyBean(new HistoryImageTaskWithBLOBs(), result));
+        historyService.updateHistoryImageResult(BeanUtils.copyBean(new HistoryImageResultWithBLOBs(), result));
 
         return result.getId();
     }
 
     public void reScanDeleteImageResult(String id) throws Exception {
 
-        ImageTrivyJsonExample imageTrivyJsonExample = new ImageTrivyJsonExample();
-        imageTrivyJsonExample.createCriteria().andResultIdEqualTo(id);
-        imageTrivyJsonMapper.deleteByExample(imageTrivyJsonExample);
+        ImageResultItemExample imageResultItemExample = new ImageResultItemExample();
+        imageResultItemExample.createCriteria().andResultIdEqualTo(id);
+        imageResultItemMapper.deleteByExample(imageResultItemExample);
 
     }
 
@@ -672,14 +672,14 @@ public class ImageService {
         imageResultLog.setResult(result);
         imageResultLogMapper.insertSelective(imageResultLog);
 
-        historyService.insertHistoryImageTaskLog(BeanUtils.copyBean(new HistoryImageTaskLog(), imageResultLog));
+        historyService.insertHistoryImageResultLog(BeanUtils.copyBean(new HistoryImageResultLog(), imageResultLog));
     }
 
-    public List<ImageTrivyJsonWithBLOBs> resultItemList(ImageTrivyJson resourceRequest) {
-        ImageTrivyJsonExample example = new ImageTrivyJsonExample();
+    public List<ImageResultItemWithBLOBs> resultItemList(ImageResultItem resourceRequest) {
+        ImageResultItemExample example = new ImageResultItemExample();
         example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
         example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
-        return imageTrivyJsonMapper.selectByExampleWithBLOBs(example);
+        return imageResultItemMapper.selectByExampleWithBLOBs(example);
     }
 
     public List<ImageRepoSyncLog> repoSyncList(String id) {
@@ -877,7 +877,7 @@ public class ImageService {
     }
 
     public String download(Map<String, Object> map) {
-        HistoryImageTaskWithBLOBs imageTaskWithBLOBs = historyImageTaskMapper.selectByPrimaryKey(map.get("id").toString());
+        HistoryImageResultWithBLOBs imageTaskWithBLOBs = historyImageResultMapper.selectByPrimaryKey(map.get("id").toString());
         String str = imageTaskWithBLOBs.getTrivyJson();
         return str;
     }
@@ -898,23 +898,23 @@ public class ImageService {
         return imageMapper.selectByExample(null);
     }
 
-    public List<HistoryImageTaskDTO> history(Map<String, Object> params) {
-        List<HistoryImageTaskDTO> historyList = extImageResultMapper.history(params);
+    public List<HistoryImageResultDTO> history(Map<String, Object> params) {
+        List<HistoryImageResultDTO> historyList = extImageResultMapper.history(params);
         return historyList;
     }
 
-    public List<ImageTrivyJsonWithBLOBs> historyResultItemList(ImageTrivyJson imageTrivyJson) {
-        ImageTrivyJsonExample example = new ImageTrivyJsonExample();
-        example.createCriteria().andResultIdEqualTo(imageTrivyJson.getResultId());
+    public List<ImageResultItemWithBLOBs> historyResultItemList(ImageResultItem imageResultItem) {
+        ImageResultItemExample example = new ImageResultItemExample();
+        example.createCriteria().andResultIdEqualTo(imageResultItem.getResultId());
         example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
-        return imageTrivyJsonMapper.selectByExampleWithBLOBs(example);
+        return imageResultItemMapper.selectByExampleWithBLOBs(example);
     }
 
     public void deleteHistoryImageResult(String id) throws Exception {
-        HistoryImageTaskLogExample logExample = new HistoryImageTaskLogExample();
+        HistoryImageResultLogExample logExample = new HistoryImageResultLogExample();
         logExample.createCriteria().andResultIdEqualTo(id);
-        historyImageTaskLogMapper.deleteByExample(logExample);
-        historyImageTaskMapper.deleteByPrimaryKey(id);
+        historyImageResultLogMapper.deleteByExample(logExample);
+        historyImageResultMapper.deleteByPrimaryKey(id);
     }
 
 

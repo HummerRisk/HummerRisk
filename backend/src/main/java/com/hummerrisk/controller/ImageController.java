@@ -215,7 +215,7 @@ public class ImageController {
     @I18n
     @ApiOperation(value = "检测结果详情")
     @PostMapping("resultItemList/{goPage}/{pageSize}")
-    public Pager<List<ImageTrivyJsonWithBLOBs>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageTrivyJson request) {
+    public Pager<List<ImageResultItemWithBLOBs>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultItem request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, imageService.resultItemList(request));
     }
@@ -278,7 +278,7 @@ public class ImageController {
     @I18n
     @ApiOperation(value = "镜像检测历史记录")
     @PostMapping("history/{goPage}/{pageSize}")
-    public Pager<List<HistoryImageTaskDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+    public Pager<List<HistoryImageResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, imageService.history(params));
     }
@@ -286,7 +286,7 @@ public class ImageController {
     @I18n
     @ApiOperation(value = "检测结果历史详情")
     @PostMapping("historyResultItemList")
-    public List<ImageTrivyJsonWithBLOBs> historyResultItemList(@RequestBody ImageTrivyJson request) {
+    public List<ImageResultItemWithBLOBs> historyResultItemList(@RequestBody ImageResultItem request) {
         return imageService.historyResultItemList(request);
     }
 

@@ -13,7 +13,7 @@ import com.hummerrisk.controller.request.sbom.SbomRequest;
 import com.hummerrisk.controller.request.sbom.SbomVersionRequest;
 import com.hummerrisk.controller.request.sbom.SettingVersionRequest;
 import com.hummerrisk.dto.ApplicationDTO;
-import com.hummerrisk.dto.HistoryImageTaskDTO;
+import com.hummerrisk.dto.HistoryImageResultDTO;
 import com.hummerrisk.dto.MetricChartDTO;
 import com.hummerrisk.dto.SbomDTO;
 import org.apache.commons.lang3.StringUtils;
@@ -48,11 +48,11 @@ public class SbomService {
     @Resource
     private HistoryCodeResultMapper historyCodeResultMapper;
     @Resource
-    private HistoryImageTaskMapper historyImageTaskMapper;
+    private HistoryImageResultMapper historyImageResultMapper;
     @Resource
     private HistoryCodeResultLogMapper historyCodeResultLogMapper;
     @Resource
-    private HistoryImageTaskLogMapper historyImageTaskLogMapper;
+    private HistoryImageResultLogMapper historyImageResultLogMapper;
 
 
     public List<SbomDTO> sbomList(SbomRequest request) {
@@ -184,14 +184,14 @@ public class SbomService {
         return historyCodeResultMapper.selectByExample(example);
     }
 
-    public List<HistoryImageTaskDTO> historyImageTask(String sbomVersionId) throws Exception {
-        HistoryImageTaskExample example = new HistoryImageTaskExample();
+    public List<HistoryImageResultDTO> historyImageTask(String sbomVersionId) throws Exception {
+        HistoryImageResultExample example = new HistoryImageResultExample();
         example.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
         example.setOrderByClause("create_time desc");
-        List<HistoryImageTask> historyImageTasks = historyImageTaskMapper.selectByExample(example);
-        List<HistoryImageTaskDTO> dtos = new LinkedList<>();
-        for (HistoryImageTask task : historyImageTasks) {
-            HistoryImageTaskDTO dto = new HistoryImageTaskDTO();
+        List<HistoryImageResult> historyImageTasks = historyImageResultMapper.selectByExample(example);
+        List<HistoryImageResultDTO> dtos = new LinkedList<>();
+        for (HistoryImageResult task : historyImageTasks) {
+            HistoryImageResultDTO dto = new HistoryImageResultDTO();
             Image image = imageMapper.selectByPrimaryKey(task.getImageId());
             BeanUtils.copyBean(dto, image);
             BeanUtils.copyBean(dto, task);
@@ -211,10 +211,10 @@ public class SbomService {
         return codeResult;
     }
 
-    public List<HistoryImageTaskLog> getImageResultLog(String resultId) {
-        HistoryImageTaskLogExample example = new HistoryImageTaskLogExample();
+    public List<HistoryImageResultLog> getImageResultLog(String resultId) {
+        HistoryImageResultLogExample example = new HistoryImageResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
-        return historyImageTaskLogMapper.selectByExampleWithBLOBs(example);
+        return historyImageResultLogMapper.selectByExampleWithBLOBs(example);
     }
 
     public MetricChartDTO codeMetricChart(String resultId) {
@@ -231,7 +231,7 @@ public class SbomService {
             HistoryCodeResult codeResult = historyCodeResultMapper.selectByPrimaryKey(request.getSourceId());
             str = codeResult.getReturnJson();
         } else if (StringUtils.equalsIgnoreCase(request.getType(), "image")) {
-            HistoryImageTaskWithBLOBs imageTask = historyImageTaskMapper.selectByPrimaryKey(request.getSourceId());
+            HistoryImageResultWithBLOBs imageTask = historyImageResultMapper.selectByPrimaryKey(request.getSourceId());
             str = imageTask.getTrivyJson() != null ? imageTask.getTrivyJson() : "";
         }
         return str;

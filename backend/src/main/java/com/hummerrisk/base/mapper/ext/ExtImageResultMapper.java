@@ -2,7 +2,7 @@ package com.hummerrisk.base.mapper.ext;
 
 import com.hummerrisk.controller.request.image.ImageResultRequest;
 import com.hummerrisk.dto.HistoryImageReportDTO;
-import com.hummerrisk.dto.HistoryImageTaskDTO;
+import com.hummerrisk.dto.HistoryImageResultDTO;
 import com.hummerrisk.dto.ImageResultDTO;
 import com.hummerrisk.dto.ImageResultWithBLOBsDTO;
 
@@ -19,6 +19,6 @@ public interface ExtImageResultMapper {
 
     ImageResultDTO getImageResult(String resultId);
 
-    List<HistoryImageTaskDTO> history(Map<String, Object> params);
+    List<HistoryImageResultDTO> history(Map<String, Object> params);
 
 }

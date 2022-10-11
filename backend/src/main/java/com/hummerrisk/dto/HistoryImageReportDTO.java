@@ -1,23 +1,23 @@
 package com.hummerrisk.dto;
 
 
-import com.hummerrisk.base.domain.HistoryImageTask;
-import com.hummerrisk.base.domain.ImageTrivyJsonWithBLOBs;
+import com.hummerrisk.base.domain.HistoryImageResult;
+import com.hummerrisk.base.domain.ImageResultItemWithBLOBs;
 
 import java.util.List;
 
 /**
  * @author harris
  */
-public class HistoryImageReportDTO extends HistoryImageTask {
+public class HistoryImageReportDTO extends HistoryImageResult {
 
-    private List<ImageTrivyJsonWithBLOBs> imageTrivyJsonWithBLOBsList;//镜像检测结果
+    private List<ImageResultItemWithBLOBs> imageResultItemWithBLOBsList;//镜像检测结果
 
-    public List<ImageTrivyJsonWithBLOBs> getImageTrivyJsonWithBLOBsList() {
-        return imageTrivyJsonWithBLOBsList;
+    public List<ImageResultItemWithBLOBs> getImageResultItemWithBLOBsList() {
+        return imageResultItemWithBLOBsList;
     }
 
-    public void setImageTrivyJsonWithBLOBsList(List<ImageTrivyJsonWithBLOBs> imageTrivyJsonWithBLOBsList) {
-        this.imageTrivyJsonWithBLOBsList = imageTrivyJsonWithBLOBsList;
+    public void setImageResultItemWithBLOBsList(List<ImageResultItemWithBLOBs> imageResultItemWithBLOBsList) {
+        this.imageResultItemWithBLOBsList = imageResultItemWithBLOBsList;
     }
 }

@@ -50,13 +50,13 @@ public class HistoryService {
     @Resource @Lazy
     private HistoryVulnTaskResourceMapper historyVulnTaskResourceMapper;
     @Resource @Lazy
-    private HistoryServerTaskMapper historyServerTaskMapper;
+    private HistoryServerResultMapper historyServerResultMapper;
     @Resource @Lazy
-    private HistoryServerTaskLogMapper historyServerTaskLogMapper;
+    private HistoryServerResultLogMapper historyServerResultLogMapper;
     @Resource @Lazy
-    private HistoryImageTaskMapper historyImageTaskMapper;
+    private HistoryImageResultMapper historyImageResultMapper;
     @Resource @Lazy
-    private HistoryImageTaskLogMapper historyImageTaskLogMapper;
+    private HistoryImageResultLogMapper historyImageResultLogMapper;
     @Resource @Lazy
     private HistoryCloudNativeResultMapper historyCloudNativeResultMapper;
     @Resource @Lazy
@@ -435,28 +435,28 @@ public class HistoryService {
         }
     }
 
-    public void insertHistoryServerTask(HistoryServerTask record) {
-        historyServerTaskMapper.insertSelective(record);
+    public void insertHistoryServerResult(HistoryServerResult record) {
+        historyServerResultMapper.insertSelective(record);
     }
 
-    public void updateHistoryServerTask(HistoryServerTask record) {
-        historyServerTaskMapper.updateByPrimaryKeySelective(record);
+    public void updateHistoryServerResult(HistoryServerResult record) {
+        historyServerResultMapper.updateByPrimaryKeySelective(record);
     }
 
-    public void insertHistoryServerTaskLog(HistoryServerTaskLog record) {
-        historyServerTaskLogMapper.insertSelective(record);
+    public void insertHistoryServerResultLog(HistoryServerResultLog record) {
+        historyServerResultLogMapper.insertSelective(record);
     }
 
-    public void insertHistoryImageTask(HistoryImageTaskWithBLOBs record) {
-        historyImageTaskMapper.insertSelective(record);
+    public void insertHistoryImageResult(HistoryImageResultWithBLOBs record) {
+        historyImageResultMapper.insertSelective(record);
     }
 
-    public void updateHistoryImageTask(HistoryImageTaskWithBLOBs record) {
-        historyImageTaskMapper.updateByPrimaryKeySelective(record);
+    public void updateHistoryImageResult(HistoryImageResultWithBLOBs record) {
+        historyImageResultMapper.updateByPrimaryKeySelective(record);
     }
 
-    public void insertHistoryImageTaskLog(HistoryImageTaskLog record) {
-        historyImageTaskLogMapper.insertSelective(record);
+    public void insertHistoryImageResultLog(HistoryImageResultLog record) {
+        historyImageResultLogMapper.insertSelective(record);
     }
 
     public void insertHistoryCloudNativeResult(HistoryCloudNativeResultWithBLOBs record) {

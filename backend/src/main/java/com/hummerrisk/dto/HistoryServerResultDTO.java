@@ -1,11 +1,11 @@
 package com.hummerrisk.dto;
 
-import com.hummerrisk.base.domain.HistoryServerTask;
+import com.hummerrisk.base.domain.HistoryServerResult;
 
 /**
  * @author harris
  */
-public class HistoryServerResultDTO extends HistoryServerTask {
+public class HistoryServerResultDTO extends HistoryServerResult {
 
     private String name;
 

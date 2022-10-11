@@ -361,7 +361,7 @@ import CodeDiff from 'vue-code-diff';
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get("/server/deleteHistoryServerTask/" + obj.id,  res => {
+              this.result = this.$get("/server/deleteHistoryServerResult/" + obj.id,  res => {
                 setTimeout(function () {window.location.reload()}, 2000);
                 this.$success(this.$t('commons.delete_success'));
               });
