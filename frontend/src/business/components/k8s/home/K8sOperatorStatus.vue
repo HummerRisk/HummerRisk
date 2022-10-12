@@ -31,7 +31,7 @@
                 } else {
                   this.$error(this.$t('account.error'));
                 }
-                this.$parent.search;
+                this.$emit("search");
               });
             }
           }
