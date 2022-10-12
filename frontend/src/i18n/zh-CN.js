@@ -1616,4 +1616,17 @@ export default {
     linked: '关联',
     belong: '所属',
   },
+  fs: {
+    file_system: '文件系统',
+    file_system_manage: '文件系统管理',
+    fs_rule: '文件系统检测规则',
+    fs_result: '文件系统检测结果',
+    fs_settings_list: '文件系统列表',
+    fs_create: '创建文件系统',
+    fs_update: '更新文件系统',
+    overview: '文件系统概览',
+    history: '文件系统检测历史记录',
+    name: '文件系统名称',
+    status: '状态',
+  },
 };

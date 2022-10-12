@@ -77,6 +77,10 @@
             <i class="iconfont icon-yuandaimaxiayoudaima"></i>
             <span slot="title">{{ $t('commons.code_scan') }}</span>
           </el-menu-item>
+          <el-menu-item index="/fs" onselectstart="return false" v-permission="['admin']">
+            <i class="iconfont icon-wendang"></i>
+            <span slot="title">{{ $t('fs.file_system') }}</span>
+          </el-menu-item>
           <el-menu-item index="/sbom" onselectstart="return false" v-permission="['admin']">
             <i class="iconfont icon-tongjijieguo"></i>
             <span slot="title">{{ $t('commons.sbom_dependency') }}</span>
