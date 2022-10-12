@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS `file_system` (
     `creator`                    varchar(128)        DEFAULT NULL COMMENT '创建人',
     `size`                       varchar(128)        DEFAULT NULL COMMENT '文件大小',
     `path`                       varchar(128)        DEFAULT NULL COMMENT '文件持久化存储路径/opt/hummerrisk/file/',
+    `sbom_id`                    varchar(50)         DEFAULT NULL COMMENT 'SBOM ID',
+    `sbom_version_id`            varchar(50)         DEFAULT NULL COMMENT 'SBOM VERSION ID',
     `proxy_id`                   int(11)             DEFAULT NULL COMMENT '代理ID',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
@@ -46,6 +48,8 @@ CREATE TABLE IF NOT EXISTS `file_system_result`
     `user_name`                  varchar(128)        DEFAULT NULL COMMENT '创建人名称',
     `return_json`                longtext            DEFAULT NULL COMMENT 'return json',
     `return_sum`                 bigint(13)          DEFAULT 0 COMMENT '输出检测结果漏洞数',
+    `sbom_id`                    varchar(50)         DEFAULT NULL COMMENT 'SBOM ID',
+    `sbom_version_id`            varchar(50)         DEFAULT NULL COMMENT 'SBOM VERSION ID',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
@@ -100,6 +104,8 @@ CREATE TABLE IF NOT EXISTS `history_file_system_result`
     `user_name`                  varchar(128)        DEFAULT NULL COMMENT '创建人名称',
     `return_json`                longtext            DEFAULT NULL COMMENT 'return json',
     `return_sum`                 bigint(13)          DEFAULT 0 COMMENT '输出检测结果漏洞数',
+    `sbom_id`                    varchar(50)         DEFAULT NULL COMMENT 'SBOM ID',
+    `sbom_version_id`            varchar(50)         DEFAULT NULL COMMENT 'SBOM VERSION ID',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
