@@ -539,11 +539,13 @@ export default {
       });
     },
     handleEdit(row) {
+      this.changeSbom({sbomId: row.sbomId});
       this.updateVisible = true;
       this.form = row;
       if(this.form.repo) this.form.isImageRepo = true;
       if(this.form.proxyId) this.form.isProxy = true;
       if(this.form.pluginIcon !== 'docker.png') this.form.isImageIcon = true;
+      this.changeImage(row.repoId);
     },
     search() {
       this.result = this.$post(this.buildPagePath(this.queryPath), this.condition, response => {
@@ -603,8 +605,8 @@ export default {
     appendTar(file) {
       this.tarFile = file;
     },
-    changeImage(item) {
-      this.$get("/image/repoItemList/" + item, response => {
+    changeImage(id) {
+      this.$get("/image/repoItemList/" + id, response => {
         this.images = response.data;
       });
     },

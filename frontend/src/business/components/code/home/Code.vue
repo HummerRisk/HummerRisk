@@ -396,6 +396,7 @@ export default {
       if (!this.form.proxyId) {
         this.form.proxyId = "";
       }
+      this.changeSbom({sbomId: tmp.sbomId});
       this.updateVisible = true;
       this.activeProxy();
       this.changePlugin('edit');
