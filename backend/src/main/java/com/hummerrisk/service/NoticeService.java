@@ -284,5 +284,25 @@ public class NoticeService {
         messageOrderItemMapper.insertSelective(messageOrderItem);
     }
 
+    public void createFsMessageOrder(FileSystemResult result) {
+        MessageOrder messageOrder = new MessageOrder();
+        String uuid = UUIDUtil.newUUID();
+        messageOrder.setId(uuid);
+        messageOrder.setAccountId(result.getId());
+        messageOrder.setAccountName(result.getName());
+        messageOrder.setCreateTime(System.currentTimeMillis());
+        messageOrder.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
+        messageOrder.setScanType(ScanConstants.SCAN_TYPE.FS.name());
+        messageOrderMapper.insertSelective(messageOrder);
+
+        MessageOrderItem messageOrderItem = new MessageOrderItem();
+        messageOrderItem.setMessageOrderId(uuid);
+        messageOrderItem.setTaskId(result.getId());
+        messageOrderItem.setTaskName(result.getName());
+        messageOrderItem.setCreateTime(System.currentTimeMillis());
+        messageOrderItem.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
+        messageOrderItemMapper.insertSelective(messageOrderItem);
+    }
+
 
 }

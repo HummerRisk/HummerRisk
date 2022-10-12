@@ -6,7 +6,8 @@ package com.hummerrisk.commons.constants;
 public enum TaskEnum {
     cloudAccount("cloudAccount"), vulnAccount("vulnAccount"), serverAccount("serverAccount"),
     imageAccount("imageAccount"), packageAccount("packageAccount"), k8sAccount("k8sAccount"),
-    codeAccount("codeAccount"), configAccount("configAccount"), rule("rule"), tag("tag"), group("group");
+    codeAccount("codeAccount"), configAccount("configAccount"), fsAccount("fsAccount"),
+    rule("rule"), tag("tag"), group("group");
 
     private String type;
 

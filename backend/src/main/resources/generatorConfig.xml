@@ -161,12 +161,12 @@
 <!--        <table tableName="cloud_resource" domainObjectName="CloudResource"/>-->
 <!--        <table tableName="cloud_resource_item" domainObjectName="CloudResourceItem"/>-->
 <!--        <table tableName="cloud_resource_amount_history" domainObjectName="CloudResourceAmountHistory"/>-->
-        <table tableName="file_system" domainObjectName="FileSystem"/>
-        <table tableName="file_system_rule" domainObjectName="FileSystemRule"/>
-        <table tableName="file_system_result" domainObjectName="FileSystemResult"/>
-        <table tableName="file_system_result_item" domainObjectName="FileSystemResultItem"/>
-        <table tableName="file_system_result_log" domainObjectName="FileSystemResultLog"/>
-        <table tableName="history_file_system_result" domainObjectName="HistoryFileSystemResult"/>
-        <table tableName="history_file_system_result_log" domainObjectName="HistoryFileSystemResultLog"/>
+<!--        <table tableName="file_system" domainObjectName="FileSystem"/>-->
+<!--        <table tableName="file_system_rule" domainObjectName="FileSystemRule"/>-->
+<!--        <table tableName="file_system_result" domainObjectName="FileSystemResult"/>-->
+<!--        <table tableName="file_system_result_item" domainObjectName="FileSystemResultItem"/>-->
+<!--        <table tableName="file_system_result_log" domainObjectName="FileSystemResultLog"/>-->
+<!--        <table tableName="history_file_system_result" domainObjectName="HistoryFileSystemResult"/>-->
+<!--        <table tableName="history_file_system_result_log" domainObjectName="HistoryFileSystemResultLog"/>-->
     </context>
 </generatorConfiguration>

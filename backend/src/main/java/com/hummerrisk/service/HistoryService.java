@@ -71,6 +71,10 @@ public class HistoryService {
     private HistoryCodeResultLogMapper historyCodeResultLogMapper;
     @Resource @Lazy
     private HistoryCodeResultMapper historyCodeResultMapper;
+    @Resource @Lazy
+    private HistoryFileSystemResultLogMapper historyFileSystemResultLogMapper;
+    @Resource @Lazy
+    private HistoryFileSystemResultMapper historyFileSystemResultMapper;
 
     public Integer insertScanHistory (Object obj) throws Exception {
 
@@ -167,6 +171,9 @@ public class HistoryService {
             } else if(obj.getClass() == Code.class || obj.getClass() == CodeDTO.class) {
                 accountId = ((Code) obj).getId();
                 map.put("accountType", TaskEnum.codeAccount.getType());
+            } else if(obj.getClass() == FileSystem.class || obj.getClass() == FsDTO.class) {
+                accountId = ((FileSystem) obj).getId();
+                map.put("accountType", TaskEnum.fsAccount.getType());
             }
             map.put("accountId", accountId);
             return map;
@@ -509,6 +516,18 @@ public class HistoryService {
 
     public void insertHistoryCodeResultLog(HistoryCodeResultLog record) {
         historyCodeResultLogMapper.insertSelective(record);
+    }
+
+    public void insertHistoryFileSystemResult(HistoryFileSystemResult record) {
+        historyFileSystemResultMapper.insertSelective(record);
+    }
+
+    public void updateHistoryFileSystemResult(HistoryFileSystemResult record) {
+        historyFileSystemResultMapper.updateByPrimaryKeySelective(record);
+    }
+
+    public void insertHistoryFileSystemResultLog(HistoryFileSystemResultLog record) {
+        historyFileSystemResultLogMapper.insertSelective(record);
     }
 
 }
