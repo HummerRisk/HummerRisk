@@ -39,6 +39,7 @@ import com.tencentcloudapi.cloudaudit.v20190319.CloudauditClient;
 import com.tencentcloudapi.cloudaudit.v20190319.models.DescribeEventsRequest;
 import com.tencentcloudapi.cloudaudit.v20190319.models.DescribeEventsResponse;
 import com.tencentcloudapi.cloudaudit.v20190319.models.Event;
+import com.tencentcloudapi.cloudaudit.v20190319.models.LookupAttribute;
 import com.tencentcloudapi.common.Credential;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import com.tencentcloudapi.common.profile.ClientProfile;
@@ -365,6 +366,10 @@ public class CloudEventService {
         CloudauditClient client = new CloudauditClient(cred, accountMap.get("region"), clientProfile);
         // 实例化一个请求对象,每个接口都会对应一个request对象
         DescribeEventsRequest req = new DescribeEventsRequest();
+        LookupAttribute attributeActionType = new LookupAttribute();
+        attributeActionType.setAttributeKey("ActionType");
+        attributeActionType.setAttributeValue("Write");
+        req.setLookupAttributes(new LookupAttribute[]{attributeActionType});
         req.setStartTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime).getTime() / 1000);
         req.setEndTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", endTime).getTime() / 1000);
         req.setMaxResults((long) maxResult);
