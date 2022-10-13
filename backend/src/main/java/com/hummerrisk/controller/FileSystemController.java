@@ -18,6 +18,7 @@ import io.kubernetes.client.openapi.ApiException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -64,16 +65,18 @@ public class FileSystemController {
 
     @I18n
     @ApiOperation(value = "添加文件系统")
-    @PostMapping(value = "addFs")
-    public FileSystem addFs(@RequestBody FileSystem request) throws Exception {
-        return fileSystemService.addFs(request);
+    @PostMapping(value = "addFs", consumes = {"multipart/form-data"})
+    public FileSystem addFs(@RequestPart(value = "tarFile", required = false) MultipartFile multipartFile,
+                            @RequestPart("request") FileSystem request) throws Exception {
+        return fileSystemService.addFs(multipartFile, request);
     }
 
     @I18n
     @ApiOperation(value = "修改文件系统")
-    @PostMapping(value = "updateFs")
-    public FileSystem updateFs(@RequestBody FileSystem request) throws Exception {
-        return fileSystemService.updateFs(request);
+    @PostMapping(value = "updateFs", consumes = {"multipart/form-data"})
+    public FileSystem updateFs(@RequestPart(value = "tarFile", required = false) MultipartFile multipartFile,
+                               @RequestPart("request") FileSystem request) throws Exception {
+        return fileSystemService.updateFs(multipartFile, request);
     }
 
     @ApiOperation(value = "删除文件系统")

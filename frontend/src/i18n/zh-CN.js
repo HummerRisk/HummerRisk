@@ -1628,5 +1628,7 @@ export default {
     history: '文件系统检测历史记录',
     name: '文件系统名称',
     status: '状态',
+    file: '文件或文件压缩包',
+    upload_tip: '大小不超过 {0} 的文件包',
   },
 };

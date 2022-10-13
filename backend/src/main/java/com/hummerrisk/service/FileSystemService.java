@@ -25,11 +25,15 @@ import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import static com.hummerrisk.service.ImageService.upload;
+import static com.hummerrisk.service.SysListener.changeFlowFormat;
 
 /**
  * @author harris
@@ -90,22 +94,33 @@ public class FileSystemService {
         return fileSystemMapper.selectByExample(null);
     }
 
-    public FileSystem addFs(FileSystem fileSystem) throws Exception {
+    public FileSystem addFs(MultipartFile multipartFile, FileSystem fileSystem) throws Exception {
         String id = UUIDUtil.newUUID();
         fileSystem.setId(id);
         fileSystem.setCreator(SessionUtils.getUserId());
         fileSystem.setCreateTime(System.currentTimeMillis());
         fileSystem.setUpdateTime(System.currentTimeMillis());
         fileSystem.setStatus("VALID");
+        if (multipartFile != null) {
+            String tarFilePath = upload(multipartFile, FileSystemConstants.DEFAULT_BASE_DIR);
+            fileSystem.setPath(tarFilePath);
+            fileSystem.setSize(changeFlowFormat(multipartFile.getSize()));
+        }
 
         OperationLogService.log(SessionUtils.getUser(), fileSystem.getId(), fileSystem.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.CREATE, "i18n_create_fs");
         fileSystemMapper.insertSelective(fileSystem);
         return fileSystem;
     }
 
-    public FileSystem updateFs(FileSystem fileSystem) throws Exception {
+    public FileSystem updateFs(MultipartFile multipartFile, FileSystem fileSystem) throws Exception {
         fileSystem.setUpdateTime(System.currentTimeMillis());
+        fileSystem.setCreator(SessionUtils.getUserId());
         fileSystem.setStatus("VALID");
+        if (multipartFile != null) {
+            String tarFilePath = upload(multipartFile, FileSystemConstants.DEFAULT_BASE_DIR);
+            fileSystem.setPath(tarFilePath);
+            fileSystem.setSize(changeFlowFormat(multipartFile.getSize()));
+        }
 
         OperationLogService.log(SessionUtils.getUser(), fileSystem.getId(), fileSystem.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.UPDATE, "i18n_update_fs");
         fileSystemMapper.updateByPrimaryKeySelective(fileSystem);

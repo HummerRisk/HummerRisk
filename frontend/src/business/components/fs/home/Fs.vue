@@ -52,13 +52,12 @@
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
-    <!--Create code-->
-    <el-drawer class="rtl" :title="$t('code.code_create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
+    <!--Create fs-->
+    <el-drawer class="rtl" :title="$t('fs.fs_create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
-      <div v-for="(form, index) in addAccountForm" :key="index">
-        <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" :ref="'addAccountForm' + index">
+      <el-form :model="addAccountForm" label-position="right" label-width="150px" size="medium" :rules="rule" :ref="addAccountForm">
           <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(form)">
+            <el-select style="width: 100%;" v-model="addAccountForm.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(addAccountForm)">
               <el-option
                 v-for="item in sboms"
                 :key="item.id"
@@ -70,7 +69,7 @@
             </el-select>
           </el-form-item>
           <el-form-item :label="$t('sbom.sbom_project_version')" :rules="{required: true, message: $t('sbom.sbom_project_version') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
+            <el-select style="width: 100%;" v-model="addAccountForm.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
               <el-option
                 v-for="item in versions"
                 :key="item.id"
@@ -81,31 +80,17 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item :label="$t('code.name')" ref="name" prop="name">
-            <el-input v-model="form.name" autocomplete="off" :placeholder="$t('code.name')"/>
+          <el-form-item :label="$t('fs.name')" ref="name" prop="name">
+            <el-input v-model="addAccountForm.name" autocomplete="off" :placeholder="$t('fs.name')"/>
           </el-form-item>
-          <el-form-item :label="$t('code.platform')" :rules="{required: true, message: $t('code.platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.pluginIcon" :placeholder="$t('code.platform')" @change="changePluginForAdd(form)">
-              <el-option
-                v-for="item in plugins"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-                <img :src="require(`@/assets/img/code/${item.id}`)" style="width: 20px; height: 16px; vertical-align:middle" alt=""/>
-                &nbsp;&nbsp; {{ $t(item.name) }}
-              </el-option>
-            </el-select>
+          <el-form-item :label="$t('fs.file')" ref="type" prop="type">
+            <tar-upload v-on:appendTar="appendTar" v-model="addAccountForm.path" :param="form.path"/>
           </el-form-item>
-          <div v-for="(tmp, index) in form.tmpList" :key="index">
-            <el-form-item v-if="tmp.inputType === 'password'" :label="tmp.label" style="margin-bottom: 29px">
-              <el-input :type="tmp.inputType" v-model="tmp.input" autocomplete="new-password" show-password :placeholder="tmp.description"/>
-            </el-form-item>
-            <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean'" :label="tmp.label">
-              <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="off" :placeholder="tmp.description"/>
-            </el-form-item>
-          </div>
-          <el-form-item v-if="form.isProxy && form.pluginId" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+          <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-switch v-model="addAccountForm.isProxy"></el-switch>
+          </el-form-item>
+          <el-form-item v-if="addAccountForm.isProxy && addAccountForm.pluginId" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="addAccountForm.proxyId" :placeholder="$t('commons.proxy')">
               <el-option
                 v-for="item in proxys"
                 :key="item.id"
@@ -115,26 +100,14 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item v-if="form.pluginId" :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-switch v-model="form.isProxy"></el-switch>
-          </el-form-item>
-          <el-form-item v-if="index > 0" :label="$t('code.delete_this_code')">
-            <el-button type="danger" icon="el-icon-delete" plain size="small" @click="deleteAccount(addAccountForm, form)">{{ $t('commons.delete') }}</el-button>
-          </el-form-item>
         </el-form>
-        <el-divider><i class="el-icon-first-aid-kit"> {{ (index + 1) }}</i></el-divider>
-        <div style="margin: 10px;">
-          <span style="color: red;">{{ $t('code.code_note') }}</span>
-        </div>
-      </div>
-      <dialog-create-footer
+      <dialog-footer
         @cancel="createVisible = false"
-        @addAccount="addAccount(addAccountForm)"
         @confirm="saveAccount(addAccountForm, 'add')"/>
     </el-drawer>
-    <!--Create code-->
+    <!--Create fs-->
 
-    <!--Update code-->
+    <!--Update fs-->
     <el-drawer class="rtl" :title="$t('code.code_update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="accountForm">
@@ -165,37 +138,12 @@
         <el-form-item :label="$t('code.name')"  ref="name" prop="name">
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('code.name')"/>
         </el-form-item>
-        <el-form-item :label="$t('code.platform')" :rules="{required: true, message: $t('code.platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" disabled v-model="form.pluginId" :placeholder="$t('code.platform')" @change="changePlugin('edit')">
-            <el-option
-              v-for="item in plugins"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-              <img :src="require(`@/assets/img/code/${item.id}`)" style="width: 20px; height: 16px; vertical-align:middle" alt=""/>
-              &nbsp;&nbsp; {{ $t(item.name) }}
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <div v-for="(tmp, index) in tmpList" :key="index">
-          <el-form-item v-if="tmp.inputType === 'password'" :label="tmp.label" style="margin-bottom: 29px">
-            <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="new-password" show-password :placeholder="tmp.description"/>
-          </el-form-item>
-          <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean'" :label="tmp.label">
-            <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="off" :placeholder="tmp.description"/>
-          </el-form-item>
-        </div>
       </el-form>
-      <div style="margin: 10px;">
-        <div style="margin: 10px;">
-          <span style="color: red;">{{ $t('code.code_note') }}</span>
-        </div>
-      </div>
       <dialog-footer
         @cancel="updateVisible = false"
         @confirm="editAccount(form, 'update')"/>
     </el-drawer>
-    <!--Update code-->
+    <!--Update fs-->
 
   </main-container>
 </template>
@@ -212,6 +160,7 @@ import {_filter, _sort} from "@/common/js/utils";
 import {CODE_CONFIGS} from "../../common/components/search/search-components";
 import DialogFooter from "../head/DialogFooter";
 import DialogCreateFooter from "../head/DialogCreateFooter";
+import TarUpload from "../head/TarUpload";
 
 /* eslint-disable */
 export default {
@@ -225,6 +174,7 @@ export default {
     TableOperator,
     DialogFooter,
     DialogCreateFooter,
+    TarUpload,
   },
   provide() {
     return {
@@ -248,15 +198,10 @@ export default {
       updateVisible: false,
       innerDrawer: false,
       innerDrawerProxy: false,
-      plugins: [
-        {id: 'github.png', name: "Github"},
-        {id: 'gitlab.png', name: "GitLab"},
-      ],
       proxys: [],
-      tmpList: [],
       item: {},
       form: {},
-      addAccountForm: [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ],
+      addAccountForm: {},
       proxyForm: {},
       script: '',
       direction: 'rtl',
@@ -310,6 +255,7 @@ export default {
       ],
       sboms: [],
       versions: [],
+      tarFile: Object,
     }
   },
   watch: {
@@ -317,7 +263,7 @@ export default {
   },
   methods: {
     create() {
-      this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
+      this.addAccountForm = {};
       this.createVisible = true;
       this.activeProxy();
     },
@@ -341,45 +287,18 @@ export default {
         this.proxys = response.data;
       });
     },
-    //校验Git项目账号
-    validate() {
-      if (this.selectIds.size === 0) {
-        this.$warning(this.$t('code.please_choose_code'));
-        return;
-      }
-      this.$alert(this.$t('account.one_validate') + this.$t('code.code_setting') + " ？", '', {
-        confirmButtonText: this.$t('commons.confirm'),
-        callback: (action) => {
-          if (action === 'confirm') {
-            let formData = new FormData();
-            this.result = this.$request({
-              method: 'POST',
-              url: "/code/validate",
-              data: Array.from(this.selectIds),
-              headers: {
-                'Content-Type': undefined
-              }
-            }, res => {
-              if (res.data) {
-                this.$success(this.$t('commons.success'));
-              } else {
-                this.$error(this.$t('commons.error'));
-              }
-              this.search();
-            });
-          }
-        }
-      });
-    },
     select(selection) {
       this.selectIds.clear();
       selection.forEach(s => {
         this.selectIds.add(s.id)
       });
     },
+    appendTar(file) {
+      this.tarFile = file;
+    },
     //查询列表
     search() {
-      let url = "/code/list/" + this.currentPage + "/" + this.pageSize;
+      let url = "/fs/list/" + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -395,7 +314,6 @@ export default {
       this.changeSbom({sbomId: tmp.sbomId});
       this.updateVisible = true;
       this.activeProxy();
-      this.changePlugin('edit');
     },
     handleClose() {
       this.createVisible =  false;
@@ -433,64 +351,24 @@ export default {
     filterStatus(value, row) {
       return row.status === value;
     },
-    //新增Git项目账号信息/选择插件查询Git项目账号信息
-    async changePluginForAdd (form){
-      let url = "/code/plugin";
-      this.result = await this.$get(url, response => {
-        let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
-        form.tmpList = fromJson.data;
-        for (let tmp of form.tmpList) {
-          if (tmp.defaultValue !== undefined) {
-            tmp.input = tmp.defaultValue;
+    //保存fs
+    saveAccount(){
+      this.$refs['addAccountForm'].validate(valid => {
+        if (valid) {
+          let formData = new FormData();
+          if (this.tarFile) {
+            formData.append("tarFile", this.tarFile);
           }
-        }
-      });
-    },
-    //编辑Git项目账号信息/选择插件查询Git项目账号信息
-    async changePlugin (type){
-      let url = "/code/plugin";
-      this.result = await this.$get(url, response => {
-        let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
-        this.tmpList = fromJson.data;
-        if (type === 'edit') {
-          let credentials = typeof(this.item.credential) === 'string'?JSON.parse(this.item.credential):this.item.credential;
-          for (let tmp of this.tmpList) {
-            if (credentials[tmp.name] === undefined) {
-              tmp.input = tmp.defaultValue?tmp.defaultValue:"";
-            } else {
-              tmp.input = credentials[tmp.name];
+          formData.append("request", new Blob([JSON.stringify(this.addAccountForm)], {type: "application/json"}));
+          let axiosRequestConfig = {
+            method: "POST",
+            url: "/fs/addFs",
+            data: formData,
+            headers: {
+              "Content-Type": 'multipart/form-data'
             }
-          }
-        } else {
-          for (let tmp of this.tmpList) {
-            if (tmp.defaultValue !== undefined) {
-              tmp.input = tmp.defaultValue;
-            }
-          }
-        }
-      });
-    },
-    //保存Git项目账号信息
-    saveAccount(addAccountForm, type){
-      for (let item of addAccountForm) {
-        if (!item.tmpList.length) {
-          this.$warning(this.$t('commons.no_plugin_param'));
-          return;
-        }
-        let data = {}, key = {};
-        for (let tmp of item.tmpList) {
-          if(tmp.input) {
-            key[tmp.name] = tmp.input.trim();
-          }
-        }
-        data["credential"] = JSON.stringify(key);
-        data["name"] = item.name;
-        data["pluginIcon"] = item.pluginIcon;
-        data["sbomId"] = item.sbomId;
-        data["sbomVersionId"] = item.sbomVersionId;
-        if (item.isProxy) data["proxyId"] = item.proxyId;
-        if (type === 'add') {
-          this.result = this.$post("/code/addCode", data,response => {
+          };
+          this.result = this.$request(axiosRequestConfig, response => {
             if (response.success) {
               this.$success(this.$t('commons.create_success'));
               this.search();
@@ -499,50 +377,38 @@ export default {
               this.$error(response.message);
             }
           });
+        } else {
+          this.$error(this.$t('rule.full_param'));
+          return false;
         }
-      }
+      });
     },
-    //编辑Git项目账号信息
-    editAccount(item, type){
-      if (!this.tmpList.length) {
-        this.$error(this.$t('account.i18n_account_cloud_plugin_param'));
-        return;
-      }
+    //编辑fs
+    editAccount(item){
       this.$refs['accountForm'].validate(valid => {
         if (valid) {
-          let data = {}, key = {};
-          for (let tmp of this.tmpList) {
-            key[tmp.name] = tmp.input;
+          let formData = new FormData();
+          if (this.tarFile) {
+            formData.append("tarFile", this.tarFile);
           }
-          data["credential"] = JSON.stringify(key);
-          data["name"] = item.name;
-          data["pluginId"] = item.pluginId;
-          data["sbomId"] = item.sbomId;
-          data["sbomVersionId"] = item.sbomVersionId;
-          if (item.isProxy) data["proxyId"] = item.proxyId;
-
-          if (type === 'add') {
-            this.result = this.$post("/code/addCode", data,response => {
-              if (response.success) {
-                this.$success(this.$t('commons.create_success'));
-                this.search();
-                this.handleClose();
-              } else {
-                this.$error(response.message);
-              }
-            });
-          } else {
-            data["id"] = item.id;
-            this.result = this.$post("/code/updateCode", data,response => {
-              if (response.success) {
-                this.$success(this.$t('commons.update_success'));
-                this.handleClose();
-                this.search();
-              } else {
-                this.$error(response.message);
-              }
-            });
-          }
+          formData.append("request", new Blob([JSON.stringify(item)], {type: "application/json"}));
+          let axiosRequestConfig = {
+            method: "POST",
+            url: "/fs/updateFs",
+            data: formData,
+            headers: {
+              "Content-Type": 'multipart/form-data'
+            }
+          };
+          this.result = this.$request(axiosRequestConfig, (response) => {
+            if (response.success) {
+              this.$success(this.$t('commons.update_success'));
+              this.search();
+              this.handleClose();
+            } else {
+              this.$error(response.message);
+            }
+          });
         } else {
           this.$error(this.$t('rule.full_param'));
           return false;
@@ -556,18 +422,6 @@ export default {
         return 'warning-row';
       } else {
         return '';
-      }
-    },
-    addAccount (addAccountForm) {
-      let newParam = { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] };
-      addAccountForm.push(newParam);
-    },
-    deleteAccount (parameter, p) {
-      for (let i in parameter) {
-        if (parameter[i].name === p.name) {
-          parameter.splice(i, 1);
-          return;
-        }
       }
     },
     handleScan(item) {
