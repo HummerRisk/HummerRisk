@@ -2,7 +2,7 @@
   <main-container>
     <el-card v-loading="result.loading">
       <template v-slot:header>
-        <table-header :condition.sync="condition" @search="search" @create="create" :createTip="$t('task.task_add')" :title="$t('task.task_list')"/>
+        <table-header :condition.sync="condition" @search="search" @create="create" :createTip="$t('task.task_add')" :show-create="true" :title="$t('task.task_list')"/>
       </template>
 
       <el-table border class="adjust-table" :data="tableData" style="width: 100%" @sort-change="sort" @filter-change="filter"

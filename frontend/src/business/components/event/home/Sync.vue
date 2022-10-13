@@ -4,8 +4,8 @@
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('event.event_sync')"
-                      @syncData="syncData" :syncTip="$t('event.sync')"
-                      :show-sync="true"/>
+                      @create="create" :createTip="$t('event.sync')"
+                      :show-create="true"/>
       </template>
         <el-table border :data="tableData" class="adjust-table table-content">
           <el-table-column  min-width="10%" :label="$t('event.cloud_account_name')">
@@ -134,7 +134,7 @@
 
 <script>
 import TablePagination from "../../common/pagination/TablePagination";
-import TableHeader from "../head/TableHeader";
+import TableHeader from "@/business/components/common/components/TableHeader";
 import Container from "../../common/components/Container";
 import MainContainer from "../../common/components/MainContainer";
 import {CLOUD_EVENT_SYNC_CONFIGS} from "../../common/components/search/search-components";
@@ -294,7 +294,7 @@ export default {
       }
       return sum == 0;
     },
-    syncData(){
+    create(){
       this.reset()
       this.showSync = true
     },

@@ -8,10 +8,14 @@
     </el-row>
     <el-row type="flex" justify="space-between" align="middle">
       <span class="operate-button">
-        <table-button  icon="el-icon-video-play" type="primary"
-                       :content="syncTip" @click="sync"/>
+        <table-button  v-if="showBack" icon="el-icon-back"
+                         :content="backTip" @click="back"/>
 
         <slot name="button"></slot>
+      </span>
+      <span>
+        <table-search-bar :condition.sync="condition" @change="search" class="search-bar" :tip="tip"/>
+        <table-adv-search-bar :condition.sync="condition" @search="search" v-if="isCombine"/>
       </span>
     </el-row>
   </div>
@@ -33,14 +37,14 @@ export default {
           return this.$t('resource.search_by_hummerid');
         }
       },
-      showSync: {
+      showBack: {
         type: Boolean,
         default: false
       },
       condition: {
         type: Object
       },
-      syncTip: {
+      backTip: {
         type: String
       },
       tip: {
@@ -55,8 +59,8 @@ export default {
         this.$emit('update:condition', this.condition);
         this.$emit('search', value);
       },
-      sync() {
-        this.$emit('sync');
+      back() {
+        this.$emit('back');
       },
     },
     computed: {

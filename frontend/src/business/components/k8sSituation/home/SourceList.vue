@@ -105,7 +105,7 @@
 
 <script>
 import Container from "../.././common/components/Container";
-import TableHeader from "../head/TableHeader";
+import TableHeader from "@/business/components/common/components/TableHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";

@@ -3,7 +3,7 @@
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search" @create="create"
-                      :create-tip="$t('image.repo_create')" :title="$t('image.image_repo_list')"/>
+                      :create-tip="$t('image.repo_create')" :title="$t('image.image_repo_list')" :show-create="true"/>
       </template>
 
       <el-table border class="adjust-table" :data="tableData" style="width: 100%" @sort-change="sort" @filter-change="filter"
@@ -252,7 +252,6 @@
 <script>
 import TablePagination from "@/business/components/common/pagination/TablePagination";
 import TableHeader from "@/business/components/common/components/TableHeader";
-import SyncTableHeader from "../head/SyncTableHeader";
 import TableOperators from "@/business/components/common/components/TableOperators";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import ImageStatus from "../head/ImageStatus";
@@ -269,7 +268,6 @@ export default {
     ImageStatus,
     TableOperators,
     MainContainer,
-    SyncTableHeader,
   },
   data() {
     return {

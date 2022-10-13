@@ -2,7 +2,7 @@
   <main-container>
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
-        <image-result-header :condition.sync="condition"
+        <table-header :condition.sync="condition"
                                @search="search"
                                :title="$t('image.result_list')"/>
       </template>
@@ -237,7 +237,7 @@
 import TableOperators from "../../common/components/TableOperators";
 import MainContainer from "../../common/components/MainContainer";
 import Container from "../../common/components/Container";
-import ImageResultHeader from "../head/ImageResultHeader";
+import TableHeader from "@/business/components/common/components/TableHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../head/DialogFooter";
@@ -252,7 +252,7 @@ export default {
     TableOperators,
     MainContainer,
     Container,
-    ImageResultHeader,
+    TableHeader,
     TablePagination,
     TableOperator,
     DialogFooter,

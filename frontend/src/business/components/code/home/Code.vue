@@ -204,7 +204,7 @@
 
 <script>
 import TablePagination from "../../common/pagination/TablePagination";
-import TableHeader from "../head/TableHeader";
+import TableHeader from "@/business/components/common/components/TableHeader";
 import TableOperator from "../../common/components/TableOperator";
 import Container from "../../common/components/Container";
 import MainContainer from "../../common/components/MainContainer";

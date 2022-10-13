@@ -10,7 +10,7 @@
             :label="$t(tag.tagName)">
           </el-tab-pane>
         </el-tabs>
-        <server-rule-header :condition.sync="condition"
+        <table-header :condition.sync="condition"
                       @search="search"
                       :title="$t('server.rule_list')"
                       @create="create"
@@ -210,7 +210,7 @@
 import TableOperators from "../../common/components/TableOperators";
 import MainContainer from "../../common/components/MainContainer";
 import Container from "../../common/components/Container";
-import ServerRuleHeader from "../head/ServerRuleHeader";
+import TableHeader from "@/business/components/common/components/TableHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../head/DialogFooter";
@@ -224,7 +224,7 @@ export default {
     TableOperators,
     MainContainer,
     Container,
-    ServerRuleHeader,
+    TableHeader,
     TablePagination,
     TableOperator,
     DialogFooter,

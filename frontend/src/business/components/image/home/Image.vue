@@ -3,7 +3,7 @@
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search" @create="create"
-                      :create-tip="$t('image.create')" :title="$t('image.image_list')"/>
+                      :create-tip="$t('image.create')" :title="$t('image.image_list')" :show-create="true"/>
       </template>
 
       <el-card class="table-card el-row-card" :body-style="{ padding: '0' }" :key="index" v-for="(data, index) in tableData">

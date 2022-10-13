@@ -3,9 +3,7 @@
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
-                      :title="$t('event.group')"
-                      :syncTip="$t('event.sync')"
-                      :show-sync="false"/>
+                      :title="$t('event.group')"/>
       </template>
       <el-table border :data="tableData" class="adjust-table table-content">
         <el-table-column type="expand">
@@ -90,7 +88,7 @@
 
 <script>
 import TablePagination from "../../common/pagination/TablePagination";
-import TableHeader from "../head/TableHeader";
+import TableHeader from "@/business/components/common/components/TableHeader";
 import Container from "../../common/components/Container";
 import MainContainer from "../../common/components/MainContainer";
 import {CLOUD_EVENT_CONFIGS} from "../../common/components/search/search-components";

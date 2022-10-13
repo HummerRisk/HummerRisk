@@ -2,7 +2,7 @@
     <main-container>
       <el-card class="table-card" v-loading="result.loading">
         <template v-slot:header>
-          <server-table-header :condition.sync="condition" @search="search"
+          <table-header :condition.sync="condition" @search="search"
                            :title="$t('server.server_list')"
                            @create="create" :createTip="$t('server.server_create')"
                            @scan="scan" :scanTip="$t('server.one_scan')"
@@ -304,7 +304,7 @@
 
 <script>
 import TablePagination from "../../common/pagination/TablePagination";
-import ServerTableHeader from "../head/ServerTableHeader";
+import TableHeader from "@/business/components/common/components/TableHeader";
 import TableOperator from "../../common/components/TableOperator";
 import Container from "../../common/components/Container";
 import MainContainer from "../../common/components/MainContainer";
@@ -320,7 +320,7 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
       TableOperators,
       MainContainer,
       Container,
-      ServerTableHeader,
+      TableHeader,
       TablePagination,
       TableOperator,
       DialogFooter,

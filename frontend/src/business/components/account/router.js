@@ -38,11 +38,6 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/resource/home/Result'),
     },
     {
-      path: "resultdetails/:id",
-      name: "resultDetails",
-      component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/ResultDetails"),
-    },
-    {
       path: "statistics",
       name: "cloudStatistics",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/resource/home/Statistics"),

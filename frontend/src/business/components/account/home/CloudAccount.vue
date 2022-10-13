@@ -308,7 +308,7 @@
 
 <script>
 import TablePagination from "../../common/pagination/TablePagination";
-import TableHeader from "../head/TableHeader";
+import TableHeader from "@/business/components/common/components/TableHeader";
 import Container from "../../common/components/Container";
 import MainContainer from "../../common/components/MainContainer";
 import AccountStatus from "./AccountStatus";

@@ -8,11 +8,12 @@
     </el-row>
     <el-row type="flex" justify="space-between" align="middle">
       <span class="operate-button">
-        <table-button  icon="el-icon-circle-plus-outline"
+        <table-button v-if="showCreate" icon="el-icon-circle-plus-outline"
                          :content="createTip" @click="create"/>
+        <table-button v-if="showScan" icon="el-icon-video-play"
+                              type="success" :content="scanTip" @click="scan"/>
         <table-button v-if="showRun" icon="el-icon-video-play"
-                         type="primary"
-                         :content="runTip" @click="validate"/>
+                         type="primary" :content="runTip" @click="validate"/>
 
         <slot name="button"></slot>
       </span>
@@ -44,6 +45,10 @@ import TableAdvSearchBar from "./search/TableAdvSearchBar";
         type: Boolean,
         default: false
       },
+      showScan: {
+        type: Boolean,
+        default: false
+      },
       showRun: {
         type: Boolean,
         default: false
@@ -57,9 +62,17 @@ import TableAdvSearchBar from "./search/TableAdvSearchBar";
           return this.$t('commons.create');
         }
       },
+      scanTip: {
+        type: String,
+        default() {
+          return this.$t('account.scan');
+        }
+      },
       runTip: {
         type: String,
-
+        default() {
+          return this.$t('account.validate');
+        }
       },
       tip: {
         String,
@@ -75,6 +88,9 @@ import TableAdvSearchBar from "./search/TableAdvSearchBar";
       },
       create() {
         this.$emit('create');
+      },
+      scan() {
+        this.$emit('scan');
       },
       validate() {
         this.$emit('validate')
