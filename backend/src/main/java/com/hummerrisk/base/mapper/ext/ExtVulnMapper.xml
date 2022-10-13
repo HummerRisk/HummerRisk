@@ -67,7 +67,7 @@
             <if test="accountId != null">
                 AND t4.id = #{accountId}
             </if>
-            and p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
+            and p.type = 'cloud'
         </where>
         ORDER BY CONVERT(ratio, signed), ruSum desc
     </select>

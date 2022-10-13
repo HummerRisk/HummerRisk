@@ -131,7 +131,7 @@
             <if test="request.status != null and request.status != ''">
                 and t.status = #{request.status}
             </if>
-            AND p1.type = 'cloud' OR p1.id = 'hummer-k8s-plugin'
+            AND p1.type = 'cloud'
         </where>
         order by t.update_time desc
     </select>
@@ -224,7 +224,7 @@
             <if test="accountId != null">
                 AND t4.account_id = #{accountId}
             </if>
-            and p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
+            and p.type = 'cloud'
         </where>
         GROUP BY
             t.id
@@ -247,7 +247,7 @@
             JOIN resource_item t5 ON t4.id = t5.resource_id
             LEFT JOIN plugin p on t2.plugin_id = p.id
             WHERE t1.report_id = t.id
-            AND p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
+            AND p.type = 'cloud'
             <if test="accountId != null">
                 AND t4.account_id = #{accountId}
             </if>
@@ -264,7 +264,7 @@
             <if test="accountId != null">
                 AND t4.account_id = #{accountId}
             </if>
-            AND p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
+            AND p.type = 'cloud'
         </where>
         GROUP BY
             t.id
@@ -291,7 +291,7 @@
             <if test="accountId != null">
                 AND t4.account_id = #{accountId}
             </if>
-            AND p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
+            AND p.type = 'cloud'
         </where>
         GROUP BY
             t.tag_key
@@ -317,7 +317,7 @@
             <if test="accountId != null">
                 AND t1.account_id = #{accountId}
             </if>
-            AND p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
+            AND p.type = 'cloud'
         </where>
         GROUP BY
             t1.region_id, t1.region_name, t1.account_label, t1.account_url
@@ -347,7 +347,7 @@
                 AND t.account_id = #{accountId}
             </if>
             AND t4.task_name IS NOT NULL
-            AND p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
+            AND p.type = 'cloud'
         </where>
         ORDER BY t.create_time DESC
     </select>
@@ -413,7 +413,7 @@
             <if test="id != null">
                 AND t.id = #{id}
             </if>
-            AND p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
+            AND p.type = 'cloud'
         </where>
         ORDER BY t5.create_time DESC
     </select>
@@ -445,7 +445,7 @@
             <if test="pluginName != null">
                 AND t5.plugin_name = #{pluginName}
             </if>
-            AND p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
+            AND p.type = 'cloud'
         </where>
         ORDER BY t5.create_time DESC
     </select>

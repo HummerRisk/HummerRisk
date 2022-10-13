@@ -403,7 +403,7 @@ import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../head/RuleDialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import RuleType from "./RuleType";
-import {RULE_CONFIGS} from "../../common/components/search/search-components";
+import {VULN_RULE_CONFIGS} from "../../common/components/search/search-components";
 
 /* eslint-disable */
 export default {
@@ -421,7 +421,7 @@ export default {
     return {
       result: {},
       condition: {
-        components: RULE_CONFIGS
+        components: VULN_RULE_CONFIGS
       },
       tableData: [],
       currentPage: 1,

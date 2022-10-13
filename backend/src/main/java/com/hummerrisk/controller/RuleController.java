@@ -65,8 +65,22 @@ public class RuleController {
     @I18n
     @ApiOperation(value = "所有规则组")
     @GetMapping(value = "allRuleGroups")
-    public List<RuleGroupDTO> allrRuleGroups() {
+    public List<RuleGroupDTO> allRuleGroups() {
         return ruleService.ruleGroupList(new RuleGroupRequest());
+    }
+
+    @I18n
+    @ApiOperation(value = "所有云检测规则组")
+    @GetMapping(value = "allCloudRuleGroups")
+    public List<RuleGroupDTO> allCloudRuleGroups() {
+        return ruleService.allCloudRuleGroups(new RuleGroupRequest());
+    }
+
+    @I18n
+    @ApiOperation(value = "所有漏洞检测规则组")
+    @GetMapping(value = "allVulnRuleGroups")
+    public List<RuleGroupDTO> allVulnRuleGroups() {
+        return ruleService.allVulnRuleGroups(new RuleGroupRequest());
     }
 
     @I18n
@@ -141,6 +155,18 @@ public class RuleController {
     @GetMapping(value = "all/resourceTypes")
     public List<Map<String, String>> getAllResourceTypes() {
         return ruleService.getAllResourceTypes();
+    }
+
+    @ApiOperation(value = "云检测规则类型")
+    @GetMapping(value = "all/cloudResourceTypes")
+    public List<Map<String, String>> cloudResourceTypes() {
+        return ruleService.cloudResourceTypes();
+    }
+
+    @ApiOperation(value = "漏洞检测规则类型")
+    @GetMapping(value = "all/vulnResourceTypes")
+    public List<Map<String, String>> vulnResourceTypes() {
+        return ruleService.vulnResourceTypes();
     }
 
     @I18n

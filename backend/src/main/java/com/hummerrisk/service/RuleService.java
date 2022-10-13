@@ -121,6 +121,14 @@ public class RuleService {
         return extRuleGroupMapper.list(request);
     }
 
+    public List<RuleGroupDTO> allCloudRuleGroups(RuleGroupRequest request) {
+        return extRuleGroupMapper.allCloudRuleGroups(request);
+    }
+
+    public List<RuleGroupDTO> allVulnRuleGroups(RuleGroupRequest request) {
+        return extRuleGroupMapper.allVulnRuleGroups(request);
+    }
+
     public Rule saveRules(CreateRuleRequest ruleRequest) {
         try {
             if (StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.custodian.toString())) {
@@ -516,6 +524,14 @@ public class RuleService {
 
     public List<Map<String, String>> getAllResourceTypes() {
         return extRuleTypeMapper.selectByExample();
+    }
+
+    public List<Map<String, String>> cloudResourceTypes() {
+        return extRuleTypeMapper.cloudResourceTypes();
+    }
+
+    public List<Map<String, String>> vulnResourceTypes() {
+        return extRuleTypeMapper.vulnResourceTypes();
     }
 
     public List<RuleGroup> getRuleGroups(String pluginId) {

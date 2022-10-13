@@ -395,7 +395,27 @@ export const RULE_GROUP = {
     options: [OPERATORS.IN, OPERATORS.NOT_IN]
   },
   options: { // 异步获取候选项
-    url: "/rule/allRuleGroups",
+    url: "/rule/allCloudRuleGroups",
+    labelKey: "name",
+    valueKey: "id",
+    showLabel: option => {
+      return option.label;
+    }
+  },
+  props: { // 尾部控件的props，一般为element ui控件的props
+    multiple: false
+  }
+}
+
+export const VULN_RULE_GROUP = {
+  key: "groupId",
+  name: 'TableSearchSelect',
+  label: 'rule.rule_set',
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN]
+  },
+  options: { // 异步获取候选项
+    url: "/rule/allVulnRuleGroups",
     labelKey: "name",
     valueKey: "id",
     showLabel: option => {
@@ -432,7 +452,27 @@ export const RULE_RESOURCE_TYPE = {
     options: [OPERATORS.IN, OPERATORS.NOT_IN]
   },
   options: { // 异步获取候选项
-    url: "/rule/all/resourceTypes",
+    url: "/rule/all/cloudResourceTypes",
+    labelKey: "name",
+    valueKey: "name",
+    showLabel: option => {
+      return option.label;
+    }
+  },
+  props: { // 尾部控件的props，一般为element ui控件的props
+    multiple: false
+  }
+}
+
+export const VULN_RULE_RESOURCE_TYPE = {
+  key: "resourceType",
+  name: 'TableSearchSelect',
+  label: 'rule.resource_type',
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN]
+  },
+  options: { // 异步获取候选项
+    url: "/rule/all/vulnResourceTypes",
     labelKey: "name",
     valueKey: "name",
     showLabel: option => {
@@ -558,6 +598,7 @@ export const SITUATION_LOG_STATUS = {
 
 export const ACCOUNT_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const VULN_CONFIGS = [NAME, VULN_PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
+export const VULN_RULE_CONFIGS = [RULE_NAME, VULN_PLUGIN_NAME, RULE_SEVERITY, VULN_RULE_RESOURCE_TYPE, VULN_RULE_GROUP];
 export const RULE_TAG_CONFIGS = [TAG_KEY, TAG_NAME, TAG_FLAG, TAG_INDEX];
 export const RULE_GROUP_CONFIGS = [NAME, DESCRIPTION, RULE_PLUGIN_NAME];
 export const RULE_CONFIGS = [RULE_NAME, RULE_PLUGIN_NAME, RULE_SEVERITY, RULE_RESOURCE_TYPE, RULE_GROUP];
