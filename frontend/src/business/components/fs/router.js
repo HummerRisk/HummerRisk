@@ -13,11 +13,6 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/fs/home/Fs'),
     },
     {
-      path: "rule",
-      name: "ImageRule",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/fs/home/Rule'),
-    },
-    {
       path: "result",
       name: "FsResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/fs/home/Result'),

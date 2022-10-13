@@ -1630,5 +1630,7 @@ export default {
     status: '状态',
     file: '文件或文件压缩包',
     upload_tip: '大小不超过 {0} 的文件包',
+    path: '文件路径',
+    size: '文件大小',
   },
 };

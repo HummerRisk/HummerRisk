@@ -105,6 +105,10 @@ public class ResourceCreateService {
     private CodeService codeService;
     @Resource
     private HistoryCodeResultMapper historyCodeResultMapper;
+    @Resource
+    private FileSystemResultMapper fileSystemResultMapper;
+    @Resource
+    private FileSystemService fileSystemService;
 
     @QuartzScheduled(cron = "${cron.expression.local}")
     public void handleTasks() throws Exception {
@@ -208,7 +212,7 @@ public class ResourceCreateService {
             });
         }
 
-        //云原生K8s检测
+        //K8s检测
         final CloudNativeResultExample cloudNativeResultExample = new CloudNativeResultExample();
         CloudNativeResultExample.Criteria cloudNativeCriteria = cloudNativeResultExample.createCriteria();
         cloudNativeCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
@@ -241,7 +245,7 @@ public class ResourceCreateService {
             });
         }
 
-        //云原生部署检测
+        //部署检测
         final CloudNativeConfigResultExample cloudNativeConfigResultExample = new CloudNativeConfigResultExample();
         CloudNativeConfigResultExample.Criteria cloudNativeConfigCriteria = cloudNativeConfigResultExample.createCriteria();
         cloudNativeConfigCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
@@ -307,6 +311,38 @@ public class ResourceCreateService {
             });
         }
 
+        //文件系统检测
+        final FileSystemResultExample fileSystemResultExample = new FileSystemResultExample();
+        FileSystemResultExample.Criteria fsCriteria = fileSystemResultExample.createCriteria();
+        fsCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
+            codeCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+        }
+        fileSystemResultExample.setOrderByClause("create_time limit 10");
+        List<FileSystemResult> fileSystemResults = fileSystemResultMapper.selectByExampleWithBLOBs(fileSystemResultExample);
+        if (CollectionUtils.isNotEmpty(fileSystemResults)) {
+            fileSystemResults.forEach(fileSystemResult -> {
+                final FileSystemResult fsToBeProceed;
+                try {
+                    fsToBeProceed = BeanUtils.copyBean(new FileSystemResult(), fileSystemResult);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                if (processingGroupIdMap.get(fsToBeProceed.getId()) != null) {
+                    return;
+                }
+                processingGroupIdMap.put(fsToBeProceed.getId(), fsToBeProceed.getId());
+                commonThreadPool.addTask(() -> {
+                    try {
+                        fileSystemService.createScan(fsToBeProceed);
+                    } catch (Exception e) {
+                        LogUtil.error(e.getMessage());
+                    } finally {
+                        processingGroupIdMap.remove(fsToBeProceed.getId());
+                    }
+                });
+            });
+        }
 
         //历史数据统计
         final HistoryScanExample historyScanExample = new HistoryScanExample();

@@ -63,7 +63,7 @@
       <!--Create Quartz Task-->
       <el-drawer class="rtl" :title="$t('account.create_quartz_task')" :visible.sync="createVisible" size="50%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-          <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" :ref="'createForm'">
+          <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" ref="'createForm'">
             <el-steps :active="active"  finish-status="success">
               <el-step :title="$t('account.step1')">
               </el-step>

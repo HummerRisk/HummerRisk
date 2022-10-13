@@ -10,40 +10,26 @@
 
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
                 :row-class-name="tableRowClassName"
-                @filter-change="filter" @select-all="select" @select="select">
-        <el-table-column type="selection" min-width="5%">
-        </el-table-column>
-        <el-table-column type="index" min-width="5%"/>
-        <el-table-column prop="name" :label="$t('code.name')" min-width="15%" show-overflow-tooltip>
+                @filter-change="filter">
+        <el-table-column type="index" min-width="2%"/>
+        <el-table-column prop="name" :label="$t('fs.name')" min-width="10%" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
-                <img :src="require(`@/assets/img/code/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
+                <img :src="require(`@/assets/img/fs/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.name }}
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" min-width="10%" :label="$t('code.status')"
-                         column-key="status"
-                         :filters="statusFilters"
-                         :filter-method="filterStatus">
-          <template v-slot:default="{row}">
-            <code-status :row="row"/>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="15%" :label="$t('account.create_time')" sortable
-                         prop="createTime">
-          <template v-slot:default="scope">
-            <span>{{ scope.row.createTime | timestampFormatDate }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="15%" :label="$t('account.update_time')" sortable
+        <el-table-column prop="path" :label="$t('fs.path')" min-width="35%" show-overflow-tooltip/>
+        <el-table-column prop="size" :label="$t('fs.size')" min-width="8%" show-overflow-tooltip/>
+        <el-table-column min-width="13%" :label="$t('account.update_time')" sortable
                          prop="updateTime">
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
-        <el-table-column min-width="17%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="12%" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
@@ -55,7 +41,7 @@
     <!--Create fs-->
     <el-drawer class="rtl" :title="$t('fs.fs_create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
-      <el-form :model="addAccountForm" label-position="right" label-width="150px" size="medium" :rules="rule" :ref="addAccountForm">
+      <el-form :model="addAccountForm" label-position="right" label-width="150px" size="medium" :rules="rule" ref="addAccountForm">
           <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-select style="width: 100%;" v-model="addAccountForm.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(addAccountForm)">
               <el-option
@@ -84,12 +70,12 @@
             <el-input v-model="addAccountForm.name" autocomplete="off" :placeholder="$t('fs.name')"/>
           </el-form-item>
           <el-form-item :label="$t('fs.file')" ref="type" prop="type">
-            <tar-upload v-on:appendTar="appendTar" v-model="addAccountForm.path" :param="form.path"/>
+            <tar-upload v-on:appendTar="appendTar" v-model="addAccountForm.path" :param="addAccountForm.path"/>
           </el-form-item>
-          <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-form-item :label="$t('proxy.is_proxy')">
             <el-switch v-model="addAccountForm.isProxy"></el-switch>
           </el-form-item>
-          <el-form-item v-if="addAccountForm.isProxy && addAccountForm.pluginId" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-form-item v-if="addAccountForm.isProxy && addAccountForm.pluginId" :label="$t('commons.proxy')">
             <el-select style="width: 100%;" v-model="addAccountForm.proxyId" :placeholder="$t('commons.proxy')">
               <el-option
                 v-for="item in proxys"
@@ -103,14 +89,14 @@
         </el-form>
       <dialog-footer
         @cancel="createVisible = false"
-        @confirm="saveAccount(addAccountForm, 'add')"/>
+        @confirm="saveAccount('addAccountForm')"/>
     </el-drawer>
     <!--Create fs-->
 
     <!--Update fs-->
     <el-drawer class="rtl" :title="$t('code.code_update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
-      <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="accountForm">
+      <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="form">
         <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
           <el-select style="width: 100%;" v-model="form.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(form)">
             <el-option
@@ -135,13 +121,30 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('code.name')"  ref="name" prop="name">
-          <el-input v-model="form.name" autocomplete="off" :placeholder="$t('code.name')"/>
+        <el-form-item :label="$t('fs.name')"  ref="name" prop="name">
+          <el-input v-model="form.name" autocomplete="off" :placeholder="$t('fs.name')"/>
+        </el-form-item>
+        <el-form-item :label="$t('fs.file')" ref="type" prop="type">
+          <tar-upload v-on:appendTar="appendTar" v-model="form.path" :param="form.path"/>
+        </el-form-item>
+        <el-form-item :label="$t('proxy.is_proxy')">
+          <el-switch v-model="form.isProxy"></el-switch>
+        </el-form-item>
+        <el-form-item v-if="form.isProxy && form.pluginId" :label="$t('commons.proxy')">
+          <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+            <el-option
+              v-for="item in proxys"
+              :key="item.id"
+              :label="item.proxyIp"
+              :value="item.id">
+              &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
+            </el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <dialog-footer
         @cancel="updateVisible = false"
-        @confirm="editAccount(form, 'update')"/>
+        @confirm="editAccount('form')"/>
     </el-drawer>
     <!--Update fs-->
 
@@ -154,26 +157,22 @@ import TableHeader from "@/business/components/common/components/TableHeader";
 import TableOperator from "../../common/components/TableOperator";
 import Container from "../../common/components/Container";
 import MainContainer from "../../common/components/MainContainer";
-import FsStatus from "./FsStatus";
 import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
-import {CODE_CONFIGS} from "../../common/components/search/search-components";
-import DialogFooter from "../head/DialogFooter";
-import DialogCreateFooter from "../head/DialogCreateFooter";
+import {FS_CONFIGS} from "../../common/components/search/search-components";
+import DialogFooter from "@/business/components/common/components/DialogFooter";
 import TarUpload from "../head/TarUpload";
 
 /* eslint-disable */
 export default {
   components: {
     TableOperators,
-    FsStatus,
     MainContainer,
     Container,
     TableHeader,
     TablePagination,
     TableOperator,
     DialogFooter,
-    DialogCreateFooter,
     TarUpload,
   },
   provide() {
@@ -186,18 +185,15 @@ export default {
       credential: {},
       result: {},
       condition: {
-        components: CODE_CONFIGS
+        components: FS_CONFIGS
       },
       tableData: [],
       currentPage: 1,
       pageSize: 10,
       total: 0,
       loading: false,
-      selectIds: new Set(),
       createVisible: false,
       updateVisible: false,
-      innerDrawer: false,
-      innerDrawerProxy: false,
       proxys: [],
       item: {},
       form: {},
@@ -214,22 +210,6 @@ export default {
             message: this.$t("workspace.special_characters_are_not_supported"),
             trigger: 'blur'
           }
-        ],
-        proxyIp: [
-          {required: true, message: this.$t('proxy.proxy_ip'), trigger: 'blur'},
-          {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
-        ],
-        proxyPort: [
-          {required: true, message: this.$t('proxy.proxy_port'), trigger: 'blur'},
-          {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
-        ],
-        proxyName: [
-          {required: false, message: this.$t('proxy.proxy_name'), trigger: 'blur'},
-          {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
-        ],
-        proxyPassword: [
-          {required: false, message: this.$t('proxy.proxy_password'), trigger: 'blur'},
-          {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
         ],
       },
       buttons: [
@@ -287,12 +267,6 @@ export default {
         this.proxys = response.data;
       });
     },
-    select(selection) {
-      this.selectIds.clear();
-      selection.forEach(s => {
-        this.selectIds.add(s.id)
-      });
-    },
     appendTar(file) {
       this.tarFile = file;
     },
@@ -324,7 +298,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/code/deleteCode/" + obj.id, () => {
+            this.result = this.$get("/fs/deleteFs/" + obj.id, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -336,7 +310,6 @@ export default {
       this.$forceUpdate();
     },
     init() {
-      this.selectIds.clear();
       this.search();
       this.initSboms();
     },
@@ -348,12 +321,9 @@ export default {
       _filter(filters, this.condition);
       this.search();
     },
-    filterStatus(value, row) {
-      return row.status === value;
-    },
     //保存fs
-    saveAccount(){
-      this.$refs['addAccountForm'].validate(valid => {
+    saveAccount(addAccountForm){
+      this.$refs[addAccountForm].validate(valid => {
         if (valid) {
           let formData = new FormData();
           if (this.tarFile) {
@@ -384,14 +354,14 @@ export default {
       });
     },
     //编辑fs
-    editAccount(item){
-      this.$refs['accountForm'].validate(valid => {
+    editAccount(form){
+      this.$refs[form].validate(valid => {
         if (valid) {
           let formData = new FormData();
           if (this.tarFile) {
             formData.append("tarFile", this.tarFile);
           }
-          formData.append("request", new Blob([JSON.stringify(item)], {type: "application/json"}));
+          formData.append("request", new Blob([JSON.stringify(this.form)], {type: "application/json"}));
           let axiosRequestConfig = {
             method: "POST",
             url: "/fs/updateFs",
@@ -429,11 +399,11 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get("/code/scan/" + item.id,response => {
+            this.$get("/fs/scan/" + item.id,response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start'));
                 this.$router.push({
-                  path: '/code/result',
+                  path: '/fs/result',
                   query: {
                     date:new Date().getTime()
                   },

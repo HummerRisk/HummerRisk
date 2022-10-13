@@ -120,6 +120,10 @@ CREATE TABLE IF NOT EXISTS `history_file_system_result_log` (
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
+INSERT INTO `file_system_rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `last_modified`, `flag`) VALUES ('rtyuewq3-ef4c-4gd8-bhc5-5ej110kb0l71', '文件系统检测', 1, 'HighRisk', '文件系统漏洞检测', '全面的漏洞检测', '[]', concat(unix_timestamp(now()), '001'), 1);
+
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('rtyuewq3-ef4c-4gd8-bhc5-5ej110kb0l71', 'safety');
+
 ALTER TABLE `history_server_task` RENAME TO `history_server_result`;
 
 ALTER TABLE `history_server_task_log` RENAME TO `history_server_result_log`;
