@@ -53,7 +53,7 @@ import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import Container from "../../common/components/Container";
 import {_filter, _sort} from "@/common/js/utils";
-import TableHeader from "../head/TableHeader";
+import TableHeader from "@/business/components/common/components/TableHeader";
 /* eslint-disable */
   export default {
     name: "active",

@@ -40,7 +40,7 @@
 
 <script>
 import TableOperators from "../../common/components/TableOperators";
-import TableHeader from "../head/DetailTableHeader";
+import TableHeader from "@/business/components/common/components/DetailTableHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import {_filter, _sort} from "@/common/js/utils";

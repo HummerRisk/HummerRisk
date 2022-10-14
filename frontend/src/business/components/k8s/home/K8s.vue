@@ -182,8 +182,8 @@ import K8sOperatorStatus from "./K8sOperatorStatus";
 import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import {K8S_CONFIGS} from "../../common/components/search/search-components";
-import ProxyDialogFooter from "../head/ProxyDialogFooter";
-import ProxyDialogCreateFooter from "../head/ProxyDialogCreateFooter";
+import ProxyDialogFooter from "@/business/components/common/components/ProxyDialogFooter";
+import ProxyDialogCreateFooter from "@/business/components/common/components/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import HrCodeEdit from "@/business/components/common/components/HrCodeEdit";
 

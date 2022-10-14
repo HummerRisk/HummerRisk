@@ -139,7 +139,7 @@ import Container from "../../common/components/Container";
 import TableHeader from "@/business/components/common/components/TableHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
-import DialogFooter from "../head/DialogFooter";
+import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import {SERVER_CERTIFICATE_CONFIGS} from "../../common/components/search/search-components";
 import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";

@@ -221,7 +221,7 @@ import MainContainer from "../../common/components/MainContainer";
 import Container from "../../common/components/Container";
 import TableHeader from "../../common/components/TableHeader";
 import TableOperator from "../../common/components/TableOperator";
-import DialogFooter from "../head/DialogFooter";
+import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter} from "@/common/js/utils";
 import RuleType from "./RuleType";
 import SeverityType from "./SeverityType";

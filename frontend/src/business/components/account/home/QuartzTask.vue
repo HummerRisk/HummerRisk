@@ -308,7 +308,7 @@ import MainContainer from "@/business/components/common/components/MainContainer
 import TablePagination from "@/business/components/common/pagination/TablePagination";
 import {_filter, _sort} from "@/common/js/utils";
 import RuleType from "@/business/components/rule/home/RuleType";
-import DialogFooter from "@/business/components/account/head/DialogFooter";
+import DialogFooter from "@/business/components/common/components/DialogNextFooter";
 import CronInput from 'vue-cron-generator/src/components/cron-input';
 import {DEFAULT_CRON_EXPRESSION} from 'vue-cron-generator/src/constant/filed';
 import QuartzTaskLog from "@/business/components/account/home/QuartzTaskLog";

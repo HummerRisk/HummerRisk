@@ -121,7 +121,7 @@
             align="right">
           </el-date-picker>
         </el-form-item>
-        <proxy-dialog-footer
+        <dialog-footer
           @cancel="cancel"
           @confirm="confirm"/>
        </el-form>
@@ -140,7 +140,7 @@ import MainContainer from "../../common/components/MainContainer";
 import {CLOUD_EVENT_SYNC_CONFIGS} from "../../common/components/search/search-components";
 import TableOperators from "../../common/components/TableOperators";
 import RegionLog from "@/business/components/event/home/RegionLog";
-import ProxyDialogFooter from "@/business/components/event/head/ProxyDialogFooter";
+import DialogFooter from "@/business/components/common/components/DialogFooter";
 import Regions from "@/business/components/event/home/Regions";
 
 /* eslint-disable */
@@ -153,7 +153,7 @@ export default {
     MainContainer,
     TableOperators,
     RegionLog,
-    ProxyDialogFooter,
+    DialogFooter,
     Regions
   },
   data() {
