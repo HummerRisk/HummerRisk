@@ -1,9 +1,9 @@
 package com.hummerrisk.dto;
 
-import com.hummerrisk.base.domain.CloudNativeConfigResultItemWithBLOBs;
+import com.hummerrisk.base.domain.CloudNativeConfigResult;
 
 
-public class CloudNativeConfigResultDTO extends CloudNativeConfigResultItemWithBLOBs {
+public class CloudNativeConfigResultDTO extends CloudNativeConfigResult {
 
     private String critical;
 

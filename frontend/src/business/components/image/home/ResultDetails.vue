@@ -145,7 +145,7 @@ import MetricChart from "@/business/components/common/chart/MetricChart";
           }).catch(error => error);
         } else if (path.indexOf("/resource") >= 0) {
           this.$router.push({
-            path: '/resource/imageResult',
+            path: '/resource/ImageResult',
           }).catch(error => error);
         }
       },

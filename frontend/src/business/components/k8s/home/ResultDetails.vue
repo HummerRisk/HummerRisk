@@ -159,7 +159,7 @@ import MetricChart from "@/business/components/common/chart/MetricChart";
           }).catch(error => error);
         } else if (path.indexOf("/resource") >= 0) {
           this.$router.push({
-            path: '/resource/k8sResult',
+            path: '/resource/K8sResult',
           }).catch(error => error);
         }
       },

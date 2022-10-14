@@ -525,10 +525,18 @@ export default {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      let p = '/vuln/resultdetails/' + params.id;
-      this.$router.push({
-        path: p
-      }).catch(error => error);
+      let path = this.$route.path;
+      if (path.indexOf("/vuln") >= 0) {
+        let p = '/vuln/resultdetails/' + params.id;
+        this.$router.push({
+          path: p
+        }).catch(error => error);
+      } else if (path.indexOf("/resource") >= 0) {
+        let p = '/resource/VulnResultdetails/' + params.id;
+        this.$router.push({
+          path: p
+        }).catch(error => error);
+      }
     },
     init() {
       this.initSelect();

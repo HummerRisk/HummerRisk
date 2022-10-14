@@ -122,7 +122,6 @@ import MetricChart from "@/business/components/common/chart/MetricChart";
         this.init();
       },
       search () {
-        console.log(this.resultId)
         let url = "/fs/resultItemList/" + this.currentPage + "/" + this.pageSize;
         this.condition.resultId = this.resultId;
         this.result = this.$post(url, this.condition, response => {
@@ -140,13 +139,13 @@ import MetricChart from "@/business/components/common/chart/MetricChart";
       },
       back () {
         let path = this.$route.path;
-        if (path.indexOf("/Fs") >= 0) {
+        if (path.indexOf("/fs") >= 0) {
           this.$router.push({
             path: '/fs/result',
           }).catch(error => error);
         } else if (path.indexOf("/resource") >= 0) {
           this.$router.push({
-            path: '/resource/fsResult',
+            path: '/resource/FsResult',
           }).catch(error => error);
         }
       },

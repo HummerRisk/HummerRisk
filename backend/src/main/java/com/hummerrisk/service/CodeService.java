@@ -197,8 +197,8 @@ public class CodeService {
         return codeRuleMapper.updateByPrimaryKeySelective(rule);
     }
 
-    public List<CodeResultWithBLOBsDTO> resultListWithBLOBs(CodeResultRequest request) {
-        List<CodeResultWithBLOBsDTO> list = extCodeResultMapper.resultListWithBLOBs(request);
+    public List<CodeResultDTO> resultListWithBLOBs(CodeResultRequest request) {
+        List<CodeResultDTO> list = extCodeResultMapper.resultListWithBLOBs(request);
         return list;
     }
 

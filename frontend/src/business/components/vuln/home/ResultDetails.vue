@@ -189,7 +189,7 @@ import {_filter, _sort} from "@/common/js/utils";
           }).catch(error => error);
         } else if (path.indexOf("/resource") >= 0) {
           this.$router.push({
-            path: '/resource/vulnResult',
+            path: '/resource/VulnResult',
           }).catch(error => error);
         }
       },

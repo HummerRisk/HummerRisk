@@ -140,9 +140,16 @@ import MetricChart from "@/business/components/common/chart/MetricChart";
         this.search();
       },
       back () {
-        this.$router.push({
-          path: '/config/result',
-        }).catch(error => error);
+        let path = this.$route.path;
+        if (path.indexOf("/config") >= 0) {
+          this.$router.push({
+            path: '/config/result',
+          }).catch(error => error);
+        } else if (path.indexOf("/resource") >= 0) {
+          this.$router.push({
+            path: '/resource/ConfigResult',
+          }).catch(error => error);
+        }
       },
     },
     activated() {

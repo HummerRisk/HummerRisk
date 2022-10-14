@@ -314,7 +314,6 @@ export default {
     //查询列表
     search() {
       let url = "/code/resultList/" + this.currentPage + "/" + this.pageSize;
-      this.condition.scanType = 'grype';
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -430,10 +429,18 @@ export default {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      let p = '/code/resultdetails/' + params.id;
-      this.$router.push({
-        path: p
-      }).catch(error => error);
+      let path = this.$route.path;
+      if (path.indexOf("/code") >= 0) {
+        let p = '/code/resultdetails/' + params.id;
+        this.$router.push({
+          path: p
+        }).catch(error => error);
+      } else if (path.indexOf("/resource") >= 0) {
+        let p = '/resource/CodeResultdetails/' + params.id;
+        this.$router.push({
+          path: p
+        }).catch(error => error);
+      }
     },
     filterJsonKeyAndValue(json) {
       //json is json object , not array -- harris

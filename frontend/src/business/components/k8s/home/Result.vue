@@ -418,10 +418,18 @@ export default {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      let p = '/k8s/resultdetails/' + params.id;
-      this.$router.push({
-        path: p
-      }).catch(error => error);
+      let path = this.$route.path;
+      if (path.indexOf("/k8s") >= 0) {
+        let p = '/k8s/resultdetails/' + params.id;
+        this.$router.push({
+          path: p
+        }).catch(error => error);
+      } else if (path.indexOf("/resource") >= 0) {
+        let p = '/resource/K8sResultdetails/' + params.id;
+        this.$router.push({
+          path: p
+        }).catch(error => error);
+      }
     },
     async showResultLog (result) {
       let logUrl = "/k8s/log/";

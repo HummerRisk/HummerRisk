@@ -429,10 +429,18 @@ export default {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      let p = '/config/resultdetails/' + params.id;
-      this.$router.push({
-        path: p
-      }).catch(error => error);
+      let path = this.$route.path;
+      if (path.indexOf("/config") >= 0) {
+        let p = '/config/result/' + params.id;
+        this.$router.push({
+          path: p
+        }).catch(error => error);
+      } else if (path.indexOf("/resource") >= 0) {
+        let p = '/resource/ConfigResultdetails/' + params.id;
+        this.$router.push({
+          path: p
+        }).catch(error => error);
+      }
     },
     filterJsonKeyAndValue(json) {
       //json is json object , not array -- harris

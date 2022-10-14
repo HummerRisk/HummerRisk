@@ -139,7 +139,7 @@ public class CodeController {
     @I18n
     @ApiOperation(value = "源码检测结果列表")
     @PostMapping(value = "resultListWithBLOBs/{goPage}/{pageSize}")
-    public Pager<List<CodeResultWithBLOBsDTO>> resultListWithBLOBs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CodeResultRequest request) {
+    public Pager<List<CodeResultDTO>> resultListWithBLOBs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CodeResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, codeService.resultListWithBLOBs(request));
     }

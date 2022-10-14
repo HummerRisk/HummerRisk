@@ -94,7 +94,7 @@
     </sql>
 
     <select id="resultListWithBLOBs" parameterType="com.hummerrisk.controller.request.code.CodeResultRequest"
-            resultType="com.hummerrisk.dto.CodeResultWithBLOBsDTO">
+            resultType="com.hummerrisk.dto.CodeResultDTO">
         SELECT
         t.*,
         t1.tag_key as tagKey,
