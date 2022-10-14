@@ -101,8 +101,7 @@ public class FileSystemService {
         fileSystem.setUpdateTime(System.currentTimeMillis());
         fileSystem.setStatus("VALID");
         if (multipartFile != null) {
-            String tarFilePath = upload(multipartFile, FileSystemConstants.DEFAULT_BASE_DIR);
-            fileSystem.setPath(tarFilePath);
+            fileSystem = upload(fileSystem, multipartFile, FileSystemConstants.DEFAULT_BASE_DIR);
             fileSystem.setSize(changeFlowFormat(multipartFile.getSize()));
         }
 
@@ -116,8 +115,7 @@ public class FileSystemService {
         fileSystem.setCreator(SessionUtils.getUserId());
         fileSystem.setStatus("VALID");
         if (multipartFile != null) {
-            String tarFilePath = upload(multipartFile, FileSystemConstants.DEFAULT_BASE_DIR);
-            fileSystem.setPath(tarFilePath);
+            fileSystem = upload(fileSystem, multipartFile, FileSystemConstants.DEFAULT_BASE_DIR);
             fileSystem.setSize(changeFlowFormat(multipartFile.getSize()));
         }
 
@@ -133,11 +131,12 @@ public class FileSystemService {
      * @return 文件名称
      * @throws Exception
      */
-    public static final String upload(MultipartFile file, String dir) throws IOException {
+    public static final FileSystem upload(FileSystem fileSystem, MultipartFile file, String dir) throws IOException {
         try {
             String fileName = file.getOriginalFilename();
             String extension = StringUtils.isNotBlank(fileName) ? fileName.split("\\.")[fileName.split("\\.").length - 1] : "";
-            String path = FileUploadUtils.upload(dir, file);
+            String second = FileUploadUtils.uploadForFs(dir, file);
+            String path = second + fileName;
             //压缩包解压
             if (fileName.contains("tar")) {
                 CommandUtils.commonExecCmdWithResult(FileSystemConstants.TAR + FileSystemConstants.DEFAULT_BASE_DIR + path, FileSystemConstants.DEFAULT_BASE_DIR);
@@ -149,7 +148,10 @@ public class FileSystemService {
                 CommandUtils.commonExecCmdWithResult(FileSystemConstants.UNZIP + FileSystemConstants.DEFAULT_BASE_DIR + path, FileSystemConstants.DEFAULT_BASE_DIR);
                 path = path.replace("." + extension, "");
             }
-            return path;
+            fileSystem.setFileName(fileName);
+            fileSystem.setPath(path);
+            fileSystem.setDir(FileSystemConstants.DEFAULT_BASE_DIR + second);
+            return fileSystem;
         } catch (Exception e) {
             throw new IOException(e.getMessage(), e);
         }
@@ -387,7 +389,7 @@ public class FileSystemService {
             String returnJson = "";
 
             execute(fileSystem);
-            returnJson = ReadFileUtils.readToBuffer(TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON);
+            returnJson = ReadFileUtils.readToBuffer(fileSystem.getDir() + TrivyConstants.TRIVY_JSON);
             result.setUpdateTime(System.currentTimeMillis());
             result.setReturnJson(returnJson);
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());

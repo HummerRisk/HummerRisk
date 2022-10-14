@@ -31,6 +31,8 @@ public class TrivyConstants {
 
     public final static String TRIVY_SBOM = "trivy sbom ";
 
+    public final static String TRIVY_FS = "trivy fs ";
+
     public final static String TRIVY_TYPE = " --format json -o ";
 
     public final static String TRIVY_JSON = "trivy.json";

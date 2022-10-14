@@ -20,7 +20,7 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="path" :label="$t('fs.path')" min-width="35%" show-overflow-tooltip/>
+        <el-table-column prop="fileName" :label="$t('fs.file_name')" min-width="25%" show-overflow-tooltip/>
         <el-table-column prop="size" :label="$t('fs.size')" min-width="8%" show-overflow-tooltip/>
         <el-table-column min-width="13%" :label="$t('account.update_time')" sortable
                          prop="updateTime">

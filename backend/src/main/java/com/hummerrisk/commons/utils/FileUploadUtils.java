@@ -61,6 +61,38 @@ public class FileUploadUtils
         return fileName;
     }
 
+    /**
+     * 文件上传
+     *
+     * @param baseDir 相对应用的基目录
+     * @param file 上传的文件
+     * @return 返回上传成功的文件名
+     * @throws FileSizeLimitExceededException 如果超出最大大小
+     * @throws FileNameLengthLimitExceededException 文件名太长
+     * @throws IOException 比如读写文件出错时
+     */
+    public static final String uploadForFs(String baseDir, MultipartFile file)
+            throws FileSizeLimitExceededException, IOException, FileNameLengthLimitExceededException
+    {
+
+        int fileNamelength = file.getOriginalFilename().length();
+        if (fileNamelength > PackageConstants.DEFAULT_FILE_NAME_LENGTH)
+        {
+            throw new FileNameLengthLimitExceededException(PackageConstants.DEFAULT_FILE_NAME_LENGTH);
+        }
+
+        assertAllowed(file);
+
+        String first = file.getOriginalFilename();
+        String second = DateUtils.datePath() + "/" + encodingFilename(first) + "/";
+        String fileName = second + first;
+
+        File desc = getAbsoluteFile(baseDir, fileName);
+        file.transferTo(desc.toPath().toAbsolutePath());
+
+        return second;
+    }
+
     public static final String extractFilename(MultipartFile file)
     {
         String filename = file.getOriginalFilename();

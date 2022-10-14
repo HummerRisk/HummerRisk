@@ -5,6 +5,7 @@
 CREATE TABLE IF NOT EXISTS `file_system` (
     `id`                         varchar(50)         NOT NULL COMMENT 'ID',
     `name`                       varchar(128)        DEFAULT NULL COMMENT '文件系统名称',
+    `file_name`                  varchar(128)        DEFAULT NULL COMMENT '文件名',
     `plugin_icon`                varchar(50)         DEFAULT 'fs.png' COMMENT 'fs',
     `status`                     varchar(10)         DEFAULT 'VALID' COMMENT '状态',
     `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
@@ -12,6 +13,7 @@ CREATE TABLE IF NOT EXISTS `file_system` (
     `creator`                    varchar(128)        DEFAULT NULL COMMENT '创建人',
     `size`                       varchar(128)        DEFAULT NULL COMMENT '文件大小',
     `path`                       varchar(128)        DEFAULT NULL COMMENT '文件持久化存储路径/opt/hummerrisk/file/',
+    `dir`                        varchar(128)        DEFAULT NULL COMMENT '目录',
     `sbom_id`                    varchar(50)         DEFAULT NULL COMMENT 'SBOM ID',
     `sbom_version_id`            varchar(50)         DEFAULT NULL COMMENT 'SBOM VERSION ID',
     `proxy_id`                   int(11)             DEFAULT NULL COMMENT '代理ID',
@@ -140,3 +142,4 @@ ALTER TABLE `history_image_result` change `trivy_json` `result_json` longtext DE
 
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/mongo-public-network.md' where id = 'c95be861-6e0e-4404-9b21-5ccfcd94ee3f';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/qingcloud/mongodb-public-network.md' where id = 'ceecc38d-5c98-4cc4-aeef-028ab653c26b';
+UPDATE `server_rule` SET `name` = 'Linux 僵尸进程检测', `status` = 1, `severity` = 'MediumRisk', `description` = '查看 Linux 僵尸进程', `script` = 'flag=true\nif [[ $(ps aux | awk \'{ print $8 \" \" $2 }\' | grep -w Z) == \"\" ]];then\n    echo \"HummerSuccess: 检测通过，无 Linux 僵尸进程\"\n    flag=false\n	exit 0\nfi\nif $flag ;then\n    echo \"HummerError: 检测到僵尸进程 $(ps aux | awk \'{ print $8 \" \" $2 }\' | grep -w Z)\"\nfi', `parameter` = '[]' WHERE `id` = 'c497a676-12ec-41ed-8944-eb32cc95b8a4';

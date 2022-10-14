@@ -4,24 +4,19 @@
       <template v-slot:header>
         <table-header :condition.sync="condition"
                                @search="search"
-                               :title="$t('fs.result_list')"/>
+                               :title="$t('fs.fs_result_list')"/>
       </template>
 
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                 @filter-change="filter">
         <el-table-column type="index" min-width="2%"/>
-        <el-table-column prop="name" :label="$t('image.image_name')" min-width="10%" show-overflow-tooltip>
+        <el-table-column prop="name" :label="$t('fs.name')" min-width="10%" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
+                <img :src="require(`@/assets/img/fs/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.name }}
               </span>
           </template>
-        </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('image.image_url')" min-width="20%" show-overflow-tooltip>
-          <el-row v-if="scope.row.type==='repo'">{{ scope.row.imageUrl }}:{{ scope.row.imageTag }}</el-row>
-          <el-row v-if="scope.row.type==='image'">{{ scope.row.imageUrl }}:{{ scope.row.imageTag }}</el-row>
-          <el-row v-if="scope.row.type==='tar'">{{ scope.row.path }}</el-row>
         </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="15%">
           <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown" placement="top">
@@ -243,7 +238,7 @@ import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import RuleType from "./RuleType";
-import {IMAGE_RESULT_CONFIGS} from "../../common/components/search/search-components";
+import {FS_RESULT_CONFIGS} from "../../common/components/search/search-components";
 import {saveAs} from "@/common/js/FileSaver";
 
 /* eslint-disable */
@@ -262,7 +257,7 @@ export default {
     return {
       result: {},
       condition: {
-        components: IMAGE_RESULT_CONFIGS
+        components: FS_RESULT_CONFIGS
       },
       tableData: [],
       currentPage: 1,
@@ -317,7 +312,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/image/resultList/" + this.currentPage + "/" + this.pageSize;
+      let url = "/fs/resultList/" + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;

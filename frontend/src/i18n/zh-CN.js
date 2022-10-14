@@ -1621,6 +1621,7 @@ export default {
     file_system_manage: '文件系统管理',
     fs_rule: '文件系统检测规则',
     fs_result: '文件系统检测结果',
+    fs_result_list: '文件系统检测结果列表',
     fs_settings_list: '文件系统列表',
     fs_create: '创建文件系统',
     fs_update: '更新文件系统',
@@ -1631,6 +1632,7 @@ export default {
     file: '文件或文件压缩包',
     upload_tip: '大小不超过 {0} 的文件包',
     path: '文件路径',
+    file_name: '文件名',
     size: '文件大小',
   },
 };
