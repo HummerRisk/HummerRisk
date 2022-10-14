@@ -32,8 +32,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static com.hummerrisk.service.ImageService.upload;
-import static com.hummerrisk.service.SysListener.changeFlowFormat;
+import static com.hummerrisk.service.ImageService.changeFlowFormat;
 
 /**
  * @author harris
@@ -125,6 +124,35 @@ public class FileSystemService {
         OperationLogService.log(SessionUtils.getUser(), fileSystem.getId(), fileSystem.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.UPDATE, "i18n_update_fs");
         fileSystemMapper.updateByPrimaryKeySelective(fileSystem);
         return fileSystem;
+    }
+
+    /**
+     * 以默认配置进行文件上传
+     *
+     * @param file 上传的文件
+     * @return 文件名称
+     * @throws Exception
+     */
+    public static final String upload(MultipartFile file, String dir) throws IOException {
+        try {
+            String fileName = file.getOriginalFilename();
+            String extension = StringUtils.isNotBlank(fileName) ? fileName.split("\\.")[fileName.split("\\.").length - 1] : "";
+            String path = FileUploadUtils.upload(dir, file);
+            //压缩包解压
+            if (fileName.contains("tar")) {
+                CommandUtils.commonExecCmdWithResult(FileSystemConstants.TAR + FileSystemConstants.DEFAULT_BASE_DIR + path, FileSystemConstants.DEFAULT_BASE_DIR);
+                path = path.replace("." + extension, "");
+            } else if (fileName.contains("gz")) {
+                CommandUtils.commonExecCmdWithResult(FileSystemConstants.GZ + FileSystemConstants.DEFAULT_BASE_DIR + path, FileSystemConstants.DEFAULT_BASE_DIR);
+                path = path.replace("." + extension, "");
+            } else if (fileName.contains("zip")) {
+                CommandUtils.commonExecCmdWithResult(FileSystemConstants.UNZIP + FileSystemConstants.DEFAULT_BASE_DIR + path, FileSystemConstants.DEFAULT_BASE_DIR);
+                path = path.replace("." + extension, "");
+            }
+            return path;
+        } catch (Exception e) {
+            throw new IOException(e.getMessage(), e);
+        }
     }
 
     public void deleteFs(String id) throws Exception {

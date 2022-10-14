@@ -543,6 +543,9 @@ public class SysListener {
      * 转换格式为xxGBxxMBxxKB
      */
     public static String changeFlowFormat(long flows) {
+        if (flows < 1024) {
+            return flows + "B";
+        }
         flows = flows / 1024;//默认是1024KB
         if (flows > 0 && flows < 1024) {//小于1M
             return flows + "KB";

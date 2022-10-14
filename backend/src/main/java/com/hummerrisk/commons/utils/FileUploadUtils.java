@@ -20,49 +20,11 @@ public class FileUploadUtils
 
     private static int counter = 0;
 
-    /**
-     * 以默认配置进行文件上传
-     *
-     * @param file 上传的文件
-     * @return 文件名称
-     * @throws Exception
-     */
-    public static final String upload(MultipartFile file) throws IOException
+    public static final String uploadSubff(String baseDir, MultipartFile file) throws IOException
     {
         try
         {
-            return upload(PackageConstants.DEFAULT_BASE_DIR, file, PackageConstants.IMAGE_JPG_EXTENSION);
-        }
-        catch (Exception e)
-        {
-            throw new IOException(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * 根据文件路径上传
-     *
-     * @param baseDir 相对应用的基目录
-     * @param file 上传的文件
-     * @return 文件名称
-     * @throws IOException
-     */
-    public static final String upload(String baseDir, MultipartFile file) throws IOException
-    {
-        try
-        {
-            return upload(baseDir, file, PackageConstants.IMAGE_JPG_EXTENSION);
-        }
-        catch (Exception e)
-        {
-            throw new IOException(e.getMessage(), e);
-        }
-    }
-    public static final String uploadSubff(String baseDir, MultipartFile file,String subf) throws IOException
-    {
-        try
-        {
-            return upload(baseDir, file, subf);
+            return upload(baseDir, file);
         }
         catch (Exception e)
         {
@@ -74,13 +36,12 @@ public class FileUploadUtils
      *
      * @param baseDir 相对应用的基目录
      * @param file 上传的文件
-     * @param extension 上传文件类型
      * @return 返回上传成功的文件名
      * @throws FileSizeLimitExceededException 如果超出最大大小
      * @throws FileNameLengthLimitExceededException 文件名太长
      * @throws IOException 比如读写文件出错时
      */
-    public static final String upload(String baseDir, MultipartFile file, String extension)
+    public static final String upload(String baseDir, MultipartFile file)
             throws FileSizeLimitExceededException, IOException, FileNameLengthLimitExceededException
     {
 
@@ -92,7 +53,7 @@ public class FileUploadUtils
 
         assertAllowed(file);
 
-        String fileName = extractFilename(file, extension);
+        String fileName = extractFilename(file);
 
         File desc = getAbsoluteFile(baseDir, fileName);
         file.transferTo(desc.toPath().toAbsolutePath());
@@ -100,7 +61,7 @@ public class FileUploadUtils
         return fileName;
     }
 
-    public static final String extractFilename(MultipartFile file, String extension)
+    public static final String extractFilename(MultipartFile file)
     {
         String filename = file.getOriginalFilename();
         filename = DateUtils.datePath() + "/" + encodingFilename(filename) + "/" + filename;

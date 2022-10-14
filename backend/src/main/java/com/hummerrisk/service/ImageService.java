@@ -381,7 +381,7 @@ public class ImageService {
             String extension = StringUtils.isNotBlank(fileName) ? fileName.split("\\.")[fileName.split("\\.").length - 1] : "";
             //png、html等小文件存放路径，页面需要显示，项目内目录
             //jar包等大文件存放路径，项目外目录
-            return FileUploadUtils.upload(dir, file, "." + extension);
+            return FileUploadUtils.upload(dir, file);
         } catch (Exception e) {
             throw new IOException(e.getMessage(), e);
         }
@@ -696,7 +696,10 @@ public class ImageService {
     /**
      * 转换流量格式为xxGBxxMBxxKB
      */
-    public String changeFlowFormat(long flows) {
+    public static String changeFlowFormat(long flows) {
+        if (flows < 1024) {
+            return flows + "B";
+        }
         flows = flows / 1024;//默认是1024KB
         if (flows > 0 && flows < 1024) {//小于1M
             return flows + "KB";
