@@ -103,25 +103,25 @@
             </template>
           </el-table-column>
         </el-table>
-        <div style="margin: 10px;" v-if="logForm.resultJson">
+        <div style="margin: 10px;" v-if="logForm.returnJson">
           <h2>Summary:&nbsp;</h2>
           <ul style="margin-left: 60px;">
             <li><i>Scan Name</i>: {{ logForm.name }}</li>
             <li><i>Scan User</i>:&nbsp;{{ logForm.userName }}</li>
-            <li><i>ArtifactType</i>:&nbsp;{{ logForm.resultJson.ArtifactType }}</li>
-            <li><i>ArtifactName</i>:&nbsp;{{ logForm.resultJson.ArtifactName }}</li>
-            <li><i>SchemaVersion</i>:&nbsp;{{ logForm.resultJson.SchemaVersion }}</li>
-            <li><i>Architecture</i>:&nbsp;{{ logForm.resultJson.Metadata.ImageConfig.architecture }}</li>
+            <li><i>ArtifactType</i>:&nbsp;{{ logForm.returnJson.ArtifactType }}</li>
+            <li><i>ArtifactName</i>:&nbsp;{{ logForm.returnJson.ArtifactName }}</li>
+            <li><i>SchemaVersion</i>:&nbsp;{{ logForm.returnJson.SchemaVersion }}</li>
+            <li><i>Architecture</i>:&nbsp;{{ logForm.returnJson.Metadata.ImageConfig.architecture }}</li>
             <li><i>Create Time</i>:&nbsp;{{ logForm.createTime | timestampFormatDate }}</li>
             <li><i>Result Status</i>:&nbsp;{{ logForm.resultStatus }}</li>
             <li><i>Vulnerabilities Found</i>: {{ logForm.returnSum }}</li>
           </ul>
         </div>
-        <div style="margin: 10px;" v-if="logForm.resultJson">
+        <div style="margin: 10px;" v-if="logForm.returnJson">
           <div style="margin: 10px 0 0 0;">
             <h2>Details:&nbsp;</h2>
             <div style="margin: 10px 0 0 0;">
-              <div style="margin: 10px 0 0 0;" :key="index" v-for="(result, index) in logForm.resultJson.Results">
+              <div style="margin: 10px 0 0 0;" :key="index" v-for="(result, index) in logForm.returnJson.Results">
                 <div style="margin: 10px;" v-if="result">
                   <h3>Summary:&nbsp;</h3>
                   <ul style="margin-left: 60px;">
@@ -388,7 +388,7 @@ export default {
       let resultUrl = "/fs/getFsResult/";
       this.result = this.$get(resultUrl + result.id, response => {
         this.logForm = response.data;
-        this.logForm.resultJson = JSON.parse(this.logForm.resultJson);
+        this.logForm.returnJson = JSON.parse(this.logForm.returnJson);
       });
       this.logVisible = true;
     },
