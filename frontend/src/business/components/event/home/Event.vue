@@ -102,7 +102,7 @@ import MainContainer from "../../common/components/MainContainer";
 import {CLOUD_EVENT_CONFIGS} from "../../common/components/search/search-components";
 import {ACCOUNT_ID} from "@/common/js/constants";
 import TableOperators from "../../common/components/TableOperators";
-import ResultReadOnly from "@/business/components/event/home/ResultReadOnly";
+import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 /* eslint-disable */
 export default {
   name: "Event",

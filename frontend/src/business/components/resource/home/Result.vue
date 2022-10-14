@@ -572,7 +572,7 @@ import {_filter, _sort, getCurrentAccountID} from "@/common/js/utils";
 import {ACCOUNT_ID} from "@/common/js/constants";
 import AccountChange from "@/business/components/common/head/AccountSwitch";
 import TableSearchBar from '@/business/components/common/components/TableSearchBar';
-import ResultReadOnly from "./ResultReadOnly";
+import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import {RESOURCE_CONFIGS} from "../../common/components/search/search-components";
 
 /* eslint-disable */

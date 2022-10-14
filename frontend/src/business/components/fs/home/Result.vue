@@ -4,7 +4,7 @@
       <template v-slot:header>
         <table-header :condition.sync="condition"
                                @search="search"
-                               :title="$t('image.result_list')"/>
+                               :title="$t('fs.result_list')"/>
       </template>
 
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"

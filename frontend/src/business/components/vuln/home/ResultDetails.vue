@@ -70,7 +70,7 @@ import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import CenterChart from "../../common/components/CenterChart";
-import ResultReadOnly from "./ResultReadOnly";
+import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import {_filter, _sort} from "@/common/js/utils";
 /* eslint-disable */
   export default {

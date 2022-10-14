@@ -54,7 +54,7 @@ import TablePagination from "../../common/pagination/TablePagination";
 import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import {SITUATION_CONFIGS} from "../../common/components/search/search-components";
-import ResultReadOnly from "@/business/components/cloudSituation/home/ResultReadOnly";
+import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 /* eslint-disable */
 export default {
   components: {
