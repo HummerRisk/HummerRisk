@@ -26,4 +26,6 @@ public interface ExtSbomMapper {
 
     MetricChartDTO imageMetricChart(@Param("resultId") String resultId);
 
+    MetricChartDTO fsMetricChart(@Param("resultId") String resultId);
+
 }

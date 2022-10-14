@@ -164,7 +164,7 @@ import MetricChart from "@/business/components/common/chart/MetricChart";
         }
       },
     },
-    created() {
+    activated() {
       this.init();
     }
   }

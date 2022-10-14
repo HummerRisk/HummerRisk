@@ -7,28 +7,32 @@
             {{ $t("resource.cloud_resource_result") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/resource/vulnResult'">
+          <el-menu-item :index="'/resource/VulnResult'">
             {{ $t("vuln.vuln_result") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/resource/serverResult'">
+          <el-menu-item :index="'/resource/ServerResult'">
             {{ $t("server.server_result") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/resource/k8sResult'">
+          <el-menu-item :index="'/resource/K8sResult'">
             {{ $t("k8s.result") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/resource/configResult'">
+          <el-menu-item :index="'/resource/ConfigResult'">
             {{ $t("config.config_result") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/resource/imageResult'">
+          <el-menu-item :index="'/resource/ImageResult'">
             {{ $t("image.image_result") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/resource/codeResult'">
+          <el-menu-item :index="'/resource/CodeResult'">
             {{ $t("code.code_result") }}
+          </el-menu-item>
+
+          <el-menu-item :index="'/resource/FsResult'">
+            {{ $t("fs.fs_result") }}
           </el-menu-item>
         </el-menu>
       </el-col>

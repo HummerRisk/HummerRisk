@@ -13,7 +13,7 @@
                         @search="search"
                         :show-back="true"
                         @back="back" :backTip="$t('image.back_resource')"
-                        :title="$t('image.result_details_list')"/>
+                        :title="$t('fs.result_details_list')"/>
         </template>
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter">
@@ -122,14 +122,15 @@ import MetricChart from "@/business/components/common/chart/MetricChart";
         this.init();
       },
       search () {
-        let url = "/image/resultItemList/" + this.currentPage + "/" + this.pageSize;
+        console.log(this.resultId)
+        let url = "/fs/resultItemList/" + this.currentPage + "/" + this.pageSize;
         this.condition.resultId = this.resultId;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;
         });
-        this.result = this.$get("/sbom/imageMetricChart/"+ this.resultId, response => {
+        this.result = this.$get("/sbom/fsMetricChart/"+ this.resultId, response => {
           this.content = response.data;
         });
       },
@@ -139,18 +140,18 @@ import MetricChart from "@/business/components/common/chart/MetricChart";
       },
       back () {
         let path = this.$route.path;
-        if (path.indexOf("/image") >= 0) {
+        if (path.indexOf("/Fs") >= 0) {
           this.$router.push({
-            path: '/image/result',
+            path: '/fs/result',
           }).catch(error => error);
         } else if (path.indexOf("/resource") >= 0) {
           this.$router.push({
-            path: '/resource/imageResult',
+            path: '/resource/fsResult',
           }).catch(error => error);
         }
       },
     },
-    created() {
+    activated() {
       this.init();
     }
   }

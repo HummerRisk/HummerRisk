@@ -72,8 +72,8 @@
               <div class="grid-content bg-purple-light">
                 <span class="grid-content-log-span"> {{ logForm.name }}</span>
                 <span class="grid-content-log-span">
-                  <img :src="require(`@/assets/img/platform/docker.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ logForm.imageName }}
+                  <img :src="require(`@/assets/img/fs/fs.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ logForm.name }}
                 </span>
                 <span class="grid-content-status-span" v-if="logForm.resultStatus === 'APPROVED'" style="color: #579df8">
                   <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
@@ -326,7 +326,7 @@ export default {
         this.timer = setInterval(this.getStatus,60000);
       } else {
         for (let data of this.tableData) {
-          let url = "/image/getImageResult/";
+          let url = "/fs/getFsResult/";
           this.$get(url + data.id, response => {
             let result = response.data;
             if (data.resultStatus !== result.resultStatus) {
@@ -381,11 +381,11 @@ export default {
       }
     },
     showResultLog (result) {
-      let logUrl = "/image/log/";
+      let logUrl = "/fs/log/";
       this.result = this.$get(logUrl + result.id, response => {
         this.logData = response.data;
       });
-      let resultUrl = "/image/getImageResultWithBLOBs/";
+      let resultUrl = "/fs/getFsResult/";
       this.result = this.$get(resultUrl + result.id, response => {
         this.logForm = response.data;
         this.logForm.resultJson = JSON.parse(this.logForm.resultJson);
@@ -401,7 +401,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get("/image/reScan/" + item.id, response => {
+            this.$get("/fs/reScan/" + item.id, response => {
               if (response.success) {
                 this.search();
               }
@@ -415,7 +415,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/image/deleteImageResult/" + obj.id,  res => {
+            this.result = this.$get("/fs/deleteFsResult/" + obj.id,  res => {
               setTimeout(function () {window.location.reload()}, 2000);
               this.$success(this.$t('commons.delete_success'));
             });
@@ -428,7 +428,7 @@ export default {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      let p = '/image/resultdetails/' + params.id;
+      let p = '/fs/resultdetails/' + params.id;
       this.$router.push({
         path: p
       }).catch(error => error);
@@ -468,7 +468,7 @@ export default {
       return jsonKeyAndValue;
     },
     handleDownload(item) {
-      this.$post("/image/download", {
+      this.$post("/fs/download", {
         id: item.id
       }, response => {
         if (response.success) {

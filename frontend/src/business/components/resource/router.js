@@ -18,34 +18,39 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/resource/home/ResultDetails"),
     },
     {
-      path: "vulnResult",
+      path: "VulnResult",
       name: "vulnResultByResource",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/vuln/home/Result'),
     },
     {
-      path: "serverResult",
+      path: "ServerResult",
       name: "serverResultByResource",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Result'),
     },
     {
-      path: "k8sResult",
+      path: "K8sResult",
       name: "k8sResultByResource",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/k8s/home/Result'),
     },
     {
-      path: "configResult",
+      path: "ConfigResult",
       name: "configResultByResource",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/config/home/Result'),
     },
     {
-      path: "imageResult",
+      path: "ImageResult",
       name: "imageResultByResource",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/Result'),
     },
     {
-      path: "codeResult",
+      path: "CodeResult",
       name: "codeResultByResource",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/code/home/Result'),
+    },
+    {
+      path: "FsResult",
+      name: "fsResultByResource",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/fs/home/Result'),
     },
   ]
 }

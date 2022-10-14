@@ -173,4 +173,16 @@
              )
     </select>
 
+    <select id="fsMetricChart" resultType="com.hummerrisk.dto.MetricChartDTO" parameterType="java.lang.String">
+        SELECT *
+        from (
+             (SELECT count(*) as critical FROM file_system_result_item t WHERE LOWER(t.severity) = 'critical' AND t.result_id = #{resultId}) as critical,
+             (SELECT count(*) as high FROM file_system_result_item t WHERE LOWER(t.severity) = 'high' AND t.result_id = #{resultId}) as high,
+             (SELECT count(*) as medium FROM file_system_result_item t WHERE LOWER(t.severity) = 'medium' AND t.result_id = #{resultId}) as medium,
+             (SELECT count(*) as low FROM file_system_result_item t WHERE LOWER(t.severity) = 'low' AND t.result_id = #{resultId}) as low,
+             (SELECT count(*) as unknown FROM file_system_result_item t WHERE LOWER(t.severity) = 'unknown' AND t.result_id = #{resultId}) as unknown,
+             (SELECT count(*) as total FROM file_system_result_item t WHERE t.result_id = #{resultId}) as total
+         )
+    </select>
+
 </mapper>

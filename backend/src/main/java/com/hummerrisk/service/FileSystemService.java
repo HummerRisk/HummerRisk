@@ -454,6 +454,7 @@ public class FileSystemService {
                         item.setReferences(resultObject.getString("References"));
                         item.setPublishedDate(resultObject.getString("PublishedDate"));
                         item.setLastModifiedDate(resultObject.getString("LastModifiedDate"));
+                        item.setCreateTime(System.currentTimeMillis());
                         fileSystemResultItemMapper.insertSelective(item);
                         i++;
                     }

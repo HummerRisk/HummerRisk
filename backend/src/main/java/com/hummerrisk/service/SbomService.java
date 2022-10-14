@@ -225,6 +225,10 @@ public class SbomService {
         return extSbomMapper.imageMetricChart(resultId);
     }
 
+    public MetricChartDTO fsMetricChart(String resultId) {
+        return extSbomMapper.fsMetricChart(resultId);
+    }
+
     public String download(DownloadRequest request) throws Exception {
         String str = "";
         if (StringUtils.equalsIgnoreCase(request.getType(), "code")) {

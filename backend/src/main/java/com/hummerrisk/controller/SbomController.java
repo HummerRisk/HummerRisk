@@ -151,10 +151,17 @@ public class SbomController {
     }
 
     @I18n
-    @ApiOperation(value = "源码风险数据信息")
+    @ApiOperation(value = "镜像风险数据信息")
     @GetMapping("imageMetricChart/{resultId}")
     public MetricChartDTO imageMetricChart(@PathVariable String resultId) {
         return sbomService.imageMetricChart(resultId);
+    }
+
+    @I18n
+    @ApiOperation(value = "文件系统风险数据信息")
+    @GetMapping("fsMetricChart/{resultId}")
+    public MetricChartDTO fsMetricChart(@PathVariable String resultId) {
+        return sbomService.fsMetricChart(resultId);
     }
 
     @I18n

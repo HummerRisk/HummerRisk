@@ -1634,5 +1634,6 @@ export default {
     path: '文件路径',
     file_name: '文件名',
     size: '文件大小',
+    result_details_list: '检测结果详情列表',
   },
 };
