@@ -11,8 +11,8 @@
 
 <script>
 import MainContainer from "../../common/components/MainContainer";
-import TopInfo from "@/business/components/image/home/TopInfo";
-import BottomInfo from "@/business/components/image/home/BottomInfo";
+import TopInfo from "@/business/components/fs/home/TopInfo";
+import BottomInfo from "@/business/components/fs/home/BottomInfo";
 
 /* eslint-disable */
 export default {

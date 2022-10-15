@@ -9,6 +9,8 @@ public class FsResultDTO extends FileSystemResult {
 
     private String name;
 
+    private String fileName;
+
     private String tagKey;
 
     private String tagName;
@@ -95,5 +97,13 @@ public class FsResultDTO extends FileSystemResult {
 
     public void setUnknown(String unknown) {
         this.unknown = unknown;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

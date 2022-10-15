@@ -18,6 +18,11 @@
               </span>
           </template>
         </el-table-column>
+        <el-table-column prop="fileName" :label="$t('fs.file_name')" min-width="10%" show-overflow-tooltip>
+          <template v-slot:default="scope">
+           &nbsp;&nbsp; {{ scope.row.fileName }}
+          </template>
+        </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="15%">
           <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown" placement="top">
             <el-link type="primary" class="text-click" @click="goResource(scope.row)">

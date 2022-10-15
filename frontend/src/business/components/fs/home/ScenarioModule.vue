@@ -13,7 +13,7 @@
         <el-input class="module-input" :placeholder="$t('image.search_by_name')" v-model="condition.filterText"
                   size="small">
           <template v-slot:append>
-            <el-button><i class="iconfont icon-rongqi"/></el-button>
+            <el-button><i class="iconfont icon-wendang"/></el-button>
           </template>
         </el-input>
       </template>
@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import NodeTree from "@/business/components/image/head/NodeTree";
+import NodeTree from "@/business/components/fs/head/NodeTree";
 import {buildNodePath} from "@/common/js/NodeTree";
 
 /* eslint-disable */

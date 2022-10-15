@@ -3,10 +3,10 @@
     <el-col :span="4">
       <el-card shadow="always" class="hr-card-index-1">
         <span class="hr-card-data">
-          <span class="hr-card-data-digital">{{ topInfo.images }}</span>
-          <span class="hr-card-data-unit"> {{ 'Images' }}</span>
+          <span class="hr-card-data-digital">{{ topInfo.filesystems }}</span>
+          <span class="hr-card-data-unit"> {{ 'FileSystems' }}</span>
         </span>
-        <span class="hr-card-desc">{{ $t('image.image_setting') }}</span>
+        <span class="hr-card-desc">{{ $t('fs.file_system_manage') }}</span>
       </el-card>
     </el-col>
     <el-col :span="4">
@@ -73,7 +73,7 @@ export default {
   },
   methods: {
     init() {
-      this.result = this.$post("/image/topInfo", {}, response => {
+      this.result = this.$post("/fs/topInfo", {}, response => {
         let data = response.data;
         this.topInfo = data;
       });

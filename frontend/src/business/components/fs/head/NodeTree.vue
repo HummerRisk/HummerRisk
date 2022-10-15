@@ -26,7 +26,7 @@
         </span>
 
         <span v-if="!data.isEdit" class="node-icon">
-          <i class="iconfont icon-jingxiang"/>
+          <i class="iconfont icon-wendang"/>
         </span>
         <span v-if="!data.isEdit" class="node-title" v-text="data.name"/>
 
@@ -89,7 +89,7 @@ export default {
     allLabel: {
       type: String,
       default() {
-        return this.$t("image.all_label");
+        return this.$t("fs.all_label");
       }
     },
   },

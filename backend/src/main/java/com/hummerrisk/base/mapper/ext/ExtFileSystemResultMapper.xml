@@ -97,12 +97,14 @@
             resultType="com.hummerrisk.dto.FsResultDTO">
         SELECT
         t.*,
+        t1.file_name as fileName,
         (select count(*) from file_system_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
         (select count(*) from file_system_result_item tj where tj.result_id = t.id and severity = 'HIGH') as high,
         (select count(*) from file_system_result_item tj where tj.result_id = t.id and severity = 'MEDIUM') as medium,
         (select count(*) from file_system_result_item tj where tj.result_id = t.id and severity = 'LOW') as low,
         (select count(*) from file_system_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown
         FROM file_system_result t
+        LEFT JOIN file_system t1 on t.fs_id = t1.id
 
         <where>
             <if test="id != null">

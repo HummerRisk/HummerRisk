@@ -117,7 +117,7 @@
               (SELECT IFNULL(count(t.id), 0) as medium from file_system_result_item t join file_system_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'medium') as medium,
               (SELECT IFNULL(count(t.id), 0) as low from file_system_result_item t join file_system_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'low') as low,
               (SELECT IFNULL(count(t.id), 0) as unknown from file_system_result_item t join file_system_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'unknown') as unknown
-                 )
+         )
     </select>
 
     <select id="projectChart" resultType="java.util.Map">

@@ -24,12 +24,12 @@ export default {
   },
   methods: {
     init() {
-      this.$get("/image/imageRepoChart", response => {
+      this.$get("/fs/projectChart", response => {
         let data = response.data;
         this.options = {
           title: {
-            text: this.$t('image.image_repo_chart'),
-            subtext: this.$t('image.image_repo_chart_images'),
+            text: this.$t('fs.project_chart'),
+            subtext: this.$t('fs.fs_chart_top'),
             left: 'center'
           },
           tooltip: {
@@ -41,7 +41,7 @@ export default {
           },
           series: [
             {
-              name: 'Image',
+              name: 'FileSystem',
               type: 'pie',
               radius: '50%',
               data: data,

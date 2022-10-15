@@ -4,7 +4,7 @@
       <el-col :span="12">
         <el-card class="table-card">
           <template v-slot:header>
-            <span class="title">{{ $t('image.image_repo') }}</span>
+            <span class="title">{{ $t('fs.project_chart') }}</span>
           </template>
           <left-chart/>
         </el-card>
@@ -22,9 +22,9 @@
       <el-col :span="24">
         <el-card class="table-card">
           <template v-slot:header>
-            <span class="title">{{ $t('dashboard.image_statistics') }}</span>
+            <span class="title">{{ $t('fs.project_chart') }}</span>
           </template>
-          <image-chart/>
+          <scan-chart/>
         </el-card>
       </el-col>
     </container>
@@ -33,9 +33,9 @@
 
 <script>
 import Container from "../.././common/components/Container";
-import LeftChart from "@/business/components/image/head/LeftChart";
-import RightChart from "@/business/components/image/head/RightChart";
-import ImageChart from "@/business/components/dashboard/head/ImageChart";
+import LeftChart from "@/business/components/fs/head/LeftChart";
+import RightChart from "@/business/components/fs/head/RightChart";
+import ScanChart from "@/business/components/fs/head/ScanChart";
 
 /* eslint-disable */
 export default {
@@ -43,7 +43,7 @@ export default {
     Container,
     LeftChart,
     RightChart,
-    ImageChart,
+    ScanChart,
   },
   data() {
     return {

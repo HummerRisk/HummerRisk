@@ -1638,5 +1638,8 @@ export default {
     file_name: '文件名',
     size: '文件大小',
     result_details_list: '检测结果详情列表',
+    project_chart: '文件系统统计',
+    fs_chart_top: '文件系统检测结果统计',
+    all_label: '全部文件系统',
   },
 };

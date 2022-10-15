@@ -5,38 +5,43 @@
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                   @filter-change="filter">
           <el-table-column type="index" min-width="2%"/>
-          <el-table-column prop="name" :label="$t('image.image_name')" min-width="15%" show-overflow-tooltip>
+          <el-table-column prop="name" :label="$t('fs.name')" min-width="10%" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
-               <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
+                <img :src="require(`@/assets/img/fs/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.name }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="16%">
+          <el-table-column prop="fileName" :label="$t('fs.file_name')" min-width="10%" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              &nbsp;&nbsp; {{ scope.row.fileName }}
+            </template>
+          </el-table-column>
+          <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="15%">
             <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown" placement="top">
               <el-link type="primary" class="text-click" @click="goResource(scope.row)">
                 {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown}}
               </el-link>
             </el-tooltip>
           </el-table-column>
-          <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="11%" prop="resultStatus" sortable show-overflow-tooltip>
-            <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
+          <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="12%" prop="resultStatus" sortable show-overflow-tooltip>
+            <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
-            <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
+            <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
-            <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
+            <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
-            <el-button @click="showResultLog(scope.row)" plain size="mini" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
+            <el-button @click="showResultLog(scope.row)" plain size="medium" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
               <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
             </el-button>
-            <el-button @click="showResultLog(scope.row)" plain size="mini" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+            <el-button @click="showResultLog(scope.row)" plain size="medium" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
               <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
             </el-button>
-            <el-button @click="showResultLog(scope.row)" plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+            <el-button @click="showResultLog(scope.row)" plain size="medium" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
               <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
             </el-button>
           </el-table-column>
@@ -402,11 +407,11 @@ import CodeDiff from 'vue-code-diff';
       },
       //查询列表
       async search() {
-        let url = "/image/history/" + this.currentPage + "/" + this.pageSize;
+        let url = "/fs/history/" + this.currentPage + "/" + this.pageSize;
         if (!!this.selectNodeIds) {
-          this.condition.imageId = this.selectNodeIds[0];
+          this.condition.fsId = this.selectNodeIds[0];
         } else {
-          this.condition.imageId = null;
+          this.condition.fsId = null;
         }
         this.result = await this.$post(url, this.condition, response => {
           let data = response.data;
@@ -442,7 +447,7 @@ import CodeDiff from 'vue-code-diff';
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get("/image/deleteHistoryImageResult/" + obj.id,  res => {
+              this.result = this.$get("/fs/deleteHistoryFsResult/" + obj.id,  res => {
                 setTimeout(function () {window.location.reload()}, 2000);
                 this.$success(this.$t('commons.delete_success'));
               });
@@ -452,7 +457,7 @@ import CodeDiff from 'vue-code-diff';
       },
       async outputListDataSearch() {
         let item = this.outputListSearchData;
-        await this.$post("/image/history/" + this.outputListPage + "/" + this.outputListPageSize, {imageId: item.imageId}, response => {
+        await this.$post("/fs/history/" + this.outputListPage + "/" + this.outputListPageSize, {imageId: item.imageId}, response => {
           let data = response.data;
           this.outputListTotal = data.itemCount;
           this.outputListData = data.listObject;
@@ -478,22 +483,22 @@ import CodeDiff from 'vue-code-diff';
           this.$warning(this.$t('resource.no_resources_allowed'));
           return;
         }
-        let url = "/image/historyResultItemList";
+        let url = "/fs/historyResultItemList";
         this.result = this.$post(url, {resultId: params.id}, response => {
           let data = response.data;
           this.statisticsData = data;
           this.statisticsList = true;
         });
-        this.result = this.$get("/sbom/imageMetricChart/"+ this.resultId, response => {
+        this.result = this.$get("/fs/metricChart/"+ this.resultId, response => {
           this.content = response.data;
         });
       },
       showResultLog (result) {
-        let logUrl = "/image/log/";
+        let logUrl = "/fs/log/";
         this.result = this.$get(logUrl + result.id, response => {
           this.logData = response.data;
         });
-        let resultUrl = "/image/getImageResultWithBLOBs/";
+        let resultUrl = "/fs/getFsResult/";
         this.result = this.$get(resultUrl + result.id, response => {
           this.logForm = response.data;
           this.logForm.resultJson = JSON.parse(this.logForm.resultJson);
