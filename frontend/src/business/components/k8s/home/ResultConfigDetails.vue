@@ -54,6 +54,7 @@ import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/RuleDialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
+import MetricChart from "@/business/components/common/chart/MetricChart";
 
 /* eslint-disable */
   export default {
@@ -66,6 +67,7 @@ import {_filter, _sort} from "@/common/js/utils";
       TablePagination,
       TableOperator,
       DialogFooter,
+      MetricChart,
     },
     data() {
       return {

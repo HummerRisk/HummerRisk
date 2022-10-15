@@ -600,8 +600,8 @@ public class K8sService {
 
     public List<CloudNativeResultItem> resultItemList(K8sResultRequest resourceRequest) {
         CloudNativeResultItemExample example = new CloudNativeResultItemExample();
-        if(resourceRequest.getName()!=null) {
-            example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId()).andTitleLike(resourceRequest.getName());
+        if(resourceRequest.getName()!=null && !StringUtils.isBlank(resourceRequest.getName())) {
+            example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId()).andTitleLike("%" + resourceRequest.getName() + "%");
         } else {
             example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
         }
@@ -611,8 +611,8 @@ public class K8sService {
 
     public List<CloudNativeResultConfigItemWithBLOBs> resultConfigItemList(K8sResultRequest resourceRequest) {
         CloudNativeResultConfigItemExample example = new CloudNativeResultConfigItemExample();
-        if(resourceRequest.getName()!=null) {
-            example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId()).andTitleLike(resourceRequest.getName());
+        if(resourceRequest.getName()!=null && !StringUtils.isBlank(resourceRequest.getName())) {
+            example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId()).andTitleLike("%" + resourceRequest.getName() + "%");
         } else {
             example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
         }

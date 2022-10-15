@@ -270,7 +270,11 @@ public class FileSystemService {
 
     public List<FileSystemResultItemWithBLOBs> resultItemList(FileSystemResultItem fileSystemResultItem) {
         FileSystemResultItemExample example = new FileSystemResultItemExample();
-        example.createCriteria().andResultIdEqualTo(fileSystemResultItem.getResultId());
+        if(fileSystemResultItem.getPkgName()!=null && !StringUtils.isBlank(fileSystemResultItem.getPkgName())) {
+            example.createCriteria().andResultIdEqualTo(fileSystemResultItem.getResultId()).andPkgNameLike("%" + fileSystemResultItem.getPkgName() + "%");
+        } else {
+            example.createCriteria().andResultIdEqualTo(fileSystemResultItem.getResultId());
+        }
         example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
         return fileSystemResultItemMapper.selectByExampleWithBLOBs(example);
     }

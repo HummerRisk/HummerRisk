@@ -383,8 +383,8 @@ public class ConfigService {
 
     public List<CloudNativeConfigResultItem> resultItemList(ConfigResultRequest resourceRequest) {
         CloudNativeConfigResultItemExample example = new CloudNativeConfigResultItemExample();
-        if(resourceRequest.getName()!=null) {
-            example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId()).andTitleLike(resourceRequest.getName());
+        if(resourceRequest.getName()!=null && !StringUtils.isBlank(resourceRequest.getName())) {
+            example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId()).andTitleLike("%" + resourceRequest.getName() + "%");
         } else {
             example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
         }

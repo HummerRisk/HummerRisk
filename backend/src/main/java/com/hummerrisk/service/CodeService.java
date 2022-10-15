@@ -230,7 +230,11 @@ public class CodeService {
 
     public List<CodeResultItemWithBLOBs> resultItemList(CodeResultItem codeResultItem) {
         CodeResultItemExample example = new CodeResultItemExample();
-        example.createCriteria().andResultIdEqualTo(codeResultItem.getResultId());
+        if(codeResultItem.getPkgName()!=null && !StringUtils.isBlank(codeResultItem.getPkgName())) {
+            example.createCriteria().andResultIdEqualTo(codeResultItem.getResultId()).andPkgNameLike("%" + codeResultItem.getPkgName() + "%");
+        } else {
+            example.createCriteria().andResultIdEqualTo(codeResultItem.getResultId());
+        }
         example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
         return codeResultItemMapper.selectByExampleWithBLOBs(example);
     }

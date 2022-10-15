@@ -1620,7 +1620,7 @@ export default {
     belong: '所属',
   },
   fs: {
-    file_system: '文件系统',
+    file_system: '文件检测',
     file_system_manage: '文件系统管理',
     fs_rule: '文件系统检测规则',
     fs_result: '文件系统检测结果',

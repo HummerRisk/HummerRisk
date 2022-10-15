@@ -1223,7 +1223,8 @@ export default {
     result: 'K8s detection result',
     result_list: 'K8s detection result list',
     back_resource: 'Return the list of K8s detection results',
-    result_details_list: 'K8s detection result details list',
+    result_details_list: 'K8s vulnerability detection result details list',
+    result_config_details_list: 'K8s configuration audit result details list',
     k8s_note: 'Note: Before using K8s security detection, you need to install tirvy-operator on the K8s cluster!',
     sync_log_create: 'Create resource synchronization task',
     sync_log_list: 'K8s resource synchronization log list',
@@ -1235,6 +1236,8 @@ export default {
     resource_situation: 'K8s resource situation',
     sync_log: 'K8s resource synchronization log',
     k8s_resource_type: 'K8s resource type',
+    vuln_compliance: 'Vulnerability detection statistics',
+    config_compliance: 'Configure audit statistics',
   },
   config: {
     config_settings: 'Deployment configuration',

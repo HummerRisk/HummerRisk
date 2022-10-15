@@ -677,7 +677,11 @@ public class ImageService {
 
     public List<ImageResultItemWithBLOBs> resultItemList(ImageResultItem resourceRequest) {
         ImageResultItemExample example = new ImageResultItemExample();
-        example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
+        if(resourceRequest.getPkgName()!=null && !StringUtils.isBlank(resourceRequest.getPkgName())) {
+            example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId()).andPkgNameLike("%" + resourceRequest.getPkgName() + "%");
+        } else {
+            example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
+        }
         example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
         return imageResultItemMapper.selectByExampleWithBLOBs(example);
     }
