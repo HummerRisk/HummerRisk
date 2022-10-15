@@ -1223,7 +1223,8 @@ export default {
     result: 'K8s 检测结果',
     result_list: 'K8s 检测结果列表',
     back_resource: '返回 K8s 检测结果列表',
-    result_details_list: 'K8s 检测结果详情列表',
+    result_details_list: 'K8s 漏洞检测结果详情列表',
+    result_config_details_list: 'K8s 配置审计结果详情列表',
     k8s_note: '注: 使用 K8s 安全检测前，需在 K8s 集群上安装 tirvy-operator!',
     sync_log_create: '创建资源同步任务',
     sync_log_list: 'K8s 资源同步日志列表',
@@ -1235,6 +1236,8 @@ export default {
     resource_situation: 'K8s 资源态势',
     sync_log: 'K8s 资源同步日志',
     k8s_resource_type: 'K8s 资源类型',
+    vuln_compliance: '漏洞检测统计',
+    config_compliance: '配置审计统计',
   },
   config: {
     config_settings: '部署配置',

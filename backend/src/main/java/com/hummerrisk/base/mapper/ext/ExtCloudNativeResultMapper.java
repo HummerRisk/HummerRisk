@@ -23,6 +23,8 @@ public interface ExtCloudNativeResultMapper {
 
     MetricChartDTO metricChart (String resultId);
 
+    MetricChartDTO metricConfigChart (String resultId);
+
     List<HistoryCloudNativeResultDTO> history(Map<String, Object> params);
 
     CloudNativeResultDTO getCloudNativeResult(String resultId);

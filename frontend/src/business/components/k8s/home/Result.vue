@@ -10,7 +10,7 @@
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                 @filter-change="filter">
         <el-table-column type="index" min-width="2%"/>
-        <el-table-column prop="name" :label="$t('k8s.name')" min-width="15%" show-overflow-tooltip>
+        <el-table-column prop="name" :label="$t('k8s.name')" min-width="13%" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -19,30 +19,37 @@
           </template>
         </el-table-column>
         <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
-        <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="16%">
+        <el-table-column v-slot:default="scope" :label="$t('k8s.vuln_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="16%">
           <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown" placement="top">
             <el-link type="primary" class="text-click" @click="goResource(scope.row)">
-              {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown}}
+              {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown }}
             </el-link>
           </el-tooltip>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="12%" prop="resultStatus" sortable show-overflow-tooltip>
-          <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
+        <el-table-column v-slot:default="scope" :label="$t('k8s.config_compliance')" prop="returnConfigSum" sortable show-overflow-tooltip min-width="16%">
+          <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.configCritical + ' HIGH:' +  scope.row.configHigh + ' MEDIUM:' + scope.row.configMedium + ' LOW:' + scope.row.configLow + ' UNKNOWN:' + scope.row.configUnknown" placement="top">
+            <el-link type="primary" class="text-click" @click="goConfigResource(scope.row)">
+              {{ 'C:' + scope.row.configCritical + ' H:' +  scope.row.configHigh + ' M:' + scope.row.configMedium + ' L:' + scope.row.configLow + ' U:' + scope.row.configUnknown }}
+            </el-link>
+          </el-tooltip>
+        </el-table-column>
+        <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="10%" prop="resultStatus" sortable show-overflow-tooltip>
+          <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
+          <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
+          <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="medium" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
+          <el-button @click="showResultLog(scope.row)" plain size="mini" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
             <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="medium" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+          <el-button @click="showResultLog(scope.row)" plain size="mini" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
             <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="medium" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+          <el-button @click="showResultLog(scope.row)" plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
@@ -426,6 +433,24 @@ export default {
         }).catch(error => error);
       } else if (path.indexOf("/resource") >= 0) {
         let p = '/resource/K8sResultdetails/' + params.id;
+        this.$router.push({
+          path: p
+        }).catch(error => error);
+      }
+    },
+    goConfigResource (params) {
+      if (params.returnConfigSum == 0) {
+        this.$warning(this.$t('resource.no_resources_allowed'));
+        return;
+      }
+      let path = this.$route.path;
+      if (path.indexOf("/k8s") >= 0) {
+        let p = '/k8s/resultconfigdetails/' + params.id;
+        this.$router.push({
+          path: p
+        }).catch(error => error);
+      } else if (path.indexOf("/resource") >= 0) {
+        let p = '/resource/K8sResultConfigdetails/' + params.id;
         this.$router.push({
           path: p
         }).catch(error => error);

@@ -140,6 +140,25 @@ ALTER TABLE `image_result` change `trivy_json` `result_json` longtext DEFAULT NU
 
 ALTER TABLE `history_image_result` change `trivy_json` `result_json` longtext DEFAULT NULL COMMENT 'result json';
 
+ALTER TABLE `cloud_native_result` ADD `return_config_sum` bigint(13) DEFAULT 0 COMMENT '输出检测结果配置审计数';
+
+CREATE TABLE IF NOT EXISTS `cloud_native_result_config_item`
+(
+    `id`                         varchar(50)         NOT NULL,
+    `result_id`                  varchar(50)         DEFAULT NULL COMMENT '云原生检测结果ID',
+    `title`                      varchar(512)        DEFAULT NULL COMMENT 'title',
+    `category`                   varchar(128)        DEFAULT NULL COMMENT 'category',
+    `severity`                   varchar(128)        DEFAULT NULL COMMENT 'severity',
+    `check_id`                   varchar(128)        DEFAULT NULL COMMENT 'checkID',
+    `description`                mediumtext          DEFAULT NULL COMMENT 'description',
+    `success`                    varchar(128)        DEFAULT NULL COMMENT 'success',
+    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `messages`                   mediumtext          DEFAULT NULL COMMENT 'messages',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+DROP TABLE `history_cloud_native_result_item`;
+
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/tencent/mongo-public-network.md' where id = 'c95be861-6e0e-4404-9b21-5ccfcd94ee3f';
 UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/suggest/qingcloud/mongodb-public-network.md' where id = 'ceecc38d-5c98-4cc4-aeef-028ab653c26b';
 UPDATE `server_rule` SET `name` = 'Linux 僵尸进程检测', `status` = 1, `severity` = 'MediumRisk', `description` = '查看 Linux 僵尸进程', `script` = 'flag=true\nif [[ $(ps aux | awk \'{ print $8 \" \" $2 }\' | grep -w Z) == \"\" ]];then\n    echo \"HummerSuccess: 检测通过，无 Linux 僵尸进程\"\n    flag=false\n	exit 0\nfi\nif $flag ;then\n    echo \"HummerError: 检测到僵尸进程 $(ps aux | awk \'{ print $8 \" \" $2 }\' | grep -w Z)\"\nfi', `parameter` = '[]' WHERE `id` = 'c497a676-12ec-41ed-8944-eb32cc95b8a4';

@@ -23,6 +23,11 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/ResultDetails"),
     },
     {
+      path: "resultconfigdetails/:id",
+      name: "K8sResultConfigDetails",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/ResultConfigDetails"),
+    },
+    {
       path: "overview",
       name: "K8sOverview",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/Overview"),

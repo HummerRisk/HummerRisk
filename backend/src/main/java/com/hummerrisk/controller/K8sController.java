@@ -144,11 +144,19 @@ public class K8sController {
     }
 
     @I18n
-    @ApiOperation(value = "云原生检测结果详情列表")
+    @ApiOperation(value = "云原生漏洞检测结果详情列表")
     @PostMapping("resultItemList/{goPage}/{pageSize}")
     public Pager<List<CloudNativeResultItem>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, k8sService.resultItemList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "云原生配置审计结果详情列表")
+    @PostMapping("resultConfigItemList/{goPage}/{pageSize}")
+    public Pager<List<CloudNativeResultConfigItemWithBLOBs>> resultConfigItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sResultRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, k8sService.resultConfigItemList(request));
     }
 
     @I18n
@@ -201,10 +209,17 @@ public class K8sController {
     }
 
     @I18n
-    @ApiOperation(value = "风险数据信息")
+    @ApiOperation(value = "漏洞风险数据信息")
     @GetMapping("metricChart/{resultId}")
     public MetricChartDTO metricChart(@PathVariable String resultId) {
         return k8sService.metricChart(resultId);
+    }
+
+    @I18n
+    @ApiOperation(value = "配置审计风险数据信息")
+    @GetMapping("metricConfigChart/{resultId}")
+    public MetricChartDTO metricConfigChart(@PathVariable String resultId) {
+        return k8sService.metricConfigChart(resultId);
     }
 
     @ApiOperation(value = "下载检测报告")
@@ -252,7 +267,7 @@ public class K8sController {
     @I18n
     @ApiOperation(value = "检测结果历史详情")
     @PostMapping("historyResultItemList")
-    public List<HistoryCloudNativeResultItem> historyResultItemList(@RequestBody CloudNativeResultItem request) {
+    public List<CloudNativeResultItem> historyResultItemList(@RequestBody CloudNativeResultItem request) {
         return k8sService.historyResultItemList(request);
     }
 

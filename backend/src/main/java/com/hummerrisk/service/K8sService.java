@@ -62,8 +62,6 @@ public class K8sService {
     @Resource
     private ExtCloudNativeMapper extCloudNativeMapper;
     @Resource
-    private HistoryCloudNativeResultItemMapper historyCloudNativeResultItemMapper;
-    @Resource
     private HistoryCloudNativeResultLogMapper historyCloudNativeResultLogMapper;
     @Resource
     private ExtCloudNativeSourceMapper extCloudNativeSourceMapper;
@@ -73,6 +71,8 @@ public class K8sService {
     private ProxyMapper proxyMapper;
     @Resource
     private CommonThreadPool commonThreadPool;
+    @Resource
+    private CloudNativeResultConfigItemMapper cloudNativeResultConfigItemMapper;
 
 
     public List<CloudNativeDTO> getCloudNativeList(CloudNativeRequest request) {
@@ -391,8 +391,6 @@ public class K8sService {
         result.setUserName(SessionUtils.getUser().getName());
         cloudNativeResultMapper.updateByPrimaryKeySelective(result);
 
-        reScanDeleteCloudNativeResult(id);
-
         saveCloudNativeResultLog(result.getId(), "i18n_restart_k8s_result", "", true);
 
         OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_restart_k8s_result");
@@ -482,6 +480,8 @@ public class K8sService {
 
             long count = saveResultItem(result);
             result.setReturnSum(count);
+            long sum = saveResultConfigItem(result);
+            result.setReturnConfigSum(sum);
             cloudNativeResultMapper.updateByPrimaryKeySelective(result);
 
             noticeService.createCloudNativeMessageOrder(result);
@@ -501,23 +501,7 @@ public class K8sService {
     public void deleteResultByCloudNativeId(String id) throws Exception {
         CloudNativeResultExample example = new CloudNativeResultExample();
         example.createCriteria().andCloudNativeIdEqualTo(id);
-        List<CloudNativeResult> list = cloudNativeResultMapper.selectByExample(example);
-
-        for (CloudNativeResult result : list) {
-            CloudNativeResultItemExample cloudNativeResultItemExample = new CloudNativeResultItemExample();
-            cloudNativeResultItemExample.createCriteria().andResultIdEqualTo(result.getId());
-            cloudNativeResultItemMapper.deleteByExample(cloudNativeResultItemExample);
-            CloudNativeResultLogExample logExample = new CloudNativeResultLogExample();
-            logExample.createCriteria().andResultIdEqualTo(result.getId());
-            cloudNativeResultLogMapper.deleteByExample(logExample);
-        }
         cloudNativeResultMapper.deleteByExample(example);
-    }
-
-    public void reScanDeleteCloudNativeResult(String id) throws Exception {
-        CloudNativeResultItemExample cloudNativeResultItemExample = new CloudNativeResultItemExample();
-        cloudNativeResultItemExample.createCriteria().andResultIdEqualTo(id);
-        cloudNativeResultItemMapper.deleteByExample(cloudNativeResultItemExample);
     }
 
     void saveCloudNativeResultLog(String resultId, String operation, String output, boolean result) throws Exception {
@@ -569,7 +553,39 @@ public class K8sService {
                     cloudNativeResultItem.setCreateTime(System.currentTimeMillis());
                     cloudNativeResultItemMapper.insertSelective(cloudNativeResultItem);
 
-                    historyService.insertHistoryCloudNativeResultItem(BeanUtils.copyBean(new HistoryCloudNativeResultItem(), cloudNativeResultItem));
+                    i++;
+                }
+            }
+        }
+        return i;
+    }
+
+    long saveResultConfigItem(CloudNativeResultWithBLOBs result) throws Exception {
+
+        String json = result.getConfigAuditReport();
+        JSONObject jsonObject1 = JSON.parseObject(json);
+        JSONArray jsonArray1 = jsonObject1.getJSONArray("items");
+        int i = 0;
+        if(jsonArray1 != null) {
+            for(Object object : jsonArray1) {
+                JSONObject obj1 = (JSONObject) object;
+                JSONObject jsonObject2 = obj1.getJSONObject("report");
+                JSONArray jsonArray = jsonObject2.getJSONArray("checks");
+                for(Object object2 : jsonArray) {
+                    JSONObject obj2 = (JSONObject) object2;
+                    CloudNativeResultConfigItemWithBLOBs item = new CloudNativeResultConfigItemWithBLOBs();
+                    item.setId(UUIDUtil.newUUID());
+                    item.setResultId(result.getId());
+                    item.setCategory(obj2.getString("category"));
+                    item.setCheckId(obj2.getString("checkID"));
+                    item.setSeverity(obj2.getString("severity"));
+                    item.setSuccess(obj2.getString("success"));
+                    item.setDescription(obj2.getString("description"));
+                    item.setTitle(obj2.getString("title"));
+                    item.setMessages(obj2.getString("messages"));
+                    item.setCreateTime(System.currentTimeMillis());
+                    cloudNativeResultConfigItemMapper.insertSelective(item);
+
                     i++;
                 }
             }
@@ -591,6 +607,17 @@ public class K8sService {
         }
         example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
         return cloudNativeResultItemMapper.selectByExample(example);
+    }
+
+    public List<CloudNativeResultConfigItemWithBLOBs> resultConfigItemList(K8sResultRequest resourceRequest) {
+        CloudNativeResultConfigItemExample example = new CloudNativeResultConfigItemExample();
+        if(resourceRequest.getName()!=null) {
+            example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId()).andTitleLike(resourceRequest.getName());
+        } else {
+            example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
+        }
+        example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
+        return cloudNativeResultConfigItemMapper.selectByExampleWithBLOBs(example);
     }
 
     public CloudNativeResultDTO getCloudNativeResult(String resultId) {
@@ -645,6 +672,10 @@ public class K8sService {
         return extCloudNativeResultMapper.metricChart(resultId);
     }
 
+    public MetricChartDTO metricConfigChart (String resultId) {
+        return extCloudNativeResultMapper.metricConfigChart(resultId);
+    }
+
     public String download(Map<String, Object> map) {
         HistoryCloudNativeResultWithBLOBs historyCloudNativeResultWithBLOBs = historyCloudNativeResultMapper.selectByPrimaryKey(map.get("id").toString());
         String str = historyCloudNativeResultWithBLOBs.getVulnerabilityReport();
@@ -672,11 +703,11 @@ public class K8sService {
         return historyList;
     }
 
-    public List<HistoryCloudNativeResultItem> historyResultItemList(CloudNativeResultItem item) {
-        HistoryCloudNativeResultItemExample example = new HistoryCloudNativeResultItemExample();
+    public List<CloudNativeResultItem> historyResultItemList(CloudNativeResultItem item) {
+        CloudNativeResultItemExample example = new CloudNativeResultItemExample();
         example.createCriteria().andResultIdEqualTo(item.getResultId());
         example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
-        return historyCloudNativeResultItemMapper.selectByExampleWithBLOBs(example);
+        return cloudNativeResultItemMapper.selectByExampleWithBLOBs(example);
     }
 
     public void deleteHistoryK8sResult(String id) throws Exception {
