@@ -9,82 +9,82 @@ export default {
   children: [
     {
       path: "result",
-      name: "cloudResourceResult",
+      name: "CloudResourceResult",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/resource/home/Result"),
     },
     {
       path: "resultdetails/:id",
-      name: "cloudResultDetails",
+      name: "CloudResourceDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/resource/home/ResultDetails"),
     },
     {
       path: "VulnResult",
-      name: "vulnResultByResource",
+      name: "VulnResourceResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/vuln/home/Result'),
     },
     {
       path: "VulnResultdetails/:id",
-      name: "VulnResultDetails",
+      name: "VulnResourceResultDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/vuln/home/ResultDetails"),
     },
     {
       path: "ServerResult",
-      name: "ServerResultByResource",
+      name: "ServerResourceResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Result'),
     },
     {
       path: "K8sResult",
-      name: "K8sResultByResource",
+      name: "K8sResourceResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/k8s/home/Result'),
     },
     {
       path: "K8sResultdetails/:id",
-      name: "K8sResultDetails",
+      name: "K8sResourceResultDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/ResultDetails"),
     },
     {
       path: "K8sResultConfigdetails/:id",
-      name: "K8sResultConfigDetails",
+      name: "K8sResourceResultConfigDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/ResultConfigDetails"),
     },
     {
       path: "ConfigResult",
-      name: "configResultByResource",
+      name: "ConfigResourceResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/config/home/Result'),
     },
     {
       path: "ConfigResultdetails/:id",
-      name: "ConfigResultDetails",
+      name: "ConfigResourceResultDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/config/home/ResultDetails"),
     },
     {
       path: "ImageResult",
-      name: "ImageResultByResource",
+      name: "ImageResourceResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/Result'),
     },
     {
       path: "ImageResultdetails/:id",
-      name: "ImageResultDetails",
+      name: "ImageResourceResultDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/image/home/ResultDetails"),
     },
     {
       path: "CodeResult",
-      name: "CodeResultByResource",
+      name: "CodeResourceResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/code/home/Result'),
     },
     {
       path: "CodeResultdetails/:id",
-      name: "CodeResultDetails",
+      name: "CodeResourceResultDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/code/home/ResultDetails"),
     },
     {
       path: "FsResult",
-      name: "FsResultByResource",
+      name: "FsResourceResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/fs/home/Result'),
     },
     {
       path: "FsResultdetails/:id",
-      name: "FsResultDetails",
+      name: "FsResourceResultDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/fs/home/ResultDetails"),
     },
   ]
