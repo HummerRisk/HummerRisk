@@ -415,6 +415,13 @@
             <if test="name != null">
                 AND LOWER(t.project) like CONCAT('%',#{name},'%')
             </if>
+            AND (
+            SELECT count(t.id)
+            FROM rule_inspection_report_mapping t1
+            JOIN rule t2 ON t1.rule_id = t2.id
+            WHERE t1.report_id = t.id
+            AND t1.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = #{groupId})
+            ) > 0
         </where>
         ORDER BY FIELD(status, 'risky','risk_free'), t.id
     </select>

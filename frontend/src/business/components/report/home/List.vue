@@ -10,12 +10,23 @@
       </el-card>
 
       <el-card class="table-card" v-if="groups.length > 0">
-        <el-tabs class="border-card" type="border-card" @tab-click="handleClick">
-          <el-tab-pane
+        <ul class="issue-list">
+          <li class="arrows" @click="clickLeft">
+            <i class="el-icon-arrow-left"></i>
+          </li>
+          <li
+            class="issue-item"
             v-for="group in groups"
             :key="group.id"
-            :value="group.id"
-            :label="group.name">
+            :class="tabsId == group.id ? 'issue-item-active' : ''"
+            @click="handleClick(group)">
+            {{ group.name }}
+          </li>
+          <li class="arrows" @click="clickRight">
+            <i class="el-icon-arrow-right"></i>
+          </li>
+        </ul>
+        <div style="margin-top: 15px;">
             <el-row>
               <el-col :span="4">
                 <span style="color: #909090;">{{ $t('resource.scene_name') }}</span>
@@ -60,8 +71,7 @@
                 <span v-if="group.status == 'risk_free'" style="color: green;"><i class="el-icon-warning"></i> {{ $t('resource.no_risk') }}</span>
               </el-col>
             </el-row>
-          </el-tab-pane>
-        </el-tabs>
+        </div>
       </el-card>
 
       <el-card class="table-report-card">
@@ -406,6 +416,10 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
         accountSize: 10,
         accountTotal: 0,
         selectIds: new Set(),
+        showNum: 5,// 需要显示多少个
+        titleList: [],
+        tabsId: 1,// 高亮显示ID
+        group: {},
       }
     },
     methods: {
@@ -432,8 +446,15 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
       },
       async groupSearch () {
         this.result = await this.$post("/resource/rule/groups", {accountId: this.accountId}, response => {
-          this.groups = response.data;
+          this.titleList = response.data;
+          this.titleList.forEach((v, i) => {
+            // tabs显示多少个
+            if (this.groups.length < this.showNum) {
+              this.groups.push(v);
+            }
+          });
           if(this.groups.length > 0) {
+            this.group = this.groups[0];
             this.groupId = this.groups[0].id;
             this.groupName = this.groups[0].name;
             this.reportIsoSearch();
@@ -535,9 +556,11 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
       },
       handleClick(tab) {
         for (let obj of this.groups) {
-          if (tab.label == obj.name) {
+          if (tab.name == obj.name) {
+            this.group = obj;
             this.groupId = obj.id;
             this.groupName = obj.name;
+            this.tabsId = this.groupId;
             break;
           }
         }
@@ -608,6 +631,37 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
           this.accountTotal = data.itemCount;
           this.accountData = data.listObject;
         });
+      },
+      //点击左边
+      clickLeft() {
+        if (this.titleList[0].id == this.groups[0].id) {
+          return false;
+        } else {
+          let vid = this.groups[0].id;
+          this.titleList.forEach((v, i) => {
+            if (vid == v.id) {
+              //删除最后一个tabs
+              this.groups.splice(this.showNum - 1, 1);
+              this.groups.unshift(this.titleList[i - 1]);
+            }
+          });
+        }
+      },
+      //点击右箭头
+      clickRight() {
+        if (
+          this.titleList.at(-1).id == this.groups.at(-1).id
+        ) {
+          return false;
+        } else {
+          let vid = this.groups[this.showNum - 1].id;
+          this.titleList.forEach((v, i) => {
+            if (vid == v.id) {
+              this.groups.splice(0, 1);
+              this.groups.push(this.titleList[i + 1]);
+            }
+          });
+        }
       },
     },
     created() {
@@ -730,5 +784,30 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
   .el-row-card >>> .el-card__body {
     margin: 0;
   }
+
+  .table-card >>> .issue-list {
+    width: 100%;
+    text-align: center;
+  }
+  .table-card >>> .arrows{
+    display: inline-block;
+    cursor: pointer;
+    margin: 0 10px;
+    font-width: bold;
+    color: red;
+  }
+  .table-card >>> .issue-item{
+    text-align: left;
+    display: inline-block;
+    padding-bottom: 11px;
+    border-bottom: 1px solid #E2E2E2;
+    margin: 10px 10px;
+    cursor: pointer;
+  }
+  .table-card >>> .issue-item-active{
+    color: #0261D5;
+    border-bottom: 2px solid #0261D5;
+  }
+
   /deep/ :focus{outline:0;}
 </style>

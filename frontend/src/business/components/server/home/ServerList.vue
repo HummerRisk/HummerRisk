@@ -24,7 +24,9 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="ip" :label="'IP'" min-width="15%" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="ip" :label="'IP'" min-width="15%" show-overflow-tooltip v-slot:default="scope">
+            {{ scope.row.ip }} : {{ scope.row.port }}
+          </el-table-column>
           <el-table-column prop="userName" :label="$t('server.server_user_name')" min-width="10%" show-overflow-tooltip></el-table-column>
           <el-table-column prop="status" min-width="12%" :label="$t('server.server_status')"
                            column-key="status"
