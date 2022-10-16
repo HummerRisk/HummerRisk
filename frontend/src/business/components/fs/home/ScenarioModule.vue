@@ -151,8 +151,12 @@ import {buildNodePath} from "@/common/js/NodeTree";
   }
 
   .module-input {
-    width: 275px;
+    width: 95%;
     margin: 6px;
+  }
+
+  .iconfont {
+    color: #409eff;
   }
 
   /deep/ :focus{outline:0;}
