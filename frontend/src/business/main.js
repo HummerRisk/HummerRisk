@@ -34,6 +34,8 @@ import 'vue-okr-tree/dist/vue-okr-tree.css';
 import '@/common/css/iconfont/iconfont.css';
 //拓扑图
 import "vis/dist/vis.css";
+//[Violation] Added non-passive event listener to a scroll-blocking 'mousewheel' event. Consider marking event handler as 'passive' to make the page more responsive.
+import 'default-passive-events';
 
 
 // you can set default global options and events when Vue.use
