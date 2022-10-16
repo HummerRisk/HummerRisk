@@ -142,7 +142,9 @@ export default {
 svg {
   margin: 25px;
 }
-
+.table-card >>> .el-card__body {
+  padding: 0;
+}
 path {
   fill: none;
   stroke: #76BF8A;

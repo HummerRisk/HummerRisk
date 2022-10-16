@@ -18,7 +18,7 @@
         <el-input class="module-input" :placeholder="$t('commons.search_by_name')" v-model="condition.filterText"
                   size="small">
           <template v-slot:append>
-            <el-button><i icon="iconfont icon-guanyuyunguanjia"></i></el-button>
+            <el-button><i class="iconfont icon-guanyuyunguanjia"></i></el-button>
           </template>
         </el-input>
       </template>
@@ -195,7 +195,7 @@ import DialogFooter from "../../common/components/DialogFooter";
   }
 
   .module-input {
-    width: 275px;
+    width: 95%;
     margin: 6px;
   }
 
