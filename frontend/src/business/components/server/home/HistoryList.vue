@@ -15,7 +15,9 @@
           <!-- 展开 end -->
           <el-table-column type="index" min-width="1%"/>
           <el-table-column prop="serverName" :label="$t('server.server_name')" min-width="10%" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="ip" :label="'IP'" min-width="10%" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="ip" :label="'IP'" min-width="15%" show-overflow-tooltip v-slot:default="scope">
+            {{ scope.row.ip }} : {{ scope.row.port }}
+          </el-table-column>
           <el-table-column prop="ruleName" :label="$t('server.rule_name')" min-width="15%" show-overflow-tooltip></el-table-column>
           <el-table-column prop="isSeverity" :label="$t('server.is_severity')" min-width="10%" show-overflow-tooltip v-slot:default="scope">
             <span v-if="scope.row.isSeverity" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>

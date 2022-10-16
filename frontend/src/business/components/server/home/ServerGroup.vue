@@ -16,7 +16,7 @@
 
       <template v-slot:header>
         <el-input class="module-input" :placeholder="$t('server.server_search')" v-model="condition.filterText"
-                  size="small">
+                  size="mini">
           <template v-slot:append>
             <el-button icon="el-icon-folder-add" @click="addServer"/>
           </template>
@@ -233,7 +233,7 @@ import DialogFooter from "../../common/components/DialogFooter";
   }
 
   .module-input {
-    width: 275px;
+    width: 95%;
     margin: 6px;
   }
 

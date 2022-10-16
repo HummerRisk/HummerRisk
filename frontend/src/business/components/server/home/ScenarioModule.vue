@@ -11,7 +11,7 @@
 
       <template v-slot:header>
         <el-input class="module-input" :placeholder="$t('server.search_by_name')" v-model="condition.filterText"
-                  size="small">
+                  size="mini">
           <template v-slot:append>
             <el-button><i class="iconfont icon-ziyuan1452"></i></el-button>
           </template>
@@ -151,7 +151,7 @@ import {buildNodePath} from "@/common/js/NodeTree";
   }
 
   .module-input {
-    width: 275px;
+    width: 95%;
     margin: 6px;
   }
 
