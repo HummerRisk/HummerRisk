@@ -265,10 +265,17 @@ public class K8sController {
     }
 
     @I18n
-    @ApiOperation(value = "检测结果历史详情")
+    @ApiOperation(value = "漏洞检测结果历史详情")
     @PostMapping("historyResultItemList")
     public List<CloudNativeResultItem> historyResultItemList(@RequestBody CloudNativeResultItem request) {
         return k8sService.historyResultItemList(request);
+    }
+
+    @I18n
+    @ApiOperation(value = "配置审计结果历史详情")
+    @PostMapping("historyResultConfigItemList")
+    public List<CloudNativeResultConfigItemWithBLOBs> historyResultConfigItemList(@RequestBody CloudNativeResultConfigItem request) {
+        return k8sService.historyResultConfigItemList(request);
     }
 
     @ApiOperation(value = "删除检测历史记录")

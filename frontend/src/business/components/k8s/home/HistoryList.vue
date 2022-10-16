@@ -5,7 +5,7 @@
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                   @filter-change="filter">
           <el-table-column type="index" min-width="2%"/>
-          <el-table-column prop="name" :label="$t('k8s.name')" min-width="15%" show-overflow-tooltip>
+          <el-table-column prop="name" :label="$t('k8s.name')" min-width="12%" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -13,11 +13,17 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
-          <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="16%">
+          <el-table-column v-slot:default="scope" :label="$t('k8s.vuln_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="16%">
             <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown" placement="top">
               <el-link type="primary" class="text-click" @click="goResource(scope.row)">
-                {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown}}
+                {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown }}
+              </el-link>
+            </el-tooltip>
+          </el-table-column>
+          <el-table-column v-slot:default="scope" :label="$t('k8s.config_compliance')" prop="returnConfigSum" sortable show-overflow-tooltip min-width="16%">
+            <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.configCritical + ' HIGH:' +  scope.row.configHigh + ' MEDIUM:' + scope.row.configMedium + ' LOW:' + scope.row.configLow + ' UNKNOWN:' + scope.row.configUnknown" placement="top">
+              <el-link type="primary" class="text-click" @click="goConfigResource(scope.row)">
+                {{ 'C:' + scope.row.configCritical + ' H:' +  scope.row.configHigh + ' M:' + scope.row.configMedium + ' L:' + scope.row.configLow + ' U:' + scope.row.configUnknown }}
               </el-link>
             </el-tooltip>
           </el-table-column>
@@ -57,7 +63,7 @@
       </el-card>
 
       <!--History statistics-->
-      <el-drawer class="rtl" :title="$t('resource.i18n_not_compliance')" :visible.sync="statisticsList" size="85%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="rtl" :title="$t('k8s.vuln_compliance')" :visible.sync="statisticsList" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <div>
           <el-table border :data="statisticsData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
@@ -90,6 +96,38 @@
         </div>
       </el-drawer>
       <!--History statistics-->
+
+      <!--History config report-->
+      <el-drawer class="rtl" :title="$t('k8s.config_compliance')" :visible.sync="configReportList" size="85%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true">
+        <div>
+          <el-table border :data="configReportData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
+            <el-table-column type="index" min-width="2%"/>
+            <el-table-column min-width="10%" :label="'Title'" prop="title" v-slot:default="scope">
+              <span style="font-weight:bold;color: #000000;">{{ scope.row.title }}</span>
+            </el-table-column>
+            <el-table-column min-width="7%" :label="'CheckID'" prop="checkId">
+            </el-table-column>
+            <el-table-column min-width="7%" :label="'Severity'" prop="severity" v-slot:default="scope">
+              <span v-if="scope.row.severity === 'CRITICAL'" style="color: #8B0000;">{{ scope.row.severity }}</span>
+              <span v-if="scope.row.severity === 'HIGH'" style="color: #FF4D4D;">{{ scope.row.severity }}</span>
+              <span v-if="scope.row.severity === 'MEDIUM'" style="color: #FF8000;">{{ scope.row.severity }}</span>
+              <span v-if="scope.row.severity === 'LOW'" style="color: #336D9F;">{{ scope.row.severity }}</span>
+              <span v-if="scope.row.severity === 'UNKNOWN'" style="color: #67C23A;">{{ scope.row.severity }}</span>
+            </el-table-column>
+            <el-table-column min-width="10%" :label="'Category'" prop="category" v-slot:default="scope">
+              {{ scope.row.category?scope.row.category:'N/A' }}
+            </el-table-column>
+            <el-table-column min-width="25%" :label="'Description'" prop="description" v-slot:default="scope">
+              <span>{{ scope.row.description }}</span>
+            </el-table-column>
+            <el-table-column min-width="5%" :label="'Success'" prop="success" v-slot:default="scope">
+              {{ scope.row.success?scope.row.success:'N/A' }}
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-drawer>
+      <!--History config report-->
 
       <!--History status-->
       <el-drawer class="rtl" :title="$t('resource.i18n_resource_scanning_log')" :visible.sync="logVisible" size="85%" :before-close="handleClose" :direction="direction"
@@ -415,8 +453,10 @@ import CodeDiff from 'vue-code-diff';
         outputListTotal: 0,
         outputListSearchData: {},
         statisticsList: false,
+        configReportList: false,
         logVisible: false,
         statisticsData: [],
+        configReportData: [],
         logForm: {},
         logData: [],
         filterJson: this.filterJsonKeyAndValue,
@@ -492,6 +532,7 @@ import CodeDiff from 'vue-code-diff';
       handleClose() {
         this.visibleList = false;
         this.statisticsList = false;
+        this.configReportList = false;
         this.logVisible = false;
       },
       innerDrawerClose() {
@@ -514,6 +555,18 @@ import CodeDiff from 'vue-code-diff';
         });
         this.result = this.$get("/k8s/metricChart/"+ this.resultId, response => {
           this.content = response.data;
+        });
+      },
+      goConfigResource(params) {
+        if (params.returnConfigSum == 0) {
+          this.$warning(this.$t('resource.no_resources_allowed'));
+          return;
+        }
+        let url = "/k8s/historyResultConfigItemList";
+        this.result = this.$post(url, {resultId: params.id}, response => {
+          let data = response.data;
+          this.configReportData = data;
+          this.configReportList = true;
         });
       },
       showResultLog (result) {

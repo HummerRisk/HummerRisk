@@ -710,6 +710,13 @@ public class K8sService {
         return cloudNativeResultItemMapper.selectByExampleWithBLOBs(example);
     }
 
+    public List<CloudNativeResultConfigItemWithBLOBs> historyResultConfigItemList(CloudNativeResultConfigItem item) {
+        CloudNativeResultConfigItemExample example = new CloudNativeResultConfigItemExample();
+        example.createCriteria().andResultIdEqualTo(item.getResultId());
+        example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
+        return cloudNativeResultConfigItemMapper.selectByExampleWithBLOBs(example);
+    }
+
     public void deleteHistoryK8sResult(String id) throws Exception {
         HistoryCloudNativeResultLogExample logExample = new HistoryCloudNativeResultLogExample();
         logExample.createCriteria().andResultIdEqualTo(id);
