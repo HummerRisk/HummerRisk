@@ -463,8 +463,13 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
           callback: (action) => {
             if (action === 'confirm') {
               this.result = this.$post("/server/validate/" + row.id, {}, response => {
-                if (response.data) {
-                  this.$success(this.$t('server.success'));
+                let data = response.data;
+                if (data) {
+                  if (data.flag) {
+                    this.$success(this.$t('server.success'));
+                  } else {
+                    this.$error(data.message, 10000);
+                  }
                 } else {
                   this.$error(this.$t('server.error'));
                 }

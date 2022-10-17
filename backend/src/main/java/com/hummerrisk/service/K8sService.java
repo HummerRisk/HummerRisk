@@ -164,9 +164,9 @@ public class K8sService {
             validateDTO.setMessage("Verification succeeded!");
             return validateDTO;
         } catch (Exception e) {
-            LogUtil.error(String.format("HRException in verifying cloud native, cloud native: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()), e);
+            LogUtil.error(e.getMessage());
             validateDTO.setFlag(false);
-            validateDTO.setMessage(String.format("HRException in verifying cloud native, cloud native Operator Status: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()));
+            validateDTO.setMessage(e.getMessage());
             return validateDTO;
         }
     }

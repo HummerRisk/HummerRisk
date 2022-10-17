@@ -63,12 +63,12 @@ public class SshUtil {
                 LogUtil.info(String.format(tipStr, "ssh2 认证成功"));
             } else {
                 LogUtil.error(String.format(tipStr, "ssh2 认证失败"));
-                throw new Exception(String.format(tipStr, "ssh2 认证失败"));
+                throw new Exception("ssh2 认证失败");
             }
 
         } catch (IOException e) {
             LogUtil.error(String.format(tipStr, "ssh2登录失败") + e.getMessage());
-            throw new Exception(String.format(tipStr, "ssh2登录失败") + e.getMessage());
+            throw e;
         }
         long endTime = Calendar.getInstance().getTimeInMillis();
         LogUtil.info("ssh2 登录用时: " + (endTime - startTime)/1000.0 + "s\n" + splitStr);
@@ -110,11 +110,9 @@ public class SshUtil {
                 LogUtil.error(String.format(tipStr, "sshd 认证失败"));
                 throw new DeploymentException("Failed to authenticate", auth.getException());
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             LogUtil.error(String.format(tipStr, "sshd登录失败") + e.getMessage());
-            throw new Exception(String.format(tipStr, "sshd登录失败") + e.getMessage());
-        } finally {
-            session.close();
+            throw new IOException("Failed to authenticate：" + e.getMessage());
         }
         long endTime = Calendar.getInstance().getTimeInMillis();
         LogUtil.info("sshd 登录用时: " + (endTime - startTime)/1000.0 + "s\n" + splitStr);
@@ -157,7 +155,7 @@ public class SshUtil {
             }
         } catch (Exception e) {
             LogUtil.error(String.format(tipStr, "sshd登录失败") + e.getMessage());
-            throw new Exception(String.format(tipStr, "sshd登录失败") + e.getMessage());
+            throw e;
         }
         long endTime = Calendar.getInstance().getTimeInMillis();
         LogUtil.info("sshd 登录用时: " + (endTime - startTime)/1000.0 + "s\n" + splitStr);

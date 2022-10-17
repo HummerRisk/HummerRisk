@@ -22,6 +22,7 @@ import com.hummerrisk.controller.request.account.UpdateCloudAccountRequest;
 import com.hummerrisk.dto.AccountDTO;
 import com.hummerrisk.dto.QuartzTaskDTO;
 import com.hummerrisk.dto.RuleDTO;
+import com.hummerrisk.dto.ValidateDTO;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -76,8 +77,8 @@ public class AccountService {
     public boolean validate(List<String> ids) {
         ids.forEach(id -> {
             try {
-                boolean validate = validate(id);
-                if(!validate) throw new HRException(Translator.get("failed_cloud_account"));
+                ValidateDTO validate = validate(id);
+                if(!validate.isFlag()) throw new HRException(Translator.get("failed_cloud_account"));
             } catch (Exception e) {
                 LogUtil.error(e.getMessage());
                 throw new HRException(e.getMessage());
@@ -87,31 +88,32 @@ public class AccountService {
     }
 
 
-    public boolean validate(String id) {
-        try {
-            AccountWithBLOBs account = accountMapper.selectByPrimaryKey(id);
-            //检验账号的有效性
-            boolean valid = validateAccount(account);
-            if (valid) {
-                account.setStatus(CloudAccountConstants.Status.VALID.name());
-            } else {
-                account.setStatus(CloudAccountConstants.Status.INVALID.name());
-            }
-            accountMapper.updateByPrimaryKeySelective(account);
-            return valid;
-        } catch (Exception e) {
-            throw new HRException(e.getMessage());
+    public ValidateDTO validate(String id) {
+        AccountWithBLOBs account = accountMapper.selectByPrimaryKey(id);
+        //检验账号的有效性
+        ValidateDTO valid = validateAccount(account);
+        if (valid.isFlag()) {
+            account.setStatus(CloudAccountConstants.Status.VALID.name());
+        } else {
+            account.setStatus(CloudAccountConstants.Status.INVALID.name());
         }
+        accountMapper.updateByPrimaryKeySelective(account);
+        return valid;
     }
 
-    private boolean validateAccount(AccountWithBLOBs account) {
+    private ValidateDTO validateAccount(AccountWithBLOBs account) {
+        ValidateDTO validateDTO = new ValidateDTO();
         try {
             Proxy proxy = new Proxy();
             if (account.getProxyId() != null) proxy = proxyMapper.selectByPrimaryKey(account.getProxyId());
-            return PlatformUtils.validateCredential(account, proxy);
+            validateDTO.setFlag(PlatformUtils.validateCredential(account, proxy));
+            validateDTO.setMessage(String.format("Verification cloud account status: [%s], cloud account: [%s], plugin: [%s]", validateDTO.isFlag(), account.getName(), account.getPluginName()));
+            return validateDTO;
         } catch (Exception e) {
+            validateDTO.setMessage(String.format("HRException in verifying cloud account, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
+            validateDTO.setFlag(false);
             LogUtil.error(String.format("HRException in verifying cloud account, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()), e);
-            return false;
+            return validateDTO;
         }
     }
 
@@ -217,8 +219,8 @@ public class AccountService {
 
     public Object getRegions(String id) {
         try {
-            boolean flag = validate(id);
-            if (!flag) {
+            ValidateDTO flag = validate(id);
+            if (!flag.isFlag()) {
                 HRException.throwException(Translator.get("i18n_ex_plugin_validate"));
             }
             AccountWithBLOBs account = accountMapper.selectByPrimaryKey(id);
@@ -226,7 +228,7 @@ public class AccountService {
             if (regions.isEmpty()) {
                 Proxy proxy = new Proxy();
                 if (account.getProxyId() != null) proxy = proxyMapper.selectByPrimaryKey(account.getProxyId());
-                return PlatformUtils._getRegions(account, proxy, flag);
+                return PlatformUtils._getRegions(account, proxy, flag.isFlag());
             } else {
                 return regions;
             }
@@ -254,7 +256,7 @@ public class AccountService {
         try {
             Proxy proxy = new Proxy();
             if (account.getProxyId() != null) proxy = proxyMapper.selectByPrimaryKey(account.getProxyId());
-            JSONArray jsonArray = PlatformUtils._getRegions(account, proxy, validate(account.getId()));
+            JSONArray jsonArray = PlatformUtils._getRegions(account, proxy, validate(account.getId()).isFlag());
             if (!jsonArray.isEmpty()) {
                 account.setRegions(jsonArray.toJSONString());
                 accountMapper.updateByPrimaryKeySelective(account);

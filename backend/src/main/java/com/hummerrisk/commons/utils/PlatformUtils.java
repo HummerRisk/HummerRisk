@@ -80,6 +80,7 @@ import com.tencentcloudapi.cvm.v20170312.CvmClient;
 import com.tencentcloudapi.cvm.v20170312.models.RegionInfo;
 import com.vmware.vim25.mo.Datacenter;
 import com.volcengine.model.request.iam.ListUsersRequest;
+import com.volcengine.model.response.iam.ListUsersResponse;
 import com.volcengine.service.iam.IIamService;
 import com.volcengine.service.iam.impl.IamServiceImpl;
 import io.fabric8.kubernetes.api.model.NamespaceList;
@@ -1058,8 +1059,8 @@ public class PlatformUtils {
                     ListUsersRequest listUsersRequest = new ListUsersRequest();
                     listUsersRequest.setLimit(3);
 
-                    iamService.listUsers(listUsersRequest);
-                    return true;
+                    ListUsersResponse listUsersResponse = iamService.listUsers(listUsersRequest);
+                    return listUsersResponse.getResult()!=null;
                 } catch (Exception e) {
                     throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }

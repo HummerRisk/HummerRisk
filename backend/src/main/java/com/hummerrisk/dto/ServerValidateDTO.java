@@ -1,10 +1,14 @@
 package com.hummerrisk.dto;
 
-public class ValidateDTO {
+import com.hummerrisk.base.domain.Server;
 
-   private String message;
+public class ServerValidateDTO {
 
-   private boolean flag;
+    private String message;
+
+    private boolean flag;
+
+    private Server server;
 
     public String getMessage() {
         return message;
@@ -20,5 +24,13 @@ public class ValidateDTO {
 
     public void setFlag(boolean flag) {
         this.flag = flag;
+    }
+
+    public Server getServer() {
+        return server;
+    }
+
+    public void setServer(Server server) {
+        this.server = server;
     }
 }

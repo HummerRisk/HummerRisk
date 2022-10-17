@@ -74,8 +74,8 @@ public class ServerService {
     public boolean validate(List<String> ids) {
         ids.forEach(id -> {
             try {
-                boolean validate = validate(id);
-                if (!validate) throw new HRException(Translator.get("failed_server"));
+                ServerValidateDTO validate = validate(id);
+                if (!validate.isFlag()) throw new HRException(Translator.get("failed_server"));
             } catch (Exception e) {
                 LogUtil.error(e.getMessage());
                 throw new HRException(e.getMessage());
@@ -85,23 +85,17 @@ public class ServerService {
     }
 
 
-    public boolean validate(String id) {
-        try {
-            Server server = serverMapper.selectByPrimaryKey(id);
-            //检验主机的有效性
-            boolean valid = validateAccount(server);
-            if (valid) {
-                server.setStatus(CloudAccountConstants.Status.VALID.name());
-            } else {
-                server.setStatus(CloudAccountConstants.Status.INVALID.name());
-            }
-            serverMapper.updateByPrimaryKeySelective(server);
-            return valid;
-        } catch (Exception e) {
-            LogUtil.error(e.getMessage());
-            return false;
+    public ServerValidateDTO validate(String id) {
+        Server server = serverMapper.selectByPrimaryKey(id);
+        //检验主机的有效性
+        ServerValidateDTO valid = validateAccount(server);
+        if (valid.isFlag()) {
+            server.setStatus(CloudAccountConstants.Status.VALID.name());
+        } else {
+            server.setStatus(CloudAccountConstants.Status.INVALID.name());
         }
-
+        serverMapper.updateByPrimaryKeySelective(server);
+        return valid;
     }
 
     public Boolean scan(List<String> ids) {
@@ -247,16 +241,20 @@ public class ServerService {
         historyService.insertHistoryServerResultLog(BeanUtils.copyBean(new HistoryServerResultLog(), serverResultLog));
     }
 
-    private boolean validateAccount(Server server) {
+    private ServerValidateDTO validateAccount(Server server) {
+        ServerValidateDTO serverValidateDTO = new ServerValidateDTO();
         try {
             Proxy proxy = new Proxy();
             if (server.getIsProxy() != null && server.getIsProxy()) {
                 proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
             }
-            return StringUtils.equalsIgnoreCase(login(server, proxy).getStatus(), CloudAccountConstants.Status.VALID.name());
+            serverValidateDTO= login(server, proxy);
+            return serverValidateDTO;
         } catch (Exception e) {
             LogUtil.error(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), e.getMessage()), e);
-            return false;
+            serverValidateDTO.setFlag(false);
+            serverValidateDTO.setMessage(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), e.getMessage()));
+            return serverValidateDTO;
         }
     }
 
@@ -306,7 +304,7 @@ public class ServerService {
 
     }
 
-    public int addServer(MultipartFile keyFile, Server server) throws Exception {
+    public ServerValidateDTO addServer(MultipartFile keyFile, Server server) throws Exception {
         String id = UUIDUtil.newUUID();
         server.setId(id);
         server.setCreator(SessionUtils.getUserId());
@@ -342,13 +340,14 @@ public class ServerService {
             server.setIsCertificate(false);
         }
 
-        server = login(server, proxy);
+        ServerValidateDTO serverValidateDTO = login(server, proxy);
 
         OperationLogService.log(SessionUtils.getUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_create_server");
-        return serverMapper.insertSelective(server);
+        serverMapper.insertSelective(serverValidateDTO.getServer());
+        return serverValidateDTO;
     }
 
-    public int editServer(MultipartFile keyFile, Server server) throws Exception {
+    public ServerValidateDTO editServer(MultipartFile keyFile, Server server) throws Exception {
         server.setUpdateTime(System.currentTimeMillis());
         Proxy proxy = new Proxy();
         if (server.getIsProxy() != null && server.getIsProxy()) {
@@ -381,10 +380,11 @@ public class ServerService {
             server.setIsCertificate(false);
         }
 
-        server = login(server, proxy);
+        ServerValidateDTO serverValidateDTO = login(server, proxy);
 
         OperationLogService.log(SessionUtils.getUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "i18n_update_server");
-        return serverMapper.updateByPrimaryKeySelective(server);
+        serverMapper.updateByPrimaryKeySelective(serverValidateDTO.getServer());
+        return serverValidateDTO;
     }
 
     public void deleteServer(String id) throws Exception {
@@ -393,22 +393,30 @@ public class ServerService {
     }
 
 
-    public Server login(Server server, Proxy proxy) throws Exception {
+    public ServerValidateDTO login(Server server, Proxy proxy) throws Exception {
+        ServerValidateDTO serverValidateDTO = new ServerValidateDTO();
         try {
             SshUtil.login(server, proxy);
             server.setStatus(CloudAccountConstants.Status.VALID.name());
             server.setAuthType("ssh2");
+            serverValidateDTO.setFlag(true);
+            serverValidateDTO.setMessage("Verification succeeded!");
         } catch (Exception e) {
             try {
                 SshUtil.loginSshd(server, proxy);
                 server.setStatus(CloudAccountConstants.Status.VALID.name());
                 server.setAuthType("sshd");
-            } catch (Exception ex) {
+                serverValidateDTO.setFlag(true);
+                serverValidateDTO.setMessage("Verification succeeded!");
+            } catch (IOException ex) {
                 server.setStatus(CloudAccountConstants.Status.INVALID.name());
                 server.setAuthType("sshd");
+                serverValidateDTO.setFlag(false);
+                serverValidateDTO.setMessage(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), ex.getMessage()));
             }
         }
-        return server;
+        serverValidateDTO.setServer(server);
+        return serverValidateDTO;
     }
 
     public String execute(Server server, String cmd, Proxy proxy) throws Exception {

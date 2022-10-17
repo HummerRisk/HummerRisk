@@ -200,7 +200,7 @@ public class CloudTaskService {
             Proxy proxy = new Proxy();
             if (account.getProxyId() != null) proxy = proxyMapper.selectByPrimaryKey(account.getProxyId());
             // 校验云账号是否有效
-            Optional.ofNullable(accountService.validate(account.getId())).filter(Boolean::booleanValue).orElseGet(() -> {
+            Optional.ofNullable(accountService.validate(account.getId()).isFlag()).filter(Boolean::booleanValue).orElseGet(() -> {
                 HRException.throwException(Translator.get("i18n_ex_plugin_validate"));
                 return null;
             });

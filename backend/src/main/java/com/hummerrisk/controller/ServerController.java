@@ -64,7 +64,7 @@ public class ServerController {
 
     @ApiOperation(value = "校验主机配置连通性")
     @PostMapping("validate/{id}")
-    public Boolean validate(@PathVariable String id) {
+    public ServerValidateDTO validate(@PathVariable String id) {
         return serverService.validate(id);
     }
 
@@ -94,14 +94,14 @@ public class ServerController {
 
     @ApiOperation(value = "添加主机")
     @PostMapping(value = "addServer", consumes = {"multipart/form-data"})
-    public int addServer(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
+    public ServerValidateDTO addServer(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
                          @RequestPart("request") Server request) throws Exception {
         return serverService.addServer(keyFile, request);
     }
 
     @ApiOperation(value = "编辑主机")
     @PostMapping(value = "editServer", consumes = {"multipart/form-data"})
-    public int editServer(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
+    public ServerValidateDTO editServer(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
                           @RequestPart("request") Server request) throws Exception {
         return serverService.editServer(keyFile, request);
     }

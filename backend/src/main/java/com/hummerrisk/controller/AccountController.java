@@ -15,6 +15,7 @@ import com.hummerrisk.controller.request.account.UpdateCloudAccountRequest;
 import com.hummerrisk.dto.AccountDTO;
 import com.hummerrisk.dto.QuartzTaskDTO;
 import com.hummerrisk.dto.RuleDTO;
+import com.hummerrisk.dto.ValidateDTO;
 import com.hummerrisk.service.AccountService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -92,7 +93,7 @@ public class AccountController {
 
     @ApiOperation(value = "校验云账号")
     @PostMapping("validate/{id}")
-    public Boolean validate(@PathVariable String id) {
+    public ValidateDTO validate(@PathVariable String id) {
         return accountService.validate(id);
     }
 
