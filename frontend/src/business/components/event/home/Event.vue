@@ -35,7 +35,7 @@
         <el-table-column
           prop="eventTime"
           :label="$t('event.event_time')"
-          min-width="10%"
+          min-width="13%"
         >
           <template v-slot:default="scope">
             <span>{{ scope.row.eventTime | timestampFormatDate }}</span>
@@ -79,7 +79,9 @@
         </el-table-column>
         <el-table-column
           :label="$t('event.risk_level')"
+          prop="eventRating"
           min-width="10%"
+          sortable
         >
           <template v-slot:default="scope">
             <el-tag v-if="!!!scope.row.eventRating || scope.row.eventRating === 0 " type="success">{{ $t('rule.LowRisk') }}</el-tag>

@@ -10,6 +10,8 @@ import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.cloudResource.CloudResourceItemRequest;
 import com.hummerrisk.controller.request.cloudResource.CloudResourceSyncRequest;
+import com.hummerrisk.dto.CloudResourceItemDTO;
+import com.hummerrisk.dto.ResourceRuleDTO;
 import com.hummerrisk.service.CloudResourceService;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -33,8 +35,15 @@ public class CloudResourceController {
 
     @I18n
     @PostMapping(value = "list/{goPage}/{pageSize}")
-    public Pager<List<CloudResourceItem>> listResource(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudResourceItemRequest cloudResourceItemRequest) {
+    public Pager<List<CloudResourceItemDTO>> listResource(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudResourceItemRequest cloudResourceItemRequest) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, cloudResourceService.getResources(cloudResourceItemRequest));
     }
+
+    @I18n
+    @GetMapping(value = "rule/list/{hummerId}")
+    public List<ResourceRuleDTO> listResourceRule(@PathVariable String hummerId) {
+        return cloudResourceService.getResourceRule(hummerId);
+    }
+
 }
