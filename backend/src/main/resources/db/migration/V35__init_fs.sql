@@ -273,28 +273,6 @@ INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('f8579451-2c24-474
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('d2628999-b60d-4e7f-812d-0cd5a94a7e38', 'safety');
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('eac1ba91-eb46-4c44-b1f4-e709ea9d0e1e', 'safety');
 
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('222dadad-480c-4da0-92a4-31c277d08e34', 'd80b3e78-6dfc-429c-bcdd-50ec212cfc42', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('244de811-6ea6-445f-82c3-c1aacbbe6413', '03979d46-6325-4b20-8d77-0e904a986064', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('28964f45-4e5b-4239-937f-3885f80a22e3', '531cefda-5723-4a81-9ec1-5eb0c797b9a0', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('337bfdc0-ab80-40c0-873c-5a98df763e7d', '705c1cef-b47b-4e0b-ab42-d1b360e6502e', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('482dfe34-3670-4de7-b8ac-d00b2eb91bdc', 'e3fdf46f-782c-439f-b09f-2a616d42697d', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('66aa5bf8-666f-409a-a090-31a93894b00c', '71427f80-643c-4e8e-9cb8-f07f544b2825', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('72ee44c2-6d31-4b03-9bc4-0a93911f1b2e', 'f8579451-2c24-4743-87e3-0fcf7c465d08', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('7c69de34-96ed-4bcf-a28a-ba9db035fe60', 'eac1ba91-eb46-4c44-b1f4-e709ea9d0e1e', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('8470b947-d2e7-4298-adee-e8d9e7e33875', '3bd0f4f5-eb7f-48d5-b3db-1fd8cee80e07', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('8d191a69-c786-4aea-84f5-eed2ffe791fc', 'd2628999-b60d-4e7f-812d-0cd5a94a7e38', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('94aa134d-2ac3-4cf9-ba57-b47a3c4e71fe', '67a2b3ad-6974-442c-9f03-32f0a8cd4f4d', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('9bd62fd6-2804-4379-921a-312190f86910', 'c66cbddd-5846-4fb9-bedb-8a6812c51c5e', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('9dc43cc7-c2dc-4412-a257-9b5db6d12691', '065d41f3-ff24-4e2e-989f-df71c45e3853', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('a7e0eba8-1598-4a12-8306-6e2b5cd87062', 'b8844aed-9da9-469b-8ec8-a69fb1a2f7f2', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('ba32ff4f-86da-423c-9f5a-f367cd33877f', 'b9f4c9f9-0fb6-47d6-af8a-57e9b8902245', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('c299e122-8c2d-4891-8621-87826425da66', 'bd18fd9b-06af-4c98-8198-26b3aa3b78bc', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('c58df2cd-66e2-4c56-8107-4686f8c3cd2f', '48e028e7-9eff-4c98-8a08-2c696e2842f7', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('d33708e6-1fb4-4a6e-bc01-ec5acc6b5e9a', 'd8a2d0ca-4f5b-4809-8321-5ef485b2bf21', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('d61b642b-0516-46d7-b3d3-d2bcdaa22845', 'bb3eed24-02b1-43d1-9057-f4f800e4660e', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('e97f49af-4079-4a78-8f84-cdfa6f93231d', '77047e0e-88da-422e-93db-2d3a0606e961', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('ea13e3c3-35f3-4bc7-ab8f-e734e6486d96', 'f2e017f1-70cb-4ad1-a187-8895c8040945', 'prowler');
-INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('ffb8880f-8162-4140-b027-d20dac6a1703', '22dd87f6-353c-42a7-a253-3957b17c1bb4', 'prowler');
 
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('b9f4c9f9-0fb6-47d6-af8a-57e9b8902245', '90');
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('c66cbddd-5846-4fb9-bedb-8a6812c51c5e', '114');
@@ -379,3 +357,69 @@ INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('71427f80-643c-
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('f8579451-2c24-4743-87e3-0fcf7c465d08', @groupId1);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('d2628999-b60d-4e7f-812d-0cd5a94a7e38', @groupId1);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('eac1ba91-eb46-4c44-b1f4-e709ea9d0e1e', @groupId1);
+
+
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('79790c74-501c-4830-bba6-ca635c0885f5', 'AWS VPC 流日志检测', 1, 'MediumRisk', 'AWS 确保在所有 VPC 中启用 VPC 流日志记录，Ensure VPC Flow Logging is Enabled in all VPCs。', '2.0 Logging - CIS only - [group2] ********************************** -  []\n\n2.9 [check29] Ensure VPC Flow Logging is Enabled in all VPCs - vpc [Medium]', '[{\"defaultValue\":\"check29\",\"name\":\"检测规则\",\"key\":\"check\",\"required\":true}]', 'hummer-aws-plugin', 'Amazon Web Services', 'aws.png', concat(unix_timestamp(now()), '003'), 1, 'prowler', NULL);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('e7b41c37-410e-4fa8-85bd-2452c1076957', 'AWS KMS CMK (轮换)检测', 1, 'MediumRisk', 'AWS 确保启用客户创建的 KMS CMK 的轮换，Ensure rotation for customer created KMS CMKs is enabled。', '2.0 Logging - CIS only - [group2] ********************************** -  []\n\n2.8 [check28] Ensure rotation for customer created KMS CMKs is enabled - kms [Medium]', '[{\"defaultValue\":\"check28\",\"name\":\"检测规则\",\"key\":\"check\",\"required\":true}]', 'hummer-aws-plugin', 'Amazon Web Services', 'aws.png', concat(unix_timestamp(now()), '003'), 1, 'prowler', NULL);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('1ca7f983-69ea-47ed-9f9a-5a6e7317d8bd', 'AWS KMS CMK 检测', 1, 'MediumRisk', 'AWS 确保使用 KMS CMK 对 CloudTrail 日志进行静态加密，Ensure CloudTrail logs are encrypted at rest using KMS CMKs。', '2.0 Logging - CIS only - [group2] ********************************** -  []\n\n2.7 [check27] Ensure CloudTrail logs are encrypted at rest using KMS CMKs - cloudtrail [Medium]', '[{\"defaultValue\":\"check27\",\"name\":\"检测规则\",\"key\":\"check\",\"required\":true}]', 'hummer-aws-plugin', 'Amazon Web Services', 'aws.png', concat(unix_timestamp(now()), '003'), 1, 'prowler', NULL);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('79d8e033-ddca-49e6-a658-76b5c0e90e09', 'AWS CloudTrail S3 检测', 1, 'MediumRisk', 'AWS 确保在 CloudTrail S3 存储桶上启用 S3 存储桶访问日志记录，Ensure S3 bucket access logging is enabled on the CloudTrail S3 bucket。', '2.0 Logging - CIS only - [group2] ********************************** -  []\n\n2.6 [check26] Ensure S3 bucket access logging is enabled on the CloudTrail S3 bucket - s3 [Medium]', '[{\"defaultValue\":\"check26\",\"name\":\"检测规则\",\"key\":\"check\",\"required\":true}]', 'hummer-aws-plugin', 'Amazon Web Services', 'aws.png', concat(unix_timestamp(now()), '003'), 1, 'prowler', NULL);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('d8fd6c3d-5faf-4394-897d-7fd84d33550d', 'AWS 启用 Config 检测', 1, 'MediumRisk', 'AWS 确保在所有区域启用 AWS Config，Ensure AWS Config is enabled in all regions。', '2.0 Logging - CIS only - [group2] ********************************** -  []\n\n2.5 [check25] Ensure AWS Config is enabled in all regions - configservice [Medium]', '[{\"defaultValue\":\"check25\",\"name\":\"检测规则\",\"key\":\"check\",\"required\":true}]', 'hummer-aws-plugin', 'Amazon Web Services', 'aws.png', concat(unix_timestamp(now()), '003'), 1, 'prowler', NULL);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('a2df85e7-0f0a-4283-84f2-81ee336736e2', 'AWS CloudTrail (CloudWatch Logs 集成)检测', 1, 'LowRisk', 'AWS 确保 CloudTrail 跟踪 CloudWatch Logs，Ensure CloudTrail trails are integrated with CloudWatch Logs。', '2.0 Logging - CIS only - [group2] ********************************** -  []\n\n2.4 [check24] Ensure CloudTrail trails are integrated with CloudWatch Logs - cloudtrail [Low]', '[{\"defaultValue\":\"check24\",\"name\":\"检测规则\",\"key\":\"check\",\"required\":true}]', 'hummer-aws-plugin', 'Amazon Web Services', 'aws.png', concat(unix_timestamp(now()), '003'), 1, 'prowler', NULL);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('96b70632-7ccb-4fe9-af1f-58a8be26eeaf', 'AWS CloudTrail 日志记录(S3 存储桶)检测', 1, 'CriticalRisk', 'AWS 确保 CloudTrail 日志记录不可公开访问 S3，Ensure the S3 bucket CloudTrail logs to is not publicly accessible。', '2.0 Logging - CIS only - [group2] ********************************** -  []\n\n2.3 [check23] Ensure the S3 bucket CloudTrail logs to is not publicly accessible - cloudtrail [Critical]', '[{\"defaultValue\":\"check23\",\"name\":\"检测规则\",\"key\":\"check\",\"required\":true}]', 'hummer-aws-plugin', 'Amazon Web Services', 'aws.png', concat(unix_timestamp(now()), '003'), 1, 'prowler', NULL);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('e554b261-0e89-42eb-a44c-4a6d00a32f85', 'AWS CloudTrail 日志文件检测', 1, 'MediumRisk', 'AWS 确保启用 CloudTrail 日志文件验证，Ensure CloudTrail log file validation is enabled。', '2.0 Logging - CIS only - [group2] ********************************** -  []\n\n2.2 [check22] Ensure CloudTrail log file validation is enabled - cloudtrail [Medium]', '[{\"defaultValue\":\"check22\",\"name\":\"检测规则\",\"key\":\"check\",\"required\":true}]', 'hummer-aws-plugin', 'Amazon Web Services', 'aws.png', concat(unix_timestamp(now()), '003'), 1, 'prowler', NULL);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('8883c71f-7d42-4007-9152-1138c3fb7ab3', 'AWS 启用 CloudTrail 检测', 1, 'HighRisk', 'AWS 确保在所有区域启用 CloudTrail，Ensure CloudTrail is enabled in all regions。', '2.0 Logging - CIS only - [group2] ********************************** -  []\n\n2.1 [check21] Ensure CloudTrail is enabled in all regions - cloudtrail [High]', '[{\"defaultValue\":\"check21\",\"name\":\"检测规则\",\"key\":\"check\",\"required\":true}]', 'hummer-aws-plugin', 'Amazon Web Services', 'aws.png', concat(unix_timestamp(now()), '003'), 1, 'prowler', NULL);
+
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('8883c71f-7d42-4007-9152-1138c3fb7ab3', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('e554b261-0e89-42eb-a44c-4a6d00a32f85', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('96b70632-7ccb-4fe9-af1f-58a8be26eeaf', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('a2df85e7-0f0a-4283-84f2-81ee336736e2', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('d8fd6c3d-5faf-4394-897d-7fd84d33550d', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('79d8e033-ddca-49e6-a658-76b5c0e90e09', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('1ca7f983-69ea-47ed-9f9a-5a6e7317d8bd', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('e7b41c37-410e-4fa8-85bd-2452c1076957', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('79790c74-501c-4830-bba6-ca635c0885f5', 'safety');
+
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('8883c71f-7d42-4007-9152-1138c3fb7ab3', '119');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('8883c71f-7d42-4007-9152-1138c3fb7ab3', '118');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('8883c71f-7d42-4007-9152-1138c3fb7ab3', '120');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('e554b261-0e89-42eb-a44c-4a6d00a32f85', '119');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('e554b261-0e89-42eb-a44c-4a6d00a32f85', '118');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('e554b261-0e89-42eb-a44c-4a6d00a32f85', '120');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('96b70632-7ccb-4fe9-af1f-58a8be26eeaf', '119');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('96b70632-7ccb-4fe9-af1f-58a8be26eeaf', '118');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('96b70632-7ccb-4fe9-af1f-58a8be26eeaf', '120');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('a2df85e7-0f0a-4283-84f2-81ee336736e2', '119');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('a2df85e7-0f0a-4283-84f2-81ee336736e2', '118');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('a2df85e7-0f0a-4283-84f2-81ee336736e2', '120');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('d8fd6c3d-5faf-4394-897d-7fd84d33550d', '119');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('d8fd6c3d-5faf-4394-897d-7fd84d33550d', '118');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('d8fd6c3d-5faf-4394-897d-7fd84d33550d', '120');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('d8fd6c3d-5faf-4394-897d-7fd84d33550d', '93');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('79d8e033-ddca-49e6-a658-76b5c0e90e09', '119');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('79d8e033-ddca-49e6-a658-76b5c0e90e09', '118');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('79d8e033-ddca-49e6-a658-76b5c0e90e09', '120');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('79d8e033-ddca-49e6-a658-76b5c0e90e09', '93');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('1ca7f983-69ea-47ed-9f9a-5a6e7317d8bd', '119');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('1ca7f983-69ea-47ed-9f9a-5a6e7317d8bd', '118');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('1ca7f983-69ea-47ed-9f9a-5a6e7317d8bd', '120');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('1ca7f983-69ea-47ed-9f9a-5a6e7317d8bd', '93');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('e7b41c37-410e-4fa8-85bd-2452c1076957', '119');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('e7b41c37-410e-4fa8-85bd-2452c1076957', '118');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('e7b41c37-410e-4fa8-85bd-2452c1076957', '120');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('e7b41c37-410e-4fa8-85bd-2452c1076957', '93');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('79790c74-501c-4830-bba6-ca635c0885f5', '119');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('79790c74-501c-4830-bba6-ca635c0885f5', '118');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('79790c74-501c-4830-bba6-ca635c0885f5', '120');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('79790c74-501c-4830-bba6-ca635c0885f5', '93');
+
+SELECT id INTO @groupId2 from rule_group where name = 'AWS Logging 安全检查';
+
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('8883c71f-7d42-4007-9152-1138c3fb7ab3', @groupId2);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('e554b261-0e89-42eb-a44c-4a6d00a32f85', @groupId2);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('96b70632-7ccb-4fe9-af1f-58a8be26eeaf', @groupId2);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('a2df85e7-0f0a-4283-84f2-81ee336736e2', @groupId2);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('d8fd6c3d-5faf-4394-897d-7fd84d33550d', @groupId2);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('79d8e033-ddca-49e6-a658-76b5c0e90e09', @groupId2);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('1ca7f983-69ea-47ed-9f9a-5a6e7317d8bd', @groupId2);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('e7b41c37-410e-4fa8-85bd-2452c1076957', @groupId2);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('79790c74-501c-4830-bba6-ca635c0885f5', @groupId2);
