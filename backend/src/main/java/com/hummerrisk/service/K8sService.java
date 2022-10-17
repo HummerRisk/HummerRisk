@@ -90,8 +90,8 @@ public class K8sService {
     public boolean validate(List<String> ids) {
         ids.forEach(id -> {
             try {
-                boolean validate = validate(id);
-                if(!validate) throw new HRException(Translator.get("failed_cloud_native"));
+                ValidateDTO validate = validate(id);
+                if(!validate.isFlag()) throw new HRException(Translator.get("failed_cloud_native"));
             } catch (Exception e) {
                 LogUtil.error(e.getMessage());
                 throw new HRException(e.getMessage());
@@ -101,11 +101,11 @@ public class K8sService {
     }
 
 
-    public boolean validate(String id) throws IOException, ApiException {
+    public ValidateDTO validate(String id) throws IOException, ApiException {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
         //检验账号的有效性
-        boolean valid = validateAccount(cloudNative);
-        if (valid) {
+        ValidateDTO valid = validateAccount(cloudNative);
+        if (valid.isFlag()) {
             cloudNative.setStatus(CloudAccountConstants.Status.VALID.name());
             addCloudNativeSource(cloudNative);
         } else {
@@ -115,19 +115,20 @@ public class K8sService {
         return valid;
     }
 
-    public boolean operatorStatusValidate(String id) throws Exception {
+    public ValidateDTO operatorStatusValidate(String id) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
-        boolean valid = validateOperatorStatus(cloudNative);
-        if (valid) {
+        ValidateDTO validateDTO = validateOperatorStatus(cloudNative);
+        if (validateDTO.isFlag()) {
             cloudNative.setOperatorStatus(CloudAccountConstants.Status.VALID.name());
         } else {
             cloudNative.setOperatorStatus(CloudAccountConstants.Status.INVALID.name());
         }
         cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
-        return valid;
+        return validateDTO;
     }
 
-    private boolean validateOperatorStatus(CloudNative cloudNative) {
+    private ValidateDTO validateOperatorStatus(CloudNative cloudNative) {
+        ValidateDTO validateDTO = new ValidateDTO();
         try {
             //检验
             K8sRequest k8sRequest = new K8sRequest();
@@ -143,25 +144,34 @@ public class K8sService {
             param.put("Accept", CloudNativeConstants.Accept);
             param.put("Authorization", token);
             boolean valid = HttpClientUtil.operatorStatus(url, param);
-            return valid;
+            validateDTO.setFlag(valid);
+            validateDTO.setMessage("Verification succeeded!");
+            return validateDTO;
         } catch (Exception e) {
+            validateDTO.setFlag(false);
+            validateDTO.setMessage(String.format("HRException in verifying cloud native, cloud native Operator Status: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()));
             LogUtil.error(String.format("HRException in verifying cloud native, cloud native Operator Status: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()), e);
-            return false;
+            return validateDTO;
         }
     }
 
-    private boolean validateAccount(CloudNative cloudNative) {
+    private ValidateDTO validateAccount(CloudNative cloudNative) {
+        ValidateDTO validateDTO = new ValidateDTO();
         try {
             Proxy proxy = new Proxy();
             if (cloudNative.getProxyId() != null) proxy = proxyMapper.selectByPrimaryKey(cloudNative.getProxyId());
-            return PlatformUtils.validateCloudNative(cloudNative, proxy);
+            validateDTO.setFlag(PlatformUtils.validateCloudNative(cloudNative, proxy));
+            validateDTO.setMessage("Verification succeeded!");
+            return validateDTO;
         } catch (Exception e) {
             LogUtil.error(String.format("HRException in verifying cloud native, cloud native: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()), e);
-            return false;
+            validateDTO.setFlag(false);
+            validateDTO.setMessage(String.format("HRException in verifying cloud native, cloud native Operator Status: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()));
+            return validateDTO;
         }
     }
 
-    public CloudNative addCloudNative(CreateCloudNativeRequest request) {
+    public ValidateDTO addCloudNative(CreateCloudNativeRequest request) {
         try{
             //参数校验
             if (StringUtils.isEmpty(request.getCredential())
@@ -192,23 +202,23 @@ public class K8sService {
                 account.setCreator(Objects.requireNonNull(SessionUtils.getUser()).getId());
                 account.setId(UUIDUtil.newUUID());
                 //检验账号的有效性
-                boolean valid = validateAccount(account);
-                if (valid) {
+                ValidateDTO valid = validateAccount(account);
+                if (valid.isFlag()) {
                     account.setStatus(CloudAccountConstants.Status.VALID.name());
                     addCloudNativeSource(account);
                 } else {
                     account.setStatus(CloudAccountConstants.Status.INVALID.name());
                 }
                 //检验operator
-                boolean operatorStatusValidate = validateOperatorStatus(account);
-                if (operatorStatusValidate) {
+                ValidateDTO operatorStatusValidate = validateOperatorStatus(account);
+                if (operatorStatusValidate.isFlag()) {
                     account.setOperatorStatus(CloudAccountConstants.Status.VALID.name());
                 } else {
                     account.setOperatorStatus(CloudAccountConstants.Status.INVALID.name());
                 }
                 cloudNativeMapper.insertSelective(account);
                 OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_create_cloud_native");
-                return account;
+                return valid;
             }
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
@@ -216,7 +226,7 @@ public class K8sService {
         return null;
     }
 
-    public CloudNative editCloudNative(UpdateCloudNativeRequest request) throws Exception {
+    public ValidateDTO editCloudNative(UpdateCloudNativeRequest request) throws Exception {
         try {
             //参数校验
             if (StringUtils.isEmpty(request.getCredential())
@@ -247,16 +257,16 @@ public class K8sService {
                 account.setPluginName(plugin.getName());
                 account.setUpdateTime(System.currentTimeMillis());
                 //检验账号的有效性
-                boolean valid = validateAccount(account);
-                if (valid) {
+                ValidateDTO valid = validateAccount(account);
+                if (valid.isFlag()) {
                     account.setStatus(CloudAccountConstants.Status.VALID.name());
                     addCloudNativeSource(account);
                 } else {
                     account.setStatus(CloudAccountConstants.Status.INVALID.name());
                 }
                 //检验operator
-                boolean operatorStatusValidate = validateOperatorStatus(account);
-                if (operatorStatusValidate) {
+                ValidateDTO operatorStatusValidate = validateOperatorStatus(account);
+                if (operatorStatusValidate.isFlag()) {
                     account.setOperatorStatus(CloudAccountConstants.Status.VALID.name());
                 } else {
                     account.setOperatorStatus(CloudAccountConstants.Status.INVALID.name());
@@ -265,7 +275,7 @@ public class K8sService {
                 account = cloudNativeMapper.selectByPrimaryKey(account.getId());
                 //检验账号已更新状态
                 OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.UPDATE, "i18n_update_cloud_native");
-                return account;
+                return valid;
             }
 
         } catch (HRException | ClientException e) {

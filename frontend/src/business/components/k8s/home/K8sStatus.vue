@@ -26,8 +26,13 @@
           callback: (action) => {
             if (action === 'confirm') {
               this.$post("/k8s/validate/" + row.id, {}, response => {
-                if (response.data) {
-                  this.$success(this.$t('account.success'));
+                let data = response.data;
+                if (data) {
+                  if (data.flag) {
+                    this.$success(this.$t('account.success'));
+                  } else {
+                    this.$error(data.message, 10000);
+                  }
                 } else {
                   this.$error(this.$t('account.error'), 10000);
                 }

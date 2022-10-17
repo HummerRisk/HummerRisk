@@ -61,27 +61,27 @@ public class K8sController {
 
     @ApiOperation(value = "校验云原生账号")
     @PostMapping("validate/{id}")
-    public Boolean validate(@PathVariable String id) throws IOException, ApiException {
+    public ValidateDTO validate(@PathVariable String id) throws IOException, ApiException {
         return k8sService.validate(id);
     }
 
     @ApiOperation(value = "校验云原生Operator状态")
     @PostMapping("operatorStatusValidate/{id}")
-    public Boolean operatorStatusValidate(@PathVariable String id) throws Exception {
+    public ValidateDTO operatorStatusValidate(@PathVariable String id) throws Exception {
         return k8sService.operatorStatusValidate(id);
     }
 
     @I18n
     @ApiOperation(value = "添加云原生账号")
     @PostMapping("add")
-    public CloudNative addCloudNative(@RequestBody CreateCloudNativeRequest request) {
+    public ValidateDTO addCloudNative(@RequestBody CreateCloudNativeRequest request) {
         return k8sService.addCloudNative(request);
     }
 
     @I18n
     @ApiOperation(value = "更新云原生账号")
     @PostMapping("update")
-    public CloudNative editCloudNative(@RequestBody UpdateCloudNativeRequest request) throws Exception {
+    public ValidateDTO editCloudNative(@RequestBody UpdateCloudNativeRequest request) throws Exception {
         return k8sService.editCloudNative(request);
     }
 
