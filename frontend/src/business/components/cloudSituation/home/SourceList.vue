@@ -39,6 +39,15 @@
                 <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
               </template>
             </el-table-column>
+            <el-table-column
+              prop="ruleCount"
+              label="漏洞数"
+              min-width="10%"
+            >
+              <template v-slot:default="scope">
+                <ResourceRule v-if="scope.row.ruleCount>0" :hummer-id="scope.row.hummerId" :rule-count="scope.row.ruleCount" ></ResourceRule>
+              </template>
+            </el-table-column>
           </el-table>
           <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
         </el-card>
@@ -55,6 +64,7 @@ import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import {SITUATION_CONFIGS} from "../../common/components/search/search-components";
 import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
+import ResourceRule from "@/business/components/cloudSituation/home/ResourceRule";
 /* eslint-disable */
 export default {
   components: {
@@ -62,7 +72,8 @@ export default {
     TableHeader,
     TablePagination,
     TableOperators,
-    ResultReadOnly
+    ResultReadOnly,
+    ResourceRule
   },
   data() {
     return {
