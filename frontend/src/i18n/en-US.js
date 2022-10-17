@@ -566,6 +566,7 @@ export default {
     rule_tag_flag:'The built-in rule tag is not allowed to be modified or deleted',
     resource_type:'Resource type',
     severity:'risk level',
+    CriticalRisk: 'High Risk',
     HighRisk:'High Risk',
     MediumRisk:'MediumRisk',
     LowRisk:'Low Risk',

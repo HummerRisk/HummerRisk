@@ -447,7 +447,7 @@ import {RULE_CONFIGS} from "../../common/components/search/search-components";
         rule: {
           name: [
             {required: true, message: this.$t('rule.input_name'), trigger: 'blur'},
-            {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+            {min: 2, max: 100, message: this.$t('commons.input_limit', [2, 100]), trigger: 'blur'},
             {
               required: true,
               message: this.$t('rule.special_characters_are_not_supported'),
@@ -456,7 +456,7 @@ import {RULE_CONFIGS} from "../../common/components/search/search-components";
           ],
           description: [
             {required: true, message: this.$t('rule.input_description'), trigger: 'blur'},
-            {min: 2, max: 100, message: this.$t('commons.input_limit', [2, 100]), trigger: 'blur'},
+            {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
             {
               required: true,
               message: this.$t('rule.special_characters_are_not_supported'),
@@ -612,7 +612,8 @@ import {RULE_CONFIGS} from "../../common/components/search/search-components";
         this.severityOptions = [
           {key: '低风险', value: "LowRisk"},
           {key: '中风险', value: "MediumRisk"},
-          {key: '高风险', value: "HighRisk"}
+          {key: '高风险', value: "HighRisk"},
+          {key: '高危风险', value: "CriticalRisk"}
         ];
       },
       ruleSetOptionsFnc (pluginId) {

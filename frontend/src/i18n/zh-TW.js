@@ -566,6 +566,7 @@ export default {
     rule_tag_flag: '內置規則標籤不允許被修改與刪除',
     resource_type: '資源類型',
     severity: '風險等級',
+    CriticalRisk: '高危風險',
     HighRisk: '高風險',
     MediumRisk: '中風險',
     LowRisk: '低風險',
