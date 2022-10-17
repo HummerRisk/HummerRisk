@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummerrisk.base.mapper.ext.ExtCloudResourceItemMapper">
-    <resultMap id="BaseResultMap" type="com.hummerrisk.base.domain.CloudResourceItem">
+    <resultMap id="BaseResultMap" type="com.hummerrisk.dto.CloudResourceItemDTO">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="resource_id" jdbcType="VARCHAR" property="resourceId" />
         <result column="hummer_id" jdbcType="VARCHAR" property="hummerId" />
@@ -15,6 +15,7 @@
         <result column="create_time" jdbcType="BIGINT" property="createTime" />
         <result column="update_time" jdbcType="BIGINT" property="updateTime" />
         <result column="resource" jdbcType="VARCHAR" property="resource" />
+        <result column="rule_count" jdbcType="VARCHAR" property="ruleCount" />
     </resultMap>
 
     <resultMap id="SummaryResultMap" type="com.hummerrisk.base.domain.CloudResourceSummary">
@@ -111,8 +112,12 @@
 
     <select id="selectByRequest" resultMap="BaseResultMap" >
         select t.id, t.resource_id, t.hummer_id, t.resource_type, t.plugin_id, t.plugin_name, t.plugin_icon, t.account_id,
-    t.region_id, t.region_name, t.create_time, t.update_time,t.resource from cloud_resource_item t
+    t.region_id, t.region_name, t.create_time, t.update_time,t.resource,t2.rule_count from cloud_resource_item t
        left join cloud_account account on account.id = t.account_id
+       left join (select hummer_id,count(hummer_id) as rule_count from resource_item a
+        inner join resource_rule b on a.resource_id = b.resource_id
+        inner join rule c on b.rule_id = c.id
+        GROUP BY hummer_id) t2 on t.hummer_id = t2.hummer_id
         where 1=1
         <if test="request.combine != null">
             <include refid="combine">
@@ -124,5 +129,13 @@
             and t.resource_type like CONCAT('%', #{request.name},'%')
         </if>
         order by account.name,t.region_id,t.resource_type,t.create_time desc
+    </select>
+
+    <select id="selectResourceRule" resultType="com.hummerrisk.dto.ResourceRuleDTO" parameterType="String">
+        select a.hummer_id,a.resource_type, c.severity,b.rule_id,c.name as rule_name
+        from resource_item a
+        inner join resource_rule b on a.resource_id = b.resource_id
+        inner join rule c on b.rule_id = c.id
+        where hummer_id = #{hummerId}
     </select>
 </mapper>
