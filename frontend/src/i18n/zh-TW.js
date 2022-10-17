@@ -623,6 +623,8 @@ export default {
     suggestion: '優化建議',
   },
   resource: {
+    vuln_statistics: '漏洞統計',
+    vuln_count: '漏洞數',
     resync: '重新同步',
     sync_log: '資源同步日誌',
     resource_id: '資源ID',
