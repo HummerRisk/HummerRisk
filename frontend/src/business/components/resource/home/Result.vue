@@ -117,8 +117,9 @@
           </el-row>
         </el-col>
       </el-row>
+      <!-- 进度条 -->
       <el-progress v-if="source.overRules!==source.allRules" :text-inside="true"
-                   :stroke-width="26" :percentage="(source.overRules/source.allRules * 100).toFixed(2)"></el-progress>
+                   :stroke-width="26" :percentage="progressResult"></el-progress>
     </el-card>
 
     <el-card class="table-card">
@@ -694,6 +695,7 @@ export default {
       regulationData: [],
       regulationVisible: false,
       rowIndex: '',
+      progressResult: 0,
     }
   },
   watch: {
@@ -827,6 +829,7 @@ export default {
         this.source.resourcesSum = data.resourcesSum;
         this.source.overRules = data.overRules;
         this.source.allRules = data.allRules;
+        this.progressResult = (this.source.overRules/this.source.allRules * 100).toFixed(2);
         let url = "/cloud/task/manual/list/" + this.currentPage + "/" + this.pageSize;
         this.condition.accountId = this.accountId;
         //在这里实现事件

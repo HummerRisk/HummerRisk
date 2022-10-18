@@ -252,10 +252,10 @@ public class PlatformUtils {
                     String config = ReadFileUtils.readToBuffer(CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/config");
                     String credentials = ReadFileUtils.readToBuffer(CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/credentials");
                     if (!config.contains(region)) {
-                        CommandUtils.commonExecCmdWithResult("echo -e '" + defaultConfig + "' >> " + CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/config", CloudTaskConstants.PROWLER_CONFIG_FILE_PATH);
+                        CommandUtils.commonExecCmdWithResultNew("echo -e '" + defaultConfig + "' >> " + CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/config", CloudTaskConstants.PROWLER_CONFIG_FILE_PATH);
                     }
                     if (!credentials.contains(awsAccessKey) && !credentials.contains(awsSecretKey)) {
-                        CommandUtils.commonExecCmdWithResult("echo -e '" + defaultCredentials + "' >> " + CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/credentials", CloudTaskConstants.PROWLER_CONFIG_FILE_PATH);
+                        CommandUtils.commonExecCmdWithResultNew("echo -e '" + defaultCredentials + "' >> " + CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/credentials", CloudTaskConstants.PROWLER_CONFIG_FILE_PATH);
                     }
                     return proxy + "./prowler -c " + (StringUtils.isNotEmpty(fileName) ? fileName : "check11") + " -f " + region + " -s -M text > result.txt";
                 }
