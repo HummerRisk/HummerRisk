@@ -204,6 +204,7 @@ public class CloudSyncService {
                     String dirPath = "", resultStr = "", fileName = "policy.yml";
                     boolean readResource = true;
                     try {
+                        long nowDate = new Date().getTime();
                         dirPath = CloudTaskConstants.RESULT_FILE_PATH_PREFIX + uuid + "/" + region;
                         CommandUtils.saveAsFile(finalScript, dirPath, "policy.yml");
                         Map<String, String> map = PlatformUtils.getAccount(account, region, proxyMapper.selectByPrimaryKey(account.getProxyId()));
@@ -231,10 +232,13 @@ public class CloudSyncService {
                         cloudResourceWithBLOBs.setMetadata(metadata);
                         cloudResourceWithBLOBs.setResources(resources);
                         cloudResourceWithBLOBs.setResourceType(resourceType);
+                        cloudResourceWithBLOBs.setPluginIcon(account.getPluginIcon());
+                        cloudResourceWithBLOBs.setPluginId(account.getPluginId());
+                        cloudResourceWithBLOBs.setPluginName(account.getPluginName());
                         cloudResourceWithBLOBs.setAccountId(accountId);
                         cloudResourceWithBLOBs.setRegionId(region);
-                        cloudResourceWithBLOBs.setCreateTime(new Date().getTime());
-                        cloudResourceWithBLOBs.setUpdateTime(new Date().getTime());
+                        cloudResourceWithBLOBs.setCreateTime(nowDate);
+                        cloudResourceWithBLOBs.setUpdateTime(nowDate);
                         cloudResourceWithBLOBs.setRegionName(cloudResourceSyncItem.getRegionName());
                         JSONArray resourcesArr = parseArray(resources);
                         cloudResourceWithBLOBs.setResourcesSum((long) resourcesArr.size());
@@ -258,6 +262,7 @@ public class CloudSyncService {
                             cloudResourceItem.setResourceId(cloudResourceWithBLOBs.getId());
                             cloudResourceItem.setResourceType(resourceType);
                             cloudResourceItem.setHummerId(fid);
+                            cloudResourceItem.setCreateTime(nowDate);
                             cloudResourceItem.setResource(jsonObject.toJSONString());
 
                             //云资源同步资源详情表
