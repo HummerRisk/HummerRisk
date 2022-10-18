@@ -102,7 +102,7 @@ import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
-import RuleType from "./RuleType";
+import SeverityType from "@/business/components/common/components/SeverityType";
 /* eslint-disable */
   export default {
     components: {
@@ -113,7 +113,7 @@ import RuleType from "./RuleType";
       TablePagination,
       TableOperator,
       DialogFooter,
-      RuleType
+      SeverityType,
     },
     data() {
       return {

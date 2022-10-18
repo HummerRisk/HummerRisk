@@ -217,6 +217,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import RuleType from "./RuleType";
 import {SERVER_RULE_CONFIGS} from "../../common/components/search/search-components";
+import {severityOptions} from "@/common/js/constants";
 
 /* eslint-disable */
 export default {
@@ -357,11 +358,7 @@ export default {
       this.search();
     },
     severityOptionsFnc () {
-      this.severityOptions = [
-        {key: '低风险', value: "LowRisk"},
-        {key: '中风险', value: "MediumRisk"},
-        {key: '高风险', value: "HighRisk"}
-      ];
+      this.severityOptions = severityOptions;
     },
     init() {
       this.tagLists();

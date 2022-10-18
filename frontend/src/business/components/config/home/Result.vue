@@ -249,6 +249,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import {CONFIG_RESULT_CONFIGS} from "../../common/components/search/search-components";
 import {saveAs} from "@/common/js/FileSaver";
+import {severityOptions} from "@/common/js/constants";
 
 /* eslint-disable */
 export default {
@@ -354,11 +355,7 @@ export default {
       return sum == 0;
     },
     severityOptionsFnc () {
-      this.severityOptions = [
-        {key: '低风险', value: "LowRisk"},
-        {key: '中风险', value: "MediumRisk"},
-        {key: '高风险', value: "HighRisk"}
-      ];
+      this.severityOptions = severityOptions;
     },
     init() {
       this.severityOptionsFnc();

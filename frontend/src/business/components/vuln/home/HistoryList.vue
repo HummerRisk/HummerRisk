@@ -54,11 +54,8 @@
                 </span>
               </template>
             </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="15%" :sort-by="['HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
-              <span v-if="scope.row.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
-              <span v-else-if="scope.row.severity == 'MediumRisk'" style="color: #fe9636;"> {{ $t('rule.MediumRisk') }}</span>
-              <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
-              <span v-else> N/A</span>
+            <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="15%" :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
+              <severity-type :row="scope.row"></severity-type>
             </el-table-column>
             <el-table-column :label="$t('resource.status')" min-width="15%" prop="resourceStatus" show-overflow-tooltip>
             </el-table-column>
@@ -122,11 +119,8 @@
                 </span>
               </template>
             </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="15%" :sort-by="['HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
-              <span v-if="scope.row.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
-              <span v-else-if="scope.row.severity == 'MediumRisk'" style="color: #fe9636;"> {{ $t('rule.MediumRisk') }}</span>
-              <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
-              <span v-else> N/A</span>
+            <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="15%" :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
+              <severity-type :row="scope.row"></severity-type>
             </el-table-column>
             <el-table-column :label="$t('resource.status')" min-width="15%" prop="resourceStatus" show-overflow-tooltip>
             </el-table-column>
@@ -190,6 +184,7 @@ import {_filter, _sort} from "@/common/js/utils";
 import TablePagination from "../../common/pagination/TablePagination";
 import DialogFooter from "../../common/components/DialogFooter";
 import TableOperators from "../../common/components/TableOperators";
+import SeverityType from "@/business/components/common/components/SeverityType";
 import CodeDiff from 'vue-code-diff';
 /* eslint-disable */
   const assets = [
@@ -229,6 +224,7 @@ import CodeDiff from 'vue-code-diff';
       TablePagination,
       DialogFooter,
       TableOperators,
+      SeverityType,
       CodeDiff,
     },
     props: {

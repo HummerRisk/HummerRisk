@@ -20,6 +20,13 @@ export const ZH_CN = "zh-CN";
 export const ZH_TW = "zh-TW";
 export const EN_US = "en-US";
 
+export const severityOptions = [
+  {key: '低风险', value: "LowRisk"},
+  {key: '中风险', value: "MediumRisk"},
+  {key: '高风险', value: "HighRisk"},
+  {key: '高危风险', value: "CriticalRisk"},
+];
+
 export const REQUEST_HEADERS = [
   {value: "Accept"},
   {value: "Accept-Charset"},

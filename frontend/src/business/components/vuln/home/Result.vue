@@ -172,14 +172,9 @@
           </el-link>
         </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="10%"
-                         :sort-by="['HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
+                         :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
                          show-overflow-tooltip>
-          <span v-if="scope.row.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
-          <span v-else-if="scope.row.severity == 'MediumRisk'" style="color: #fe9636;"> {{
-              $t('rule.MediumRisk')
-            }}</span>
-          <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
-          <span v-else> N/A</span>
+          <severity-type :row="scope.row"></severity-type>
         </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="13%" prop="status" sortable
                          show-overflow-tooltip>
@@ -299,15 +294,7 @@
                       </span>
                 </el-form-item>
                 <el-form-item :label="$t('rule.severity')">
-                  <span v-if="detailForm.severity == 'HighRisk'" style="color: #f84846;"> {{
-                      $t('rule.HighRisk')
-                    }}</span>
-                  <span v-else-if="detailForm.severity == 'MediumRisk'"
-                        style="color: #fe9636;"> {{ $t('rule.MediumRisk') }}</span>
-                  <span v-else-if="detailForm.severity == 'LowRisk'" style="color: #4dabef;"> {{
-                      $t('rule.LowRisk')
-                    }}</span>
-                  <span v-else> N/A</span>
+                  <severity-type :row="detailForm"></severity-type>
                 </el-form-item>
                 <el-form-item :label="$t('resource.status')">
                   <el-button plain size="mini" type="primary" v-if="detailForm.status === 'UNCHECKED'">
@@ -366,6 +353,7 @@ import ResultLog from "./ResultLog";
 import VulnSwitch from "@/business/components/common/head/VulnSwitch";
 import {getVulnID} from "@/common/js/utils";
 import {VULN_ID} from "@/common/js/constants";
+import SeverityType from "@/business/components/common/components/SeverityType";
 
 /* eslint-disable */
 export default {
@@ -380,6 +368,7 @@ export default {
     CenterChart,
     ResultLog,
     VulnSwitch,
+    SeverityType,
   },
   data() {
     return {

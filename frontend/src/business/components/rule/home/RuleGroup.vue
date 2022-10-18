@@ -214,7 +214,7 @@
           </el-table-column>
           <el-table-column min-width="7%" :label="$t('rule.severity')" column-key="severity">
             <template v-slot:default="{row}">
-              <rule-type :row="row"/>
+              <severity-type :row="row"></severity-type>
             </template>
           </el-table-column>
           <el-table-column prop="description" :label="$t('rule.description')" min-width="28%" show-overflow-tooltip></el-table-column>
@@ -287,7 +287,7 @@ import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
-import RuleType from "./RuleType";
+import SeverityType from "@/business/components/common/components/SeverityType";
 import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
 /* eslint-disable */
   export default {
@@ -299,7 +299,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
       TablePagination,
       TableOperator,
       DialogFooter,
-      RuleType
+      SeverityType,
     },
     data() {
       return {

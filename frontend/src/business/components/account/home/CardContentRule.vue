@@ -26,10 +26,7 @@
           </el-table-column>
           <el-table-column prop="severity" :label="$t('dashboard.i18n_severity_resource_number')" min-width="30%" show-overflow-tooltip sortable>
             <template v-slot:default="scope">
-              <span v-if="scope.row.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
-              <span v-else-if="scope.row.severity == 'MediumRisk'" style="color: #fe9636;"> {{ $t('rule.MediumRisk') }}</span>
-              <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
-              <span v-else> N/A</span>
+              <severity-type :row="scope.row"></severity-type>
               <span> | ({{ scope.row.ruSum?scope.row.ruSum:0 }}/{{ scope.row.reSum?scope.row.reSum:0 }})</span>
               <span> &nbsp;&nbsp;<i :class="scope.row.assets"></i></span>
             </template>
@@ -293,6 +290,8 @@
 import {_filter, _sort} from "@/common/js/utils";
 import TablePagination from "../../common/pagination/TablePagination";
 import DialogFooter from "../../common/components/DialogFooter";
+import SeverityType from "@/business/components/common/components/SeverityType";
+import {severityOptions} from "@/common/js/constants";
 /* eslint-disable */
   const assets = [
     {key: "ec2", value: "el-icon-s-platform"},
@@ -330,6 +329,7 @@ import DialogFooter from "../../common/components/DialogFooter";
     components: {
       TablePagination,
       DialogFooter,
+      SeverityType,
     },
     props: {
       selectNodeIds: Array,
@@ -498,11 +498,7 @@ import DialogFooter from "../../common/components/DialogFooter";
         return "el-icon-s-platform";
       },
       severityOptionsFnc () {
-        this.severityOptions = [
-          {key: '低风险', value: "LowRisk"},
-          {key: '中风险', value: "MediumRisk"},
-          {key: '高风险', value: "HighRisk"}
-        ];
+        this.severityOptions = severityOptions;
       },
       ruleSetOptionsFnc () {
         this.$get("/rule/ruleGroups/" + null, res => {

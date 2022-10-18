@@ -435,6 +435,7 @@ export const RULE_SEVERITY = {
     options: [OPERATORS.IN, OPERATORS.NOT_IN]
   },
   options: [
+    {label: 'rule.CriticalRisk', value: 'CriticalRisk'},
     {label: 'rule.HighRisk', value: 'HighRisk'},
     {label: 'rule.MediumRisk', value: 'MediumRisk'},
     {label: 'rule.LowRisk', value: 'LowRisk'}

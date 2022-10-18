@@ -61,7 +61,6 @@ import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/RuleDialogFooter";
 import CenterChart from "../../common/components/CenterChart";
 import {_filter, _sort} from "@/common/js/utils";
-import RuleType from "@/business/components/image/home/RuleType";
 import MetricChart from "@/business/components/common/chart/MetricChart";
 
 /* eslint-disable */
@@ -76,7 +75,6 @@ import MetricChart from "@/business/components/common/chart/MetricChart";
       TableOperator,
       DialogFooter,
       CenterChart,
-      RuleType,
       MetricChart,
     },
     data() {

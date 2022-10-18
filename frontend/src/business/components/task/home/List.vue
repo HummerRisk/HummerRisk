@@ -129,10 +129,7 @@
                       <span> {{ ruleDetailForm.tagName }}</span>
                     </el-form-item>
                     <el-form-item :label="$t('rule.severity')">
-                      <span v-if="ruleDetailForm.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
-                      <span v-else-if="ruleDetailForm.severity == 'MediumRisk'" style="color: #fe9636;"> {{ $t('rule.MediumRisk') }}</span>
-                      <span v-else-if="ruleDetailForm.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
-                      <span v-else> N/A</span>
+                      <severity-type :row="ruleDetailForm"></severity-type>
                     </el-form-item>
                     <el-form-item :label="$t('account.create_time')">
                       <span>{{ ruleDetailForm.lastModified | timestampFormatDate }}</span>
@@ -426,7 +423,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import TaskType from "./TaskType";
 import {_filter, _sort} from "@/common/js/utils";
 import RuleType from "@/business/components/task/home/RuleType";
-import SeverityType from "@/business/components/task/home/SeverityType";
+import SeverityType from "@/business/components/common/components/SeverityType";
 import Account from "@/business/components/task/home/Account";
 import UpdateRule from "@/business/components/task/home/UpdateRule";
 import AccountType from "@/business/components/task/home/AccountType";

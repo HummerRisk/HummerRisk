@@ -323,7 +323,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import CenterChart from "@/business/components/common/components/CenterChart";
 import MetricChart from "./MetricChart";
 import {_filter, _sort, getVulnID} from "@/common/js/utils";
-import {VULN_ID} from "@/common/js/constants";
+import {severityOptions, VULN_ID} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver.js";
 import VulnSwitch from "@/business/components/common/head/VulnSwitch";
 
@@ -477,11 +477,7 @@ import VulnSwitch from "@/business/components/common/head/VulnSwitch";
         });
       },
       severityOptionsFnc () {
-        this.severityOptions = [
-          {key: '低风险', value: "LowRisk"},
-          {key: '中风险', value: "MediumRisk"},
-          {key: '高风险', value: "HighRisk"}
-        ];
+        this.severityOptions = severityOptions;
       },
       ruleSetOptionsFnc () {
         this.$get("/rule/ruleGroups/" + null, res => {

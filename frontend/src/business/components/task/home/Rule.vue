@@ -110,10 +110,7 @@
                       <span> {{ detailForm.tagName }}</span>
                   </el-form-item>
                   <el-form-item :label="$t('rule.severity')">
-                    <span v-if="detailForm.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
-                    <span v-else-if="detailForm.severity == 'MediumRisk'" style="color: #fe9636;"> {{ $t('rule.MediumRisk') }}</span>
-                    <span v-else-if="detailForm.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
-                    <span v-else> N/A</span>
+                    <severity-type :row="detailForm"></severity-type>
                   </el-form-item>
                   <el-form-item :label="$t('account.create_time')">
                     <span>{{ detailForm.lastModified | timestampFormatDate }}</span>
@@ -213,7 +210,7 @@ import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter} from "@/common/js/utils";
-import SeverityType from "./SeverityType";
+import SeverityType from "@/business/components/common/components/SeverityType";
 
 /* eslint-disable */
   export default {

@@ -242,10 +242,7 @@
                       {{ scope.row.applyUser }}
                     </el-table-column>
                     <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="8%" prop="severity">
-                      <span v-if="scope.row.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
-                      <span v-else-if="scope.row.severity == 'MediumRisk'" style="color: #fe9636;"> {{ $t('rule.MediumRisk') }}</span>
-                      <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
-                      <span v-else> N/A</span>
+                      <severity-type :row="scope.row"></severity-type>
                     </el-table-column>
                     <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="12%" prop="status">
                       <el-button plain size="mini" type="primary" v-if="scope.row.status === 'UNCHECKED'">
@@ -307,11 +304,11 @@ import Container from "@/business/components/common/components/Container";
 import MainContainer from "@/business/components/common/components/MainContainer";
 import TablePagination from "@/business/components/common/pagination/TablePagination";
 import {_filter, _sort} from "@/common/js/utils";
-import RuleType from "@/business/components/rule/home/RuleType";
 import DialogFooter from "@/business/components/common/components/DialogNextFooter";
 import CronInput from 'vue-cron-generator/src/components/cron-input';
 import {DEFAULT_CRON_EXPRESSION} from 'vue-cron-generator/src/constant/filed';
 import QuartzTaskLog from "@/business/components/account/home/QuartzTaskLog";
+import SeverityType from "@/business/components/common/components/SeverityType";
 
 /* eslint-disable */
   export default {
@@ -322,10 +319,10 @@ import QuartzTaskLog from "@/business/components/account/home/QuartzTaskLog";
       Container,
       MainContainer,
       TablePagination,
-      RuleType,
       DialogFooter,
       CronInput,
       QuartzTaskLog,
+      SeverityType,
     },
     provide() {
       return {

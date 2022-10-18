@@ -100,11 +100,8 @@
                       <el-table-column v-slot:default="scope" :label="$t('account.creator')" min-width="6%" show-overflow-tooltip>
                         {{ scope.row.applyUser }}
                       </el-table-column>
-                      <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="8%" :sort-by="['HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
-                        <span v-if="scope.row.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
-                        <span v-else-if="scope.row.severity == 'MediumRisk'" style="color: #fe9636;"> {{ $t('rule.MediumRisk') }}</span>
-                        <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
-                        <span v-else> N/A</span>
+                      <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="8%" :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
+                        <severity-type :row="scope.row"></severity-type>
                       </el-table-column>
                       <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="10%" prop="status" sortable show-overflow-tooltip>
                         <el-button plain size="medium" type="primary" v-if="scope.row.status === 'UNCHECKED'">
@@ -247,11 +244,8 @@
                       <el-table-column v-slot:default="scope" :label="$t('account.creator')" min-width="6%" show-overflow-tooltip>
                         {{ scope.row.applyUser }}
                       </el-table-column>
-                      <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="8%" :sort-by="['HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
-                        <span v-if="scope.row.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
-                        <span v-else-if="scope.row.severity == 'MediumRisk'" style="color: #fe9636;"> {{ $t('rule.MediumRisk') }}</span>
-                        <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
-                        <span v-else> N/A</span>
+                      <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="8%" :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
+                        <severity-type :row="scope.row"></severity-type>
                       </el-table-column>
                       <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="12%" prop="status" sortable show-overflow-tooltip>
                         <el-button plain size="medium" type="primary" v-if="scope.row.status === 'UNCHECKED'">
@@ -769,7 +763,7 @@
 //OKR树
 import {VueOkrTree} from 'vue-okr-tree';
 import RuleType from "@/business/components/task/home/RuleType";
-import SeverityType from "@/business/components/task/home/SeverityType";
+import SeverityType from "@/business/components/common/components/SeverityType";
 /* eslint-disable */
 export default {
   components: {

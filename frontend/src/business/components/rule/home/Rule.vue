@@ -64,7 +64,7 @@
           </el-table-column>
           <el-table-column min-width="7%" :label="$t('rule.severity')" column-key="severity">
             <template v-slot:default="{row}">
-              <rule-type :row="row"/>
+              <severity-type :row="row"></severity-type>
             </template>
           </el-table-column>
           <el-table-column prop="description" :label="$t('rule.description')" min-width="22%" show-overflow-tooltip></el-table-column>
@@ -406,8 +406,9 @@ import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/RuleDialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
-import RuleType from "./RuleType";
 import {RULE_CONFIGS} from "../../common/components/search/search-components";
+import SeverityType from "@/business/components/common/components/SeverityType";
+import {severityOptions} from "@/common/js/constants";
 
 /* eslint-disable */
   export default {
@@ -419,7 +420,7 @@ import {RULE_CONFIGS} from "../../common/components/search/search-components";
       TablePagination,
       TableOperator,
       DialogFooter,
-      RuleType
+      SeverityType,
     },
     data() {
       return {
@@ -609,12 +610,7 @@ import {RULE_CONFIGS} from "../../common/components/search/search-components";
         this.search();
       },
       severityOptionsFnc () {
-        this.severityOptions = [
-          {key: '低风险', value: "LowRisk"},
-          {key: '中风险', value: "MediumRisk"},
-          {key: '高风险', value: "HighRisk"},
-          {key: '高危风险', value: "CriticalRisk"}
-        ];
+        this.severityOptions = severityOptions;
       },
       ruleSetOptionsFnc (pluginId) {
         this.$get("/rule/ruleGroups/" + pluginId, res => {
