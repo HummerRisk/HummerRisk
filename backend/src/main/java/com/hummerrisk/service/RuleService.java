@@ -710,6 +710,7 @@ public class RuleService {
         RuleExample ruleExample = new RuleExample();
         if (ids.size() > 0) {
             ruleExample.createCriteria().andIdIn(ids);
+            ruleExample.setOrderByClause("name");
             return ruleMapper.selectByExample(ruleExample);
         }
         return new ArrayList<>();
@@ -719,6 +720,7 @@ public class RuleService {
         RuleGroup ruleGroup = ruleGroupMapper.selectByPrimaryKey(id);
         RuleExample ruleExample = new RuleExample();
         ruleExample.createCriteria().andPluginIdEqualTo(ruleGroup.getPluginId());
+        ruleExample.setOrderByClause("name");
         return ruleMapper.selectByExample(ruleExample);
     }
 

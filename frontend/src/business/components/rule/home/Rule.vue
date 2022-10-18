@@ -48,7 +48,7 @@
           </el-table-column >
           <!-- 展开 end -->
           <el-table-column type="index" min-width="3%"/>
-          <el-table-column prop="name" :label="$t('rule.rule_name')" min-width="17%" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="name" :label="$t('rule.rule_name')" min-width="15%" show-overflow-tooltip></el-table-column>
           <el-table-column :label="$t('rule.resource_type')" min-width="7%" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span v-for="(resourceType, index) in scope.row.types" :key="index">[{{ resourceType }}] </span>
