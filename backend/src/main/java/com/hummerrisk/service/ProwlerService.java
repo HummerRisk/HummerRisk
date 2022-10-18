@@ -72,7 +72,7 @@ public class ProwlerService {
 
         String script = quartzTaskDTO.getScript();
         JSONArray jsonArray = JSON.parseArray(quartzTaskDTO.getParameter());
-        String groupName = "group1";
+        String groupName = "check11";
         for (Object o : jsonArray) {
             JSONObject jsonObject = (JSONObject) o;
             groupName = jsonObject.getString("defaultValue");

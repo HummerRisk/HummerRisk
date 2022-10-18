@@ -257,7 +257,7 @@ public class PlatformUtils {
                     if (!credentials.contains(awsAccessKey) && !credentials.contains(awsSecretKey)) {
                         CommandUtils.commonExecCmdWithResult("echo -e '" + defaultCredentials + "' >> " + CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/credentials", CloudTaskConstants.PROWLER_CONFIG_FILE_PATH);
                     }
-                    return proxy + "./prowler -g " + (StringUtils.isNotEmpty(fileName) ? fileName : "group1") + " -f " + region + " -s -M text > result.txt";
+                    return proxy + "./prowler -c " + (StringUtils.isNotEmpty(fileName) ? fileName : "check11") + " -f " + region + " -s -M text > result.txt";
                 }
                 pre = "AWS_ACCESS_KEY_ID=" + awsAccessKey + " " +
                         "AWS_SECRET_ACCESS_KEY=" + awsSecretKey + " " +
