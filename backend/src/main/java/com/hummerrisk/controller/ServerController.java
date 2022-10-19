@@ -238,7 +238,7 @@ public class ServerController {
     @I18n
     @ApiOperation(value = "检测统计")
     @PostMapping("serverLineChart")
-    public CodeChartDTO serverLineChart(@RequestBody Map<String, Object> params) {
+    public ChartDTO serverLineChart(@RequestBody Map<String, Object> params) {
         return serverService.serverLineChart(params);
     }
 

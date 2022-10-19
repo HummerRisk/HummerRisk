@@ -16,7 +16,9 @@ import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.controller.request.dashboard.AnslysisVo;
 import com.hummerrisk.controller.request.dashboard.HistoryScanVo;
 import com.hummerrisk.controller.request.dashboard.TaskCalendarVo;
-import com.hummerrisk.dto.*;
+import com.hummerrisk.dto.ChartDTO;
+import com.hummerrisk.dto.HistoryScanDTO;
+import com.hummerrisk.dto.TopInfoDTO;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -124,8 +126,8 @@ public class DashboardService {
         return extDashboardMapper.topInfo(params);
     }
 
-    public ImageChartDTO imageChart(Map<String, Object> params) {
-        ImageChartDTO imageChartDTO = new ImageChartDTO();
+    public ChartDTO imageChart(Map<String, Object> params) {
+        ChartDTO imageChartDTO = new ChartDTO();
         List<String> xAxis = extDashboardMapper.imageChartX(params);
         List<Integer> yAxis = extDashboardMapper.imageChartY(params);
         imageChartDTO.setxAxis(xAxis);
@@ -133,8 +135,8 @@ public class DashboardService {
         return imageChartDTO;
     }
 
-    public CodeChartDTO codeChart(Map<String, Object> params) {
-        CodeChartDTO codeChartDTO = new CodeChartDTO();
+    public ChartDTO codeChart(Map<String, Object> params) {
+        ChartDTO codeChartDTO = new ChartDTO();
         List<String> xAxis = extDashboardMapper.codeChartX(params);
         List<Integer> yAxis = extDashboardMapper.codeChartY(params);
         codeChartDTO.setxAxis(xAxis);
@@ -142,8 +144,8 @@ public class DashboardService {
         return codeChartDTO;
     }
 
-    public CloudNativeChartDTO cloudNativeChart(Map<String, Object> params) {
-        CloudNativeChartDTO cloudNativeChartDTO = new CloudNativeChartDTO();
+    public ChartDTO cloudNativeChart(Map<String, Object> params) {
+        ChartDTO cloudNativeChartDTO = new ChartDTO();
         List<String> xAxis = extDashboardMapper.cloudNativeChartX(params);
         List<Integer> yAxis = extDashboardMapper.cloudNativeChartY(params);
         cloudNativeChartDTO.setxAxis(xAxis);
@@ -151,13 +153,22 @@ public class DashboardService {
         return cloudNativeChartDTO;
     }
 
-    public CloudNativeChartDTO configChart(Map<String, Object> params) {
-        CloudNativeChartDTO cloudNativeChartDTO = new CloudNativeChartDTO();
+    public ChartDTO configChart(Map<String, Object> params) {
+        ChartDTO cloudNativeChartDTO = new ChartDTO();
         List<String> xAxis = extDashboardMapper.configChartX(params);
         List<Integer> yAxis = extDashboardMapper.configChartY(params);
         cloudNativeChartDTO.setxAxis(xAxis);
         cloudNativeChartDTO.setyAxis(yAxis);
         return cloudNativeChartDTO;
+    }
+
+    public ChartDTO fsChart(Map<String, Object> params) {
+        ChartDTO fsChartDTO = new ChartDTO();
+        List<String> xAxis = extDashboardMapper.fsChartX(params);
+        List<Integer> yAxis = extDashboardMapper.fsChartY(params);
+        fsChartDTO.setxAxis(xAxis);
+        fsChartDTO.setyAxis(yAxis);
+        return fsChartDTO;
     }
 
     public List<TaskCalendarVo> taskCalendar() {
@@ -288,9 +299,9 @@ public class DashboardService {
         return anslysisVo;
     }
 
-    public AnalysisChartDTO analysisChart() {
+    public ChartDTO analysisChart() {
         AnslysisVo anslysisVo = queryAnalysis();
-        AnalysisChartDTO analysisChartDTO = new AnalysisChartDTO();
+        ChartDTO analysisChartDTO = new ChartDTO();
         List<String> xAxis = extDashboardMapper.analysisChartX(anslysisVo);
         List<Integer> yAxis = extDashboardMapper.analysisChartY(anslysisVo);
         analysisChartDTO.setxAxis(xAxis);

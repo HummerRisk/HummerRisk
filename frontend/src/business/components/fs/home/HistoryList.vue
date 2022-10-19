@@ -136,25 +136,25 @@
               </template>
             </el-table-column>
           </el-table>
-          <div style="margin: 10px;" v-if="logForm.resultJson">
+          <div style="margin: 10px;" v-if="logForm.returnJson">
             <h2>Summary:&nbsp;</h2>
             <ul style="margin-left: 60px;">
               <li><i>Scan Name</i>: {{ logForm.name }}</li>
               <li><i>Scan User</i>:&nbsp;{{ logForm.userName }}</li>
-              <li><i>ArtifactType</i>:&nbsp;{{ logForm.resultJson.ArtifactType }}</li>
-              <li><i>ArtifactName</i>:&nbsp;{{ logForm.resultJson.ArtifactName }}</li>
-              <li><i>SchemaVersion</i>:&nbsp;{{ logForm.resultJson.SchemaVersion }}</li>
-              <li><i>Architecture</i>:&nbsp;{{ logForm.resultJson.Metadata.ImageConfig.architecture }}</li>
+              <li><i>ArtifactType</i>:&nbsp;{{ logForm.returnJson.ArtifactType }}</li>
+              <li><i>ArtifactName</i>:&nbsp;{{ logForm.returnJson.ArtifactName }}</li>
+              <li><i>SchemaVersion</i>:&nbsp;{{ logForm.returnJson.SchemaVersion }}</li>
+              <li><i>Architecture</i>:&nbsp;{{ logForm.returnJson.Metadata.ImageConfig.architecture }}</li>
               <li><i>Create Time</i>:&nbsp;{{ logForm.createTime | timestampFormatDate }}</li>
               <li><i>Result Status</i>:&nbsp;{{ logForm.resultStatus }}</li>
               <li><i>Vulnerabilities Found</i>: {{ logForm.returnSum }}</li>
             </ul>
           </div>
-          <div style="margin: 10px;" v-if="logForm.resultJson">
+          <div style="margin: 10px;" v-if="logForm.returnJson">
             <div style="margin: 10px 0 0 0;">
               <h2>Details:&nbsp;</h2>
               <div style="margin: 10px 0 0 0;">
-                <div style="margin: 10px 0 0 0;" :key="index" v-for="(result, index) in logForm.resultJson.Results">
+                <div style="margin: 10px 0 0 0;" :key="index" v-for="(result, index) in logForm.returnJson.Results">
                   <div style="margin: 10px;" v-if="result">
                     <h3>Summary:&nbsp;</h3>
                     <ul style="margin-left: 60px;">
@@ -264,34 +264,39 @@
         <div>
           <el-table border :data="outputListData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
             <el-table-column type="index" min-width="2%"/>
-            <el-table-column prop="name" :label="$t('image.image_name')" min-width="15%" show-overflow-tooltip>
+            <el-table-column prop="name" :label="$t('fs.name')" min-width="10%" show-overflow-tooltip>
               <template v-slot:default="scope">
               <span>
-               <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
+                <img :src="require(`@/assets/img/fs/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.name }}
               </span>
               </template>
             </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="16%">
-              {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown}}
+            <el-table-column prop="fileName" :label="$t('fs.file_name')" min-width="10%" show-overflow-tooltip>
+              <template v-slot:default="scope">
+                &nbsp;&nbsp; {{ scope.row.fileName }}
+              </template>
             </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="11%" prop="resultStatus" sortable show-overflow-tooltip>
-              <el-button plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
+            <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="15%">
+                {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown}}
+            </el-table-column>
+            <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="12%" prop="resultStatus" sortable show-overflow-tooltip>
+              <el-button plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
                 <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
               </el-button>
-              <el-button plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
+              <el-button plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
                 <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
               </el-button>
-              <el-button plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
+              <el-button plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
                 <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
               </el-button>
-              <el-button plain size="mini" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
+              <el-button plain size="medium" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
                 <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
               </el-button>
-              <el-button plain size="mini" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+              <el-button plain size="medium" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
                 <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
               </el-button>
-              <el-button plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+              <el-button plain size="medium" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
                 <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
               </el-button>
             </el-table-column>
@@ -439,7 +444,7 @@ import CodeDiff from 'vue-code-diff';
       handleOpen(item) {
         this.outputListSearchData = item;
         this.outputListDataSearch();
-        this.oldStr = item.resultJson;
+        this.oldStr = item.returnJson;
         this.visibleList =  true;
       },
       handleDelete(obj) {
@@ -475,7 +480,7 @@ import CodeDiff from 'vue-code-diff';
         this.innerDrawer = false;
       },
       innerDrawerComparison(item) {
-        this.newStr = item.resultJson?item.resultJson:"[]";
+        this.newStr = item.returnJson?item.returnJson:"[]";
         this.innerDrawer = true;
       },
       goResource(params) {
@@ -489,7 +494,7 @@ import CodeDiff from 'vue-code-diff';
           this.statisticsData = data;
           this.statisticsList = true;
         });
-        this.result = this.$get("/fs/metricChart/"+ this.resultId, response => {
+        this.result = this.$get("/sbom/fsMetricChart/"+ params.id, response => {
           this.content = response.data;
         });
       },
@@ -501,7 +506,7 @@ import CodeDiff from 'vue-code-diff';
         let resultUrl = "/fs/getFsResult/";
         this.result = this.$get(resultUrl + result.id, response => {
           this.logForm = response.data;
-          this.logForm.resultJson = JSON.parse(this.logForm.resultJson);
+          this.logForm.returnJson = JSON.parse(this.logForm.returnJson);
         });
         this.logVisible = true;
       },

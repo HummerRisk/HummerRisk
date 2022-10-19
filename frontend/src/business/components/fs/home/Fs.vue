@@ -12,7 +12,7 @@
                 :row-class-name="tableRowClassName"
                 @filter-change="filter">
         <el-table-column type="index" min-width="2%"/>
-        <el-table-column prop="name" :label="$t('fs.name')" min-width="10%" show-overflow-tooltip>
+        <el-table-column prop="name" :label="$t('fs.name')" min-width="15%" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/fs/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -20,7 +20,7 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="fileName" :label="$t('fs.file_name')" min-width="25%" show-overflow-tooltip/>
+        <el-table-column prop="fileName" :label="$t('fs.file_name')" min-width="20%" show-overflow-tooltip/>
         <el-table-column prop="size" :label="$t('fs.size')" min-width="8%" show-overflow-tooltip/>
         <el-table-column min-width="13%" :label="$t('account.update_time')" sortable
                          prop="updateTime">

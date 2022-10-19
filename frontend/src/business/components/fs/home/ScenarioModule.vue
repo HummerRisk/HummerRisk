@@ -77,7 +77,7 @@ import {buildNodePath} from "@/common/js/NodeTree";
     },
     methods: {
       list() {
-        let url = "/image/allList";
+        let url = "/fs/allList";
         this.result = this.$get(url, response => {
           if (response.data != undefined && response.data != null) {
             this.data = response.data;

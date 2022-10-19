@@ -25,6 +25,8 @@ public class HistoryFsResultDTO extends HistoryFileSystemResult {
 
     private String unknown;
 
+    private String fileName;
+
     public String getName() {
         return name;
     }
@@ -95,5 +97,13 @@ public class HistoryFsResultDTO extends HistoryFileSystemResult {
 
     public void setUnknown(String unknown) {
         this.unknown = unknown;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

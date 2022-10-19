@@ -32,6 +32,10 @@ public interface ExtDashboardMapper {
 
     List<Integer> configChartY(Map<String, Object> params);
 
+    List<String> fsChartX(Map<String, Object> params);
+
+    List<Integer> fsChartY(Map<String, Object> params);
+
     List<TaskCalendarVo> taskCalendar();
 
     List<String> analysisChartX(AnslysisVo anslysisVo);

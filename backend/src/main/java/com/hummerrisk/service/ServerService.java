@@ -581,8 +581,8 @@ public class ServerService {
         return extServerResultMapper.severityChart();
     }
 
-    public CodeChartDTO serverLineChart(Map<String, Object> params) {
-        CodeChartDTO codeChartDTO = new CodeChartDTO();
+    public ChartDTO serverLineChart(Map<String, Object> params) {
+        ChartDTO codeChartDTO = new ChartDTO();
         List<String> xAxis = extServerResultMapper.serverChartX(params);
         List<Integer> yAxis = extServerResultMapper.serverChartY(params);
         codeChartDTO.setxAxis(xAxis);

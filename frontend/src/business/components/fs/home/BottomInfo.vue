@@ -24,7 +24,7 @@
           <template v-slot:header>
             <span class="title">{{ $t('fs.project_chart') }}</span>
           </template>
-          <scan-chart/>
+          <fs-chart/>
         </el-card>
       </el-col>
     </container>
@@ -35,7 +35,7 @@
 import Container from "../.././common/components/Container";
 import LeftChart from "@/business/components/fs/head/LeftChart";
 import RightChart from "@/business/components/fs/head/RightChart";
-import ScanChart from "@/business/components/fs/head/ScanChart";
+import FsChart from "@/business/components/fs/head/FsChart";
 
 /* eslint-disable */
 export default {
@@ -43,7 +43,7 @@ export default {
     Container,
     LeftChart,
     RightChart,
-    ScanChart,
+    FsChart,
   },
   data() {
     return {

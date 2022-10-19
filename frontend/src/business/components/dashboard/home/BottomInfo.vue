@@ -30,6 +30,16 @@
         </el-card>
       </el-col>
     </container>
+    <container class="container">
+      <el-col :span="24">
+        <el-card class="table-card">
+          <template v-slot:header>
+            <span class="title">{{ $t('dashboard.fs_statistics') }}</span>
+          </template>
+          <fs-chart/>
+        </el-card>
+      </el-col>
+    </container>
   </div>
 </template>
 
@@ -37,6 +47,7 @@
 import ImageChart from "@/business/components/dashboard/head/ImageChart";
 import CodeChart from "@/business/components/dashboard/head/CodeChart";
 import ConfigChart from "@/business/components/dashboard/head/ConfigChart";
+import FsChart from "@/business/components/fs/head/FsChart";
 import Container from "../.././common/components/Container";
 
 /* eslint-disable */
@@ -46,6 +57,7 @@ export default {
     CodeChart,
     ConfigChart,
     Container,
+    FsChart,
   },
   data() {
     return {

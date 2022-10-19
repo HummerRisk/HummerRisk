@@ -3,7 +3,7 @@ package com.hummerrisk.dto;
 import java.util.List;
 
 
-public class AnalysisChartDTO {
+public class ChartDTO {
 
     private List<String> xAxis;
 

@@ -8,7 +8,7 @@
 import HrChart from "@/business/components/common/chart/HrChart";
 /* eslint-disable */
 export default {
-  name: "ScanChart",
+  name: "FsChart",
   components: {
     HrChart,
   },
@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     init() {
-      this.$post("/fs/scanChart", {}, response => {
+      this.$post("/dashboard/fsChart", {}, response => {
         let data = response.data;
         this.options = {
           xAxis: {
