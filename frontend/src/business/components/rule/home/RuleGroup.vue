@@ -96,7 +96,7 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column min-width="16%" :label="$t('commons.operating')" fixed="right">
+          <el-table-column min-width="20%" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators v-if="!!scope.row.flag" :buttons="buttonsN" :row="scope.row"/>
               <table-operators v-if="!scope.row.flag" :buttons="buttons" :row="scope.row"/>
