@@ -10,10 +10,7 @@ import com.hummerrisk.controller.request.sbom.DownloadRequest;
 import com.hummerrisk.controller.request.sbom.SbomRequest;
 import com.hummerrisk.controller.request.sbom.SbomVersionRequest;
 import com.hummerrisk.controller.request.sbom.SettingVersionRequest;
-import com.hummerrisk.dto.ApplicationDTO;
-import com.hummerrisk.dto.HistoryImageResultDTO;
-import com.hummerrisk.dto.MetricChartDTO;
-import com.hummerrisk.dto.SbomDTO;
+import com.hummerrisk.dto.*;
 import com.hummerrisk.service.SbomService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -120,6 +117,13 @@ public class SbomController {
     @GetMapping("historyImageResult/{sbomVersionId}")
     public List<HistoryImageResultDTO> historyImageResult(@PathVariable String sbomVersionId) throws Exception {
         return sbomService.historyImageResult(sbomVersionId);
+    }
+
+    @I18n
+    @ApiOperation(value = "所有已绑定项目的文件系统的检测结果")
+    @GetMapping("historyFsResult/{sbomVersionId}")
+    public List<HistoryFsResultDTO> historyFsResult(@PathVariable String sbomVersionId) throws Exception {
+        return sbomService.historyFsResult(sbomVersionId);
     }
 
     @I18n

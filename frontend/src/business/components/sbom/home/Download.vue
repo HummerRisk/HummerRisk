@@ -36,6 +36,9 @@ export default {
         } else if (this.params.imageId) {
           this.type = 'image';
           this.sourceId = this.params.id;
+        } else if (this.params.fsId) {
+          this.type = 'fs';
+          this.sourceId = this.params.id;
         } else {
           return;
         }

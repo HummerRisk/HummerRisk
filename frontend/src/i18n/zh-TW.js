@@ -1333,6 +1333,8 @@ export default {
     target_code: '已綁定源碼',
     source_image: '未綁定鏡像',
     target_image: '已綁定鏡像',
+    target_fs: '已綁定文件系統',
+    source_fs: '未綁定文件系統',
     source_package: '未綁定軟件包',
     target_package: '已綁定軟件包',
     applications: '應用',

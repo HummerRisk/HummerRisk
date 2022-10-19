@@ -116,7 +116,7 @@
             <li><i>ArtifactType</i>:&nbsp;{{ logForm.returnJson.ArtifactType }}</li>
             <li><i>ArtifactName</i>:&nbsp;{{ logForm.returnJson.ArtifactName }}</li>
             <li><i>SchemaVersion</i>:&nbsp;{{ logForm.returnJson.SchemaVersion }}</li>
-            <li><i>Architecture</i>:&nbsp;{{ logForm.returnJson.Metadata.ImageConfig.architecture }}</li>
+            <li><i>Architecture</i>:&nbsp;{{ logForm.returnJson.Metadata.ImageConfig?logForm.returnJson.Metadata.ImageConfig.architecture:'N/A' }}</li>
             <li><i>Create Time</i>:&nbsp;{{ logForm.createTime | timestampFormatDate }}</li>
             <li><i>Result Status</i>:&nbsp;{{ logForm.resultStatus }}</li>
             <li><i>Vulnerabilities Found</i>: {{ logForm.returnSum }}</li>

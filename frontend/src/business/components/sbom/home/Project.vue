@@ -206,6 +206,12 @@
                            :filter-placeholder="$t('commons.search_by_name')" filterable v-model="imageValue" :data="imageData">
               </el-transfer>
             </div>
+            <div style="text-align: center; margin: 25px;">
+              <p style="text-align: center; padding: 10px;margin: 25px;color: #215d9a;background-color: aliceblue;">{{ $t('fs.file_system') }}</p>
+              <el-transfer :titles="[$t('sbom.source_fs'), $t('sbom.target_fs')]" :filter-method="filterMethod" style="text-align: left; display: inline-block"
+                           :filter-placeholder="$t('commons.search_by_name')" filterable v-model="fsValue" :data="fsData">
+              </el-transfer>
+            </div>
           </el-card>
           <dialog-footer
           @cancel="innerSettingVersion = false"
@@ -325,6 +331,8 @@ export default {
       codeData: [],
       imageValue: [],
       imageData: [],
+      fsValue: [],
+      fsData: [],
     }
   },
   watch: {
@@ -527,6 +535,15 @@ export default {
           });
         }
       });
+      this.$get("/fs/unBindList",response => {
+        this.fsData = [];
+        for(let data of response.data) {
+          this.fsData.push({
+            key: data.id,
+            label: data.name
+          });
+        }
+      });
       this.$get("/code/allBindList/" + item.id,response => {
         this.codeValue = [];
         for(let data of response.data) {
@@ -537,6 +554,12 @@ export default {
         this.imageValue = [];
         for(let data of response.data) {
           this.imageValue.push(data.id);
+        }
+      });
+      this.$get("/fs/allBindList/" + item.id,response => {
+        this.fsValue = [];
+        for(let data of response.data) {
+          this.fsValue.push(data.id);
         }
       });
       this.innerSettingVersion = true;

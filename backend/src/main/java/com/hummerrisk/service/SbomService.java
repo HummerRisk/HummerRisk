@@ -2,6 +2,7 @@ package com.hummerrisk.service;
 
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
+import com.hummerrisk.base.mapper.ext.ExtFileSystemResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtSbomMapper;
 import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
@@ -12,17 +13,16 @@ import com.hummerrisk.controller.request.sbom.DownloadRequest;
 import com.hummerrisk.controller.request.sbom.SbomRequest;
 import com.hummerrisk.controller.request.sbom.SbomVersionRequest;
 import com.hummerrisk.controller.request.sbom.SettingVersionRequest;
-import com.hummerrisk.dto.ApplicationDTO;
-import com.hummerrisk.dto.HistoryImageResultDTO;
-import com.hummerrisk.dto.MetricChartDTO;
-import com.hummerrisk.dto.SbomDTO;
+import com.hummerrisk.dto.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author harris
@@ -53,6 +53,10 @@ public class SbomService {
     private HistoryCodeResultLogMapper historyCodeResultLogMapper;
     @Resource
     private HistoryImageResultLogMapper historyImageResultLogMapper;
+    @Resource
+    private ExtFileSystemResultMapper extFileSystemResultMapper;
+    @Resource
+    private HistoryFileSystemResultMapper historyFileSystemResultMapper;
 
 
     public List<SbomDTO> sbomList(SbomRequest request) {
@@ -200,6 +204,14 @@ public class SbomService {
         return dtos;
     }
 
+    public List<HistoryFsResultDTO> historyFsResult(String sbomVersionId) throws Exception {
+        Map<String, Object> params = new HashMap<>();
+        params.put("sbomVersionId", sbomVersionId);
+        List<HistoryFsResultDTO> historyList = extFileSystemResultMapper.history(params);
+        return historyList;
+    }
+
+
     public List<HistoryCodeResultLog> getCodeResultLog(String resultId) {
         HistoryCodeResultLogExample example = new HistoryCodeResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
@@ -233,10 +245,13 @@ public class SbomService {
         String str = "";
         if (StringUtils.equalsIgnoreCase(request.getType(), "code")) {
             HistoryCodeResult codeResult = historyCodeResultMapper.selectByPrimaryKey(request.getSourceId());
-            str = codeResult.getReturnJson();
+            str = codeResult.getReturnJson() != null ? codeResult.getReturnJson() : "{}";
         } else if (StringUtils.equalsIgnoreCase(request.getType(), "image")) {
             HistoryImageResultWithBLOBs imageTask = historyImageResultMapper.selectByPrimaryKey(request.getSourceId());
-            str = imageTask.getResultJson() != null ? imageTask.getResultJson() : "";
+            str = imageTask.getResultJson() != null ? imageTask.getResultJson() : "{}";
+        } else if (StringUtils.equalsIgnoreCase(request.getType(), "fs")) {
+            HistoryFileSystemResult fsTask = historyFileSystemResultMapper.selectByPrimaryKey(request.getSourceId());
+            str = fsTask.getReturnJson() != null ? fsTask.getReturnJson() : "{}";
         }
         return str;
     }

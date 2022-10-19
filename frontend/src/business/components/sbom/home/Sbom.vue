@@ -71,7 +71,7 @@
               </el-col>
             </el-row>
 
-            <!-- code -->
+            <!-- code start -->
             <el-table border v-if="tag=='code'" :data="codeData" class="adjust-table table-content" stripe style="min-height: 317px;cursor:pointer;" max-height="318" @row-click="selectVuln">
               <el-table-column type="index" min-width="1%"/>
               <el-table-column prop="name" :label="$t('code.name')" min-width="10%" show-overflow-tooltip>
@@ -117,7 +117,7 @@
               </el-table-column>
             </el-table>
 
-            <!--Result detail-->
+            <!-- code Result detail-->
             <el-drawer class="rtl" :title="$t('code.result_details_list')" :visible.sync="codeVisible" size="85%" :before-close="handleClose" :direction="direction"
                        :destroy-on-close="true">
               <code-result-details :id="codeResultId"/>
@@ -127,9 +127,9 @@
                   @confirm="codeVisible = false"/>
               </template>
             </el-drawer>
-            <!--Result detail-->
+            <!-- code Result detail-->
 
-            <!--Result log-->
+            <!-- code Result log-->
             <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logCodeVisible" size="85%" :before-close="handleClose" :direction="direction"
                        :destroy-on-close="true">
               <el-row class="el-form-item-dev" v-if="logCodeData.length == 0">
@@ -293,11 +293,11 @@
                   @confirm="logCodeVisible = false"/>
               </template>
             </el-drawer>
-            <!--Result log-->
+            <!-- code Result log-->
 
-            <!-- code -->
+            <!-- code end -->
 
-            <!-- image -->
+            <!-- image start -->
             <el-table border v-if="tag=='image'" :data="imageData" class="adjust-table table-content" stripe style="min-height: 317px;cursor:pointer;" max-height="318" @row-click="selectVuln">
               <el-table-column type="index" min-width="1%"/>
               <el-table-column prop="name" :label="$t('image.image_name')" min-width="10%" show-overflow-tooltip>
@@ -348,7 +348,7 @@
               </el-table-column>
             </el-table>
 
-            <!--Result detail-->
+            <!-- image Result detail-->
             <el-drawer class="rtl" :title="$t('image.result_details_list')" :visible.sync="imageVisible" size="85%" :before-close="handleClose" :direction="direction"
                        :destroy-on-close="true">
               <image-result-details :id="imageResultId"/>
@@ -358,9 +358,9 @@
                   @confirm="imageVisible = false"/>
               </template>
             </el-drawer>
-            <!--Result detail-->
+            <!-- image Result detail-->
 
-            <!--Result log-->
+            <!-- image Result log-->
             <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logImageVisible" size="85%" :before-close="handleClose" :direction="direction"
                        :destroy-on-close="true">
               <el-row class="el-form-item-dev" v-if="logImageData.length == 0">
@@ -371,20 +371,20 @@
                   <el-row>
                     <el-col :span="24">
                       <div class="grid-content bg-purple-light">
-                        <span class="grid-content-log-span"> {{ logImageForm.ruleName }} | {{ logImageForm.name }}</span>
+                        <span class="grid-content-log-span"> {{ logImageForm.name }}</span>
                         <span class="grid-content-log-span">
-                          <img :src="require(`@/assets/img/platform/docker.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                         &nbsp;&nbsp; {{ logImageForm.imageName }}
-                        </span>
-                                  <span class="grid-content-status-span" v-if="logImageForm.resultStatus === 'APPROVED'" style="color: #579df8">
-                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
-                        </span>
-                                  <span class="grid-content-status-span" v-else-if="logImageForm.resultStatus === 'FINISHED'" style="color: #7ebf50">
-                          <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
-                        </span>
-                                  <span class="grid-content-status-span" v-else-if="logImageForm.resultStatus === 'ERROR'" style="color: red;">
-                          <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
-                        </span>
+                  <img :src="require(`@/assets/img/platform/docker.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ logImageForm.imageName }}
+                </span>
+                        <span class="grid-content-status-span" v-if="logImageForm.resultStatus === 'APPROVED'" style="color: #579df8">
+                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                </span>
+                        <span class="grid-content-status-span" v-else-if="logImageForm.resultStatus === 'FINISHED'" style="color: #7ebf50">
+                  <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+                </span>
+                        <span class="grid-content-status-span" v-else-if="logImageForm.resultStatus === 'ERROR'" style="color: red;">
+                  <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+                </span>
                       </div>
                     </el-col>
                   </el-row>
@@ -393,132 +393,121 @@
                   <el-table-column>
                     <template v-slot:default="scope">
                       <div class="bg-purple-div">
-                        <span
-                          v-bind:class="{true: 'color-red', false: ''}[scope.row.result == false]">
-                              {{ scope.row.createTime | timestampFormatDate }}
-                              {{ scope.row.operator }}
-                              {{ scope.row.operation }}
-                              {{ scope.row.output }}<br>
-                        </span>
+                <span
+                  v-bind:class="{true: 'color-red', false: ''}[scope.row.result == false]">
+                      {{ scope.row.createTime | timestampFormatDate }}
+                      {{ scope.row.operator }}
+                      {{ scope.row.operation }}
+                      {{ scope.row.output }}<br>
+                </span>
                       </div>
                     </template>
                   </el-table-column>
                 </el-table>
-                <div style="margin: 10px;">
+                <div style="margin: 10px;" v-if="logImageForm.resultJson">
                   <h2>Summary:&nbsp;</h2>
                   <ul style="margin-left: 60px;">
                     <li><i>Scan Name</i>: {{ logImageForm.name }}</li>
-                    <li><i>Rule Name</i>: {{ logImageForm.ruleDesc }}</li>
                     <li><i>Scan User</i>:&nbsp;{{ logImageForm.userName }}</li>
-                    <li><i>Severity</i>:&nbsp;{{ logImageForm.severity }}</li>
+                    <li><i>ArtifactType</i>:&nbsp;{{ logImageForm.resultJson.ArtifactType }}</li>
+                    <li><i>ArtifactName</i>:&nbsp;{{ logImageForm.resultJson.ArtifactName }}</li>
+                    <li><i>SchemaVersion</i>:&nbsp;{{ logImageForm.resultJson.SchemaVersion }}</li>
+                    <li><i>Architecture</i>:&nbsp;{{ logImageForm.resultJson.Metadata.ImageConfig.architecture }}</li>
                     <li><i>Create Time</i>:&nbsp;{{ logImageForm.createTime | timestampFormatDate }}</li>
                     <li><i>Result Status</i>:&nbsp;{{ logImageForm.resultStatus }}</li>
                     <li><i>Vulnerabilities Found</i>: {{ logImageForm.returnSum }}</li>
                   </ul>
                 </div>
-                <el-tabs type="border-card">
-                  <el-tab-pane :label="$t('image.grype_table')">
-                    <div style="margin: 10px 0 0 0;" v-if="JSON.stringify(logImageForm.imageGrypeTableList) !== '[]'">
-                      <h3>Vuln:&nbsp;</h3>
-                      <el-table :data="logImageForm.imageGrypeTableList" border stripe style="width: 100%">
-                        <el-table-column type="index" min-width="5%"/>
-                        <el-table-column :label="'Name'" min-width="15%" prop="name">
-                        </el-table-column>
-                        <el-table-column :label="'Installed'" min-width="15%" prop="installed">
-                        </el-table-column>
-                        <el-table-column min-width="10%" :label="'FixedIn'" prop="fixedIn">
-                        </el-table-column>
-                        <el-table-column min-width="10%" :label="'Type'" prop="type">
-                        </el-table-column>
-                        <el-table-column min-width="15%" :label="'Vulnerability'" prop="vulnerability">
-                        </el-table-column>
-                        <el-table-column min-width="15%" :label="'Severity'" prop="severity">
-                        </el-table-column>
-                      </el-table>
-                    </div>
-                  </el-tab-pane>
-                  <el-tab-pane :label="$t('image.grype_json')">
+                <div style="margin: 10px;" v-if="logImageForm.resultJson">
+                  <div style="margin: 10px 0 0 0;">
+                    <h2>Details:&nbsp;</h2>
                     <div style="margin: 10px 0 0 0;">
-                      <h3>Details:&nbsp;</h3>
-                      <div style="margin: 10px 0 0 0;">
-                        <div style="margin: 10px 0 0 0;" :key="imageGrypeJson.id" v-for="imageGrypeJson in logImageForm.imageGrypeJsonList">
+                      <div style="margin: 10px 0 0 0;" :key="index" v-for="(result, index) in logImageForm.resultJson.Results">
+                        <div style="margin: 10px;" v-if="result">
+                          <h3>Summary:&nbsp;</h3>
+                          <ul style="margin-left: 60px;">
+                            <li><i>Target</i>: {{ result.Target }}</li>
+                            <li><i>Class</i>:&nbsp;{{ result.Class }}</li>
+                            <li><i>Type</i>:&nbsp;{{ result.Type }}</li>
+                          </ul>
+                        </div>
+                        <div style="margin: 10px 0 0 0;" :key="index" v-for="(vulnerabilitiy, index) in result.Vulnerabilities">
                           <el-card class="box-card">
                             <div slot="header" class="clearfix">
                               <el-row>
                                 <el-col class="icon-title" :span="3">
-                                  <span>{{ imageGrypeJson.severity.substring(0, 1) }}</span>
+                                  <span>{{ vulnerabilitiy.Severity.substring(0, 1) }}</span>
                                 </el-col>
                                 <el-col :span="15" style="margin: -7px 0 0 15px;">
-                                  <span style="font-size: 24px;font-weight: 500;">{{ imageGrypeJson.name }}</span>
-                                  <span style="font-size: 20px;color: #888;margin-left: 5px;"> - {{ imageGrypeJson.version }}</span>
+                                  <span style="font-size: 24px;font-weight: 500;">{{ vulnerabilitiy.Title }}</span>
                                 </el-col>
                                 <el-col :span="6" style="float: right;">
-                                  <span style="font-size: 20px;color: #999;float: right;">{{ 'OTHER RELATED VULNERABILITIES' }}</span>
+                                  <span style="font-size: 20px;color: #999;float: right;">{{ 'SEVERITY SOURCE' }}</span>
                                 </el-col>
                               </el-row>
                               <el-row style="font-size: 18px;padding: 10px;">
                                 <el-col :span="20">
-                                  <span style="color: #888;margin: 5px;">{{ 'VULNERABILITY' }}</span>
+                                  <span style="margin: 5px;"><a :href="vulnerabilitiy.PrimaryURL">{{ vulnerabilitiy.VulnerabilityID }}</a></span>
                                   <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                  <span style="margin: 5px;"><a :href="imageGrypeJson.datasource">{{ imageGrypeJson.cve }}</a></span>
+                                  <span style="margin: 5px;"><el-button type="danger" size="mini">{{ vulnerabilitiy.Severity }}</el-button></span>
                                   <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                  <span style="margin: 5px;"><el-button type="danger" size="mini">{{ imageGrypeJson.severity }}</el-button></span>
+                                  <span style="color: #888;margin: 5px;">INSTALLED VERSION: {{ vulnerabilitiy.InstalledVersion }}</span>
                                   <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                  <span style="color: #444;margin: 5px;">TYPE: {{ imageGrypeJson.type }}</span>
-                                  <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                  <span style="color: #444;margin: 5px;">NAMESPACE: {{ imageGrypeJson.namespace }}</span>
+                                  <span style="color: #444;margin: 5px;">PkgName: {{ vulnerabilitiy.PkgName }}</span>
                                 </el-col>
                                 <el-col :span="4" style="float: right;">
-                                  <span style="font-size: 20px;color: #000;float: right;">{{ JSON.parse(imageGrypeJson.relatedVulnerabilities).length }}</span>
+                                  <span style="font-size: 20px;color: #000;float: right;">{{ vulnerabilitiy.SeveritySource }}</span>
                                 </el-col>
                               </el-row>
                             </div>
                             <div class="text item div-desc">
                               <el-row>
-                                <i class="el-icon-s-opportunity"></i> {{ imageGrypeJson.datasource }}
+                                <span style="color: red;"><i class="el-icon-s-opportunity"></i>PrimaryURL:</span> &nbsp;{{ vulnerabilitiy.PrimaryURL }}
                               </el-row>
                               <el-row>
-                                {{ imageGrypeJson.description }}
+                                <span style="color: red;">Description:</span> {{ vulnerabilitiy.Description }}
+                              </el-row>
+                              <el-row>
+                                <span style="color: red;">PublishedDate:</span> {{ vulnerabilitiy.PublishedDate }}
+                              </el-row>
+                              <el-row>
+                                <span style="color: red;">LastModifiedDate:</span> {{ vulnerabilitiy.LastModifiedDate }}
+                              </el-row>
+                              <el-row>
+                                <span style="color: red;">FixedVersion:</span> {{ vulnerabilitiy.FixedVersion }}
+                              </el-row>
+                              <el-row>
+                                <span style="color: red;">DataSource:</span> {{ vulnerabilitiy.DataSource.ID }} | {{ vulnerabilitiy.DataSource.Name }} | {{ vulnerabilitiy.DataSource.URL }}
                               </el-row>
                             </div>
                             <div class="text div-json">
-                              <el-descriptions title="Vulnerability" :column="2">
-                                <el-descriptions-item v-for="(vuln, index) in filterJson(imageGrypeJson.vulnerability)" :key="index" :label="vuln.key">
-                              <span v-if="!vuln.flag" show-overflow-tooltip>
-                                <el-tooltip class="item" effect="dark" :content="JSON.stringify(vuln.value)" placement="top-start">
-                                  <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
-                                </el-tooltip>
-                              </span>
+                              <el-descriptions title="Layer" :column="2">
+                                <el-descriptions-item v-for="(vuln, index) in filterJson(vulnerabilitiy.Layer)" :key="index" :label="vuln.key">
+                          <span v-if="!vuln.flag" show-overflow-tooltip>
+                            <el-tooltip class="item" effect="dark" :content="JSON.stringify(vuln.value)" placement="top-start">
+                              <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
+                            </el-tooltip>
+                          </span>
                                   <el-tooltip v-if="vuln.flag && vuln.value" class="item" effect="light" :content="typeof(vuln.value) === 'boolean'?vuln.value.toString():vuln.value" placement="top-start">
-                                <span class="table-expand-span-value">
-                                    {{ vuln.value }}
-                                </span>
+                            <span class="table-expand-span-value">
+                                {{ vuln.value }}
+                            </span>
                                   </el-tooltip>
                                   <span v-if="vuln.flag && !vuln.value"> N/A</span>
                                 </el-descriptions-item>
                               </el-descriptions>
                             </div>
                             <div class="text div-json">
-                              <el-descriptions title="Artifact" :column="2">
-                                <el-descriptions-item v-for="(artifact, index) in filterJson(imageGrypeJson.artifact)" :key="index" :label="artifact.key">
-                              <span v-if="!artifact.flag" show-overflow-tooltip>
-                                <el-tooltip class="item" effect="dark" :content="JSON.stringify(artifact.value)" placement="top-start">
-                                  <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
-                                </el-tooltip>
-                              </span>
-                                  <el-tooltip v-if="artifact.flag && artifact.value" class="item" effect="light" :content="typeof(artifact.value) === 'boolean'?artifact.value.toString():artifact.value" placement="top-start">
-                                <span class="table-expand-span-value">
-                                    {{ artifact.value }}
-                                </span>
-                                  </el-tooltip>
-                                  <span v-if="artifact.flag && !artifact.value"> N/A</span>
+                              <el-descriptions title="CweIDs" :column="2">
+                                <el-descriptions-item v-for="(CweID, index) in vulnerabilitiy.CweIDs" :key="index" :label="index">
+                                  <span> {{ CweID }}</span>
                                 </el-descriptions-item>
                               </el-descriptions>
                             </div>
                             <div class="text div-json">
-                              <el-descriptions title="MatchDetails" :column="2">
-                                <el-descriptions-item v-for="(matchDetail, index) in JSON.parse(imageGrypeJson.matchDetails)" :key="index" :label="matchDetail.matcher">
-                                  <span> {{ matchDetail.type }}</span>
+                              <el-descriptions title="References" :column="2">
+                                <el-descriptions-item v-for="(Reference, index) in vulnerabilitiy.References" :key="index" :label="index">
+                                  <span> {{ Reference }}</span>
                                 </el-descriptions-item>
                               </el-descriptions>
                             </div>
@@ -526,88 +515,8 @@
                         </div>
                       </div>
                     </div>
-                  </el-tab-pane>
-                  <el-tab-pane :label="$t('image.syft_table')">
-                    <div style="margin: 10px 0 0 0;">
-                      <h3>Sbom:&nbsp;</h3>
-                      <el-table :data="logImageForm.imageSyftTableList" border stripe style="width: 100%">
-                        <el-table-column type="index" min-width="5%"/>
-                        <el-table-column :label="'Name'" min-width="35%" prop="name">
-                        </el-table-column>
-                        <el-table-column :label="'Version'" min-width="35%" prop="version">
-                        </el-table-column>
-                        <el-table-column min-width="20%" :label="'Type'" prop="type">
-                        </el-table-column>
-                      </el-table>
-                    </div>
-                  </el-tab-pane>
-                  <el-tab-pane :label="$t('image.syft_json')">
-                    <div style="margin: 10px 0 0 0;">
-                      <div style="margin: 10px 0 0 0;" :key="index" v-for="(imageSyftJson,index) in logImageForm.imageSyftJsonList">
-                        <el-card class="box-card">
-                          <div slot="header" class="clearfix">
-                            <el-row>
-                              <el-col :span="15" style="margin: -7px 0 0 15px;">
-                                <span style="font-size: 24px;font-weight: 500;">{{ imageSyftJson.name }}</span>
-                                <span style="font-size: 20px;color: #888;margin-left: 5px;">- {{ imageSyftJson.version?imageSyftJson.version:'N/A' }}</span>
-                              </el-col>
-                              <el-col :span="8" style="float: right;">
-                                <span style="font-size: 20px;color: #999;float: right;">{{ 'LANGUAGE' }}</span>
-                              </el-col>
-                            </el-row>
-                            <el-row style="font-size: 18px;padding: 10px;">
-                              <el-col :span="20">
-                                <span style="color: #888;margin: 5px;">{{ 'SBOM' }}</span>
-                                <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                <span style="color: #444;margin: 5px;">TYPE: {{ imageSyftJson.type }}</span>
-                                <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                <span style="color: #444;margin: 5px;">FOUNDBY: {{ imageSyftJson.foundBy }}</span>
-                                <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                <span style="color: #444;margin: 5px;">METADATA TYPE: {{ imageSyftJson.metadataType }}</span>
-                              </el-col>
-                              <el-col :span="4" style="float: right;">
-                                <span style="font-size: 20px;color: #000;float: right;">{{ imageSyftJson.language }}</span>
-                              </el-col>
-                            </el-row>
-                            <el-row style="font-size: 18px;padding: 10px;">
-                              <span style="color: #444;margin: 5px;">PURL: {{ imageSyftJson.purl }}</span>
-                            </el-row>
-                          </div>
-                          <div class="text div-json">
-                            <el-descriptions title="Metadata" :column="2">
-                              <el-descriptions-item v-for="(meta, index) in filterJson(imageSyftJson.metadata)" :key="index" :label="meta.key">
-                                <span v-if="!meta.flag" show-overflow-tooltip>
-                                  <el-tooltip class="item" effect="dark" :content="JSON.stringify(meta.value)" placement="top-start">
-                                    <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
-                                  </el-tooltip>
-                                </span>
-                                <el-tooltip v-if="meta.flag && meta.value" class="item" effect="light" :content="typeof(meta.value) === 'boolean'?meta.value.toString():meta.value" placement="top-start">
-                                <span class="table-expand-span-value">
-                                    {{ meta.value }}
-                                </span>
-                                </el-tooltip>
-                                <span v-if="meta.flag && !meta.value"> N/A</span>
-                              </el-descriptions-item>
-                            </el-descriptions>
-                          </div>
-                          <div class="text div-json">
-                            <el-descriptions title="Locations" :column="2">
-                              <el-descriptions-item v-for="(location, index) in JSON.parse(imageSyftJson.locations)" :key="index" :label="location.path">
-                                <span> {{ location.layerID }}</span>
-                              </el-descriptions-item>
-                              <el-descriptions-item label="Licenses">
-                                <span> {{ imageSyftJson.licenses }}</span>
-                              </el-descriptions-item>
-                              <el-descriptions-item label="Cpes">
-                                <span> {{ imageSyftJson.cpes }}</span>
-                              </el-descriptions-item>
-                            </el-descriptions>
-                          </div>
-                        </el-card>
-                      </div>
-                    </div>
-                  </el-tab-pane>
-                </el-tabs>
+                  </div>
+                </div>
               </el-row>
               <template v-slot:footer>
                 <dialog-footer
@@ -615,9 +524,242 @@
                   @confirm="logImageVisible = false"/>
               </template>
             </el-drawer>
-            <!--Result log-->
+            <!-- image Result log-->
 
-            <!-- image -->
+            <!-- image end -->
+
+            <!-- fs start -->
+            <el-table border v-if="tag=='fs'" :data="fsData" class="adjust-table table-content" stripe style="min-height: 317px;cursor:pointer;" max-height="318" @row-click="selectVuln">
+              <el-table-column type="index" min-width="1%"/>
+              <el-table-column prop="name" :label="$t('fs.name')" min-width="10%" show-overflow-tooltip>
+                <template v-slot:default="scope">
+              <span>
+                <img :src="require(`@/assets/img/fs/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ scope.row.name }}
+              </span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="fileName" :label="$t('fs.file_name')" min-width="10%" show-overflow-tooltip>
+                <template v-slot:default="scope">
+                  &nbsp;&nbsp; {{ scope.row.fileName }}
+                </template>
+              </el-table-column>
+              <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="15%">
+                <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown" placement="top">
+                  <el-link type="primary" class="text-click" @click="showFsResource(scope.row)">
+                    {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown}}
+                  </el-link>
+                </el-tooltip>
+              </el-table-column>
+              <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="12%" prop="resultStatus" sortable show-overflow-tooltip>
+                <el-button @click="showFsResultLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
+                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                </el-button>
+                <el-button @click="showFsResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
+                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                </el-button>
+                <el-button @click="showFsResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
+                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                </el-button>
+                <el-button @click="showFsResultLog(scope.row)" plain size="medium" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
+                  <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+                </el-button>
+                <el-button @click="showFsResultLog(scope.row)" plain size="medium" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+                  <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+                </el-button>
+                <el-button @click="showFsResultLog(scope.row)" plain size="medium" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+                  <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+                </el-button>
+              </el-table-column>
+              <el-table-column prop="updateTime" min-width="14%" :label="$t('image.last_modified')" sortable>
+                <template v-slot:default="scope">
+                  <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column min-width="14%" v-slot:default="scope" :label="$t('commons.operating')">
+                <download :params="scope.row"/>
+              </el-table-column>
+            </el-table>
+
+            <!-- fs Result detail-->
+            <el-drawer class="rtl" :title="$t('fs.result_details_list')" :visible.sync="fsVisible" size="85%" :before-close="handleClose" :direction="direction"
+                       :destroy-on-close="true">
+              <fs-result-details :id="fsResultId"/>
+              <template v-slot:footer>
+                <dialog-footer
+                  @cancel="fsVisible = false"
+                  @confirm="fsVisible = false"/>
+              </template>
+            </el-drawer>
+            <!-- fs Result detail-->
+
+            <!-- fs Result log-->
+            <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logFsVisible" size="85%" :before-close="handleClose" :direction="direction"
+                       :destroy-on-close="true">
+              <el-row class="el-form-item-dev" v-if="logFsData.length == 0">
+                <span>{{ $t('resource.i18n_no_data') }}<br></span>
+              </el-row>
+              <el-row class="el-form-item-dev" v-if="logFsData.length > 0">
+                <div>
+                  <el-row>
+                    <el-col :span="24">
+                      <div class="grid-content bg-purple-light">
+                        <span class="grid-content-log-span"> {{ logFsForm.name }}</span>
+                        <span class="grid-content-log-span">
+                  <img :src="require(`@/assets/img/fs/fs.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ logFsForm.name }}
+                </span>
+                        <span class="grid-content-status-span" v-if="logFsForm.resultStatus === 'APPROVED'" style="color: #579df8">
+                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                </span>
+                        <span class="grid-content-status-span" v-else-if="logFsForm.resultStatus === 'FINISHED'" style="color: #7ebf50">
+                  <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+                </span>
+                        <span class="grid-content-status-span" v-else-if="logFsForm.resultStatus === 'ERROR'" style="color: red;">
+                  <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+                </span>
+                      </div>
+                    </el-col>
+                  </el-row>
+                </div>
+                <el-table :show-header="false" :data="logImageData" class="adjust-table table-content">
+                  <el-table-column>
+                    <template v-slot:default="scope">
+                      <div class="bg-purple-div">
+                <span
+                  v-bind:class="{true: 'color-red', false: ''}[scope.row.result == false]">
+                      {{ scope.row.createTime | timestampFormatDate }}
+                      {{ scope.row.operator }}
+                      {{ scope.row.operation }}
+                      {{ scope.row.output }}<br>
+                </span>
+                      </div>
+                    </template>
+                  </el-table-column>
+                </el-table>
+                <div style="margin: 10px;" v-if="logFsForm.returnJson">
+                  <h2>Summary:&nbsp;</h2>
+                  <ul style="margin-left: 60px;">
+                    <li><i>Scan Name</i>: {{ logFsForm.name }}</li>
+                    <li><i>Scan User</i>:&nbsp;{{ logFsForm.userName }}</li>
+                    <li><i>ArtifactType</i>:&nbsp;{{ logFsForm.returnJson.ArtifactType }}</li>
+                    <li><i>ArtifactName</i>:&nbsp;{{ logFsForm.returnJson.ArtifactName }}</li>
+                    <li><i>SchemaVersion</i>:&nbsp;{{ logFsForm.returnJson.SchemaVersion }}</li>
+                    <li><i>Architecture</i>:&nbsp;{{ logFsForm.returnJson.Metadata.ImageConfig?logFsForm.returnJson.Metadata.ImageConfig.architecture:'N/A' }}</li>
+                    <li><i>Create Time</i>:&nbsp;{{ logFsForm.createTime | timestampFormatDate }}</li>
+                    <li><i>Result Status</i>:&nbsp;{{ logFsForm.resultStatus }}</li>
+                    <li><i>Vulnerabilities Found</i>: {{ logFsForm.returnSum }}</li>
+                  </ul>
+                </div>
+                <div style="margin: 10px;" v-if="logFsForm.returnJson">
+                  <div style="margin: 10px 0 0 0;">
+                    <h2>Details:&nbsp;</h2>
+                    <div style="margin: 10px 0 0 0;">
+                      <div style="margin: 10px 0 0 0;" :key="index" v-for="(result, index) in logFsForm.returnJson.Results">
+                        <div style="margin: 10px;" v-if="result">
+                          <h3>Summary:&nbsp;</h3>
+                          <ul style="margin-left: 60px;">
+                            <li><i>Target</i>: {{ result.Target }}</li>
+                            <li><i>Class</i>:&nbsp;{{ result.Class }}</li>
+                            <li><i>Type</i>:&nbsp;{{ result.Type }}</li>
+                          </ul>
+                        </div>
+                        <div style="margin: 10px 0 0 0;" :key="index" v-for="(vulnerabilitiy, index) in result.Vulnerabilities">
+                          <el-card class="box-card">
+                            <div slot="header" class="clearfix">
+                              <el-row>
+                                <el-col class="icon-title" :span="3">
+                                  <span>{{ vulnerabilitiy.Severity.substring(0, 1) }}</span>
+                                </el-col>
+                                <el-col :span="15" style="margin: -7px 0 0 15px;">
+                                  <span style="font-size: 24px;font-weight: 500;">{{ vulnerabilitiy.Title }}</span>
+                                </el-col>
+                                <el-col :span="6" style="float: right;">
+                                  <span style="font-size: 20px;color: #999;float: right;">{{ 'SEVERITY SOURCE' }}</span>
+                                </el-col>
+                              </el-row>
+                              <el-row style="font-size: 18px;padding: 10px;">
+                                <el-col :span="20">
+                                  <span style="margin: 5px;"><a :href="vulnerabilitiy.PrimaryURL">{{ vulnerabilitiy.VulnerabilityID }}</a></span>
+                                  <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                                  <span style="margin: 5px;"><el-button type="danger" size="mini">{{ vulnerabilitiy.Severity }}</el-button></span>
+                                  <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                                  <span style="color: #888;margin: 5px;">INSTALLED VERSION: {{ vulnerabilitiy.InstalledVersion }}</span>
+                                  <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                                  <span style="color: #444;margin: 5px;">PkgName: {{ vulnerabilitiy.PkgName }}</span>
+                                </el-col>
+                                <el-col :span="4" style="float: right;">
+                                  <span style="font-size: 20px;color: #000;float: right;">{{ vulnerabilitiy.SeveritySource }}</span>
+                                </el-col>
+                              </el-row>
+                            </div>
+                            <div class="text item div-desc">
+                              <el-row>
+                                <span style="color: red;"><i class="el-icon-s-opportunity"></i>PrimaryURL:</span> &nbsp;{{ vulnerabilitiy.PrimaryURL }}
+                              </el-row>
+                              <el-row>
+                                <span style="color: red;">Description:</span> {{ vulnerabilitiy.Description }}
+                              </el-row>
+                              <el-row>
+                                <span style="color: red;">PublishedDate:</span> {{ vulnerabilitiy.PublishedDate }}
+                              </el-row>
+                              <el-row>
+                                <span style="color: red;">LastModifiedDate:</span> {{ vulnerabilitiy.LastModifiedDate }}
+                              </el-row>
+                              <el-row>
+                                <span style="color: red;">FixedVersion:</span> {{ vulnerabilitiy.FixedVersion }}
+                              </el-row>
+                              <el-row>
+                                <span style="color: red;">DataSource:</span> {{ vulnerabilitiy.DataSource.ID }} | {{ vulnerabilitiy.DataSource.Name }} | {{ vulnerabilitiy.DataSource.URL }}
+                              </el-row>
+                            </div>
+                            <div class="text div-json">
+                              <el-descriptions title="Layer" :column="2">
+                                <el-descriptions-item v-for="(vuln, index) in filterJson(vulnerabilitiy.Layer)" :key="index" :label="vuln.key">
+                          <span v-if="!vuln.flag" show-overflow-tooltip>
+                            <el-tooltip class="item" effect="dark" :content="JSON.stringify(vuln.value)" placement="top-start">
+                              <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
+                            </el-tooltip>
+                          </span>
+                                  <el-tooltip v-if="vuln.flag && vuln.value" class="item" effect="light" :content="typeof(vuln.value) === 'boolean'?vuln.value.toString():vuln.value" placement="top-start">
+                            <span class="table-expand-span-value">
+                                {{ vuln.value }}
+                            </span>
+                                  </el-tooltip>
+                                  <span v-if="vuln.flag && !vuln.value"> N/A</span>
+                                </el-descriptions-item>
+                              </el-descriptions>
+                            </div>
+                            <div class="text div-json">
+                              <el-descriptions title="CweIDs" :column="2">
+                                <el-descriptions-item v-for="(CweID, index) in vulnerabilitiy.CweIDs" :key="index" :label="index">
+                                  <span> {{ CweID }}</span>
+                                </el-descriptions-item>
+                              </el-descriptions>
+                            </div>
+                            <div class="text div-json">
+                              <el-descriptions title="References" :column="2">
+                                <el-descriptions-item v-for="(Reference, index) in vulnerabilitiy.References" :key="index" :label="index">
+                                  <span> {{ Reference }}</span>
+                                </el-descriptions-item>
+                              </el-descriptions>
+                            </div>
+                          </el-card>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </el-row>
+              <template v-slot:footer>
+                <dialog-footer
+                  @cancel="logImageVisible = false"
+                  @confirm="logImageVisible = false"/>
+              </template>
+            </el-drawer>
+            <!-- fs Result log-->
+
+            <!-- fs end -->
 
           </el-card>
         </el-col>
@@ -637,6 +779,7 @@
             </section>
             <code-result-details v-if="codeResultId" :id="codeResultId"/>
             <image-result-details v-if="imageResultId" :id="imageResultId"/>
+            <fs-result-details v-if="fsResultId" :id="fsResultId"/>
           </el-card>
         </el-col>
       </el-row>
@@ -649,6 +792,7 @@ import MainContainer from "@/business/components/common/components/MainContainer
 import Download from "@/business/components/sbom/home/Download";
 import CodeResultDetails from "@/business/components/sbom/home/CodeResultDetails";
 import ImageResultDetails from "@/business/components/sbom/home/ImageResultDetails";
+import FsResultDetails from "@/business/components/sbom/home/FsResultDetails";
 import MetricChart from "@/business/components/common/chart/MetricChart";
 
 /* eslint-disable */
@@ -658,6 +802,7 @@ export default {
     Download,
     CodeResultDetails,
     ImageResultDetails,
+    FsResultDetails,
     MetricChart,
   },
   data() {
@@ -670,21 +815,28 @@ export default {
       tags: [
         {id: 'code', name: this.$t('sbom.target_code'), icon: 'iconfont icon-yuandaimaxiayoudaima'},
         {id: 'image', name: this.$t('sbom.target_image'), icon: 'iconfont icon-jingxiang2'},
+        {id: 'fs', name: this.$t('sbom.target_fs'), icon: 'iconfont icon-wendang'},
       ],
       tag: 'code',
       codeData: [],
       imageData: [],
+      fsData: [],
       direction: 'rtl',
       codeVisible: false,
       imageVisible: false,
+      fsVisible: false,
       logCodeVisible: false,
       logImageVisible: false,
+      logFsVisible: false,
       codeResultId: '',
       imageResultId: '',
+      fsResultId: '',
       logCodeData: {},
       logCodeForm: [],
       logImageData: {},
       logImageForm: [],
+      logFsData: {},
+      logFsForm: [],
       filterJson: this.filterJsonKeyAndValue,
       content: {
         critical: 0,
@@ -728,6 +880,9 @@ export default {
         this.$get("/sbom/historyImageResult/" + this.sbomVersion.id, response => {
           this.imageData = response.data;
         });
+        this.$get("/sbom/historyFsResult/" + this.sbomVersion.id, response => {
+          this.fsData = response.data;
+        });
       }
     },
     handleClick(item) {
@@ -743,6 +898,10 @@ export default {
     showImageResource(item) {
       this.imageResultId = item.id;
       this.imageVisible = true;
+    },
+    showFsResource(item) {
+      this.fsResultId = item.id;
+      this.fsVisible = true;
     },
     showCodeResultLog(result) {
       let logUrl = "/sbom/codeLog/";
@@ -761,21 +920,37 @@ export default {
       this.result = this.$get(logUrl + result.id, response => {
         this.logImageData = response.data;
       });
-      let resultUrl = "/image/getImageResultDto/";
+      let resultUrl = "/image/getImageResultWithBLOBs/";
       this.result = this.$get(resultUrl + result.id, response => {
         this.logImageForm = response.data;
+        this.logImageForm.resultJson = JSON.parse(this.logImageForm.resultJson);
       });
       this.logImageVisible = true;
+    },
+    showFsResultLog(result) {
+      let logUrl = "/fs/log/";
+      this.result = this.$get(logUrl + result.id, response => {
+        this.logFsData = response.data;
+      });
+      let resultUrl = "/fs/getFsResult/";
+      this.result = this.$get(resultUrl + result.id, response => {
+        this.logFsForm = response.data;
+        this.logFsForm.returnJson = JSON.parse(this.logFsForm.returnJson);
+      });
+      this.logFsVisible = true;
     },
     handleClose() {
       this.codeVisible = false;
       this.imageVisible = false;
       this.logCodeVisible = false;
       this.logImageVisible = false;
+      this.fsVisible = false;
+      this.logFsVisible = false;
     },
     selectVuln(item) {
       this.codeResultId = "";
       this.imageResultId = "";
+      this.fsResultId = "";
       if(item.codeId) {
         this.codeResultId = item.id;
         this.result = this.$get("/sbom/codeMetricChart/"+ this.codeResultId, response => {
@@ -784,6 +959,11 @@ export default {
       } else if(item.imageId) {
         this.imageResultId = item.id;
         this.result = this.$get("/sbom/imageMetricChart/"+ this.imageResultId, response => {
+          this.content = response.data;
+        });
+      } else if(item.fsId) {
+        this.fsResultId = item.id;
+        this.result = this.$get("/sbom/fsMetricChart/"+ this.fsResultId, response => {
           this.content = response.data;
         });
       }

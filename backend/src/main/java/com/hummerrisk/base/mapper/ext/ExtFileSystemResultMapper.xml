@@ -158,6 +158,9 @@
             <if test="fsId != null">
                 AND t.fs_id = #{fsId}
             </if>
+            <if test="sbomVersionId != null">
+                AND t.sbom_version_id = #{sbomVersionId}
+            </if>
             <if test="name != null">
                 AND LOWER(t.name) like CONCAT('%',#{name},'%')
             </if>

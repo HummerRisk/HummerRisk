@@ -1333,6 +1333,8 @@ export default {
     target_code: 'The source code has been bound',
     source_image: 'Unbound image',
     target_image: 'Bound image',
+    target_fs: 'Bound file system',
+    source_fs: 'Unbound file system',
     source_package: 'Unbound package',
     target_package: 'bundled package',
     applications: 'application',
