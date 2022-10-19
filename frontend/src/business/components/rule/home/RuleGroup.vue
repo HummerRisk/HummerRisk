@@ -733,6 +733,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
   }
   .edit-dev-drawer >>> .el-transfer-panel__list{
     height: 500px;
+    padding-bottom: 50px;
   }
   .el-trans {
     width: 100%;

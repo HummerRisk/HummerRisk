@@ -640,5 +640,8 @@ export default {
 .edit_dev >>> .el-transfer-panel {
   width:350px;
 }
+.edit_dev >>> .el-transfer-panel__list{
+  padding-bottom: 50px;
+}
 </style>
 
