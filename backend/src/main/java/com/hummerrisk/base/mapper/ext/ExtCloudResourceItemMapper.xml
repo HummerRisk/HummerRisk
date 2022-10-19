@@ -15,7 +15,7 @@
         <result column="create_time" jdbcType="BIGINT" property="createTime" />
         <result column="update_time" jdbcType="BIGINT" property="updateTime" />
         <result column="resource" jdbcType="VARCHAR" property="resource" />
-        <result column="rule_count" jdbcType="VARCHAR" property="ruleCount" />
+        <result column="risk_count" jdbcType="VARCHAR" property="riskCount" />
     </resultMap>
 
     <resultMap id="SummaryResultMap" type="com.hummerrisk.base.domain.CloudResourceSummary">
@@ -112,12 +112,14 @@
 
     <select id="selectByRequest" resultMap="BaseResultMap" >
         select t.id, t.resource_id, t.hummer_id, t.resource_type, t.plugin_id, t.plugin_name, t.plugin_icon, t.account_id,
-    t.region_id, t.region_name, t.create_time, t.update_time,t.resource,t2.rule_count from cloud_resource_item t
+    t.region_id, t.region_name, t.create_time, t.update_time,t.resource,t2.risk_count from cloud_resource_item t
        left join cloud_account account on account.id = t.account_id
-       left join (select hummer_id,count(hummer_id) as rule_count from resource_item a
-        inner join resource_rule b on a.resource_id = b.resource_id
-        inner join rule c on b.rule_id = c.id
-        GROUP BY hummer_id) t2 on t.hummer_id = t2.hummer_id
+       left join (select a.hummer_id,count(*) as risk_count FROM resource_item A
+        join cloud_task_item_resource b
+        on a.resource_id = b.resource_id
+        join cloud_task_item c on b.task_item_id = c.id
+        group by a.hummer_id
+        order by hummer_id) t2 on t.hummer_id = t2.hummer_id
         where 1=1
         <if test="request.combine != null">
             <include refid="combine">
@@ -138,4 +140,20 @@
         inner join rule c on b.rule_id = c.id
         where hummer_id = #{hummerId}
     </select>
+    
+    <select id="countResourceTask" resultType="int" >
+        SELECT count(*) as num FROM cloud_task_item a
+            INNER JOIN rule b on a.rule_id = b.id
+            INNER JOIN rule_type c on b.id = c.rule_id
+        where a.account_id=#{accountId} and a.region_id = #{regionId} and c.resource_type = #{resourceType}
+    </select>
+
+    <select id="selectResourceRisk" parameterType="String">
+        select d.* FROM resource_item A
+        join cloud_task_item_resource b on a.resource_id = b.resource_id
+        join cloud_task_item c on b.task_item_id = c.id
+        join cloud_task d on d.id = c.task_id
+        where hummer_id = #{hummerId}
+    </select>
+
 </mapper>

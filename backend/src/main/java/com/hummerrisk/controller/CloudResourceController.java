@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.CloudResourceItem;
 import com.hummerrisk.base.domain.CloudResourceSummary;
 import com.hummerrisk.base.domain.CloudResourceSync;
+import com.hummerrisk.base.domain.CloudTask;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
@@ -41,9 +42,15 @@ public class CloudResourceController {
     }
 
     @I18n
-    @GetMapping(value = "rule/list/{hummerId}")
-    public List<ResourceRuleDTO> listResourceRule(@PathVariable String hummerId) {
-        return cloudResourceService.getResourceRule(hummerId);
+    @GetMapping(value = "risk/list/{hummerId}")
+    public List<CloudTask> listResourceRisk(@PathVariable String hummerId) {
+        return cloudResourceService.getCloudTaskByHummerId(hummerId);
+    }
+
+    @I18n
+    @GetMapping(value = "task/count/{accountId}/{regionId}/{resourceType}")
+    public Integer countResourceTask(@PathVariable String accountId,@PathVariable String regionId,@PathVariable String resourceType) {
+        return cloudResourceService.countResourceTask(accountId,regionId,resourceType);
     }
 
 }
