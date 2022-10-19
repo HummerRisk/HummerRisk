@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `file_system_result_log` (
     `result_id`                    varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
-    `operation`                    varchar(1024)       DEFAULT NULL COMMENT '操作内容',
+    `operation`                    mediumtext          DEFAULT NULL COMMENT '操作内容',
     `output`                       mediumtext          DEFAULT NULL COMMENT '输出',
     `result`                       tinyint(1)          DEFAULT NULL COMMENT '结果',
     PRIMARY KEY (`id`)
@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `history_file_system_result_log` (
     `result_id`                    varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
-    `operation`                    varchar(1024)       DEFAULT NULL COMMENT '操作内容',
+    `operation`                    mediumtext          DEFAULT NULL COMMENT '操作内容',
     `output`                       mediumtext          DEFAULT NULL COMMENT '输出',
     `result`                       tinyint(1)          DEFAULT NULL COMMENT '结果',
     PRIMARY KEY (`id`)
@@ -141,6 +141,50 @@ ALTER TABLE `image_result` change `trivy_json` `result_json` longtext DEFAULT NU
 ALTER TABLE `history_image_result` change `trivy_json` `result_json` longtext DEFAULT NULL COMMENT 'result json';
 
 ALTER TABLE `cloud_native_result` ADD `return_config_sum` bigint(13) DEFAULT 0 COMMENT '输出检测结果配置审计数';
+
+ALTER TABLE `cloud_task_item_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `cloud_account_quartz_task_rela_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `server_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `image_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `task_item_resource_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `history_cloud_task_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `history_vuln_task_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `history_server_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `history_image_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `cloud_native_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `history_cloud_native_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `cloud_native_config_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `history_cloud_native_config_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `code_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `history_code_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `image_repo_sync_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `cloud_native_source_sync_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `cloud_event_sync_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `cloud_event_region_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `cloud_resource_sync_item_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `file_system_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+
+ALTER TABLE `history_file_system_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
 
 CREATE TABLE IF NOT EXISTS `cloud_native_result_config_item`
 (

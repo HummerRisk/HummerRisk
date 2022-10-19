@@ -288,7 +288,7 @@ public class OrderService {
     }
 
     void saveTaskItemLog(String taskItemId, String resourcePrimaryKey, String operation, String output, boolean success, String historyType) throws Exception {
-        CloudTaskItemLog cloudTaskItemLog = new CloudTaskItemLog();
+        CloudTaskItemLogWithBLOBs cloudTaskItemLog = new CloudTaskItemLogWithBLOBs();
         String operator = "system";
         try {
             if (SessionUtils.getUser() != null) {
@@ -307,9 +307,9 @@ public class OrderService {
         cloudTaskItemLogMapper.insertSelective(cloudTaskItemLog);
 
         if (StringUtils.equalsIgnoreCase(historyType, CloudTaskConstants.HISTORY_TYPE.Cloud.name())) {
-            historyService.insertHistoryCloudTaskLog(BeanUtils.copyBean(new HistoryCloudTaskLog(), cloudTaskItemLog));
+            historyService.insertHistoryCloudTaskLog(BeanUtils.copyBean(new HistoryCloudTaskLogWithBLOBs(), cloudTaskItemLog));
         } else if (StringUtils.equalsIgnoreCase(historyType, CloudTaskConstants.HISTORY_TYPE.Vuln.name())) {
-            historyService.insertHistoryVulnTaskLog(BeanUtils.copyBean(new HistoryVulnTaskLog(), cloudTaskItemLog));
+            historyService.insertHistoryVulnTaskLog(BeanUtils.copyBean(new HistoryVulnTaskLogWithBLOBs(), cloudTaskItemLog));
         }
 
     }
@@ -371,14 +371,14 @@ public class OrderService {
         return cloudTaskItemMapper.selectByPrimaryKey(taskItemId);
     }
 
-    public List<CloudTaskItemLog> getQuartzLogByTaskItemId(CloudTaskItemWithBLOBs taskItemWithBLOBs) {
+    public List<CloudTaskItemLogWithBLOBs> getQuartzLogByTaskItemId(CloudTaskItemWithBLOBs taskItemWithBLOBs) {
         CloudTaskItemLogExample cloudTaskItemLogExample = new CloudTaskItemLogExample();
         cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(taskItemWithBLOBs.getId());
         cloudTaskItemLogExample.setOrderByClause("create_time desc");
         return cloudTaskItemLogMapper.selectByExampleWithBLOBs(cloudTaskItemLogExample);
     }
 
-    public List<CloudAccountQuartzTaskRelaLog> getQuartzLogsById(String qzTaskId) {
+    public List<CloudAccountQuartzTaskRelaLogWithBLOBs> getQuartzLogsById(String qzTaskId) {
         CloudAccountQuartzTaskRelaLogExample example = new CloudAccountQuartzTaskRelaLogExample();
         example.createCriteria().andQuartzTaskIdEqualTo(qzTaskId);
         example.setOrderByClause("create_time desc");
@@ -475,8 +475,8 @@ public class OrderService {
                     if (item.getStatus().equals(CloudTaskConstants.TASK_STATUS.ERROR.name())) {
                         CloudTaskItemLogExample cloudTaskItemLogExample = new CloudTaskItemLogExample();
                         cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(item.getId()).andResourceIdIsNotNull().andResultEqualTo(false);
-                        List<CloudTaskItemLog> cloudTaskItemLogs = cloudTaskItemLogMapper.selectByExample(cloudTaskItemLogExample);
-                        resourceIdSet2BeReleased.addAll(cloudTaskItemLogs.stream().map(CloudTaskItemLog::getResourceId).collect(Collectors.toList()));
+                        List<CloudTaskItemLogWithBLOBs> cloudTaskItemLogs = cloudTaskItemLogMapper.selectByExampleWithBLOBs(cloudTaskItemLogExample);
+                        resourceIdSet2BeReleased.addAll(cloudTaskItemLogs.stream().map(CloudTaskItemLogWithBLOBs::getResourceId).collect(Collectors.toList()));
                     }
 
                     //释放资源
@@ -492,7 +492,7 @@ public class OrderService {
                         //清除日志关联
                         CloudTaskItemLogExample cloudTaskItemLogExample = new CloudTaskItemLogExample();
                         cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(item.getId()).andResourceIdEqualTo(resourceId);
-                        CloudTaskItemLog cloudTaskItemLog = new CloudTaskItemLog();
+                        CloudTaskItemLogWithBLOBs cloudTaskItemLog = new CloudTaskItemLogWithBLOBs();
                         cloudTaskItemLog.setTaskItemId(newTaskItemId);
                         cloudTaskItemLogMapper.updateByExampleSelective(cloudTaskItemLog, cloudTaskItemLogExample);
                     }
@@ -630,7 +630,7 @@ public class OrderService {
                         cloudTask.setPrevFireTime(quartzTask.getPrevFireTime());
                         cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
                     }
-                    CloudAccountQuartzTaskRelaLog quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLog();
+                    CloudAccountQuartzTaskRelaLogWithBLOBs quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLogWithBLOBs();
                     quartzTaskRelaLog.setCreateTime(System.currentTimeMillis());
                     quartzTaskRelaLog.setQuartzTaskId(quartzTaskId);
                     quartzTaskRelaLog.setQuartzTaskRelaId(quartzTaskRelation.getId());

@@ -219,7 +219,7 @@ public class ServerService {
     }
 
     public void saveServerResultLog(String resultId, String operation, String output, boolean result) throws Exception {
-        ServerResultLog serverResultLog = new ServerResultLog();
+        ServerResultLogWithBLOBs serverResultLog = new ServerResultLogWithBLOBs();
         String operator = "system";
         try {
             if (SessionUtils.getUser() != null) {
@@ -236,7 +236,7 @@ public class ServerService {
         serverResultLog.setResult(result);
         serverResultLogMapper.insertSelective(serverResultLog);
 
-        historyService.insertHistoryServerResultLog(BeanUtils.copyBean(new HistoryServerResultLog(), serverResultLog));
+        historyService.insertHistoryServerResultLog(BeanUtils.copyBean(new HistoryServerResultLogWithBLOBs(), serverResultLog));
     }
 
     private ServerValidateDTO validateAccount(Server server) {
@@ -493,7 +493,7 @@ public class ServerService {
         return extServerResultMapper.resultList(request) != null ? extServerResultMapper.resultList(request).get(0) : new ServerResultDTO();
     }
 
-    public List<ServerResultLog> getServerResultLog(String resultId) {
+    public List<ServerResultLogWithBLOBs> getServerResultLog(String resultId) {
         ServerResultLogExample example = new ServerResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
         return serverResultLogMapper.selectByExampleWithBLOBs(example);

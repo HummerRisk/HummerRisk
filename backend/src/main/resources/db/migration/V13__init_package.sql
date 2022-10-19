@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `package_result_log` (
     `result_id`                    varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
-    `operation`                    varchar(1024)       DEFAULT NULL COMMENT '操作内容',
+    `operation`                    mediumtext          DEFAULT NULL COMMENT '操作内容',
     `output`                       mediumtext          DEFAULT NULL COMMENT '输出',
     `result`                       tinyint(1)          DEFAULT NULL COMMENT '结果',
     PRIMARY KEY (`id`)

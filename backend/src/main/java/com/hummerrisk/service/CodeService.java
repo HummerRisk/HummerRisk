@@ -215,7 +215,7 @@ public class CodeService {
         return codeResult;
     }
 
-    public List<CodeResultLog> getCodeResultLog(String resultId) {
+    public List<CodeResultLogWithBLOBs> getCodeResultLog(String resultId) {
         CodeResultLogExample example = new CodeResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
         return codeResultLogMapper.selectByExampleWithBLOBs(example);
@@ -315,7 +315,7 @@ public class CodeService {
     }
 
     void saveCodeResultLog(String resultId, String operation, String output, boolean result) throws Exception {
-        CodeResultLog codeResultLog = new CodeResultLog();
+        CodeResultLogWithBLOBs codeResultLog = new CodeResultLogWithBLOBs();
         String operator = "system";
         try {
             if (SessionUtils.getUser() != null) {
@@ -332,7 +332,7 @@ public class CodeService {
         codeResultLog.setResult(result);
         codeResultLogMapper.insertSelective(codeResultLog);
 
-        historyService.insertHistoryCodeResultLog(BeanUtils.copyBean(new HistoryCodeResultLog(), codeResultLog));
+        historyService.insertHistoryCodeResultLog(BeanUtils.copyBean(new HistoryCodeResultLogWithBLOBs(), codeResultLog));
     }
 
     public void createScan (CodeResult result) throws Exception {

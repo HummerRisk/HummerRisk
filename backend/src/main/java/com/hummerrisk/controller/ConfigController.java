@@ -2,10 +2,7 @@ package com.hummerrisk.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummerrisk.base.domain.CloudNativeConfig;
-import com.hummerrisk.base.domain.CloudNativeConfigResultItem;
-import com.hummerrisk.base.domain.CloudNativeConfigResultItemWithBLOBs;
-import com.hummerrisk.base.domain.CloudNativeConfigResultLog;
+import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
@@ -120,7 +117,7 @@ public class ConfigController {
     @I18n
     @ApiOperation(value = "云原生部署配置检测日志")
     @GetMapping(value = "log/{resultId}")
-    public List<CloudNativeConfigResultLog> getCloudNativeConfigResultLog(@PathVariable String resultId) {
+    public List<CloudNativeConfigResultLogWithBLOBs> getCloudNativeConfigResultLog(@PathVariable String resultId) {
         return configService.getCloudNativeConfigResultLog(resultId);
     }
 

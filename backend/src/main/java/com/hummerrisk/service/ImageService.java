@@ -130,7 +130,7 @@ public class ImageService {
      */
     public boolean syncImages(ImageRepo imageRepo) throws Exception {
         long i = 0;
-        ImageRepoSyncLog imageRepoSyncLog = new ImageRepoSyncLog();
+        ImageRepoSyncLogWithBLOBs imageRepoSyncLog = new ImageRepoSyncLogWithBLOBs();
         try {
             ImageRepoItemExample example = new ImageRepoItemExample();
             example.createCriteria().andRepoIdEqualTo(imageRepo.getId());
@@ -648,14 +648,14 @@ public class ImageService {
         return imageResultWithBLOBs;
     }
 
-    public List<ImageResultLog> getImageResultLog(String resultId) {
+    public List<ImageResultLogWithBLOBs> getImageResultLog(String resultId) {
         ImageResultLogExample example = new ImageResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
         return imageResultLogMapper.selectByExampleWithBLOBs(example);
     }
 
     void saveImageResultLog(String resultId, String operation, String output, boolean result) throws Exception {
-        ImageResultLog imageResultLog = new ImageResultLog();
+        ImageResultLogWithBLOBs imageResultLog = new ImageResultLogWithBLOBs();
         String operator = "system";
         try {
             if (SessionUtils.getUser() != null) {
@@ -672,7 +672,7 @@ public class ImageService {
         imageResultLog.setResult(result);
         imageResultLogMapper.insertSelective(imageResultLog);
 
-        historyService.insertHistoryImageResultLog(BeanUtils.copyBean(new HistoryImageResultLog(), imageResultLog));
+        historyService.insertHistoryImageResultLog(BeanUtils.copyBean(new HistoryImageResultLogWithBLOBs(), imageResultLog));
     }
 
     public List<ImageResultItemWithBLOBs> resultItemList(ImageResultItem resourceRequest) {
@@ -686,7 +686,7 @@ public class ImageService {
         return imageResultItemMapper.selectByExampleWithBLOBs(example);
     }
 
-    public List<ImageRepoSyncLog> repoSyncList(String id) {
+    public List<ImageRepoSyncLogWithBLOBs> repoSyncList(String id) {
         ImageRepoSyncLogExample example = new ImageRepoSyncLogExample();
         example.createCriteria().andRepoIdEqualTo(id);
         return imageRepoSyncLogMapper.selectByExampleWithBLOBs(example);

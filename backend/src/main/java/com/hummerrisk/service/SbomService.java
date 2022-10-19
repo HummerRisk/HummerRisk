@@ -212,7 +212,7 @@ public class SbomService {
     }
 
 
-    public List<HistoryCodeResultLog> getCodeResultLog(String resultId) {
+    public List<HistoryCodeResultLogWithBLOBs> getCodeResultLog(String resultId) {
         HistoryCodeResultLogExample example = new HistoryCodeResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
         return historyCodeResultLogMapper.selectByExampleWithBLOBs(example);
@@ -223,7 +223,7 @@ public class SbomService {
         return codeResult;
     }
 
-    public List<HistoryImageResultLog> getImageResultLog(String resultId) {
+    public List<HistoryImageResultLogWithBLOBs> getImageResultLog(String resultId) {
         HistoryImageResultLogExample example = new HistoryImageResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
         return historyImageResultLogMapper.selectByExampleWithBLOBs(example);

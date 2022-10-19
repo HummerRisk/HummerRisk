@@ -269,7 +269,7 @@ public class ConfigService {
     }
 
     void saveCloudNativeConfigResultLog(String resultId, String operation, String output, boolean result) throws Exception {
-        CloudNativeConfigResultLog cloudNativeConfigResultLog = new CloudNativeConfigResultLog();
+        CloudNativeConfigResultLogWithBLOBs cloudNativeConfigResultLog = new CloudNativeConfigResultLogWithBLOBs();
         String operator = "system";
         try {
             if (SessionUtils.getUser() != null) {
@@ -286,7 +286,7 @@ public class ConfigService {
         cloudNativeConfigResultLog.setResult(result);
         cloudNativeConfigResultLogMapper.insertSelective(cloudNativeConfigResultLog);
 
-        historyService.insertHistoryCloudNativeConfigResultLog(BeanUtils.copyBean(new HistoryCloudNativeConfigResultLog(), cloudNativeConfigResultLog));
+        historyService.insertHistoryCloudNativeConfigResultLog(BeanUtils.copyBean(new HistoryCloudNativeConfigResultLogWithBLOBs(), cloudNativeConfigResultLog));
     }
 
     public void reScanDeleteCloudNativeConfigResult(String id) throws Exception {
@@ -396,7 +396,7 @@ public class ConfigService {
         return cloudNativeConfigResult;
     }
 
-    public List<CloudNativeConfigResultLog> getCloudNativeConfigResultLog(String resultId) {
+    public List<CloudNativeConfigResultLogWithBLOBs> getCloudNativeConfigResultLog(String resultId) {
         CloudNativeConfigResultLogExample example = new CloudNativeConfigResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
         return cloudNativeConfigResultLogMapper.selectByExampleWithBLOBs(example);

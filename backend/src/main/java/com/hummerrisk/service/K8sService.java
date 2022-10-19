@@ -294,7 +294,7 @@ public class K8sService {
 
     public void addCloudNativeSource(CloudNative cloudNative) throws IOException, ApiException {
         commonThreadPool.addTask(() -> {
-            CloudNativeSourceSyncLog record = new CloudNativeSourceSyncLog();
+            CloudNativeSourceSyncLogWithBLOBs record = new CloudNativeSourceSyncLogWithBLOBs();
             long i = 0;
             try {
                 CloudNativeSourceExample example = new CloudNativeSourceExample();
@@ -515,7 +515,7 @@ public class K8sService {
     }
 
     void saveCloudNativeResultLog(String resultId, String operation, String output, boolean result) throws Exception {
-        CloudNativeResultLog cloudNativeResultLog = new CloudNativeResultLog();
+        CloudNativeResultLogWithBLOBs cloudNativeResultLog = new CloudNativeResultLogWithBLOBs();
         String operator = "system";
         try {
             if (SessionUtils.getUser() != null) {
@@ -532,7 +532,7 @@ public class K8sService {
         cloudNativeResultLog.setResult(result);
         cloudNativeResultLogMapper.insertSelective(cloudNativeResultLog);
 
-        historyService.insertHistoryCloudNativeResultLog(BeanUtils.copyBean(new HistoryCloudNativeResultLog(), cloudNativeResultLog));
+        historyService.insertHistoryCloudNativeResultLog(BeanUtils.copyBean(new HistoryCloudNativeResultLogWithBLOBs(), cloudNativeResultLog));
     }
 
     long saveResultItem(CloudNativeResultWithBLOBs result) throws Exception {
@@ -648,7 +648,7 @@ public class K8sService {
         cloudNativeResultMapper.deleteByPrimaryKey(id);
     }
 
-    public List<CloudNativeResultLog> getCloudNativeResultLog(String resultId) {
+    public List<CloudNativeResultLogWithBLOBs> getCloudNativeResultLog(String resultId) {
         CloudNativeResultLogExample example = new CloudNativeResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
         return cloudNativeResultLogMapper.selectByExampleWithBLOBs(example);
@@ -665,7 +665,7 @@ public class K8sService {
         return cloudNativeSourceMapper.selectByExampleWithBLOBs(example);
     }
 
-    public List<CloudNativeSourceSyncLog> syncList(CloudNativeSyncLogRequest request) {
+    public List<CloudNativeSourceSyncLogWithBLOBs> syncList(CloudNativeSyncLogRequest request) {
         return extCloudNativeResultMapper.syncList(request);
     }
 

@@ -176,7 +176,7 @@ public class K8sController {
     @I18n
     @ApiOperation(value = "云原生检测日志")
     @GetMapping(value = "log/{resultId}")
-    public List<CloudNativeResultLog> getCloudNativeResultLog(@PathVariable String resultId) {
+    public List<CloudNativeResultLogWithBLOBs> getCloudNativeResultLog(@PathVariable String resultId) {
         return k8sService.getCloudNativeResultLog(resultId);
     }
 
@@ -190,7 +190,7 @@ public class K8sController {
     @I18n
     @ApiOperation(value = "资源态势同步日志列表")
     @PostMapping("syncList/{goPage}/{pageSize}")
-    public Pager<List<CloudNativeSourceSyncLog>> syncList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudNativeSyncLogRequest request) {
+    public Pager<List<CloudNativeSourceSyncLogWithBLOBs>> syncList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudNativeSyncLogRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, k8sService.syncList(request));
     }

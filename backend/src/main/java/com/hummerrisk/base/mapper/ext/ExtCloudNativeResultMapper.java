@@ -1,6 +1,6 @@
 package com.hummerrisk.base.mapper.ext;
 
-import com.hummerrisk.base.domain.CloudNativeSourceSyncLog;
+import com.hummerrisk.base.domain.CloudNativeSourceSyncLogWithBLOBs;
 import com.hummerrisk.controller.request.cloudNative.CloudNativeSyncLogRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
@@ -19,7 +19,7 @@ public interface ExtCloudNativeResultMapper {
 
     List<ImageDTO> imageList(@Param("request") ImageRequest request);
 
-    List<CloudNativeSourceSyncLog> syncList(CloudNativeSyncLogRequest request);
+    List<CloudNativeSourceSyncLogWithBLOBs> syncList(CloudNativeSyncLogRequest request);
 
     MetricChartDTO metricChart (String resultId);
 

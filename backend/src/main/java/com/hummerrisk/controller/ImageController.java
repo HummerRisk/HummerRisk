@@ -202,7 +202,7 @@ public class ImageController {
     @I18n
     @ApiOperation(value = "镜像检测日志")
     @GetMapping(value = "log/{resultId}")
-    public List<ImageResultLog> getImageResultLog(@PathVariable String resultId) {
+    public List<ImageResultLogWithBLOBs> getImageResultLog(@PathVariable String resultId) {
         return imageService.getImageResultLog(resultId);
     }
 
@@ -223,7 +223,7 @@ public class ImageController {
     @I18n
     @ApiOperation(value = "镜像仓库同步日志列表")
     @GetMapping("repoSyncList/{id}")
-    public List<ImageRepoSyncLog> repoSyncList(@PathVariable String id) {
+    public List<ImageRepoSyncLogWithBLOBs> repoSyncList(@PathVariable String id) {
         return imageService.repoSyncList(id);
     }
 

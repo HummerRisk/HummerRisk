@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.CloudEvent;
 import com.hummerrisk.base.domain.CloudEventRegionLog;
 import com.hummerrisk.base.domain.CloudEventSyncLog;
+import com.hummerrisk.base.domain.CloudEventSyncLogExample;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;

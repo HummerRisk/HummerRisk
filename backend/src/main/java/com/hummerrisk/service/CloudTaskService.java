@@ -407,7 +407,7 @@ public class CloudTaskService {
                     quartzTaskRelation.setTaskIds(jsonArray.toJSONString());
                     quartzTaskRelationMapper.updateByPrimaryKeySelective(quartzTaskRelation);
 
-                    CloudAccountQuartzTaskRelaLog quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLog();
+                    CloudAccountQuartzTaskRelaLogWithBLOBs quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLogWithBLOBs();
                     quartzTaskRelaLog.setCreateTime(System.currentTimeMillis());
                     quartzTaskRelaLog.setQuartzTaskId(dto.getId());
                     quartzTaskRelaLog.setQuartzTaskRelaId(quartzTaskRelation.getId());
@@ -461,7 +461,7 @@ public class CloudTaskService {
                     quartzTaskRelation.setTaskIds(jsonArray.toJSONString());
                     quartzTaskRelationMapper.updateByPrimaryKeySelective(quartzTaskRelation);
 
-                    CloudAccountQuartzTaskRelaLog quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLog();
+                    CloudAccountQuartzTaskRelaLogWithBLOBs quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLogWithBLOBs();
                     quartzTaskRelaLog.setCreateTime(System.currentTimeMillis());
                     quartzTaskRelaLog.setQuartzTaskId(dto.getId());
                     quartzTaskRelaLog.setQuartzTaskRelaId(quartzTaskRelation.getId());
@@ -578,7 +578,7 @@ public class CloudTaskService {
             List<CloudAccountQuartzTaskRelation> list = quartzTaskRelationMapper.selectByExampleWithBLOBs(example);
 
             for (CloudAccountQuartzTaskRelation quartzTaskRelation : list) {
-                CloudAccountQuartzTaskRelaLog quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLog();
+                CloudAccountQuartzTaskRelaLogWithBLOBs quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLogWithBLOBs();
                 quartzTaskRelaLog.setCreateTime(System.currentTimeMillis());
                 quartzTaskRelaLog.setQuartzTaskId(quartzId);
                 quartzTaskRelaLog.setQuartzTaskRelaId(quartzTaskRelation.getId());

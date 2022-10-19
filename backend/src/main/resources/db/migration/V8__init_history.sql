@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `cloud_scan_task_history` (
     `id`                           int(11)             NOT NULL AUTO_INCREMENT,
     `scan_id`                      int(11)             DEFAULT NULL COMMENT '历史表主键ID',
     `task_id`                      varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
-    `operation`                    varchar(1024)       DEFAULT NULL COMMENT '操作内容',
+    `operation`                    mediumtext          DEFAULT NULL COMMENT '操作内容',
     `output`                       mediumtext          DEFAULT NULL COMMENT '输出',
     `resources_sum`                bigint(13)          DEFAULT 0 COMMENT '资源总量',
     `return_sum`                   bigint(13)          DEFAULT 0 COMMENT '输出检测结果资源数',

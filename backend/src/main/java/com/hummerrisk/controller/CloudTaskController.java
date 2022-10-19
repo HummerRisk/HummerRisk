@@ -52,7 +52,7 @@ public class CloudTaskController {
 
     @I18n
     @PostMapping("quartz/log/{taskItemId}/{goPage}/{pageSize}")
-    public Pager<List<CloudTaskItemLog>> getquartzLogDetails(@PathVariable int goPage, @PathVariable int pageSize, @PathVariable String taskItemId) {
+    public Pager<List<CloudTaskItemLogWithBLOBs>> getquartzLogDetails(@PathVariable int goPage, @PathVariable int pageSize, @PathVariable String taskItemId) {
         CloudTaskItemWithBLOBs taskItem = orderService.taskItemWithBLOBs(taskItemId);
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, orderService.getQuartzLogByTaskItemId(taskItem));
@@ -60,7 +60,7 @@ public class CloudTaskController {
 
     @I18n
     @PostMapping("quartz/rela/log/{qzTaskId}/{goPage}/{pageSize}")
-    public Pager<List<CloudAccountQuartzTaskRelaLog>> getQuartzLogs(@PathVariable int goPage, @PathVariable int pageSize, @PathVariable String qzTaskId) {
+    public Pager<List<CloudAccountQuartzTaskRelaLogWithBLOBs>> getQuartzLogs(@PathVariable int goPage, @PathVariable int pageSize, @PathVariable String qzTaskId) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, orderService.getQuartzLogsById(qzTaskId));
     }

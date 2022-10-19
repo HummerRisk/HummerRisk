@@ -107,7 +107,7 @@
         ORDER BY t.update_time desc
     </select>
 
-    <select id="syncList" parameterType="com.hummerrisk.controller.request.cloudNative.CloudNativeSyncLogRequest" resultType="com.hummerrisk.base.domain.CloudNativeSourceSyncLog">
+    <select id="syncList" parameterType="com.hummerrisk.controller.request.cloudNative.CloudNativeSyncLogRequest" resultType="com.hummerrisk.base.domain.CloudNativeSourceSyncLogWithBLOBs">
         SELECT
         t.*
         FROM cloud_native_source_sync_log t

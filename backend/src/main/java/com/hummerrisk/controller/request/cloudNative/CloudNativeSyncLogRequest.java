@@ -1,13 +1,13 @@
 package com.hummerrisk.controller.request.cloudNative;
 
-import com.hummerrisk.base.domain.CloudNativeSourceSyncLog;
+import com.hummerrisk.base.domain.CloudNativeSourceSyncLogWithBLOBs;
 
 import java.util.Map;
 
 /**
  * harris
  */
-public class CloudNativeSyncLogRequest extends CloudNativeSourceSyncLog {
+public class CloudNativeSyncLogRequest extends CloudNativeSourceSyncLogWithBLOBs {
 
     private String name;
 

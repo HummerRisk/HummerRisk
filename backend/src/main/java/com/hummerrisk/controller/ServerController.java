@@ -163,7 +163,7 @@ public class ServerController {
     @I18n
     @ApiOperation(value = "主机检测日志")
     @GetMapping(value = "log/{resultId}")
-    public List<ServerResultLog> getServerResultLog(@PathVariable String resultId) {
+    public List<ServerResultLogWithBLOBs> getServerResultLog(@PathVariable String resultId) {
         return serverService.getServerResultLog(resultId);
     }
 

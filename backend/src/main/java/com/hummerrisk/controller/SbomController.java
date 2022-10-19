@@ -129,7 +129,7 @@ public class SbomController {
     @I18n
     @ApiOperation(value = "源码检测历史日志")
     @GetMapping(value = "codeLog/{resultId}")
-    public List<HistoryCodeResultLog> getCodeResultLog(@PathVariable String resultId) {
+    public List<HistoryCodeResultLogWithBLOBs> getCodeResultLog(@PathVariable String resultId) {
         return sbomService.getCodeResultLog(resultId);
     }
 
@@ -143,7 +143,7 @@ public class SbomController {
     @I18n
     @ApiOperation(value = "镜像检测历史日志")
     @GetMapping(value = "imageLog/{resultId}")
-    public List<HistoryImageResultLog> getImageResultLog(@PathVariable String resultId) {
+    public List<HistoryImageResultLogWithBLOBs> getImageResultLog(@PathVariable String resultId) {
         return sbomService.getImageResultLog(resultId);
     }
 

@@ -358,7 +358,7 @@ public class HistoryService {
         }
     }
 
-    public void insertHistoryCloudTaskLog(HistoryCloudTaskLog historyCloudTaskLog) throws Exception {
+    public void insertHistoryCloudTaskLog(HistoryCloudTaskLogWithBLOBs historyCloudTaskLog) throws Exception {
         try {
             historyCloudTaskLogMapper.insertSelective(historyCloudTaskLog);
         } catch (Exception e) {
@@ -415,7 +415,7 @@ public class HistoryService {
         }
     }
 
-    public void insertHistoryVulnTaskLog(HistoryVulnTaskLog historyVulnTaskLog) throws Exception {
+    public void insertHistoryVulnTaskLog(HistoryVulnTaskLogWithBLOBs historyVulnTaskLog) throws Exception {
         try {
             historyVulnTaskLogMapper.insertSelective(historyVulnTaskLog);
         } catch (Exception e) {
@@ -448,7 +448,7 @@ public class HistoryService {
         historyServerResultMapper.updateByPrimaryKeySelective(record);
     }
 
-    public void insertHistoryServerResultLog(HistoryServerResultLog record) {
+    public void insertHistoryServerResultLog(HistoryServerResultLogWithBLOBs record) {
         historyServerResultLogMapper.insertSelective(record);
     }
 
@@ -460,7 +460,7 @@ public class HistoryService {
         historyImageResultMapper.updateByPrimaryKeySelective(record);
     }
 
-    public void insertHistoryImageResultLog(HistoryImageResultLog record) {
+    public void insertHistoryImageResultLog(HistoryImageResultLogWithBLOBs record) {
         historyImageResultLogMapper.insertSelective(record);
     }
 
@@ -472,7 +472,7 @@ public class HistoryService {
         historyCloudNativeResultMapper.updateByPrimaryKeySelective(record);
     }
 
-    public void insertHistoryCloudNativeResultLog(HistoryCloudNativeResultLog record) {
+    public void insertHistoryCloudNativeResultLog(HistoryCloudNativeResultLogWithBLOBs record) {
         historyCloudNativeResultLogMapper.insertSelective(record);
     }
 
@@ -484,7 +484,7 @@ public class HistoryService {
         historyCloudNativeConfigResultMapper.updateByPrimaryKeySelective(record);
     }
 
-    public void insertHistoryCloudNativeConfigResultLog(HistoryCloudNativeConfigResultLog record) {
+    public void insertHistoryCloudNativeConfigResultLog(HistoryCloudNativeConfigResultLogWithBLOBs record) {
         historyCloudNativeConfigResultLogMapper.insertSelective(record);
     }
 
@@ -496,7 +496,7 @@ public class HistoryService {
         historyCodeResultMapper.updateByPrimaryKeySelective(record);
     }
 
-    public void insertHistoryCodeResultLog(HistoryCodeResultLog record) {
+    public void insertHistoryCodeResultLog(HistoryCodeResultLogWithBLOBs record) {
         historyCodeResultLogMapper.insertSelective(record);
     }
 

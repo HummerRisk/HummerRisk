@@ -162,7 +162,7 @@ public class CodeController {
     @I18n
     @ApiOperation(value = "源码检测日志")
     @GetMapping(value = "log/{resultId}")
-    public List<CodeResultLog> getCodeResultLog(@PathVariable String resultId) {
+    public List<CodeResultLogWithBLOBs> getCodeResultLog(@PathVariable String resultId) {
         return codeService.getCodeResultLog(resultId);
     }
 

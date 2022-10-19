@@ -1066,7 +1066,7 @@ public class TaskService {
     }
 
     void saveTaskItemResourceLog(String taskItemId, String taskItemResourceId, String resourceId, String operation, String output, boolean result) {
-        TaskItemResourceLog taskItemResourceLog = new TaskItemResourceLog();
+        TaskItemResourceLogWithBLOBs taskItemResourceLog = new TaskItemResourceLogWithBLOBs();
         String operator = "system";
         try {
             if (SessionUtils.getUser() != null) {
