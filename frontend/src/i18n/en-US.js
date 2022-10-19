@@ -623,7 +623,7 @@ export default {
     suggestion: 'Optimization suggestion',
   },
   resource: {
-    vuln_statistics: 'Vulnerability statistics',
+    vuln_statistics: 'Risk statistics',
     vuln_count: 'Number of vulnerabilities',
     resync: 'Resync',
     sync_log: 'Resource synchronization log',
