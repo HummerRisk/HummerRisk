@@ -23,14 +23,14 @@
                 </el-form>
               </template>
             </el-table-column>
-            <el-table-column type="index" min-width="3%"/>
-            <el-table-column :label="$t('event.cloud_account_name')" min-width="10%" show-overflow-tooltip>
+            <el-table-column type="index" min-width="2%"/>
+            <el-table-column :label="$t('event.cloud_account_name')" min-width="15%" show-overflow-tooltip>
               <template v-slot:default="scope">
               <span><img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                 {{ getAccountName(scope.row.accountId) }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="hummerId" :label="$t('resource.resource_id')" min-width="23%" show-overflow-tooltip sortable></el-table-column>
+            <el-table-column prop="hummerId" :label="$t('resource.resource_id')" min-width="15%" show-overflow-tooltip sortable></el-table-column>
             <el-table-column prop="regionName" :label="$t('event.region')" min-width="18%"  show-overflow-tooltip sortable></el-table-column>
             <el-table-column prop="resourceType" :label="$t('dashboard.resource_type')" min-width="16%" show-overflow-tooltip sortable></el-table-column>
             <el-table-column min-width="18%" :label="$t('account.update_time')" sortable
@@ -41,11 +41,14 @@
             </el-table-column>
             <el-table-column
               prop="ruleCount"
-              label="漏洞数"
+              label="风险"
               min-width="10%"
             >
               <template v-slot:default="scope">
-                <ResourceRule v-if="scope.row.ruleCount>0" :hummer-id="scope.row.hummerId" :rule-count="scope.row.ruleCount" ></ResourceRule>
+                <ResourceRule  :hummer-id="scope.row.hummerId" :risk-count="scope.row.riskCount" :account-id="scope.row.accountId"
+                               :region-id="scope.row.regionId" :resource-type="scope.row.resourceType"
+                               :account-name="getAccountName(scope.row.accountId)"
+                ></ResourceRule>
               </template>
             </el-table-column>
           </el-table>
