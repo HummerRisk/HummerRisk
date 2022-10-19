@@ -623,6 +623,10 @@ export default {
     suggestion: 'Optimization suggestion',
   },
   resource: {
+    have_risk: 'risk',
+    n_risk: 'No risk',
+    uncheck: 'unchecked',
+    risk: 'risk',
     vuln_statistics: 'Risk statistics',
     vuln_count: 'Number of vulnerabilities',
     resync: 'Resync',
