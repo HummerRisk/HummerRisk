@@ -172,4 +172,11 @@
         </if>
     </select>
 
+    <select id="selectByHummerId" resultMap="BaseResultMap" parameterType="String">
+        select d.* FROM resource_item A
+                            join cloud_task_item_resource b on a.resource_id = b.resource_id
+                            join cloud_task_item c on b.task_item_id = c.id
+                            join cloud_task d on d.id = c.task_id
+        where hummer_id = #{hummerId}
+    </select>
 </mapper>
