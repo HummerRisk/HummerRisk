@@ -1,13 +1,13 @@
 <template>
   <div>
-    <el-button v-if="type==='NO-SCAN'" slot="reference" size="mini" type="info" plain >
-      未检测
+    <el-button v-show="type==='NO-SCAN'" slot="reference" size="mini" type="info" plain >
+      {{$t('resource.uncheck')}}
     </el-button>
-    <el-button  v-if="type==='NO-RISK'"  slot="reference" size="mini" type="success" plain >
-      无风险
+    <el-button  v-show="type==='NO-RISK'"  slot="reference" size="mini" type="success" plain >
+      {{$t('resource.n_risk')}}
     </el-button>
-    <el-button v-if="type==='HAVE-RISK'"  slot="reference" size="mini" type="warning" plain @click="showRegions">
-      有风险
+    <el-button v-show="type==='HAVE-RISK'"  slot="reference" size="mini" type="warning" plain @click="showRegions">
+      {{$t('resource.have_risk')}}
     </el-button>
     <!--regions-->
     <el-drawer class="rtl" :title="$t('resource.vuln_statistics')" :visible.sync="regionsVisible" size="70%" :before-close="handleClose" :direction="direction"
@@ -90,18 +90,7 @@
       }
     },
     created() {
-      if(this.riskCount && this.riskCount > 0){
-        this.type = "HAVE-RISK"
-      }else{
-        this.result = this.$get("/cloud/resource/task/count/" +  this.accountId+"/"+this.regionId+"/"+this.resourceType,response => {
-          if(response.data > 0){
-            this.type = "NO-RISK"
-          }else{
-            this.type = "NO-SCAN"
-          }
-        });
-      }
-      console.log(this.riskCount)
+
     },
     methods: {
       async initSelect() {
@@ -120,6 +109,20 @@
         });
         if (!!getCurrentAccountID()) {
           this.accountId = getCurrentAccountID();
+        }
+      },
+      getType(){
+        this.type = "NO-SCAN"
+        if(this.riskCount && this.riskCount > 0){
+          this.type = "HAVE-RISK"
+        }else{
+          this.result = this.$get("/cloud/resource/task/count/" +  this.accountId+"/"+this.regionId+"/"+this.resourceType,response => {
+            if(response.data > 0){
+              this.type = "NO-RISK"
+            }else{
+              this.type = "NO-SCAN"
+            }
+          });
         }
       },
       showTaskDetail(item) {
@@ -149,6 +152,15 @@
 
       },
     },
+    watch:{
+      hummerId:{
+        handler(newVal, oldVal) {
+          this.getType()
+        },
+        // 立即处理 进入页面就触发
+        immediate: true
+      }
+    }
   }
 </script>
 

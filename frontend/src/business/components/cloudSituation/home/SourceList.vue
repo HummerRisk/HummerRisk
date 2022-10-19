@@ -41,7 +41,7 @@
             </el-table-column>
             <el-table-column
               prop="ruleCount"
-              label="风险"
+              :label="$t('resource.risk')"
               min-width="10%"
             >
               <template v-slot:default="scope">

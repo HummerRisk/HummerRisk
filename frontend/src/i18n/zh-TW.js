@@ -623,6 +623,10 @@ export default {
     suggestion: '優化建議',
   },
   resource: {
+    have_risk: '有風險',
+    n_risk: '無風險',
+    uncheck: '未檢測',
+    risk: '風險',
     vuln_statistics: '風險統計',
     vuln_count: '漏洞數',
     resync: '重新同步',
