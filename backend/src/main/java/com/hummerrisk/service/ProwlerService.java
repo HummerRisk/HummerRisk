@@ -340,12 +340,10 @@ public class ProwlerService {
                     read.close();
 
                 } else {
-                    LogUtil.error(Translator.get("i18n_not_found_file"));
                     throw new Exception(Translator.get("i18n_not_found_file"));
                 }
             } catch (Exception error) {
-                LogUtil.error(error.getMessage(), Translator.get("i18n_read_file_error"));
-                throw new Exception(error.getMessage());
+                throw new Exception(Translator.get("i18n_read_file_error") + error.getMessage());
             }
 
             //资源、规则、申请人关联表
@@ -370,7 +368,6 @@ public class ProwlerService {
             cloudTask.setReturnSum((long) returnSum);
             cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
 
@@ -423,7 +420,6 @@ public class ProwlerService {
             resourceItemMapper.insertSelective(resourceItem);
 
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             throw e;
         }
     }

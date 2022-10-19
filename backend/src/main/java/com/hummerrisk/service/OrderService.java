@@ -123,9 +123,7 @@ public class OrderService {
                     String sc = "";
                     String dirPath = "";
                     try {
-                        LogUtil.info(" ::: Generate policy.yml file start ::: ");
                         dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + regionId, "policy.yml");
-                        LogUtil.info(" ::: Generate policy.yml file end ::: " + dirPath);
                     } catch (Exception e) {
                         LogUtil.error("[{}] Generate policy.yml file，and custodian run failed:{}", taskId + "/" + regionId, e.getMessage());
                     }

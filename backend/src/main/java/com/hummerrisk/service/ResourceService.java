@@ -163,7 +163,6 @@ public class ResourceService {
             cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
 
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
 
@@ -200,7 +199,6 @@ public class ResourceService {
             }
 
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             throw e;
         }
     }
@@ -239,7 +237,6 @@ public class ResourceService {
             String resultFile = ResourceConstants.QUERY_ALL_RESOURCE.replace("{resource_name}", resourceWithBLOBs.getDirName());
             resultFile = resultFile.replace("{resource_type}", resourceWithBLOBs.getResourceType());
             dirPath = CommandUtils.saveAsFile(resultFile, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + uuid, "policy.yml");
-            LogUtil.info(resourceWithBLOBs.getResourceType() + " ::: count resource sum ::: start");
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(resourceWithBLOBs.getAccountId());
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, resourceWithBLOBs.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
             String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, "policy.yml", map);
@@ -259,7 +256,6 @@ public class ResourceService {
             } else {
                 resourceWithBLOBs.setResourcesSum((long) jsonArray.size());
             }
-            LogUtil.info(resourceWithBLOBs.getResourceType() + " ::: count resource sum ::: end");
             //执行完删除返回目录文件，以便于下一次操作覆盖
             String deleteResourceDir = "rm -rf " + dirPath;
             CommandUtils.commonExecCmdWithResult(deleteResourceDir, dirPath);

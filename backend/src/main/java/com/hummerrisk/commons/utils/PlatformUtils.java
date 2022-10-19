@@ -252,10 +252,16 @@ public class PlatformUtils {
                     String config = ReadFileUtils.readToBuffer(CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/config");
                     String credentials = ReadFileUtils.readToBuffer(CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/credentials");
                     if (!config.contains(region)) {
-                        CommandUtils.commonExecCmdWithResultNew("echo -e '" + defaultConfig + "' >> " + CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/config", CloudTaskConstants.PROWLER_CONFIG_FILE_PATH);
+                        String defaultConfig2 = "[default]\\n"
+                                + "region=" + region + "\\n";
+                        //java调用 command echo -e 会把 -e 写到文件里，故重新设置参数
+                        CommandUtils.commonExecCmdWithResultNew("echo '" + defaultConfig2 + "' >> " + CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/config", CloudTaskConstants.PROWLER_CONFIG_FILE_PATH);
                     }
                     if (!credentials.contains(awsAccessKey) && !credentials.contains(awsSecretKey)) {
-                        CommandUtils.commonExecCmdWithResultNew("echo -e '" + defaultCredentials + "' >> " + CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/credentials", CloudTaskConstants.PROWLER_CONFIG_FILE_PATH);
+                        String defaultCredentials2 = "[default]\\n"
+                                + "aws_access_key_id=" + awsAccessKey + "\\n"
+                                + "aws_secret_access_key=" + awsSecretKey + "\\n";
+                        CommandUtils.commonExecCmdWithResultNew("echo '" + defaultCredentials2 + "' >> " + CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/credentials", CloudTaskConstants.PROWLER_CONFIG_FILE_PATH);
                     }
                     return proxy + "./prowler -c " + (StringUtils.isNotEmpty(fileName) ? fileName : "check11") + " -f " + region + " -s -M text > result.txt";
                 }

@@ -80,7 +80,6 @@ public class AccountService {
                 ValidateDTO validate = validate(id);
                 if(!validate.isFlag()) throw new HRException(Translator.get("failed_cloud_account"));
             } catch (Exception e) {
-                LogUtil.error(e.getMessage());
                 throw new HRException(e.getMessage());
             }
         });
@@ -286,7 +285,6 @@ public class AccountService {
             });
             OperationLogService.log(SessionUtils.getUser(), list.get(0).getRuleId(), accountMapper.selectByPrimaryKey(list.get(0).getAccountId()).getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, " i18n_clean_cloud_account");
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             throw e;
         }
         return true;
@@ -297,7 +295,6 @@ public class AccountService {
             list.forEach(this::accept);
             OperationLogService.log(SessionUtils.getUser(), list.get(0).getId(), accountMapper.selectByPrimaryKey(list.get(0).getAccountId()).getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "i18n_save_cloud_account");
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             throw e;
         }
         return true;

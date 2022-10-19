@@ -74,7 +74,6 @@ public class ConfigService {
                 boolean validate = validate(id);
                 if(!validate) throw new HRException(Translator.get("failed_cloud_native"));
             } catch (Exception e) {
-                LogUtil.error(e.getMessage());
                 throw new HRException(e.getMessage());
             }
         });

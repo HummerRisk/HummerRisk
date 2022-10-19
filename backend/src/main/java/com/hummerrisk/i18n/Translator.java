@@ -72,7 +72,6 @@ public class Translator {
                         return JsonUtils.toPrettyJSONString(rawString);
                     } catch (Exception e) {
                         e.printStackTrace();
-//                        LogUtil.warn("Failed to translate object " + rawString + ". Error: " + ExceptionUtils.getStackTrace(e));
                         return translateRawString(null, rawString);
                     }
 
@@ -141,7 +140,6 @@ public class Translator {
             try {
                 return JSON.parseObject(translateRawString(null, JSON.toJSONString(javaObject)).toString(), javaObject.getClass());
             } catch (Exception e) {
-//                LogUtil.error("Failed to translate object " + javaObject.toString(), e);
                 return javaObject;
             }
         }

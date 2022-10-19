@@ -111,9 +111,7 @@ public class NucleiService {
                     String sc = "";
                     String dirPath = "";
                     try {
-                        LogUtil.info(" ::: Generate nuclei.yml file start ::: ");
                         dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + regionId, "nuclei.yml");
-                        LogUtil.info(" ::: Generate nuclei.yml file end ::: " + dirPath);
                     } catch (Exception e) {
                         LogUtil.error("[{}] Generate nuclei.yml file，and nuclei run failed:{}", taskId + "/" + regionId, e.getMessage());
                     }
@@ -381,7 +379,6 @@ public class NucleiService {
             cloudTask.setReturnSum((long) returnSum);
             cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
 
@@ -443,7 +440,6 @@ public class NucleiService {
             }
 
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             throw e;
         }
     }

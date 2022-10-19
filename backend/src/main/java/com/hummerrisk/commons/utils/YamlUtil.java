@@ -52,9 +52,9 @@ public class YamlUtil {
             mapper.writeValue(stringWriter, object);
             return stringWriter.toString();
         } catch (IOException e) {
-            LogUtil.debug(e.getMessage());
+            LogUtil.error(e.getMessage());
         } catch (Exception e) {
-            LogUtil.debug(e.getMessage());
+            LogUtil.error(e.getMessage());
         }
         return "";
     }

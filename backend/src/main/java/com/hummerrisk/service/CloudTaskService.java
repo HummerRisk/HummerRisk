@@ -88,7 +88,6 @@ public class CloudTaskService {
                 return orderService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId);
             }
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             throw new HRException(e.getMessage());
         }
     }
@@ -103,7 +102,6 @@ public class CloudTaskService {
                 HRException.throwException("CloudTask not found");
             }
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             throw e;
         }
         return true;
@@ -477,7 +475,6 @@ public class CloudTaskService {
             }
             OperationLogService.log(SessionUtils.getUser(), dto.getId(), dto.getName(), ResourceTypeConstants.QUOTA.name(), ResourceOperation.CREATE, "i18n_create_qrtz_cloud_task");
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             throw e;
         }
         return true;
@@ -656,7 +653,6 @@ public class CloudTaskService {
             BeanUtils.copyBean(showAccountQuartzTaskDTO, quartzTask);
             return showAccountQuartzTaskDTO;
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             throw new HRException(e.getMessage());
         }
     }

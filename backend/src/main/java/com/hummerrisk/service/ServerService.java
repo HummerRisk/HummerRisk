@@ -77,7 +77,6 @@ public class ServerService {
                 ServerValidateDTO validate = validate(id);
                 if (!validate.isFlag()) throw new HRException(Translator.get("failed_server"));
             } catch (Exception e) {
-                LogUtil.error(e.getMessage());
                 throw new HRException(e.getMessage());
             }
         });
@@ -103,7 +102,6 @@ public class ServerService {
             try {
                 scan(id);
             } catch (Exception e) {
-                LogUtil.error(e.getMessage());
                 throw new HRException(e.getMessage());
             }
         });
