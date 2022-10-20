@@ -499,8 +499,6 @@ import CodeDiff from 'vue-code-diff';
 
 .box-card {
   width: 99%;
-  border-top-color: #ff0000;
-  border-top-width: 5px;
 }
 
 .icon-title {

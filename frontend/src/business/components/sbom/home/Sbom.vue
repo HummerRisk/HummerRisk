@@ -201,7 +201,7 @@
                           </ul>
                         </div>
                         <div style="margin: 10px 0 0 0;" :key="index" v-for="(vulnerabilitiy, index) in result.Vulnerabilities">
-                          <el-card class="box-card">
+                          <el-card class="box-card2">
                             <div slot="header" class="clearfix">
                               <el-row>
                                 <el-col class="icon-title" :span="3">
@@ -432,7 +432,7 @@
                           </ul>
                         </div>
                         <div style="margin: 10px 0 0 0;" :key="index" v-for="(vulnerabilitiy, index) in result.Vulnerabilities">
-                          <el-card class="box-card">
+                          <el-card class="box-card2">
                             <div slot="header" class="clearfix">
                               <el-row>
                                 <el-col class="icon-title" :span="3">
@@ -665,7 +665,7 @@
                           </ul>
                         </div>
                         <div style="margin: 10px 0 0 0;" :key="index" v-for="(vulnerabilitiy, index) in result.Vulnerabilities">
-                          <el-card class="box-card">
+                          <el-card class="box-card2">
                             <div slot="header" class="clearfix">
                               <el-row>
                                 <el-col class="icon-title" :span="3">
@@ -1146,9 +1146,6 @@ export default {
   padding: 10px 2%;
   width: 46%;
 }
-.box-card >>> .el-card__header {
-  background-color: aliceblue;
-}
 
 .div-desc {
   background-color: #ecebf5;
@@ -1159,8 +1156,16 @@ export default {
 .div-json {
   padding: 15px;
 }
-
-.box-card {
+.box-card2 >>> .el-card__body {
+  padding: 10px;
+  min-height: 405px;
+}
+.box-card2 >>> .el-card__header {
+  padding: 5px 20px;
+  background-color: aliceblue;
+}
+.box-card2 {
+  margin: 10px 0 0 0;
   width: 99%;
   border-top-color: #ff0000;
   border-top-width: 5px;

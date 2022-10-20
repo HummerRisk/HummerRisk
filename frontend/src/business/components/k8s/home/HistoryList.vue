@@ -184,7 +184,7 @@
                   </ul>
                   <div style="margin: 10px 0 0 0;">
                     <div style="margin: 10px 0 0 0;" :key="index" v-for="(item, index) in logForm.vulnerabilityReport.items">
-                      <el-card class="box-card">
+                      <el-card class="box-card2">
                         <div style="margin: 10px;">
                           <h3>Summary:&nbsp;</h3>
                           <ul style="margin-left: 60px;">
@@ -256,7 +256,7 @@
                   </ul>
                   <div style="margin: 10px 0 0 0;">
                     <div style="margin: 10px 0 0 0;" :key="index" v-for="(item, index) in logForm.configAuditReport.items">
-                      <el-card class="box-card">
+                      <el-card class="box-card2">
                         <div style="margin: 10px;">
                           <h3>Summary:&nbsp;</h3>
                           <ul style="margin-left: 60px;">
@@ -701,8 +701,10 @@ import CodeDiff from 'vue-code-diff';
 .div-json {
   padding: 15px;
 }
-
-.box-card {
+.box-card2 >>> .el-card__header {
+  background-color: aliceblue;
+}
+.box-card2 {
   width: 99%;
   border-top-color: #ff0000;
   border-top-width: 5px;
