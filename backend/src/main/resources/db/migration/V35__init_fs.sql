@@ -166,10 +166,6 @@ ALTER TABLE `image_repo_sync_log` MODIFY column `operation` mediumtext DEFAULT N
 
 ALTER TABLE `cloud_native_source_sync_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
 
-ALTER TABLE `cloud_event_sync_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
-
-ALTER TABLE `cloud_event_region_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
-
 ALTER TABLE `cloud_resource_sync_item_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
 
 ALTER TABLE `file_system_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
