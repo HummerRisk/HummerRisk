@@ -116,6 +116,12 @@ export default {
         return this.$t("task.task_code");
       }
     },
+    fsAccount: {
+      type: String,
+      default() {
+        return this.$t("task.task_fs");
+      }
+    },
   },
   watch: {
     treeNodes() {
@@ -149,6 +155,7 @@ export default {
           {name: this.configAccount, level: 1, type: 'configAccount', children: this.treeNodes.configAccount},
           {name: this.imageAccount, level: 1, type: 'imageAccount', children: this.treeNodes.imageAccount},
           {name: this.codeAccount, level: 1, type: 'codeAccount', children: this.treeNodes.codeAccount},
+          {name: this.fsAccount, level: 1, type: 'fsAccount', children: this.treeNodes.fsAccount},
         ],
       });
       if (this.expandedNode.length === 0) {

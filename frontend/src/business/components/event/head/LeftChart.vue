@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import echarts from 'echarts';
 import HrChart from "@/business/components/common/chart/HrChart";
+import echarts from 'echarts';
 /* eslint-disable */
 export default {
   name: "LeftChart",

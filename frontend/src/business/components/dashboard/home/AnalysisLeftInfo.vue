@@ -15,9 +15,10 @@
                   <div class="_group"><el-radio class="radio_group" border :label="'vulnAccount'" name="vulnAccount">{{ $t('dashboard.vuln_scan') }}</el-radio></div>
                   <div class="_group"><el-radio class="radio_group" border :label="'serverAccount'" name="serverAccount">{{ $t('dashboard.server_scan') }}</el-radio></div>
                   <div class="_group"><el-radio class="radio_group" border :label="'imageAccount'" name="imageAccount">{{ $t('dashboard.image_scan') }}</el-radio></div>
-                  <div class="_group"><el-radio class="radio_group" border :label="'codeAccount'" name="imageAccount">{{ $t('dashboard.code_scan') }}</el-radio></div>
-                  <div class="_group"><el-radio class="radio_group" border :label="'k8sAccount'" name="imageAccount">{{ $t('dashboard.k8s_scan') }}</el-radio></div>
-                  <div class="_group"><el-radio class="radio_group" border :label="'configAccount'" name="imageAccount">{{ $t('dashboard.config_scan') }}</el-radio></div>
+                  <div class="_group"><el-radio class="radio_group" border :label="'codeAccount'" name="codeAccount">{{ $t('dashboard.code_scan') }}</el-radio></div>
+                  <div class="_group"><el-radio class="radio_group" border :label="'fsAccount'" name="fsAccount">{{ $t('dashboard.fs_scan') }}</el-radio></div>
+                  <div class="_group"><el-radio class="radio_group" border :label="'k8sAccount'" name="k8sAccount">{{ $t('dashboard.k8s_scan') }}</el-radio></div>
+                  <div class="_group"><el-radio class="radio_group" border :label="'configAccount'" name="configAccount">{{ $t('dashboard.config_scan') }}</el-radio></div>
                 </el-radio-group>
               </el-collapse-item>
               <el-collapse-item :title="$t('dashboard.types_2')" name="2">
@@ -48,6 +49,7 @@
               </el-collapse-item>
               <el-collapse-item :title="$t('dashboard.types_4')" name="4">
                 <el-radio-group v-model="condition.severityType" size="medium" @change="changeSearch">
+                  <div class="_group"><el-radio class="radio_group" border :label="'CriticalRisk'" name="CriticalRisk">{{ $t('rule.CriticalRisk') }}</el-radio></div>
                   <div class="_group"><el-radio class="radio_group" border :label="'HighRisk'" name="HighRisk">{{ $t('rule.HighRisk') }}</el-radio></div>
                   <div class="_group"><el-radio class="radio_group" border :label="'MediumRisk'" name="MediumRisk">{{ $t('rule.MediumRisk') }}</el-radio></div>
                   <div class="_group"><el-radio class="radio_group" border :label="'LowRisk'" name="LowRisk">{{ $t('rule.LowRisk') }}</el-radio></div>
@@ -249,6 +251,7 @@ export default {
       serverAccount: this.$t("task.task_server"),
       imageAccount: this.$t("task.task_image"),
       codeAccount: this.$t("task.task_code"),
+      fsAccount: this.$t("task.task_fs"),
       k8sAccount: this.$t("task.task_k8s"),
       configAccount: this.$t("task.task_config"),
       expandedNode: [],
@@ -276,6 +279,7 @@ export default {
               {name: this.serverAccount, level: 1, type: 'serverAccount', children: treeNodes.serverAccount},
               {name: this.imageAccount, level: 1, type: 'imageAccount', children: treeNodes.imageAccount},
               {name: this.codeAccount, level: 1, type: 'codeAccount', children: treeNodes.codeAccount},
+              {name: this.fsAccount, level: 1, type: 'fsAccount', children: treeNodes.fsAccount},
               {name: this.k8sAccount, level: 1, type: 'k8sAccount', children: treeNodes.k8sAccount},
               {name: this.configAccount, level: 1, type: 'configAccount', children: treeNodes.configAccount},
             ],

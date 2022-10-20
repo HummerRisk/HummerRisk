@@ -4,10 +4,11 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import echarts from 'echarts';
 /* eslint-disable */
   export default {
     name: "ScoreChart",
-    components: {HrChart},
+    components: {HrChart,echarts},
     data() {
       return {
         options: {

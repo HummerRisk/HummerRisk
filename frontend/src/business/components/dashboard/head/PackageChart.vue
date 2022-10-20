@@ -6,11 +6,13 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import echarts from 'echarts';
 /* eslint-disable */
 export default {
   name: "PackageChart",
   components: {
     HrChart,
+    echarts
   },
   props: {
     data: {},

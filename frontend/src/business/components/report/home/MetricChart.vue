@@ -51,10 +51,11 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import echarts from 'echarts';
 /* eslint-disable */
 export default {
   name: "MetricChart",
-  components: {HrChart},
+  components: {HrChart,echarts},
   props: {
     content: Object
   },
