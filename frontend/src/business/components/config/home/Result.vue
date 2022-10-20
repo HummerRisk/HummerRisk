@@ -134,10 +134,19 @@
                   </ul>
                 </div>
                 <div style="margin: 10px 0 0 0;" :key="index" v-for="(misconfiguration, index) in result.Misconfigurations">
-                  <el-card class="box-card">
+                  <el-card v-bind:class="{ 'box-card box-card-critical': misconfiguration.Severity === 'CRITICAL',
+                   'box-card box-card-high': misconfiguration.Severity === 'HIGH',
+                   'box-card box-card-medium': misconfiguration.Severity === 'MEDIUM',
+                   'box-card box-card-low': misconfiguration.Severity === 'LOW',
+                   'box-card box-card-unknown': misconfiguration.Severity === 'UNKNOWN' }">
                     <div slot="header" class="clearfix">
                       <el-row>
-                        <el-col class="icon-title" :span="3">
+                        <el-col v-bind:class="{ 'icon-title box-critical': misconfiguration.Severity === 'CRITICAL',
+                                'icon-title box-high': misconfiguration.Severity === 'HIGH',
+                                'icon-title box-medium': misconfiguration.Severity === 'MEDIUM',
+                                'icon-title box-low': misconfiguration.Severity === 'LOW',
+                                'icon-title box-unknown': misconfiguration.Severity === 'UNKNOWN' }"
+                                :span="3">
                           <span>{{ misconfiguration.Severity.substring(0, 1) }}</span>
                         </el-col>
                         <el-col :span="15" style="margin: -7px 0 0 15px;">
@@ -151,7 +160,13 @@
                         <el-col :span="20">
                           <span style="margin: 5px;"><a :href="misconfiguration.PrimaryURL">{{ misconfiguration.Namespace }}</a></span>
                           <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                          <span style="margin: 5px;"><el-button type="danger" size="mini">{{ misconfiguration.Severity }}</el-button></span>
+                          <span style="margin: 5px;">
+                            <el-button v-bind:class="{ 'box-critical': misconfiguration.Severity === 'CRITICAL',
+                              'box-high': misconfiguration.Severity === 'HIGH',
+                              'box-medium': misconfiguration.Severity === 'MEDIUM', 'box-low': misconfiguration.Severity === 'LOW',
+                              'box-unknown': misconfiguration.Severity === 'UNKNOWN' }" size="mini">{{ misconfiguration.Severity }}
+                            </el-button>
+                          </span>
                           <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
                           <span style="color: #888;margin: 5px;">Type: {{ misconfiguration.Type }}</span>
                           <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
@@ -592,35 +607,65 @@ export default {
   padding: 10px 2%;
   width: 46%;
 }
-.box-card >>> .el-card__header {
-  background-color: aliceblue;
-}
-
 .div-desc {
   background-color: #ecebf5;
   color: blueviolet;
   padding: 15px;
 }
-
 .div-json {
   padding: 15px;
 }
-
+.box-card >>> .el-card__header {
+  background-color: aliceblue;
+}
 .box-card {
   width: 99%;
-  border-top-color: #ff0000;
   border-top-width: 5px;
 }
-
+.box-card-critical {
+  border-top-color: #8B0000;
+}
+.box-card-high {
+  border-top-color: #FF4D4D;
+}
+.box-card-medium {
+  border-top-color: #FF8000;
+}
+.box-card-low {
+  border-top-color: #336D9F;
+}
+.box-card-unknown {
+  border-top-color: #67C23A;
+}
+.box-critical {
+  color: #ffffff;
+  background-color: #8B0000;
+}
+.box-high {
+  color: #ffffff;
+  background-color: #FF4D4D;
+}
+.box-medium {
+  color: #ffffff;
+  background-color: #FF8000;
+}
+.box-low {
+  color: #ffffff;
+  background-color: #336D9F;
+}
+.box-unknown {
+  color: #ffffff;
+  background-color: #67C23A;
+}
 .icon-title {
   color: #fff;
   width: 30px;
-  background-color: #32CD32;
   height: 30px;
   line-height: 30px;
   text-align: center;
   border-radius: 30px;
   font-size: 14px;
+  margin: -7px 0 0 15px;
 }
 .el-card >>> .diy-con-name {
   margin: 8px 3px;

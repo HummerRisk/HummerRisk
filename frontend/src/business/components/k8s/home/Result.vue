@@ -139,7 +139,12 @@
                       <div style="margin: 10px 0 0 0;box-shadow: 1px 1px 1px 1px #e8e8e8;" :key="index" v-for="(vulnerability, index) in item.report.vulnerabilities">
                         <div slot="header" class="clearfix clearfix-dev">
                           <el-row>
-                            <el-col class="icon-title" :span="3">
+                            <el-col v-bind:class="{ 'icon-title box-critical': vulnerability.severity === 'CRITICAL',
+                                'icon-title box-high': vulnerability.severity === 'HIGH',
+                                'icon-title box-medium': vulnerability.severity === 'MEDIUM',
+                                'icon-title box-low': vulnerability.severity === 'LOW',
+                                'icon-title box-unknown': vulnerability.severity === 'UNKNOWN' }"
+                                    :span="3">
                               <span>{{ vulnerability.severity.substring(0, 1) }}</span>
                             </el-col>
                             <el-col :span="15" style="margin: -7px 0 0 15px;">
@@ -155,7 +160,13 @@
                               <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
                               <span style="margin: 5px;"><a :href="vulnerability.primaryLink">{{ vulnerability.vulnerabilityID }}</a></span>
                               <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                              <span style="margin: 5px;"><el-button type="danger" size="mini">{{ vulnerability.severity }}</el-button></span>
+                              <span style="margin: 5px;">
+                                <el-button v-bind:class="{ 'box-critical': vulnerability.severity === 'CRITICAL',
+                                  'box-high': vulnerability.severity === 'HIGH',
+                                  'box-medium': vulnerability.severity === 'MEDIUM', 'box-low': vulnerability.severity === 'LOW',
+                                  'box-unknown': vulnerability.severity === 'UNKNOWN' }" size="mini">{{ vulnerability.severity }}
+                                </el-button>
+                              </span>
                               <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
                               <span style="color: #444;margin: 5px;">RESOURCE: {{ vulnerability.resource }}</span>
                             </el-col>
@@ -209,7 +220,12 @@
                       <div style="margin: 10px 0 10px 0;padding: 5px; box-shadow: 1px 1px 1px 1px #e8e8e8;" :key="index" v-for="(check, index) in item.report.checks">
                         <div slot="header" class="clearfix clearfix-dev">
                           <el-row>
-                            <el-col class="icon-title" :span="3">
+                            <el-col v-bind:class="{ 'icon-title box-critical': check.severity === 'CRITICAL',
+                                  'icon-title box-high': check.severity === 'HIGH',
+                                  'icon-title box-medium': check.severity === 'MEDIUM',
+                                  'icon-title box-low': check.severity === 'LOW',
+                                  'icon-title box-unknown': check.severity === 'UNKNOWN' }"
+                                    :span="3">
                               <span>{{ check.severity.substring(0, 1) }}</span>
                             </el-col>
                             <el-col :span="15" style="margin: -7px 0 0 15px;">
@@ -225,7 +241,13 @@
                               <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
                               <span style="margin: 5px;">{{ check.category }}</span>
                               <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                              <span style="margin: 5px;"><el-button type="danger" size="mini">{{ check.severity }}</el-button></span>
+                              <span style="margin: 5px;">
+                                <el-button v-bind:class="{ 'box-critical': check.severity === 'CRITICAL',
+                                  'box-high': check.severity === 'HIGH',
+                                  'box-medium': check.severity === 'MEDIUM', 'box-low': check.severity === 'LOW',
+                                  'box-unknown': check.severity === 'UNKNOWN' }" size="mini">{{ check.severity }}
+                                </el-button>
+                              </span>
                               <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
                               <span style="color: #444;margin: 5px;">SUCCESS: {{ check.success }}</span>
                             </el-col>
@@ -680,19 +702,52 @@ export default {
 
 .box-card {
   width: 99%;
-  border-top-color: #ff0000;
   border-top-width: 5px;
 }
-
+.box-card-critical {
+  border-top-color: #8B0000;
+}
+.box-card-high {
+  border-top-color: #FF4D4D;
+}
+.box-card-medium {
+  border-top-color: #FF8000;
+}
+.box-card-low {
+  border-top-color: #336D9F;
+}
+.box-card-unknown {
+  border-top-color: #67C23A;
+}
+.box-critical {
+  color: #ffffff;
+  background-color: #8B0000;
+}
+.box-high {
+  color: #ffffff;
+  background-color: #FF4D4D;
+}
+.box-medium {
+  color: #ffffff;
+  background-color: #FF8000;
+}
+.box-low {
+  color: #ffffff;
+  background-color: #336D9F;
+}
+.box-unknown {
+  color: #ffffff;
+  background-color: #67C23A;
+}
 .icon-title {
   color: #fff;
   width: 30px;
-  background-color: #32CD32;
   height: 30px;
   line-height: 30px;
   text-align: center;
   border-radius: 30px;
   font-size: 14px;
+  margin: -7px 0 0 15px;
 }
 .el-card >>> .diy-con-name {
   margin: 8px 3px;

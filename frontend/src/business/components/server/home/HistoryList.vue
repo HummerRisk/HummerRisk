@@ -504,12 +504,12 @@ import CodeDiff from 'vue-code-diff';
 .icon-title {
   color: #fff;
   width: 30px;
-  background-color: #32CD32;
   height: 30px;
   line-height: 30px;
   text-align: center;
   border-radius: 30px;
   font-size: 14px;
+  margin: -7px 0 0 15px;
 }
 .el-card >>> .diy-con-name {
   margin: 8px 3px;

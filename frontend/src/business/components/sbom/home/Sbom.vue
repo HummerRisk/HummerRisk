@@ -200,15 +200,24 @@
                             <li><i>Type</i>:&nbsp;{{ result.Type }}</li>
                           </ul>
                         </div>
-                        <div style="margin: 10px 0 0 0;" :key="index" v-for="(vulnerabilitiy, index) in result.Vulnerabilities">
-                          <el-card class="box-card2">
+                        <div style="margin: 10px 0 0 0;" :key="index" v-for="(vulnerability, index) in result.Vulnerabilities">
+                          <el-card v-bind:class="{ 'box-card2 box-card-critical': vulnerability.Severity === 'CRITICAL',
+                           'box-card2 box-card-high': vulnerability.Severity === 'HIGH',
+                           'box-card2 box-card-medium': vulnerability.Severity === 'MEDIUM',
+                           'box-card2 box-card-low': vulnerability.Severity === 'LOW',
+                           'box-card2 box-card-unknown': vulnerability.Severity === 'UNKNOWN' }">
                             <div slot="header" class="clearfix">
                               <el-row>
-                                <el-col class="icon-title" :span="3">
-                                  <span>{{ vulnerabilitiy.Severity.substring(0, 1) }}</span>
+                                <el-col v-bind:class="{ 'icon-title box-critical': vulnerability.Severity === 'CRITICAL',
+                                'icon-title box-high': vulnerability.Severity === 'HIGH',
+                                'icon-title box-medium': vulnerability.Severity === 'MEDIUM',
+                                'icon-title box-low': vulnerability.Severity === 'LOW',
+                                'icon-title box-unknown': vulnerability.Severity === 'UNKNOWN' }"
+                                        :span="3">
+                                  <span>{{ vulnerability.Severity.substring(0, 1) }}</span>
                                 </el-col>
                                 <el-col :span="15" style="margin: -7px 0 0 15px;">
-                                  <span style="font-size: 24px;font-weight: 500;">{{ vulnerabilitiy.Title }}</span>
+                                  <span style="font-size: 24px;font-weight: 500;">{{ vulnerability.Title }}</span>
                                 </el-col>
                                 <el-col :span="6" style="float: right;">
                                   <span style="font-size: 20px;color: #999;float: right;">{{ 'SEVERITY SOURCE' }}</span>
@@ -216,42 +225,48 @@
                               </el-row>
                               <el-row style="font-size: 18px;padding: 10px;">
                                 <el-col :span="20">
-                                  <span style="margin: 5px;"><a :href="vulnerabilitiy.PrimaryURL">{{ vulnerabilitiy.VulnerabilityID }}</a></span>
+                                  <span style="margin: 5px;"><a :href="vulnerability.PrimaryURL">{{ vulnerability.VulnerabilityID }}</a></span>
                                   <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                  <span style="margin: 5px;"><el-button type="danger" size="mini">{{ vulnerabilitiy.Severity }}</el-button></span>
+                                  <span style="margin: 5px;">
+                                    <el-button v-bind:class="{ 'box-critical': vulnerability.Severity === 'CRITICAL',
+                                      'box-high': vulnerability.Severity === 'HIGH',
+                                      'box-medium': vulnerability.Severity === 'MEDIUM', 'box-low': vulnerability.Severity === 'LOW',
+                                      'box-unknown': vulnerability.Severity === 'UNKNOWN' }" size="mini">{{ vulnerability.Severity }}
+                                    </el-button>
+                                  </span>
                                   <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                  <span style="color: #888;margin: 5px;">INSTALLED VERSION: {{ vulnerabilitiy.InstalledVersion }}</span>
+                                  <span style="color: #888;margin: 5px;">INSTALLED VERSION: {{ vulnerability.InstalledVersion }}</span>
                                   <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                  <span style="color: #444;margin: 5px;">PkgName: {{ vulnerabilitiy.PkgName }}</span>
+                                  <span style="color: #444;margin: 5px;">PkgName: {{ vulnerability.PkgName }}</span>
                                 </el-col>
                                 <el-col :span="4" style="float: right;">
-                                  <span style="font-size: 20px;color: #000;float: right;">{{ vulnerabilitiy.SeveritySource }}</span>
+                                  <span style="font-size: 20px;color: #000;float: right;">{{ vulnerability.SeveritySource }}</span>
                                 </el-col>
                               </el-row>
                             </div>
                             <div class="text item div-desc">
                               <el-row>
-                                <span style="color: red;"><i class="el-icon-s-opportunity"></i>PrimaryURL:</span> &nbsp;{{ vulnerabilitiy.PrimaryURL }}
+                                <span style="color: red;"><i class="el-icon-s-opportunity"></i>PrimaryURL:</span> &nbsp;{{ vulnerability.PrimaryURL }}
                               </el-row>
                               <el-row>
-                                <span style="color: red;">Description:</span> {{ vulnerabilitiy.Description }}
+                                <span style="color: red;">Description:</span> {{ vulnerability.Description }}
                               </el-row>
                               <el-row>
-                                <span style="color: red;">PublishedDate:</span> {{ vulnerabilitiy.PublishedDate }}
+                                <span style="color: red;">PublishedDate:</span> {{ vulnerability.PublishedDate }}
                               </el-row>
                               <el-row>
-                                <span style="color: red;">LastModifiedDate:</span> {{ vulnerabilitiy.LastModifiedDate }}
+                                <span style="color: red;">LastModifiedDate:</span> {{ vulnerability.LastModifiedDate }}
                               </el-row>
                               <el-row>
-                                <span style="color: red;">FixedVersion:</span> {{ vulnerabilitiy.FixedVersion }}
+                                <span style="color: red;">FixedVersion:</span> {{ vulnerability.FixedVersion }}
                               </el-row>
                               <el-row>
-                                <span style="color: red;">DataSource:</span> {{ vulnerabilitiy.DataSource.ID }} | {{ vulnerabilitiy.DataSource.Name }} | {{ vulnerabilitiy.DataSource.URL }}
+                                <span style="color: red;">DataSource:</span> {{ vulnerability.DataSource.ID }} | {{ vulnerability.DataSource.Name }} | {{ vulnerability.DataSource.URL }}
                               </el-row>
                             </div>
                             <div class="text div-json">
                               <el-descriptions title="Layer" :column="2">
-                                <el-descriptions-item v-for="(vuln, index) in filterJson(vulnerabilitiy.Layer)" :key="index" :label="vuln.key">
+                                <el-descriptions-item v-for="(vuln, index) in filterJson(vulnerability.Layer)" :key="index" :label="vuln.key">
                                   <span v-if="!vuln.flag" show-overflow-tooltip>
                                     <el-tooltip class="item" effect="dark" :content="JSON.stringify(vuln.value)" placement="top-start">
                                       <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
@@ -268,14 +283,14 @@
                             </div>
                             <div class="text div-json">
                               <el-descriptions title="CweIDs" :column="2">
-                                <el-descriptions-item v-for="(CweID, index) in vulnerabilitiy.CweIDs" :key="index" :label="index">
+                                <el-descriptions-item v-for="(CweID, index) in vulnerability.CweIDs" :key="index" :label="index">
                                   <span> {{ CweID }}</span>
                                 </el-descriptions-item>
                               </el-descriptions>
                             </div>
                             <div class="text div-json">
                               <el-descriptions title="References" :column="2">
-                                <el-descriptions-item v-for="(Reference, index) in vulnerabilitiy.References" :key="index" :label="index">
+                                <el-descriptions-item v-for="(Reference, index) in vulnerability.References" :key="index" :label="index">
                                   <span> {{ Reference }}</span>
                                 </el-descriptions-item>
                               </el-descriptions>
@@ -431,15 +446,24 @@
                             <li><i>Type</i>:&nbsp;{{ result.Type }}</li>
                           </ul>
                         </div>
-                        <div style="margin: 10px 0 0 0;" :key="index" v-for="(vulnerabilitiy, index) in result.Vulnerabilities">
-                          <el-card class="box-card2">
+                        <div style="margin: 10px 0 0 0;" :key="index" v-for="(vulnerability, index) in result.Vulnerabilities">
+                          <el-card v-bind:class="{ 'box-card2 box-card-critical': vulnerability.Severity === 'CRITICAL',
+                           'box-card2 box-card-high': vulnerability.Severity === 'HIGH',
+                           'box-card2 box-card-medium': vulnerability.Severity === 'MEDIUM',
+                           'box-card2 box-card-low': vulnerability.Severity === 'LOW',
+                           'box-card2 box-card-unknown': vulnerability.Severity === 'UNKNOWN' }">
                             <div slot="header" class="clearfix">
                               <el-row>
-                                <el-col class="icon-title" :span="3">
-                                  <span>{{ vulnerabilitiy.Severity.substring(0, 1) }}</span>
+                                <el-col v-bind:class="{ 'icon-title box-critical': vulnerability.Severity === 'CRITICAL',
+                                'icon-title box-high': vulnerability.Severity === 'HIGH',
+                                'icon-title box-medium': vulnerability.Severity === 'MEDIUM',
+                                'icon-title box-low': vulnerability.Severity === 'LOW',
+                                'icon-title box-unknown': vulnerability.Severity === 'UNKNOWN' }"
+                                        :span="3">
+                                  <span>{{ vulnerability.Severity.substring(0, 1) }}</span>
                                 </el-col>
                                 <el-col :span="15" style="margin: -7px 0 0 15px;">
-                                  <span style="font-size: 24px;font-weight: 500;">{{ vulnerabilitiy.Title }}</span>
+                                  <span style="font-size: 24px;font-weight: 500;">{{ vulnerability.Title }}</span>
                                 </el-col>
                                 <el-col :span="6" style="float: right;">
                                   <span style="font-size: 20px;color: #999;float: right;">{{ 'SEVERITY SOURCE' }}</span>
@@ -447,42 +471,48 @@
                               </el-row>
                               <el-row style="font-size: 18px;padding: 10px;">
                                 <el-col :span="20">
-                                  <span style="margin: 5px;"><a :href="vulnerabilitiy.PrimaryURL">{{ vulnerabilitiy.VulnerabilityID }}</a></span>
+                                  <span style="margin: 5px;"><a :href="vulnerability.PrimaryURL">{{ vulnerability.VulnerabilityID }}</a></span>
                                   <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                  <span style="margin: 5px;"><el-button type="danger" size="mini">{{ vulnerabilitiy.Severity }}</el-button></span>
+                                  <span style="margin: 5px;">
+                                    <el-button v-bind:class="{ 'box-critical': vulnerability.Severity === 'CRITICAL',
+                                      'box-high': vulnerability.Severity === 'HIGH',
+                                      'box-medium': vulnerability.Severity === 'MEDIUM', 'box-low': vulnerability.Severity === 'LOW',
+                                      'box-unknown': vulnerability.Severity === 'UNKNOWN' }" size="mini">{{ vulnerability.Severity }}
+                                    </el-button>
+                                  </span>
                                   <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                  <span style="color: #888;margin: 5px;">INSTALLED VERSION: {{ vulnerabilitiy.InstalledVersion }}</span>
+                                  <span style="color: #888;margin: 5px;">INSTALLED VERSION: {{ vulnerability.InstalledVersion }}</span>
                                   <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                  <span style="color: #444;margin: 5px;">PkgName: {{ vulnerabilitiy.PkgName }}</span>
+                                  <span style="color: #444;margin: 5px;">PkgName: {{ vulnerability.PkgName }}</span>
                                 </el-col>
                                 <el-col :span="4" style="float: right;">
-                                  <span style="font-size: 20px;color: #000;float: right;">{{ vulnerabilitiy.SeveritySource }}</span>
+                                  <span style="font-size: 20px;color: #000;float: right;">{{ vulnerability.SeveritySource }}</span>
                                 </el-col>
                               </el-row>
                             </div>
                             <div class="text item div-desc">
                               <el-row>
-                                <span style="color: red;"><i class="el-icon-s-opportunity"></i>PrimaryURL:</span> &nbsp;{{ vulnerabilitiy.PrimaryURL }}
+                                <span style="color: red;"><i class="el-icon-s-opportunity"></i>PrimaryURL:</span> &nbsp;{{ vulnerability.PrimaryURL }}
                               </el-row>
                               <el-row>
-                                <span style="color: red;">Description:</span> {{ vulnerabilitiy.Description }}
+                                <span style="color: red;">Description:</span> {{ vulnerability.Description }}
                               </el-row>
                               <el-row>
-                                <span style="color: red;">PublishedDate:</span> {{ vulnerabilitiy.PublishedDate }}
+                                <span style="color: red;">PublishedDate:</span> {{ vulnerability.PublishedDate }}
                               </el-row>
                               <el-row>
-                                <span style="color: red;">LastModifiedDate:</span> {{ vulnerabilitiy.LastModifiedDate }}
+                                <span style="color: red;">LastModifiedDate:</span> {{ vulnerability.LastModifiedDate }}
                               </el-row>
                               <el-row>
-                                <span style="color: red;">FixedVersion:</span> {{ vulnerabilitiy.FixedVersion }}
+                                <span style="color: red;">FixedVersion:</span> {{ vulnerability.FixedVersion }}
                               </el-row>
                               <el-row>
-                                <span style="color: red;">DataSource:</span> {{ vulnerabilitiy.DataSource.ID }} | {{ vulnerabilitiy.DataSource.Name }} | {{ vulnerabilitiy.DataSource.URL }}
+                                <span style="color: red;">DataSource:</span> {{ vulnerability.DataSource.ID }} | {{ vulnerability.DataSource.Name }} | {{ vulnerability.DataSource.URL }}
                               </el-row>
                             </div>
                             <div class="text div-json">
                               <el-descriptions title="Layer" :column="2">
-                                <el-descriptions-item v-for="(vuln, index) in filterJson(vulnerabilitiy.Layer)" :key="index" :label="vuln.key">
+                                <el-descriptions-item v-for="(vuln, index) in filterJson(vulnerability.Layer)" :key="index" :label="vuln.key">
                           <span v-if="!vuln.flag" show-overflow-tooltip>
                             <el-tooltip class="item" effect="dark" :content="JSON.stringify(vuln.value)" placement="top-start">
                               <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
@@ -499,14 +529,14 @@
                             </div>
                             <div class="text div-json">
                               <el-descriptions title="CweIDs" :column="2">
-                                <el-descriptions-item v-for="(CweID, index) in vulnerabilitiy.CweIDs" :key="index" :label="index">
+                                <el-descriptions-item v-for="(CweID, index) in vulnerability.CweIDs" :key="index" :label="index">
                                   <span> {{ CweID }}</span>
                                 </el-descriptions-item>
                               </el-descriptions>
                             </div>
                             <div class="text div-json">
                               <el-descriptions title="References" :column="2">
-                                <el-descriptions-item v-for="(Reference, index) in vulnerabilitiy.References" :key="index" :label="index">
+                                <el-descriptions-item v-for="(Reference, index) in vulnerability.References" :key="index" :label="index">
                                   <span> {{ Reference }}</span>
                                 </el-descriptions-item>
                               </el-descriptions>
@@ -626,13 +656,13 @@
                   <el-table-column>
                     <template v-slot:default="scope">
                       <div class="bg-purple-div">
-                <span
-                  v-bind:class="{true: 'color-red', false: ''}[scope.row.result == false]">
-                      {{ scope.row.createTime | timestampFormatDate }}
-                      {{ scope.row.operator }}
-                      {{ scope.row.operation }}
-                      {{ scope.row.output }}<br>
-                </span>
+                        <span
+                          v-bind:class="{true: 'color-red', false: ''}[scope.row.result == false]">
+                              {{ scope.row.createTime | timestampFormatDate }}
+                              {{ scope.row.operator }}
+                              {{ scope.row.operation }}
+                              {{ scope.row.output }}<br>
+                        </span>
                       </div>
                     </template>
                   </el-table-column>
@@ -664,15 +694,24 @@
                             <li><i>Type</i>:&nbsp;{{ result.Type }}</li>
                           </ul>
                         </div>
-                        <div style="margin: 10px 0 0 0;" :key="index" v-for="(vulnerabilitiy, index) in result.Vulnerabilities">
-                          <el-card class="box-card2">
+                        <div style="margin: 10px 0 0 0;" :key="index" v-for="(vulnerability, index) in result.Vulnerabilities">
+                          <el-card v-bind:class="{ 'box-card2 box-card-critical': vulnerability.Severity === 'CRITICAL',
+                           'box-card2 box-card-high': vulnerability.Severity === 'HIGH',
+                           'box-card2 box-card-medium': vulnerability.Severity === 'MEDIUM',
+                           'box-card2 box-card-low': vulnerability.Severity === 'LOW',
+                           'box-card2 box-card-unknown': vulnerability.Severity === 'UNKNOWN' }">
                             <div slot="header" class="clearfix">
                               <el-row>
-                                <el-col class="icon-title" :span="3">
-                                  <span>{{ vulnerabilitiy.Severity.substring(0, 1) }}</span>
+                                <el-col v-bind:class="{ 'icon-title box-critical': vulnerability.Severity === 'CRITICAL',
+                                'icon-title box-high': vulnerability.Severity === 'HIGH',
+                                'icon-title box-medium': vulnerability.Severity === 'MEDIUM',
+                                'icon-title box-low': vulnerability.Severity === 'LOW',
+                                'icon-title box-unknown': vulnerability.Severity === 'UNKNOWN' }"
+                                        :span="3">
+                                  <span>{{ vulnerability.Severity.substring(0, 1) }}</span>
                                 </el-col>
                                 <el-col :span="15" style="margin: -7px 0 0 15px;">
-                                  <span style="font-size: 24px;font-weight: 500;">{{ vulnerabilitiy.Title }}</span>
+                                  <span style="font-size: 24px;font-weight: 500;">{{ vulnerability.Title }}</span>
                                 </el-col>
                                 <el-col :span="6" style="float: right;">
                                   <span style="font-size: 20px;color: #999;float: right;">{{ 'SEVERITY SOURCE' }}</span>
@@ -680,42 +719,48 @@
                               </el-row>
                               <el-row style="font-size: 18px;padding: 10px;">
                                 <el-col :span="20">
-                                  <span style="margin: 5px;"><a :href="vulnerabilitiy.PrimaryURL">{{ vulnerabilitiy.VulnerabilityID }}</a></span>
+                                  <span style="margin: 5px;"><a :href="vulnerability.PrimaryURL">{{ vulnerability.VulnerabilityID }}</a></span>
                                   <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                  <span style="margin: 5px;"><el-button type="danger" size="mini">{{ vulnerabilitiy.Severity }}</el-button></span>
+                                  <span style="margin: 5px;">
+                                    <el-button v-bind:class="{ 'box-critical': vulnerability.Severity === 'CRITICAL',
+                                      'box-high': vulnerability.Severity === 'HIGH',
+                                      'box-medium': vulnerability.Severity === 'MEDIUM', 'box-low': vulnerability.Severity === 'LOW',
+                                      'box-unknown': vulnerability.Severity === 'UNKNOWN' }" size="mini">{{ vulnerability.Severity }}
+                                    </el-button>
+                                  </span>
                                   <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                  <span style="color: #888;margin: 5px;">INSTALLED VERSION: {{ vulnerabilitiy.InstalledVersion }}</span>
+                                  <span style="color: #888;margin: 5px;">INSTALLED VERSION: {{ vulnerability.InstalledVersion }}</span>
                                   <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                  <span style="color: #444;margin: 5px;">PkgName: {{ vulnerabilitiy.PkgName }}</span>
+                                  <span style="color: #444;margin: 5px;">PkgName: {{ vulnerability.PkgName }}</span>
                                 </el-col>
                                 <el-col :span="4" style="float: right;">
-                                  <span style="font-size: 20px;color: #000;float: right;">{{ vulnerabilitiy.SeveritySource }}</span>
+                                  <span style="font-size: 20px;color: #000;float: right;">{{ vulnerability.SeveritySource }}</span>
                                 </el-col>
                               </el-row>
                             </div>
                             <div class="text item div-desc">
                               <el-row>
-                                <span style="color: red;"><i class="el-icon-s-opportunity"></i>PrimaryURL:</span> &nbsp;{{ vulnerabilitiy.PrimaryURL }}
+                                <span style="color: red;"><i class="el-icon-s-opportunity"></i>PrimaryURL:</span> &nbsp;{{ vulnerability.PrimaryURL }}
                               </el-row>
                               <el-row>
-                                <span style="color: red;">Description:</span> {{ vulnerabilitiy.Description }}
+                                <span style="color: red;">Description:</span> {{ vulnerability.Description }}
                               </el-row>
                               <el-row>
-                                <span style="color: red;">PublishedDate:</span> {{ vulnerabilitiy.PublishedDate }}
+                                <span style="color: red;">PublishedDate:</span> {{ vulnerability.PublishedDate }}
                               </el-row>
                               <el-row>
-                                <span style="color: red;">LastModifiedDate:</span> {{ vulnerabilitiy.LastModifiedDate }}
+                                <span style="color: red;">LastModifiedDate:</span> {{ vulnerability.LastModifiedDate }}
                               </el-row>
                               <el-row>
-                                <span style="color: red;">FixedVersion:</span> {{ vulnerabilitiy.FixedVersion }}
+                                <span style="color: red;">FixedVersion:</span> {{ vulnerability.FixedVersion }}
                               </el-row>
                               <el-row>
-                                <span style="color: red;">DataSource:</span> {{ vulnerabilitiy.DataSource.ID }} | {{ vulnerabilitiy.DataSource.Name }} | {{ vulnerabilitiy.DataSource.URL }}
+                                <span style="color: red;">DataSource:</span> {{ vulnerability.DataSource.ID }} | {{ vulnerability.DataSource.Name }} | {{ vulnerability.DataSource.URL }}
                               </el-row>
                             </div>
                             <div class="text div-json">
                               <el-descriptions title="Layer" :column="2">
-                                <el-descriptions-item v-for="(vuln, index) in filterJson(vulnerabilitiy.Layer)" :key="index" :label="vuln.key">
+                                <el-descriptions-item v-for="(vuln, index) in filterJson(vulnerability.Layer)" :key="index" :label="vuln.key">
                           <span v-if="!vuln.flag" show-overflow-tooltip>
                             <el-tooltip class="item" effect="dark" :content="JSON.stringify(vuln.value)" placement="top-start">
                               <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
@@ -732,14 +777,14 @@
                             </div>
                             <div class="text div-json">
                               <el-descriptions title="CweIDs" :column="2">
-                                <el-descriptions-item v-for="(CweID, index) in vulnerabilitiy.CweIDs" :key="index" :label="index">
+                                <el-descriptions-item v-for="(CweID, index) in vulnerability.CweIDs" :key="index" :label="index">
                                   <span> {{ CweID }}</span>
                                 </el-descriptions-item>
                               </el-descriptions>
                             </div>
                             <div class="text div-json">
                               <el-descriptions title="References" :column="2">
-                                <el-descriptions-item v-for="(Reference, index) in vulnerabilitiy.References" :key="index" :label="index">
+                                <el-descriptions-item v-for="(Reference, index) in vulnerability.References" :key="index" :label="index">
                                   <span> {{ Reference }}</span>
                                 </el-descriptions-item>
                               </el-descriptions>
@@ -1167,19 +1212,52 @@ export default {
 .box-card2 {
   margin: 10px 0 0 0;
   width: 99%;
-  border-top-color: #ff0000;
   border-top-width: 5px;
 }
-
+.box-card-critical {
+  border-top-color: #8B0000;
+}
+.box-card-high {
+  border-top-color: #FF4D4D;
+}
+.box-card-medium {
+  border-top-color: #FF8000;
+}
+.box-card-low {
+  border-top-color: #336D9F;
+}
+.box-card-unknown {
+  border-top-color: #67C23A;
+}
+.box-critical {
+  color: #ffffff;
+  background-color: #8B0000;
+}
+.box-high {
+  color: #ffffff;
+  background-color: #FF4D4D;
+}
+.box-medium {
+  color: #ffffff;
+  background-color: #FF8000;
+}
+.box-low {
+  color: #ffffff;
+  background-color: #336D9F;
+}
+.box-unknown {
+  color: #ffffff;
+  background-color: #67C23A;
+}
 .icon-title {
   color: #fff;
   width: 30px;
-  background-color: #32CD32;
   height: 30px;
   line-height: 30px;
   text-align: center;
   border-radius: 30px;
   font-size: 14px;
+  margin: -7px 0 0 15px;
 }
 .el-card >>> .diy-con-name {
   margin: 8px 3px;
