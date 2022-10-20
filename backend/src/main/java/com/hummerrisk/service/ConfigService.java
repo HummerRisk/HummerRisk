@@ -255,16 +255,6 @@ public class ConfigService {
     public void deleteResultByCloudNativeConfigId(String id) throws Exception {
         CloudNativeConfigResultExample example = new CloudNativeConfigResultExample();
         example.createCriteria().andConfigIdEqualTo(id);
-        List<CloudNativeConfigResult> list = cloudNativeConfigResultMapper.selectByExample(example);
-
-        for (CloudNativeConfigResult result : list) {
-            CloudNativeConfigResultItemExample cloudNativeConfigResultItemExample = new CloudNativeConfigResultItemExample();
-            cloudNativeConfigResultItemExample.createCriteria().andResultIdEqualTo(result.getId());
-            cloudNativeConfigResultItemMapper.deleteByExample(cloudNativeConfigResultItemExample);
-            CloudNativeConfigResultLogExample logExample = new CloudNativeConfigResultLogExample();
-            logExample.createCriteria().andResultIdEqualTo(result.getId());
-            cloudNativeConfigResultLogMapper.deleteByExample(logExample);
-        }
         cloudNativeConfigResultMapper.deleteByExample(example);
     }
 
@@ -286,7 +276,6 @@ public class ConfigService {
         cloudNativeConfigResultLog.setResult(result);
         cloudNativeConfigResultLogMapper.insertSelective(cloudNativeConfigResultLog);
 
-        historyService.insertHistoryCloudNativeConfigResultLog(BeanUtils.copyBean(new HistoryCloudNativeConfigResultLogWithBLOBs(), cloudNativeConfigResultLog));
     }
 
     public void reScanDeleteCloudNativeConfigResult(String id) throws Exception {
@@ -403,11 +392,6 @@ public class ConfigService {
     }
 
     public void deleteCloudNativeConfigResult(String id) throws Exception {
-
-        CloudNativeConfigResultLogExample logExample = new CloudNativeConfigResultLogExample();
-        logExample.createCriteria().andResultIdEqualTo(id);
-        cloudNativeConfigResultLogMapper.deleteByExample(logExample);
-
         cloudNativeConfigResultMapper.deleteByPrimaryKey(id);
     }
 

@@ -75,8 +75,6 @@ public class ImageService {
     private ExecEngineFactoryImp execEngineFactoryImp;
     @Resource
     private HistoryImageResultMapper historyImageResultMapper;
-    @Resource
-    private HistoryImageResultLogMapper historyImageResultLogMapper;
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
@@ -588,25 +586,12 @@ public class ImageService {
     }
 
     public void deleteImageResult(String id) throws Exception {
-
-        ImageResultLogExample logExample = new ImageResultLogExample();
-        logExample.createCriteria().andResultIdEqualTo(id);
-        imageResultLogMapper.deleteByExample(logExample);
-
         imageResultMapper.deleteByPrimaryKey(id);
     }
 
     public void deleteResultByImageId(String id) throws Exception {
         ImageResultExample example = new ImageResultExample();
         example.createCriteria().andImageIdEqualTo(id);
-        List<ImageResult> list = imageResultMapper.selectByExample(example);
-
-        for (ImageResult result : list) {
-            ImageResultLogExample logExample = new ImageResultLogExample();
-            logExample.createCriteria().andResultIdEqualTo(result.getId());
-            imageResultLogMapper.deleteByExample(logExample);
-
-        }
         imageResultMapper.deleteByExample(example);
     }
 
@@ -672,7 +657,6 @@ public class ImageService {
         imageResultLog.setResult(result);
         imageResultLogMapper.insertSelective(imageResultLog);
 
-        historyService.insertHistoryImageResultLog(BeanUtils.copyBean(new HistoryImageResultLogWithBLOBs(), imageResultLog));
     }
 
     public List<ImageResultItemWithBLOBs> resultItemList(ImageResultItem resourceRequest) {
@@ -918,9 +902,6 @@ public class ImageService {
     }
 
     public void deleteHistoryImageResult(String id) throws Exception {
-        HistoryImageResultLogExample logExample = new HistoryImageResultLogExample();
-        logExample.createCriteria().andResultIdEqualTo(id);
-        historyImageResultLogMapper.deleteByExample(logExample);
         historyImageResultMapper.deleteByPrimaryKey(id);
     }
 

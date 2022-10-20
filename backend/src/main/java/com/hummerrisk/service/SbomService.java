@@ -50,13 +50,13 @@ public class SbomService {
     @Resource
     private HistoryImageResultMapper historyImageResultMapper;
     @Resource
-    private HistoryCodeResultLogMapper historyCodeResultLogMapper;
-    @Resource
-    private HistoryImageResultLogMapper historyImageResultLogMapper;
+    private ImageResultLogMapper imageResultLogMapper;
     @Resource
     private ExtFileSystemResultMapper extFileSystemResultMapper;
     @Resource
     private HistoryFileSystemResultMapper historyFileSystemResultMapper;
+    @Resource
+    private CodeResultLogMapper codeResultLogMapper;
 
 
     public List<SbomDTO> sbomList(SbomRequest request) {
@@ -212,10 +212,10 @@ public class SbomService {
     }
 
 
-    public List<HistoryCodeResultLogWithBLOBs> getCodeResultLog(String resultId) {
-        HistoryCodeResultLogExample example = new HistoryCodeResultLogExample();
+    public List<CodeResultLogWithBLOBs> getCodeResultLog(String resultId) {
+        CodeResultLogExample example = new CodeResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
-        return historyCodeResultLogMapper.selectByExampleWithBLOBs(example);
+        return codeResultLogMapper.selectByExampleWithBLOBs(example);
     }
 
     public HistoryCodeResult getCodeResult(String resultId) {
@@ -223,10 +223,10 @@ public class SbomService {
         return codeResult;
     }
 
-    public List<HistoryImageResultLogWithBLOBs> getImageResultLog(String resultId) {
-        HistoryImageResultLogExample example = new HistoryImageResultLogExample();
+    public List<ImageResultLogWithBLOBs> getImageResultLog(String resultId) {
+        ImageResultLogExample example = new ImageResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
-        return historyImageResultLogMapper.selectByExampleWithBLOBs(example);
+        return imageResultLogMapper.selectByExampleWithBLOBs(example);
     }
 
     public MetricChartDTO codeMetricChart(String resultId) {

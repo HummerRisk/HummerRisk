@@ -67,8 +67,6 @@ public class ServerService {
     @Resource
     private ExtServerCertificateMapper extServerCertificateMapper;
     @Resource
-    private HistoryServerResultLogMapper historyServerResultLogMapper;
-    @Resource
     private HistoryServerResultMapper historyServerResultMapper;
 
     public boolean validate(List<String> ids) {
@@ -208,13 +206,6 @@ public class ServerService {
     public void deleteServerResult(String id) {
         ServerResultExample example = new ServerResultExample();
         example.createCriteria().andServerIdEqualTo(id);//serverId
-        List<ServerResult> list = serverResultMapper.selectByExample(example);
-
-        for (ServerResult result : list) {
-            ServerResultLogExample logExample = new ServerResultLogExample();
-            logExample.createCriteria().andResultIdEqualTo(result.getId());
-            serverResultLogMapper.deleteByExample(logExample);
-        }
         serverResultMapper.deleteByExample(example);
     }
 
@@ -236,7 +227,6 @@ public class ServerService {
         serverResultLog.setResult(result);
         serverResultLogMapper.insertSelective(serverResultLog);
 
-        historyService.insertHistoryServerResultLog(BeanUtils.copyBean(new HistoryServerResultLogWithBLOBs(), serverResultLog));
     }
 
     private ServerValidateDTO validateAccount(Server server) {
@@ -596,9 +586,6 @@ public class ServerService {
     }
 
     public void deleteHistoryServerResult(String id) throws Exception {
-        HistoryServerResultLogExample logExample = new HistoryServerResultLogExample();
-        logExample.createCriteria().andResultIdEqualTo(id);
-        historyServerResultLogMapper.deleteByExample(logExample);
         historyServerResultMapper.deleteByPrimaryKey(id);
     }
 

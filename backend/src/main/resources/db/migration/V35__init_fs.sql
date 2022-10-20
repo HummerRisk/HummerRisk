@@ -156,21 +156,11 @@ ALTER TABLE `history_cloud_task_log` MODIFY column `operation` mediumtext DEFAUL
 
 ALTER TABLE `history_vuln_task_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
 
-ALTER TABLE `history_server_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
-
-ALTER TABLE `history_image_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
-
 ALTER TABLE `cloud_native_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
-
-ALTER TABLE `history_cloud_native_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
 
 ALTER TABLE `cloud_native_config_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
 
-ALTER TABLE `history_cloud_native_config_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
-
 ALTER TABLE `code_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
-
-ALTER TABLE `history_code_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
 
 ALTER TABLE `image_repo_sync_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
 
@@ -184,7 +174,17 @@ ALTER TABLE `cloud_resource_sync_item_log` MODIFY column `operation` mediumtext 
 
 ALTER TABLE `file_system_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
 
-ALTER TABLE `history_file_system_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
+DROP TABLE `history_server_result_log`;
+
+DROP TABLE `history_image_result_log`;
+
+DROP TABLE `history_cloud_native_result_log`;
+
+DROP TABLE `history_cloud_native_config_result_log`;
+
+DROP TABLE `history_code_result_log`;
+
+DROP TABLE `history_file_system_result_log`;
 
 CREATE TABLE IF NOT EXISTS `cloud_native_result_config_item`
 (

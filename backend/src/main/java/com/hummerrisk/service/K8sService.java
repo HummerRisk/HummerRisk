@@ -62,8 +62,6 @@ public class K8sService {
     @Resource
     private ExtCloudNativeMapper extCloudNativeMapper;
     @Resource
-    private HistoryCloudNativeResultLogMapper historyCloudNativeResultLogMapper;
-    @Resource
     private ExtCloudNativeSourceMapper extCloudNativeSourceMapper;
     @Resource
     private PluginMapper pluginMapper;
@@ -532,7 +530,6 @@ public class K8sService {
         cloudNativeResultLog.setResult(result);
         cloudNativeResultLogMapper.insertSelective(cloudNativeResultLog);
 
-        historyService.insertHistoryCloudNativeResultLog(BeanUtils.copyBean(new HistoryCloudNativeResultLogWithBLOBs(), cloudNativeResultLog));
     }
 
     long saveResultItem(CloudNativeResultWithBLOBs result) throws Exception {
@@ -640,11 +637,6 @@ public class K8sService {
     }
 
     public void deleteCloudNativeResult(String id) throws Exception {
-
-        CloudNativeResultLogExample logExample = new CloudNativeResultLogExample();
-        logExample.createCriteria().andResultIdEqualTo(id);
-        cloudNativeResultLogMapper.deleteByExample(logExample);
-
         cloudNativeResultMapper.deleteByPrimaryKey(id);
     }
 
@@ -728,9 +720,6 @@ public class K8sService {
     }
 
     public void deleteHistoryK8sResult(String id) throws Exception {
-        HistoryCloudNativeResultLogExample logExample = new HistoryCloudNativeResultLogExample();
-        logExample.createCriteria().andResultIdEqualTo(id);
-        historyCloudNativeResultLogMapper.deleteByExample(logExample);
         historyCloudNativeResultMapper.deleteByPrimaryKey(id);
     }
 

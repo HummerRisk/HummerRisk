@@ -52,25 +52,13 @@ public class HistoryService {
     @Resource @Lazy
     private HistoryServerResultMapper historyServerResultMapper;
     @Resource @Lazy
-    private HistoryServerResultLogMapper historyServerResultLogMapper;
-    @Resource @Lazy
     private HistoryImageResultMapper historyImageResultMapper;
-    @Resource @Lazy
-    private HistoryImageResultLogMapper historyImageResultLogMapper;
     @Resource @Lazy
     private HistoryCloudNativeResultMapper historyCloudNativeResultMapper;
     @Resource @Lazy
-    private HistoryCloudNativeResultLogMapper historyCloudNativeResultLogMapper;
-    @Resource @Lazy
     private HistoryCloudNativeConfigResultMapper historyCloudNativeConfigResultMapper;
     @Resource @Lazy
-    private HistoryCloudNativeConfigResultLogMapper historyCloudNativeConfigResultLogMapper;
-    @Resource @Lazy
-    private HistoryCodeResultLogMapper historyCodeResultLogMapper;
-    @Resource @Lazy
     private HistoryCodeResultMapper historyCodeResultMapper;
-    @Resource @Lazy
-    private HistoryFileSystemResultLogMapper historyFileSystemResultLogMapper;
     @Resource @Lazy
     private HistoryFileSystemResultMapper historyFileSystemResultMapper;
 
@@ -448,20 +436,12 @@ public class HistoryService {
         historyServerResultMapper.updateByPrimaryKeySelective(record);
     }
 
-    public void insertHistoryServerResultLog(HistoryServerResultLogWithBLOBs record) {
-        historyServerResultLogMapper.insertSelective(record);
-    }
-
     public void insertHistoryImageResult(HistoryImageResultWithBLOBs record) {
         historyImageResultMapper.insertSelective(record);
     }
 
     public void updateHistoryImageResult(HistoryImageResultWithBLOBs record) {
         historyImageResultMapper.updateByPrimaryKeySelective(record);
-    }
-
-    public void insertHistoryImageResultLog(HistoryImageResultLogWithBLOBs record) {
-        historyImageResultLogMapper.insertSelective(record);
     }
 
     public void insertHistoryCloudNativeResult(HistoryCloudNativeResultWithBLOBs record) {
@@ -472,20 +452,12 @@ public class HistoryService {
         historyCloudNativeResultMapper.updateByPrimaryKeySelective(record);
     }
 
-    public void insertHistoryCloudNativeResultLog(HistoryCloudNativeResultLogWithBLOBs record) {
-        historyCloudNativeResultLogMapper.insertSelective(record);
-    }
-
     public void insertHistoryCloudNativeConfigResult(HistoryCloudNativeConfigResult record) {
         historyCloudNativeConfigResultMapper.insertSelective(record);
     }
 
     public void updateHistoryCloudNativeConfigResult(HistoryCloudNativeConfigResult record) {
         historyCloudNativeConfigResultMapper.updateByPrimaryKeySelective(record);
-    }
-
-    public void insertHistoryCloudNativeConfigResultLog(HistoryCloudNativeConfigResultLogWithBLOBs record) {
-        historyCloudNativeConfigResultLogMapper.insertSelective(record);
     }
 
     public void insertHistoryCodeResult(HistoryCodeResult record) {
@@ -496,10 +468,6 @@ public class HistoryService {
         historyCodeResultMapper.updateByPrimaryKeySelective(record);
     }
 
-    public void insertHistoryCodeResultLog(HistoryCodeResultLogWithBLOBs record) {
-        historyCodeResultLogMapper.insertSelective(record);
-    }
-
     public void insertHistoryFileSystemResult(HistoryFileSystemResult record) {
         historyFileSystemResultMapper.insertSelective(record);
     }
@@ -508,8 +476,5 @@ public class HistoryService {
         historyFileSystemResultMapper.updateByPrimaryKeySelective(record);
     }
 
-    public void insertHistoryFileSystemResultLog(HistoryFileSystemResultLog record) {
-        historyFileSystemResultLogMapper.insertSelective(record);
-    }
 
 }

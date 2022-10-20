@@ -71,8 +71,6 @@ public class FileSystemService {
     private ExecEngineFactoryImp execEngineFactoryImp;
     @Resource
     private HistoryFileSystemResultMapper historyFileSystemResultMapper;
-    @Resource
-    private HistoryFileSystemResultLogMapper historyFileSystemResultLogMapper;
 
 
     public List<FsDTO> fsList(FsRequest request) {
@@ -262,9 +260,6 @@ public class FileSystemService {
     }
 
     public void deleteFsResult(String id) throws Exception {
-        FileSystemResultLogExample logExample = new FileSystemResultLogExample();
-        logExample.createCriteria().andResultIdEqualTo(id);
-        fileSystemResultLogMapper.deleteByExample(logExample);
         fileSystemResultMapper.deleteByPrimaryKey(id);
     }
 
@@ -343,14 +338,6 @@ public class FileSystemService {
     public void deleteResultByFsId(String id) throws Exception {
         FileSystemResultExample example = new FileSystemResultExample();
         example.createCriteria().andFsIdEqualTo(id);
-        List<FileSystemResult> list = fileSystemResultMapper.selectByExample(example);
-
-        for (FileSystemResult result : list) {
-            FileSystemResultLogExample logExample = new FileSystemResultLogExample();
-            logExample.createCriteria().andResultIdEqualTo(result.getId());
-            fileSystemResultLogMapper.deleteByExample(logExample);
-
-        }
         fileSystemResultMapper.deleteByExample(example);
     }
 
@@ -372,7 +359,6 @@ public class FileSystemService {
         log.setResult(result);
         fileSystemResultLogMapper.insertSelective(log);
 
-        historyService.insertHistoryFileSystemResultLog(BeanUtils.copyBean(new HistoryFileSystemResultLog(), log));
     }
 
     public void createScan (FileSystemResult result) throws Exception {
@@ -495,9 +481,6 @@ public class FileSystemService {
     }
 
     public void deleteHistoryFsResult(String id) throws Exception {
-        HistoryFileSystemResultLogExample logExample = new HistoryFileSystemResultLogExample();
-        logExample.createCriteria().andResultIdEqualTo(id);
-        historyFileSystemResultLogMapper.deleteByExample(logExample);
         historyFileSystemResultMapper.deleteByPrimaryKey(id);
     }
 

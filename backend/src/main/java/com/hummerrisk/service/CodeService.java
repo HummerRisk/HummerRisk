@@ -68,8 +68,6 @@ public class CodeService {
     private ExecEngineFactoryImp execEngineFactoryImp;
     @Resource
     private HistoryCodeResultMapper historyCodeResultMapper;
-    @Resource
-    private HistoryCodeResultLogMapper historyCodeResultLogMapper;
 
 
     public List<CodeDTO> codeList(CodeRequest request) {
@@ -222,9 +220,6 @@ public class CodeService {
     }
 
     public void deleteCodeResult(String id) throws Exception {
-        CodeResultLogExample logExample = new CodeResultLogExample();
-        logExample.createCriteria().andResultIdEqualTo(id);
-        codeResultLogMapper.deleteByExample(logExample);
         codeResultMapper.deleteByPrimaryKey(id);
     }
 
@@ -303,14 +298,6 @@ public class CodeService {
     public void deleteResultByCodeId(String id) throws Exception {
         CodeResultExample example = new CodeResultExample();
         example.createCriteria().andCodeIdEqualTo(id);
-        List<CodeResult> list = codeResultMapper.selectByExample(example);
-
-        for (CodeResult result : list) {
-            CodeResultLogExample logExample = new CodeResultLogExample();
-            logExample.createCriteria().andResultIdEqualTo(result.getId());
-            codeResultLogMapper.deleteByExample(logExample);
-
-        }
         codeResultMapper.deleteByExample(example);
     }
 
@@ -332,7 +319,6 @@ public class CodeService {
         codeResultLog.setResult(result);
         codeResultLogMapper.insertSelective(codeResultLog);
 
-        historyService.insertHistoryCodeResultLog(BeanUtils.copyBean(new HistoryCodeResultLogWithBLOBs(), codeResultLog));
     }
 
     public void createScan (CodeResult result) throws Exception {
@@ -467,9 +453,6 @@ public class CodeService {
     }
 
     public void deleteHistoryCodeResult(String id) throws Exception {
-        HistoryCodeResultLogExample logExample = new HistoryCodeResultLogExample();
-        logExample.createCriteria().andResultIdEqualTo(id);
-        historyCodeResultLogMapper.deleteByExample(logExample);
         historyCodeResultMapper.deleteByPrimaryKey(id);
     }
 
