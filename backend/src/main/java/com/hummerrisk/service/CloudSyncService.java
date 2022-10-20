@@ -56,57 +56,6 @@ public class CloudSyncService {
     @Resource
     private ExtCloudResourceSyncItemMapper extCloudResourceSyncItemMapper;
 
-
-    /**
-     * 同步状态更新
-     */
-    @QuartzScheduled(cron = "${cron.system.sync.status}")
-    public void updateResourceSyncStatus(){
-        CloudResourceSyncExample cloudResourceSyncExample = new CloudResourceSyncExample();
-        List<String> statusList = new ArrayList<>();
-        statusList.add(CloudTaskConstants.TASK_STATUS.APPROVED.name());
-        statusList.add(CloudTaskConstants.TASK_STATUS.RUNNING.name());
-        cloudResourceSyncExample.createCriteria().andStatusIn(statusList);
-        List<CloudResourceSync> cloudResourceSyncs = cloudResourceSyncMapper.selectByExample(cloudResourceSyncExample);
-        cloudResourceSyncs.forEach(cloudResourceSync -> {
-            String id = cloudResourceSync.getId();
-            CloudResourceSyncItemExample cloudResourceSyncItemExample = new CloudResourceSyncItemExample();
-            cloudResourceSyncItemExample.createCriteria().andSyncIdEqualTo(id);
-            List<CloudResourceSyncItem> cloudResourceSyncItems = cloudResourceSyncItemMapper.selectByExample(cloudResourceSyncItemExample);
-            int errorCount = 0;
-            int successCount = 0;
-            int runningCount = 0;
-            long resourceSum = 0;
-            for (CloudResourceSyncItem cloudResourceSyncItem : cloudResourceSyncItems) {
-                resourceSum += cloudResourceSyncItem.getCount()==null?0:cloudResourceSyncItem.getCount();
-                if(CloudTaskConstants.TASK_STATUS.APPROVED.name().equals(cloudResourceSyncItem.getStatus())
-                        ||CloudTaskConstants.TASK_STATUS.RUNNING.name().equals(cloudResourceSyncItem.getStatus())
-                        ||CloudTaskConstants.TASK_STATUS.UNCHECKED.name().equals(cloudResourceSyncItem.getStatus())) {
-                    runningCount++;
-                }else if (CloudTaskConstants.TASK_STATUS.ERROR.name().equals(cloudResourceSyncItem.getStatus())){
-                    errorCount++;
-                } else if (CloudTaskConstants.TASK_STATUS.FINISHED.name().equals(cloudResourceSyncItem.getStatus())) {
-                    successCount++;
-                }
-            }
-            String status = CloudTaskConstants.TASK_STATUS.RUNNING.name();
-            if(cloudResourceSyncItems.size() == 0){
-                status =  CloudTaskConstants.TASK_STATUS.FINISHED.name();
-            } else if (runningCount == 0 && errorCount>0 && successCount > 0){
-                status = CloudTaskConstants.TASK_STATUS.WARNING.name();
-            } else if (runningCount == 0 && errorCount > 0) {
-                status = CloudTaskConstants.TASK_STATUS.ERROR.name();
-            }else if (runningCount == 0){
-                status =  CloudTaskConstants.TASK_STATUS.FINISHED.name();
-            }
-            CloudResourceSync cloudResourceSync1 = new CloudResourceSync();
-            cloudResourceSync1.setId(cloudResourceSync.getId());
-            cloudResourceSync1.setStatus(status);
-            cloudResourceSync1.setResourcesSum(resourceSum);
-            cloudResourceSyncMapper.updateByPrimaryKeySelective(cloudResourceSync1);
-        });
-    }
-
     /**
      * 获取同步日志
      * @param resourceSyncRequest
