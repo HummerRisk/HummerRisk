@@ -11,7 +11,7 @@
         </template>
 
         <el-row :gutter="20" class="el-row-body" v-if="listStatus === 2">
-          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in tableData"
+          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in ftableData"
                   :key="index" class="el-col el-col-su">
             <el-card :body-style="{ padding: '15px' }">
               <div style="height: 130px;">
@@ -72,6 +72,7 @@
             </el-card>
           </el-col>
         </el-row>
+        <f-table-pagination v-if="listStatus === 2" :change="search" :current-page.sync="fcurrentPage" :page-size.sync="fpageSize" :total="ftotal"/>
 
         <el-table v-if="listStatus === 1" :border="true" :stripe="true" :data="tableData" class="adjust-table table-content" @sort-change="sort"
                   @filter-change="filter" @select-all="select" @select="select">
@@ -103,8 +104,7 @@
             </template>
           </el-table-column>
         </el-table>
-
-        <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
+        <table-pagination v-if="listStatus === 1" :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
 
       </el-card>
 
@@ -284,6 +284,7 @@ import MainContainer from "../../common/components/MainContainer";
 import Container from "../../common/components/Container";
 import TableHeader from "../head/GroupTableHeader";
 import TablePagination from "../../common/pagination/TablePagination";
+import FTablePagination from "../../common/pagination/FTablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
@@ -297,6 +298,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
       Container,
       TableHeader,
       TablePagination,
+      FTablePagination,
       TableOperator,
       DialogFooter,
       SeverityType,
@@ -309,6 +311,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         },
         plugins: [],
         tableData: [],
+        ftableData: [],
         createForm: {},
         infoForm: {},
         ruleForm: [],
@@ -320,6 +323,9 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         currentPage: 1,
         pageSize: 10,
         total: 0,
+        fcurrentPage: 1,
+        fpageSize: 12,
+        ftotal: 0,
         loading: false,
         selectIds: new Set(),
         direction: 'rtl',
@@ -475,12 +481,21 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
       },
       //查询列表
       search() {
-        let url = "/rule/ruleGroup/list/" + this.currentPage + "/" + this.pageSize;
-        this.result = this.$post(url, this.condition, response => {
-          let data = response.data;
-          this.total = data.itemCount;
-          this.tableData = data.listObject;
-        });
+        if (this.listStatus === 1) {
+          let url = "/rule/ruleGroup/list/" + this.currentPage + "/" + this.pageSize;
+          this.result = this.$post(url, this.condition, response => {
+            let data = response.data;
+            this.total = data.itemCount;
+            this.tableData = data.listObject;
+          });
+        } else {
+          let url = "/rule/ruleGroup/list/" + this.fcurrentPage + "/" + this.fpageSize;
+          this.result = this.$post(url, this.condition, response => {
+            let data = response.data;
+            this.ftotal = data.itemCount;
+            this.ftableData = data.listObject;
+          });
+        }
       },
       init() {
         this.search();
@@ -520,9 +535,11 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
       },
       list() {
         this.listStatus = 1;
+        this.search();
       },
       menu() {
         this.listStatus = 2;
+        this.search();
       },
       handleCommand(command, data) {
         switch (command) {
