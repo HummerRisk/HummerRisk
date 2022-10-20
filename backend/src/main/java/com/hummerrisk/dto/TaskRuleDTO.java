@@ -5,17 +5,19 @@ package com.hummerrisk.dto;
  */
 public class TaskRuleDTO {
 
-   private RuleDTO ruleDTO;
+    private RuleDTO ruleDTO;
 
-   private ServerRuleDTO serverRuleDTO;
+    private ServerRuleDTO serverRuleDTO;
 
     private K8sRuleDTO k8sRuleDTO;
 
     private ConfigRuleDTO configRuleDTO;
 
-   private ImageRuleDTO imageRuleDTO;
+    private ImageRuleDTO imageRuleDTO;
 
     private CodeRuleDTO codeRuleDTO;
+
+    private FsRuleDTO fsRuleDTO;
 
     public RuleDTO getRuleDTO() {
         return ruleDTO;
@@ -63,5 +65,13 @@ public class TaskRuleDTO {
 
     public void setConfigRuleDTO(ConfigRuleDTO configRuleDTO) {
         this.configRuleDTO = configRuleDTO;
+    }
+
+    public FsRuleDTO getFsRuleDTO() {
+        return fsRuleDTO;
+    }
+
+    public void setFsRuleDTO(FsRuleDTO fsRuleDTO) {
+        this.fsRuleDTO = fsRuleDTO;
     }
 }

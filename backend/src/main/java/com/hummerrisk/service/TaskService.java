@@ -99,6 +99,14 @@ public class TaskService {
     private K8sService k8sService;
     @Resource
     private ConfigService configService;
+    @Resource
+    private FileSystemRuleMapper fileSystemRuleMapper;
+    @Resource
+    private FileSystemResultMapper fileSystemResultMapper;
+    @Resource
+    private FileSystemMapper fileSystemMapper;
+    @Resource
+    private FileSystemService fileSystemService;
 
 
     public List<Favorite> listFavorites() {
@@ -136,6 +144,11 @@ public class TaskService {
         codeExample.setOrderByClause("create_time desc");
         List<CodeVo> codeVos = extTaskMapper.selectCodeByExample(codeExample);
         dto.setCodeAccount(codeVos);
+        //文件
+        FileSystemExample fileSystemExample = new FileSystemExample();
+        fileSystemExample.setOrderByClause("create_time desc");
+        List<FileSystemVo> fileSystemVos = extTaskMapper.selectFsByExample(fileSystemExample);
+        dto.setFsAccount(fileSystemVos);
         //云原生
         CloudNativeExample cloudNativeExample = new CloudNativeExample();
         cloudNativeExample.setOrderByClause("create_time desc");
@@ -187,6 +200,8 @@ public class TaskService {
             allList = extTaskMapper.imageRuleList(ruleVo);
         } else if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.codeAccount.getType())) {
             allList = extTaskMapper.codeRuleList(ruleVo);
+        } else if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.fsAccount.getType())) {
+            allList = extTaskMapper.fsRuleList(ruleVo);
         }
         if (ruleVo.getAccountType() != null) allList.addAll(extTaskMapper.ruleTagList(ruleVo));
         if (ruleVo.getAccountType() != null && StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.cloudAccount.getType()))
@@ -209,6 +224,8 @@ public class TaskService {
             return extTaskMapper.configRuleList(ruleVo);
         } else if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.codeAccount.getType())) {
             return extTaskMapper.codeRuleList(ruleVo);
+        } else if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.fsAccount.getType())) {
+            return extTaskMapper.fsRuleList(ruleVo);
         }
         return new LinkedList<>();
     }
@@ -241,6 +258,8 @@ public class TaskService {
             ruleDTO.setImageRuleDTO(extTaskMapper.imageDetailRule(ruleVo));
         } else if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.codeAccount.getType())) {
             ruleDTO.setCodeRuleDTO(extTaskMapper.codeDetailRule(ruleVo));
+        } else if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.fsAccount.getType())) {
+            ruleDTO.setFsRuleDTO(extTaskMapper.fsDetailRule(ruleVo));
         }
         return ruleDTO;
     }
@@ -379,6 +398,11 @@ public class TaskService {
                     ruleId = rule.getId();
                     ruleName = rule.getName();
                     resourceId = this.codeResource(taskItem.getSourceId(), taskItem.getAccountId());
+                } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.fsAccount.getType())) {
+                    FileSystemRule rule = fileSystemRuleMapper.selectByPrimaryKey(taskItem.getSourceId());
+                    ruleId = rule.getId();
+                    ruleName = rule.getName();
+                    resourceId = this.fsResource(taskItem.getSourceId(), taskItem.getAccountId());
                 }
                 this.insertTaskItemResource(taskItem, ruleId, ruleName, resourceId);
             } else if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.tag.name())) {
@@ -455,6 +479,16 @@ public class TaskService {
                         if (resourceId == null) continue;
                         this.insertTaskItemResource(taskItem, codeRule.getId(), codeRule.getName(), resourceId);
                     }
+                } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.fsAccount.getType())) {
+                    for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
+                        FileSystemRule fileSystemRule = fileSystemRuleMapper.selectByPrimaryKey(ruleTagMapping.getRuleId());
+                        if (fileSystemRule == null) {
+                            continue;
+                        }
+                        resourceId = this.fsResource(fileSystemRule.getId(), taskItem.getAccountId());
+                        if (resourceId == null) continue;
+                        this.insertTaskItemResource(taskItem, fileSystemRule.getId(), fileSystemRule.getName(), resourceId);
+                    }
                 }
             } else if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.group.name())) {
                 String resourceId = "";
@@ -502,6 +536,12 @@ public class TaskService {
                         CodeRule codeRule = codeRuleMapper.selectByPrimaryKey(ruleGroupMapping.getRuleId());
                         resourceId = this.codeResource(codeRule.getId(), taskItem.getAccountId());
                         this.insertTaskItemResource(taskItem, codeRule.getId(), codeRule.getName(), resourceId);
+                    }
+                } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.fsAccount.getType())) {
+                    for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
+                        FileSystemRule fileSystemRule = fileSystemRuleMapper.selectByPrimaryKey(ruleGroupMapping.getRuleId());
+                        resourceId = this.fsResource(fileSystemRule.getId(), taskItem.getAccountId());
+                        this.insertTaskItemResource(taskItem, fileSystemRule.getId(), fileSystemRule.getName(), resourceId);
                     }
                 }
             }
@@ -555,6 +595,10 @@ public class TaskService {
                         CodeRule rule = codeRuleMapper.selectByPrimaryKey(taskItem.getSourceId());
                         ruleId = rule.getId();
                         resourceId = codeService.reScan(taskItemResource.getResourceId());
+                    } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.fsAccount.getType())) {
+                        FileSystemRule rule = fileSystemRuleMapper.selectByPrimaryKey(taskItem.getSourceId());
+                        ruleId = rule.getId();
+                        resourceId = fileSystemService.reScan(taskItemResource.getResourceId());
                     }
                     this.updateTaskItemResource(taskItemResource, ruleId, resourceId);
                 } else if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.tag.name())) {
@@ -644,6 +688,18 @@ public class TaskService {
                                 this.updateTaskItemResource(taskItemResource, codeRule.getId(), resourceId);
                             }
                         }
+                    } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.fsAccount.getType())) {
+                        for (RuleTagMapping ruleTagMapping : ruleTagMappings) {
+                            FileSystemResultExample fileSystemResultExample = new FileSystemResultExample();
+                            fileSystemResultExample.createCriteria().andRuleIdEqualTo(ruleTagMapping.getRuleId());
+                            List<FileSystemResult> fileSystemResults = fileSystemResultMapper.selectByExample(fileSystemResultExample);
+                            for (FileSystemResult fileSystemResult : fileSystemResults) {
+                                FileSystemRule fileSystemRule = fileSystemRuleMapper.selectByPrimaryKey(fileSystemResult.getRuleId());
+                                resourceId = fileSystemService.reScan(fileSystemRule.getId());
+                                if (resourceId == null) continue;
+                                this.updateTaskItemResource(taskItemResource, fileSystemRule.getId(), resourceId);
+                            }
+                        }
                     }
                 } else if (StringUtils.equalsIgnoreCase(ruleType, TaskConstants.RuleType.group.name())) {
                     String resourceId = "";
@@ -730,6 +786,18 @@ public class TaskService {
                                 resourceId = codeService.reScan(codeRule.getId());
                                 if (resourceId == null) continue;
                                 this.updateTaskItemResource(taskItemResource, codeRule.getId(), resourceId);
+                            }
+                        }
+                    } else if (StringUtils.equalsIgnoreCase(taskItem.getAccountType(), TaskEnum.fsAccount.getType())) {
+                        for (RuleGroupMapping ruleGroupMapping : ruleGroupMappings) {
+                            FileSystemResultExample fileSystemResultExample = new FileSystemResultExample();
+                            fileSystemResultExample.createCriteria().andRuleIdEqualTo(ruleGroupMapping.getRuleId());
+                            List<FileSystemResult> fileSystemResults = fileSystemResultMapper.selectByExample(fileSystemResultExample);
+                            for (FileSystemResult fileSystemResult : fileSystemResults) {
+                                FileSystemRule fileSystemRule = fileSystemRuleMapper.selectByPrimaryKey(fileSystemResult.getRuleId());
+                                resourceId = fileSystemService.reScan(fileSystemRule.getId());
+                                if (resourceId == null) continue;
+                                this.updateTaskItemResource(taskItemResource, fileSystemRule.getId(), resourceId);
                             }
                         }
                     }
@@ -967,6 +1035,41 @@ public class TaskService {
         return "";
     }
 
+    private String dealFsTask(FileSystemRule rule, FileSystem fileSystem, Integer scanId) {
+        try {
+            if (rule.getStatus()) {
+                FileSystemResult result = new FileSystemResult();
+                BeanUtils.copyBean(result, fileSystem);
+                result.setId(UUIDUtil.newUUID());
+                result.setFsId(fileSystem.getId());
+                result.setApplyUser(SessionUtils.getUserId());
+                result.setCreateTime(System.currentTimeMillis());
+                result.setUpdateTime(System.currentTimeMillis());
+                result.setRuleId(rule.getId());
+                result.setRuleName(rule.getName());
+                result.setRuleDesc(rule.getDescription());
+                result.setResultStatus(TaskConstants.TASK_STATUS.APPROVED.toString());
+                result.setSeverity(rule.getSeverity());
+                result.setUserName(SessionUtils.getUser().getName());
+                FileSystemResultExample fileSystemResultExample = new FileSystemResultExample();
+                fileSystemResultExample.createCriteria().andFsIdEqualTo(fileSystem.getId()).andRuleIdEqualTo(rule.getId());
+                fileSystemResultMapper.deleteByExample(fileSystemResultExample);
+                fileSystemResultMapper.insertSelective(result);
+
+                fileSystemService.saveFsResultLog(result.getId(), "i18n_start_fs_result", "", true);
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.CREATE, "i18n_start_fs_result");
+                historyService.insertScanTaskHistory(result, scanId, result.getFsId(), TaskEnum.fsAccount.getType());
+                historyService.insertHistoryFileSystemResult(BeanUtils.copyBean(new HistoryFileSystemResult(), result));
+                return result.getId();
+            } else {
+                HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
+            }
+        } catch (Exception e) {
+            HRException.throwException(e.getMessage());
+        }
+        return "";
+    }
+
     private String dealImageTask(ImageRule rule, Image image, Integer scanId) {
         try {
             if (rule.getStatus()) {
@@ -1042,6 +1145,13 @@ public class TaskService {
         Code code = codeMapper.selectByPrimaryKey(accountId);
         Integer scanId = historyService.insertScanHistory(code);
         return this.dealCodeTask(codeRule, code, scanId);
+    }
+
+    private String fsResource(String ruleId, String accountId) throws Exception {
+        FileSystemRule fsRule = fileSystemRuleMapper.selectByPrimaryKey(ruleId);
+        FileSystem fileSystem = fileSystemMapper.selectByPrimaryKey(accountId);
+        Integer scanId = historyService.insertScanHistory(fileSystem);
+        return this.dealFsTask(fsRule, fileSystem, scanId);
     }
 
     private String imageResource(String ruleId, String accountId) throws Exception {

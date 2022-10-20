@@ -279,6 +279,21 @@ public class HistoryService {
             } else {
                 score = 100 - 41;
             }
+        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.fsAccount.getType())) {
+            FileSystemResult fsResult = (FileSystemResult) task;
+            if (fsResult.getReturnSum() >= 0 && fsResult.getReturnSum() < 10) {
+                score = 100 - 5;
+            } else if (fsResult.getReturnSum() >= 10 && fsResult.getReturnSum() < 50) {
+                score = 100 - 10;
+            } else if (fsResult.getReturnSum() >= 50 && fsResult.getReturnSum() < 100) {
+                score = 100 - 20;
+            } else if (fsResult.getReturnSum() >= 100 && fsResult.getReturnSum() < 200) {
+                score = 100 - 30;
+            } else if (fsResult.getReturnSum() >= 200 && fsResult.getReturnSum() < 500) {
+                score = 100 - 40;
+            } else {
+                score = 100 - 41;
+            }
         } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.k8sAccount.getType())) {
             CloudNativeResult cloudNativeResult = (CloudNativeResult) task;
             if (cloudNativeResult.getReturnSum() >= 0 && cloudNativeResult.getReturnSum() < 10) {

@@ -210,6 +210,37 @@
         </if>
     </select>
 
+    <resultMap id="FsBaseResultMap" type="com.hummerrisk.controller.request.task.FileSystemVo">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="size" jdbcType="VARCHAR" property="size" />
+        <result column="path" jdbcType="VARCHAR" property="path" />
+        <result column="dir" jdbcType="VARCHAR" property="dir" />
+        <result column="sbom_id" jdbcType="VARCHAR" property="sbomId" />
+        <result column="sbom_version_id" jdbcType="VARCHAR" property="sbomVersionId" />
+        <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
+        <result column="favour" jdbcType="BOOLEAN" property="favour" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+    </resultMap>
+
+    <select id="selectFsByExample" parameterType="com.hummerrisk.base.domain.FileSystemExample" resultMap="FsBaseResultMap">
+        select t.*, (f.id is null) as favour, 'fsAccount' as type
+        from file_system t
+        left join favorite f on t.id = f.source_id
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
     <resultMap id="K8sBaseResultMap" type="com.hummerrisk.controller.request.task.K8sVo">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
@@ -414,6 +445,26 @@
         order by t.last_modified desc
     </select>
 
+    <select id="fsRuleList" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.controller.request.task.RuleVo">
+        select
+        t.id as sourceId,
+        'rule' as ruleType,
+        t.name as ruleName,
+        t.description as ruleDesc,
+        'fs.png' as icon,
+        t.severity,
+        (select id from file_system where id = #{accountId}) as accountId,
+        (select name from file_system where id = #{accountId}) as accountName,
+        'fsAccount' as accountType
+        from file_system_rule t
+        <where>
+            <if test="ruleName != null">
+                AND t.name like CONCAT('%', #{ruleName},'%')
+            </if>
+        </where>
+        order by t.last_modified desc
+    </select>
+
     <select id="ruleTagList" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.controller.request.task.RuleVo">
         select
         t.tag_key as sourceId,
@@ -443,6 +494,9 @@
             <if test="accountType != null and accountType == 'codeAccount'">
                 select id from code where id = #{accountId}
             </if>
+            <if test="accountType != null and accountType == 'fsAccount'">
+                select id from file_system where id = #{accountId}
+            </if>
             ) as accountId,
         </if>
         <if test="accountType != null">
@@ -457,16 +511,19 @@
                 select name from server where id = #{accountId}
             </if>
             <if test="accountType != null and accountType == 'k8sAccount'">
-                select id from cloud_native where id = #{accountId}
+                select name from cloud_native where id = #{accountId}
             </if>
             <if test="accountType != null and accountType == 'configAccount'">
-                select id from cloud_native_config where id = #{accountId}
+                select name from cloud_native_config where id = #{accountId}
             </if>
             <if test="accountType != null and accountType == 'imageAccount'">
                 select name from image where id = #{accountId}
             </if>
             <if test="accountType != null and accountType == 'codeAccount'">
                 select name from code where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'fsAccount'">
+                select name from file_system where id = #{accountId}
             </if>
             ) as accountName,
         </if>
@@ -492,6 +549,9 @@
             </if>
             <if test="accountType != null and accountType == 'codeAccount'">
                 'codeAccount'
+            </if>
+            <if test="accountType != null and accountType == 'fsAccount'">
+                'fsAccount'
             </if>
         ) as accountType,
         </if>
@@ -534,6 +594,9 @@
             <if test="accountType != null and accountType == 'codeAccount'">
                 select id from code where id = #{accountId}
             </if>
+            <if test="accountType != null and accountType == 'fsAccount'">
+                select id from file_system where id = #{accountId}
+            </if>
             ) as accountId,
         </if>
         <if test="accountType != null">
@@ -548,16 +611,19 @@
                 select name from server where id = #{accountId}
             </if>
             <if test="accountType != null and accountType == 'k8sAccount'">
-                select id from cloud_native where id = #{accountId}
+                select name from cloud_native where id = #{accountId}
             </if>
             <if test="accountType != null and accountType == 'configAccount'">
-                select id from cloud_native_config where id = #{accountId}
+                select name from cloud_native_config where id = #{accountId}
             </if>
             <if test="accountType != null and accountType == 'imageAccount'">
                 select name from image where id = #{accountId}
             </if>
             <if test="accountType != null and accountType == 'codeAccount'">
                 select name from code where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'fsAccount'">
+                select name from file_system where id = #{accountId}
             </if>
             ) as accountName,
         </if>
@@ -583,6 +649,9 @@
             </if>
             <if test="accountType != null and accountType == 'codeAccount'">
                 'codeAccount'
+            </if>
+            <if test="accountType != null and accountType == 'fsAccount'">
+                'fsAccount'
             </if>
             ) as accountType,
         </if>
@@ -725,6 +794,24 @@
         t1.tag_key as tagKey,
         t2.tag_name as tagName
         FROM code_rule t
+        left join rule_tag_mapping t1 on t1.rule_id = t.id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+        ORDER BY t.last_modified desc
+    </select>
+
+    <select id="fsDetailRule" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.dto.FsRuleDTO">
+        SELECT
+        t.*,
+        'fs.png' as pluginIcon,
+        t1.tag_key as tagKey,
+        t2.tag_name as tagName
+        FROM file_system_rule t
         left join rule_tag_mapping t1 on t1.rule_id = t.id
         left join rule_tag t2 on t1.tag_key = t2.tag_key
 
@@ -892,6 +979,32 @@
             </if>
         </where>
 
+        UNION ALL
+
+        SELECT
+        DISTINCT
+        t2.id,
+        t2.name,
+        t2.status,
+        t2.severity,
+        t2.description,
+        t2.parameter,
+        t2.last_modified as lastModified,
+        t2.flag,
+        t2.script
+        FROM rule_tag t
+        left join rule_tag_mapping t1 on t.tag_key = t1.tag_key
+        join file_system_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.tag_key = #{sourceId}
+            </if>
+            <if test="accountType != null and accountType != 'fsAccount'">
+                AND t.tag_key = 'fsAccount'
+            </if>
+        </where>
+
     </select>
 
     <select id="detailGroup" parameterType="com.hummerrisk.controller.request.task.RuleVo" resultType="com.hummerrisk.dto.TaskTagGroupDTO">
@@ -978,6 +1091,27 @@
         FROM rule_group t
         left join rule_group_mapping t1 on t.id = t1.group_id
         join code_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+
+        SELECT
+        DISTINCT
+        t2.id,
+        t2.name,
+        t2.status,
+        t2.severity,
+        t2.description,
+        t2.parameter,
+        t2.last_modified as lastModified,
+        t2.flag,
+        t2.script
+        FROM rule_group t
+        left join rule_group_mapping t1 on t.id = t1.group_id
+        join file_system_rule t2 on t1.rule_id = t2.id
 
         <where>
             <if test="sourceId != null">
@@ -1086,6 +1220,17 @@
                'code.png' as icon
         FROM history_code_result t
         WHERE t.id = #{resource_id}
+
+        UNION ALL
+
+        SELECT t.id,
+               t.name as name,
+               t.rule_desc as 'desc',
+                t.result_status as status,
+               t.severity,
+               'fs.png' as icon
+        FROM history_file_system_result t
+        WHERE t.id = #{resource_id}
     </select>
 
     <select id="getTaskItemResourceLogList" resultType="com.hummerrisk.base.domain.TaskItemResourceLog" parameterType="java.lang.String">
@@ -1115,6 +1260,8 @@
         <collection property="historyImageReportDTOList" ofType="com.hummerrisk.dto.HistoryImageReportDTO" javaType="list" select="getHistoryImageReportDTOList" column="id">
         </collection>
         <collection property="historyCodeReportDTOList" ofType="com.hummerrisk.dto.HistoryCodeReportDTO" javaType="list" select="getHistoryCodeReportDTOList" column="id">
+        </collection>
+        <collection property="historyFsReportDTOList" ofType="com.hummerrisk.dto.HistoryCodeReportDTO" javaType="list" select="getHistoryFsReportDTOList" column="id">
         </collection>
     </resultMap>
 
@@ -1227,6 +1374,25 @@
         SELECT t.*
         FROM code_result_item t
                  JOIN history_code_result t1 on t1.id = t.result_id
+        WHERE t1.id = #{id}
+    </select>
+
+    <resultMap id="HistoryFsReportDTOMap" type="com.hummerrisk.dto.HistoryFsReportDTO" extends="com.hummerrisk.base.mapper.HistoryFileSystemResultMapper.BaseResultMap">
+        <collection property="fsResultItemList" ofType="com.hummerrisk.base.domain.FileSystemResultItemWithBLOBs" javaType="list" select="getFsResultItemList" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="getHistoryFsReportDTOList" resultMap="HistoryFsReportDTOMap" parameterType="java.lang.String">
+        SELECT t.*
+        FROM history_file_system_result t
+                 JOIN file_system_item_resource t1 on t1.resource_id = t.id
+        WHERE t1.task_id = #{id}
+    </select>
+
+    <select id="getFsResultItemList" resultType="com.hummerrisk.base.domain.FileSystemResultItemWithBLOBs" parameterType="java.lang.String">
+        SELECT t.*
+        FROM file_system_result_item t
+                 JOIN history_file_system_result t1 on t1.id = t.result_id
         WHERE t1.id = #{id}
     </select>
 

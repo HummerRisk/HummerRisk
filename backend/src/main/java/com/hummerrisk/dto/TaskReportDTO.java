@@ -12,15 +12,17 @@ public class TaskReportDTO extends Task {
 
     private List<HistoryResourceReportDTO> historyCloudResourceReportDTOList;//云账号检测结果details
 
-    private List<HistoryVulnTaskDTO> historyVulnTaskDTOList;//漏洞检测结果table
+    private List<HistoryVulnTaskDTO> historyVulnTaskDTOList;//漏洞检测结果details
 
     private List<HistoryResourceReportDTO> historyVulnResourceReportDTOList;//漏洞检测结果details
 
-    private List<HistoryServerResult> historyServerResultList;//主机检测结果table
+    private List<HistoryServerResult> historyServerResultList;//主机检测结果details
 
     private List<HistoryImageReportDTO> historyImageReportDTOList;//镜像检测结果details
 
-    private List<HistoryCodeReportDTO> historyCodeReportDTOList;//软件包检测结果details
+    private List<HistoryCodeReportDTO> historyCodeReportDTOList;//源码检测结果details
+
+    private List<HistoryFsReportDTO> historyFsReportDTOList;//文件检测结果details
 
     public List<HistoryCloudTaskDTO> getHistoryCloudTaskDTOList() {
         return historyCloudTaskDTOList;
@@ -78,4 +80,11 @@ public class TaskReportDTO extends Task {
         this.historyImageReportDTOList = historyImageReportDTOList;
     }
 
+    public List<HistoryFsReportDTO> getHistoryFsReportDTOList() {
+        return historyFsReportDTOList;
+    }
+
+    public void setHistoryFsReportDTOList(List<HistoryFsReportDTO> historyFsReportDTOList) {
+        this.historyFsReportDTOList = historyFsReportDTOList;
+    }
 }

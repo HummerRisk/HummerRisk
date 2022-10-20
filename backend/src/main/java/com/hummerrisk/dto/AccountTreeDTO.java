@@ -21,6 +21,8 @@ public class AccountTreeDTO {
 
     private List<ConfigVo> configAccount;
 
+    private List<FileSystemVo> fsAccount;
+
     public List<AccountVo> getCloudAccount() {
         return cloudAccount;
     }
@@ -75,5 +77,13 @@ public class AccountTreeDTO {
 
     public void setConfigAccount(List<ConfigVo> configAccount) {
         this.configAccount = configAccount;
+    }
+
+    public List<FileSystemVo> getFsAccount() {
+        return fsAccount;
+    }
+
+    public void setFsAccount(List<FileSystemVo> fsAccount) {
+        this.fsAccount = fsAccount;
     }
 }

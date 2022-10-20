@@ -113,6 +113,8 @@ public class ResourceCreateService {
     private CloudResourceSyncItemMapper cloudResourceSyncItemMapper;
     @Resource
     private CloudResourceSyncMapper cloudResourceSyncMapper;
+    @Resource
+    private HistoryFileSystemResultMapper historyFileSystemResultMapper;
 
     @QuartzScheduled(cron = "${cron.expression.local}")
     public void handleTasks() throws Exception {
@@ -426,6 +428,16 @@ public class ResourceCreateService {
                         historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), codeResult, TaskEnum.codeAccount.getType()));
                         historyService.updateScanTaskHistory(historyScanTask);
                     }
+                }  else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.fsAccount.getType())) {
+                    FileSystemResult fileSystemResult = fileSystemResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                    if (fileSystemResult != null && historyScanStatus.contains(fileSystemResult.getResultStatus())) {
+                        historyScanTask.setStatus(fileSystemResult.getResultStatus());
+                        historyScanTask.setOutput(jsonArray.toJSONString());
+                        historyScanTask.setResourcesSum(fileSystemResult.getReturnSum()!=null? fileSystemResult.getReturnSum():0);
+                        historyScanTask.setReturnSum(fileSystemResult.getReturnSum()!=null? fileSystemResult.getReturnSum():0);
+                        historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), fileSystemResult, TaskEnum.fsAccount.getType()));
+                        historyService.updateScanTaskHistory(historyScanTask);
+                    }
                 } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.k8sAccount.getType())) {
                     CloudNativeResult cloudNativeResult = cloudNativeResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
                     if (cloudNativeResult != null && historyScanStatus.contains(cloudNativeResult.getResultStatus())) {
@@ -515,6 +527,11 @@ public class ResourceCreateService {
                         HistoryCodeResultExample example = new HistoryCodeResultExample();
                         example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
                         n = historyCodeResultMapper.countByExample(example);
+                        i = i + n;
+                    } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.fsAccount.getType())) {
+                        HistoryFileSystemResultExample example = new HistoryFileSystemResultExample();
+                        example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
+                        n = historyFileSystemResultMapper.countByExample(example);
                         i = i + n;
                     }
                     if (n > 0) {//任务结束时插入结束日志，但是只保留一条
