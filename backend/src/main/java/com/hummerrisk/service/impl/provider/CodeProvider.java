@@ -22,7 +22,7 @@ public class CodeProvider implements IProvider {
         return name;
     }
 
-    public String execute(Object... obj) {
+    public String execute(Object... obj) throws Exception {
         Code code = (Code) obj[0];
         try {
             Proxy proxy;
@@ -58,7 +58,7 @@ public class CodeProvider implements IProvider {
             }
             return resultStr;
         } catch (Exception e) {
-            return "";
+            throw e;
         }
     }
 

@@ -189,7 +189,7 @@ public class ServerService {
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             serverResultMapper.updateByPrimaryKeySelective(result);
             historyService.updateHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
-            saveServerResultLog(result.getId(), "i18n_operation_ex" + ": " + StringUtils.substring(e.getMessage(), 0, 900) + "...", e.getMessage(), false);
+            saveServerResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
         }
     }
 

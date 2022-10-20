@@ -512,7 +512,7 @@ public class ImageService {
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             imageResultMapper.updateByPrimaryKeySelective(result);
             historyService.updateHistoryImageResult(BeanUtils.copyBean(new HistoryImageResultWithBLOBs(), result));
-            saveImageResultLog(result.getId(), "i18n_operation_ex" + ": " + StringUtils.substring(e.getMessage(), 0, 900) + "...", e.getMessage(), false);
+            saveImageResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
         }
     }
 

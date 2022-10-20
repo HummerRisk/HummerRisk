@@ -398,7 +398,7 @@ public class FileSystemService {
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             fileSystemResultMapper.updateByPrimaryKeySelective(result);
             historyService.updateHistoryFileSystemResult(BeanUtils.copyBean(new HistoryFileSystemResult(), result));
-            saveFsResultLog(result.getId(), "i18n_operation_ex" + ": " + StringUtils.substring(e.getMessage(), 0, 900) + "...", e.getMessage(), false);
+            saveFsResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
         }
     }
 

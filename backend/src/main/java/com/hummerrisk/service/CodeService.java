@@ -358,7 +358,7 @@ public class CodeService {
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             codeResultMapper.updateByPrimaryKeySelective(result);
             historyService.updateHistoryCodeResult(BeanUtils.copyBean(new HistoryCodeResult(), result));
-            saveCodeResultLog(result.getId(), "i18n_operation_ex" + ": " + StringUtils.substring(e.getMessage(), 0, 900) + "...", e.getMessage(), false);
+            saveCodeResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
         }
     }
 

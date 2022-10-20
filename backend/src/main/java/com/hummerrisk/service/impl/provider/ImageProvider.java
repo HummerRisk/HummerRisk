@@ -21,7 +21,7 @@ public class ImageProvider implements IProvider {
         return name;
     }
 
-    public String execute(Object... obj) {
+    public String execute(Object... obj) throws Exception {
         Image image = (Image) obj[0];
         try {
             String _proxy = "";
@@ -53,11 +53,11 @@ public class ImageProvider implements IProvider {
             }
             return resultStr;
         } catch (Exception e) {
-            return "";
+            throw e;
         }
     }
 
-    public String dockerLogin(Object obj) {
+    public String dockerLogin(Object obj) throws Exception {
         try {
             ImageRepo imageRepo = (ImageRepo) obj;
             String repo = imageRepo.getRepo().replace("https://", "").replace("http://", "");
@@ -73,7 +73,7 @@ public class ImageProvider implements IProvider {
             String resultStr = CommandUtils.commonExecCmdWithResult(dockerLogin, ImageConstants.DEFAULT_BASE_DIR);
             return resultStr;
         } catch (Exception e) {
-            return "";
+            throw e;
         }
     }
 

@@ -4,8 +4,8 @@ public interface IProvider {
 
     String getName();
 
-    String execute(Object ...obj);
+    String execute(Object ...obj) throws Exception;
 
-    String dockerLogin(Object obj);
+    String dockerLogin(Object obj) throws Exception;
 
 }
