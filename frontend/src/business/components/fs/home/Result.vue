@@ -80,13 +80,13 @@
                   <img :src="require(`@/assets/img/fs/fs.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ logForm.name }}
                 </span>
-                <span class="grid-content-status-span" v-if="logForm.resultStatus === 'APPROVED'" style="color: #579df8">
+                <span class="grid-content-status-span-approved" v-if="logForm.resultStatus === 'APPROVED'">
                   <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                 </span>
-                <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'FINISHED'" style="color: #7ebf50">
+                <span class="grid-content-status-span-finished" v-else-if="logForm.resultStatus === 'FINISHED'">
                   <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
                 </span>
-                <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'ERROR'" style="color: red;">
+                <span class="grid-content-status-span-error" v-else-if="logForm.resultStatus === 'ERROR'">
                   <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
                 </span>
               </div>
@@ -107,134 +107,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <div style="margin: 10px;" v-if="logForm.returnJson">
-          <h2>Summary:&nbsp;</h2>
-          <ul style="margin-left: 60px;">
-            <li><i>Scan Name</i>: {{ logForm.name }}</li>
-            <li><i>Scan User</i>:&nbsp;{{ logForm.userName }}</li>
-            <li><i>ArtifactType</i>:&nbsp;{{ logForm.returnJson.ArtifactType }}</li>
-            <li><i>ArtifactName</i>:&nbsp;{{ logForm.returnJson.ArtifactName }}</li>
-            <li><i>SchemaVersion</i>:&nbsp;{{ logForm.returnJson.SchemaVersion }}</li>
-            <li><i>Architecture</i>:&nbsp;{{ logForm.returnJson.Metadata.ImageConfig?logForm.returnJson.Metadata.ImageConfig.architecture:'N/A' }}</li>
-            <li><i>Create Time</i>:&nbsp;{{ logForm.createTime | timestampFormatDate }}</li>
-            <li><i>Result Status</i>:&nbsp;{{ logForm.resultStatus }}</li>
-            <li><i>Vulnerabilities Found</i>: {{ logForm.returnSum }}</li>
-          </ul>
-        </div>
-        <div style="margin: 10px;" v-if="logForm.returnJson">
-          <div style="margin: 10px 0 0 0;">
-            <h2>Details:&nbsp;</h2>
-            <div style="margin: 10px 0 0 0;">
-              <div style="margin: 10px 0 0 0;" :key="index" v-for="(result, index) in logForm.returnJson.Results">
-                <div style="margin: 10px;" v-if="result">
-                  <h3>Summary:&nbsp;</h3>
-                  <ul style="margin-left: 60px;">
-                    <li><i>Target</i>: {{ result.Target }}</li>
-                    <li><i>Class</i>:&nbsp;{{ result.Class }}</li>
-                    <li><i>Type</i>:&nbsp;{{ result.Type }}</li>
-                  </ul>
-                </div>
-                <div style="margin: 10px 0 0 0;" :key="index" v-for="(vulnerability, index) in result.Vulnerabilities">
-                  <el-card v-bind:class="{ 'box-card box-card-critical': vulnerability.Severity === 'CRITICAL',
-                   'box-card box-card-high': vulnerability.Severity === 'HIGH',
-                   'box-card box-card-medium': vulnerability.Severity === 'MEDIUM',
-                   'box-card box-card-low': vulnerability.Severity === 'LOW',
-                   'box-card box-card-unknown': vulnerability.Severity === 'UNKNOWN' }">
-                    <div slot="header" class="clearfix">
-                      <el-row>
-                        <el-col v-bind:class="{ 'icon-title box-critical': vulnerability.Severity === 'CRITICAL',
-                                'icon-title box-high': vulnerability.Severity === 'HIGH',
-                                'icon-title box-medium': vulnerability.Severity === 'MEDIUM',
-                                'icon-title box-low': vulnerability.Severity === 'LOW',
-                                'icon-title box-unknown': vulnerability.Severity === 'UNKNOWN' }"
-                                :span="3">
-                          <span>{{ vulnerability.Severity.substring(0, 1) }}</span>
-                        </el-col>
-                        <el-col :span="15" style="margin: -7px 0 0 15px;">
-                          <span style="font-size: 24px;font-weight: 500;">{{ vulnerability.Title }}</span>
-                        </el-col>
-                        <el-col :span="6" style="float: right;">
-                          <span style="font-size: 20px;color: #999;float: right;">{{ 'SEVERITY SOURCE' }}</span>
-                        </el-col>
-                      </el-row>
-                      <el-row style="font-size: 18px;padding: 10px;">
-                        <el-col :span="20">
-                          <span style="margin: 5px;"><a :href="vulnerability.PrimaryURL">{{ vulnerability.VulnerabilityID }}</a></span>
-                          <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                          <span style="margin: 5px;">
-                            <el-button v-bind:class="{ 'box-critical': vulnerability.Severity === 'CRITICAL',
-                              'box-high': vulnerability.Severity === 'HIGH',
-                              'box-medium': vulnerability.Severity === 'MEDIUM', 'box-low': vulnerability.Severity === 'LOW',
-                              'box-unknown': vulnerability.Severity === 'UNKNOWN' }" size="mini">{{ vulnerability.Severity }}
-                            </el-button>
-                          </span>
-                          <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                          <span style="color: #888;margin: 5px;">INSTALLED VERSION: {{ vulnerability.InstalledVersion }}</span>
-                          <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                          <span style="color: #444;margin: 5px;">PkgName: {{ vulnerability.PkgName }}</span>
-                        </el-col>
-                        <el-col :span="4" style="float: right;">
-                          <span style="font-size: 20px;color: #000;float: right;">{{ vulnerability.SeveritySource }}</span>
-                        </el-col>
-                      </el-row>
-                    </div>
-                    <div class="text item div-desc">
-                      <el-row>
-                        <span style="color: red;"><i class="el-icon-s-opportunity"></i>PrimaryURL:</span> &nbsp;{{ vulnerability.PrimaryURL }}
-                      </el-row>
-                      <el-row>
-                        <span style="color: red;">Description:</span> {{ vulnerability.Description }}
-                      </el-row>
-                      <el-row>
-                        <span style="color: red;">PublishedDate:</span> {{ vulnerability.PublishedDate }}
-                      </el-row>
-                      <el-row>
-                        <span style="color: red;">LastModifiedDate:</span> {{ vulnerability.LastModifiedDate }}
-                      </el-row>
-                      <el-row>
-                        <span style="color: red;">FixedVersion:</span> {{ vulnerability.FixedVersion }}
-                      </el-row>
-                      <el-row>
-                        <span style="color: red;">DataSource:</span> {{ vulnerability.DataSource.ID }} | {{ vulnerability.DataSource.Name }} | {{ vulnerability.DataSource.URL }}
-                      </el-row>
-                    </div>
-                    <div class="text div-json">
-                      <el-descriptions title="Layer" :column="2">
-                        <el-descriptions-item v-for="(vuln, index) in filterJson(vulnerability.Layer)" :key="index" :label="vuln.key">
-                          <span v-if="!vuln.flag" show-overflow-tooltip>
-                            <el-tooltip class="item" effect="dark" :content="JSON.stringify(vuln.value)" placement="top-start">
-                              <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
-                            </el-tooltip>
-                          </span>
-                          <el-tooltip v-if="vuln.flag && vuln.value" class="item" effect="light" :content="typeof(vuln.value) === 'boolean'?vuln.value.toString():vuln.value" placement="top-start">
-                            <span class="table-expand-span-value">
-                                {{ vuln.value }}
-                            </span>
-                          </el-tooltip>
-                          <span v-if="vuln.flag && !vuln.value"> N/A</span>
-                        </el-descriptions-item>
-                      </el-descriptions>
-                    </div>
-                    <div class="text div-json">
-                      <el-descriptions title="CweIDs" :column="2">
-                        <el-descriptions-item v-for="(CweID, index) in vulnerability.CweIDs" :key="index" :label="index">
-                          <span> {{ CweID }}</span>
-                        </el-descriptions-item>
-                      </el-descriptions>
-                    </div>
-                    <div class="text div-json">
-                      <el-descriptions title="References" :column="2">
-                        <el-descriptions-item v-for="(Reference, index) in vulnerability.References" :key="index" :label="index">
-                          <span> {{ Reference }}</span>
-                        </el-descriptions-item>
-                      </el-descriptions>
-                    </div>
-                  </el-card>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <log-form :logForm="logForm"/>
       </el-row>
       <template v-slot:footer>
         <dialog-footer
@@ -259,6 +132,7 @@ import {_filter, _sort} from "@/common/js/utils";
 import {FS_RESULT_CONFIGS} from "../../common/components/search/search-components";
 import {saveAs} from "@/common/js/FileSaver";
 import {severityOptions} from "@/common/js/constants";
+import LogForm from "@/business/components/fs/home/LogForm";
 
 /* eslint-disable */
 export default {
@@ -270,6 +144,7 @@ export default {
     TablePagination,
     TableOperator,
     DialogFooter,
+    LogForm,
   },
   data() {
     return {
@@ -319,8 +194,6 @@ export default {
         indentWithTabs: true,
         location: "",
       },
-      activeNames: ['1','2','3','4','5','6','7','8','9'],
-      filterJson: this.filterJsonKeyAndValue,
     }
   },
 
@@ -455,40 +328,6 @@ export default {
         }).catch(error => error);
       }
     },
-    filterJsonKeyAndValue(json) {
-      //json is json object , not array -- harris
-      let list = json;
-      if(typeof json === 'object') {
-        list = json;
-      } else {
-        list = JSON.parse(json);
-      }
-
-      let jsonKeyAndValue = [];
-
-      for (let item in list) {
-        let flag = true;
-        let value = list[item];
-        //string && boolean的值直接显示, object是[{}]
-        if (typeof (value) === 'number') {
-          value = String(value);
-        }
-        if (typeof (value) === 'object') {
-          if (value !== null && JSON.stringify(value) !== '[]' && JSON.stringify(value) !== '{}') {
-            flag = false;
-          }
-          if (JSON.stringify(value) === '[]' || JSON.stringify(value) === '{}') {
-            value = "";
-          }
-        }
-
-        if (item.indexOf('$$') === -1 && item !== 'show') {
-          let map = {key: item, value: value, flag: flag};
-          jsonKeyAndValue.push(map);
-        }
-      }
-      return jsonKeyAndValue;
-    },
     handleDownload(item) {
       this.$post("/fs/download", {
         id: item.id
@@ -528,23 +367,6 @@ export default {
 .el-form-item-dev  >>> .el-form-item__content {
   margin-left: 0 !important;
 }
-.demo-table-expand {
-  font-size: 0;
-}
-.demo-table-expand label {
-  width: 90px;
-  color: #99a9bf;
-}
-.demo-table-expand .el-form-item {
-  margin-right: 0;
-  margin-bottom: 0;
-  padding: 10px 10%;
-  width: 47%;
-}
-.tag-v{
-  margin: 10px;
-  cursor:pointer;
-}
 .rtl >>> .el-drawer__body {
   overflow-y: auto;
   padding: 20px;
@@ -558,12 +380,6 @@ export default {
 .rtl >>> .el-form-item__content {
   width: 75%;
 }
-.bg-purple-dark {
-  background: #99a9bf;
-}
-.bg-purple {
-  background: #d3dce6;
-}
 .bg-purple-light {
   background: #f2f2f2;
 }
@@ -571,162 +387,47 @@ export default {
   border-radius: 4px;
   min-height: 36px;
 }
-.el-form-item-dev  >>> .el-form-item__content {
-  margin-left: 0 !important;
-}
-
 .grid-content-log-span {
-  width: 39%;
+  width: 34%;
   float: left;
   vertical-align: middle;
   display:table-cell;
   margin: 6px 0 6px 2px;
   color: #606266;
+  padding: 0 1%;
 }
-
+.grid-content-status-span-approved{
+  width: 20%;
+  float: right;
+  vertical-align: middle;
+  display:table-cell;
+  margin: 6px 0;
+  padding: 0 1%;
+  color: #579df8;
+}
+.grid-content-status-span-finished{
+  width: 20%;
+  float: right;
+  vertical-align: middle;
+  display:table-cell;
+  margin: 6px 0;
+  padding: 0 1%;
+  color: #7ebf50
+}
+.grid-content-status-span-error{
+  width: 20%;
+  float: right;
+  vertical-align: middle;
+  display:table-cell;
+  margin: 6px 0;
+  padding: 0 1%;
+  color: red;
+}
 .grid-content-status-span {
   width: 20%;float: left;
   vertical-align: middle;
   display:table-cell;
   margin: 6px 0;
-}
-.pure-span {
-  color: #606266;
-  margin: 10px 0;
-}
-
-.demo-table-expand {
-  font-size: 0;
-}
-.demo-table-expand label {
-  width: 90px;
-  color: #99a9bf;
-}
-.demo-table-expand .el-form-item {
-  margin-right: 0;
-  margin-bottom: 0;
-  padding: 10px 2%;
-  width: 46%;
-}
-.div-desc {
-  background-color: #ecebf5;
-  color: blueviolet;
-  padding: 15px;
-}
-
-.div-json {
-  padding: 15px;
-}
-.box-card >>> .el-card__header {
-  background-color: aliceblue;
-}
-.box-card {
-  width: 99%;
-  border-top-width: 5px;
-}
-.box-card-critical {
-  border-top-color: #8B0000;
-}
-.box-card-high {
-  border-top-color: #FF4D4D;
-}
-.box-card-medium {
-  border-top-color: #FF8000;
-}
-.box-card-low {
-  border-top-color: #336D9F;
-}
-.box-card-unknown {
-  border-top-color: #67C23A;
-}
-.box-critical {
-  color: #ffffff;
-  background-color: #8B0000;
-}
-.box-high {
-  color: #ffffff;
-  background-color: #FF4D4D;
-}
-.box-medium {
-  color: #ffffff;
-  background-color: #FF8000;
-}
-.box-low {
-  color: #ffffff;
-  background-color: #336D9F;
-}
-.box-unknown {
-  color: #ffffff;
-  background-color: #67C23A;
-}
-.icon-title {
-  color: #fff;
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
-  text-align: center;
-  border-radius: 30px;
-  font-size: 14px;
-  margin: -7px 0 0 15px;
-}
-.el-card >>> .diy-con-name {
-  margin: 8px 3px;
-}
-
-.el-card >>> .diy-con-content {
-  margin: 8px 3px;
-}
-
-.el-card >>> .diy-con-left {
-  text-align: left;
-  color: tomato;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  font-size: 14px;
-}
-
-.el-card >>> .diy-con-right {
-  text-align: right;
-  color: #888888;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  font-size: 12px;
-}
-
-.el-card >>> .diy-con-right-cve {
-  text-align: right;
-  color: #32CD32;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  cursor:pointer;
-  font-size: 12px;
-}
-.el-card >>> .label-class-blue {
-  color: #1989fa;
-}
-.el-card >>> .label-bg-blue {
-  background: #1989fa;
-  color: #fff;
-}
-.el-card >>> .diy-wrapper {
-  padding:10px
-}
-.el-card >>> .no-padding {
-  padding: 0 !important;
-}
-.diy-wrapper >>> .left-child {
-  border: 1px solid red;
-}
-.el-card >>> .org-chart-node-label-inner {
-  border-style: solid;
-  border-left-color: #ff0000;
-  border-left-width: 5px;
-  border-right-color:#fff;
-  border-top-color:#fff;
-  border-bottom-color:#fff;
 }
 * { touch-action: pan-y; }
 /deep/ :focus{outline:0;}
