@@ -1191,7 +1191,7 @@ export default {
     gen_report: '生成报告',
     download_report: '下载报告',
     no_selected_task: '没有选择需要下载报告的任务，请选择任务!',
-    report_desc: 'HummerRisk 是开源的安全检测平台，全面支持云原生，实现对主流公(私)有云资源的安全合规检测、网络漏洞检测、主机安全检测、软件依赖检测、容器镜像检测，支持 Cloud Custodian、Prowler、Nuclei、 Xray 、 Dependency Check 、 Grype 和 Syft 等多种检测引擎，全面满足日常的安全合规检测需要。',
+    report_desc: 'HummerRisk 是开源的云原生安全平台，以非侵入的方式解决云原生的安全和治理问题。核心能力包括混合云的安全治理和K8S容器云安全检测。全面支持云原生，满足日常的安全需要。',
     filter_okr: '输入关键字进行过滤',
   },
   proxy: {

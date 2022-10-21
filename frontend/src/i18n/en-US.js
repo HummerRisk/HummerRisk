@@ -1191,7 +1191,7 @@ export default {
     gen_report: 'Generate report',
     download_report: 'Download report',
     no_selected_task: 'There is no task selected to download the report, please select a task!',
-    report_desc: 'HummerRisk is an open-source security detection platform that fully supports cloud native, and implements security compliance detection, network vulnerability detection, host security detection, software dependency detection, and container image detection for mainstream public (private) cloud resources. Various detection engines such as Cloud Custodian, Prowler, Nuclei, Xray, Dependency Check, Grype and Syft fully meet the needs of daily security compliance detection. ',
+    report_desc: 'HummerRisk is an open source cloud-native security platform that addresses cloud-native security and governance issues in a non-intrusive way. Core capabilities include hybrid cloud security governance and K8S container cloud security detection. Fully supports cloud native to meet daily security needs.',
     filter_okr: 'Enter keywords to filter',
   },
   proxy: {

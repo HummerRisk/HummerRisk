@@ -22,6 +22,10 @@ public class TaskReportDTO extends Task {
 
     private List<HistoryCodeReportDTO> historyCodeReportDTOList;//源码检测结果details
 
+    private List<HistoryConfigReportDTO> historyConfigReportDTOList;//部署检测结果details
+
+    private List<HistoryK8sReportDTO> historyK8sReportDTOList;//K8s检测结果details
+
     private List<HistoryFsReportDTO> historyFsReportDTOList;//文件检测结果details
 
     public List<HistoryCloudTaskDTO> getHistoryCloudTaskDTOList() {
@@ -86,5 +90,21 @@ public class TaskReportDTO extends Task {
 
     public void setHistoryFsReportDTOList(List<HistoryFsReportDTO> historyFsReportDTOList) {
         this.historyFsReportDTOList = historyFsReportDTOList;
+    }
+
+    public List<HistoryConfigReportDTO> getHistoryConfigReportDTOList() {
+        return historyConfigReportDTOList;
+    }
+
+    public void setHistoryConfigReportDTOList(List<HistoryConfigReportDTO> historyConfigReportDTOList) {
+        this.historyConfigReportDTOList = historyConfigReportDTOList;
+    }
+
+    public List<HistoryK8sReportDTO> getHistoryK8sReportDTOList() {
+        return historyK8sReportDTOList;
+    }
+
+    public void setHistoryK8sReportDTOList(List<HistoryK8sReportDTO> historyK8sReportDTOList) {
+        this.historyK8sReportDTOList = historyK8sReportDTOList;
     }
 }

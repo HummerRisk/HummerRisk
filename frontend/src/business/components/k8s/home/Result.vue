@@ -133,7 +133,7 @@ import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import {K8S_RESULT_CONFIGS} from "../../common/components/search/search-components";
-import logForm from "@/business/components/k8s/home/LogForm";
+import LogForm from "@/business/components/k8s/home/LogForm";
 import {saveAs} from "@/common/js/FileSaver";
 
 /* eslint-disable */
@@ -146,7 +146,7 @@ export default {
     TablePagination,
     TableOperator,
     DialogFooter,
-    logForm,
+    LogForm,
   },
   data() {
     return {

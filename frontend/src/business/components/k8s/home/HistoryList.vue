@@ -260,7 +260,7 @@ import {_filter, _sort} from "@/common/js/utils";
 import TablePagination from "../../common/pagination/TablePagination";
 import DialogFooter from "../../common/components/DialogFooter";
 import TableOperators from "../../common/components/TableOperators";
-import logForm from "@/business/components/k8s/home/LogForm";
+import LogForm from "@/business/components/k8s/home/LogForm";
 import CodeDiff from 'vue-code-diff';
 /* eslint-disable */
   export default {
@@ -270,7 +270,7 @@ import CodeDiff from 'vue-code-diff';
       DialogFooter,
       TableOperators,
       CodeDiff,
-      logForm,
+      LogForm,
     },
     props: {
       selectNodeIds: Array,

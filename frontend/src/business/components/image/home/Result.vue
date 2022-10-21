@@ -133,7 +133,7 @@ import {_filter, _sort} from "@/common/js/utils";
 import {IMAGE_RESULT_CONFIGS} from "../../common/components/search/search-components";
 import {saveAs} from "@/common/js/FileSaver";
 import {severityOptions} from "@/common/js/constants";
-import logForm from "@/business/components/image/home/LogForm";
+import LogForm from "@/business/components/image/home/LogForm";
 
 /* eslint-disable */
 export default {
@@ -145,7 +145,7 @@ export default {
     TablePagination,
     TableOperator,
     DialogFooter,
-    logForm,
+    LogForm,
   },
   data() {
     return {
