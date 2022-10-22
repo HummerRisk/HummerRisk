@@ -128,7 +128,7 @@ export default {
 }
 .account-name {
   display: inline-block;
-  width: 130px;
+  width: 250px;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;

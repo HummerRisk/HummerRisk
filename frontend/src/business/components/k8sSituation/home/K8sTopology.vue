@@ -6,7 +6,7 @@
         <el-menu-item index="1" v-show="false">Placeholder</el-menu-item>
         <el-submenu index="2" popper-class="submenu">
           <template v-slot:title>
-            <span class="account-name" :title="currentAccount" style="width: 250px;">
+            <span class="account-name" :title="currentAccount">
               {{ $t('k8s.name') }}: {{ currentAccount }}
             </span>
           </template>
@@ -377,7 +377,7 @@ export default {
 }
 .account-name {
   display: inline-block;
-  width: 130px;
+  width: 250px;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
