@@ -120,17 +120,17 @@
     <!--Update imageRepo-->
 
     <!--Image list-->
-    <el-drawer class="rtl" :title="$t('image.image_list')" :visible.sync="imageVisible" size="80%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('image.image_list')" :visible.sync="imageVisible" size="90%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
       <el-table border :data="imageData" class="adjust-table table-content">
         <el-table-column type="index" min-width="2%"/>
-        <el-table-column prop="project" :label="'Project'" min-width="7%" v-slot:default="scope">
+        <el-table-column prop="project" :label="'Project'" min-width="10%" v-slot:default="scope">
           {{ scope.row.project?scope.row.project:'N/A' }}
         </el-table-column>
         <el-table-column prop="repository" :label="'Repository'" min-width="15%">
         </el-table-column>
-        <el-table-column prop="path" :label="'ImagePath'" min-width="30%">
+        <el-table-column prop="path" :label="'ImagePath'" min-width="25%">
         </el-table-column>
         <el-table-column min-width="9%" :label="'Size'" prop="size" v-slot:default="scope">
           {{ scope.row.size?scope.row.size:'--' }}
@@ -212,7 +212,7 @@
     <!--Image list-->
 
     <!--Sync image-->
-    <el-drawer class="rtl" :title="$t('image.image_sync_for_repo')" :visible.sync="syncVisible" size="85%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('image.image_sync_for_repo')" :visible.sync="syncVisible" size="90%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
       <sync-table-header @sync="sync" :sync-tip="$t('image.image_sync')" :title="$t('image.image_sync_log')" style="margin: 0 0 15px 0;"/>
@@ -257,6 +257,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import ImageStatus from "../head/ImageStatus";
 import {_filter, _sort} from "@/common/js/utils";
 import MainContainer from "../.././common/components/MainContainer";
+import SyncTableHeader from "@/business/components/image/head/SyncTableHeader";
 import {IMAGE_REPO_CONFIGS} from "@/business/components/common/components/search/search-components";
 /* eslint-disable */
 export default {
@@ -268,6 +269,7 @@ export default {
     ImageStatus,
     TableOperators,
     MainContainer,
+    SyncTableHeader,
   },
   data() {
     return {
