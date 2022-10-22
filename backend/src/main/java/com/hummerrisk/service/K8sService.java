@@ -684,8 +684,12 @@ public class K8sService {
 
     public String download(Map<String, Object> map) {
         HistoryCloudNativeResultWithBLOBs historyCloudNativeResultWithBLOBs = historyCloudNativeResultMapper.selectByPrimaryKey(map.get("id").toString());
-        String str = historyCloudNativeResultWithBLOBs.getVulnerabilityReport();
-        return str;
+        JSONObject str = JSON.parseObject(historyCloudNativeResultWithBLOBs.getVulnerabilityReport()!=null?historyCloudNativeResultWithBLOBs.getVulnerabilityReport():"{}");
+        JSONObject str2 = JSON.parseObject(historyCloudNativeResultWithBLOBs.getConfigAuditReport()!=null?historyCloudNativeResultWithBLOBs.getConfigAuditReport():"{}");
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.add(str);
+        jsonArray.add(str2);
+        return jsonArray.toJSONString();
     }
 
     public Map<String, Object> topInfo(Map<String, Object> params) {
