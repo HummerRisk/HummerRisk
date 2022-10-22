@@ -13,7 +13,7 @@
         <el-table-column prop="name" :label="$t('code.name')" min-width="10%" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
-                <img :src="require(`@/assets/img/code/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
+                <img :src="require(`@/assets/img/code/${scope.row.pluginIcon}`)" style="width: 35px; height: 25px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.name }}
               </span>
           </template>
@@ -73,8 +73,8 @@
               <div class="grid-content bg-purple-light">
                 <span class="grid-content-log-span"> {{ logForm.name }}</span>
                 <span class="grid-content-log-span">
-                  <img :src="require(`@/assets/img/platform/docker.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ logForm.imageName }}
+                  <img :src="require(`@/assets/img/code/${logForm.pluginIcon}`)" style="width: 35px; height: 25px; vertical-align:middle" alt=""/>
+                  {{ 'C:' + logForm.critical + ' H:' +  logForm.high + ' M:' + logForm.medium + ' L:' + logForm.low + ' U:' + logForm.unknown}}
                 </span>
                 <span class="grid-content-status-span" v-if="logForm.resultStatus === 'APPROVED'" style="color: #579df8">
                   <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
@@ -412,12 +412,13 @@ export default {
 }
 
 .grid-content-log-span {
-  width: 39%;
+  width: 34%;
   float: left;
   vertical-align: middle;
   display:table-cell;
   margin: 6px 0 6px 2px;
   color: #606266;
+  padding: 0 1%;
 }
 
 .grid-content-status-span {
@@ -425,6 +426,7 @@ export default {
   vertical-align: middle;
   display:table-cell;
   margin: 6px 0;
+  padding: 0 1%;
 }
 .pure-span {
   color: #606266;

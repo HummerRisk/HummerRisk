@@ -19,7 +19,7 @@
         <el-table-column prop="name" :label="$t('code.name')" min-width="15%" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
-                <img :src="require(`@/assets/img/code/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
+                <img :src="require(`@/assets/img/code/${scope.row.pluginIcon}`)" style="width: 35px; height: 25px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.name }}
               </span>
           </template>
@@ -93,7 +93,7 @@
                 :key="item.id"
                 :label="item.name"
                 :value="item.id">
-                <img :src="require(`@/assets/img/code/${item.id}`)" style="width: 20px; height: 16px; vertical-align:middle" alt=""/>
+                <img :src="require(`@/assets/img/code/${item.id}`)" style="width: 25px; height: 16px; vertical-align:middle" alt=""/>
                 &nbsp;&nbsp; {{ $t(item.name) }}
               </el-option>
             </el-select>
@@ -168,13 +168,13 @@
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('code.name')"/>
         </el-form-item>
         <el-form-item :label="$t('code.platform')" :rules="{required: true, message: $t('code.platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" disabled v-model="form.pluginId" :placeholder="$t('code.platform')" @change="changePlugin('edit')">
+          <el-select style="width: 100%;" disabled v-model="form.pluginIcon" :placeholder="$t('code.platform')">
             <el-option
               v-for="item in plugins"
               :key="item.id"
               :label="item.name"
               :value="item.id">
-              <img :src="require(`@/assets/img/code/${item.id}`)" style="width: 20px; height: 16px; vertical-align:middle" alt=""/>
+              <img :src="require(`@/assets/img/code/${item.id}`)" style="width: 25px; height: 16px; vertical-align:middle" alt=""/>
               &nbsp;&nbsp; {{ $t(item.name) }}
             </el-option>
           </el-select>
