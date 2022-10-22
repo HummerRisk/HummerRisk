@@ -9,11 +9,18 @@
         </template>
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
-          <el-table-column type="index" min-width="3%"/>
+          <el-table-column type="index" min-width="2%"/>
           <el-table-column prop="name" :label="$t('account.task_input_name')" min-width="10%" show-overflow-tooltip></el-table-column>
           <el-table-column prop="qzType" :label="$t('account.choose_qztype')" min-width="9%" show-overflow-tooltip>
             <template v-slot:default="scope">
-              <el-link type="primary" @click="showAccount(scope.row)">{{ scope.row.qzType }}</el-link>
+              <el-link type="primary" @click="showAccount(scope.row)">
+                <span v-if="scope.row.qzType==='ACCOUNT'">
+                  {{ $t('ACCOUNT') }}
+                </span>
+                <span v-if="scope.row.qzType==='RULE'">
+                  {{ $t('RULE') }}
+                </span>
+              </el-link>
             </template>
           </el-table-column>
           <el-table-column prop="cron" :label="$t('account.cron_expression')" min-width="8%" show-overflow-tooltip></el-table-column>
@@ -183,7 +190,12 @@
                   </el-form-item>
                   <el-form-item :label="$t('account.choose_qztype')">
                     <el-tooltip class="item" effect="dark" :content="detailForm.qzType" placement="top-start">
-                      <div v-if="detailForm.qzType" class="view-text">{{ detailForm.qzType }}</div>
+                      <div v-if="detailForm.qzType==='ACCOUNT'" class="view-text">
+                        {{ $t('account.qztype_account') }}
+                      </div>
+                      <div v-if="detailForm.qzType==='RULE'" class="view-text">
+                        {{ $t('account.qztype_rule') }}
+                      </div>
                     </el-tooltip>
                   </el-form-item>
                   <el-form-item :label="$t('account.cron_expression')">
