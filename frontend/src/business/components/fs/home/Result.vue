@@ -78,7 +78,7 @@
                 <span class="grid-content-log-span"> {{ logForm.name }}</span>
                 <span class="grid-content-log-span">
                   <img :src="require(`@/assets/img/fs/fs.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ logForm.name }}
+                 &nbsp;&nbsp; {{ logForm.fileName }} | {{ logForm.size }}
                 </span>
                 <span class="grid-content-status-span-approved" v-if="logForm.resultStatus === 'APPROVED'">
                   <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}

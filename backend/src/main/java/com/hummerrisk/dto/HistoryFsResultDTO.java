@@ -9,6 +9,10 @@ public class HistoryFsResultDTO extends HistoryFileSystemResult {
 
     private String name;
 
+    private String fileName;
+
+    private String size;
+
     private String tagKey;
 
     private String tagName;
@@ -24,8 +28,6 @@ public class HistoryFsResultDTO extends HistoryFileSystemResult {
     private String low;
 
     private String unknown;
-
-    private String fileName;
 
     public String getName() {
         return name;
@@ -105,5 +107,13 @@ public class HistoryFsResultDTO extends HistoryFileSystemResult {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
     }
 }

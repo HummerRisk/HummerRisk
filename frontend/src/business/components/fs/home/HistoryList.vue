@@ -26,22 +26,22 @@
             </el-tooltip>
           </el-table-column>
           <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="12%" prop="resultStatus" sortable show-overflow-tooltip>
-            <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
+            <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
-            <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
+            <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
-            <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
+            <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
-            <el-button @click="showResultLog(scope.row)" plain size="medium" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
+            <el-button @click="showResultLog(scope.row)" plain size="mini" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
               <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
             </el-button>
-            <el-button @click="showResultLog(scope.row)" plain size="medium" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+            <el-button @click="showResultLog(scope.row)" plain size="mini" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
               <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
             </el-button>
-            <el-button @click="showResultLog(scope.row)" plain size="medium" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+            <el-button @click="showResultLog(scope.row)" plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
               <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
             </el-button>
           </el-table-column>
@@ -105,18 +105,18 @@
                 <div class="grid-content bg-purple-light">
                   <span class="grid-content-log-span"> {{ logForm.name }}</span>
                   <span class="grid-content-log-span">
-                  <img :src="require(`@/assets/img/platform/docker.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ logForm.imageName }}
-                </span>
+                    <img :src="require(`@/assets/img/fs/fs.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                   &nbsp;&nbsp; {{ logForm.fileName }} | {{ logForm.size }}
+                  </span>
                   <span class="grid-content-status-span" v-if="logForm.resultStatus === 'APPROVED'" style="color: #579df8">
-                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
-                </span>
+                    <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                  </span>
                   <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'FINISHED'" style="color: #7ebf50">
-                  <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
-                </span>
+                    <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+                  </span>
                   <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'ERROR'" style="color: red;">
-                  <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
-                </span>
+                    <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+                  </span>
                 </div>
               </el-col>
             </el-row>
@@ -169,22 +169,22 @@
                 {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown}}
             </el-table-column>
             <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="12%" prop="resultStatus" sortable show-overflow-tooltip>
-              <el-button plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
+              <el-button plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
                 <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
               </el-button>
-              <el-button plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
+              <el-button plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
                 <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
               </el-button>
-              <el-button plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
+              <el-button plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
                 <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
               </el-button>
-              <el-button plain size="medium" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
+              <el-button plain size="mini" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
                 <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
               </el-button>
-              <el-button plain size="medium" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+              <el-button plain size="mini" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
                 <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
               </el-button>
-              <el-button plain size="medium" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+              <el-button plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
                 <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
               </el-button>
             </el-table-column>
@@ -440,12 +440,13 @@ import CodeDiff from 'vue-code-diff';
 }
 
 .grid-content-log-span {
-  width: 39%;
+  width: 34%;
   float: left;
   vertical-align: middle;
   display:table-cell;
   margin: 6px 0 6px 2px;
   color: #606266;
+  padding: 0 1%;
 }
 
 .grid-content-status-span {
@@ -453,6 +454,7 @@ import CodeDiff from 'vue-code-diff';
   vertical-align: middle;
   display:table-cell;
   margin: 6px 0;
+  padding: 0 1%;
 }
 .pure-span {
   color: #606266;
