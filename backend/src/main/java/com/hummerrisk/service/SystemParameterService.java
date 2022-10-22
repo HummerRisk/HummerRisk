@@ -135,7 +135,7 @@ public class SystemParameterService {
         });
     }
 
-    public void editMessage(List<SystemParameter> parameters) {
+    public void edit(List<SystemParameter> parameters) {
         parameters.forEach(parameter -> {
             SystemParameterExample example = new SystemParameterExample();
             example.createCriteria().andParamKeyEqualTo(parameter.getParamKey());
@@ -349,6 +349,28 @@ public class SystemParameterService {
                 }
 
             });
+        }
+        paramList.sort(Comparator.comparingInt(SystemParameter::getSort));
+        return paramList;
+    }
+
+    public List<SystemParameter> scanSettingInfo(String type) {
+        List<SystemParameter> paramList = this.getParamList(type);
+        if (!StringUtils.equalsIgnoreCase(type, ParamConstants.Classify.SCAN.getValue())) return paramList;
+        if (CollectionUtils.isEmpty(paramList)) {
+            paramList = new ArrayList<>();
+            ParamConstants.SCAN[] values = ParamConstants.SCAN.values();
+            for (ParamConstants.SCAN value : values) {
+                SystemParameter systemParameter = new SystemParameter();
+                if (value.equals(ParamConstants.SCAN.SkipDbUpdate) || value.equals(ParamConstants.SCAN.IgnoreUnfixed)) {
+                    systemParameter.setType(ParamConstants.Type.BOOLEAN.getValue());
+                } else {
+                    systemParameter.setType(ParamConstants.Type.TEXT.getValue());
+                }
+                systemParameter.setParamKey(value.getKey());
+                systemParameter.setSort(value.getValue());
+                paramList.add(systemParameter);
+            }
         }
         paramList.sort(Comparator.comparingInt(SystemParameter::getSort));
         return paramList;

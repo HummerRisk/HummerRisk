@@ -43,7 +43,10 @@ public class TrivyConstants {
 
     public final static String OFFLINE_SCAN = " --offline-scan ";
 
-    public final static String SECURITY_CHECKS = " --security-checks vuln ";
+    //vuln
+    public final static String SECURITY_CHECKS = " --security-checks ";
+
+    public final static String SECURITY_CHECKS_DEFAULT = " --security-checks vuln ";
 
     public final static String SKIP_DB_UPDATE = " --skip-db-update ";
 
@@ -53,12 +56,12 @@ public class TrivyConstants {
 
     public final static String TAG = " --tag ";
 
-    public final static String INPUT = "--input ";
+    public final static String INPUT = " --input ";
 
     //默认情况下，Trivy还检测未修补/未修复的漏洞。这意味着即使更新所有软件包也无法修复这些漏洞。如果您想忽略它们，请使用该--ignore-unfixed选项。
-    public final static String UNFIXED = "--ignore-unfixed ";
+    public final static String UNFIXED = " --ignore-unfixed ";
 
-    //按风险等级 HIGH,CRITICAL
-    public final static String severity = "--severity ";
+    //按风险等级 CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN
+    public final static String severity = " --severity ";
 
 }

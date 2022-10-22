@@ -354,6 +354,11 @@ export default {
       nail_robot:'Ding ding',
       enterprise_wechat_robot:'Enterprise Wechat',
       select_receiving_method:'Select receiving method',
+      trivy_settings: 'Detection parameter settings',
+      skip_db_update: 'Skip database update',
+      security_checks: 'Security check items',
+      ignore_unfixed: 'Ignore unfixed',
+      offline_scan: 'Offline detection',
     },
   },
   i18n: {

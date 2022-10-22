@@ -75,6 +75,8 @@ public class ImageService {
     private ExecEngineFactoryImp execEngineFactoryImp;
     @Resource
     private HistoryImageResultMapper historyImageResultMapper;
+    @Resource
+    private SystemParameterService systemParameterService;
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
@@ -604,8 +606,17 @@ public class ImageService {
         if (image.getRepoId() != null) {
             imageRepo = imageRepoMapper.selectByPrimaryKey(image.getRepoId());
         }
+        ScanSetting scanSetting = new ScanSetting();
+        String skipDbUpdate = systemParameterService.getValue(ParamConstants.SCAN.SkipDbUpdate.getKey());
+        String securityChecks = systemParameterService.getValue(ParamConstants.SCAN.SecurityChecks.getKey());
+        String ignoreUnfixed = systemParameterService.getValue(ParamConstants.SCAN.IgnoreUnfixed.getKey());
+        String offlineScan = systemParameterService.getValue(ParamConstants.SCAN.OfflineScan.getKey());
+        scanSetting.setSkipDbUpdate(skipDbUpdate);
+        scanSetting.setSecurityChecks(securityChecks);
+        scanSetting.setIgnoreUnfixed(ignoreUnfixed);
+        scanSetting.setOfflineScan(offlineScan);
         IProvider cp = execEngineFactoryImp.getProvider("imageProvider");
-        return (String) execEngineFactoryImp.executeMethod(cp, "execute", image, proxy, imageRepo);
+        return (String) execEngineFactoryImp.executeMethod(cp, "execute", image, proxy, imageRepo, scanSetting);
     }
 
     public List<ImageResultWithBLOBsDTO> resultListWithBLOBs(ImageResultRequest request) {

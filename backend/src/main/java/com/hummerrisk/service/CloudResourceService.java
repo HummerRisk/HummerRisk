@@ -1,6 +1,5 @@
 package com.hummerrisk.service;
 
-import com.hummerrisk.base.domain.CloudResourceItem;
 import com.hummerrisk.base.domain.CloudResourceSummary;
 import com.hummerrisk.base.domain.CloudTask;
 import com.hummerrisk.base.mapper.ext.ExtCloudResourceItemMapper;

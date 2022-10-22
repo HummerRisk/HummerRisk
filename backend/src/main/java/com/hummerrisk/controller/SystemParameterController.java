@@ -42,6 +42,13 @@ public class SystemParameterController {
         systemParameterService.editDingding(systemParameter);
     }
 
+    @ApiOperation(value = "编辑检测参数设置")
+    @PostMapping("/edit/scanSetting")
+    @RequiresRoles(value = {RoleConstants.ADMIN})
+    public void editScanSetting(@RequestBody List<SystemParameter> systemParameter) {
+        systemParameterService.edit(systemParameter);
+    }
+
     @ApiOperation(value = "测试连接")
     @PostMapping("/testConnection/{type}")
     @RequiresRoles(value = {RoleConstants.ADMIN})
@@ -91,6 +98,14 @@ public class SystemParameterController {
     }
 
     @I18n
+    @ApiOperation(value = "检测参数设置")
+    @GetMapping("/scanSetting/info")
+    @RequiresRoles(value = {RoleConstants.ADMIN})
+    public List<SystemParameter> scanSettingInfo() {
+        return systemParameterService.scanSettingInfo(ParamConstants.Classify.SCAN.getValue());
+    }
+
+    @I18n
     @ApiOperation(value = "消息通知")
     @GetMapping("/message/info")
     @RequiresRoles(value = {RoleConstants.ADMIN})
@@ -102,7 +117,7 @@ public class SystemParameterController {
     @PostMapping("/edit/message")
     @RequiresRoles(value = {RoleConstants.ADMIN})
     public void editMessage(@RequestBody List<SystemParameter> systemParameter) {
-        systemParameterService.editMessage(systemParameter);
+        systemParameterService.edit(systemParameter);
     }
 
     @ApiOperation(value = "刷新系统参数信息")

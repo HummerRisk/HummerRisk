@@ -11,6 +11,7 @@ public interface ParamConstants {
 
         PASSWORD("password"),
         TEXT("text"),
+        BOOLEAN("boolean"),
         JSON("json");
 
         private String value;
@@ -36,6 +37,7 @@ public interface ParamConstants {
         MESSAGE("message"),
         REGISTRY("registry"),
         SYSTEM("system"),
+        SCAN("scansetting"),
         ANALYSIS("analysis");
 
         private String value;
@@ -218,8 +220,32 @@ public interface ParamConstants {
         public final static String color = "#409EFF";
         public final static Integer cycle = 30;
         public final static List<Boolean> ids = Arrays.asList(true, false, false, false, false, false, false, false);
-        public final static List<String> types = Arrays.asList("cloudAccount", "vulnAccount", "serverAccount", "packageAccount", "imageAccount");
+        public final static List<String> types = Arrays.asList("cloudAccount", "vulnAccount", "serverAccount", "k8sAccount", "imageAccount", "configAccount", "fsAccount");
         public final static List<String> users = Arrays.asList("admin");
 
+    }
+
+    enum SCAN {
+        SkipDbUpdate("scansetting.skipDbUpdate", 1),
+        SecurityChecks("scansetting.securityChecks", 2),
+        IgnoreUnfixed("scansetting.ignoreUnfixed", 3),
+        Severity("scansetting.severity", 4),
+        OfflineScan("scansetting.offlineScan", 5);
+
+        private String key;
+        private Integer value;
+
+        private SCAN(String key, Integer value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public String getKey() {
+            return this.key;
+        }
+
+        public Integer getValue() {
+            return this.value;
+        }
     }
 }

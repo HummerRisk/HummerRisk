@@ -3,6 +3,7 @@ package com.hummerrisk.service.impl.provider;
 import com.hummerrisk.base.domain.Image;
 import com.hummerrisk.base.domain.ImageRepo;
 import com.hummerrisk.base.domain.Proxy;
+import com.hummerrisk.base.domain.ScanSetting;
 import com.hummerrisk.commons.constants.ImageConstants;
 import com.hummerrisk.commons.constants.TrivyConstants;
 import com.hummerrisk.commons.utils.CommandUtils;
@@ -44,8 +45,24 @@ public class ImageProvider implements IProvider {
             } else {
                 fileName = TrivyConstants.INPUT + ImageConstants.DEFAULT_BASE_DIR + image.getPath();
             }
+            ScanSetting scanSetting = (ScanSetting) obj[3];
+            String str = "";
+            if(scanSetting.getSkipDbUpdate() != null && StringUtils.equalsIgnoreCase(scanSetting.getSkipDbUpdate(), "true")) {
+                str = str + TrivyConstants.SKIP_DB_UPDATE;
+            }
+            if(scanSetting.getIgnoreUnfixed() != null && StringUtils.equalsIgnoreCase(scanSetting.getIgnoreUnfixed(), "true")) {
+                str = str + TrivyConstants.UNFIXED;
+            }
+            if(scanSetting.getSecurityChecks() != null) {
+                str = str + TrivyConstants.SECURITY_CHECKS + scanSetting.getSecurityChecks();
+            } else {
+                str = str + TrivyConstants.SECURITY_CHECKS_DEFAULT;
+            }
+            if(scanSetting.getOfflineScan() != null && StringUtils.equalsIgnoreCase(scanSetting.getOfflineScan(), "true")) {
+                str = str + TrivyConstants.OFFLINE_SCAN;
+            }
             CommandUtils.commonExecCmdWithResult(TrivyConstants.TRIVY_RM + TrivyConstants.TRIVY_JSON, TrivyConstants.DEFAULT_BASE_DIR);
-            String command = _proxy + dockerLogin + TrivyConstants.TRIVY_IMAGE + TrivyConstants.UNFIXED + TrivyConstants.TRIVY_SKIP + fileName + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
+            String command = _proxy + dockerLogin + TrivyConstants.TRIVY_IMAGE + str + fileName + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
             LogUtil.info(image.getId() + " {k8sImage}[command]: " + image.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
             if (resultStr.contains("ERROR") || resultStr.contains("error")) {

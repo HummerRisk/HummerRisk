@@ -2556,3 +2556,10 @@ INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES (UUID(), 'f7f1
 INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES (UUID(), 'f8579451-2c24-4743-87e3-0fcf7c465d08', 'prowler');
 INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES (UUID(), 'fa080bcf-6efb-4091-ab4d-210ef361fc68', 'prowler');
 INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES (UUID(), 'fe94237b-eaa1-4d2f-9d87-c354b787fdc8', 'prowler');
+
+
+INSERT INTO `system_parameter` (`param_key`, `param_value`, `type`, `sort`) VALUES ('scansetting.offlineScan', 'true', 'boolean', 5);
+INSERT INTO `system_parameter` (`param_key`, `param_value`, `type`, `sort`) VALUES ('scansetting.severity', 'CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN', 'text', 4);
+INSERT INTO `system_parameter` (`param_key`, `param_value`, `type`, `sort`) VALUES ('scansetting.ignoreUnfixed', 'true', 'boolean', 3);
+INSERT INTO `system_parameter` (`param_key`, `param_value`, `type`, `sort`) VALUES ('scansetting.securityChecks', 'vuln', 'text', 2);
+INSERT INTO `system_parameter` (`param_key`, `param_value`, `type`, `sort`) VALUES ('scansetting.skipDbUpdate', 'true', 'boolean', 1);

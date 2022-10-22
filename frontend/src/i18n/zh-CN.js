@@ -355,6 +355,11 @@ export default {
       enterprise_wechat_robot: '企业微信',
       select_receiving_method: '选择接收方式',
     },
+    trivy_settings: '检测参数设置',
+    skip_db_update: '跳过数据库更新',
+    security_checks: '安全检查项',
+    ignore_unfixed: '忽略未修复',
+    offline_scan: '离线检测',
   },
   i18n: {
     home: '首页'

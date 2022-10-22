@@ -63,6 +63,8 @@ public class ConfigService {
     private ExecEngineFactoryImp execEngineFactoryImp;
     @Resource
     private HistoryCloudNativeConfigResultMapper historyCloudNativeConfigResultMapper;
+    @Resource
+    private SystemParameterService systemParameterService;
 
     public List<CloudNativeConfigDTO> getCloudNativeConfigList(ConfigRequest request) {
         return extCloudNativeConfigMapper.getCloudNativeConfigList(request);
@@ -318,10 +320,19 @@ public class ConfigService {
     public String execute(CloudNativeConfig cloudNativeConfig) throws Exception {
         Proxy proxy = new Proxy();
         if (cloudNativeConfig.getProxyId()!=null) {
-            proxy = proxyMapper.selectByPrimaryKey(cloudNativeConfig.getProxyId());
+            proxy= proxyMapper.selectByPrimaryKey(cloudNativeConfig.getProxyId());
         }
+        ScanSetting scanSetting = new ScanSetting();
+        String skipDbUpdate = systemParameterService.getValue(ParamConstants.SCAN.SkipDbUpdate.getKey());
+        String securityChecks = systemParameterService.getValue(ParamConstants.SCAN.SecurityChecks.getKey());
+        String ignoreUnfixed = systemParameterService.getValue(ParamConstants.SCAN.IgnoreUnfixed.getKey());
+        String offlineScan = systemParameterService.getValue(ParamConstants.SCAN.OfflineScan.getKey());
+        scanSetting.setSkipDbUpdate(skipDbUpdate);
+        scanSetting.setSecurityChecks(securityChecks);
+        scanSetting.setIgnoreUnfixed(ignoreUnfixed);
+        scanSetting.setOfflineScan(offlineScan);
         IProvider cp = execEngineFactoryImp.getProvider("configProvider");
-        return (String) execEngineFactoryImp.executeMethod(cp, "execute", cloudNativeConfig, proxy);
+        return (String) execEngineFactoryImp.executeMethod(cp, "execute", cloudNativeConfig, proxy, scanSetting);
     }
 
     long saveCloudNativeConfigResultItem(CloudNativeConfigResult result) throws Exception {

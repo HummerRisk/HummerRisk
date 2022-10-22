@@ -68,6 +68,8 @@ public class CodeService {
     private ExecEngineFactoryImp execEngineFactoryImp;
     @Resource
     private HistoryCodeResultMapper historyCodeResultMapper;
+    @Resource
+    private SystemParameterService systemParameterService;
 
 
     public List<CodeDTO> codeList(CodeRequest request) {
@@ -367,8 +369,17 @@ public class CodeService {
         if (code.getProxyId()!=null) {
             proxy = proxyMapper.selectByPrimaryKey(code.getProxyId());
         }
+        ScanSetting scanSetting = new ScanSetting();
+        String skipDbUpdate = systemParameterService.getValue(ParamConstants.SCAN.SkipDbUpdate.getKey());
+        String securityChecks = systemParameterService.getValue(ParamConstants.SCAN.SecurityChecks.getKey());
+        String ignoreUnfixed = systemParameterService.getValue(ParamConstants.SCAN.IgnoreUnfixed.getKey());
+        String offlineScan = systemParameterService.getValue(ParamConstants.SCAN.OfflineScan.getKey());
+        scanSetting.setSkipDbUpdate(skipDbUpdate);
+        scanSetting.setSecurityChecks(securityChecks);
+        scanSetting.setIgnoreUnfixed(ignoreUnfixed);
+        scanSetting.setOfflineScan(offlineScan);
         IProvider cp = execEngineFactoryImp.getProvider("codeProvider");
-        return (String) execEngineFactoryImp.executeMethod(cp, "execute", code, proxy);
+        return (String) execEngineFactoryImp.executeMethod(cp, "execute", code, proxy, scanSetting);
     }
 
     long saveResultItem(CodeResult result) throws Exception {

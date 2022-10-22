@@ -306,7 +306,7 @@ export default {
       }
       let path = this.$route.path;
       if (path.indexOf("/config") >= 0) {
-        let p = '/config/result/' + params.id;
+        let p = '/config/resultdetails/' + params.id;
         this.$router.push({
           path: p
         }).catch(error => error);

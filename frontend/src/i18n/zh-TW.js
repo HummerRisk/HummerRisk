@@ -354,6 +354,11 @@ export default {
       nail_robot: '釘釘',
       enterprise_wechat_robot: '企業微信',
       select_receiving_method: '選擇接收方式',
+      trivy_settings: '檢測參數設置',
+      skip_db_update: '跳過數據庫更新',
+      security_checks: '安全檢查項',
+      ignore_unfixed: '忽略未修復',
+      offline_scan: '離線檢測',
     },
   },
   i18n: {

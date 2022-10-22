@@ -71,6 +71,8 @@ public class FileSystemService {
     private ExecEngineFactoryImp execEngineFactoryImp;
     @Resource
     private HistoryFileSystemResultMapper historyFileSystemResultMapper;
+    @Resource
+    private SystemParameterService systemParameterService;
 
 
     public List<FsDTO> fsList(FsRequest request) {
@@ -407,8 +409,17 @@ public class FileSystemService {
         if (fileSystem.getProxyId()!=null) {
             proxy = proxyMapper.selectByPrimaryKey(fileSystem.getProxyId());
         }
+        ScanSetting scanSetting = new ScanSetting();
+        String skipDbUpdate = systemParameterService.getValue(ParamConstants.SCAN.SkipDbUpdate.getKey());
+        String securityChecks = systemParameterService.getValue(ParamConstants.SCAN.SecurityChecks.getKey());
+        String ignoreUnfixed = systemParameterService.getValue(ParamConstants.SCAN.IgnoreUnfixed.getKey());
+        String offlineScan = systemParameterService.getValue(ParamConstants.SCAN.OfflineScan.getKey());
+        scanSetting.setSkipDbUpdate(skipDbUpdate);
+        scanSetting.setSecurityChecks(securityChecks);
+        scanSetting.setIgnoreUnfixed(ignoreUnfixed);
+        scanSetting.setOfflineScan(offlineScan);
         IProvider cp = execEngineFactoryImp.getProvider("fsProvider");
-        return (String) execEngineFactoryImp.executeMethod(cp, "execute", fileSystem, proxy);
+        return (String) execEngineFactoryImp.executeMethod(cp, "execute", fileSystem, proxy, scanSetting);
     }
 
     long saveResultItem(FileSystemResult result) throws Exception {
