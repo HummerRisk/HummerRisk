@@ -107,10 +107,13 @@
         ORDER BY t.update_time desc
     </select>
 
-    <select id="syncList" parameterType="com.hummerrisk.controller.request.cloudNative.CloudNativeSyncLogRequest" resultType="com.hummerrisk.base.domain.CloudNativeSourceSyncLogWithBLOBs">
+    <select id="syncList" parameterType="com.hummerrisk.controller.request.cloudNative.CloudNativeSyncLogRequest" resultType="com.hummerrisk.dto.CloudNativeSourceSyncLogWithBLOBsDTO">
         SELECT
-        t.*
+        t.*,
+        t1.name as k8sName,
+        t1.plugin_icon as pluginIcon
         FROM cloud_native_source_sync_log t
+        LEFT JOIN cloud_native t1 on t.cloud_native_id = t1.id
         <where>
             <if test="id != null">
                 AND t.id = #{id}

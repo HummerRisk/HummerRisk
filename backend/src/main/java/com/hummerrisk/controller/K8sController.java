@@ -3,7 +3,6 @@ package com.hummerrisk.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.*;
-import com.hummerrisk.commons.constants.CloudAccountConstants;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
@@ -190,7 +189,7 @@ public class K8sController {
     @I18n
     @ApiOperation(value = "资源态势同步日志列表")
     @PostMapping("syncList/{goPage}/{pageSize}")
-    public Pager<List<CloudNativeSourceSyncLogWithBLOBs>> syncList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudNativeSyncLogRequest request) {
+    public Pager<List<CloudNativeSourceSyncLogWithBLOBsDTO>> syncList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudNativeSyncLogRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, k8sService.syncList(request));
     }
@@ -204,7 +203,7 @@ public class K8sController {
 
     @ApiOperation(value = "删除资源态势同步日志")
     @GetMapping("deleteSyncLog/{id}")
-    public void deleteSyncLog(@PathVariable Integer id) throws Exception {
+    public void deleteSyncLog(@PathVariable String id) throws Exception {
         k8sService.deleteSyncLog(id);
     }
 

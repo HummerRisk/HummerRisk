@@ -12,27 +12,38 @@
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
                 :row-class-name="tableRowClassName" @filter-change="filter">
         <el-table-column type="index" min-width="2%"/>
+        <el-table-column :label="$t('k8s.platform')" min-width="15%" show-overflow-tooltip>
+          <template v-slot:default="scope">
+              <span>
+                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ scope.row.k8sName }}
+              </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="operation" :label="$t('k8s.sync_log')" min-width="15%"/>
-        <el-table-column prop="operator" :label="$t('resource.creator')" min-width="15%"/>
+        <el-table-column prop="operator" :label="$t('resource.creator')" min-width="10%"/>
         <el-table-column prop="status" min-width="10%" :label="$t('code.status')">
           <template v-slot:default="scope">
             <el-tooltip class="item" effect="dark" :content="scope.row.output" placement="top">
               <el-tag size="mini" type="success" v-if="scope.row.result">
                 {{ $t('commons.success') }}
               </el-tag>
-              <el-tag size="mini" type="danger" v-else-if="!scope.row.result">
+              <el-tag size="mini" type="primary" v-else-if="scope.row.result === null">
+                {{ $t('resource.i18n_in_process') }}<i class="el-icon-loading"/>
+              </el-tag>
+              <el-tag size="mini" type="danger" v-else>
                 {{ $t('commons.error') }}
               </el-tag>
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column prop="sum" :label="$t('resource.i18n_not_compliance')" min-width="12%"/>
-        <el-table-column prop="createTime" :label="$t('k8s.sync_time')" min-width="20%" sortable>
+        <el-table-column prop="sum" :label="$t('resource.i18n_not_compliance')" min-width="8%"/>
+        <el-table-column prop="createTime" :label="$t('k8s.sync_time')" min-width="15%" sortable>
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="12%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>

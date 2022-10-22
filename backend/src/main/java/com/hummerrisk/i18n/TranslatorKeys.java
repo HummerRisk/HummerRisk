@@ -34,7 +34,9 @@ public class TranslatorKeys {
                     "i18n_more_resource",
                     "i18n_end_msg",
                     "i18n_sync_image_error",
-                    "i18n_sync_k8s_error"
+                    "i18n_sync_k8s_error",
+                    "i18n_sync_k8s",
+                    "i18n_in_process"
             ));
 
 }

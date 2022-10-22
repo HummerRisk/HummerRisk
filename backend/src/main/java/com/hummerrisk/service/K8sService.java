@@ -291,8 +291,16 @@ public class K8sService {
     }
 
     public void addCloudNativeSource(CloudNative cloudNative) throws IOException, ApiException {
+        CloudNativeSourceSyncLogWithBLOBs record = new CloudNativeSourceSyncLogWithBLOBs();
+        record.setSum(0L);
+        record.setOperation("i18n_sync_k8s");
+        record.setCloudNativeId(cloudNative.getId());
+        record.setCreateTime(System.currentTimeMillis());
+        record.setOperator(SessionUtils.getUser().getName());
+        record.setOutput("i18n_in_process");
+        record.setId(UUIDUtil.newUUID());
+        cloudNativeSourceSyncLogMapper.insertSelective(record);
         commonThreadPool.addTask(() -> {
-            CloudNativeSourceSyncLogWithBLOBs record = new CloudNativeSourceSyncLogWithBLOBs();
             long i = 0;
             try {
                 CloudNativeSourceExample example = new CloudNativeSourceExample();
@@ -342,11 +350,7 @@ public class K8sService {
                 record.setResult(false);
             }
             record.setSum(i);
-            record.setOperation("i18n_sync_k8s");
-            record.setCloudNativeId(cloudNative.getId());
-            record.setCreateTime(System.currentTimeMillis());
-            record.setOperator(SessionUtils.getUser().getName());
-            cloudNativeSourceSyncLogMapper.insertSelective(record);
+            cloudNativeSourceSyncLogMapper.updateByPrimaryKeySelective(record);
         });
     }
 
@@ -657,7 +661,7 @@ public class K8sService {
         return cloudNativeSourceMapper.selectByExampleWithBLOBs(example);
     }
 
-    public List<CloudNativeSourceSyncLogWithBLOBs> syncList(CloudNativeSyncLogRequest request) {
+    public List<CloudNativeSourceSyncLogWithBLOBsDTO> syncList(CloudNativeSyncLogRequest request) {
         return extCloudNativeResultMapper.syncList(request);
     }
 
@@ -666,7 +670,7 @@ public class K8sService {
         addCloudNativeSource(cloudNative);
     }
 
-    public void deleteSyncLog(Integer id) throws Exception {
+    public void deleteSyncLog(String id) throws Exception {
         cloudNativeSourceSyncLogMapper.deleteByPrimaryKey(id);
     }
 

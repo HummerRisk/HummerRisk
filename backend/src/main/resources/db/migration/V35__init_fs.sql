@@ -122,6 +122,20 @@ CREATE TABLE IF NOT EXISTS `history_file_system_result_log` (
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
+DROP TABLE `cloud_native_source_sync_log`;
+
+CREATE TABLE IF NOT EXISTS `cloud_native_source_sync_log` (
+    `id`                           varchar(50)         NOT NULL COMMENT 'ID',
+    `cloud_native_id`              varchar(50)         DEFAULT NULL COMMENT '云原生账号ID',
+    `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
+    `operation`                    mediumtext          DEFAULT NULL COMMENT '操作内容',
+    `sum`                          bigint(13)          DEFAULT NULL COMMENT '同步资源数量',
+    `output`                       mediumtext          DEFAULT NULL COMMENT '输出',
+    `result`                       tinyint(1)          DEFAULT NULL COMMENT '结果',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
+
 INSERT INTO `file_system_rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `last_modified`, `flag`) VALUES ('rtyuewq3-ef4c-4gd8-bhc5-5ej110kb0l71', '文件系统检测', 1, 'HighRisk', '文件系统漏洞检测', '全面的漏洞检测', '[]', concat(unix_timestamp(now()), '001'), 1);
 
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('rtyuewq3-ef4c-4gd8-bhc5-5ej110kb0l71', 'safety');
@@ -163,8 +177,6 @@ ALTER TABLE `cloud_native_config_result_log` MODIFY column `operation` mediumtex
 ALTER TABLE `code_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
 
 ALTER TABLE `image_repo_sync_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
-
-ALTER TABLE `cloud_native_source_sync_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
 
 ALTER TABLE `cloud_resource_sync_item_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
 
