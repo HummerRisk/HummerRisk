@@ -202,6 +202,7 @@ export default {
     batch_settings: '批量设置',
     severity: '风险等级',
     history: '历史记录',
+    format: '文件格式',
   },
   workspace: {
     create: '创建工作空间',
@@ -935,7 +936,7 @@ export default {
     server9: '用户',
     server10: '操作系统',
     is_public_key: '密钥类型',
-    no_public_key: '无密钥',
+    no_public_key: '密码',
     str_public_key: '密钥文本',
     file_public_key: '密钥文件',
     public_key: '密钥',

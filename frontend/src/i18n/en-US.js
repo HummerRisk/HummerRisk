@@ -202,6 +202,7 @@ export default {
     batch_settings: 'Batch settings',
     severity: 'Risk level',
     history: 'History',
+    format: 'File format',
   },
   workspace: {
     create:'Create a workspace',
@@ -935,7 +936,7 @@ export default {
     server9: 'User',
     server10: 'Operating system',
     is_public_key: 'Key type',
-    no_public_key: 'No key',
+    no_public_key: 'Password',
     str_public_key: 'Key text',
     file_public_key: 'Key file',
     public_key: 'Public Key',

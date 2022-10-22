@@ -12,16 +12,6 @@
 
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                 @filter-change="filter">
-        <!-- 展开 start -->
-        <el-table-column type="expand" min-width="1%">
-          <template slot-scope="props">
-            <el-form>
-              <codemirror ref="cmEditor" v-if="props.row.public_key" v-model="props.row.public_key" class="code-mirror" :options="cmOptions" />
-              <codemirror ref="cmEditor" v-else v-model="props.row.password" class="code-mirror" :options="cmOptions" />
-            </el-form>
-          </template>
-        </el-table-column >
-        <!-- 展开 end -->
         <el-table-column type="index" min-width="2%"/>
         <el-table-column prop="name" :label="$t('commons.name')" min-width="15%" show-overflow-tooltip></el-table-column>
         <el-table-column prop="description" :label="$t('commons.description')" min-width="18%" show-overflow-tooltip></el-table-column>
