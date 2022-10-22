@@ -203,6 +203,7 @@ export default {
     severity: '风险等级',
     history: '历史记录',
     format: '文件格式',
+    certificate: '凭证',
   },
   workspace: {
     create: '创建工作空间',
@@ -960,6 +961,7 @@ export default {
     server_risk_chart: '主机风险统计',
     server_risk_chart_vuln: '主机检测结果风险统计',
     all_label: '所有主机',
+    tobeSet: '待设置',
   },
   image: {
     image_repo: '镜像仓库',

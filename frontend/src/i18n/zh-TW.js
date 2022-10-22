@@ -203,6 +203,7 @@ export default {
     severity: '風險等級',
     history: '歷史記錄',
     format: '文件格式',
+    certificate: '憑證',
   },
   workspace: {
     create: '創建工作空間',

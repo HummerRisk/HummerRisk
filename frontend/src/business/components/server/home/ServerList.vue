@@ -80,7 +80,7 @@
             <el-row>
               <el-col :span="24">
                 <el-table :data="servers" class="tb-edit" border :cell-style="rowClass" :header-cell-style="headClass">
-                  <el-table-column :label="$t('server.server_name')" min-width="15%" prop="serverName">
+                  <el-table-column :label="$t('server.server_name')" min-width="20%" prop="serverName">
                     <template slot-scope="scope">
                       <el-input v-model="scope.row.name"></el-input>
                     </template>
@@ -90,27 +90,38 @@
                       <el-input v-model="row.ip"></el-input>
                     </template>
                   </el-table-column>
-                  <el-table-column :label="$t('server.server_user_name')" min-width="20%" prop="userName">
-                    <template slot-scope="scope">
-                      <el-input v-model="scope.row.userName"></el-input>
-                    </template>
-                  </el-table-column>
-                  <el-table-column :label="$t('commons.password')" min-width="20%" prop="password">
-                    <template slot-scope="scope">
-                      <el-input v-model="scope.row.password"></el-input>
-                    </template>
-                  </el-table-column>
                   <el-table-column :label="$t('server.port')" min-width="10%" prop="port">
                     <template slot-scope="scope">
                       <el-input v-model="scope.row.port"></el-input>
                     </template>
                   </el-table-column>
+                  <el-table-column :label="$t('server.server_user_name')" min-width="20%" prop="userName">
+                    <template slot-scope="scope">
+                      <el-input v-model="scope.row.userName"></el-input>
+                    </template>
+                  </el-table-column>
+                  <el-table-column :label="$t('commons.certificate')" min-width="15%" prop="password">
+                    <template slot-scope="scope">
+                      <el-tooltip v-if="scope.row.isPublicKey==='no'" class="item" effect="dark" :content="scope.row.password" placement="left-start">
+                        <el-button type="success" size="mini">{{ $t('server.no_public_key') }}</el-button>
+                      </el-tooltip>
+                      <el-tooltip v-if="scope.row.isPublicKey==='str'" class="item" effect="dark" :content="scope.row.publicKey" placement="left-start">
+                        <el-button type="success" size="mini">{{ $t('server.str_public_key') }}</el-button>
+                      </el-tooltip>
+                      <el-tooltip v-if="scope.row.isPublicKey==='file'" class="item" effect="dark" :content="scope.row.publicKey" placement="left-start">
+                        <el-button type="success" size="mini">{{ $t('server.file_public_key') }}</el-button>
+                      </el-tooltip>
+                      <el-button v-if="scope.row.isPublicKey==null|| scope.row.isPublicKey==undefined" size="mini" @click="bindCertificate(scope.$index, scope.row)">{{ $t('server.tobeSet') }}</el-button>
+                    </template>
+                  </el-table-column>
                   <el-table-column :label="$t('commons.operating')" fixed="right" min-width="15%" prop="result">
                     <template v-slot:default="scope">
-                      <el-button type="primary" size="mini" @click="bindCertificate(scope.$index, scope.row)" icon="el-icon-tickets">
+                      <el-button type="primary" size="mini" @click="bindCertificate(scope.$index, scope.row)">
+                        {{ $t('commons.certificate') }}
                       </el-button>
                       <el-button type="danger" icon="el-icon-delete" size="mini" v-show="!scope.row.isSet"
-                                 @click.native.prevent="deleteRowServer(scope.$index, scope.row)"></el-button>
+                                 @click.native.prevent="deleteRowServer(scope.$index, scope.row)">
+                      </el-button>
                       <!--bind Certificate-->
                       <div>
                         <el-drawer
@@ -155,7 +166,7 @@
                           </el-form>
                           <dialog-footer
                             @cancel="innerAddCertificate = false"
-                            @confirm="saveCertificate(addCertificateForm, scope.row)"/>
+                            @confirm="saveCertificate(addCertificateForm, scope.row, rowindex)"/>
                         </el-drawer>
                       </div>
                       <!--bind Certificate-->
@@ -175,7 +186,13 @@
               :before-close="innerCertificateClose"
               :visible.sync="batchBindCertificate">
               <el-form :model="batchBindForm" label-position="right" label-width="150px" size="small" ref="addCertificateForm" :rules="rule" style="padding: 5px 5% 5px 5px;">
-                <el-form-item :label="$t('server.bind_certificate')" ref="type" prop="type" :rules="{required: true, message: $t('server.bind_certificate') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                <el-form-item :label="$t('server.port')" ref="type" prop="port" :rules="{required: true, message: $t('server.port') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                  <el-input v-model="batchBindForm.port"></el-input>
+                </el-form-item>
+                <el-form-item :label="$t('server.server_user_name')" ref="type" prop="userName" :rules="{required: true, message: $t('server.server_user_name') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                  <el-input v-model="batchBindForm.userName"></el-input>
+                </el-form-item>
+                <el-form-item :label="$t('server.bind_certificate')" ref="type" prop="isCertificate" :rules="{required: true, message: $t('server.bind_certificate') + $t('commons.cannot_be_empty'), trigger: 'change'}">
                   <el-radio v-model="batchBindForm.isCertificate" :label="false">{{ $t('server.menu_certificate') }}</el-radio>
                   <el-radio v-model="batchBindForm.isCertificate" :label="true">{{ $t('server.public_certificate') }}</el-radio>
                 </el-form-item>
@@ -385,9 +402,16 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
         certificates: [],
         keyFile: Object,
         innerAddCertificate: false,
-        addCertificateForm: {},
+        addCertificateForm: {
+          isCertificate: false,
+          isPublicKey: 'no',
+        },
         batchBindCertificate: false,
-        batchBindForm: {},
+        batchBindForm: {
+          isCertificate: false,
+          isPublicKey: 'no',
+        },
+        rowindex: 0,
       }
     },
     props: {
@@ -606,7 +630,12 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
         this.servers.splice(index, 1);
       },
       bindCertificate(index, data) {
+        this.rowindex = index;
         this.addCertificateForm = data;
+        if (this.addCertificateForm.isCertificate === undefined) {
+          this.addCertificateForm.isCertificate = false;
+          this.addCertificateForm.isPublicKey = 'no';
+        }
         this.activeCertificates();
         this.innerAddCertificate = true;
       },
@@ -682,7 +711,10 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
         this.keyFile = file;
       },
       batchBind() {
-        this.batchBindForm = {};
+        this.batchBindForm = {
+          isCertificate: false,
+          isPublicKey: 'no',
+        };
         this.activeCertificates();
         this.batchBindCertificate = true;
       },
@@ -690,14 +722,18 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
         this.innerAddCertificate = false;
         this.batchBindCertificate = false;
       },
-      saveCertificate(item, row) {
-        row.isCertificate = item.isCertificate;
-        row.certificateId = item.certificateId;
-        row.isPublicKey = item.isPublicKey;
-        row.password = item.password;
-        row.publicKey = item.publicKey;
-        row.publicKeyPath = item.publicKeyPath;
-        row.keyFile = this.keyFile;
+      saveCertificate(item, row, index) {
+        for(let i = 0; i<= this.servers.length;i++) {
+          if(i===index) {
+            this.servers[index].isCertificate = item.isCertificate;
+            this.servers[index].certificateId = item.certificateId;
+            this.servers[index].isPublicKey = item.isPublicKey;
+            this.servers[index].password = item.password;
+            this.servers[index].publicKey = item.publicKey;
+            this.servers[index].publicKeyPath = item.publicKeyPath;
+            this.servers[index].keyFile = this.keyFile;
+          }
+        }
         this.innerCertificateClose();
       },
       saveBatchBind(item) {
@@ -709,6 +745,8 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
             row.password = item.password;
             row.publicKey = item.publicKey;
             row.publicKeyPath = item.publicKeyPath;
+            row.port = item.port;
+            row.userName = item.userName;
           }
           this.$success(this.$t('server.batch_success'));
           this.innerCertificateClose();

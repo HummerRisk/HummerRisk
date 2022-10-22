@@ -203,6 +203,7 @@ export default {
     severity: 'Risk level',
     history: 'History',
     format: 'File format',
+    certificate: 'Certificate',
   },
   workspace: {
     create:'Create a workspace',
