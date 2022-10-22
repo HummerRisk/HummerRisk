@@ -33,7 +33,9 @@
                 </el-row>
                 <el-row class="cl-mid-row">
                   <el-col :span="3" class="cl-data-col">
-                    <span style="word-wrap:break-word;">{{ data.name }}</span>
+                    <el-tooltip class="item" effect="dark" :content="data.name" placement="top-start">
+                      <span class="word-wrap">{{ data.name }}</span>
+                    </el-tooltip>
                   </el-col>
                   <el-col :span="3" class="cl-data-col">
                     <el-tag size="mini" type="warning" v-if="data.status === 'DELETE'">
@@ -48,13 +50,19 @@
                   </el-col>
                   <el-col :span="data.type==='tar'?5:8" class="cl-data-col">
                     <div v-if="data.type==='repo'">
-                      <span style="word-wrap:break-word;">{{ data.imageUrl + ':' + data.imageTag }}</span>
+                      <el-tooltip class="item" effect="dark" :content="data.imageUrl + ':' + data.imageTag" placement="top-start">
+                        <span class="word-wrap">{{ data.imageUrl + ':' + data.imageTag }}</span>
+                      </el-tooltip>
                     </div>
                     <div v-if="data.type==='image'">
-                      <span style="word-wrap:break-word;">{{ data.imageUrl + ':' + data.imageTag }}</span>
+                      <el-tooltip class="item" effect="dark" :content="data.imageUrl + ':' + data.imageTag" placement="top-start">
+                        <span class="word-wrap">{{ data.imageUrl + ':' + data.imageTag }}</span>
+                      </el-tooltip>
                     </div>
                     <div v-if="data.type==='tar'">
-                      <span style="word-wrap:break-word;">{{ data.path }}</span>
+                      <el-tooltip class="item" effect="dark" :content="data.path" placement="top-start">
+                        <span class="word-wrap">{{ data.path }}</span>
+                      </el-tooltip>
                     </div>
                   </el-col>
                   <el-col :span="3" v-if="data.type==='tar'" class="cl-data-col">{{ data.size }}</el-col>
@@ -686,5 +694,12 @@ export default {
 .co-el-i{
   width: 70px;
   height: 70px;
+}
+.word-wrap{
+  width: 98%;
+  display:block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 </style>
