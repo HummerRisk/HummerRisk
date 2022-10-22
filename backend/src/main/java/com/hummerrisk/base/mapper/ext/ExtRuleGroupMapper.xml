@@ -78,6 +78,7 @@
     <select id="list" resultMap="BaseResultMap">
         select
         t.*,
+        (select count(g.id) from rule_group_mapping g where g.group_id = t.id) as ruleSum,
         t1.name as pluginName,
         t1.icon as pluginIcon
         from rule_group as t

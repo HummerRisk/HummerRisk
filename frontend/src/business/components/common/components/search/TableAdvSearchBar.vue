@@ -1,7 +1,7 @@
 <template>
   <span class="adv-search-bar">
     <el-button icon="el-icon-refresh" size="small" @click="refresh">{{ $t('commons.refresh') }}</el-button>
-    <el-button icon="el-icon-setting" size="small" @click="open" style="margin: 0;">{{ $t('el.table.confirmFilter') }}</el-button>
+    <el-button icon="el-icon-setting" size="small" @click="open" v-if="showOpen" style="margin: 0;">{{ $t('el.table.confirmFilter') }}</el-button>
     <el-dialog :title="$t('commons.adv_search.combine')" :visible.sync="visible" custom-class="adv-dialog"
                :append-to-body="true">
       <div>
@@ -29,6 +29,10 @@ import {cloneDeep} from "lodash";
     name: "TableAdvSearchBar",
     props: {
       condition: Object,
+      showOpen: {
+        type: Boolean,
+        default: true
+      },
     },
     data() {
       return {

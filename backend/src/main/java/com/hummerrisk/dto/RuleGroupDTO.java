@@ -11,6 +11,8 @@ public class RuleGroupDTO extends RuleGroup {
 
     private String pluginIcon;
 
+    private String ruleSum;
+
     public String getPluginName() {
         return pluginName;
     }
@@ -25,5 +27,13 @@ public class RuleGroupDTO extends RuleGroup {
 
     public void setPluginIcon(String pluginIcon) {
         this.pluginIcon = pluginIcon;
+    }
+
+    public String getRuleSum() {
+        return ruleSum;
+    }
+
+    public void setRuleSum(String ruleSum) {
+        this.ruleSum = ruleSum;
     }
 }

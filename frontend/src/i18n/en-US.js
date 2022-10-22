@@ -628,6 +628,7 @@ export default {
     target_rule: 'Bound rules',
     rule_group: 'Cloud detection rule group',
     suggestion: 'Optimization suggestion',
+    rule_sum: '(Total {0} rules)',
   },
   resource: {
     have_risk: 'risk',

@@ -8,7 +8,7 @@
     </el-row>
     <el-row type="flex" justify="space-between" align="middle">
       <span class="operate-button">
-        <table-button  icon="el-icon-circle-plus-outline"
+        <table-button v-if="showCreate" icon="el-icon-circle-plus-outline"
                          :content="createTip" @click="create"/>
         <table-button v-if="showRun" icon="el-icon-video-play"
                          type="primary"

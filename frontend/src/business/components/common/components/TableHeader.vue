@@ -1,7 +1,7 @@
 <template>
 
   <div>
-    <el-row class="table-title" type="flex" justify="space-between" align="middle">
+    <el-row class="table-title" type="flex" justify="space-between" align="middle" v-if="showName">
       <slot name="title">
         {{ title }}
       </slot>
@@ -19,7 +19,7 @@
       </span>
       <span>
         <table-search-bar :condition.sync="condition" @change="search" class="search-bar" :tip="tip"/>
-        <table-adv-search-bar :condition.sync="condition" @search="search" v-if="isCombine"/>
+        <table-adv-search-bar :condition.sync="condition" :showOpen="showOpen" @search="search" v-if="isCombine"/>
       </span>
     </el-row>
   </div>
@@ -79,7 +79,15 @@ import TableAdvSearchBar from "./search/TableAdvSearchBar";
         default() {
           return this.$t('commons.search_by_name');
         }
-      }
+      },
+      showOpen: {
+        type: Boolean,
+        default: true
+      },
+      showName: {
+        type: Boolean,
+        default: true
+      },
     },
     methods: {
       search(value) {

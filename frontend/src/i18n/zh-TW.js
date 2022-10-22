@@ -628,6 +628,7 @@ export default {
     target_rule: '已綁定規則',
     rule_group: '雲檢測規則組',
     suggestion: '優化建議',
+    rule_sum: '(共 {0} 條規則)',
   },
   resource: {
     have_risk: '有風險',

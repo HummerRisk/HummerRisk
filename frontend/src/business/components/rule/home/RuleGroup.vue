@@ -2,7 +2,7 @@
     <main-container>
       <el-card class="table-card" v-loading="result.loading">
         <template v-slot:header>
-          <table-header :condition.sync="condition" @search="search"
+          <group-table-header :condition.sync="condition" @search="search"
                         :title="$t('rule.rule_set_list')"
                         @create="create" @list="list" @menu="menu"
                         :createTip="$t('rule.create_rule_set')"
@@ -47,12 +47,15 @@
                 <span class="button time pa-na">
               </span>
                 <div class="bottom clearfix">
-                  <time class="time pa-time">{{ data.level }}</time>
+                  <time class="time">
+                    <span class="pa-time">{{ data.level }}&nbsp;&nbsp;</span>
+                    <span class="pa-time2">{{ $t('rule.rule_sum', [data.ruleSum]) }}</span>
+                  </time>
                   <el-dropdown class="button button-drop" @command="(command)=>{handleCommand(command, data)}">
-                  <span class="el-dropdown-link">
-                    {{ $t('package.operate') }}
-                    <i class="el-icon-arrow-down el-icon--right"></i>
-                  </span>
+                    <span class="el-dropdown-link">
+                      {{ $t('package.operate') }}
+                      <i class="el-icon-arrow-down el-icon--right"></i>
+                    </span>
                     <el-dropdown-menu slot="dropdown" v-if="!!data.flag">
                       <el-dropdown-item command="handleScan">{{ $t('account.scan') }}</el-dropdown-item>
                       <el-dropdown-item command="handleInfo">{{ $t('commons.detail') }}</el-dropdown-item>
@@ -195,9 +198,13 @@
       <!--rule list-->
       <el-drawer class="rtl" :title="$t('rule.rule_list')" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
+        <table-header :condition.sync="ruleCondition"
+                      @search="handleListSearch"
+                      :show-create="false" :show-open="false" :show-name="false"
+                      style="margin: 0 15px 15px 15px;"/>
         <el-table border :data="ruleForm" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                  @filter-change="filter" @select-all="select" @select="select">
-          <el-table-column type="index" min-width="4%"/>
+                  @filter-change="filter">
+          <el-table-column type="index" min-width="2%"/>
           <el-table-column prop="name" :label="$t('rule.rule_name')" min-width="18%" show-overflow-tooltip></el-table-column>
           <el-table-column :label="$t('rule.resource_type')" min-width="10%" show-overflow-tooltip>
             <template v-slot:default="scope">
@@ -282,7 +289,8 @@
 import TableOperators from "../../common/components/TableOperators";
 import MainContainer from "../../common/components/MainContainer";
 import Container from "../../common/components/Container";
-import TableHeader from "../head/GroupTableHeader";
+import GroupTableHeader from "../head/GroupTableHeader";
+import TableHeader from "@/business/components/common/components/TableHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import FTablePagination from "../../common/pagination/FTablePagination";
 import TableOperator from "../../common/components/TableOperator";
@@ -296,18 +304,22 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
       TableOperators,
       MainContainer,
       Container,
-      TableHeader,
+      GroupTableHeader,
       TablePagination,
       FTablePagination,
       TableOperator,
       DialogFooter,
       SeverityType,
+      TableHeader,
     },
     data() {
       return {
         result: {},
         condition: {
           components: RULE_GROUP_CONFIGS
+        },
+        ruleCondition: {
+          components: RULE_CONFIGS
         },
         plugins: [],
         tableData: [],
@@ -427,12 +439,9 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         this.listVisible = true;
       },
       handleListSearch () {
-        let condition = {
-          components: RULE_CONFIGS
-        };
-        condition.combine = {group: {operator: 'in', value: this.itemId }};
+        this.ruleCondition.combine = {group: {operator: 'in', value: this.itemId }};
         let url = "/rule/list/" + this.ruleListPage + "/" + this.ruleListPageSize;
-        this.result = this.$post(url, condition, response => {
+        this.result = this.$post(url, this.ruleCondition, response => {
           let data = response.data;
           this.ruleListTotal = data.itemCount;
           this.ruleForm = data.listObject;
@@ -677,6 +686,14 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
     color: #1e6427;
     float: left;
   }
+  .pa-time2 {
+    display:inline-block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: red;
+    float: left;
+  }
   .button-drop {
     float: right;
   }
@@ -702,7 +719,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
   }
   .rtl >>> .el-drawer__body {
     overflow-y: auto;
-    padding: 20px;
+    padding: 0 20px;
   }
   .rtl >>> input {
     width: 100%;
@@ -712,6 +729,9 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
   }
   .rtl >>> .el-form-item__content {
     width: 60%;
+  }
+  .rtl >>> #el-drawer__title {
+    margin: 0;
   }
   .el-col-su >>> .el-card {
     margin: 10px 0;
