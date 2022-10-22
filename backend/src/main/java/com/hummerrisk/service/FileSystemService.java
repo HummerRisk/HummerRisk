@@ -159,6 +159,12 @@ public class FileSystemService {
 
     public void deleteFs(String id) throws Exception {
         fileSystemMapper.deleteByPrimaryKey(id);
+        FileSystemResultExample example = new FileSystemResultExample();
+        example.createCriteria().andFsIdEqualTo(id);
+        List<FileSystemResult> list = fileSystemResultMapper.selectByExample(example);
+        if(list.size() > 0) {
+            throw new Exception(Translator.get("i18n_exist_error_result"));
+        }
         OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs");
     }
 
