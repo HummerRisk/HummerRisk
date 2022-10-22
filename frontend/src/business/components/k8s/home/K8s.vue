@@ -30,7 +30,17 @@
                          :filters="statusFilters"
                          :filter-method="filterStatus">
           <template v-slot:default="{row}">
-            <k8s-status :row="row"/>
+            <div @click="validateK8s(row)">
+              <el-tag size="mini" type="warning" v-if="row.status === 'DELETE'">
+                {{ $t('account.DELETE') }}
+              </el-tag>
+              <el-tag size="mini" type="success" v-else-if="row.status === 'VALID'">
+                {{ $t('account.VALID') }}
+              </el-tag>
+              <el-tag size="mini" type="danger" v-else-if="row.status === 'INVALID'">
+                {{ $t('account.INVALID') }}
+              </el-tag>
+            </div>
           </template>
         </el-table-column>
         <el-table-column prop="operatorStatus" min-width="10%" :label="$t('k8s.operator_status')"
@@ -38,7 +48,17 @@
                          :filters="statusFilters"
                          :filter-method="filterStatus">
           <template v-slot:default="{row}">
-            <k8s-operator-status :row="row"/>
+            <div @click="validateOperator(row)">
+              <el-tag size="mini" type="warning" v-if="row.operatorStatus === 'DELETE'">
+                {{ $t('account.DELETE') }}
+              </el-tag>
+              <el-tag size="mini" type="success" v-else-if="row.operatorStatus === 'VALID'">
+                {{ $t('account.VALID') }}
+              </el-tag>
+              <el-tag size="mini" type="danger" v-else-if="row.operatorStatus === 'INVALID'">
+                {{ $t('account.INVALID') }}
+              </el-tag>
+            </div>
           </template>
         </el-table-column>
         <el-table-column min-width="15%" :label="$t('account.update_time')" sortable
@@ -177,8 +197,6 @@ import TableHeader from "@/business/components/common/components/TableHeader";
 import TableOperator from "../../common/components/TableOperator";
 import Container from "../../common/components/Container";
 import MainContainer from "../../common/components/MainContainer";
-import K8sStatus from "./K8sStatus";
-import K8sOperatorStatus from "./K8sOperatorStatus";
 import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import {K8S_CONFIGS} from "../../common/components/search/search-components";
@@ -191,7 +209,6 @@ import HrCodeEdit from "@/business/components/common/components/HrCodeEdit";
 export default {
   components: {
     TableOperators,
-    K8sStatus,
     MainContainer,
     Container,
     TableHeader,
@@ -201,7 +218,6 @@ export default {
     ProxyDialogFooter,
     ProxyDialogCreateFooter,
     HrCodeEdit,
-    K8sOperatorStatus,
   },
   provide() {
     return {
@@ -349,6 +365,50 @@ export default {
                 this.$success(this.$t('commons.success'));
               } else {
                 this.$error(this.$t('commons.error'));
+              }
+              this.search();
+            });
+          }
+        }
+      });
+    },
+    validateK8s(row) {
+      this.$alert(this.$t('account.validate') + this.$t('k8s.k8s_setting') + ' : ' + row.name +  " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.$post("/k8s/validate/" + row.id, {}, response => {
+              let data = response.data;
+              if (data) {
+                if (data.flag) {
+                  this.$success(this.$t('account.success'));
+                } else {
+                  this.$error(data.message, 10000);
+                }
+              } else {
+                this.$error(this.$t('account.error'), 10000);
+              }
+              this.search();
+            });
+          }
+        }
+      });
+    },
+    validateOperator(row) {
+      this.$alert(this.$t('account.validate') + this.$t('k8s.k8s_setting') + ' : ' + row.name +  " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.$post("/k8s/operatorStatusValidate/" + row.id, {}, response => {
+              let data = response.data;
+              if (data) {
+                if (data.flag) {
+                  this.$success(this.$t('account.success'));
+                } else {
+                  this.$error(data.message, 10000);
+                }
+              } else {
+                this.$error(this.$t('account.error'));
               }
               this.search();
             });
