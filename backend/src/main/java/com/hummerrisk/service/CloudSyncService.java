@@ -154,7 +154,7 @@ public class CloudSyncService {
                     try {
                         long nowDate = new Date().getTime();
                         dirPath = CloudTaskConstants.RESULT_FILE_PATH_PREFIX + uuid + "/" + region;
-                        CommandUtils.saveAsFile(finalScript, dirPath, "policy.yml");
+                        CommandUtils.saveAsFile(finalScript, dirPath, "policy.yml", false);
                         Map<String, String> map = PlatformUtils.getAccount(account, region, proxyMapper.selectByPrimaryKey(account.getProxyId()));
                         String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, fileName, map);
                         resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);

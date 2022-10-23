@@ -242,26 +242,22 @@ public class PlatformUtils {
                 String awsAccessKey = params.get("accessKey");
                 String awsSecretKey = params.get("secretKey");
                 if (StringUtils.equalsIgnoreCase(custodian, ScanTypeConstants.prowler.name())) {
-                    String defaultConfig = "[default]" + "\n"
+                    String defaultConfig = "["+ region + "]" + "\n"
                             + "region=" + region + "\n";
-                    String defaultCredentials = "[default]" + "\n"
+                    String defaultCredentials = "[" + awsAccessKey + "]" + "\n"
                             + "aws_access_key_id=" + awsAccessKey + "\n"
                             + "aws_secret_access_key=" + awsSecretKey + "\n";
-                    CommandUtils.saveAsFile(defaultConfig, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "config");
-                    CommandUtils.saveAsFile(defaultCredentials, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "credentials");
+                    CommandUtils.saveAsFile(defaultConfig, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "config", false);
+                    CommandUtils.saveAsFile(defaultCredentials, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "credentials", false);
                     String config = ReadFileUtils.readToBuffer(CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/config");
                     String credentials = ReadFileUtils.readToBuffer(CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/credentials");
                     if (!config.contains(region)) {
-                        String defaultConfig2 = "[default]\\n"
-                                + "region=" + region + "\\n";
-                        //java调用 command echo -e 会把 -e 写到文件里，故重新设置参数
-                        CommandUtils.commonExecCmdWithResultNew("echo '" + defaultConfig2 + "' >> " + CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/config", CloudTaskConstants.PROWLER_CONFIG_FILE_PATH);
+                        config = config + defaultConfig;
+                        CommandUtils.saveAsFile(config, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "config", true);
                     }
                     if (!credentials.contains(awsAccessKey) && !credentials.contains(awsSecretKey)) {
-                        String defaultCredentials2 = "[default]\\n"
-                                + "aws_access_key_id=" + awsAccessKey + "\\n"
-                                + "aws_secret_access_key=" + awsSecretKey + "\\n";
-                        CommandUtils.commonExecCmdWithResultNew("echo '" + defaultCredentials2 + "' >> " + CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/credentials", CloudTaskConstants.PROWLER_CONFIG_FILE_PATH);
+                        credentials = credentials + defaultCredentials;
+                        CommandUtils.saveAsFile(credentials, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "credentials", true);
                     }
                     return proxy + "./prowler -c " + (StringUtils.isNotEmpty(fileName) ? fileName : "check11") + " -f " + region + " -s -M text > result.txt";
                 }
@@ -320,7 +316,7 @@ public class PlatformUtils {
                                     "      project_id: " + oProjectId + "\n" +
                                     "      domain_name: " + oDomainId + "\n" +
                                     "      auth_url: " + oEndpoint + "\n";
-                    CommandUtils.saveAsFile(clouds, dirPath, "clouds.yml");
+                    CommandUtils.saveAsFile(clouds, dirPath, "clouds.yml", false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -338,7 +334,7 @@ public class PlatformUtils {
                 String credential = params.get("credential");
                 try {
                     CommandUtils.commonExecCmdWithResult("export GOOGLE_APPLICATION_CREDENTIALS=" + credential, dirPath);
-                    CommandUtils.saveAsFile(credential, dirPath, "google_application_credentials.json");
+                    CommandUtils.saveAsFile(credential, dirPath, "google_application_credentials.json", false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -387,7 +383,7 @@ public class PlatformUtils {
             case nuclei:
                 try {
                     String nucleiCredential = params.get("nucleiCredential");
-                    CommandUtils.saveAsFile(nucleiCredential, dirPath, "urls.txt");
+                    CommandUtils.saveAsFile(nucleiCredential, dirPath, "urls.txt", false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -398,7 +394,7 @@ public class PlatformUtils {
             case xray:
                 try {
                     String xrayCredential = params.get("xrayCredential");
-                    CommandUtils.saveAsFile(xrayCredential, dirPath, "urls.txt");
+                    CommandUtils.saveAsFile(xrayCredential, dirPath, "urls.txt", false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
