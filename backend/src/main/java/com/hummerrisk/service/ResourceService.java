@@ -236,7 +236,7 @@ public class ResourceService {
             String uuid = resourceWithBLOBs.getId() != null ? resourceWithBLOBs.getId() : UUIDUtil.newUUID();
             String resultFile = ResourceConstants.QUERY_ALL_RESOURCE.replace("{resource_name}", resourceWithBLOBs.getDirName());
             resultFile = resultFile.replace("{resource_type}", resourceWithBLOBs.getResourceType());
-            dirPath = CommandUtils.saveAsFile(resultFile, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + uuid, "policy.yml", false);
+            dirPath = CommandUtils.saveAsFile(resultFile, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + uuid, "policy.yml", true);
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(resourceWithBLOBs.getAccountId());
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, resourceWithBLOBs.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
             String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, "policy.yml", map);
@@ -399,7 +399,7 @@ public class ResourceService {
     private void createCustodianResource (String finalScript, ResourceWithBLOBs resourceWithBLOBs, Map<String, String> map,
                                           CloudTaskItemWithBLOBs taskItem, CloudTaskItemResource cloudTaskItemResource, String operation) {
         try {
-            String dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + resourceWithBLOBs.getId(), "policy.yml", false);
+            String dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + resourceWithBLOBs.getId(), "policy.yml", true);
             String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, "policy.yml", map);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
             if (!resultStr.isEmpty() && !resultStr.contains("INFO")) {
@@ -437,7 +437,7 @@ public class ResourceService {
                 command = command.replace("-t", "-w");
             }
             LogUtil.info(taskItem.getTaskId() + " {}[command]: " + command);
-            CommandUtils.saveAsFile(taskItem.getDetails(), dirPath, "nuclei.yml", false);//重启服务后容器内文件在/tmp目录下会丢失
+            CommandUtils.saveAsFile(taskItem.getDetails(), dirPath, "nuclei.yml", true);//重启服务后容器内文件在/tmp目录下会丢失
             String resultStr = CommandUtils.commonExecCmdWithResultByNuclei(command, dirPath);
 
             String nucleiRun = resultStr;

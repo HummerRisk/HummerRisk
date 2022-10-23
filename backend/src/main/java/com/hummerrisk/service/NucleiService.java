@@ -111,7 +111,7 @@ public class NucleiService {
                     String sc = "";
                     String dirPath = "";
                     try {
-                        dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + regionId, "nuclei.yml", false);
+                        dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + regionId, "nuclei.yml", true);
                     } catch (Exception e) {
                         LogUtil.error("[{}] Generate nuclei.yml file，and nuclei run failed:{}", taskId + "/" + regionId, e.getMessage());
                     }
@@ -269,7 +269,7 @@ public class NucleiService {
                 command = command.replace("-t", "-w");
             }
             LogUtil.info(cloudTask.getId() + " {}[command]: " + command);
-            CommandUtils.saveAsFile(taskItem.getDetails(), dirPath, fileName, false);//重启服务后容器内文件在/tmp目录下会丢失
+            CommandUtils.saveAsFile(taskItem.getDetails(), dirPath, fileName, true);//重启服务后容器内文件在/tmp目录下会丢失
             resultStr = CommandUtils.commonExecCmdWithResultByNuclei(command, dirPath);
             if (LogUtil.getLogger().isDebugEnabled()) {
                 LogUtil.getLogger().debug("resource created: {}", resultStr);

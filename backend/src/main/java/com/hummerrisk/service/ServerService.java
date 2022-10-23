@@ -311,7 +311,7 @@ public class ServerService {
                     server.setPublicKey(publicKey);
                 } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
                     String uuid = UUIDUtil.newUUID();
-                    CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA, false);
+                    CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA, true);
                     server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
                 }
             } else {
@@ -351,7 +351,7 @@ public class ServerService {
                     server.setPublicKey(publicKey);
                 } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
                     String uuid = UUIDUtil.newUUID();
-                    CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA, false);
+                    CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA, true);
                     server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
                 }
             } else {
@@ -510,7 +510,7 @@ public class ServerService {
             certificate.setPublicKey(publicKey);
         } else if (StringUtils.equalsIgnoreCase(certificate.getIsPublicKey(), "str")) {
             String uuid = UUIDUtil.newUUID();
-            CommandUtils.saveAsFile(certificate.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA, false);
+            CommandUtils.saveAsFile(certificate.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA, true);
             certificate.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
         }
 

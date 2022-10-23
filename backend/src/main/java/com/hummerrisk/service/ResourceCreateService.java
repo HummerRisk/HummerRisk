@@ -734,7 +734,7 @@ public class ResourceCreateService {
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
             String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, fileName, map);
             LogUtil.info(cloudTask.getId() + " {}[command]: " + command);
-            CommandUtils.saveAsFile(taskItem.getDetails(), dirPath, fileName, false);//重启服务后容器内文件在/tmp目录下会丢失
+            CommandUtils.saveAsFile(taskItem.getDetails(), dirPath, fileName, true);//重启服务后容器内文件在/tmp目录下会丢失
             resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
             if (LogUtil.getLogger().isDebugEnabled()) {
                 LogUtil.getLogger().debug("resource created: {}", resultStr);

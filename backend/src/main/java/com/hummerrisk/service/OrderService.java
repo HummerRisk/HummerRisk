@@ -123,7 +123,7 @@ public class OrderService {
                     String sc = "";
                     String dirPath = "";
                     try {
-                        dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + regionId, "policy.yml", false);
+                        dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + regionId, "policy.yml", true);
                     } catch (Exception e) {
                         LogUtil.error("[{}] Generate policy.yml file，and custodian run failed:{}", taskId + "/" + regionId, e.getMessage());
                     }
@@ -525,7 +525,7 @@ public class OrderService {
                             String sc = "";
                             String dirPath = "";
                             try {
-                                dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + item.getRegion(), "policy.yml", false);
+                                dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + item.getRegion(), "policy.yml", true);
                             } catch (Exception e) {
                                 LogUtil.error("[{}] Generate policy.yml file，and custodian run failed:{}", taskId + "/" + item.getRegion(), e.getMessage());
                             }

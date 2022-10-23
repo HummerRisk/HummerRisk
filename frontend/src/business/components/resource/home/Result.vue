@@ -695,7 +695,7 @@ export default {
       regulationData: [],
       regulationVisible: false,
       rowIndex: '',
-      progressResult: 0,
+      progressResult: 0.0,
     }
   },
   watch: {
