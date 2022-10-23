@@ -242,23 +242,23 @@ public class PlatformUtils {
                 String awsAccessKey = params.get("accessKey");
                 String awsSecretKey = params.get("secretKey");
                 if (StringUtils.equalsIgnoreCase(custodian, ScanTypeConstants.prowler.name())) {
-                    String defaultConfig = "["+ "default" + "]" + "\n"
+                    String defaultConfig = "[default]" + "\n"
                             + "region=" + region + "\n";
-                    String defaultCredentials = "[" + "default" + "]" + "\n"
+                    String defaultCredentials = "[default]" + "\n"
                             + "aws_access_key_id=" + awsAccessKey + "\n"
                             + "aws_secret_access_key=" + awsSecretKey + "\n";
-                    CommandUtils.saveAsFile(defaultConfig, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "config", true);
-                    CommandUtils.saveAsFile(defaultCredentials, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "credentials", true);
-                    String config = ReadFileUtils.readToBuffer(CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/config");
-                    String credentials = ReadFileUtils.readToBuffer(CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/credentials");
-                    if (!config.contains(region)) {
-                        config = config + defaultConfig;
-                        CommandUtils.saveAsFile(config, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "config", false);
-                    }
-                    if (!credentials.contains(awsAccessKey) && !credentials.contains(awsSecretKey)) {
-                        credentials = credentials + defaultCredentials;
-                        CommandUtils.saveAsFile(credentials, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "credentials", false);
-                    }
+                    CommandUtils.saveAsFile(defaultConfig, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "config", false);
+                    CommandUtils.saveAsFile(defaultCredentials, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "credentials", false);
+//                    String config = ReadFileUtils.readToBuffer(CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/config");
+//                    String credentials = ReadFileUtils.readToBuffer(CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/credentials");
+//                    if (config.indexOf(region) == -1) {
+//                        config = config + "\n" + defaultConfig;
+//                        CommandUtils.saveAsFile(config, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "config", false);
+//                    }
+//                    if (credentials.indexOf(awsAccessKey) == -1 && credentials.indexOf(awsSecretKey) == -1) {
+//                        credentials = credentials + "\n" + defaultCredentials;
+//                        CommandUtils.saveAsFile(credentials, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "credentials", false);
+//                    }
                     return proxy + "./prowler -c " + (StringUtils.isNotEmpty(fileName) ? fileName : "check11") + " -f " + region + " -s -M text > result.txt";
                 }
                 pre = "AWS_ACCESS_KEY_ID=" + awsAccessKey + " " +
