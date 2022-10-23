@@ -184,8 +184,7 @@ public class OrderService {
                             throw new RuntimeException(e);
                         }
                         CloudResourceItemExample cloudResourceItemExample = new CloudResourceItemExample();
-                        cloudResourceItemExample.createCriteria().andAccountIdEqualTo(quartzTaskDTO.getAccountId());
-                        cloudResourceItemExample.createCriteria().andResourceTypeIn(resourceTypes);
+                        cloudResourceItemExample.createCriteria().andAccountIdEqualTo(quartzTaskDTO.getAccountId()).andResourceTypeIn(resourceTypes);
                         long resourceSum = cloudResourceItemMapper.countByExample(cloudResourceItemExample);
                         cloudTask.setResourcesSum(resourceSum);
                         cloudTask.setResourceTypes(new HashSet<>(resourceTypes).toString());
