@@ -113,6 +113,7 @@
             t.server_name as 'name',
             count(t.id) as 'value'
         FROM server_result as t
+        WHERE t.is_severity = 0
         GROUP BY t.server_name
         Limit 10;
     </select>
