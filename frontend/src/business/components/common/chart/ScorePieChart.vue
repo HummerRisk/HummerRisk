@@ -24,7 +24,6 @@ export default {
     init () {
       this.$get("/dashboard/score", response => {
         let data = response.data;
-        console.log(data)
         let gaugeData = [
           {
             value: data,

@@ -122,114 +122,117 @@
                       <el-button type="danger" icon="el-icon-delete" size="mini" v-show="!scope.row.isSet"
                                  @click.native.prevent="deleteRowServer(scope.$index, scope.row)">
                       </el-button>
-                      <!--bind Certificate-->
-                      <div>
-                        <el-drawer
-                          size="60%"
-                          :title="$t('server.bind_certificate')"
-                          :append-to-body="true"
-                          :before-close="innerCertificateClose"
-                          :visible.sync="innerAddCertificate">
-                          <el-form :model="addCertificateForm" label-position="right" label-width="150px" size="small" ref="addCertificateForm" :rules="rule" style="padding: 5px 5% 5px 5px;">
-                            <el-form-item :label="$t('server.bind_certificate')" ref="type" prop="type" :rules="{required: true, message: $t('server.bind_certificate') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-                              <el-radio v-model="addCertificateForm.isCertificate" :label="false">{{ $t('server.menu_certificate') }}</el-radio>
-                              <el-radio v-model="addCertificateForm.isCertificate" :label="true">{{ $t('server.public_certificate') }}</el-radio>
-                            </el-form-item>
-                            <el-form-item v-if="addCertificateForm.isCertificate" :label="$t('server.public_certificate')">
-                              <el-select style="width: 100%;" filterable :clearable="true" v-model="addCertificateForm.certificateId" :placeholder="$t('server.public_certificate')">
-                                <el-option
-                                  v-for="item in certificates"
-                                  :key="item.id"
-                                  :label="item.name"
-                                  :value="item.id">
-                                  &nbsp;&nbsp; {{ item.name }}
-                                </el-option>
-                              </el-select>
-                            </el-form-item>
-                            <el-form-item v-if="!addCertificateForm.isCertificate !==null && !addCertificateForm.isCertificate" :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-                              <el-radio v-model="addCertificateForm.isPublicKey" label="no">{{ $t('server.no_public_key') }}</el-radio>
-                              <el-radio v-model="addCertificateForm.isPublicKey" label="str">{{ $t('server.str_public_key') }}</el-radio>
-                              <el-radio v-model="addCertificateForm.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
-                            </el-form-item>
-                            <el-form-item v-if="!addCertificateForm.isCertificate && addCertificateForm.isPublicKey === 'no'" :label="$t('commons.password')" ref="password" prop="password">
-                              <el-input type="password" v-model="addCertificateForm.password" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
-                            </el-form-item>
-                            <el-form-item v-if="!addCertificateForm.isCertificate && addCertificateForm.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
-                              <el-input type="textarea" :rows="10" v-model="addCertificateForm.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
-                            </el-form-item>
-                            <el-form-item v-if="!addCertificateForm.isCertificate && addCertificateForm.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
-                              <server-key-upload v-on:append="append" v-model="addCertificateForm.publicKeyPath" :param="addCertificateForm.publicKeyPath"/>
-                            </el-form-item>
-                            <el-form-item>
-                              <span style="color: red">{{ $t('server.certificate_note') }}</span>
-                            </el-form-item>
-                          </el-form>
-                          <dialog-footer
-                            @cancel="innerAddCertificate = false"
-                            @confirm="saveCertificate(addCertificateForm, scope.row, rowindex)"/>
-                        </el-drawer>
-                      </div>
-                      <!--bind Certificate-->
                     </template>
                   </el-table-column>
                 </el-table>
               </el-col>
             </el-row>
+          </div>
 
-          </div>
+          <!--bind Certificate-->
+          <el-drawer
+            size="60%"
+            :title="$t('server.bind_certificate')"
+            :append-to-body="true"
+            :before-close="innerCertificateClose"
+            :visible.sync="innerAddCertificate">
+            <el-form :model="addCertificateForm" label-position="right" label-width="150px" size="small" ref="addCertificateForm" :rules="rule" style="padding: 5px 5% 5px 5px;">
+              <el-form-item :label="$t('server.port')" ref="type" prop="port" :rules="{required: true, message: $t('server.port') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                <el-input v-model="addCertificateForm.port"></el-input>
+              </el-form-item>
+              <el-form-item :label="$t('server.server_user_name')" ref="type" prop="userName" :rules="{required: true, message: $t('server.server_user_name') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                <el-input v-model="addCertificateForm.userName"></el-input>
+              </el-form-item>
+              <el-form-item :label="$t('server.bind_certificate')" ref="type" prop="type" :rules="{required: true, message: $t('server.bind_certificate') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                <el-radio v-model="addCertificateForm.isCertificate" :label="false">{{ $t('server.menu_certificate') }}</el-radio>
+                <el-radio v-model="addCertificateForm.isCertificate" :label="true">{{ $t('server.public_certificate') }}</el-radio>
+              </el-form-item>
+              <el-form-item v-if="addCertificateForm.isCertificate" :label="$t('server.public_certificate')">
+                <el-select style="width: 100%;" filterable :clearable="true" v-model="addCertificateForm.certificateId" :placeholder="$t('server.public_certificate')">
+                  <el-option
+                    v-for="item in certificates"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+                    &nbsp;&nbsp; {{ item.name }}
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item v-if="!addCertificateForm.isCertificate !==null && !addCertificateForm.isCertificate" :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                <el-radio v-model="addCertificateForm.isPublicKey" label="no">{{ $t('server.no_public_key') }}</el-radio>
+                <el-radio v-model="addCertificateForm.isPublicKey" label="str">{{ $t('server.str_public_key') }}</el-radio>
+                <el-radio v-model="addCertificateForm.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
+              </el-form-item>
+              <el-form-item v-if="!addCertificateForm.isCertificate && addCertificateForm.isPublicKey === 'no'" :label="$t('commons.password')" ref="password" prop="password">
+                <el-input type="password" v-model="addCertificateForm.password" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
+              </el-form-item>
+              <el-form-item v-if="!addCertificateForm.isCertificate && addCertificateForm.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
+                <el-input type="textarea" :rows="10" v-model="addCertificateForm.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
+              </el-form-item>
+              <el-form-item v-if="!addCertificateForm.isCertificate && addCertificateForm.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
+                <server-key-upload v-on:append="append" v-model="addCertificateForm.publicKeyPath" :param="addCertificateForm.publicKeyPath"/>
+              </el-form-item>
+              <el-form-item>
+                <span style="color: red">{{ $t('server.certificate_note') }}</span>
+              </el-form-item>
+            </el-form>
+            <dialog-footer
+              @cancel="innerAddCertificate = false"
+              @confirm="saveCertificate(addCertificateForm, rowindex)"/>
+          </el-drawer>
+          <!--bind Certificate-->
+
           <!--batch Certificate-->
-          <div>
-            <el-drawer
-              size="60%"
-              :title="$t('server.bind_certificate')"
-              :append-to-body="true"
-              :before-close="innerCertificateClose"
-              :visible.sync="batchBindCertificate">
-              <el-form :model="batchBindForm" label-position="right" label-width="150px" size="small" ref="addCertificateForm" :rules="rule" style="padding: 5px 5% 5px 5px;">
-                <el-form-item :label="$t('server.port')" ref="type" prop="port" :rules="{required: true, message: $t('server.port') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-                  <el-input v-model="batchBindForm.port"></el-input>
-                </el-form-item>
-                <el-form-item :label="$t('server.server_user_name')" ref="type" prop="userName" :rules="{required: true, message: $t('server.server_user_name') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-                  <el-input v-model="batchBindForm.userName"></el-input>
-                </el-form-item>
-                <el-form-item :label="$t('server.bind_certificate')" ref="type" prop="isCertificate" :rules="{required: true, message: $t('server.bind_certificate') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-                  <el-radio v-model="batchBindForm.isCertificate" :label="false">{{ $t('server.menu_certificate') }}</el-radio>
-                  <el-radio v-model="batchBindForm.isCertificate" :label="true">{{ $t('server.public_certificate') }}</el-radio>
-                </el-form-item>
-                <el-form-item v-if="batchBindForm.isCertificate" :label="$t('server.public_certificate')">
-                  <el-select style="width: 100%;" filterable :clearable="true" v-model="batchBindForm.certificateId" :placeholder="$t('server.public_certificate')">
-                    <el-option
-                      v-for="item in certificates"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id">
-                      &nbsp;&nbsp; {{ item.name }}
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item v-if="!batchBindForm.isCertificate !==null && !batchBindForm.isCertificate" :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-                  <el-radio v-model="batchBindForm.isPublicKey" label="no">{{ $t('server.no_public_key') }}</el-radio>
-                  <el-radio v-model="batchBindForm.isPublicKey" label="str">{{ $t('server.str_public_key') }}</el-radio>
-                  <el-radio v-model="batchBindForm.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
-                </el-form-item>
-                <el-form-item v-if="!batchBindForm.isCertificate && batchBindForm.isPublicKey === 'no'" :label="$t('commons.password')" ref="password" prop="password">
-                  <el-input type="password" v-model="batchBindForm.password" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
-                </el-form-item>
-                <el-form-item v-if="!batchBindForm.isCertificate && batchBindForm.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
-                  <el-input type="textarea" :rows="10" v-model="batchBindForm.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
-                </el-form-item>
-                <el-form-item v-if="!batchBindForm.isCertificate && batchBindForm.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
-                  <server-key-upload v-on:append="append" v-model="batchBindForm.publicKeyPath" :param="batchBindForm.publicKeyPath"/>
-                </el-form-item>
-                <el-form-item>
-                  <span style="color: red">{{ $t('server.certificate_note') }}</span>
-                </el-form-item>
-              </el-form>
-              <dialog-footer
-                @cancel="batchBindCertificate = false"
-                @confirm="saveBatchBind(batchBindForm)"/>
-            </el-drawer>
-          </div>
+          <el-drawer
+            size="60%"
+            :title="$t('server.bind_certificate')"
+            :append-to-body="true"
+            :before-close="innerCertificateClose"
+            :visible.sync="batchBindCertificate">
+            <el-form :model="batchBindForm" label-position="right" label-width="150px" size="small" ref="addCertificateForm" :rules="rule" style="padding: 5px 5% 5px 5px;">
+              <el-form-item :label="$t('server.port')" ref="type" prop="port" :rules="{required: true, message: $t('server.port') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                <el-input v-model="batchBindForm.port"></el-input>
+              </el-form-item>
+              <el-form-item :label="$t('server.server_user_name')" ref="type" prop="userName" :rules="{required: true, message: $t('server.server_user_name') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                <el-input v-model="batchBindForm.userName"></el-input>
+              </el-form-item>
+              <el-form-item :label="$t('server.bind_certificate')" ref="type" prop="isCertificate" :rules="{required: true, message: $t('server.bind_certificate') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                <el-radio v-model="batchBindForm.isCertificate" :label="false">{{ $t('server.menu_certificate') }}</el-radio>
+                <el-radio v-model="batchBindForm.isCertificate" :label="true">{{ $t('server.public_certificate') }}</el-radio>
+              </el-form-item>
+              <el-form-item v-if="batchBindForm.isCertificate" :label="$t('server.public_certificate')">
+                <el-select style="width: 100%;" filterable :clearable="true" v-model="batchBindForm.certificateId" :placeholder="$t('server.public_certificate')">
+                  <el-option
+                    v-for="item in certificates"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+                    &nbsp;&nbsp; {{ item.name }}
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item v-if="!batchBindForm.isCertificate !==null && !batchBindForm.isCertificate" :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                <el-radio v-model="batchBindForm.isPublicKey" label="no">{{ $t('server.no_public_key') }}</el-radio>
+                <el-radio v-model="batchBindForm.isPublicKey" label="str">{{ $t('server.str_public_key') }}</el-radio>
+                <el-radio v-model="batchBindForm.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
+              </el-form-item>
+              <el-form-item v-if="!batchBindForm.isCertificate && batchBindForm.isPublicKey === 'no'" :label="$t('commons.password')" ref="password" prop="password">
+                <el-input type="password" v-model="batchBindForm.password" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
+              </el-form-item>
+              <el-form-item v-if="!batchBindForm.isCertificate && batchBindForm.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
+                <el-input type="textarea" :rows="10" v-model="batchBindForm.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
+              </el-form-item>
+              <el-form-item v-if="!batchBindForm.isCertificate && batchBindForm.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
+                <server-key-upload v-on:append="append" v-model="batchBindForm.publicKeyPath" :param="batchBindForm.publicKeyPath"/>
+              </el-form-item>
+              <el-form-item>
+                <span style="color: red">{{ $t('server.certificate_note') }}</span>
+              </el-form-item>
+            </el-form>
+            <dialog-footer
+              @cancel="batchBindCertificate = false"
+              @confirm="saveBatchBind(batchBindForm)"/>
+          </el-drawer>
           <!--batch Certificate-->
           <div style="margin: 10px;">
             <dialog-footer
@@ -436,7 +439,7 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
           this.proxys = response.data;
         });
       },
-      //查询代理
+      //查询证书下拉列表
       activeCertificates() {
         let url = "/server/allCertificateList";
         this.result = this.$get(url, response => {
@@ -632,11 +635,6 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
       bindCertificate(index, data) {
         this.rowindex = index;
         this.addCertificateForm = data;
-        if (this.addCertificateForm.isCertificate === undefined) {
-          this.addCertificateForm.isCertificate = false;
-          this.addCertificateForm.isPublicKey = 'no';
-        }
-        this.activeCertificates();
         this.innerAddCertificate = true;
       },
       saveServer(servers) {
@@ -715,38 +713,43 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
           isCertificate: false,
           isPublicKey: 'no',
         };
-        this.activeCertificates();
         this.batchBindCertificate = true;
       },
       innerCertificateClose() {
         this.innerAddCertificate = false;
         this.batchBindCertificate = false;
       },
-      saveCertificate(item, row, index) {
-        for(let i = 0; i<= this.servers.length;i++) {
-          if(i===index) {
-            this.servers[index].isCertificate = item.isCertificate;
-            this.servers[index].certificateId = item.certificateId;
-            this.servers[index].isPublicKey = item.isPublicKey;
-            this.servers[index].password = item.password;
-            this.servers[index].publicKey = item.publicKey;
-            this.servers[index].publicKeyPath = item.publicKeyPath;
-            this.servers[index].keyFile = this.keyFile;
+      saveCertificate(item, index) {
+        let index_ = 0;
+        for (let row of this.servers) {
+          if(index_ === index) {
+            row.isCertificate = item.isCertificate ? item.isCertificate : '';
+            row.certificateId = item.certificateId ? item.certificateId : '';
+            row.isPublicKey = item.isPublicKey ? item.isPublicKey : '';
+            row.password = item.password ? item.password : '';
+            row.publicKey = item.publicKey ? item.publicKey : '';
+            row.publicKeyPath = item.publicKeyPath ? item.publicKeyPath : '';
+            row.port = item.port ? item.port : '';
+            row.userName = item.userName ? item.userName : '';
+            row.keyFile = item.keyFile ? item.keyFile : '';
+            break;
           }
+          index_++;
         }
         this.innerCertificateClose();
       },
       saveBatchBind(item) {
         if (this.servers.length > 0) {
           for (let row of this.servers) {
-            row.isCertificate = item.isCertificate;
-            row.certificateId = item.certificateId;
-            row.isPublicKey = item.isPublicKey;
-            row.password = item.password;
-            row.publicKey = item.publicKey;
-            row.publicKeyPath = item.publicKeyPath;
-            row.port = item.port;
-            row.userName = item.userName;
+            row.isCertificate = item.isCertificate?item.isCertificate:'';
+            row.certificateId = item.certificateId?item.certificateId:'';
+            row.isPublicKey = item.isPublicKey?item.isPublicKey:'';
+            row.password = item.password?item.password:'';
+            row.publicKey = item.publicKey?item.publicKey:'';
+            row.publicKeyPath = item.publicKeyPath?item.publicKeyPath:'';
+            row.port = item.port?item.port:'';
+            row.userName = item.userName?item.userName:'';
+            row.keyFile = item.keyFile?item.keyFile:'';
           }
           this.$success(this.$t('server.batch_success'));
           this.innerCertificateClose();
