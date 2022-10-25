@@ -251,7 +251,7 @@ public class ServerService {
     }
 
     public List<Server> allServerList() {
-        return serverMapper.selectByExample(null);
+        return serverMapper.selectByExampleWithBLOBs(null);
     }
 
     public List<ServerDTO> getServerList(ServerRequest server) {
@@ -490,7 +490,7 @@ public class ServerService {
     }
 
     public List<ServerCertificate> allCertificateList() {
-        return serverCertificateMapper.selectByExample(null);
+        return serverCertificateMapper.selectByExampleWithBLOBs(null);
     }
 
     public List<ServerCertificateDTO> certificateList(ServerCertificateRequest request) {

@@ -79,7 +79,7 @@
           <div>
             <el-row>
               <el-col :span="24">
-                <el-table :data="servers" class="tb-edit" border :cell-style="rowClass" :header-cell-style="headClass">
+                <el-table :data="servers" class="tb-edit" border :cell-style="rowClass" :header-cell-style="headClass" :key="itemKey">
                   <el-table-column :label="$t('server.server_name')" min-width="20%" prop="serverName">
                     <template slot-scope="scope">
                       <el-input v-model="scope.row.name"></el-input>
@@ -108,7 +108,7 @@
                       <el-tooltip v-if="scope.row.isPublicKey==='str'" class="item" effect="dark" :content="scope.row.publicKey" placement="left-start">
                         <el-button type="success" size="mini">{{ $t('server.str_public_key') }}</el-button>
                       </el-tooltip>
-                      <el-tooltip v-if="scope.row.isPublicKey==='file'" class="item" effect="dark" :content="scope.row.publicKey" placement="left-start">
+                      <el-tooltip v-if="scope.row.isPublicKey==='file'" class="item" effect="dark" :content="scope.row.publicKeyPath" placement="left-start">
                         <el-button type="success" size="mini">{{ $t('server.file_public_key') }}</el-button>
                       </el-tooltip>
                       <el-button v-if="scope.row.isPublicKey==null|| scope.row.isPublicKey==undefined" size="mini" @click="bindCertificate(scope.$index, scope.row)">{{ $t('server.tobeSet') }}</el-button>
@@ -415,6 +415,7 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
           isPublicKey: 'no',
         },
         rowindex: 0,
+        itemKey: Math.random(),
       }
     },
     props: {
@@ -724,11 +725,24 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
         for (let row of this.servers) {
           if(index_ === index) {
             row.isCertificate = item.isCertificate ? item.isCertificate : '';
-            row.certificateId = item.certificateId ? item.certificateId : '';
-            row.isPublicKey = item.isPublicKey ? item.isPublicKey : '';
-            row.password = item.password ? item.password : '';
-            row.publicKey = item.publicKey ? item.publicKey : '';
-            row.publicKeyPath = item.publicKeyPath ? item.publicKeyPath : '';
+            if (item.isCertificate) {
+              for (let certificate of this.certificates) {
+                if(item.certificateId === certificate.id) {
+                  row.certificateId = item.certificateId ? item.certificateId : '';
+                  row.isPublicKey = certificate.isPublicKey ? certificate.isPublicKey : '';
+                  row.password = certificate.password ? certificate.password : '';
+                  row.publicKey = certificate.publicKey ? certificate.publicKey : '';
+                  row.publicKeyPath = certificate.publicKeyPath ? certificate.publicKeyPath : '';
+                  break;
+                }
+              }
+            } else {
+              row.certificateId = item.certificateId ? item.certificateId : '';
+              row.isPublicKey = item.isPublicKey ? item.isPublicKey : '';
+              row.password = item.password ? item.password : '';
+              row.publicKey = item.publicKey ? item.publicKey : '';
+              row.publicKeyPath = item.publicKeyPath ? item.publicKeyPath : '';
+            }
             row.port = item.port ? item.port : '';
             row.userName = item.userName ? item.userName : '';
             row.keyFile = item.keyFile ? item.keyFile : '';
@@ -736,6 +750,8 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
           }
           index_++;
         }
+        // 在tableData赋值的地方，顺便随机设置下key，页面就会刷新了
+        this.itemKey = Math.random();
         this.innerCertificateClose();
       },
       saveBatchBind(item) {
@@ -758,7 +774,7 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
         }
       },
     },
-    created () {
+    activated () {
       this.init();
       this.activeProxy();
       this.activeCertificates();

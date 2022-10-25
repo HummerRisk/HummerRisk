@@ -17,7 +17,7 @@
         <el-table-column prop="description" :label="$t('commons.description')" min-width="18%" show-overflow-tooltip></el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('server.is_public_key')" min-width="10%" show-overflow-tooltip>
           <el-tag size="mini" type="success" v-if="scope.row.isPublicKey === 'no'">
-            {{ $t('server.no_public_key') + '(' +  $t('commons.password') + ')'}}
+            {{ $t('server.no_public_key')}}
           </el-tag>
           <el-tag size="mini" type="success" v-else-if="scope.row.isPublicKey === 'file'">
             {{ $t('server.file_public_key') }}
