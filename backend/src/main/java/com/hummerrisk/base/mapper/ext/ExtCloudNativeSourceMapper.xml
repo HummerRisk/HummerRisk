@@ -320,7 +320,7 @@
 
     <select id="selectK8s" resultMap="K8sBaseResultMap">
         select
-            CONCAT('K8s账号: ', t.name, '(共',
+            CONCAT('K8s账号: \r', t.name, '\r(共 ',
                    (
                        select count(t1.id) from cloud_native_source t1
                        where t1.cloud_native_id = t.id
@@ -332,7 +332,7 @@
 
     <select id="selectResourceType" resultMap="ResourceTypeBaseResultMap">
         select
-            CONCAT('资源类型: ', t.source_type, '(共',
+            CONCAT('资源类型: \r', t.source_type, '\r(共 ',
                    (
                        select count(t1.id) from cloud_native_source t1
                        where t1.cloud_native_id = t.cloud_native_id and t1.source_type = t.source_type
@@ -350,8 +350,9 @@
             CASE
                 WHEN t.source_namespace IS NULL
                     THEN CONCAT(t.source_name)
-                ELSE CONCAT(t.source_name, '(', t.source_namespace, ')')
+                ELSE CONCAT(t.source_name)
                 END AS name,
+            t.source_namespace as namespace,
             CASE
                 WHEN t.source_namespace IS NULL
                     THEN 2

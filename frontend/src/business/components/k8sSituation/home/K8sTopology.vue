@@ -1,5 +1,5 @@
 <template>
-  <main-container>
+  <main-container class="card">
     <el-card class="table-card" v-loading="result.loading">
 
       <svg id="cloud-topo"></svg>
@@ -62,18 +62,22 @@ export default {
           .attr("pointer-events", d => !d.children ? "none" : null)
           .on("mouseover", function() { d3.select(this).attr("stroke", "#000"); })
           .on("mouseout", function() { d3.select(this).attr("stroke", null); })
-          .on("click", (event, d) => focus !== d && (zoom(event, d), event.stopPropagation()));
+          .on("click", (event, d) => {
+            if(focus !== d && d.parent !== focus && d.depth === 2) {
+              this.open(d);
+            }
+            focus !== d && (zoom(event, d), event.stopPropagation());
+          });
 
         const label = svg.append("g")
           .style("font", "10px sans-serif")
-          .style("word-wrap", "break-word")
           .attr("pointer-events", "none")
           .attr("text-anchor", "middle")
           .selectAll("text")
           .data(root.descendants())
           .join("text")
           .style("fill-opacity", d => d.parent === root ? 1 : 0)
-          .style("display", d => d.parent === root ? "inline" : "none")
+          .style("display", d => d.parent === root ? "inline-block" : "none")
           .text(d => d.data.name);
 
         zoomTo([root.x, root.y, root.r * 2]);
@@ -101,16 +105,31 @@ export default {
             });
 
           label
-            .filter(function(d) { return d.parent === focus || this.style.display === "inline"; })
+            .filter(function(d) { return d.parent === focus || this.style.display === "inline-block"; })
             .transition(transition)
             .style("fill-opacity", d => d.parent === focus ? 1 : 0)
-            .on("start", function(d) { if (d.parent === focus) this.style.display = "inline"; })
+            .on("start", function(d) { if (d.parent === focus) this.style.display = "inline-block"; })
             .on("end", function(d) { if (d.parent !== focus) this.style.display = "none"; });
         }
 
         return svg.node();
       });
 
+    },
+    open(node) {
+      let childrens = node.children;
+      let message = '<table><tr style="background-color: thistle;width: 120px;"><th>命名空间</th><th>资源详情</th></tr>';
+      for (let children of childrens) {
+        let tr = '<tr style="background-color: #9ec1e5;width: 120px;"><td>' + (children.data.namespace?children.data.namespace:'N/A') + '</td><td>' + children.data.name + '</td></tr>';
+        message += tr;
+      }
+      message+='</table>';
+      this.$notify.success({
+        title: node.data.name,
+        message: message,
+        dangerouslyUseHTMLString: true,
+        showClose: false,
+      });
     },
   },
 
