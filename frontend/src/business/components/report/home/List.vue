@@ -9,23 +9,83 @@
 
       </el-card>
 
-      <el-card class="table-card" v-if="groups.length > 0">
-        <ul class="issue-list">
-          <li class="arrows" @click="clickLeft">
-            <i class="el-icon-arrow-left"></i>
-          </li>
-          <li
-            class="issue-item"
-            v-for="group in groups"
-            :key="group.id"
-            :class="tabsId == group.id ? 'issue-item-active' : ''"
-            @click="handleClick(group)">
-            {{ group.name }}
-          </li>
-          <li class="arrows" @click="clickRight">
-            <i class="el-icon-arrow-right"></i>
-          </li>
-        </ul>
+      <el-card class="table-card" v-loading="result.loading">
+        <template v-slot:header>
+          <table-header :condition.sync="condition" @search="search"
+                              :title="$t('rule.rule_set_list')"
+                              :createTip="$t('rule.create_rule_set')"
+                              :show-create="false"/>
+
+        </template>
+        <el-row :gutter="20" class="el-row-body">
+          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in ftableData"
+                  :key="index" class="el-col el-col-su">
+            <el-card :body-style="{ padding: '15px' }">
+              <div style="height: 130px;">
+                <el-row :gutter="20">
+                  <el-col :span="3">
+                    <el-image style="border-radius: 50%;width: 16px; height: 16px; vertical-align:middle;" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
+                      <div slot="error" class="image-slot">
+                        <i class="el-icon-picture-outline"></i>
+                      </div>
+                    </el-image>
+                  </el-col>
+                  <el-col :span="21">
+                    <el-row class="plugin">{{ data.pluginName }}</el-row>
+                    <el-row class="desc">{{ data.description }}</el-row>
+                  </el-col>
+                </el-row>
+              </div>
+              <el-divider></el-divider>
+              <div style="padding: 0 14px 14px 14px;">
+                <el-row>
+                  <el-col :span="19">
+                    <span class="da-na">{{ data.name }}</span>
+                  </el-col>
+                  <el-col :span="5">
+                    <el-button size="medium" type="danger" class="round" round v-if="data.flag === true">
+                      {{ $t('rule.tag_flag_true') }}
+                    </el-button>
+                    <el-button size="medium" type="success" class="round" round v-else-if="data.flag === false">
+                      {{ $t('rule.tag_flag_false') }}
+                    </el-button>
+                  </el-col>
+                </el-row>
+                <span class="button time pa-na">
+                </span>
+                <div class="bottom clearfix">
+                  <time class="time">
+                    <span class="pa-time">{{ data.level }}&nbsp;&nbsp;</span>
+                    <span class="pa-time2">{{ $t('rule.rule_sum', [data.ruleSum]) }}</span>
+                  </time>
+                  <el-dropdown class="button button-drop" @command="(command)=>{handleCommand(command, data)}">
+                      <span class="el-dropdown-link">
+                        {{ $t('package.operate') }}
+                        <i class="el-icon-arrow-down el-icon--right"></i>
+                      </span>
+                    <el-dropdown-menu slot="dropdown" v-if="!!data.flag">
+                      <el-dropdown-item command="handleScan">{{ $t('account.scan') }}</el-dropdown-item>
+                      <el-dropdown-item command="handleInfo">{{ $t('commons.detail') }}</el-dropdown-item>
+                      <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
+                      <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
+                    </el-dropdown-menu>
+                    <el-dropdown-menu slot="dropdown" v-if="!data.flag">
+                      <el-dropdown-item command="handleScan">{{ $t('account.scan') }}</el-dropdown-item>
+                      <el-dropdown-item command="handleEdit">{{ $t('commons.edit') }}</el-dropdown-item>
+                      <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
+                      <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
+                      <el-dropdown-item command="handleDelete">{{ $t('commons.delete') }}</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </div>
+              </div>
+            </el-card>
+          </el-col>
+        </el-row>
+        <f-table-pagination :change="search" :current-page.sync="fcurrentPage" :page-size.sync="fpageSize" :total="ftotal"/>
+      </el-card>
+
+      <el-card class="table-card">
         <div style="margin-top: 15px;">
             <el-row>
               <el-col :span="4">
@@ -127,7 +187,6 @@
         </el-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
-
 
       <!--Rule detail-->
       <el-drawer class="rtl" :title="$t('resource.report_detail')" :visible.sync="visible" size="60%" :before-close="handleClose" :direction="direction"
@@ -336,6 +395,8 @@ import {_filter, _sort, getCurrentAccountID} from "@/common/js/utils";
 import {ACCOUNT_ID, severityOptions} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver.js";
 import AccountChange from "@/business/components/common/head/AccountSwitch";
+import FTablePagination from "../../common/pagination/FTablePagination";
+import GroupTableHeader from "@/business/components/rule/head/GroupTableHeader";
 
 /* eslint-disable */
   export default {
@@ -350,13 +411,14 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
       CenterChart,
       MetricChart,
       AccountChange,
+      FTablePagination,
+      GroupTableHeader,
     },
     data() {
       return {
         result: {},
         content: {},
         tableData: [],
-        groups: [],
         currentPage: 1,
         pageSize: 10,
         total: 0,
@@ -416,10 +478,11 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
         accountSize: 10,
         accountTotal: 0,
         selectIds: new Set(),
-        showNum: 5,// 需要显示多少个
-        titleList: [],
-        tabsId: 1,// 高亮显示ID
         group: {},
+        ftableData: [],
+        fcurrentPage: 1,
+        fpageSize: 12,
+        ftotal: 0,
       }
     },
     methods: {
@@ -445,20 +508,11 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
         await this.groupSearch();
       },
       async groupSearch () {
-        this.result = await this.$post("/resource/rule/groups", {accountId: this.accountId}, response => {
-          this.titleList = response.data;
-          this.titleList.forEach((v, i) => {
-            // tabs显示多少个
-            if (this.groups.length < this.showNum) {
-              this.groups.push(v);
-            }
-          });
-          if(this.groups.length > 0) {
-            this.group = this.groups[0];
-            this.groupId = this.groups[0].id;
-            this.groupName = this.groups[0].name;
-            this.reportIsoSearch();
-          }
+        this.condition.accountId = this.accountId;
+        this.result = await this.$post("/rule/ruleGroup/list/" + this.fcurrentPage + "/" + this.fpageSize, this.condition, response => {
+          let data = response.data;
+          this.ftotal = data.itemCount;
+          this.ftableData = data.listObject;
         });
       },
       async reportIsoSearch() {
@@ -532,8 +586,8 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
         this.severityOptionsFnc();
         this.ruleSetOptionsFnc();
         this.inspectionSeportOptionsFnc();
-        this.search();
         this.accountList();
+        this.search();
       },
       filterAccount (tag) {
         if (!!tag.name) {
@@ -551,15 +605,6 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
         }
       },
       handleClick(tab) {
-        for (let obj of this.groups) {
-          if (tab.name == obj.name) {
-            this.group = obj;
-            this.groupId = obj.id;
-            this.groupName = obj.name;
-            this.tabsId = this.groupId;
-            break;
-          }
-        }
         this.reportIsoSearch();
       },
       handleClose() {
@@ -626,38 +671,11 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
           let data = response.data;
           this.accountTotal = data.itemCount;
           this.accountData = data.listObject;
+          if(this.accountData.length>0){
+            localStorage.setItem(ACCOUNT_ID, this.accountData[0].id);
+            this.accountId = this.accountData[0].id;
+          }
         });
-      },
-      //点击左边
-      clickLeft() {
-        if (this.titleList[0].id == this.groups[0].id) {
-          return false;
-        } else {
-          let vid = this.groups[0].id;
-          this.titleList.forEach((v, i) => {
-            if (vid == v.id) {
-              //删除最后一个tabs
-              this.groups.splice(this.showNum - 1, 1);
-              this.groups.unshift(this.titleList[i - 1]);
-            }
-          });
-        }
-      },
-      //点击右箭头
-      clickRight() {
-        if (
-          this.titleList.at(-1).id == this.groups.at(-1).id
-        ) {
-          return false;
-        } else {
-          let vid = this.groups[this.showNum - 1].id;
-          this.titleList.forEach((v, i) => {
-            if (vid == v.id) {
-              this.groups.splice(0, 1);
-              this.groups.push(this.titleList[i + 1]);
-            }
-          });
-        }
       },
     },
     created() {
