@@ -31,8 +31,6 @@
     "sha.js": "^2.4.11",
     "sortablejs": "^1.15.0",
     "spark-md5": "^3.0.2",
-    "vis": "^4.21.0-EOL",
-    "vis-network": "^9.1.2",
     "vue": "^2.6.10",
     "vue-calendar-heatmap": "^0.8.4",
     "vue-code-diff": "^1.2.0",

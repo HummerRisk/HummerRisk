@@ -9,6 +9,8 @@ import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.cloudNative.*;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
+import com.hummerrisk.controller.request.k8s.K8sTopology;
+import com.hummerrisk.controller.request.sync.CloudTopology;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.service.K8sService;
 import io.kubernetes.client.openapi.ApiException;
@@ -284,10 +286,10 @@ public class K8sController {
     }
 
     @I18n
-    @ApiOperation(value = "拓扑图资源")
-    @GetMapping("k8sTopology/{cloudNativeId}")
-    public K8sTopologyDTO k8sTopology(@PathVariable String cloudNativeId) {
-        return k8sService.k8sTopology(cloudNativeId);
+    @ApiOperation(value = "资源态势拓扑图")
+    @GetMapping(value = "k8sTopology")
+    public K8sTopology k8sTopology() {
+        return k8sService.k8sTopology();
     }
 
 }

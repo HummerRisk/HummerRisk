@@ -7,7 +7,7 @@ import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.cloudResource.CloudResourceSyncRequest;
-import com.hummerrisk.controller.request.sync.D3;
+import com.hummerrisk.controller.request.sync.CloudTopology;
 import com.hummerrisk.dto.CloudResourceSyncItemDto;
 import com.hummerrisk.service.CloudSyncService;
 import io.swagger.annotations.Api;
@@ -62,9 +62,9 @@ public class CloudSyncController {
 
     @I18n
     @ApiOperation(value = "资源态势拓扑图")
-    @GetMapping(value = "d3")
-    public D3 d3() {
-        return cloudSyncService.d3();
+    @GetMapping(value = "cloudTopology")
+    public CloudTopology cloudTopology() {
+        return cloudSyncService.cloudTopology();
     }
 
 }

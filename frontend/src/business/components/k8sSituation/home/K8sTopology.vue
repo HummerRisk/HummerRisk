@@ -1,408 +1,131 @@
 <template>
   <main-container>
     <el-card class="table-card" v-loading="result.loading">
-      <el-menu class="header-menu" :unique-opened="true" mode="horizontal" default-active="1" router background-color="aliceblue" active-text-color="red">
-        <!-- 不激活项目路由-->
-        <el-menu-item index="1" v-show="false">Placeholder</el-menu-item>
-        <el-submenu index="2" popper-class="submenu">
-          <template v-slot:title>
-            <span class="account-name" :title="currentAccount">
-              {{ $t('k8s.name') }}: {{ currentAccount }}
-            </span>
-          </template>
-          <search-list v-if="items.length>0" :items="items" @cloudAccountSwitch="cloudAccountSwitch"/>
-        </el-submenu>
 
-        <div style="float: right;margin: 10px 15px 10px 0;">
-          <span class="title-account">{{ data }}</span>
-          <el-divider direction="vertical"></el-divider>
-          <el-dropdown @command="handleCommand">
-            <span class="el-dropdown-link">
-              {{ $t('k8s.k8s_resource_type') }}<i class="el-icon-arrow-down el-icon--right"></i>
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item
-                v-for="item in types"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-                :command="item">
-                {{ item.name }}
-              </el-dropdown-item>
-              <el-dropdown-item divided :command="{id: 'all', name: $t('rule.all')}">{{ $t('rule.all') }}</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </div>
-      </el-menu>
+      <svg id="cloud-topo"></svg>
 
-      <el-row :gutter="20" class="el-row-body">
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ $t('k8s.k8s_resource_type') }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <k8s v-if="accountId" :key="timeRefusr" :accountId="accountId" :currentAccount="currentAccount"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='NameSpace' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'NameSpace' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <name-space v-if="k8sTopology.k8sNameSpace" :key="timeRefusr" :k8sNameSpace="k8sTopology.k8sNameSpace" :edgesNameSpace="k8sTopology.edgesNameSpace"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Node' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'Node' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <node v-if="k8sTopology.k8sNode" :key="timeRefusr" :k8sLink="k8sTopology.k8sNode" :edgesBelong="k8sTopology.edgesNode"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Pod' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'Pod' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <pod v-if="k8sTopology.k8sPod" :key="timeRefusr" :k8sLink="k8sTopology.k8sPod" :edgesBelong="k8sTopology.edgesPod"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Deployment' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'Deployment' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <deployment v-if="k8sTopology.k8sDeployment" :key="timeRefusr" :k8sLink="k8sTopology.k8sDeployment" :edgesBelong="k8sTopology.edgesDeployment"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Service' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'Service' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <service v-if="k8sTopology.k8sService" :key="timeRefusr" :k8sLink="k8sTopology.k8sService" :edgesBelong="k8sTopology.edgesService"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='DaemonSet' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'DaemonSet' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <daemon-set v-if="k8sTopology.k8sDaemonSet" :key="timeRefusr" :k8sLink="k8sTopology.k8sDaemonSet" :edgesBelong="k8sTopology.edgesDaemonSet"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Ingress' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'Ingress' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <ingress v-if="k8sTopology.k8sIngress" :key="timeRefusr" :k8sLink="k8sTopology.k8sIngress" :edgesBelong="k8sTopology.edgesIngress"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Role' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'Role' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <role v-if="k8sTopology.k8sRole" :key="timeRefusr" :k8sLink="k8sTopology.k8sRole" :edgesBelong="k8sTopology.edgesRole"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Secret' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'Secret' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <secret v-if="k8sTopology.k8sSecret" :key="timeRefusr" :k8sLink="k8sTopology.k8sSecret" :edgesBelong="k8sTopology.edgesSecret"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='ConfigMap' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'ConfigMap' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <config-map v-if="k8sTopology.k8sConfigMap" :key="timeRefusr" :k8sLink="k8sTopology.k8sConfigMap" :edgesBelong="k8sTopology.edgesConfigMap"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='StatefulSet' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'StatefulSet' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <stateful-set v-if="k8sTopology.k8sStatefulSet" :key="timeRefusr" :k8sLink="k8sTopology.k8sStatefulSet" :edgesBelong="k8sTopology.edgesStatefulSet"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='CronJob' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'CronJob' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <cron-job v-if="k8sTopology.k8sCronJob" :key="timeRefusr" :k8sLink="k8sTopology.k8sCronJob" :edgesBelong="k8sTopology.edgesCronJob"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Job' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'Job' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <job v-if="k8sTopology.k8sJob" :key="timeRefusr" :k8sLink="k8sTopology.k8sJob" :edgesBelong="k8sTopology.edgesJob"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='PV' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'PV' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <p-v v-if="k8sTopology.k8sPV" :key="timeRefusr" :k8sLink="k8sTopology.k8sPV" :edgesBelong="k8sTopology.edgesPV"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='PVC' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'PVC' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <p-v-c v-if="k8sTopology.k8sPVC" :key="timeRefusr" :k8sLink="k8sTopology.k8sPVC" :edgesBelong="k8sTopology.edgesPVC"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Lease' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'Lease' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <lease v-if="k8sTopology.k8sLease" :key="timeRefusr" :k8sLink="k8sTopology.k8sLease" :edgesBelong="k8sTopology.edgesLease"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='EndpointSlice' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'EndpointSlice' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <endpoint-slice v-if="k8sTopology.k8sEndpointSlice" :key="timeRefusr" :k8sLink="k8sTopology.k8sEndpointSlice" :edgesBelong="k8sTopology.edgesEndpointSlice"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Event' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'Event' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <event v-if="k8sTopology.k8sEvent" :key="timeRefusr" :k8sLink="k8sTopology.k8sEvent" :edgesBelong="k8sTopology.edgesEvent"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='NetworkPolicy' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'NetworkPolicy' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <network-policy v-if="k8sTopology.k8sNetworkPolicy" :key="timeRefusr" :k8sLink="k8sTopology.k8sNetworkPolicy" :edgesBelong="k8sTopology.edgesNetworkPolicy"/>
-          </el-card>
-        </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el-col el-col-su" v-if="data==='Version' || data===$t('rule.all')">
-          <el-card class="table-card">
-            <template v-slot:header>
-              <span class="title">{{ 'Version' }}</span>
-            </template>
-            <!--width,height 画布的宽度，高度。 可以是百分比或像素，一般在dom元素上设置 -->
-            <version v-if="k8sTopology.k8sVersion" :key="timeRefusr" :k8sLink="k8sTopology.k8sVersion" :edgesBelong="k8sTopology.edgesVersion"/>
-          </el-card>
-        </el-col>
-      </el-row>
     </el-card>
   </main-container>
 </template>
-
 <script>
 import MainContainer from "../../common/components/MainContainer";
-import SearchList from "@/business/components/k8sSituation/home/SearchList";
-import K8s from "@/business/components/k8sSituation/topology/K8s";
-import NameSpace from "@/business/components/k8sSituation/topology/NameSpace";
-import Node from "@/business/components/k8sSituation/topology/Node";
-import Pod from "@/business/components/k8sSituation/topology/Pod";
-import Deployment from "@/business/components/k8sSituation/topology/Deployment";
-import Service from "@/business/components/k8sSituation/topology/Service";
-import DaemonSet from "@/business/components/k8sSituation/topology/DaemonSet";
-import Ingress from "@/business/components/k8sSituation/topology/Ingress";
-import Role from "@/business/components/k8sSituation/topology/Role";
-import ConfigMap from "@/business/components/k8sSituation/topology/ConfigMap";
-import StatefulSet from "@/business/components/k8sSituation/topology/StatefulSet";
-import Secret from "@/business/components/k8sSituation/topology/Secret";
-import CronJob from "@/business/components/k8sSituation/topology/CronJob";
-import Job from "@/business/components/k8sSituation/topology/Job";
-import PV from "@/business/components/k8sSituation/topology/PV";
-import PVC from "@/business/components/k8sSituation/topology/PVC";
-import Lease from "@/business/components/k8sSituation/topology/Lease";
-import EndpointSlice from "@/business/components/k8sSituation/topology/EndpointSlice";
-import Event from "@/business/components/k8sSituation/topology/Event";
-import NetworkPolicy from "@/business/components/k8sSituation/topology/NetworkPolicy";
-import Version from "@/business/components/k8sSituation/topology/Version";
-
+import * as d3 from 'd3';
 /* eslint-disable */
 export default {
   components: {
     MainContainer,
-    SearchList,
-    K8s,
-    NameSpace,
-    Node,
-    Pod,
-    Deployment,
-    Service,
-    DaemonSet,
-    Ingress,
-    Role,
-    ConfigMap,
-    StatefulSet,
-    Secret,
-    CronJob,
-    Job,
-    PV,
-    PVC,
-    Lease,
-    EndpointSlice,
-    Event,
-    NetworkPolicy,
-    Version,
+    d3,
   },
   data() {
     return {
       result: {},
-      dialogVisible: false,
-      currentAccount: "",
-      items: [],
-      accountId: "",
-      timeRefusr: new Date().getTime(),
-      k8sTopology: {},
-      types: [
-        {id: 'NameSpace', name: 'NameSpace'},
-        {id: 'Pod', name: 'Pod'},
-        {id: 'Node', name: 'Node'},
-        {id: 'Deployment', name: 'Deployment'},
-        {id: 'Service', name: 'Service'},
-        {id: 'DaemonSet', name: 'DaemonSet'},
-        {id: 'Ingress', name: 'Ingress'},
-        {id: 'Role', name: 'Role'},
-        {id: 'Secret', name: 'Secret'},
-        {id: 'ConfigMap', name: 'ConfigMap'},
-        {id: 'StatefulSet', name: 'StatefulSet'},
-        {id: 'CronJob', name: 'CronJob'},
-        {id: 'Job', name: 'Job'},
-        {id: 'PV', name: 'PV'},
-        {id: 'PVC', name: 'PVC'},
-        {id: 'Lease', name: 'Lease'},
-        {id: 'EndpointSlice', name: 'EndpointSlice'},
-        {id: 'Event', name: 'Event'},
-        {id: 'NetworkPolicy', name: 'NetworkPolicy'},
-        {id: 'Version', name: 'Version'},
-      ],
-      data: this.$t('rule.all'),
+      cloudTopology: {},
     };
   },
   methods: {
     init() {
-      this.$get("/k8s/allList", response => {
-        this.items = response.data;
-        this.accountId = this.items[0].id;
-        this.currentAccount = this.items[0].name;
-        this.search();
-      })
-    },
-    resetAllNodes() {
-      let _this = this;
-      _this.nodes.clear();
-      _this.edges.clear();
-      _this.nodes.add(_this.nodesArray);
-      _this.edges.add(_this.edgesArray);
-      _this.data = {
-        nodes: _this.nodes,
-        edges: _this.edges
-      };
-      //   network是一种用于将包含点和线的网络和网络之间的可视化展示
-      _this.network = new Vis.Network(
-        _this.container,
-        _this.data,
-        _this.options
-      );
-    },
-    resetAllNodesStabilize() {
-      let _this = this;
-      _this.resetAllNodes();
-      _this.network.stabilize();
-    },
-    cloudAccountSwitch(accountId, accountName) {
-      this.accountId = accountId;
-      this.currentAccount = accountName;
-      this.k8sTopology = {};
-      this.search();
-    },
-    async search() {
-      let url = "/k8s/k8sTopology/" + this.accountId;
-      await this.$get(url,response => {
-        this.k8sTopology = response.data;
+      // let data = {"name":"cloud","children":[{"name":"analytics","children":[{"name":"cluster","children":[{"name":"AgglomerativeCluster","value":3938},{"name":"CommunityStructure","value":3812},{"name":"HierarchicalCluster","value":6714},{"name":"MergeEdge","value":743}]},{"name":"graph","children":[{"name":"BetweennessCentrality","value":3534},{"name":"LinkDistance","value":5731},{"name":"MaxFlowMinCut","value":7840},{"name":"ShortestPaths","value":5914},{"name":"SpanningTree","value":3416}]},{"name":"optimization","children":[{"name":"AspectRatioBanker","value":7074}]}]},{"name":"animate","children":[{"name":"Easing","value":17010},{"name":"FunctionSequence","value":5842},{"name":"interpolate","children":[{"name":"ArrayInterpolator","value":1983},{"name":"ColorInterpolator","value":2047},{"name":"DateInterpolator","value":1375},{"name":"Interpolator","value":8746},{"name":"MatrixInterpolator","value":2202},{"name":"NumberInterpolator","value":1382},{"name":"ObjectInterpolator","value":1629},{"name":"PointInterpolator","value":1675},{"name":"RectangleInterpolator","value":2042}]},{"name":"ISchedulable","value":1041},{"name":"Parallel","value":5176},{"name":"Pause","value":449},{"name":"Scheduler","value":5593},{"name":"Sequence","value":5534},{"name":"Transition","value":9201},{"name":"Transitioner","value":19975},{"name":"TransitionEvent","value":1116},{"name":"Tween","value":6006}]},{"name":"data","children":[{"name":"converters","children":[{"name":"Converters","value":721},{"name":"DelimitedTextConverter","value":4294},{"name":"GraphMLConverter","value":9800},{"name":"IDataConverter","value":1314},{"name":"JSONConverter","value":2220}]},{"name":"DataField","value":1759},{"name":"DataSchema","value":2165},{"name":"DataSet","value":586},{"name":"DataSource","value":3331},{"name":"DataTable","value":772},{"name":"DataUtil","value":3322}]},{"name":"display","children":[{"name":"DirtySprite","value":8833},{"name":"LineSprite","value":1732},{"name":"RectSprite","value":3623},{"name":"TextSprite","value":10066}]},{"name":"flex","children":[{"name":"FlareVis","value":4116}]},{"name":"physics","children":[{"name":"DragForce","value":1082},{"name":"GravityForce","value":1336},{"name":"IForce","value":319},{"name":"NBodyForce","value":10498},{"name":"Particle","value":2822},{"name":"Simulation","value":9983},{"name":"Spring","value":2213},{"name":"SpringForce","value":1681}]},{"name":"query","children":[{"name":"AggregateExpression","value":1616},{"name":"And","value":1027},{"name":"Arithmetic","value":3891},{"name":"Average","value":891},{"name":"BinaryExpression","value":2893},{"name":"Comparison","value":5103},{"name":"CompositeExpression","value":3677},{"name":"Count","value":781},{"name":"DateUtil","value":4141},{"name":"Distinct","value":933},{"name":"Expression","value":5130},{"name":"ExpressionIterator","value":3617},{"name":"Fn","value":3240},{"name":"If","value":2732},{"name":"IsA","value":2039},{"name":"Literal","value":1214},{"name":"Match","value":3748},{"name":"Maximum","value":843},{"name":"methods","children":[{"name":"add","value":593},{"name":"and","value":330},{"name":"average","value":287},{"name":"count","value":277},{"name":"distinct","value":292},{"name":"div","value":595},{"name":"eq","value":594},{"name":"fn","value":460},{"name":"gt","value":603},{"name":"gte","value":625},{"name":"iff","value":748},{"name":"isa","value":461},{"name":"lt","value":597},{"name":"lte","value":619},{"name":"max","value":283},{"name":"min","value":283},{"name":"mod","value":591},{"name":"mul","value":603},{"name":"neq","value":599},{"name":"not","value":386},{"name":"or","value":323},{"name":"orderby","value":307},{"name":"range","value":772},{"name":"select","value":296},{"name":"stddev","value":363},{"name":"sub","value":600},{"name":"sum","value":280},{"name":"update","value":307},{"name":"variance","value":335},{"name":"where","value":299},{"name":"xor","value":354},{"name":"_","value":264}]},{"name":"Minimum","value":843},{"name":"Not","value":1554},{"name":"Or","value":970},{"name":"Query","value":13896},{"name":"Range","value":1594},{"name":"StringUtil","value":4130},{"name":"Sum","value":791},{"name":"Variable","value":1124},{"name":"Variance","value":1876},{"name":"Xor","value":1101}]},{"name":"scale","children":[{"name":"IScaleMap","value":2105},{"name":"LinearScale","value":1316},{"name":"LogScale","value":3151},{"name":"OrdinalScale","value":3770},{"name":"QuantileScale","value":2435},{"name":"QuantitativeScale","value":4839},{"name":"RootScale","value":1756},{"name":"Scale","value":4268},{"name":"ScaleType","value":1821},{"name":"TimeScale","value":5833}]},{"name":"util","children":[{"name":"Arrays","value":8258},{"name":"Colors","value":10001},{"name":"Dates","value":8217},{"name":"Displays","value":12555},{"name":"Filter","value":2324},{"name":"Geometry","value":10993},{"name":"heap","children":[{"name":"FibonacciHeap","value":9354},{"name":"HeapNode","value":1233}]},{"name":"IEvaluable","value":335},{"name":"IPredicate","value":383},{"name":"IValueProxy","value":874},{"name":"math","children":[{"name":"DenseMatrix","value":3165},{"name":"IMatrix","value":2815},{"name":"SparseMatrix","value":3366}]},{"name":"Maths","value":17705},{"name":"Orientation","value":1486},{"name":"palette","children":[{"name":"ColorPalette","value":6367},{"name":"Palette","value":1229},{"name":"ShapePalette","value":2059},{"name":"SizePalette","value":2291}]},{"name":"Property","value":5559},{"name":"Shapes","value":19118},{"name":"Sort","value":6887},{"name":"Stats","value":6557},{"name":"Strings","value":22026}]},{"name":"vis","children":[{"name":"axis","children":[{"name":"Axes","value":1302},{"name":"Axis","value":24593},{"name":"AxisGridLine","value":652},{"name":"AxisLabel","value":636},{"name":"CartesianAxes","value":6703}]},{"name":"controls","children":[{"name":"AnchorControl","value":2138},{"name":"ClickControl","value":3824},{"name":"Control","value":1353},{"name":"ControlList","value":4665},{"name":"DragControl","value":2649},{"name":"ExpandControl","value":2832},{"name":"HoverControl","value":4896},{"name":"IControl","value":763},{"name":"PanZoomControl","value":5222},{"name":"SelectionControl","value":7862},{"name":"TooltipControl","value":8435}]},{"name":"data","children":[{"name":"Data","value":20544},{"name":"DataList","value":19788},{"name":"DataSprite","value":10349},{"name":"EdgeSprite","value":3301},{"name":"NodeSprite","value":19382},{"name":"render","children":[{"name":"ArrowType","value":698},{"name":"EdgeRenderer","value":5569},{"name":"IRenderer","value":353},{"name":"ShapeRenderer","value":2247}]},{"name":"ScaleBinding","value":11275},{"name":"Tree","value":7147},{"name":"TreeBuilder","value":9930}]},{"name":"events","children":[{"name":"DataEvent","value":2313},{"name":"SelectionEvent","value":1880},{"name":"TooltipEvent","value":1701},{"name":"VisualizationEvent","value":1117}]},{"name":"legend","children":[{"name":"Legend","value":20859},{"name":"LegendItem","value":4614},{"name":"LegendRange","value":10530}]},{"name":"operator","children":[{"name":"distortion","children":[{"name":"BifocalDistortion","value":4461},{"name":"Distortion","value":6314},{"name":"FisheyeDistortion","value":3444}]},{"name":"encoder","children":[{"name":"ColorEncoder","value":3179},{"name":"Encoder","value":4060},{"name":"PropertyEncoder","value":4138},{"name":"ShapeEncoder","value":1690},{"name":"SizeEncoder","value":1830}]},{"name":"filter","children":[{"name":"FisheyeTreeFilter","value":5219},{"name":"GraphDistanceFilter","value":3165},{"name":"VisibilityFilter","value":3509}]},{"name":"IOperator","value":1286},{"name":"label","children":[{"name":"Labeler","value":9956},{"name":"RadialLabeler","value":3899},{"name":"StackedAreaLabeler","value":3202}]},{"name":"layout","children":[{"name":"AxisLayout","value":6725},{"name":"BundledEdgeRouter","value":3727},{"name":"CircleLayout","value":9317},{"name":"CirclePackingLayout","value":12003},{"name":"DendrogramLayout","value":4853},{"name":"ForceDirectedLayout","value":8411},{"name":"IcicleTreeLayout","value":4864},{"name":"IndentedTreeLayout","value":3174},{"name":"Layout","value":7881},{"name":"NodeLinkTreeLayout","value":12870},{"name":"PieLayout","value":2728},{"name":"RadialTreeLayout","value":12348},{"name":"RandomLayout","value":870},{"name":"StackedAreaLayout","value":9121},{"name":"TreeMapLayout","value":9191}]},{"name":"Operator","value":2490},{"name":"OperatorList","value":5248},{"name":"OperatorSequence","value":4190},{"name":"OperatorSwitch","value":2581},{"name":"SortOperator","value":2023}]},{"name":"Visualization","value":16540}]}]};
+      this.result = this.$get("/k8s/k8sTopology", response => {
+        let data = response.data;
+
+        let width = 932, height = width;
+
+        let color = d3.scaleLinear()
+          .domain([0, 5])
+          .range(["hsl(152,80%,80%)", "hsl(228,30%,40%)"])
+          .interpolate(d3.interpolateHcl);
+
+        let pack = data => d3.pack()
+          .size([width, height])
+          .padding(3)
+          (d3.hierarchy(data)
+            .sum(d => d.value)
+            .sort((a, b) => b.value - a.value));
+
+        const root = pack(data);
+        let focus = root;
+        let view;
+
+        const svg = d3.select("#cloud-topo")
+          .attr("viewBox", `-${width / 2} -${height / 2} ${width} ${height}`)
+          .style("display", "block")
+          .style("margin", "0 -14px")
+          .style("background", color(0))
+          .style("cursor", "pointer")
+          .on("click", (event) => zoom(event, root));
+
+        const node = svg.append("g")
+          .selectAll("circle")
+          .data(root.descendants().slice(1))
+          .join("circle")
+          .attr("fill", d => d.children ? color(d.depth) : (d.value!=1?"DarkSlateBlue":"Green"))
+          .attr("pointer-events", d => !d.children ? "none" : null)
+          .on("mouseover", function() { d3.select(this).attr("stroke", "#000"); })
+          .on("mouseout", function() { d3.select(this).attr("stroke", null); })
+          .on("click", (event, d) => focus !== d && (zoom(event, d), event.stopPropagation()));
+
+        const label = svg.append("g")
+          .style("font", "10px sans-serif")
+          .style("word-wrap", "break-word")
+          .attr("pointer-events", "none")
+          .attr("text-anchor", "middle")
+          .selectAll("text")
+          .data(root.descendants())
+          .join("text")
+          .style("fill-opacity", d => d.parent === root ? 1 : 0)
+          .style("display", d => d.parent === root ? "inline" : "none")
+          .text(d => d.data.name);
+
+        zoomTo([root.x, root.y, root.r * 2]);
+
+        function zoomTo(v) {
+          const k = width / v[2];
+
+          view = v;
+
+          label.attr("transform", d => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
+          node.attr("transform", d => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
+          node.attr("r", d => d.r * k);
+        }
+
+        function zoom(event, d) {
+          const focus0 = focus;
+
+          focus = d;
+
+          const transition = svg.transition()
+            .duration(event.altKey ? 7500 : 750)
+            .tween("zoom", d => {
+              const i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2]);
+              return t => zoomTo(i(t));
+            });
+
+          label
+            .filter(function(d) { return d.parent === focus || this.style.display === "inline"; })
+            .transition(transition)
+            .style("fill-opacity", d => d.parent === focus ? 1 : 0)
+            .on("start", function(d) { if (d.parent === focus) this.style.display = "inline"; })
+            .on("end", function(d) { if (d.parent !== focus) this.style.display = "none"; });
+        }
+
+        return svg.node();
       });
-    },
-    handleCommand(command) {
-      this.data = command.name;
+
     },
   },
+
   mounted() {
     this.init();
-  },
-  created() {
   }
+
 }
 </script>
 
 <style scoped>
-.table-card >>> .vis-edit-mode {
-  width: 60px;
+svg {
+  margin: 25px;
 }
-.account-name {
-  display: inline-block;
-  width: 250px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.header-menu {
-  margin: 15px 0 15px 0;
-}
-.el-divider--horizontal {
-  margin: 0;
-}
-.el-row-body {
-  line-height: 1.15;
-}
-.el-col-su >>> .el-card {
-  margin: 5px 0;
-}
-.el-dropdown-link {
-  cursor: pointer;
-  color: #409EFF;
-}
-.el-icon-arrow-down {
-  font-size: 12px;
-}
-.title-account{
-  color: #e43235;
+.table-card >>> .el-card__body {
+  padding: 0;
 }
 </style>
-

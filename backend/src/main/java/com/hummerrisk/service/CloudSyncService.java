@@ -14,7 +14,7 @@ import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.cloudResource.CloudResourceSyncRequest;
-import com.hummerrisk.controller.request.sync.D3;
+import com.hummerrisk.controller.request.sync.CloudTopology;
 import com.hummerrisk.dto.CloudResourceSyncItemDto;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
@@ -300,8 +300,8 @@ public class CloudSyncService {
         cloudResourceSyncItemLogMapper.deleteByExample(cloudResourceSyncItemLogExample);
     }
 
-    public D3 d3() {
-        return extCloudResourceSyncMapper.d3();
+    public CloudTopology cloudTopology() {
+        return extCloudResourceSyncMapper.cloudTopology();
     }
 
 }

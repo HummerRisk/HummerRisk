@@ -289,34 +289,76 @@
              )
     </select>
 
-    <select id="k8sTopology" resultType="java.util.Map">
-        SELECT
-            t.id as 'id',
-            t.source_name as 'label',
-            t.source_type as 'type'
-        FROM cloud_native_source as t
-        <where>
-            <if test="cloudNativeId != null and cloudNativeId != ''">
-                and t.cloud_native_id = #{cloudNativeId}
-            </if>
-            and t.source_type = #{name}
-        </where>
-        ORDER BY t.update_time DESC
+    <resultMap id="D3BaseResultMap" type="com.hummerrisk.controller.request.k8s.K8sTopology">
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <collection property="children" ofType="com.hummerrisk.controller.request.k8s.K8s" javaType="list" select="selectK8s" column="name">
+        </collection>
+    </resultMap>
+
+    <resultMap id="K8sBaseResultMap" type="com.hummerrisk.controller.request.k8s.K8s">
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="k8sId" jdbcType="VARCHAR" property="k8sId" />
+        <collection property="children" ofType="com.hummerrisk.controller.request.k8s.ResourceType" javaType="list"
+                    select="selectResourceType" column="k8sId">
+        </collection>
+    </resultMap>
+
+    <resultMap id="ResourceTypeBaseResultMap" type="com.hummerrisk.controller.request.k8s.ResourceType">
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="k8sId" jdbcType="VARCHAR" property="k8sId" />
+        <result column="resourceType" jdbcType="VARCHAR" property="resourceType" />
+        <collection property="children" ofType="com.hummerrisk.controller.request.k8s.Resource" javaType="list"
+                    select="selectResource" column="{k8sId=k8sId, resourceType=resourceType}">
+            <result column="name" jdbcType="VARCHAR" property="name" />
+            <result column="value" jdbcType="INTEGER" property="value" />
+        </collection>
+    </resultMap>
+
+    <select id="k8sTopology" resultMap="D3BaseResultMap">
+        select 'K8s' as name
     </select>
 
-    <select id="edgesTopology" resultType="java.util.Map">
-        SELECT
-        1 AS 'from',
-        t.id as 'to',
-        '所属' as 'label'
-        FROM cloud_native_source as t
-        <where>
-            <if test="cloudNativeId != null and cloudNativeId != ''">
-                and t.cloud_native_id = #{cloudNativeId}
-            </if>
-            and t.source_type = #{name}
-        </where>
-        ORDER BY t.update_time DESC
+    <select id="selectK8s" resultMap="K8sBaseResultMap">
+        select
+            CONCAT('K8s账号: ', t.name, '(共',
+                   (
+                       select count(t1.id) from cloud_native_source t1
+                       where t1.cloud_native_id = t.id
+                   ), ' 个资源)'
+                ) as name,
+            t.id as k8sId
+        from cloud_native t
+    </select>
+
+    <select id="selectResourceType" resultMap="ResourceTypeBaseResultMap">
+        select
+            CONCAT('资源类型: ', t.source_type, '(共',
+                   (
+                       select count(t1.id) from cloud_native_source t1
+                       where t1.cloud_native_id = t.cloud_native_id and t1.source_type = t.source_type
+                   ), ' 个资源)'
+                ) as name,
+            t.cloud_native_id as k8sId,
+            t.source_type as resourceType
+        from cloud_native_source t
+        where t.cloud_native_id = #{k8sId}
+        group by t.source_type, t.cloud_native_id
+    </select>
+
+    <select id="selectResource" resultType="com.hummerrisk.controller.request.sync.Resource">
+        select
+            CASE
+                WHEN t.source_namespace IS NULL
+                    THEN CONCAT(t.source_name)
+                ELSE CONCAT(t.source_name, '(', t.source_namespace, ')')
+                END AS name,
+            CASE
+                WHEN t.source_namespace IS NULL
+                    THEN 2
+                ELSE 1
+                END AS value
+        from cloud_native_source t
+        where t.cloud_native_id = #{k8sId} and t.source_type = #{resourceType}
     </select>
 
 </mapper>

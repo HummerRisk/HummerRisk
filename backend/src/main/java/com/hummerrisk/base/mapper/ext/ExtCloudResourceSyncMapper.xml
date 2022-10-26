@@ -101,7 +101,7 @@
     </select>
 
 
-    <resultMap id="D3BaseResultMap" type="com.hummerrisk.controller.request.sync.D3">
+    <resultMap id="D3BaseResultMap" type="com.hummerrisk.controller.request.sync.CloudTopology">
         <result column="name" jdbcType="VARCHAR" property="name" />
         <collection property="children" ofType="com.hummerrisk.controller.request.sync.Cloud" javaType="list" select="selectCloudAccount" column="name">
         </collection>
@@ -137,7 +137,7 @@
         </collection>
     </resultMap>
 
-    <select id="d3" resultMap="D3BaseResultMap">
+    <select id="cloudTopology" resultMap="D3BaseResultMap">
         select 'Cloud' as name
     </select>
 

@@ -32,9 +32,6 @@ import 'vue-select-image/dist/vue-select-image.css';
 import 'vue-okr-tree/dist/vue-okr-tree.css';
 //阿里矢量图标样式
 import '@/common/css/iconfont/iconfont.css';
-//拓扑图
-import "vis/dist/vis.css";
-//[Violation] Added non-passive event listener to a scroll-blocking 'mousewheel' event. Consider marking event handler as 'passive' to make the page more responsive.
 import 'default-passive-events';
 
 

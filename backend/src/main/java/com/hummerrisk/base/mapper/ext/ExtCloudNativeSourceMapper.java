@@ -1,6 +1,7 @@
 package com.hummerrisk.base.mapper.ext;
 
 import com.hummerrisk.controller.request.cloudNative.CloudNativeSourceRequest;
+import com.hummerrisk.controller.request.k8s.K8sTopology;
 import com.hummerrisk.dto.CloudNativeSourceDTO;
 import com.hummerrisk.dto.SituationDTO;
 import org.apache.ibatis.annotations.Param;
@@ -14,8 +15,7 @@ public interface ExtCloudNativeSourceMapper {
 
     SituationDTO situationInfo(Map<String, Object> params);
 
-    List<Map<String, Object>> k8sTopology(@Param("cloudNativeId") String cloudNativeId, @Param("name") String name);
+    K8sTopology k8sTopology();
 
-    List<Map<String, Object>> edgesTopology(@Param("cloudNativeId") String cloudNativeId, @Param("name") String name);
 
 }

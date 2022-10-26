@@ -15,6 +15,8 @@ import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.cloudNative.*;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
+import com.hummerrisk.controller.request.k8s.K8sTopology;
+import com.hummerrisk.controller.request.sync.CloudTopology;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.proxy.k8s.K8sRequest;
@@ -731,49 +733,8 @@ public class K8sService {
         historyCloudNativeResultMapper.deleteByPrimaryKey(id);
     }
 
-    public K8sTopologyDTO k8sTopology(String cloudNativeId) {
-        K8sTopologyDTO dto = new K8sTopologyDTO();
-        dto.setK8sNameSpace(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "NameSpace"));
-        dto.setEdgesNameSpace(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "NameSpace"));
-        dto.setK8sPod(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "Pod"));
-        dto.setEdgesPod(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "Pod"));
-        dto.setK8sNode(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "Node"));
-        dto.setEdgesNode(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "Node"));
-        dto.setK8sDeployment(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "Deployment"));
-        dto.setEdgesDeployment(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "Deployment"));
-        dto.setK8sService(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "Service"));
-        dto.setEdgesService(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "Service"));
-        dto.setK8sDaemonSet(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "DaemonSet"));
-        dto.setEdgesDaemonSet(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "DaemonSet"));
-        dto.setK8sIngress(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "Ingress"));
-        dto.setEdgesIngress(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "Ingress"));
-        dto.setK8sRole(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "Role"));
-        dto.setEdgesRole(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "Role"));
-        dto.setK8sSecret(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "Secret"));
-        dto.setEdgesSecret(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "Secret"));
-        dto.setK8sConfigMap(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "ConfigMap"));
-        dto.setEdgesConfigMap(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "ConfigMap"));
-        dto.setK8sStatefulSet(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "StatefulSet"));
-        dto.setEdgesStatefulSet(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "StatefulSet"));
-        dto.setK8sCronJob(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "CronJob"));
-        dto.setEdgesCronJob(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "CronJob"));
-        dto.setK8sJob(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "Job"));
-        dto.setEdgesJob(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "Job"));
-        dto.setK8sPV(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "PV"));
-        dto.setEdgesPV(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "PV"));
-        dto.setK8sPVC(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "PVC"));
-        dto.setEdgesPVC(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "PVC"));
-        dto.setK8sLease(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "Lease"));
-        dto.setEdgesLease(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "Lease"));
-        dto.setK8sEndpointSlice(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "EndpointSlice"));
-        dto.setEdgesEndpointSlice(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "EndpointSlice"));
-        dto.setK8sEvent(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "Event"));
-        dto.setEdgesEvent(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "Event"));
-        dto.setK8sNetworkPolicy(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "NetworkPolicy"));
-        dto.setEdgesNetworkPolicy(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "NetworkPolicy"));
-        dto.setK8sVersion(extCloudNativeSourceMapper.k8sTopology(cloudNativeId, "Version"));
-        dto.setEdgesVersion(extCloudNativeSourceMapper.edgesTopology(cloudNativeId, "Version"));
-        return dto;
+    public K8sTopology k8sTopology() {
+        return extCloudNativeSourceMapper.k8sTopology();
     }
 
 }
