@@ -60,7 +60,7 @@ export default {
           .selectAll("circle")
           .data(root.descendants().slice(1))
           .join("circle")
-          .attr("fill", d => d.children ? color(d.depth) : "white")
+          .attr("fill", d => d.children ? color(d.depth) : (d.value!=1?"Salmon":"Green"))
           .attr("pointer-events", d => !d.children ? "none" : null)
           .on("mouseover", function() { d3.select(this).attr("stroke", "#000"); })
           .on("mouseout", function() { d3.select(this).attr("stroke", null); })

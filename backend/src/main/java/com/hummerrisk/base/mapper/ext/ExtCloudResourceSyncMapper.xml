@@ -129,10 +129,11 @@
         <result column="regionId" jdbcType="VARCHAR" property="regionId" />
         <result column="accountId" jdbcType="VARCHAR" property="accountId" />
         <result column="resourceType" jdbcType="VARCHAR" property="resourceType" />
+        <result column="value" jdbcType="INTEGER" property="value" />
         <collection property="children" ofType="com.hummerrisk.controller.request.sync.Resource" javaType="list"
                     select="selectResource" column="{regionId=regionId, accountId=accountId, resourceType=resourceType}">
             <result column="name" jdbcType="VARCHAR" property="name" />
-            <result column="value" jdbcType="VARCHAR" property="value" />
+            <result column="value" jdbcType="INTEGER" property="value" />
         </collection>
     </resultMap>
 
@@ -142,7 +143,12 @@
 
     <select id="selectCloudAccount" resultMap="CloudBaseResultMap">
         select
-        t1.name as name,
+        CONCAT('云账号: ', t1.name, '(共',
+         (
+           select count(t1.id) from cloud_resource_item t1
+           where t1.account_id = t.account_id
+         ), ' 个资源)'
+        ) as name,
         t1.id as accountId
         from cloud_resource_item t
         join cloud_account t1 on t.account_id = t1.id
@@ -151,7 +157,12 @@
 
     <select id="selectRegion" resultMap="RegionBaseResultMap">
         select
-        t.region_name as name,
+        CONCAT('区域: ', t.region_name, '(共',
+         (
+           select count(t1.id) from cloud_resource_item t1
+           where t1.account_id = t.account_id and t1.region_id = t.region_id
+         ), ' 个资源)'
+        ) as name,
         t.account_id as accountId,
         t.region_id as regionId
         from cloud_resource_item t
@@ -161,7 +172,12 @@
 
     <select id="selectResourceType" resultMap="ResourceBaseResultMap">
         select
-        t.resource_type as name,
+        CONCAT('资源类型: ', t.resource_type, '(共',
+           (
+               select count(t1.id) from cloud_resource_item t1
+               where t1.account_id = t.account_id and t1.region_id = t.region_id and t1.resource_type = t.resource_type
+           ), ' 个资源)'
+        ) as name,
         t.account_id as accountId,
         t.region_id as regionId,
         t.resource_type as resourceType
@@ -172,8 +188,16 @@
 
     <select id="selectResource" resultType="com.hummerrisk.controller.request.sync.Resource">
         select
-        CONCAT(t.hummer_id, '(', t.resource_type, ')') as name,
-        1 as value
+        CASE
+            WHEN t.hummer_id IN (SELECT t1.hummer_id FROM resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type)
+            THEN CONCAT('(有安全合规风险)资源标识:', t.hummer_id)
+            ELSE CONCAT('资源标识:', t.hummer_id)
+        END AS name,
+        CASE
+            WHEN t.hummer_id IN (SELECT t1.hummer_id FROM resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type)
+            THEN (SELECT count(t1.hummer_id) FROM resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type) * 2
+            ELSE 1
+        END AS value
         from cloud_resource_item t
         where t.resource_type = #{resourceType} and t.region_id = #{regionId} and t.account_id = #{accountId}
     </select>

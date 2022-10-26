@@ -5,15 +5,15 @@ package com.hummerrisk.controller.request.sync;
  */
 public class Resource {
 
-    private String value;
+    private Integer value;
 
     private String name;
 
-    public String getValue() {
+    public Integer getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(Integer value) {
         this.value = value;
     }
 
