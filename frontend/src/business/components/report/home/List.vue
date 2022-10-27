@@ -3,22 +3,17 @@
 
       <el-card class="el-row-card">
 
-        <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"/>
-
-        <el-divider><i class="el-icon-tickets"></i></el-divider>
-
-      </el-card>
-
-      <el-card class="table-card" v-loading="result.loading">
         <template v-slot:header>
-          <table-header :condition.sync="condition" @search="search"
-                              :title="$t('rule.rule_set_list')"
-                              :createTip="$t('rule.create_rule_set')"
-                              :show-create="false"/>
 
+          <account-change class="account-change" :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"/>
+
+          <table-header :condition.sync="condition" @search="search"
+                              :show-name="false"
+                              :show-create="false"
+                              :show-open="true"/>
         </template>
         <el-row :gutter="20" class="el-row-body">
-          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in ftableData"
+          <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(data, index) in ftableData"
                   :key="index" class="el-col el-col-su">
             <el-card :body-style="{ padding: '15px' }">
               <div style="height: 130px;">
@@ -85,8 +80,11 @@
         <f-table-pagination :change="search" :current-page.sync="fcurrentPage" :page-size.sync="fpageSize" :total="ftotal"/>
       </el-card>
 
-      <el-card class="table-card">
-        <div style="margin-top: 15px;">
+      <!--风险条例-->
+      <el-drawer class="rtl" :title="$t('resource.report_detail')" :visible.sync="visible" size="60%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true">
+        <el-card class="table-card">
+          <div style="margin-top: 15px;">
             <el-row>
               <el-col :span="4">
                 <span style="color: #909090;">{{ $t('resource.scene_name') }}</span>
@@ -131,18 +129,16 @@
                 <span v-if="group.status == 'risk_free'" style="color: green;"><i class="el-icon-warning"></i> {{ $t('resource.no_risk') }}</span>
               </el-col>
             </el-row>
-        </div>
-      </el-card>
-
-      <el-card class="table-report-card">
-        <section class="report-container">
-          <main>
-            <metric-chart :content="content"/>
-          </main>
-        </section>
-      </el-card>
-
-      <el-card>
+          </div>
+        </el-card>
+        <el-card class="table-report-card">
+          <section class="report-container">
+            <main>
+              <metric-chart :content="content"/>
+            </main>
+          </section>
+        </el-card>
+        <el-card>
         <template v-slot:header>
           <table-header :condition.sync="condition"
                         @search="search"
@@ -187,6 +183,8 @@
         </el-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
+      </el-drawer>
+      <!--风险条例-->
 
       <!--Rule detail-->
       <el-drawer class="rtl" :title="$t('resource.report_detail')" :visible.sync="visible" size="60%" :before-close="handleClose" :direction="direction"
@@ -822,6 +820,149 @@ import GroupTableHeader from "@/business/components/rule/head/GroupTableHeader";
     color: #0261D5;
     border-bottom: 2px solid #0261D5;
   }
-
+  .el-col-su >>> .el-card {
+    margin: 10px 0;
+  }
+  .vue-select-image >>> .vue-select-image__img {
+    width: 120px;
+    height: 100px;
+  }
+  .el-row-body >>> .el-card__body >>> .el-divider {
+    margin: 5px 0;
+  }
+  .plugin {
+    color: #215d9a;
+    font-size: 16px;
+  }
+  .desc {
+    color: #888888;
+    font-size: 13px;
+    margin-top: 10px;
+    line-height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:6;
+  }
+  .edit_dev >>> .el-transfer-panel {
+    width: 40%;
+    text-align: left;
+  }
+  .edit-dev-drawer >>> .el-drawer__header {
+    margin-bottom: 0;
+  }
+  .edit-dev-drawer >>> .el-transfer-panel__body{
+    height: 500px;
+  }
+  .edit-dev-drawer >>> .el-transfer-panel__list{
+    height: 500px;
+    padding-bottom: 50px;
+  }
+  .el-trans {
+    width: 100%;
+    text-align: center;
+    display: inline-block;
+  }
+  .table-content {
+    width: 100%;
+  }
+  .el-row-body {
+    line-height: 1.15;
+  }
+  .time {
+    font-size: 13px;
+    color: #999;
+  }
+  .round {
+    font-size: 13px;
+    margin: 0 0 0 5px;
+    padding: 1px 3px 1px 3px;
+    float: right;
+  }
+  .bottom {
+    margin-top: 13px;
+    line-height: 13px;
+  }
+  .button {
+    padding: 0;
+    float: right;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    -o-text-overflow:ellipsis;
+    overflow:hidden;
+  }
+  .da-na {
+    width: 100%;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    overflow:hidden;
+    float: left;
+  }
+  .pa-na {
+    max-width: 60%;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    -o-text-overflow:ellipsis;
+    overflow:hidden;
+  }
+  .pa-time {
+    display:inline-block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: #1e6427;
+    float: left;
+  }
+  .pa-time2 {
+    display:inline-block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: red;
+    float: left;
+  }
+  .button-drop {
+    float: right;
+  }
+  .el-dropdown-link {
+    cursor: pointer;
+    color: #409EFF;
+  }
+  .el-icon-arrow-down {
+    font-size: 12px;
+  }
+  .demo-table-expand {
+    font-size: 0;
+  }
+  .demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+  }
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    padding: 10px 10%;
+    width: 47%;
+  }
+  .account-change {
+    margin: 0 0 10px 0;
+  }
+  /*.rtl >>> .el-drawer__body {*/
+  /*  overflow-y: auto;*/
+  /*  padding: 0 20px;*/
+  /*}*/
+  /*.rtl >>> input {*/
+  /*  width: 100%;*/
+  /*}*/
+  /*.rtl >>> .el-select {*/
+  /*  width: 80%;*/
+  /*}*/
+  /*.rtl >>> .el-form-item__content {*/
+  /*  width: 60%;*/
+  /*}*/
+  /*.rtl >>> #el-drawer__title {*/
+  /*  margin: 0;*/
+  /*}*/
   /deep/ :focus{outline:0;}
 </style>
