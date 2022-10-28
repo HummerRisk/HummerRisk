@@ -3,7 +3,7 @@
   <div>
     <el-row type="flex" justify="space-between" align="middle">
       <span>
-        <account-change class="account-change" :accountName="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"/>
+        <account-change class="account-change" :accountName="currentAccount" @cloudAccountSwitch="cloudAccountSwitch" @openDownload="openDownload"/>
       </span>
       <span>
         <table-search-bar :condition.sync="condition" @change="search" class="search-bar" :tip="tip"/>
@@ -101,10 +101,13 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
         this.$emit('scan');
       },
       validate() {
-        this.$emit('validate')
+        this.$emit('validate');
       },
       cloudAccountSwitch(accountId) {
         this.$emit('cloudAccountSwitch', accountId);
+      },
+      openDownload() {
+        this.$emit('openDownload');
       },
     },
     computed: {

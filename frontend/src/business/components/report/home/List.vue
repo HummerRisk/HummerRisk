@@ -7,7 +7,7 @@
 
           <report-table-header :condition.sync="condition" @search="search"
                               :currentAccount="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"
-                              :show-open="true"/>
+                               @openDownload="openDownload" :show-open="true"/>
         </template>
         <el-row :gutter="20" class="el-row-body">
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(data, index) in ftableData"
@@ -55,9 +55,9 @@
                 <span class="button time pa-na">
                 </span>
                 <div class="bottom clearfix">
-                  <el-button class="el-btn-btm" type="primary" plain size="small">{{ $t('report.download_group') }}</el-button>
-                  <el-button class="el-btn-btm" type="success" plain size="small">{{ $t('report.scan_details') }}</el-button>
-                  <el-button class="el-btn-btm" type="warning" plain size="small">{{ $t('report.scan_rules') }}</el-button>
+                  <el-button class="el-btn-btm" type="primary" plain size="small" @click="downloadReports(data)">{{ $t('report.download_group') }}</el-button>
+                  <el-button class="el-btn-btm" type="success" plain size="small" @click="showDetails(data)">{{ $t('report.scan_details') }}</el-button>
+                  <el-button class="el-btn-btm" type="warning" plain size="small" @click="handleList(data)">{{ $t('report.scan_rules') }}</el-button>
                 </div>
               </div>
             </el-card>
@@ -67,7 +67,7 @@
       </el-card>
 
       <!--风险条例-->
-      <el-drawer class="rtl" :title="$t('resource.report_detail')" :visible.sync="visible" size="60%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="btt" :title="$t('resource.report_detail')" :visible.sync="revisible" size="80%" :before-close="handleClose" :direction="directionB"
                  :destroy-on-close="true">
         <el-card class="table-card">
           <div style="margin-top: 15px;">
@@ -82,7 +82,7 @@
                 <span style="color: #909090;">{{ $t('resource.activation_time') }}</span>
               </el-col>
               <el-col :span="8">
-                <span>{{ group.createTime | timestampFormatDate }}</span>
+                <span>{{ group.createTime?(group.createTime | timestampFormatDate):'N/A' }}</span>
               </el-col>
             </el-row>
             <el-row>
@@ -120,60 +120,58 @@
         <el-card class="table-report-card">
           <section class="report-container">
             <main>
-              <metric-chart :content="content"/>
+              <metric-chart v-if="content" :content="content"/>
             </main>
           </section>
         </el-card>
         <el-card>
-        <template v-slot:header>
-          <table-header :condition.sync="condition"
-                        @search="search"
-                        :title="$t('resource.regulation_list')"/>
-        </template>
-
-
-        <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter" :row-class-name="tableRowClassName">
-          <el-table-column type="index" min-width="5%"/>
-          <el-table-column prop="itemSortFirstLevel" :label="$t('resource.security_level')" min-width="10%" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="itemSortSecondLevel" :label="$t('resource.control_point')" min-width="10%" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="project" :label="$t('resource.basic_requirements_for_grade_protection')" min-width="47%" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('resource.pre_check_results')" min-width="10%" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <el-tooltip class="item" effect="dark" :content="$t('resource.risk_of_non_compliance')" placement="top">
-                <span v-if="scope.row.status === 'risky'" style="color: red;">
-                    {{ $t('resource.' + scope.row.status) }} <i class="el-icon-warning"></i>
+          <template v-slot:header>
+            <table-header :condition.sync="condition"
+                          @search="search"
+                          :title="$t('resource.regulation_list')"/>
+          </template>
+          <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter" :row-class-name="tableRowClassName">
+            <el-table-column type="index" min-width="5%"/>
+            <el-table-column prop="itemSortFirstLevel" :label="$t('resource.security_level')" min-width="10%" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="itemSortSecondLevel" :label="$t('resource.control_point')" min-width="10%" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="project" :label="$t('resource.basic_requirements_for_grade_protection')" min-width="47%" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('resource.pre_check_results')" min-width="10%" show-overflow-tooltip>
+              <template v-slot:default="scope">
+                <el-tooltip class="item" effect="dark" :content="$t('resource.risk_of_non_compliance')" placement="top">
+                  <span v-if="scope.row.status === 'risky'" style="color: red;">
+                      {{ $t('resource.' + scope.row.status) }} <i class="el-icon-warning"></i>
+                  </span>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" :content="$t('resource.requirements_of_the_regulations')" placement="top">
+                  <span v-if="scope.row.status === 'risk_free'" style="color: #00bb00;">
+                      {{ $t('resource.' + scope.row.status) }} <i class="el-icon-warning"></i>
+                  </span>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+            <el-table-column v-slot:default="scope" :label="$t('resource.suggestions_for_improvement')" min-width="10%">
+              <el-tooltip v-if="scope.row.status === 'risky'" class="item" effect="dark" :content="scope.row.improvement" placement="top">
+                <span style="color: #0066ac;">
+                  {{ $t('resource.suggestions_for_improvement') }} <i class="el-icon-question"></i>
                 </span>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" :content="$t('resource.requirements_of_the_regulations')" placement="top">
-                <span v-if="scope.row.status === 'risk_free'" style="color: #00bb00;">
-                    {{ $t('resource.' + scope.row.status) }} <i class="el-icon-warning"></i>
-                </span>
-              </el-tooltip>
-            </template>
-          </el-table-column>
-          <el-table-column v-slot:default="scope" :label="$t('resource.suggestions_for_improvement')" min-width="10%">
-            <el-tooltip v-if="scope.row.status === 'risky'" class="item" effect="dark" :content="scope.row.improvement" placement="top">
-              <span style="color: #0066ac;">
-                {{ $t('resource.suggestions_for_improvement') }} <i class="el-icon-question"></i>
+              <span v-if="scope.row.status === 'risk_free'">
+                <i class="el-icon-minus"></i>
               </span>
-            </el-tooltip>
-            <span v-if="scope.row.status === 'risk_free'">
-              <i class="el-icon-minus"></i>
-            </span>
-          </el-table-column>
-          <el-table-column min-width="8%" :label="$t('commons.operating')" fixed="right">
-            <template v-slot:default="scope">
-              <table-operators :buttons="buttons" :row="scope.row"/>
-            </template>
-          </el-table-column>
-        </el-table>
-        <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
+            </el-table-column>
+            <el-table-column min-width="8%" :label="$t('commons.operating')" fixed="right">
+              <template v-slot:default="scope">
+                <table-operators :buttons="buttons" :row="scope.row"/>
+              </template>
+            </el-table-column>
+          </el-table>
+          <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
       </el-drawer>
       <!--风险条例-->
 
       <!--Rule detail-->
-      <el-drawer class="rtl" :title="$t('resource.report_detail')" :visible.sync="visible" size="60%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="btt" :title="$t('resource.report_detail')" :visible.sync="visible" size="60%" :before-close="handleClose" :direction="directionB"
                  :destroy-on-close="true">
           <el-row class="el-row-c">
             <el-col :span="8"><span style="color: #909090;">{{ $t('resource.basic_requirements_for_grade_protection') }}</span></el-col>
@@ -362,6 +360,51 @@
       </el-drawer>
       <!-- 合并下载报告 -->
 
+      <!--rule list-->
+      <el-drawer class="rtl" :title="$t('rule.rule_list')" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true">
+        <table-header :condition.sync="ruleCondition"
+                      @search="handleListSearch"
+                      :show-create="false" :show-open="false" :show-name="false"
+                      style="margin: 0 15px 15px 15px;"/>
+        <el-table border :data="ruleData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
+                  @filter-change="filter">
+          <el-table-column type="index" min-width="2%"/>
+          <el-table-column prop="name" :label="$t('rule.rule_name')" min-width="18%" show-overflow-tooltip></el-table-column>
+          <el-table-column :label="$t('rule.resource_type')" min-width="10%" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <span v-for="(resourceType, index) in scope.row.types" :key="index">[{{ resourceType }}] </span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('account.cloud_platform')" min-width="11%" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <span>
+                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ scope.row.pluginName }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column min-width="7%" :label="$t('rule.severity')" column-key="severity">
+            <template v-slot:default="{row}">
+              <severity-type :row="row"></severity-type>
+            </template>
+          </el-table-column>
+          <el-table-column prop="description" :label="$t('rule.description')" min-width="28%" show-overflow-tooltip></el-table-column>
+          <el-table-column :label="$t('rule.status')" min-width="7%" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
+            </template>
+          </el-table-column>
+          <el-table-column prop="lastModified" min-width="15%" :label="$t('rule.last_modified')" sortable>
+            <template v-slot:default="scope">
+              <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+        <table-pagination :change="handleListSearch" :current-page.sync="ruleListPage" :page-size.sync="ruleListPageSize" :total="ruleListTotal"/>
+      </el-drawer>
+      <!--rule list-->
+
     </main-container>
 </template>
 
@@ -440,9 +483,11 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
           {text: this.$t('account.k8s'), value: 'hummer-k8s-plugin'}
         ],
         visible: false,
+        revisible: false,
         accountId: localStorage.getItem(ACCOUNT_ID),
         accountIds: [],
         direction: 'rtl',
+        directionB: 'btt',
         detailForm: {},
         innerDrawer: false,
         cmOptions: {
@@ -469,6 +514,15 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         fcurrentPage: 1,
         fpageSize: 12,
         ftotal: 0,
+        listVisible: false,
+        ruleCondition: {
+          components: RULE_CONFIGS
+        },
+        ruleData: [],
+        itemId: "",
+        ruleListPage: 1,
+        ruleListPageSize: 10,
+        ruleListTotal: 0,
       }
     },
     methods: {
@@ -593,6 +647,8 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
       handleClose() {
         this.visible = false;
         this.infoVisible = false;
+        this.revisible = false;
+        this.listVisible = false;
       },
       innerDrawerClose() {
         this.innerDrawer = false;
@@ -658,6 +714,36 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
             localStorage.setItem(ACCOUNT_ID, this.accountData[0].id);
             this.accountId = this.accountData[0].id;
           }
+        });
+      },
+      showDetails(data) {
+        this.group = data;
+        this.groupId = data.id;
+        this.reportIsoSearch();
+        this.reportListSearch();
+        this.revisible = true;
+      },
+      downloadReports(data) {
+        this.accountIds = [];
+        this.accountIds.push(this.accountId);
+        this.infoVisible = true;
+      },
+      handleList(item) {
+        this.ruleListPage = 1;
+        this.ruleListPageSize = 10;
+        this.ruleListTotal = 0;
+        this.ruleForm = [];
+        this.itemId = item.id;
+        this.handleListSearch();
+        this.listVisible = true;
+      },
+      handleListSearch () {
+        this.ruleCondition.combine = {group: {operator: 'in', value: this.itemId }};
+        let url = "/rule/list/" + this.ruleListPage + "/" + this.ruleListPageSize;
+        this.result = this.$post(url, this.ruleCondition, response => {
+          let data = response.data;
+          this.ruleListTotal = data.itemCount;
+          this.ruleData = data.listObject;
         });
       },
     },
@@ -948,21 +1034,21 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
   .bottom >>> .el-button--small {
     padding: 9px 1%;
   }
-  /*.rtl >>> .el-drawer__body {*/
-  /*  overflow-y: auto;*/
-  /*  padding: 0 20px;*/
-  /*}*/
-  /*.rtl >>> input {*/
-  /*  width: 100%;*/
-  /*}*/
-  /*.rtl >>> .el-select {*/
-  /*  width: 80%;*/
-  /*}*/
-  /*.rtl >>> .el-form-item__content {*/
-  /*  width: 60%;*/
-  /*}*/
-  /*.rtl >>> #el-drawer__title {*/
-  /*  margin: 0;*/
-  /*}*/
+  .rtl >>> .el-drawer__body {
+    overflow-y: auto;
+    padding: 0 20px;
+  }
+  .rtl >>> input {
+    width: 100%;
+  }
+  .rtl >>> .el-select {
+    width: 80%;
+  }
+  .rtl >>> .el-form-item__content {
+    width: 60%;
+  }
+  .rtl >>> #el-drawer__title {
+    margin: 0;
+  }
   /deep/ :focus{outline:0;}
 </style>
