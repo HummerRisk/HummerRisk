@@ -628,17 +628,72 @@
         select
         t.*,
         (select count(g.id) from rule_group_mapping g where g.group_id = t.id) as ruleSum,
-        t1.name as pluginName,
-        t1.icon as pluginIcon
+        p.name as pluginName,
+        p.icon as pluginIcon,
+        CASE
+        WHEN
+        (
+        SELECT count(t5.id) FROM rule_group_mapping t1
+        JOIN rule t2 ON t1.rule_id = t2.id
+        JOIN resource_rule t3 ON t2.id = t3.rule_id
+        JOIN resource t4 ON t4.id = t3.resource_id
+        JOIN resource_item t5 ON t4.id = t5.resource_id
+        WHERE t1.group_id = t.id
+        AND t4.account_id = c.id
+        ) > 0 THEN 'risky'
+        ELSE 'risk_free'
+        END AS status,
+        (select create_time from cloud_task where account_id = c.id order by create_time desc limit 1) as createTime,
+        '暂无合规报告' as state,
+        (
+        SELECT
+        IFNULL(count( DISTINCT g.id ), 0)
+        FROM
+        rule_inspection_report r
+        JOIN rule_inspection_report_mapping t1 ON t1.report_id = r.id
+        JOIN cloud_task_item t2 ON t2.rule_id = t1.rule_id
+        JOIN cloud_task t3 ON t3.id = t2.task_id
+        JOIN rule_group_mapping t4 ON t3.rule_id = t4.rule_id
+        JOIN rule_group g ON t4.group_id = g.id
+        WHERE t3.account_id = c.id and g.id = t.id
+        AND t3.return_sum > 0
+        )
+        AS riskyRegulation,
+        (
+        SELECT count( DISTINCT r.id ) FROM rule_inspection_report r
+        ) AS totalRegulation,
+        (
+        SELECT
+        IFNULL(sum( r.return_sum ), 0)
+        FROM
+        cloud_task r
+        WHERE
+        r.account_id = c.id
+        AND r.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = t.id)
+        )
+        AS returnSum,
+        (
+        SELECT
+        IFNULL(sum( r.resources_sum ), 0)
+        FROM
+        cloud_task r
+        WHERE
+        r.account_id = c.id
+        AND r.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = t.id)
+        )
+        AS resourcesSum
         from rule_group as t
-        left join plugin t1 on t.plugin_id = t1.id
+        join plugin p on t.plugin_id = p.id
+        join cloud_account c on t.plugin_id = c.plugin_id
         <where>
             <if test="request.combine != null">
                 <include refid="combine">
                     <property name="condition" value="request.combine"/>
                 </include>
             </if>
-
+            <if test="request.accountId != null and request.accountId != ''">
+                and c.id = #{request.accountId}
+            </if>
             <if test="request.name != null and request.name != ''">
                 and t.name like concat('%', #{request.name}, '%')
             </if>
@@ -646,7 +701,7 @@
                 and t.plugin_id = #{request.pluginId}
             </if>
         </where>
-        order by t.name
+        order by t.plugin_id, t.flag, t.id
     </select>
 
 </mapper>
