@@ -1663,4 +1663,10 @@ export default {
     fs_chart_top: '依赖文件检测结果统计',
     all_label: '全部依赖文件',
   },
+  report: {
+    download_group: '下载合规报告',
+    download_account: '下载云账号整体合规报告',
+    scan_details: '检测报告详情',
+    scan_rules: '检测规则列表',
+  },
 };

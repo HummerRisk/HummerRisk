@@ -5,10 +5,8 @@ import com.hummerrisk.base.domain.CloudTaskItem;
 import com.hummerrisk.base.domain.ResourceWithBLOBs;
 import com.hummerrisk.base.domain.RuleInspectionReport;
 import com.hummerrisk.controller.request.resource.ResourceRequest;
-import com.hummerrisk.dto.ExportDTO;
-import com.hummerrisk.dto.ReportDTO;
-import com.hummerrisk.dto.ResourceDTO;
-import com.hummerrisk.dto.SourceDTO;
+import com.hummerrisk.controller.request.rule.RuleGroupRequest;
+import com.hummerrisk.dto.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -54,5 +52,7 @@ public interface ExtResourceMapper {
     List<Map<String, Object>> ruleData(Map<String, Object> map);
 
     List<RuleInspectionReport> regulation(String ruleId);
+
+    List<RuleGroupDTO> ruleGroupList(@Param("request") RuleGroupRequest request);
 
 }

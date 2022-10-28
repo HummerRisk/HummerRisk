@@ -624,4 +624,29 @@
         ORDER BY id
     </select>
 
+    <select id="ruleGroupList" resultType="com.hummerrisk.dto.RuleGroupDTO">
+        select
+        t.*,
+        (select count(g.id) from rule_group_mapping g where g.group_id = t.id) as ruleSum,
+        t1.name as pluginName,
+        t1.icon as pluginIcon
+        from rule_group as t
+        left join plugin t1 on t.plugin_id = t1.id
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                </include>
+            </if>
+
+            <if test="request.name != null and request.name != ''">
+                and t.name like concat('%', #{request.name}, '%')
+            </if>
+            <if test="request.pluginId != null and request.pluginId != ''">
+                and t.plugin_id = #{request.pluginId}
+            </if>
+        </where>
+        order by t.name
+    </select>
+
 </mapper>

@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.CloudTaskItem;
 import com.hummerrisk.base.domain.ResourceWithBLOBs;
+import com.hummerrisk.base.domain.RuleGroup;
 import com.hummerrisk.base.domain.RuleInspectionReport;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
@@ -11,6 +12,7 @@ import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.excel.ExcelExportRequest;
 import com.hummerrisk.controller.request.resource.JsonRequest;
 import com.hummerrisk.controller.request.resource.ResourceRequest;
+import com.hummerrisk.controller.request.rule.RuleGroupRequest;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.service.ResourceService;
 import io.swagger.annotations.Api;
@@ -188,5 +190,13 @@ public class ResourceController {
     @GetMapping("regulation/{ruleId}")
     public List<RuleInspectionReport> regulation(@PathVariable String ruleId) {
         return resourceService.regulation(ruleId);
+    }
+
+    @I18n
+    @ApiOperation(value = "规则组列表")
+    @PostMapping(value = "ruleGroup/list/{goPage}/{pageSize}")
+    public Pager<List<RuleGroupDTO>> ruleGroupList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleGroupRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, resourceService.ruleGroupList(request));
     }
 }

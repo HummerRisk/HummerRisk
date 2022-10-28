@@ -5,11 +5,8 @@
 
         <template v-slot:header>
 
-          <account-change class="account-change" :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"/>
-
-          <table-header :condition.sync="condition" @search="search"
-                              :show-name="false"
-                              :show-create="false"
+          <report-table-header :condition.sync="condition" @search="search"
+                              :currentAccount="currentAccount"
                               :show-open="true"/>
         </template>
         <el-row :gutter="20" class="el-row-body">
@@ -24,9 +21,20 @@
                         <i class="el-icon-picture-outline"></i>
                       </div>
                     </el-image>
+                    <div class="plugin">{{ data.pluginName }}</div>
                   </el-col>
                   <el-col :span="21">
-                    <el-row class="plugin">{{ data.pluginName }}</el-row>
+                    <el-row>
+                      <span style="color: #1e6427;font-size: 13px;">
+                        ({{ data.level }})
+                        <el-button size="mini" type="danger" class="round el-btn" round v-if="data.flag === true">
+                          {{ $t('rule.tag_flag_true') }}
+                        </el-button>
+                        <el-button size="mini" type="success" class="round el-btn" round v-else-if="data.flag === false">
+                          {{ $t('rule.tag_flag_false') }}
+                        </el-button>
+                      </span>
+                    </el-row>
                     <el-row class="desc">{{ data.description }}</el-row>
                   </el-col>
                 </el-row>
@@ -49,29 +57,9 @@
                 <span class="button time pa-na">
                 </span>
                 <div class="bottom clearfix">
-                  <time class="time">
-                    <span class="pa-time">{{ data.level }}&nbsp;&nbsp;</span>
-                    <span class="pa-time2">{{ $t('rule.rule_sum', [data.ruleSum]) }}</span>
-                  </time>
-                  <el-dropdown class="button button-drop" @command="(command)=>{handleCommand(command, data)}">
-                      <span class="el-dropdown-link">
-                        {{ $t('package.operate') }}
-                        <i class="el-icon-arrow-down el-icon--right"></i>
-                      </span>
-                    <el-dropdown-menu slot="dropdown" v-if="!!data.flag">
-                      <el-dropdown-item command="handleScan">{{ $t('account.scan') }}</el-dropdown-item>
-                      <el-dropdown-item command="handleInfo">{{ $t('commons.detail') }}</el-dropdown-item>
-                      <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
-                      <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
-                    </el-dropdown-menu>
-                    <el-dropdown-menu slot="dropdown" v-if="!data.flag">
-                      <el-dropdown-item command="handleScan">{{ $t('account.scan') }}</el-dropdown-item>
-                      <el-dropdown-item command="handleEdit">{{ $t('commons.edit') }}</el-dropdown-item>
-                      <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
-                      <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
-                      <el-dropdown-item command="handleDelete">{{ $t('commons.delete') }}</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
+                  <el-button class="el-btn-btm" type="primary" plain size="small">{{ $t('report.download_group') }}</el-button>
+                  <el-button class="el-btn-btm" type="success" plain size="small">{{ $t('report.scan_details') }}</el-button>
+                  <el-button class="el-btn-btm" type="warning" plain size="small">{{ $t('report.scan_rules') }}</el-button>
                 </div>
               </div>
             </el-card>
@@ -394,7 +382,8 @@ import {ACCOUNT_ID, severityOptions} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver.js";
 import AccountChange from "@/business/components/common/head/AccountSwitch";
 import FTablePagination from "../../common/pagination/FTablePagination";
-import GroupTableHeader from "@/business/components/rule/head/GroupTableHeader";
+import ReportTableHeader from "@/business/components/report/head/ReportTableHeader";
+import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
 
 /* eslint-disable */
   export default {
@@ -410,7 +399,7 @@ import GroupTableHeader from "@/business/components/rule/head/GroupTableHeader";
       MetricChart,
       AccountChange,
       FTablePagination,
-      GroupTableHeader,
+      ReportTableHeader,
     },
     data() {
       return {
@@ -429,6 +418,7 @@ import GroupTableHeader from "@/business/components/rule/head/GroupTableHeader";
         ruleSetOptions: [],
         inspectionSeportOptions: [],
         condition: {
+          components: RULE_GROUP_CONFIGS
         },
         buttons: [
           {
@@ -502,12 +492,16 @@ import GroupTableHeader from "@/business/components/rule/head/GroupTableHeader";
         this.accountId = accountId;
         this.search();
       },
+      async searchById (accountId) {
+        this.accountId = accountId;
+        await this.groupSearch();
+      },
       async search () {
         await this.groupSearch();
       },
       async groupSearch () {
         this.condition.accountId = this.accountId;
-        this.result = await this.$post("/rule/ruleGroup/list/" + this.fcurrentPage + "/" + this.fpageSize, this.condition, response => {
+        this.result = await this.$post("/resource/ruleGroup/list/" + this.fcurrentPage + "/" + this.fpageSize, this.condition, response => {
           let data = response.data;
           this.ftotal = data.itemCount;
           this.ftableData = data.listObject;
@@ -832,7 +826,13 @@ import GroupTableHeader from "@/business/components/rule/head/GroupTableHeader";
   }
   .plugin {
     color: #215d9a;
-    font-size: 16px;
+    font-size: 13px;
+    margin-top: 25px;
+    width: 1px;
+    max-height: 130px;
+    /*文字竖排显示*/
+    writing-mode: vertical-lr;/*从左向右 从右向左是 writing-mode: vertical-rl;*/
+    writing-mode: tb-lr;/*IE浏览器的从左向右 从右向左是 writing-mode: tb-rl；*/
   }
   .desc {
     color: #888888;
@@ -947,6 +947,15 @@ import GroupTableHeader from "@/business/components/rule/head/GroupTableHeader";
   }
   .account-change {
     margin: 0 0 10px 0;
+  }
+  .el-btn {
+    transform: scale(0.8);
+  }
+  .el-btn-btm {
+    width: 30%;
+  }
+  .bottom >>> .el-button--small {
+    padding: 9px 1%;
   }
   /*.rtl >>> .el-drawer__body {*/
   /*  overflow-y: auto;*/

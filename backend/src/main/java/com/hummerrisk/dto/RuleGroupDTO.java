@@ -13,6 +13,8 @@ public class RuleGroupDTO extends RuleGroup {
 
     private String ruleSum;
 
+
+
     public String getPluginName() {
         return pluginName;
     }

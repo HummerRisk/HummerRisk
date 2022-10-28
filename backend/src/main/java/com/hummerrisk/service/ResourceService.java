@@ -15,6 +15,7 @@ import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.excel.ExcelExportRequest;
 import com.hummerrisk.controller.request.resource.ResourceRequest;
+import com.hummerrisk.controller.request.rule.RuleGroupRequest;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.collections.MapUtils;
@@ -753,5 +754,9 @@ public class ResourceService {
 
     public List<RuleInspectionReport> regulation(String ruleId) {
         return extResourceMapper.regulation(ruleId);
+    }
+
+    public List<RuleGroupDTO> ruleGroupList(RuleGroupRequest request) {
+        return extResourceMapper.ruleGroupList(request);
     }
 }
