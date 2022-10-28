@@ -58,9 +58,9 @@ export default {
     }
   },
   methods: {
-    init: function () {
+    async init () {
       if (hasRoles(ROLE_ADMIN)) {
-        this.result = this.$get("/account/allList", response => {
+        await this.$get("/account/allList", response => {
           this.items = response.data;
           this.searchArray = response.data;
           if (!localStorage.getItem(ACCOUNT_ID)) {
@@ -79,9 +79,13 @@ export default {
           }
           let accountId = getCurrentAccountID();
           if (accountId) {
+            let account = this.searchArray.filter(p => p.id === accountId);
             // 保存的 accountId 在当前云张号列表是否存在; 切换工作空间后
             if (this.searchArray.length > 0 && this.searchArray.map(p => p.id).indexOf(accountId) === -1) {
               this.change(this.items[0].id);
+            } else {
+              localStorage.setItem(ACCOUNT_NAME, account[0].name);
+              localStorage.setItem(ACCOUNT, JSON.stringify(account[0]));
             }
           } else {
             if (this.items.length > 0) {

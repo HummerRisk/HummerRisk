@@ -3,7 +3,7 @@
   <div>
     <el-row type="flex" justify="space-between" align="middle">
       <span>
-        <account-change class="account-change" :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"/>
+        <account-change class="account-change" :accountName="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"/>
       </span>
       <span>
         <table-search-bar :condition.sync="condition" @change="search" class="search-bar" :tip="tip"/>
@@ -19,7 +19,7 @@ import TableSearchBar from '@/business/components/common/components/TableSearchB
 import TableButton from '@/business/components/common/components/TableButton';
 import TableAdvSearchBar from "@/business/components/common/components/search/TableAdvSearchBar";
 import AccountChange from "@/business/components/common/head/AccountSwitch";
-import {ACCOUNT_ID} from "@/common/js/constants";
+import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 
 /* eslint-disable */
   export default {
@@ -84,7 +84,10 @@ import {ACCOUNT_ID} from "@/common/js/constants";
         type: Boolean,
         default: true
       },
-      currentAccount: '',
+      currentAccount: {
+        type: String,
+        default: localStorage.getItem(ACCOUNT_NAME)
+      },
     },
     methods: {
       search(value) {
@@ -101,8 +104,7 @@ import {ACCOUNT_ID} from "@/common/js/constants";
         this.$emit('validate')
       },
       cloudAccountSwitch(accountId) {
-        localStorage.setItem(ACCOUNT_ID, accountId);
-        this.$emit('searchById', accountId);
+        this.$emit('cloudAccountSwitch', accountId);
       },
     },
     computed: {

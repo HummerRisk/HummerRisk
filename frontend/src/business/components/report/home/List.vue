@@ -6,7 +6,7 @@
         <template v-slot:header>
 
           <report-table-header :condition.sync="condition" @search="search"
-                              :currentAccount="currentAccount"
+                              :currentAccount="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"
                               :show-open="true"/>
         </template>
         <el-row :gutter="20" class="el-row-body">
@@ -25,7 +25,8 @@
                   </el-col>
                   <el-col :span="21">
                     <el-row>
-                      <span style="color: #1e6427;font-size: 13px;">
+                      <span style="color: #11365d;font-size: 13px;">{{ currentAccount }}</span>
+                      <span style="color: #1e6427;font-size: 12px;">
                         ({{ data.level }})
                         <el-button size="mini" type="danger" class="round el-btn" round v-if="data.flag === true">
                           {{ $t('rule.tag_flag_true') }}
@@ -42,16 +43,13 @@
               <el-divider></el-divider>
               <div style="padding: 0 14px 14px 14px;">
                 <el-row>
-                  <el-col :span="19">
+                  <el-col :span="12">
                     <span class="da-na">{{ data.name }}</span>
                   </el-col>
-                  <el-col :span="5">
-                    <el-button size="medium" type="danger" class="round" round v-if="data.flag === true">
-                      {{ $t('rule.tag_flag_true') }}
-                    </el-button>
-                    <el-button size="medium" type="success" class="round" round v-else-if="data.flag === false">
-                      {{ $t('rule.tag_flag_false') }}
-                    </el-button>
+                  <el-col :span="12">
+                    <span style="color: #e8a97e;float: right;margin-left: 1%;">({{ data.returnSum }}/{{ data.resourcesSum }})</span>
+                    <span v-if="data.status == 'risky'" style="color: red;float: right"><i class="el-icon-warning"></i> {{ $t('resource.discover_risk') }}</span>
+                    <span v-if="data.status == 'risk_free'" style="color: green;float: right"><i class="el-icon-warning"></i> {{ $t('resource.no_risk') }}</span>
                   </el-col>
                 </el-row>
                 <span class="button time pa-na">
@@ -378,7 +376,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import CenterChart from "@/business/components/common/components/CenterChart";
 import MetricChart from "./MetricChart";
 import {_filter, _sort, getCurrentAccountID} from "@/common/js/utils";
-import {ACCOUNT_ID, severityOptions} from "@/common/js/constants";
+import {ACCOUNT_ID, ACCOUNT_NAME, severityOptions} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver.js";
 import AccountChange from "@/business/components/common/head/AccountSwitch";
 import FTablePagination from "../../common/pagination/FTablePagination";
@@ -412,7 +410,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         loading: false,
         ruleForm: {parameter:[]},
         tags: [],
-        currentAccount: '',
+        currentAccount: localStorage.getItem(ACCOUNT_NAME),
         plugins: [],
         severityOptions: [],
         ruleSetOptions: [],
@@ -488,18 +486,11 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
           this.selectIds.add(s.id)
         });
       },
-      cloudAccountSwitch(accountId) {
+      cloudAccountSwitch (accountId) {
         this.accountId = accountId;
         this.search();
       },
-      async searchById (accountId) {
-        this.accountId = accountId;
-        await this.groupSearch();
-      },
       async search () {
-        await this.groupSearch();
-      },
-      async groupSearch () {
         this.condition.accountId = this.accountId;
         this.result = await this.$post("/resource/ruleGroup/list/" + this.fcurrentPage + "/" + this.fpageSize, this.condition, response => {
           let data = response.data;

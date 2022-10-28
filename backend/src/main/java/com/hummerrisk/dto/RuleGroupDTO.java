@@ -15,7 +15,7 @@ public class RuleGroupDTO extends RuleGroup {
 
     private String status;
 
-    private Integer createTime;
+    private Long createTime;
 
     private String state;
 
@@ -59,11 +59,11 @@ public class RuleGroupDTO extends RuleGroup {
         this.status = status;
     }
 
-    public Integer getCreateTime() {
+    public Long getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Integer createTime) {
+    public void setCreateTime(Long createTime) {
         this.createTime = createTime;
     }
 
