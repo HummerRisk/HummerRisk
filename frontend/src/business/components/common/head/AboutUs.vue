@@ -16,7 +16,7 @@
 
     <el-row>
       <el-col class="version">
-        <span><font-awesome-icon class="github-icon" :icon="['fas', 'code-branch']"/> {{ $t('commons.version') }}:</span> &nbsp;
+        <span><font-awesome-icon :icon="['fas', 'code-branch']"/> {{ $t('commons.version') }}:</span> &nbsp;
         <span>{{ version }}</span>
       </el-col>
     </el-row>
@@ -36,13 +36,13 @@
         websiteUrl: 'https://docs.hummerrisk.com',
         version: 'v1.0.0',
         items: [
-          {img: require(`@/assets/img/logo/favicon-彩色.png`), url: 'https://docs.hummerrisk.com'},
-          {img: require(`@/assets/img/code/github.png`), url: 'https://github.com/HummerRisk/HummerRisk'},
-          {img: require(`@/assets/img/engine/custodian.png`), url: 'https://docs.hummerrisk.com/question/rule'},
-          {img: require(`@/assets/img/engine/prowler.png`), url: 'https://docs.hummerrisk.com/question/prowler'},
-          {img: require(`@/assets/img/engine/nuclei.png`), url: 'https://docs.hummerrisk.com/question/nuclei'},
-          {img: require(`@/assets/img/engine/xray.png`), url: 'https://docs.hummerrisk.com/question/xray'},
-          {img: require(`@/assets/img/engine/trivy.png`), url: 'https://docs.hummerrisk.com/question/trivy'},
+          {img: require(`@/assets/img/about/docs.png`), url: 'https://docs.hummerrisk.com'},
+          {img: require(`@/assets/img/about/github.png`), url: 'https://github.com/HummerRisk/HummerRisk'},
+          {img: require(`@/assets/img/about/custodian.png`), url: 'https://docs.hummerrisk.com/question/rule'},
+          {img: require(`@/assets/img/about/prowler.png`), url: 'https://docs.hummerrisk.com/question/prowler'},
+          {img: require(`@/assets/img/about/nuclei.png`), url: 'https://docs.hummerrisk.com/question/nuclei'},
+          {img: require(`@/assets/img/about/xray.png`), url: 'https://docs.hummerrisk.com/question/xray'},
+          {img: require(`@/assets/img/about/trivy.png`), url: 'https://docs.hummerrisk.com/question/trivy'},
         ],
       }
     },
@@ -79,7 +79,10 @@
 
   .github-icon {
     font-size: 20px;
-    margin-left: 5px;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    text-align: center;
   }
 
   .el-row {
