@@ -10,10 +10,10 @@
                                @openDownload="openDownload" @selectAccount="selectAccount" :show-open="true"/>
         </template>
         <el-row :gutter="20" class="el-row-body">
-          <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(data, index) in ftableData"
+          <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="8" v-for="(data, index) in ftableData"
                   :key="index" class="el-col el-col-su">
             <el-card :body-style="{ padding: '15px' }">
-              <div style="height: 130px;">
+              <div style="height: 110px;">
                 <el-row :gutter="20">
                   <el-col :span="3">
                     <el-image style="border-radius: 50%;width: 16px; height: 16px; vertical-align:middle;" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
@@ -40,7 +40,15 @@
                   </el-col>
                 </el-row>
               </div>
-              <el-divider></el-divider>
+              <el-row :gutter="20" style="text-align: center">
+                <el-col :span="12">
+                  <hr-chart style="margin-left: 5%;" id="chart" ref="chart" :options="data.ruleOptions" :autoresize="true" :width="240" :height="150"></hr-chart>
+                </el-col>
+                <el-col :span="12">
+                  <hr-chart style="margin-left: 5%;" id="chart" ref="chart" :options="data.resourceOptions" :autoresize="true" :width="240" :height="150"></hr-chart>
+                </el-col>
+              </el-row>
+              <el-divider style="margin-top: 0;"></el-divider>
               <div style="padding: 0 14px 14px 14px;">
                 <el-row>
                   <el-col :span="12">
@@ -424,6 +432,8 @@ import {saveAs} from "@/common/js/FileSaver.js";
 import FTablePagination from "../../common/pagination/FTablePagination";
 import ReportTableHeader from "@/business/components/report/head/ReportTableHeader";
 import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
+import HrChart from "@/business/components/common/chart/HrChart";
+import echarts from 'echarts';
 
 /* eslint-disable */
   export default {
@@ -439,6 +449,8 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
       MetricChart,
       FTablePagination,
       ReportTableHeader,
+      HrChart,
+      echarts
     },
     data() {
       return {
@@ -521,6 +533,8 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         ruleListPage: 1,
         ruleListPageSize: 10,
         ruleListTotal: 0,
+        ruleOptions: {},
+        resourceOptions: {},
       }
     },
     methods: {
@@ -548,6 +562,109 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
           let data = response.data;
           this.ftotal = data.itemCount;
           this.ftableData = data.listObject;
+          for(let tableData of this.ftableData) {
+            tableData.ruleOptions = {
+              legend: {},
+              tooltip: {},
+              dataset: {
+                source: [
+                  ['risk', this.$t('report.have_risk_rule'), this.$t('report.no_risk_rule'), this.$t('report.total_risk_rule')],
+                  [this.$t('rule.cloud_rule'), tableData.riskRuleSum, tableData.ruleSum - tableData.riskRuleSum, tableData.ruleSum]
+                ]
+              },
+              xAxis: { type: 'category' },
+              yAxis: {},
+              series: [
+                {
+                  type: 'bar',
+                  itemStyle: {
+                    normal: {
+                      label: {
+                        show: true, //开启显示
+                        position: 'top', //在上方显示
+                        textStyle: { //数值样式
+                          color: 'black',
+                          fontSize: 16
+                        }
+                      }
+                    }
+                  },
+                },
+                {
+                  type: 'bar',
+                  itemStyle: {
+                    normal: {
+                      label: {
+                        show: true, //开启显示
+                        position: 'top', //在上方显示
+                        textStyle: { //数值样式
+                          color: 'black',
+                          fontSize: 16
+                        }
+                      }
+                    }
+                  },
+                },
+                {
+                  type: 'bar',
+                  itemStyle: {
+                    normal: {
+                      label: {
+                        show: true, //开启显示
+                        position: 'top', //在上方显示
+                        textStyle: { //数值样式
+                          color: 'black',
+                          fontSize: 16
+                        }
+                      }
+                    }
+                  },
+                },
+              ],
+              color: ['#009ef0', '#627dec', '#11cfae', '#893fdc', '#89ffff','#0051a4']
+            };
+            tableData.resourceOptions = {
+              tooltip: {
+                trigger: 'item'
+              },
+              legend: {
+                top: '0.1%',
+                left: 'center'
+              },
+              series: [
+                {
+                  name: 'Access From',
+                  type: 'pie',
+                  radius: ['40%', '70%'],
+                  avoidLabelOverlap: false,
+                  itemStyle: {
+                    borderRadius: 10,
+                    borderColor: '#fff',
+                    borderWidth: 2
+                  },
+                  label: {
+                    show: false,
+                    position: 'center'
+                  },
+                  emphasis: {
+                    label: {
+                      show: true,
+                      fontSize: '40',
+                      fontWeight: 'bold'
+                    }
+                  },
+                  labelLine: {
+                    show: false
+                  },
+                  data: [
+                    { value: tableData.returnSum, name: this.$t('report.have_risk_resource') },
+                    { value: tableData.resourcesSum, name: this.$t('report.no_risk_resource') }
+                  ]
+                }
+              ],
+              color: ['#009ef0', '#627dec', '#11cfae', '#893fdc', '#89ffff','#0051a4']
+            };
+          }
         });
       },
       async reportIsoSearch() {
@@ -906,7 +1023,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
     font-size: 13px;
     margin-top: 25px;
     width: 1px;
-    max-height: 130px;
+    max-height: 110px;
     /*文字竖排显示*/
     writing-mode: vertical-lr;/*从左向右 从右向左是 writing-mode: vertical-rl;*/
     writing-mode: tb-lr;/*IE浏览器的从左向右 从右向左是 writing-mode: tb-rl；*/
@@ -921,6 +1038,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
     display:-webkit-box;
     -webkit-box-orient:vertical;
     -webkit-line-clamp:6;
+    height: 110px;
   }
   .edit_dev >>> .el-transfer-panel {
     width: 40%;

@@ -628,6 +628,12 @@
         select
         t.*,
         (select count(g.id) from rule_group_mapping g where g.group_id = t.id) as ruleSum,
+        (
+        select count(g.id)
+        from rule_group_mapping g
+        where g.group_id = t.id
+        and g.rule_id in (select tt.rule_id from cloud_task tt where tt.resources_sum &lt; 0 and tt.account_id = #{request.accountId})
+        ) as riskRuleSum,
         p.name as pluginName,
         p.icon as pluginIcon,
         CASE

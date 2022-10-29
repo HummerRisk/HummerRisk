@@ -1668,5 +1668,10 @@ export default {
     download_account: '下载云账号整体合规报告',
     scan_details: '检测报告详情',
     scan_rules: '检测规则列表',
+    have_risk_rule: '有風險規則數',
+    no_risk_rule: '無風險規則數',
+    total_risk_rule: '總規則數',
+    have_risk_resource: '有風險資源數',
+    no_risk_resource: '無風險資源數',
   },
 };

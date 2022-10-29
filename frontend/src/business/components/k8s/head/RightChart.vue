@@ -30,7 +30,7 @@ export default {
           legend: {},
           tooltip: {},
           dataset: {
-            dimensions: ['product', 'Critical', 'High', 'Medium', 'Low', 'Unknown'],
+            dimensions: ['risk', 'Critical', 'High', 'Medium', 'Low', 'Unknown'],
             source: data
           },
           xAxis: { type: 'category' },

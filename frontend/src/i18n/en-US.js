@@ -1668,5 +1668,10 @@ export default {
     download_account: 'Download the overall compliance report of the cloud account',
     scan_details: 'Test report details',
     scan_rules: 'List of detection rules',
+    have_risk_rule: 'Number of risky rules',
+    no_risk_rule: 'Number of risk-free rules',
+    total_risk_rule: 'Total number of rules',
+    have_risk_resource: 'Number of risky resources',
+    no_risk_resource: 'Number of risk-free resources',
   },
 };

@@ -11,7 +11,9 @@ public class RuleGroupDTO extends RuleGroup {
 
     private String pluginIcon;
 
-    private String ruleSum;
+    private Integer ruleSum;
+
+    private Integer riskRuleSum;
 
     private String status;
 
@@ -19,9 +21,9 @@ public class RuleGroupDTO extends RuleGroup {
 
     private String state;
 
-    private String riskyRegulation;
+    private Integer riskyRegulation;
 
-    private String totalRegulation;
+    private Integer totalRegulation;
 
     private Integer returnSum;
 
@@ -41,14 +43,6 @@ public class RuleGroupDTO extends RuleGroup {
 
     public void setPluginIcon(String pluginIcon) {
         this.pluginIcon = pluginIcon;
-    }
-
-    public String getRuleSum() {
-        return ruleSum;
-    }
-
-    public void setRuleSum(String ruleSum) {
-        this.ruleSum = ruleSum;
     }
 
     public String getStatus() {
@@ -75,22 +69,6 @@ public class RuleGroupDTO extends RuleGroup {
         this.state = state;
     }
 
-    public String getRiskyRegulation() {
-        return riskyRegulation;
-    }
-
-    public void setRiskyRegulation(String riskyRegulation) {
-        this.riskyRegulation = riskyRegulation;
-    }
-
-    public String getTotalRegulation() {
-        return totalRegulation;
-    }
-
-    public void setTotalRegulation(String totalRegulation) {
-        this.totalRegulation = totalRegulation;
-    }
-
     public Integer getReturnSum() {
         return returnSum;
     }
@@ -105,5 +83,37 @@ public class RuleGroupDTO extends RuleGroup {
 
     public void setResourcesSum(Integer resourcesSum) {
         this.resourcesSum = resourcesSum;
+    }
+
+    public Integer getRuleSum() {
+        return ruleSum;
+    }
+
+    public void setRuleSum(Integer ruleSum) {
+        this.ruleSum = ruleSum;
+    }
+
+    public Integer getRiskRuleSum() {
+        return riskRuleSum;
+    }
+
+    public void setRiskRuleSum(Integer riskRuleSum) {
+        this.riskRuleSum = riskRuleSum;
+    }
+
+    public Integer getRiskyRegulation() {
+        return riskyRegulation;
+    }
+
+    public void setRiskyRegulation(Integer riskyRegulation) {
+        this.riskyRegulation = riskyRegulation;
+    }
+
+    public Integer getTotalRegulation() {
+        return totalRegulation;
+    }
+
+    public void setTotalRegulation(Integer totalRegulation) {
+        this.totalRegulation = totalRegulation;
     }
 }
