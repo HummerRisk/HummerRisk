@@ -961,6 +961,7 @@ export default {
     server_risk_chart: '主機風險統計',
     server_risk_chart_vuln: '主機檢測結果風險統計',
     all_label: '所有主機',
+    to_be_set: '待設置',
   },
   image: {
     image_repo: '鏡像倉庫',
@@ -1661,5 +1662,11 @@ export default {
     project_chart: '依賴文件統計',
     fs_chart_top: '依賴文件檢測結果統計',
     all_label: '全部依賴文件',
+  },
+  report: {
+    download_group: '下载合规报告',
+    download_account: '下载云账号整体合规报告',
+    scan_details: '检测报告详情',
+    scan_rules: '检测规则列表',
   },
 };

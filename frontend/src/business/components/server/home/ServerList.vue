@@ -111,7 +111,7 @@
                       <el-tooltip v-if="scope.row.isPublicKey==='file'" class="item" effect="dark" :content="scope.row.publicKeyPath" placement="left-start">
                         <el-button type="success" size="mini">{{ $t('server.file_public_key') }}</el-button>
                       </el-tooltip>
-                      <el-button v-if="scope.row.isPublicKey==null|| scope.row.isPublicKey==undefined" size="mini" @click="bindCertificate(scope.$index, scope.row)">{{ $t('server.tobeSet') }}</el-button>
+                      <el-button v-if="scope.row.isPublicKey==null|| scope.row.isPublicKey==undefined" size="mini" @click="bindCertificate(scope.$index, scope.row)">{{ $t('server.to_be_set') }}</el-button>
                     </template>
                   </el-table-column>
                   <el-table-column :label="$t('commons.operating')" fixed="right" min-width="15%" prop="result">

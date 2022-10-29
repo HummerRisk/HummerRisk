@@ -961,7 +961,7 @@ export default {
     server_risk_chart: '主机风险统计',
     server_risk_chart_vuln: '主机检测结果风险统计',
     all_label: '所有主机',
-    tobeSet: '待设置',
+    to_be_set: '待设置',
   },
   image: {
     image_repo: '镜像仓库',

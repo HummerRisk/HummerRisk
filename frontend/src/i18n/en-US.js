@@ -961,6 +961,7 @@ export default {
     server_risk_chart: 'Host risk statistics',
     server_risk_chart_vuln: 'Host detection result risk statistics',
     all_label: 'All hosts',
+    to_be_set: 'To be set',
   },
   image: {
     image_repo: 'Mirror repository',
@@ -1362,7 +1363,7 @@ export default {
     total: 'Total risk',
     sbom_project: 'Sbom Project',
     sbom_project_version: 'Project version',
-    event_start: 'Please wait for the detection to complete in each detection result menu. ',
+    event_start: 'Please wait for the detection to complete in each detection result menu.',
   },
   cost: {
     analyze: 'Cost analysis',
@@ -1661,5 +1662,11 @@ export default {
     project_chart: 'Dependency file statistics',
     fs_chart_top: 'Dependency file detection result statistics',
     all_label: 'All dependency files',
+  },
+  report: {
+    download_group: 'Download Compliance Report',
+    download_account: 'Download the overall compliance report of the cloud account',
+    scan_details: 'Test report details',
+    scan_rules: 'List of detection rules',
   },
 };
