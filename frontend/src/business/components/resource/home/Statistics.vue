@@ -3,7 +3,7 @@
 
       <el-card class="el-row-card">
 
-        <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"/>
+        <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch" @selectAccount="selectAccount"/>
 
         <el-divider><i class="el-icon-tickets"></i></el-divider>
 
@@ -603,6 +603,10 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
           this.accountTotal = data.itemCount;
           this.accountData = data.listObject;
         });
+      },
+      selectAccount(accountId, accountName) {
+        this.accountId = accountId;
+        this.currentAccount = accountName;
       },
     },
     created() {

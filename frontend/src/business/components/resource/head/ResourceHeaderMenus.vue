@@ -43,15 +43,11 @@
 
 <script>
 
-import SearchList from "@/business/components/common/head/SearchList";
 import {LIST_CHANGE, ResourceEvent} from "@/business/components/common/head/ListEvent";
-import AccountChange from "@/business/components/common/head/AccountSwitch";
 
 export default {
   name: "HeaderMenus",
   components: {
-    SearchList,
-    AccountChange,
   },
   data() {
     return {

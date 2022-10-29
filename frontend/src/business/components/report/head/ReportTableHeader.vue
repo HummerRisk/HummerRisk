@@ -3,7 +3,8 @@
   <div>
     <el-row type="flex" justify="space-between" align="middle">
       <span>
-        <account-change class="account-change" :accountName="currentAccount" @cloudAccountSwitch="cloudAccountSwitch" @openDownload="openDownload"/>
+        <account-change class="account-change" :accountName="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"
+                        @selectAccount="selectAccount" @openDownload="openDownload"/>
       </span>
       <span>
         <table-search-bar :condition.sync="condition" @change="search" class="search-bar" :tip="tip"/>
@@ -18,8 +19,8 @@
 import TableSearchBar from '@/business/components/common/components/TableSearchBar';
 import TableButton from '@/business/components/common/components/TableButton';
 import TableAdvSearchBar from "@/business/components/common/components/search/TableAdvSearchBar";
-import AccountChange from "@/business/components/common/head/AccountSwitch";
-import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
+import AccountChange from "@/business/components/report/head/AccountSwitch";
+import {ACCOUNT_NAME} from "@/common/js/constants";
 
 /* eslint-disable */
   export default {
@@ -108,6 +109,9 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
       },
       openDownload() {
         this.$emit('openDownload');
+      },
+      selectAccount(accountId, accountName) {
+        this.$emit('selectAccount', accountId, accountName);
       },
     },
     computed: {

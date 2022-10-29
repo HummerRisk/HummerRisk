@@ -32,7 +32,7 @@ import {ROLE_ADMIN, VULN_ID, VULN_NAME} from "@/common/js/constants";
 
 /* eslint-disable */
 export default {
-  name: "SearchList",
+  name: "VulnList",
   props: {
     options: Object,
     vulnAccount: String

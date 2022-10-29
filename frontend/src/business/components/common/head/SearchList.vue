@@ -27,16 +27,17 @@
 </template>
 
 <script>
-import {getCurrentAccountID, getCurrentUser, hasRoles} from "@/common/js/utils";
+import {
+  getCurrentAccountID,
+  getCurrentAccountName,
+  getCurrentUser,
+  hasRoles
+} from "@/common/js/utils";
 import {ACCOUNT, ACCOUNT_ID, ACCOUNT_NAME, ROLE_ADMIN} from "@/common/js/constants";
 
 /* eslint-disable */
 export default {
   name: "SearchList",
-  props: {
-    options: Object,
-    currentAccount: String
-  },
   created() {
     this.init();
   },
@@ -49,7 +50,8 @@ export default {
       searchArray: [],
       searchString: '',
       userId: getCurrentUser().id,
-      currentAccountId: localStorage.getItem(ACCOUNT_ID),
+      currentAccountId: getCurrentAccountID(),
+      accountName: getCurrentAccountName(),
     }
   },
   watch: {
@@ -63,7 +65,13 @@ export default {
         await this.$get("/account/allList", response => {
           this.items = response.data;
           this.searchArray = response.data;
-          if (!localStorage.getItem(ACCOUNT_ID)) {
+          if (this.currentAccountId) {
+            let account = this.searchArray.filter(p => p.id === this.currentAccountId);
+            this.accountName = account[0].name;
+            localStorage.setItem(ACCOUNT_NAME, this.accountName);
+            localStorage.setItem(ACCOUNT, JSON.stringify(account[0]));
+            this.changecurrentAccount(this.currentAccountId);
+          } else {
             let userLastAccountId = getCurrentUser().lastAccountId;
             if (userLastAccountId) {
               // id 是否存在
@@ -71,29 +79,19 @@ export default {
                 localStorage.setItem(ACCOUNT_ID, userLastAccountId);
                 let account = this.searchArray.filter(p => p.id === userLastAccountId);
                 if(account) {
-                  localStorage.setItem(ACCOUNT_NAME, account[0].name);
+                  this.accountName = account[0].name;
+                  localStorage.setItem(ACCOUNT_NAME, this.accountName);
                   localStorage.setItem(ACCOUNT, JSON.stringify(account[0]));
+                  this.changecurrentAccount(this.currentAccountId);
                 }
+              }
+            } else {
+              if (this.items.length > 0) {
+                this.change(this.items[0].id);
               }
             }
           }
-          let accountId = getCurrentAccountID();
-          if (accountId) {
-            let account = this.searchArray.filter(p => p.id === accountId);
-            // 保存的 accountId 在当前云张号列表是否存在; 切换工作空间后
-            if (this.searchArray.length > 0 && this.searchArray.map(p => p.id).indexOf(accountId) === -1) {
-              this.change(this.items[0].id);
-            } else {
-              localStorage.setItem(ACCOUNT_NAME, account[0].name);
-              localStorage.setItem(ACCOUNT, JSON.stringify(account[0]));
-            }
-          } else {
-            if (this.items.length > 0) {
-              this.change(this.items[0].id);
-            }
-          }
-          this.changeAccountName(accountId);
-        })
+        });
       }
     },
     query(queryString) {
@@ -113,23 +111,24 @@ export default {
         localStorage.setItem(ACCOUNT_ID, accountId);
         let account = this.searchArray.filter(p => p.id === accountId);
         if(account) {
-          localStorage.setItem(ACCOUNT_NAME, account[0].name);
+          this.accountName = account[0].name;
+          localStorage.setItem(ACCOUNT_NAME, this.accountName);
           localStorage.setItem(ACCOUNT, JSON.stringify(account[0]));
         }
 
         this.currentAccountId = accountId;
-        this.$emit("cloudAccountSwitch", accountId, account[0].name);
-        this.changeAccountName(accountId);
+        this.$emit("cloudAccountSwitch", accountId, this.accountName);
+        this.changecurrentAccount(accountId);
       });
     },
-    changeAccountName(accountId) {
+    changecurrentAccount(accountId) {
       if (accountId) {
         let account = this.searchArray.filter(p => p.id === accountId);
         if (account.length > 0) {
-          this.$emit("update:currentAccount", !!this.currentAccount?this.currentAccount:account[0].name);
+          this.$emit("selectAccount", accountId, !!this.accountName?this.accountName:account[0].name);
         }
       } else {
-        this.$emit("update:currentAccount", this.$t('account.select'));
+        this.$emit("selectAccount", null, this.$t('account.select'));
       }
     }
   }

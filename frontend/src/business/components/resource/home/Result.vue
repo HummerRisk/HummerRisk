@@ -3,7 +3,7 @@
 
     <el-card class="table-card el-row-card">
 
-      <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"/>
+      <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch" @selectAccount="selectAccount"/>
 
       <el-divider><i class="el-icon-tickets"></i></el-divider>
 
@@ -1044,6 +1044,10 @@ export default {
           this.regulationVisible = true;
         }
       });
+    },
+    selectAccount(accountId, accountName) {
+      this.accountId = accountId;
+      this.currentAccount = accountName;
     },
   },
   computed: {

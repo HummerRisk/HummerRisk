@@ -21,6 +21,7 @@
         <span style="padding-left: 7px;">{{ $t('commons.show_all') }}</span>
       </el-menu-item>
     </el-submenu>
+    <el-button class="el-btn-btm" type="success" plain size="small" @click="openDownload">{{ $t('report.download_account') }}</el-button>
   </el-menu>
 </template>
 
@@ -44,6 +45,9 @@ export default {
     cloudAccountSwitch(accountId, accountName) {
       this.currentAccount = accountName;
       this.$emit("cloudAccountSwitch", accountId);
+    },
+    openDownload() {
+      this.$emit('openDownload');
     },
     selectAccount(accountId, accountName) {
       this.$emit('selectAccount', accountId, accountName);

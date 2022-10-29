@@ -7,7 +7,7 @@
 
           <report-table-header :condition.sync="condition" @search="search"
                               :currentAccount="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"
-                               @openDownload="openDownload" :show-open="true"/>
+                               @openDownload="openDownload" @selectAccount="selectAccount" :show-open="true"/>
         </template>
         <el-row :gutter="20" class="el-row-body">
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(data, index) in ftableData"
@@ -82,7 +82,7 @@
                 <span style="color: #909090;">{{ $t('resource.activation_time') }}</span>
               </el-col>
               <el-col :span="8">
-                <span>{{ group.createTime?(group.createTime | timestampFormatDate):'N/A' }}</span>
+                <span>{{ group.createTime | timestampFormatDate }}</span>
               </el-col>
             </el-row>
             <el-row>
@@ -166,12 +166,12 @@
             </el-table-column>
           </el-table>
           <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
-      </el-card>
+        </el-card>
       </el-drawer>
       <!--风险条例-->
 
       <!--Rule detail-->
-      <el-drawer class="btt" :title="$t('resource.report_detail')" :visible.sync="visible" size="60%" :before-close="handleClose" :direction="directionB"
+      <el-drawer class="btt" :title="$t('resource.report_detail')" :visible.sync="visible" size="60%" :before-close="handleCloseB" :direction="directionB"
                  :destroy-on-close="true">
           <el-row class="el-row-c">
             <el-col :span="8"><span style="color: #909090;">{{ $t('resource.basic_requirements_for_grade_protection') }}</span></el-col>
@@ -419,9 +419,8 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import CenterChart from "@/business/components/common/components/CenterChart";
 import MetricChart from "./MetricChart";
 import {_filter, _sort, getCurrentAccountID} from "@/common/js/utils";
-import {ACCOUNT_ID, ACCOUNT_NAME, severityOptions} from "@/common/js/constants";
+import {severityOptions} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver.js";
-import AccountChange from "@/business/components/common/head/AccountSwitch";
 import FTablePagination from "../../common/pagination/FTablePagination";
 import ReportTableHeader from "@/business/components/report/head/ReportTableHeader";
 import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
@@ -438,7 +437,6 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
       DialogFooter,
       CenterChart,
       MetricChart,
-      AccountChange,
       FTablePagination,
       ReportTableHeader,
     },
@@ -453,7 +451,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         loading: false,
         ruleForm: {parameter:[]},
         tags: [],
-        currentAccount: localStorage.getItem(ACCOUNT_NAME),
+        currentAccount: '',
         plugins: [],
         severityOptions: [],
         ruleSetOptions: [],
@@ -484,7 +482,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         ],
         visible: false,
         revisible: false,
-        accountId: localStorage.getItem(ACCOUNT_ID),
+        accountId: '',
         accountIds: [],
         direction: 'rtl',
         directionB: 'btt',
@@ -645,10 +643,12 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         this.reportIsoSearch();
       },
       handleClose() {
-        this.visible = false;
         this.infoVisible = false;
         this.revisible = false;
         this.listVisible = false;
+      },
+      handleCloseB() {
+        this.visible = false;
       },
       innerDrawerClose() {
         this.innerDrawer = false;
@@ -710,10 +710,6 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
           let data = response.data;
           this.accountTotal = data.itemCount;
           this.accountData = data.listObject;
-          if(this.accountData.length>0){
-            localStorage.setItem(ACCOUNT_ID, this.accountData[0].id);
-            this.accountId = this.accountData[0].id;
-          }
         });
       },
       showDetails(data) {
@@ -745,6 +741,10 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
           this.ruleListTotal = data.itemCount;
           this.ruleData = data.listObject;
         });
+      },
+      selectAccount(accountId, accountName) {
+        this.accountId = accountId;
+        this.currentAccount = accountName;
       },
     },
     created() {
