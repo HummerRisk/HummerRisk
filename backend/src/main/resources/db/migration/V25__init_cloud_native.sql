@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS `cloud_native` (
 CREATE TABLE IF NOT EXISTS `cloud_native_source` (
     `id`                         int(11)             NOT NULL AUTO_INCREMENT,
     `cloud_native_id`            varchar(50)         DEFAULT NULL COMMENT '云原生ID',
-    `source_name`                varchar(128)        DEFAULT NULL COMMENT '资源名称',
-    `source_namespace`           varchar(50)         DEFAULT NULL COMMENT '资源标识',
+    `source_name`                varchar(256)        DEFAULT NULL COMMENT '资源名称',
+    `source_namespace`           varchar(256)        DEFAULT NULL COMMENT '资源标识',
     `source_yaml`                longtext            DEFAULT NULL COMMENT '资源yaml',
     `source_type`                varchar(50)         DEFAULT NULL COMMENT '资源类型',
     `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',

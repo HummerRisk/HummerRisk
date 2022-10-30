@@ -88,7 +88,7 @@ import Container from "../../common/components/Container";
 import MainContainer from "../../common/components/MainContainer";
 import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
-import {SITUATION_LOG_CONFIGS} from "../../common/components/search/search-components";
+import {K8S_SITUATION_LOG_CONFIGS} from "../../common/components/search/search-components";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 
 /* eslint-disable */
@@ -107,7 +107,7 @@ export default {
       credential: {},
       result: {},
       condition: {
-        components: SITUATION_LOG_CONFIGS
+        components: K8S_SITUATION_LOG_CONFIGS
       },
       tableData: [],
       currentPage: 1,

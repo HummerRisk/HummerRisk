@@ -137,6 +137,7 @@ public class K8sRequest extends Request {
                 cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Pod));
                 cloudNativeSource.setSourceName(v1Pod.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Pod.name());
+                cloudNativeSource.setSourceNode(v1Pod.getSpec().getNodeName());
                 list.add(cloudNativeSource);
             }
         } catch (IOException e) {

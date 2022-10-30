@@ -328,6 +328,7 @@
                 ) as name,
             t.id as k8sId
         from cloud_native t
+        where t.status != 'INVALID'
     </select>
 
     <select id="selectResourceType" resultMap="ResourceTypeBaseResultMap">
