@@ -364,7 +364,7 @@
         <el-row style="margin: 3%;">
           <span style="color: red;font-style: italic; font-weight: bold;">{{ $t('resource.desc') }}</span>
         </el-row>
-        <el-button type="primary" style="margin-left: 45%;" @click="download">{{ $t('resource.download_report') }}</el-button>
+        <el-button type="primary" style="margin-left: 45%;" @click="downloadReports">{{ $t('resource.download_report') }}</el-button>
       </el-drawer>
       <!-- 合并下载报告 -->
 
@@ -392,7 +392,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column min-width="7%" :label="$t('rule.severity')" column-key="severity">
+          <el-table-column min-width="8%" :label="$t('rule.severity')" column-key="severity">
             <template v-slot:default="{row}">
               <severity-type :row="row"></severity-type>
             </template>
@@ -433,6 +433,7 @@ import FTablePagination from "../../common/pagination/FTablePagination";
 import ReportTableHeader from "@/business/components/report/head/ReportTableHeader";
 import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
 import HrChart from "@/business/components/common/chart/HrChart";
+import SeverityType from "@/business/components/common/components/SeverityType";
 import echarts from 'echarts';
 
 /* eslint-disable */
@@ -450,6 +451,7 @@ import echarts from 'echarts';
       FTablePagination,
       ReportTableHeader,
       HrChart,
+      SeverityType,
       echarts
     },
     data() {
