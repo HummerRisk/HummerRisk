@@ -41,6 +41,8 @@ public interface ExtResourceMapper {
 
     List<ExportDTO> searchExportData(ResourceRequest resourceRequest, @Param("accountIds") List<String> accountIds);
 
+    List<ExportDTO> searchGroupExportData(ResourceRequest request, @Param("groupId") String groupId, @Param("accountId") String accountId);
+
     ResourceWithBLOBs resource(CloudTaskItem cloudTaskItem);
 
     List<Map<String, Object>> regionData(Map<String, Object> map);

@@ -107,10 +107,23 @@ public class ResourceController {
         return resourceService.getResourceLog(resourceId);
     }
 
-    @ApiOperation(value = "导出检测报告")
+    @ApiOperation(value = "导出整个云检测报告")
     @PostMapping("export")
     public ResponseEntity<byte[]> exportReport(@RequestBody ExcelExportRequest request) throws Exception {
         byte[] bytes = resourceService.export(request);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", "不合规资源检测报告.xlsx");
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .headers(headers)
+                .body(bytes);
+    }
+
+    @ApiOperation(value = "导出规则组检测报告")
+    @PostMapping("groupExport")
+    public ResponseEntity<byte[]> exportGroupReport(@RequestBody ExcelExportRequest request) throws Exception {
+        byte[] bytes = resourceService.exportGroupReport(request);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentDispositionFormData("attachment", "不合规资源检测报告.xlsx");

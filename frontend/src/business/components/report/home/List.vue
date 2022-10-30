@@ -837,9 +837,39 @@ import echarts from 'echarts';
         this.revisible = true;
       },
       downloadReports(data) {
-        this.accountIds = [];
-        this.accountIds.push(this.accountId);
-        this.infoVisible = true;
+        let myDate = new Date();
+        this.$alert(this.$t('resource.download_report_description_start') + myDate.toLocaleString() + this.$t('resource.download_report_description_end'), this.$t('resource.download_report'), {
+          confirmButtonText: this.$t('commons.confirm'),
+          callback: (action) => {
+            if (action === 'confirm') {
+              let columns = [
+                {value: this.$t('resource.Hummer_ID'), key: "hummerId"},
+                {value: this.$t('dashboard.resource_name'), key: "resourceName"},
+                {value: this.$t('rule.resource_type'), key: "resourceType"},
+                {value: this.$t('account.region_id'), key: "regionId"},
+                {value: this.$t('account.region_name'), key: "regionName"},
+                {value: this.$t('rule.rule_name'), key: "ruleName"},
+                {value: this.$t('rule.rule_description'), key: "ruleDescription"},
+                {value: this.$t('rule.severity'), key: "severity"},
+                {value: this.$t('resource.audit_name'), key: "auditName"},
+                {value: this.$t('resource.basic_requirements_for_grade_protection'), key: "basicRequirements"},
+                {value: this.$t('resource.suggestions_for_improvement'), key: "improvement"},
+              ];
+              this.result = this.$download("/resource/groupExport", {
+                columns: columns,
+                accountId: this.accountId,
+                groupId: data.id,
+              }, response => {
+                if (response.status === 201) {
+                  let blob = new Blob([response.data], {type: "'application/octet-stream'"});
+                  saveAs(blob, this.$t("resource.resource_report_xlsx"));
+                }
+              }, error => {
+                this.$error('导出报错' + error);
+              });
+            }
+          }
+        });
       },
       handleList(item) {
         this.ruleListPage = 1;

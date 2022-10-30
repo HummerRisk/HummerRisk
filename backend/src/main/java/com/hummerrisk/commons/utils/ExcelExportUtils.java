@@ -163,6 +163,7 @@ public class ExcelExportUtils {
         }
         //最新Excel列索引,从0开始
         int lastRowIndex = sheet.getLastRowNum();
+        if(lastRowIndex < 0) lastRowIndex = 0;
         // 设置表格默认列宽度
         sheet.setDefaultColumnWidth(DEFAULT_COLUMN_SIZE);
         // 产生表格标题行

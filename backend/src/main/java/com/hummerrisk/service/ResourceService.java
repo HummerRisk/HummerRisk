@@ -117,6 +117,10 @@ public class ResourceService {
         return extResourceMapper.searchExportData(request, accountIds);
     }
 
+    public List<ExportDTO> searchGroupExportData(ResourceRequest request, String groupId, String accountId) {
+        return extResourceMapper.searchGroupExportData(request, groupId, accountId);
+    }
+
     public List<ReportDTO> reportList(ResourceRequest request) {
         return extResourceMapper.reportList(request);
     }
@@ -582,66 +586,142 @@ public class ResourceService {
      */
     @SuppressWarnings(value={"unchecked","deprecation", "serial"})
     public byte[] export(ExcelExportRequest request) throws Exception {
-        Map<String, Object> params = request.getParams();
-        ResourceRequest resourceRequest = new ResourceRequest();
-        if (MapUtils.isNotEmpty(params)) {
-            org.apache.commons.beanutils.BeanUtils.populate(resourceRequest, params);
-        }
-        List<ExcelExportRequest.Column> columns = request.getColumns();
-        List<ExportDTO> exportDTOs = searchExportData(resourceRequest, request.getAccountIds());
-        List<List<Object>> data = exportDTOs.stream().map(resource -> {
-            return new ArrayList<Object>() {{
-                columns.forEach(column -> {
-                    try {
-                        switch (column.getKey()) {
-                            case "auditName":
-                                add(resource.getFirstLevel() + "-" + resource.getSecondLevel());
-                                break;
-                            case "basicRequirements":
-                                add(resource.getProject());
-                                break;
-                            case "severity":
-                                add(resource.getSeverity());
-                                break;
-                            case "hummerId":
-                                add(resource.getHummerId());
-                                break;
-                            case "resourceName":
-                                add(resource.getResourceName());
-                                break;
-                            case "resourceType":
-                                add(resource.getResourceType());
-                                break;
-                            case "regionId":
-                                add(resource.getRegionId());
-                                break;
-                            case "ruleName":
-                                add(resource.getRuleName());
-                                break;
-                            case "ruleDescription":
-                                add(resource.getRuleDescription());
-                                break;
-                            case "regionName":
-                                add(resource.getRegionName());
-                                break;
-                            case "improvement":
-                                add(resource.getImprovement());
-                                break;
-                            case "project":
-                                add(resource.getProject());
-                                break;
-                            default:
-                                add(MethodUtils.invokeMethod(resource, "get" + StringUtils.capitalize(ExcelExportUtils.underlineToCamelCase(column.getKey()))));
-                                break;
+        try{
+            Map<String, Object> params = request.getParams();
+            ResourceRequest resourceRequest = new ResourceRequest();
+            if (MapUtils.isNotEmpty(params)) {
+                org.apache.commons.beanutils.BeanUtils.populate(resourceRequest, params);
+            }
+            List<ExcelExportRequest.Column> columns = request.getColumns();
+            List<ExportDTO> exportDTOs = searchExportData(resourceRequest, request.getAccountIds());
+            List<List<Object>> data = exportDTOs.stream().map(resource -> {
+                return new ArrayList<Object>() {{
+                    columns.forEach(column -> {
+                        try {
+                            switch (column.getKey()) {
+                                case "auditName":
+                                    add(resource.getFirstLevel() + "-" + resource.getSecondLevel());
+                                    break;
+                                case "basicRequirements":
+                                    add(resource.getProject());
+                                    break;
+                                case "severity":
+                                    add(resource.getSeverity());
+                                    break;
+                                case "hummerId":
+                                    add(resource.getHummerId());
+                                    break;
+                                case "resourceName":
+                                    add(resource.getResourceName());
+                                    break;
+                                case "resourceType":
+                                    add(resource.getResourceType());
+                                    break;
+                                case "regionId":
+                                    add(resource.getRegionId());
+                                    break;
+                                case "ruleName":
+                                    add(resource.getRuleName());
+                                    break;
+                                case "ruleDescription":
+                                    add(resource.getRuleDescription());
+                                    break;
+                                case "regionName":
+                                    add(resource.getRegionName());
+                                    break;
+                                case "improvement":
+                                    add(resource.getImprovement());
+                                    break;
+                                case "project":
+                                    add(resource.getProject());
+                                    break;
+                                default:
+                                    add(MethodUtils.invokeMethod(resource, "get" + StringUtils.capitalize(ExcelExportUtils.underlineToCamelCase(column.getKey()))));
+                                    break;
+                            }
+                        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                            LogUtil.error("export resource excel error: ", ExceptionUtils.getStackTrace(e));
                         }
-                    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                        LogUtil.error("export resource excel error: ", ExceptionUtils.getStackTrace(e));
-                    }
-                });
-            }};
-        }).collect(Collectors.toList());
-        OperationLogService.log(SessionUtils.getUser(), request.getAccountIds().get(0), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "导出合规报告");
-        return ExcelExportUtils.exportExcelData(Translator.get("i18n_scan_resource"), request.getColumns().stream().map(ExcelExportRequest.Column::getValue).collect(Collectors.toList()), data);
+                    });
+                }};
+            }).collect(Collectors.toList());
+            OperationLogService.log(SessionUtils.getUser(), request.getAccountIds().get(0), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "导出合规报告");
+            return ExcelExportUtils.exportExcelData(Translator.get("i18n_scan_resource"), request.getColumns().stream().map(ExcelExportRequest.Column::getValue).collect(Collectors.toList()), data);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    /**
+     * 导出excel
+     */
+    @SuppressWarnings(value={"unchecked","deprecation", "serial"})
+    public byte[] exportGroupReport(ExcelExportRequest request) throws Exception {
+        try{
+            Map<String, Object> params = request.getParams();
+            ResourceRequest resourceRequest = new ResourceRequest();
+            if (MapUtils.isNotEmpty(params)) {
+                org.apache.commons.beanutils.BeanUtils.populate(resourceRequest, params);
+            }
+            List<ExcelExportRequest.Column> columns = request.getColumns();
+            List<ExportDTO> exportDTOs = searchGroupExportData(resourceRequest, request.getGroupId(), request.getAccountId());
+            List<List<Object>> data = exportDTOs.stream().map(resource -> {
+                return new ArrayList<Object>() {{
+                    columns.forEach(column -> {
+                        try {
+                            switch (column.getKey()) {
+                                case "auditName":
+                                    add(resource.getFirstLevel() + "-" + resource.getSecondLevel());
+                                    break;
+                                case "basicRequirements":
+                                    add(resource.getProject());
+                                    break;
+                                case "severity":
+                                    add(resource.getSeverity());
+                                    break;
+                                case "hummerId":
+                                    add(resource.getHummerId());
+                                    break;
+                                case "resourceName":
+                                    add(resource.getResourceName());
+                                    break;
+                                case "resourceType":
+                                    add(resource.getResourceType());
+                                    break;
+                                case "regionId":
+                                    add(resource.getRegionId());
+                                    break;
+                                case "ruleName":
+                                    add(resource.getRuleName());
+                                    break;
+                                case "ruleDescription":
+                                    add(resource.getRuleDescription());
+                                    break;
+                                case "regionName":
+                                    add(resource.getRegionName());
+                                    break;
+                                case "improvement":
+                                    add(resource.getImprovement());
+                                    break;
+                                case "project":
+                                    add(resource.getProject());
+                                    break;
+                                default:
+                                    add(MethodUtils.invokeMethod(resource, "get" + StringUtils.capitalize(ExcelExportUtils.underlineToCamelCase(column.getKey()))));
+                                    break;
+                            }
+                        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                            LogUtil.error("export resource excel error: ", ExceptionUtils.getStackTrace(e));
+                        }
+                    });
+                }};
+            }).collect(Collectors.toList());
+            OperationLogService.log(SessionUtils.getUser(), request.getAccountId(), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "导出合规报告");
+            return ExcelExportUtils.exportExcelData(Translator.get("i18n_scan_resource"), request.getColumns().stream().map(ExcelExportRequest.Column::getValue).collect(Collectors.toList()), data);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
