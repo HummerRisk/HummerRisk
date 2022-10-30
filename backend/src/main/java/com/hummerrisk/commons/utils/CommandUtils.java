@@ -116,7 +116,7 @@ public class CommandUtils {
         }
         FileWriter fwriter = null;
         try {
-            // true表示不覆盖原来的内容，而是加到文件的后面。若要覆盖原来的内容，直接省略这个参数就好
+            // true表示不覆盖原来的内容，而是加到文件的后面。若要覆盖原来的内容，false
             fwriter = new FileWriter(dirPath + "/" + fileName, append);
             fwriter.write(content);
         } catch (IOException ex) {

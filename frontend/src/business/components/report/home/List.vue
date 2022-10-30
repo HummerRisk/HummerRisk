@@ -566,64 +566,53 @@ import echarts from 'echarts';
           this.ftableData = data.listObject;
           for(let tableData of this.ftableData) {
             tableData.ruleOptions = {
-              legend: {},
-              tooltip: {},
-              dataset: {
-                source: [
-                  ['risk', this.$t('report.have_risk_rule'), this.$t('report.no_risk_rule'), this.$t('report.total_risk_rule')],
-                  [this.$t('rule.cloud_rule'), tableData.riskRuleSum, tableData.ruleSum - tableData.riskRuleSum, tableData.ruleSum]
-                ]
+              tooltip: {
+                trigger: 'axis',
+                  axisPointer: {
+                  type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
+                }
               },
-              xAxis: { type: 'category' },
-              yAxis: {},
+              legend: {},
+              grid: {
+                left: '3%',
+                  right: '4%',
+                  bottom: '3%',
+                  containLabel: true
+              },
+              xAxis: {
+                type: 'value'
+              },
+              yAxis: {
+                type: 'category',
+                  data: [this.$t('rule.rule')]
+              },
               series: [
                 {
+                  name: this.$t('report.have_risk_rule'),
                   type: 'bar',
-                  itemStyle: {
-                    normal: {
-                      label: {
-                        show: true, //开启显示
-                        position: 'top', //在上方显示
-                        textStyle: { //数值样式
-                          color: 'black',
-                          fontSize: 16
-                        }
-                      }
-                    }
+                  stack: 'total',
+                  label: {
+                    show: true
                   },
+                  emphasis: {
+                    focus: 'series'
+                  },
+                  data: [tableData.riskRuleSum]
                 },
                 {
+                  name:  this.$t('report.no_risk_rule'),
                   type: 'bar',
-                  itemStyle: {
-                    normal: {
-                      label: {
-                        show: true, //开启显示
-                        position: 'top', //在上方显示
-                        textStyle: { //数值样式
-                          color: 'black',
-                          fontSize: 16
-                        }
-                      }
-                    }
+                  stack: 'total',
+                  label: {
+                    show: true
                   },
-                },
-                {
-                  type: 'bar',
-                  itemStyle: {
-                    normal: {
-                      label: {
-                        show: true, //开启显示
-                        position: 'top', //在上方显示
-                        textStyle: { //数值样式
-                          color: 'black',
-                          fontSize: 16
-                        }
-                      }
-                    }
+                  emphasis: {
+                    focus: 'series'
                   },
+                  data: [tableData.ruleSum - tableData.riskRuleSum]
                 },
               ],
-              color: ['#009ef0', '#627dec', '#11cfae', '#893fdc', '#89ffff','#0051a4']
+              color: ['#267dc9', '#11cfae', '#893fdc']
             };
             tableData.resourceOptions = {
               tooltip: {
