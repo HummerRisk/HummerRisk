@@ -146,23 +146,21 @@
                 <span>
                   <template v-for="tag in tagSelect">
                     <span :key="tag.value" v-if="scope.row.ruleTags">
-                      <span :key="tag.tagKey" v-if="scope.row.ruleTags.indexOf(tag.tagKey) > -1"> {{
-                          tag.tagName
-                        }}</span>
+                      <span :key="tag.tagKey" v-if="scope.row.ruleTags.indexOf(tag.tagKey) > -1">
+                        {{ tag.tagName }}
+                      </span>
                     </span>
                   </template>
-                  <span v-if="!!scope.row.resourceTypes && scope.row.resourceTypes.indexOf('.')===-1"> {{
-                      scope.row.resourceTypes
-                    }}</span>
-                  <span v-if="!!scope.row.resourceTypes && scope.row.resourceTypes.indexOf('.')>-1">
-                    <template v-for="type in resourceTypes">
-                      <span :key="type.value" v-if="scope.row.resourceTypes">
-                        <span :key="type.value" v-if="scope.row.resourceTypes.indexOf(type.value) > -1"> [{{
-                            type.value
-                          }}]</span>
-                      </span>
-                    </template>
-                  </span>
+                    {{ scope.row.resourceTypes }}
+<!--                  <span v-if="!!scope.row.resourceTypes && scope.row.resourceTypes.indexOf('.')>-1">-->
+<!--                    <template v-for="type in resourceTypes">-->
+<!--                      <span :key="type.value" v-if="scope.row.resourceTypes">-->
+<!--                        <span :key="type.value" v-if="scope.row.resourceTypes.indexOf(type.value) > -1">-->
+<!--                          [{{ type.value }}]-->
+<!--                        </span>-->
+<!--                      </span>-->
+<!--                    </template>-->
+<!--                  </span>-->
                 </span>
         </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="18%" show-overflow-tooltip>
@@ -829,7 +827,7 @@ export default {
         this.source.resourcesSum = data.resourcesSum;
         this.source.overRules = data.overRules;
         this.source.allRules = data.allRules;
-        this.progressResult = (this.source.overRules/this.source.allRules * 100).toFixed(2);
+        this.progressResult = parseFloat((this.source.overRules/this.source.allRules * 100).toFixed(2)?(this.source.overRules/this.source.allRules * 100).toFixed(2):0.0);
         let url = "/cloud/task/manual/list/" + this.currentPage + "/" + this.pageSize;
         this.condition.accountId = this.accountId;
         //在这里实现事件
