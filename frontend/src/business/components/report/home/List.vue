@@ -594,7 +594,8 @@ import echarts from 'echarts';
                   containLabel: true
               },
               xAxis: {
-                type: 'value'
+                type: 'value',
+                minInterval: 1
               },
               yAxis: {
                 type: 'category',
@@ -638,7 +639,7 @@ import echarts from 'echarts';
               },
               series: [
                 {
-                  name: 'Access From',
+                  name: this.$t('history.scan_resources'),
                   type: 'pie',
                   radius: ['40%', '70%'],
                   avoidLabelOverlap: false,
@@ -654,7 +655,7 @@ import echarts from 'echarts';
                   emphasis: {
                     label: {
                       show: true,
-                      fontSize: '40',
+                      fontSize: '20',
                       fontWeight: 'bold'
                     }
                   },
