@@ -839,4 +839,8 @@ public class ResourceService {
     public List<RuleGroupDTO> ruleGroupList(RuleGroupRequest request) {
         return extResourceMapper.ruleGroupList(request);
     }
+
+    public List<ResourceDTO> resourceList(ResourceRequest resourceRequest) {
+        return extResourceMapper.getComplianceResult(resourceRequest);
+    }
 }

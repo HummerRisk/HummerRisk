@@ -88,7 +88,7 @@
         <f-table-pagination :change="search" :current-page.sync="fcurrentPage" :page-size.sync="fpageSize" :total="ftotal"/>
       </el-card>
 
-      <!--风险条例-->
+      <!--检测报告详情-->
       <el-drawer class="btt" :title="$t('resource.report_detail')" :visible.sync="revisible" size="80%" :before-close="handleClose" :direction="directionB"
                  :destroy-on-close="true">
         <el-card class="table-card">
@@ -146,14 +146,64 @@
             </main>
           </section>
         </el-card>
+        <el-card v-if="resourceTableData.length>0">
+          <template v-slot:header>
+            <table-header :condition.sync="resourceCondition"
+                          @search="searchResource"
+                          :title="$t('resource.cloud_resource_detail_result')"/>
+          </template>
+          <el-table border :data="resourceTableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter" :row-class-name="tableRowClassName">
+            <!-- 展开 start -->
+            <el-table-column type="expand" min-width="1%">
+              <template v-slot:default="props">
+                <el-divider><i class="el-icon-folder-opened"></i></el-divider>
+                <el-form v-if="props.row.resource !== '[]'">
+                  <result-read-only :row="typeof(props.row.resource) === 'string'?JSON.parse(props.row.resource):props.row.resource"></result-read-only>
+                  <el-divider><i class="el-icon-document-checked"></i></el-divider>
+                </el-form>
+              </template>
+            </el-table-column>
+            <!-- 展开 end -->
+            <el-table-column type="index" min-width="2%"/>
+            <el-table-column v-slot:default="scope" :label="$t('resource.Hummer_ID')" min-width="15%">
+              {{ scope.row.hummerId }}
+            </el-table-column>
+            <el-table-column v-slot:default="scope" :label="$t('rule.resource_type')" min-width="15%">
+              {{ scope.row.resourceType }}
+            </el-table-column>
+            <el-table-column prop="regionName" :label="$t('account.regions')" min-width="12%">
+              <template v-slot:default="scope">
+              <span>
+                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                {{ scope.row.regionName }}
+              </span>
+              </template>
+            </el-table-column>
+            <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="12%"
+                             :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
+                             show-overflow-tooltip>
+              <severity-type :row="scope.row"></severity-type>
+            </el-table-column>
+            <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="16%" show-overflow-tooltip>
+              {{ scope.row.ruleName }}
+            </el-table-column>
+            <el-table-column min-width="10%" :label="$t('commons.operating')" show-overflow-tooltip>
+              <template v-slot:default="scope">
+                <table-operators v-if="!!scope.row.suggestion" :buttons="resource_buttons2" :row="scope.row"/>
+                <table-operators v-if="!scope.row.suggestion" :buttons="resource_buttons" :row="scope.row"/>
+              </template>
+            </el-table-column>
+          </el-table>
+          <table-pagination :change="searchResource" :current-page.sync="resourceCurrentPage" :page-size.sync="resourcePageSize" :total="resourceTotal"/>
+        </el-card>
         <el-card>
           <template v-slot:header>
-            <table-header :condition.sync="condition"
-                          @search="search"
+            <table-header :condition.sync="riskCondition"
+                          @search="reportListSearch"
                           :title="$t('resource.regulation_list')"/>
           </template>
           <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter" :row-class-name="tableRowClassName">
-            <el-table-column type="index" min-width="5%"/>
+            <el-table-column type="index" min-width="2%"/>
             <el-table-column prop="itemSortFirstLevel" :label="$t('resource.security_level')" min-width="10%" show-overflow-tooltip></el-table-column>
             <el-table-column prop="itemSortSecondLevel" :label="$t('resource.control_point')" min-width="10%" show-overflow-tooltip></el-table-column>
             <el-table-column prop="project" :label="$t('resource.basic_requirements_for_grade_protection')" min-width="47%" show-overflow-tooltip></el-table-column>
@@ -187,10 +237,33 @@
               </template>
             </el-table-column>
           </el-table>
-          <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
+          <table-pagination :change="reportListSearch" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
         </el-card>
       </el-drawer>
-      <!--风险条例-->
+      <!--检测报告详情-->
+
+      <!--regulation report-->
+      <el-drawer class="btt" :title="$t('resource.regulation')" :visible.sync="regulationVisible"  size="60%" :before-close="handleCloseB" :direction="direction" :destroy-on-close="true">
+        <el-card class="table-card" :body-style="{ padding: '15px', margin: '15px' }" v-for="(data, index) in regulationData" :key="data.id">
+          <el-row class="el-row-c">
+            <el-col :span="8"><span style="color: #215d9a;">{{ '(' + (index + 1) +') ' + $t('resource.basic_requirements_for_grade_protection') }}</span></el-col>
+            <el-col :span="16"><span>{{ data.project }}</span></el-col>
+          </el-row>
+          <el-row class="el-row-c">
+            <el-col :span="8"><span style="color: #215d9a;">{{ $t('resource.security_level') }}</span></el-col>
+            <el-col :span="16"><span>{{ data.itemSortFirstLevel }}</span></el-col>
+          </el-row>
+          <el-row class="el-row-c">
+            <el-col :span="8"><span style="color: #215d9a;">{{ $t('resource.control_point') }}</span></el-col>
+            <el-col :span="16"><span>{{ data.itemSortSecondLevel }}</span></el-col>
+          </el-row>
+          <el-row class="el-row-c">
+            <el-col :span="8"><span style="color: #215d9a;">{{ $t('resource.suggestions_for_improvement') }} <i class="el-icon-question"></i></span></el-col>
+            <el-col :span="16"><span>{{ data.improvement }}</span></el-col>
+          </el-row>
+        </el-card>
+      </el-drawer>
+      <!--regulation report-->
 
       <!--Rule detail-->
       <el-drawer class="btt" :title="$t('resource.report_detail')" :visible.sync="visible" size="60%" :before-close="handleCloseB" :direction="directionB"
@@ -448,6 +521,7 @@ import ReportTableHeader from "@/business/components/report/head/ReportTableHead
 import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
 import HrChart from "@/business/components/common/chart/HrChart";
 import SeverityType from "@/business/components/common/components/SeverityType";
+import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import echarts from 'echarts';
 
 /* eslint-disable */
@@ -466,6 +540,7 @@ import echarts from 'echarts';
       ReportTableHeader,
       HrChart,
       SeverityType,
+      ResultReadOnly,
       echarts
     },
     data() {
@@ -487,6 +562,8 @@ import echarts from 'echarts';
         condition: {
           components: RULE_GROUP_CONFIGS
         },
+        riskCondition: {},
+        resourceCondition: {},
         buttons: [
           {
             tip: this.$t('resource.i18n_detail'), icon: "el-icon-notebook-2", type: "primary",
@@ -551,6 +628,28 @@ import echarts from 'echarts';
         ruleListTotal: 0,
         ruleOptions: {},
         resourceOptions: {},
+        resourceTableData: [],
+        resourceCurrentPage: 1,
+        resourcePageSize: 10,
+        resourceTotal: 0,
+        resource_buttons: [
+          {
+            tip: this.$t('resource.regulation'), icon: "el-icon-document", type: "warning",
+            exec: this.showSeverityDetail
+          },
+        ],
+        resource_buttons2: [
+          {
+            tip: this.$t('rule.suggestion'), icon: "el-icon-share", type: "primary",
+            exec: this.handleSuggestion
+          },
+          {
+            tip: this.$t('resource.regulation'), icon: "el-icon-document", type: "warning",
+            exec: this.showSeverityDetail
+          },
+        ],
+        regulationData: [],
+        regulationVisible: false,
       }
     },
     methods: {
@@ -678,17 +777,29 @@ import echarts from 'echarts';
           this.content = response.data;
           this.content.groupName = this.groupName;
           this.reportListSearch();
+          this.searchResource();
         });
       },
       async reportListSearch() {
         let url = "/resource/reportList/" + this.currentPage + "/" + this.pageSize;
         //在这里实现事件
-        this.condition.accountId = this.accountId;
-        this.condition.groupId = this.groupId;
-        await this.$post(url, this.condition, response => {
+        this.riskCondition.accountId = this.accountId;
+        this.riskCondition.groupId = this.groupId;
+        await this.$post(url, this.riskCondition, response => {
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;
+        });
+      },
+      async searchResource() {
+        let url = "/resource/resourceList/" + this.resourceCurrentPage + "/" + this.resourcePageSize;
+        //在这里实现事件
+        this.resourceCondition.accountId = this.accountId;
+        this.resourceCondition.groupId = this.groupId;
+        await this.$post(url, this.resourceCondition, response => {
+          let data = response.data;
+          this.resourceTotal = data.itemCount;
+          this.resourceTableData = data.listObject;
         });
       },
       goResource (params) {
@@ -772,6 +883,7 @@ import echarts from 'echarts';
       },
       handleCloseB() {
         this.visible = false;
+        this.regulationVisible = false;
       },
       innerDrawerClose() {
         this.innerDrawer = false;
@@ -898,6 +1010,17 @@ import echarts from 'echarts';
       selectAccount(accountId, accountName) {
         this.accountId = accountId;
         this.currentAccount = accountName;
+      },
+      handleSuggestion(item) {
+        window.open(item.suggestion,'_blank','');
+      },
+      showSeverityDetail(item) {
+        this.$get("/resource/regulation/" + item.ruleId, response => {
+          if (response.success) {
+            this.regulationData = response.data;
+            this.regulationVisible = true;
+          }
+        });
       },
     },
     created() {

@@ -56,7 +56,8 @@ public class ResourceController {
     @ApiOperation(value = "资源列表")
     @PostMapping("list/{goPage}/{pageSize}")
     public Pager<List<ResourceDTO>> list(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {
-        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);return PageUtils.setPageInfo(page, resourceService.search(request));
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, resourceService.search(request));
     }
 
     @I18n
@@ -211,5 +212,13 @@ public class ResourceController {
     public Pager<List<RuleGroupDTO>> ruleGroupList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleGroupRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, resourceService.ruleGroupList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "合规报告资源组列表")
+    @PostMapping(value = "resourceList/{goPage}/{pageSize}")
+    public Pager<List<ResourceDTO>> resourceList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, resourceService.resourceList(request));
     }
 }
