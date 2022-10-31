@@ -206,7 +206,7 @@ public class ResourceController {
     }
 
     @I18n
-    @ApiOperation(value = "规则组列表")
+    @ApiOperation(value = "合规报告规则组列表")
     @PostMapping(value = "ruleGroup/list/{goPage}/{pageSize}")
     public Pager<List<RuleGroupDTO>> ruleGroupList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleGroupRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);

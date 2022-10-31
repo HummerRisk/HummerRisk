@@ -652,12 +652,12 @@
     <select id="ruleGroupList" resultType="com.hummerrisk.dto.RuleGroupDTO">
         select
         t.*,
-        (select count(g.id) from rule_group_mapping g where g.group_id = t.id) as ruleSum,
+        (SELECT count(g.id) from rule_group_mapping g where g.group_id = t.id) as ruleSum,
         (
-        select count(g.id)
-        from rule_group_mapping g
-        where g.group_id = t.id
-        and g.rule_id in (select tt.rule_id from cloud_task tt where tt.resources_sum &lt; 0 and tt.account_id = #{request.accountId})
+        SELECT count(g.id)
+        FROM rule_group_mapping g
+        WHERE g.group_id = t.id
+        AND g.rule_id in (select tt.rule_id from cloud_task tt where tt.resources_sum &gt; 0 and tt.account_id = #{request.accountId})
         ) as riskRuleSum,
         p.name as pluginName,
         p.icon as pluginIcon,
@@ -674,7 +674,10 @@
         ) > 0 THEN 'risky'
         ELSE 'risk_free'
         END AS status,
-        (select create_time from cloud_task where account_id = c.id order by create_time desc limit 1) as createTime,
+        (
+        SELECT c1.create_time FROM cloud_task c1
+        WHERE c1.account_id = c.id and c1.rule_id in (select r1.rule_id from rule_group_mapping r1 where r1.group_id = t.id)
+        order by create_time desc limit 1) as createTime,
         '暂无合规报告' as state,
         (
         SELECT
@@ -731,8 +734,9 @@
             <if test="request.pluginId != null and request.pluginId != ''">
                 and t.plugin_id = #{request.pluginId}
             </if>
+            and t.id in (select r.group_id from rule_group_mapping r join cloud_task ct on r.rule_id = ct.rule_id where ct.account_id = #{request.accountId})
         </where>
-        order by t.plugin_id, t.flag, t.id
+        order by createTime, t.plugin_id, t.flag, t.id desc
     </select>
 
 </mapper>

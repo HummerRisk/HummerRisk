@@ -25,16 +25,25 @@
                   </el-col>
                   <el-col :span="21">
                     <el-row>
-                      <span style="color: #11365d;font-size: 13px;">{{ currentAccount }}</span>
-                      <span style="color: #1e6427;font-size: 12px;">
-                        ({{ data.level }})
-                        <el-button size="mini" type="danger" class="round el-btn" round v-if="data.flag === true">
-                          {{ $t('rule.tag_flag_true') }}
-                        </el-button>
-                        <el-button size="mini" type="success" class="round el-btn" round v-else-if="data.flag === false">
-                          {{ $t('rule.tag_flag_false') }}
-                        </el-button>
-                      </span>
+                      <el-col :span="12">
+                        <el-tooltip class="item" effect="dark" :content="data.name" placement="top">
+                          <span class="da-na">
+                            {{ data.name }}
+                          </span>
+                        </el-tooltip>
+                      </el-col>
+                      <el-col :span="12">
+                        <el-tooltip class="item" effect="dark" :content="$t('history.resource_result') + ':' + data.returnSum + '/' + data.resourcesSum" placement="top">
+                          <span v-if="data.status == 'risky'" style="color: red;float: right">
+                            <i class="el-icon-warning"></i> {{ $t('resource.discover_risk') }}
+                            <I style="color: #e8a97e;">{{ '(' + data.returnSum + '/' + data.resourcesSum + ')'}}</I>
+                          </span>
+                          <span v-if="data.status == 'risk_free'" style="color: green;float: right">
+                            <i class="el-icon-warning"></i> {{ $t('resource.no_risk') }}
+                            <I style="color: #e8a97e;">{{ '(' + data.returnSum + '/' + data.resourcesSum + ')'}}</I>
+                          </span>
+                        </el-tooltip>
+                      </el-col>
                     </el-row>
                     <el-row class="desc">{{ data.description }}</el-row>
                   </el-col>
@@ -51,14 +60,19 @@
               <el-divider style="margin-top: 0;"></el-divider>
               <div style="padding: 0 14px 14px 14px;">
                 <el-row>
-                  <el-col :span="12">
-                    <span class="da-na">{{ data.name }}</span>
-                  </el-col>
-                  <el-col :span="12">
-                    <span style="color: #e8a97e;float: right;margin-left: 1%;">({{ data.returnSum }}/{{ data.resourcesSum }})</span>
-                    <span v-if="data.status == 'risky'" style="color: red;float: right"><i class="el-icon-warning"></i> {{ $t('resource.discover_risk') }}</span>
-                    <span v-if="data.status == 'risk_free'" style="color: green;float: right"><i class="el-icon-warning"></i> {{ $t('resource.no_risk') }}</span>
-                  </el-col>
+                  <span style="color: #11365d;">{{ currentAccount }}</span>
+                  <span style="color: #1e6427;">
+                      ({{ data.level }})
+                  </span>
+                  <span>
+                    <el-button size="mini" type="danger" class="round el-btn" round v-if="data.flag === true">
+                        {{ $t('rule.tag_flag_true') }}
+                      </el-button>
+                      <el-button size="mini" type="success" class="round el-btn" round v-else-if="data.flag === false">
+                        {{ $t('rule.tag_flag_false') }}
+                      </el-button>
+                      <span class="round">{{ data.createTime | timestampFormatDate }}</span>
+                  </span>
                 </el-row>
                 <span class="button time pa-na">
                 </span>
@@ -1114,6 +1128,7 @@ import echarts from 'echarts';
     text-overflow:ellipsis;
     overflow:hidden;
     float: left;
+    color: red;
   }
   .pa-na {
     max-width: 60%;
@@ -1165,7 +1180,7 @@ import echarts from 'echarts';
     margin: 0 0 10px 0;
   }
   .el-btn {
-    transform: scale(0.8);
+    transform: scale(0.9);
   }
   .el-btn-btm {
     width: 30%;
