@@ -1257,6 +1257,8 @@ export default {
     k8s_resource_type: 'K8s resource type',
     vuln_compliance: 'Vulnerability detection statistics',
     config_compliance: 'Configure audit statistics',
+    resource_perspective: 'Resource Perspective',
+    node_perspective: 'Node Perspective',
   },
   config: {
     config_settings: 'Deployment configuration',

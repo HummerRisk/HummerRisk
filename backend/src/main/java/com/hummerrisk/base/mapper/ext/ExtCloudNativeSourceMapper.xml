@@ -363,4 +363,79 @@
         where t.cloud_native_id = #{k8sId} and t.source_type = #{resourceType}
     </select>
 
+
+    <resultMap id="NodeBaseResultMap" type="com.hummerrisk.controller.request.k8s.NodeTopology">
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <collection property="children" ofType="com.hummerrisk.controller.request.k8s.K8sResource" javaType="list" select="selectK8sResource" column="name">
+        </collection>
+    </resultMap>
+
+    <resultMap id="K8sResourceBaseResultMap" type="com.hummerrisk.controller.request.k8s.K8sResource">
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="k8sId" jdbcType="VARCHAR" property="k8sId" />
+        <collection property="children" ofType="com.hummerrisk.controller.request.k8s.Node" javaType="list"
+                    select="selectNode" column="k8sId">
+        </collection>
+    </resultMap>
+
+    <resultMap id="K8sNodeBaseResultMap" type="com.hummerrisk.controller.request.k8s.Node">
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="k8sId" jdbcType="VARCHAR" property="k8sId" />
+        <result column="nodeId" jdbcType="VARCHAR" property="nodeId" />
+        <collection property="children" ofType="com.hummerrisk.controller.request.k8s.Pod" javaType="list"
+                    select="selectPod" column="{k8sId=k8sId, nodeId=nodeId}">
+            <result column="name" jdbcType="VARCHAR" property="name" />
+            <result column="value" jdbcType="INTEGER" property="value" />
+        </collection>
+    </resultMap>
+
+    <select id="nodeTopology" resultMap="NodeBaseResultMap">
+        select 'K8s' as name
+    </select>
+
+    <select id="selectK8sResource" resultMap="K8sResourceBaseResultMap">
+        select
+            CONCAT('K8s账号: \r', t.name, '\r(共 ',
+                   (
+                       select count(t1.id) from cloud_native_source t1
+                       where t1.cloud_native_id = t.id and t1.source_type = 'Node'
+                   ), ' 个Node)'
+                ) as name,
+            t.id as k8sId
+        from cloud_native t
+        where t.status != 'INVALID'
+    </select>
+
+    <select id="selectNode" resultMap="K8sNodeBaseResultMap">
+        select
+            CONCAT('Node: \r', t.source_name, '\r(共 ',
+                   (
+                       select count(t1.id) from cloud_native_source t1
+                       where t1.cloud_native_id = t.cloud_native_id and t1.source_type = 'Pod'
+                   ), ' 个Pod)'
+                ) as name,
+            t.cloud_native_id as k8sId,
+            t.source_name as nodeId
+        from cloud_native_source t
+        where t.cloud_native_id = #{k8sId} and t.source_type = 'Node'
+    </select>
+
+
+    <select id="selectPod" resultType="com.hummerrisk.controller.request.k8s.Pod">
+        select
+            CASE
+                WHEN t.source_namespace IS NULL
+                    THEN CONCAT(t.source_name)
+                ELSE CONCAT(t.source_name)
+                END AS name,
+            t.source_namespace as namespace,
+            CASE
+                WHEN t.source_namespace IS NULL
+                    THEN 2
+                ELSE 1
+                END AS value
+        from cloud_native_source t
+        where t.cloud_native_id = #{k8sId} and t.source_node = #{nodeId} and t.source_type = 'Pod'
+    </select>
+
 </mapper>

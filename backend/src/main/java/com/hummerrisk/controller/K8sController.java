@@ -10,6 +10,7 @@ import com.hummerrisk.controller.request.cloudNative.*;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
 import com.hummerrisk.controller.request.k8s.K8sTopology;
+import com.hummerrisk.controller.request.k8s.NodeTopology;
 import com.hummerrisk.controller.request.sync.CloudTopology;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.service.K8sService;
@@ -286,10 +287,17 @@ public class K8sController {
     }
 
     @I18n
-    @ApiOperation(value = "资源态势拓扑图")
+    @ApiOperation(value = "详情资源态势拓扑图")
     @GetMapping(value = "k8sTopology")
     public K8sTopology k8sTopology() {
         return k8sService.k8sTopology();
+    }
+
+    @I18n
+    @ApiOperation(value = "节点资源态势拓扑图")
+    @GetMapping(value = "nodeTopology")
+    public NodeTopology nodeTopology() {
+        return k8sService.nodeTopology();
     }
 
 }
