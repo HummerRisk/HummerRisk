@@ -12,9 +12,8 @@
             <div class="ch-mar-top" :key="index" v-for="(item, index) in logForm.vulnerabilityReport.items">
               <el-card class="box-card">
                 <div class="ch-mar">
-                  <h3>Report:&nbsp;</h3>
+                  <h3>Report:&nbsp;{{ item.metadata.name }}</h3>
                   <ul style="margin-left: 60px;">
-                    <li><i>Name</i>: {{ item.metadata.name }}</li>
                     <li><i>Namespace</i>: {{ item.metadata.namespace }}</li>
                     <li><i>Repository</i>: {{ item.report.artifact.repository }}</li>
                     <li><i>Critical Count</i>: {{ item.report.summary.criticalCount }}</li>
@@ -24,51 +23,52 @@
                     <li><i>Unknown Count</i>:&nbsp;{{ item.report.summary.unknownCount }}</li>
                   </ul>
                 </div>
-                <div class="box-chr" :key="index" v-for="(vulnerability, index) in item.report.vulnerabilities">
-                  <div slot="header" class="clearfix clearfix-dev">
-                    <el-row>
-                      <el-col v-bind:class="{ 'icon-title box-critical': vulnerability.severity === 'CRITICAL',
-                                'icon-title box-high': vulnerability.severity === 'HIGH',
-                                'icon-title box-medium': vulnerability.severity === 'MEDIUM',
-                                'icon-title box-low': vulnerability.severity === 'LOW',
-                                'icon-title box-unknown': vulnerability.severity === 'UNKNOWN' }"
-                              :span="3">
-                        <span>{{ vulnerability.severity.substring(0, 1) }}</span>
-                      </el-col>
-                      <el-col :span="15" style="margin: -7px 0 0 15px;">
-                        <span style="font-size: 24px;font-weight: 500;">{{ vulnerability.title }}</span>
-                      </el-col>
-                      <el-col :span="6" style="float: right;">
-                        <span style="font-size: 20px;color: #999;float: right;">{{ 'SCORE' }}</span>
-                      </el-col>
-                    </el-row>
-                    <el-row style="font-size: 18px;padding: 10px;">
-                      <el-col :span="20">
-                        <span style="color: #888;margin: 5px;">{{ 'VULNERABILITY' }}</span>
-                        <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                        <span style="margin: 5px;"><a :href="vulnerability.primaryLink" target="_blank">{{ vulnerability.vulnerabilityID }}</a></span>
-                        <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                        <span style="margin: 5px;">
-                                <el-button v-bind:class="{ 'box-critical': vulnerability.severity === 'CRITICAL',
-                                  'box-high': vulnerability.severity === 'HIGH',
-                                  'box-medium': vulnerability.severity === 'MEDIUM', 'box-low': vulnerability.severity === 'LOW',
-                                  'box-unknown': vulnerability.severity === 'UNKNOWN' }" size="mini">{{ vulnerability.severity }}
-                                </el-button>
-                              </span>
-                        <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                        <span style="color: #444;margin: 5px;">RESOURCE: {{ vulnerability.resource }}</span>
-                      </el-col>
-                      <el-col :span="4" style="float: right;">
-                        <span style="font-size: 20px;color: #000;float: right;">{{ vulnerability.score }}</span>
-                      </el-col>
-                    </el-row>
-                  </div>
-                  <div class="text item div-desc">
-                    <el-row>
-                      <i class="el-icon-s-opportunity"></i> {{ vulnerability.primaryLink }}
-                    </el-row>
-                  </div>
-                  <div class="text div-json">
+                <div class="box-chr2 box-card" :key="index" v-for="(vulnerability, index) in item.report.vulnerabilities">
+                  <el-card>
+                    <div slot="header" class="clearfix clearfix-dev">
+                      <el-row>
+                        <el-col v-bind:class="{ 'icon-title box-critical': vulnerability.severity === 'CRITICAL',
+                                  'icon-title box-high': vulnerability.severity === 'HIGH',
+                                  'icon-title box-medium': vulnerability.severity === 'MEDIUM',
+                                  'icon-title box-low': vulnerability.severity === 'LOW',
+                                  'icon-title box-unknown': vulnerability.severity === 'UNKNOWN' }"
+                                :span="3">
+                          <span>{{ vulnerability.severity.substring(0, 1) }}</span>
+                        </el-col>
+                        <el-col :span="15" style="margin: -7px 0 0 15px;">
+                          <span style="font-size: 24px;font-weight: 500;">{{ vulnerability.title }}</span>
+                        </el-col>
+                        <el-col :span="6" style="float: right;">
+                          <span style="font-size: 20px;color: #999;float: right;">{{ 'SCORE' }}</span>
+                        </el-col>
+                      </el-row>
+                      <el-row style="font-size: 18px;padding: 10px;">
+                        <el-col :span="20">
+                          <span style="color: #888;margin: 5px;">{{ 'VULNERABILITY' }}</span>
+                          <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                          <span style="margin: 5px;"><a :href="vulnerability.primaryLink" target="_blank">{{ vulnerability.vulnerabilityID }}</a></span>
+                          <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                          <span style="margin: 5px;">
+                                  <el-button v-bind:class="{ 'box-critical': vulnerability.severity === 'CRITICAL',
+                                    'box-high': vulnerability.severity === 'HIGH',
+                                    'box-medium': vulnerability.severity === 'MEDIUM', 'box-low': vulnerability.severity === 'LOW',
+                                    'box-unknown': vulnerability.severity === 'UNKNOWN' }" size="mini">{{ vulnerability.severity }}
+                                  </el-button>
+                                </span>
+                          <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                          <span style="color: #444;margin: 5px;">RESOURCE: {{ vulnerability.resource }}</span>
+                        </el-col>
+                        <el-col :span="4" style="float: right;">
+                          <span style="font-size: 20px;color: #000;float: right;">{{ vulnerability.score }}</span>
+                        </el-col>
+                      </el-row>
+                      <div class="text item div-desc">
+                        <el-row>
+                          <i class="el-icon-s-opportunity"></i> {{ vulnerability.primaryLink }}
+                        </el-row>
+                      </div>
+                    </div>
+                    <div class="text div-json">
                     <el-descriptions title="Vulnerability" :column="2">
                       <el-descriptions-item label="fixedVersion">
                         {{ vulnerability.fixedVersion }}
@@ -78,6 +78,7 @@
                       </el-descriptions-item>
                     </el-descriptions>
                   </div>
+                  </el-card>
                 </div>
               </el-card>
             </div>
@@ -95,9 +96,8 @@
             <div class="ch-mar-top" :key="index" v-for="(item, index) in logForm.configAuditReport.items">
               <el-card class="box-card">
                 <div class="ch-mar">
-                  <h3>Report:&nbsp;</h3>
+                  <h3>Report:&nbsp;{{ item.metadata.name }}</h3>
                   <ul style="margin-left: 60px;">
-                    <li><i>Name</i>: {{ item.metadata.name }}</li>
                     <li><i>Namespace</i>: {{ item.metadata.namespace }}</li>
                     <li><i>Critical Count</i>: {{ item.report.summary.criticalCount }}</li>
                     <li><i>High Count</i>: {{ item.report.summary.highCount }}</li>
@@ -197,8 +197,13 @@ export default {
 .box-chr {
   margin: 10px 0 10px 0;
   padding: 15px;
-  box-shadow: 1px 1px 1px 1px #e8e8e8;
+  box-shadow: #6e6464 0px 0px 3px;
   background-color: aliceblue;
+}
+
+.box-chr2 {
+  margin: 10px 0 10px 0;
+  box-shadow: #6e6464 0px 0px 5px;
 }
 
 .box-card-critical {

@@ -37,10 +37,10 @@
           </el-table-column>
           <el-table-column min-width="10%" :label="'FixedVersion'" prop="fixedVersion">
           </el-table-column>
-          <el-table-column min-width="25%" :label="'PrimaryURL'" prop="primaryUrl" v-slot:default="scope">
+          <el-table-column min-width="25%" :label="'PrimaryLink'" prop="primaryLink" v-slot:default="scope">
             <span>{{ scope.row.title }}</span>
             <br>
-            <el-link type="primary" style="color: #0000e4;" :href="scope.row.primaryUrl" target="_blank">{{ scope.row.primaryUrl }}</el-link>
+            <el-link type="primary" style="color: #0000e4;" :href="scope.row.primaryLink" target="_blank">{{ scope.row.primaryLink }}</el-link>
           </el-table-column>
           <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
