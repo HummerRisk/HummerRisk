@@ -147,6 +147,7 @@ public class RuleService {
                 ruleRequest.setPluginIcon(plugin.getIcon());
                 ruleRequest.setFlag(false);
                 ruleMapper.insertSelective(ruleRequest);
+                OperationLogService.log(SessionUtils.getUser(), ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.CREATE, "i18n_create_rule");
             } else {
                 Plugin plugin = pluginMapper.selectByPrimaryKey(ruleRequest.getPluginId());
                 ruleRequest.setPluginId(plugin.getId());
@@ -155,6 +156,7 @@ public class RuleService {
                 ruleRequest.setFlag(false);
                 ruleRequest.setLastModified(System.currentTimeMillis());
                 ruleMapper.updateByPrimaryKeySelective(ruleRequest);
+                OperationLogService.log(SessionUtils.getUser(), ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.UPDATE, "i18n_update_rule");
             }
 
             saveRuleTagMapping(ruleRequest.getId(), ruleRequest.getTagKey());
@@ -162,7 +164,6 @@ public class RuleService {
             saveRuleInspectionReportMapping(ruleRequest.getId(), ruleRequest.getInspectionSeports());
             saveRuleType(ruleRequest);
 
-            OperationLogService.log(SessionUtils.getUser(), ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.CREATE, "i18n_create_rule");
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
@@ -475,11 +476,13 @@ public class RuleService {
 
     public RuleTag saveRuleTag(RuleTag ruleTag) {
         ruleTagMapper.insertSelective(ruleTag);
+        OperationLogService.log(SessionUtils.getUser(), ruleTag.getTagKey(), ruleTag.getTagName(), ResourceTypeConstants.RULE_TAG.name(), ResourceOperation.CREATE, "i18n_create_rule_tag");
         return ruleTag;
     }
 
     public RuleTag updateRuleTag(RuleTag ruleTag) {
         ruleTagMapper.updateByPrimaryKey(ruleTag);
+        OperationLogService.log(SessionUtils.getUser(), ruleTag.getTagKey(), ruleTag.getTagName(), ResourceTypeConstants.RULE_TAG.name(), ResourceOperation.UPDATE, "i18n_update_rule_tag");
         return ruleTag;
     }
 

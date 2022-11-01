@@ -514,7 +514,7 @@ public class ServerService {
             certificate.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
         }
 
-        OperationLogService.log(SessionUtils.getUser(), certificate.getId(), certificate.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_create_server");
+        OperationLogService.log(SessionUtils.getUser(), certificate.getId(), certificate.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_create_server_certificate");
         return serverCertificateMapper.insertSelective(certificate);
     }
 
@@ -531,13 +531,13 @@ public class ServerService {
             certificate.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
         }
 
-        OperationLogService.log(SessionUtils.getUser(), certificate.getId(), certificate.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "i18n_update_server");
+        OperationLogService.log(SessionUtils.getUser(), certificate.getId(), certificate.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "i18n_update_server_certificate");
         return serverCertificateMapper.updateByPrimaryKeySelective(certificate);
     }
 
     public void deleteCertificate(String id) throws Exception {
         serverCertificateMapper.deleteByPrimaryKey(id);
-        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server");
+        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server_certificate");
     }
 
     /**
