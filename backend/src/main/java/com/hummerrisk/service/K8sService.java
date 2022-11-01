@@ -297,7 +297,7 @@ public class K8sService {
     public void addCloudNativeSource(CloudNative cloudNative) throws IOException, ApiException {
         CloudNativeSourceSyncLogWithBLOBs record = new CloudNativeSourceSyncLogWithBLOBs();
         record.setSum(0L);
-        record.setOperation("i18n_sync_k8s");
+        record.setOperation("i18n_sync_k8s_start");
         record.setCloudNativeId(cloudNative.getId());
         record.setCreateTime(System.currentTimeMillis());
         record.setOperator(SessionUtils.getUser().getName());
@@ -342,15 +342,15 @@ public class K8sService {
                 record.setResult(true);
             } catch (IOException e) {
                 LogUtil.error(e.getMessage());
-                record.setOutput("i18n_sync_k8s_error:" + e.getMessage());
+                record.setOutput("i18n_sync_k8s_error:{" + i + "}" + e.getMessage());
                 record.setResult(false);
             } catch (ApiException e) {
                 LogUtil.error(e.getMessage());
-                record.setOutput("i18n_sync_k8s_error:" + e.getMessage());
+                record.setOutput("i18n_sync_k8s_error:{" + i + "}" + e.getMessage());
                 record.setResult(false);
             } catch (Exception e) {
                 LogUtil.error(e.getMessage());
-                record.setOutput("i18n_sync_k8s_error:" + e.getMessage());
+                record.setOutput("i18n_sync_k8s_error:{" + i + "}" + e.getMessage());
                 record.setResult(false);
             }
             record.setSum(i);
