@@ -16,6 +16,7 @@ import com.hummerrisk.controller.request.cloudNative.*;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
 import com.hummerrisk.controller.request.k8s.K8sTopology;
+import com.hummerrisk.controller.request.k8s.NameSpaceTopology;
 import com.hummerrisk.controller.request.k8s.NodeTopology;
 import com.hummerrisk.controller.request.sync.CloudTopology;
 import com.hummerrisk.dto.*;
@@ -740,6 +741,10 @@ public class K8sService {
 
     public NodeTopology nodeTopology() {
         return extCloudNativeSourceMapper.nodeTopology();
+    }
+
+    public NameSpaceTopology namespaceTopology() {
+        return extCloudNativeSourceMapper.namespaceTopology();
     }
 
 }

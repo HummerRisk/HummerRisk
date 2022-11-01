@@ -1259,6 +1259,7 @@ export default {
     config_compliance: '配置审计统计',
     resource_perspective: '资源视角',
     node_perspective: '节点视角',
+    namespace_perspective: '命名空间视角',
   },
   config: {
     config_settings: '部署配置',

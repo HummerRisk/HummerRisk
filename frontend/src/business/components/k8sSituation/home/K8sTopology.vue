@@ -5,6 +5,9 @@
         <el-tab-pane :label="$t('k8s.node_perspective')">
           <svg id="node-topo"></svg>
         </el-tab-pane>
+        <el-tab-pane :label="$t('k8s.namespace_perspective')">
+          <svg id="namespace-topo"></svg>
+        </el-tab-pane>
         <el-tab-pane :label="$t('k8s.resource_perspective')">
           <svg id="k8s-topo"></svg>
         </el-tab-pane>
@@ -52,6 +55,95 @@ export default {
         let view;
 
         const svg = d3.select("#node-topo")
+          .attr("viewBox", `-${width / 2} -${height / 2} ${width} ${height}`)
+          .style("display", "block")
+          .style("margin", "0 -14px")
+          .style("background", color(0))
+          .style("cursor", "pointer")
+          .on("click", (event) => zoom(event, root));
+
+        const node = svg.append("g")
+          .selectAll("circle")
+          .data(root.descendants().slice(1))
+          .join("circle")
+          .attr("fill", d => d.children ? color(d.depth) : (d.value!=1?"AliceBlue":"Aquamarine"))
+          .attr("pointer-events", d => !d.children ? "none" : null)
+          .on("mouseover", function() { d3.select(this).attr("stroke", "#000"); })
+          .on("mouseout", function() { d3.select(this).attr("stroke", null); })
+          .on("click", (event, d) => {
+            if(focus !== d && d.parent !== focus && d.depth === 2) {
+              this.open(d);
+            }
+            focus !== d && (zoom(event, d), event.stopPropagation());
+          });
+
+        const label = svg.append("g")
+          .style("font", "10px sans-serif")
+          .attr("pointer-events", "none")
+          .attr("text-anchor", "middle")
+          .selectAll("text")
+          .data(root.descendants())
+          .join("text")
+          .style("fill-opacity", d => d.parent === root ? 1 : 0)
+          .style("display", d => d.parent === root ? "inline-block" : "none")
+          .text(d => d.data.name);
+
+        zoomTo([root.x, root.y, root.r * 2]);
+
+        function zoomTo(v) {
+          const k = width / v[2];
+
+          view = v;
+
+          label.attr("transform", d => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
+          node.attr("transform", d => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
+          node.attr("r", d => d.r * k);
+        }
+
+        function zoom(event, d) {
+          const focus0 = focus;
+
+          focus = d;
+
+          const transition = svg.transition()
+            .duration(event.altKey ? 7500 : 750)
+            .tween("zoom", d => {
+              const i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2]);
+              return t => zoomTo(i(t));
+            });
+
+          label
+            .filter(function(d) { return d.parent === focus || this.style.display === "inline-block"; })
+            .transition(transition)
+            .style("fill-opacity", d => d.parent === focus ? 1 : 0)
+            .on("start", function(d) { if (d.parent === focus) this.style.display = "inline-block"; })
+            .on("end", function(d) { if (d.parent !== focus) this.style.display = "none"; });
+        }
+
+        return svg.node();
+      });
+      this.result = this.$get("/k8s/namespaceTopology", response => {
+        let data = response.data;
+
+        let width = 932, height = width;
+
+        let color = d3.scaleLinear()
+          .domain([0, 5])
+          .range(["hsl(152,80%,80%)", "hsl(228,30%,40%)"])
+          .interpolate(d3.interpolateHcl);
+
+        let pack = data => d3.pack()
+          .size([width, height])
+          .padding(3)
+          (d3.hierarchy(data)
+            .sum(d => d.value)
+            .sort((a, b) => b.value - a.value));
+
+        const root = pack(data);
+        let focus = root;
+        let view;
+
+        const svg = d3.select("#namespace-topo")
           .attr("viewBox", `-${width / 2} -${height / 2} ${width} ${height}`)
           .style("display", "block")
           .style("margin", "0 -14px")
@@ -221,7 +313,6 @@ export default {
         title: node.data.name,
         message: message,
         dangerouslyUseHTMLString: true,
-        showClose: false,
       });
     },
   },

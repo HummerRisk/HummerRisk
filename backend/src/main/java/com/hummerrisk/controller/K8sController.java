@@ -10,6 +10,7 @@ import com.hummerrisk.controller.request.cloudNative.*;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;
 import com.hummerrisk.controller.request.k8s.K8sTopology;
+import com.hummerrisk.controller.request.k8s.NameSpaceTopology;
 import com.hummerrisk.controller.request.k8s.NodeTopology;
 import com.hummerrisk.controller.request.sync.CloudTopology;
 import com.hummerrisk.dto.*;
@@ -298,6 +299,13 @@ public class K8sController {
     @GetMapping(value = "nodeTopology")
     public NodeTopology nodeTopology() {
         return k8sService.nodeTopology();
+    }
+
+    @I18n
+    @ApiOperation(value = "命名空间资源态势拓扑图")
+    @GetMapping(value = "namespaceTopology")
+    public NameSpaceTopology namespaceTopology() {
+        return k8sService.namespaceTopology();
     }
 
 }

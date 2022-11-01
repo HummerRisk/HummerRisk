@@ -1259,6 +1259,7 @@ export default {
     config_compliance: 'Configure audit statistics',
     resource_perspective: 'Resource Perspective',
     node_perspective: 'Node Perspective',
+    namespace_perspective: 'Namespace perspective',
   },
   config: {
     config_settings: 'Deployment configuration',
