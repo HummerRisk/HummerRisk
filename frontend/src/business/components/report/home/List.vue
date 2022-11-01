@@ -146,7 +146,7 @@
             </main>
           </section>
         </el-card>
-        <el-card v-if="resourceTableData.length>0">
+        <el-card v-if="resourceTableData.length>0" class="table-report-card-resource">
           <template v-slot:header>
             <table-header :condition.sync="resourceCondition"
                           @search="searchResource"
@@ -196,7 +196,7 @@
           </el-table>
           <table-pagination :change="searchResource" :current-page.sync="resourceCurrentPage" :page-size.sync="resourcePageSize" :total="resourceTotal"/>
         </el-card>
-        <el-card>
+        <el-card class="table-report-card-resource">
           <template v-slot:header>
             <table-header :condition.sync="riskCondition"
                           @search="reportListSearch"
@@ -521,7 +521,7 @@ import ReportTableHeader from "@/business/components/report/head/ReportTableHead
 import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
 import HrChart from "@/business/components/common/chart/HrChart";
 import SeverityType from "@/business/components/common/components/SeverityType";
-import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
+import ResultReadOnly from "@/business/components/report/head/ResultReadOnly";
 import echarts from 'echarts';
 
 /* eslint-disable */
@@ -1118,6 +1118,10 @@ import echarts from 'echarts';
     overflow-y: auto;
   }
   .table-report-card {
+    margin-bottom: 15px;
+  }
+
+  .table-report-card-resource {
     margin-bottom: 15px;
   }
 
