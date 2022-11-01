@@ -450,6 +450,12 @@
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-auditmanager</artifactId>
         </dependency>
+
+
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-cloudtrail</artifactId>
+        </dependency>
         <!-- AWS -->
 
         <!-- azure -->
