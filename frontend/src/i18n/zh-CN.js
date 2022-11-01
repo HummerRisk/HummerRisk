@@ -430,6 +430,7 @@ export default {
     scan_score: '安全评分',
     resource_result: '不合规资源/资源总数',
     result: '发现漏洞资源数',
+    config_result: '发现配置审计资源数',
     create_time: '历史记录时间',
     scan_resources: '检测资源',
   },

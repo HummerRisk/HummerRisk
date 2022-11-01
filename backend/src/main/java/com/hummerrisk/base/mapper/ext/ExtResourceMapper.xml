@@ -736,7 +736,7 @@
             </if>
             and t.id in (select r.group_id from rule_group_mapping r join cloud_task ct on r.rule_id = ct.rule_id where ct.account_id = #{request.accountId})
         </where>
-        order by FIELD(`status`, 'risky', 'risk_free'), createTime, t.plugin_id, t.flag, t.id desc
+        order by FIELD(`status`, 'risk_free', 'risky'), createTime, t.plugin_id, t.flag, t.id desc
     </select>
 
 </mapper>

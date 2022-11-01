@@ -556,6 +556,7 @@ public class K8sService {
                     CloudNativeResultItem cloudNativeResultItem = new CloudNativeResultItem();
                     cloudNativeResultItem.setId(UUIDUtil.newUUID());
                     cloudNativeResultItem.setResultId(result.getId());
+                    cloudNativeResultItem.setResource(obj2.getString("resource"));
                     cloudNativeResultItem.setPrimaryLink(obj2.getString("primaryLink"));
                     cloudNativeResultItem.setScore(obj2.getString("score"));
                     cloudNativeResultItem.setSeverity(obj2.getString("severity"));
@@ -588,20 +589,23 @@ public class K8sService {
                 JSONArray jsonArray = jsonObject2.getJSONArray("checks");
                 for(Object object2 : jsonArray) {
                     JSONObject obj2 = (JSONObject) object2;
-                    CloudNativeResultConfigItemWithBLOBs item = new CloudNativeResultConfigItemWithBLOBs();
-                    item.setId(UUIDUtil.newUUID());
-                    item.setResultId(result.getId());
-                    item.setCategory(obj2.getString("category"));
-                    item.setCheckId(obj2.getString("checkID"));
-                    item.setSeverity(obj2.getString("severity"));
-                    item.setSuccess(obj2.getString("success"));
-                    item.setDescription(obj2.getString("description"));
-                    item.setTitle(obj2.getString("title"));
-                    item.setMessages(obj2.getString("messages"));
-                    item.setCreateTime(System.currentTimeMillis());
-                    cloudNativeResultConfigItemMapper.insertSelective(item);
+                    String success = obj2.getString("success");
+                    if (success !=null && StringUtils.equalsIgnoreCase(success, "false")) {
+                        CloudNativeResultConfigItemWithBLOBs item = new CloudNativeResultConfigItemWithBLOBs();
+                        item.setId(UUIDUtil.newUUID());
+                        item.setResultId(result.getId());
+                        item.setCategory(obj2.getString("category"));
+                        item.setCheckId(obj2.getString("checkID"));
+                        item.setSeverity(obj2.getString("severity"));
+                        item.setSuccess(success);
+                        item.setDescription(obj2.getString("description"));
+                        item.setTitle(obj2.getString("title"));
+                        item.setMessages(obj2.getString("messages"));
+                        item.setCreateTime(System.currentTimeMillis());
+                        cloudNativeResultConfigItemMapper.insertSelective(item);
 
-                    i++;
+                        i++;
+                    }
                 }
             }
         }

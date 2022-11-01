@@ -101,54 +101,56 @@
                     <li><i>Namespace</i>: {{ item.metadata.namespace }}</li>
                     <li><i>Critical Count</i>: {{ item.report.summary.criticalCount }}</li>
                     <li><i>High Count</i>: {{ item.report.summary.highCount }}</li>
-                    <li><i>Low Count</i>:&nbsp;{{ item.report.summary.lowCount }}</li>
                     <li><i>Medium Count</i>:&nbsp;{{ item.report.summary.mediumCount }}</li>
+                    <li><i>Low Count</i>:&nbsp;{{ item.report.summary.lowCount }}</li>
                   </ul>
                 </div>
                 <div v-if="item.report">
-                  <div class="box-chr" :key="index" v-for="(check, index) in item.report.checks">
-                    <div slot="header" class="clearfix clearfix-dev">
-                      <el-row>
-                        <el-col v-bind:class="{ 'icon-title box-critical': check.severity === 'CRITICAL',
+                  <div :key="index" v-for="(check, index) in item.report.checks">
+                    <div class="box-chr" v-if="!check.success">
+                      <div slot="header" class="clearfix clearfix-dev">
+                        <el-row>
+                          <el-col v-bind:class="{ 'icon-title box-critical': check.severity === 'CRITICAL',
                                   'icon-title box-high': check.severity === 'HIGH',
                                   'icon-title box-medium': check.severity === 'MEDIUM',
                                   'icon-title box-low': check.severity === 'LOW',
                                   'icon-title box-unknown': check.severity === 'UNKNOWN' }"
-                                :span="3">
-                          <span>{{ check.severity.substring(0, 1) }}</span>
-                        </el-col>
-                        <el-col :span="15" style="margin: -7px 0 0 15px;">
-                          <span style="font-size: 24px;font-weight: 500;">{{ check.title }}</span>
-                        </el-col>
-                        <el-col :span="6" style="float: right;">
-                          <span style="font-size: 20px;color: #999;float: right;">{{ 'CHECKID' }}</span>
-                        </el-col>
-                      </el-row>
-                      <el-row style="font-size: 18px;padding: 10px;">
-                        <el-col :span="20">
-                          <span style="color: #888;margin: 5px;">{{ 'CHECKS' }}</span>
-                          <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                          <span style="margin: 5px;">{{ check.category }}</span>
-                          <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                          <span style="margin: 5px;">
+                                  :span="3">
+                            <span>{{ check.severity.substring(0, 1) }}</span>
+                          </el-col>
+                          <el-col :span="15" style="margin: -7px 0 0 15px;">
+                            <span style="font-size: 24px;font-weight: 500;">{{ check.title }}</span>
+                          </el-col>
+                          <el-col :span="6" style="float: right;">
+                            <span style="font-size: 20px;color: #999;float: right;">{{ 'CHECKID' }}</span>
+                          </el-col>
+                        </el-row>
+                        <el-row style="font-size: 18px;padding: 10px;">
+                          <el-col :span="20">
+                            <span style="color: #888;margin: 5px;">{{ 'CHECKS' }}</span>
+                            <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                            <span style="margin: 5px;">{{ check.category }}</span>
+                            <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                            <span style="margin: 5px;">
                                 <el-button v-bind:class="{ 'box-critical': check.severity === 'CRITICAL',
                                   'box-high': check.severity === 'HIGH',
                                   'box-medium': check.severity === 'MEDIUM', 'box-low': check.severity === 'LOW',
                                   'box-unknown': check.severity === 'UNKNOWN' }" size="mini">{{ check.severity }}
                                 </el-button>
                               </span>
-                          <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                          <span style="color: #444;margin: 5px;">SUCCESS: {{ check.success }}</span>
-                        </el-col>
-                        <el-col :span="4" style="float: right;">
-                          <span style="font-size: 20px;color: #000;float: right;">{{ check.checkID }}</span>
-                        </el-col>
-                      </el-row>
-                    </div>
-                    <div class="text item div-desc">
-                      <el-row>
-                        <i class="el-icon-s-opportunity"></i> {{ check.description }}
-                      </el-row>
+                            <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                            <span style="color: #444;margin: 5px;">SUCCESS: {{ check.success }}</span>
+                          </el-col>
+                          <el-col :span="4" style="float: right;">
+                            <span style="font-size: 20px;color: #000;float: right;">{{ check.checkID }}</span>
+                          </el-col>
+                        </el-row>
+                      </div>
+                      <div class="text item div-desc">
+                        <el-row>
+                          <i class="el-icon-s-opportunity"></i> {{ check.description }}
+                        </el-row>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -430,6 +430,7 @@ export default {
     scan_score:'Security score',
     resource_result:'Non-compliant resources/total resources',
     result: 'Number of vulnerable resources found',
+    config_result: 'Number of configuration audit resources found',
     create_time:'History time',
     scan_resources:'Scan resources',
   },
