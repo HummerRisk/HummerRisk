@@ -17,6 +17,10 @@ import com.amazonaws.services.auditmanager.AWSAuditManagerClient;
 import com.amazonaws.services.auditmanager.model.Evidence;
 import com.amazonaws.services.auditmanager.model.GetEvidenceRequest;
 import com.amazonaws.services.auditmanager.model.GetEvidenceResult;
+import com.amazonaws.services.cloudtrail.AWSCloudTrail;
+import com.amazonaws.services.cloudtrail.AWSCloudTrailClient;
+import com.amazonaws.services.cloudtrail.model.LookupAttributeKey;
+import com.amazonaws.services.cloudtrail.model.LookupEventsResult;
 import com.huaweicloud.sdk.core.auth.BasicCredentials;
 import com.huaweicloud.sdk.core.auth.ICredential;
 import com.huaweicloud.sdk.cts.v3.CtsClient;
@@ -288,6 +292,9 @@ public class CloudEventService {
             case PlatformUtils.tencent:
                 result = getTencentEvents(accountMap, startTime, endTime, pageNum, maxResult);
                 break;
+            case PlatformUtils.aws:
+                result = getAwsEvents(accountMap,startTime,endTime,pageNum,maxResult);
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + account.getPluginId());
         }
@@ -415,13 +422,29 @@ public class CloudEventService {
 
     public List<CloudEvent> getAwsEvents(Map<String, String> accountMap, String startTime, String endTime,
                                          int pageNum, int maxResult) {
-        AWSAuditManager awsAuditManager = AWSAuditManagerClient.builder().build();
-        GetEvidenceRequest getEvidenceRequest = new GetEvidenceRequest();
-        AWSCredentials awsCredentials = new BasicAWSCredentials("", "");
+        AWSCredentials awsCredentials = new BasicAWSCredentials(accountMap.get("secretId"), accountMap.get("secretKey"));
         AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials);
-        getEvidenceRequest.setRequestCredentialsProvider(awsCredentialsProvider);
-        GetEvidenceResult evidence = awsAuditManager.getEvidence(getEvidenceRequest);
-        Evidence evidence1 = evidence.getEvidence();
+        AWSCloudTrail awsCloudTrail = AWSCloudTrailClient.builder().withRegion(accountMap.get("region")).withCredentials(awsCredentialsProvider).build();
+        com.amazonaws.services.cloudtrail.model.LookupEventsRequest eventsRequest = new com.amazonaws.services.cloudtrail.model.LookupEventsRequest();
+        eventsRequest.setMaxResults(maxResult);
+        eventsRequest.setStartTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime));
+        eventsRequest.setEndTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", endTime));
+        com.amazonaws.services.cloudtrail.model.LookupAttribute lookupAttribute = new com.amazonaws.services.cloudtrail.model.LookupAttribute();
+        lookupAttribute.setAttributeKey(LookupAttributeKey.ReadOnly);
+        lookupAttribute.setAttributeValue("false");
+        List<com.amazonaws.services.cloudtrail.model.LookupAttribute> list = new ArrayList<>();
+        list.add(lookupAttribute);
+        eventsRequest.setLookupAttributes(list);
+        if(accountMap.get("nextToken")!=null){
+            eventsRequest.setNextToken(accountMap.get("nextToken"));
+        }
+        LookupEventsResult lookupEventsResult = awsCloudTrail.lookupEvents(eventsRequest);
+        if(lookupEventsResult.getNextToken()!=null){
+            accountMap.put("nextToken",lookupEventsResult.getNextToken());
+        }else{
+            accountMap.put("isEnd","true");
+        }
+        List<com.amazonaws.services.cloudtrail.model.Event> events = lookupEventsResult.getEvents();
         return null;
     }
 
