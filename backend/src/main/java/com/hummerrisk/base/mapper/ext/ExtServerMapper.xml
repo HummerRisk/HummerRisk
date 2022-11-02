@@ -132,9 +132,9 @@
               (SELECT IFNULL(count(*), 0) as groups from server_group) as groups,
               (SELECT IFNULL(count(*), 0) as servers from server) as servers,
               (SELECT IFNULL(count(*), 0) as certificates from server_certificate) as certificates,
-              (SELECT IFNULL(count(t.id), 0) as high from server_result t where LOWER(t.severity) = 'highrisk') as high,
-              (SELECT IFNULL(count(t.id), 0) as medium from server_result t where LOWER(t.severity) = 'mediumrisk') as medium,
-              (SELECT IFNULL(count(t.id), 0) as low from server_result t where LOWER(t.severity) = 'lowrisk') as low
+              (SELECT IFNULL(count(t.id), 0) as high from server_result t where LOWER(t.severity) = 'highrisk' and is_severity = 0) as high,
+              (SELECT IFNULL(count(t.id), 0) as medium from server_result t where LOWER(t.severity) = 'mediumrisk' and is_severity = 0) as medium,
+              (SELECT IFNULL(count(t.id), 0) as low from server_result t where LOWER(t.severity) = 'lowrisk' and is_severity = 0) as low
                  )
     </select>
 

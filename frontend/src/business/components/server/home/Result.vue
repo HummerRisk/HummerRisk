@@ -27,10 +27,6 @@
             <rule-type :row="row"/>
           </template>
         </el-table-column>
-        <el-table-column prop="isSeverity" :label="$t('server.is_severity')" min-width="8%" show-overflow-tooltip v-slot:default="scope">
-          <span v-if="scope.row.isSeverity" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
-          <span v-if="!scope.row.isSeverity" style="color: #f84846">{{ $t('resource.risky') }}</span>
-        </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('server.result_status')" min-width="12%" prop="resultStatus" sortable show-overflow-tooltip>
           <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
@@ -50,6 +46,12 @@
           <el-button @click="showResultLog(scope.row)" plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
+        </el-table-column>
+        <el-table-column prop="isSeverity" :label="$t('server.is_severity')" min-width="8%" show-overflow-tooltip v-slot:default="scope">
+          <el-tooltip class="item" effect="dark" :content="scope.row.returnLog" placement="top">
+            <span v-if="scope.row.isSeverity" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
+            <span v-if="!scope.row.isSeverity" style="color: #f84846">{{ $t('resource.risky') }}</span>
+          </el-tooltip>
         </el-table-column>
         <el-table-column prop="updateTime" min-width="15%" :label="$t('server.last_modified')" sortable>
           <template v-slot:default="scope">

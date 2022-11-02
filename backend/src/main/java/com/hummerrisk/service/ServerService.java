@@ -169,7 +169,7 @@ public class ServerService {
                 result.setIsSeverity(true);
             } else if (returnLog.contains(ServerConstants.HUMMER_ERROR)) {
                 result.setIsSeverity(false);
-            } else if (returnLog == null) {
+            } else if (StringUtils.isBlank(returnLog)) {
                 returnLog = ServerConstants.HUMMER_ERROR + ": 没有获取到返回值";
                 result.setIsSeverity(false);
             }
