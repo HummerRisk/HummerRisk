@@ -711,7 +711,7 @@ export default {
     requirements_of_the_regulations: '符合条例要求',
     report_detail: '报告详情',
     risk_point: '风险点',
-    resource_result_score: '不合规数据统计: 检测评分(不合规资源/资源总数)',
+    resource_result_score: '不合规数据统计: 不合规资源/资源总数(检测评分)',
     discover_risk: '发现风险',
     no_risk: '无风险',
     scene_name: '场景名称',

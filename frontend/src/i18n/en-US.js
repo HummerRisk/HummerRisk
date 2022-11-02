@@ -711,7 +711,7 @@ export default {
     requirements_of_the_regulations:'Meet the requirements of the regulations',
     report_detail:'Report details',
     risk_point:'risk point',
-    resource_result_score: 'Non-compliant data statistics: detection score (non-compliant resources/total number of resources)',
+    resource_result_score: 'Non-compliant data statistics: non-compliant resources/total number of resources (detection score)',
     discover_risk:'Discover risk',
     no_risk:'No risk',
     scene_name:'Scene name',

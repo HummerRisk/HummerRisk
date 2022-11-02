@@ -711,7 +711,7 @@ export default {
     requirements_of_the_regulations: '符合條例要求',
     report_detail: '報告詳情',
     risk_point: '風險點',
-    resource_result_score: '不合規數據統計: 檢測評分(不合規資源/資源總數)',
+    resource_result_score: '不合規數據統計: 不合規資源/資源總數(檢測評分)',
     discover_risk: '發現風險',
     no_risk: '無風險',
     scene_name: '場景名稱',
