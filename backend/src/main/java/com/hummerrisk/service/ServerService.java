@@ -381,6 +381,48 @@ public class ServerService {
         return serverValidateDTO;
     }
 
+    public ServerValidateDTO copyServer(MultipartFile keyFile, Server server) throws Exception {
+        String id = UUIDUtil.newUUID();
+        server.setId(id);
+        server.setUpdateTime(System.currentTimeMillis());
+        Proxy proxy = new Proxy();
+        if (server.getIsProxy() != null && server.getIsProxy()) {
+            proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
+        }
+
+        if (server.getIsCertificate() != null) {
+            if (!server.getIsCertificate()) {
+                if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
+                    String keyFilePath = upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
+                    String publicKey = ReadFileUtils.readToBuffer(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+                    server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+                    server.setPublicKey(publicKey);
+                } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
+                    String uuid = UUIDUtil.newUUID();
+                    CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA, true);
+                    server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
+                }
+            } else {
+                ServerCertificate serverCertificate = serverCertificateMapper.selectByPrimaryKey(server.getCertificateId());
+                server.setIsPublicKey(serverCertificate.getIsPublicKey());
+                if (StringUtils.equalsIgnoreCase(serverCertificate.getIsPublicKey(), "no")) {
+                    server.setPassword(serverCertificate.getPassword());
+                } else {
+                    server.setPublicKey(serverCertificate.getPublicKey());
+                    server.setPublicKeyPath(serverCertificate.getPublicKeyPath());
+                }
+            }
+        } else {
+            server.setIsCertificate(false);
+        }
+
+        ServerValidateDTO serverValidateDTO = login(server, proxy);
+
+        OperationLogService.log(SessionUtils.getUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.COPY, "i18n_copy_server");
+        serverMapper.insertSelective(serverValidateDTO.getServer());
+        return serverValidateDTO;
+    }
+
     public void deleteServer(String id) throws Exception {
         serverMapper.deleteByPrimaryKey(id);
         OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server");

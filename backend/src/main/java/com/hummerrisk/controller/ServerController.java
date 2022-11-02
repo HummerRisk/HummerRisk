@@ -106,6 +106,13 @@ public class ServerController {
         return serverService.editServer(keyFile, request);
     }
 
+    @ApiOperation(value = "复制主机")
+    @PostMapping(value = "copyServer", consumes = {"multipart/form-data"})
+    public ServerValidateDTO copyServer(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
+                                        @RequestPart("request") Server request) throws Exception {
+        return serverService.copyServer(keyFile, request);
+    }
+
     @ApiOperation(value = "删除主机")
     @GetMapping("deleteServer/{id}")
     public void deleteServer(@PathVariable String id) throws Exception {

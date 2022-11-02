@@ -24,7 +24,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="ip" :label="'IP'" min-width="18%" show-overflow-tooltip v-slot:default="scope">
+          <el-table-column prop="ip" :label="'IP:Port'" min-width="18%" show-overflow-tooltip v-slot:default="scope">
             {{ scope.row.ip }} : {{ scope.row.port }}
           </el-table-column>
           <el-table-column prop="userName" :label="$t('server.server_user_name')" min-width="7%" show-overflow-tooltip></el-table-column>
@@ -52,8 +52,8 @@
               <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="user" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
-          <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
+<!--          <el-table-column prop="user" :label="$t('account.creator')" min-width="7%" show-overflow-tooltip/>-->
+          <el-table-column min-width="13%" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
@@ -321,6 +321,84 @@
       </el-drawer>
       <!--Update server-->
 
+      <!--Copy server-->
+      <el-drawer class="rtl" :title="$t('server.server_copy')" :visible.sync="copyVisible" size="60%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true">
+        <div v-loading="rstResult.loading">
+          <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="createServerForm">
+            <el-form-item :label="$t('server.server_group_name')" ref="groupId" prop="groupId">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="form.groupId" :placeholder="$t('server.server_group_name')">
+                <el-option
+                  v-for="item in groups"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="$t('server.server_name')" ref="name" prop="name">
+              <el-input v-model="form.name" autocomplete="off" :placeholder="$t('server.server_name')"/>
+            </el-form-item>
+            <el-form-item :label="'IP'" ref="ip" prop="ip">
+              <el-input v-model="form.ip" autocomplete="off" :placeholder="'IP'"/>
+            </el-form-item>
+            <el-form-item :label="$t('server.port')" ref="port" prop="port">
+              <el-input type="number" v-model="form.port" autocomplete="off" :placeholder="$t('server.port')"/>
+            </el-form-item>
+            <el-form-item :label="$t('server.server_user_name')" ref="userName" prop="userName">
+              <el-input v-model="form.userName" autocomplete="off" :placeholder="$t('server.server_user_name')"/>
+            </el-form-item>
+            <el-form-item :label="$t('server.bind_certificate')" ref="type" prop="type" :rules="{required: true, message: $t('server.bind_certificate') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-radio v-model="form.isCertificate" :label="false">{{ $t('server.menu_certificate') }}</el-radio>
+              <el-radio v-model="form.isCertificate" :label="true">{{ $t('server.public_certificate') }}</el-radio>
+            </el-form-item>
+            <el-form-item v-if="form.isCertificate" :label="$t('server.public_certificate')">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="form.certificateId" :placeholder="$t('server.public_certificate')">
+                <el-option
+                  v-for="item in certificates"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                  &nbsp;&nbsp; {{ item.name }}
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item v-if="!form.isCertificate !==null && !form.isCertificate" :label="$t('server.is_public_key')" ref="type" prop="type" :rules="{required: true, message: $t('server.is_public_key') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-radio v-model="form.isPublicKey" label="no">{{ $t('server.no_public_key') }}</el-radio>
+              <el-radio v-model="form.isPublicKey" label="str">{{ $t('server.str_public_key') }}</el-radio>
+              <el-radio v-model="form.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
+            </el-form-item>
+            <el-form-item v-if="!form.isCertificate && form.isPublicKey === 'no'" :label="$t('commons.password')" ref="password" prop="password">
+              <el-input type="password" v-model="form.password" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
+            </el-form-item>
+            <el-form-item v-if="!form.isCertificate && form.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
+              <el-input type="textarea" :rows="10" v-model="form.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
+            </el-form-item>
+            <el-form-item v-if="!form.isCertificate && form.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
+              <server-key-upload v-on:append="append" v-model="form.publicKeyPath" :param="form.publicKeyPath"/>
+            </el-form-item>
+            <!--          <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">-->
+            <!--            <el-switch v-model="form.isProxy"></el-switch>-->
+            <!--          </el-form-item>-->
+            <!--          <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">-->
+            <!--            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyId" :placeholder="$t('commons.proxy')">-->
+            <!--              <el-option-->
+            <!--                v-for="item in proxys"-->
+            <!--                :key="item.id"-->
+            <!--                :label="item.proxyIp"-->
+            <!--                :value="item.id">-->
+            <!--                &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}-->
+            <!--              </el-option>-->
+            <!--            </el-select>-->
+            <!--          </el-form-item>-->
+          </el-form>
+          <dialog-footer
+            @cancel="copyVisible = false"
+            @confirm="copyServer(form)"/>
+        </div>
+      </el-drawer>
+      <!--Copy server-->
+
     </main-container>
 </template>
 
@@ -369,6 +447,7 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
         selectIds: new Set(),
         createVisible: false,
         updateVisible: false,
+        copyVisible: false,
         item: {},
         form: {isPublicKey: "no"},
         script: '',
@@ -388,6 +467,9 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
           {
             tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
             exec: this.handleEdit
+          }, {
+            tip: this.$t('commons.copy'), icon: "el-icon-document-copy", type: "success",
+            exec: this.handleCopy
           }, {
             tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
             exec: this.handleDelete
@@ -532,9 +614,20 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
         this.form = tmp;
         this.updateVisible = true;
       },
+      handleCopy (tmp) {
+        let url = "/server/serverGroupList";
+        this.result = this.$get(url, response => {
+          if (response.data != undefined && response.data != null) {
+            this.groups = response.data;
+          }
+        });
+        this.form = tmp;
+        this.copyVisible = true;
+      },
       handleClose() {
         this.createVisible =  false;
         this.updateVisible =  false;
+        this.copyVisible = false;
       },
       handleDelete(obj) {
         this.$alert(this.$t('server.delete_confirm') + obj.name + " ？", '', {
@@ -703,6 +796,31 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
             this.$success(this.$t('commons.save_success'));
             this.search();
             this.updateVisible = false;
+          }
+        });
+      },
+      copyServer (server) {
+        if (!server.isProxy) {
+          server.proxyId = null;
+        }
+        let formData = new FormData();
+        if (this.keyFile) {
+          formData.append("keyFile", this.keyFile);
+        }
+        formData.append("request", new Blob([JSON.stringify(server)], {type: "application/json"}));
+        let axiosRequestConfig = {
+          method: "POST",
+          url: "/server/copyServer",
+          data: formData,
+          headers: {
+            "Content-Type": 'multipart/form-data'
+          }
+        };
+        this.rstResult = this.$request(axiosRequestConfig, (res) => {
+          if (res.success) {
+            this.$success(this.$t('commons.save_success'));
+            this.search();
+            this.copyVisible = false;
           }
         });
       },
