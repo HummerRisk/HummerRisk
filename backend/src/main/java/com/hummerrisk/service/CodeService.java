@@ -14,10 +14,7 @@ import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.code.CodeRequest;
 import com.hummerrisk.controller.request.code.CodeResultRequest;
 import com.hummerrisk.controller.request.code.CodeRuleRequest;
-import com.hummerrisk.dto.CodeDTO;
-import com.hummerrisk.dto.CodeResultDTO;
-import com.hummerrisk.dto.CodeRuleDTO;
-import com.hummerrisk.dto.HistoryCodeResultDTO;
+import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.service.impl.ExecEngineFactoryImp;
 import com.hummerrisk.service.impl.IProvider;
@@ -340,7 +337,8 @@ public class CodeService {
             }
             String returnJson = "";
 
-            execute(code);
+            String command = execute(code).getCommand();
+            result.setCommand(command);
             returnJson = ReadFileUtils.readToBuffer(TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON);
             result.setUpdateTime(System.currentTimeMillis());
             result.setReturnJson(returnJson);
@@ -364,7 +362,7 @@ public class CodeService {
         }
     }
 
-    public String execute(Code code) throws Exception {
+    public ResultDTO execute(Code code) throws Exception {
         Proxy proxy = new Proxy();
         if (code.getProxyId()!=null) {
             proxy = proxyMapper.selectByPrimaryKey(code.getProxyId());
@@ -379,7 +377,7 @@ public class CodeService {
         scanSetting.setIgnoreUnfixed(ignoreUnfixed);
         scanSetting.setOfflineScan(offlineScan);
         IProvider cp = execEngineFactoryImp.getProvider("codeProvider");
-        return (String) execEngineFactoryImp.executeMethod(cp, "execute", code, proxy, scanSetting);
+        return (ResultDTO) execEngineFactoryImp.executeMethod(cp, "execute", code, proxy, scanSetting);
     }
 
     long saveResultItem(CodeResult result) throws Exception {

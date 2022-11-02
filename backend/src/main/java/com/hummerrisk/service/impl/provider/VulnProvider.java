@@ -1,5 +1,6 @@
 package com.hummerrisk.service.impl.provider;
 
+import com.hummerrisk.dto.ResultDTO;
 import com.hummerrisk.service.impl.HummerPlugin;
 import com.hummerrisk.service.impl.IProvider;
 
@@ -12,9 +13,8 @@ public class VulnProvider implements IProvider {
         return name;
     }
 
-    public String execute(Object... obj) {
-        String str = "";
-        return str;
+    public ResultDTO execute(Object... obj) {
+        return new ResultDTO();
     }
 
     public String dockerLogin(Object obj) {

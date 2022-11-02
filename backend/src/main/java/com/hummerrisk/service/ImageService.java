@@ -486,12 +486,16 @@ public class ImageService {
             Image image = imageMapper.selectByPrimaryKey(result.getImageId());
             String resultJson = "";
 
-            String log = execute(image);
+            ResultDTO resultDTO = execute(image);
+            String log = resultDTO.getResultStr();
+            String command = resultDTO.getCommand();
+
             if (log.contains("docker login")) {
                 throw new Exception(log);
             }
             resultJson = ReadFileUtils.readToBuffer(TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON);
 
+            result.setCommand(command);
             result.setReturnLog(log);
             result.setResultJson(resultJson);
             result.setRuleId(dto.getId());
@@ -597,7 +601,7 @@ public class ImageService {
         imageResultMapper.deleteByExample(example);
     }
 
-    public String execute(Image image) throws Exception {
+    public ResultDTO execute(Image image) throws Exception {
         Proxy proxy = new Proxy();
         ImageRepo imageRepo = new ImageRepo();
         if (image.getIsProxy() && image.getProxyId() != null) {
@@ -616,7 +620,7 @@ public class ImageService {
         scanSetting.setIgnoreUnfixed(ignoreUnfixed);
         scanSetting.setOfflineScan(offlineScan);
         IProvider cp = execEngineFactoryImp.getProvider("imageProvider");
-        return (String) execEngineFactoryImp.executeMethod(cp, "execute", image, proxy, imageRepo, scanSetting);
+        return (ResultDTO) execEngineFactoryImp.executeMethod(cp, "execute", image, proxy, imageRepo, scanSetting);
     }
 
     public List<ImageResultWithBLOBsDTO> resultListWithBLOBs(ImageResultRequest request) {

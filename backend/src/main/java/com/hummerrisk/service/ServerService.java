@@ -173,6 +173,7 @@ public class ServerService {
                 returnLog = ServerConstants.HUMMER_ERROR + ": 没有获取到返回值";
                 result.setIsSeverity(false);
             }
+            result.setCommand(script);
             result.setReturnLog(returnLog);
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());

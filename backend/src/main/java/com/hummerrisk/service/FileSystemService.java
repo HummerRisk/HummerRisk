@@ -14,10 +14,7 @@ import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.fs.FsRequest;
 import com.hummerrisk.controller.request.fs.FsResultRequest;
 import com.hummerrisk.controller.request.fs.FsRuleRequest;
-import com.hummerrisk.dto.FsDTO;
-import com.hummerrisk.dto.FsResultDTO;
-import com.hummerrisk.dto.FsRuleDTO;
-import com.hummerrisk.dto.HistoryFsResultDTO;
+import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.service.impl.ExecEngineFactoryImp;
 import com.hummerrisk.service.impl.IProvider;
@@ -386,7 +383,8 @@ public class FileSystemService {
             }
             String returnJson = "";
 
-            execute(fileSystem);
+            String command = execute(fileSystem).getCommand();
+            result.setCommand(command);
             returnJson = ReadFileUtils.readToBuffer(fileSystem.getDir() + TrivyConstants.TRIVY_JSON);
             result.setUpdateTime(System.currentTimeMillis());
             result.setReturnJson(returnJson);
@@ -410,7 +408,7 @@ public class FileSystemService {
         }
     }
 
-    public String execute(FileSystem fileSystem) throws Exception {
+    public ResultDTO execute(FileSystem fileSystem) throws Exception {
         Proxy proxy = new Proxy();
         if (fileSystem.getProxyId()!=null) {
             proxy = proxyMapper.selectByPrimaryKey(fileSystem.getProxyId());
@@ -425,7 +423,7 @@ public class FileSystemService {
         scanSetting.setIgnoreUnfixed(ignoreUnfixed);
         scanSetting.setOfflineScan(offlineScan);
         IProvider cp = execEngineFactoryImp.getProvider("fsProvider");
-        return (String) execEngineFactoryImp.executeMethod(cp, "execute", fileSystem, proxy, scanSetting);
+        return (ResultDTO) execEngineFactoryImp.executeMethod(cp, "execute", fileSystem, proxy, scanSetting);
     }
 
     long saveResultItem(FileSystemResult result) throws Exception {

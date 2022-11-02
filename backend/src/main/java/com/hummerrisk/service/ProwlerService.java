@@ -244,7 +244,9 @@ public class ProwlerService {
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
             String command = PlatformUtils.fixedCommand(CommandEnum.prowler.getCommand(), CommandEnum.run.getCommand(), dirPath, fileName, map);
-            LogUtil.info(cloudTask.getId() + " {}[command]: " + command);
+            LogUtil.info(cloudTask.getId() + " {prowler}[command]: " + command);
+            taskItem.setCommand(command);
+            cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItem);
             resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
             if (LogUtil.getLogger().isDebugEnabled()) {
                 LogUtil.getLogger().debug("resource created: {}", resultStr);

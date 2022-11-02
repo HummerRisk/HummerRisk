@@ -268,7 +268,9 @@ public class NucleiService {
             if(taskItem.getDetails().contains("workflows:")) {
                 command = command.replace("-t", "-w");
             }
-            LogUtil.info(cloudTask.getId() + " {}[command]: " + command);
+            LogUtil.debug(cloudTask.getId() + " {nuclei}[command]: " + command);
+            taskItem.setCommand(command);
+            cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItem);
             CommandUtils.saveAsFile(taskItem.getDetails(), dirPath, fileName, true);//重启服务后容器内文件在/tmp目录下会丢失
             resultStr = CommandUtils.commonExecCmdWithResultByNuclei(command, dirPath);
             if (LogUtil.getLogger().isDebugEnabled()) {

@@ -8,6 +8,7 @@ import com.hummerrisk.commons.constants.TrivyConstants;
 import com.hummerrisk.commons.utils.CommandUtils;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.commons.utils.ProxyUtil;
+import com.hummerrisk.dto.ResultDTO;
 import com.hummerrisk.service.impl.HummerPlugin;
 import com.hummerrisk.service.impl.IProvider;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +22,7 @@ public class FsProvider implements IProvider {
         return name;
     }
 
-    public String execute(Object... obj) {
+    public ResultDTO execute(Object... obj) throws Exception {
         FileSystem fileSystem = (FileSystem) obj[0];
         try {
             String _proxy = "";
@@ -52,9 +53,12 @@ public class FsProvider implements IProvider {
             if (resultStr.contains("ERROR") || resultStr.contains("error")) {
                 throw new Exception(resultStr);
             }
-            return resultStr;
+            ResultDTO dto = new ResultDTO();
+            dto.setCommand(command);
+            dto.setResultStr(resultStr);
+            return dto;
         } catch (Exception e) {
-            return "";
+            throw e;
         }
     }
 

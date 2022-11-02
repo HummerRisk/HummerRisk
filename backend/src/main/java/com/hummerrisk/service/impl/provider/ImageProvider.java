@@ -9,6 +9,7 @@ import com.hummerrisk.commons.constants.TrivyConstants;
 import com.hummerrisk.commons.utils.CommandUtils;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.commons.utils.ProxyUtil;
+import com.hummerrisk.dto.ResultDTO;
 import com.hummerrisk.service.impl.HummerPlugin;
 import com.hummerrisk.service.impl.IProvider;
 import org.apache.commons.lang3.StringUtils;
@@ -22,7 +23,7 @@ public class ImageProvider implements IProvider {
         return name;
     }
 
-    public String execute(Object... obj) throws Exception {
+    public ResultDTO execute(Object... obj) throws Exception {
         Image image = (Image) obj[0];
         try {
             String _proxy = "";
@@ -68,7 +69,10 @@ public class ImageProvider implements IProvider {
             if (resultStr.contains("ERROR") || resultStr.contains("error")) {
                 throw new Exception(resultStr);
             }
-            return resultStr;
+            ResultDTO dto = new ResultDTO();
+            dto.setCommand(command);
+            dto.setResultStr(resultStr);
+            return dto;
         } catch (Exception e) {
             throw e;
         }

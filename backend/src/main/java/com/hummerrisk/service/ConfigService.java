@@ -12,10 +12,7 @@ import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.config.ConfigRequest;
 import com.hummerrisk.controller.request.config.ConfigResultRequest;
-import com.hummerrisk.dto.CloudNativeConfigDTO;
-import com.hummerrisk.dto.CloudNativeConfigResultDTO;
-import com.hummerrisk.dto.HistoryCloudNativeConfigResultDTO;
-import com.hummerrisk.dto.MetricChartDTO;
+import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.service.impl.ExecEngineFactoryImp;
 import com.hummerrisk.service.impl.IProvider;
@@ -291,8 +288,8 @@ public class ConfigService {
             CloudNativeConfig cloudNativeConfig = cloudNativeConfigMapper.selectByPrimaryKey(result.getConfigId());
             String resultJson = "";
 
-            execute(cloudNativeConfig);
-
+            String command = execute(cloudNativeConfig).getCommand();
+            result.setCommand(command);
             resultJson = ReadFileUtils.readToBuffer(TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON);
 
             result.setResultJson(resultJson);
@@ -317,7 +314,7 @@ public class ConfigService {
         }
     }
 
-    public String execute(CloudNativeConfig cloudNativeConfig) throws Exception {
+    public ResultDTO execute(CloudNativeConfig cloudNativeConfig) throws Exception {
         Proxy proxy = new Proxy();
         if (cloudNativeConfig.getProxyId()!=null) {
             proxy= proxyMapper.selectByPrimaryKey(cloudNativeConfig.getProxyId());
@@ -332,7 +329,7 @@ public class ConfigService {
         scanSetting.setIgnoreUnfixed(ignoreUnfixed);
         scanSetting.setOfflineScan(offlineScan);
         IProvider cp = execEngineFactoryImp.getProvider("configProvider");
-        return (String) execEngineFactoryImp.executeMethod(cp, "execute", cloudNativeConfig, proxy, scanSetting);
+        return (ResultDTO) execEngineFactoryImp.executeMethod(cp, "execute", cloudNativeConfig, proxy, scanSetting);
     }
 
     long saveCloudNativeConfigResultItem(CloudNativeConfigResult result) throws Exception {
