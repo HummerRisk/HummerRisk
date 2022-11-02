@@ -97,6 +97,8 @@ public class K8sRequest extends Request {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
             LogUtil.error(e.getMessage());
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -121,6 +123,8 @@ public class K8sRequest extends Request {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
             LogUtil.error(e.getMessage());
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -144,6 +148,8 @@ public class K8sRequest extends Request {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
             LogUtil.error(e.getMessage());
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -165,6 +171,8 @@ public class K8sRequest extends Request {
         } catch (IOException e) {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
+            LogUtil.error(e.getMessage());
+        } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
         return list;
@@ -188,6 +196,8 @@ public class K8sRequest extends Request {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
             LogUtil.error(e.getMessage());
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -209,6 +219,8 @@ public class K8sRequest extends Request {
         } catch (IOException e) {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
+            LogUtil.error(e.getMessage());
+        } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
         return list;
@@ -232,6 +244,8 @@ public class K8sRequest extends Request {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
             LogUtil.error(e.getMessage());
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -253,6 +267,8 @@ public class K8sRequest extends Request {
         } catch (IOException e) {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
+            LogUtil.error(e.getMessage());
+        } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
         return list;
@@ -276,6 +292,8 @@ public class K8sRequest extends Request {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
             LogUtil.error(e.getMessage());
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -297,6 +315,8 @@ public class K8sRequest extends Request {
         } catch (IOException e) {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
+            LogUtil.error(e.getMessage());
+        } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
         return list;
@@ -320,6 +340,8 @@ public class K8sRequest extends Request {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
             LogUtil.error(e.getMessage());
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -341,6 +363,8 @@ public class K8sRequest extends Request {
         } catch (IOException e) {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
+            LogUtil.error(e.getMessage());
+        } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
         return list;
@@ -364,6 +388,8 @@ public class K8sRequest extends Request {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
             LogUtil.error(e.getMessage());
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -385,6 +411,8 @@ public class K8sRequest extends Request {
         } catch (IOException e) {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
+            LogUtil.error(e.getMessage());
+        } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
         return list;
@@ -408,6 +436,8 @@ public class K8sRequest extends Request {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
             LogUtil.error(e.getMessage());
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -429,6 +459,8 @@ public class K8sRequest extends Request {
         } catch (IOException e) {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
+            LogUtil.error(e.getMessage());
+        } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
         return list;
@@ -452,6 +484,8 @@ public class K8sRequest extends Request {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
             LogUtil.error(e.getMessage());
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -473,6 +507,8 @@ public class K8sRequest extends Request {
         } catch (IOException e) {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
+            LogUtil.error(e.getMessage());
+        } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
         return list;
@@ -496,6 +532,8 @@ public class K8sRequest extends Request {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
             LogUtil.error(e.getMessage());
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
         }
         return list;
     }
@@ -513,6 +551,8 @@ public class K8sRequest extends Request {
         } catch (IOException e) {
             LogUtil.error(e.getMessage());
         } catch (ApiException e) {
+            LogUtil.error(e.getMessage());
+        } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
         return list;

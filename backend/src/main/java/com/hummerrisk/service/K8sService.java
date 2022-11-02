@@ -342,15 +342,15 @@ public class K8sService {
                 record.setResult(true);
             } catch (IOException e) {
                 LogUtil.error(e.getMessage());
-                record.setOutput("i18n_sync_k8s_error:{" + i + "}" + e.getMessage());
+                record.setOutput("i18n_sync_k8s_error:{IOException " + i + "}" + e.getMessage());
                 record.setResult(false);
             } catch (ApiException e) {
                 LogUtil.error(e.getMessage());
-                record.setOutput("i18n_sync_k8s_error:{" + i + "}" + e.getMessage());
+                record.setOutput("i18n_sync_k8s_error:{ApiException " + i + "}" + e.getMessage());
                 record.setResult(false);
             } catch (Exception e) {
                 LogUtil.error(e.getMessage());
-                record.setOutput("i18n_sync_k8s_error:{" + i + "}" + e.getMessage());
+                record.setOutput("i18n_sync_k8s_error:{Exception " + i + "}" + e.getMessage());
                 record.setResult(false);
             }
             record.setSum(i);

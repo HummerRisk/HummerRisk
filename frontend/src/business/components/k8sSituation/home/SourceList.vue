@@ -217,6 +217,7 @@ export default {
   },
   watch: {
     selectNodeIds() {
+      this.searchInfo();
       this.search();
     },
     batchReportId() {
