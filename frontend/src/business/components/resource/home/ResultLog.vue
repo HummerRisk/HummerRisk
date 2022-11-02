@@ -48,6 +48,9 @@
                 <el-button plain size="small" @click="showInformation(scope.row, $t('resource.i18n_resource_scanning_return'))">
                   <i class="el-icon-document"></i> {{ $t('resource.i18n_resource_scanning_return') }}
                 </el-button>
+                <el-button plain size="small" @click="copy(scope.row.cloudTaskItem)" style="display: none;">
+                  <i class="el-icon-document-copy"></i> {{ $t('task.execute') }}
+                </el-button>
             </div>
             <div>
               <el-drawer
@@ -162,6 +165,17 @@
           this.fileTitle = title;
           this.innerDrawer = true;
         });
+      },
+      copy(row) {
+        let input = document.createElement("input");
+        document.body.appendChild(input);
+        input.value = row['command'];
+        input.select();
+        if (input.setSelectionRange) {
+          input.setSelectionRange(0, input.value.length);
+        }
+        document.execCommand("copy");
+        document.body.removeChild(input);
       },
     },
 

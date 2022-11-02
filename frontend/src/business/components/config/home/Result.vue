@@ -75,7 +75,10 @@
           <el-row>
             <el-col :span="24">
               <div class="grid-content bg-purple-light">
-                <span class="grid-content-log-span"> {{ logForm.name }}</span>
+                <span class="grid-content-log-span">
+                  {{ logForm.name }}
+                  <i class="el-icon-document-copy" @click="copy(logForm)" style="display: none;"></i>
+                </span>
                 <span class="grid-content-log-span">
                   <img :src="require(`@/assets/img/config/yaml.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                 </span>
@@ -332,6 +335,17 @@ export default {
       }, error => {
         console.log("下载报错", error);
       });
+    },
+    copy(row) {
+      let input = document.createElement("input");
+      document.body.appendChild(input);
+      input.value = row['command'];
+      input.select();
+      if (input.setSelectionRange) {
+        input.setSelectionRange(0, input.value.length);
+      }
+      document.execCommand("copy");
+      document.body.removeChild(input);
     },
   },
   computed: {

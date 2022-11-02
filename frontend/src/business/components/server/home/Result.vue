@@ -78,7 +78,10 @@
           <el-row>
             <el-col :span="24">
               <div class="grid-content bg-purple-light">
-                <span class="grid-content-log-span"> {{ logForm.ruleName }}</span>
+                <span class="grid-content-log-span">
+                  {{ logForm.ruleName }}
+                  <i class="el-icon-document-copy" @click="copy(logForm)" style="display: none;"></i>
+                </span>
                 <span class="grid-content-log-span">
                       <img :src="require(`@/assets/img/platform/${logForm.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                        &nbsp;&nbsp; {{ logForm.serverGroupName }} : {{ logForm.serverName }}
@@ -314,6 +317,17 @@ export default {
           }
         }
       });
+    },
+    copy(row) {
+      let input = document.createElement("input");
+      document.body.appendChild(input);
+      input.value = row['command'];
+      input.select();
+      if (input.setSelectionRange) {
+        input.setSelectionRange(0, input.value.length);
+      }
+      document.execCommand("copy");
+      document.body.removeChild(input);
     },
   },
   computed: {

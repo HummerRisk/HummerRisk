@@ -25,13 +25,12 @@
             </el-tooltip>
           </el-table-column>
           <el-table-column v-slot:default="scope" :label="$t('k8s.config_compliance')" prop="returnConfigSum" sortable show-overflow-tooltip min-width="16%">
-            <el-tooltip effect="dark" :content="$t('history.config_result') + ' CRITICAL:' + scope.row.configCritical + ' HIGH:' +  scope.row.configHigh + ' MEDIUM:' + scope.row.configMedium + ' LOW:' + scope.row.configLow + ' UNKNOWN:' + scope.row.configUnknown" placement="top">
+            <el-tooltip effect="dark" :content="$t('history.config_result') + ' CRITICAL:' + scope.row.configCritical + ' HIGH:' +  scope.row.configHigh + ' MEDIUM:' + scope.row.configMedium + ' LOW:' + scope.row.configLow" placement="top">
               <div class="txt-click" @click="goConfigResource(scope.row)">
                 <span style="background-color: #8B0000;color: white;padding: 3px;">{{ 'C:' + scope.row.configCritical }}</span>
                 <span style="background-color: #FF4D4D;color: white;padding: 3px;">{{ 'H:' +  scope.row.configHigh }}</span>
                 <span style="background-color: #FF8000;color: white;padding: 3px;">{{ 'M:' + scope.row.configMedium }}</span>
-                <span style="background-color: #eeab80;color: white;padding: 3px;">{{ 'L:' + scope.row.configLow }}</span>
-                <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'U:' + scope.row.configUnknown }}</span>
+                <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'L:' + scope.row.configLow }}</span>
               </div>
             </el-tooltip>
           </el-table-column>
