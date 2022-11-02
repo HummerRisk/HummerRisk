@@ -15,16 +15,24 @@
           </el-table-column>
           <el-table-column v-slot:default="scope" :label="$t('k8s.vuln_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="16%">
             <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown" placement="top">
-              <el-link type="primary" class="text-click" @click="goResource(scope.row)">
-                {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown }}
-              </el-link>
+              <div class="txt-click" @click="goResource(scope.row)">
+                <span style="background-color: #8B0000;color: white;padding: 3px;">{{ 'C:' + scope.row.critical }}</span>
+                <span style="background-color: #FF4D4D;color: white;padding: 3px;">{{ 'H:' +  scope.row.high }}</span>
+                <span style="background-color: #FF8000;color: white;padding: 3px;">{{ 'M:' + scope.row.medium }}</span>
+                <span style="background-color: #eeab80;color: white;padding: 3px;">{{ 'L:' + scope.row.low }}</span>
+                <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'U:' + scope.row.unknown }}</span>
+              </div>
             </el-tooltip>
           </el-table-column>
           <el-table-column v-slot:default="scope" :label="$t('k8s.config_compliance')" prop="returnConfigSum" sortable show-overflow-tooltip min-width="16%">
-            <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.configCritical + ' HIGH:' +  scope.row.configHigh + ' MEDIUM:' + scope.row.configMedium + ' LOW:' + scope.row.configLow + ' UNKNOWN:' + scope.row.configUnknown" placement="top">
-              <el-link type="primary" class="text-click" @click="goConfigResource(scope.row)">
-                {{ 'C:' + scope.row.configCritical + ' H:' +  scope.row.configHigh + ' M:' + scope.row.configMedium + ' L:' + scope.row.configLow + ' U:' + scope.row.configUnknown }}
-              </el-link>
+            <el-tooltip effect="dark" :content="$t('history.config_result') + ' CRITICAL:' + scope.row.configCritical + ' HIGH:' +  scope.row.configHigh + ' MEDIUM:' + scope.row.configMedium + ' LOW:' + scope.row.configLow + ' UNKNOWN:' + scope.row.configUnknown" placement="top">
+              <div class="txt-click" @click="goConfigResource(scope.row)">
+                <span style="background-color: #8B0000;color: white;padding: 3px;">{{ 'C:' + scope.row.configCritical }}</span>
+                <span style="background-color: #FF4D4D;color: white;padding: 3px;">{{ 'H:' +  scope.row.configHigh }}</span>
+                <span style="background-color: #FF8000;color: white;padding: 3px;">{{ 'M:' + scope.row.configMedium }}</span>
+                <span style="background-color: #eeab80;color: white;padding: 3px;">{{ 'L:' + scope.row.configLow }}</span>
+                <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'U:' + scope.row.configUnknown }}</span>
+              </div>
             </el-tooltip>
           </el-table-column>
           <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="11%" prop="resultStatus" sortable show-overflow-tooltip>
@@ -442,8 +450,8 @@ import CodeDiff from 'vue-code-diff';
         let resultUrl = "/k8s/getCloudNativeResultWithBLOBs/";
         this.result = this.$get(resultUrl + result.id, response => {
           this.logForm = response.data;
-          this.logForm.vulnerabilityReport = JSON.parse(this.logForm.vulnerabilityReport);
-          this.logForm.configAuditReport = JSON.parse(this.logForm.configAuditReport);
+          if(this.logForm.vulnerabilityReport) this.logForm.vulnerabilityReport = JSON.parse(this.logForm.vulnerabilityReport);
+          if(this.logForm.configAuditReport) this.logForm.configAuditReport = JSON.parse(this.logForm.configAuditReport);
         });
         this.logVisible = true;
       },
@@ -519,5 +527,12 @@ import CodeDiff from 'vue-code-diff';
   margin-bottom: 0;
   padding: 10px 2%;
   width: 46%;
+}
+.txt-click {
+  cursor:pointer;
+}
+.txt-click:hover {
+  color: aliceblue;
+  text-shadow: 1px 1px 1px #000;
 }
 </style>

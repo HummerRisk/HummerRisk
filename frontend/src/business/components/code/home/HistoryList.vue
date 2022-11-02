@@ -15,9 +15,13 @@
           </el-table-column>
           <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="16%">
             <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown" placement="top">
-              <el-link type="primary" class="text-click" @click="goResource(scope.row)">
-                {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown}}
-              </el-link>
+              <div class="txt-click" @click="goResource(scope.row)">
+                <span style="background-color: #8B0000;color: white;padding: 3px;">{{ 'C:' + scope.row.critical }}</span>
+                <span style="background-color: #FF4D4D;color: white;padding: 3px;">{{ 'H:' +  scope.row.high }}</span>
+                <span style="background-color: #FF8000;color: white;padding: 3px;">{{ 'M:' + scope.row.medium }}</span>
+                <span style="background-color: #eeab80;color: white;padding: 3px;">{{ 'L:' + scope.row.low }}</span>
+                <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'U:' + scope.row.unknown }}</span>
+              </div>
             </el-tooltip>
           </el-table-column>
           <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="11%" prop="resultStatus" sortable show-overflow-tooltip>
@@ -466,5 +470,11 @@ import CodeDiff from 'vue-code-diff';
 .box-card >>> .el-card__header {
   background-color: aliceblue;
 }
-
+.txt-click {
+  cursor:pointer;
+}
+.txt-click:hover {
+  color: aliceblue;
+  text-shadow: 1px 1px 1px #000;
+}
 </style>

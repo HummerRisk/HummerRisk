@@ -180,7 +180,7 @@ export default {
     init() {
     },
   },
-  created() {
+  activated() {
     this.init();
   }
 }

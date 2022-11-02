@@ -543,5 +543,9 @@ export default {
 .txt-click {
   cursor:pointer;
 }
+.txt-click:hover {
+  color: aliceblue;
+  text-shadow: 1px 1px 1px #000;
+}
 </style>
 
