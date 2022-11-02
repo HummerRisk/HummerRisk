@@ -121,7 +121,11 @@
               <el-col :span="24">
                 <div class="grid-content bg-purple-light">
                   <span class="grid-content-log-span"> {{ logForm.ruleDesc }}</span>
-                  <span class="grid-content-log-span"> {{ logForm.ip }}</span>
+                  <span class="grid-content-log-span">
+                    {{ logForm.ip }}
+                    <span v-if="logForm.isSeverity" style="color: #46ad59">({{ $t('resource.risk_free') }})</span>
+                    <span v-if="!logForm.isSeverity" style="color: #f84846">({{ $t('resource.risky') }})</span>
+                  </span>
                   <span class="grid-content-status-span">
                   <rule-type :row="logForm"/>
                 </span>
@@ -282,10 +286,6 @@ import CodeDiff from 'vue-code-diff';
         script: '',
         buttons: [
           {
-            tip: this.$t('resource.resource_result'), icon: "el-icon-s-data", type: "success",
-            exec: this.handleOpen
-          },
-          {
             tip: this.$t('resource.delete_result'), icon: "el-icon-delete", type: "danger",
             exec: this.handleDelete
           }
@@ -353,12 +353,6 @@ import CodeDiff from 'vue-code-diff';
         } else {
           return '';
         }
-      },
-      handleOpen(item) {
-        this.outputListSearchData = item;
-        this.outputListDataSearch();
-        this.oldStr = item.returnLog;
-        this.visibleList =  true;
       },
       handleDelete(obj) {
         this.$alert(this.$t('code.delete_confirm') + this.$t('code.result') + " ？", '', {

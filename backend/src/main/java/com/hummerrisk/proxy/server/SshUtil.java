@@ -195,6 +195,7 @@ public class SshUtil {
             result = result + s + " ";
         }
         result = result.trim();
+        session.close();
         return result;
     }
 
@@ -264,6 +265,7 @@ public class SshUtil {
             result = result + s + " ";
         }
         result = result.trim();
+        session.close(false);
         return result;
     }
 

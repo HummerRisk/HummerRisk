@@ -367,6 +367,16 @@ export const RULE_NAME = {
   },
 }
 
+export const SERVER_RULE_NAME = {
+  key: "ruleName", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "rule.rule_name", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
 export const RULE_PLUGIN_NAME = {
   key: "pluginId",
   name: 'TableSearchSelect',
@@ -607,7 +617,7 @@ export const RESOURCE_CONFIGS = [NAME, RULE_NAME, RULE_SEVERITY, CREATOR];
 export const SERVER_CONFIGS = [NAME, IP, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const SERVER_CERTIFICATE_CONFIGS = [NAME, DESCRIPTION, CREATOR, LAST_MODIFIED];
 export const SERVER_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
-export const SERVER_RESULT_CONFIGS = [NAME, IP, RULE_NAME, RULE_SEVERITY, CREATOR, UPDATE_TIME];
+export const SERVER_RESULT_CONFIGS = [NAME, IP, SERVER_RULE_NAME, RULE_SEVERITY, CREATOR, UPDATE_TIME];
 export const IMAGE_CONFIGS = [NAME, IMAGE_URL, ACCOUNT_STATUS, CREATOR, CREATE_TIME, UPDATE_TIME];
 export const IMAGE_REPO_CONFIGS = [NAME, ACCOUNT_STATUS, CREATOR, UPDATE_TIME];
 export const IMAGE_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];

@@ -112,7 +112,7 @@ public class ServerService {
         Server server = BeanUtils.copyBean(new Server(), getServerList(request).get(0));
         Integer scanId = historyService.insertScanHistory(server);
         if (StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.VALID.name())) {
-            deleteServerResult(id);
+            deleteServerResultById(id);
             List<ServerRuleDTO> ruleList = ruleList(null);
             ServerResult result = new ServerResult();
             String serverGroupName = serverGroupMapper.selectByPrimaryKey(server.getServerGroupId()).getName();
@@ -180,11 +180,12 @@ public class ServerService {
 
             noticeService.createServerMessageOrder(result);
 
-            saveServerResultLog(result.getId(), "i18n_end_server_result", returnLog, true);
+            saveServerResultLog(result.getId(), "i18n_end_server_result", returnLog, result.getIsSeverity());
 
             historyService.updateHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
         } catch (Exception e) {
             LogUtil.error(result.getServerName() + "{}" + result.getIp() + "[error]: " + e.getMessage());
+            result.setReturnLog(result.getServerName() + "{}" + result.getIp() + "[error]: " + e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             serverResultMapper.updateByPrimaryKeySelective(result);
@@ -203,10 +204,14 @@ public class ServerService {
         return result.getId();
     }
 
-    public void deleteServerResult(String id) {
+    public void deleteServerResultById(String id) {
         ServerResultExample example = new ServerResultExample();
         example.createCriteria().andServerIdEqualTo(id);//serverId
         serverResultMapper.deleteByExample(example);
+    }
+
+    public void deleteServerResult(String id) {
+        serverResultMapper.deleteByPrimaryKey(id);
     }
 
     public void saveServerResultLog(String resultId, String operation, String output, boolean result) throws Exception {

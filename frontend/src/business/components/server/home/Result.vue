@@ -20,7 +20,7 @@
         <!-- 展开 end -->
         <el-table-column type="index" min-width="2%"/>
         <el-table-column prop="serverName" :label="$t('server.server_name')" min-width="11%" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="ip" :label="'IP'" min-width="12%" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="ip" :label="'IP'" min-width="10%" show-overflow-tooltip></el-table-column>
         <el-table-column prop="ruleName" :label="$t('server.rule_name')" min-width="17%" show-overflow-tooltip></el-table-column>
         <el-table-column min-width="8%" :label="$t('server.severity')" column-key="severity">
           <template v-slot:default="{row}">
@@ -47,7 +47,7 @@
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
-        <el-table-column prop="isSeverity" :label="$t('server.is_severity')" min-width="8%" show-overflow-tooltip v-slot:default="scope">
+        <el-table-column prop="isSeverity" :label="$t('server.is_severity')" min-width="10%" show-overflow-tooltip v-slot:default="scope" sortable>
           <el-tooltip class="item" effect="dark" :content="scope.row.returnLog" placement="top">
             <span v-if="scope.row.isSeverity" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
             <span v-if="!scope.row.isSeverity" style="color: #f84846">{{ $t('resource.risky') }}</span>
@@ -97,7 +97,11 @@
             <el-col :span="24">
               <div class="grid-content bg-purple-light">
                 <span class="grid-content-log-span"> {{ logForm.ruleDesc }}</span>
-                <span class="grid-content-log-span"> {{ logForm.ip }}</span>
+                <span class="grid-content-log-span">
+                  {{ logForm.ip }}
+                  <span v-if="logForm.isSeverity" style="color: #46ad59">({{ $t('resource.risk_free') }})</span>
+                  <span v-if="!logForm.isSeverity" style="color: #f84846">({{ $t('resource.risky') }})</span>
+                </span>
                 <span class="grid-content-status-span">
                   <rule-type :row="logForm"/>
                 </span>
@@ -299,12 +303,12 @@ export default {
       });
     },
     handleDelete(obj) {
-      this.$alert(this.$t('server.delete_confirm') + this.$t('server.result') + " ？", '', {
+      this.$alert(this.$t('server.delete_confirm') + this.$t('server.result') + " ？", obj.ruleName, {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
             this.result = this.$get("/server/deleteServerResult/" + obj.id,  res => {
-              setTimeout(function () {window.location.reload()}, 2000);
+              this.search();
               this.$success(this.$t('commons.delete_success'));
             });
           }
