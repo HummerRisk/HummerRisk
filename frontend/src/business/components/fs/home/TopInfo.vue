@@ -6,7 +6,7 @@
           <span class="hr-card-data-digital">{{ topInfo.filesystems }}</span>
           <span class="hr-card-data-unit"> {{ 'FileSystems' }}</span>
         </span>
-        <span class="hr-card-desc">{{ $t('fs.file_system_manage') }}</span>
+        <span class="hr-card-desc">{{ $t('fs.fs') }}</span>
       </el-card>
     </el-col>
     <el-col :span="4">

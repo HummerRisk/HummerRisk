@@ -4,7 +4,7 @@
       <el-col :span="12">
         <el-card class="table-card">
           <template v-slot:header>
-            <span class="title">{{ $t('code.code_project') }}</span>
+            <span class="title">{{ $t('code.by_code_project') }}</span>
           </template>
           <left-chart/>
         </el-card>
@@ -12,7 +12,7 @@
       <el-col :span="12">
         <el-card class="table-card">
           <template v-slot:header>
-            <span class="title">{{ $t('code.severity') }}</span>
+            <span class="title">{{ $t('commons.by_severity') }}</span>
           </template>
           <right-chart/>
         </el-card>
@@ -22,7 +22,7 @@
       <el-col :span="24">
         <el-card class="table-card">
           <template v-slot:header>
-            <span class="title">{{ $t('dashboard.code_statistics') }}</span>
+            <span class="title">{{ $t('code.by_code') }}</span>
           </template>
           <code-chart/>
         </el-card>

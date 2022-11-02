@@ -6,7 +6,7 @@
           <span class="hr-card-data-digital">{{ topInfo.k8s }}</span>
           <span class="hr-card-data-unit"> {{ 'K8s' }}</span>
         </span>
-        <span class="hr-card-desc">{{ $t('k8s.platform') }}</span>
+        <span class="hr-card-desc">{{ $t('k8s.k8s_platform') }}</span>
       </el-card>
     </el-col>
     <el-col :span="4">

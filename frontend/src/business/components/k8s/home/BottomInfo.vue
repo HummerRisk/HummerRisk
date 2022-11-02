@@ -4,7 +4,7 @@
       <el-col :span="12">
         <el-card class="table-card">
           <template v-slot:header>
-            <span class="title">{{ $t('k8s.platform') }}</span>
+            <span class="title">{{ $t('k8s.by_k8s_platform') }}</span>
           </template>
           <left-chart/>
         </el-card>
@@ -12,7 +12,7 @@
       <el-col :span="12">
         <el-card class="table-card">
           <template v-slot:header>
-            <span class="title">{{ $t('commons.severity') }}</span>
+            <span class="title">{{ $t('commons.by_severity') }}</span>
           </template>
           <right-chart/>
         </el-card>

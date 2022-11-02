@@ -12,7 +12,7 @@
       <el-col :span="12">
         <el-card class="table-card">
           <template v-slot:header>
-            <span class="title">{{ $t('server.severity') }}</span>
+            <span class="title">{{ $t('commons.by_severity') }}</span>
           </template>
           <right-chart/>
         </el-card>

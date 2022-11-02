@@ -4,7 +4,7 @@
       <el-col :span="12">
         <el-card class="table-card">
           <template v-slot:header>
-            <span class="title">{{ $t('image.image_repo') }}</span>
+            <span class="title">{{ $t('image.by_image_repo') }}</span>
           </template>
           <left-chart/>
         </el-card>
@@ -12,7 +12,7 @@
       <el-col :span="12">
         <el-card class="table-card">
           <template v-slot:header>
-            <span class="title">{{ $t('image.severity') }}</span>
+            <span class="title">{{ $t('commons.by_severity') }}</span>
           </template>
           <right-chart/>
         </el-card>
@@ -22,7 +22,7 @@
       <el-col :span="24">
         <el-card class="table-card">
           <template v-slot:header>
-            <span class="title">{{ $t('dashboard.image_statistics') }}</span>
+            <span class="title">{{ $t('image.by_image') }}</span>
           </template>
           <image-chart/>
         </el-card>
