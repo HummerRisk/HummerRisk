@@ -372,10 +372,12 @@ public class CodeService {
         String securityChecks = systemParameterService.getValue(ParamConstants.SCAN.SecurityChecks.getKey());
         String ignoreUnfixed = systemParameterService.getValue(ParamConstants.SCAN.IgnoreUnfixed.getKey());
         String offlineScan = systemParameterService.getValue(ParamConstants.SCAN.OfflineScan.getKey());
+        String severity = systemParameterService.getValue(ParamConstants.SCAN.Severity.getKey());
         scanSetting.setSkipDbUpdate(skipDbUpdate);
         scanSetting.setSecurityChecks(securityChecks);
         scanSetting.setIgnoreUnfixed(ignoreUnfixed);
         scanSetting.setOfflineScan(offlineScan);
+        scanSetting.setSeverity(severity);
         IProvider cp = execEngineFactoryImp.getProvider("codeProvider");
         return (ResultDTO) execEngineFactoryImp.executeMethod(cp, "execute", code, proxy, scanSetting);
     }
