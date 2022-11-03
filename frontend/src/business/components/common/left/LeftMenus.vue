@@ -43,10 +43,10 @@
 <!--            <i class="iconfont icon-feiyongbaohan"></i>-->
 <!--            <span slot="title">{{ $t('cost.analyze') }}</span>-->
 <!--          </el-menu-item>-->
-<!--          <el-menu-item index="/oss">-->
-<!--            <i class="iconfont icon-ossduixiangcunchuOSS"></i>-->
-<!--            <span slot="title">{{ $t('oss.oss_setting') }}</span>-->
-<!--          </el-menu-item>-->
+          <el-menu-item index="/oss">
+            <i class="iconfont icon-ossduixiangcunchuOSS"></i>
+            <span slot="title">{{ $t('oss.oss_setting') }}</span>
+          </el-menu-item>
         </el-submenu>
         <el-submenu index="2">
           <template slot="title">
