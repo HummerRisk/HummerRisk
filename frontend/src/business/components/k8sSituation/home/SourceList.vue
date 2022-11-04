@@ -311,7 +311,6 @@ export default {
       this.visible =  false;
     },
     showYaml(item) {
-      console.log(item)
       this.string2YamlFormat = item.sourceYaml;
       this.string2JsonFormat = item.sourceJson;
       this.visible = true;

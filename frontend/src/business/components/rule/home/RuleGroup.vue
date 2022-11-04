@@ -48,7 +48,7 @@
               </span>
                 <div class="bottom clearfix">
                   <time class="time">
-                    <span class="pa-time">{{ data.level }}&nbsp;&nbsp;</span>
+                    <span class="pa-time">{{ data.level }}&nbsp;</span>
                     <span class="pa-time2">{{ $t('rule.rule_sum', [data.ruleSum]) }}</span>
                   </time>
                   <el-dropdown class="button button-drop" @command="(command)=>{handleCommand(command, data)}">
