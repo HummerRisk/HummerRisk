@@ -157,16 +157,20 @@
                     :row-class-name="tableRowClassName"
                     @filter-change="filter">
             <el-table-column type="index" min-width="3%"/>
-            <el-table-column :label="$t('k8s.platform')" min-width="15%" show-overflow-tooltip>
+            <el-table-column :label="$t('k8s.platform')" min-width="18%" show-overflow-tooltip>
               <template v-slot:default="scope">
-              <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.cloudNativeName }}
-              </span>
               </template>
             </el-table-column>
-            <el-table-column prop="sourceName" :label="$t('k8s.source_name')" min-width="23%" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="sourceNamespace" :label="$t('k8s.source_namespace')" min-width="16%" show-overflow-tooltip sortable></el-table-column>
+            <el-table-column prop="sourceName" :label="$t('k8s.source_name')" min-width="25%" show-overflow-tooltip>
+              <template v-slot:default="scope">
+                <el-link type="primary" @click="showYaml(scope.row)">
+                  &nbsp;&nbsp; <i class="el-icon-info"></i> {{ scope.row.sourceName }}
+                </el-link>
+              </template>
+            </el-table-column>
+            <el-table-column prop="sourceNamespace" :label="$t('k8s.source_namespace')" min-width="18%" show-overflow-tooltip sortable></el-table-column>
             <el-table-column prop="sourceType" :label="$t('k8s.source_type')" min-width="13%" show-overflow-tooltip sortable></el-table-column>
             <el-table-column min-width="18%" :label="$t('k8s.sync_time')" sortable
                              prop="createTime">
@@ -174,12 +178,25 @@
                 <span>{{ scope.row.createTime | timestampFormatDate }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="userName" :label="$t('account.creator')" min-width="12%" show-overflow-tooltip/>
+<!--            <el-table-column prop="userName" :label="$t('account.creator')" min-width="12%" show-overflow-tooltip/>-->
           </el-table>
           <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
         </el-card>
       </el-card>
     </el-col>
+
+    <!--json-->
+    <el-drawer class="rtl" title="YAML&JSON" :visible.sync="visible"  size="80%" :before-close="handleClose" :direction="direction" :destroy-on-close="true">
+      <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+        <el-tab-pane label="YAML" name="yaml">
+          <codemirror ref="cmEditor" v-model="string2YamlFormat" class="code-mirror" :options="cmOptions" />
+        </el-tab-pane>
+        <el-tab-pane label="JSON" name="json">
+          <codemirror ref="cmEditor" v-model="string2JsonFormat" class="code-mirror" :options="cmOptions" />
+        </el-tab-pane>
+      </el-tabs>
+    </el-drawer>
+    <!--json-->
   </el-row>
 </template>
 
@@ -210,6 +227,23 @@ export default {
       currentPage: 1,
       pageSize: 10,
       total: 0,
+      direction: 'rtl',
+      string2Key: "",
+      string2YamlFormat: "",
+      string2JsonFormat: "",
+      visible: false,
+      cmOptions: {
+        tabSize: 4,
+        mode: {
+          name: 'shell',
+          json: true
+        },
+        theme: 'bespin',
+        lineNumbers: true,
+        line: true,
+        indentWithTabs: true,
+      },
+      activeName: 'yaml',
     }
   },
   props: {
@@ -273,6 +307,26 @@ export default {
         return '';
       }
     },
+    handleClose() {
+      this.visible =  false;
+    },
+    showYaml(item) {
+      console.log(item)
+      this.string2YamlFormat = item.sourceYaml;
+      this.string2JsonFormat = item.sourceJson;
+      this.visible = true;
+    },
+    handleClick(tab, event) {
+      this.activeName = tab.name;
+      setTimeout(() => {
+        this.$refs.cmEditor.codemirror.refresh();
+      }, 50);
+    }
+  },
+  computed: {
+    codemirror() {
+      return this.$refs.cmEditor.codemirror
+    }
   },
   created() {
     this.init();
@@ -376,5 +430,15 @@ export default {
   text-align: center;
   text-decoration: underline;
 }
-
+.rtl >>> .el-drawer__body {
+  overflow-y: auto;
+  padding: 20px;
+}
+.code-mirror {
+  height: 600px !important;
+}
+.code-mirror >>> .CodeMirror {
+  /* Set height, width, borders, and global font properties here */
+  height: 600px !important;
+}
 </style>

@@ -1,9 +1,9 @@
 package com.hummerrisk.dto;
 
-import com.hummerrisk.base.domain.CloudNativeSource;
+import com.hummerrisk.base.domain.CloudNativeSourceWithBLOBs;
 
 
-public class CloudNativeSourceDTO extends CloudNativeSource {
+public class CloudNativeSourceDTO extends CloudNativeSourceWithBLOBs {
 
     private String userName;
 
