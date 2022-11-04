@@ -26,3 +26,5 @@ CREATE TABLE IF NOT EXISTS `oss_log` (
     `result`                       tinyint(1)          DEFAULT NULL COMMENT '结果',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
+
+ALTER TABLE `cloud_native_source` ADD `source_json` longtext DEFAULT NULL COMMENT '资源json';

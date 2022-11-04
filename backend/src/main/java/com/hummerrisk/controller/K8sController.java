@@ -186,7 +186,7 @@ public class K8sController {
     @I18n
     @ApiOperation(value = "所有带有 YAML 的云原生资源信息")
     @GetMapping("allCloudNativeSource2YamlList")
-    public List<CloudNativeSource> allCloudNativeSource2YamlList() {
+    public List<CloudNativeSourceWithBLOBs> allCloudNativeSource2YamlList() {
         return k8sService.allCloudNativeSource2YamlList();
     }
 

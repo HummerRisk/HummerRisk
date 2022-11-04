@@ -1,10 +1,13 @@
 package com.hummerrisk.proxy.k8s;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.hummerrisk.base.domain.CloudNative;
-import com.hummerrisk.base.domain.CloudNativeSource;
+import com.hummerrisk.base.domain.CloudNativeSourceWithBLOBs;
+import com.hummerrisk.base.domain.CloudNativeSourceWithBLOBs;
 import com.hummerrisk.base.domain.Proxy;
 import com.hummerrisk.commons.constants.CloudNativeConstants;
+import com.hummerrisk.commons.utils.JsonUtils;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.commons.utils.YamlUtil;
@@ -77,8 +80,8 @@ public class K8sRequest extends Request {
         return null;
     }
 
-    public List<CloudNativeSource> getNameSpace(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getNameSpace(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             CoreV1Api apiInstance = new CoreV1Api(apiClient);
@@ -86,9 +89,11 @@ public class K8sRequest extends Request {
             V1NamespaceList result = apiInstance.listNamespace(pretty, true, null,
                     null, null, null, null, null, null, null);
             for (V1Namespace v1Namespace : result.getItems()) {
-                CloudNativeSource cloudNativeSource = base(cloudNative);
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Namespace.getMetadata().getName());
-                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Namespace));
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(v1Namespace);
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1Namespace.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Namespace.name());
                 list.add(cloudNativeSource);
@@ -103,8 +108,8 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public List<CloudNativeSource> getNode(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getNode(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             CoreV1Api apiInstance = new CoreV1Api(apiClient);
@@ -112,9 +117,11 @@ public class K8sRequest extends Request {
             V1NodeList result = apiInstance.listNode(pretty, true, null,
                     null, null, null, null, null, null, null);
             for (V1Node v1Node : result.getItems()) {
-                CloudNativeSource cloudNativeSource = base(cloudNative);
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Node.getMetadata().getNamespace()!=null?v1Node.getMetadata().getNamespace():"");
-                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Node));
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(v1Node);
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1Node.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Node.name());
                 list.add(cloudNativeSource);
@@ -129,16 +136,18 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public List<CloudNativeSource> getPod(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getPod(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             CoreV1Api apiInstance = new CoreV1Api(apiClient);
             V1PodList result = apiInstance.listPodForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
             for (V1Pod v1Pod : result.getItems()) {
-                CloudNativeSource cloudNativeSource = base(cloudNative);
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Pod.getMetadata().getNamespace()!=null?v1Pod.getMetadata().getNamespace():"");
-                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Pod));
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(v1Pod);
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1Pod.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Pod.name());
                 cloudNativeSource.setSourceNode(v1Pod.getSpec().getNodeName()!=null?v1Pod.getSpec().getNodeName():"");
@@ -154,16 +163,18 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public List<CloudNativeSource> getDeployment(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getDeployment(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             AppsV1Api apiInstance = new AppsV1Api(apiClient);
             V1DeploymentList result = apiInstance.listDeploymentForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
             for (V1Deployment v1Deployment : result.getItems()) {
-                CloudNativeSource cloudNativeSource = base(cloudNative);
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Deployment.getMetadata().getNamespace()!=null?v1Deployment.getMetadata().getNamespace():"");
-                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Deployment));
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(v1Deployment);
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1Deployment.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Deployment.name());
                 list.add(cloudNativeSource);
@@ -178,16 +189,18 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public List<CloudNativeSource> getDaemonSet(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getDaemonSet(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             AppsV1Api apiInstance = new AppsV1Api(apiClient);
             V1DaemonSetList result = apiInstance.listDaemonSetForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
             for (V1DaemonSet v1DaemonSet : result.getItems()) {
-                CloudNativeSource cloudNativeSource = base(cloudNative);
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1DaemonSet.getMetadata().getNamespace()!=null?v1DaemonSet.getMetadata().getNamespace():"");
-                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1DaemonSet));
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(v1DaemonSet);
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1DaemonSet.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.DaemonSet.name());
                 list.add(cloudNativeSource);
@@ -202,16 +215,18 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public List<CloudNativeSource> getService(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getService(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             CoreV1Api apiInstance = new CoreV1Api(apiClient);
             V1ServiceList result = apiInstance.listServiceForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
             for (V1Service v1Service : result.getItems()) {
-                CloudNativeSource cloudNativeSource = base(cloudNative);
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Service.getMetadata().getNamespace()!=null?v1Service.getMetadata().getNamespace():"");
-                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Service));
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(v1Service);
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1Service.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Service.name());
                 list.add(cloudNativeSource);
@@ -226,16 +241,18 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public List<CloudNativeSource> getIngress(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getIngress(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             NetworkingV1Api apiInstance = new NetworkingV1Api(apiClient);
             V1IngressList result = apiInstance.listIngressForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
             for (V1Ingress v1Ingress : result.getItems()) {
-                CloudNativeSource cloudNativeSource = base(cloudNative);
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Ingress.getMetadata().getNamespace()!=null?v1Ingress.getMetadata().getNamespace():"");
-                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Ingress));
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(v1Ingress);
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1Ingress.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Ingress.name());
                 list.add(cloudNativeSource);
@@ -250,16 +267,18 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public List<CloudNativeSource> getRole(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getRole(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             RbacAuthorizationV1Api apiInstance = new RbacAuthorizationV1Api(apiClient);
             V1RoleList result = apiInstance.listRoleForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
             for (V1Role v1Role : result.getItems()) {
-                CloudNativeSource cloudNativeSource = base(cloudNative);
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Role.getMetadata().getNamespace()!=null?v1Role.getMetadata().getNamespace():"");
-                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Role));
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(v1Role);
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1Role.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Role.name());
                 list.add(cloudNativeSource);
@@ -274,16 +293,18 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public List<CloudNativeSource> getSecret(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getSecret(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             CoreV1Api apiInstance = new CoreV1Api(apiClient);
             V1SecretList result = apiInstance.listSecretForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
             for (V1Secret v1Secret : result.getItems()) {
-                CloudNativeSource cloudNativeSource = base(cloudNative);
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Secret.getMetadata().getNamespace()!=null?v1Secret.getMetadata().getNamespace():"");
-                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Secret));
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(v1Secret);
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1Secret.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Secret.name());
                 list.add(cloudNativeSource);
@@ -298,16 +319,18 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public List<CloudNativeSource> getConfigMap(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getConfigMap(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             CoreV1Api apiInstance = new CoreV1Api(apiClient);
             V1ConfigMapList result = apiInstance.listConfigMapForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
             for (V1ConfigMap v1ConfigMap : result.getItems()) {
-                CloudNativeSource cloudNativeSource = base(cloudNative);
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1ConfigMap.getMetadata().getNamespace()!=null?v1ConfigMap.getMetadata().getNamespace():"");
-                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1ConfigMap));
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(v1ConfigMap);
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1ConfigMap.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.ConfigMap.name());
                 list.add(cloudNativeSource);
@@ -322,16 +345,18 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public List<CloudNativeSource> getStatefulSet(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getStatefulSet(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             AppsV1Api apiInstance = new AppsV1Api(apiClient);
             V1StatefulSetList result = apiInstance.listStatefulSetForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
             for (V1StatefulSet v1StatefulSet : result.getItems()) {
-                CloudNativeSource cloudNativeSource = base(cloudNative);
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1StatefulSet.getMetadata().getNamespace()!=null?v1StatefulSet.getMetadata().getNamespace():"");
-                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1StatefulSet));
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(v1StatefulSet);
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1StatefulSet.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.StatefulSet.name());
                 list.add(cloudNativeSource);
@@ -346,16 +371,18 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public List<CloudNativeSource> getCronJob(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getCronJob(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             BatchV1beta1Api apiInstance = new BatchV1beta1Api(apiClient);
             V1beta1CronJobList result = apiInstance.listCronJobForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
             for (V1beta1CronJob v1beta1CronJob : result.getItems()) {
-                CloudNativeSource cloudNativeSource = base(cloudNative);
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1beta1CronJob.getMetadata().getNamespace()!=null?v1beta1CronJob.getMetadata().getNamespace():"");
-                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1beta1CronJob));
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(v1beta1CronJob);
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1beta1CronJob.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.CronJob.name());
                 list.add(cloudNativeSource);
@@ -370,16 +397,18 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public List<CloudNativeSource> getJob(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getJob(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             BatchV1Api apiInstance = new BatchV1Api(apiClient);
             V1JobList result = apiInstance.listJobForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
             for (V1Job v1Job : result.getItems()) {
-                CloudNativeSource cloudNativeSource = base(cloudNative);
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Job.getMetadata().getNamespace()!=null?v1Job.getMetadata().getNamespace():"");
-                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Job));
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(v1Job);
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1Job.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Job.name());
                 list.add(cloudNativeSource);
@@ -394,16 +423,18 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public List<CloudNativeSource> getPv(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getPv(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             CoreV1Api apiInstance = new CoreV1Api(apiClient);
             V1PersistentVolumeList result = apiInstance.listPersistentVolume(null, null, null, null, null, null, null, null, null, null);
             for (V1PersistentVolume v1PersistentVolume : result.getItems()) {
-                CloudNativeSource cloudNativeSource = base(cloudNative);
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1PersistentVolume.getMetadata().getNamespace()!=null?v1PersistentVolume.getMetadata().getNamespace():"");
-                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1PersistentVolume));
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(v1PersistentVolume);
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1PersistentVolume.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.PVC.name());
                 list.add(cloudNativeSource);
@@ -418,16 +449,18 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public List<CloudNativeSource> getPvc(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getPvc(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             CoreV1Api apiInstance = new CoreV1Api(apiClient);
             V1PersistentVolumeClaimList result = apiInstance.listPersistentVolumeClaimForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
             for (V1PersistentVolumeClaim v1PersistentVolumeClaim : result.getItems()) {
-                CloudNativeSource cloudNativeSource = base(cloudNative);
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1PersistentVolumeClaim.getMetadata().getNamespace()!=null?v1PersistentVolumeClaim.getMetadata().getNamespace():"");
-                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1PersistentVolumeClaim));
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(v1PersistentVolumeClaim);
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1PersistentVolumeClaim.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.PVC.name());
                 list.add(cloudNativeSource);
@@ -442,16 +475,18 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public List<CloudNativeSource> getLease(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getLease(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             CoordinationV1Api apiInstance = new CoordinationV1Api(apiClient);
             V1LeaseList result = apiInstance.listLeaseForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
             for (V1Lease v1Lease : result.getItems()) {
-                CloudNativeSource cloudNativeSource = base(cloudNative);
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1Lease.getMetadata().getNamespace()!=null?v1Lease.getMetadata().getNamespace():"");
-                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1Lease));
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(v1Lease);
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1Lease.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Lease.name());
                 list.add(cloudNativeSource);
@@ -466,16 +501,18 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public List<CloudNativeSource> getEndpointSlice(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getEndpointSlice(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             DiscoveryV1Api apiInstance = new DiscoveryV1Api(apiClient);
             V1EndpointSliceList result = apiInstance.listEndpointSliceForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
             for (V1EndpointSlice v1EndpointSlice : result.getItems()) {
-                CloudNativeSource cloudNativeSource = base(cloudNative);
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1EndpointSlice.getMetadata().getNamespace()!=null?v1EndpointSlice.getMetadata().getNamespace():"");
-                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1EndpointSlice));
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(v1EndpointSlice);
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1EndpointSlice.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Lease.name());
                 list.add(cloudNativeSource);
@@ -490,16 +527,18 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public List<CloudNativeSource> getEvent(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getEvent(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             EventsV1Api apiInstance = new EventsV1Api(apiClient);
             EventsV1EventList result = apiInstance.listEventForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
             for (EventsV1Event eventsV1Event : result.getItems()) {
-                CloudNativeSource cloudNativeSource = base(cloudNative);
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(eventsV1Event.getMetadata().getNamespace()!=null?eventsV1Event.getMetadata().getNamespace():"");
-                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(eventsV1Event));
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(eventsV1Event);
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(eventsV1Event.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Event.name());
                 list.add(cloudNativeSource);
@@ -514,16 +553,18 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public List<CloudNativeSource> getNetworkPolicy(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getNetworkPolicy(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             NetworkingV1Api apiInstance = new NetworkingV1Api(apiClient);
             V1NetworkPolicyList result = apiInstance.listNetworkPolicyForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
             for (V1NetworkPolicy v1NetworkPolicy : result.getItems()) {
-                CloudNativeSource cloudNativeSource = base(cloudNative);
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(v1NetworkPolicy.getMetadata().getNamespace()!=null?v1NetworkPolicy.getMetadata().getNamespace():"");
-                cloudNativeSource.setSourceYaml(YamlUtil.toYaml(v1NetworkPolicy));
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(v1NetworkPolicy);
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1NetworkPolicy.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.NetworkPolicy.name());
                 list.add(cloudNativeSource);
@@ -538,14 +579,17 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public List<CloudNativeSource> getVersion(CloudNative cloudNative) throws IOException, ApiException {
-        List<CloudNativeSource> list = new ArrayList<>();
+    public List<CloudNativeSourceWithBLOBs> getVersion(CloudNative cloudNative) throws IOException, ApiException {
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
             VersionApi apiInstance = new VersionApi(apiClient);
             VersionInfo result = apiInstance.getCode();
-            CloudNativeSource cloudNativeSource = base(cloudNative);
+            CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
             cloudNativeSource.setSourceName(result.getGitVersion());
+            JSONObject jsonObject = (JSONObject) JSONObject.toJSON(result);
+            cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+            cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
             cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Version.name());
             list.add(cloudNativeSource);
         } catch (IOException e) {
@@ -558,10 +602,9 @@ public class K8sRequest extends Request {
         return list;
     }
 
-    public CloudNativeSource base(CloudNative cloudNative) {
-        CloudNativeSource cloudNativeSource = new CloudNativeSource();
+    public CloudNativeSourceWithBLOBs base(CloudNative cloudNative) {
+        CloudNativeSourceWithBLOBs cloudNativeSource = new CloudNativeSourceWithBLOBs();
         cloudNativeSource.setCloudNativeId(cloudNative.getId());
-        cloudNativeSource.setCreator(SessionUtils.getUserId());
         cloudNativeSource.setCreateTime(System.currentTimeMillis());
         cloudNativeSource.setUpdateTime(System.currentTimeMillis());
         return cloudNativeSource;

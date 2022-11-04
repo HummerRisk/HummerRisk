@@ -18,7 +18,6 @@ import com.hummerrisk.controller.request.k8s.K8sResultRequest;
 import com.hummerrisk.controller.request.k8s.K8sTopology;
 import com.hummerrisk.controller.request.k8s.NameSpaceTopology;
 import com.hummerrisk.controller.request.k8s.NodeTopology;
-import com.hummerrisk.controller.request.sync.CloudTopology;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.proxy.k8s.K8sRequest;
@@ -300,7 +299,8 @@ public class K8sService {
         record.setOperation("i18n_sync_k8s_start");
         record.setCloudNativeId(cloudNative.getId());
         record.setCreateTime(System.currentTimeMillis());
-        record.setOperator(SessionUtils.getUser().getName());
+        String creator = SessionUtils.getUser().getName();
+        record.setOperator(creator);
         record.setOutput("i18n_in_process");
         record.setId(UUIDUtil.newUUID());
         cloudNativeSourceSyncLogMapper.insertSelective(record);
@@ -311,7 +311,7 @@ public class K8sService {
                 example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId());
                 cloudNativeSourceMapper.deleteByExample(example);
 
-                List<CloudNativeSource> list = new LinkedList<>();
+                List<CloudNativeSourceWithBLOBs> list = new LinkedList<>();
                 K8sRequest k8sRequest = new K8sRequest();
                 k8sRequest.setCredential(cloudNative.getCredential());
                 list.addAll(k8sRequest.getVersion(cloudNative));
@@ -334,7 +334,8 @@ public class K8sService {
                 list.addAll(k8sRequest.getEndpointSlice(cloudNative));
                 list.addAll(k8sRequest.getEvent(cloudNative));
                 list.addAll(k8sRequest.getNetworkPolicy(cloudNative));
-                for (CloudNativeSource cloudNativeSource : list) {
+                for (CloudNativeSourceWithBLOBs cloudNativeSource : list) {
+                    cloudNativeSource.setCreator(creator);
                     cloudNativeSourceMapper.insertSelective(cloudNativeSource);
                     i++;
                 }
@@ -663,7 +664,7 @@ public class K8sService {
         return cloudNativeResultWithBLOBs;
     }
 
-    public List<CloudNativeSource> allCloudNativeSource2YamlList() {
+    public List<CloudNativeSourceWithBLOBs> allCloudNativeSource2YamlList() {
         CloudNativeSourceExample example = new CloudNativeSourceExample();
         example.createCriteria().andSourceTypeNotEqualTo("Version").andSourceYamlIsNotNull();
         return cloudNativeSourceMapper.selectByExampleWithBLOBs(example);
