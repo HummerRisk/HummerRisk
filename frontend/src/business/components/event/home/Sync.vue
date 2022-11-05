@@ -7,35 +7,28 @@
                       @create="create" :createTip="$t('event.sync')"
                       :show-create="true"/>
       </template>
-        <el-table border :data="tableData" class="adjust-table table-content">
-          <el-table-column  min-width="10%" :label="$t('event.cloud_account_name')">
+        <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
+                  :row-class-name="tableRowClassName"
+                  @filter-change="filter">
+          <el-table-column min-width="10%" :label="$t('event.cloud_account_name')">
             <template v-slot:default="scope">
-              <span> <img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.accountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ getAccountName(scope.row.accountId) }}</span>
+              <span>
+                <img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.accountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ getAccountName(scope.row.accountId) }}
+              </span>
             </template>
           </el-table-column>
-
-          <el-table-column
-            prop="regionName"
-            :label="$t('event.region')"
-            min-width="10%"
-          >
+          <el-table-column prop="regionName" :label="$t('event.region')" min-width="10%">
             <template v-slot:default="scope">
               <regions :logId="scope.row.id" :accountId="scope.row.accountId"></regions>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="createTime"
-            :label="$t('event.sync_time')"
-            min-width="10%"
-          >
+          <el-table-column prop="createTime" :label="$t('event.sync_time')" min-width="10%">
             <template v-slot:default="scope">
               <span>{{ scope.row.createTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-
-          <el-table-column v-slot:default="scope" :label="$t('event.sync_status')" min-width="10%"
-          >
+          <el-table-column v-slot:default="scope" :label="$t('event.sync_status')" min-width="10%">
             <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.status === 0">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
@@ -49,21 +42,14 @@
               <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
             </el-button>
           </el-table-column>
-          <el-table-column
-            prop="dataCount"
-            :label="$t('event.data_count')"
-            min-width="5%"
-            v-slot:default="scope"
-          >
+          <el-table-column prop="dataCount" :label="$t('event.data_count')" min-width="5%" v-slot:default="scope">
             <el-link type="primary" :underline="false" class="md-primary text-click" @click="showEvents(scope.row)">
               {{ scope.row.dataCount }}
             </el-link>
           </el-table-column>
-          <el-table-column
-            :label="$t('event.sync_time_section')" min-width="20%"
-          >
+          <el-table-column :label="$t('event.sync_time_section')" min-width="20%">
             <template v-slot:default="scope">
-              <span>{{ scope.row.requestStartTime | timestampFormatDate }}-{{ scope.row.requestEndTime | timestampFormatDate }}</span>
+              <span>{{ scope.row.requestStartTime | timestampFormatDate }} - {{ scope.row.requestEndTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('commons.operating')" fixed="right"  min-width="5%">
@@ -74,12 +60,13 @@
         </el-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
-    <!--Task log-->
+
+    <!--sync log-->
     <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="65%" :before-close="handleClose" direction="rtl"
                :destroy-on-close="true">
       <region-log :row="logForm"></region-log>
     </el-drawer>
-    <!--Task log-->
+    <!--sync log-->
 
     <!--sync-->
     <el-drawer class="rtl" :title="$t('event.event_sync')" :visible.sync="showSync" size="50%" :before-close="handleClose" direction="rtl"
@@ -142,6 +129,7 @@ import TableOperators from "../../common/components/TableOperators";
 import RegionLog from "@/business/components/event/home/RegionLog";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import Regions from "@/business/components/event/home/Regions";
+import {_filter, _sort} from "@/common/js/utils";
 
 /* eslint-disable */
 export default {
@@ -392,6 +380,23 @@ export default {
             this.eventFrom.regions.push(option["regionId"]);
           }
         }
+      }
+    },
+    sort(column) {
+      _sort(column, this.condition);
+      this.search();
+    },
+    filter(filters) {
+      _filter(filters, this.condition);
+      this.search();
+    },
+    tableRowClassName({row, rowIndex}) {
+      if (rowIndex % 4 === 0) {
+        return 'success-row';
+      } else if (rowIndex % 2 === 0) {
+        return 'warning-row';
+      } else {
+        return '';
       }
     },
   },

@@ -5,8 +5,10 @@
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('event.group')"/>
       </template>
-      <el-table border :data="tableData" class="adjust-table table-content">
-        <el-table-column type="expand">
+      <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
+                :row-class-name="tableRowClassName"
+                @filter-change="filter">
+        <el-table-column type="expand" min-width="2%">
           <template v-slot:default="props">
             <el-divider><i class="el-icon-folder-opened"></i></el-divider>
             <el-form>
@@ -16,69 +18,21 @@
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column
-          min-width="10%" :label="$t('event.cloud_account_name')"
-        >
+        <el-table-column min-width="10%" :label="$t('event.cloud_account_name')">
           <template v-slot:default="scope">
               <span><img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.cloudAccountId)}`)"
                          style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                 {{ getAccountName(scope.row.cloudAccountId) }}</span>
           </template>
         </el-table-column>
-
-        <el-table-column
-          prop="regionName"
-          :label="$t('event.region')"
-          min-width="10%"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="eventDate"
-          :label="$t('event.event_date')"
-          min-width="10%"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="userName"
-          :show-overflow-tooltip="true"
-          :label="$t('event.user_name')"
-          min-width="10%"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="sourceIpAddress"
-          :show-overflow-tooltip="true"
-          :label="$t('event.source_ip')"
-          min-width="10%"
-        >
-        </el-table-column>
-
-        <el-table-column
-            prop="serviceName"
-            :label="$t('event.service_name')"
-            min-width="10%"
-            :formatter="serviceNameFormat"
-          />
-        <el-table-column
-          prop="eventName"
-          :label="$t('event.event_name')"
-          min-width="10%"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="resourceName"
-          :show-overflow-tooltip="true"
-          :label="$t('event.resource_name')"
-          min-width="15%"
-          :formatter="resourceNameFormat"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="eventSum"
-          :label="$t('event.event_sum')"
-          min-width="10%"
-        >
-        </el-table-column>
+        <el-table-column prop="regionName" :label="$t('event.region')" min-width="10%"></el-table-column>
+        <el-table-column prop="eventDate" :label="$t('event.event_date')" min-width="10%"></el-table-column>
+        <el-table-column prop="userName" :show-overflow-tooltip="true" :label="$t('event.user_name')" min-width="10%"></el-table-column>
+        <el-table-column prop="sourceIpAddress" :show-overflow-tooltip="true" :label="$t('event.source_ip')" min-width="10%"></el-table-column>
+        <el-table-column prop="serviceName" :label="$t('event.service_name')" min-width="12%" :formatter="serviceNameFormat"/>
+        <el-table-column prop="eventName" :label="$t('event.event_name')" min-width="15%"></el-table-column>
+        <el-table-column prop="resourceName" :show-overflow-tooltip="true" :label="$t('event.resource_name')" min-width="10%" :formatter="resourceNameFormat"></el-table-column>
+        <el-table-column prop="eventSum" :label="$t('event.event_sum')" min-width="5%"></el-table-column>
       </el-table>
 
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
@@ -95,6 +49,7 @@ import {CLOUD_EVENT_CONFIGS} from "../../common/components/search/search-compone
 import {ACCOUNT_ID} from "@/common/js/constants";
 import TableOperators from "../../common/components/TableOperators";
 import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
+import {_filter, _sort} from "@/common/js/utils";
 /* eslint-disable */
 export default {
   name: "Event",
@@ -226,7 +181,24 @@ export default {
         return item.id === accountId
       })
       return result.length > 0 ? result[0].pluginIcon : ""
-    }
+    },
+    sort(column) {
+      _sort(column, this.condition);
+      this.search();
+    },
+    filter(filters) {
+      _filter(filters, this.condition);
+      this.search();
+    },
+    tableRowClassName({row, rowIndex}) {
+      if (rowIndex % 4 === 0) {
+        return 'success-row';
+      } else if (rowIndex % 2 === 0) {
+        return 'warning-row';
+      } else {
+        return '';
+      }
+    },
   },
   watch: {
     $route(to, from) {
