@@ -15,7 +15,7 @@
                 @filter-change="filter" @select-all="select" @select="select">
         <el-table-column type="selection" min-width="5%">
         </el-table-column>
-        <el-table-column type="index" min-width="5%"/>
+        <el-table-column type="index" min-width="1%"/>
         <el-table-column prop="name" :label="$t('code.name')" min-width="15%" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>

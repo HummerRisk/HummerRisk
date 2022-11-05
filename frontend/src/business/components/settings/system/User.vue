@@ -4,7 +4,8 @@
     <el-card class="table-card">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search" @create="create"
-                         :create-tip="$t('user.create')" :title="$t('commons.user')"/>
+                         :create-tip="$t('user.create')" :title="$t('commons.user')"
+                          :show-create="true"/>
       </template>
 
       <el-table border class="adjust-table" :data="tableData" style="width: 100%" :row-class-name="tableRowClassName">
