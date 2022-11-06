@@ -31,8 +31,8 @@ public class CloudResourceService {
         return extCloudResourceItemMapper.selectResourceRule(hummerId);
     }
 
-    public List<CloudTask> getCloudTaskByHummerId(String hummerId){
-        return extCloudTaskMapper.selectByHummerId(hummerId);
+    public List<CloudTask> getCloudTaskByHummerId(String hummerId,String regionId){
+        return extCloudTaskMapper.selectByHummerId(hummerId,regionId);
     }
 
     public int countResourceTask(String accountId,String regionId,String resourceType){

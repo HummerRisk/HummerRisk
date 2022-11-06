@@ -141,7 +141,7 @@
       },
       showRegions() {
         this.initSelect();
-        this.result = this.$get("/cloud/resource/risk/list/" +  this.hummerId,response => {
+        this.result = this.$get("/cloud/resource/risk/list/"+this.regionId+"/"+  this.hummerId,response => {
           this.string2PrettyFormat = response.data
           this.regionsVisible =  true;
         });

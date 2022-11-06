@@ -42,9 +42,9 @@ public class CloudResourceController {
     }
 
     @I18n
-    @GetMapping(value = "risk/list/{hummerId}")
-    public List<CloudTask> listResourceRisk(@PathVariable String hummerId) {
-        return cloudResourceService.getCloudTaskByHummerId(hummerId);
+    @GetMapping(value = "risk/list/{regionId}/{hummerId}")
+    public List<CloudTask> listResourceRisk(@PathVariable String regionId,@PathVariable String hummerId) {
+        return cloudResourceService.getCloudTaskByHummerId(hummerId,regionId);
     }
 
     @I18n
