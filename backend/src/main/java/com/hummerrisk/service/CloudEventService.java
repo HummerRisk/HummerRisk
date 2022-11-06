@@ -87,6 +87,8 @@ public class CloudEventService {
     private CommonThreadPool commonThreadPool;
     private static final int MAX_PAGE_NUM = 1000;
     private static final int MAX_INSERT_SIZE = 30;
+
+    private static final String[] LOW_RISK_ARR = {"GET","查","获取","LOGIN","LOGOUT","登陆","登出"};
     @Resource
     private PlatformTransactionManager transactionManager;
 
@@ -394,7 +396,7 @@ public class CloudEventService {
             com.tencentcloudapi.cloudaudit.v20190319.models.Resource resource = event.getResources();
             String eventName = event.getEventNameCn();
             int eventLevel = -1;
-            if (eventName != null && (eventName.indexOf("查") > -1 || eventName.indexOf("Get") > -1) || eventName.indexOf("获取") > -1) {
+            if (checkLowRisk(eventName)) {
                 eventLevel = 0;
             } else if (eventName != null && (eventName.indexOf("删") > -1 || eventName.toUpperCase().indexOf("DELETE") > -1)) {
                 eventLevel = 2;
@@ -530,5 +532,15 @@ public class CloudEventService {
 
     public List<Map<String, Object>> severityChart() {
         return extCloudEventMapper.severityChart();
+    }
+
+    public boolean checkLowRisk(String content){
+        content = content.toUpperCase();
+        for (String s : LOW_RISK_ARR) {
+            if(content.contains(s.toUpperCase())){
+                return true;
+            }
+        }
+        return false;
     }
 }

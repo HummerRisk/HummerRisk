@@ -28,5 +28,5 @@ public interface ExtCloudTaskMapper {
     int getResourcesSumForEmail(MessageOrder messageOrder);
 
     List<CloudTaskDTO> selectByExample(CloudTaskExample example);
-    List<CloudTask> selectByHummerId(String hummerId);
+    List<CloudTask> selectByHummerId(String hummerId,String regionId);
 }
