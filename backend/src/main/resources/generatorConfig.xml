@@ -163,8 +163,7 @@
 <!--        <table tableName="file_system_result_log" domainObjectName="FileSystemResultLog"/>-->
 <!--        <table tableName="history_file_system_result" domainObjectName="HistoryFileSystemResult"/>-->
 <!--        <table tableName="oss" domainObjectName="Oss"/>-->
-<!--        <table tableName="oss_item" domainObjectName="OssItem"/>-->
-<!--        <table tableName="oss_item_log" domainObjectName="OssItemLog"/>-->
+<!--        <table tableName="oss_log" domainObjectName="OssLog"/>-->
 <!--        <table tableName="oss_bucket" domainObjectName="OssBucket"/>-->
     </context>
 </generatorConfiguration>
