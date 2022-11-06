@@ -91,7 +91,7 @@
         </if>
     </sql>
 
-    <select id="ossList" resultMap="BaseResultMap">
+    <select id="ossList" resultMap="BaseResultMap" parameterType="com.hummerrisk.oss.controller.request.OssRequest">
         select
         t.*,
         p.proxy_ip,

@@ -1,8 +1,5 @@
 package com.hummerrisk.oss.controller.request;
 
-import com.hummerrisk.commons.utils.FuzzyQuery;
-import io.swagger.annotations.ApiModelProperty;
-
 import java.util.Map;
 
 /**
@@ -10,20 +7,14 @@ import java.util.Map;
  */
 public class OssRequest {
 
-    @ApiModelProperty("ID")
     private String id;
 
-    @ApiModelProperty(value = "云账号名称,模糊匹配")
-    @FuzzyQuery
     private String name;
 
-    @ApiModelProperty("插件ID")
     private String pluginId;
 
-    @ApiModelProperty("插件名称")
     private String pluginName;
 
-    @ApiModelProperty(value = "状态", allowableValues = "VALID,INVALID,DELETED")
     private String status;
 
     private Map<String, Object> combine;
@@ -75,5 +66,4 @@ public class OssRequest {
     public void setCombine(Map<String, Object> combine) {
         this.combine = combine;
     }
-
 }
