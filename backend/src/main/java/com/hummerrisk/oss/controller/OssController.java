@@ -10,6 +10,7 @@ import com.hummerrisk.oss.dto.OssDTO;
 import com.hummerrisk.oss.service.OssService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -29,6 +30,13 @@ public class OssController {
             @PathVariable int goPage, @PathVariable int pageSize, @RequestBody OssRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, ossService.ossList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "同步对象存储")
+    @GetMapping("batch/sync/{id}")
+    public void sync(@PathVariable String id) throws Exception {
+        ossService.syncBatch(id);
     }
 
 }
