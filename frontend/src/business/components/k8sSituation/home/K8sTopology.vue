@@ -3,7 +3,32 @@
     <el-card class="table-card" v-loading="result.loading">
       <el-tabs type="border-card">
         <el-tab-pane :label="$t('k8s.node_perspective')">
-          <svg id="node-topo"></svg>
+          <el-row :gutter="24">
+            <el-col :span="8"><div class="grid-content bg-purple"></div></el-col>
+            <el-col :span="8">
+              <div class="grid-content bg-purple-light">
+                <span style="text-align: left;color: white;margin: 20px;">NameSpace<I style="color: turquoise;margin-left: 20px;">6</I></span>
+                <span style="text-align: right;color: white;margin: 20px;">Controller<I style="color: turquoise;margin-left: 20px;">0/29(Reset)</I></span>
+              </div>
+            </el-col>
+            <el-col :span="8"><div class="grid-content bg-purple"></div></el-col>
+          </el-row>
+          <el-row :gutter="24">
+            <el-col :span="6">
+              <el-card class="box-card">
+                <div slot="header" class="clearfix">
+                  <span>卡片名称</span>
+                  <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
+                </div>
+                <div v-for="o in 4" :key="o" class="text item">
+                  {{'列表内容 ' + o }}
+                </div>
+              </el-card>
+            </el-col>
+            <el-col :span="18">
+              <svg id="node-topo"></svg>
+            </el-col>
+          </el-row>
         </el-tab-pane>
         <el-tab-pane :label="$t('k8s.namespace_perspective')">
           <svg id="namespace-topo"></svg>
@@ -333,5 +358,47 @@ svg {
 }
 .table-card >>> .el-tabs__content{
   padding: 0;
+}
+.text {
+  font-size: 14px;
+}
+.item {
+  margin-bottom: 18px;
+}
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both
+}
+.box-card {
+  width: 80%;
+  margin: 10%;
+  background-color: #364f6c;
+  color: #FFFFFF;
+  min-height: 1000px;
+}
+.table-card >>> .el-tabs__content {
+  background-color: hsl(152,80%,80%);
+}
+.el-col {
+  border-radius: 4px;
+}
+.bg-purple-dark {
+  background: hsl(152,80%,80%);
+}
+.bg-purple {
+  background: hsl(152,80%,80%);
+}
+.bg-purple-light {
+  background: #364f6c;
+  margin: 1%;
+  display: table-cell;
+}
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
 }
 </style>
