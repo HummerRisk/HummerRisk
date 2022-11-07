@@ -192,7 +192,7 @@ import {RULE_CONFIGS, RULE_TAG_CONFIGS} from "../../common/components/search/sea
           ],
           tagName: [
             {required: true, message: this.$t('rule.tag_name') + this.$t('commons.cannot_be_empty'), trigger: 'blur'},
-            {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+            {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
             {
               required: true,
               message: this.$t('rule.special_characters_are_not_supported'),

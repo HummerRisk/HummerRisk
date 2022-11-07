@@ -281,7 +281,7 @@ export default {
       rule: {
         name: [
           {required: true, message: this.$t('commons.input_name'), trigger: 'blur'},
-          {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+          {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
           {
             required: true,
             message: this.$t("workspace.special_characters_are_not_supported"),

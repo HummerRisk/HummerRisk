@@ -254,7 +254,7 @@ export default {
       rule: {
         name: [
           {required: true, message: this.$t('commons.input_name'), trigger: 'blur'},
-          {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+          {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
           {
             required: true,
             message: this.$t("workspace.special_characters_are_not_supported"),
@@ -271,11 +271,11 @@ export default {
         ],
         proxyName: [
           {required: false, message: this.$t('proxy.proxy_name'), trigger: 'blur'},
-          {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+          {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
         ],
         proxyPassword: [
           {required: false, message: this.$t('proxy.proxy_password'), trigger: 'blur'},
-          {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+          {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
         ],
       },
       buttons: [
