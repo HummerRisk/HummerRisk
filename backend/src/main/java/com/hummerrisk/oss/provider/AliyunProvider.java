@@ -1,14 +1,12 @@
 package com.hummerrisk.oss.provider;
 
 
-import com.alibaba.fastjson.JSON;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.Bucket;
 import com.aliyun.oss.model.BucketStat;
 import com.hummerrisk.base.domain.OssBucket;
 import com.hummerrisk.base.domain.OssWithBLOBs;
 import com.hummerrisk.proxy.aliyun.AliyunRequest;
-import com.hummerrisk.proxy.azure.AzureBaseRequest;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
