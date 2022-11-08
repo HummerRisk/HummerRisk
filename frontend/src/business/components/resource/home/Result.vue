@@ -129,7 +129,7 @@
           <el-tab-pane :label="$t('resource.cloud_resource_detail_result')" name="second"></el-tab-pane>
         </el-tabs>
         <table-header :condition.sync="condition"
-                      @search="search"
+                      @search="search" :show-name="false"
                       v-if="activeName === 'first'"/>
       </template>
 
@@ -358,7 +358,7 @@
         <template v-slot:header>
           <table-header :condition.sync="resourceCondition"
                         @search="resourceSearch"
-                        :show-back="false"
+                        :show-name="false"
                        />
         </template>
 

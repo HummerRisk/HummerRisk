@@ -655,7 +655,13 @@ public class RuleService {
                 quartzTaskDTO.setAccountId(account.getId());
                 quartzTaskDTO.setTaskName(rule.getName());
                 CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, messageOrderId);
-                if(scanId!=null) historyService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.cloudAccount.getType());
+                if(scanId!=null) {
+                    if (PlatformUtils.isSupportCloudAccount(cloudTask.getPluginId())) {
+                        historyService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.cloudAccount.getType());
+                    } else {
+                        historyService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.vulnAccount.getType());
+                    }
+                }
                 return cloudTask.getId();
             } else {
                 historyService.deleyeScanTaskHistory(scanId);

@@ -64,8 +64,9 @@ public class HistoryService {
 
     public Integer insertScanHistory (Object obj) throws Exception {
 
-        String accountId = obj2Account(obj).get("accountId").toString();
-        String accountType = obj2Account(obj).get("accountType").toString();
+        Map map = obj2Account(obj);
+        String accountId = map.get("accountId").toString();
+        String accountType = map.get("accountType").toString();
 
         HistoryScan history = new HistoryScan();
         history.setOperator(SessionUtils.getUserId());

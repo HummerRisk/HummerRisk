@@ -215,7 +215,7 @@ public class RuleController {
         ruleService.reScan(taskId, accountId);
     }
 
-    @ApiOperation(value = "批量检测")
+    @ApiOperation(value = "执行检测")
     @PostMapping("scan")
     public void scan(@RequestBody ScanGroupRequest request) throws Exception {
         ruleService.scan(request);
