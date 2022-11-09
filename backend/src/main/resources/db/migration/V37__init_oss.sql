@@ -52,3 +52,7 @@ CREATE TABLE IF NOT EXISTS `oss_bucket` (
 
 
 ALTER TABLE `cloud_native_source` ADD `source_json` longtext DEFAULT NULL COMMENT '资源json';
+
+ALTER TABLE `image_result_item` ADD `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';
+ALTER TABLE `code_result_item` ADD `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';
+ALTER TABLE `file_system_result_item` ADD `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';
