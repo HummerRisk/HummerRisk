@@ -797,6 +797,11 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
         }
       },
     },
+    computed: {
+      codemirror() {
+        return this.$refs.cmEditor.codemirror;
+      }
+    },
     created() {
       this.init();
     }

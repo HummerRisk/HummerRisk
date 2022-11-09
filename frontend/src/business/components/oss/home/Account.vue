@@ -50,21 +50,18 @@
     </el-card>
 
     <!--oss account-->
-    <el-drawer class="rtl" :title="$t('account.update')" :visible.sync="visible" size="50%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="ossTitle" :visible.sync="visible" size="50%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <div v-loading="cloudResult.loading">
         <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="accountForm">
-          <el-form-item :label="$t('account.name')"  ref="name" prop="name">
-            <el-input v-model="form.name" autocomplete="off" :placeholder="$t('account.input_name')"/>
-          </el-form-item>
-          <el-form-item :label="$t('account.cloud_platform')" :rules="{required: true, message: $t('account.cloud_platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePlugin(form.pluginId)">
+          <el-form-item :label="$t('account.cloud_account')" :rules="{required: true, message: $t('account.cloud_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="form.id" :placeholder="$t('account.please_choose_account')" @change="changeAccount(form.id)">
               <el-option
-                v-for="item in plugins"
+                v-for="item in accounts"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id">
-                <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                <img :src="require(`@/assets/img/platform/${item.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                 &nbsp;&nbsp; {{ $t(item.name) }}
               </el-option>
             </el-select>
@@ -105,49 +102,11 @@
                 </el-form-item>
               </el-drawer>
             </div>
-            <div>
-              <el-drawer
-                size="45%"
-                :title="$t('proxy.add_proxy')"
-                :append-to-body="true"
-                :before-close="innerDrawerProxyClose"
-                :visible.sync="innerDrawerProxy">
-                <el-form :model="proxyForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="updateProxyForm">
-                  <el-form-item :label="$t('commons.proxy_type')" :rules="{required: true, message: $t('commons.proxy_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-                    <el-select style="width: 100%;" v-model="proxyForm.proxyType" :placeholder="$t('commons.proxy_type')">
-                      <el-option
-                        v-for="item in proxyType"
-                        :key="item.id"
-                        :label="item.value"
-                        :value="item.id">
-                        &nbsp;&nbsp; {{ item.value }}
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                  <el-form-item label="Proxy IP" prop="proxyIp">
-                    <el-input v-model="proxyForm.proxyIp" autocomplete="off" :placeholder="$t('proxy.proxy_ip')"/>
-                  </el-form-item>
-                  <el-form-item :label="$t('commons.proxy_port')" prop="proxyPort">
-                    <el-input type="number" v-model="proxyForm.proxyPort" autocomplete="off" :placeholder="$t('proxy.proxy_port')"/>
-                  </el-form-item>
-                  <el-form-item :label="$t('commons.proxy_name')" prop="proxyName">
-                    <el-input v-model="proxyForm.proxyName" autocomplete="off" :placeholder="$t('proxy.proxy_name')"/>
-                  </el-form-item>
-                  <el-form-item :label="$t('commons.proxy_password')" prop="proxyPassword" style="margin-bottom: 29px">
-                    <el-input v-model="proxyForm.proxyPassword" autocomplete="new-password" show-password
-                              :placeholder="$t('proxy.proxy_password')"/>
-                  </el-form-item>
-                </el-form>
-                <dialog-footer
-                  @cancel="innerDrawerProxy = false"
-                  @confirm="createProxy('updateProxyForm')"/>
-              </el-drawer>
-            </div>
           </el-form-item>
         </el-form>
-        <proxy-dialog-footer
+        <dialog-footer
           @cancel="visible = false"
-          @add="innerDrawerProxy = true"
+          @add="innerDrawerProxy = false"
           @confirm="saveOss(form, ossType)"/>
       </div>
     </el-drawer>
@@ -164,8 +123,6 @@ import MainContainer from "../../common/components/MainContainer";
 import Regions from "@/business/components/account/home/Regions";
 import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
-import ProxyDialogFooter from "@/business/components/common/components/ProxyDialogFooter";
-import ProxyDialogCreateFooter from "@/business/components/common/components/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {ACCOUNT_CONFIGS} from "@/business/components/common/components/search/search-components";
 
@@ -179,8 +136,6 @@ export default {
     TableHeader,
     TablePagination,
     DialogFooter,
-    ProxyDialogFooter,
-    ProxyDialogCreateFooter
   },
   data() {
     return {
@@ -198,11 +153,10 @@ export default {
       loading: false,
       script: '',
       direction: 'rtl',
-      form: [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ],
+      form: { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] },
       visible: false,
       innerDrawer: false,
       innerDrawerProxy: false,
-      plugins: [],
       accounts: [],
       proxys: [],
       tmpList: [],
@@ -257,6 +211,18 @@ export default {
           exec: this.handleDelete
         }
       ],
+      ossTitle: this.$t('oss.create'),
+      cmOptions: {
+        tabSize: 4,
+        mode: {
+          name: 'json',
+          json: true
+        },
+        theme: 'bespin',
+        lineNumbers: true,
+        line: true,
+        indentWithTabs: true,
+      },
     }
   },
   methods: {
@@ -275,14 +241,6 @@ export default {
     showRegions (tmp) {
       this.regions = tmp.regions;
     },
-    //查询插件
-    activePlugin() {
-      let url = "/plugin/cloud";
-      this.result = this.$get(url, response => {
-        let data = response.data;
-        this.plugins =  data;
-      });
-    },
     //查询可以添加的云账号到对象存储账号列表中
     activeAccount() {
       let url = "/oss/accounts";
@@ -300,6 +258,8 @@ export default {
     },
     init() {
       this.search();
+      this.activeAccount();
+      this.activeProxy();
     },
     sort(column) {
       _sort(column, this.condition);
@@ -322,22 +282,27 @@ export default {
       }
     },
     create() {
-      this.form = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
+      this.form = { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] };
+      this.ossTitle = this.$t('oss.create');
       this.visible = true;
-      this.activePlugin();
-      this.activeProxy();
+    },
+    update(item) {
+      this.form = item;
+      this.ossTitle = this.$t('oss.update');
+      this.visible = true;
     },
     //选择插件查询云账号信息
-    async changePlugin (pluginId, type){
-      this.$get("/account/iam/strategy/" + pluginId,res => {
+    async changeAccount (accountId){
+      this.$get("/oss/iam/strategy/" + accountId,res => {
         this.script = res.data;
       });
-      let url = "/plugin/";
-      this.result = await this.$get(url + pluginId, response => {
+      let url = "/oss/changeAccount/";
+      this.cloudResult = await this.$get(url + accountId, response => {
         let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
-        this.tmpList = fromJson.data;
-        if (type === 'edit') {
-          let credentials = typeof(this.item.credential) === 'string'?JSON.parse(this.item.credential):this.item.credential;
+        let data = fromJson.data;
+        this.$get("/account/getAccount/" + accountId,res => {
+          let credentials = typeof(res.data.credential) === 'string'?JSON.parse(res.data.credential):res.data.credential;
+          this.tmpList = data;
           for (let tmp of this.tmpList) {
             if (credentials[tmp.name] === undefined) {
               tmp.input = tmp.defaultValue?tmp.defaultValue:"";
@@ -345,13 +310,7 @@ export default {
               tmp.input = credentials[tmp.name];
             }
           }
-        } else {
-          for (let tmp of this.tmpList) {
-            if (tmp.defaultValue !== undefined) {
-              tmp.input = tmp.defaultValue;
-            }
-          }
-        }
+        });
       });
     },
     change(e) {
@@ -425,6 +384,11 @@ export default {
         }
       });
     },
+  },
+  computed: {
+    codemirror() {
+      return this.$refs.cmEditor.codemirror;
+    }
   },
   created() {
     this.init();

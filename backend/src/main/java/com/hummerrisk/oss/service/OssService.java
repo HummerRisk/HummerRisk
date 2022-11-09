@@ -10,6 +10,7 @@ import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.CommonThreadPool;
 import com.hummerrisk.commons.utils.LogUtil;
+import com.hummerrisk.commons.utils.ReadFileUtils;
 import com.hummerrisk.controller.request.account.CloudAccountRequest;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.oss.config.OssManager;
@@ -47,6 +48,9 @@ public class OssService {
     @Resource
     private CommonThreadPool commonThreadPool;
 
+    private static final String BASE_CREDENTIAL_DIC = "support/credential/";
+    private static final String JSON_EXTENSION = ".json";
+
     public List<OssDTO> ossList (OssRequest request) {
         return extOssMapper.ossList(request);
     }
@@ -65,6 +69,24 @@ public class OssService {
         values.add(OSSConstants.ucloud);
         example.createCriteria().andStatusEqualTo(CloudAccountConstants.Status.VALID.name()).andPluginIdIn(values);
         return accountMapper.selectByExampleWithBLOBs(example);
+    }
+
+    public String strategy(String accountId) throws Exception {
+        Account account = accountMapper.selectByPrimaryKey(accountId);
+        OssProvider ossProvider = getOssProvider(account.getPluginId());
+        String script = ossProvider.policyModel();
+        return script;
+    }
+
+    public String getCredential(String accountId) {
+        Account account = accountMapper.selectByPrimaryKey(accountId);
+        try {
+            return ReadFileUtils.readConfigFile(BASE_CREDENTIAL_DIC, account.getPluginId(), JSON_EXTENSION);
+        } catch (Exception e) {
+            LogUtil.error("Error getting credential parameters: " + account.getPluginId(), e);
+            HRException.throwException(Translator.get("i18n_ex_plugin_get"));
+        }
+        return Translator.get("i18n_ex_plugin_get");
     }
 
     public void syncBatch(String id) throws Exception {
@@ -119,7 +141,7 @@ public class OssService {
 
     public void fetchOssBucketList(OssWithBLOBs oss) throws Exception {
         try {
-            OssProvider ossProvider = getOssProvider(oss.getPluginName());
+            OssProvider ossProvider = getOssProvider(oss.getPluginId());
             saveOssBuckets(ossProvider, oss);
         } catch (Exception e) {
             LogUtil.error("Failed to get the bucket information: " + oss.getName(), e);
@@ -128,10 +150,10 @@ public class OssService {
         }
     }
 
-    public OssProvider getOssProvider(String pluginName) throws Exception {
-        OssProvider ossProvider = (OssProvider) OssManager.getOssProviders().get(pluginName);
+    public OssProvider getOssProvider(String pluginId) throws Exception {
+        OssProvider ossProvider = (OssProvider) OssManager.getOssProviders().get(pluginId);
         if(ossProvider == null){
-            throw new Exception(String.format("Unsupported plugin: %s", pluginName));
+            throw new Exception(String.format("Unsupported plugin: %s", pluginId));
         }
         return ossProvider;
     }

@@ -40,6 +40,19 @@ public class OssController {
     }
 
     @I18n
+    @ApiOperation(value = "IAM策略信息")
+    @GetMapping("iam/strategy/{accountId}")
+    public String strategy(@PathVariable String accountId) throws Exception {
+        return ossService.strategy(accountId);
+    }
+
+    @ApiOperation(value = "云账号详情")
+    @GetMapping("changeAccount/{accountId}")
+    public String getCredential(@PathVariable String accountId) {
+        return ossService.getCredential(accountId);
+    }
+
+    @I18n
     @ApiOperation(value = "同步对象存储")
     @GetMapping("batch/sync/{id}")
     public void sync(@PathVariable String id) throws Exception {
