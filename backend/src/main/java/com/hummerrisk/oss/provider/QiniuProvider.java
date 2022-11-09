@@ -10,7 +10,10 @@ import java.util.List;
 public class QiniuProvider implements OssProvider {
 
 
-
+    @Override
+    public String policyModel() {
+        return "";
+    }
 
     @Override
     public List<OssBucket> getOssBucketList(OssWithBLOBs ossAccount) {

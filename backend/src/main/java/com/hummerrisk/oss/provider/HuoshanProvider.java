@@ -7,7 +7,7 @@ import com.hummerrisk.base.domain.OssWithBLOBs;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UcloudProvider implements OssProvider {
+public class HuoshanProvider implements OssProvider {
 
 
     @Override

@@ -9,7 +9,23 @@ import java.util.List;
 
 public class QcloudProvider implements OssProvider {
 
-
+    @Override
+    public String policyModel() {
+        return "{\n" +
+                "    \"version\": \"2.0\",\n" +
+                "    \"statement\": [\n" +
+                "        {\n" +
+                "            \"effect\": \"allow\",\n" +
+                "            \"action\": [\n" +
+                "                \"name/cos:*\"\n" +
+                "            ],\n" +
+                "            \"resource\": [\n" +
+                "                \"qcs::cos:REGION:uid/UID:BUCKET_NAME\"\n" +
+                "            ]\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
+    }
 
 
     @Override

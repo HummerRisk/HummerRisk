@@ -15,6 +15,23 @@ import java.util.List;
 public class AliyunProvider implements OssProvider {
 
     @Override
+    public String policyModel() {
+        return "{\n" +
+                "    \"Version\": \"1\",\n" +
+                "    \"Statement\": [\n" +
+                "        {\n" +
+                "            \"Action\": \"oss:*\",\n" +
+                "            \"Effect\": \"Allow\",\n" +
+                "            \"Resource\": [\n" +
+                "                \"acs:oss:*:*:BUCKET_NAME\"\n" +
+                "            ],\n" +
+                "            \"Condition\": {}\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
+    }
+
+    @Override
     public List<OssBucket> getOssBucketList(OssWithBLOBs ossWithBLOBs) {
         OSSClient ossClient = getOSSClient(ossWithBLOBs);
         List<Bucket> list = ossClient.listBuckets();

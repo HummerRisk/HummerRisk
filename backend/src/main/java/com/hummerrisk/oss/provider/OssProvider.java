@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface OssProvider {
 
+    public String policyModel();
+
     public List<OssBucket> getOssBucketList(OssWithBLOBs ossAccount) throws Exception;
 
 }

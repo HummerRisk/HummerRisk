@@ -30,6 +30,8 @@ public class OssManager implements ApplicationRunner {
         ossProviders.put(OSSConstants.qiniu, new QiniuProvider());
         ossProviders.put(OSSConstants.qingcloud, new QingcloudProvider());
         ossProviders.put(OSSConstants.ucloud, new UcloudProvider());
+        ossProviders.put(OSSConstants.baidu, new BaiduProvider());
+        ossProviders.put(OSSConstants.huoshan, new HuoshanProvider());
     }
 
     @Override

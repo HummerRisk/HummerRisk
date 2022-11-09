@@ -9,6 +9,10 @@ import java.util.List;
 public class HuaweiProvider implements OssProvider {
 
 
+    @Override
+    public String policyModel() {
+        return "";
+    }
 
     @Override
     public List<OssBucket> getOssBucketList(OssWithBLOBs ossAccount) {

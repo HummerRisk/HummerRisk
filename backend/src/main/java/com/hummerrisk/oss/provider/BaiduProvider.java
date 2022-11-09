@@ -8,7 +8,10 @@ import java.util.List;
 
 public class BaiduProvider implements OssProvider {
 
-
+    @Override
+    public String policyModel() {
+        return "";
+    }
 
     @Override
     public List<OssBucket> getOssBucketList(OssWithBLOBs ossAccount) {

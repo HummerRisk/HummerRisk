@@ -10,6 +10,20 @@ import java.util.List;
 
 public class AwsProvider implements OssProvider {
 
+    @Override
+    public String policyModel() {
+        return "{\n" +
+                "    \"Version\": \"2012-10-17\",\n" +
+                "    \"Statement\": [\n" +
+                "        {\n" +
+                "            \"Sid\": \"VisualEditor0\",\n" +
+                "            \"Effect\": \"Allow\",\n" +
+                "            \"Action\": \"s3:*\",\n" +
+                "            \"Resource\": \"arn:AWS_LOCATION:s3:::BUCKET_NAME\"\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
+    }
 
     @Override
     public List<OssBucket> getOssBucketList(OssWithBLOBs ossAccount) {
