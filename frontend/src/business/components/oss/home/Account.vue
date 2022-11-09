@@ -3,8 +3,8 @@
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
-                      :title="$t('account.cloud_account_list')"
-                      @create="create" :createTip="$t('account.create')"
+                      :title="$t('oss.oss_account_list')"
+                      @create="create" :createTip="$t('oss.create')"
                       :show-validate="false" :show-create="true"/>
 
       </template>
@@ -12,10 +12,8 @@
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
                 :row-class-name="tableRowClassName"
                 @filter-change="filter">
-        <el-table-column type="selection" min-width="2%">
-        </el-table-column>
         <el-table-column type="index" min-width="2%"/>
-        <el-table-column prop="name" :label="$t('account.name')" min-width="12%" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="name" :label="$t('oss.oss_account')" min-width="12%" show-overflow-tooltip></el-table-column>
         <el-table-column :label="$t('account.cloud_platform')" min-width="10%" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>

@@ -1145,6 +1145,9 @@ export default {
     oss_bucket: '存储桶列表',
     oss_order: '存储桶操作',
     oss_account: '对象存储账号',
+    oss_account_list: '对象存储账号列表',
+    create: '创建对象存储账号',
+    update: '编辑对象存储账号',
   },
   task: {
     task_setting: '任务编排',
