@@ -104,7 +104,7 @@ curl -sSL https://github.com/HummerRisk/HummerRisk/releases/latest/download/quic
 
 For more product information and usage instructions, you can visit our online  documentation
 
-> [帮助文档](https://docs.hummercloud.com)
+> [帮助文档](https://docs.hummerrisk.com)
 
 
 ## Wechat

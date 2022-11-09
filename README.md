@@ -101,7 +101,7 @@ curl -sSL https://github.com/HummerRisk/HummerRisk/releases/latest/download/quic
 
 获取更多的产品信息和使用说明，可以访问我们的在线帮助文档
 
-> [帮助文档](https://docs.hummercloud.com)
+> [帮助文档](https://docs.hummerrisk.com)
 
 ## 技术优势
 
