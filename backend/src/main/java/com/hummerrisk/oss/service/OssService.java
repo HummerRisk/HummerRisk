@@ -1,18 +1,16 @@
 package com.hummerrisk.oss.service;
 
-import com.hummerrisk.base.domain.AccountWithBLOBs;
-import com.hummerrisk.base.domain.OssBucket;
-import com.hummerrisk.base.domain.OssBucketExample;
-import com.hummerrisk.base.domain.OssWithBLOBs;
+import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.AccountMapper;
 import com.hummerrisk.base.mapper.OssBucketMapper;
 import com.hummerrisk.base.mapper.OssMapper;
 import com.hummerrisk.base.mapper.ext.ExtOssMapper;
+import com.hummerrisk.commons.constants.CloudAccountConstants;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
-import com.hummerrisk.commons.utils.BeanUtils;
 import com.hummerrisk.commons.utils.CommonThreadPool;
 import com.hummerrisk.commons.utils.LogUtil;
+import com.hummerrisk.controller.request.account.CloudAccountRequest;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.oss.config.OssManager;
 import com.hummerrisk.oss.constants.OSSConstants;
@@ -21,10 +19,12 @@ import com.hummerrisk.oss.dto.OssDTO;
 import com.hummerrisk.oss.provider.OssProvider;
 import com.hummerrisk.service.AccountService;
 import com.hummerrisk.service.OperationLogService;
+import kotlin.collections.ArrayDeque;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,6 +49,22 @@ public class OssService {
 
     public List<OssDTO> ossList (OssRequest request) {
         return extOssMapper.ossList(request);
+    }
+
+    public List<AccountWithBLOBs> getCloudAccountList() {
+        AccountExample example = new AccountExample();
+        List<String> values = new ArrayList<>();
+        values.add(OSSConstants.aws);
+        values.add(OSSConstants.aliyun);
+        values.add(OSSConstants.baidu);
+        values.add(OSSConstants.huawei);
+        values.add(OSSConstants.huoshan);
+        values.add(OSSConstants.tencent);
+        values.add(OSSConstants.qingcloud);
+        values.add(OSSConstants.qiniu);
+        values.add(OSSConstants.ucloud);
+        example.createCriteria().andStatusEqualTo(CloudAccountConstants.Status.VALID.name()).andPluginIdIn(values);
+        return accountMapper.selectByExampleWithBLOBs(example);
     }
 
     public void syncBatch(String id) throws Exception {
