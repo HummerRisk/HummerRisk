@@ -427,7 +427,17 @@ export default {
   methods: {
     create() {
       this.form = {type: 'image'};
+      if(this.sboms && this.sboms.length > 0) {
+        this.form.sbomId = this.sboms[0].id;
+        this.initSbom({sbomId: this.form.sbomId});
+      }
       this.createVisible = true;
+    },
+    async initSbom(params) {
+      await this.$post("/sbom/allSbomVersionList", params,response => {
+        this.versions = response.data;
+        if(this.versions && this.versions.length > 0) this.form.sbomVersionId = this.versions[0].id;
+      });
     },
     initSboms() {
       this.result = this.$post("/sbom/allSbomList", {},response => {
