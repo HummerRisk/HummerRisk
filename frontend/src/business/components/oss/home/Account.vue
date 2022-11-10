@@ -13,7 +13,7 @@
                 :row-class-name="tableRowClassName"
                 @filter-change="filter">
         <el-table-column type="index" min-width="2%"/>
-        <el-table-column prop="name" :label="$t('oss.oss_account')" min-width="12%" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="name" :label="$t('oss.oss_account')" min-width="10%" show-overflow-tooltip></el-table-column>
         <el-table-column :label="$t('account.cloud_platform')" min-width="10%" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
@@ -21,6 +21,33 @@
                  &nbsp;&nbsp; {{ scope.row.pluginName }}
               </span>
           </template>
+        </el-table-column>
+        <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="12%" prop="status" sortable
+                         show-overflow-tooltip>
+          <el-button @click="showLog(scope.row)" plain size="medium" type="primary"
+                     v-if="scope.row.status === 'UNCHECKED'">
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+          </el-button>
+          <el-button @click="showLog(scope.row)" plain size="medium" type="primary"
+                     v-else-if="scope.row.status === 'APPROVED'">
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+          </el-button>
+          <el-button @click="showLog(scope.row)" plain size="medium" type="primary"
+                     v-else-if="scope.row.status === 'PROCESSING'">
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+          </el-button>
+          <el-button @click="showLog(scope.row)" plain size="medium" type="success"
+                     v-else-if="scope.row.status === 'FINISHED'">
+            <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+          </el-button>
+          <el-button @click="showLog(scope.row)" plain size="medium" type="danger"
+                     v-else-if="scope.row.status === 'ERROR'">
+            <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+          </el-button>
+          <el-button @click="showLog(scope.row)" plain size="medium" type="warning"
+                     v-else-if="scope.row.status === 'WARNING'">
+            <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+          </el-button>
         </el-table-column>
         <el-table-column min-width="15%" :label="$t('account.create_time')" sortable
                          prop="createTime">
@@ -124,7 +151,7 @@ import Regions from "@/business/components/account/home/Regions";
 import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
-import {ACCOUNT_CONFIGS} from "@/business/components/common/components/search/search-components";
+import {OSS_CONFIGS} from "@/business/components/common/components/search/search-components";
 
 /* eslint-disable */
 export default {
@@ -144,7 +171,7 @@ export default {
       cloudResult: {},
       groupResult: {},
       condition: {
-        components: ACCOUNT_CONFIGS
+        components: OSS_CONFIGS
       },
       tableData: [],
       currentPage: 1,
@@ -196,12 +223,12 @@ export default {
         ],
       },
       buttons: [
+        // {
+        //   tip: this.$t('account.one_scan'), icon: "el-icon-s-promotion", type: "success",
+        //   exec: this.handleScan
+        // },
         {
-          tip: this.$t('account.one_scan'), icon: "el-icon-s-promotion", type: "success",
-          exec: this.openScanGroup
-        },
-        {
-          tip: this.$t('account.tuning'), icon: "el-icon-setting", type: "warning",
+          tip: this.$t('commons.sync'), icon: "el-icon-refresh-right", type: "warning",
           exec: this.handleScan
         }, {
           tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
@@ -286,9 +313,26 @@ export default {
       this.ossTitle = this.$t('oss.create');
       this.visible = true;
     },
-    update(item) {
-      this.form = item;
+    handleEdit(item) {
       this.ossTitle = this.$t('oss.update');
+      this.$get("/oss/iam/strategy/" + item.id,res1 => {
+        this.script = res1.data;
+      });
+      let url = "/oss/changeAccount/";
+      this.cloudResult = this.$get(url + item.id, response => {
+        let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
+        let data = fromJson.data;
+        this.form = item;
+        let credentials = typeof(item.credential) === 'string'?JSON.parse(item.credential):item.credential;
+        this.tmpList = data;
+        for (let tmp of this.tmpList) {
+          if (credentials[tmp.name] === undefined) {
+            tmp.input = tmp.defaultValue?tmp.defaultValue:"";
+          } else {
+            tmp.input = credentials[tmp.name];
+          }
+        }
+      });
       this.visible = true;
     },
     //选择插件查询云账号信息
@@ -301,7 +345,6 @@ export default {
         let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
         let data = fromJson.data;
         this.$get("/account/getAccount/" + accountId,res => {
-          console.log(res, this.form)
           this.form = res.data;
           let credentials = typeof(res.data.credential) === 'string'?JSON.parse(res.data.credential):res.data.credential;
           this.tmpList = data;
@@ -312,7 +355,6 @@ export default {
               tmp.input = credentials[tmp.name];
             }
           }
-          console.log(this.form)
         });
       });
     },
@@ -384,6 +426,13 @@ export default {
           return false;
         }
       });
+    },
+    showLog (item) {
+      let logUrl = "/oss/log/";
+      this.result = this.$get(logUrl + item.id, response => {
+        this.logData = response.data;
+      });
+      this.logVisible = true;
     },
   },
   computed: {
