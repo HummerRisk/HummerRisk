@@ -844,7 +844,6 @@ export default {
           }
         });
       });
-      this.resourceSearch();
     },
     //是否是结束状态，返回false代表都在运行中，true代表已结束
     checkStatus(tableData) {
@@ -938,6 +937,10 @@ export default {
     },
     handleClick(tab, event) {
       this.resourceCondition.taskId = null;
+      this.regionDataSearch();
+      this.severityDataSearch();
+      this.resourceTypeDataSearch();
+      this.ruleDataSearch();
       this.resourceSearch();
       this.activeName = tab.name;
       this.rowIndex = '';
