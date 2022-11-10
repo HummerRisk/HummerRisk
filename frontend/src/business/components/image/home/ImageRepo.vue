@@ -474,11 +474,11 @@ export default {
         this.sboms = response.data;
       });
     },
-    changeSbom(item) {
+    async changeSbom(item) {
       let params = {
         sbomId: item.sbomId
       };
-      this.result = this.$post("/sbom/allSbomVersionList", params,response => {
+      await this.$post("/sbom/allSbomVersionList", params,response => {
         this.versions = response.data;
       });
     },
@@ -490,11 +490,20 @@ export default {
       });
     },
     handleScan(item) {
-      this.initSboms();
       this.activeProxy();
       this.addForm = item;
       this.addForm.name = item.path;
+      if(this.sboms && this.sboms.length > 0) {
+        this.addForm.sbomId = this.sboms[0].id;
+        this.initSbom({sbomId: this.addForm.sbomId});
+      }
       this.innerAdd = true;
+    },
+    async initSbom(params) {
+      await this.$post("/sbom/allSbomVersionList", params,response => {
+        this.versions = response.data;
+        if(this.versions && this.versions.length > 0) this.addForm.sbomVersionId = this.versions[0].id;
+      });
     },
     saveAdd() {
       this.$refs['addForm'].validate(valid => {
@@ -520,6 +529,7 @@ export default {
   },
   created() {
     this.search();
+    this.initSboms();
   }
 }
 </script>
