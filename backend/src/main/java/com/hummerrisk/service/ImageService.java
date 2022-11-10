@@ -607,7 +607,7 @@ public class ImageService {
         if (image.getIsProxy() && image.getProxyId() != null) {
             proxy = proxyMapper.selectByPrimaryKey(image.getProxyId());
         }
-        if (image.getRepoId() != null) {
+        if (image.getRepoId() != null && !StringUtils.isEmpty(image.getRepoId())) {
             imageRepo = imageRepoMapper.selectByPrimaryKey(image.getRepoId());
         }
         ScanSetting scanSetting = new ScanSetting();

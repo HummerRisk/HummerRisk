@@ -32,13 +32,16 @@ public class ImageProvider implements IProvider {
                 Proxy proxy = (Proxy) obj[1];
                 _proxy = ProxyUtil.isProxy(proxy);
             }
-            if (image.getRepoId() != null) {
+            if (image.getRepoId() != null && !StringUtils.isEmpty(image.getRepoId())) {
                 ImageRepo imageRepo = (ImageRepo) obj[2];
                 String repo = imageRepo.getRepo().replace("https://", "").replace("http://", "");
                 if (repo.endsWith("/")) {
                     repo = repo.substring(0, repo.length() - 1);
                 }
-                dockerLogin = "docker login " + repo + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword() + "\n";
+//                dockerLogin = "docker login " + repo + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword() + "\n";
+                dockerLogin =
+                        "export TRIVY_USERNAME=" + imageRepo.getUserName() + ";\n" +
+                        "export TRIVY_PASSWORD=" + imageRepo.getPassword() + ";";
             }
             String fileName = "";
             if (StringUtils.equalsIgnoreCase("image", image.getType()) || StringUtils.equalsIgnoreCase("repo", image.getType())) {
@@ -64,7 +67,7 @@ public class ImageProvider implements IProvider {
             }
             CommandUtils.commonExecCmdWithResult(TrivyConstants.TRIVY_RM + TrivyConstants.TRIVY_JSON, TrivyConstants.DEFAULT_BASE_DIR);
             String command = _proxy + dockerLogin + TrivyConstants.TRIVY_IMAGE + str + fileName + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
-            LogUtil.info(image.getId() + " {k8sImage}[command]: " + image.getName() + "   " + command);
+            LogUtil.info(image.getId() + " {Image}[command]: " + image.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
             if (resultStr.contains("ERROR") || resultStr.contains("error")) {
                 throw new Exception(resultStr);
