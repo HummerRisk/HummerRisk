@@ -1309,6 +1309,16 @@
             </exclusions>
         </dependency>
         <!-- 钉钉 -->
+
+        <!-- 容器测试库 -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>1.17.5</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- 容器测试库 -->
+
     </dependencies>
 
     <build>

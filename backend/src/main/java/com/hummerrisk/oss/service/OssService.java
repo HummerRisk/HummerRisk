@@ -11,7 +11,7 @@ import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.CommonThreadPool;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.commons.utils.ReadFileUtils;
-import com.hummerrisk.controller.request.account.CloudAccountRequest;
+import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.oss.config.OssManager;
 import com.hummerrisk.oss.constants.OSSConstants;
@@ -20,7 +20,6 @@ import com.hummerrisk.oss.dto.OssDTO;
 import com.hummerrisk.oss.provider.OssProvider;
 import com.hummerrisk.service.AccountService;
 import com.hummerrisk.service.OperationLogService;
-import kotlin.collections.ArrayDeque;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,7 +50,7 @@ public class OssService {
     private static final String BASE_CREDENTIAL_DIC = "support/credential/";
     private static final String JSON_EXTENSION = ".json";
 
-    public List<OssDTO> ossList (OssRequest request) {
+    public List<OssDTO> ossList(OssRequest request) {
         return extOssMapper.ossList(request);
     }
 
@@ -87,6 +86,31 @@ public class OssService {
             HRException.throwException(Translator.get("i18n_ex_plugin_get"));
         }
         return Translator.get("i18n_ex_plugin_get");
+    }
+
+    public OssWithBLOBs addOss(OssWithBLOBs request) throws Exception {
+        OssWithBLOBs oss = ossMapper.selectByPrimaryKey(request.getId());
+        if (oss != null) {
+            editOss(request);
+        } else {
+            request.setCreateTime(System.currentTimeMillis());
+            request.setUpdateTime(System.currentTimeMillis());
+            request.setCreator(SessionUtils.getUserId());
+            ossMapper.insertSelective(request);
+        }
+        return request;
+    }
+
+    public OssWithBLOBs editOss(OssWithBLOBs request) throws Exception {
+        request.setCreateTime(System.currentTimeMillis());
+        request.setUpdateTime(System.currentTimeMillis());
+        request.setCreator(SessionUtils.getUserId());
+        ossMapper.updateByPrimaryKeySelective(request);
+        return request;
+    }
+
+    public void deleteOss(String ossId) {
+        ossMapper.deleteByPrimaryKey(ossId);
     }
 
     public void syncBatch(String id) throws Exception {
@@ -145,21 +169,21 @@ public class OssService {
             saveOssBuckets(ossProvider, oss);
         } catch (Exception e) {
             LogUtil.error("Failed to get the bucket information: " + oss.getName(), e);
-            HRException.throwException(Translator.get("i18n_get_bucket_info_failed")+ e.getMessage());
+            HRException.throwException(Translator.get("i18n_get_bucket_info_failed") + e.getMessage());
             throw e;
         }
     }
 
     public OssProvider getOssProvider(String pluginId) throws Exception {
         OssProvider ossProvider = (OssProvider) OssManager.getOssProviders().get(pluginId);
-        if(ossProvider == null){
+        if (ossProvider == null) {
             throw new Exception(String.format("Unsupported plugin: %s", pluginId));
         }
         return ossProvider;
     }
 
-    private void saveOssBuckets(OssProvider ossProvider, OssWithBLOBs ossAccount) throws Exception{
-        try{
+    private void saveOssBuckets(OssProvider ossProvider, OssWithBLOBs ossAccount) throws Exception {
+        try {
             List<OssBucket> list = ossProvider.getOssBucketList(ossAccount);
             OssBucketExample bucketExample = new OssBucketExample();
             bucketExample.createCriteria().andIdEqualTo(ossAccount.getId());
@@ -186,7 +210,7 @@ public class OssService {
                     .andOssIdEqualTo(ossAccount.getId())
                     .andSyncFlagEqualTo(true);
             ossBucketMapper.deleteByExample(bucketExample);
-        }catch (Exception e){
+        } catch (Exception e) {
             LogUtil.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
         }

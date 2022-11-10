@@ -3,9 +3,12 @@ package com.hummerrisk.oss.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.AccountWithBLOBs;
+import com.hummerrisk.base.domain.OssWithBLOBs;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
+import com.hummerrisk.controller.request.account.CreateCloudAccountRequest;
+import com.hummerrisk.controller.request.account.UpdateCloudAccountRequest;
 import com.hummerrisk.oss.controller.request.OssRequest;
 import com.hummerrisk.oss.dto.OssDTO;
 import com.hummerrisk.oss.service.OssService;
@@ -50,6 +53,26 @@ public class OssController {
     @GetMapping("changeAccount/{accountId}")
     public String getCredential(@PathVariable String accountId) {
         return ossService.getCredential(accountId);
+    }
+
+    @I18n
+    @ApiOperation(value = "添加对象存储")
+    @PostMapping("add")
+    public OssWithBLOBs addOss(@RequestBody OssWithBLOBs request) throws Exception {
+        return ossService.addOss(request);
+    }
+
+    @I18n
+    @ApiOperation(value = "更新对象存储")
+    @PostMapping("update")
+    public OssWithBLOBs editOss(@RequestBody OssWithBLOBs request) throws Exception {
+        return ossService.editOss(request);
+    }
+
+    @ApiOperation(value = "删除对象存储")
+    @PostMapping(value = "delete/{ossId}")
+    public void deleteOss(@PathVariable String ossId) {
+        ossService.deleteOss(ossId);
     }
 
     @I18n

@@ -53,9 +53,9 @@
     <el-drawer class="rtl" :title="ossTitle" :visible.sync="visible" size="50%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <div v-loading="cloudResult.loading">
-        <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="accountForm">
+        <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="form">
           <el-form-item :label="$t('account.cloud_account')" :rules="{required: true, message: $t('account.cloud_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.id" :placeholder="$t('account.please_choose_account')" @change="changeAccount(form.id)">
+            <el-select style="width: 100%;" :disabled="ossTitle!=$t('oss.create')" v-model="form.id" :placeholder="$t('account.please_choose_account')" @change="changeAccount(form.id)">
               <el-option
                 v-for="item in accounts"
                 :key="item.id"
@@ -293,14 +293,16 @@ export default {
     },
     //选择插件查询云账号信息
     async changeAccount (accountId){
-      this.$get("/oss/iam/strategy/" + accountId,res => {
-        this.script = res.data;
+      this.$get("/oss/iam/strategy/" + accountId,res1 => {
+        this.script = res1.data;
       });
       let url = "/oss/changeAccount/";
       this.cloudResult = await this.$get(url + accountId, response => {
         let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
         let data = fromJson.data;
         this.$get("/account/getAccount/" + accountId,res => {
+          console.log(res, this.form)
+          this.form = res.data;
           let credentials = typeof(res.data.credential) === 'string'?JSON.parse(res.data.credential):res.data.credential;
           this.tmpList = data;
           for (let tmp of this.tmpList) {
@@ -310,6 +312,7 @@ export default {
               tmp.input = credentials[tmp.name];
             }
           }
+          console.log(this.form)
         });
       });
     },
@@ -343,7 +346,7 @@ export default {
       }
       this.$refs['form'].validate(valid => {
         if (valid) {
-          let data = {}, key = {};
+          let key = {};
           for (let tmp of this.tmpList) {
             if(!tmp.input) {
               this.$warning(this.$t('vuln.no_plugin_param') + tmp.label);
@@ -351,13 +354,12 @@ export default {
             }
             key[tmp.name] = tmp.input;
           }
-          data["credential"] = JSON.stringify(key);
-          data["name"] = item.name;
-          data["pluginId"] = item.pluginId;
-          if (item.isProxy) data["proxyId"] = item.proxyId;
+          item["credential"] = JSON.stringify(key);
+          item["name"] = item.name;
+          item["pluginId"] = item.pluginId;
 
           if (type === 'add') {
-            this.cloudResult = this.$post("/account/add", data,response => {
+            this.cloudResult = this.$post("/oss/add", item,response => {
               if (response.success) {
                 this.$success(this.$t('account.i18n_hr_create_success'));
                 this.search();
@@ -367,8 +369,7 @@ export default {
               }
             });
           } else {
-            data["id"] = item.id;
-            this.cloudResult = this.$post("/account/update", data,response => {
+            this.cloudResult = this.$post("/oss/update", item,response => {
               if (response.success) {
                 this.$success(this.$t('account.i18n_hr_update_success'));
                 this.handleClose();
