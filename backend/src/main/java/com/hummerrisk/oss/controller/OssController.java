@@ -3,12 +3,14 @@ package com.hummerrisk.oss.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.AccountWithBLOBs;
+import com.hummerrisk.base.domain.OssBucket;
 import com.hummerrisk.base.domain.OssLogWithBLOBs;
 import com.hummerrisk.base.domain.OssWithBLOBs;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.oss.controller.request.OssRequest;
+import com.hummerrisk.oss.dto.OssBucketDTO;
 import com.hummerrisk.oss.dto.OssDTO;
 import com.hummerrisk.oss.service.OssService;
 import io.swagger.annotations.Api;
@@ -87,5 +89,15 @@ public class OssController {
     public List<OssLogWithBLOBs> getLogList(@PathVariable String ossId) {
         return ossService.getLogList(ossId);
     }
+
+    @I18n
+    @ApiOperation(value = "对象存储桶列表")
+    @PostMapping("bucketList/{goPage}/{pageSize}")
+    public Pager<List<OssBucketDTO>> ossBucketList(
+            @PathVariable int goPage, @PathVariable int pageSize, @RequestBody OssRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, ossService.ossBucketList(request));
+    }
+
 
 }

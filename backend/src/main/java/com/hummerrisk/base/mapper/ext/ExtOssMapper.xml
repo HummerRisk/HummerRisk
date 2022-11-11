@@ -123,4 +123,32 @@
         order by t.update_time desc
     </select>
 
+    <select id="ossBucketList" resultType="com.hummerrisk.oss.dto.OssBucketDTO" parameterType="com.hummerrisk.oss.controller.request.OssRequest">
+        select
+        t.*,
+        t1.name as name,
+        t1.plugin_id as pluginId,
+        t1.plugin_icon as pluginIcon
+        from oss_bucket as t
+        left join oss t1 on t.oss_id = t1.id
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
+            </if>
+            <if test="request.id != null and request.id != ''">
+                and t.oss_id like CONCAT('%', #{request.id},'%')
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and t.name like CONCAT('%', #{request.name},'%')
+            </if>
+            <if test="request.status != null and request.status != ''">
+                and t.status = #{request.status}
+            </if>
+        </where>
+        order by t.create_time desc
+    </select>
+
 </mapper>

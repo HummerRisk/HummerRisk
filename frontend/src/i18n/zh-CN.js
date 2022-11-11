@@ -1151,6 +1151,10 @@ export default {
     create: '创建对象存储账号',
     update: '编辑对象存储账号',
     log_list: '对象存储同步日志',
+    location: '位置',
+    storage_class: '存储类型',
+    oss_size: '存储用量',
+    object_number: "文件数量",
   },
   task: {
     task_setting: '任务编排',

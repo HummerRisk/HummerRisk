@@ -61,10 +61,12 @@
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
-        <el-table-column :label="$t('account.regions')" min-width="7%">
+        <el-table-column prop="userName" :label="$t('account.creator')" min-width="7%" show-overflow-tooltip/>
+        <el-table-column :label="$t('oss.bucket')" min-width="10%">
           <template v-slot:default="scope">
-            <regions :row="scope.row"/>
+            <el-link type="primary" @click="showBuckets(scope.row)">
+              {{ scope.row.sum }}
+            </el-link>
           </template>
         </el-table-column>
         <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right">
@@ -77,7 +79,7 @@
     </el-card>
 
     <!--oss account-->
-    <el-drawer class="rtl" :title="ossTitle" :visible.sync="visible" size="50%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="ossTitle" :visible.sync="visible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <div v-loading="cloudResult.loading">
         <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="form">
@@ -140,7 +142,7 @@
     <!--oss account-->
 
     <!--oss log-->
-    <el-drawer class="rtl" :title="$t('oss.log_list')" :visible.sync="logVisible" size="85%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('oss.log_list')" :visible.sync="logVisible" size="65%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-row class="el-form-item-dev" v-if="logData.length == 0">
         <span>{{ $t('resource.i18n_no_data') }}<br></span>
@@ -195,6 +197,43 @@
     </el-drawer>
     <!--oss log-->
 
+    <!--oss bucket-->
+    <el-drawer class="rtl" :title="$t('oss.oss_bucket')" :visible.sync="bucketVisible" size="90%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <table-header :condition.sync="bucketCondition" @search="searchBuckets"
+                    :show-name="false"
+                    :show-validate="false" :show-create="false"/>
+      <el-table border :data="bucketData" class="adjust-table table-content" @sort-change="sort"
+                :row-class-name="tableRowClassName"
+                @filter-change="filter">
+        <el-table-column type="index" min-width="2%"/>
+        <el-table-column prop="bucketName" :label="$t('oss.bucket')" min-width="10%" show-overflow-tooltip v-slot:default="scope">
+          <el-link type="primary" @click="showObject(scope.row)">
+            {{ scope.row.bucketName }}
+          </el-link>
+        </el-table-column>
+        <el-table-column :label="$t('oss.name')" min-width="10%" show-overflow-tooltip>
+          <template v-slot:default="scope">
+              <span>
+                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ scope.row.name }}
+              </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="location" :label="$t('oss.location')" min-width="10%" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="storageClass" :label="$t('oss.storage_class')" min-width="10%" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="size" :label="$t('oss.oss_size')" min-width="10%" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="objectNumber" :label="$t('oss.object_number')" min-width="10%" show-overflow-tooltip></el-table-column>
+<!--        <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">-->
+<!--          <template v-slot:default="scope">-->
+<!--            <table-operators :buttons="bucketButtons" :row="scope.row"/>-->
+<!--          </template>-->
+<!--        </el-table-column>-->
+      </el-table>
+      <table-pagination :change="searchBuckets" :current-page.sync="bucketPage" :page-size.sync="bucketPageSize" :total="bucketTotal"/>
+    </el-drawer>
+    <!--oss bucket-->
+
   </main-container>
 </template>
 
@@ -203,7 +242,6 @@ import TablePagination from "../../common/pagination/TablePagination";
 import TableHeader from "@/business/components/common/components/TableHeader";
 import Container from "../../common/components/Container";
 import MainContainer from "../../common/components/MainContainer";
-import Regions from "@/business/components/account/home/Regions";
 import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
@@ -213,7 +251,6 @@ import {OSS_CONFIGS} from "@/business/components/common/components/search/search
 export default {
   components: {
     TableOperators,
-    Regions,
     MainContainer,
     Container,
     TableHeader,
@@ -227,6 +264,9 @@ export default {
       cloudResult: {},
       groupResult: {},
       condition: {
+        components: OSS_CONFIGS
+      },
+      bucketCondition: {
         components: OSS_CONFIGS
       },
       tableData: [],
@@ -309,6 +349,12 @@ export default {
       logVisible: false,
       logData: [],
       logForm: {},
+      bucketVisible: false,
+      bucketData: [],
+      bucketPage: 1,
+      bucketPageSize: 10,
+      bucketTotal: 0,
+      ossId: "",
     }
   },
   methods: {
@@ -542,6 +588,23 @@ export default {
         }
       }
       return sum == 0;
+    },
+    showBuckets(item) {
+      this.ossId = item.id;
+      this.searchBuckets();
+      this.bucketVisible = true;
+    },
+    searchBuckets() {
+      let url = "/oss/bucketList/" + this.bucketPage + "/" + this.bucketPageSize;
+      this.bucketCondition.id = this.ossId;
+      this.result = this.$post(url, this.bucketCondition, response => {
+        let data = response.data;
+        this.bucketTotal = data.itemCount;
+        this.bucketData = data.listObject;
+      });
+    },
+    showObject(bucket) {
+
     },
   },
   computed: {

@@ -15,6 +15,7 @@ import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.oss.config.OssManager;
 import com.hummerrisk.oss.constants.OSSConstants;
 import com.hummerrisk.oss.controller.request.OssRequest;
+import com.hummerrisk.oss.dto.OssBucketDTO;
 import com.hummerrisk.oss.dto.OssDTO;
 import com.hummerrisk.oss.provider.OssProvider;
 import com.hummerrisk.service.AccountService;
@@ -53,6 +54,10 @@ public class OssService {
 
     public List<OssDTO> ossList(OssRequest request) {
         return extOssMapper.ossList(request);
+    }
+
+    public List<OssBucketDTO> ossBucketList(OssRequest request) {
+        return extOssMapper.ossBucketList(request);
     }
 
     public List<AccountWithBLOBs> getCloudAccountList() {
