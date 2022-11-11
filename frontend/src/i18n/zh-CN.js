@@ -1140,6 +1140,8 @@ export default {
     rule_group_vuln: '规则组漏洞情况',
   },
   oss: {
+    name: '账号名称',
+    bucket: '存储桶',
     oss_setting: '对象存储',
     oss_overview: '对象存储概览',
     oss_bucket: '存储桶列表',
@@ -1148,6 +1150,7 @@ export default {
     oss_account_list: '对象存储账号列表',
     create: '创建对象存储账号',
     update: '编辑对象存储账号',
+    log_list: '对象存储同步日志',
   },
   task: {
     task_setting: '任务编排',

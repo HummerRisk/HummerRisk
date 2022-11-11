@@ -1140,11 +1140,17 @@ export default {
     rule_group_vuln: 'Rule group vulnerability situation',
   },
   oss: {
+    name: 'Account name',
+    bucket: 'Bucket',
     oss_setting: 'Object storage',
     oss_overview: 'Object storage overview',
     oss_bucket: 'Bucket list',
     oss_order: 'Bucket operations',
     oss_account: 'Object storage account',
+    oss_account_list: 'Object storage account list',
+    create: 'Create an object storage account',
+    update: 'Edit object storage account',
+    log_list: 'Object storage synchronization log',
   },
   task: {
     task_setting: 'Task arrangement',

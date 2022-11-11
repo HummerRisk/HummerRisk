@@ -119,10 +119,19 @@ public class OssService {
         ossLogMapper.deleteByExample(example);
     }
 
+    public List<OssLogWithBLOBs> getLogList(String ossId) {
+        OssLogExample example = new OssLogExample();
+        example.createCriteria().andOssIdEqualTo(ossId);
+        return ossLogMapper.selectByExampleWithBLOBs(example);
+    }
+
     public void batch(String id) throws Exception {
         OssWithBLOBs oss = ossMapper.selectByPrimaryKey(id);
         oss.setStatus(OSSConstants.SYNC_STATUS.APPROVED.name());
         ossMapper.updateByPrimaryKeySelective(oss);
+        OssLogExample example = new OssLogExample();
+        example.createCriteria().andOssIdEqualTo(id);
+        ossLogMapper.deleteByExample(example);
         saveLog(oss.getId(), "i18n_start_oss_sync", "", true, 0);
     }
 
@@ -133,7 +142,7 @@ public class OssService {
         } catch (Exception e) {
             oss.setStatus(OSSConstants.SYNC_STATUS.ERROR.name());
             ossMapper.updateByPrimaryKeySelective(oss);
-            saveLog(oss.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), true, 0);
+            saveLog(oss.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, 0);
             LogUtil.error(String.format("Failed to synchronize cloud account: %s", oss.getName()), e);
         }
     }
@@ -142,7 +151,7 @@ public class OssService {
         if (!accountService.validate(oss.getId()).isFlag()) {
             oss.setStatus(OSSConstants.SYNC_STATUS.ERROR.name());
             ossMapper.updateByPrimaryKeySelective(oss);
-            saveLog(oss.getId(), "i18n_operation_ex" + ": " + "failed_oss", "failed_oss", true, 0);
+            saveLog(oss.getId(), "i18n_operation_ex" + ": " + "failed_oss", "failed_oss", false, 0);
             return;
         }
         OperationLogService.log(null, oss.getId(), oss.getName(), ResourceTypeConstants.OSS.name(), OSSConstants.SYNC_STATUS.APPROVED.name(), null);
@@ -158,7 +167,7 @@ public class OssService {
                 oss.setStatus(OSSConstants.SYNC_STATUS.ERROR.name());
                 oss.setUpdateTime(System.currentTimeMillis());
                 ossMapper.updateByPrimaryKeySelective(oss);
-                saveLog(oss.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), true, 0);
+                saveLog(oss.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, 0);
             }
         });
     }
@@ -167,6 +176,7 @@ public class OssService {
         Integer sum = fetchOssBucketList(oss);
         oss.setStatus(OSSConstants.SYNC_STATUS.FINISHED.name());
         oss.setUpdateTime(System.currentTimeMillis());
+        oss.setSum(sum);
         ossMapper.updateByPrimaryKeySelective(oss);
         saveLog(oss.getId(), "i18n_end_oss_sync", "", true, sum);
     }

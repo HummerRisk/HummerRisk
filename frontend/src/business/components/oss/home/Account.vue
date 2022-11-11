@@ -13,7 +13,7 @@
                 :row-class-name="tableRowClassName"
                 @filter-change="filter">
         <el-table-column type="index" min-width="2%"/>
-        <el-table-column prop="name" :label="$t('oss.oss_account')" min-width="10%" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="name" :label="$t('oss.name')" min-width="10%" show-overflow-tooltip></el-table-column>
         <el-table-column :label="$t('account.cloud_platform')" min-width="10%" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
@@ -139,6 +139,62 @@
     </el-drawer>
     <!--oss account-->
 
+    <!--oss log-->
+    <el-drawer class="rtl" :title="$t('oss.log_list')" :visible.sync="logVisible" size="85%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <el-row class="el-form-item-dev" v-if="logData.length == 0">
+        <span>{{ $t('resource.i18n_no_data') }}<br></span>
+      </el-row>
+      <el-row class="el-form-item-dev" v-if="logData.length > 0">
+        <div>
+          <el-row>
+            <el-col :span="24">
+              <div class="grid-content bg-purple-light">
+                <span class="grid-content-log-span">
+                  <img :src="require(`@/assets/img/platform/${logForm.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                  {{ logForm.name }}
+                </span>
+                <span class="grid-content-log-span">
+                  {{ $t('oss.bucket') }} : {{ logForm.sum }}
+                </span>
+                <span class="grid-content-status-span" v-if="logForm.status === 'APPROVED'" style="color: #579df8">
+                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                </span>
+                <span class="grid-content-status-span" v-else-if="logForm.status === 'FINISHED'" style="color: #7ebf50">
+                  <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+                </span>
+                <span class="grid-content-status-span" v-else-if="logForm.status === 'ERROR'" style="color: red;">
+                  <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+                </span>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+        <el-table :show-header="false" :data="logData" class="adjust-table table-content">
+          <el-table-column>
+            <template v-slot:default="scope">
+              <div class="bg-purple-div">
+                <span
+                  v-bind:class="{true: 'color-red', false: ''}[scope.row.result == false]">
+                      {{ scope.row.createTime | timestampFormatDate }}
+                      {{ scope.row.operator }}
+                      {{ scope.row.operation }}
+                      {{ scope.row.output }}
+                      : {{ scope.row.sum }}<br>
+                </span>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-row>
+      <template v-slot:footer>
+        <dialog-footer
+          @cancel="logVisible = false"
+          @confirm="logVisible = false"/>
+      </template>
+    </el-drawer>
+    <!--oss log-->
+
   </main-container>
 </template>
 
@@ -250,6 +306,9 @@ export default {
         line: true,
         indentWithTabs: true,
       },
+      logVisible: false,
+      logData: [],
+      logForm: {},
     }
   },
   methods: {
@@ -264,6 +323,7 @@ export default {
     },
     handleClose() {
       this.visible =  false;
+      this.logVisible = false;
     },
     showRegions (tmp) {
       this.regions = tmp.regions;
@@ -431,6 +491,7 @@ export default {
       let logUrl = "/oss/log/";
       this.result = this.$get(logUrl + item.id, response => {
         this.logData = response.data;
+        this.logForm = item;
       });
       this.logVisible = true;
     },
@@ -439,6 +500,19 @@ export default {
         if(response.success) {
           this.$success(this.$t('event.sync'));
           this.search();
+        }
+      });
+    },
+    handleDelete(item) {
+      this.$alert(this.$t('code.delete_confirm') + this.$t('oss.oss_setting') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$get("/oss/delete/" + item.id,  res => {
+              this.$success(this.$t('commons.delete_success'));
+              this.search();
+            });
+          }
         }
       });
     },
@@ -515,6 +589,39 @@ export default {
 }
 .rtl >>> .el-form-item__content {
   width: 75%;
+}
+.el-form-item-dev  >>> .el-form-item__content {
+  margin-left: 0 !important;
+}
+.grid-content-log-span {
+  width: 34%;
+  float: left;
+  vertical-align: middle;
+  display:table-cell;
+  margin: 6px 0 6px 2px;
+  color: #606266;
+  padding: 0 1%;
+}
+
+.grid-content-status-span {
+  width: 20%;float: left;
+  vertical-align: middle;
+  display:table-cell;
+  margin: 6px 0;
+  padding: 0 1%;
+}
+.bg-purple-dark {
+  background: #99a9bf;
+}
+.bg-purple {
+  background: #d3dce6;
+}
+.bg-purple-light {
+  background: #f2f2f2;
+}
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
 }
 </style>
 

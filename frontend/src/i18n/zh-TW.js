@@ -1140,11 +1140,17 @@ export default {
     rule_group_vuln: '規則組漏洞情況',
   },
   oss: {
+    name: '賬號名稱',
+    bucket: '存儲桶',
     oss_setting: '對象存儲',
     oss_overview: '對象存儲概覽',
     oss_bucket: '存儲桶列表',
     oss_order: '存儲桶操作',
     oss_account: '對象存儲賬號',
+    oss_account_list: '對象存儲賬號列表',
+    create: '創建對象存儲賬號',
+    update: '編輯對象存儲賬號',
+    log_list: '對象存儲同步日誌',
   },
   task: {
     task_setting: '任務編排',

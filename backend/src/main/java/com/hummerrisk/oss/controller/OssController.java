@@ -3,12 +3,11 @@ package com.hummerrisk.oss.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.AccountWithBLOBs;
+import com.hummerrisk.base.domain.OssLogWithBLOBs;
 import com.hummerrisk.base.domain.OssWithBLOBs;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
-import com.hummerrisk.controller.request.account.CreateCloudAccountRequest;
-import com.hummerrisk.controller.request.account.UpdateCloudAccountRequest;
 import com.hummerrisk.oss.controller.request.OssRequest;
 import com.hummerrisk.oss.dto.OssDTO;
 import com.hummerrisk.oss.service.OssService;
@@ -70,7 +69,7 @@ public class OssController {
     }
 
     @ApiOperation(value = "删除对象存储")
-    @PostMapping(value = "delete/{ossId}")
+    @GetMapping(value = "delete/{ossId}")
     public void deleteOss(@PathVariable String ossId) {
         ossService.deleteOss(ossId);
     }
@@ -80,6 +79,13 @@ public class OssController {
     @GetMapping("batch/sync/{id}")
     public void sync(@PathVariable String id) throws Exception {
         ossService.batch(id);
+    }
+
+    @I18n
+    @ApiOperation(value = "对象存储同步日志")
+    @GetMapping(value = "log/{ossId}")
+    public List<OssLogWithBLOBs> getLogList(@PathVariable String ossId) {
+        return ossService.getLogList(ossId);
     }
 
 }
