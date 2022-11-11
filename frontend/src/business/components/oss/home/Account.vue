@@ -22,7 +22,7 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="12%" prop="status" sortable
+        <el-table-column v-slot:default="scope" :label="$t('event.sync_status')" min-width="12%" prop="status" sortable
                          show-overflow-tooltip>
           <el-button @click="showLog(scope.row)" plain size="medium" type="primary"
                      v-if="scope.row.status === 'UNCHECKED'">
@@ -434,6 +434,41 @@ export default {
       });
       this.logVisible = true;
     },
+    handleScan(item) {
+      this.result = this.$get("/oss/batch/sync/" + item.id, response => {
+        if(response.success) {
+          this.$success(this.$t('event.sync'));
+          this.search();
+        }
+      });
+    },
+    getStatus() {
+      if (this.checkStatus(this.tableData)) {
+        this.search();
+        clearInterval(this.timer);
+        this.timer = setInterval(this.getStatus, 60000);
+      }
+      let url = "/oss/list/" + this.currentPage + "/" + this.pageSize;
+      this.result = this.$post(url, this.condition, response => {
+        for (let data of response.data.listObject) {
+          for (let item of this.tableData) {
+            if (data.id == item.id) {
+              item.status = data.status;
+            }
+          }
+        }
+      });
+    },
+    //是否是结束状态，返回false代表都在运行中，true代表已结束
+    checkStatus(tableData) {
+      let sum = 0;
+      for (let row of tableData) {
+        if (row.status != 'ERROR' && row.status != 'FINISHED' && row.status != 'WARNING') {
+          sum++;
+        }
+      }
+      return sum == 0;
+    },
   },
   computed: {
     codemirror() {
@@ -442,6 +477,10 @@ export default {
   },
   created() {
     this.init();
+    this.timer = setInterval(this.getStatus, 10000);
+  },
+  beforeDestroy() {
+    clearInterval(this.timer);
   }
 }
 </script>

@@ -14,10 +14,7 @@ public interface OSSConstants {
     }
 
     enum SYNC_STATUS {
-        PENDING,
-        SUCCESS,
-        ERROR,
-        SYNC;
+        DRAFT, UNCHECKED, APPROVED, FINISHED, TERMINATED, CANCELED, REJECTED, PROCESSING, ERROR, WARNING, RUNNING, PENDING, PAUSE, WAITING;
 
         public boolean equals(String status) {
             return StringUtils.equals(this.name(), status);

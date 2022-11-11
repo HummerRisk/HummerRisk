@@ -7,6 +7,7 @@ import com.aliyun.oss.model.BucketStat;
 import com.hummerrisk.base.domain.OssBucket;
 import com.hummerrisk.base.domain.OssWithBLOBs;
 import com.hummerrisk.proxy.aliyun.AliyunRequest;
+import com.hummerrisk.service.SysListener;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -64,11 +65,11 @@ public class AliyunProvider implements OssProvider {
         ossBucket.setCannedAcl(cannedAcl);
         ossBucket.setDomainName(bucket.getName() + "." + bucket.getExtranetEndpoint());
         if (bucketStat != null) {
-            Double size = (double) bucketStat.getStorageSize() / 1024 / 1024;
-            ossBucket.setSize(size.longValue());
+            String size = SysListener.changeFlowFormat(bucketStat.getStorageSize());
+            ossBucket.setSize(size);
             ossBucket.setObjectNumber(bucketStat.getObjectCount());
         } else {
-            ossBucket.setSize(0L);
+            ossBucket.setSize("KB");
             ossBucket.setObjectNumber(0L);
         }
 

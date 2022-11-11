@@ -79,7 +79,7 @@ public class OssController {
     @ApiOperation(value = "同步对象存储")
     @GetMapping("batch/sync/{id}")
     public void sync(@PathVariable String id) throws Exception {
-        ossService.syncBatch(id);
+        ossService.batch(id);
     }
 
 }

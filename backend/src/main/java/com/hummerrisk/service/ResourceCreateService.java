@@ -13,6 +13,8 @@ import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.resource.ResourceRequest;
 import com.hummerrisk.dto.ResourceDTO;
 import com.hummerrisk.i18n.Translator;
+import com.hummerrisk.oss.constants.OSSConstants;
+import com.hummerrisk.oss.service.OssService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -115,6 +117,10 @@ public class ResourceCreateService {
     private CloudResourceSyncMapper cloudResourceSyncMapper;
     @Resource
     private HistoryFileSystemResultMapper historyFileSystemResultMapper;
+    @Resource
+    private OssService ossService;
+    @Resource
+    private OssMapper ossMapper;
 
     @QuartzScheduled(cron = "${cron.expression.local}")
     public void handleTasks() throws Exception {
@@ -345,6 +351,39 @@ public class ResourceCreateService {
                         LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(fsToBeProceed.getId());
+                    }
+                });
+            });
+        }
+
+        //对象存储
+        final OssExample ossExample = new OssExample();
+        OssExample.Criteria ossCriteria = ossExample.createCriteria();
+        ossCriteria.andStatusEqualTo(OSSConstants.SYNC_STATUS.APPROVED.toString());
+        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
+            ossCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+        }
+        ossExample.setOrderByClause("create_time limit 10");
+        List<Oss> ossList = ossMapper.selectByExample(ossExample);
+        if (CollectionUtils.isNotEmpty(ossList)) {
+            ossList.forEach(oss -> {
+                final Oss ossToBeProceed;
+                try {
+                    ossToBeProceed = BeanUtils.copyBean(new Oss(), oss);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                if (processingGroupIdMap.get(ossToBeProceed.getId()) != null) {
+                    return;
+                }
+                processingGroupIdMap.put(ossToBeProceed.getId(), ossToBeProceed.getId());
+                commonThreadPool.addTask(() -> {
+                    try {
+                        ossService.syncBatch(ossToBeProceed.getId());
+                    } catch (Exception e) {
+                        LogUtil.error(e.getMessage());
+                    } finally {
+                        processingGroupIdMap.remove(ossToBeProceed.getId());
                     }
                 });
             });

@@ -21,8 +21,6 @@ CREATE TABLE IF NOT EXISTS `oss`
 CREATE TABLE IF NOT EXISTS `oss_log` (
     `id`                           int(11)             NOT NULL AUTO_INCREMENT,
     `oss_id`                       varchar(50)         DEFAULT NULL COMMENT 'Oss ID',
-    `region_id`                    varchar(100)        DEFAULT NULL COMMENT '区域ID',
-    `region_name`                  varchar(100)        DEFAULT NULL COMMENT '区域名称',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
     `operation`                    mediumtext          DEFAULT NULL COMMENT '操作内容',
@@ -43,9 +41,8 @@ CREATE TABLE IF NOT EXISTS `oss_bucket` (
     `oss_id`                       varchar(50)         DEFAULT NULL COMMENT 'Oss ID',
     `owner_id`                     varchar(80)         DEFAULT NULL COMMENT '所有者id',
     `owner_name`                   varchar(80)         DEFAULT NULL COMMENT '所有者',
-    `sync_status`                  varchar(50)         DEFAULT NULL COMMENT '同步状态',
     `domain_name`                  varchar(500)        DEFAULT NULL COMMENT '存储桶域名',
-    `size`                         bigint(20)          COLLATE utf8mb4_bin DEFAULT NULL COMMENT '存储用量(M)',
+    `size`                         varchar(50)         DEFAULT NULL COMMENT '存储用量',
     `object_number`                bigint(20)          COLLATE utf8mb4_bin COMMENT '文件数量',
     `canned_acl`                   varchar(45)         DEFAULT NULL COMMENT '权限',
     `sync_flag`                    tinyint(1)          DEFAULT 0 COMMENT '是否启用',
@@ -54,7 +51,6 @@ CREATE TABLE IF NOT EXISTS `oss_bucket` (
 
 
 ALTER TABLE `cloud_native_source` ADD `source_json` longtext DEFAULT NULL COMMENT '资源json';
-
 ALTER TABLE `image_result_item` ADD `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';
 ALTER TABLE `code_result_item` ADD `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';
 ALTER TABLE `file_system_result_item` ADD `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';

@@ -3,15 +3,14 @@ package com.hummerrisk.oss.service;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.AccountMapper;
 import com.hummerrisk.base.mapper.OssBucketMapper;
+import com.hummerrisk.base.mapper.OssLogMapper;
 import com.hummerrisk.base.mapper.OssMapper;
 import com.hummerrisk.base.mapper.ext.ExtOssMapper;
 import com.hummerrisk.commons.constants.CloudAccountConstants;
+import com.hummerrisk.commons.constants.CloudTaskConstants;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
-import com.hummerrisk.commons.utils.CommonThreadPool;
-import com.hummerrisk.commons.utils.LogUtil;
-import com.hummerrisk.commons.utils.ReadFileUtils;
-import com.hummerrisk.commons.utils.SessionUtils;
+import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.oss.config.OssManager;
 import com.hummerrisk.oss.constants.OSSConstants;
@@ -46,6 +45,8 @@ public class OssService {
     private OssBucketMapper ossBucketMapper;
     @Resource
     private CommonThreadPool commonThreadPool;
+    @Resource
+    private OssLogMapper ossLogMapper;
 
     private static final String BASE_CREDENTIAL_DIC = "support/credential/";
     private static final String JSON_EXTENSION = ".json";
@@ -96,6 +97,7 @@ public class OssService {
             request.setCreateTime(System.currentTimeMillis());
             request.setUpdateTime(System.currentTimeMillis());
             request.setCreator(SessionUtils.getUserId());
+            request.setStatus(CloudTaskConstants.TASK_STATUS.APPROVED.name());
             ossMapper.insertSelective(request);
         }
         return request;
@@ -105,12 +107,23 @@ public class OssService {
         request.setCreateTime(System.currentTimeMillis());
         request.setUpdateTime(System.currentTimeMillis());
         request.setCreator(SessionUtils.getUserId());
+        request.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());
         ossMapper.updateByPrimaryKeySelective(request);
         return request;
     }
 
     public void deleteOss(String ossId) {
         ossMapper.deleteByPrimaryKey(ossId);
+        OssLogExample example = new OssLogExample();
+        example.createCriteria().andOssIdEqualTo(ossId);
+        ossLogMapper.deleteByExample(example);
+    }
+
+    public void batch(String id) throws Exception {
+        OssWithBLOBs oss = ossMapper.selectByPrimaryKey(id);
+        oss.setStatus(OSSConstants.SYNC_STATUS.APPROVED.name());
+        ossMapper.updateByPrimaryKeySelective(oss);
+        saveLog(oss.getId(), "i18n_start_oss_sync", "", true, 0);
     }
 
     public void syncBatch(String id) throws Exception {
@@ -120,29 +133,24 @@ public class OssService {
         } catch (Exception e) {
             oss.setStatus(OSSConstants.SYNC_STATUS.ERROR.name());
             ossMapper.updateByPrimaryKeySelective(oss);
+            saveLog(oss.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), true, 0);
             LogUtil.error(String.format("Failed to synchronize cloud account: %s", oss.getName()), e);
         }
     }
 
     private void syncResource(OssWithBLOBs oss) throws Exception {
-        if (OSSConstants.SYNC_STATUS.SYNC.equals(oss.getStatus())) {
-            return;
-        }
-        if (OSSConstants.SYNC_STATUS.PENDING.equals(oss.getStatus())) {
-            return;
-        }
         if (!accountService.validate(oss.getId()).isFlag()) {
             oss.setStatus(OSSConstants.SYNC_STATUS.ERROR.name());
             ossMapper.updateByPrimaryKeySelective(oss);
+            saveLog(oss.getId(), "i18n_operation_ex" + ": " + "failed_oss", "failed_oss", true, 0);
             return;
         }
-        OperationLogService.log(null, oss.getId(), oss.getName(), ResourceTypeConstants.OSS.name(), OSSConstants.SYNC_STATUS.SYNC.name(), null);
-        oss.setStatus(OSSConstants.SYNC_STATUS.PENDING.name());
+        OperationLogService.log(null, oss.getId(), oss.getName(), ResourceTypeConstants.OSS.name(), OSSConstants.SYNC_STATUS.APPROVED.name(), null);
         ossMapper.updateByPrimaryKeySelective(oss);
         syncBucketInfo(oss);
     }
 
-    public void syncBucketInfo(final OssWithBLOBs oss) {
+    public void syncBucketInfo(final OssWithBLOBs oss) throws Exception {
         commonThreadPool.addTask(() -> {
             try {
                 doSyncBucketInfo(oss);
@@ -150,23 +158,23 @@ public class OssService {
                 oss.setStatus(OSSConstants.SYNC_STATUS.ERROR.name());
                 oss.setUpdateTime(System.currentTimeMillis());
                 ossMapper.updateByPrimaryKeySelective(oss);
+                saveLog(oss.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), true, 0);
             }
         });
     }
 
     public void doSyncBucketInfo(OssWithBLOBs oss) throws Exception {
-        oss.setStatus(OSSConstants.SYNC_STATUS.SYNC.name());
-        ossMapper.updateByPrimaryKeySelective(oss);
-        fetchOssBucketList(oss);
-        oss.setStatus(OSSConstants.SYNC_STATUS.SUCCESS.name());
+        Integer sum = fetchOssBucketList(oss);
+        oss.setStatus(OSSConstants.SYNC_STATUS.FINISHED.name());
         oss.setUpdateTime(System.currentTimeMillis());
         ossMapper.updateByPrimaryKeySelective(oss);
+        saveLog(oss.getId(), "i18n_end_oss_sync", "", true, sum);
     }
 
-    public void fetchOssBucketList(OssWithBLOBs oss) throws Exception {
+    public Integer fetchOssBucketList(OssWithBLOBs oss) throws Exception {
         try {
             OssProvider ossProvider = getOssProvider(oss.getPluginId());
-            saveOssBuckets(ossProvider, oss);
+            return saveOssBuckets(ossProvider, oss);
         } catch (Exception e) {
             LogUtil.error("Failed to get the bucket information: " + oss.getName(), e);
             HRException.throwException(Translator.get("i18n_get_bucket_info_failed") + e.getMessage());
@@ -182,7 +190,7 @@ public class OssService {
         return ossProvider;
     }
 
-    private void saveOssBuckets(OssProvider ossProvider, OssWithBLOBs ossAccount) throws Exception {
+    private Integer saveOssBuckets(OssProvider ossProvider, OssWithBLOBs ossAccount) throws Exception {
         try {
             List<OssBucket> list = ossProvider.getOssBucketList(ossAccount);
             OssBucketExample bucketExample = new OssBucketExample();
@@ -201,6 +209,7 @@ public class OssService {
                 if (ossBucketMapper.selectByExample(example).size() > 0) {
                     ossBucketMapper.updateByExampleSelective(newBucket, example);
                 } else {
+                    newBucket.setId(UUIDUtil.newUUID());
                     ossBucketMapper.insertSelective(newBucket);
                 }
             });
@@ -210,10 +219,32 @@ public class OssService {
                     .andOssIdEqualTo(ossAccount.getId())
                     .andSyncFlagEqualTo(true);
             ossBucketMapper.deleteByExample(bucketExample);
+            return list.size();
         } catch (Exception e) {
             LogUtil.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
         }
+
+    }
+
+    void saveLog(String ossId, String operation, String output, boolean result, Integer sum) {
+        OssLogWithBLOBs ossLog = new OssLogWithBLOBs();
+        String operator = "system";
+        try {
+            if (SessionUtils.getUser() != null) {
+                operator = SessionUtils.getUser().getId();
+            }
+        } catch (Exception e) {
+            //防止单元测试无session
+        }
+        ossLog.setOperator(operator);
+        ossLog.setOssId(ossId);
+        ossLog.setCreateTime(System.currentTimeMillis());
+        ossLog.setOperation(operation);
+        ossLog.setOutput(output);
+        ossLog.setResult(result);
+        ossLog.setSum(sum);
+        ossLogMapper.insertSelective(ossLog);
 
     }
 
