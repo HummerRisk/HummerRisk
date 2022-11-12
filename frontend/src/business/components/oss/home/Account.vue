@@ -231,6 +231,44 @@
 <!--        </el-table-column>-->
       </el-table>
       <table-pagination :change="searchBuckets" :current-page.sync="bucketPage" :page-size.sync="bucketPageSize" :total="bucketTotal"/>
+
+      <el-drawer
+        size="75%"
+        :title="$t('oss.oss_object')"
+        :append-to-body="true"
+        :before-close="innerDrawerClose"
+        :visible.sync="innerDrawer">
+        <el-table border :data="objectData" class="adjust-table table-content" @sort-change="sort" stripe>
+          <el-table-column type="index" min-width="1%"></el-table-column>
+          <el-table-column prop="objectName" :label="$t('oss.object_name')" min-width="20%" show-overflow-tooltip v-slot:default="scope">
+            <el-link v-if="scope.row.objectType==='BACK'" type="primary" style="color: red;" @click="backObject(scope.row)">
+              <i class="el-icon-back"></i>  {{ scope.row.objectName }}
+            </el-link>
+            <el-link v-if="scope.row.objectType==='DIR'" type="primary" @click="selectObject(scope.row)">
+              <i class="el-icon-folder-opened"></i>  {{ scope.row.objectName }}
+            </el-link>
+            <span v-if="scope.row.objectType==='FILE'"><i class="el-icon-document"></i> {{ scope.row.objectName }}</span>
+          </el-table-column>
+          <el-table-column prop="objectType" :label="$t('oss.object_type')" min-width="8%" show-overflow-tooltip v-slot:default="scope">
+            <span v-if="scope.row.objectType==='DIR'">{{ $t('oss.object_dir') }}</span>
+            <span v-if="scope.row.objectType==='FILE'">{{ $t('oss.object_file') }}</span>
+            <span v-if="scope.row.objectType==='BACK'">{{ $t('vis.back') }}</span>
+          </el-table-column>
+          <el-table-column prop="objectSize" :label="$t('oss.oss_size')" min-width="10%" show-overflow-tooltip v-slot:default="scope">
+            {{ scope.row.objectSize?scope.row.objectSize:'-' }}
+          </el-table-column>
+          <el-table-column prop="storageClass" :label="$t('oss.storage_class')" min-width="10%" show-overflow-tooltip v-slot:default="scope">
+            {{ scope.row.storageClass?scope.row.storageClass:'-' }}
+          </el-table-column>
+          <el-table-column min-width="15%" :label="$t('account.update_time')" sortable prop="lastModified">
+            <template v-slot:default="scope">
+              <span v-if="scope.row.lastModified">{{ scope.row.lastModified | timestampFormatDate }}</span>
+              <span v-if="!scope.row.lastModified">{{ '-' }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-drawer>
+
     </el-drawer>
     <!--oss bucket-->
 
@@ -279,7 +317,6 @@ export default {
       form: { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] },
       visible: false,
       innerDrawer: false,
-      innerDrawerProxy: false,
       accounts: [],
       proxys: [],
       tmpList: [],
@@ -355,6 +392,9 @@ export default {
       bucketPageSize: 10,
       bucketTotal: 0,
       ossId: "",
+      objectData: [],
+      path: "/",
+      thisObject: {},
     }
   },
   methods: {
@@ -469,22 +509,6 @@ export default {
     },
     innerDrawerClose() {
       this.innerDrawer = false;
-    },
-    innerDrawerProxyClose() {
-      this.innerDrawerProxy = false;
-    },
-    createProxy(createProxyForm) {
-      this.$refs[createProxyForm].validate(valid => {
-        if (valid) {
-          this.result = this.$post('/proxy/add', this.proxyForm, () => {
-            this.$success(this.$t('commons.save_success'));
-            this.innerDrawerProxy = false;
-            this.activeProxy();
-          });
-        } else {
-          return false;
-        }
-      })
     },
     //编辑oss账号
     saveOss(item, type){
@@ -604,7 +628,32 @@ export default {
       });
     },
     showObject(bucket) {
-
+      this.path = '/';
+      this.result = this.$get("/oss/objects/" + bucket.id, response => {
+        this.objectData = response.data;
+        this.innerDrawer = true;
+      });
+    },
+    getObjects(path) {
+      if (path !== '' && path !== 'none') {
+        this.path = path;
+        this.result = this.$post("/oss/objects/" + this.thisObject.bucketId, path, response => {
+          this.objectData = response.data;
+          this.innerDrawer = true;
+        });
+      }
+    },
+    backObject(item) {
+      if (this.path === '/') {
+        this.showObject(item);
+      } else {
+        this.thisObject = item;
+        this.getObjects(item.id);
+      }
+    },
+    selectObject(item) {
+      this.thisObject = item;
+      this.getObjects(item.id);
     },
   },
   computed: {
@@ -625,6 +674,7 @@ export default {
 <style scoped>
 .table-content {
   width: 100%;
+  margin-bottom: 5px;
 }
 .el-table {
   cursor: pointer;
@@ -675,6 +725,9 @@ export default {
 }
 .bg-purple-dark {
   background: #99a9bf;
+  min-height: 36px;
+  color: #FFFFFF;
+  margin-bottom: 5px;
 }
 .bg-purple {
   background: #d3dce6;

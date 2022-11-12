@@ -15,6 +15,7 @@ import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.oss.config.OssManager;
 import com.hummerrisk.oss.constants.OSSConstants;
 import com.hummerrisk.oss.controller.request.OssRequest;
+import com.hummerrisk.oss.dto.BucketObjectDTO;
 import com.hummerrisk.oss.dto.OssBucketDTO;
 import com.hummerrisk.oss.dto.OssDTO;
 import com.hummerrisk.oss.provider.OssProvider;
@@ -261,6 +262,27 @@ public class OssService {
         ossLog.setSum(sum);
         ossLogMapper.insertSelective(ossLog);
 
+    }
+
+    public List<BucketObjectDTO> getObjects(String bucketId, String prefix) throws Exception{
+        OssBucket bucket = getBucketByPrimaryKey(bucketId);
+        OssWithBLOBs oss = getAccountByPrimaryKey(bucket.getOssId());
+        OssProvider ossProvider = (OssProvider) OssManager.getOssProviders().get(oss.getPluginId());
+        if(prefix != null && prefix.contains("%2F")) prefix = prefix.replaceAll("%2F=", "/");
+        return ossProvider.getBucketObjects(bucket, oss, prefix);
+    }
+
+    private OssBucket getBucketByPrimaryKey(String bucketId) throws Exception{
+        OssBucket bucket = ossBucketMapper.selectByPrimaryKey(bucketId);
+        if(bucket == null){
+            throw new Exception("Parameter is null.");
+        }
+        return bucket;
+    }
+
+    private OssWithBLOBs getAccountByPrimaryKey(String ossId)throws Exception{
+        OssWithBLOBs account = ossMapper.selectByPrimaryKey(ossId);
+        return account;
     }
 
 }

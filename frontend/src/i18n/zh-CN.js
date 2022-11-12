@@ -1155,6 +1155,11 @@ export default {
     storage_class: '存储类型',
     oss_size: '存储用量',
     object_number: "文件数量",
+    oss_object: '文件管理',
+    object_name: '文件名称',
+    object_type: '文件类型',
+    object_dir: '文件夹',
+    object_file: '文件',
   },
   task: {
     task_setting: '任务编排',
