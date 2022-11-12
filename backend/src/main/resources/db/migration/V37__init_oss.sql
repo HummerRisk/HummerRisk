@@ -75,6 +75,6 @@ CREATE TABLE IF NOT EXISTS `cloud_native_source_image` (
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
 ALTER TABLE `image_result_item` ADD `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';
-ALTER TABLE `image_result_item` ADD `image` varchar(512) DEFAULT NULL COMMENT 'image';
+ALTER TABLE `cloud_native_result_item` ADD `image` varchar(512) DEFAULT NULL COMMENT 'image';
 ALTER TABLE `code_result_item` ADD `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';
 ALTER TABLE `file_system_result_item` ADD `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';

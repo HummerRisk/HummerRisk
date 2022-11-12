@@ -613,8 +613,10 @@ public class K8sService {
         if(jsonArray1 != null) {
             for(Object object : jsonArray1) {
                 JSONObject obj1 = (JSONObject) object;
-                JSONObject jsonObject2 = obj1.getJSONObject("report");
-                JSONArray jsonArray = jsonObject2.getJSONArray("vulnerabilities");
+                JSONObject report = obj1.getJSONObject("report");
+                JSONArray jsonArray = report.getJSONArray("vulnerabilities");
+                JSONObject artifact = report.getJSONObject("artifact");
+                String image = artifact.get("repository") + ":" + artifact.get("tag");
                 for(Object object2 : jsonArray) {
                     JSONObject obj2 = (JSONObject) object2;
                     CloudNativeResultItem cloudNativeResultItem = new CloudNativeResultItem();
@@ -631,6 +633,7 @@ public class K8sService {
                     cloudNativeResultItem.setFixedVersion(obj2.getString("fixedVersion"));
                     cloudNativeResultItem.setLinks(obj2.getString("links"));
                     cloudNativeResultItem.setCreateTime(System.currentTimeMillis());
+                    cloudNativeResultItem.setImage(image);
                     cloudNativeResultItemMapper.insertSelective(cloudNativeResultItem);
 
                     i++;
