@@ -165,5 +165,6 @@
 <!--        <table tableName="oss" domainObjectName="Oss"/>-->
 <!--        <table tableName="oss_log" domainObjectName="OssLog"/>-->
 <!--        <table tableName="oss_bucket" domainObjectName="OssBucket"/>-->
+<!--        <table tableName="cloud_native_source_image" domainObjectName="CloudNativeSourceImage"/>-->
     </context>
 </generatorConfiguration>
