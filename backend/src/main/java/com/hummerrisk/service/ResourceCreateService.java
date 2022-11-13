@@ -359,7 +359,7 @@ public class ResourceCreateService {
         //对象存储
         final OssExample ossExample = new OssExample();
         OssExample.Criteria ossCriteria = ossExample.createCriteria();
-        ossCriteria.andStatusEqualTo(OSSConstants.SYNC_STATUS.APPROVED.toString());
+        ossCriteria.andSyncStatusEqualTo(OSSConstants.SYNC_STATUS.APPROVED.toString());
         if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
             ossCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
         }

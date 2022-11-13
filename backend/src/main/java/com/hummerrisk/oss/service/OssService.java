@@ -1,16 +1,14 @@
 package com.hummerrisk.oss.service;
 
 import com.hummerrisk.base.domain.*;
-import com.hummerrisk.base.mapper.AccountMapper;
-import com.hummerrisk.base.mapper.OssBucketMapper;
-import com.hummerrisk.base.mapper.OssLogMapper;
-import com.hummerrisk.base.mapper.OssMapper;
+import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtOssMapper;
 import com.hummerrisk.commons.constants.CloudAccountConstants;
 import com.hummerrisk.commons.constants.CloudTaskConstants;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
+import com.hummerrisk.dto.ValidateDTO;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.oss.config.OssManager;
 import com.hummerrisk.oss.constants.OSSConstants;
@@ -50,6 +48,8 @@ public class OssService {
     private CommonThreadPool commonThreadPool;
     @Resource
     private OssLogMapper ossLogMapper;
+    @Resource
+    private ProxyMapper proxyMapper;
 
     private static final String BASE_CREDENTIAL_DIC = "support/credential/";
     private static final String JSON_EXTENSION = ".json";
@@ -60,6 +60,35 @@ public class OssService {
 
     public List<OssBucketDTO> ossBucketList(OssRequest request) {
         return extOssMapper.ossBucketList(request);
+    }
+
+    public ValidateDTO validate(String id) {
+        OssWithBLOBs oss = ossMapper.selectByPrimaryKey(id);
+        //检验账号的有效性
+        ValidateDTO valid = validateAccount(oss);
+        if (valid.isFlag()) {
+            oss.setStatus(CloudAccountConstants.Status.VALID.name());
+        } else {
+            oss.setStatus(CloudAccountConstants.Status.INVALID.name());
+        }
+        ossMapper.updateByPrimaryKeySelective(oss);
+        return valid;
+    }
+
+    private ValidateDTO validateAccount(OssWithBLOBs account) {
+        ValidateDTO validateDTO = new ValidateDTO();
+        try {
+            Proxy proxy = new Proxy();
+            if (account.getProxyId() != null) proxy = proxyMapper.selectByPrimaryKey(account.getProxyId());
+            validateDTO.setFlag(PlatformUtils.validateCredential(BeanUtils.copyBean(new AccountWithBLOBs(), account), proxy));
+            validateDTO.setMessage(String.format("Verification oss account status: [%s], oss account: [%s], plugin: [%s]", validateDTO.isFlag(), account.getName(), account.getPluginName()));
+            return validateDTO;
+        } catch (Exception e) {
+            validateDTO.setMessage(String.format("HRException in verifying oss account, oss account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
+            validateDTO.setFlag(false);
+            LogUtil.error(String.format("HRException in verifying oss account, oss account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()), e);
+            return validateDTO;
+        }
     }
 
     public List<AccountWithBLOBs> getCloudAccountList() {
@@ -104,8 +133,9 @@ public class OssService {
             request.setCreateTime(System.currentTimeMillis());
             request.setUpdateTime(System.currentTimeMillis());
             request.setCreator(SessionUtils.getUserId());
-            request.setStatus(CloudTaskConstants.TASK_STATUS.APPROVED.name());
+            request.setSyncStatus(CloudTaskConstants.TASK_STATUS.APPROVED.name());
             ossMapper.insertSelective(request);
+            validate(request.getId());
         }
         return request;
     }
@@ -114,8 +144,8 @@ public class OssService {
         request.setCreateTime(System.currentTimeMillis());
         request.setUpdateTime(System.currentTimeMillis());
         request.setCreator(SessionUtils.getUserId());
-        request.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());
         ossMapper.updateByPrimaryKeySelective(request);
+        validate(request.getId());
         return request;
     }
 
@@ -134,12 +164,12 @@ public class OssService {
 
     public void batch(String id) throws Exception {
         OssWithBLOBs oss = ossMapper.selectByPrimaryKey(id);
-        oss.setStatus(OSSConstants.SYNC_STATUS.APPROVED.name());
+        oss.setSyncStatus(OSSConstants.SYNC_STATUS.APPROVED.name());
         ossMapper.updateByPrimaryKeySelective(oss);
         OssLogExample example = new OssLogExample();
         example.createCriteria().andOssIdEqualTo(id);
         ossLogMapper.deleteByExample(example);
-        saveLog(oss.getId(), "i18n_start_oss_sync", "", true, 0);
+        saveLog(id, "i18n_start_oss_sync", "", true, 0);
     }
 
     public void syncBatch(String id) throws Exception {
@@ -147,7 +177,7 @@ public class OssService {
         try {
             syncResource(oss);
         } catch (Exception e) {
-            oss.setStatus(OSSConstants.SYNC_STATUS.ERROR.name());
+            oss.setSyncStatus(OSSConstants.SYNC_STATUS.ERROR.name());
             ossMapper.updateByPrimaryKeySelective(oss);
             saveLog(oss.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, 0);
             LogUtil.error(String.format("Failed to synchronize cloud account: %s", oss.getName()), e);
@@ -156,7 +186,7 @@ public class OssService {
 
     private void syncResource(OssWithBLOBs oss) throws Exception {
         if (!accountService.validate(oss.getId()).isFlag()) {
-            oss.setStatus(OSSConstants.SYNC_STATUS.ERROR.name());
+            oss.setSyncStatus(OSSConstants.SYNC_STATUS.ERROR.name());
             ossMapper.updateByPrimaryKeySelective(oss);
             saveLog(oss.getId(), "i18n_operation_ex" + ": " + "failed_oss", "failed_oss", false, 0);
             return;
@@ -171,7 +201,7 @@ public class OssService {
             try {
                 doSyncBucketInfo(oss);
             } catch (Exception e) {
-                oss.setStatus(OSSConstants.SYNC_STATUS.ERROR.name());
+                oss.setSyncStatus(OSSConstants.SYNC_STATUS.ERROR.name());
                 oss.setUpdateTime(System.currentTimeMillis());
                 ossMapper.updateByPrimaryKeySelective(oss);
                 saveLog(oss.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, 0);
@@ -181,7 +211,7 @@ public class OssService {
 
     public void doSyncBucketInfo(OssWithBLOBs oss) throws Exception {
         Integer sum = fetchOssBucketList(oss);
-        oss.setStatus(OSSConstants.SYNC_STATUS.FINISHED.name());
+        oss.setSyncStatus(OSSConstants.SYNC_STATUS.FINISHED.name());
         oss.setUpdateTime(System.currentTimeMillis());
         oss.setSum(sum);
         ossMapper.updateByPrimaryKeySelective(oss);

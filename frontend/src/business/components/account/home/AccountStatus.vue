@@ -22,11 +22,11 @@
     },
     methods: {
       validate(row) {
-        this.$alert(this.$t('account.validate') + this.$t('account.cloud_account') + ' : ' + row.name +  " ？", '', {
+        this.$alert(this.$t('account.validate') + this.$t('account.oss_setting') + ' : ' + row.name +  " ？", '', {
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.$post("/account/validate/" + row.id, {}, response => {
+              this.$post("/oss/validate/" + row.id, {}, response => {
                 let data = response.data;
                 if (data) {
                   if (data.flag) {

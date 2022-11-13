@@ -2,13 +2,14 @@
 CREATE TABLE IF NOT EXISTS `oss`
 (
     `id`                         varchar(50)         NOT NULL COMMENT 'ID',
-    `name`                       varchar(128)        DEFAULT NULL UNIQUE COMMENT '云账号名称',
+    `name`                       varchar(128)        DEFAULT NULL UNIQUE COMMENT '对象存储名称',
     `credential`                 longtext            DEFAULT NULL COMMENT '云账号凭证',
     `endpoint`                   varchar(256)        DEFAULT NULL COMMENT 'Endpoint',
     `plugin_id`                  varchar(50)         DEFAULT NULL COMMENT '插件ID',
     `plugin_name`                varchar(100)        DEFAULT NULL COMMENT '插件名称',
     `plugin_icon`                varchar(256)        DEFAULT NULL COMMENT '插件图标',
-    `status`                     varchar(50)         DEFAULT 'APPROVED' COMMENT '同步状态',
+    `status`                     varchar(50)         DEFAULT NULL COMMENT '云账号状态',
+    `sync_status`                varchar(50)         DEFAULT 'APPROVED' COMMENT '同步状态',
     `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
     `creator`                    varchar(128)        DEFAULT NULL COMMENT '创建人',

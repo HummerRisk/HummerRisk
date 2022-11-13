@@ -8,6 +8,7 @@ import com.hummerrisk.base.domain.OssWithBLOBs;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
+import com.hummerrisk.dto.ValidateDTO;
 import com.hummerrisk.oss.controller.request.OssRequest;
 import com.hummerrisk.oss.dto.BucketObjectDTO;
 import com.hummerrisk.oss.dto.OssBucketDTO;
@@ -53,6 +54,12 @@ public class OssController {
     @GetMapping("iam/strategy/{accountId}")
     public String strategy(@PathVariable String accountId) throws Exception {
         return ossService.strategy(accountId);
+    }
+
+    @ApiOperation(value = "校验对象存储账号")
+    @PostMapping("validate/{id}")
+    public ValidateDTO validate(@PathVariable String id) {
+        return ossService.validate(id);
     }
 
     @ApiOperation(value = "云账号详情")

@@ -22,30 +22,38 @@
               </span>
           </template>
         </el-table-column>
+        <el-table-column prop="status" min-width="8%" :label="$t('account.status')"
+                         column-key="status"
+                         :filters="statusFilters"
+                         :filter-method="filterStatus">
+          <template v-slot:default="{row}">
+            <account-status @search="search" :row="row"/>
+          </template>
+        </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('event.sync_status')" min-width="12%" prop="status" sortable
                          show-overflow-tooltip>
           <el-button @click="showLog(scope.row)" plain size="medium" type="primary"
-                     v-if="scope.row.status === 'UNCHECKED'">
+                     v-if="scope.row.syncStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
           <el-button @click="showLog(scope.row)" plain size="medium" type="primary"
-                     v-else-if="scope.row.status === 'APPROVED'">
+                     v-else-if="scope.row.syncStatus === 'APPROVED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
           <el-button @click="showLog(scope.row)" plain size="medium" type="primary"
-                     v-else-if="scope.row.status === 'PROCESSING'">
+                     v-else-if="scope.row.syncStatus === 'PROCESSING'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
           <el-button @click="showLog(scope.row)" plain size="medium" type="success"
-                     v-else-if="scope.row.status === 'FINISHED'">
+                     v-else-if="scope.row.syncStatus === 'FINISHED'">
             <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
           </el-button>
           <el-button @click="showLog(scope.row)" plain size="medium" type="danger"
-                     v-else-if="scope.row.status === 'ERROR'">
+                     v-else-if="scope.row.syncStatus === 'ERROR'">
             <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
           </el-button>
           <el-button @click="showLog(scope.row)" plain size="medium" type="warning"
-                     v-else-if="scope.row.status === 'WARNING'">
+                     v-else-if="scope.row.syncStatus === 'WARNING'">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
@@ -286,6 +294,7 @@ import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {OSS_CONFIGS} from "@/business/components/common/components/search/search-components";
+import AccountStatus from "@/business/components/account/home/AccountStatus";
 
 /* eslint-disable */
 export default {
@@ -296,6 +305,7 @@ export default {
     TableHeader,
     TablePagination,
     DialogFooter,
+    AccountStatus,
   },
   data() {
     return {
@@ -397,6 +407,11 @@ export default {
       objectData: [],
       path: "/",
       thisObject: {},
+      statusFilters: [
+        {text: this.$t('account.INVALID'), value: 'INVALID'},
+        {text: this.$t('account.VALID'), value: 'VALID'},
+        {text: this.$t('account.DELETE'), value: 'DELETE'}
+      ],
     }
   },
   methods: {
