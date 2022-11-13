@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "对象存储")
 @RestController
@@ -112,7 +113,8 @@ public class OssController {
     @I18n
     @ApiOperation("文件列表")
     @PostMapping("objects/{bucketId}")
-    public List<BucketObjectDTO> getObjects(@PathVariable String bucketId, @RequestBody String path) throws Exception{
+    public List<BucketObjectDTO> getObjects(@PathVariable String bucketId, @RequestBody Map map) throws Exception{
+        String path = map.get("path").toString();
         return ossService.getObjects(bucketId, path);
     }
 

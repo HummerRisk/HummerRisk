@@ -268,7 +268,6 @@ public class OssService {
         OssBucket bucket = getBucketByPrimaryKey(bucketId);
         OssWithBLOBs oss = getAccountByPrimaryKey(bucket.getOssId());
         OssProvider ossProvider = (OssProvider) OssManager.getOssProviders().get(oss.getPluginId());
-        if(prefix != null && prefix.contains("%2F")) prefix = prefix.replaceAll("%2F=", "/");
         return ossProvider.getBucketObjects(bucket, oss, prefix);
     }
 

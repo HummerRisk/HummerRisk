@@ -641,7 +641,7 @@ export default {
     getObjects(path) {
       if (path !== '' && path !== 'none') {
         this.path = path;
-        this.result = this.$post("/oss/objects/" + this.thisObject.bucketId, path.replace("%2F", "/"), response => {
+        this.result = this.$post("/oss/objects/" + this.thisObject.bucketId, { "path" : path}, response => {
           this.objectData = response.data;
           this.innerDrawer = true;
         });
