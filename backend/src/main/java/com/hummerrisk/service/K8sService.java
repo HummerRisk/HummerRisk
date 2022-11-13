@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -75,6 +76,8 @@ public class K8sService {
     private CommonThreadPool commonThreadPool;
     @Resource
     private CloudNativeResultConfigItemMapper cloudNativeResultConfigItemMapper;
+    @Resource
+    private CloudNativeSourceImageMapper cloudNativeSourceImageMapper;
 
 
     public List<CloudNativeDTO> getCloudNativeList(CloudNativeRequest request) {
@@ -396,6 +399,10 @@ public class K8sService {
                 K8sSource networkPolicy = k8sRequest.getNetworkPolicy(cloudNative);
                 list.addAll(networkPolicy.getK8sSource());
                 k8sSourceImage.addAll(networkPolicy.getK8sSourceImage());
+
+                for (CloudNativeSourceImage cloudNativeSourceImage : k8sSourceImage) {
+                    cloudNativeSourceImageMapper.insertSelective(cloudNativeSourceImage);
+                }
 
                 for (CloudNativeSourceWithBLOBs cloudNativeSource : list) {
                     cloudNativeSource.setCreator(creator);
@@ -816,6 +823,31 @@ public class K8sService {
 
     public NameSpaceTopology namespaceTopology() {
         return extCloudNativeSourceMapper.namespaceTopology();
+    }
+
+    public List<CloudNativeSourceImageDTO> sourceImages(String sourceId) throws Exception {
+        List<CloudNativeSourceImageDTO> sourceImages = new ArrayList<>();
+        CloudNativeSourceImageExample example = new CloudNativeSourceImageExample();
+        example.createCriteria().andSourceIdEqualTo(sourceId);
+        List<CloudNativeSourceImage> images = cloudNativeSourceImageMapper.selectByExample(example);
+        for (CloudNativeSourceImage image : images) {
+            CloudNativeSourceImageDTO dto = BeanUtils.copyBean(new CloudNativeSourceImageDTO(), image);
+            String imageName = image.getImage();
+            CloudNativeSource cloudNativeSource = cloudNativeSourceMapper.selectByPrimaryKey(image.getSourceId());
+            CloudNativeResultExample cloudNativeResultExample = new CloudNativeResultExample();
+            cloudNativeResultExample.createCriteria().andCloudNativeIdEqualTo(cloudNativeSource.getCloudNativeId());
+            CloudNativeResult cloudNativeResult = cloudNativeResultMapper.selectByExample(cloudNativeResultExample).get(0);
+            CloudNativeResultItemExample cloudNativeResultItemExample = new CloudNativeResultItemExample();
+            cloudNativeResultItemExample.createCriteria().andResultIdEqualTo(cloudNativeResult.getId()).andImageEqualTo(imageName);
+            List<CloudNativeResultItem> list =  cloudNativeResultItemMapper.selectByExample(cloudNativeResultItemExample);
+            if (list.size() > 0) {
+                dto.setRisk("yes");
+            } else {
+                dto.setRisk("no");
+            }
+            sourceImages.add(dto);
+        }
+        return sourceImages;
     }
 
 }

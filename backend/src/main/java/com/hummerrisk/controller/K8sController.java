@@ -308,4 +308,11 @@ public class K8sController {
         return k8sService.namespaceTopology();
     }
 
+    @I18n
+    @ApiOperation(value = "资源态势资源对应的镜像")
+    @GetMapping("sourceImages/{sourceId}")
+    public List<CloudNativeSourceImageDTO> sourceImages(@PathVariable String sourceId) throws Exception {
+        return k8sService.sourceImages(sourceId);
+    }
+
 }
