@@ -81,24 +81,4 @@ public class ImageProvider implements IProvider {
         }
     }
 
-    public String dockerLogin(Object obj) throws Exception {
-        try {
-            ImageRepo imageRepo = (ImageRepo) obj;
-            String repo = imageRepo.getRepo().replace("https://", "").replace("http://", "");
-            if (repo.endsWith("/")) {
-                repo = repo.substring(0, repo.length() - 1);
-            }
-            String dockerLogin = "";
-            if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "dockerhub.png")) {
-                dockerLogin = "docker login " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword();
-            } else {
-                dockerLogin = "docker login " + repo + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword();
-            }
-            String resultStr = CommandUtils.commonExecCmdWithResult(dockerLogin, ImageConstants.DEFAULT_BASE_DIR);
-            return resultStr;
-        } catch (Exception e) {
-            throw e;
-        }
-    }
-
 }

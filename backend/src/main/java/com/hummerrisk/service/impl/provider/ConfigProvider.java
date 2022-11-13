@@ -63,11 +63,4 @@ public class ConfigProvider implements IProvider {
         }
     }
 
-    public String dockerLogin(Object obj) {
-        try {
-            return "";
-        } catch (Exception e) {
-            return "";
-        }
-    }
 }

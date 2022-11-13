@@ -17,11 +17,4 @@ public class VulnProvider implements IProvider {
         return new ResultDTO();
     }
 
-    public String dockerLogin(Object obj) {
-        try {
-            return "";
-        } catch (Exception e) {
-            return "";
-        }
-    }
 }

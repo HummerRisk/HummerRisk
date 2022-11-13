@@ -17,11 +17,4 @@ public class K8sProvider implements IProvider {
         return new ResultDTO();
     }
 
-    public String dockerLogin(Object obj) {
-        try {
-            return "";
-        } catch (Exception e) {
-            return "";
-        }
-    }
 }

@@ -82,11 +82,4 @@ public class CodeProvider implements IProvider {
         }
     }
 
-    public String dockerLogin(Object obj) {
-        try {
-            return "";
-        } catch (Exception e) {
-            return "";
-        }
-    }
 }
