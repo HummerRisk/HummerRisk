@@ -55,6 +55,9 @@ public class AccountService {
     @Resource
     private ProxyMapper proxyMapper;
 
+    @Resource
+    private CloudSyncService cloudSyncService;
+
     public List<AccountDTO> getCloudAccountList(CloudAccountRequest request) {
         return extAccountMapper.getCloudAccountList(request);
     }
@@ -149,6 +152,7 @@ public class AccountService {
                 accountMapper.insertSelective(account);
                 updateRegions(account);
                 OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "i18n_create_cloud_account");
+                cloudSyncService.sync(account.getId());
                 return getCloudAccountById(account.getId());
             }
         } catch (HRException | ClientException e) {
