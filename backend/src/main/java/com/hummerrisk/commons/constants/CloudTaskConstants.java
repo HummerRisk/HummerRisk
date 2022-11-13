@@ -65,7 +65,7 @@ public class CloudTaskConstants {
 
     public final static String[] ALIYUN_RESOURCE_TYPE = {"aliyun.cdn", "aliyun.disk", "aliyun.ecs", "aliyun.eip", "aliyun.mongodb", "aliyun.oss", "aliyun.polardb", "aliyun.ram", "aliyun.rds", "aliyun.redis", "aliyun.security-group", "aliyun.slb", "aliyun.nas", "aliyun.mse", "aliyun.ack"};
     public final static String[] HUAWEI_RESOURCE_TYPE = {"huawei.dds","huawei.disk","huawei.ecs","huawei.eip","huawei.elb","huawei.gaussdb","huawei.gaussdbfornosql","huawei.gaussdbforopengauss","huawei.iam","huawei.obs","huawei.rds","huawei.redis","huawei.security-group"};
-    public final static String[] TENCENT_RESOURCE_TYPE = {"tencent.cdb","tencent.clb","tencent.cos","tencent.cvm","tencent.disk","tencent.eip","tencent.mongodb","tencent.redis","tencent.security-group"};
+    public final static String[] TENCENT_RESOURCE_TYPE = {"tencent.vpc","tencent.es","tencent.cdb","tencent.clb","tencent.cos","tencent.cvm","tencent.disk","tencent.eip","tencent.mongodb","tencent.redis","tencent.security-group"};
     public final static String[] AWS_RESOURCE_TYPE = {"aws.ebs","aws.ec2","aws.elb","aws.network-addr","aws.rds","aws.s3","aws.security-group"};
     public final static String[] AZURE_RESOURCE_TYPE = {"azure.cosmosdb","azure.disk","azure.loadbalancer","azure.networkinterface","azure.networksecuritygroup","azure.publicip","azure.resourcegroup","azure.sqldatabase","azure.sqlserver","azure.storage","azure.vm","azure.webapp"};
     public final static String[] GCP_RESOURCE_TYPE = {"gcp.app-engine-certificate","gcp.app-engine-domain","gcp.app-engine-firewall-ingress-rule","gcp.dm-deployment","gcp.dns-managed-zone","gcp.dns-policy","gcp.instance-template","gcp.loadbalancer-ssl-policy","gcp.sql-backup-run"};
