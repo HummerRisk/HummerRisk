@@ -284,6 +284,7 @@ export default {
     },
     create(){
       this.reset()
+      this.checkAll = false
       this.showSync = true
     },
     search() {
