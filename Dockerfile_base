@@ -14,7 +14,7 @@ COPY --from=prowler-env /prowler /prowler
 
 COPY --from=xray-env /opt/hummerrisk/xray/ /opt/hummerrisk/xray/
 
-RUN apk add docker aws-cli git bash && \
+RUN apk add aws-cli git bash && \
     pip3 install detect-secrets==1.0.3 && \
     curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.34.0
 
