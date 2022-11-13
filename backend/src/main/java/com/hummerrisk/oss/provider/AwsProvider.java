@@ -4,11 +4,13 @@ package com.hummerrisk.oss.provider;
 import com.alibaba.fastjson.JSON;
 import com.hummerrisk.base.domain.OssBucket;
 import com.hummerrisk.base.domain.OssWithBLOBs;
+import com.hummerrisk.oss.constants.ObjectTypeConstants;
 import com.hummerrisk.oss.dto.BucketMetric;
 import com.hummerrisk.oss.dto.BucketObjectDTO;
+import com.hummerrisk.proxy.aws.AWSCredential;
 import com.hummerrisk.service.SysListener;
-import com.tencentcloudapi.common.Credential;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -176,20 +178,105 @@ public class AwsProvider implements OssProvider {
     }
 
     private CloudWatchClient getCloudWatchClient (String credential, String region){
-        Credential object = JSON.parseObject(credential, Credential.class);
-        AwsBasicCredentials awsBasicCredentials = AwsBasicCredentials.create(object.getSecretId(), object.getSecretKey());
+        AWSCredential object = JSON.parseObject(credential, AWSCredential.class);
+        AwsBasicCredentials awsBasicCredentials = AwsBasicCredentials.create(object.getAccessKey(), object.getSecretKey());
         return  CloudWatchClient.builder().credentialsProvider(StaticCredentialsProvider.create(awsBasicCredentials)).region(Region.of(region)).build();
     }
 
     private S3Client getS3Client (String credential, String region){
-        Credential object = JSON.parseObject(credential, Credential.class);
-        AwsBasicCredentials awsBasicCredentials = AwsBasicCredentials.create(object.getSecretId(), object.getSecretKey());
+        AWSCredential object = JSON.parseObject(credential, AWSCredential.class);
+        AwsBasicCredentials awsBasicCredentials = AwsBasicCredentials.create(object.getAccessKey(), object.getSecretKey());
         return S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(awsBasicCredentials)).region(Region.of(region)).build();
     }
 
     @Override
     public List<BucketObjectDTO> getBucketObjects(OssBucket bucket, OssWithBLOBs account, String prefix) {
         List<BucketObjectDTO> objects = new ArrayList<>();
+        S3Client s3 = getS3Client(account.getCredential(), bucket.getLocation());
+        ListObjectsV2Request.Builder builder = ListObjectsV2Request.builder().delimiter("/").bucket(bucket.getBucketName());
+        if(StringUtils.isNotEmpty(prefix)){
+            builder.prefix(prefix);
+        }
+        ListObjectsV2Request listObjectsV2Request = builder.build();
+
+        boolean done = false;
+        while (!done) {
+            ListObjectsV2Response listObjResponse = s3.listObjectsV2(listObjectsV2Request);
+            objects.addAll(convertToBucketObject(bucket, listObjResponse.contents(), prefix));
+
+            objects.addAll(convertToBucketFolder(bucket, listObjResponse.commonPrefixes(), prefix));
+
+            if (listObjResponse.nextContinuationToken() == null) {
+                done = true;
+            }
+
+            listObjectsV2Request = listObjectsV2Request.toBuilder()
+                    .continuationToken(listObjResponse.nextContinuationToken())
+                    .build();
+        }
+        s3.close();
+        List<BucketObjectDTO> bucketObjectDTOS = new ArrayList<>();
+        for (BucketObjectDTO object : objects) {
+            if(object.getObjectType().equals(ObjectTypeConstants.BACK.name())){
+                bucketObjectDTOS.add(0, object);
+            }else {
+                bucketObjectDTOS.add(object);
+            }
+        }
+        return bucketObjectDTOS;
+    }
+
+    private List<BucketObjectDTO> convertToBucketObject(OssBucket bucket, List<S3Object> contents, final String prefix){
+        List<BucketObjectDTO> objects = new ArrayList<>();
+        for (S3Object s3Object : contents) {
+            BucketObjectDTO bucketObject = new BucketObjectDTO();
+            bucketObject.setBucketId(bucket.getId());
+
+            if(StringUtils.isNotEmpty(prefix) && s3Object.key().equals(prefix)){
+                String[] dirs = prefix.split("/");
+                if(dirs.length == 1){
+                    bucketObject.setId("/");
+                    bucketObject.setObjectName(prefix);
+                }else {
+                    String lastDir = dirs[dirs.length -1];
+                    bucketObject.setId(prefix.substring(0, prefix.length() - lastDir.length() - 1 ) );
+                    bucketObject.setObjectName(lastDir + "/");
+                }
+                bucketObject.setObjectType(ObjectTypeConstants.BACK.name());
+            }
+
+            if(!s3Object.key().endsWith("/")){
+                bucketObject.setObjectSize(SysListener.changeFlowFormat(s3Object.size()));
+                bucketObject.setId(s3Object.key());
+                if(StringUtils.isEmpty(prefix)){
+                    bucketObject.setObjectName(s3Object.key());
+                }else {
+                    bucketObject.setObjectName(s3Object.key().substring(prefix.length(), s3Object.key().length() - 1));
+                }
+                bucketObject.setStorageClass(s3Object.storageClassAsString());
+                bucketObject.setLastModified(s3Object.lastModified().toEpochMilli());
+                bucketObject.setObjectType(ObjectTypeConstants.FILE.name());
+            }
+            objects.add(bucketObject);
+
+        }
+        return objects;
+    }
+
+    private List<BucketObjectDTO> convertToBucketFolder(OssBucket bucket,  List<CommonPrefix> commonPrefixes, String prefix){
+        List<BucketObjectDTO> objects = new ArrayList<>();
+        for (CommonPrefix commonPrefix : commonPrefixes) {
+            BucketObjectDTO bucketObject = new BucketObjectDTO();
+            bucketObject.setBucketId(bucket.getId());
+            if(StringUtils.isNotEmpty(prefix)){
+                bucketObject.setObjectName(commonPrefix.prefix().substring(prefix.length()));
+            }else {
+                bucketObject.setObjectName(commonPrefix.prefix());
+            }
+            bucketObject.setId(commonPrefix.prefix());
+            bucketObject.setObjectType(ObjectTypeConstants.DIR.name());
+            objects.add(bucketObject);
+        }
         return objects;
     }
 

@@ -14,7 +14,7 @@
                 @filter-change="filter">
         <el-table-column type="index" min-width="2%"/>
         <el-table-column prop="name" :label="$t('oss.name')" min-width="10%" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('account.cloud_platform')" min-width="10%" show-overflow-tooltip>
+        <el-table-column :label="$t('account.cloud_platform')" min-width="12%" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -62,7 +62,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="userName" :label="$t('account.creator')" min-width="7%" show-overflow-tooltip/>
-        <el-table-column :label="$t('oss.bucket')" min-width="10%">
+        <el-table-column :label="$t('oss.bucket')" min-width="8%">
           <template v-slot:default="scope">
             <el-link type="primary" @click="showBuckets(scope.row)">
               {{ scope.row.sum }}
@@ -242,10 +242,10 @@
           <el-table-column type="index" min-width="1%"></el-table-column>
           <el-table-column prop="objectName" :label="$t('oss.object_name')" min-width="20%" show-overflow-tooltip v-slot:default="scope">
             <el-link v-if="scope.row.objectType==='BACK'" type="primary" style="color: red;" @click="backObject(scope.row)">
-              <i class="el-icon-back"></i>  {{ scope.row.objectName.replace('%2F', "/") }}
+              <i class="el-icon-back"></i>  {{ scope.row.objectName }}
             </el-link>
             <el-link v-if="scope.row.objectType==='DIR'" type="primary" @click="selectObject(scope.row)">
-              <i class="el-icon-folder-opened"></i>  {{ scope.row.objectName.replace('%2F', "/") }}
+              <i class="el-icon-folder-opened"></i>  {{ scope.row.objectName }}
             </el-link>
             <span v-if="scope.row.objectType==='FILE'">
               <i class="el-icon-document"></i> {{ scope.row.objectName }}
