@@ -49,8 +49,32 @@ CREATE TABLE IF NOT EXISTS `oss_bucket` (
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
+DROP TABLE `cloud_native_source`;
 
-ALTER TABLE `cloud_native_source` ADD `source_json` longtext DEFAULT NULL COMMENT '资源json';
+CREATE TABLE IF NOT EXISTS `cloud_native_source` (
+    `id`                         varchar(50)         NOT NULL COMMENT 'ID',
+    `cloud_native_id`            varchar(50)         DEFAULT NULL COMMENT '云原生ID',
+    `source_name`                varchar(256)        DEFAULT NULL COMMENT '资源名称',
+    `source_namespace`           varchar(256)        DEFAULT NULL COMMENT '资源标识',
+    `source_yaml`                longtext            DEFAULT NULL COMMENT '资源yaml',
+    `source_json`                longtext            DEFAULT NULL COMMENT '资源json',
+    `source_type`                varchar(50)         DEFAULT NULL COMMENT '资源类型',
+    `source_node`                varchar(256)        DEFAULT NULL COMMENT '资源节点',
+    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
+    `creator`                    varchar(128)        DEFAULT NULL COMMENT '创建人',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `cloud_native_source_image` (
+    `id`                           int(11)             NOT NULL AUTO_INCREMENT,
+    `source_id`                    varchar(50)         DEFAULT NULL COMMENT 'source ID',
+    `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `image`                        varchar(512)        DEFAULT NULL COMMENT 'image',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
+
 ALTER TABLE `image_result_item` ADD `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';
+ALTER TABLE `cloud_native_result_item` ADD `image` varchar(512) DEFAULT NULL COMMENT 'image';
 ALTER TABLE `code_result_item` ADD `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';
 ALTER TABLE `file_system_result_item` ADD `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';

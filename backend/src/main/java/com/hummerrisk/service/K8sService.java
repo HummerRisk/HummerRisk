@@ -21,6 +21,7 @@ import com.hummerrisk.controller.request.k8s.NodeTopology;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.proxy.k8s.K8sRequest;
+import com.hummerrisk.proxy.k8s.K8sSource;
 import com.hummerrisk.proxy.kubesphere.KubeSphereRequest;
 import com.hummerrisk.proxy.rancher.RancherRequest;
 import io.kubernetes.client.openapi.ApiException;
@@ -312,28 +313,90 @@ public class K8sService {
                 cloudNativeSourceMapper.deleteByExample(example);
 
                 List<CloudNativeSourceWithBLOBs> list = new LinkedList<>();
+                List<CloudNativeSourceImage> k8sSourceImage = new ArrayList<>();
                 K8sRequest k8sRequest = new K8sRequest();
                 k8sRequest.setCredential(cloudNative.getCredential());
-                list.addAll(k8sRequest.getVersion(cloudNative));
-                list.addAll(k8sRequest.getNameSpace(cloudNative));
-                list.addAll(k8sRequest.getNode(cloudNative));
-                list.addAll(k8sRequest.getPod(cloudNative));
-                list.addAll(k8sRequest.getService(cloudNative));
-                list.addAll(k8sRequest.getDeployment(cloudNative));
-                list.addAll(k8sRequest.getDaemonSet(cloudNative));
-                list.addAll(k8sRequest.getIngress(cloudNative));
-                list.addAll(k8sRequest.getRole(cloudNative));
-                list.addAll(k8sRequest.getSecret(cloudNative));
-                list.addAll(k8sRequest.getConfigMap(cloudNative));
-                list.addAll(k8sRequest.getStatefulSet(cloudNative));
-                list.addAll(k8sRequest.getCronJob(cloudNative));
-                list.addAll(k8sRequest.getJob(cloudNative));
-                list.addAll(k8sRequest.getPv(cloudNative));
-                list.addAll(k8sRequest.getPvc(cloudNative));
-                list.addAll(k8sRequest.getLease(cloudNative));
-                list.addAll(k8sRequest.getEndpointSlice(cloudNative));
-                list.addAll(k8sRequest.getEvent(cloudNative));
-                list.addAll(k8sRequest.getNetworkPolicy(cloudNative));
+
+                K8sSource version = k8sRequest.getVersion(cloudNative);
+                list.addAll(version.getK8sSource());
+                k8sSourceImage.addAll(version.getK8sSourceImage());
+
+                K8sSource nameSpace = k8sRequest.getNameSpace(cloudNative);
+                list.addAll(nameSpace.getK8sSource());
+                k8sSourceImage.addAll(nameSpace.getK8sSourceImage());
+
+                K8sSource node = k8sRequest.getNode(cloudNative);
+                list.addAll(node.getK8sSource());
+                k8sSourceImage.addAll(node.getK8sSourceImage());
+
+                K8sSource pod = k8sRequest.getPod(cloudNative);
+                list.addAll(pod.getK8sSource());
+                k8sSourceImage.addAll(pod.getK8sSourceImage());
+
+                K8sSource service = k8sRequest.getService(cloudNative);
+                list.addAll(service.getK8sSource());
+                k8sSourceImage.addAll(service.getK8sSourceImage());
+
+                K8sSource deployment = k8sRequest.getDeployment(cloudNative);
+                list.addAll(deployment.getK8sSource());
+                k8sSourceImage.addAll(deployment.getK8sSourceImage());
+
+                K8sSource daemonSet = k8sRequest.getDaemonSet(cloudNative);
+                list.addAll(daemonSet.getK8sSource());
+                k8sSourceImage.addAll(daemonSet.getK8sSourceImage());
+
+                K8sSource ingress = k8sRequest.getIngress(cloudNative);
+                list.addAll(ingress.getK8sSource());
+                k8sSourceImage.addAll(ingress.getK8sSourceImage());
+
+                K8sSource role = k8sRequest.getRole(cloudNative);
+                list.addAll(role.getK8sSource());
+                k8sSourceImage.addAll(role.getK8sSourceImage());
+
+                K8sSource secret = k8sRequest.getSecret(cloudNative);
+                list.addAll(secret.getK8sSource());
+                k8sSourceImage.addAll(secret.getK8sSourceImage());
+
+                K8sSource configMap = k8sRequest.getConfigMap(cloudNative);
+                list.addAll(configMap.getK8sSource());
+                k8sSourceImage.addAll(configMap.getK8sSourceImage());
+
+                K8sSource statefulSet = k8sRequest.getStatefulSet(cloudNative);
+                list.addAll(statefulSet.getK8sSource());
+                k8sSourceImage.addAll(statefulSet.getK8sSourceImage());
+
+                K8sSource cronJob = k8sRequest.getCronJob(cloudNative);
+                list.addAll(cronJob.getK8sSource());
+                k8sSourceImage.addAll(cronJob.getK8sSourceImage());
+
+                K8sSource job = k8sRequest.getJob(cloudNative);
+                list.addAll(job.getK8sSource());
+                k8sSourceImage.addAll(job.getK8sSourceImage());
+
+                K8sSource pv = k8sRequest.getPv(cloudNative);
+                list.addAll(pv.getK8sSource());
+                k8sSourceImage.addAll(pv.getK8sSourceImage());
+
+                K8sSource pvc = k8sRequest.getPvc(cloudNative);
+                list.addAll(pvc.getK8sSource());
+                k8sSourceImage.addAll(pvc.getK8sSourceImage());
+
+                K8sSource lease = k8sRequest.getLease(cloudNative);
+                list.addAll(lease.getK8sSource());
+                k8sSourceImage.addAll(lease.getK8sSourceImage());
+
+                K8sSource endpointSlice = k8sRequest.getEndpointSlice(cloudNative);
+                list.addAll(endpointSlice.getK8sSource());
+                k8sSourceImage.addAll(endpointSlice.getK8sSourceImage());
+
+                K8sSource event = k8sRequest.getEvent(cloudNative);
+                list.addAll(event.getK8sSource());
+                k8sSourceImage.addAll(event.getK8sSourceImage());
+
+                K8sSource networkPolicy = k8sRequest.getNetworkPolicy(cloudNative);
+                list.addAll(networkPolicy.getK8sSource());
+                k8sSourceImage.addAll(networkPolicy.getK8sSourceImage());
+
                 for (CloudNativeSourceWithBLOBs cloudNativeSource : list) {
                     cloudNativeSource.setCreator(creator);
                     cloudNativeSourceMapper.insertSelective(cloudNativeSource);
@@ -550,8 +613,10 @@ public class K8sService {
         if(jsonArray1 != null) {
             for(Object object : jsonArray1) {
                 JSONObject obj1 = (JSONObject) object;
-                JSONObject jsonObject2 = obj1.getJSONObject("report");
-                JSONArray jsonArray = jsonObject2.getJSONArray("vulnerabilities");
+                JSONObject report = obj1.getJSONObject("report");
+                JSONArray jsonArray = report.getJSONArray("vulnerabilities");
+                JSONObject artifact = report.getJSONObject("artifact");
+                String image = artifact.get("repository") + ":" + artifact.get("tag");
                 for(Object object2 : jsonArray) {
                     JSONObject obj2 = (JSONObject) object2;
                     CloudNativeResultItem cloudNativeResultItem = new CloudNativeResultItem();
@@ -568,6 +633,7 @@ public class K8sService {
                     cloudNativeResultItem.setFixedVersion(obj2.getString("fixedVersion"));
                     cloudNativeResultItem.setLinks(obj2.getString("links"));
                     cloudNativeResultItem.setCreateTime(System.currentTimeMillis());
+                    cloudNativeResultItem.setImage(image);
                     cloudNativeResultItemMapper.insertSelective(cloudNativeResultItem);
 
                     i++;
