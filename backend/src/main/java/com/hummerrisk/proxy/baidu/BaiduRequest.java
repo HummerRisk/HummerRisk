@@ -57,7 +57,7 @@ public class BaiduRequest extends Request {
 
     public <T> BosClient getClient() throws Exception {
         BosClient client = null;
-        if (getAccessKey() != null && getAccessKey().trim().length() > 0 && getSecretKey() != null && getSecretKey().trim().length() > 0) {
+        if (getAccessKey() != null && getSecretKey() != null) {
 
             BosClientConfiguration config = new BosClientConfiguration();
 

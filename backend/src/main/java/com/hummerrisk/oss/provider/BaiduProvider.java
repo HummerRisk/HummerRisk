@@ -118,7 +118,7 @@ public class BaiduProvider implements OssProvider {
     private static BosClient getBosClient(OssWithBLOBs account) throws Exception {
         BaiduCredential baiduCredential = JSON.parseObject(account.getCredential(), BaiduCredential.class);
         BaiduRequest req = new BaiduRequest();
-        req.setCredential(JSON.toJSONString(baiduCredential));
+        req.setBaiduCredential(baiduCredential);
         return req.getClient();
     }
 

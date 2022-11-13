@@ -1160,6 +1160,7 @@ export default {
     object_type: '文件类型',
     object_dir: '文件夹',
     object_file: '文件',
+    acl: '权限',
   },
   task: {
     task_setting: '任务编排',

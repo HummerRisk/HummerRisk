@@ -13,19 +13,14 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/oss/home/Account'),
     },
     {
-      path: "oss",
-      name: "oss",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/oss/home/Oss'),
+      path: "overview",
+      name: "overview",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/oss/home/Overview'),
     },
     {
       path: "bucket",
       name: "bucket",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/oss/home/Bucket'),
-    },
-    {
-      path: "ossOrder",
-      name: "ossOrder",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/oss/home/OssOrder'),
     },
   ]
 }

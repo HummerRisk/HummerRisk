@@ -615,7 +615,7 @@ export default {
         for (let data of response.data.listObject) {
           for (let item of this.tableData) {
             if (data.id == item.id) {
-              item.status = data.status;
+              item.syncStatus = data.syncStatus;
               item.sum = data.sum;
             }
           }
@@ -626,7 +626,7 @@ export default {
     checkStatus(tableData) {
       let sum = 0;
       for (let row of tableData) {
-        if (row.status != 'ERROR' && row.status != 'FINISHED' && row.status != 'WARNING') {
+        if (row.syncStatus != 'ERROR' && row.syncStatus != 'FINISHED' && row.syncStatus != 'WARNING') {
           sum++;
         }
       }
