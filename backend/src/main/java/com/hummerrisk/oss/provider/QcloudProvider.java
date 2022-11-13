@@ -73,6 +73,9 @@ public class QcloudProvider implements OssProvider {
 
     private OssBucket setBucket(Bucket bucket, OssWithBLOBs ossAccount) throws Exception{
         OssBucket bucketDTO = new OssBucket();
+        if (bucket.getCreationDate() != null) {
+            bucketDTO.setCreateTime(bucket.getCreationDate().getTime());
+        }
         bucketDTO.setBucketName(bucket.getName());
         bucketDTO.setOssId(ossAccount.getId());
         bucketDTO.setCannedAcl(bucket.getLocation());
