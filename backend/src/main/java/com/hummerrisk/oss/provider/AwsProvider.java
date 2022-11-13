@@ -13,12 +13,14 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 import software.amazon.awssdk.services.cloudwatch.model.*;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 
+import java.io.FilterInputStream;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -278,6 +280,14 @@ public class AwsProvider implements OssProvider {
             objects.add(bucketObject);
         }
         return objects;
+    }
+
+    @Override
+    public FilterInputStream downloadObject(OssBucket bucket, OssWithBLOBs account, final String objectId) throws Exception{
+        S3Client s3 = getS3Client(account.getCredential(), bucket.getLocation());
+
+        ResponseInputStream<GetObjectResponse> responseResponseInputStream = s3.getObject(GetObjectRequest.builder().bucket(bucket.getBucketName()).key(objectId).build());
+        return (FilterInputStream)responseResponseInputStream;
     }
 
 }

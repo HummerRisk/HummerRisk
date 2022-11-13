@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.FilterInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -282,6 +283,13 @@ public class OssService {
     private OssWithBLOBs getAccountByPrimaryKey(String ossId)throws Exception{
         OssWithBLOBs account = ossMapper.selectByPrimaryKey(ossId);
         return account;
+    }
+
+    public FilterInputStream downloadObject(String bucketId, String objectId) throws Exception{
+        OssBucket bucket = getBucketByPrimaryKey(bucketId);
+        OssWithBLOBs oss = getAccountByPrimaryKey(bucket.getOssId());
+        OssProvider ossProvider = (OssProvider) OssManager.getOssProviders().get(oss.getPluginId());
+        return ossProvider.downloadObject(bucket, oss, objectId);
     }
 
 }

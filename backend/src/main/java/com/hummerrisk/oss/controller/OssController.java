@@ -3,10 +3,8 @@ package com.hummerrisk.oss.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.AccountWithBLOBs;
-import com.hummerrisk.base.domain.OssBucket;
 import com.hummerrisk.base.domain.OssLogWithBLOBs;
 import com.hummerrisk.base.domain.OssWithBLOBs;
-import com.hummerrisk.commons.utils.EncryptUtils;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
@@ -17,10 +15,13 @@ import com.hummerrisk.oss.dto.OssDTO;
 import com.hummerrisk.oss.service.OssService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedOutputStream;
+import java.io.FilterInputStream;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
@@ -106,16 +107,37 @@ public class OssController {
     @I18n
     @ApiOperation("文件目录列表")
     @GetMapping("objects/{bucketId}")
-    public List<BucketObjectDTO> getObjects(@PathVariable String bucketId) throws Exception{
+    public List<BucketObjectDTO> getObjects(@PathVariable String bucketId) throws Exception {
         return ossService.getObjects(bucketId, null);
     }
 
     @I18n
     @ApiOperation("文件列表")
     @PostMapping("objects/{bucketId}")
-    public List<BucketObjectDTO> getObjects(@PathVariable String bucketId, @RequestBody Map map) throws Exception{
+    public List<BucketObjectDTO> getObjects(@PathVariable String bucketId, @RequestBody Map map) throws Exception {
         String path = map.get("path").toString();
         return ossService.getObjects(bucketId, path);
+    }
+
+    @I18n
+    @ApiOperation("下载文件")
+    @PostMapping("downloadObject/{bucketId}")
+    public void downloadObject(@PathVariable String bucketId, @RequestBody String objectId, HttpServletResponse response) throws Exception {
+        BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());
+        FilterInputStream in = ossService.downloadObject(bucketId, objectId);
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(objectId, "utf-8"));
+        byte[] car = new byte[102400];
+        int L = 0;
+        while ((L = in.read(car)) != -1) {
+            out.write(car, 0, L);
+        }
+        if (out != null) {
+            out.flush();
+            out.close();
+        }
+        if (in != null) {
+            in.close();
+        }
     }
 
 }

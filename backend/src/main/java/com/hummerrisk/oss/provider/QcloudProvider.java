@@ -10,7 +10,6 @@ import com.hummerrisk.base.domain.OssWithBLOBs;
 import com.hummerrisk.commons.utils.ReadFileUtils;
 import com.hummerrisk.oss.constants.ObjectTypeConstants;
 import com.hummerrisk.oss.dto.*;
-import com.hummerrisk.proxy.tencent.QCloudBaseRequest;
 import com.hummerrisk.proxy.tencent.QCloudCredential;
 import com.hummerrisk.service.SysListener;
 import com.qcloud.cos.COSClient;
@@ -23,7 +22,7 @@ import com.tencentcloudapi.common.Credential;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.text.DecimalFormat;
+import java.io.FilterInputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -300,6 +299,12 @@ public class QcloudProvider implements OssProvider {
 
         }
         return objects;
+    }
+
+    @Override
+    public FilterInputStream downloadObject(OssBucket bucket, OssWithBLOBs account, final String objectId) throws Exception{
+        COSClient cosClient = getCosClient(account.getCredential(), bucket.getLocation());
+        return cosClient.getObject(bucket.getBucketName(), objectId).getObjectContent();
     }
 
 }

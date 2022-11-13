@@ -18,6 +18,8 @@ import com.obs.services.model.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.BufferedInputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -278,6 +280,16 @@ public class HuaweiProvider implements OssProvider {
         request.setObjectKey(objectKey);
         TemporarySignatureResponse response = obsClient.createTemporarySignature(request);
         return new URL(response.getSignedUrl());
+    }
+
+    @Override
+    public FilterInputStream downloadObject(OssBucket bucket, OssWithBLOBs account, String objectId) throws Exception {
+        ObsClient obsClient = getObsClient(account, bucket);
+        ObsObject obsObject = obsClient.getObject(bucket.getBucketName(), objectId);
+        // 读取对象内容
+        FilterInputStream in = new BufferedInputStream(obsObject.getObjectContent());
+        obsClient.close();
+        return in;
     }
 
 }

@@ -13,8 +13,9 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
+import java.io.BufferedInputStream;
+import java.io.FilterInputStream;
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -205,5 +206,13 @@ public class AliyunProvider implements OssProvider {
         return ossClient.generatePresignedUrl(bucketName, objectId, expiration);
     }
 
+    @Override
+    public FilterInputStream downloadObject(OssBucket bucket, OssWithBLOBs account, final String objectId) throws Exception {
+        OSSClient ossClient = getOSSClient(account);
+        ossClient.setEndpoint(bucket.getExtranetEndpoint());
+        OSSObject ossObject = ossClient.getObject(bucket.getBucketName(), objectId);
+        FilterInputStream in = new BufferedInputStream(ossObject.getObjectContent());
+        return in;
+    }
 
 }
