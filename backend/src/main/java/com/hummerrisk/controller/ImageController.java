@@ -241,6 +241,12 @@ public class ImageController {
         imageService.scanImageRepo(request);
     }
 
+    @ApiOperation(value = "批量执行镜像仓库中的镜像")
+    @PostMapping("scanImagesRepo")
+    public void scanImagesRepo(@RequestBody List<String> selectIds) {
+        imageService.scanImagesRepo(selectIds);
+    }
+
     @ApiOperation(value = "下载检测报告")
     @PostMapping("download")
     public String download(@RequestBody Map<String, Object> map) throws Exception {

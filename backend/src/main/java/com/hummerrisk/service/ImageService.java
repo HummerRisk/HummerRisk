@@ -10,9 +10,11 @@ import com.hummerrisk.base.mapper.ext.ExtImageRepoMapper;
 import com.hummerrisk.base.mapper.ext.ExtImageResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtImageRuleMapper;
 import com.hummerrisk.commons.constants.*;
+import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.image.*;
 import com.hummerrisk.dto.*;
+import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.service.impl.ExecEngineFactoryImp;
 import com.hummerrisk.service.impl.IProvider;
 import org.apache.commons.lang3.StringUtils;
@@ -77,6 +79,10 @@ public class ImageService {
     private HistoryImageResultMapper historyImageResultMapper;
     @Resource
     private SystemParameterService systemParameterService;
+    @Resource
+    private SbomMapper sbomMapper;
+    @Resource
+    private SbomVersionMapper sbomVersionMapper;
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
@@ -719,6 +725,24 @@ public class ImageService {
         return "i18n_no_data";
     }
 
+    public void scanImagesRepo(List<String> ids) {
+        ids.forEach(id -> {
+            try {
+                ImageRepoItem imageRepoItem = imageRepoItemMapper.selectByPrimaryKey(id);
+                ScanImageRepoRequest request = BeanUtils.copyBean(new ScanImageRepoRequest(), imageRepoItem);
+                Sbom sbom = sbomMapper.selectByExample(null).get(0);
+                request.setSbomId(sbom.getId());
+                SbomVersionExample example = new SbomVersionExample();
+                example.createCriteria().andSbomIdEqualTo(sbom.getId());
+                SbomVersion sbomVersion = sbomVersionMapper.selectByExample(example).get(0);
+                request.setSbomVersionId(sbomVersion.getId());
+                request.setName(imageRepoItem.getPath());
+                scanImageRepo(request);
+            } catch (Exception e) {
+                throw new HRException(e.getMessage());
+            }
+        });
+    }
     public void scanImageRepo(ScanImageRepoRequest request) throws Exception {
         try {
             Image image = BeanUtils.copyBean(new Image(), request);

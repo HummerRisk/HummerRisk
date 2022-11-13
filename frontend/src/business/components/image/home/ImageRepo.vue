@@ -123,7 +123,10 @@
     <el-drawer class="rtl" :title="$t('image.image_list')" :visible.sync="imageVisible" size="90%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
-      <el-table border :data="imageData" class="adjust-table table-content">
+      <el-table border :data="imageData" class="adjust-table table-content" @sort-change="sort"
+                @filter-change="filter" @select-all="select" @select="select">
+        <el-table-column type="selection" min-width="2%">
+        </el-table-column>
         <el-table-column type="index" min-width="2%"/>
         <el-table-column prop="project" :label="'Project'" min-width="10%" v-slot:default="scope">
           {{ scope.row.project?scope.row.project:'N/A' }}
@@ -206,7 +209,7 @@
       <div style="margin: 10px;">
         <dialog-footer
           @cancel="imageVisible = false"
-          @confirm="imageVisible = false"/>
+          @confirm="saveAddAll()"/>
       </div>
     </el-drawer>
     <!--Image list-->
@@ -278,6 +281,7 @@ export default {
       createPath: '/image/addImageRepo/',
       updatePath: '/image/editImageRepo/',
       scanPath: '/image/scanImageRepo/',
+      scanAllPath: '/image/scanImagesRepo/',
       result: {},
       createVisible: false,
       updateVisible: false,
@@ -358,6 +362,7 @@ export default {
       sboms: [],
       versions: [],
       proxys: [],
+      selectIds: new Set(),
     }
   },
   methods: {
@@ -372,6 +377,12 @@ export default {
     filter(filters) {
       _filter(filters, this.condition);
       this.init();
+    },
+    select(selection) {
+      this.selectIds.clear();
+      selection.forEach(s => {
+        this.selectIds.add(s.id)
+      });
     },
     filterStatus(value, row) {
       return row.status === value;
@@ -526,8 +537,43 @@ export default {
         }
       });
     },
+    saveAddAll() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('image.image_url'));
+        return;
+      }
+      this.$alert(this.$t('image.one_scan') + this.$t('image.image_scan') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: this.scanAllPath,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              if (res.success) {
+                this.imageVisible = false;
+                this.$success(this.$t('account.success'));
+                this.$router.push({
+                  path: '/image/result',
+                  query: {
+                    date: new Date().getTime()
+                  },
+                }).catch(error => error);
+              } else {
+                this.$error(this.$t('account.error'));
+              }
+            });
+          }
+        }
+      });
+    },
   },
   created() {
+    this.selectIds.clear();
     this.search();
     this.initSboms();
   }
