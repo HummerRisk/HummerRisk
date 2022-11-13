@@ -76,7 +76,7 @@ public class AliyunProvider implements OssProvider {
             ossBucket.setSize(size);
             ossBucket.setObjectNumber(bucketStat.getObjectCount());
         } else {
-            ossBucket.setSize("KB");
+            ossBucket.setSize("0");
             ossBucket.setObjectNumber(0L);
         }
 

@@ -11,6 +11,7 @@ import com.hummerrisk.commons.utils.ReadFileUtils;
 import com.hummerrisk.oss.constants.ObjectTypeConstants;
 import com.hummerrisk.oss.dto.*;
 import com.hummerrisk.proxy.tencent.QCloudBaseRequest;
+import com.hummerrisk.proxy.tencent.QCloudCredential;
 import com.hummerrisk.service.SysListener;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.ClientConfig;
@@ -81,6 +82,8 @@ public class QcloudProvider implements OssProvider {
         bucketDTO.setCannedAcl(bucket.getLocation());
         bucketDTO.setLocation(bucket.getLocation());
         bucketDTO.setDomainName(getDomainame(ossAccount, bucket.getLocation(), bucket.getName()));
+        bucketDTO.setSize("0");
+        bucketDTO.setObjectNumber(0L);
         return bucketDTO;
     }
 
@@ -146,7 +149,7 @@ public class QcloudProvider implements OssProvider {
 
     public BucketMetric getBucketMetric(OssBucket bucket, OssWithBLOBs account) throws Exception{
         Long size = 0L;
-        Credential credential = JSON.parseObject(account.getCredential(), Credential.class);
+        QCloudCredential credential = JSON.parseObject(account.getCredential(), QCloudCredential.class);
         TreeMap<String, Object> params = new TreeMap<>();
         Date date = new Date();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -155,8 +158,8 @@ public class QcloudProvider implements OssProvider {
         params.put("namespace", "qce/cos");
         params.put("metricName", "std_storage");
         params.put("Region", bucket.getLocation());
-//        params.put("dimensions.0.name", "appid");
-//        params.put("dimensions.0.value", credential.getAPPID());
+        params.put("dimensions.0.name", "appid");
+        params.put("dimensions.0.value", credential.getAPPID());
         params.put("dimensions.1.name", "bucket");
         params.put("dimensions.1.value", bucket.getBucketName());
         QcloudApiModuleCenter monitor = getModule(account.getCredential(), new Monitor());
