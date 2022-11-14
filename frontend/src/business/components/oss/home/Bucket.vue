@@ -53,9 +53,9 @@
           <el-link v-if="scope.row.objectType==='DIR'" type="primary" @click="selectObject(scope.row)">
             <i class="el-icon-folder-opened"></i>  {{ scope.row.objectName }}
           </el-link>
-          <span v-if="scope.row.objectType==='FILE'">
-              <i class="el-icon-document"></i> {{ scope.row.objectName }}
-            </span>
+          <span v-if="scope.row.objectType==='FILE'" style="color: #336d9f">
+            <i class="el-icon-document"></i> {{ scope.row.objectName }}
+          </span>
         </el-table-column>
         <el-table-column prop="objectType" :label="$t('oss.object_type')" min-width="8%" show-overflow-tooltip v-slot:default="scope">
           <span v-if="scope.row.objectType==='DIR'">{{ $t('oss.object_dir') }}</span>
@@ -90,6 +90,7 @@ import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {OSS_CONFIGS} from "@/business/components/common/components/search/search-components";
+import {saveAs} from "@/common/js/FileSaver";
 
 /* eslint-disable */
 export default {
@@ -165,7 +166,7 @@ export default {
     getObjects(path) {
       if (path !== '' && path !== 'none') {
         this.path = path;
-        this.result = this.$post("/oss/objects/" + this.thisObject.bucketId, { "path" : path}, response => {
+        this.result = this.$post("/oss/objects/" + this.thisObject.bucketId, { "path" : path=="/"?"":path}, response => {
           this.objectData = response.data;
           this.bucketVisible = true;
         });
@@ -182,6 +183,18 @@ export default {
     selectObject(item) {
       this.thisObject = item;
       this.getObjects(item.id);
+    },
+    download(item) {
+      this.result = this.$download("/downloadObject/" + item.bucketId, {
+        objectId: item.id,
+      }, response => {
+        if (response.status === 201) {
+          let blob = new Blob([response.data], {type: "'application/octet-stream'"});
+          saveAs(blob, item.objectName);
+        }
+      }, error => {
+        console.log("下载报错", error);
+      });
     },
   },
   created() {

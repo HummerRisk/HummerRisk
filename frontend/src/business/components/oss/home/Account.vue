@@ -265,7 +265,7 @@
             <el-link v-if="scope.row.objectType==='DIR'" type="primary" @click="selectObject(scope.row)">
               <i class="el-icon-folder-opened"></i>  {{ scope.row.objectName }}
             </el-link>
-            <span v-if="scope.row.objectType==='FILE'">
+            <span v-if="scope.row.objectType==='FILE'" style="color: #336d9f">
               <i class="el-icon-document"></i> {{ scope.row.objectName }}
             </span>
           </el-table-column>
@@ -664,7 +664,7 @@ export default {
     getObjects(path) {
       if (path !== '' && path !== 'none') {
         this.path = path;
-        this.result = this.$post("/oss/objects/" + this.thisObject.bucketId, { "path" : path}, response => {
+        this.result = this.$post("/oss/objects/" + this.thisObject.bucketId, { "path" : path=="/"?"":path}, response => {
           this.objectData = response.data;
           this.innerDrawer = true;
         });

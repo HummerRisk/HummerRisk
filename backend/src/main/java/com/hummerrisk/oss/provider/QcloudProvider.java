@@ -57,7 +57,7 @@ public class QcloudProvider implements OssProvider {
     public List<OssBucket> getOssBucketList(OssWithBLOBs ossAccount) throws Exception {
         List<OssBucket> resultList = new ArrayList<>();
         COSClient cosClient = getCosClient(ossAccount.getCredential(), null);
-        List<com.qcloud.cos.model.Bucket> buckets= cosClient.listBuckets();
+        List<com.qcloud.cos.model.Bucket> buckets = cosClient.listBuckets();
         for (Bucket bucket : buckets) {
             OssBucket tmpBucket = setBucket(bucket, ossAccount);
             setBucketAcl(tmpBucket, ossAccount);
@@ -68,10 +68,10 @@ public class QcloudProvider implements OssProvider {
             resultList.add(tmpBucket);
         }
         cosClient.shutdown();
-        return  resultList;
+        return resultList;
     }
 
-    private OssBucket setBucket(Bucket bucket, OssWithBLOBs ossAccount) throws Exception{
+    private OssBucket setBucket(Bucket bucket, OssWithBLOBs ossAccount) throws Exception {
         OssBucket bucketDTO = new OssBucket();
         if (bucket.getCreationDate() != null) {
             bucketDTO.setCreateTime(bucket.getCreationDate().getTime());
@@ -86,29 +86,30 @@ public class QcloudProvider implements OssProvider {
         return bucketDTO;
     }
 
-    private String getDomainame(OssWithBLOBs ossAccount, String region, String bucketName)throws Exception{
+    private String getDomainame(OssWithBLOBs ossAccount, String region, String bucketName) throws Exception {
         List<OssRegion> ossRegions = getOssRegions(ossAccount);
         for (OssRegion ossRegion : ossRegions) {
-            if(ossRegion.getRegionId().equals(region)){
+            if (ossRegion.getRegionId().equals(region)) {
                 return ossRegion.getExtranetEndpoint().replace("<BucketName-APPID>", bucketName);
             }
         }
         return null;
     }
 
-    public List<OssRegion> getOssRegions(OssWithBLOBs ossAccount) throws Exception{
+    public List<OssRegion> getOssRegions(OssWithBLOBs ossAccount) throws Exception {
         String result = ReadFileUtils.readConfigFile(BASE_CREDENTIAL_DIC, ossAccount.getPluginId(), JSON_EXTENSION);
-        return new Gson().fromJson(result, new TypeToken<ArrayList<OssRegion>>() {}.getType());
+        return new Gson().fromJson(result, new TypeToken<ArrayList<OssRegion>>() {
+        }.getType());
     }
 
 
-    private COSClient getCosClient (String credential, String region){
+    private COSClient getCosClient(String credential, String region) {
         Credential object = JSON.parseObject(credential, Credential.class);
-        COSCredentials cred = new BasicCOSCredentials(object.getSecretId(),object.getSecretKey());
+        COSCredentials cred = new BasicCOSCredentials(object.getSecretId(), object.getSecretKey());
         ClientConfig clientConfig;
-        if(StringUtils.isEmpty(region)){
+        if (StringUtils.isEmpty(region)) {
             clientConfig = new ClientConfig(new Region("ap-guangzhou"));
-        }else {
+        } else {
             clientConfig = new ClientConfig(new Region(region));
         }
         clientConfig.setConnectionTimeout(300 * 1000);
@@ -116,37 +117,37 @@ public class QcloudProvider implements OssProvider {
         return new COSClient(cred, clientConfig);
     }
 
-    private void setBucketAcl(OssBucket bucket, OssWithBLOBs ossAccount){
+    private void setBucketAcl(OssBucket bucket, OssWithBLOBs ossAccount) {
         COSClient cosClient = getCosClient(ossAccount.getCredential(), bucket.getLocation());
         AccessControlList accessControlList = cosClient.getBucketAcl(bucket.getBucketName());
-        List<Grant>  grants = accessControlList.getGrantsAsList();
+        List<Grant> grants = accessControlList.getGrantsAsList();
         boolean Private = true;
         boolean PublicRead = false;
         boolean PublicWrite = false;
         for (Grant grant : grants) {
-            if(grant.getPermission().name().equalsIgnoreCase("READ") && grant.getGrantee().toString().contains("AllUsers]")){
+            if (grant.getPermission().name().equalsIgnoreCase("READ") && grant.getGrantee().toString().contains("AllUsers]")) {
                 PublicRead = true;
                 Private = false;
             }
-            if(grant.getPermission().name().equalsIgnoreCase("WRITE") && grant.getGrantee().toString().contains("AllUsers]")){
-                PublicWrite  =true;
+            if (grant.getPermission().name().equalsIgnoreCase("WRITE") && grant.getGrantee().toString().contains("AllUsers]")) {
+                PublicWrite = true;
                 Private = false;
             }
         }
-        if(Private){
+        if (Private) {
             bucket.setCannedAcl("Private");
         }
-        if(PublicRead){
+        if (PublicRead) {
             bucket.setCannedAcl("PublicRead");
         }
-        if(PublicWrite  && PublicRead){
+        if (PublicWrite && PublicRead) {
             bucket.setCannedAcl("PublicReadWrite");
         }
 
         cosClient.shutdown();
     }
 
-    public BucketMetric getBucketMetric(OssBucket bucket, OssWithBLOBs account) throws Exception{
+    public BucketMetric getBucketMetric(OssBucket bucket, OssWithBLOBs account) throws Exception {
         Long size = 0L;
         QCloudCredential credential = JSON.parseObject(account.getCredential(), QCloudCredential.class);
         TreeMap<String, Object> params = new TreeMap<>();
@@ -163,17 +164,17 @@ public class QcloudProvider implements OssProvider {
         params.put("dimensions.1.value", bucket.getBucketName());
         QcloudApiModuleCenter monitor = getModule(account.getCredential(), new Monitor());
         JSONObject resp = JSONObject.parseObject(monitor.call("GetMonitorData", params));
-        if(resp.getInteger("code") == 0 && resp.getJSONArray("dataPoints").get(0) != null){
+        if (resp.getInteger("code") == 0 && resp.getJSONArray("dataPoints").get(0) != null) {
             size = size + Long.parseLong(resp.getJSONArray("dataPoints").getString(0));
         }
         params.put("metricName", "sia_storage");
         resp = JSONObject.parseObject(monitor.call("GetMonitorData", params));
-        if(resp.getInteger("code") == 0 && resp.getJSONArray("dataPoints").get(0) != null){
+        if (resp.getInteger("code") == 0 && resp.getJSONArray("dataPoints").get(0) != null) {
             size = size + Long.parseLong(resp.getJSONArray("dataPoints").getString(0));
         }
         params.put("metricName", "arc_storage");
         resp = JSONObject.parseObject(monitor.call("GetMonitorData", params));
-        if(resp.getInteger("code") == 0 && resp.getJSONArray("dataPoints").get(0) != null){
+        if (resp.getInteger("code") == 0 && resp.getJSONArray("dataPoints").get(0) != null) {
             size = size + Long.parseLong(resp.getJSONArray("dataPoints").getString(0));
         }
 
@@ -185,12 +186,12 @@ public class QcloudProvider implements OssProvider {
         return bucketMetric;
     }
 
-    private QcloudApiModuleCenter getModule(String credential, Base module){
+    private QcloudApiModuleCenter getModule(String credential, Base module) {
         Credential object = JSON.parseObject(credential, Credential.class);
         TreeMap<String, Object> config = new TreeMap<String, Object>();
         config.put("SecretId", object.getSecretId());
         config.put("SecretKey", object.getSecretKey());
-        return new QcloudApiModuleCenter(module ,config);
+        return new QcloudApiModuleCenter(module, config);
     }
 
     @Override
@@ -200,7 +201,7 @@ public class QcloudProvider implements OssProvider {
         ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
         listObjectsRequest.setBucketName(bucket.getBucketName());
         listObjectsRequest.setDelimiter("/");
-        if(StringUtils.isNotEmpty(prefix)){
+        if (StringUtils.isNotEmpty(prefix)) {
             listObjectsRequest.setPrefix(prefix);
         }
 
@@ -216,23 +217,23 @@ public class QcloudProvider implements OssProvider {
         cosClient.shutdown();
         List<BucketObjectDTO> bucketObjectDTOS = new ArrayList<>();
         for (BucketObjectDTO object : objects) {
-            if(object.getObjectType().equals(ObjectTypeConstants.BACK.name())){
+            if (object.getObjectType().equals(ObjectTypeConstants.BACK.name())) {
                 bucketObjectDTOS.add(0, object);
-            }else {
+            } else {
                 bucketObjectDTOS.add(object);
             }
         }
         return bucketObjectDTOS;
     }
 
-    private List<BucketObjectDTO> convertToBucketFolder(OssBucket bucket,  List<String> commonPrefixes, String prefix){
+    private List<BucketObjectDTO> convertToBucketFolder(OssBucket bucket, List<String> commonPrefixes, String prefix) {
         List<BucketObjectDTO> objects = new ArrayList<>();
         for (String commonPrefix : commonPrefixes) {
             BucketObjectDTO bucketObject = new BucketObjectDTO();
             bucketObject.setBucketId(bucket.getId());
-            if(StringUtils.isNotEmpty(prefix)){
+            if (StringUtils.isNotEmpty(prefix)) {
                 bucketObject.setObjectName(commonPrefix.substring(prefix.length()));
-            }else {
+            } else {
                 bucketObject.setObjectName(commonPrefix);
             }
             bucketObject.setId(commonPrefix);
@@ -242,19 +243,19 @@ public class QcloudProvider implements OssProvider {
         return objects;
     }
 
-    private List<BucketObjectDTO> convertToBucketObject(OssBucket bucket, List<COSObjectSummary>  cosObjectSummaries, final String prefix){
+    private List<BucketObjectDTO> convertToBucketObject(OssBucket bucket, List<COSObjectSummary> cosObjectSummaries, final String prefix) {
         List<BucketObjectDTO> objects = new ArrayList<>();
         if (ObjectUtils.isEmpty(cosObjectSummaries)) {
             BucketObjectDTO bucketObject = new BucketObjectDTO();
             bucketObject.setBucketId(bucket.getId());
-            if(StringUtils.isNotEmpty(prefix)){
+            if (StringUtils.isNotEmpty(prefix)) {
                 String[] dirs = prefix.split("/");
-                if(dirs.length == 1){
+                if (dirs.length == 1) {
                     bucketObject.setId("/");
                     bucketObject.setObjectName(prefix);
-                }else {
-                    String lastDir = dirs[dirs.length -1];
-                    bucketObject.setId(prefix.substring(0, prefix.length() - lastDir.length() - 1 ) );
+                } else {
+                    String lastDir = dirs[dirs.length - 1];
+                    bucketObject.setId(prefix.substring(0, prefix.length() - lastDir.length() - 1));
                     bucketObject.setObjectName(lastDir + "/");
                 }
                 bucketObject.setObjectType(ObjectTypeConstants.BACK.name());
@@ -264,14 +265,14 @@ public class QcloudProvider implements OssProvider {
             BucketObjectDTO bucketObject = new BucketObjectDTO();
             bucketObject.setBucketId(bucket.getId());
 
-            if(StringUtils.isNotEmpty(prefix) && cosObjectSummaries.get(0).getKey().contains(prefix)){
+            if (StringUtils.isNotEmpty(prefix) && cosObjectSummaries.get(0).getKey().contains(prefix)) {
                 String[] dirs = prefix.split("/");
-                if(dirs.length == 1){
+                if (dirs.length == 1) {
                     bucketObject.setId("/");
                     bucketObject.setObjectName(prefix);
-                }else {
-                    String lastDir = dirs[dirs.length -1];
-                    bucketObject.setId(prefix.substring(0, prefix.length() - lastDir.length() - 1 ) );
+                } else {
+                    String lastDir = dirs[dirs.length - 1];
+                    bucketObject.setId(prefix.substring(0, prefix.length() - lastDir.length() - 1));
                     bucketObject.setObjectName(lastDir + "/");
                 }
                 bucketObject.setObjectType(ObjectTypeConstants.BACK.name());
@@ -281,14 +282,14 @@ public class QcloudProvider implements OssProvider {
 
         for (COSObjectSummary cosObjectSummary : cosObjectSummaries) {
 
-            if(!cosObjectSummary.getKey().endsWith("/")){
+            if (!cosObjectSummary.getKey().endsWith("/")) {
                 BucketObjectDTO bucketObject = new BucketObjectDTO();
                 bucketObject.setBucketId(bucket.getId());
                 bucketObject.setObjectSize(SysListener.changeFlowFormat(cosObjectSummary.getSize()));
                 bucketObject.setId(cosObjectSummary.getKey());
-                if(StringUtils.isEmpty(prefix)){
+                if (StringUtils.isEmpty(prefix)) {
                     bucketObject.setObjectName(cosObjectSummary.getKey());
-                }else {
+                } else {
                     bucketObject.setObjectName(cosObjectSummary.getKey().substring(prefix.length(), cosObjectSummary.getKey().length() - 1));
                 }
                 bucketObject.setStorageClass(cosObjectSummary.getStorageClass());
@@ -302,7 +303,7 @@ public class QcloudProvider implements OssProvider {
     }
 
     @Override
-    public FilterInputStream downloadObject(OssBucket bucket, OssWithBLOBs account, final String objectId) throws Exception{
+    public FilterInputStream downloadObject(OssBucket bucket, OssWithBLOBs account, final String objectId) throws Exception {
         COSClient cosClient = getCosClient(account.getCredential(), bucket.getLocation());
         return cosClient.getObject(bucket.getBucketName(), objectId).getObjectContent();
     }
