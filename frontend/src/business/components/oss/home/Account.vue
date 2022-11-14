@@ -27,7 +27,17 @@
                          :filters="statusFilters"
                          :filter-method="filterStatus">
           <template v-slot:default="{row}">
-            <account-status @search="search" :row="row"/>
+            <div @click="validate(row)">
+              <el-tag size="mini" type="warning" v-if="row.status === 'DELETE'">
+                {{ $t('account.DELETE') }}
+              </el-tag>
+              <el-tag size="mini" type="success" v-else-if="row.status === 'VALID'">
+                {{ $t('account.VALID') }}
+              </el-tag>
+              <el-tag size="mini" type="danger" v-else-if="row.status === 'INVALID'">
+                {{ $t('account.INVALID') }}
+              </el-tag>
+            </div>
           </template>
         </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('event.sync_status')" min-width="12%" prop="status" sortable
@@ -294,7 +304,6 @@ import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {OSS_CONFIGS} from "@/business/components/common/components/search/search-components";
-import AccountStatus from "@/business/components/account/home/AccountStatus";
 
 /* eslint-disable */
 export default {
@@ -305,7 +314,6 @@ export default {
     TableHeader,
     TablePagination,
     DialogFooter,
-    AccountStatus,
   },
   data() {
     return {
@@ -673,6 +681,28 @@ export default {
     selectObject(item) {
       this.thisObject = item;
       this.getObjects(item.id);
+    },
+    validate(row) {
+      this.$alert(this.$t('account.validate') + this.$t('account.oss_setting') + ' : ' + row.name +  " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.$post("/oss/validate/" + row.id, {}, response => {
+              let data = response.data;
+              if (data) {
+                if (data.flag) {
+                  this.$success(this.$t('server.success'));
+                } else {
+                  this.$error(data.message, 10000);
+                }
+              } else {
+                this.$error(this.$t('account.error'));
+              }
+              this.search();
+            });
+          }
+        }
+      });
     },
   },
   computed: {
