@@ -1,8 +1,8 @@
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/hummerrisk-base:v0.5.0
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/hummerrisk-base:v0.5.1
 
 COPY backend/target/backend-1.0.jar /opt/apps
 
-ARG HR_VERSION=v0.5.0
+ARG HR_VERSION=v0.5.1
 
 ENV JAVA_APP_JAR=/opt/apps/backend-1.0.jar \
     AB_OFF=true \
