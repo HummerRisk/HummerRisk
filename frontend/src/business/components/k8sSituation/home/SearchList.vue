@@ -93,7 +93,7 @@ export default {
 .title {
   display: inline-block;
   padding-left: 15px;
-  max-width: 300px;
+  max-width: 400px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

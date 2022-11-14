@@ -1284,6 +1284,7 @@ export default {
     resource_perspective: '资源视角',
     node_perspective: '节点视角',
     namespace_perspective: '命名空间视角',
+    k8s_perspective: 'K8s 视角',
   },
   config: {
     config_settings: '部署配置',

@@ -2,17 +2,7 @@
   <main-container class="card">
     <el-card class="table-card" v-loading="result.loading">
       <el-tabs type="border-card">
-        <el-tab-pane :label="$t('k8s.node_perspective')">
-          <el-row :gutter="24">
-            <el-col :span="8"><div class="grid-content bg-purple"></div></el-col>
-            <el-col :span="8">
-              <div class="grid-content bg-purple-light">
-                <span style="text-align: left;color: white;margin: 20px;">NameSpace<I style="color: turquoise;margin-left: 20px;">6</I></span>
-                <span style="text-align: right;color: white;margin: 20px;">Controller<I style="color: turquoise;margin-left: 20px;">0/29(Reset)</I></span>
-              </div>
-            </el-col>
-            <el-col :span="8"><div class="grid-content bg-purple"></div></el-col>
-          </el-row>
+        <el-tab-pane :label="$t('k8s.k8s_perspective')">
           <el-row :gutter="24">
             <el-col :span="6">
               <el-card class="box-card">
@@ -25,10 +15,64 @@
                 </div>
               </el-card>
             </el-col>
-            <el-col :span="18">
-              <svg id="node-topo"></svg>
+            <el-col :span="15">
+              <el-row :gutter="24">
+                <el-card class="box-card-top">
+                    <div style="float: left;color: white;margin: 11px 1%;min-width: 18%;">NameSpace<I style="color: turquoise;margin-left: 20px;">6</I></div>
+                    <div style="float: left;min-width: 58%;vertical-align: middle;height: 100%;background-color: #364f6c;">
+                      <el-menu class="header-menu" :unique-opened="true" mode="horizontal" default-active="1" router background-color="#364f6c;" active-text-color="red">
+                        <!-- 不激活项目路由-->
+                        <el-menu-item index="1" v-show="false">Placeholder</el-menu-item>
+                        <el-submenu index="2" popper-class="submenu">
+                          <template v-slot:title>
+                          <span class="account-name" :title="currentAccount">
+                            {{ $t('k8s.name') }}:  {{ currentAccount }}
+                          </span>
+                          </template>
+                          <search-list v-if="items.length>0" :items="items" @cloudAccountSwitch="cloudAccountSwitch"/>
+                        </el-submenu>
+                      </el-menu>
+                    </div>
+                    <div style="float: right;color: white;margin: 11px 1%;min-width: 18%;">Controller<I style="color: turquoise;margin-left: 20px;">0/29(Reset)</I></div>
+                </el-card>
+              </el-row>
+              <el-row :gutter="24">
+                <svg id="risk-topo"></svg>
+              </el-row>
+            </el-col>
+            <el-col :span="3">
+              <el-card class="box-card-right hr-card-index-1">
+                <div class="text item-left">
+                  {{ 'Critical: 10' }}
+                </div>
+              </el-card>
+              <el-card class="box-card-right2 hr-card-index-2">
+                <div class="text item-left">
+                  {{ 'High: 20' }}
+                </div>
+              </el-card>
+              <el-card class="box-card-right2 hr-card-index-3">
+                <div class="text item-left">
+                  {{ 'Medium: 20' }}
+                </div>
+              </el-card>
+              <el-card class="box-card-right2 hr-card-index-4">
+                <div class="text item-left">
+                  {{ 'Low: 20' }}
+                </div>
+              </el-card>
+              <el-card class="box-card-right2 hr-card-index-5">
+                <div class="text item-left">
+                  {{ 'Unknown: 20' }}
+                </div>
+              </el-card>
             </el-col>
           </el-row>
+        </el-tab-pane>
+        <el-tab-pane :label="$t('k8s.node_perspective')">
+          <el-col :span="18">
+            <svg id="node-topo"></svg>
+          </el-col>
         </el-tab-pane>
         <el-tab-pane :label="$t('k8s.namespace_perspective')">
           <svg id="namespace-topo"></svg>
@@ -42,17 +86,22 @@
 </template>
 <script>
 import MainContainer from "../../common/components/MainContainer";
+import SearchList from "@/business/components/k8sSituation/home/SearchList";
 import * as d3 from 'd3';
 /* eslint-disable */
 export default {
   components: {
     MainContainer,
+    SearchList,
     d3,
   },
   data() {
     return {
       result: {},
       cloudTopology: {},
+      currentAccount: "",
+      accountId: "",
+      items: [],
     };
   },
   methods: {
@@ -340,9 +389,22 @@ export default {
         dangerouslyUseHTMLString: true,
       });
     },
+    initK8s() {
+      this.$get("/k8s/allList", response => {
+        this.items = response.data;
+        this.accountId = this.items[0].id;
+        this.currentAccount = this.items[0].name;
+      })
+    },
+    cloudAccountSwitch(accountId, accountName) {
+      this.accountId = accountId;
+      this.currentAccount = accountName;
+      this.init();
+    },
   },
 
   mounted() {
+    this.initK8s();
     this.init();
   }
 
@@ -379,6 +441,38 @@ svg {
   background-color: #364f6c;
   color: #FFFFFF;
   min-height: 1000px;
+  border-radius: 10px;
+}
+.box-card-top {
+  width: 100%;
+  background-color: #364f6c;
+  color: #FFFFFF;
+  border-radius: 10px;
+  margin-top: 3%;
+}
+.box-card-right {
+  width: 80%;
+  background-color: #364f6c;
+  color: #FFFFFF;
+  border-radius: 3px;
+  margin: 20% 5% 0 5%;
+}
+.box-card-right2 {
+  width: 80%;
+  background-color: #364f6c;
+  color: #FFFFFF;
+  border-radius: 3px;
+  margin: 0 5% 0 5%;
+}
+.header-menu {
+  background-color: #364f6c;
+  color: #FFFFFF;
+}
+.account-name {
+  color: #FFFFFF;
+}
+.item-left {
+  padding-left: 5px;
 }
 .table-card >>> .el-tabs__content {
   background-color: hsl(152,80%,80%);
@@ -400,5 +494,27 @@ svg {
 .grid-content {
   border-radius: 4px;
   min-height: 36px;
+}
+
+.hr-card-index-1 {
+  border-left-color: #8B0000;
+  border-left-width: 5px;
+}
+
+.hr-card-index-2 {
+  border-left-color: #FF4D4D;
+  border-left-width: 5px;
+}
+.hr-card-index-3 {
+  border-left-color: #FF8000;
+  border-left-width: 5px;
+}
+.hr-card-index-4 {
+  border-left-color: #eeab80;
+  border-left-width: 5px;
+}
+.hr-card-index-5 {
+  border-left-color: #67C23A;
+  border-left-width: 5px;
 }
 </style>
