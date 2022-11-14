@@ -319,4 +319,11 @@ public class K8sController {
         return k8sService.riskTopology(accountId);
     }
 
+    @I18n
+    @ApiOperation(value = "镜像拓扑图")
+    @GetMapping(value = "getImage/{accountId}")
+    public K8sImage getImage(@PathVariable String accountId) {
+        return k8sService.getImage(accountId);
+    }
+
 }

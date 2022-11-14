@@ -564,5 +564,169 @@
         and t.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
     </select>
 
+    <resultMap id="ImageRiskResultMap" type="com.hummerrisk.controller.request.k8s.K8sImage">
+        <result column="nameSpaces" jdbcType="INTEGER" property="nameSpaces" />
+        <result column="images" jdbcType="INTEGER" property="images" />
+        <result column="riskController" jdbcType="INTEGER" property="riskController" />
+        <result column="controllers" jdbcType="INTEGER" property="controllers" />
+        <result column="critical" jdbcType="INTEGER" property="critical" />
+        <result column="high" jdbcType="INTEGER" property="high" />
+        <result column="medium" jdbcType="INTEGER" property="medium" />
+        <result column="low" jdbcType="INTEGER" property="low" />
+        <result column="unknown" jdbcType="INTEGER" property="unknown" />
+        <result column="k8sId" jdbcType="INTEGER" property="k8sId" />
+        <collection property="nameSpaceImages" ofType="com.hummerrisk.controller.request.k8s.NameSpaceImage" javaType="list" select="selectRiskNameSpaceImage" column="k8sId">
+        </collection>
+    </resultMap>
+
+    <resultMap id="NameSpaceImageResultMap" type="com.hummerrisk.controller.request.k8s.NameSpaceImage">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="source_id" jdbcType="VARCHAR" property="sourceId" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="image" jdbcType="VARCHAR" property="image" />
+        <association property="cloudNativeSource" column="source_id" select="fromCloudNativeSource">
+        </association>
+        <collection property="cloudNativeResultItemList" ofType="com.hummerrisk.base.domain.CloudNativeResultItem" javaType="list" select="fromCloudNativeResultItem" column="source_id">
+        </collection>
+    </resultMap>
+
+    <select id="getImage" resultMap="ImageRiskResultMap" parameterType="java.lang.String">
+        select * from
+            (select IFNULL(count(t1.id), 0) as nameSpaces
+            from cloud_native_source t1
+            where t1.cloud_native_id = #{k8sId}
+              and t1.source_type = 'NameSpace'
+              and (
+                  select count(t2.id) from cloud_native_source t2
+                  where t2.cloud_native_id = t1.cloud_native_id
+                    and t2.source_namespace = t1.source_namespace
+                    and t2.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
+                  ) &gt; 0
+            ) as nameSpaces,
+            (select IFNULL(count(t1.id), 0) as images
+             from cloud_native_source_image t1
+             left join cloud_native_source t2 on t1.source_id = t2.id
+             where t2.cloud_native_id = #{k8sId}
+               and t2.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
+            ) as images,
+            (select IFNULL(count(t1.id), 0) as controllers
+             from cloud_native_source t1
+             where t1.cloud_native_id = #{k8sId}
+               and t1.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
+               and (
+                   select count(t2.id) from cloud_native_source t2
+                   where t2.cloud_native_id = t1.cloud_native_id
+                     and t2.source_namespace = t1.source_namespace
+                     and t2.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
+               ) &gt; 0
+            ) as  controllers,
+            (select IFNULL(count(t1.id), 0) as riskController
+             from cloud_native_source t1
+             where t1.cloud_native_id = #{k8sId}
+               and t1.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
+               and (
+                       select count(t2.id) from cloud_native_source t2
+                       where t2.cloud_native_id = t1.cloud_native_id
+                         and t2.source_namespace = t1.source_namespace
+                         and t2.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
+                   ) &gt; 0
+               and t1.id in
+                   (select t3.source_id from cloud_native_source_image t3 join cloud_native_result_item t4 on t3.image = t4.image join cloud_native_result t5 on t5.id = t4.result_id
+                            where t5.cloud_native_id = t1.cloud_native_id)
+            ) as riskController,
+            (select IFNULL(count(t1.id), 0) as critical
+             from cloud_native_source t1
+             where t1.cloud_native_id = #{k8sId}
+               and t1.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
+               and (
+                       select count(t2.id) from cloud_native_source t2
+                       where t2.cloud_native_id = t1.cloud_native_id
+                         and t2.source_namespace = t1.source_namespace
+                         and t2.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
+                   ) &gt; 0
+               and t1.id in
+                   (select t3.source_id from cloud_native_source_image t3 join cloud_native_result_item t4 on t3.image = t4.image and LOWER(t4.severity) = 'critical' join cloud_native_result t5 on t5.id = t4.result_id
+                    where t5.cloud_native_id = t1.cloud_native_id)
+            ) as critical,
+            (select IFNULL(count(t1.id), 0) as high
+             from cloud_native_source t1
+             where t1.cloud_native_id = #{k8sId}
+               and t1.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
+               and (
+                       select count(t2.id) from cloud_native_source t2
+                       where t2.cloud_native_id = t1.cloud_native_id
+                         and t2.source_namespace = t1.source_namespace
+                         and t2.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
+                   ) &gt; 0
+               and t1.id in
+                   (select t3.source_id from cloud_native_source_image t3 join cloud_native_result_item t4 on t3.image = t4.image and LOWER(t4.severity) = 'high' join cloud_native_result t5 on t5.id = t4.result_id
+                    where t5.cloud_native_id = t1.cloud_native_id)
+            ) as high,
+            (select IFNULL(count(t1.id), 0) as medium
+             from cloud_native_source t1
+             where t1.cloud_native_id = #{k8sId}
+               and t1.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
+               and (
+                       select count(t2.id) from cloud_native_source t2
+                       where t2.cloud_native_id = t1.cloud_native_id
+                         and t2.source_namespace = t1.source_namespace
+                         and t2.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
+                   ) &gt; 0
+               and t1.id in
+                   (select t3.source_id from cloud_native_source_image t3 join cloud_native_result_item t4 on t3.image = t4.image and LOWER(t4.severity) = 'medium' join cloud_native_result t5 on t5.id = t4.result_id
+                    where t5.cloud_native_id = t1.cloud_native_id)
+            ) as medium,
+            (select IFNULL(count(t1.id), 0) as low
+             from cloud_native_source t1
+             where t1.cloud_native_id = #{k8sId}
+               and t1.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
+               and (
+                       select count(t2.id) from cloud_native_source t2
+                       where t2.cloud_native_id = t1.cloud_native_id
+                         and t2.source_namespace = t1.source_namespace
+                         and t2.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
+                   ) &gt; 0
+               and t1.id in
+                   (select t3.source_id from cloud_native_source_image t3 join cloud_native_result_item t4 on t3.image = t4.image and LOWER(t4.severity) = 'low' join cloud_native_result t5 on t5.id = t4.result_id
+                    where t5.cloud_native_id = t1.cloud_native_id)
+            ) as low,
+            (select IFNULL(count(t1.id), 0) as unknown
+             from cloud_native_source t1
+             where t1.cloud_native_id = #{k8sId}
+               and t1.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
+               and (
+                       select count(t2.id) from cloud_native_source t2
+                       where t2.cloud_native_id = t1.cloud_native_id
+                         and t2.source_namespace = t1.source_namespace
+                         and t2.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
+                   ) &gt; 0
+               and t1.id in
+                   (select t3.source_id from cloud_native_source_image t3 join cloud_native_result_item t4 on t3.image = t4.image and LOWER(t4.severity) = 'unknown' join cloud_native_result t5 on t5.id = t4.result_id
+                    where t5.cloud_native_id = t1.cloud_native_id)
+            ) as unknown,
+             (select #{k8sId} as k8sId) as k8sId
+    </select>
+
+    <select id="selectRiskNameSpaceImage" resultMap="NameSpaceImageResultMap">
+        select t.*
+        from cloud_native_source_image t
+        join cloud_native_source t1 on t.source_id = t1.id
+        where t1.cloud_native_id = #{k8sId}
+    </select>
+
+    <select id="fromCloudNativeSource" resultType="com.hummerrisk.base.domain.CloudNativeSource">
+        select t.*
+        from cloud_native_source t
+        where t.id = #{source_id}
+    </select>
+
+    <select id="fromCloudNativeResultItem" resultType="com.hummerrisk.base.domain.CloudNativeResultItem">
+        select t.*
+        from cloud_native_result_item t
+        join cloud_native_result t1 on t.result_id = t1.id
+        join cloud_native_source t2 on t1.cloud_native_id = t2.cloud_native_id
+        join cloud_native_source_image t3 on t3.source_id = t2.id and t.image = t3.image
+        where t3.id = #{source_id}
+    </select>
 
 </mapper>

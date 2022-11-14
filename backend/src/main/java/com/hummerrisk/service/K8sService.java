@@ -818,6 +818,10 @@ public class K8sService {
         return extCloudNativeSourceMapper.riskTopology(k8sId);
     }
 
+    public K8sImage getImage(String k8sId) {
+        return extCloudNativeSourceMapper.getImage(k8sId);
+    }
+
     public NodeTopology nodeTopology() {
         return extCloudNativeSourceMapper.nodeTopology();
     }

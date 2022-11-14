@@ -2,13 +2,13 @@
   <main-container class="card">
     <el-card class="table-card" v-loading="result.loading">
       <el-tabs type="border-card">
-        <el-tab-pane :label="$t('k8s.k8s_perspective')">
+        <el-tab-pane v-if="k8sImage" :label="$t('k8s.k8s_perspective')">
           <el-row :gutter="24">
             <el-col :span="6">
               <el-card class="box-card">
                 <div slot="header" class="clearfix">
-                  <span>卡片名称</span>
-                  <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
+                  <span style="color:red;">{{ k8sImage.images }} {{ 'Images' }}</span>
+<!--                  <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>-->
                 </div>
                 <div v-for="o in 4" :key="o" class="text item">
                   {{'列表内容 ' + o }}
@@ -18,8 +18,8 @@
             <el-col :span="15">
               <el-row :gutter="24">
                 <el-card class="box-card-top">
-                    <div style="float: left;color: white;margin: 11px 1%;min-width: 18%;">NameSpace<I style="color: turquoise;margin-left: 20px;">6</I></div>
-                    <div style="float: left;min-width: 58%;vertical-align: middle;height: 100%;background-color: #364f6c;">
+                    <div style="float: left;color: white;margin: 11px 1%;min-width: 18%;">NameSpace<I style="color: turquoise;margin-left: 20px;">{{ k8sImage.nameSpaces }}</I></div>
+                    <div style="float: left;min-width: 57%;vertical-align: middle;height: 100%;background-color: #364f6c;">
                       <el-menu class="header-menu" :unique-opened="true" mode="horizontal" default-active="1" router background-color="#364f6c;" active-text-color="red">
                         <!-- 不激活项目路由-->
                         <el-menu-item index="1" v-show="false">Placeholder</el-menu-item>
@@ -33,7 +33,7 @@
                         </el-submenu>
                       </el-menu>
                     </div>
-                    <div style="float: right;color: white;margin: 11px 1%;min-width: 18%;">Controller<I style="color: turquoise;margin-left: 20px;">0/29(Reset)</I></div>
+                    <div style="float: right;color: white;margin: 11px 1%;min-width: 18%;">Controller<I style="color: turquoise;margin-left: 20px;">{{ k8sImage.riskController }} / {{ k8sImage.controllers }} (Reset)</I></div>
                 </el-card>
               </el-row>
               <el-row :gutter="24">
@@ -41,29 +41,34 @@
               </el-row>
             </el-col>
             <el-col :span="3">
-              <el-card class="box-card-right hr-card-index-1">
+              <el-card class="box-card-right">
                 <div class="text item-left">
-                  {{ 'Critical: 10' }}
+                  {{ $t('k8s.image_risk') }}
+                </div>
+              </el-card>
+              <el-card class="box-card-right2 hr-card-index-1">
+                <div class="text item-left">
+                  {{ 'Critical: ' }} {{ k8sImage.critical }}
                 </div>
               </el-card>
               <el-card class="box-card-right2 hr-card-index-2">
                 <div class="text item-left">
-                  {{ 'High: 20' }}
+                  {{ 'High: ' }} {{ k8sImage.high }}
                 </div>
               </el-card>
               <el-card class="box-card-right2 hr-card-index-3">
                 <div class="text item-left">
-                  {{ 'Medium: 20' }}
+                  {{ 'Medium: ' }} {{ k8sImage.medium }}
                 </div>
               </el-card>
               <el-card class="box-card-right2 hr-card-index-4">
                 <div class="text item-left">
-                  {{ 'Low: 20' }}
+                  {{ 'Low: ' }} {{ k8sImage.low }}
                 </div>
               </el-card>
               <el-card class="box-card-right2 hr-card-index-5">
                 <div class="text item-left">
-                  {{ 'Unknown: 20' }}
+                  {{ 'Ok: ' }} {{ k8sImage.unknown }}
                 </div>
               </el-card>
             </el-col>
@@ -102,6 +107,7 @@ export default {
       currentAccount: "",
       accountId: "",
       items: [],
+      k8sImage: {},
     };
   },
   methods: {
@@ -463,6 +469,11 @@ export default {
 
         return svg.node();
       });
+
+      this.result = this.$get("/k8s/getImage/" + this.accountId, response => {
+        this.k8sImage = response.data;
+      });
+
     },
     open(node) {
       let childrens = node.children;
@@ -529,7 +540,7 @@ svg {
   margin: 10%;
   background-color: #364f6c;
   color: #FFFFFF;
-  min-height: 1000px;
+  height: calc(100vh - 200px);
   border-radius: 10px;
 }
 .box-card-top {
@@ -541,10 +552,9 @@ svg {
 }
 .box-card-right {
   width: 80%;
-  background-color: #364f6c;
-  color: #FFFFFF;
-  border-radius: 3px;
-  margin: 20% 5% 0 5%;
+  background-color: #9ec1e5;
+  color: #000000;
+  margin: 20% 5% 1px 5%;
 }
 .box-card-right2 {
   width: 80%;
