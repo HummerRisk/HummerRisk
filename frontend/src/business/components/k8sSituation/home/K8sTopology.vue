@@ -8,7 +8,7 @@
               <el-card class="box-card">
                 <div slot="header" class="clearfix">
                   <span style="color:red;">{{ k8sImage.images }} {{ 'Images' }}</span>
-                  <el-button style="float: right; padding: 3px 0" type="text" @click="showRisk">{{ 'Risk' }}</el-button>
+                  <el-button style="float: right; padding: 3px 0" type="text" @click="showRisk">{{ 'Image Risk' }}</el-button>
                 </div>
                 <div class="text item">
                   <slot name="header">
@@ -84,7 +84,7 @@
                           </template>
                           <search-list v-if="items.length>0" :items="items" @cloudAccountSwitch="cloudAccountSwitch"/>
                         </el-submenu>
-                        <el-button type="text" @click="showRisk">{{ 'Show Image Risk' }}</el-button>
+                        <el-button type="text" @click="showRisk">{{ 'Show K8s Risk' }}</el-button>
                       </el-menu>
                     </div>
                     <div style="float: right;color: white;margin: 11px 1%;min-width: 18%;">Controller<I style="color: turquoise;margin-left: 20px;">{{ k8sImage.riskController }} / {{ k8sImage.controllers }} (Reset)</I></div>

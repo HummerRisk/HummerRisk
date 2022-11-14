@@ -1284,6 +1284,8 @@ export default {
     resource_perspective: '資源視角',
     node_perspective: '節點視角',
     namespace_perspective: '命名空間視角',
+    k8s_perspective: 'K8s 風險視角',
+    image_risk: '存在风险的镜像',
   },
   config: {
     config_settings: '部署配置',
