@@ -1284,6 +1284,7 @@ export default {
     resource_perspective: 'Resource Perspective',
     node_perspective: 'Node Perspective',
     namespace_perspective: 'Namespace perspective',
+    image_risk: 'Has risky image',
   },
   config: {
     config_settings: 'Deployment configuration',

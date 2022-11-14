@@ -108,4 +108,12 @@ public class K8sImage {
     public void setK8sId(String k8sId) {
         this.k8sId = k8sId;
     }
+
+    public Integer getImages() {
+        return images;
+    }
+
+    public void setImages(Integer images) {
+        this.images = images;
+    }
 }

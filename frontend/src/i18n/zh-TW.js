@@ -1311,6 +1311,7 @@ export default {
     config_chart: '部署檢測統計',
     config_chart_vuln: '部署配置檢測統計',
     all_label: '全部部署配置',
+    image_risk: '存在风险的镜像',
   },
   code: {
     code_scan: '源碼檢測',
