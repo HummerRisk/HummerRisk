@@ -8,7 +8,7 @@
               <el-card class="box-card">
                 <div slot="header" class="clearfix">
                   <span style="color:red;">{{ k8sImage.images }} {{ 'Images' }}</span>
-<!--                  <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>-->
+                  <el-button style="float: right; padding: 3px 0" type="text" @click="showRisk">{{ 'Risk' }}</el-button>
                 </div>
                 <div class="text item">
                   <slot name="header">
@@ -21,16 +21,48 @@
                           {{index+1}} <i class="header-icon el-icon-film"></i>  {{ nameSpaceImage.image.split('/')[nameSpaceImage.image.split('/').length -1] }}
                         </div>
                       </template>
-<!--                      <el-table border :data="nameSpaceImage.cloudNativeResultItemList" class="adjust-table table-content" :show-header="false"-->
-<!--                                style="cursor:pointer;">-->
-<!--                        <el-table-column show-overflow-tooltip>-->
-<!--                          <template v-slot:default="scope">-->
-<!--                          <span style="cursor:pointer; color: #215d9a;" >-->
-<!--                             <i class="el-icon-s-grid" style="color: #0a7be0"></i>  {{ scope.row.name }}-->
-<!--                          </span>-->
-<!--                          </template>-->
-<!--                        </el-table-column>-->
-<!--                      </el-table>-->
+                      <el-descriptions class="margin-top" title="" :column="1" size="mini" border>
+                        <el-descriptions-item>
+                          <template slot="label">
+                            {{ 'NameSpace' }}
+                          </template>
+                          {{ nameSpaceImage.cloudNativeSource.sourceNamespace }}
+                        </el-descriptions-item>
+                        <el-descriptions-item>
+                          <template slot="label">
+                            {{ 'SourceName' }}
+                          </template>
+                          {{ nameSpaceImage.cloudNativeSource.sourceName }}
+                        </el-descriptions-item>
+                        <el-descriptions-item>
+                          <template slot="label">
+                            {{ 'SourceType' }}
+                          </template>
+                          {{ nameSpaceImage.cloudNativeSource.sourceType }}
+                        </el-descriptions-item>
+                        <el-descriptions-item>
+                          <template slot="label">
+                            {{ 'Risk number' }}
+                          </template>
+                          {{ nameSpaceImage.cloudNativeResultItemList.length }}
+                        </el-descriptions-item>
+                      </el-descriptions>
+                      <el-table border v-if="nameSpaceImage.cloudNativeResultItemList && nameSpaceImage.cloudNativeResultItemList != '[]' && nameSpaceImage.cloudNativeResultItemList != []" :data="nameSpaceImage.cloudNativeResultItemList" class="adjust-table table-content" :show-header="false"
+                                style="cursor:pointer;">
+                        <el-table-column show-overflow-tooltip>
+                          <template v-slot:default="scope">
+                          <span
+                                v-bind:class="{
+                                  'icon-title box-critical': scope.row.severity === 'CRITICAL',
+                                  'icon-title box-high': scope.row.severity === 'HIGH',
+                                  'icon-title box-medium': scope.row.severity === 'MEDIUM',
+                                  'icon-title box-low': scope.row.severity === 'LOW',
+                                  'icon-title box-unknown': scope.row.severity === 'UNKNOWN' }">
+                             <i class="el-icon-s-grid"></i>  {{ scope.row.vulnerabilityId }}
+                          </span>
+                          </template>
+                        </el-table-column>
+                      </el-table>
                     </el-collapse-item>
                   </el-collapse>
                 </div>
@@ -52,6 +84,7 @@
                           </template>
                           <search-list v-if="items.length>0" :items="items" @cloudAccountSwitch="cloudAccountSwitch"/>
                         </el-submenu>
+                        <el-button type="text" @click="showRisk">{{ 'Show Image Risk' }}</el-button>
                       </el-menu>
                     </div>
                     <div style="float: right;color: white;margin: 11px 1%;min-width: 18%;">Controller<I style="color: turquoise;margin-left: 20px;">{{ k8sImage.riskController }} / {{ k8sImage.controllers }} (Reset)</I></div>
@@ -61,9 +94,9 @@
                 <svg id="risk-topo"></svg>
               </el-row>
             </el-col>
-            <el-col :span="3">
+            <el-col :span="3" style="cursor:pointer;">
               <el-card class="box-card-right">
-                <div class="text item-left">
+                <div class="text item-left" @click="showRisk">
                   {{ $t('k8s.image_risk') }}
                 </div>
               </el-card>
@@ -89,7 +122,7 @@
               </el-card>
               <el-card class="box-card-right2 hr-card-index-5">
                 <div class="text item-left">
-                  {{ 'Ok: ' }} {{ k8sImage.unknown }}
+                  {{ 'Unknown: ' }} {{ k8sImage.unknown }}
                 </div>
               </el-card>
             </el-col>
@@ -108,17 +141,74 @@
         </el-tab-pane>
       </el-tabs>
     </el-card>
+
+    <!--Result log-->
+    <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="85%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <el-row class="el-form-item-dev" v-if="logData.length == 0">
+        <span>{{ $t('resource.i18n_no_data') }}<br></span>
+      </el-row>
+      <el-row class="el-form-item-dev" v-if="logData.length > 0">
+        <div>
+          <el-row style="background: #e5e9f2;">
+              <el-col :span="8" style="background: #e5e9f2;">
+                <span class="grid-content-log-span"> {{ logForm.name }}</span>
+              </el-col>
+              <el-col :span="8" style="background: #e5e9f2;">
+                <span class="grid-content-log-span">
+                    <img :src="require(`@/assets/img/platform/${logForm.pluginIcon?logForm.pluginIcon:'k8s.png'}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                  </span>
+              </el-col>
+              <el-col :span="8" style="background: #e5e9f2;">
+                 <span class="grid-content-status-span" v-if="logForm.resultStatus === 'APPROVED'" style="color: #579df8">
+                    <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                  </span>
+                <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'FINISHED'" style="color: #7ebf50">
+                    <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+                  </span>
+                <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'ERROR'" style="color: red;">
+                    <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+                  </span>
+              </el-col>
+          </el-row>
+        </div>
+        <el-table :show-header="false" :data="logData" class="adjust-table table-content">
+          <el-table-column>
+            <template v-slot:default="scope">
+              <div class="bg-purple-div">
+                <span
+                  v-bind:class="{true: 'color-red', false: ''}[scope.row.result == false]">
+                      {{ scope.row.createTime | timestampFormatDate }}
+                      {{ scope.row.operator }}
+                      {{ scope.row.operation }}
+                      {{ scope.row.output }}<br>
+                </span>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+        <log-form :logForm="logForm"/>
+      </el-row>
+      <template v-slot:footer>
+        <dialog-footer
+          @cancel="logVisible = false"
+          @confirm="logVisible = false"/>
+      </template>
+    </el-drawer>
+    <!--Result log-->
   </main-container>
 </template>
 <script>
 import MainContainer from "../../common/components/MainContainer";
 import SearchList from "@/business/components/k8sSituation/home/SearchList";
+import LogForm from "@/business/components/k8s/home/LogForm";
 import * as d3 from 'd3';
 /* eslint-disable */
 export default {
   components: {
     MainContainer,
     SearchList,
+    LogForm,
     d3,
   },
   data() {
@@ -130,6 +220,10 @@ export default {
       items: [],
       k8sImage: {},
       filterText: "",
+      direction: 'rtl',
+      logVisible: false,
+      logForm: {},
+      logData: [],
     };
   },
   methods: {
@@ -527,6 +621,22 @@ export default {
       this.currentAccount = accountName;
       this.init();
     },
+    showRisk() {
+      let logUrl = "/k8s/log/topo/";
+      this.result = this.$get(logUrl + this.accountId, response => {
+        this.logData = response.data;
+      });
+      let resultUrl = "/k8s/getCloudNativeResultWithBLOBs/topo/";
+      this.$get(resultUrl + this.accountId, response => {
+        this.logForm = response.data;
+        this.logForm.vulnerabilityReport = JSON.parse(this.logForm.vulnerabilityReport);
+        this.logForm.configAuditReport = JSON.parse(this.logForm.configAuditReport);
+      });
+      this.logVisible = true;
+    },
+    handleClose() {
+      this.logVisible=false;
+    },
   },
 
   mounted() {
@@ -567,6 +677,15 @@ svg {
   color: #FFFFFF;
   height: calc(100vh - 200px);
   border-radius: 10px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.box-card::-webkit-scrollbar {
+  width: 6px;
+}
+.box-card::-webkit-scrollbar-thumb {
+  background-color: #8899A7;
+  border-radius: 3px;
 }
 .box-card-top {
   width: 100%;
@@ -649,5 +768,86 @@ svg {
   background-color: #364f6c;
   color: #FFFFFF;
   padding: 1px 10px;
+}
+.item >>> .el-submenu__title {
+  background-color: #364f6c;
+  color: #FFFFFF;
+}
+.box-critical {
+  cursor:pointer;
+  color: #8B0000;
+  font-size: 12px;
+}
+.box-high {
+  cursor:pointer;
+  color: #FF4D4D;
+  font-size: 12px;
+}
+.box-medium {
+  cursor:pointer;
+  color: #FF8000;
+  font-size: 12px;
+}
+.box-low {
+  cursor:pointer;
+  color: #336D9F;
+  font-size: 12px;
+}
+.box-unknown {
+  cursor:pointer;
+  color: #67C23A;
+  font-size: 12px;
+}
+.el-form-item-dev  >>> .el-form-item__content {
+  margin-left: 0 !important;
+}
+.grid-content-log-span {
+  width: 39%;
+  float: left;
+  vertical-align: middle;
+  display:table-cell;
+  margin: 6px 0 6px 2px;
+  color: #606266;
+}
+
+.grid-content-status-span {
+  width: 20%;
+  float: left;
+  vertical-align: middle;
+  display:table-cell;
+  margin: 6px 0;
+}
+
+.el-form-item-dev >>> .bg-purple-light {
+  background: #f2f2f2;
+}
+
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
+.box-card >>> .clearfix-dev {
+  background-color: aliceblue;
+  padding: 18px 20px;
+  border-bottom: 1px solid #ebeef5;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.table-content {
+  width: 100%;
+}
+.demo-table-expand {
+  font-size: 0;
+}
+.demo-table-expand label {
+  width: 90px;
+  color: #99a9bf;
+}
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  padding: 10px 10%;
+  width: 47%;
 }
 </style>

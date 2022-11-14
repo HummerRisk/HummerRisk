@@ -174,10 +174,24 @@ public class K8sController {
     }
 
     @I18n
+    @ApiIgnore
+    @GetMapping(value = "getCloudNativeResultWithBLOBs/topo/{accountId}")
+    public CloudNativeResultWithBLOBs topoResult(@PathVariable String accountId) {
+        return k8sService.topoResult(accountId);
+    }
+
+    @I18n
     @ApiOperation(value = "云原生检测日志")
     @GetMapping(value = "log/{resultId}")
     public List<CloudNativeResultLogWithBLOBs> getCloudNativeResultLog(@PathVariable String resultId) {
         return k8sService.getCloudNativeResultLog(resultId);
+    }
+
+    @I18n
+    @ApiIgnore
+    @GetMapping(value = "log/topo/{accountId}")
+    public List<CloudNativeResultLogWithBLOBs> topoLog(@PathVariable String accountId) {
+        return k8sService.topoLog(accountId);
     }
 
     @I18n

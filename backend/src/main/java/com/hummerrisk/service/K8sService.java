@@ -620,7 +620,8 @@ public class K8sService {
                 JSONObject report = obj1.getJSONObject("report");
                 JSONArray jsonArray = report.getJSONArray("vulnerabilities");
                 JSONObject artifact = report.getJSONObject("artifact");
-                String image = artifact.get("repository") + ":" + artifact.get("tag");
+                JSONObject registry = report.getJSONObject("registry");
+                String image = registry.get("server") + "/" + artifact.get("repository") + ":" + artifact.get("tag");
                 for(Object object2 : jsonArray) {
                     JSONObject obj2 = (JSONObject) object2;
                     CloudNativeResultItem cloudNativeResultItem = new CloudNativeResultItem();
@@ -727,6 +728,23 @@ public class K8sService {
         CloudNativeResultLogExample example = new CloudNativeResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
         return cloudNativeResultLogMapper.selectByExampleWithBLOBs(example);
+    }
+
+    public List<CloudNativeResultLogWithBLOBs> topoLog(String accountId) {
+        CloudNativeResultExample cloudNativeResultExample = new CloudNativeResultExample();
+        cloudNativeResultExample.createCriteria().andCloudNativeIdEqualTo(accountId);
+        CloudNativeResult cloudNativeResult = cloudNativeResultMapper.selectByExample(cloudNativeResultExample).get(0);
+        CloudNativeResultLogExample example = new CloudNativeResultLogExample();
+        example.createCriteria().andResultIdEqualTo(cloudNativeResult.getId());
+        return cloudNativeResultLogMapper.selectByExampleWithBLOBs(example);
+    }
+
+    public CloudNativeResultWithBLOBs topoResult(String accountId) {
+        CloudNativeResultExample cloudNativeResultExample = new CloudNativeResultExample();
+        cloudNativeResultExample.createCriteria().andCloudNativeIdEqualTo(accountId);
+        CloudNativeResult cloudNativeResult = cloudNativeResultMapper.selectByExample(cloudNativeResultExample).get(0);
+        CloudNativeResultWithBLOBs cloudNativeResultWithBLOBs = cloudNativeResultMapper.selectByPrimaryKey(cloudNativeResult.getId());
+        return cloudNativeResultWithBLOBs;
     }
 
     public CloudNativeResultWithBLOBs getCloudNativeResultWithBLOBs(String resultId) {

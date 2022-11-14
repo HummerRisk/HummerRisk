@@ -428,7 +428,8 @@ export default {
 }
 
 .grid-content-status-span {
-  width: 20%;float: left;
+  width: 20%;
+  float: left;
   vertical-align: middle;
   display:table-cell;
   margin: 6px 0;
@@ -442,9 +443,6 @@ export default {
   border-radius: 4px;
   min-height: 36px;
 }
-.el-form-item-dev  >>> .el-form-item__content {
-  margin-left: 0 !important;
-}
 .box-card >>> .clearfix-dev {
   background-color: aliceblue;
   padding: 18px 20px;
@@ -455,9 +453,6 @@ export default {
 
 .table-content {
   width: 100%;
-}
-.el-form-item-dev  >>> .el-form-item__content {
-  margin-left: 0 !important;
 }
 .demo-table-expand {
   font-size: 0;
@@ -502,9 +497,6 @@ export default {
   border-radius: 4px;
   min-height: 36px;
 }
-.el-form-item-dev  >>> .el-form-item__content {
-  margin-left: 0 !important;
-}
 
 .grid-content-log-span {
   width: 39%;
@@ -515,12 +507,6 @@ export default {
   color: #606266;
 }
 
-.grid-content-status-span {
-  width: 20%;float: left;
-  vertical-align: middle;
-  display:table-cell;
-  margin: 6px 0;
-}
 .pure-span {
   color: #606266;
   margin: 10px 0;

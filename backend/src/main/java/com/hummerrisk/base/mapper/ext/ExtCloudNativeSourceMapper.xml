@@ -631,7 +631,7 @@
                          and t2.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
                    ) &gt; 0
                and t1.id in
-                   (select t3.source_id from cloud_native_source_image t3 join cloud_native_result_item t4 on t3.image = t4.image join cloud_native_result t5 on t5.id = t4.result_id
+                   (select t3.source_id from cloud_native_source_image t3 join cloud_native_result_item t4 on t4.image like concat('%', t3.image,'%') join cloud_native_result t5 on t5.id = t4.result_id
                             where t5.cloud_native_id = t1.cloud_native_id)
             ) as riskController,
             (select IFNULL(count(t1.id), 0) as critical
@@ -645,7 +645,7 @@
                          and t2.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
                    ) &gt; 0
                and t1.id in
-                   (select t3.source_id from cloud_native_source_image t3 join cloud_native_result_item t4 on t3.image = t4.image and LOWER(t4.severity) = 'critical' join cloud_native_result t5 on t5.id = t4.result_id
+                   (select t3.source_id from cloud_native_source_image t3 join cloud_native_result_item t4 on t4.image like concat('%', t3.image,'%') and LOWER(t4.severity) = 'critical' join cloud_native_result t5 on t5.id = t4.result_id
                     where t5.cloud_native_id = t1.cloud_native_id)
             ) as critical,
             (select IFNULL(count(t1.id), 0) as high
@@ -659,7 +659,7 @@
                          and t2.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
                    ) &gt; 0
                and t1.id in
-                   (select t3.source_id from cloud_native_source_image t3 join cloud_native_result_item t4 on t3.image = t4.image and LOWER(t4.severity) = 'high' join cloud_native_result t5 on t5.id = t4.result_id
+                   (select t3.source_id from cloud_native_source_image t3 join cloud_native_result_item t4 on t4.image like concat('%', t3.image,'%') and LOWER(t4.severity) = 'high' join cloud_native_result t5 on t5.id = t4.result_id
                     where t5.cloud_native_id = t1.cloud_native_id)
             ) as high,
             (select IFNULL(count(t1.id), 0) as medium
@@ -673,7 +673,7 @@
                          and t2.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
                    ) &gt; 0
                and t1.id in
-                   (select t3.source_id from cloud_native_source_image t3 join cloud_native_result_item t4 on t3.image = t4.image and LOWER(t4.severity) = 'medium' join cloud_native_result t5 on t5.id = t4.result_id
+                   (select t3.source_id from cloud_native_source_image t3 join cloud_native_result_item t4 on t4.image like concat('%', t3.image,'%') and LOWER(t4.severity) = 'medium' join cloud_native_result t5 on t5.id = t4.result_id
                     where t5.cloud_native_id = t1.cloud_native_id)
             ) as medium,
             (select IFNULL(count(t1.id), 0) as low
@@ -687,7 +687,7 @@
                          and t2.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
                    ) &gt; 0
                and t1.id in
-                   (select t3.source_id from cloud_native_source_image t3 join cloud_native_result_item t4 on t3.image = t4.image and LOWER(t4.severity) = 'low' join cloud_native_result t5 on t5.id = t4.result_id
+                   (select t3.source_id from cloud_native_source_image t3 join cloud_native_result_item t4 on t4.image like concat('%', t3.image,'%') and LOWER(t4.severity) = 'low' join cloud_native_result t5 on t5.id = t4.result_id
                     where t5.cloud_native_id = t1.cloud_native_id)
             ) as low,
             (select IFNULL(count(t1.id), 0) as unknown
@@ -701,7 +701,7 @@
                          and t2.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
                    ) &gt; 0
                and t1.id in
-                   (select t3.source_id from cloud_native_source_image t3 join cloud_native_result_item t4 on t3.image = t4.image and LOWER(t4.severity) = 'unknown' join cloud_native_result t5 on t5.id = t4.result_id
+                   (select t3.source_id from cloud_native_source_image t3 join cloud_native_result_item t4 on t4.image like concat('%', t3.image,'%') and LOWER(t4.severity) = 'unknown' join cloud_native_result t5 on t5.id = t4.result_id
                     where t5.cloud_native_id = t1.cloud_native_id)
             ) as unknown,
              (select #{k8sId} as k8sId) as k8sId
@@ -725,8 +725,9 @@
         from cloud_native_result_item t
         join cloud_native_result t1 on t.result_id = t1.id
         join cloud_native_source t2 on t1.cloud_native_id = t2.cloud_native_id
-        join cloud_native_source_image t3 on t3.source_id = t2.id and t.image = t3.image
-        where t3.id = #{source_id}
+        join cloud_native_source_image t3 on t3.source_id = t2.id and t.image like concat('%', t3.image,'%')
+        where t3.source_id = #{source_id}
+        ORDER BY FIELD(t.severity, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')
     </select>
 
 </mapper>

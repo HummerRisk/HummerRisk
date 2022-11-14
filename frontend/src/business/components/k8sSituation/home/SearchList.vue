@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 300px;">
+  <div style="width: 400px;">
     <el-input :placeholder="$t('resource.search_by_name')"
               prefix-icon="el-icon-search"
               v-model="searchString"
