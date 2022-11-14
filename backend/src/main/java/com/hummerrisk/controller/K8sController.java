@@ -8,10 +8,7 @@ import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.cloudNative.*;
 import com.hummerrisk.controller.request.image.ImageRequest;
-import com.hummerrisk.controller.request.k8s.K8sResultRequest;
-import com.hummerrisk.controller.request.k8s.K8sTopology;
-import com.hummerrisk.controller.request.k8s.NameSpaceTopology;
-import com.hummerrisk.controller.request.k8s.NodeTopology;
+import com.hummerrisk.controller.request.k8s.*;
 import com.hummerrisk.controller.request.sync.CloudTopology;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.service.K8sService;
@@ -313,6 +310,13 @@ public class K8sController {
     @GetMapping("sourceImages/{sourceId}")
     public List<CloudNativeSourceImageDTO> sourceImages(@PathVariable String sourceId) throws Exception {
         return k8sService.sourceImages(sourceId);
+    }
+
+    @I18n
+    @ApiOperation(value = "K8s风险态势拓扑图")
+    @GetMapping(value = "riskTopology/{accountId}")
+    public RiskTopology riskTopology(@PathVariable String accountId) {
+        return k8sService.riskTopology(accountId);
     }
 
 }

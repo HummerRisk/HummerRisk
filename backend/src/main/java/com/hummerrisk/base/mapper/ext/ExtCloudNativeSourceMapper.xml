@@ -502,5 +502,67 @@
         where t.cloud_native_id = #{k8sId} and t.source_namespace = #{namespaceId} and t.source_type in ('Namespace', 'Pod', 'Node', 'Deployment', 'Service')
     </select>
 
+    <resultMap id="D3BaseRiskResultMap" type="com.hummerrisk.controller.request.k8s.RiskTopology">
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <collection property="children" ofType="com.hummerrisk.controller.request.k8s.NameSpace" javaType="list" select="selectRiskNameSpace" column="name">
+        </collection>
+    </resultMap>
+
+    <resultMap id="NameSpaceBaseRiskResultMap" type="com.hummerrisk.controller.request.k8s.NameSpace">
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="k8sId" jdbcType="VARCHAR" property="k8sId" />
+        <result column="namespaceId" jdbcType="VARCHAR" property="namespaceId" />
+        <collection property="children" ofType="com.hummerrisk.controller.request.k8s.Resource" javaType="list"
+                    select="selectRiskResource" column="{k8sId=k8sId, namespaceId=namespaceId}">
+            <result column="name" jdbcType="VARCHAR" property="name" />
+            <result column="value" jdbcType="INTEGER" property="value" />
+            <result column="risk" jdbcType="INTEGER" property="risk" />
+        </collection>
+    </resultMap>
+
+    <select id="riskTopology" resultMap="D3BaseRiskResultMap" parameterType="java.lang.String">
+        select #{k8sId} as name
+    </select>
+
+    <select id="selectRiskNameSpace" resultMap="NameSpaceBaseRiskResultMap">
+        select
+            CONCAT('NameSpace: \r', t.source_name, '\r(共 ',
+                   (
+                       select count(t1.id) from cloud_native_source t1
+                       where t1.cloud_native_id = t.cloud_native_id
+                         and t1.source_namespace = t.source_namespace
+                         and t1.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
+                   ), ' 个资源)'
+                ) as name,
+            t.cloud_native_id as k8sId,
+            t.source_name as namespaceId
+        from cloud_native_source t
+        where t.cloud_native_id = #{name}
+          and t.source_type = 'Namespace'
+          and (
+            select count(t1.id) from cloud_native_source t1
+            where t1.cloud_native_id = t.cloud_native_id
+              and t1.source_namespace = t.source_namespace
+              and t1.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
+            ) &gt; 0
+    </select>
+
+    <select id="selectRiskResource" resultType="com.hummerrisk.controller.request.k8s.Resource">
+        select
+            CONCAT(t.source_name, '(', t.source_type, ')') AS name,
+            (select count(i.id) from cloud_native_source_image i where t.id = i.source_id) AS value,
+            (
+            select count(t3.id)
+            from cloud_native_source_image i
+            left join cloud_native_source t1 on i.source_id = t1.id
+            left join cloud_native_result t2 on t1.cloud_native_id = t2.cloud_native_id
+            left join cloud_native_result_item t3 on t2.id = t3.result_id and i.image = t3.image
+            where t.id = i.source_id ) AS risk
+        from cloud_native_source t
+        where t.cloud_native_id = #{k8sId}
+        and t.source_namespace = #{namespaceId}
+        and t.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
+    </select>
+
 
 </mapper>

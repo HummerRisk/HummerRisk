@@ -14,10 +14,7 @@ import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.cloudNative.*;
 import com.hummerrisk.controller.request.image.ImageRequest;
-import com.hummerrisk.controller.request.k8s.K8sResultRequest;
-import com.hummerrisk.controller.request.k8s.K8sTopology;
-import com.hummerrisk.controller.request.k8s.NameSpaceTopology;
-import com.hummerrisk.controller.request.k8s.NodeTopology;
+import com.hummerrisk.controller.request.k8s.*;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.proxy.k8s.K8sRequest;
@@ -815,6 +812,10 @@ public class K8sService {
 
     public K8sTopology k8sTopology() {
         return extCloudNativeSourceMapper.k8sTopology();
+    }
+
+    public RiskTopology riskTopology(String k8sId) {
+        return extCloudNativeSourceMapper.riskTopology(k8sId);
     }
 
     public NodeTopology nodeTopology() {

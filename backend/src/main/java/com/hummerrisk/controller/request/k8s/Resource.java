@@ -7,6 +7,8 @@ public class Resource {
 
     private Integer value;
 
+    private Integer risk;
+
     private String name;
 
     public Integer getValue() {
@@ -23,5 +25,13 @@ public class Resource {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Integer getRisk() {
+        return risk;
+    }
+
+    public void setRisk(Integer risk) {
+        this.risk = risk;
     }
 }
