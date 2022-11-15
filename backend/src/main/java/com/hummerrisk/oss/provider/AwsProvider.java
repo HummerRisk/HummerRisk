@@ -360,7 +360,7 @@ public class AwsProvider implements OssProvider {
         }
 
         List<software.amazon.awssdk.services.ec2.model.Region> regions = describeRegionsResponse.regions();
-        String result = ReadFileUtils.readConfigFile(BASE_REGION_DIC, ossAccount.getPluginName(), JSON_EXTENSION);
+        String result = ReadFileUtils.readConfigFile(BASE_REGION_DIC, ossAccount.getPluginId(), JSON_EXTENSION);
         List<OssRegion> allOssRegions = new Gson().fromJson(result, new TypeToken<ArrayList<OssRegion>>() {}.getType());
         List<OssRegion> ossRegions = new ArrayList<>();
         for (software.amazon.awssdk.services.ec2.model.Region region : regions) {

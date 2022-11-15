@@ -13,6 +13,8 @@ import java.util.List;
 
 public class QingcloudProvider implements OssProvider {
 
+    private static final String BASE_REGION_DIC = "support/regions/";
+    private static final String JSON_EXTENSION = ".json";
 
     @Override
     public String policyModel() {

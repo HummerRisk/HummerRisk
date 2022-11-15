@@ -288,7 +288,7 @@ public class AliyunProvider implements OssProvider {
 
     @Override
     public List<OssRegion> getOssRegions(OssWithBLOBs ossAccount) throws Exception {
-        String result = ReadFileUtils.readConfigFile(BASE_REGION_DIC, ossAccount.getPluginName(), JSON_EXTENSION);
+        String result = ReadFileUtils.readConfigFile(BASE_REGION_DIC, ossAccount.getPluginId(), JSON_EXTENSION);
         return new Gson().fromJson(result, new TypeToken<ArrayList<OssRegion>>() {
         }.getType());
     }
