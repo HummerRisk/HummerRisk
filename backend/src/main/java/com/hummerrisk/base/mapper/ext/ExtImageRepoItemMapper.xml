@@ -50,39 +50,33 @@
     </sql>
 
     <sql id="combine">
-        <if test='${condition}.name != null and (${name} == null or ${name} == "")'>
-            and t.name
+        <if test='${condition}.repository != null'>
+            and t.repository
             <include refid="condition">
-                <property name="object" value="${condition}.name"/>
+                <property name="object" value="${condition}.repository"/>
             </include>
         </if>
-        <if test="${condition}.updateTime != null">
-            and t.update_time
+        <if test='${condition}.tag != null'>
+            and t.tag
             <include refid="condition">
-                <property name="object" value="${condition}.updateTime"/>
+                <property name="object" value="${condition}.tag"/>
             </include>
         </if>
-        <if test="${condition}.createTime != null">
-            and t.create_time
+        <if test='${condition}.path != null and (${path} == null or ${path} == "")'>
+            and t.path
             <include refid="condition">
-                <property name="object" value="${condition}.createTime"/>
+                <property name="object" value="${condition}.path"/>
             </include>
         </if>
-        <if test="${condition}.status != null">
-            and t.status
+        <if test='${condition}.size != null'>
+            and t.size
             <include refid="condition">
-                <property name="object" value="${condition}.status"/>
-            </include>
-        </if>
-        <if test="${condition}.creator != null">
-            and user.id
-            <include refid="condition">
-                <property name="object" value="${condition}.creator"/>
+                <property name="object" value="${condition}.size"/>
             </include>
         </if>
     </sql>
 
-    <select id="repoItemList" resultType="com.hummerrisk.base.domain.ImageRepo">
+    <select id="repoItemList" resultMap="ImageRepoResultMap">
         select
         t.*
         from image_repo_item as t
