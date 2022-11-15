@@ -3,8 +3,10 @@ package com.hummerrisk.oss.provider;
 import com.hummerrisk.base.domain.OssBucket;
 import com.hummerrisk.base.domain.OssWithBLOBs;
 import com.hummerrisk.oss.dto.BucketObjectDTO;
+import com.hummerrisk.oss.dto.OssRegion;
 
 import java.io.FilterInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 public interface OssProvider {
@@ -16,5 +18,22 @@ public interface OssProvider {
     public List<BucketObjectDTO> getBucketObjects(OssBucket bucket, OssWithBLOBs account, String prefix) throws Exception;
 
     public FilterInputStream downloadObject(OssBucket bucket, OssWithBLOBs account, final String objectId) throws Exception;
+
+    public boolean doesBucketExist(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception;
+
+    public OssBucket createBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception;
+
+    public void deleteBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception;
+
+    public List<OssRegion> getOssRegions(OssWithBLOBs ossAccount) throws Exception;
+
+    public void deletetObjects(OssBucket bucket, OssWithBLOBs account, final List<String> objectIds) throws Exception;
+
+    public void createDir(OssBucket bucket, OssWithBLOBs account, String dir)throws Exception;
+
+    public void uploadFile(OssBucket bucket, OssWithBLOBs account, String dir, InputStream file, long size)throws Exception;
+
+    public void deleteKey(OssBucket bucket, OssWithBLOBs account, String name)throws Exception;
+
 
 }

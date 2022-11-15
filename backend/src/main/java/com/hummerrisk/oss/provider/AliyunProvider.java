@@ -1,12 +1,22 @@
 package com.hummerrisk.oss.provider;
 
 
+import com.alibaba.fastjson.JSON;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.*;
+import com.aliyuncs.DefaultAcsClient;
+import com.aliyuncs.profile.DefaultProfile;
+import com.aliyuncs.profile.IClientProfile;
+import com.aliyuncs.ram.model.v20150501.*;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.hummerrisk.base.domain.OssBucket;
 import com.hummerrisk.base.domain.OssWithBLOBs;
+import com.hummerrisk.commons.utils.ReadFileUtils;
 import com.hummerrisk.oss.constants.ObjectTypeConstants;
 import com.hummerrisk.oss.dto.BucketObjectDTO;
+import com.hummerrisk.oss.dto.OssRegion;
+import com.hummerrisk.proxy.aliyun.AliyunCredential;
 import com.hummerrisk.proxy.aliyun.AliyunRequest;
 import com.hummerrisk.service.SysListener;
 import org.apache.commons.lang3.ObjectUtils;
@@ -14,7 +24,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.FilterInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +34,9 @@ import java.util.Date;
 import java.util.List;
 
 public class AliyunProvider implements OssProvider {
+
+    private static final String BASE_REGION_DIC = "support/regions/";
+    private static final String JSON_EXTENSION = ".json";
 
     @Override
     public String policyModel() {
@@ -213,6 +228,184 @@ public class AliyunProvider implements OssProvider {
         OSSObject ossObject = ossClient.getObject(bucket.getBucketName(), objectId);
         FilterInputStream in = new BufferedInputStream(ossObject.getObjectContent());
         return in;
+    }
+
+    @Override
+    public boolean doesBucketExist(OssWithBLOBs ossAccount, OssBucket bucket) {
+        OSSClient ossClient = getOSSClient(ossAccount);
+        boolean exists = ossClient.doesBucketExist(bucket.getBucketName());
+        ossClient.shutdown();
+        return exists;
+    }
+
+    @Override
+    public OssBucket createBucket(OssWithBLOBs ossAccount, OssBucket bucket) {
+        OSSClient ossClient = getOSSClient(ossAccount);
+        CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucket.getBucketName());
+        // 设置存储空间的权限，默认是私有。
+        createBucketRequest.setCannedACL(CannedAccessControlList.parse(bucket.getCannedAcl()));
+        // 设置存储空间的存储类型，默认是标准类型。
+        createBucketRequest.setStorageClass(StorageClass.parse(bucket.getStorageClass()));
+        ossClient.createBucket(createBucketRequest);
+        BucketInfo result = ossClient.getBucketInfo(bucket.getBucketName());
+        ossClient.shutdown();
+        if (result != null) {
+            OssBucket bucket1 = setBucket(result.getBucket(), ossAccount, bucket.getCannedAcl(), null);
+            return bucket1;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void deleteBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
+        OSSClient ossClient = getOSSClient(ossAccount);
+        ossClient.setEndpoint(bucket.getExtranetEndpoint());
+        //删除存储空间之前，必须先删除存储空间下的所有文件、LiveChannel和分片上传产生的碎片。
+        // 判断是否有文件
+        ObjectListing objectListing = ossClient.listObjects(bucket.getBucketName());
+        if (objectListing.getObjectSummaries().size() > 0 || objectListing.getCommonPrefixes().size() > 0) {
+            throw new Exception("Bucket is not empty. Please check whether the bucket contains undeleted objects!");
+        }
+        // 删除liveChannel
+        List<LiveChannel> liveChannels = ossClient.listLiveChannels(bucket.getBucketName());
+        for (LiveChannel liveChannel : liveChannels) {
+            //能直接删？
+            ossClient.deleteLiveChannel(bucket.getBucketName(), liveChannel.getName());
+        }
+        // 删除碎片
+        MultipartUploadListing uploadListing = ossClient.listMultipartUploads(new ListMultipartUploadsRequest(bucket.getBucketName()));
+        List<MultipartUpload> multipartUploads = uploadListing.getMultipartUploads();
+        for (MultipartUpload multipartUpload : multipartUploads) {
+            //不知道对不对..
+            ossClient.abortMultipartUpload(new AbortMultipartUploadRequest(bucket.getBucketName(), multipartUpload.getKey(), multipartUpload.getUploadId()));
+        }
+        //删除桶
+        ossClient.deleteBucket(bucket.getBucketName());
+
+        ossClient.shutdown();
+    }
+
+    @Override
+    public List<OssRegion> getOssRegions(OssWithBLOBs ossAccount) throws Exception {
+        String result = ReadFileUtils.readConfigFile(BASE_REGION_DIC, ossAccount.getPluginName(), JSON_EXTENSION);
+        return new Gson().fromJson(result, new TypeToken<ArrayList<OssRegion>>() {
+        }.getType());
+    }
+
+    @Override
+    public void deletetObjects(OssBucket bucket, OssWithBLOBs account, final List<String> objectIds) throws Exception {
+        OSSClient ossClient = getOSSClient(account);
+        ossClient.setEndpoint(bucket.getExtranetEndpoint());
+        if (org.apache.commons.collections.CollectionUtils.isNotEmpty(objectIds)) {
+            for (String str : objectIds) {
+                if (str.endsWith("/")) {
+                    deleteObj(ossClient, bucket, str);
+                } else {
+                    ossClient.deleteObject(bucket.getBucketName(), str);
+                }
+            }
+        }
+        ossClient.shutdown();
+    }
+
+    private void deleteObj(OSSClient ossClient, OssBucket bucket, String objectId) {
+        ListObjectsRequest listObjectsRequest = new ListObjectsRequest(bucket.getBucketName());
+        listObjectsRequest.setMaxKeys(1000);
+        if (StringUtils.isNotEmpty(objectId)) {
+            listObjectsRequest.setPrefix(objectId);
+        }
+        listObjectsRequest.setDelimiter("/");
+
+        boolean done = false;
+        while (!done) {
+            ObjectListing objectListing = ossClient.listObjects(listObjectsRequest);
+
+            for (OSSObjectSummary ossObjectSummary : objectListing.getObjectSummaries()) {
+                ossClient.deleteObject(bucket.getBucketName(), ossObjectSummary.getKey());
+            }
+
+            if (objectListing.getCommonPrefixes() != null) {
+                for (String commonPrefixes : objectListing.getCommonPrefixes()) {
+                    deleteObj(ossClient, bucket, commonPrefixes);
+                }
+            } else {
+                ossClient.deleteObject(bucket.getBucketName(), objectId);
+            }
+
+            if (objectListing.getNextMarker() == null) {
+                done = true;
+            }
+        }
+    }
+
+    @Override
+    public void createDir(OssBucket bucket, OssWithBLOBs account, String dir) throws Exception {
+        dir = dir.endsWith("/") ? dir : dir + "/";
+        OSSClient ossClient = getOSSClient(account);
+        ossClient.setEndpoint(bucket.getExtranetEndpoint());
+        String[] split = dir.split("/");
+        String data = "";
+        for (String d : split) {
+            data += d + "/";
+            ossClient.putObject(bucket.getBucketName(), data, new ByteArrayInputStream("".getBytes()));
+        }
+    }
+
+    @Override
+    public void uploadFile(OssBucket bucket, OssWithBLOBs account, String objectid, InputStream file, long size) throws Exception {
+        OSSClient ossClient = getOSSClient(account);
+        ossClient.setEndpoint(bucket.getExtranetEndpoint());
+        ossClient.putObject(bucket.getBucketName(), objectid, file);
+    }
+
+    @Override
+    public void deleteKey(OssBucket bucket, OssWithBLOBs account, String name) throws Exception {
+        //删除用户、删除权限
+        DefaultAcsClient client = getClient(account);
+        detachPolicyFromUser(client, bucket.getBucketName(), bucket.getBucketName(), "Custom");
+        deletekeys(client, bucket.getBucketName());
+        deleteUser(client, bucket.getBucketName());
+        deletePolicy(client, bucket.getBucketName());
+    }
+
+    private static DefaultAcsClient getClient(OssWithBLOBs account) {
+        AliyunCredential aliyunCredential = JSON.parseObject(account.getCredential(), AliyunCredential.class);
+        IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", aliyunCredential.getAccessKey(),
+                aliyunCredential.getSecretKey());
+        return new DefaultAcsClient(profile);
+    }
+
+    private void detachPolicyFromUser(DefaultAcsClient client, String userName, String policyName, String policyType) throws Exception {
+        DetachPolicyFromUserRequest detachPolicyFromUserRequest = new DetachPolicyFromUserRequest();
+        detachPolicyFromUserRequest.setUserName(userName);
+        detachPolicyFromUserRequest.setPolicyName(policyName);
+        detachPolicyFromUserRequest.setPolicyType(policyType);
+        client.getAcsResponse(detachPolicyFromUserRequest);
+    }
+
+    private void deletekeys(DefaultAcsClient client, String userName) throws Exception {
+        ListAccessKeysRequest listAccessKeysRequest = new ListAccessKeysRequest();
+        listAccessKeysRequest.setUserName(userName);
+        ListAccessKeysResponse listAccessKeysResponse = client.getAcsResponse(listAccessKeysRequest);
+        for (ListAccessKeysResponse.AccessKey accessKey : listAccessKeysResponse.getAccessKeys()) {
+            DeleteAccessKeyRequest deleteAccessKeyRequest = new DeleteAccessKeyRequest();
+            deleteAccessKeyRequest.setUserName(userName);
+            deleteAccessKeyRequest.setUserAccessKeyId(accessKey.getAccessKeyId());
+            client.getAcsResponse(deleteAccessKeyRequest);
+        }
+    }
+
+    private DeleteUserResponse deleteUser(DefaultAcsClient client, String userName) throws Exception {
+        DeleteUserRequest request = new DeleteUserRequest();
+        request.setUserName(userName);
+        return client.getAcsResponse(request);
+    }
+
+    private DeletePolicyResponse deletePolicy(DefaultAcsClient client, String policyName) throws Exception {
+        DeletePolicyRequest deletePolicyRequest = new DeletePolicyRequest();
+        deletePolicyRequest.setPolicyName(policyName);
+        return client.getAcsResponse(deletePolicyRequest);
     }
 
 }
