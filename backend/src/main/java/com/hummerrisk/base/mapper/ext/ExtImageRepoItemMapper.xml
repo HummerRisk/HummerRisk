@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummerrisk.base.mapper.ext.ExtImageRepoItemMapper">
+
+    <resultMap id="ImageRepoResultMap" type="com.hummerrisk.dto.ImageRepoItemDTO"
+               extends="com.hummerrisk.base.mapper.ImageRepoItemMapper.BaseResultMap">
+        <collection property="imageRepoItemK8sDTOList" ofType="com.hummerrisk.dto.ImageRepoItemK8sDTO" javaType="list" select="getImageRepoItemK8sDTO" column="path">
+        </collection>
+    </resultMap>
+
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.name != null and (${name} == null or ${name} == "")'>
+            and t.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test="${condition}.updateTime != null">
+            and t.update_time
+            <include refid="condition">
+                <property name="object" value="${condition}.updateTime"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+        <if test="${condition}.status != null">
+            and t.status
+            <include refid="condition">
+                <property name="object" value="${condition}.status"/>
+            </include>
+        </if>
+        <if test="${condition}.creator != null">
+            and user.id
+            <include refid="condition">
+                <property name="object" value="${condition}.creator"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="repoItemList" resultType="com.hummerrisk.base.domain.ImageRepo">
+        select
+        t.*
+        from image_repo_item as t
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
+            </if>
+
+            <if test="request.repoId != null and request.repoId != ''">
+                and t.repo_id = #{request.repoId}
+            </if>
+            <if test="request.path != null and request.path != ''">
+                and t.path like CONCAT('%', #{path},'%')
+            </if>
+        </where>
+        order by t.path
+    </select>
+
+    <select id="getImageRepoItemK8sDTO" resultType="com.hummerrisk.dto.ImageRepoItemK8sDTO">
+        select
+        t.source_name as sourceName,
+        t.source_namespace as namespace,
+        t.source_type as sourceType,
+        t1.name as k8sName
+        from cloud_native_source as t
+        left join cloud_native t1 on t.cloud_native_id = t1.id
+        join cloud_native_source_image t2 on t.id = t2.source_id
+        where t2.image = #{path}
+        order by t.source_name
+    </select>
+
+</mapper>

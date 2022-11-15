@@ -65,9 +65,10 @@ public class ImageController {
 
     @I18n
     @ApiOperation(value = "镜像仓库中的镜像列表")
-    @GetMapping("repoItemList/{id}")
-    public List<ImageRepoItem> repoItemList(@PathVariable String id) {
-        return imageService.repoItemList(id);
+    @PostMapping("repoItemList/{goPage}/{pageSize}")
+    public Pager<List<ImageRepoItemDTO>> repoItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageRepoItemRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, imageService.repoItemList(request));
     }
 
     @I18n

@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
-import com.hummerrisk.base.mapper.ext.ExtImageMapper;
-import com.hummerrisk.base.mapper.ext.ExtImageRepoMapper;
-import com.hummerrisk.base.mapper.ext.ExtImageResultMapper;
-import com.hummerrisk.base.mapper.ext.ExtImageRuleMapper;
+import com.hummerrisk.base.mapper.ext.*;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
@@ -70,6 +67,8 @@ public class ImageService {
     @Resource
     private ImageRepoItemMapper imageRepoItemMapper;
     @Resource
+    private ExtImageRepoItemMapper extImageRepoItemMapper;
+    @Resource
     private ImageRepoSyncLogMapper imageRepoSyncLogMapper;
     @Resource
     private ImageResultItemMapper imageResultItemMapper;
@@ -94,10 +93,8 @@ public class ImageService {
         return imageRepoMapper.selectByExample(example);
     }
 
-    public List<ImageRepoItem> repoItemList(String id) {
-        ImageRepoItemExample example = new ImageRepoItemExample();
-        example.createCriteria().andRepoIdEqualTo(id);
-        List<ImageRepoItem> repoItemList = imageRepoItemMapper.selectByExample(example);
+    public List<ImageRepoItemDTO> repoItemList(ImageRepoItemRequest request) {
+        List<ImageRepoItemDTO> repoItemList = extImageRepoItemMapper.repoItemList(request);
         return repoItemList;
     }
 
