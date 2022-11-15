@@ -23,6 +23,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.FilterInputStream;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -100,6 +101,26 @@ public class QcloudProvider implements OssProvider {
         String result = ReadFileUtils.readConfigFile(BASE_CREDENTIAL_DIC, ossAccount.getPluginId(), JSON_EXTENSION);
         return new Gson().fromJson(result, new TypeToken<ArrayList<OssRegion>>() {
         }.getType());
+    }
+
+    @Override
+    public void deletetObjects(OssBucket bucket, OssWithBLOBs account, List<String> objectIds) throws Exception {
+
+    }
+
+    @Override
+    public void createDir(OssBucket bucket, OssWithBLOBs account, String dir) throws Exception {
+
+    }
+
+    @Override
+    public void uploadFile(OssBucket bucket, OssWithBLOBs account, String dir, InputStream file, long size) throws Exception {
+
+    }
+
+    @Override
+    public void deleteKey(OssBucket bucket, OssWithBLOBs account, String name) throws Exception {
+
     }
 
 
@@ -306,6 +327,21 @@ public class QcloudProvider implements OssProvider {
     public FilterInputStream downloadObject(OssBucket bucket, OssWithBLOBs account, final String objectId) throws Exception {
         COSClient cosClient = getCosClient(account.getCredential(), bucket.getLocation());
         return cosClient.getObject(bucket.getBucketName(), objectId).getObjectContent();
+    }
+
+    @Override
+    public boolean doesBucketExist(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
+        return false;
+    }
+
+    @Override
+    public OssBucket createBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
+        return null;
+    }
+
+    @Override
+    public void deleteBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
+
     }
 
 }

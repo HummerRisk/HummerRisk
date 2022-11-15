@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedInputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -186,6 +187,26 @@ public class HuaweiProvider implements OssProvider {
     }
 
     @Override
+    public void deletetObjects(OssBucket bucket, OssWithBLOBs account, List<String> objectIds) throws Exception {
+
+    }
+
+    @Override
+    public void createDir(OssBucket bucket, OssWithBLOBs account, String dir) throws Exception {
+
+    }
+
+    @Override
+    public void uploadFile(OssBucket bucket, OssWithBLOBs account, String dir, InputStream file, long size) throws Exception {
+
+    }
+
+    @Override
+    public void deleteKey(OssBucket bucket, OssWithBLOBs account, String name) throws Exception {
+
+    }
+
+    @Override
     public List<BucketObjectDTO> getBucketObjects(OssBucket bucket, OssWithBLOBs account, String prefix) throws IOException {
         ObsClient obsClient = getObsClient(account, bucket);
         ListObjectsRequest request = new ListObjectsRequest(bucket.getBucketName());
@@ -290,6 +311,21 @@ public class HuaweiProvider implements OssProvider {
         FilterInputStream in = new BufferedInputStream(obsObject.getObjectContent());
         obsClient.close();
         return in;
+    }
+
+    @Override
+    public boolean doesBucketExist(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
+        return false;
+    }
+
+    @Override
+    public OssBucket createBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
+        return null;
+    }
+
+    @Override
+    public void deleteBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
+
     }
 
 }

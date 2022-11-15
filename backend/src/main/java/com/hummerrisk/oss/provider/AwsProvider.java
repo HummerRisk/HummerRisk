@@ -2,11 +2,15 @@ package com.hummerrisk.oss.provider;
 
 
 import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.hummerrisk.base.domain.OssBucket;
 import com.hummerrisk.base.domain.OssWithBLOBs;
+import com.hummerrisk.commons.utils.ReadFileUtils;
 import com.hummerrisk.oss.constants.ObjectTypeConstants;
 import com.hummerrisk.oss.dto.BucketMetric;
 import com.hummerrisk.oss.dto.BucketObjectDTO;
+import com.hummerrisk.oss.dto.OssRegion;
 import com.hummerrisk.proxy.aws.AWSCredential;
 import com.hummerrisk.service.SysListener;
 import org.apache.commons.collections.CollectionUtils;
@@ -14,19 +18,26 @@ import org.apache.commons.lang3.StringUtils;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 import software.amazon.awssdk.services.cloudwatch.model.*;
+import software.amazon.awssdk.services.ec2.Ec2Client;
+import software.amazon.awssdk.services.ec2.model.DescribeRegionsResponse;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.FilterInputStream;
+import java.io.InputStream;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class AwsProvider implements OssProvider {
+
+    private static final String BASE_REGION_DIC = "support/regions/";
+    private static final String JSON_EXTENSION = ".json";
 
     @Override
     public String policyModel() {
@@ -288,6 +299,148 @@ public class AwsProvider implements OssProvider {
 
         ResponseInputStream<GetObjectResponse> responseResponseInputStream = s3.getObject(GetObjectRequest.builder().bucket(bucket.getBucketName()).key(objectId).build());
         return (FilterInputStream)responseResponseInputStream;
+    }
+
+    @Override
+    public boolean doesBucketExist(OssWithBLOBs ossAccount, OssBucket bucket) {
+        boolean exits = false;
+        S3Client s3;
+        ListBucketsResponse listBucketsResponse;
+
+        s3 = getS3Client(ossAccount.getCredential(), bucket.getLocation());
+        listBucketsResponse = s3.listBuckets();
+        s3.close();
+
+        for (Bucket awsBucket : listBucketsResponse.buckets()) {
+            if(awsBucket.name().equals(bucket.getBucketName())){
+                exits = true;
+            }
+        }
+        return exits;
+    }
+
+    @Override
+    public OssBucket createBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
+        S3Client s3 = getS3Client(ossAccount.getCredential(), bucket.getLocation());
+        CreateBucketRequest createBucketRequest = CreateBucketRequest.builder().bucket(bucket.getBucketName())
+                .acl(BucketCannedACL.fromValue(bucket.getCannedAcl())).build();
+        CreateBucketResponse createBucketResponse = s3.createBucket(createBucketRequest);
+        bucket.setOssId(ossAccount.getId());
+        bucket.setCreateTime(System.currentTimeMillis());
+        bucket.setStorageClass("N/A");
+        return bucket;
+    }
+
+    @Override
+    public void deleteBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
+        S3Client s3 = getS3Client(ossAccount.getCredential(), bucket.getLocation());
+        ListObjectsV2Request listObjectsV2Request = ListObjectsV2Request.builder().bucket(bucket.getBucketName()).build();
+        ListObjectsV2Response listObjectsV2Response = s3.listObjectsV2(listObjectsV2Request);
+        if(listObjectsV2Response.commonPrefixes().size() > 0 || listObjectsV2Response.commonPrefixes().size() > 0){
+            s3.close();
+            throw new Exception("Bucket is not empty. Please check whether the bucket contains undeleted objects!");
+        }
+        s3.deleteBucket(DeleteBucketRequest.builder().bucket(bucket.getBucketName()).build());
+        s3.close();
+    }
+
+    @Override
+    public List<OssRegion> getOssRegions(OssWithBLOBs ossAccount) throws Exception {
+        AWSCredential awsCredential = JSON.parseObject(ossAccount.getCredential(), AWSCredential.class);
+        AwsBasicCredentials awsBasicCredentials = AwsBasicCredentials.create(awsCredential.getAccessKey(), awsCredential.getSecretKey());
+        Ec2Client ec2Client;
+        DescribeRegionsResponse describeRegionsResponse;
+
+        try{
+            ec2Client = Ec2Client.builder().region(Region.CN_NORTH_1).credentialsProvider(StaticCredentialsProvider.create(awsBasicCredentials)).build();
+            describeRegionsResponse  = ec2Client.describeRegions();
+        }catch (Exception e){
+            ec2Client = Ec2Client.builder().region(Region.US_EAST_1).credentialsProvider(StaticCredentialsProvider.create(awsBasicCredentials)).build();
+            describeRegionsResponse  = ec2Client.describeRegions();
+        }
+
+        List<software.amazon.awssdk.services.ec2.model.Region> regions = describeRegionsResponse.regions();
+        String result = ReadFileUtils.readConfigFile(BASE_REGION_DIC, ossAccount.getPluginName(), JSON_EXTENSION);
+        List<OssRegion> allOssRegions = new Gson().fromJson(result, new TypeToken<ArrayList<OssRegion>>() {}.getType());
+        List<OssRegion> ossRegions = new ArrayList<>();
+        for (software.amazon.awssdk.services.ec2.model.Region region : regions) {
+            for (OssRegion ossRegion : allOssRegions) {
+                if(ossRegion.getRegionId().equals(region.regionName())){
+                    ossRegions.add(ossRegion);
+                    break;
+                }
+            }
+        }
+        ec2Client.close();
+        return ossRegions;
+    }
+
+    @Override
+    public void deletetObjects(OssBucket bucket, OssWithBLOBs account, List<String> objectIds) throws Exception {
+        S3Client s3 = getS3Client(account.getCredential(), bucket.getLocation());
+
+        if (org.apache.commons.collections.CollectionUtils.isNotEmpty(objectIds)) {
+            for (String str : objectIds) {
+                if (str.endsWith("/")) {
+                    deleteObj(s3, bucket, str);
+                } else {
+                    s3.deleteObject(DeleteObjectRequest.builder().bucket(bucket.getBucketName()).key(str).build());
+                }
+            }
+        }
+        s3.close();
+    }
+
+    private void deleteObj(S3Client s3, OssBucket bucket, String objectId) {
+        ListObjectsV2Request.Builder builder = ListObjectsV2Request.builder().delimiter("/").bucket(bucket.getBucketName());
+        if(StringUtils.isNotEmpty(objectId)){
+            builder.prefix(objectId);
+        }
+        ListObjectsV2Request listObjectsV2Request = builder.build();
+
+        boolean done = false;
+        while (!done) {
+            ListObjectsV2Response listObjResponse = s3.listObjectsV2(listObjectsV2Request);
+
+            for (S3Object s3Object : listObjResponse.contents()) {
+                s3.deleteObject(DeleteObjectRequest.builder().bucket(bucket.getBucketName()).key(s3Object.key()).build());
+            }
+
+            if (listObjResponse.commonPrefixes() != null) {
+                for (CommonPrefix commonPrefixes : listObjResponse.commonPrefixes()) {
+                    deleteObj(s3, bucket, commonPrefixes.prefix());
+                }
+            } else {
+                s3.deleteObject(DeleteObjectRequest.builder().bucket(bucket.getBucketName()).key(objectId).build());
+            }
+
+            if (listObjResponse.nextContinuationToken() == null) {
+                done = true;
+            }
+        }
+    }
+
+    @Override
+    public void createDir(OssBucket bucket, OssWithBLOBs account, String dir) throws Exception {
+        dir = dir.endsWith("/") ? dir : dir+ "/";
+        S3Client s3 = getS3Client(account.getCredential(), bucket.getLocation());
+        String[] split = dir.split("/");
+        String data = "";
+        for (String d : split) {
+            data += d + "/";
+            s3.putObject(PutObjectRequest.builder().bucket(bucket.getBucketName()).key(data).build(), RequestBody.empty());
+        }
+    }
+
+    @Override
+    public void uploadFile(OssBucket bucket, OssWithBLOBs account, String objectId, InputStream file, long size) throws Exception {
+        S3Client s3 = getS3Client(account.getCredential(), bucket.getLocation());
+        s3.putObject(PutObjectRequest.builder().bucket(bucket.getBucketName()).key(objectId).build(), RequestBody.fromInputStream(file, size));
+    }
+
+    @Override
+    public void deleteKey(OssBucket bucket, OssWithBLOBs account, String name) throws Exception {
+
     }
 
 }

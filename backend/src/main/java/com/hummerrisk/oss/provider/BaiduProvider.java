@@ -9,6 +9,7 @@ import com.hummerrisk.commons.exception.PluginException;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.oss.constants.ObjectTypeConstants;
 import com.hummerrisk.oss.dto.BucketObjectDTO;
+import com.hummerrisk.oss.dto.OssRegion;
 import com.hummerrisk.proxy.baidu.BaiduCredential;
 import com.hummerrisk.proxy.baidu.BaiduRequest;
 import com.hummerrisk.service.SysListener;
@@ -17,6 +18,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.BufferedInputStream;
 import java.io.FilterInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -240,6 +242,46 @@ public class BaiduProvider implements OssProvider {
             LogUtil.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
         }
+    }
+
+    @Override
+    public boolean doesBucketExist(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
+        return false;
+    }
+
+    @Override
+    public OssBucket createBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
+        return null;
+    }
+
+    @Override
+    public void deleteBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
+
+    }
+
+    @Override
+    public List<OssRegion> getOssRegions(OssWithBLOBs ossAccount) throws Exception {
+        return null;
+    }
+
+    @Override
+    public void deletetObjects(OssBucket bucket, OssWithBLOBs account, List<String> objectIds) throws Exception {
+
+    }
+
+    @Override
+    public void createDir(OssBucket bucket, OssWithBLOBs account, String dir) throws Exception {
+
+    }
+
+    @Override
+    public void uploadFile(OssBucket bucket, OssWithBLOBs account, String dir, InputStream file, long size) throws Exception {
+
+    }
+
+    @Override
+    public void deleteKey(OssBucket bucket, OssWithBLOBs account, String name) throws Exception {
+
     }
 
 }
