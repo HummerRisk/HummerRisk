@@ -36,6 +36,9 @@ public class TranslatorKeys {
                     "i18n_sync_image_error",
                     "i18n_sync_k8s_error",
                     "i18n_sync_k8s_start",
+                    "i18n_start_k8s_result",
+                    "i18n_end_k8s_result",
+                    "i18n_restart_k8s_result",
                     "i18n_in_process"
             ));
 
