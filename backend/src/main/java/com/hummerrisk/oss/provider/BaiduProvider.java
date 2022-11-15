@@ -1,30 +1,40 @@
 package com.hummerrisk.oss.provider;
 
 import com.alibaba.fastjson.JSON;
+import com.baidubce.BceServiceException;
 import com.baidubce.services.bos.BosClient;
 import com.baidubce.services.bos.model.*;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.hummerrisk.base.domain.OssBucket;
 import com.hummerrisk.base.domain.OssWithBLOBs;
 import com.hummerrisk.commons.exception.PluginException;
 import com.hummerrisk.commons.utils.LogUtil;
+import com.hummerrisk.commons.utils.ReadFileUtils;
 import com.hummerrisk.oss.constants.ObjectTypeConstants;
 import com.hummerrisk.oss.dto.BucketObjectDTO;
 import com.hummerrisk.oss.dto.OssRegion;
 import com.hummerrisk.proxy.baidu.BaiduCredential;
 import com.hummerrisk.proxy.baidu.BaiduRequest;
 import com.hummerrisk.service.SysListener;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.FilterInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class BaiduProvider implements OssProvider {
+
+    private static final String BASE_REGION_DIC = "support/regions/";
+    private static final String JSON_EXTENSION = ".json";
 
     @Override
     public String policyModel() {
@@ -231,7 +241,7 @@ public class BaiduProvider implements OssProvider {
     }
 
     @Override
-    public FilterInputStream downloadObject(OssBucket bucket, OssWithBLOBs account, final String objectId) throws Exception{
+    public FilterInputStream downloadObject(OssBucket bucket, OssWithBLOBs account, final String objectId) throws Exception {
         FilterInputStream input = null;
         try {
             BosClient bosClient = getBosClient(account);
@@ -246,37 +256,177 @@ public class BaiduProvider implements OssProvider {
 
     @Override
     public boolean doesBucketExist(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
-        return false;
+        boolean exists = true;
+        try {
+            BosClient bosClient = getBosClient(ossAccount);
+            exists = bosClient.doesBucketExist(bucket.getBucketName());
+            bosClient.shutdown();
+        } catch (BceServiceException be) {
+            LogUtil.warn(be.getMessage(), be);
+            throw new BceServiceException(be.getMessage());
+        } catch (Exception e) {
+            LogUtil.warn(e.getMessage(), e);
+            throw new PluginException(e.getMessage());
+        }
+        return exists;
     }
 
     @Override
     public OssBucket createBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
-        return null;
+        try {
+            BosClient bosClient = getBosClient(ossAccount);
+            if (bosClient.doesBucketExist(bucket.getBucketName())) {
+                throw new Exception("Bucket already exists");
+            } else {
+                CreateBucketResponse response = bosClient.createBucket(bucket.getBucketName());
+                setBucketPolicy(bosClient, bucket.getBucketName(), bucket.getCannedAcl());
+                BucketSummary bucketSummary = new BucketSummary();
+                bucketSummary.setCreationDate(new Date());
+                bucketSummary.setLocation(bucket.getLocation());
+                bucketSummary.setName(bucket.getBucketName());
+                OssBucket bucket1 = setBucket(bosClient, ossAccount, bucketSummary, bucket);
+                bosClient.shutdown();
+                if (response != null) {
+                    return bucket1;
+                } else {
+                    return null;
+                }
+            }
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    private void setBucketPolicy(BosClient bosClient, String bucketName, String cannedAcl) throws Exception {
+        if (cannedAcl == null) {
+            return;
+        }
+        List<Grant> accessControlList = new ArrayList<Grant>();
+        List<Grantee> grantees = new ArrayList<Grantee>();
+        List<Permission> permissions = new ArrayList<Permission>();
+
+        //授权给Everyone
+        grantees.add(new Grantee("*"));
+
+        //设置权限
+        permissions.add(Permission.WRITE);
+        permissions.add(Permission.READ);
+        permissions.add(Permission.LIST);
+
+        Grant grant = new Grant();
+        grant.setGrantee(grantees);
+        grant.setPermission(permissions);
+        accessControlList.add(grant);
+        SetBucketAclRequest request = new SetBucketAclRequest(bucketName, accessControlList);
+
+        bosClient.setBucketAcl(request);
     }
 
     @Override
     public void deleteBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
-
+        try {
+            BosClient bosClient = getBosClient(ossAccount);
+            if (bosClient.doesBucketExist(bucket.getBucketName())) {
+                ListObjectsRequest listObjectsRequest = new ListObjectsRequest(bucket.getBucketName());
+                ListObjectsResponse objectListing = bosClient.listObjects(listObjectsRequest);
+                if (ObjectUtils.isNotEmpty(objectListing.getContents()) || ObjectUtils.isNotEmpty(objectListing.getCommonPrefixes())) {
+                    throw new Exception("Bucket is not empty. Please check whether the bucket contains undeleted objects!");
+                }
+                bosClient.deleteBucket(bucket.getBucketName());
+            } else {
+                throw new Exception("Bucket does not exist");
+            }
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
     }
 
     @Override
     public List<OssRegion> getOssRegions(OssWithBLOBs ossAccount) throws Exception {
-        return null;
+        String result = ReadFileUtils.readConfigFile(BASE_REGION_DIC, ossAccount.getPluginId(), JSON_EXTENSION);
+        return new Gson().fromJson(result, new TypeToken<ArrayList<OssRegion>>() {
+        }.getType());
     }
 
     @Override
     public void deletetObjects(OssBucket bucket, OssWithBLOBs account, List<String> objectIds) throws Exception {
+        try {
+            BosClient bosClient = getBosClient(account);
+            //删除Object
+            if (org.apache.commons.collections.CollectionUtils.isNotEmpty(objectIds)) {
+                for (String str : objectIds) {
+                    if (str.endsWith("/")) {
+                        deleteObj(bosClient, bucket, str);
+                    } else {
+                        bosClient.deleteObject(bucket.getBucketName(), str);
+                    }
+                }
+            }
+            bosClient.shutdown();
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
+    }
 
+    private void deleteObj(BosClient bosClient, OssBucket bucket, String objectId) {
+        ListObjectsRequest listObjectsRequest = new ListObjectsRequest(bucket.getBucketName());
+        listObjectsRequest.setMaxKeys(1000);
+        if (StringUtils.isNotEmpty(objectId)) {
+            listObjectsRequest.setPrefix(objectId);
+        }
+        listObjectsRequest.setDelimiter("/");
+
+        boolean done = false;
+        while (!done) {
+            ListObjectsResponse listObjectsResponse = bosClient.listObjects(listObjectsRequest);
+
+            for (BosObjectSummary bosObjectSummary : listObjectsResponse.getContents()) {
+                bosClient.deleteObject(bucket.getBucketName(), bosObjectSummary.getKey());
+            }
+
+            if (listObjectsResponse.getCommonPrefixes() != null) {
+                for (String commonPrefixes : listObjectsResponse.getCommonPrefixes()) {
+                    deleteObj(bosClient, bucket, commonPrefixes);
+                }
+            } else {
+                bosClient.deleteObject(bucket.getBucketName(), objectId);
+            }
+
+            if (listObjectsResponse.getNextMarker() == null) {
+                done = true;
+            }
+        }
     }
 
     @Override
     public void createDir(OssBucket bucket, OssWithBLOBs account, String dir) throws Exception {
-
+        try {
+            dir = dir.endsWith("/") ? dir : dir + "/";
+            BosClient bosClient = getBosClient(account);
+            String[] split = dir.split("/");
+            String data = "";
+            for (String d : split) {
+                data += d + "/";
+                bosClient.putObject(bucket.getBucketName(), data, new ByteArrayInputStream("".getBytes()));
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     @Override
-    public void uploadFile(OssBucket bucket, OssWithBLOBs account, String dir, InputStream file, long size) throws Exception {
-
+    public void uploadFile(OssBucket bucket, OssWithBLOBs account, String objectid, InputStream file, long size) throws Exception {
+        try {
+            BosClient bosClient = getBosClient(account);
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(size);
+            bosClient.putObject(bucket.getBucketName(), objectid, file, metadata);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     @Override
