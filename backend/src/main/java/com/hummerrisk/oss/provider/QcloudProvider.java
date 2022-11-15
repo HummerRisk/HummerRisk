@@ -22,6 +22,7 @@ import com.tencentcloudapi.common.Credential;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.FilterInputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -31,6 +32,9 @@ import java.util.List;
 import java.util.TreeMap;
 
 public class QcloudProvider implements OssProvider {
+
+    private static final String BASE_REGION_DIC = "support/regions/";
+    private static final String JSON_EXTENSION = ".json";
 
     @Override
     public String policyModel() {
@@ -49,9 +53,6 @@ public class QcloudProvider implements OssProvider {
                 "    ]\n" +
                 "}";
     }
-
-    private static final String BASE_CREDENTIAL_DIC = "support/regions/";
-    private static final String JSON_EXTENSION = ".json";
 
 
     @Override
@@ -98,24 +99,81 @@ public class QcloudProvider implements OssProvider {
     }
 
     public List<OssRegion> getOssRegions(OssWithBLOBs ossAccount) throws Exception {
-        String result = ReadFileUtils.readConfigFile(BASE_CREDENTIAL_DIC, ossAccount.getPluginId(), JSON_EXTENSION);
+        String result = ReadFileUtils.readConfigFile(BASE_REGION_DIC, ossAccount.getPluginId(), JSON_EXTENSION);
         return new Gson().fromJson(result, new TypeToken<ArrayList<OssRegion>>() {
         }.getType());
     }
 
     @Override
     public void deletetObjects(OssBucket bucket, OssWithBLOBs account, List<String> objectIds) throws Exception {
+        COSClient cosClient = getCosClient(account.getCredential(), bucket.getLocation());
+        for (String objectId : objectIds) {
+            if(objectId.endsWith("/")){
+                List<DeleteObjectsRequest.KeyVersion> keys = new ArrayList<>();
+                getObjectKeys(objectId, bucket.getBucketName(), keys, cosClient);
+                DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucket.getBucketName());
+                deleteObjectsRequest.setQuiet(false);
+                deleteObjectsRequest.setKeys(keys);
+                cosClient.deleteObjects(deleteObjectsRequest);
+            }
+            cosClient.deleteObject(new DeleteObjectRequest(bucket.getBucketName(), objectId));
+        }
+        cosClient.shutdown();
+    }
 
+    private void getObjectKeys(String objectId, String bucketName, List<DeleteObjectsRequest.KeyVersion> keys, COSClient cosClient){
+        ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
+        listObjectsRequest.setBucketName(bucketName);
+        listObjectsRequest.setDelimiter("/");
+        listObjectsRequest.setPrefix(objectId);
+        boolean done = false;
+        while (!done) {
+            ObjectListing objectListing = cosClient.listObjects(listObjectsRequest);
+            if(objectListing.getObjectSummaries().size() > 0 || objectListing.getCommonPrefixes().size() > 0){
+                DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucketName);
+                deleteObjectsRequest.setQuiet(false);
+                for (COSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
+                    keys.add(new DeleteObjectsRequest.KeyVersion(objectSummary.getKey()));
+                }
+                for (String objectSummary : objectListing.getCommonPrefixes()) {
+                    keys.add(new DeleteObjectsRequest.KeyVersion(objectSummary));
+                    getObjectKeys(objectSummary, bucketName, keys, cosClient);
+                }
+            }
+            if (objectListing.getNextMarker() == null) {
+                done = true;
+                return;
+            }
+        }
     }
 
     @Override
     public void createDir(OssBucket bucket, OssWithBLOBs account, String dir) throws Exception {
-
+        try {
+            dir = dir.endsWith("/") ? dir : dir+ "/";
+            COSClient cosClient = getCosClient(account.getCredential(), bucket.getLocation());
+            String[] split = dir.split("/");
+            String data = "";
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentLength(0);
+            for (String d : split) {
+                data += d + "/";
+                PutObjectRequest putObjectRequest = new PutObjectRequest(bucket.getBucketName(), data, new ByteArrayInputStream("".getBytes()), objectMetadata);
+                cosClient.putObject(putObjectRequest);
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     @Override
-    public void uploadFile(OssBucket bucket, OssWithBLOBs account, String dir, InputStream file, long size) throws Exception {
-
+    public void uploadFile(OssBucket bucket, OssWithBLOBs account, String objectId, InputStream file, long size) throws Exception {
+        COSClient cosClient = getCosClient(account.getCredential(), bucket.getLocation());
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(size);
+        PutObjectRequest putObjectRequest = new PutObjectRequest(bucket.getBucketName(), objectId, file, objectMetadata);
+        cosClient.putObject(putObjectRequest);
+        cosClient.shutdown();
     }
 
     @Override
@@ -331,17 +389,44 @@ public class QcloudProvider implements OssProvider {
 
     @Override
     public boolean doesBucketExist(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
-        return false;
+        boolean exits = false;
+        COSClient cosClient = getCosClient(ossAccount.getCredential(), bucket.getLocation());
+        List<com.qcloud.cos.model.Bucket> buckets = cosClient.listBuckets();
+        for (Bucket cosBucket : buckets) {
+            if(cosBucket.getName().equals(bucket.getBucketName())){
+                exits = true;
+            }
+        }
+        cosClient.shutdown();
+        return exits;
     }
 
     @Override
     public OssBucket createBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
-        return null;
+        COSClient cosClient = getCosClient(ossAccount.getCredential(), bucket.getLocation());
+        QCloudCredential qCloudCredential = JSON.parseObject(ossAccount.getCredential(), QCloudCredential.class);
+        CreateBucketRequest createBucketRequest =  new CreateBucketRequest(bucket.getBucketName() + "-" + qCloudCredential.getAPPID());
+        createBucketRequest.setCannedAcl(CannedAccessControlList.valueOf(bucket.getCannedAcl()));
+        Bucket cosBucket = cosClient.createBucket(createBucketRequest);
+        bucket.setCreateTime(System.currentTimeMillis());
+        bucket.setBucketName(cosBucket.getName());
+        bucket.setStorageClass("N/A");
+        bucket.setDomainName(getDomainame(ossAccount, bucket.getLocation(), cosBucket.getName()));
+        cosClient.shutdown();
+        return bucket;
     }
 
     @Override
     public void deleteBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
-
+        COSClient cosClient = getCosClient(ossAccount.getCredential(), bucket.getLocation());
+        ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
+        listObjectsRequest.setBucketName(bucket.getBucketName());
+        ObjectListing objectListing = cosClient.listObjects(listObjectsRequest);
+        if(objectListing.getCommonPrefixes().size() > 0 || objectListing.getObjectSummaries().size() > 0){
+            throw new Exception("Bucket is not empty. Please check whether the bucket contains undeleted objects!");
+        }
+        cosClient.deleteBucket(bucket.getBucketName());
+        cosClient.shutdown();
     }
 
 }
