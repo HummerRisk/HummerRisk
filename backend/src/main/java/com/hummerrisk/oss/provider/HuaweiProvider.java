@@ -18,26 +18,23 @@ import com.obs.services.model.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.BufferedInputStream;
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class HuaweiProvider implements OssProvider {
 
+    private static final String BASE_REGION_DIC = "support/regions/";
+    private static final String JSON_EXTENSION = ".json";
 
     @Override
     public String policyModel() {
         return "";
     }
-
-    private static final String BASE_CREDENTIAL_DIC = "support/regions/";
-    private static final String JSON_EXTENSION = ".json";
 
     @Override
     public List<OssBucket> getOssBucketList(OssWithBLOBs ossAccount) throws Exception {
@@ -182,23 +179,71 @@ public class HuaweiProvider implements OssProvider {
     }
 
     public List<OssRegion> getOssRegions(OssWithBLOBs ossAccount) throws Exception {
-        String result = ReadFileUtils.readConfigFile(BASE_CREDENTIAL_DIC, ossAccount.getPluginId(), JSON_EXTENSION);
+        String result = ReadFileUtils.readConfigFile(BASE_REGION_DIC, ossAccount.getPluginId(), JSON_EXTENSION);
         return new Gson().fromJson(result, new TypeToken<ArrayList<OssRegion>>() {}.getType());
     }
 
     @Override
     public void deletetObjects(OssBucket bucket, OssWithBLOBs account, List<String> objectIds) throws Exception {
+        ObsClient obsClient = getObsClient(account, bucket);
+        if (CollectionUtils.isNotEmpty(objectIds)) {
+            for (String str : objectIds) {
+                if (str.endsWith("/")) {
+                    deleteObj(obsClient, bucket, str);
+                } else {
+                    obsClient.deleteObject(bucket.getBucketName(), str);
+                }
+            }
+        }
+        obsClient.close();
+    }
 
+    private void deleteObj(ObsClient client, OssBucket bucket, String objectId) {
+        ListObjectsRequest listObjectsRequest = new ListObjectsRequest(bucket.getBucketName());
+        listObjectsRequest.setMaxKeys(1000);
+        if (StringUtils.isNotEmpty(objectId)) {
+            listObjectsRequest.setPrefix(objectId);
+        }
+        listObjectsRequest.setDelimiter("/");
+
+        boolean done = false;
+        while (!done) {
+            ObjectListing objectListing = client.listObjects(listObjectsRequest);
+
+            for (ObsObject obsObject : objectListing.getObjects()) {
+                client.deleteObject(bucket.getBucketName(), obsObject.getObjectKey());
+            }
+
+            if (objectListing.getCommonPrefixes() != null) {
+                for (String commonPrefixes : objectListing.getCommonPrefixes()) {
+                    deleteObj(client, bucket, commonPrefixes);
+                }
+            } else {
+                client.deleteObject(bucket.getBucketName(), objectId);
+            }
+
+            if (objectListing.getNextMarker() == null) {
+                done = true;
+            }
+        }
     }
 
     @Override
     public void createDir(OssBucket bucket, OssWithBLOBs account, String dir) throws Exception {
-
+        ObsClient obsClient = getObsClient(account, bucket);
+        dir = dir.endsWith("/") ? dir : dir + "/";
+        String[] split = dir.split("/");
+        String data = "";
+        for (String d : split) {
+            data += d + "/";
+            obsClient.putObject(bucket.getBucketName(), data, new ByteArrayInputStream(new byte[0]));
+        }
     }
 
     @Override
     public void uploadFile(OssBucket bucket, OssWithBLOBs account, String dir, InputStream file, long size) throws Exception {
-
+        ObsClient obsClient = getObsClient(account, bucket);
+        obsClient.putObject(bucket.getBucketName(), dir, file);
     }
 
     @Override
@@ -315,17 +360,63 @@ public class HuaweiProvider implements OssProvider {
 
     @Override
     public boolean doesBucketExist(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
-        return false;
+        ObsClient obsClient = getObsClient(ossAccount, bucket);
+        boolean exists = obsClient.headBucket(bucket.getBucketName());
+        obsClient.close();
+        return exists;
     }
 
     @Override
     public OssBucket createBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
-        return null;
+        ObsClient obsClient = getObsClient(ossAccount, bucket);
+        if (!obsClient.headBucket(bucket.getBucketName())) {
+            ObsBucket obsBucket = new ObsBucket();
+            obsBucket.setBucketName(bucket.getBucketName());
+            // 设置桶访问权限为公共读，默认是私有读写
+            obsBucket.setAcl(chooseAccessControlList(bucket.getCannedAcl()));
+            // 设置桶的存储类型为归档存储
+            obsBucket.setBucketStorageClass(chooseStorageClassEnum(bucket.getStorageClass()));
+            // 设置桶区域位置
+            obsBucket.setLocation(bucket.getLocation());
+            // 创建桶
+            ObsBucket result = obsClient.createBucket(obsBucket);
+            result.setCreationDate(new Date());
+            obsClient.close();
+            return setBucket(result, ossAccount);
+        }
+        throw new Exception("Bucket[" + bucket.getBucketName() + "] already exist");
+    }
+
+    private AccessControlList chooseAccessControlList(String cannedAcl) {
+        if (cannedAcl.equals("public-read")) {
+            return AccessControlList.REST_CANNED_PUBLIC_READ;
+        } else if (cannedAcl.equals("public-read-write")) {
+            return AccessControlList.REST_CANNED_PUBLIC_READ_WRITE;
+        } else {
+            return AccessControlList.REST_CANNED_PRIVATE;
+        }
+    }
+
+    private StorageClassEnum chooseStorageClassEnum(String storageClass) {
+        if (storageClass.equals(StorageClassEnum.COLD.name())) {
+            return StorageClassEnum.COLD;
+        } else if (storageClass.equals(StorageClassEnum.WARM.name())) {
+            return StorageClassEnum.WARM;
+        } else {
+            return StorageClassEnum.STANDARD;
+        }
     }
 
     @Override
     public void deleteBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
-
+        ObsClient obsClient = getObsClient(ossAccount, bucket);
+        BucketStorageInfo storageInfo = obsClient.getBucketStorageInfo(bucket.getBucketName());
+        if (storageInfo.getSize() != 0) {
+            obsClient.close();
+            throw new Exception("Bucket is not empty. Please check whether the bucket contains undeleted objects!");
+        }
+        obsClient.deleteBucket(bucket.getBucketName());
+        obsClient.close();
     }
 
 }
