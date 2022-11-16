@@ -280,7 +280,7 @@ public class CloudSyncService {
         cloudResourceItemMapper.deleteByExample(cloudResourceItemExample);
     }
 
-    public void SyncResources () throws Exception {
+    public void syncResources () throws Exception {
         AccountExample example = new AccountExample();
         example.createCriteria().andStatusEqualTo("VALID");
         List<Account> accounts = accountMapper.selectByExample(example);

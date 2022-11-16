@@ -742,21 +742,6 @@ public class ResourceService {
         historyScanExample.createCriteria().andAccountIdEqualTo(accountId).andCreateTimeEqualTo(zero);
         List<HistoryScan> list = historyScanMapper.selectByExample(historyScanExample);
 
-        HistoryScan history = new HistoryScan();
-        history.setResourcesSum(0L);
-        history.setReturnSum(0L);
-        history.setScanScore(100);
-        history.setOperator("System");
-        if (!list.isEmpty()) {
-            int id = list.get(0).getId();
-            history.setId(id);
-            extHistoryScanMapper.updateByExampleSelective(history);
-        } else {
-            history.setAccountId(accountId);
-            history.setCreateTime(zero);
-            historyScanMapper.insertSelective(history);
-        }
-
         CloudAccountQuartzTaskRelationExample quartzTaskRelationExample = new CloudAccountQuartzTaskRelationExample();
         quartzTaskRelationExample.createCriteria().andSourceIdEqualTo(accountId);
         List<CloudAccountQuartzTaskRelation> quartzTaskRelationList = quartzTaskRelationMapper.selectByExample(quartzTaskRelationExample);
