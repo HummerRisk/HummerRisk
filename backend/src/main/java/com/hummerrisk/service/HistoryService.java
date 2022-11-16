@@ -92,11 +92,6 @@ public class HistoryService {
     private CloudNativeConfigMapper cloudNativeConfigMapper;
 
 
-
-
-
-
-
     public Integer insertScanHistory (Object obj) throws Exception {
 
         Map map = obj2Account(obj);
@@ -148,6 +143,15 @@ public class HistoryService {
             throw new Exception(e.getMessage());
         }
     }
+
+    public void deleteScanTaskHistory (Integer scanId) throws Exception {
+        try{
+            historyScanTaskMapper.deleteByPrimaryKey(scanId);
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
 
     public void editUselessScanTaskHistory () throws Exception {
         try{
