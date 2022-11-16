@@ -482,6 +482,7 @@ export default {
     },
     create() {
       this.form = { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] };
+      this.tmpList = [];
       this.ossTitle = this.$t('oss.create');
       this.visible = true;
     },
