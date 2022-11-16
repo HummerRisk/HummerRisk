@@ -141,9 +141,9 @@ public class OssService {
     }
 
     public OssWithBLOBs editOss(OssWithBLOBs request) throws Exception {
-        request.setCreateTime(System.currentTimeMillis());
         request.setUpdateTime(System.currentTimeMillis());
         request.setCreator(SessionUtils.getUserId());
+        request.setSyncStatus(CloudTaskConstants.TASK_STATUS.APPROVED.name());
         ossMapper.updateByPrimaryKeySelective(request);
         validate(request.getId());
         return request;
