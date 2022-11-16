@@ -839,7 +839,6 @@ import echarts from 'echarts';
         this.severityOptions = severityOptions;
       },
       ruleSetOptionsFnc () {
-
         this.$post("/resource/rule/groups" , {"accountId":this.accountId}, res => {
           this.ruleSetOptions = res.data;
         });
@@ -859,7 +858,7 @@ import echarts from 'echarts';
         this.search();
       },
       filterAccount (tag) {
-        if (!!tag.name) {
+        if (tag.name) {
           this.condition.pluginId = tag.name;
           this.search();
         }
