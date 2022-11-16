@@ -9,6 +9,7 @@ import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.dto.ValidateDTO;
+import com.hummerrisk.oss.controller.request.OssBucketRequest;
 import com.hummerrisk.oss.controller.request.OssRequest;
 import com.hummerrisk.oss.dto.BucketObjectDTO;
 import com.hummerrisk.oss.dto.OssBucketDTO;
@@ -16,6 +17,7 @@ import com.hummerrisk.oss.dto.OssDTO;
 import com.hummerrisk.oss.service.OssService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -145,6 +147,13 @@ public class OssController {
         if (in != null) {
             in.close();
         }
+    }
+
+    @I18n
+    @ApiOperation("创建存储桶")
+    @PostMapping("createDir")
+    public void createDir(@RequestBody OssBucketRequest request) throws Exception{
+        ossService.createDir(request);
     }
 
 }

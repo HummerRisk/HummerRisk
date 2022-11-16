@@ -1162,6 +1162,8 @@ export default {
     object_dir: '文件夹',
     object_file: '文件',
     acl: '权限',
+    create_bucket: '创建存储桶',
+    update_bucket: '编辑存储桶',
   },
   task: {
     task_setting: '任务编排',

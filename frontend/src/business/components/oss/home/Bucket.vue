@@ -3,8 +3,8 @@
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
-                      :title="$t('oss.oss_bucket')"
-                      :show-validate="false" :show-create="false"/>
+                      :title="$t('oss.oss_bucket')" @create="create" :createTip="$t('oss.create_bucket')"
+                      :show-validate="false" :show-create="true"/>
 
       </template>
 
@@ -78,6 +78,14 @@
     </el-drawer>
     <!--oss bucket-->
 
+    <!--create oss bucket-->
+    <el-drawer class="rtl" :title="ossTitle" :visible.sync="visible" size="60%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <div v-loading="ossResult.loading">
+      </div>
+    </el-drawer>
+    <!--create oss bucket-->
+
   </main-container>
 </template>
 
@@ -106,6 +114,7 @@ export default {
   data() {
     return {
       result: {},
+      ossResult: {},
       condition: {
         components: OSS_CONFIGS
       },
@@ -120,6 +129,8 @@ export default {
       visible: false,
       direction: 'rtl',
       objectData: [],
+      form: {},
+      ossTitle: this.$t('oss.create_bucket'),
     }
   },
   methods: {
@@ -195,6 +206,11 @@ export default {
       }, error => {
         console.log("下载报错", error);
       });
+    },
+    create() {
+      this.form = {};
+      this.ossTitle = this.$t('oss.create_bucket');
+      this.visible = true;
     },
   },
   created() {

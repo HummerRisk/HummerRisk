@@ -12,6 +12,7 @@ import com.hummerrisk.dto.ValidateDTO;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.oss.config.OssManager;
 import com.hummerrisk.oss.constants.OSSConstants;
+import com.hummerrisk.oss.controller.request.OssBucketRequest;
 import com.hummerrisk.oss.controller.request.OssRequest;
 import com.hummerrisk.oss.dto.BucketObjectDTO;
 import com.hummerrisk.oss.dto.OssBucketDTO;
@@ -320,6 +321,17 @@ public class OssService {
         OssWithBLOBs oss = getAccountByPrimaryKey(bucket.getOssId());
         OssProvider ossProvider = (OssProvider) OssManager.getOssProviders().get(oss.getPluginId());
         return ossProvider.downloadObject(bucket, oss, objectId);
+    }
+
+    public void createDir(OssBucketRequest request) throws Exception{
+        String bucketId = UUIDUtil.newUUID();
+        request.setBucketId(bucketId);
+        OssWithBLOBs account = getAccountByPrimaryKey(request.getId());
+        OssProvider ossProvider = getOssProvider(account.getPluginId());
+        OssBucket bucket = new OssBucket();
+        bucket.setId(bucketId);
+        bucket.setBucketName(request.getBucketName());
+        ossProvider.createDir(bucket, account, request.getBucketName());
     }
 
 }

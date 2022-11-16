@@ -1162,6 +1162,8 @@ export default {
     object_dir: 'Folder',
     object_file: 'File',
     acl: 'Permission',
+    create_bucket: 'Create bucket',
+    update_bucket: 'Edit Bucket',
   },
   task: {
     task_setting: 'Task arrangement',
