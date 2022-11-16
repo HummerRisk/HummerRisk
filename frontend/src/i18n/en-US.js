@@ -205,6 +205,7 @@ export default {
     history: 'History',
     format: 'File format',
     certificate: 'Certificate',
+    update_vuln_db: 'Update vulnerability database',
   },
   workspace: {
     create:'Create a workspace',

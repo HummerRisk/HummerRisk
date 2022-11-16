@@ -13,7 +13,9 @@ import com.hummerrisk.base.domain.SystemParameter;
 import com.hummerrisk.base.domain.SystemParameterExample;
 import com.hummerrisk.base.mapper.SystemParameterMapper;
 import com.hummerrisk.commons.constants.ParamConstants;
+import com.hummerrisk.commons.constants.TrivyConstants;
 import com.hummerrisk.commons.exception.HRException;
+import com.hummerrisk.commons.utils.CommandUtils;
 import com.hummerrisk.commons.utils.EncryptUtils;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.i18n.Translator;
@@ -404,4 +406,11 @@ public class SystemParameterService {
             }
         });
     }
+
+    public void updateVulnDb() throws Exception {
+        String command = "trivy image --download-db-only";
+        LogUtil.info(" {UpdateVulnDb}[command]: " + command);
+        CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
+    }
+
 }

@@ -205,6 +205,7 @@ export default {
     history: '历史记录',
     format: '文件格式',
     certificate: '凭证',
+    update_vuln_db: '更新漏洞库',
   },
   workspace: {
     create: '创建工作空间',
