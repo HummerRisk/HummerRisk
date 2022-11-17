@@ -93,7 +93,7 @@
           </template>
           <el-menu-item index="/task" onselectstart="return false" v-permission="['admin']">
             <i class="iconfont icon-history"></i>
-            <span slot="title">{{ $t('task.task_list') }}</span>
+            <span slot="title">{{ $t('task.task_manage') }}</span>
           </el-menu-item>
           <el-menu-item index="/taskReport" onselectstart="return false" v-permission="['admin']">
             <i class="iconfont icon-image-text"></i>
