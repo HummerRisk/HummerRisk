@@ -25,10 +25,13 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class HuaweiProvider implements OssProvider {
 
     private static final String BASE_REGION_DIC = "support/regions/";
+
+    private static final String BASE_STORAGE_CLASS_DIC = "support/storageClass/";
     private static final String JSON_EXTENSION = ".json";
 
     @Override
@@ -181,6 +184,18 @@ public class HuaweiProvider implements OssProvider {
     public List<OssRegion> getOssRegions(OssWithBLOBs ossAccount) throws Exception {
         String result = ReadFileUtils.readConfigFile(BASE_REGION_DIC, ossAccount.getPluginId(), JSON_EXTENSION);
         return new Gson().fromJson(result, new TypeToken<ArrayList<OssRegion>>() {}.getType());
+    }
+
+    private static String getStorageClassByEnglish(String storageClassName, OssWithBLOBs ossAccount) throws Exception {
+        String result = ReadFileUtils.readConfigFile(BASE_STORAGE_CLASS_DIC, ossAccount.getPluginId(), JSON_EXTENSION);
+        List<Map<String, String>> list = new Gson().fromJson(result, new TypeToken<ArrayList<Map<String, String>>>() {
+        }.getType());
+        for (Map<String, String> map : list) {
+            if (map.get("value").equals(storageClassName)) {
+                return map.get("key");
+            }
+        }
+        return storageClassName;
     }
 
     @Override

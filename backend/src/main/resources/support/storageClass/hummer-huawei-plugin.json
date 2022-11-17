@@ -1,0 +1,14 @@
+[
+  {
+    "key": "标准存储",
+    "value": "STANDARD"
+  },
+  {
+    "key": "低频访问",
+    "value": "WARM"
+  },
+  {
+    "key": "归档存储",
+    "value": "COLD"
+  }
+]

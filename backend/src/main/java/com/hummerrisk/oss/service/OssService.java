@@ -1,5 +1,7 @@
 package com.hummerrisk.oss.service;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtOssMapper;
@@ -14,9 +16,7 @@ import com.hummerrisk.oss.config.OssManager;
 import com.hummerrisk.oss.constants.OSSConstants;
 import com.hummerrisk.oss.controller.request.OssBucketRequest;
 import com.hummerrisk.oss.controller.request.OssRequest;
-import com.hummerrisk.oss.dto.BucketObjectDTO;
-import com.hummerrisk.oss.dto.OssBucketDTO;
-import com.hummerrisk.oss.dto.OssDTO;
+import com.hummerrisk.oss.dto.*;
 import com.hummerrisk.oss.provider.OssProvider;
 import com.hummerrisk.service.AccountService;
 import com.hummerrisk.service.OperationLogService;
@@ -52,7 +52,12 @@ public class OssService {
     @Resource
     private ProxyMapper proxyMapper;
 
+    private static final String BASE_CANNED_ACL_TYPE = "cannedACL";
+    private static final String BASE_STORAGE_CLASS_TYPE = "storageClass";
+    private static final String BASE_REGION_DIC = "support/regions/";
     private static final String BASE_CREDENTIAL_DIC = "support/credential/";
+    private static final String BASE_CANNED_ACL_DIC = "support/cannedACL/";
+    private static final String BASE_STORAGE_CLASS_DIC = "support/storageClass/";
     private static final String JSON_EXTENSION = ".json";
 
     public List<OssDTO> ossList(OssRequest request) {
@@ -333,5 +338,51 @@ public class OssService {
         bucket.setBucketName(request.getBucketName());
         ossProvider.createDir(bucket, account, request.getBucketName());
     }
+
+    public List<OssRegion> getOssRegions(String ossId) throws Exception {
+        OssWithBLOBs account = getAccountByPrimaryKey(ossId);
+        OssProvider ossProvider = getOssProvider(account.getPluginId());
+        return ossProvider.getOssRegions(account);
+    }
+
+    public List<KeyValueItem> getParamList(String ossId, String type) throws Exception{
+        return getParamList(ossMapper.selectByPrimaryKey(ossId), type);
+    }
+
+    public List<KeyValueItem> getParamList(OssWithBLOBs ossAccount, String type) throws Exception{
+        String path = "";
+        switch (type) {
+            case BASE_CANNED_ACL_TYPE:
+                path = BASE_CANNED_ACL_DIC;
+                break;
+            case BASE_STORAGE_CLASS_TYPE:
+                path = BASE_STORAGE_CLASS_DIC;
+                break;
+            default:
+                HRException.throwException("Illegal parameter");
+        }
+
+        try {
+            if (type.equals(BASE_STORAGE_CLASS_TYPE)){
+                if (ossAccount.getPluginName().equals(OSSConstants.aws) ||
+                        ossAccount.getPluginName().equals(OSSConstants.baidu) ||
+                        ossAccount.getPluginName().equals(OSSConstants.huawei)) {
+                    return new ArrayList<KeyValueItem>();
+                }
+            }
+            return getParams(ossAccount, path);
+        } catch (Exception e) {
+            e.printStackTrace();
+            LogUtil.error("Getting parameters failed: " + ossAccount.getPluginName(), e);
+            throw new Exception("Failed to get parameters" + e.getMessage());
+        }
+    }
+
+    private List<KeyValueItem> getParams(OssWithBLOBs ossAccount, String path) throws Exception {
+        String result = ReadFileUtils.readConfigFile(BASE_STORAGE_CLASS_DIC, ossAccount.getPluginId(), JSON_EXTENSION);
+        return new Gson().fromJson(result, new TypeToken<ArrayList<KeyValueItem>>() {
+        }.getType());
+    }
+
 
 }

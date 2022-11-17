@@ -11,13 +11,10 @@ import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.dto.ValidateDTO;
 import com.hummerrisk.oss.controller.request.OssBucketRequest;
 import com.hummerrisk.oss.controller.request.OssRequest;
-import com.hummerrisk.oss.dto.BucketObjectDTO;
-import com.hummerrisk.oss.dto.OssBucketDTO;
-import com.hummerrisk.oss.dto.OssDTO;
+import com.hummerrisk.oss.dto.*;
 import com.hummerrisk.oss.service.OssService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -154,6 +151,20 @@ public class OssController {
     @PostMapping("createDir")
     public void createDir(@RequestBody OssBucketRequest request) throws Exception{
         ossService.createDir(request);
+    }
+
+    @I18n
+    @ApiOperation("获取对象存储区域")
+    @GetMapping("getOssRegions/{ossId}")
+    public List<OssRegion> getOssRegions(@PathVariable String ossId) throws Exception {
+        return ossService.getOssRegions(ossId);
+    }
+
+    @I18n
+    @ApiOperation("获取对象存储类型")
+    @GetMapping("support/{ossId}/params/{type}")
+    public List<KeyValueItem> getParams(@PathVariable String ossId, @PathVariable String type) throws Exception{
+        return ossService.getParamList(ossId, type);
     }
 
 }
