@@ -1164,6 +1164,7 @@ export default {
     acl: 'Permission',
     create_bucket: 'Create bucket',
     update_bucket: 'Edit Bucket',
+    read_acl: 'Read and write permissions',
   },
   task: {
     task_setting: 'Task arrangement',

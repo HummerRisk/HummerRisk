@@ -1164,6 +1164,7 @@ export default {
     acl: '權限',
     create_bucket: '創建存儲桶',
     update_bucket: '編輯存儲桶',
+    read_acl: '讀寫權限',
   },
   task: {
     task_setting: '任務編排',

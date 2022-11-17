@@ -82,6 +82,42 @@
     <el-drawer class="rtl" :title="ossTitle" :visible.sync="visible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <div v-loading="ossResult.loading">
+        <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="form">
+          <el-form-item :label="$t('account.cloud_account')" :rules="{required: true, message: $t('account.cloud_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="form.id" :placeholder="$t('account.please_choose_account')" @change="changeAccount(form.id)">
+              <el-option
+                v-for="item in accounts"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+                <img :src="require(`@/assets/img/platform/${item.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                &nbsp;&nbsp; {{ item.name }}
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="$t('account.regions')" :rules="{required: true, message: $t('account.regions') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="form.regionId" :placeholder="$t('account.please_choose_region')">
+              <el-option
+                v-for="item in regions"
+                :key="item.regionId"
+                :label="item.regionName"
+                :value="item.regionId">
+                &nbsp;&nbsp; {{ item.regionName }}
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="$t('account.regions')" :rules="{required: true, message: $t('account.regions') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="form.regionId" :placeholder="$t('account.please_choose_region')">
+              <el-option
+                v-for="item in regions"
+                :key="item.regionId"
+                :label="item.regionName"
+                :value="item.regionId">
+                &nbsp;&nbsp; {{ item.regionName }}
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
       </div>
     </el-drawer>
     <!--create oss bucket-->
@@ -131,6 +167,35 @@ export default {
       objectData: [],
       form: {},
       ossTitle: this.$t('oss.create_bucket'),
+      rule: {
+        name: [
+          {required: true, message: this.$t('commons.input_name'), trigger: 'blur'},
+          {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
+          {
+            required: true,
+            message: this.$t("workspace.special_characters_are_not_supported"),
+            trigger: 'blur'
+          }
+        ],
+        proxyIp: [
+          {required: true, message: this.$t('proxy.proxy_ip'), trigger: 'blur'},
+          {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+        ],
+        proxyPort: [
+          {required: true, message: this.$t('proxy.proxy_port'), trigger: 'blur'},
+          {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+        ],
+        proxyName: [
+          {required: false, message: this.$t('proxy.proxy_name'), trigger: 'blur'},
+          {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
+        ],
+        proxyPassword: [
+          {required: false, message: this.$t('proxy.proxy_password'), trigger: 'blur'},
+          {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
+        ],
+      },
+      accounts: [],
+      regions: [],
     }
   },
   methods: {
@@ -157,6 +222,7 @@ export default {
     },
     init() {
       this.search();
+      this.activeAccount();
     },
     tableRowClassName({row, rowIndex}) {
       if (rowIndex % 4 === 0) {
@@ -212,6 +278,20 @@ export default {
       this.ossTitle = this.$t('oss.create_bucket');
       this.visible = true;
     },
+    //查询对象存储账号
+    activeAccount() {
+      let url = "/oss/accounts";
+      this.result = this.$get(url, response => {
+        let data = response.data;
+        this.accounts =  data;
+      });
+    },
+    //选择插件查询云账号信息
+    changeAccount (accountId){
+      this.$get("/oss/getOssRegions/" + accountId,res1 => {
+        this.regions = res1.data;
+      });
+    },
   },
   created() {
     this.init();
@@ -220,6 +300,35 @@ export default {
 </script>
 
 <style scoped>
-
+.table-content {
+  width: 100%;
+  margin-bottom: 5px;
+}
+.el-table {
+  cursor: pointer;
+}
+.demo-table-expand label {
+  width: 90px;
+  color: #99a9bf;
+}
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  padding: 10px 10%;
+  width: 47%;
+}
+.rtl >>> .el-drawer__body {
+  overflow-y: auto;
+  padding: 20px;
+}
+.rtl >>> input {
+  width: 100%;
+}
+.rtl >>> .el-select {
+  width: 80%;
+}
+.rtl >>> .el-form-item__content {
+  width: 75%;
+}
 </style>
 
