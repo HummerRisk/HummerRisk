@@ -215,7 +215,7 @@ public class ResourceController {
     }
 
     @I18n
-    @ApiOperation(value = "合规报告资源组列表")
+    @ApiOperation(value = "合规报告资源列表")
     @PostMapping(value = "resourceList/{goPage}/{pageSize}")
     public Pager<List<ResourceDTO>> resourceList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);

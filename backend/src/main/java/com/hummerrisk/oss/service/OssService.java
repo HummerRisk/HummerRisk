@@ -7,9 +7,15 @@ import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtOssMapper;
 import com.hummerrisk.commons.constants.CloudAccountConstants;
 import com.hummerrisk.commons.constants.CloudTaskConstants;
+import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
+import com.hummerrisk.controller.request.excel.ExcelExportRequest;
+import com.hummerrisk.controller.request.resource.ResourceRequest;
+import com.hummerrisk.controller.request.rule.RuleGroupRequest;
+import com.hummerrisk.dto.ExportDTO;
+import com.hummerrisk.dto.RuleGroupDTO;
 import com.hummerrisk.dto.ValidateDTO;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.oss.config.OssManager;
@@ -20,13 +26,20 @@ import com.hummerrisk.oss.dto.*;
 import com.hummerrisk.oss.provider.OssProvider;
 import com.hummerrisk.service.AccountService;
 import com.hummerrisk.service.OperationLogService;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.FilterInputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author harris
@@ -97,6 +110,12 @@ public class OssService {
             LogUtil.error(String.format("HRException in verifying oss account, oss account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()), e);
             return validateDTO;
         }
+    }
+
+    public List<OssWithBLOBs> allList() {
+        OssExample example = new OssExample();
+        example.createCriteria().andStatusEqualTo(CloudAccountConstants.Status.VALID.name());
+        return ossMapper.selectByExampleWithBLOBs(example);
     }
 
     public List<AccountWithBLOBs> getCloudAccountList() {
@@ -391,6 +410,85 @@ public class OssService {
         example.createCriteria().andPluginIdEqualTo(pluginId).andLevelEqualTo("对象存储");
         List<RuleGroup> groups = ruleGroupMapper.selectByExample(example);
         return groups;
+    }
+
+    public List<RuleGroupDTO> ruleGroupList(RuleGroupRequest request) {
+        return extOssMapper.ruleGroupList(request);
+    }
+
+    /**
+     * 导出excel
+     */
+    @SuppressWarnings(value={"unchecked","deprecation", "serial"})
+    public byte[] exportGroupReport(ExcelExportRequest request) throws Exception {
+        try{
+            Map<String, Object> params = request.getParams();
+            ResourceRequest resourceRequest = new ResourceRequest();
+            if (MapUtils.isNotEmpty(params)) {
+                org.apache.commons.beanutils.BeanUtils.populate(resourceRequest, params);
+            }
+            List<ExcelExportRequest.Column> columns = request.getColumns();
+            List<ExportDTO> exportDTOs = searchGroupExportData(resourceRequest, request.getGroupId(), request.getAccountId());
+            List<List<Object>> data = exportDTOs.stream().map(resource -> {
+                return new ArrayList<Object>() {{
+                    columns.forEach(column -> {
+                        try {
+                            switch (column.getKey()) {
+                                case "auditName":
+                                    add(resource.getFirstLevel() + "-" + resource.getSecondLevel());
+                                    break;
+                                case "basicRequirements":
+                                    add(resource.getProject());
+                                    break;
+                                case "severity":
+                                    add(resource.getSeverity());
+                                    break;
+                                case "hummerId":
+                                    add(resource.getHummerId());
+                                    break;
+                                case "resourceName":
+                                    add(resource.getResourceName());
+                                    break;
+                                case "resourceType":
+                                    add(resource.getResourceType());
+                                    break;
+                                case "regionId":
+                                    add(resource.getRegionId());
+                                    break;
+                                case "ruleName":
+                                    add(resource.getRuleName());
+                                    break;
+                                case "ruleDescription":
+                                    add(resource.getRuleDescription());
+                                    break;
+                                case "regionName":
+                                    add(resource.getRegionName());
+                                    break;
+                                case "improvement":
+                                    add(resource.getImprovement());
+                                    break;
+                                case "project":
+                                    add(resource.getProject());
+                                    break;
+                                default:
+                                    add(MethodUtils.invokeMethod(resource, "get" + StringUtils.capitalize(ExcelExportUtils.underlineToCamelCase(column.getKey()))));
+                                    break;
+                            }
+                        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                            LogUtil.error("export resource excel error: ", ExceptionUtils.getStackTrace(e));
+                        }
+                    });
+                }};
+            }).collect(Collectors.toList());
+            OperationLogService.log(SessionUtils.getUser(), request.getAccountId(), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "导出合规报告");
+            return ExcelExportUtils.exportExcelData(Translator.get("i18n_scan_resource"), request.getColumns().stream().map(ExcelExportRequest.Column::getValue).collect(Collectors.toList()), data);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    public List<ExportDTO> searchGroupExportData(ResourceRequest request, String groupId, String accountId) {
+        return extOssMapper.searchGroupExportData(request, groupId, accountId);
     }
 
 }

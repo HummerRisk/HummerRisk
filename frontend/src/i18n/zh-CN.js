@@ -1167,6 +1167,7 @@ export default {
     read_acl: '读写权限',
     oss_risk: '对象存储检测结果',
     oss_report: '对象存储合规报告',
+    download_account: '下载对象存储整体合规报告',
   },
   task: {
     task_setting: '任务编排',

@@ -6,9 +6,15 @@ import com.hummerrisk.base.domain.AccountWithBLOBs;
 import com.hummerrisk.base.domain.OssLogWithBLOBs;
 import com.hummerrisk.base.domain.OssWithBLOBs;
 import com.hummerrisk.base.domain.RuleGroup;
+import com.hummerrisk.commons.constants.CloudAccountConstants;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
+import com.hummerrisk.controller.request.account.CloudAccountRequest;
+import com.hummerrisk.controller.request.excel.ExcelExportRequest;
+import com.hummerrisk.controller.request.rule.RuleGroupRequest;
+import com.hummerrisk.dto.AccountDTO;
+import com.hummerrisk.dto.RuleGroupDTO;
 import com.hummerrisk.dto.ValidateDTO;
 import com.hummerrisk.oss.controller.request.OssBucketRequest;
 import com.hummerrisk.oss.controller.request.OssRequest;
@@ -16,6 +22,10 @@ import com.hummerrisk.oss.dto.*;
 import com.hummerrisk.oss.service.OssService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -41,6 +51,13 @@ public class OssController {
             @PathVariable int goPage, @PathVariable int pageSize, @RequestBody OssRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, ossService.ossList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "所有对象存储账号")
+    @GetMapping("allList")
+    public List<OssWithBLOBs> allList() {
+        return ossService.allList();
     }
 
     @I18n
@@ -174,6 +191,27 @@ public class OssController {
     @GetMapping("groups/{pluginId}")
     public List<RuleGroup> groups(@PathVariable String pluginId) {
         return ossService.groups(pluginId);
+    }
+
+    @I18n
+    @ApiOperation(value = "合规报告规则组列表")
+    @PostMapping(value = "ruleGroup/list/{goPage}/{pageSize}")
+    public Pager<List<RuleGroupDTO>> ruleGroupList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleGroupRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, ossService.ruleGroupList(request));
+    }
+
+    @ApiOperation(value = "导出规则组检测报告")
+    @PostMapping("groupExport")
+    public ResponseEntity<byte[]> exportGroupReport(@RequestBody ExcelExportRequest request) throws Exception {
+        byte[] bytes = ossService.exportGroupReport(request);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", "对象存储不合规资源检测报告.xlsx");
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .headers(headers)
+                .body(bytes);
     }
 
 }
