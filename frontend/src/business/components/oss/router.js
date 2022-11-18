@@ -22,6 +22,16 @@ export default {
       name: "bucket",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/oss/home/Bucket'),
     },
+    {
+      path: "ossRisk",
+      name: "OssRisk",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/oss/home/Risk'),
+    },
+    {
+      path: "ossReport",
+      name: "OssReport",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/oss/home/Report'),
+    },
   ]
 }
 

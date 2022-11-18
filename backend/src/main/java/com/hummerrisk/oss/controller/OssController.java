@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.AccountWithBLOBs;
 import com.hummerrisk.base.domain.OssLogWithBLOBs;
 import com.hummerrisk.base.domain.OssWithBLOBs;
+import com.hummerrisk.base.domain.RuleGroup;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
@@ -16,6 +17,7 @@ import com.hummerrisk.oss.service.OssService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -165,6 +167,13 @@ public class OssController {
     @GetMapping("support/{ossId}/params/{type}")
     public List<KeyValueItem> getParams(@PathVariable String ossId, @PathVariable String type) throws Exception{
         return ossService.getParamList(ossId, type);
+    }
+
+    @I18n
+    @ApiIgnore
+    @GetMapping("groups/{pluginId}")
+    public List<RuleGroup> groups(@PathVariable String pluginId) {
+        return ossService.groups(pluginId);
     }
 
 }

@@ -4,9 +4,9 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
-<!--          <el-menu-item :index="'/oss/overview'">-->
-<!--            {{ $t("oss.oss_overview") }}-->
-<!--          </el-menu-item>-->
+          <el-menu-item :index="'/oss/overview'">
+            {{ $t("oss.oss_overview") }}
+          </el-menu-item>
 
           <el-menu-item :index="'/oss/account'">
             {{ $t("oss.oss_account") }}
@@ -14,6 +14,14 @@
 
           <el-menu-item :index="'/oss/bucket'">
             {{ $t("oss.oss_bucket") }}
+          </el-menu-item>
+
+          <el-menu-item :index="'/oss/ossRisk'">
+            {{ $t("oss.oss_risk") }}
+          </el-menu-item>
+
+          <el-menu-item :index="'/oss/ossReport'">
+            {{ $t("oss.oss_report") }}
           </el-menu-item>
 
         </el-menu>

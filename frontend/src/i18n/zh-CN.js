@@ -1165,6 +1165,8 @@ export default {
     create_bucket: '创建存储桶',
     update_bucket: '编辑存储桶',
     read_acl: '读写权限',
+    oss_risk: '对象存储检测结果',
+    oss_report: '对象存储合规报告',
   },
   task: {
     task_setting: '任务编排',

@@ -51,6 +51,8 @@ public class OssService {
     private OssLogMapper ossLogMapper;
     @Resource
     private ProxyMapper proxyMapper;
+    @Resource
+    private RuleGroupMapper ruleGroupMapper;
 
     private static final String BASE_CANNED_ACL_TYPE = "cannedACL";
     private static final String BASE_STORAGE_CLASS_TYPE = "storageClass";
@@ -384,5 +386,11 @@ public class OssService {
         }.getType());
     }
 
+    public List<RuleGroup> groups(String pluginId) {
+        RuleGroupExample example = new RuleGroupExample();
+        example.createCriteria().andPluginIdEqualTo(pluginId).andLevelEqualTo("对象存储");
+        List<RuleGroup> groups = ruleGroupMapper.selectByExample(example);
+        return groups;
+    }
 
 }

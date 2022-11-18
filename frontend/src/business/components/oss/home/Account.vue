@@ -292,6 +292,34 @@
     </el-drawer>
     <!--oss bucket-->
 
+    <!-- 一键检测选择规则组 -->
+    <el-dialog :close-on-click-modal="false"
+               :modal-append-to-body="false"
+               :title="$t('account.scan_group_quick')"
+               :visible.sync="scanVisible"
+               class="" width="70%">
+      <div v-loading="groupResult.loading">
+        <el-card class="box-card el-box-card">
+          <div slot="header" class="clearfix">
+              <span>
+                <img :src="require(`@/assets/img/platform/${accountWithGroup.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+             &nbsp;&nbsp; {{ accountWithGroup.pluginName }} {{ $t('rule.rule_set') }} | {{ accountWithGroup.name }}
+              </span>
+            <el-button style="float: right; padding: 3px 0" type="text"  @click="handleCheckAllByAccount">{{ $t('account.i18n_sync_all') }}</el-button>
+          </div>
+          <el-checkbox-group v-model="checkedGroups">
+            <el-checkbox v-for="(group, index) in groups" :label="group.id" :value="group.id" :key="index" border >
+              {{ group.name }}
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-card>
+        <dialog-footer
+          @cancel="scanVisible = false"
+          @confirm="scanGroup()"/>
+      </div>
+    </el-dialog>
+    <!-- 一键检测选择检测组 -->
+
   </main-container>
 </template>
 
@@ -304,6 +332,7 @@ import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {OSS_CONFIGS} from "@/business/components/common/components/search/search-components";
+import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 
 /* eslint-disable */
 export default {
@@ -376,13 +405,13 @@ export default {
         ],
       },
       buttons: [
-        // {
-        //   tip: this.$t('account.one_scan'), icon: "el-icon-s-promotion", type: "success",
-        //   exec: this.handleScan
-        // },
+        {
+          tip: this.$t('account.one_scan'), icon: "el-icon-s-promotion", type: "success",
+          exec: this.handleScan
+        },
         {
           tip: this.$t('commons.sync'), icon: "el-icon-refresh-right", type: "warning",
-          exec: this.handleScan
+          exec: this.handleSync
         }, {
           tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
           exec: this.handleEdit
@@ -420,6 +449,10 @@ export default {
         {text: this.$t('account.VALID'), value: 'VALID'},
         {text: this.$t('account.DELETE'), value: 'DELETE'}
       ],
+      accountWithGroup: {pluginIcon: 'aliyun.png'},
+      scanVisible: false,
+      groups: [],
+      checkedGroups: [],
     }
   },
   methods: {
@@ -592,7 +625,7 @@ export default {
       });
       this.logVisible = true;
     },
-    handleScan(item) {
+    handleSync(item) {
       this.result = this.$get("/oss/batch/sync/" + item.id, response => {
         if(response.success) {
           this.$success(this.$t('event.sync'));
@@ -700,6 +733,56 @@ export default {
                 this.$error(this.$t('account.error'));
               }
               this.search();
+            });
+          }
+        }
+      });
+    },
+    handleScan(account) {
+      this.accountWithGroup = account;
+      localStorage.setItem(ACCOUNT_ID, account.id);
+      localStorage.setItem(ACCOUNT_NAME, account.name);
+      this.initGroups(account.pluginId);
+      this.scanVisible = true;
+    },
+    initGroups(pluginId) {
+      this.result = this.$get("/oss/groups/" + pluginId,response => {
+        this.groups = response.data;
+      });
+    },
+    handleCheckAllByAccount() {
+      if (this.checkedGroups.length === this.groups.length) {
+        this.checkedGroups = [];
+      } else {
+        let arr = [];
+        this.checkedGroups = [];
+        for (let group of this.groups) {
+          arr.push(group.id);
+        }
+        let concatArr = this.checkedGroups.concat(arr);
+        this.checkedGroups = Array.from(concatArr);
+      }
+    },
+    scanGroup () {
+      let account = this.$t('account.one_scan') + this.$t('account.cloud_account');
+      this.$alert( account + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            if (this.checkedGroups.length === 0) {
+              this.$warning(this.$t('account.please_choose_rule_group'));
+              return;
+            }
+            let params = {
+              accountId: this.accountWithGroup.id,
+              groups: this.checkedGroups
+            }
+            this.groupResult = this.$post("/rule/scan", params, () => {
+              this.$success(this.$t('account.i18n_hr_create_success'));
+              this.scanVisible = false;
+              this.$router.push({
+                path: '/account/result',
+              }).catch(error => error);
             });
           }
         }
