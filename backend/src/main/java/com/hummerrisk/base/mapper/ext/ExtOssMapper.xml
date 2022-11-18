@@ -268,4 +268,91 @@
         ORDER BY t.resource_type, t1.resource_name, t.region_id, t.hummer_id
     </select>
 
+    <resultMap id="ResourceBaseResultMap" type="com.hummerrisk.dto.ResourceDTO"
+               extends="com.hummerrisk.base.mapper.ResourceItemMapper.ResultMapWithBLOBs">
+        <result column="taskId" jdbcType="VARCHAR" property="taskId"/>
+        <result column="taskName" jdbcType="VARCHAR" property="taskName"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="applyUser" jdbcType="VARCHAR" property="applyUser"/>
+        <result column="ruleId" jdbcType="VARCHAR" property="ruleId"/>
+        <result column="ruleName" jdbcType="VARCHAR" property="ruleName"/>
+        <result column="suggestion" jdbcType="VARCHAR" property="suggestion"/>
+        <result column="accountName" jdbcType="VARCHAR" property="accountName"/>
+        <association property="resourceWithBLOBs" column="resource_id" select="getResourceList">
+        </association>
+    </resultMap>
+
+    <select id="resourceList" parameterType="com.hummerrisk.controller.request.resource.ResourceRequest" resultMap="ResourceBaseResultMap">
+        SELECT
+        t4.task_name as taskName,
+        t4.type,
+        t4.id as taskId,
+        t4.apply_user as applyUser,
+        t5.rule_id as ruleId,
+        t6.name as ruleName,
+        t7.name as accountName,
+        t6.suggestion,
+        t.*
+        FROM resource_item t
+        JOIN resource t1 ON t1.id = t.resource_id
+        JOIN cloud_task_item_resource t2 ON t1.id = t2.resource_id and t2.resource_type in
+        <foreach collection="resourceTypes" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        JOIN cloud_task_item t3 ON t3.id = t2.task_item_id
+        JOIN cloud_task t4 ON t3.task_id = t4.id
+        JOIN resource_rule t5 ON t1.id = t5.resource_id
+        JOIN rule t6 ON t5.rule_id = t6.id
+        JOIN cloud_account t7 ON t.account_id = t7.id
+        <where>
+            <if test="combine != null">
+                <include refid="combine">
+                    <property name="condition" value="combine"/>
+                </include>
+            </if>
+            <if test="taskId != null">
+                AND t4.id = #{taskId}
+            </if>
+            <if test="accountId != null">
+                AND t.account_id = #{accountId}
+            </if>
+            <if test="regionId != null">
+                AND t.region_id = #{regionId}
+            </if>
+            <if test="taskName != null">
+                AND t4.task_name like CONCAT('%',#{taskName},'%')
+            </if>
+            <if test="severity != null">
+                AND t.severity = #{severity}
+            </if>
+            <if test="tagKey != null">
+                AND t5.rule_id in (select tt.rule_id from rule_tag_mapping tt where tt.tag_key = #{tagKey})
+            </if>
+            <if test="pluginName != null">
+                AND t.plugin_name = #{pluginName}
+            </if>
+            <if test="resourceName != null">
+                AND t.resource_name like CONCAT('%',#{resourceName},'%')
+            </if>
+            <if test="resourceStatus != null">
+                AND t.resource_status = #{resourceStatus}
+            </if>
+            <if test="resourceType != null">
+                AND t.resource_type = #{resourceType}
+            </if>
+            <if test="ruleId != null">
+                AND t5.rule_id = #{ruleId}
+            </if>
+            <if test="ruleName != null">
+                AND t6.name like CONCAT('%',#{ruleName},'%')
+            </if>
+            <if test="name != null">
+                AND t.hummer_id like CONCAT('%',#{name},'%')
+            </if>
+        </where>
+        <if test="sort == null">
+            ORDER BY t.create_time DESC
+        </if>
+    </select>
+
 </mapper>

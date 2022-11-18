@@ -2,18 +2,17 @@ package com.hummerrisk.oss.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummerrisk.base.domain.AccountWithBLOBs;
-import com.hummerrisk.base.domain.OssLogWithBLOBs;
-import com.hummerrisk.base.domain.OssWithBLOBs;
-import com.hummerrisk.base.domain.RuleGroup;
+import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.constants.CloudAccountConstants;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.account.CloudAccountRequest;
 import com.hummerrisk.controller.request.excel.ExcelExportRequest;
+import com.hummerrisk.controller.request.resource.ResourceRequest;
 import com.hummerrisk.controller.request.rule.RuleGroupRequest;
 import com.hummerrisk.dto.AccountDTO;
+import com.hummerrisk.dto.ResourceDTO;
 import com.hummerrisk.dto.RuleGroupDTO;
 import com.hummerrisk.dto.ValidateDTO;
 import com.hummerrisk.oss.controller.request.OssBucketRequest;
@@ -212,6 +211,23 @@ public class OssController {
                 .status(HttpStatus.CREATED)
                 .headers(headers)
                 .body(bytes);
+    }
+
+    @I18n
+    @ApiIgnore
+    @PostMapping("manual/list/{goPage}/{pageSize}")
+    public Pager<List<CloudTask>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> param) throws Exception {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        param.put("type", "manual");
+        return PageUtils.setPageInfo(page, ossService.selectManualTasks(param));
+    }
+
+    @I18n
+    @ApiIgnore
+    @PostMapping("resource/list/{goPage}/{pageSize}")
+    public Pager<List<ResourceDTO>> resourceList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, ossService.resourceList(request));
     }
 
 }
