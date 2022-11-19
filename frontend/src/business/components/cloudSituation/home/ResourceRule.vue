@@ -1,14 +1,15 @@
 <template>
   <div>
-    <el-button v-show="type==='NO-SCAN'" slot="reference" size="mini" type="info" plain >
-      {{$t('resource.uncheck')}}
+    <el-button v-if="type==='NO-SCAN'" slot="reference" size="mini" type="info" plain>
+      {{ $t('resource.uncheck') }}
     </el-button>
-    <el-button  v-show="type==='NO-RISK'"  slot="reference" size="mini" type="success" plain >
-      {{$t('resource.n_risk')}}
+    <el-button v-if="type==='NO-RISK'" slot="reference" size="mini" type="success" plain>
+      {{ $t('resource.n_risk') }}
     </el-button>
-    <el-button v-show="type==='HAVE-RISK'"  slot="reference" size="mini" type="warning" plain @click="showRegions">
-      {{$t('resource.have_risk')}}
+    <el-button v-if="type==='HAVE-RISK'" slot="reference" size="mini" type="error" plain @click="showRegions">
+      {{ $t('resource.have_risk') }}
     </el-button>
+
     <!--regions-->
     <el-drawer class="rtl" :title="$t('resource.vuln_statistics')" :visible.sync="regionsVisible" size="70%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
@@ -58,8 +59,6 @@
       </el-table>
     </el-drawer>
     <!--regions-->
-
-
   </div>
 </template>
 

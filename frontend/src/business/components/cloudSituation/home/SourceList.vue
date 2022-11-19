@@ -14,7 +14,7 @@
           <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
                     :row-class-name="tableRowClassName"
                     @filter-change="filter">
-            <el-table-column type="expand">
+            <el-table-column type="expand"  min-width="40">
               <template v-slot:default="scope">
                 <el-divider><i class="el-icon-folder-opened"></i></el-divider>
                 <el-form>
@@ -23,17 +23,17 @@
                 </el-form>
               </template>
             </el-table-column>
-            <el-table-column type="index" min-width="2%"/>
-            <el-table-column :label="$t('event.cloud_account_name')" min-width="15%" show-overflow-tooltip>
+            <el-table-column type="index" min-width="40"/>
+            <el-table-column :label="$t('event.cloud_account_name')" min-width="130" show-overflow-tooltip>
               <template v-slot:default="scope">
               <span><img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                 {{ getAccountName(scope.row.accountId) }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="hummerId" :label="$t('resource.resource_id')" min-width="15%" show-overflow-tooltip sortable></el-table-column>
-            <el-table-column prop="regionName" :label="$t('event.region')" min-width="18%"  show-overflow-tooltip sortable></el-table-column>
-            <el-table-column prop="resourceType" :label="$t('dashboard.resource_type')" min-width="16%" show-overflow-tooltip sortable></el-table-column>
-            <el-table-column min-width="18%" :label="$t('account.update_time')" sortable
+            <el-table-column prop="hummerId" :label="$t('resource.resource_id')" min-width="130" show-overflow-tooltip sortable></el-table-column>
+            <el-table-column prop="regionName" :label="$t('event.region')" min-width="150"  show-overflow-tooltip sortable></el-table-column>
+            <el-table-column prop="resourceType" :label="$t('dashboard.resource_type')" min-width="130" show-overflow-tooltip sortable></el-table-column>
+            <el-table-column min-width="160" :label="$t('account.update_time')" sortable
                              prop="updateTime">
               <template v-slot:default="scope">
                 <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
@@ -42,13 +42,13 @@
             <el-table-column
               prop="ruleCount"
               :label="$t('resource.risk')"
-              min-width="10%"
+              min-width="120"
             >
               <template v-slot:default="scope">
-                <ResourceRule  :hummer-id="scope.row.hummerId" :risk-count="scope.row.riskCount" :account-id="scope.row.accountId"
+                <resource-rule  :hummer-id="scope.row.hummerId" :risk-count="scope.row.riskCount" :account-id="scope.row.accountId"
                                :region-id="scope.row.regionId" :resource-type="scope.row.resourceType"
                                :account-name="getAccountName(scope.row.accountId)"
-                ></ResourceRule>
+                ></resource-rule>
               </template>
             </el-table-column>
           </el-table>
