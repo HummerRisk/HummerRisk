@@ -78,3 +78,4 @@ ALTER TABLE `image_result_item` ADD `pkg_name` varchar(256) DEFAULT NULL COMMENT
 ALTER TABLE `cloud_native_result_item` ADD `image` varchar(512) DEFAULT NULL COMMENT 'image';
 ALTER TABLE `code_result_item` ADD `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';
 ALTER TABLE `file_system_result_item` ADD `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';
+ALTER TABLE `cloud_event` MODIFY column `user_identity` varchar(1024) DEFAULT NULL COMMENT '用户认证';
