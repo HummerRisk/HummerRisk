@@ -22,7 +22,7 @@
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                   @filter-change="filter" @select-all="select" @select="select">
           <!-- 展开 start -->
-          <el-table-column type="expand" min-width="1%">
+          <el-table-column type="expand" min-width="50">
             <template slot-scope="props">
               <el-form>
                   <codemirror ref="cmEditor" v-model="props.row.script" class="code-mirror" :options="cmOptions" />
@@ -47,14 +47,14 @@
             </template>
           </el-table-column >
           <!-- 展开 end -->
-          <el-table-column type="index" min-width="3%"/>
-          <el-table-column prop="name" :label="$t('rule.rule_name')" min-width="15%" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.resource_type')" min-width="7%" show-overflow-tooltip>
+          <el-table-column type="index" min-width="50"/>
+          <el-table-column prop="name" :label="$t('rule.rule_name')" min-width="180" show-overflow-tooltip></el-table-column>
+          <el-table-column :label="$t('rule.resource_type')" min-width="120" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span v-for="(resourceType, index) in scope.row.types" :key="index">[{{ resourceType }}] </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" min-width="9%" show-overflow-tooltip>
+          <el-table-column :label="$t('account.cloud_platform')" min-width="140" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -62,18 +62,18 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column min-width="7%" :label="$t('rule.severity')" column-key="severity">
+          <el-table-column min-width="90" :label="$t('rule.severity')" column-key="severity">
             <template v-slot:default="{row}">
               <severity-type :row="row"></severity-type>
             </template>
           </el-table-column>
-          <el-table-column prop="description" :label="$t('rule.description')" min-width="22%" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.status')" min-width="5%" show-overflow-tooltip>
+          <el-table-column prop="description" :label="$t('rule.description')" min-width="300" show-overflow-tooltip></el-table-column>
+          <el-table-column :label="$t('rule.status')" width="80" show-overflow-tooltip>
             <template v-slot:default="scope">
               <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
             </template>
           </el-table-column>
-          <el-table-column min-width="10%" :label="$t('commons.operating')">
+          <el-table-column min-width="120" :label="$t('commons.operating')">
             <template v-slot:default="scope">
               <table-operators v-if="!scope.row.flag" :buttons="buttons" :row="scope.row"/>
               <table-operators v-if="scope.row.flag" :buttons="buttons2" :row="scope.row"/>

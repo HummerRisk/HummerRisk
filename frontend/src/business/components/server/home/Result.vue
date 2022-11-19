@@ -10,7 +10,7 @@
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                 @filter-change="filter">
         <!-- 展开 start -->
-        <el-table-column type="expand" min-width="1%">
+        <el-table-column type="expand" min-width="50">
           <template slot-scope="props">
             <el-form>
               <codemirror ref="cmEditor" v-model="props.row.returnLog" class="code-mirror" :options="cmOptions" />
@@ -18,16 +18,16 @@
           </template>
         </el-table-column >
         <!-- 展开 end -->
-        <el-table-column type="index" min-width="2%"/>
-        <el-table-column prop="serverName" :label="$t('server.server_name')" min-width="11%" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="ip" :label="'IP'" min-width="10%" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="ruleName" :label="$t('server.rule_name')" min-width="17%" show-overflow-tooltip></el-table-column>
-        <el-table-column min-width="8%" :label="$t('server.severity')" column-key="severity">
+        <el-table-column type="index" min-width="50"/>
+        <el-table-column prop="serverName" :label="$t('server.server_name')" min-width="140" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="ip" :label="'IP'" min-width="130" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="ruleName" :label="$t('server.rule_name')" min-width="180" show-overflow-tooltip></el-table-column>
+        <el-table-column min-width="120" :label="$t('server.severity')" column-key="severity">
           <template v-slot:default="{row}">
             <rule-type :row="row"/>
           </template>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('server.result_status')" min-width="12%" prop="resultStatus" sortable show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" :label="$t('server.result_status')" min-width="130" prop="resultStatus" sortable show-overflow-tooltip>
           <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
@@ -47,18 +47,18 @@
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
-        <el-table-column prop="isSeverity" :label="$t('server.is_severity')" min-width="10%" show-overflow-tooltip v-slot:default="scope" sortable>
+        <el-table-column prop="isSeverity" :label="$t('server.is_severity')" min-width="120" show-overflow-tooltip v-slot:default="scope" sortable>
           <el-tooltip class="item" effect="dark" :content="scope.row.returnLog" placement="top">
             <span v-if="scope.row.isSeverity" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
             <span v-if="!scope.row.isSeverity" style="color: #f84846">{{ $t('resource.risky') }}</span>
           </el-tooltip>
         </el-table-column>
-        <el-table-column prop="updateTime" min-width="15%" :label="$t('server.last_modified')" sortable>
+        <el-table-column prop="updateTime" min-width="160" :label="$t('server.last_modified')" sortable>
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="10%" :label="$t('commons.operating')">
+        <el-table-column min-width="110" :label="$t('commons.operating')">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>

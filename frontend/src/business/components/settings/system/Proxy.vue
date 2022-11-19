@@ -8,22 +8,22 @@
       </template>
 
       <el-table border class="adjust-table" :data="tableData" style="width: 100%" :row-class-name="tableRowClassName">
-        <el-table-column type="index" min-width="5%"/>
-        <el-table-column prop="proxyType" :label="$t('commons.proxy_type')" min-width="10%"/>
-        <el-table-column prop="proxyIp" label="Proxy IP" min-width="15%"/>
-        <el-table-column prop="proxyPort" :label="$t('commons.proxy_port')" min-width="10%"/>
-        <el-table-column prop="proxyName" :label="$t('commons.proxy_name')" min-width="15%"/>
-        <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="15%">
+        <el-table-column type="index" min-width="50"/>
+        <el-table-column prop="proxyType" :label="$t('commons.proxy_type')" min-width="100"/>
+        <el-table-column prop="proxyIp" label="Proxy IP" min-width="100"/>
+        <el-table-column prop="proxyPort" :label="$t('commons.proxy_port')" min-width="100"/>
+        <el-table-column prop="proxyName" :label="$t('commons.proxy_name')" min-width="100"/>
+        <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="150">
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="updateTime" :label="$t('commons.update_time')" min-width="15%">
+        <el-table-column prop="updateTime" :label="$t('commons.update_time')" min-width="150">
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('commons.operating')" fixed="right" min-width="15%">
+        <el-table-column :label="$t('commons.operating')" fixed="right" min-width="100">
           <template v-slot:default="scope">
             <table-operator @editClick="edit(scope.row)" @deleteClick="del(scope.row)">
               <template v-slot:behind>

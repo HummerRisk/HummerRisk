@@ -27,8 +27,8 @@
                 :row-class-name="tableRowClassName"
                 @sort-change="sort"
                 @filter-change="filter">
-        <el-table-column type="index" min-width="2%"/>
-        <el-table-column v-slot:default="scope" :label="$t('resource.i18n_task_type')" min-width="15%"
+        <el-table-column type="index" min-width="50"/>
+        <el-table-column v-slot:default="scope" :label="$t('resource.i18n_task_type')" min-width="150"
                          show-overflow-tooltip>
                 <span>
                   <template v-for="tag in tagSelect">
@@ -41,17 +41,17 @@
                     {{ scope.row.resourceTypes }}
                 </span>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="18%" show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="180" show-overflow-tooltip>
           <el-link type="primary" :underline="false" class="md-primary text-click" @click="showTaskDetail(scope.row)">
             {{ scope.row.taskName }}
           </el-link>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="8%"
+        <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="100"
                          :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
                          show-overflow-tooltip>
           <severity-type :row="scope.row"></severity-type>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="12%" prop="status" sortable
+        <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="130" prop="status" sortable
                          show-overflow-tooltip>
           <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary"
                      v-if="scope.row.status === 'UNCHECKED'">
@@ -79,7 +79,7 @@
           </el-button>
         </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable
-                         show-overflow-tooltip min-width="6%">
+                         show-overflow-tooltip min-width="90">
           <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
             <span v-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
             <span v-if="(scope.row.returnSum != null) && (scope.row.returnSum == 0)">
@@ -93,19 +93,19 @@
           </el-tooltip>
         </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" sortable
-                         show-overflow-tooltip min-width="8%">
+                         show-overflow-tooltip min-width="110">
           <span v-if="scope.row.returnSum == 0" style="color: #46ad59;">{{ $t('resource.i18n_compliance_true') }}</span>
           <span v-else-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)"
                 style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
           <span v-else-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
         </el-table-column>
-        <el-table-column prop="createTime" min-width="14%" :label="$t('account.update_time')" sortable
+        <el-table-column prop="createTime" min-width="160" :label="$t('account.update_time')" sortable
                          show-overflow-tooltip>
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
+        <el-table-column min-width="100" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
           <template v-slot:default="scope">
             <table-operators :buttons="rule_buttons" :row="scope.row"/>
           </template>

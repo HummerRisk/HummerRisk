@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <span>
     <span v-if="row.severity === 'CriticalRisk'" style="color: #8a1917;">
     {{ $t('rule.CriticalRisk') }}
     </span>
@@ -15,7 +15,7 @@
     <span v-else-if="row.severity === ''">
       N/A
     </span>
-  </div>
+  </span>
 </template>
 
 <script>

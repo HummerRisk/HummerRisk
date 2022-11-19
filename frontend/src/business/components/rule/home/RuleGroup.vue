@@ -79,10 +79,10 @@
 
         <el-table v-if="listStatus === 1" :border="true" :stripe="true" :data="tableData" class="adjust-table table-content" @sort-change="sort"
                   @filter-change="filter" @select-all="select" @select="select">
-          <el-table-column type="index" min-width="5%"/>
-          <el-table-column prop="name" :label="$t('rule.rule_set_name')" min-width="15%" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="description" :label="$t('commons.description')" min-width="48%" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" min-width="10%" show-overflow-tooltip>
+          <el-table-column type="index" min-width="50"/>
+          <el-table-column prop="name" :label="$t('rule.rule_set_name')" min-width="180" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="description" :label="$t('commons.description')" min-width="600" show-overflow-tooltip></el-table-column>
+          <el-table-column :label="$t('account.cloud_platform')" min-width="180" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -90,7 +90,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('rule.tag_flag')" min-width="9%" show-overflow-tooltip>
+          <el-table-column :label="$t('rule.tag_flag')" min-width="140" show-overflow-tooltip>
             <template v-slot:default="scope">
               <el-tag size="mini" type="danger" v-if="scope.row.flag === true">
                 {{ $t('rule.tag_flag_true') }}
@@ -100,7 +100,7 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column min-width="20%" :label="$t('commons.operating')" fixed="right">
+          <el-table-column min-width="200" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators v-if="!!scope.row.flag" :buttons="buttonsN" :row="scope.row"/>
               <table-operators v-if="!scope.row.flag" :buttons="buttons" :row="scope.row"/>

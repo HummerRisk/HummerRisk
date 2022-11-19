@@ -11,16 +11,17 @@
 
       <!--Personal information menu-->
       <el-table border class="adjust-table" :data="tableData" style="width: 100%">
-        <el-table-column prop="id" label="ID" min-width="15%"/>
-        <el-table-column prop="name" :label="$t('commons.username')" min-width="15%"/>
-        <el-table-column prop="email" :label="$t('commons.email')" min-width="20%"/>
-        <el-table-column prop="phone" :label="$t('commons.phone')" min-width="15%"/>
-        <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="20%">
+        <el-table-column type="index" min-width="50"/>
+        <el-table-column prop="id" label="ID" min-width="100"/>
+        <el-table-column prop="name" :label="$t('commons.username')" min-width="110"/>
+        <el-table-column prop="email" :label="$t('commons.email')" min-width="200"/>
+        <el-table-column prop="phone" :label="$t('commons.phone')" min-width="150"/>
+        <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="160">
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('commons.operating')" fixed="right" min-width="15%">
+        <el-table-column :label="$t('commons.operating')" fixed="right" min-width="100">
           <template v-slot:default="scope">
             <table-operator-button :tip="$t('member.edit_information')" icon="el-icon-edit"
                                       type="primary" @exec="edit(scope.row)"/>

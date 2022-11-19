@@ -9,15 +9,16 @@
       </template>
 
       <el-table border class="adjust-table" :data="tableData" style="width: 100%" :row-class-name="tableRowClassName">
-        <el-table-column prop="id" label="ID" min-width="10%"/>
-        <el-table-column prop="name" :label="$t('commons.name')" min-width="10%"/>
-        <el-table-column :label="$t('commons.role')" min-width="10%">
+        <el-table-column type="index" min-width="50"/>
+        <el-table-column prop="id" label="ID" min-width="100"/>
+        <el-table-column prop="name" :label="$t('commons.name')" min-width="110"/>
+        <el-table-column :label="$t('commons.role')" min-width="110">
           <template v-slot:default="scope">
             <roles-tag :roles="scope.row.roles"/>
           </template>
         </el-table-column>
-        <el-table-column prop="email" :label="$t('commons.email')" min-width="20%"/>
-        <el-table-column prop="status" :label="$t('commons.status')" min-width="10%">
+        <el-table-column prop="email" :label="$t('commons.email')" min-width="200"/>
+        <el-table-column prop="status" :label="$t('commons.status')" min-width="100">
           <template v-slot:default="scope">
             <el-switch v-model="scope.row.status"
                        active-color="#13ce66"
@@ -27,13 +28,13 @@
                        @change="changeSwitch(scope.row)"/>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="15%">
+        <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="160">
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="source" :label="$t('user.source')" min-width="10%"/>
-        <el-table-column :label="$t('commons.operating')" fixed="right" min-width="15%">
+        <el-table-column prop="source" :label="$t('user.source')" min-width="120"/>
+        <el-table-column :label="$t('commons.operating')" fixed="right" min-width="150">
           <template v-slot:default="scope">
             <table-operator @editClick="edit(scope.row)" @deleteClick="del(scope.row)">
               <template v-slot:behind>

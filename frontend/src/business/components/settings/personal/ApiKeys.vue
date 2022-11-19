@@ -16,7 +16,8 @@
       </template>
 
       <el-table border class="adjust-table" :data="tableData" style="width: 100%">
-        <el-table-column prop="accessKey" label="Access Key" min-width="20%">
+        <el-table-column type="index" min-width="50"/>
+        <el-table-column prop="accessKey" label="Access Key" min-width="200">
           <template v-slot:default="scope">
             <div class="variable-combine">
               <div class="variable">{{ scope.row.accessKey }}</div>
@@ -29,12 +30,12 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="secretKey" label="Secret Key" min-width="20%">
+        <el-table-column prop="secretKey" label="Secret Key" min-width="150">
           <template v-slot:default="scope">
             <el-link type="primary" @click="showSecretKey(scope.row)">{{ $t('commons.show') }}</el-link>
           </template>
         </el-table-column>
-        <el-table-column prop="status" :label="$t('commons.status')" min-width="20%">
+        <el-table-column prop="status" :label="$t('commons.status')" min-width="110">
           <template v-slot:default="scope">
             <el-switch v-model="scope.row.status"
                        active-color="#13ce66"
@@ -44,12 +45,12 @@
                        @change="changeSwitch(scope.row)"/>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="20%">
+        <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="160">
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('commons.operating')" fixed="right" min-width="20%">
+        <el-table-column :label="$t('commons.operating')" fixed="right" min-width="80">
           <template v-slot:default="scope">
             <table-operator-button :tip="$t('commons.delete')" icon="el-icon-delete"
                                       type="danger" @exec="deleteApiKey(scope.row)"/>

@@ -12,9 +12,9 @@
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
                 :row-class-name="tableRowClassName"
                 @filter-change="filter">
-        <el-table-column type="index" min-width="2%"/>
-        <el-table-column prop="name" :label="$t('oss.name')" min-width="10%" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('account.cloud_platform')" min-width="12%" show-overflow-tooltip>
+        <el-table-column type="index" min-width="50"/>
+        <el-table-column prop="name" :label="$t('oss.name')" min-width="150" show-overflow-tooltip></el-table-column>
+        <el-table-column :label="$t('account.cloud_platform')" min-width="150" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -22,7 +22,7 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" min-width="8%" :label="$t('account.status')"
+        <el-table-column prop="status" min-width="120" :label="$t('account.status')"
                          column-key="status"
                          :filters="statusFilters"
                          :filter-method="filterStatus">
@@ -40,7 +40,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('event.sync_status')" min-width="12%" prop="status" sortable
+        <el-table-column v-slot:default="scope" :label="$t('event.sync_status')" min-width="170" prop="status" sortable
                          show-overflow-tooltip>
           <el-button @click="showLog(scope.row)" plain size="medium" type="primary"
                      v-if="scope.row.syncStatus === 'UNCHECKED'">
@@ -67,27 +67,27 @@
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('account.create_time')" sortable
-                         prop="createTime">
-          <template v-slot:default="scope">
-            <span>{{ scope.row.createTime | timestampFormatDate }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="15%" :label="$t('account.update_time')" sortable
-                         prop="updateTime">
-          <template v-slot:default="scope">
-            <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="userName" :label="$t('account.creator')" min-width="7%" show-overflow-tooltip/>
-        <el-table-column :label="$t('oss.bucket')" min-width="8%">
+        <el-table-column :label="$t('oss.bucket')" min-width="110">
           <template v-slot:default="scope">
             <el-link type="primary" @click="showBuckets(scope.row)">
               {{ scope.row.sum }}
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="180" :label="$t('account.create_time')" sortable
+                         prop="createTime">
+          <template v-slot:default="scope">
+            <span>{{ scope.row.createTime | timestampFormatDate }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="180" :label="$t('account.update_time')" sortable
+                         prop="updateTime">
+          <template v-slot:default="scope">
+            <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="userName" :label="$t('account.creator')" min-width="110" show-overflow-tooltip/>
+        <el-table-column min-width="200" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>

@@ -9,9 +9,9 @@
         </template>
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
-          <el-table-column type="index" min-width="2%"/>
-          <el-table-column prop="name" :label="$t('account.task_input_name')" min-width="10%" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="qzType" :label="$t('account.choose_qztype')" min-width="9%" show-overflow-tooltip>
+          <el-table-column type="index" min-width="50"/>
+          <el-table-column prop="name" :label="$t('account.task_input_name')" min-width="150" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="qzType" :label="$t('account.choose_qztype')" min-width="120" show-overflow-tooltip>
             <template v-slot:default="scope">
               <el-link type="primary" @click="showAccount(scope.row)">
                 <span v-if="scope.row.qzType==='ACCOUNT'">
@@ -23,20 +23,20 @@
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="cron" :label="$t('account.cron_expression')" min-width="8%" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="cronDesc" :label="$t('account.cron_expression_desc')" min-width="12%" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="prevFireTime" :label="$t('account.prev_fire_time')" min-width="12%" sortable>
+          <el-table-column prop="cron" :label="$t('account.cron_expression')" min-width="130" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="cronDesc" :label="$t('account.cron_expression_desc')" min-width="180" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="prevFireTime" :label="$t('account.prev_fire_time')" min-width="200" sortable>
             <template v-slot:default="scope">
               <span v-if="scope.row.prevFireTime"><i class="el-icon-time"></i> {{ scope.row.prevFireTime | timestampFormatDate }}</span>
               <span v-if="!scope.row.prevFireTime"><i class="el-icon-time"></i> {{ '--' }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="lastFireTime" :label="$t('account.last_fire_time')" min-width="13%" sortable>
+          <el-table-column prop="lastFireTime" :label="$t('account.last_fire_time')" min-width="200" sortable>
             <template v-slot:default="scope">
               <span><i class="el-icon-time"></i> {{ scope.row.lastFireTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="status" min-width="10%" :label="$t('account.task_status')"
+          <el-table-column prop="status" min-width="150" :label="$t('account.task_status')"
                            column-key="status"
                            :filters="statusFilters"
                            :filter-method="filterStatus">
@@ -52,12 +52,12 @@
               </el-button>
             </template>
           </el-table-column>
-          <el-table-column min-width="12%" :label="$t('account.create_time')" sortable prop="createTime">
+          <el-table-column min-width="200" :label="$t('account.create_time')" sortable prop="createTime">
             <template v-slot:default="scope">
               <span><i class="el-icon-time"></i> {{ scope.row.createTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column min-width="11%" :label="$t('commons.operating')" fixed="right">
+          <el-table-column min-width="150" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators v-if="scope.row.status === 'PAUSE'" :buttons="buttons1" :row="scope.row"/>
               <table-operators v-if="scope.row.status != 'PAUSE'" :buttons="buttons2" :row="scope.row"/>
