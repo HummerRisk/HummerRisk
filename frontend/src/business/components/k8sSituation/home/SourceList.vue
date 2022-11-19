@@ -194,6 +194,22 @@
         <el-tab-pane label="JSON" name="json">
           <codemirror ref="cmEditor" v-model="string2JsonFormat" class="code-mirror" :options="cmOptions" />
         </el-tab-pane>
+        <el-tab-pane v-if="showImage" label="IMAGE" name="image">
+          <el-table border :data="imageData" class="adjust-table table-content" @sort-change="sort">
+            <el-table-column type="index" min-width="3%"/>
+            <el-table-column prop="image" :label="$t('image.image_url')" min-width="60%" show-overflow-tooltip sortable></el-table-column>
+            <el-table-column prop="risk" :label="$t('resource.risk')" min-width="10%" show-overflow-tooltip sortable v-slot:default="scope">
+              <span v-if="scope.row.risk=='yes'" style="color: red;">{{ $t('resource.risky') }}</span>
+              <span v-if="scope.row.risk=='no'" style="color: #25a23a;">{{ $t('resource.risk_free') }}</span>
+            </el-table-column>
+            <el-table-column min-width="28%" :label="$t('k8s.sync_time')" sortable
+                             prop="createTime">
+              <template v-slot:default="scope">
+                <span>{{ scope.row.createTime | timestampFormatDate }}</span>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
       </el-tabs>
     </el-drawer>
     <!--json-->
@@ -244,6 +260,8 @@ export default {
         indentWithTabs: true,
       },
       activeName: 'yaml',
+      imageData: [],
+      showImage: false,
     }
   },
   props: {
@@ -314,6 +332,14 @@ export default {
       this.string2YamlFormat = item.sourceYaml;
       this.string2JsonFormat = item.sourceJson;
       this.visible = true;
+      let data = ["DaemonSet", "Deployment", "StatefulSet", "Pod", "Job", "CronJob"];
+      if (data.includes(item.sourceType)) {
+        this.showImage = true;
+        this.$get("/k8s/sourceImages/" + item.id, response => {
+          this.imageData = response.data;
+        });
+      }
+
     },
     handleClick(tab, event) {
       this.activeName = tab.name;

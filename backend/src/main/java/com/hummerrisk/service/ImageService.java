@@ -5,14 +5,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
-import com.hummerrisk.base.mapper.ext.ExtImageMapper;
-import com.hummerrisk.base.mapper.ext.ExtImageRepoMapper;
-import com.hummerrisk.base.mapper.ext.ExtImageResultMapper;
-import com.hummerrisk.base.mapper.ext.ExtImageRuleMapper;
+import com.hummerrisk.base.mapper.ext.*;
 import com.hummerrisk.commons.constants.*;
+import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.image.*;
 import com.hummerrisk.dto.*;
+import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.service.impl.ExecEngineFactoryImp;
 import com.hummerrisk.service.impl.IProvider;
 import org.apache.commons.lang3.StringUtils;
@@ -68,6 +67,8 @@ public class ImageService {
     @Resource
     private ImageRepoItemMapper imageRepoItemMapper;
     @Resource
+    private ExtImageRepoItemMapper extImageRepoItemMapper;
+    @Resource
     private ImageRepoSyncLogMapper imageRepoSyncLogMapper;
     @Resource
     private ImageResultItemMapper imageResultItemMapper;
@@ -77,6 +78,10 @@ public class ImageService {
     private HistoryImageResultMapper historyImageResultMapper;
     @Resource
     private SystemParameterService systemParameterService;
+    @Resource
+    private SbomMapper sbomMapper;
+    @Resource
+    private SbomVersionMapper sbomVersionMapper;
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
@@ -88,10 +93,8 @@ public class ImageService {
         return imageRepoMapper.selectByExample(example);
     }
 
-    public List<ImageRepoItem> repoItemList(String id) {
-        ImageRepoItemExample example = new ImageRepoItemExample();
-        example.createCriteria().andRepoIdEqualTo(id);
-        List<ImageRepoItem> repoItemList = imageRepoItemMapper.selectByExample(example);
+    public List<ImageRepoItemDTO> repoItemList(ImageRepoItemRequest request) {
+        List<ImageRepoItemDTO> repoItemList = extImageRepoItemMapper.repoItemList(request);
         return repoItemList;
     }
 
@@ -102,9 +105,8 @@ public class ImageService {
         imageRepo.setCreateTime(System.currentTimeMillis());
         imageRepo.setUpdateTime(System.currentTimeMillis());
 
-        IProvider cp = execEngineFactoryImp.getProvider("imageProvider");
-        String resultStr = (String) execEngineFactoryImp.executeMethod(cp, "dockerLogin", imageRepo);
-        if (resultStr.contains("Succeeded")) {
+        boolean result = syncImages(imageRepo);
+        if (result) {
             imageRepo.setStatus("VALID");
         } else {
             imageRepo.setStatus("INVALID");
@@ -113,14 +115,6 @@ public class ImageService {
         OperationLogService.log(SessionUtils.getUser(), imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image_repo");
         imageRepoMapper.insertSelective(imageRepo);
 
-        commonThreadPool.addTask(() -> {
-            try {
-                syncImages(imageRepo);
-            } catch (Exception e) {
-                LogUtil.error(e.getMessage());
-            } finally {
-            }
-        });
         return imageRepo;
     }
 
@@ -146,11 +140,11 @@ public class ImageService {
                 Map<String, String> header = new HashMap<>();
                 header.put("Accept", CloudNativeConstants.Accept);
                 header.put("Authorization", "Basic " + Base64.getUrlEncoder().encodeToString((imageRepo.getUserName() + ":" + imageRepo.getPassword()).getBytes()));
-                int version =  this.getHarborVersion(path);
-                if(version == 1){
-                    i = this.saveHarborV1(path,header,imageRepo);
-                }else if(version == 2){
-                    i = this.saveHarborV2(path,header,imageRepo);
+                int version = this.getHarborVersion(path);
+                if (version == 1) {
+                    i = this.saveHarborV1(path, header, imageRepo);
+                } else if (version == 2) {
+                    i = this.saveHarborV2(path, header, imageRepo);
                 }
 
             } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "dockerhub.png")) {
@@ -223,7 +217,7 @@ public class ImageService {
                     }
                 }
             } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "other.png")) {
-
+                return true;
             }
             imageRepoSyncLog.setRepoId(imageRepo.getId());
             imageRepoSyncLog.setCreateTime(System.currentTimeMillis());
@@ -252,10 +246,9 @@ public class ImageService {
     public ImageRepo editImageRepo(ImageRepo imageRepo) throws Exception {
         imageRepo.setUpdateTime(System.currentTimeMillis());
 
-        IProvider cp = execEngineFactoryImp.getProvider("imageProvider");
-        String resultStr = (String) execEngineFactoryImp.executeMethod(cp, "dockerLogin", imageRepo);
+        boolean result = syncImages(imageRepo);
 
-        if (resultStr.contains("Succeeded")) {
+        if (result) {
             imageRepo.setStatus("VALID");
         } else {
             imageRepo.setStatus("INVALID");
@@ -264,14 +257,6 @@ public class ImageService {
         OperationLogService.log(SessionUtils.getUser(), imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image_repo");
         imageRepoMapper.updateByPrimaryKeySelective(imageRepo);
 
-        commonThreadPool.addTask(() -> {
-            try {
-                syncImages(imageRepo);
-            } catch (Exception e) {
-                LogUtil.error(e.getMessage());
-            } finally {
-            }
-        });
         return imageRepo;
     }
 
@@ -678,7 +663,7 @@ public class ImageService {
 
     public List<ImageResultItemWithBLOBs> resultItemList(ImageResultItem resourceRequest) {
         ImageResultItemExample example = new ImageResultItemExample();
-        if(resourceRequest.getPkgName()!=null && !StringUtils.isBlank(resourceRequest.getPkgName())) {
+        if (resourceRequest.getPkgName() != null && !StringUtils.isBlank(resourceRequest.getPkgName())) {
             example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId()).andPkgNameLike("%" + resourceRequest.getPkgName() + "%");
         } else {
             example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
@@ -737,6 +722,24 @@ public class ImageService {
         return "i18n_no_data";
     }
 
+    public void scanImagesRepo(List<String> ids) {
+        ids.forEach(id -> {
+            try {
+                ImageRepoItem imageRepoItem = imageRepoItemMapper.selectByPrimaryKey(id);
+                ScanImageRepoRequest request = BeanUtils.copyBean(new ScanImageRepoRequest(), imageRepoItem);
+                Sbom sbom = sbomMapper.selectByExample(null).get(0);
+                request.setSbomId(sbom.getId());
+                SbomVersionExample example = new SbomVersionExample();
+                example.createCriteria().andSbomIdEqualTo(sbom.getId());
+                SbomVersion sbomVersion = sbomVersionMapper.selectByExample(example).get(0);
+                request.setSbomVersionId(sbomVersion.getId());
+                request.setName(imageRepoItem.getPath());
+                scanImageRepo(request);
+            } catch (Exception e) {
+                throw new HRException(e.getMessage());
+            }
+        });
+    }
     public void scanImageRepo(ScanImageRepoRequest request) throws Exception {
         try {
             Image image = BeanUtils.copyBean(new Image(), request);
@@ -779,8 +782,8 @@ public class ImageService {
         }
     }
 
-    public int saveHarborV2(String path,Map<String,String> header,ImageRepo imageRepo) throws Exception {
-        int i =0 ;
+    public int saveHarborV2(String path, Map<String, String> header, ImageRepo imageRepo) throws Exception {
+        int i = 0;
         String projectStr = HttpClientUtil.HttpGet(path + "/api/v2.0/projects/", header);
         JSONArray projects = JSON.parseArray(projectStr);
         for (Object o : projects) {
@@ -827,17 +830,17 @@ public class ImageService {
         return i;
     }
 
-    public int saveHarborV1(String path,Map<String,String> header,ImageRepo imageRepo) throws Exception {
-        int i =0 ;
+    public int saveHarborV1(String path, Map<String, String> header, ImageRepo imageRepo) throws Exception {
+        int i = 0;
         String projectStr = HttpClientUtil.HttpGet(path + "/api/projects/", header);
-        if("null".equals(projectStr)){
+        if ("null".equals(projectStr)) {
             return i;
         }
         JSONArray projects = JSON.parseArray(projectStr);
         for (Object o : projects) {
             JSONObject project = (JSONObject) o;
             String projectName = project.getString("name");
-            String repositoriesStr = HttpClientUtil.HttpGet(path + "/api/repositories?project_id="+project.getString("project_id"), header);
+            String repositoriesStr = HttpClientUtil.HttpGet(path + "/api/repositories?project_id=" + project.getString("project_id"), header);
             JSONArray repositories = JSON.parseArray(repositoriesStr);
             for (Object repository : repositories) {
                 JSONObject rep = (JSONObject) repository;
@@ -845,7 +848,7 @@ public class ImageService {
                 if (repName.indexOf("/") > 0) {
                     repName = repName.split("/", -1)[1];
                 }
-                String artifactsStr = HttpClientUtil.HttpGet(path + "/api/repositories/"+rep.getString("name")+"/tags", header);
+                String artifactsStr = HttpClientUtil.HttpGet(path + "/api/repositories/" + rep.getString("name") + "/tags", header);
                 JSONArray artifacts = JSON.parseArray(artifactsStr);
                 for (Object artifact : artifacts) {
                     JSONObject arti = (JSONObject) artifact;
@@ -873,7 +876,7 @@ public class ImageService {
         return i;
     }
 
-    private int getHarborVersion(String path){
+    private int getHarborVersion(String path) {
         Map<String, String> header = new HashMap<>();
         header.put("Accept", CloudNativeConstants.Accept);
         try {

@@ -2,13 +2,14 @@
 CREATE TABLE IF NOT EXISTS `oss`
 (
     `id`                         varchar(50)         NOT NULL COMMENT 'ID',
-    `name`                       varchar(128)        DEFAULT NULL UNIQUE COMMENT '云账号名称',
+    `name`                       varchar(128)        DEFAULT NULL UNIQUE COMMENT '对象存储名称',
     `credential`                 longtext            DEFAULT NULL COMMENT '云账号凭证',
     `endpoint`                   varchar(256)        DEFAULT NULL COMMENT 'Endpoint',
     `plugin_id`                  varchar(50)         DEFAULT NULL COMMENT '插件ID',
     `plugin_name`                varchar(100)        DEFAULT NULL COMMENT '插件名称',
     `plugin_icon`                varchar(256)        DEFAULT NULL COMMENT '插件图标',
-    `status`                     varchar(50)         DEFAULT 'APPROVED' COMMENT '同步状态',
+    `status`                     varchar(50)         DEFAULT NULL COMMENT '云账号状态',
+    `sync_status`                varchar(50)         DEFAULT 'APPROVED' COMMENT '同步状态',
     `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
     `creator`                    varchar(128)        DEFAULT NULL COMMENT '创建人',
@@ -74,8 +75,8 @@ CREATE TABLE IF NOT EXISTS `cloud_native_source_image` (
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
-ALTER TABLE `image_result_item` ADD `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';
+ALTER TABLE `image_result_item` MODIFY column `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';
 ALTER TABLE `cloud_native_result_item` ADD `image` varchar(512) DEFAULT NULL COMMENT 'image';
-ALTER TABLE `code_result_item` ADD `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';
-ALTER TABLE `file_system_result_item` ADD `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';
+ALTER TABLE `code_result_item` MODIFY column `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';
+ALTER TABLE `file_system_result_item` MODIFY column `pkg_name` varchar(256) DEFAULT NULL COMMENT 'PkgName';
 ALTER TABLE `cloud_event` MODIFY column `user_identity` varchar(1024) DEFAULT NULL COMMENT '用户认证';

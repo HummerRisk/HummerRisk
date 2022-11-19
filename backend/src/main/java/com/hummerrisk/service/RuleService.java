@@ -664,7 +664,7 @@ public class RuleService {
                 }
                 return cloudTask.getId();
             } else {
-                historyService.deleyeScanTaskHistory(scanId);
+                historyService.deleteScanTaskHistory(scanId);
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
             }
         } catch (Exception e) {

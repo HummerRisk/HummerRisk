@@ -1,32 +1,47 @@
 package com.hummerrisk.oss.service;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.hummerrisk.base.domain.*;
-import com.hummerrisk.base.mapper.AccountMapper;
-import com.hummerrisk.base.mapper.OssBucketMapper;
-import com.hummerrisk.base.mapper.OssLogMapper;
-import com.hummerrisk.base.mapper.OssMapper;
+import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtOssMapper;
 import com.hummerrisk.commons.constants.CloudAccountConstants;
 import com.hummerrisk.commons.constants.CloudTaskConstants;
+import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
+import com.hummerrisk.controller.request.excel.ExcelExportRequest;
+import com.hummerrisk.controller.request.resource.ResourceRequest;
+import com.hummerrisk.controller.request.rule.RuleGroupRequest;
+import com.hummerrisk.dto.ExportDTO;
+import com.hummerrisk.dto.ResourceDTO;
+import com.hummerrisk.dto.RuleGroupDTO;
+import com.hummerrisk.dto.ValidateDTO;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.oss.config.OssManager;
 import com.hummerrisk.oss.constants.OSSConstants;
+import com.hummerrisk.oss.controller.request.OssBucketRequest;
 import com.hummerrisk.oss.controller.request.OssRequest;
-import com.hummerrisk.oss.dto.BucketObjectDTO;
-import com.hummerrisk.oss.dto.OssBucketDTO;
-import com.hummerrisk.oss.dto.OssDTO;
+import com.hummerrisk.oss.dto.*;
 import com.hummerrisk.oss.provider.OssProvider;
 import com.hummerrisk.service.AccountService;
 import com.hummerrisk.service.OperationLogService;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.FilterInputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author harris
@@ -49,8 +64,19 @@ public class OssService {
     private CommonThreadPool commonThreadPool;
     @Resource
     private OssLogMapper ossLogMapper;
+    @Resource
+    private ProxyMapper proxyMapper;
+    @Resource
+    private RuleGroupMapper ruleGroupMapper;
+    @Resource
+    private CloudTaskMapper cloudTaskMapper;
 
+    private static final String BASE_CANNED_ACL_TYPE = "cannedACL";
+    private static final String BASE_STORAGE_CLASS_TYPE = "storageClass";
+    private static final String BASE_REGION_DIC = "support/regions/";
     private static final String BASE_CREDENTIAL_DIC = "support/credential/";
+    private static final String BASE_CANNED_ACL_DIC = "support/cannedACL/";
+    private static final String BASE_STORAGE_CLASS_DIC = "support/storageClass/";
     private static final String JSON_EXTENSION = ".json";
 
     public List<OssDTO> ossList(OssRequest request) {
@@ -59,6 +85,41 @@ public class OssService {
 
     public List<OssBucketDTO> ossBucketList(OssRequest request) {
         return extOssMapper.ossBucketList(request);
+    }
+
+    public ValidateDTO validate(String id) {
+        OssWithBLOBs oss = ossMapper.selectByPrimaryKey(id);
+        //检验账号的有效性
+        ValidateDTO valid = validateAccount(oss);
+        if (valid.isFlag()) {
+            oss.setStatus(CloudAccountConstants.Status.VALID.name());
+        } else {
+            oss.setStatus(CloudAccountConstants.Status.INVALID.name());
+        }
+        ossMapper.updateByPrimaryKeySelective(oss);
+        return valid;
+    }
+
+    private ValidateDTO validateAccount(OssWithBLOBs account) {
+        ValidateDTO validateDTO = new ValidateDTO();
+        try {
+            Proxy proxy = new Proxy();
+            if (account.getProxyId() != null) proxy = proxyMapper.selectByPrimaryKey(account.getProxyId());
+            validateDTO.setFlag(PlatformUtils.validateCredential(BeanUtils.copyBean(new AccountWithBLOBs(), account), proxy));
+            validateDTO.setMessage(String.format("Verification oss account status: [%s], oss account: [%s], plugin: [%s]", validateDTO.isFlag(), account.getName(), account.getPluginName()));
+            return validateDTO;
+        } catch (Exception e) {
+            validateDTO.setMessage(String.format("HRException in verifying oss account, oss account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
+            validateDTO.setFlag(false);
+            LogUtil.error(String.format("HRException in verifying oss account, oss account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()), e);
+            return validateDTO;
+        }
+    }
+
+    public List<OssWithBLOBs> allList() {
+        OssExample example = new OssExample();
+        example.createCriteria().andStatusEqualTo(CloudAccountConstants.Status.VALID.name());
+        return ossMapper.selectByExampleWithBLOBs(example);
     }
 
     public List<AccountWithBLOBs> getCloudAccountList() {
@@ -103,18 +164,19 @@ public class OssService {
             request.setCreateTime(System.currentTimeMillis());
             request.setUpdateTime(System.currentTimeMillis());
             request.setCreator(SessionUtils.getUserId());
-            request.setStatus(CloudTaskConstants.TASK_STATUS.APPROVED.name());
+            request.setSyncStatus(CloudTaskConstants.TASK_STATUS.APPROVED.name());
             ossMapper.insertSelective(request);
+            validate(request.getId());
         }
         return request;
     }
 
     public OssWithBLOBs editOss(OssWithBLOBs request) throws Exception {
-        request.setCreateTime(System.currentTimeMillis());
         request.setUpdateTime(System.currentTimeMillis());
         request.setCreator(SessionUtils.getUserId());
-        request.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());
+        request.setSyncStatus(CloudTaskConstants.TASK_STATUS.APPROVED.name());
         ossMapper.updateByPrimaryKeySelective(request);
+        validate(request.getId());
         return request;
     }
 
@@ -133,12 +195,12 @@ public class OssService {
 
     public void batch(String id) throws Exception {
         OssWithBLOBs oss = ossMapper.selectByPrimaryKey(id);
-        oss.setStatus(OSSConstants.SYNC_STATUS.APPROVED.name());
+        oss.setSyncStatus(OSSConstants.SYNC_STATUS.APPROVED.name());
         ossMapper.updateByPrimaryKeySelective(oss);
         OssLogExample example = new OssLogExample();
         example.createCriteria().andOssIdEqualTo(id);
         ossLogMapper.deleteByExample(example);
-        saveLog(oss.getId(), "i18n_start_oss_sync", "", true, 0);
+        saveLog(id, "i18n_start_oss_sync", "", true, 0);
     }
 
     public void syncBatch(String id) throws Exception {
@@ -146,7 +208,7 @@ public class OssService {
         try {
             syncResource(oss);
         } catch (Exception e) {
-            oss.setStatus(OSSConstants.SYNC_STATUS.ERROR.name());
+            oss.setSyncStatus(OSSConstants.SYNC_STATUS.ERROR.name());
             ossMapper.updateByPrimaryKeySelective(oss);
             saveLog(oss.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, 0);
             LogUtil.error(String.format("Failed to synchronize cloud account: %s", oss.getName()), e);
@@ -155,7 +217,7 @@ public class OssService {
 
     private void syncResource(OssWithBLOBs oss) throws Exception {
         if (!accountService.validate(oss.getId()).isFlag()) {
-            oss.setStatus(OSSConstants.SYNC_STATUS.ERROR.name());
+            oss.setSyncStatus(OSSConstants.SYNC_STATUS.ERROR.name());
             ossMapper.updateByPrimaryKeySelective(oss);
             saveLog(oss.getId(), "i18n_operation_ex" + ": " + "failed_oss", "failed_oss", false, 0);
             return;
@@ -170,7 +232,7 @@ public class OssService {
             try {
                 doSyncBucketInfo(oss);
             } catch (Exception e) {
-                oss.setStatus(OSSConstants.SYNC_STATUS.ERROR.name());
+                oss.setSyncStatus(OSSConstants.SYNC_STATUS.ERROR.name());
                 oss.setUpdateTime(System.currentTimeMillis());
                 ossMapper.updateByPrimaryKeySelective(oss);
                 saveLog(oss.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, 0);
@@ -180,7 +242,7 @@ public class OssService {
 
     public void doSyncBucketInfo(OssWithBLOBs oss) throws Exception {
         Integer sum = fetchOssBucketList(oss);
-        oss.setStatus(OSSConstants.SYNC_STATUS.FINISHED.name());
+        oss.setSyncStatus(OSSConstants.SYNC_STATUS.FINISHED.name());
         oss.setUpdateTime(System.currentTimeMillis());
         oss.setSum(sum);
         ossMapper.updateByPrimaryKeySelective(oss);
@@ -268,7 +330,6 @@ public class OssService {
         OssBucket bucket = getBucketByPrimaryKey(bucketId);
         OssWithBLOBs oss = getAccountByPrimaryKey(bucket.getOssId());
         OssProvider ossProvider = (OssProvider) OssManager.getOssProviders().get(oss.getPluginId());
-        if(prefix != null && prefix.contains("%2F")) prefix = prefix.replaceAll("%2F=", "/");
         return ossProvider.getBucketObjects(bucket, oss, prefix);
     }
 
@@ -283,6 +344,217 @@ public class OssService {
     private OssWithBLOBs getAccountByPrimaryKey(String ossId)throws Exception{
         OssWithBLOBs account = ossMapper.selectByPrimaryKey(ossId);
         return account;
+    }
+
+    public FilterInputStream downloadObject(String bucketId, String objectId) throws Exception{
+        OssBucket bucket = getBucketByPrimaryKey(bucketId);
+        OssWithBLOBs oss = getAccountByPrimaryKey(bucket.getOssId());
+        OssProvider ossProvider = (OssProvider) OssManager.getOssProviders().get(oss.getPluginId());
+        return ossProvider.downloadObject(bucket, oss, objectId);
+    }
+
+    public void createDir(OssBucketRequest request) throws Exception{
+        String bucketId = UUIDUtil.newUUID();
+        request.setBucketId(bucketId);
+        OssWithBLOBs account = getAccountByPrimaryKey(request.getId());
+        OssProvider ossProvider = getOssProvider(account.getPluginId());
+        OssBucket bucket = new OssBucket();
+        bucket.setId(bucketId);
+        bucket.setBucketName(request.getBucketName());
+        ossProvider.createDir(bucket, account, request.getBucketName());
+    }
+
+    public List<OssRegion> getOssRegions(String ossId) throws Exception {
+        OssWithBLOBs account = getAccountByPrimaryKey(ossId);
+        OssProvider ossProvider = getOssProvider(account.getPluginId());
+        return ossProvider.getOssRegions(account);
+    }
+
+    public List<KeyValueItem> getParamList(String ossId, String type) throws Exception{
+        return getParamList(ossMapper.selectByPrimaryKey(ossId), type);
+    }
+
+    public List<KeyValueItem> getParamList(OssWithBLOBs ossAccount, String type) throws Exception{
+        String path = "";
+        switch (type) {
+            case BASE_CANNED_ACL_TYPE:
+                path = BASE_CANNED_ACL_DIC;
+                break;
+            case BASE_STORAGE_CLASS_TYPE:
+                path = BASE_STORAGE_CLASS_DIC;
+                break;
+            default:
+                HRException.throwException("Illegal parameter");
+        }
+
+        try {
+            if (type.equals(BASE_STORAGE_CLASS_TYPE)){
+                if (ossAccount.getPluginName().equals(OSSConstants.aws) ||
+                        ossAccount.getPluginName().equals(OSSConstants.baidu) ||
+                        ossAccount.getPluginName().equals(OSSConstants.huawei)) {
+                    return new ArrayList<KeyValueItem>();
+                }
+            }
+            return getParams(ossAccount, path);
+        } catch (Exception e) {
+            e.printStackTrace();
+            LogUtil.error("Getting parameters failed: " + ossAccount.getPluginName(), e);
+            throw new Exception("Failed to get parameters" + e.getMessage());
+        }
+    }
+
+    private List<KeyValueItem> getParams(OssWithBLOBs ossAccount, String path) throws Exception {
+        String result = ReadFileUtils.readConfigFile(BASE_STORAGE_CLASS_DIC, ossAccount.getPluginId(), JSON_EXTENSION);
+        return new Gson().fromJson(result, new TypeToken<ArrayList<KeyValueItem>>() {
+        }.getType());
+    }
+
+    public List<RuleGroup> groups(String pluginId) {
+        RuleGroupExample example = new RuleGroupExample();
+        example.createCriteria().andPluginIdEqualTo(pluginId).andLevelEqualTo("对象存储");
+        List<RuleGroup> groups = ruleGroupMapper.selectByExample(example);
+        return groups;
+    }
+
+    public List<RuleGroupDTO> ruleGroupList(RuleGroupRequest request) {
+        return extOssMapper.ruleGroupList(request);
+    }
+
+    /**
+     * 导出excel
+     */
+    @SuppressWarnings(value={"unchecked","deprecation", "serial"})
+    public byte[] exportGroupReport(ExcelExportRequest request) throws Exception {
+        try{
+            Map<String, Object> params = request.getParams();
+            ResourceRequest resourceRequest = new ResourceRequest();
+            if (MapUtils.isNotEmpty(params)) {
+                org.apache.commons.beanutils.BeanUtils.populate(resourceRequest, params);
+            }
+            List<ExcelExportRequest.Column> columns = request.getColumns();
+            List<ExportDTO> exportDTOs = searchGroupExportData(resourceRequest, request.getGroupId(), request.getAccountId());
+            List<List<Object>> data = exportDTOs.stream().map(resource -> {
+                return new ArrayList<Object>() {{
+                    columns.forEach(column -> {
+                        try {
+                            switch (column.getKey()) {
+                                case "auditName":
+                                    add(resource.getFirstLevel() + "-" + resource.getSecondLevel());
+                                    break;
+                                case "basicRequirements":
+                                    add(resource.getProject());
+                                    break;
+                                case "severity":
+                                    add(resource.getSeverity());
+                                    break;
+                                case "hummerId":
+                                    add(resource.getHummerId());
+                                    break;
+                                case "resourceName":
+                                    add(resource.getResourceName());
+                                    break;
+                                case "resourceType":
+                                    add(resource.getResourceType());
+                                    break;
+                                case "regionId":
+                                    add(resource.getRegionId());
+                                    break;
+                                case "ruleName":
+                                    add(resource.getRuleName());
+                                    break;
+                                case "ruleDescription":
+                                    add(resource.getRuleDescription());
+                                    break;
+                                case "regionName":
+                                    add(resource.getRegionName());
+                                    break;
+                                case "improvement":
+                                    add(resource.getImprovement());
+                                    break;
+                                case "project":
+                                    add(resource.getProject());
+                                    break;
+                                default:
+                                    add(MethodUtils.invokeMethod(resource, "get" + StringUtils.capitalize(ExcelExportUtils.underlineToCamelCase(column.getKey()))));
+                                    break;
+                            }
+                        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                            LogUtil.error("export resource excel error: ", ExceptionUtils.getStackTrace(e));
+                        }
+                    });
+                }};
+            }).collect(Collectors.toList());
+            OperationLogService.log(SessionUtils.getUser(), request.getAccountId(), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "导出合规报告");
+            return ExcelExportUtils.exportExcelData(Translator.get("i18n_scan_resource"), request.getColumns().stream().map(ExcelExportRequest.Column::getValue).collect(Collectors.toList()), data);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    public List<ExportDTO> searchGroupExportData(ResourceRequest request, String groupId, String accountId) {
+        return extOssMapper.searchGroupExportData(request, groupId, accountId);
+    }
+
+    public List<CloudTask> selectManualTasks(Map<String, Object> params) throws Exception {
+
+        try {
+            CloudTaskExample example = new CloudTaskExample();
+            CloudTaskExample.Criteria criteria = example.createCriteria();
+            if (params.get("name") != null && StringUtils.isNotEmpty(params.get("name").toString())) {
+                criteria.andTaskNameLike("%" + params.get("name").toString() + "%");
+            }
+            if (params.get("type") != null && StringUtils.isNotEmpty(params.get("type").toString())) {
+                criteria.andTypeEqualTo(params.get("type").toString());
+            }
+            if (params.get("accountId") != null && StringUtils.isNotEmpty(params.get("accountId").toString())) {
+                criteria.andAccountIdEqualTo(params.get("accountId").toString());
+            }
+            if (params.get("cron") != null && StringUtils.isNotEmpty(params.get("cron").toString())) {
+                criteria.andCronLike(params.get("cron").toString());
+            }
+            if (params.get("status") != null && StringUtils.isNotEmpty(params.get("status").toString())) {
+                criteria.andStatusEqualTo(params.get("status").toString());
+            }
+            if (params.get("severity") != null && StringUtils.isNotEmpty(params.get("severity").toString())) {
+                criteria.andSeverityEqualTo(params.get("severity").toString());
+            }
+            if (params.get("pluginName") != null && StringUtils.isNotEmpty(params.get("pluginName").toString())) {
+                criteria.andPluginNameEqualTo(params.get("pluginName").toString());
+            }
+            if (params.get("ruleTag") != null && StringUtils.isNotEmpty(params.get("ruleTag").toString())) {
+                criteria.andRuleTagsLike("%" + params.get("ruleTag").toString() + "%");
+            }
+            OssWithBLOBs oss = ossMapper.selectByPrimaryKey(params.get("accountId").toString());
+            if (StringUtils.equals(oss.getPluginId(), OSSConstants.aws)) {
+                criteria.andResourceTypesLike("%aws.s3%");
+            } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.aliyun)) {
+                criteria.andResourceTypesLike("%aliyun.oss%");
+            } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.tencent)) {
+                criteria.andResourceTypesLike("%aliyun.cos%");
+            } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.huawei)) {
+                criteria.andResourceTypesLike("%huawei.obs%");
+            } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.baidu)) {
+                criteria.andResourceTypesLike("%baidu.bos%");
+            } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.ucloud)) {
+                criteria.andResourceTypesLike("%ucloud.oss%");
+            } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.qingcloud)) {
+                criteria.andResourceTypesLike("%qingcloud.oss%");
+            } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.qiniu)) {
+                criteria.andResourceTypesLike("%qiniu.oss%");
+            } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.huoshan)) {
+                criteria.andResourceTypesLike("%vloc.oss%");
+            }
+            criteria.andPluginIdNotIn(PlatformUtils.getVulnPlugin());
+            example.setOrderByClause("FIELD(`status`, 'PROCESSING', 'APPROVED', 'FINISHED', 'WARNING', 'ERROR'), return_sum desc, create_time desc, FIELD(`severity`, 'HighRisk', 'MediumRisk', 'LowRisk')");
+            return cloudTaskMapper.selectByExample(example);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    public List<ResourceDTO> resourceList(ResourceRequest resourceRequest) {
+        resourceRequest.setResourceTypes(Arrays.asList(OSSConstants.SUPPORT_RESOURCE_TYPE));
+        return extOssMapper.resourceList(resourceRequest);
     }
 
 }

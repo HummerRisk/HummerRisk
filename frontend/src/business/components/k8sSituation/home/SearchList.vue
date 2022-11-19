@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 300px;">
+  <div style="width: 400px;">
     <el-input :placeholder="$t('resource.search_by_name')"
               prefix-icon="el-icon-search"
               v-model="searchString"
@@ -93,7 +93,7 @@ export default {
 .title {
   display: inline-block;
   padding-left: 15px;
-  max-width: 300px;
+  max-width: 400px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

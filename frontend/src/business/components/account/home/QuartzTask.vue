@@ -103,7 +103,7 @@
                   :key="item.id"
                   :label="item.name"
                   :value="item.id">
-                  &nbsp;&nbsp; {{ $t(item.name) }}
+                  &nbsp;&nbsp; {{ item.name }}
                 </el-option>
               </el-select>
             </div>
@@ -120,7 +120,7 @@
                     :label="item.name"
                     :value="item.id">
                     <img :src="require(`@/assets/img/platform/${item.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                    &nbsp;&nbsp; {{ $t(item.name) }}
+                    &nbsp;&nbsp; {{ item.name }}
                   </el-option>
                 </el-select>
               </div>
@@ -133,7 +133,7 @@
                     :label="item.name"
                     :value="item.id">
                     <img :src="require(`@/assets/img/platform/${item.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                    &nbsp;&nbsp; {{ $t(item.name) }}
+                    &nbsp;&nbsp; {{ item.name }}
                   </el-option>
                 </el-select>
                 <el-select v-if="form.accountId" v-model="form.ruleIds" multiple filterable :collapse-tags="false" :placeholder="$t('rule.please_choose_rule')" :clearable="true" style="width: 100%;margin: 20px 0;">
@@ -144,7 +144,7 @@
                     :label="item.name"
                     :value="item.id">
                     <img :src="require(`@/assets/img/platform/${item.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                    &nbsp;&nbsp; {{ $t(item.name) }}
+                    &nbsp;&nbsp; {{ item.name }}
                   </el-option>
                 </el-select>
               </div>

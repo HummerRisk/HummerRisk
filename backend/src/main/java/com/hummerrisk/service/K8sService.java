@@ -14,10 +14,7 @@ import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.cloudNative.*;
 import com.hummerrisk.controller.request.image.ImageRequest;
-import com.hummerrisk.controller.request.k8s.K8sResultRequest;
-import com.hummerrisk.controller.request.k8s.K8sTopology;
-import com.hummerrisk.controller.request.k8s.NameSpaceTopology;
-import com.hummerrisk.controller.request.k8s.NodeTopology;
+import com.hummerrisk.controller.request.k8s.*;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.proxy.k8s.K8sRequest;
@@ -29,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -75,6 +73,8 @@ public class K8sService {
     private CommonThreadPool commonThreadPool;
     @Resource
     private CloudNativeResultConfigItemMapper cloudNativeResultConfigItemMapper;
+    @Resource
+    private CloudNativeSourceImageMapper cloudNativeSourceImageMapper;
 
 
     public List<CloudNativeDTO> getCloudNativeList(CloudNativeRequest request) {
@@ -397,6 +397,10 @@ public class K8sService {
                 list.addAll(networkPolicy.getK8sSource());
                 k8sSourceImage.addAll(networkPolicy.getK8sSourceImage());
 
+                for (CloudNativeSourceImage cloudNativeSourceImage : k8sSourceImage) {
+                    cloudNativeSourceImageMapper.insertSelective(cloudNativeSourceImage);
+                }
+
                 for (CloudNativeSourceWithBLOBs cloudNativeSource : list) {
                     cloudNativeSource.setCreator(creator);
                     cloudNativeSourceMapper.insertSelective(cloudNativeSource);
@@ -616,7 +620,8 @@ public class K8sService {
                 JSONObject report = obj1.getJSONObject("report");
                 JSONArray jsonArray = report.getJSONArray("vulnerabilities");
                 JSONObject artifact = report.getJSONObject("artifact");
-                String image = artifact.get("repository") + ":" + artifact.get("tag");
+                JSONObject registry = report.getJSONObject("registry");
+                String image = registry.get("server") + "/" + artifact.get("repository") + ":" + artifact.get("tag");
                 for(Object object2 : jsonArray) {
                     JSONObject obj2 = (JSONObject) object2;
                     CloudNativeResultItem cloudNativeResultItem = new CloudNativeResultItem();
@@ -725,6 +730,23 @@ public class K8sService {
         return cloudNativeResultLogMapper.selectByExampleWithBLOBs(example);
     }
 
+    public List<CloudNativeResultLogWithBLOBs> topoLog(String accountId) {
+        CloudNativeResultExample cloudNativeResultExample = new CloudNativeResultExample();
+        cloudNativeResultExample.createCriteria().andCloudNativeIdEqualTo(accountId);
+        CloudNativeResult cloudNativeResult = cloudNativeResultMapper.selectByExample(cloudNativeResultExample).get(0);
+        CloudNativeResultLogExample example = new CloudNativeResultLogExample();
+        example.createCriteria().andResultIdEqualTo(cloudNativeResult.getId());
+        return cloudNativeResultLogMapper.selectByExampleWithBLOBs(example);
+    }
+
+    public CloudNativeResultWithBLOBs topoResult(String accountId) {
+        CloudNativeResultExample cloudNativeResultExample = new CloudNativeResultExample();
+        cloudNativeResultExample.createCriteria().andCloudNativeIdEqualTo(accountId);
+        CloudNativeResult cloudNativeResult = cloudNativeResultMapper.selectByExample(cloudNativeResultExample).get(0);
+        CloudNativeResultWithBLOBs cloudNativeResultWithBLOBs = cloudNativeResultMapper.selectByPrimaryKey(cloudNativeResult.getId());
+        return cloudNativeResultWithBLOBs;
+    }
+
     public CloudNativeResultWithBLOBs getCloudNativeResultWithBLOBs(String resultId) {
         CloudNativeResultWithBLOBs cloudNativeResultWithBLOBs = cloudNativeResultMapper.selectByPrimaryKey(resultId);
         return cloudNativeResultWithBLOBs;
@@ -810,12 +832,45 @@ public class K8sService {
         return extCloudNativeSourceMapper.k8sTopology();
     }
 
+    public RiskTopology riskTopology(String k8sId) {
+        return extCloudNativeSourceMapper.riskTopology(k8sId);
+    }
+
+    public K8sImage getImage(String k8sId) {
+        return extCloudNativeSourceMapper.getImage(k8sId);
+    }
+
     public NodeTopology nodeTopology() {
         return extCloudNativeSourceMapper.nodeTopology();
     }
 
     public NameSpaceTopology namespaceTopology() {
         return extCloudNativeSourceMapper.namespaceTopology();
+    }
+
+    public List<CloudNativeSourceImageDTO> sourceImages(String sourceId) throws Exception {
+        List<CloudNativeSourceImageDTO> sourceImages = new ArrayList<>();
+        CloudNativeSourceImageExample example = new CloudNativeSourceImageExample();
+        example.createCriteria().andSourceIdEqualTo(sourceId);
+        List<CloudNativeSourceImage> images = cloudNativeSourceImageMapper.selectByExample(example);
+        for (CloudNativeSourceImage image : images) {
+            CloudNativeSourceImageDTO dto = BeanUtils.copyBean(new CloudNativeSourceImageDTO(), image);
+            String imageName = image.getImage();
+            CloudNativeSource cloudNativeSource = cloudNativeSourceMapper.selectByPrimaryKey(image.getSourceId());
+            CloudNativeResultExample cloudNativeResultExample = new CloudNativeResultExample();
+            cloudNativeResultExample.createCriteria().andCloudNativeIdEqualTo(cloudNativeSource.getCloudNativeId());
+            CloudNativeResult cloudNativeResult = cloudNativeResultMapper.selectByExample(cloudNativeResultExample).get(0);
+            CloudNativeResultItemExample cloudNativeResultItemExample = new CloudNativeResultItemExample();
+            cloudNativeResultItemExample.createCriteria().andResultIdEqualTo(cloudNativeResult.getId()).andImageEqualTo(imageName);
+            List<CloudNativeResultItem> list =  cloudNativeResultItemMapper.selectByExample(cloudNativeResultItemExample);
+            if (list.size() > 0) {
+                dto.setRisk("yes");
+            } else {
+                dto.setRisk("no");
+            }
+            sourceImages.add(dto);
+        }
+        return sourceImages;
     }
 
 }

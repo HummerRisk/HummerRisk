@@ -3,6 +3,7 @@ package com.hummerrisk.controller.request.resource;
 import com.hummerrisk.base.domain.Resource;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,6 +23,7 @@ public class ResourceRequest extends Resource {
     private String itemSortSecondLevel;
     private String name;
     private String groupId;
+    private List<String> resourceTypes;
 
     @ApiModelProperty(hidden = true)
     private String sort;
@@ -138,5 +140,13 @@ public class ResourceRequest extends Resource {
 
     public void setGroupId(String groupId) {
         this.groupId = groupId;
+    }
+
+    public List<String> getResourceTypes() {
+        return resourceTypes;
+    }
+
+    public void setResourceTypes(List<String> resourceTypes) {
+        this.resourceTypes = resourceTypes;
     }
 }

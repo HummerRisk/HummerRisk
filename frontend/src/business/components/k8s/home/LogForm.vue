@@ -66,6 +66,9 @@
                         <el-row>
                           <i class="el-icon-s-opportunity"></i> {{ vulnerability.primaryLink }}
                         </el-row>
+                        <el-row v-if="item.report.artifact && item.report.registry">
+                          <i class="el-icon-info"></i> {{ 'Risk image: ' }} {{ item.report.registry.server }}/{{ item.report.artifact.repository }}:{{ item.report.artifact.tag }}
+                        </el-row>
                       </div>
                     </div>
                     <div class="text div-json">

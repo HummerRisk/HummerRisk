@@ -20,6 +20,8 @@ public class HuaweiCloudCredential {
 
     private Boolean isPublic = true;
 
+    private String endPoint;
+
     public String getDomainId() {
         return domainId;
     }
@@ -74,5 +76,13 @@ public class HuaweiCloudCredential {
 
     public void setPublic(Boolean aPublic) {
         isPublic = aPublic;
+    }
+
+    public String getEndPoint() {
+        return endPoint;
+    }
+
+    public void setEndPoint(String endPoint) {
+        this.endPoint = endPoint;
     }
 }

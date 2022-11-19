@@ -151,4 +151,208 @@
         order by t.create_time desc
     </select>
 
+    <select id="ruleGroupList" resultType="com.hummerrisk.dto.RuleGroupDTO">
+        select
+        t.*,
+        (SELECT count(g.id) from rule_group_mapping g where g.group_id = t.id) as ruleSum,
+        (
+        SELECT count(g.id)
+        FROM rule_group_mapping g
+        WHERE g.group_id = t.id
+        AND g.rule_id in (select tt.rule_id from cloud_task tt where tt.resources_sum &gt; 0 and tt.account_id = #{request.accountId})
+        ) as riskRuleSum,
+        p.name as pluginName,
+        p.icon as pluginIcon,
+        CASE
+        WHEN
+        (
+        SELECT count(t5.id) FROM rule_group_mapping t1
+        JOIN rule t2 ON t1.rule_id = t2.id
+        JOIN resource_rule t3 ON t2.id = t3.rule_id
+        JOIN resource t4 ON t4.id = t3.resource_id
+        JOIN resource_item t5 ON t4.id = t5.resource_id
+        WHERE t1.group_id = t.id
+        AND t4.account_id = c.id
+        ) > 0 THEN 'risky'
+        ELSE 'risk_free'
+        END AS status,
+        (
+        SELECT c1.create_time FROM cloud_task c1
+        WHERE c1.account_id = c.id and c1.rule_id in (select r1.rule_id from rule_group_mapping r1 where r1.group_id = t.id)
+        order by create_time desc limit 1) as createTime,
+        '暂无合规报告' as state,
+        (
+        SELECT
+        IFNULL(count( DISTINCT g.id ), 0)
+        FROM
+        rule_inspection_report r
+        JOIN rule_inspection_report_mapping t1 ON t1.report_id = r.id
+        JOIN cloud_task_item t2 ON t2.rule_id = t1.rule_id
+        JOIN cloud_task t3 ON t3.id = t2.task_id
+        JOIN rule_group_mapping t4 ON t3.rule_id = t4.rule_id
+        JOIN rule_group g ON t4.group_id = g.id
+        WHERE t3.account_id = c.id and g.id = t.id
+        AND t3.return_sum > 0
+        )
+        AS riskyRegulation,
+        (
+        SELECT count( DISTINCT r.id ) FROM rule_inspection_report r
+        ) AS totalRegulation,
+        (
+        SELECT
+        IFNULL(sum( r.return_sum ), 0)
+        FROM
+        cloud_task r
+        WHERE
+        r.account_id = c.id
+        AND r.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = t.id)
+        )
+        AS returnSum,
+        (
+        SELECT
+        IFNULL(sum( r.resources_sum ), 0)
+        FROM
+        cloud_task r
+        WHERE
+        r.account_id = c.id
+        AND r.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = t.id)
+        )
+        AS resourcesSum
+        from rule_group as t
+        join plugin p on t.plugin_id = p.id
+        join cloud_account c on t.plugin_id = c.plugin_id
+        <where>
+            and t.level = '对象存储'
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                </include>
+            </if>
+            <if test="request.accountId != null and request.accountId != ''">
+                and c.id = #{request.accountId}
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and t.name like concat('%', #{request.name}, '%')
+            </if>
+            <if test="request.pluginId != null and request.pluginId != ''">
+                and t.plugin_id = #{request.pluginId}
+            </if>
+            and t.id in (select r.group_id from rule_group_mapping r join cloud_task ct on r.rule_id = ct.rule_id where ct.account_id = #{request.accountId})
+        </where>
+        order by `status`, createTime desc
+    </select>
+
+    <select id="searchGroupExportData" resultType="com.hummerrisk.dto.ExportDTO" parameterType="java.lang.String">
+        SELECT
+            DISTINCT t.hummer_id as hummerId,
+                     t.region_id as regionId,
+                     t.region_name as regionName,
+                     t1.resource_name as resourceName,
+                     t.resource_type as resourceType,
+                     t.severity,
+                     t3.name as ruleName,
+                     t3.description as ruleDescription,
+                     IFNULL(t5.project, '暂无') as project,
+                     IFNULL(t5.item_sort_first_level, '暂无') as firstLevel,
+                     IFNULL(t5.item_sort_second_level, '暂无') as secondLevel,
+                     IFNULL(t5.improvement, '暂无') as improvement
+        FROM resource_item t
+         JOIN resource t1 on t.resource_id = t1.id
+         JOIN resource_rule t2 on t.resource_id = t2.resource_id
+         JOIN rule t3 on t2.rule_id = t3.id
+         JOIN rule_group_mapping g on t3.id = g.rule_id and g.group_id = #{groupId}
+         JOIN rule_group rg on rg.id = g.group_id and rg.level = '对象存储'
+         LEFT JOIN rule_inspection_report_mapping t4 on t3.id = t4.rule_id
+         LEFT JOIN rule_inspection_report t5 on t4.report_id = t5.id
+        WHERE t.account_id = #{accountId}
+        ORDER BY t.resource_type, t1.resource_name, t.region_id, t.hummer_id
+    </select>
+
+    <resultMap id="ResourceBaseResultMap" type="com.hummerrisk.dto.ResourceDTO"
+               extends="com.hummerrisk.base.mapper.ResourceItemMapper.ResultMapWithBLOBs">
+        <result column="taskId" jdbcType="VARCHAR" property="taskId"/>
+        <result column="taskName" jdbcType="VARCHAR" property="taskName"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="applyUser" jdbcType="VARCHAR" property="applyUser"/>
+        <result column="ruleId" jdbcType="VARCHAR" property="ruleId"/>
+        <result column="ruleName" jdbcType="VARCHAR" property="ruleName"/>
+        <result column="suggestion" jdbcType="VARCHAR" property="suggestion"/>
+        <result column="accountName" jdbcType="VARCHAR" property="accountName"/>
+        <association property="resourceWithBLOBs" column="resource_id" select="getResourceList">
+        </association>
+    </resultMap>
+
+    <select id="resourceList" parameterType="com.hummerrisk.controller.request.resource.ResourceRequest" resultMap="ResourceBaseResultMap">
+        SELECT
+        t4.task_name as taskName,
+        t4.type,
+        t4.id as taskId,
+        t4.apply_user as applyUser,
+        t5.rule_id as ruleId,
+        t6.name as ruleName,
+        t7.name as accountName,
+        t6.suggestion,
+        t.*
+        FROM resource_item t
+        JOIN resource t1 ON t1.id = t.resource_id
+        JOIN cloud_task_item_resource t2 ON t1.id = t2.resource_id and t2.resource_type in
+        <foreach collection="resourceTypes" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        JOIN cloud_task_item t3 ON t3.id = t2.task_item_id
+        JOIN cloud_task t4 ON t3.task_id = t4.id
+        JOIN resource_rule t5 ON t1.id = t5.resource_id
+        JOIN rule t6 ON t5.rule_id = t6.id
+        JOIN cloud_account t7 ON t.account_id = t7.id
+        <where>
+            <if test="combine != null">
+                <include refid="combine">
+                    <property name="condition" value="combine"/>
+                </include>
+            </if>
+            <if test="taskId != null">
+                AND t4.id = #{taskId}
+            </if>
+            <if test="accountId != null">
+                AND t.account_id = #{accountId}
+            </if>
+            <if test="regionId != null">
+                AND t.region_id = #{regionId}
+            </if>
+            <if test="taskName != null">
+                AND t4.task_name like CONCAT('%',#{taskName},'%')
+            </if>
+            <if test="severity != null">
+                AND t.severity = #{severity}
+            </if>
+            <if test="tagKey != null">
+                AND t5.rule_id in (select tt.rule_id from rule_tag_mapping tt where tt.tag_key = #{tagKey})
+            </if>
+            <if test="pluginName != null">
+                AND t.plugin_name = #{pluginName}
+            </if>
+            <if test="resourceName != null">
+                AND t.resource_name like CONCAT('%',#{resourceName},'%')
+            </if>
+            <if test="resourceStatus != null">
+                AND t.resource_status = #{resourceStatus}
+            </if>
+            <if test="resourceType != null">
+                AND t.resource_type = #{resourceType}
+            </if>
+            <if test="ruleId != null">
+                AND t5.rule_id = #{ruleId}
+            </if>
+            <if test="ruleName != null">
+                AND t6.name like CONCAT('%',#{ruleName},'%')
+            </if>
+            <if test="name != null">
+                AND t.hummer_id like CONCAT('%',#{name},'%')
+            </if>
+        </where>
+        <if test="sort == null">
+            ORDER BY t.create_time DESC
+        </if>
+    </select>
+
 </mapper>

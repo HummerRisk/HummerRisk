@@ -14,7 +14,7 @@
                 @filter-change="filter">
         <el-table-column type="index" min-width="2%"/>
         <el-table-column prop="name" :label="$t('oss.name')" min-width="10%" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('account.cloud_platform')" min-width="10%" show-overflow-tooltip>
+        <el-table-column :label="$t('account.cloud_platform')" min-width="12%" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -22,30 +22,48 @@
               </span>
           </template>
         </el-table-column>
+        <el-table-column prop="status" min-width="8%" :label="$t('account.status')"
+                         column-key="status"
+                         :filters="statusFilters"
+                         :filter-method="filterStatus">
+          <template v-slot:default="{row}">
+            <div @click="validate(row)">
+              <el-tag size="mini" type="warning" v-if="row.status === 'DELETE'">
+                {{ $t('account.DELETE') }}
+              </el-tag>
+              <el-tag size="mini" type="success" v-else-if="row.status === 'VALID'">
+                {{ $t('account.VALID') }}
+              </el-tag>
+              <el-tag size="mini" type="danger" v-else-if="row.status === 'INVALID'">
+                {{ $t('account.INVALID') }}
+              </el-tag>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('event.sync_status')" min-width="12%" prop="status" sortable
                          show-overflow-tooltip>
           <el-button @click="showLog(scope.row)" plain size="medium" type="primary"
-                     v-if="scope.row.status === 'UNCHECKED'">
+                     v-if="scope.row.syncStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
           <el-button @click="showLog(scope.row)" plain size="medium" type="primary"
-                     v-else-if="scope.row.status === 'APPROVED'">
+                     v-else-if="scope.row.syncStatus === 'APPROVED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
           <el-button @click="showLog(scope.row)" plain size="medium" type="primary"
-                     v-else-if="scope.row.status === 'PROCESSING'">
+                     v-else-if="scope.row.syncStatus === 'PROCESSING'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
           <el-button @click="showLog(scope.row)" plain size="medium" type="success"
-                     v-else-if="scope.row.status === 'FINISHED'">
+                     v-else-if="scope.row.syncStatus === 'FINISHED'">
             <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
           </el-button>
           <el-button @click="showLog(scope.row)" plain size="medium" type="danger"
-                     v-else-if="scope.row.status === 'ERROR'">
+                     v-else-if="scope.row.syncStatus === 'ERROR'">
             <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
           </el-button>
           <el-button @click="showLog(scope.row)" plain size="medium" type="warning"
-                     v-else-if="scope.row.status === 'WARNING'">
+                     v-else-if="scope.row.syncStatus === 'WARNING'">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
@@ -62,7 +80,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="userName" :label="$t('account.creator')" min-width="7%" show-overflow-tooltip/>
-        <el-table-column :label="$t('oss.bucket')" min-width="10%">
+        <el-table-column :label="$t('oss.bucket')" min-width="8%">
           <template v-slot:default="scope">
             <el-link type="primary" @click="showBuckets(scope.row)">
               {{ scope.row.sum }}
@@ -91,7 +109,7 @@
                 :label="item.name"
                 :value="item.id">
                 <img :src="require(`@/assets/img/platform/${item.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                &nbsp;&nbsp; {{ $t(item.name) }}
+                &nbsp;&nbsp; {{ item.name }}
               </el-option>
             </el-select>
           </el-form-item>
@@ -242,12 +260,12 @@
           <el-table-column type="index" min-width="1%"></el-table-column>
           <el-table-column prop="objectName" :label="$t('oss.object_name')" min-width="20%" show-overflow-tooltip v-slot:default="scope">
             <el-link v-if="scope.row.objectType==='BACK'" type="primary" style="color: red;" @click="backObject(scope.row)">
-              <i class="el-icon-back"></i>  {{ scope.row.objectName.replace('%2F', "/") }}
+              <i class="el-icon-back"></i>  {{ scope.row.objectName }}
             </el-link>
             <el-link v-if="scope.row.objectType==='DIR'" type="primary" @click="selectObject(scope.row)">
-              <i class="el-icon-folder-opened"></i>  {{ scope.row.objectName.replace('%2F', "/") }}
+              <i class="el-icon-folder-opened"></i>  {{ scope.row.objectName }}
             </el-link>
-            <span v-if="scope.row.objectType==='FILE'">
+            <span v-if="scope.row.objectType==='FILE'" style="color: #336d9f">
               <i class="el-icon-document"></i> {{ scope.row.objectName }}
             </span>
           </el-table-column>
@@ -274,6 +292,34 @@
     </el-drawer>
     <!--oss bucket-->
 
+    <!-- 一键检测选择规则组 -->
+    <el-dialog :close-on-click-modal="false"
+               :modal-append-to-body="false"
+               :title="$t('account.scan_group_quick')"
+               :visible.sync="scanVisible"
+               class="" width="70%">
+      <div v-loading="groupResult.loading">
+        <el-card class="box-card el-box-card">
+          <div slot="header" class="clearfix">
+              <span>
+                <img :src="require(`@/assets/img/platform/${accountWithGroup.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+             &nbsp;&nbsp; {{ accountWithGroup.pluginName }} {{ $t('rule.rule_set') }} | {{ accountWithGroup.name }}
+              </span>
+            <el-button style="float: right; padding: 3px 0" type="text"  @click="handleCheckAllByAccount">{{ $t('account.i18n_sync_all') }}</el-button>
+          </div>
+          <el-checkbox-group v-model="checkedGroups">
+            <el-checkbox v-for="(group, index) in groups" :label="group.id" :value="group.id" :key="index" border >
+              {{ group.name }}
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-card>
+        <dialog-footer
+          @cancel="scanVisible = false"
+          @confirm="scanGroup()"/>
+      </div>
+    </el-dialog>
+    <!-- 一键检测选择检测组 -->
+
   </main-container>
 </template>
 
@@ -286,6 +332,7 @@ import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {OSS_CONFIGS} from "@/business/components/common/components/search/search-components";
+import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 
 /* eslint-disable */
 export default {
@@ -358,13 +405,13 @@ export default {
         ],
       },
       buttons: [
-        // {
-        //   tip: this.$t('account.one_scan'), icon: "el-icon-s-promotion", type: "success",
-        //   exec: this.handleScan
-        // },
+        {
+          tip: this.$t('account.one_scan'), icon: "el-icon-s-promotion", type: "success",
+          exec: this.handleScan
+        },
         {
           tip: this.$t('commons.sync'), icon: "el-icon-refresh-right", type: "warning",
-          exec: this.handleScan
+          exec: this.handleSync
         }, {
           tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
           exec: this.handleEdit
@@ -397,6 +444,15 @@ export default {
       objectData: [],
       path: "/",
       thisObject: {},
+      statusFilters: [
+        {text: this.$t('account.INVALID'), value: 'INVALID'},
+        {text: this.$t('account.VALID'), value: 'VALID'},
+        {text: this.$t('account.DELETE'), value: 'DELETE'}
+      ],
+      accountWithGroup: {pluginIcon: 'aliyun.png'},
+      scanVisible: false,
+      groups: [],
+      checkedGroups: [],
     }
   },
   methods: {
@@ -459,6 +515,7 @@ export default {
     },
     create() {
       this.form = { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] };
+      this.tmpList = [];
       this.ossTitle = this.$t('oss.create');
       this.visible = true;
     },
@@ -568,7 +625,7 @@ export default {
       });
       this.logVisible = true;
     },
-    handleScan(item) {
+    handleSync(item) {
       this.result = this.$get("/oss/batch/sync/" + item.id, response => {
         if(response.success) {
           this.$success(this.$t('event.sync'));
@@ -600,7 +657,7 @@ export default {
         for (let data of response.data.listObject) {
           for (let item of this.tableData) {
             if (data.id == item.id) {
-              item.status = data.status;
+              item.syncStatus = data.syncStatus;
               item.sum = data.sum;
             }
           }
@@ -611,7 +668,7 @@ export default {
     checkStatus(tableData) {
       let sum = 0;
       for (let row of tableData) {
-        if (row.status != 'ERROR' && row.status != 'FINISHED' && row.status != 'WARNING') {
+        if (row.syncStatus != 'ERROR' && row.syncStatus != 'FINISHED' && row.syncStatus != 'WARNING') {
           sum++;
         }
       }
@@ -641,7 +698,7 @@ export default {
     getObjects(path) {
       if (path !== '' && path !== 'none') {
         this.path = path;
-        this.result = this.$post("/oss/objects/" + this.thisObject.bucketId, path.replace("%2F", "/"), response => {
+        this.result = this.$post("/oss/objects/" + this.thisObject.bucketId, { "path" : path=="/"?"":path}, response => {
           this.objectData = response.data;
           this.innerDrawer = true;
         });
@@ -658,6 +715,78 @@ export default {
     selectObject(item) {
       this.thisObject = item;
       this.getObjects(item.id);
+    },
+    validate(row) {
+      this.$alert(this.$t('account.validate') + this.$t('account.oss_setting') + ' : ' + row.name +  " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.$post("/oss/validate/" + row.id, {}, response => {
+              let data = response.data;
+              if (data) {
+                if (data.flag) {
+                  this.$success(this.$t('server.success'));
+                } else {
+                  this.$error(data.message, 10000);
+                }
+              } else {
+                this.$error(this.$t('account.error'));
+              }
+              this.search();
+            });
+          }
+        }
+      });
+    },
+    handleScan(account) {
+      this.accountWithGroup = account;
+      localStorage.setItem(ACCOUNT_ID, account.id);
+      localStorage.setItem(ACCOUNT_NAME, account.name);
+      this.initGroups(account.pluginId);
+      this.scanVisible = true;
+    },
+    initGroups(pluginId) {
+      this.result = this.$get("/oss/groups/" + pluginId,response => {
+        this.groups = response.data;
+      });
+    },
+    handleCheckAllByAccount() {
+      if (this.checkedGroups.length === this.groups.length) {
+        this.checkedGroups = [];
+      } else {
+        let arr = [];
+        this.checkedGroups = [];
+        for (let group of this.groups) {
+          arr.push(group.id);
+        }
+        let concatArr = this.checkedGroups.concat(arr);
+        this.checkedGroups = Array.from(concatArr);
+      }
+    },
+    scanGroup () {
+      let account = this.$t('account.one_scan') + this.$t('account.cloud_account');
+      this.$alert( account + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            if (this.checkedGroups.length === 0) {
+              this.$warning(this.$t('account.please_choose_rule_group'));
+              return;
+            }
+            let params = {
+              accountId: this.accountWithGroup.id,
+              groups: this.checkedGroups
+            }
+            this.groupResult = this.$post("/rule/scan", params, () => {
+              this.$success(this.$t('account.i18n_hr_create_success'));
+              this.scanVisible = false;
+              this.$router.push({
+                path: '/account/result',
+              }).catch(error => error);
+            });
+          }
+        }
+      });
     },
   },
   computed: {

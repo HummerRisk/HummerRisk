@@ -123,8 +123,12 @@
     <el-drawer class="rtl" :title="$t('image.image_list')" :visible.sync="imageVisible" size="90%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
-      <el-table border :data="imageData" class="adjust-table table-content">
-        <el-table-column type="index" min-width="2%"/>
+      <table-header :condition.sync="imageCondition" @search="handleList" :show-create="false" :show-name="false"/>
+      <el-table border :data="imageData" class="adjust-table table-content" @sort-change="sort"
+                @filter-change="filter" @select-all="select" @select="select">
+        <el-table-column type="selection" min-width="1%">
+        </el-table-column>
+        <el-table-column type="index" min-width="1%"/>
         <el-table-column prop="project" :label="'Project'" min-width="10%" v-slot:default="scope">
           {{ scope.row.project?scope.row.project:'N/A' }}
         </el-table-column>
@@ -138,8 +142,16 @@
         <el-table-column min-width="9%" :label="'Arch'" prop="arch" v-slot:default="scope">
           {{ scope.row.arch?scope.row.arch:'--' }}
         </el-table-column>
-        <el-table-column min-width="15%" :label="'PushTime'" prop="pushTime" v-slot:default="scope">
+        <el-table-column min-width="12%" :label="'PushTime'" prop="pushTime" v-slot:default="scope">
           {{ scope.row.pushTime?scope.row.pushTime:'--' }}
+        </el-table-column>
+        <el-table-column min-width="11%" :label="$t('task.task_k8s')" prop="pushTime" v-slot:default="scope">
+          <el-button v-if="scope.row.imageRepoItemK8sDTOList.length > 0" slot="reference" size="mini" type="warning" plain @click="showK8s(scope.row)">
+            {{ $t('k8s.platform') }}
+          </el-button>
+          <el-button v-if="scope.row.imageRepoItemK8sDTOList.length == 0" slot="reference" size="mini" type="primary" plain>
+            {{ 'N/A' }}
+          </el-button>
         </el-table-column>
         <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
@@ -147,6 +159,33 @@
           </template>
         </el-table-column>
       </el-table>
+      <table-pagination :change="handleList" :current-page.sync="imagePage" :page-size.sync="imageSize" :total="imageTotal"/>
+      <div>
+        <el-drawer
+          class="rtl"
+          size="60%"
+          :title="$t('k8s.execute_scan')"
+          :append-to-body="true"
+          :before-close="innerClose"
+          :visible.sync="innerK8s">
+          <el-table border :data="k8sData" class="adjust-table table-content">
+            <el-table-column type="index" min-width="1%"/>
+            <el-table-column prop="k8sName" :label="'K8sName'" min-width="20%" v-slot:default="scope">
+              {{ scope.row.k8sName?scope.row.k8sName:'N/A' }}
+            </el-table-column>
+            <el-table-column prop="namespace" :label="'Namespace'" min-width="20%">
+            </el-table-column>
+            <el-table-column prop="sourceType" :label="'SourceType'" min-width="15%">
+            </el-table-column>
+            <el-table-column min-width="40%" :label="'SourceName'" prop="sourceName" v-slot:default="scope">
+              {{ scope.row.sourceName?scope.row.sourceName:'--' }}
+            </el-table-column>
+          </el-table>
+          <dialog-footer
+            @cancel="innerK8s = false"
+            @confirm="innerK8s = false"/>
+        </el-drawer>
+      </div>
       <div>
         <el-drawer
           class="rtl"
@@ -206,7 +245,7 @@
       <div style="margin: 10px;">
         <dialog-footer
           @cancel="imageVisible = false"
-          @confirm="imageVisible = false"/>
+          @confirm="saveAddAll()"/>
       </div>
     </el-drawer>
     <!--Image list-->
@@ -258,7 +297,10 @@ import ImageStatus from "../head/ImageStatus";
 import {_filter, _sort} from "@/common/js/utils";
 import MainContainer from "../.././common/components/MainContainer";
 import SyncTableHeader from "@/business/components/image/head/SyncTableHeader";
-import {IMAGE_REPO_CONFIGS} from "@/business/components/common/components/search/search-components";
+import {
+  IMAGE_REPO_CONFIGS,
+  IMAGE_REPO_IMAGE_CONFIGS
+} from "@/business/components/common/components/search/search-components";
 /* eslint-disable */
 export default {
   name: "ImageRepo",
@@ -278,6 +320,7 @@ export default {
       createPath: '/image/addImageRepo/',
       updatePath: '/image/editImageRepo/',
       scanPath: '/image/scanImageRepo/',
+      scanAllPath: '/image/scanImagesRepo/',
       result: {},
       createVisible: false,
       updateVisible: false,
@@ -292,6 +335,12 @@ export default {
       condition: {
         components: IMAGE_REPO_CONFIGS
       },
+      imageCondition: {
+        components: IMAGE_REPO_IMAGE_CONFIGS
+      },
+      imagePage: 1,
+      imageSize: 10,
+      imageTotal: 0,
       tableData: [],
       form: {},
       direction: 'rtl',
@@ -358,6 +407,10 @@ export default {
       sboms: [],
       versions: [],
       proxys: [],
+      selectIds: new Set(),
+      innerK8s: false,
+      k8sData: [],
+      handleItem: {},
     }
   },
   methods: {
@@ -372,6 +425,12 @@ export default {
     filter(filters) {
       _filter(filters, this.condition);
       this.init();
+    },
+    select(selection) {
+      this.selectIds.clear();
+      selection.forEach(s => {
+        this.selectIds.add(s.id)
+      });
     },
     filterStatus(value, row) {
       return row.status === value;
@@ -446,8 +505,15 @@ export default {
       });
     },
     handleList(item) {
-      this.$get("/image/repoItemList/" + item.id, response => {
-        this.imageData = response.data;
+      console.log(item)
+      if (item) {
+        this.handleItem = item;
+      }
+      this.imageCondition.repoId = this.handleItem.id;
+      this.$post("/image/repoItemList/" + this.imagePage + "/" + this.imageSize, this.imageCondition, response => {
+        let data = response.data;
+        this.imageTotal = data.itemCount;
+        this.imageData = data.listObject;
         this.imageVisible = true;
       });
     },
@@ -468,6 +534,7 @@ export default {
     },
     innerClose() {
       this.innerAdd = false;
+      this.innerK8s = false;
     },
     initSboms() {
       this.result = this.$post("/sbom/allSbomList", {},response => {
@@ -526,8 +593,47 @@ export default {
         }
       });
     },
+    saveAddAll() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('image.image_url'));
+        return;
+      }
+      this.$alert(this.$t('image.one_scan') + this.$t('image.image_scan') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: this.scanAllPath,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              if (res.success) {
+                this.imageVisible = false;
+                this.$success(this.$t('account.success'));
+                this.$router.push({
+                  path: '/image/result',
+                  query: {
+                    date: new Date().getTime()
+                  },
+                }).catch(error => error);
+              } else {
+                this.$error(this.$t('account.error'));
+              }
+            });
+          }
+        }
+      });
+    },
+    showK8s(item) {
+      this.k8sData = item.imageRepoItemK8sDTOList;
+      this.innerK8s = true;
+    },
   },
   created() {
+    this.selectIds.clear();
     this.search();
     this.initSboms();
   }

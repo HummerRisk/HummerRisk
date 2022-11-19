@@ -93,7 +93,7 @@
               :key="item.id"
               :label="item.name"
               :value="item.id">
-              &nbsp;&nbsp; {{ $t(item.name) }}
+              &nbsp;&nbsp; {{ item.name }}
             </el-option>
           </el-select>
         </el-form-item>
@@ -111,7 +111,7 @@
               :label="item.name"
               :value="item.id">
               <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-              &nbsp;&nbsp; {{ $t(item.name) }}
+              &nbsp;&nbsp; {{ item.name }}
             </el-option>
           </el-select>
         </el-form-item>
@@ -211,7 +211,7 @@
               :label="item.name"
               :value="item.id">
               <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-              &nbsp;&nbsp; {{ $t(item.name) }}
+              &nbsp;&nbsp; {{ item.name }}
             </el-option>
           </el-select>
         </el-form-item>
@@ -311,7 +311,7 @@
               :label="item.name"
               :value="item.id">
               <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-              &nbsp;&nbsp; {{ $t(item.name) }}
+              &nbsp;&nbsp; {{ item.name }}
             </el-option>
           </el-select>
         </el-form-item>

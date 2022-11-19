@@ -8,10 +8,7 @@ import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.cloudNative.*;
 import com.hummerrisk.controller.request.image.ImageRequest;
-import com.hummerrisk.controller.request.k8s.K8sResultRequest;
-import com.hummerrisk.controller.request.k8s.K8sTopology;
-import com.hummerrisk.controller.request.k8s.NameSpaceTopology;
-import com.hummerrisk.controller.request.k8s.NodeTopology;
+import com.hummerrisk.controller.request.k8s.*;
 import com.hummerrisk.controller.request.sync.CloudTopology;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.service.K8sService;
@@ -177,10 +174,24 @@ public class K8sController {
     }
 
     @I18n
+    @ApiIgnore
+    @GetMapping(value = "getCloudNativeResultWithBLOBs/topo/{accountId}")
+    public CloudNativeResultWithBLOBs topoResult(@PathVariable String accountId) {
+        return k8sService.topoResult(accountId);
+    }
+
+    @I18n
     @ApiOperation(value = "云原生检测日志")
     @GetMapping(value = "log/{resultId}")
     public List<CloudNativeResultLogWithBLOBs> getCloudNativeResultLog(@PathVariable String resultId) {
         return k8sService.getCloudNativeResultLog(resultId);
+    }
+
+    @I18n
+    @ApiIgnore
+    @GetMapping(value = "log/topo/{accountId}")
+    public List<CloudNativeResultLogWithBLOBs> topoLog(@PathVariable String accountId) {
+        return k8sService.topoLog(accountId);
     }
 
     @I18n
@@ -306,6 +317,27 @@ public class K8sController {
     @GetMapping(value = "namespaceTopology")
     public NameSpaceTopology namespaceTopology() {
         return k8sService.namespaceTopology();
+    }
+
+    @I18n
+    @ApiOperation(value = "资源态势资源对应的镜像")
+    @GetMapping("sourceImages/{sourceId}")
+    public List<CloudNativeSourceImageDTO> sourceImages(@PathVariable String sourceId) throws Exception {
+        return k8sService.sourceImages(sourceId);
+    }
+
+    @I18n
+    @ApiOperation(value = "K8s风险态势拓扑图")
+    @GetMapping(value = "riskTopology/{accountId}")
+    public RiskTopology riskTopology(@PathVariable String accountId) {
+        return k8sService.riskTopology(accountId);
+    }
+
+    @I18n
+    @ApiOperation(value = "镜像拓扑图")
+    @GetMapping(value = "getImage/{accountId}")
+    public K8sImage getImage(@PathVariable String accountId) {
+        return k8sService.getImage(accountId);
     }
 
 }

@@ -2,6 +2,9 @@ package com.hummerrisk.oss.constants;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public interface OSSConstants {
 
     enum ACCOUNT_STATUS {
@@ -30,4 +33,7 @@ public interface OSSConstants {
     public final static String qiniu = "hummer-qiniu-plugin";
     public final static String qingcloud = "hummer-qingcloud-plugin";
     public final static String ucloud = "hummer-ucloud-plugin";
+
+    public final static String[] SUPPORT_RESOURCE_TYPE = {"aliyun.oss", "tencent.cos", "huawei.obs", "aws.s3", "baidu.bos", "ucloud.oss", "qingcloud.oss", "qiniu.oss", "vloc.oss"};
+
 }

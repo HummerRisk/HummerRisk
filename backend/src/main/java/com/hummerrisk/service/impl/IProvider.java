@@ -8,6 +8,4 @@ public interface IProvider {
 
     ResultDTO execute(Object ...obj) throws Exception;
 
-    String dockerLogin(Object obj) throws Exception;
-
 }

@@ -135,4 +135,12 @@ public class SystemParameterController {
         return systemParameterService.info(ParamConstants.Classify.SYSTEM.getValue());
     }
 
+    @I18n
+    @ApiOperation(value = "更新漏洞库")
+    @GetMapping("/updateVulnDb")
+    @RequiresRoles(value = {RoleConstants.ADMIN})
+    public void updateVulnDb() throws Exception {
+        systemParameterService.updateVulnDb();
+    }
+
 }

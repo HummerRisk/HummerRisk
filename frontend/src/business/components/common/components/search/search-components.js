@@ -625,6 +625,46 @@ export const SITUATION_LOG_STATUS = {
   }
 }
 
+export const REPOSITORY = {
+  key: "repository", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "Repository", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
+export const PATH = {
+  key: "path", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "Path", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
+export const SIZE = {
+  key: "size", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "Size", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
+export const TAG = {
+  key: "tag", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "Tag", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
 export const ACCOUNT_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const OSS_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, RESULT_STATUS, CREATOR];
 export const VULN_CONFIGS = [NAME, VULN_PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
@@ -639,6 +679,7 @@ export const SERVER_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
 export const SERVER_RESULT_CONFIGS = [NAME, IP, SERVER_RULE_NAME, RULE_SEVERITY, RESULT_STATUS, CREATOR, UPDATE_TIME];
 export const IMAGE_CONFIGS = [NAME, IMAGE_URL, ACCOUNT_STATUS, CREATOR, CREATE_TIME, UPDATE_TIME];
 export const IMAGE_REPO_CONFIGS = [NAME, ACCOUNT_STATUS, CREATOR, UPDATE_TIME];
+export const IMAGE_REPO_IMAGE_CONFIGS = [REPOSITORY, PATH, SIZE, TAG];
 export const IMAGE_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
 export const IMAGE_RESULT_CONFIGS = [NAME, IMAGE_URL, RULE_NAME, RULE_SEVERITY, RESULT_STATUS, CREATOR, UPDATE_TIME];
 export const K8S_CONFIGS = [NAME, K8S_PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];

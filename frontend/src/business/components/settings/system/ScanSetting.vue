@@ -63,6 +63,9 @@
       </el-row>
     </el-form>
     <div>
+      <el-button type="primary" @click="updateVulnDb()" size="small">
+        {{ $t('commons.update_vuln_db') }}
+      </el-button>
       <el-button @click="edit" v-if="showEdit" size="small">{{ $t('commons.edit') }}</el-button>
       <el-button type="success" @click="save('formInline')" v-if="showSave" :disabled="disabledSave" size="small">
         {{ $t('commons.save') }}
@@ -196,8 +199,12 @@ export default {
       this.showSave = false;
       this.show = true;
       this.query();
-    }
-
+    },
+    updateVulnDb() {
+      this.result = this.$get("/system/updateVulnDb", response => {
+        this.$success(this.$t('commons.success'));
+      });
+    },
   }
 }
 </script>

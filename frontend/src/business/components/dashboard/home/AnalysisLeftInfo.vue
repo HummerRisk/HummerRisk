@@ -62,7 +62,7 @@
                     :key="item.id"
                     :label="item.name"
                     :value="item.id">
-                    &nbsp;&nbsp; {{ $t(item.name) }}
+                    &nbsp;&nbsp; {{ item.name }}
                   </el-option>
                 </el-select>
               </el-collapse-item>

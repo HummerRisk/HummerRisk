@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +62,35 @@ public class HistoryService {
     private HistoryCodeResultMapper historyCodeResultMapper;
     @Resource @Lazy
     private HistoryFileSystemResultMapper historyFileSystemResultMapper;
+    @Resource @Lazy
+    private CloudTaskMapper cloudTaskMapper;
+    @Resource @Lazy
+    private AccountMapper accountMapper;
+    @Resource @Lazy
+    private ServerResultMapper serverResultMapper;
+    @Resource @Lazy
+    private ServerMapper serverMapper;
+    @Resource @Lazy
+    private ImageResultMapper imageResultMapper;
+    @Resource @Lazy
+    private ImageMapper imageMapper;
+    @Resource @Lazy
+    private CodeResultMapper codeResultMapper;
+    @Resource @Lazy
+    private CodeMapper codeMapper;
+    @Resource @Lazy
+    private FileSystemResultMapper fileSystemResultMapper;
+    @Resource @Lazy
+    private FileSystemMapper fileSystemMapper;
+    @Resource @Lazy
+    private CloudNativeResultMapper cloudNativeResultMapper;
+    @Resource @Lazy
+    private CloudNativeMapper cloudNativeMapper;
+    @Resource @Lazy
+    private CloudNativeConfigResultMapper cloudNativeConfigResultMapper;
+    @Resource @Lazy
+    private CloudNativeConfigMapper cloudNativeConfigMapper;
+
 
     public Integer insertScanHistory (Object obj) throws Exception {
 
@@ -114,9 +144,97 @@ public class HistoryService {
         }
     }
 
-    public void deleyeScanTaskHistory (Integer id) throws Exception {
+    public void deleteScanTaskHistory (Integer scanId) throws Exception {
         try{
-            historyScanTaskMapper.deleteByPrimaryKey(id);
+            historyScanTaskMapper.deleteByPrimaryKey(scanId);
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
+
+    public void editUselessScanTaskHistory () throws Exception {
+        try{
+            final HistoryScanExample historyScanExample = new HistoryScanExample();
+            HistoryScanExample.Criteria historyScanCriteria = historyScanExample.createCriteria();
+            historyScanCriteria.andStatusEqualTo(TaskConstants.TASK_STATUS.APPROVED.toString());
+            List<HistoryScan> historyScans = historyScanMapper.selectByExample(historyScanExample);
+
+            List<String> historyScanStatus = Arrays.asList(TaskConstants.TASK_STATUS.ERROR.name(), TaskConstants.TASK_STATUS.FINISHED.name(), TaskConstants.TASK_STATUS.WARNING.name());
+            for (HistoryScan historyScan : historyScans) {
+                HistoryScanTaskExample historyScanTaskExample = new HistoryScanTaskExample();
+                HistoryScanTaskExample.Criteria historyScanTaskCriteria = historyScanTaskExample.createCriteria();
+                historyScanTaskCriteria.andScanIdEqualTo(historyScan.getId()).andStatusNotIn(historyScanStatus);
+                List<HistoryScanTask> historyScanTasks = historyScanTaskMapper.selectByExample(historyScanTaskExample);
+                if(historyScanTasks.size() == 0) {
+                    historyScan.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                    historyScanMapper.updateByPrimaryKey(historyScan);
+                }
+                for (HistoryScanTask historyScanTask : historyScanTasks) {
+                    if(historyScanTask.getTaskId()==null) {
+                        historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                        historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
+                    } else {
+                        if (StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.cloudAccount.getType())) {
+                            CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                            Account account = accountMapper.selectByPrimaryKey(historyScanTask.getAccountId());
+                            if(cloudTask == null || account == null) {
+                                historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                                historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
+                            }
+                        } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.vulnAccount.getType())) {
+                            CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                            Account account = accountMapper.selectByPrimaryKey(historyScanTask.getAccountId());
+                            if(cloudTask == null || account == null) {
+                                historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                                historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
+                            }
+                        } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.serverAccount.getType())) {
+                            ServerResult serverResult = serverResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                            Server server = serverMapper.selectByPrimaryKey(historyScanTask.getAccountId());
+                            if(serverResult == null || server == null) {
+                                historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                                historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
+                            }
+                        } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.imageAccount.getType())) {
+                            ImageResult imageResult = imageResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                            Image image = imageMapper.selectByPrimaryKey(historyScanTask.getAccountId());
+                            if(imageResult == null || image == null) {
+                                historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                                historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
+                            }
+                        } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.codeAccount.getType())) {
+                            CodeResult codeResult = codeResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                            Code code = codeMapper.selectByPrimaryKey(historyScanTask.getAccountId());
+                            if(codeResult == null || code == null) {
+                                historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                                historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
+                            }
+                        }  else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.fsAccount.getType())) {
+                            FileSystemResult fileSystemResult = fileSystemResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                            FileSystem fileSystem = fileSystemMapper.selectByPrimaryKey(historyScanTask.getAccountId());
+                            if(fileSystemResult == null || fileSystem == null) {
+                                historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                                historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
+                            }
+                        } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.k8sAccount.getType())) {
+                            CloudNativeResult cloudNativeResult = cloudNativeResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                            CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(historyScanTask.getAccountId());
+                            if(cloudNativeResult == null || cloudNative == null) {
+                                historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                                historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
+                            }
+                        } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.configAccount.getType())) {
+                            CloudNativeConfigResult cloudNativeConfigResult = cloudNativeConfigResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                            CloudNativeConfig cloudNativeConfig = cloudNativeConfigMapper.selectByPrimaryKey(historyScanTask.getAccountId());
+                            if(cloudNativeConfigResult == null || cloudNativeConfig == null) {
+                                historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                                historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
+                            }
+                        }
+                    }
+                }
+            }
         }catch (Exception e){
             throw new Exception(e.getMessage());
         }
@@ -185,6 +303,10 @@ public class HistoryService {
                 resultId = ((CodeResult) obj).getId();
             } else if(obj.getClass() == ImageResult.class || obj.getClass() == ImageResultWithBLOBs.class || obj.getClass() == ImageResultDTO.class) {
                 resultId = ((ImageResult) obj).getId();
+            } else if(obj.getClass() == FileSystemResult.class) {
+                resultId = ((FileSystemResult) obj).getId();
+            } else {
+                resultId = ((Map) obj).get("id").toString();
             }
             return resultId;
         } catch (Exception e) {
