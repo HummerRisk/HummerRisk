@@ -8,7 +8,7 @@
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
                 :row-class-name="tableRowClassName"
                 @filter-change="filter">
-        <el-table-column type="expand" min-width="2%">
+        <el-table-column type="expand" min-width="50">
           <template v-slot:default="props">
             <el-divider><i class="el-icon-folder-opened"></i></el-divider>
             <el-form>
@@ -18,7 +18,8 @@
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column min-width="10%" :label="$t('event.cloud_account_name')">
+        <el-table-column type="index" min-width="50"/>
+        <el-table-column min-width="150" :label="$t('event.cloud_account_name')">
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.cloudAccountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -26,18 +27,18 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="regionName" :label="$t('event.region')" min-width="10%"></el-table-column>
-        <el-table-column prop="eventTime" :label="$t('event.event_time')" min-width="13%">
+        <el-table-column prop="regionName" :label="$t('event.region')" min-width="150"></el-table-column>
+        <el-table-column prop="eventTime" :label="$t('event.event_time')" min-width="160">
           <template v-slot:default="scope">
             <span>{{ scope.row.eventTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" :show-overflow-tooltip="true" :label="$t('event.user_name')" min-width="10%"></el-table-column>
-        <el-table-column prop="sourceIpAddress" :show-overflow-tooltip="true" :label="$t('event.source_ip')" min-width="10%"></el-table-column>
-        <el-table-column prop="eventName" :label="$t('event.event_name')" min-width="15%"></el-table-column>
-        <el-table-column prop="resourceType" :show-overflow-tooltip="true" :label="$t('event.resource_type')" min-width="10%" :formatter="resourceTypeFormat"></el-table-column>
-        <el-table-column prop="resourceName" :show-overflow-tooltip="true" :label="$t('event.resource_name')" min-width="10%" :formatter="resourceNameFormat"></el-table-column>
-        <el-table-column :label="$t('event.risk_level')" prop="eventRating" min-width="8%" sortable>
+        <el-table-column prop="userName" :show-overflow-tooltip="true" :label="$t('event.user_name')" min-width="130"></el-table-column>
+        <el-table-column prop="sourceIpAddress" :show-overflow-tooltip="true" :label="$t('event.source_ip')" min-width="140"></el-table-column>
+        <el-table-column prop="eventName" :label="$t('event.event_name')" min-width="150"></el-table-column>
+        <el-table-column prop="resourceType" :show-overflow-tooltip="true" :label="$t('event.resource_type')" min-width="150" :formatter="resourceTypeFormat"></el-table-column>
+        <el-table-column prop="resourceName" :show-overflow-tooltip="true" :label="$t('event.resource_name')" min-width="150" :formatter="resourceNameFormat"></el-table-column>
+        <el-table-column :label="$t('event.risk_level')" prop="eventRating" min-width="150" sortable fixed="right">
           <template v-slot:default="scope">
             <el-tag v-if="!scope.row.eventRating || scope.row.eventRating === 0" type="success">{{ $t('rule.LowRisk') }}</el-tag>
             <el-tag v-if="scope.row.eventRating=== 1" type="warning">{{ $t('rule.MediumRisk') }}</el-tag>

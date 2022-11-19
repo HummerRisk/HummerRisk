@@ -10,7 +10,8 @@
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
                   :row-class-name="tableRowClassName"
                   @filter-change="filter">
-          <el-table-column min-width="10%" :label="$t('event.cloud_account_name')">
+          <el-table-column type="index" min-width="50"/>
+          <el-table-column min-width="150" :label="$t('event.cloud_account_name')">
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.accountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -18,41 +19,41 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="regionName" :label="$t('event.region')" min-width="10%">
+          <el-table-column prop="regionName" :label="$t('event.region')" min-width="110">
             <template v-slot:default="scope">
               <regions :logId="scope.row.id" :accountId="scope.row.accountId"></regions>
             </template>
           </el-table-column>
-          <el-table-column prop="createTime" :label="$t('event.sync_time')" min-width="10%">
+          <el-table-column prop="createTime" :label="$t('event.sync_time')" min-width="160">
             <template v-slot:default="scope">
               <span>{{ scope.row.createTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column v-slot:default="scope" :label="$t('event.sync_status')" min-width="10%">
-            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.status === 0">
+          <el-table-column v-slot:default="scope" :label="$t('event.sync_status')" min-width="120">
+            <el-button @click="showTaskLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.status === 0">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
-            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="success" v-else-if="scope.row.status === 1">
+            <el-button @click="showTaskLog(scope.row)" plain size="mini" type="success" v-else-if="scope.row.status === 1">
               <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
             </el-button>
-            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="danger" v-else-if="scope.row.status === 2">
+            <el-button @click="showTaskLog(scope.row)" plain size="mini" type="danger" v-else-if="scope.row.status === 2">
               <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
             </el-button>
-            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="warning" v-else-if="scope.row.status === 3">
+            <el-button @click="showTaskLog(scope.row)" plain size="mini" type="warning" v-else-if="scope.row.status === 3">
               <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
             </el-button>
           </el-table-column>
-          <el-table-column prop="dataCount" :label="$t('event.data_count')" min-width="5%" v-slot:default="scope">
+          <el-table-column prop="dataCount" :label="$t('event.data_count')" min-width="90" v-slot:default="scope">
             <el-link type="primary" :underline="false" class="md-primary text-click" @click="showEvents(scope.row)">
               {{ scope.row.dataCount }}
             </el-link>
           </el-table-column>
-          <el-table-column :label="$t('event.sync_time_section')" min-width="20%">
+          <el-table-column :label="$t('event.sync_time_section')" min-width="300">
             <template v-slot:default="scope">
               <span>{{ scope.row.requestStartTime | timestampFormatDate }} - {{ scope.row.requestEndTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('commons.operating')" fixed="right"  min-width="5%">
+          <el-table-column :label="$t('commons.operating')" fixed="right"  min-width="100">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
