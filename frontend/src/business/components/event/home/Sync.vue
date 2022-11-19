@@ -150,7 +150,7 @@ export default {
         accountId: "",
         region: ""
       },
-      supportCloud:["hummer-aliyun-plugin","hummer-huawei-plugin","hummer-qcloud-plugin"],
+      supportCloud:["hummer-aliyun-plugin","hummer-huawei-plugin","hummer-qcloud-plugin","hummer-aws-plugin"],
       checkAll: false,
       showSync: false,
       syncLog: '',

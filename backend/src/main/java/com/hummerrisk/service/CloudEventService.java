@@ -220,6 +220,9 @@ public class CloudEventService {
                 if (pageResult.size() < maxNum || pageNum > MAX_PAGE_NUM) {
                     haveNextPage = false;
                 }
+                if("true".equals(accountMap.get("isEnd"))){
+                    haveNextPage = false;
+                }
                 pageNum++;
             }
             TransactionTemplate template = new TransactionTemplate(transactionManager);
@@ -424,7 +427,7 @@ public class CloudEventService {
 
     public List<CloudEvent> getAwsEvents(Map<String, String> accountMap, String startTime, String endTime,
                                          int pageNum, int maxResult) {
-        AWSCredentials awsCredentials = new BasicAWSCredentials(accountMap.get("secretId"), accountMap.get("secretKey"));
+        AWSCredentials awsCredentials = new BasicAWSCredentials(accountMap.get("accessKey"), accountMap.get("secretKey"));
         AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials);
         AWSCloudTrail awsCloudTrail = AWSCloudTrailClient.builder().withRegion(accountMap.get("region")).withCredentials(awsCredentialsProvider).build();
         com.amazonaws.services.cloudtrail.model.LookupEventsRequest eventsRequest = new com.amazonaws.services.cloudtrail.model.LookupEventsRequest();
@@ -447,7 +450,31 @@ public class CloudEventService {
             accountMap.put("isEnd","true");
         }
         List<com.amazonaws.services.cloudtrail.model.Event> events = lookupEventsResult.getEvents();
-        return null;
+        return events.stream().map(item->{
+            CloudEvent cloudEvent = new CloudEvent();
+            cloudEvent.setEventId(item.getEventId());
+            cloudEvent.setEventName(item.getEventName());
+            //cloudEvent.setUserIdentity(item.getAccessKeyId());
+            cloudEvent.setEventTime(item.getEventTime().getTime());
+            cloudEvent.setEventSource(item.getEventSource());
+            cloudEvent.setUserName(item.getUsername());
+            cloudEvent.setReferencedResources(JSON.toJSONString(item.getResources()));
+            String cloudTrailEvent = item.getCloudTrailEvent();
+            JSONObject jsonObject =  JSON.parseObject(cloudTrailEvent);
+            cloudEvent.setUserIdentity(jsonObject.get("userIdentity")==null?null:jsonObject.get("userIdentity").toString());
+            cloudEvent.setAcsRegion(jsonObject.getString("awsRegion"));
+            cloudEvent.setSourceIpAddress(jsonObject.getString("sourceIPAddress"));
+            cloudEvent.setUserAgent(jsonObject.getString("userAgent"));
+            cloudEvent.setRequestParameters(jsonObject.getString("requestParameters"));
+            cloudEvent.setResponseElements(jsonObject.getString("responseElements"));
+            cloudEvent.setAdditionalEventData(jsonObject.getString("additionalEventData"));
+            cloudEvent.setEventType(jsonObject.getString("eventType"));
+            cloudEvent.setEventCategory(jsonObject.getString("eventCategory"));
+            cloudEvent.setEventVersion(jsonObject.getString("eventVersion"));
+            cloudEvent.setCloudAuditEvent(jsonObject.toJSONString());
+            return cloudEvent;
+        }).collect(Collectors.toList());
+
     }
 
     public List<CloudEvent> getAliyunCloudEvents(Map<String, String> accountMap, String startTime, String endTime,
