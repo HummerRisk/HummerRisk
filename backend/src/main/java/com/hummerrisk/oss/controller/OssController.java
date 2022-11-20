@@ -21,6 +21,7 @@ import com.hummerrisk.oss.dto.*;
 import com.hummerrisk.oss.service.OssService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -166,15 +167,29 @@ public class OssController {
 
     @I18n
     @ApiOperation("创建存储桶")
+    @PostMapping("create")
+    public void create(@RequestBody OssBucket bucket) throws Exception {
+        ossService.create(bucket);
+    }
+
+    @I18n
+    @ApiOperation("创建目录")
     @PostMapping("createDir")
     public void createDir(@RequestBody OssBucketRequest request) throws Exception{
         ossService.createDir(request);
     }
 
     @I18n
+    @ApiIgnore
+    @GetMapping("support/bucketAddforOssId/{ossId}")
+    public BucketKeyValueItem bucketAddforOssId(@PathVariable String ossId) throws Exception {
+        return ossService.bucketAddforOssId(ossId);
+    }
+
+    @I18n
     @ApiOperation("获取对象存储区域")
-    @GetMapping("getOssRegions/{ossId}")
-    public List<OssRegion> getOssRegions(@PathVariable String ossId) throws Exception {
+    @GetMapping("support/regions/{ossId}")
+    public List<OssRegion> getRegions(@PathVariable String ossId) throws Exception {
         return ossService.getOssRegions(ossId);
     }
 

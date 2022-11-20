@@ -12,7 +12,7 @@
                 :row-class-name="tableRowClassName"
                 @filter-change="filter">
         <el-table-column type="index" min-width="1%"/>
-        <el-table-column prop="bucketName" :label="$t('oss.bucket')" min-width="12%" show-overflow-tooltip v-slot:default="scope">
+        <el-table-column prop="bucketName" :label="$t('oss.bucket')" min-width="14%" show-overflow-tooltip v-slot:default="scope">
           <el-link type="primary" @click="showObject(scope.row)">
             {{ scope.row.bucketName }}
           </el-link>
@@ -30,8 +30,8 @@
           {{ scope.row.cannedAcl?scope.row.cannedAcl:'-' }}
         </el-table-column>
         <el-table-column prop="storageClass" :label="$t('oss.storage_class')" min-width="10%" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="size" :label="$t('oss.oss_size')" min-width="10%" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="objectNumber" :label="$t('oss.object_number')" min-width="10%" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="size" :label="$t('oss.oss_size')" min-width="9%" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="objectNumber" :label="$t('oss.object_number')" min-width="9%" show-overflow-tooltip></el-table-column>
         <!--        <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">-->
         <!--          <template v-slot:default="scope">-->
         <!--            <table-operators :buttons="bucketButtons" :row="scope.row"/>-->
@@ -83,8 +83,11 @@
                :destroy-on-close="true">
       <div v-loading="ossResult.loading">
         <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="form">
-          <el-form-item :label="$t('account.cloud_account')" :rules="{required: true, message: $t('account.cloud_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.id" :placeholder="$t('account.please_choose_account')" @change="changeAccount(form.id)">
+          <el-form-item :label="$t('oss.bucket_name')" :rules="{required: true, message: $t('oss.bucket_name') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-input type="text" v-model="form.bucketName" @input="change($event)" autocomplete="off" :placeholder="$t('oss.bucket_name')"/>
+          </el-form-item>
+          <el-form-item :label="$t('oss.oss_account')" :rules="{required: true, message: $t('oss.oss_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="form.ossId" :placeholder="$t('account.please_choose_account')" @change="changeAccount(form.ossId)">
               <el-option
                 v-for="item in accounts"
                 :key="item.id"
@@ -95,10 +98,10 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item :label="$t('account.regions')" :rules="{required: true, message: $t('account.regions') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-form-item v-if="bucketParams.showLocation" :label="$t('account.regions')" :rules="{required: true, message: $t('account.regions') + $t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-select style="width: 100%;" v-model="form.regionId" :placeholder="$t('account.please_choose_region')">
               <el-option
-                v-for="item in regions"
+                v-for="item in bucketParams.locationList"
                 :key="item.regionId"
                 :label="item.regionName"
                 :value="item.regionId">
@@ -106,18 +109,38 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item :label="$t('account.regions')" :rules="{required: true, message: $t('account.regions') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.regionId" :placeholder="$t('account.please_choose_region')">
+          <el-form-item v-if="bucketParams.showStorageClass" :label="$t('oss.storage_class')" :rules="{required: true, message: $t('oss.storage_class') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="form.storageClass" :placeholder="$t('oss.storage_class')">
               <el-option
-                v-for="item in regions"
-                :key="item.regionId"
-                :label="item.regionName"
-                :value="item.regionId">
-                &nbsp;&nbsp; {{ item.regionName }}
+                v-for="item in bucketParams.storageList"
+                :key="item.key"
+                :label="item.value"
+                :value="item.key">
+                &nbsp;&nbsp; {{ item.value }}
               </el-option>
             </el-select>
           </el-form-item>
+          <el-form-item v-if="bucketParams.showCannedAcl" :label="$t('oss.read_acl')" :rules="{required: true, message: $t('oss.read_acl') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="form.cannedAcl" :placeholder="$t('oss.read_acl')">
+              <el-option
+                v-for="item in bucketParams.cannedAclList"
+                :key="item.key"
+                :label="item.value"
+                :value="item.key">
+                &nbsp;&nbsp; {{ item.value }}
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <div style="color: red;font-style:oblique;margin: 10px 0 10px 50px;">
+            <div>{{ $t('oss.bucket_tips6') }}</div>
+            <div>{{ $t('oss.bucket_tips2') }}</div>
+            <div>{{ $t('oss.bucket_tips7') }}</div>
+            <div>{{ $t('oss.bucket_tips8') }}</div>
+          </div>
         </el-form>
+        <dialog-footer
+          @cancel="visible = false"
+          @confirm="createBucket()"/>
       </div>
     </el-drawer>
     <!--create oss bucket-->
@@ -195,7 +218,13 @@ export default {
         ],
       },
       accounts: [],
-      regions: [],
+      bucketParams: [],
+      locationList: [],
+      storageList: [],
+      cannedAclList: [],
+      showLocation: false,
+      showCannedAcl: false,
+      showStorageClass: false,
     }
   },
   methods: {
@@ -286,11 +315,43 @@ export default {
         this.accounts =  data;
       });
     },
-    //选择插件查询云账号信息
-    changeAccount (accountId){
-      this.$get("/oss/getOssRegions/" + accountId,res1 => {
-        this.regions = res1.data;
+    //选择插件查询对象存储账号信息
+    changeAccount (ossId){
+      this.$get("/oss/support/bucketAddforOssId/" + ossId,response => {
+        this.bucketParams = response.data;
       });
+    },
+    createBucket() {
+      this.result = this.$post("/oss/create", this.form, response => {
+        if (response.success) {
+          this.$success(this.$t('commons.create_success'));
+          this.search();
+          this.handleClose();
+        } else {
+          this.$error(response.message);
+        }
+      });
+    },
+    getBucketLocation (ossId) {
+      this.locationList = [];
+      this.$get('bucket/support/regions/' + ossId, response => {
+        this.locationList = response.data;
+      });
+    },
+    getStorageList (ossId) {
+      this.storageList = [];
+      this.$get('bucket/support/regions/' + ossId + '/params/storageClass', response => {
+        this.storageList = response.data;
+      });
+    },
+    getCannedACL (ossId) {
+      this.cannedAclList = [];
+      this.$get('bucket/support/' + ossId + '/params/cannedACL', response => {
+        this.cannedAclList = response.data;
+      });
+    },
+    change(e) {
+      this.$forceUpdate();
     },
   },
   created() {

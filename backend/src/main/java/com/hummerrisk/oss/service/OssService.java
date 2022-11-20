@@ -33,6 +33,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.annotation.Resource;
 import java.io.FilterInputStream;
@@ -222,7 +223,7 @@ public class OssService {
             saveLog(oss.getId(), "i18n_operation_ex" + ": " + "failed_oss", "failed_oss", false, 0);
             return;
         }
-        OperationLogService.log(null, oss.getId(), oss.getName(), ResourceTypeConstants.OSS.name(), OSSConstants.SYNC_STATUS.APPROVED.name(), null);
+        OperationLogService.log(null, oss.getId(), oss.getName(), ResourceTypeConstants.OSS.name(), ResourceOperation.SYNC, "i18n_start_oss_sync");
         ossMapper.updateByPrimaryKeySelective(oss);
         syncBucketInfo(oss);
     }
@@ -353,6 +354,35 @@ public class OssService {
         return ossProvider.downloadObject(bucket, oss, objectId);
     }
 
+    public void create(OssBucket params) throws Exception{
+        if (null == params || StringUtils.isBlank(params.getOssId()) || StringUtils.isBlank(params.getBucketName())) {
+            HRException.throwException("Parameter is null.");
+        }
+        OssWithBLOBs account = getAccountByPrimaryKey(params.getOssId());
+        OssProvider ossProvider = getOssProvider(account.getPluginId());
+        createBucket(ossProvider, account, params);
+    }
+
+    public OssBucket createBucket(OssProvider cloudprovider, OssWithBLOBs account , OssBucket params){
+        OssBucket result = null;
+        try {
+            result = cloudprovider.createBucket(account, params);
+            if (result == null) {
+                throw new Exception(Translator.get("i18n_creation_returns_empty"));
+            }
+            if (result.getStorageClass() == null){
+                result.setStorageClass("");
+            }
+            ossBucketMapper.insertSelective(result);
+            OperationLogService.log(SessionUtils.getUser(), result.getBucketName(), result.getBucketName(), ResourceTypeConstants.OSS.name(), ResourceOperation.CREATE, "i18n_create_bucket");
+            return result;
+        } catch (Exception e) {
+            LogUtil.error("Failed to create the bucket: " + params.getBucketName(), e);
+            HRException.throwException(Translator.get("i18n_create_bucket_failed")+ e.getMessage());
+        }
+        return result;
+    }
+
     public void createDir(OssBucketRequest request) throws Exception{
         String bucketId = UUIDUtil.newUUID();
         request.setBucketId(bucketId);
@@ -362,6 +392,56 @@ public class OssService {
         bucket.setId(bucketId);
         bucket.setBucketName(request.getBucketName());
         ossProvider.createDir(bucket, account, request.getBucketName());
+    }
+
+    public BucketKeyValueItem bucketAddforOssId(String ossId) throws Exception {
+        BucketKeyValueItem bucketKeyValueItem = new BucketKeyValueItem();
+        OssWithBLOBs oss = getAccountByPrimaryKey(ossId);
+        bucketKeyValueItem.setShowLocation(true);
+        bucketKeyValueItem.setLocationList(getOssRegions(ossId));
+        if (StringUtils.equals(oss.getPluginId(), OSSConstants.aws)) {
+            bucketKeyValueItem.setShowCannedAcl(true);
+            bucketKeyValueItem.setCannedAclList(getParamList(ossId, BASE_CANNED_ACL_TYPE));
+        } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.aliyun)) {
+            bucketKeyValueItem.setShowCannedAcl(true);
+            bucketKeyValueItem.setShowStorageClass(true);
+            bucketKeyValueItem.setCannedAclList(getParamList(ossId, BASE_CANNED_ACL_TYPE));
+            bucketKeyValueItem.setStorageList(getParamList(ossId, BASE_STORAGE_CLASS_TYPE));
+        } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.tencent)) {
+            bucketKeyValueItem.setShowCannedAcl(true);
+            bucketKeyValueItem.setCannedAclList(getParamList(ossId, BASE_CANNED_ACL_TYPE));
+        } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.huawei)) {
+            bucketKeyValueItem.setShowCannedAcl(true);
+            bucketKeyValueItem.setShowStorageClass(true);
+            bucketKeyValueItem.setCannedAclList(getParamList(ossId, BASE_CANNED_ACL_TYPE));
+            bucketKeyValueItem.setStorageList(getParamList(ossId, BASE_STORAGE_CLASS_TYPE));
+        } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.baidu)) {
+            bucketKeyValueItem.setShowCannedAcl(true);
+            bucketKeyValueItem.setShowStorageClass(true);
+            bucketKeyValueItem.setCannedAclList(getParamList(ossId, BASE_CANNED_ACL_TYPE));
+            bucketKeyValueItem.setStorageList(getParamList(ossId, BASE_STORAGE_CLASS_TYPE));
+        } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.ucloud)) {
+            bucketKeyValueItem.setShowCannedAcl(true);
+            bucketKeyValueItem.setShowStorageClass(true);
+            bucketKeyValueItem.setCannedAclList(getParamList(ossId, BASE_CANNED_ACL_TYPE));
+            bucketKeyValueItem.setStorageList(getParamList(ossId, BASE_STORAGE_CLASS_TYPE));
+        } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.qingcloud)) {
+            bucketKeyValueItem.setShowCannedAcl(true);
+            bucketKeyValueItem.setShowStorageClass(true);
+            bucketKeyValueItem.setCannedAclList(getParamList(ossId, BASE_CANNED_ACL_TYPE));
+            bucketKeyValueItem.setStorageList(getParamList(ossId, BASE_STORAGE_CLASS_TYPE));
+        } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.qiniu)) {
+            bucketKeyValueItem.setShowCannedAcl(true);
+            bucketKeyValueItem.setShowStorageClass(true);
+            bucketKeyValueItem.setCannedAclList(getParamList(ossId, BASE_CANNED_ACL_TYPE));
+            bucketKeyValueItem.setStorageList(getParamList(ossId, BASE_STORAGE_CLASS_TYPE));
+        } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.huoshan)) {
+            bucketKeyValueItem.setShowCannedAcl(true);
+            bucketKeyValueItem.setShowStorageClass(true);
+            bucketKeyValueItem.setCannedAclList(getParamList(ossId, BASE_CANNED_ACL_TYPE));
+            bucketKeyValueItem.setStorageList(getParamList(ossId, BASE_STORAGE_CLASS_TYPE));
+        }
+        return bucketKeyValueItem;
     }
 
     public List<OssRegion> getOssRegions(String ossId) throws Exception {
@@ -389,9 +469,12 @@ public class OssService {
 
         try {
             if (type.equals(BASE_STORAGE_CLASS_TYPE)){
-                if (ossAccount.getPluginName().equals(OSSConstants.aws) ||
-                        ossAccount.getPluginName().equals(OSSConstants.baidu) ||
-                        ossAccount.getPluginName().equals(OSSConstants.huawei)) {
+                if (ossAccount.getProxyId().equals(OSSConstants.aws) ||
+                        ossAccount.getProxyId().equals(OSSConstants.tencent) ||
+                        ossAccount.getProxyId().equals(OSSConstants.huoshan) ||
+                        ossAccount.getProxyId().equals(OSSConstants.qingcloud) ||
+                        ossAccount.getProxyId().equals(OSSConstants.qiniu) ||
+                        ossAccount.getProxyId().equals(OSSConstants.ucloud)) {
                     return new ArrayList<KeyValueItem>();
                 }
             }
@@ -484,7 +567,7 @@ public class OssService {
                     });
                 }};
             }).collect(Collectors.toList());
-            OperationLogService.log(SessionUtils.getUser(), request.getAccountId(), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "导出合规报告");
+            OperationLogService.log(SessionUtils.getUser(), request.getAccountId(), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "i18n_export_report");
             return ExcelExportUtils.exportExcelData(Translator.get("i18n_scan_resource"), request.getColumns().stream().map(ExcelExportRequest.Column::getValue).collect(Collectors.toList()), data);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
