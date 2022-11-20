@@ -100,7 +100,7 @@
     </if>
   </sql>
 
-  <select id="getCloudEventList" resultType="com.hummerrisk.base.domain.CloudEvent">
+  <select id="getCloudEventList" resultType="com.hummerrisk.base.domain.CloudEventWithBLOBs">
     select
         t.*
     from cloud_event t

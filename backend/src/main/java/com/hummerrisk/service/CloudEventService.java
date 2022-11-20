@@ -132,7 +132,7 @@ public class CloudEventService {
         cloudEventMapper.deleteByExample(cloudEventExample);
     }
 
-    public List<CloudEvent> getCloudEvents(CloudEventRequest cloudEventRequest) {
+    public List<CloudEventWithBLOBs> getCloudEvents(CloudEventRequest cloudEventRequest) {
         return extCloudEventMapper.getCloudEventList(cloudEventRequest);
     }
 
@@ -210,12 +210,12 @@ public class CloudEventService {
 
             Map<String, String> accountMap = PlatformUtils.getAccount(account, region, proxyMapper.selectByPrimaryKey(account.getProxyId()));
             accountMap.put("regionName", PlatformUtils.tranforRegionId2RegionName(region, account.getPluginId()));
-            List<CloudEvent> result1 = new ArrayList<>();
+            List<CloudEventWithBLOBs> result1 = new ArrayList<>();
             int pageNum = 1;
             int maxNum = 20;
             boolean haveNextPage = true;
             while (haveNextPage) {
-                List<CloudEvent> pageResult = getCloudEvents(account, accountMap, startTime, endTime, pageNum, maxNum);
+                List<CloudEventWithBLOBs> pageResult = getCloudEvents(account, accountMap, startTime, endTime, pageNum, maxNum);
                 result1.addAll(pageResult);
                 if (pageResult.size() < maxNum || pageNum > MAX_PAGE_NUM) {
                     haveNextPage = false;
@@ -226,7 +226,7 @@ public class CloudEventService {
                 pageNum++;
             }
             TransactionTemplate template = new TransactionTemplate(transactionManager);
-            Map<String,CloudEvent> cloudEventMap = new HashMap<>();
+            Map<String,CloudEventWithBLOBs> cloudEventMap = new HashMap<>();
             result1.forEach(item -> {
                 item.setCloudAccountId(account.getId());
                 item.setSyncRegion(region);
@@ -237,7 +237,7 @@ public class CloudEventService {
                 cloudEventMap.put(item.getEventId(),item);
             });
 
-            List<CloudEvent> result  = new ArrayList<>(cloudEventMap.values());
+            List<CloudEventWithBLOBs> result  = new ArrayList<>(cloudEventMap.values());
             template.execute(new TransactionCallbackWithoutResult() {
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus arg0) {
@@ -284,9 +284,9 @@ public class CloudEventService {
         return -1;
     }
 
-    public List<CloudEvent> getCloudEvents(AccountWithBLOBs account, Map<String, String> accountMap, String startTime, String endTime,
+    public List<CloudEventWithBLOBs> getCloudEvents(AccountWithBLOBs account, Map<String, String> accountMap, String startTime, String endTime,
                                            int pageNum, int maxResult) throws Exception {
-        List<CloudEvent> result;
+        List<CloudEventWithBLOBs> result;
         switch (account.getPluginId()) {
             case PlatformUtils.aliyun:
                 result = getAliyunCloudEvents(accountMap, startTime, endTime, pageNum, maxResult);
@@ -306,7 +306,7 @@ public class CloudEventService {
         return result;
     }
 
-    private List<CloudEvent> getHuaweiCloudEvents(Map<String, String> accountMap, String startTime
+    private List<CloudEventWithBLOBs> getHuaweiCloudEvents(Map<String, String> accountMap, String startTime
             , String endTime, int pageNum, int maxResult) {
         String ak = accountMap.get("ak");
         String sk = accountMap.get("sk");
@@ -339,7 +339,7 @@ public class CloudEventService {
                 eventLevel = 2;
             }
             UserInfo user = trace.getUser();
-            CloudEvent cloudEvent = new CloudEvent();
+            CloudEventWithBLOBs cloudEvent = new CloudEventWithBLOBs();
             cloudEvent.setEventId(trace.getTraceId());
             cloudEvent.setEventName(trace.getTraceName());
             cloudEvent.setEventRating(eventLevel);
@@ -365,7 +365,7 @@ public class CloudEventService {
         }).collect(Collectors.toList());
     }
 
-    private List<CloudEvent> getTencentEvents(Map<String, String> accountMap, String startTime
+    private List<CloudEventWithBLOBs> getTencentEvents(Map<String, String> accountMap, String startTime
             , String endTime, int pageNum, int maxResult) throws TencentCloudSDKException {
         Credential cred = new Credential(accountMap.get("secretId"), accountMap.get("secretKey"));
         // 实例化一个http选项，可选的，没有特殊需求可以跳过
@@ -407,7 +407,7 @@ public class CloudEventService {
                 eventLevel = 1;
             }
 
-            CloudEvent cloudEvent = new CloudEvent();
+            CloudEventWithBLOBs cloudEvent = new CloudEventWithBLOBs();
             cloudEvent.setEventRating(eventLevel);
             cloudEvent.setEventId(event.getEventId());
             cloudEvent.setUserName(event.getUsername());
@@ -425,7 +425,7 @@ public class CloudEventService {
 
     }
 
-    public List<CloudEvent> getAwsEvents(Map<String, String> accountMap, String startTime, String endTime,
+    public List<CloudEventWithBLOBs> getAwsEvents(Map<String, String> accountMap, String startTime, String endTime,
                                          int pageNum, int maxResult) {
         AWSCredentials awsCredentials = new BasicAWSCredentials(accountMap.get("accessKey"), accountMap.get("secretKey"));
         AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials);
@@ -451,7 +451,7 @@ public class CloudEventService {
         }
         List<com.amazonaws.services.cloudtrail.model.Event> events = lookupEventsResult.getEvents();
         return events.stream().map(item->{
-            CloudEvent cloudEvent = new CloudEvent();
+            CloudEventWithBLOBs cloudEvent = new CloudEventWithBLOBs();
             cloudEvent.setEventId(item.getEventId());
             cloudEvent.setEventName(item.getEventName());
             //cloudEvent.setUserIdentity(item.getAccessKeyId());
@@ -477,7 +477,7 @@ public class CloudEventService {
 
     }
 
-    public List<CloudEvent> getAliyunCloudEvents(Map<String, String> accountMap, String startTime, String endTime,
+    public List<CloudEventWithBLOBs> getAliyunCloudEvents(Map<String, String> accountMap, String startTime, String endTime,
                                                  int pageNum, int maxResult) throws Exception {
         startTime = DateUtils.localDateStrToUtcDateStr("yyyy-MM-dd HH:mm:ss", startTime).replace(" ", "T") + "Z";
         endTime = DateUtils.localDateStrToUtcDateStr("yyyy-MM-dd HH:mm:ss", endTime).replace(" ", "T") + "Z";
@@ -503,7 +503,7 @@ public class CloudEventService {
             } else {
                 eventLevel = 1;
             }
-            CloudEvent cloudEvent = new CloudEvent();
+            CloudEventWithBLOBs cloudEvent = new CloudEventWithBLOBs();
             cloudEvent.setEventRating(eventLevel);
             cloudEvent.setEventId((String) item.get("eventId"));
             cloudEvent.setEventName((String) item.get("eventName"));

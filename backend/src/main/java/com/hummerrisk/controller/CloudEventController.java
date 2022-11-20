@@ -2,10 +2,7 @@ package com.hummerrisk.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummerrisk.base.domain.CloudEvent;
-import com.hummerrisk.base.domain.CloudEventRegionLog;
-import com.hummerrisk.base.domain.CloudEventSyncLog;
-import com.hummerrisk.base.domain.CloudEventSyncLogExample;
+import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
@@ -68,7 +65,7 @@ public class CloudEventController {
 
     @ApiOperation(value = "云事件分析列表")
     @PostMapping("list/{goPage}/{pageSize}")
-    public Pager<List<CloudEvent>> listEvents(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest) {
+    public Pager<List<CloudEventWithBLOBs>> listEvents(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, cloudEventService.getCloudEvents(cloudEventRequest));
     }

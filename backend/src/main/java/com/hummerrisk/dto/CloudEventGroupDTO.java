@@ -4,7 +4,6 @@ public class CloudEventGroupDTO {
     private String eventDate;
     private String cloudAccountId;
     private String syncRegion ;
-
     private String regionName;
     private String eventName;
     private String userName;
