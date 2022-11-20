@@ -1,15 +1,33 @@
 package com.hummerrisk.oss.provider;
 
 
+import com.alibaba.fastjson.JSON;
+import com.hummerrisk.base.domain.Oss;
 import com.hummerrisk.base.domain.OssBucket;
 import com.hummerrisk.base.domain.OssWithBLOBs;
+import com.hummerrisk.commons.constants.RegionsConstants;
+import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.oss.dto.BucketObjectDTO;
 import com.hummerrisk.oss.dto.OssRegion;
+import com.hummerrisk.proxy.qiniu.QiniuCredential;
+import com.hummerrisk.service.SysListener;
+import com.qiniu.common.QiniuException;
+import com.qiniu.storage.BucketManager;
+import com.qiniu.storage.Configuration;
+import com.qiniu.storage.Region;
+import com.qiniu.storage.model.BucketInfo;
+import com.qiniu.storage.model.FileInfo;
+import com.qiniu.storage.model.FileListing;
+import com.qiniu.util.Auth;
+import com.qiniu.util.StringUtils;
+import org.ini4j.Reg;
 
 import java.io.FilterInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class QiniuProvider implements OssProvider {
 
@@ -21,15 +39,72 @@ public class QiniuProvider implements OssProvider {
     }
 
     @Override
-    public List<OssBucket> getOssBucketList(OssWithBLOBs ossAccount) {
+    public List<OssBucket> getOssBucketList(OssWithBLOBs ossAccount) throws QiniuException {
         List<OssBucket> resultList = new ArrayList<>();
+        Map<String,String> regionMap = RegionsConstants.QiniuMap;
+        Set<String> regionSet = regionMap.keySet();
+        for (String region : regionSet) {
+            BucketManager bucketManager = getBucketManager(ossAccount, region);
+            String[] buckets = bucketManager.buckets();
+            for(String bucket:buckets){
+                OssBucket ossBucket = new OssBucket();
+                ossBucket.setOssId(ossAccount.getId());
+                ossBucket.setBucketName(bucket);
+                ossBucket.setLocation(region);
+                resultList.add(ossBucket);
+            }
+        }
+
         return resultList;
     }
 
+    private BucketManager getBucketManager(OssWithBLOBs ossAccount,String region){
+        Configuration cfg = new Configuration(getRegion(region));
+        QiniuCredential qiniuCredential = JSON.parseObject(ossAccount.getCredential(), QiniuCredential.class);
+        Auth auth = Auth.create(qiniuCredential.getAccessKey(), qiniuCredential.getSecretKey());
+        return new BucketManager(auth, cfg);
+    }
+
+    private Region getRegion(String region){
+        switch (region){
+            case "z0":return Region.huadong();
+            case "z1":return Region.huabei();
+            case "z2":return Region.huanan();
+            case "na0":return Region.beimei();
+            case "as0":return Region.regionAs0();
+            case "fog-cn-east-1":return Region.regionFogCnEast1();
+            case "fog-cn-east-2":return Region.huadongZheJiang2();
+        }
+        return Region.autoRegion();
+    }
+
     @Override
-    public List<BucketObjectDTO> getBucketObjects(OssBucket bucket, OssWithBLOBs account, String prefix) {
-        List<BucketObjectDTO> objects = new ArrayList<>();
-        return objects;
+    public List<BucketObjectDTO> getBucketObjects(OssBucket bucket, OssWithBLOBs account, String prefix) throws QiniuException {
+        BucketManager bucketManager = getBucketManager(account, bucket.getLocation());
+        String marker = null;
+        List<BucketObjectDTO> result = new ArrayList<>();
+        boolean isEnd = false;
+        int maxPage = 10;
+        int page = 1;
+        while (!isEnd){
+            FileListing fileListing = bucketManager.listFilesV2(bucket.getBucketName(), prefix, marker, 1000, null);
+            marker = fileListing.marker;
+            if(StringUtils.isNullOrEmpty(marker) ||page>=maxPage){
+                isEnd = true;
+            }
+            for (FileInfo item : fileListing.items) {
+                BucketObjectDTO bucketObjectDTO = new BucketObjectDTO();
+                bucketObjectDTO.setBucketId(bucket.getId());
+                bucketObjectDTO.setObjectType("FILE");
+                bucketObjectDTO.setObjectName(item.key);
+                bucketObjectDTO.setObjectSize(SysListener.changeFlowFormat(item.fsize));
+                bucketObjectDTO.setLastModified(item.putTime);
+                result.add(bucketObjectDTO);
+            }
+            page++;
+        }
+
+        return result;
     }
 
     @Override
