@@ -99,7 +99,7 @@
             </el-select>
           </el-form-item>
           <el-form-item v-if="bucketParams.showLocation" :label="$t('account.regions')" :rules="{required: true, message: $t('account.regions') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.regionId" :placeholder="$t('account.please_choose_region')">
+            <el-select style="width: 100%;" v-model="form.location" :placeholder="$t('account.please_choose_region')">
               <el-option
                 v-for="item in bucketParams.locationList"
                 :key="item.regionId"
@@ -113,10 +113,10 @@
             <el-select style="width: 100%;" v-model="form.storageClass" :placeholder="$t('oss.storage_class')">
               <el-option
                 v-for="item in bucketParams.storageList"
-                :key="item.key"
-                :label="item.value"
-                :value="item.key">
-                &nbsp;&nbsp; {{ item.value }}
+                :key="item.value"
+                :label="item.key"
+                :value="item.value">
+                &nbsp;&nbsp; {{ item.key }}
               </el-option>
             </el-select>
           </el-form-item>
@@ -124,14 +124,14 @@
             <el-select style="width: 100%;" v-model="form.cannedAcl" :placeholder="$t('oss.read_acl')">
               <el-option
                 v-for="item in bucketParams.cannedAclList"
-                :key="item.key"
-                :label="item.value"
-                :value="item.key">
-                &nbsp;&nbsp; {{ item.value }}
+                :key="item.value"
+                :label="item.key"
+                :value="item.value">
+                &nbsp;&nbsp; {{ item.key }}
               </el-option>
             </el-select>
           </el-form-item>
-          <div style="color: red;font-style:oblique;margin: 10px 0 10px 50px;">
+          <div style="color: red;font-style:oblique;margin: 10px 0 10px 100px;">
             <div>{{ $t('oss.bucket_tips6') }}</div>
             <div>{{ $t('oss.bucket_tips2') }}</div>
             <div>{{ $t('oss.bucket_tips7') }}</div>
@@ -309,7 +309,7 @@ export default {
     },
     //查询对象存储账号
     activeAccount() {
-      let url = "/oss/accounts";
+      let url = "/oss/allList";
       this.result = this.$get(url, response => {
         let data = response.data;
         this.accounts =  data;

@@ -373,12 +373,13 @@ public class OssService {
             if (result.getStorageClass() == null){
                 result.setStorageClass("");
             }
+            result.setId(UUIDUtil.newUUID());
             ossBucketMapper.insertSelective(result);
-            OperationLogService.log(SessionUtils.getUser(), result.getBucketName(), result.getBucketName(), ResourceTypeConstants.OSS.name(), ResourceOperation.CREATE, "i18n_create_bucket");
+            OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getBucketName(), ResourceTypeConstants.OSS.name(), ResourceOperation.CREATE, "i18n_create_bucket");
             return result;
         } catch (Exception e) {
             LogUtil.error("Failed to create the bucket: " + params.getBucketName(), e);
-            HRException.throwException(Translator.get("i18n_create_bucket_failed")+ e.getMessage());
+            HRException.throwException(Translator.get("i18n_create_bucket_failed") + "：" + e.getMessage());
         }
         return result;
     }
@@ -469,12 +470,12 @@ public class OssService {
 
         try {
             if (type.equals(BASE_STORAGE_CLASS_TYPE)){
-                if (ossAccount.getProxyId().equals(OSSConstants.aws) ||
-                        ossAccount.getProxyId().equals(OSSConstants.tencent) ||
-                        ossAccount.getProxyId().equals(OSSConstants.huoshan) ||
-                        ossAccount.getProxyId().equals(OSSConstants.qingcloud) ||
-                        ossAccount.getProxyId().equals(OSSConstants.qiniu) ||
-                        ossAccount.getProxyId().equals(OSSConstants.ucloud)) {
+                if (ossAccount.getPluginId().equals(OSSConstants.aws) ||
+                        ossAccount.getPluginId().equals(OSSConstants.tencent) ||
+                        ossAccount.getPluginId().equals(OSSConstants.huoshan) ||
+                        ossAccount.getPluginId().equals(OSSConstants.qingcloud) ||
+                        ossAccount.getPluginId().equals(OSSConstants.qiniu) ||
+                        ossAccount.getPluginId().equals(OSSConstants.ucloud)) {
                     return new ArrayList<KeyValueItem>();
                 }
             }
@@ -487,7 +488,7 @@ public class OssService {
     }
 
     private List<KeyValueItem> getParams(OssWithBLOBs ossAccount, String path) throws Exception {
-        String result = ReadFileUtils.readConfigFile(BASE_STORAGE_CLASS_DIC, ossAccount.getPluginId(), JSON_EXTENSION);
+        String result = ReadFileUtils.readConfigFile(path, ossAccount.getPluginId(), JSON_EXTENSION);
         return new Gson().fromJson(result, new TypeToken<ArrayList<KeyValueItem>>() {
         }.getType());
     }
