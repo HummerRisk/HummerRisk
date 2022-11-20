@@ -44,9 +44,9 @@ public class QingcloudProvider implements OssProvider {
             ossBucket.setOssId(ossAccount.getId());
             ossBucket.setBucketName(item.getName());
             ossBucket.setLocation(item.getLocation());
-            ossBucket.setDomainName(item.getURL());
-
-            return new OssBucket();
+            ossBucket.setDomainName(item.getURL().replaceAll("https://",""));
+            ossBucket.setIntranetEndpoint("N/A");
+            return ossBucket;
         }).collect(Collectors.toList());
     }
 
@@ -65,9 +65,11 @@ public class QingcloudProvider implements OssProvider {
             BucketObjectDTO bucketObjectDTO = new BucketObjectDTO();
             bucketObjectDTO.setBucketId(bucket.getId());
             bucketObjectDTO.setObjectName(item.getKey());
-            bucketObjectDTO.setObjectType(item.getMimeType());
+            bucketObjectDTO.setId(item.getKey());
+            bucketObjectDTO.setDownloadUrl(item.getKey());
+            bucketObjectDTO.setObjectType("FILE");
             bucketObjectDTO.setObjectSize(SysListener.changeFlowFormat(item.getSize()));
-            bucketObjectDTO.setLastModified((long)item.getModified());
+            bucketObjectDTO.setLastModified((long)item.getModified()*1000);
             bucketObjectDTO.setStorageClass(item.getStorageClass());
             return bucketObjectDTO;
         }).collect(Collectors.toList());
