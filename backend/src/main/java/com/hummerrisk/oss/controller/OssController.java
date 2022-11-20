@@ -6,6 +6,7 @@ import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.constants.CloudAccountConstants;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
+import com.hummerrisk.controller.ResultHolder;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.account.CloudAccountRequest;
 import com.hummerrisk.controller.request.excel.ExcelExportRequest;
@@ -34,6 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
 import java.io.FilterInputStream;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -170,6 +173,20 @@ public class OssController {
     @PostMapping("create")
     public void create(@RequestBody OssBucket bucket) throws Exception {
         ossService.create(bucket);
+    }
+
+    @I18n
+    @ApiOperation("批量删除存储桶")
+    @PostMapping("deleteByBatch")
+    public ResultHolder deleteByBatch(@RequestBody List<String> ids) {
+        return ossService.delete(ids);
+    }
+
+    @I18n
+    @ApiOperation("删除存储桶")
+    @GetMapping("deleteBucket/{bucketId}")
+    public ResultHolder deleteBucket(@PathVariable String bucketId) {
+        return ossService.delete(Arrays.asList(bucketId));
     }
 
     @I18n

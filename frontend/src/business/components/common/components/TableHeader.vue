@@ -14,7 +14,8 @@
                               type="success" :content="scanTip" @click="scan"/>
         <table-button v-if="showRun" icon="el-icon-video-play"
                          type="primary" :content="runTip" @click="validate"/>
-
+        <table-button v-if="showDelete" icon="el-icon-remove-outline"
+                      type="danger" :content="deleteTip" @click="deleteSelect"/>
         <slot name="button"></slot>
       </span>
       <span>
@@ -53,6 +54,10 @@ import TableAdvSearchBar from "./search/TableAdvSearchBar";
         type: Boolean,
         default: false
       },
+      showDelete: {
+        type: Boolean,
+        default: false
+      },
       condition: {
         type: Object
       },
@@ -80,6 +85,12 @@ import TableAdvSearchBar from "./search/TableAdvSearchBar";
           return this.$t('commons.search_by_name');
         }
       },
+      deleteTip: {
+        type: String,
+        default() {
+          return this.$t('commons.delete');
+        }
+      },
       showOpen: {
         type: Boolean,
         default: true
@@ -101,7 +112,10 @@ import TableAdvSearchBar from "./search/TableAdvSearchBar";
         this.$emit('scan');
       },
       validate() {
-        this.$emit('validate')
+        this.$emit('validate');
+      },
+      deleteSelect() {
+        this.$emit('deleteSelect');
       },
     },
     computed: {

@@ -11,6 +11,7 @@ import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
+import com.hummerrisk.controller.ResultHolder;
 import com.hummerrisk.controller.request.excel.ExcelExportRequest;
 import com.hummerrisk.controller.request.resource.ResourceRequest;
 import com.hummerrisk.controller.request.rule.RuleGroupRequest;
@@ -27,6 +28,7 @@ import com.hummerrisk.oss.dto.*;
 import com.hummerrisk.oss.provider.OssProvider;
 import com.hummerrisk.service.AccountService;
 import com.hummerrisk.service.OperationLogService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -361,6 +363,46 @@ public class OssService {
         OssWithBLOBs account = getAccountByPrimaryKey(params.getOssId());
         OssProvider ossProvider = getOssProvider(account.getPluginId());
         createBucket(ossProvider, account, params);
+    }
+
+    public ResultHolder delete(List<String> ids) {
+        ResultHolder resultHolder = new ResultHolder();
+        if (CollectionUtils.isEmpty(ids)) {
+            resultHolder.setSuccess(false);
+            resultHolder.setMessage("Unselected record");
+        }
+
+        OssBucketExample example = new OssBucketExample();
+        example.createCriteria().andIdIn(ids);
+        List<OssBucket> buckets = ossBucketMapper.selectByExample(example);
+        int count = 0;
+        StringBuilder message = new StringBuilder();
+        for (final OssBucket bucket : buckets) {
+            OperationLogService.log(SessionUtils.getUser(), bucket.getId(), bucket.getBucketName(), ResourceTypeConstants.OSS.name(), ResourceOperation.DELETE, "i18n_delete_bucket");
+            try {
+                OssWithBLOBs account = getAccountByPrimaryKey(bucket.getOssId());
+                if (null != account && !OSSConstants.ACCOUNT_STATUS.VALID.equals(account.getStatus())) {
+                    throw new Exception(Translator.get("i18n_invalid_cloud_account"));
+                }
+                OssProvider ossProvider = getOssProvider(account.getPluginId());
+                if (ossProvider.doesBucketExist(account, bucket)) {
+                    ossProvider.deleteBucket(account, bucket);
+                }
+                if (!String.valueOf(bucket.getId()).isEmpty()) {
+                    ossBucketMapper.deleteByPrimaryKey(bucket.getId());
+                }
+            } catch (Exception e) {
+                LogUtil.error("Failed to delete the bucket: " + bucket.getBucketName(), e);
+                count++;
+                message.append(String.format("Bucket %s delete failed：%s \n", bucket.getBucketName(), e.getMessage()));
+            }
+        }
+        if (count > 0) {
+            resultHolder.setSuccess(false);
+            resultHolder.setMessage(message.toString());
+        }
+
+        return resultHolder;
     }
 
     public OssBucket createBucket(OssProvider cloudprovider, OssWithBLOBs account , OssBucket params){

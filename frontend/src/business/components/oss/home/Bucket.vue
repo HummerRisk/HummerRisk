@@ -2,22 +2,24 @@
   <main-container>
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
-        <table-header :condition.sync="condition" @search="search"
-                      :title="$t('oss.oss_bucket')" @create="create" :createTip="$t('oss.create_bucket')"
-                      :show-validate="false" :show-create="true"/>
+        <table-header :condition.sync="condition" @search="search" :title="$t('oss.oss_bucket')"
+                      @create="create" :createTip="$t('oss.create_bucket')" :show-create="true"
+                      @deleteSelect="deleteSelect" :deleteTip="$t('oss.delete_batch')" :show-delete="true"/>
 
       </template>
 
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
                 :row-class-name="tableRowClassName"
-                @filter-change="filter">
+                @filter-change="filter" @select-all="select" @select="select">
+        <el-table-column type="selection" min-width="1%">
+        </el-table-column>
         <el-table-column type="index" min-width="1%"/>
-        <el-table-column prop="bucketName" :label="$t('oss.bucket')" min-width="14%" show-overflow-tooltip v-slot:default="scope">
+        <el-table-column prop="bucketName" :label="$t('oss.bucket')" min-width="15%" show-overflow-tooltip v-slot:default="scope">
           <el-link type="primary" @click="showObject(scope.row)">
             {{ scope.row.bucketName }}
           </el-link>
         </el-table-column>
-        <el-table-column :label="$t('oss.name')" min-width="10%" show-overflow-tooltip>
+        <el-table-column :label="$t('oss.name')" min-width="11%" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -29,14 +31,14 @@
         <el-table-column prop="canned_acl" :label="$t('oss.acl')" min-width="10%" show-overflow-tooltip v-slot:default="scope">
           {{ scope.row.cannedAcl?scope.row.cannedAcl:'-' }}
         </el-table-column>
-        <el-table-column prop="storageClass" :label="$t('oss.storage_class')" min-width="10%" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="size" :label="$t('oss.oss_size')" min-width="9%" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="objectNumber" :label="$t('oss.object_number')" min-width="9%" show-overflow-tooltip></el-table-column>
-        <!--        <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">-->
-        <!--          <template v-slot:default="scope">-->
-        <!--            <table-operators :buttons="bucketButtons" :row="scope.row"/>-->
-        <!--          </template>-->
-        <!--        </el-table-column>-->
+        <el-table-column prop="storageClass" :label="$t('oss.storage_class')" min-width="9%" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="size" :label="$t('oss.oss_size')" min-width="8%" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="objectNumber" :label="$t('oss.object_number')" min-width="8%" show-overflow-tooltip></el-table-column>
+        <el-table-column min-width="6%" :label="$t('commons.operating')" fixed="right">
+          <template v-slot:default="scope">
+            <table-operators :buttons="bucketButtons" :row="scope.row"/>
+          </template>
+        </el-table-column>
       </el-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
@@ -140,7 +142,7 @@
         </el-form>
         <dialog-footer
           @cancel="visible = false"
-          @confirm="createBucket()"/>
+          @confirm="createBucket(ossTitle)"/>
       </div>
     </el-drawer>
     <!--create oss bucket-->
@@ -225,9 +227,22 @@ export default {
       showLocation: false,
       showCannedAcl: false,
       showStorageClass: false,
+      bucketButtons: [
+        {
+          tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
+          exec: this.handleDelete
+        }
+      ],
+      selectIds: new Set(),
     }
   },
   methods: {
+    select(selection) {
+      this.selectIds.clear();
+      selection.forEach(s => {
+        this.selectIds.add(s.id)
+      });
+    },
     //查询列表
     search() {
       let url = "/oss/bucketList/" + this.currentPage + "/" + this.pageSize;
@@ -304,6 +319,7 @@ export default {
     },
     create() {
       this.form = {};
+      this.bucketParams = {};
       this.ossTitle = this.$t('oss.create_bucket');
       this.visible = true;
     },
@@ -321,7 +337,7 @@ export default {
         this.bucketParams = response.data;
       });
     },
-    createBucket() {
+    createBucket(ossTitle) {
       this.result = this.$post("/oss/create", this.form, response => {
         if (response.success) {
           this.$success(this.$t('commons.create_success'));
@@ -352,6 +368,44 @@ export default {
     },
     change(e) {
       this.$forceUpdate();
+    },
+    handleDelete(item) {
+      this.$alert(this.$t('commons.delete') + this.$t('oss.bucket') + item.bucketName + " ？", this.$t('commons.delete') + this.$t('oss.bucket'), {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$get("/oss/deleteBucket/" + item.id, response => {
+              if (response.success) {
+                this.$success(this.$t('commons.delete_success'));
+                this.search();
+              } else {
+                this.$error(response.message);
+              }
+            });
+          }
+        }
+      });
+    },
+    deleteSelect() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('oss.please_choose_bucket'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('oss.bucket') + " ？", this.$t('commons.delete') + this.$t('oss.bucket'), {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$post("/oss/deleteByBatch", this.selectIds, response => {
+              if (response.success) {
+                this.$success(this.$t('commons.delete_success'));
+                this.search();
+              } else {
+                this.$error(response.message);
+              }
+            });
+          }
+        }
+      });
     },
   },
   created() {

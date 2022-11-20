@@ -1178,6 +1178,8 @@ export default {
     bucket_tips7: '2.不要出现 /',
     bucket_tips8: '3.总长度控制在 1-254 个字符',
     dir_name: '目录名称',
+    delete_batch: '批量删除',
+    please_choose_bucket: '请选择存储桶',
   },
   task: {
     task_setting: '任务编排',
