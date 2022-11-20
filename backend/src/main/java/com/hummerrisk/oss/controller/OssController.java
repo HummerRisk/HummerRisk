@@ -150,8 +150,9 @@ public class OssController {
     @I18n
     @ApiOperation("下载文件")
     @PostMapping("downloadObject/{bucketId}")
-    public void downloadObject(@PathVariable String bucketId, @RequestBody String objectId, HttpServletResponse response) throws Exception {
+    public void downloadObject(@PathVariable String bucketId, @RequestBody Map map, HttpServletResponse response) throws Exception {
         BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());
+        String objectId = map.get("objectId").toString();
         FilterInputStream in = ossService.downloadObject(bucketId, objectId);
         response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(objectId, "utf-8"));
         byte[] car = new byte[102400];

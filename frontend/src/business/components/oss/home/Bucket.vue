@@ -8,7 +8,7 @@
 
       </template>
 
-      <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
+      <el-table :border="true" :data="tableData" class="adjust-table table-content" @sort-change="sort"
                 :row-class-name="tableRowClassName"
                 @filter-change="filter" @select-all="select" @select="select">
         <el-table-column type="selection" min-width="1%">
@@ -44,36 +44,48 @@
     </el-card>
 
     <!--oss bucket-->
-    <el-drawer class="rtl" :title="$t('oss.oss_bucket')" :visible.sync="bucketVisible" size="70%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('oss.oss_bucket')" :visible.sync="bucketVisible" size="80%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
-      <el-table border :data="objectData" class="adjust-table table-content" @sort-change="sort" stripe>
-        <el-table-column type="index" min-width="1%"></el-table-column>
-        <el-table-column prop="objectName" :label="$t('oss.object_name')" min-width="20%" show-overflow-tooltip v-slot:default="scope">
+      <el-row class="el-btn">
+        <el-button type="primary" icon="el-icon-upload2" size="medium" plain>{{ $t('oss.i18n_upload') }}</el-button>
+        <el-button type="success" icon="el-icon-folder-add" size="medium" plain>{{ $t('oss.add_dir') }}</el-button>
+        <el-button type="danger" icon="el-icon-folder-delete" size="medium" plain>{{ $t('commons.delete') }}</el-button>
+        <el-button type="info" icon="el-icon-refresh" size="medium" plain>{{ $t('commons.refresh') }}</el-button>
+      </el-row>
+      <el-table :border="true" :data="objectData" class="adjust-table table-content table-inner" @sort-change="sort" stripe>
+        <el-table-column type="index" min-width="50"></el-table-column>
+        <el-table-column prop="objectName" :label="$t('oss.object_name')" min-width="200" show-overflow-tooltip v-slot:default="scope">
           <el-link v-if="scope.row.objectType==='BACK'" type="primary" style="color: red;" @click="backObject(scope.row)">
             <i class="el-icon-back"></i>  {{ scope.row.objectName }}
           </el-link>
           <el-link v-if="scope.row.objectType==='DIR'" type="primary" @click="selectObject(scope.row)">
             <i class="el-icon-folder-opened"></i>  {{ scope.row.objectName }}
           </el-link>
-          <span v-if="scope.row.objectType==='FILE'" style="color: #336d9f">
+          <span v-if="scope.row.objectType==='FILE'" style="color: #336d9f" @click="objectDownload(scope.row)">
             <i class="el-icon-document"></i> {{ scope.row.objectName }}
           </span>
         </el-table-column>
-        <el-table-column prop="objectType" :label="$t('oss.object_type')" min-width="8%" show-overflow-tooltip v-slot:default="scope">
+        <el-table-column prop="objectType" :label="$t('oss.object_type')" min-width="100" show-overflow-tooltip v-slot:default="scope">
           <span v-if="scope.row.objectType==='DIR'">{{ $t('oss.object_dir') }}</span>
           <span v-if="scope.row.objectType==='FILE'">{{ $t('oss.object_file') }}</span>
           <span v-if="scope.row.objectType==='BACK'">{{ $t('vis.back') }}</span>
         </el-table-column>
-        <el-table-column prop="objectSize" :label="$t('oss.oss_size')" min-width="10%" show-overflow-tooltip v-slot:default="scope">
+        <el-table-column prop="objectSize" :label="$t('oss.oss_size')" min-width="120" show-overflow-tooltip v-slot:default="scope">
           {{ scope.row.objectSize?scope.row.objectSize:'-' }}
         </el-table-column>
-        <el-table-column prop="storageClass" :label="$t('oss.storage_class')" min-width="10%" show-overflow-tooltip v-slot:default="scope">
+        <el-table-column prop="storageClass" :label="$t('oss.storage_class')" min-width="120" show-overflow-tooltip v-slot:default="scope">
           {{ scope.row.storageClass?scope.row.storageClass:'-' }}
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('account.update_time')" sortable prop="lastModified">
+        <el-table-column min-width="160" :label="$t('account.update_time')" sortable prop="lastModified">
           <template v-slot:default="scope">
             <span v-if="scope.row.lastModified">{{ scope.row.lastModified | timestampFormatDate }}</span>
             <span v-if="!scope.row.lastModified">{{ '-' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="100" :label="$t('commons.operating')">
+          <template v-slot:default="scope">
+            <table-operators v-if="scope.row.objectType==='DIR'" :buttons="objectButtons1" :row="scope.row"/>
+            <table-operators v-if="scope.row.objectType==='FILE'" :buttons="objectButtons2" :row="scope.row"/>
           </template>
         </el-table-column>
       </el-table>
@@ -234,6 +246,22 @@ export default {
         }
       ],
       selectIds: new Set(),
+      objectButtons1: [
+        {
+          tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
+          exec: this.dirDelete
+        }
+      ],
+      objectButtons2: [
+        {
+          tip: this.$t('server.download'), icon: "el-icon-download", type: "success",
+          exec: this.objectDownload
+        },
+        {
+          tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
+          exec: this.objectDelete
+        }
+      ],
     }
   },
   methods: {
@@ -304,18 +332,6 @@ export default {
     selectObject(item) {
       this.thisObject = item;
       this.getObjects(item.id);
-    },
-    download(item) {
-      this.result = this.$download("/downloadObject/" + item.bucketId, {
-        objectId: item.id,
-      }, response => {
-        if (response.status === 201) {
-          let blob = new Blob([response.data], {type: "'application/octet-stream'"});
-          saveAs(blob, item.objectName);
-        }
-      }, error => {
-        console.log("下载报错", error);
-      });
     },
     create() {
       this.form = {};
@@ -407,6 +423,29 @@ export default {
         }
       });
     },
+    objectDownload(item) {
+      this.$alert(this.$t('server.download') + item.objectName + " ？", this.$t('server.download') + this.$t('oss.object_file'), {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$download("/oss/downloadObject/" + item.bucketId, {
+              objectId: item.id
+            }, response => {
+              let blob = new Blob([response.data], {type: "'application/octet-stream'"});
+              saveAs(blob, item.objectName);
+            }, error => {
+              console.log("下载报错", error);
+            });
+          }
+        }
+      });
+    },
+    dirDelete(item) {
+
+    },
+    objectDelete(item) {
+
+    },
   },
   created() {
     this.init();
@@ -434,7 +473,7 @@ export default {
 }
 .rtl >>> .el-drawer__body {
   overflow-y: auto;
-  padding: 20px;
+  padding: 0 20px 20px 20px;
 }
 .rtl >>> input {
   width: 100%;
@@ -445,5 +484,24 @@ export default {
 .rtl >>> .el-form-item__content {
   width: 75%;
 }
+.el-btn {
+  margin: 0 0 10px 10px;
+}
+.table-card >>> .el-table__header-wrapper {
+  border-left: 1px solid #EBEEF5;
+}
+.table-card >>> .el-table__body-wrapper {
+  border-left: 1px solid #e4e7ec;
+}
+.table-inner >>> .el-table__header-wrapper {
+  border-left: 1px solid #EBEEF5;
+  border-right: 1px solid #EBEEF5;
+  border-top: 1px solid #EBEEF5;
+}
+.table-inner >>> .el-table__body-wrapper {
+  border-left: 1px solid #EBEEF5;
+  border-right: 1px solid #EBEEF5;
+}
+
 </style>
 

@@ -1180,6 +1180,8 @@ export default {
     dir_name: '目录名称',
     delete_batch: '批量删除',
     please_choose_bucket: '请选择存储桶',
+    i18n_upload: '上传',
+    add_dir: '新建目录',
   },
   task: {
     task_setting: '任务编排',

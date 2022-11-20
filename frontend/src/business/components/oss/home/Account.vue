@@ -242,11 +242,6 @@
         <el-table-column prop="storageClass" :label="$t('oss.storage_class')" min-width="10%" show-overflow-tooltip></el-table-column>
         <el-table-column prop="size" :label="$t('oss.oss_size')" min-width="10%" show-overflow-tooltip></el-table-column>
         <el-table-column prop="objectNumber" :label="$t('oss.object_number')" min-width="10%" show-overflow-tooltip></el-table-column>
-<!--        <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">-->
-<!--          <template v-slot:default="scope">-->
-<!--            <table-operators :buttons="bucketButtons" :row="scope.row"/>-->
-<!--          </template>-->
-<!--        </el-table-column>-->
       </el-table>
       <table-pagination :change="searchBuckets" :current-page.sync="bucketPage" :page-size.sync="bucketPageSize" :total="bucketTotal"/>
 
@@ -333,6 +328,7 @@ import {_filter, _sort} from "@/common/js/utils";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {OSS_CONFIGS} from "@/business/components/common/components/search/search-components";
 import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
+import {saveAs} from "@/common/js/FileSaver";
 
 /* eslint-disable */
 export default {
@@ -788,6 +784,23 @@ export default {
         }
       });
     },
+    objectDownload(item) {
+      this.$alert(this.$t('server.download') + item.objectName + " ？", this.$t('server.download') + this.$t('oss.object_file'), {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$download("/oss/downloadObject/" + item.bucketId, {
+              objectId: item.id
+            }, response => {
+              let blob = new Blob([response.data], {type: "'application/octet-stream'"});
+              saveAs(blob, item.objectName);
+            }, error => {
+              console.log("下载报错", error);
+            });
+          }
+        }
+      });
+    },
   },
   computed: {
     codemirror() {
@@ -871,6 +884,21 @@ export default {
 .grid-content {
   border-radius: 4px;
   min-height: 36px;
+}
+.table-card >>> .el-table__header-wrapper {
+  border-left: 1px solid #EBEEF5;
+}
+.table-card >>> .el-table__body-wrapper {
+  border-left: 1px solid #e4e7ec;
+}
+.table-inner >>> .el-table__header-wrapper {
+  border-left: 1px solid #EBEEF5;
+  border-right: 1px solid #EBEEF5;
+  border-top: 1px solid #EBEEF5;
+}
+.table-inner >>> .el-table__body-wrapper {
+  border-left: 1px solid #EBEEF5;
+  border-right: 1px solid #EBEEF5;
 }
 </style>
 
