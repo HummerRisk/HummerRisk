@@ -39,7 +39,8 @@ public class TranslatorKeys {
                     "i18n_start_k8s_result",
                     "i18n_end_k8s_result",
                     "i18n_restart_k8s_result",
-                    "i18n_in_process"
+                    "i18n_in_process",
+                    "i18n_export_report"
             ));
 
 }
