@@ -3,16 +3,13 @@ package com.hummerrisk.oss.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.*;
-import com.hummerrisk.commons.constants.CloudAccountConstants;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.ResultHolder;
 import com.hummerrisk.controller.handler.annotation.I18n;
-import com.hummerrisk.controller.request.account.CloudAccountRequest;
 import com.hummerrisk.controller.request.excel.ExcelExportRequest;
 import com.hummerrisk.controller.request.resource.ResourceRequest;
 import com.hummerrisk.controller.request.rule.RuleGroupRequest;
-import com.hummerrisk.dto.AccountDTO;
 import com.hummerrisk.dto.ResourceDTO;
 import com.hummerrisk.dto.RuleGroupDTO;
 import com.hummerrisk.dto.ValidateDTO;
@@ -22,7 +19,6 @@ import com.hummerrisk.oss.dto.*;
 import com.hummerrisk.oss.service.OssService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
 import java.io.FilterInputStream;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -195,6 +190,20 @@ public class OssController {
     @PostMapping("createDir")
     public void createDir(@RequestBody OssBucketRequest request) throws Exception{
         ossService.createDir(request);
+    }
+
+    @I18n
+    @ApiOperation("删除对象")
+    @PostMapping("deleteObject/{bucketId}")
+    public void deleteObject(@PathVariable String bucketId, @RequestBody String objectId) throws Exception{
+        ossService.deleteObject(bucketId, objectId);
+    }
+
+    @I18n
+    @ApiOperation("批量删除对象")
+    @PostMapping("deleteObjects/{bucketId}")
+    public void deleteObjects(@PathVariable String bucketId, @RequestBody List<String> objectIds) throws Exception{
+        ossService.deleteObjects(bucketId, objectIds);
     }
 
     @I18n

@@ -11,15 +11,15 @@
       <el-table :border="true" :data="tableData" class="adjust-table table-content" @sort-change="sort"
                 :row-class-name="tableRowClassName"
                 @filter-change="filter" @select-all="select" @select="select">
-        <el-table-column type="selection" min-width="1%">
+        <el-table-column type="selection" min-width="50">
         </el-table-column>
-        <el-table-column type="index" min-width="1%"/>
-        <el-table-column prop="bucketName" :label="$t('oss.bucket')" min-width="15%" show-overflow-tooltip v-slot:default="scope">
+        <el-table-column type="index" min-width="50"/>
+        <el-table-column prop="bucketName" :label="$t('oss.bucket')" min-width="160" show-overflow-tooltip v-slot:default="scope">
           <el-link type="primary" @click="showObject(scope.row)">
             {{ scope.row.bucketName }}
           </el-link>
         </el-table-column>
-        <el-table-column :label="$t('oss.name')" min-width="11%" show-overflow-tooltip>
+        <el-table-column :label="$t('oss.name')" min-width="110" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -27,14 +27,14 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="location" :label="$t('oss.location')" min-width="10%" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="canned_acl" :label="$t('oss.acl')" min-width="10%" show-overflow-tooltip v-slot:default="scope">
+        <el-table-column prop="location" :label="$t('oss.location')" min-width="110" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="canned_acl" :label="$t('oss.acl')" min-width="110" show-overflow-tooltip v-slot:default="scope">
           {{ scope.row.cannedAcl?scope.row.cannedAcl:'-' }}
         </el-table-column>
-        <el-table-column prop="storageClass" :label="$t('oss.storage_class')" min-width="9%" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="size" :label="$t('oss.oss_size')" min-width="8%" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="objectNumber" :label="$t('oss.object_number')" min-width="8%" show-overflow-tooltip></el-table-column>
-        <el-table-column min-width="6%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column prop="storageClass" :label="$t('oss.storage_class')" min-width="100" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="size" :label="$t('oss.oss_size')" min-width="90" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="objectNumber" :label="$t('oss.object_number')" min-width="90" show-overflow-tooltip></el-table-column>
+        <el-table-column min-width="50" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="bucketButtons" :row="scope.row"/>
           </template>
@@ -49,10 +49,12 @@
       <el-row class="el-btn">
         <el-button type="primary" icon="el-icon-upload2" size="medium" plain>{{ $t('oss.i18n_upload') }}</el-button>
         <el-button type="success" icon="el-icon-folder-add" size="medium" plain>{{ $t('oss.add_dir') }}</el-button>
-        <el-button type="danger" icon="el-icon-folder-delete" size="medium" plain>{{ $t('commons.delete') }}</el-button>
+        <el-button type="danger" icon="el-icon-folder-delete" size="medium" plain @click="deleteSelects">{{ $t('commons.delete') }}</el-button>
         <el-button type="info" icon="el-icon-refresh" size="medium" plain>{{ $t('commons.refresh') }}</el-button>
       </el-row>
-      <el-table :border="true" :data="objectData" class="adjust-table table-content table-inner" @sort-change="sort" stripe>
+      <el-table :border="true" :data="objectData" class="adjust-table table-content table-inner" @sort-change="sort" stripe @select-all="selectObjects" @select="selectObjects">
+        <el-table-column type="selection" min-width="50">
+        </el-table-column>
         <el-table-column type="index" min-width="50"></el-table-column>
         <el-table-column prop="objectName" :label="$t('oss.object_name')" min-width="200" show-overflow-tooltip v-slot:default="scope">
           <el-link v-if="scope.row.objectType==='BACK'" type="primary" style="color: red;" @click="backObject(scope.row)">
@@ -82,7 +84,7 @@
             <span v-if="!scope.row.lastModified">{{ '-' }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="100" :label="$t('commons.operating')">
+        <el-table-column min-width="90" :label="$t('commons.operating')">
           <template v-slot:default="scope">
             <table-operators v-if="scope.row.objectType==='DIR'" :buttons="objectButtons1" :row="scope.row"/>
             <table-operators v-if="scope.row.objectType==='FILE'" :buttons="objectButtons2" :row="scope.row"/>
@@ -246,6 +248,7 @@ export default {
         }
       ],
       selectIds: new Set(),
+      selectObjectIds: new Set(),
       objectButtons1: [
         {
           tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
@@ -262,6 +265,7 @@ export default {
           exec: this.objectDelete
         }
       ],
+      bucketOss: {},
     }
   },
   methods: {
@@ -269,6 +273,12 @@ export default {
       this.selectIds.clear();
       selection.forEach(s => {
         this.selectIds.add(s.id)
+      });
+    },
+    selectObjects(selection) {
+      this.selectObjectIds.clear();
+      selection.forEach(s => {
+        this.selectObjectIds.add(s.id)
       });
     },
     //查询列表
@@ -293,6 +303,8 @@ export default {
       this.init();
     },
     init() {
+      this.selectIds.clear();
+      this.selectObjectIds.clear();
       this.search();
       this.activeAccount();
     },
@@ -307,6 +319,7 @@ export default {
     },
     showObject(bucket) {
       this.path = '/';
+      this.bucketOss = bucket;
       this.result = this.$get("/oss/objects/" + bucket.id, response => {
         this.objectData = response.data;
         this.bucketVisible = true;
@@ -441,10 +454,59 @@ export default {
       });
     },
     dirDelete(item) {
-
+      this.$alert(this.$t('commons.delete') + this.$t('oss.object_dir') + item.objectName + " ？", this.$t('commons.delete') + this.$t('oss.object_dir'), {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$post("/oss/deleteObject/", item.bucketId, item.id,response => {
+              if (response.success) {
+                this.$success(this.$t('commons.delete_success'));
+                this.search();
+              } else {
+                this.$error(response.message);
+              }
+            });
+          }
+        }
+      });
     },
     objectDelete(item) {
-
+      this.$alert(this.$t('commons.delete') + this.$t('oss.object_file') + item.objectName + " ？", this.$t('commons.delete') + this.$t('oss.object_file'), {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$post("/oss/deleteObject/" + item.bucketId, item.id,response => {
+              if (response.success) {
+                this.$success(this.$t('commons.delete_success'));
+                this.search();
+              } else {
+                this.$error(response.message);
+              }
+            });
+          }
+        }
+      });
+    },
+    deleteSelects() {
+      if (this.selectObjectIds.size === 0) {
+        this.$warning(this.$t('oss.please_choose_object'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('oss.object_file') + " ？", this.$t('commons.delete') + this.$t('oss.object_file'), {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$post("/oss/deleteObjects/" + this.bucketOss.id, this.selectObjectIds, response => {
+              if (response.success) {
+                this.$success(this.$t('commons.delete_success'));
+                this.search();
+              } else {
+                this.$error(response.message);
+              }
+            });
+          }
+        }
+      });
     },
   },
   created() {

@@ -437,6 +437,17 @@ public class OssService {
         ossProvider.createDir(bucket, account, request.getBucketName());
     }
 
+    public void deleteObject(String bucketId, String objectId) throws Exception{
+        deleteObjects(bucketId, Arrays.asList(objectId));
+    }
+
+    public void deleteObjects(String bucketId, List<String> objectIds) throws Exception{
+        OssBucket bucket = getBucketByPrimaryKey(bucketId);
+        OssWithBLOBs account = getAccountByPrimaryKey(bucket.getOssId());
+        OssProvider ossProvider = getOssProvider(account.getPluginId());
+        ossProvider.deletetObjects(bucket, account, objectIds);
+    }
+
     public BucketKeyValueItem bucketAddforOssId(String ossId) throws Exception {
         BucketKeyValueItem bucketKeyValueItem = new BucketKeyValueItem();
         OssWithBLOBs oss = getAccountByPrimaryKey(ossId);
