@@ -63,8 +63,11 @@
       </el-row>
     </el-form>
     <div>
-      <el-button type="primary" @click="updateVulnDb()" size="small">
-        {{ $t('commons.update_vuln_db') }}
+      <el-button type="primary" @click="updateVulnDb" size="small">
+        {{ $t('commons.online_update_vuln_db') }}
+      </el-button>
+      <el-button type="primary" @click="updateVulnDbOffline" size="small">
+        {{ $t('commons.offline_update_vuln_db') }}
       </el-button>
       <el-button @click="edit" v-if="showEdit" size="small">{{ $t('commons.edit') }}</el-button>
       <el-button type="success" @click="save('formInline')" v-if="showSave" :disabled="disabledSave" size="small">
@@ -72,13 +75,36 @@
       </el-button>
       <el-button @click="cancel" type="info" v-if="showCancel" size="small">{{ $t('commons.cancel') }}</el-button>
     </div>
+
+    <el-drawer
+      size="60%"
+      :title="$t('commons.offline_update_vuln_db')"
+      :append-to-body="true"
+      :before-close="innerDrawerClose"
+      :visible.sync="innerDrawer">
+      <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
+        <el-form-item :label="$t('oss.object_file')" :rules="{required: true, message: $t('oss.object_file') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <upload v-on:appendUpload="appendUpload" v-model="form.path"/>
+        </el-form-item>
+      </el-form>
+      <dialog-footer
+        @cancel="innerDrawer = false"
+        @confirm="uploadFile()"/>
+    </el-drawer>
   </div>
 </template>
 
 <script>
 /* eslint-disable */
+import Upload from "@/business/components/oss/head/Upload";
+import DialogFooter from "@/business/components/common/components/DialogFooter";
+
 export default {
   name: "ScanSetting",
+  components: {
+    DialogFooter,
+    Upload,
+  },
   data() {
     return {
       formInline: {},
@@ -131,7 +157,10 @@ export default {
       items: [
         {id: 'true', name: 'True'},
         {id: 'false', name: 'False'}
-      ]
+      ],
+      innerDrawer: false,
+      form: {},
+      objectFile: Object,
     }
   },
 
@@ -203,6 +232,37 @@ export default {
     updateVulnDb() {
       this.result = this.$get("/system/updateVulnDb", response => {
         this.$success(this.$t('commons.success'));
+      });
+    },
+    updateVulnDbOffline() {
+      this.innerDrawer = true;
+    },
+    innerDrawerClose() {
+      this.innerDrawer = false;
+    },
+    appendUpload(file) {
+      this.objectFile = file;
+    },
+    uploadFile() {
+      let formData = new FormData();
+      if (this.objectFile) {
+        formData.append("objectFile", this.objectFile);
+      }
+      formData.append("request", new Blob([JSON.stringify(this.uploadForm)], {type: "application/json"}));
+      let axiosRequestConfig = {
+        method: "POST",
+        url: "/system/updateVulnDbOffline",
+        data: formData,
+        headers: {
+          "Content-Type": 'multipart/form-data'
+        }
+      };
+      this.result = this.$request(axiosRequestConfig, (res) => {
+        if (res.success) {
+          this.$success(this.$t('commons.save_success'));
+          this.search();
+          this.innerDrawer = false;
+        }
       });
     },
   }

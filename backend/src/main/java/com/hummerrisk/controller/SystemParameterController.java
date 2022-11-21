@@ -9,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -136,11 +137,18 @@ public class SystemParameterController {
     }
 
     @I18n
-    @ApiOperation(value = "更新漏洞库")
+    @ApiOperation(value = "在线更新漏洞库")
     @GetMapping("/updateVulnDb")
     @RequiresRoles(value = {RoleConstants.ADMIN})
     public void updateVulnDb() throws Exception {
         systemParameterService.updateVulnDb();
+    }
+
+    @I18n
+    @ApiOperation(value = "离线更新漏洞库")
+    @PostMapping(value = "updateVulnDbOffline", consumes = {"multipart/form-data"})
+    public void updateVulnDbOffline(@RequestPart(value = "objectFile", required = false) MultipartFile objectFile) throws Exception {
+        systemParameterService.updateVulnDbOffline(objectFile);
     }
 
 }

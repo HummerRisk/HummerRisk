@@ -362,8 +362,6 @@ public class ImageService {
      */
     public static final String upload(MultipartFile file, String dir) throws IOException {
         try {
-            String fileName = file.getOriginalFilename();
-            String extension = StringUtils.isNotBlank(fileName) ? fileName.split("\\.")[fileName.split("\\.").length - 1] : "";
             //png、html等小文件存放路径，页面需要显示，项目内目录
             //jar包等大文件存放路径，项目外目录
             return FileUploadUtils.upload(dir, file);

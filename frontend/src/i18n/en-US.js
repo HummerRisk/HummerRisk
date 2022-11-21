@@ -205,7 +205,9 @@ export default {
     history: 'History',
     format: 'File format',
     certificate: 'Certificate',
-    update_vuln_db: 'Update vulnerability database',
+    offline_update_vuln_db: 'Offline update vulnerability database',
+    online_update_vuln_db: 'Online update vulnerability database',
+    upload_tip: 'Files up to {0} in size',
   },
   workspace: {
     create:'Create a workspace',

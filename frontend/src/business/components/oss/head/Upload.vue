@@ -6,7 +6,7 @@
                ref="path" :file-list="fileList" :limit="1">
       <i class="el-icon-upload"></i>
       <div class="el-upload__text">{{ $t('package.upload_text1') }}<em>{{ $t('package.upload_text2') }}</em></div>
-      <div class="el-upload__tip" slot="tip">{{ $t('image.upload_tip2', ['5GB']) }}</div>
+      <div class="el-upload__tip" slot="tip">{{ $t('commons.upload_tip', ['5GB']) }}</div>
     </el-upload>
 
   </div>

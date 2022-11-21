@@ -205,7 +205,9 @@ export default {
     history: '歷史記錄',
     format: '文件格式',
     certificate: '憑證',
-    update_vuln_db: '更新漏洞庫',
+    offline_update_vuln_db: '離線更新漏洞庫',
+    online_update_vuln_db: '在線更新漏洞庫',
+    upload_tip: '大小不超過 {0} 的文件',
   },
   workspace: {
     create: '創建工作空間',

@@ -17,6 +17,7 @@ import com.hummerrisk.commons.constants.TrivyConstants;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.CommandUtils;
 import com.hummerrisk.commons.utils.EncryptUtils;
+import com.hummerrisk.commons.utils.FileUploadUtils;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.message.NotificationBasicResponse;
@@ -30,10 +31,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -409,8 +413,32 @@ public class SystemParameterService {
 
     public void updateVulnDb() throws Exception {
         String command = "trivy image --download-db-only";
-        LogUtil.info(" {UpdateVulnDb}[command]: " + command);
+        LogUtil.info(" {updateVulnDbOnline}[command]: " + command);
         CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
+    }
+
+    public void updateVulnDbOffline(MultipartFile objectFile) throws Exception {
+        String fileName = upload(objectFile, "/opt/hummerrisk/data/trivy/db");
+        String command = "tar -zxvf /opt/hummerrisk/data/trivy/db/" + fileName;
+        LogUtil.info(" {updateVulnDbOffline}[command]: " + command);
+        CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
+    }
+
+    /**
+     * 以默认配置进行文件上传
+     *
+     * @param file 上传的文件
+     * @return 文件名称
+     * @throws Exception
+     */
+    public static final String upload(MultipartFile file, String dir) throws IOException {
+        try {
+            //png、html等小文件存放路径，页面需要显示，项目内目录
+            //jar包等大文件存放路径，项目外目录
+            return FileUploadUtils.upload(dir, file);
+        } catch (Exception e) {
+            throw new IOException(e.getMessage(), e);
+        }
     }
 
 }
