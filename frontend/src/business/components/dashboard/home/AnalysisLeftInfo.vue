@@ -96,17 +96,17 @@
                       :data="tableData"
                       @sort-change="sort"
                       @filter-change="filter">
-              <el-table-column type="index" min-width="2%"/>
-              <el-table-column v-slot:default="scope" :label="$t('dashboard.accounts')" min-width="10%" show-overflow-tooltip>
+              <el-table-column type="index" min-width="40"/>
+              <el-table-column v-slot:default="scope" :label="$t('dashboard.accounts')" min-width="100" show-overflow-tooltip>
                 {{ scope.row.accountName }}
               </el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('account.creator')" min-width="9%" show-overflow-tooltip>
+              <el-table-column v-slot:default="scope" :label="$t('account.creator')" min-width="80" show-overflow-tooltip>
                 {{ scope.row.userName }}
               </el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('dashboard.safe_score')" min-width="10%" show-overflow-tooltip>
+              <el-table-column v-slot:default="scope" :label="$t('dashboard.safe_score')" min-width="80" show-overflow-tooltip>
                 {{ scope.row.scanScore }}
               </el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="13%" prop="status" sortable show-overflow-tooltip>
+              <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="110" prop="status" show-overflow-tooltip>
                 <el-button plain size="mini" type="primary" v-if="scope.row.status === 'UNCHECKED'">
                   <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                 </el-button>
@@ -126,7 +126,7 @@
                   <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
                 </el-button>
               </el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" show-overflow-tooltip min-width="8%">
+              <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" show-overflow-tooltip min-width="80">
                 <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
                   <span v-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
                   <span v-if="(scope.row.returnSum != null) && (scope.row.returnSum == 0)">
@@ -137,12 +137,12 @@
                 </span>
                 </el-tooltip>
               </el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" show-overflow-tooltip min-width="10%">
+              <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" show-overflow-tooltip min-width="80">
                 <span v-if="scope.row.returnSum == 0" style="color: #46ad59;">{{ $t('resource.i18n_compliance_true') }}</span>
                 <span v-else-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)" style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
                 <span v-else-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
               </el-table-column>
-              <el-table-column prop="createTime" min-width="14%" :label="$t('account.update_time')" sortable show-overflow-tooltip>
+              <el-table-column prop="createTime" min-width="160" :label="$t('account.update_time')" sortable show-overflow-tooltip>
                 <template v-slot:default="scope">
                   <span>{{ scope.row.createTime | timestampFormatDate }}</span>
                 </template>

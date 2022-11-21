@@ -12,33 +12,33 @@
                 @sort-change="sort"
                 :row-class-name="tableRowClassName"
                 @filter-change="filter">
-        <el-table-column type="index" min-width="5%"/>
-        <el-table-column prop="resourceUserName" :label="$t('dashboard.resource_user_name')" min-width="15%" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="resourceUserId" :label="$t('dashboard.resource_user_id')" min-width="10%" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('commons.operating')" fixed="right" min-width="10%" show-overflow-tooltip>
-          <template v-slot:default="scope">
-            {{ $t(scope.row.operation) }}
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('commons.description')" min-width="15%" show-overflow-tooltip>
+        <el-table-column type="index" min-width="50"/>
+        <el-table-column prop="resourceUserName" :label="$t('dashboard.resource_user_name')" min-width="200" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="resourceUserId" :label="$t('dashboard.resource_user_id')" min-width="80" show-overflow-tooltip></el-table-column>
+        <el-table-column :label="$t('commons.description')" min-width="120" show-overflow-tooltip>
           <template v-slot:default="scope">
             {{ scope.row.message }}
           </template>
         </el-table-column>
-        <el-table-column prop="resourceName" :label="$t('dashboard.resource_name')" min-width="10%" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('dashboard.resource_type')" min-width="10%" show-overflow-tooltip>
+        <el-table-column prop="resourceName" :label="$t('dashboard.resource_name')" min-width="120" show-overflow-tooltip></el-table-column>
+        <el-table-column :label="$t('dashboard.resource_type')" min-width="100" show-overflow-tooltip>
           <template v-slot:default="scope">
             {{ $t(scope.row.resourceType) }}
           </template>
         </el-table-column>
-        <el-table-column prop="sourceIp" :label="$t('dashboard.source_ip')" min-width="10%" show-overflow-tooltip>
+        <el-table-column prop="sourceIp" :label="$t('dashboard.source_ip')" min-width="100" show-overflow-tooltip>
           <template v-slot:default="scope">
             <span> {{ scope.row.sourceIp?scope.row.sourceIp:'--' }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('dashboard.time')" sortable prop="time">
+        <el-table-column min-width="160" :label="$t('dashboard.time')" sortable prop="time">
           <template v-slot:default="scope">
             <span><i class="el-icon-time"></i> {{ scope.row.time | timestampFormatDate }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('commons.operating')" fixed="right" min-width="100" show-overflow-tooltip>
+          <template v-slot:default="scope">
+            {{ $t(scope.row.operation) }}
           </template>
         </el-table-column>
       </el-table>
