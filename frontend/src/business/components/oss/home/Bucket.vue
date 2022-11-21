@@ -29,9 +29,18 @@
         </el-table-column>
         <el-table-column prop="location" :label="$t('oss.location')" min-width="110" show-overflow-tooltip></el-table-column>
         <el-table-column prop="canned_acl" :label="$t('oss.acl')" min-width="110" show-overflow-tooltip v-slot:default="scope">
-          {{ scope.row.cannedAcl?scope.row.cannedAcl:'-' }}
+          <span v-if="scope.row.cannedAcl === 'public-read-write' || scope.row.cannedAcl === 'PublicReadWrite'">{{ $t('oss.public_read_write') }}</span>
+          <span v-else-if="scope.row.cannedAcl === 'public-read' || scope.row.cannedAcl === 'PublicRead'">{{ $t('oss.public_read') }}</span>
+          <span v-else-if="scope.row.cannedAcl === 'private' || scope.row.cannedAcl === 'Private'">{{ $t('oss.private') }}</span>
+          <span v-else>{{ scope.row.cannedAcl }}</span>
         </el-table-column>
-        <el-table-column prop="storageClass" :label="$t('oss.storage_class')" min-width="100" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="storageClass" :label="$t('oss.storage_class')" min-width="100" show-overflow-tooltip v-slot:default="scope">
+          <span v-if="scope.row.storageClass === 'Standard' || scope.row.storageClass === 'STANDARD'">{{ $t('oss.standard') }}</span>
+          <span v-else-if="scope.row.storageClass === 'IA' || scope.row.storageClass === 'STANDARD_IA' || scope.row.storageClass === 'WARM'">{{ $t('oss.ia') }}</span>
+          <span v-else-if="scope.row.storageClass === 'Archive' || scope.row.storageClass === 'ARCHIVE'">{{ $t('oss.archive') }}</span>
+          <span v-else-if="scope.row.storageClass === 'COLD'">{{ $t('oss.cold') }}</span>
+          <span v-else>{{ scope.row.storageClass }}</span>
+        </el-table-column>
         <el-table-column prop="size" :label="$t('oss.oss_size')" min-width="90" show-overflow-tooltip></el-table-column>
         <el-table-column prop="objectNumber" :label="$t('oss.object_number')" min-width="90" show-overflow-tooltip></el-table-column>
         <el-table-column min-width="50" :label="$t('commons.operating')" fixed="right">
@@ -76,7 +85,11 @@
           {{ scope.row.objectSize?scope.row.objectSize:'-' }}
         </el-table-column>
         <el-table-column prop="storageClass" :label="$t('oss.storage_class')" min-width="120" show-overflow-tooltip v-slot:default="scope">
-          {{ scope.row.storageClass?scope.row.storageClass:'-' }}
+          <span v-if="scope.row.storageClass === 'Standard' || scope.row.storageClass === 'STANDARD'">{{ $t('oss.standard') }}</span>
+          <span v-else-if="scope.row.storageClass === 'IA' || scope.row.storageClass === 'STANDARD_IA' || scope.row.storageClass === 'WARM'">{{ $t('oss.ia') }}</span>
+          <span v-else-if="scope.row.storageClass === 'Archive' || scope.row.storageClass === 'ARCHIVE'">{{ $t('oss.archive') }}</span>
+          <span v-else-if="scope.row.storageClass === 'COLD'">{{ $t('oss.cold') }}</span>
+          <span v-else>{{ scope.row.storageClass }}</span>
         </el-table-column>
         <el-table-column min-width="160" :label="$t('account.update_time')" sortable prop="lastModified">
           <template v-slot:default="scope">

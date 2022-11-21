@@ -1186,6 +1186,13 @@ export default {
     please_choose_object: '请选择存储对象',
     i18n_upload: '上传',
     add_dir: '新建目录',
+    public_read_write: '公共读写',
+    public_read: '公共读',
+    private: '私有',
+    standard: '标准存储',
+    ia: '低频访问',
+    archive: '归档存储',
+    cold: '冷存储',
   },
   task: {
     task_setting: '任务编排',
