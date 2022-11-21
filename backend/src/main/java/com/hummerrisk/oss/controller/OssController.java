@@ -24,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
@@ -187,9 +188,9 @@ public class OssController {
 
     @I18n
     @ApiOperation("创建目录")
-    @PostMapping("createDir")
-    public void createDir(@RequestBody OssBucketRequest request) throws Exception{
-        ossService.createDir(request);
+    @PostMapping("createDir/{bucketId}")
+    public void createDir(@PathVariable String bucketId, @RequestBody String dir) throws Exception{
+        ossService.createDir(bucketId, dir);
     }
 
     @I18n
@@ -270,6 +271,13 @@ public class OssController {
     public Pager<List<ResourceDTO>> resourceList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, ossService.resourceList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "上传文件")
+    @PostMapping(value = "uploadFile/{bucketId}", consumes = {"multipart/form-data"})
+    public void uploadFile(@PathVariable String bucketId, @RequestPart(value = "objectFile", required = false) MultipartFile objectFile) throws Exception {
+        ossService.uploadObject(bucketId , objectFile);
     }
 
 }

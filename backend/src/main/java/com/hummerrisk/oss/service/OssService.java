@@ -36,8 +36,11 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FilterInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -329,34 +332,34 @@ public class OssService {
 
     }
 
-    public List<BucketObjectDTO> getObjects(String bucketId, String prefix) throws Exception{
+    public List<BucketObjectDTO> getObjects(String bucketId, String prefix) throws Exception {
         OssBucket bucket = getBucketByPrimaryKey(bucketId);
         OssWithBLOBs oss = getAccountByPrimaryKey(bucket.getOssId());
         OssProvider ossProvider = (OssProvider) OssManager.getOssProviders().get(oss.getPluginId());
         return ossProvider.getBucketObjects(bucket, oss, prefix);
     }
 
-    private OssBucket getBucketByPrimaryKey(String bucketId) throws Exception{
+    private OssBucket getBucketByPrimaryKey(String bucketId) throws Exception {
         OssBucket bucket = ossBucketMapper.selectByPrimaryKey(bucketId);
-        if(bucket == null){
+        if (bucket == null) {
             throw new Exception("Parameter is null.");
         }
         return bucket;
     }
 
-    private OssWithBLOBs getAccountByPrimaryKey(String ossId)throws Exception{
+    private OssWithBLOBs getAccountByPrimaryKey(String ossId) throws Exception {
         OssWithBLOBs account = ossMapper.selectByPrimaryKey(ossId);
         return account;
     }
 
-    public FilterInputStream downloadObject(String bucketId, String objectId) throws Exception{
+    public FilterInputStream downloadObject(String bucketId, String objectId) throws Exception {
         OssBucket bucket = getBucketByPrimaryKey(bucketId);
         OssWithBLOBs oss = getAccountByPrimaryKey(bucket.getOssId());
         OssProvider ossProvider = (OssProvider) OssManager.getOssProviders().get(oss.getPluginId());
         return ossProvider.downloadObject(bucket, oss, objectId);
     }
 
-    public void create(OssBucket params) throws Exception{
+    public void create(OssBucket params) throws Exception {
         if (null == params || StringUtils.isBlank(params.getOssId()) || StringUtils.isBlank(params.getBucketName())) {
             HRException.throwException("Parameter is null.");
         }
@@ -405,14 +408,14 @@ public class OssService {
         return resultHolder;
     }
 
-    public OssBucket createBucket(OssProvider cloudprovider, OssWithBLOBs account , OssBucket params){
+    public OssBucket createBucket(OssProvider cloudprovider, OssWithBLOBs account, OssBucket params) {
         OssBucket result = null;
         try {
             result = cloudprovider.createBucket(account, params);
             if (result == null) {
                 throw new Exception(Translator.get("i18n_creation_returns_empty"));
             }
-            if (result.getStorageClass() == null){
+            if (result.getStorageClass() == null) {
                 result.setStorageClass("");
             }
             result.setId(UUIDUtil.newUUID());
@@ -426,22 +429,18 @@ public class OssService {
         return result;
     }
 
-    public void createDir(OssBucketRequest request) throws Exception{
-        String bucketId = UUIDUtil.newUUID();
-        request.setBucketId(bucketId);
-        OssWithBLOBs account = getAccountByPrimaryKey(request.getId());
+    public void createDir(String bucketId, String dir) throws Exception {
+        OssBucket bucket = getBucketByPrimaryKey(bucketId);
+        OssWithBLOBs account = getAccountByPrimaryKey(bucket.getOssId());
         OssProvider ossProvider = getOssProvider(account.getPluginId());
-        OssBucket bucket = new OssBucket();
-        bucket.setId(bucketId);
-        bucket.setBucketName(request.getBucketName());
-        ossProvider.createDir(bucket, account, request.getBucketName());
+        ossProvider.createDir(bucket, account, dir);
     }
 
-    public void deleteObject(String bucketId, String objectId) throws Exception{
+    public void deleteObject(String bucketId, String objectId) throws Exception {
         deleteObjects(bucketId, Arrays.asList(objectId));
     }
 
-    public void deleteObjects(String bucketId, List<String> objectIds) throws Exception{
+    public void deleteObjects(String bucketId, List<String> objectIds) throws Exception {
         OssBucket bucket = getBucketByPrimaryKey(bucketId);
         OssWithBLOBs account = getAccountByPrimaryKey(bucket.getOssId());
         OssProvider ossProvider = getOssProvider(account.getPluginId());
@@ -504,11 +503,11 @@ public class OssService {
         return ossProvider.getOssRegions(account);
     }
 
-    public List<KeyValueItem> getParamList(String ossId, String type) throws Exception{
+    public List<KeyValueItem> getParamList(String ossId, String type) throws Exception {
         return getParamList(ossMapper.selectByPrimaryKey(ossId), type);
     }
 
-    public List<KeyValueItem> getParamList(OssWithBLOBs ossAccount, String type) throws Exception{
+    public List<KeyValueItem> getParamList(OssWithBLOBs ossAccount, String type) throws Exception {
         String path = "";
         switch (type) {
             case BASE_CANNED_ACL_TYPE:
@@ -522,7 +521,7 @@ public class OssService {
         }
 
         try {
-            if (type.equals(BASE_STORAGE_CLASS_TYPE)){
+            if (type.equals(BASE_STORAGE_CLASS_TYPE)) {
                 if (ossAccount.getPluginId().equals(OSSConstants.aws) ||
                         ossAccount.getPluginId().equals(OSSConstants.tencent) ||
                         ossAccount.getPluginId().equals(OSSConstants.huoshan) ||
@@ -560,9 +559,9 @@ public class OssService {
     /**
      * 导出excel
      */
-    @SuppressWarnings(value={"unchecked","deprecation", "serial"})
+    @SuppressWarnings(value = {"unchecked", "deprecation", "serial"})
     public byte[] exportGroupReport(ExcelExportRequest request) throws Exception {
-        try{
+        try {
             Map<String, Object> params = request.getParams();
             ResourceRequest resourceRequest = new ResourceRequest();
             if (MapUtils.isNotEmpty(params)) {
@@ -692,6 +691,40 @@ public class OssService {
     public List<ResourceDTO> resourceList(ResourceRequest resourceRequest) {
         resourceRequest.setResourceTypes(Arrays.asList(OSSConstants.SUPPORT_RESOURCE_TYPE));
         return extOssMapper.resourceList(resourceRequest);
+    }
+
+    private static String basePath = "/tmp/";
+
+    public void uploadObject(String bucketId, MultipartFile multipartFile) throws Exception {
+        String objectId = multipartFile.getOriginalFilename();
+        OssBucket bucket = getBucketByPrimaryKey(bucketId);
+        OssWithBLOBs account = getAccountByPrimaryKey(bucket.getOssId());
+        OssProvider ossProvider = getOssProvider(account.getPluginId());
+
+        String filePath = UUIDUtil.newUUID();
+        File localFile = new File(filePath);
+        long size = multipartFile.getSize();
+        multipartFile.transferTo(localFile);
+        commonThreadPool.addTask(() -> {
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(basePath + filePath);
+                ossProvider.uploadFile(bucket, account, objectId, fis, size);
+                OperationLogService.log(SessionUtils.getUser(), bucket.getBucketName(), objectId, ResourceTypeConstants.OSS.name(), ResourceOperation.UPLOAD, "i18n_upload_oss");
+            } catch (Exception e) {
+                LogUtil.error(String.format("Failed to upload file %s to %s, %s", objectId, bucket.getBucketName(), e.getMessage()));
+            } finally {
+                try {
+                    if (fis != null)
+                        fis.close();
+                } catch (Exception ignore) {
+                }
+                localFile.deleteOnExit();
+                if (localFile.exists()) {
+                    localFile.delete();
+                }
+            }
+        });
     }
 
 }

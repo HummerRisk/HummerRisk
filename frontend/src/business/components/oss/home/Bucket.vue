@@ -47,10 +47,10 @@
     <el-drawer class="rtl" :title="$t('oss.oss_bucket')" :visible.sync="bucketVisible" size="80%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-row class="el-btn">
-        <el-button type="primary" icon="el-icon-upload2" size="medium" plain>{{ $t('oss.i18n_upload') }}</el-button>
-        <el-button type="success" icon="el-icon-folder-add" size="medium" plain>{{ $t('oss.add_dir') }}</el-button>
+        <el-button type="primary" icon="el-icon-upload2" size="medium" plain @click="upload">{{ $t('oss.i18n_upload') }}</el-button>
+        <el-button type="success" icon="el-icon-folder-add" size="medium" plain @click="addDir">{{ $t('oss.add_dir') }}</el-button>
         <el-button type="danger" icon="el-icon-folder-delete" size="medium" plain @click="deleteSelects">{{ $t('commons.delete') }}</el-button>
-        <el-button type="info" icon="el-icon-refresh" size="medium" plain>{{ $t('commons.refresh') }}</el-button>
+        <el-button type="info" icon="el-icon-refresh" size="medium" plain @click="refresh">{{ $t('commons.refresh') }}</el-button>
       </el-row>
       <el-table :border="true" :data="objectData" class="adjust-table table-content table-inner" @sort-change="sort" stripe @select-all="selectObjects" @select="selectObjects">
         <el-table-column type="selection" min-width="50">
@@ -91,6 +91,53 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <el-drawer
+        size="70%"
+        :title="$t('oss.i18n_upload')"
+        :append-to-body="true"
+        :before-close="innerDrawerClose"
+        :visible.sync="innerDrawer1">
+        <el-form :model="uploadForm" label-position="right" label-width="150px" size="small" ref="form">
+          <el-form-item :label="$t('oss.object_file')" :rules="{required: true, message: $t('oss.object_file') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <upload v-on:appendUpload="appendUpload" v-model="uploadForm.path"/>
+          </el-form-item>
+          <div style="color: red;font-style:oblique;margin: 10px 0 10px 100px;">
+            <div>{{ $t('oss.bucket_tips9') }}</div>
+            <div>{{ $t('oss.bucket_tips2') }}</div>
+            <div>{{ $t('oss.bucket_tips10') }}</div>
+            <div>{{ $t('oss.bucket_tips8') }}</div>
+            <div>{{ $t('oss.bucket_tips11') }}</div>
+          </div>
+        </el-form>
+        <dialog-footer
+          @cancel="innerDrawer1 = false"
+          @confirm="uploadFile()"/>
+      </el-drawer>
+
+      <el-drawer
+        size="70%"
+        :title="$t('oss.add_dir')"
+        :append-to-body="true"
+        :before-close="innerDrawerClose"
+        :visible.sync="innerDrawer2">
+        <el-form :model="dirForm" label-position="right" label-width="150px" size="small" ref="form">
+          <el-form-item :label="$t('oss.dir_name')" :rules="{required: true, message: $t('oss.dir_name') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-input type="text" class="dir" v-model="dirForm.dir" @input="change($event)" autocomplete="off" :placeholder="$t('oss.dir_name')"/>
+          </el-form-item>
+          <div style="color: red;font-style:oblique;margin: 10px 0 10px 100px;">
+            <div>{{ $t('oss.bucket_tips1') }}</div>
+            <div>{{ $t('oss.bucket_tips2') }}</div>
+            <div>{{ $t('oss.bucket_tips3') }}</div>
+            <div>{{ $t('oss.bucket_tips4') }}</div>
+            <div>{{ $t('oss.bucket_tips5') }}</div>
+          </div>
+        </el-form>
+        <dialog-footer
+          @cancel="innerDrawer2 = false"
+          @confirm="submitDir()"/>
+      </el-drawer>
+
     </el-drawer>
     <!--oss bucket-->
 
@@ -174,6 +221,7 @@ import {_filter, _sort} from "@/common/js/utils";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {OSS_CONFIGS} from "@/business/components/common/components/search/search-components";
 import {saveAs} from "@/common/js/FileSaver";
+import Upload from "@/business/components/oss/head/Upload";
 
 /* eslint-disable */
 export default {
@@ -185,6 +233,7 @@ export default {
     TableHeader,
     TablePagination,
     DialogFooter,
+    Upload,
   },
   data() {
     return {
@@ -266,6 +315,11 @@ export default {
         }
       ],
       bucketOss: {},
+      innerDrawer1: false,
+      innerDrawer2: false,
+      objectFile: Object,
+      uploadForm: {},
+      dirForm: {},
     }
   },
   methods: {
@@ -508,6 +562,54 @@ export default {
         }
       });
     },
+    upload() {
+      this.innerDrawer1 = true;
+    },
+    uploadFile() {
+      let formData = new FormData();
+      if (this.objectFile) {
+        formData.append("objectFile", this.objectFile);
+      }
+      formData.append("request", new Blob([JSON.stringify(this.uploadForm)], {type: "application/json"}));
+      let axiosRequestConfig = {
+        method: "POST",
+        url: "/oss/uploadFile/" + this.bucketOss.id,
+        data: formData,
+        headers: {
+          "Content-Type": 'multipart/form-data'
+        }
+      };
+      this.result = this.$request(axiosRequestConfig, (res) => {
+        if (res.success) {
+          this.$success(this.$t('commons.save_success'));
+          this.search();
+          this.innerDrawer1 = false;
+        }
+      });
+    },
+    addDir() {
+      this.innerDrawer2 = true;
+    },
+    submitDir() {
+      this.result = this.$post("/oss/createDir/" + this.bucketOss.id, this.dirForm.dir, response => {
+        if (response.success) {
+          this.$success(this.$t('commons.save_success'));
+          this.search();
+        } else {
+          this.$error(response.message);
+        }
+      });
+    },
+    innerDrawerClose() {
+      this.innerDrawer1 = false;
+      this.innerDrawer2 = false;
+    },
+    refresh() {
+      this.showObject(this.bucketOss);
+    },
+    appendUpload(file) {
+      this.objectFile = file;
+    },
   },
   created() {
     this.init();
@@ -545,6 +647,9 @@ export default {
 }
 .rtl >>> .el-form-item__content {
   width: 75%;
+}
+.dir >>> .el-input__inner {
+  width: 90%;
 }
 .el-btn {
   margin: 0 0 10px 10px;
