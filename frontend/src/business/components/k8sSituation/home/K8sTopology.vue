@@ -9,7 +9,7 @@
                 <div slot="header" class="clearfix">
                   <el-tabs v-if="k8sImage.images" v-model="activeName" @tab-click="handleClick" :stretch="true">
                     <el-tab-pane class="el-tab-pane-k8s" :label="k8sImage.images + ' Images'" name="image">
-                      <div class="text item">
+                      <div v-if="!vulnDetails" class="text item">
                         <slot name="header">
                           <el-input style="background-color: #364f6c;color: #FFF" prefix-icon="el-icon-search" @change="search" :placeholder="$t('image.search_by_name')" v-model="filterText" size="small" :clearable="true"/>
                         </slot>
@@ -59,7 +59,7 @@
                                       style="cursor:pointer;">
                               <el-table-column show-overflow-tooltip>
                                 <template v-slot:default="scope">
-                          <span
+                          <span @click="showVuln(scope.row)"
                             v-bind:class="{
                                   'icon-title box-critical': scope.row.severity === 'CRITICAL',
                                   'icon-title box-high': scope.row.severity === 'HIGH',
@@ -74,6 +74,66 @@
                           </el-collapse-item>
                         </el-collapse>
                       </div>
+                      <div v-if="vulnDetails" class="text item">
+                        <slot name="header">
+                          <el-link icon="el-icon-back" @click="backImage"> {{ $t('vis.back') }}</el-link>
+                        </slot>
+                        <el-card>
+                          <div slot="header" class="clearfix clearfix-dev">
+                            <el-row>
+                              <el-col v-bind:class="{ 'icon-title box-critical': vuln.severity === 'CRITICAL',
+                                  'icon-title box-high': vuln.severity === 'HIGH',
+                                  'icon-title box-medium': vuln.severity === 'MEDIUM',
+                                  'icon-title box-low': vuln.severity === 'LOW',
+                                  'icon-title box-unknown': vuln.severity === 'UNKNOWN' }"
+                                      :span="3">
+                                <span>{{ vuln.severity.substring(0, 1) }}</span>
+                              </el-col>
+                              <el-col :span="15" style="margin: -7px 0 0 15px;">
+                                <span style="font-size: 24px;font-weight: 500;">{{ vuln.title }}</span>
+                              </el-col>
+                              <el-col :span="6" style="float: right;">
+                                <span style="font-size: 20px;color: #999;float: right;">{{ 'SCORE' }}</span>
+                              </el-col>
+                            </el-row>
+                            <el-row style="font-size: 18px;padding: 10px;">
+                              <el-col :span="20">
+                                <span style="color: #888;margin: 5px;">{{ 'VULNERABILITY' }}</span>
+                                <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                                <span style="margin: 5px;"><a :href="vuln.primaryLink" target="_blank">{{ vuln.vulnerabilityID }}</a></span>
+                                <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                                <span style="margin: 5px;">
+                                  <el-button v-bind:class="{ 'box-critical': vuln.severity === 'CRITICAL',
+                                    'box-high': vuln.severity === 'HIGH',
+                                    'box-medium': vuln.severity === 'MEDIUM', 'box-low': vuln.severity === 'LOW',
+                                    'box-unknown': vuln.severity === 'UNKNOWN' }" size="mini">{{ vuln.severity }}
+                                  </el-button>
+                                </span>
+                                <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
+                                <span style="color: #444;margin: 5px;">RESOURCE: {{ vuln.resource }}</span>
+                              </el-col>
+                              <el-col :span="4" style="float: right;">
+                                <span style="font-size: 20px;color: #000;float: right;">{{ vuln.score }}</span>
+                              </el-col>
+                            </el-row>
+                            <div class="text item div-desc">
+                              <el-row>
+                                <i class="el-icon-s-opportunity"></i> {{ vuln.primaryLink }}
+                              </el-row>
+                            </div>
+                          </div>
+                          <div class="text div-json">
+                            <el-descriptions title="Vulnerability" :column="2">
+                              <el-descriptions-item label="fixedVersion">
+                                {{ vuln.fixedVersion }}
+                              </el-descriptions-item>
+                              <el-descriptions-item label="installedVersion">
+                                {{ vuln.installedVersion }}
+                              </el-descriptions-item>
+                            </el-descriptions>
+                          </div>
+                        </el-card>
+                      </div>
                     </el-tab-pane>
                     <el-tab-pane class="el-tab-pane-k8s" :label="nodes.length + ' Nodes'" name="node">
                       <div v-for="(node, index_n) in nodes" :key="index_n">
@@ -85,14 +145,18 @@
                               </div>
                             </el-tooltip>
                           </div>
-                          <div v-for="(o, index_o) in node.children" :key="index_o" class="text item">
+                          <div v-for="(o, index_o) in node.children" :key="index_o" class="text">
                             <el-card shadow="always" class="hr-card-index-o">
                               <span class="hr-card-data">
-                                  <span class="hr-card-data-unit"> {{ 'Pod: ' + o.name }}</span>
+                                <el-tooltip class="item" effect="dark" :content="'Pod: ' + o.name" placement="top">
+                                  <el-row class="hr-card-data-unit"> {{ '(' + (index_o + 1) + ') Pod: ' + o.name }}</el-row>
+                                </el-tooltip>
                               </span>
-                              <span class="hr-card-desc">
-                                  {{ 'NameSpace: ' + o.namespace }}
-                              </span>
+                              <el-tooltip class="item" effect="dark" :content="'NameSpace: ' + o.namespace" placement="top">
+                                <el-row class="hr-card-desc">
+                                    {{ 'NameSpace: ' + o.namespace }}
+                                </el-row>
+                              </el-tooltip>
                             </el-card>
                           </div>
                         </el-card>
@@ -261,7 +325,9 @@ export default {
       logData: [],
       radio: 'critical',
       nodes: [],
-      activeName: 'image'
+      activeName: 'image',
+      vuln: {},
+      vulnDetails: false,
     };
   },
   methods: {
@@ -678,7 +744,16 @@ export default {
       this.logVisible=false;
     },
     handleClick(tab, event) {
-    }
+    },
+    showVuln(item) {
+      this.vuln = item;
+      console.log(item)
+      this.vulnDetails = true;
+    },
+    backImage() {
+      this.vuln = {};
+      this.vulnDetails = false;
+    },
   },
 
   mounted() {
@@ -913,9 +988,10 @@ svg {
 }
 .hr-card-index-o {
   border-left-color: #5a9cf8;
-  border-left-width: 5px;
+  border-left-width: 3px;
   background-color: #364f6c;
-  margin: 3px;
+  margin: 5px 5px 0 5px;
+  padding: 3px;
 }
 .hr-card-data {
   text-align: left;
