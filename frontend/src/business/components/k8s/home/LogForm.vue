@@ -46,7 +46,7 @@
                         <el-col :span="20">
                           <span style="color: #888;margin: 5px;">{{ 'VULNERABILITY' }}</span>
                           <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                          <span style="margin: 5px;"><a :href="vulnerability.primaryLink" target="_blank">{{ vulnerability.vulnerabilityID }}</a></span>
+                          <span style="margin: 5px;"><a :href="vulnerability.primaryLink" target="_blank">{{ vulnerability.vulnerabilityID?vulnerability.vulnerabilityID:vulnerability.vulnerabilityId }}</a></span>
                           <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
                           <span style="margin: 5px;">
                                   <el-button v-bind:class="{ 'box-critical': vulnerability.severity === 'CRITICAL',
