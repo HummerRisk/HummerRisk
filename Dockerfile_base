@@ -4,7 +4,7 @@ FROM registry.cn-beijing.aliyuncs.com/hummerrisk/prowler:v0.5 as prowler-env
 
 FROM registry.cn-beijing.aliyuncs.com/hummerrisk/xray:v0.5 as xray-env
 
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/cloud-custodian:v0.5.0
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/cloud-custodian:v0.5.2
 
 WORKDIR /usr
 
