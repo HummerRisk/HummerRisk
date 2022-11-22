@@ -2,6 +2,10 @@ package com.hummerrisk.oss.provider;
 
 
 import com.alibaba.fastjson.JSON;
+import com.baidubce.services.bos.BosClient;
+import com.baidubce.services.bos.model.BosObjectSummary;
+import com.baidubce.services.bos.model.BucketSummary;
+import com.baidubce.services.bos.model.ListObjectsResponse;
 import com.hummerrisk.base.domain.Oss;
 import com.hummerrisk.base.domain.OssBucket;
 import com.hummerrisk.base.domain.OssWithBLOBs;
@@ -33,6 +37,7 @@ public class QiniuProvider implements OssProvider {
 
     private static final String BASE_REGION_DIC = "support/regions/";
     private static final String JSON_EXTENSION = ".json";
+
     @Override
     public String policyModel() {
         return "";
@@ -41,55 +46,66 @@ public class QiniuProvider implements OssProvider {
     @Override
     public List<OssBucket> getOssBucketList(OssWithBLOBs ossAccount) throws QiniuException {
         List<OssBucket> resultList = new ArrayList<>();
-        Map<String,String> regionMap = RegionsConstants.QiniuMap;
-        Set<String> regionSet = regionMap.keySet();
-        for (String region : regionSet) {
-            BucketManager bucketManager = getBucketManager(ossAccount, region);
-            String[] buckets = bucketManager.buckets();
-            for(String bucket:buckets){
-                OssBucket ossBucket = new OssBucket();
-                ossBucket.setOssId(ossAccount.getId());
-                ossBucket.setBucketName(bucket);
-                ossBucket.setLocation(region);
-                resultList.add(ossBucket);
-            }
+        BucketManager bucketManager = getBucketManager(ossAccount);
+        String[] buckets = bucketManager.buckets();
+        for (String bucket : buckets) {
+            OssBucket ossBucket = new OssBucket();
+            ossBucket.setOssId(ossAccount.getId());
+            ossBucket.setBucketName(bucket);
+            ossBucket.setLocation(Region.autoRegion().toString());
+            ossBucket.setCreateTime(System.currentTimeMillis());
+            ossBucket.setExtranetEndpoint("");
+            ossBucket.setIntranetEndpoint("");
+            ossBucket.setStorageClass("N/A");
+            ossBucket.setCannedAcl("N/A");
+            ossBucket.setDomainName(Region.autoRegion().toString());
+            ossBucket.setSize("0");
+            ossBucket.setObjectNumber(0L);
+            resultList.add(ossBucket);
         }
 
         return resultList;
     }
 
-    private BucketManager getBucketManager(OssWithBLOBs ossAccount,String region){
-        Configuration cfg = new Configuration(getRegion(region));
+    private BucketManager getBucketManager(OssWithBLOBs ossAccount) {
+        Configuration cfg = new Configuration(Region.autoRegion());
         QiniuCredential qiniuCredential = JSON.parseObject(ossAccount.getCredential(), QiniuCredential.class);
         Auth auth = Auth.create(qiniuCredential.getAccessKey(), qiniuCredential.getSecretKey());
         return new BucketManager(auth, cfg);
     }
 
-    private Region getRegion(String region){
-        switch (region){
-            case "z0":return Region.huadong();
-            case "z1":return Region.huabei();
-            case "z2":return Region.huanan();
-            case "na0":return Region.beimei();
-            case "as0":return Region.regionAs0();
-            case "fog-cn-east-1":return Region.regionFogCnEast1();
-            case "fog-cn-east-2":return Region.huadongZheJiang2();
+    private Region getRegion(String region) {
+        switch (region) {
+            case "z0":
+                return Region.huadong();
+            case "z1":
+                return Region.huabei();
+            case "z2":
+                return Region.huanan();
+            case "na0":
+                return Region.beimei();
+            case "as0":
+                return Region.regionAs0();
+            case "fog-cn-east-1":
+                return Region.regionFogCnEast1();
+            case "fog-cn-east-2":
+                return Region.huadongZheJiang2();
         }
         return Region.autoRegion();
     }
 
     @Override
     public List<BucketObjectDTO> getBucketObjects(OssBucket bucket, OssWithBLOBs account, String prefix) throws QiniuException {
-        BucketManager bucketManager = getBucketManager(account, bucket.getLocation());
+        BucketManager bucketManager = getBucketManager(account);
         String marker = null;
         List<BucketObjectDTO> result = new ArrayList<>();
         boolean isEnd = false;
         int maxPage = 10;
         int page = 1;
-        while (!isEnd){
+        while (!isEnd) {
             FileListing fileListing = bucketManager.listFilesV2(bucket.getBucketName(), prefix, marker, 1000, null);
             marker = fileListing.marker;
-            if(StringUtils.isNullOrEmpty(marker) ||page>=maxPage){
+            if (StringUtils.isNullOrEmpty(marker) || page >= maxPage) {
                 isEnd = true;
             }
             for (FileInfo item : fileListing.items) {
@@ -108,7 +124,7 @@ public class QiniuProvider implements OssProvider {
     }
 
     @Override
-    public FilterInputStream downloadObject(OssBucket bucket, OssWithBLOBs account, final String objectId) throws Exception{
+    public FilterInputStream downloadObject(OssBucket bucket, OssWithBLOBs account, final String objectId) throws Exception {
         FilterInputStream filterInputStream = null;
         return filterInputStream;
     }
