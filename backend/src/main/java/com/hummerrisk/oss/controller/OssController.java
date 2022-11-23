@@ -189,8 +189,8 @@ public class OssController {
     @I18n
     @ApiOperation("创建目录")
     @PostMapping("createDir/{bucketId}")
-    public void createDir(@PathVariable String bucketId, @RequestBody String dir) throws Exception{
-        ossService.createDir(bucketId, dir);
+    public void createDir(@PathVariable String bucketId, @RequestBody Map map) throws Exception{
+        ossService.createDir(bucketId, map.get("dir").toString());
     }
 
     @I18n

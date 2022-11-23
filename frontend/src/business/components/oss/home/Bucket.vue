@@ -216,7 +216,7 @@
         </el-form>
         <dialog-footer
           @cancel="visible = false"
-          @confirm="createBucket(ossTitle)"/>
+          @confirm="createBucket()"/>
       </div>
     </el-drawer>
     <!--create oss bucket-->
@@ -433,7 +433,7 @@ export default {
         this.bucketParams = response.data;
       });
     },
-    createBucket(ossTitle) {
+    createBucket() {
       this.result = this.$post("/oss/create", this.form, response => {
         if (response.success) {
           this.$success(this.$t('commons.create_success'));
@@ -604,10 +604,11 @@ export default {
       this.innerDrawer2 = true;
     },
     submitDir() {
-      this.result = this.$post("/oss/createDir/" + this.bucketOss.id, this.dirForm.dir, response => {
+      this.result = this.$post("/oss/createDir/" + this.bucketOss.id, {dir: this.path + this.dirForm.dir}, response => {
         if (response.success) {
           this.$success(this.$t('commons.save_success'));
-          this.search();
+          this.dirForm = {};
+          this.innerDrawer2 = false;
         } else {
           this.$error(response.message);
         }
