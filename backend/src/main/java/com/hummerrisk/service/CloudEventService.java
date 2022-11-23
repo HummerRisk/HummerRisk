@@ -472,6 +472,7 @@ public class CloudEventService {
             cloudEvent.setEventCategory(jsonObject.getString("eventCategory"));
             cloudEvent.setEventVersion(jsonObject.getString("eventVersion"));
             cloudEvent.setCloudAuditEvent(jsonObject.toJSONString());
+            cloudEvent.setRegionName(accountMap.get("regionName"));
             return cloudEvent;
         }).collect(Collectors.toList());
 
