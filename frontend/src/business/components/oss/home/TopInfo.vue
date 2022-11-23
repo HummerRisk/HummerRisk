@@ -3,7 +3,7 @@
     <el-col :span="4">
       <el-card shadow="always" class="hr-card-index-1">
         <span class="hr-card-data">
-          <span class="hr-card-data-digital">{{ topInfo.codes }}</span>
+          <span class="hr-card-data-digital">{{ topInfo.accounts }}</span>
           <span class="hr-card-data-unit"> {{ 'Oss' }}</span>
         </span>
         <span class="hr-card-desc">{{ $t('oss.oss_account') }}</span>
@@ -12,7 +12,7 @@
     <el-col :span="4">
       <el-card shadow="always" class="hr-card-index-2">
         <span class="hr-card-data">
-          <span class="hr-card-data-digital">{{ topInfo.critical }}</span>
+          <span class="hr-card-data-digital">{{ topInfo.buckets }}</span>
           <span class="hr-card-data-unit"> {{ 'Bucket' }}</span>
         </span>
         <span class="hr-card-desc">{{ $t('oss.bucket') }}</span>
@@ -21,37 +21,37 @@
     <el-col :span="4">
       <el-card shadow="always" class="hr-card-index-3">
         <span class="hr-card-data">
-          <span class="hr-card-data-digital">{{ topInfo.high }}</span>
-          <span class="hr-card-data-unit"> {{ 'High' }}</span>
+          <span class="hr-card-data-digital">{{ topInfo.AllRisk }}</span>
+          <span class="hr-card-data-unit"> {{ 'AllRisk' }}</span>
         </span>
-        <span class="hr-card-desc">{{ $t('code.overview_high') }}</span>
+        <span class="hr-card-desc">{{ $t('sbom.total') }}</span>
       </el-card>
     </el-col>
     <el-col :span="4">
       <el-card shadow="always" class="hr-card-index-4">
         <span class="hr-card-data">
-          <span class="hr-card-data-digital">{{ topInfo.medium }}</span>
-          <span class="hr-card-data-unit"> {{ 'Medium' }}</span>
+          <span class="hr-card-data-digital">{{ topInfo.HighRisk }}</span>
+          <span class="hr-card-data-unit"> {{ 'HighRisk' }}</span>
         </span>
-        <span class="hr-card-desc">{{ $t('code.overview_medium') }}</span>
+        <span class="hr-card-desc">{{ $t('rule.HighRisk') + $t('oss.bucket') }}</span>
       </el-card>
     </el-col>
     <el-col :span="4">
       <el-card shadow="always" class="hr-card-index-5">
         <span class="hr-card-data">
-          <span class="hr-card-data-digital">{{ topInfo.low }}</span>
-          <span class="hr-card-data-unit"> {{ 'Low' }}</span>
+          <span class="hr-card-data-digital">{{ topInfo.MediumRisk }}</span>
+          <span class="hr-card-data-unit"> {{ 'MediumRisk' }}</span>
         </span>
-        <span class="hr-card-desc">{{ $t('code.overview_low') }}</span>
+        <span class="hr-card-desc">{{ $t('rule.MediumRisk') + $t('oss.bucket') }}</span>
       </el-card>
     </el-col>
     <el-col :span="4">
       <el-card shadow="always" class="hr-card-index-6">
         <span class="hr-card-data">
-          <span class="hr-card-data-digital">{{ topInfo.unknown }}</span>
-          <span class="hr-card-data-unit"> {{ 'Unknown' }}</span>
+          <span class="hr-card-data-digital">{{ topInfo.LowRisk }}</span>
+          <span class="hr-card-data-unit"> {{ 'LowRisk' }}</span>
         </span>
-        <span class="hr-card-desc">{{ $t('code.overview_unknown') }}</span>
+        <span class="hr-card-desc">{{ $t('rule.LowRisk') + $t('oss.bucket') }}</span>
       </el-card>
     </el-col>
   </container>
@@ -73,7 +73,7 @@ export default {
   },
   methods: {
     init() {
-      this.result = this.$post("/code/topInfo", {}, response => {
+      this.result = this.$post("/oss/topInfo", {}, response => {
         let data = response.data;
         this.topInfo = data;
       });

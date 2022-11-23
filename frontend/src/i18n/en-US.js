@@ -1195,6 +1195,12 @@ export default {
     ia: 'Low frequency access',
     archive: 'Archive storage',
     cold: 'Cold storage',
+    by_oss: 'Statistics by object storage account',
+    by_oss_bucket: 'Statistics by bucket',
+    oss_chart: 'Object storage bucket statistics',
+    oss_chart_vuln: 'Bucket Statistics',
+    oss_bucket_chart: 'Object storage bucket file statistics',
+    oss_bucket_chart_vuln: 'Storage bucket file statistics',
   },
   task: {
     task_setting: 'Task arrangement',

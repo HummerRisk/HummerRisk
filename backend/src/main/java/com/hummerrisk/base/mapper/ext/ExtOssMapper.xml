@@ -355,4 +355,97 @@
         </if>
     </select>
 
+    <select id="topInfo" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT *
+        from (
+              (SELECT IFNULL(count(*), 0) as accounts from oss) as accounts,
+              (SELECT IFNULL(count(*), 0) as buckets from oss_bucket) as buckets,
+              (SELECT IFNULL(sum(t.return_sum), 0) as HighRisk
+                  from resource t
+                  join cloud_task_item_resource t1 on t.id = t1.resource_id
+                  join cloud_task t2 on t1.task_id = t2.id
+                  join oss t3 on t2.account_id = t3.id
+                  join rule_group_mapping t4 on t2.rule_id = t4.rule_id
+                  join rule_group t5 on t4.group_id = t5.id and t5.level = '对象存储'
+                  where t.severity = 'HighRisk'
+              ) as HighRisk,
+              (SELECT IFNULL(sum(t.return_sum), 0) as MediumRisk
+                  from resource t
+                  join cloud_task_item_resource t1 on t.id = t1.resource_id
+                  join cloud_task t2 on t1.task_id = t2.id
+                  join oss t3 on t2.account_id = t3.id
+                  join rule_group_mapping t4 on t2.rule_id = t4.rule_id
+                  join rule_group t5 on t4.group_id = t5.id and t5.level = '对象存储'
+                  where t.severity = 'MediumRisk'
+              ) as MediumRisk,
+                  (SELECT IFNULL(sum(t.return_sum), 0) as LowRisk
+                  from resource t
+                  join cloud_task_item_resource t1 on t.id = t1.resource_id
+                  join cloud_task t2 on t1.task_id = t2.id
+                  join oss t3 on t2.account_id = t3.id
+                  join rule_group_mapping t4 on t2.rule_id = t4.rule_id
+                  join rule_group t5 on t4.group_id = t5.id and t5.level = '对象存储'
+                  where t.severity = 'LowRisk'
+              ) as LowRisk,
+              (SELECT IFNULL(sum(t.return_sum), 0) as AllRisk
+                  from resource t
+                  join cloud_task_item_resource t1 on t.id = t1.resource_id
+                  join cloud_task t2 on t1.task_id = t2.id
+                  join oss t3 on t2.account_id = t3.id
+                  join rule_group_mapping t4 on t2.rule_id = t4.rule_id
+                  join rule_group t5 on t4.group_id = t5.id and t5.level = '对象存储'
+              ) as AllRisk
+                 )
+    </select>
+
+    <select id="ossChart" resultType="java.util.Map">
+        SELECT
+            concat(t.name, ' (', t.sum, ')') as 'name',
+            t.sum as 'value'
+        FROM oss as t
+        ORDER BY t.update_time DESC
+        Limit 10;
+    </select>
+
+    <select id="bucketChart" resultType="java.util.Map">
+        SELECT
+            concat(t.bucket_name, '(', IFNULL(t.object_number, 0), ')') as 'name',
+            IFNULL(t.object_number, 0) as 'value'
+        FROM oss_bucket as t
+        ORDER BY t.create_time DESC
+        Limit 20;
+    </select>
+
+    <select id="severityChart" resultType="java.util.Map">
+        SELECT
+            o.name as 'product',
+            (SELECT IFNULL(sum(t.return_sum), 0) as HighRisk
+             from resource t
+                  join cloud_task_item_resource t1 on t.id = t1.resource_id
+                  join cloud_task t2 on t1.task_id = t2.id
+                  join rule_group_mapping t4 on t2.rule_id = t4.rule_id
+                  join rule_group t5 on t4.group_id = t5.id and t5.level = '对象存储'
+             where t.severity = 'HighRisk' and t2.account_id = o.id
+            ) as HighRisk,
+            (SELECT IFNULL(sum(t.return_sum), 0) as MediumRisk
+             from resource t
+                  join cloud_task_item_resource t1 on t.id = t1.resource_id
+                  join cloud_task t2 on t1.task_id = t2.id
+                  join rule_group_mapping t4 on t2.rule_id = t4.rule_id
+                  join rule_group t5 on t4.group_id = t5.id and t5.level = '对象存储'
+             where t.severity = 'MediumRisk' and t2.account_id = o.id
+            ) as MediumRisk,
+            (SELECT IFNULL(sum(t.return_sum), 0) as LowRisk
+             from resource t
+                  join cloud_task_item_resource t1 on t.id = t1.resource_id
+                  join cloud_task t2 on t1.task_id = t2.id
+                  join rule_group_mapping t4 on t2.rule_id = t4.rule_id
+                  join rule_group t5 on t4.group_id = t5.id and t5.level = '对象存储'
+             where t.severity = 'LowRisk' and t2.account_id = o.id
+            ) as LowRisk
+        FROM oss as o
+        ORDER BY o.update_time DESC
+        Limit 10;
+    </select>
+
 </mapper>

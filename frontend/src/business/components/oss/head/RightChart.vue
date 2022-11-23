@@ -9,7 +9,7 @@ import echarts from 'echarts';
 import HrChart from "@/business/components/common/chart/HrChart";
 /* eslint-disable */
 export default {
-  name: "RightChart",
+  name: "LeftChart",
   components: {
     HrChart,
     echarts,
@@ -24,20 +24,36 @@ export default {
   },
   methods: {
     init() {
-      this.$get("/code/severityChart", response => {
+      this.$get("/oss/bucketChart", response => {
         let data = response.data;
         this.options = {
-          legend: {},
-          tooltip: {},
-          dataset: {
-            dimensions: ['product', 'Critical', 'High', 'Medium', 'Low', 'Unknown'],
-            source: data
+          title: {
+            text: this.$t('oss.oss_bucket_chart'),
+            subtext: this.$t('oss.oss_bucket_chart_vuln'),
+            left: 'center'
           },
-          xAxis: { type: 'category' },
-          yAxis: {},
-          // Declare several bar series, each will be mapped
-          // to a column of dataset.source by default.
-          series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }, { type: 'bar' }, { type: 'bar' }],
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            orient: 'vertical',
+            left: 'left'
+          },
+          series: [
+            {
+              name: 'Bucket',
+              type: 'pie',
+              radius: '50%',
+              data: data,
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
+            }
+          ],
           color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4', '#8B0000', '#FF4D4D', '#FF8000', '#336D9F']
         };
       });

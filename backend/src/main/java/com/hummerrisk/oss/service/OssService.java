@@ -727,4 +727,20 @@ public class OssService {
         });
     }
 
+    public Map<String, Object> topInfo(Map<String, Object> params) {
+        return extOssMapper.topInfo(params);
+    }
+
+    public List<Map<String, Object>> ossChart() {
+        return extOssMapper.ossChart();
+    }
+
+    public List<Map<String, Object>> bucketChart() {
+        return extOssMapper.bucketChart();
+    }
+
+    public List<Map<String, Object>> severityChart() {
+        return extOssMapper.severityChart();
+    }
+
 }

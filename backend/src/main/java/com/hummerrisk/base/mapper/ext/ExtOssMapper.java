@@ -11,6 +11,7 @@ import com.hummerrisk.oss.dto.OssDTO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ExtOssMapper {
 
@@ -23,5 +24,13 @@ public interface ExtOssMapper {
     List<ExportDTO> searchGroupExportData(ResourceRequest request, @Param("groupId") String groupId, @Param("accountId") String accountId);
 
     List<ResourceDTO> resourceList(ResourceRequest resourceRequest);
+
+    Map<String, Object> topInfo(Map<String, Object> params);
+
+    List<Map<String, Object>> ossChart();
+
+    List<Map<String, Object>> bucketChart();
+
+    List<Map<String, Object>> severityChart();
 
 }

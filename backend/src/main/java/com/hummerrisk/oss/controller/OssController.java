@@ -280,4 +280,31 @@ public class OssController {
         ossService.uploadObject(bucketId , objectFile);
     }
 
+    @I18n
+    @ApiOperation(value = "对象存储概览TOP统计")
+    @PostMapping("topInfo")
+    public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
+        return ossService.topInfo(params);
+    }
+
+    @I18n
+    @ApiOperation(value = "对象存储统计")
+    @GetMapping("ossChart")
+    public List<Map<String, Object>> ossChart() {
+        return ossService.ossChart();
+    }
+
+    @ApiOperation(value = "存储桶统计")
+    @GetMapping("bucketChart")
+    public List<Map<String, Object>> bucketChart() {
+        return ossService.bucketChart();
+    }
+
+    @I18n
+    @ApiOperation(value = "对象存储风险统计")
+    @GetMapping("severityChart")
+    public List<Map<String, Object>> severityChart() {
+        return ossService.severityChart();
+    }
+
 }
