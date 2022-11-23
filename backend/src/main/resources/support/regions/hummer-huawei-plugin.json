@@ -1,8 +1,8 @@
 [
   {
-    "regionId": "cn-north-1",
-    "regionName": "华北-北京一",
-    "extranetEndpoint": "obs.cn-north-1.myhuaweicloud.com"
+    "regionId": "cn-north-4",
+    "regionName": "华北-北京四",
+    "extranetEndpoint": "obs.cn-north-4.myhuaweicloud.com"
   },
   {
     "regionId": "cn-east-2",
@@ -20,18 +20,13 @@
     "extranetEndpoint": "obs.ap-southeast-1.myhuaweicloud.com"
   },
   {
-    "regionId": "cn-north-4",
-    "regionName": "华北-北京四",
-    "extranetEndpoint": "obs.cn-north-4.myhuaweicloud.com"
+    "regionId": "cn-north-1",
+    "regionName": "华北-北京一",
+    "extranetEndpoint": "obs.cn-north-1.myhuaweicloud.com"
   },
   {
     "regionId": "ap-southeast-2",
     "regionName": "亚太-曼谷",
     "extranetEndpoint": "obs.ap-southeast-2.myhuaweicloud.com"
-  },
-  {
-    "regionId": "cn-north-4",
-    "regionName": "华北-北京四",
-    "extranetEndpoint": "obs.cn-north-4.myhuaweicloud.com"
   }
 ]
