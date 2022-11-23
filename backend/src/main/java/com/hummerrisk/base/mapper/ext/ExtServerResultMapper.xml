@@ -116,7 +116,7 @@
 
     <select id="serverChart" resultType="java.util.Map">
         SELECT
-            t.server_name as 'name',
+            concat(t.server_name, ' (', count(t.id), ')') as 'name',
             count(t.id) as 'value'
         FROM server_result as t
         WHERE t.is_severity = 0
