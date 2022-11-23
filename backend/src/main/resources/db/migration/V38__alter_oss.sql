@@ -42,3 +42,31 @@ INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('0eaec886-c769-
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('0eaec886-c769-4dfb-8efa-7933328fde0d', @groupId2);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('d0edb278-0df2-41fd-9032-7eac190416df', @groupId2);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('d0edb278-0df2-41fd-9032-7eac190416df', @groupId1);
+
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('1268870b-188d-41a8-a86e-0c83299dc93c', 'Qiniu Bucket 公开读取访问权限检测', 1, 'HighRisk', 'Qiniu 查看您的 存储桶是否不允许公开读取访问权限。如果某个存储桶策略允许公开读取访问权限，则该存储桶“不合规“', 'policies:\n    - name: qiniu-bucket-private\n      resource: qiniu.bucket\n      filters:\n        - type: private\n          value: ${{value}}', '[{\"key\":\"value\",\"name\":\"私有状态：0 公开， 1 私有\",\"defaultValue\":\"1\",\"required\":true}]', 'hummer-qiniu-plugin', '七牛云', 'qiniu.png', concat(unix_timestamp(now()), '002'), '1', 'custodian', NULL);
+
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('1268870b-188d-41a8-a86e-0c83299dc93c', 'safety');
+
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('c0cd80bf-259f-4a46-a1a8-9ce7edc5e592', '1268870b-188d-41a8-a86e-0c83299dc93c', 'qiniu.bucket');
+
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('1268870b-188d-41a8-a86e-0c83299dc93c', '10');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('1268870b-188d-41a8-a86e-0c83299dc93c', '13');
+
+SELECT id INTO @groupId3 FROM rule_group WHERE name =  'Qiniu 等保预检';
+
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('1268870b-188d-41a8-a86e-0c83299dc93c', @groupId3);
+
+
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('accfd8f2-636a-4e01-8b15-18fc61afa7e3', 'Baidu BOS 存储桶加密检测', 1, 'HighRisk', 'Baidu 查看并确认您的 BOS 存储桶启用了默认加密，开启视为“合规”，未开启则该存储桶“不合规“', 'policies:\n    - name: baidu-bos-encryption\n      resource: baidu.bos\n      filters:\n        - type: encryption\n          value: ${{value}}', '[{\"key\":\"value\",\"name\":\"加密算法\",\"defaultValue\":\"none\",\"required\":true}]', 'hummer-baidu-plugin', '百度云', 'baidu.png', concat(unix_timestamp(now()), '003'), '1', 'custodian', NULL);
+
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('accfd8f2-636a-4e01-8b15-18fc61afa7e3', 'safety');
+
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('8140407a-9ef7-4042-9834-67c26b3fa8e8', 'accfd8f2-636a-4e01-8b15-18fc61afa7e3', 'baidu.bos');
+
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('accfd8f2-636a-4e01-8b15-18fc61afa7e3', '53');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('accfd8f2-636a-4e01-8b15-18fc61afa7e3', '55');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('accfd8f2-636a-4e01-8b15-18fc61afa7e3', '96');
+
+SELECT id INTO @groupId4 FROM rule_group WHERE name =  'Baidu 等保预检';
+
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('accfd8f2-636a-4e01-8b15-18fc61afa7e3', @groupId4);
