@@ -15,6 +15,8 @@ public class NameSpace {
 
     private String namespaceId;
 
+    private String riskType;
+
     public String getName() {
         return name;
     }
@@ -45,5 +47,13 @@ public class NameSpace {
 
     public void setNamespaceId(String namespaceId) {
         this.namespaceId = namespaceId;
+    }
+
+    public String getRiskType() {
+        return riskType;
+    }
+
+    public void setRiskType(String riskType) {
+        this.riskType = riskType;
     }
 }

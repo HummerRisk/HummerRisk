@@ -17,9 +17,9 @@ public interface ExtCloudNativeSourceMapper {
 
     K8sTopology k8sTopology();
 
-    RiskTopology riskTopology(@Param("k8sId") String k8sId);
+    RiskTopology riskTopology(@Param("request") RiskRequest request);
 
-    K8sImage getImage(@Param("k8sId") String k8sId);
+    K8sImage getImage(@Param("request") RiskRequest request);
 
     NodeTopology nodeTopology();
 

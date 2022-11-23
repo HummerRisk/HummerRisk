@@ -11,6 +11,8 @@ public class Resource {
 
     private String name;
 
+    private String severity;
+
     public Integer getValue() {
         return value;
     }
@@ -33,5 +35,13 @@ public class Resource {
 
     public void setRisk(Integer risk) {
         this.risk = risk;
+    }
+
+    public String getSeverity() {
+        return severity;
+    }
+
+    public void setSeverity(String severity) {
+        this.severity = severity;
     }
 }

@@ -832,14 +832,13 @@ public class K8sService {
         return extCloudNativeSourceMapper.k8sTopology();
     }
 
-    public RiskTopology riskTopology(String k8sId) {
-        return extCloudNativeSourceMapper.riskTopology(k8sId);
+    public RiskTopology riskTopology(RiskRequest request) {
+        return extCloudNativeSourceMapper.riskTopology(request);
     }
 
-    public K8sImage getImage(String k8sId) {
-        return extCloudNativeSourceMapper.getImage(k8sId);
+    public K8sImage getImage(RiskRequest request) {
+        return extCloudNativeSourceMapper.getImage(request);
     }
-
     public NodeTopology nodeTopology() {
         return extCloudNativeSourceMapper.nodeTopology();
     }

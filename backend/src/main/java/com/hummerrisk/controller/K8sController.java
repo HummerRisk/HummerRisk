@@ -328,16 +328,16 @@ public class K8sController {
 
     @I18n
     @ApiOperation(value = "K8s风险态势拓扑图")
-    @GetMapping(value = "riskTopology/{accountId}")
-    public RiskTopology riskTopology(@PathVariable String accountId) {
-        return k8sService.riskTopology(accountId);
+    @PostMapping(value = "riskTopology")
+    public RiskTopology riskTopology(@RequestBody RiskRequest request) {
+        return k8sService.riskTopology(request);
     }
 
     @I18n
     @ApiOperation(value = "镜像拓扑图")
-    @GetMapping(value = "getImage/{accountId}")
-    public K8sImage getImage(@PathVariable String accountId) {
-        return k8sService.getImage(accountId);
+    @PostMapping(value = "getImage")
+    public K8sImage getImage(@RequestBody RiskRequest request) {
+        return k8sService.getImage(request);
     }
 
 }
