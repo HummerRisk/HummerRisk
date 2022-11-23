@@ -42,27 +42,27 @@
         </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('event.sync_status')" min-width="170" prop="status" sortable
                          show-overflow-tooltip>
-          <el-button @click="showLog(scope.row)" plain size="medium" type="primary"
+          <el-button @click="showLog(scope.row)" plain size="mini" type="primary"
                      v-if="scope.row.syncStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showLog(scope.row)" plain size="medium" type="primary"
+          <el-button @click="showLog(scope.row)" plain size="mini" type="primary"
                      v-else-if="scope.row.syncStatus === 'APPROVED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showLog(scope.row)" plain size="medium" type="primary"
+          <el-button @click="showLog(scope.row)" plain size="mini" type="primary"
                      v-else-if="scope.row.syncStatus === 'PROCESSING'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showLog(scope.row)" plain size="medium" type="success"
+          <el-button @click="showLog(scope.row)" plain size="mini" type="success"
                      v-else-if="scope.row.syncStatus === 'FINISHED'">
             <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
           </el-button>
-          <el-button @click="showLog(scope.row)" plain size="medium" type="danger"
+          <el-button @click="showLog(scope.row)" plain size="mini" type="danger"
                      v-else-if="scope.row.syncStatus === 'ERROR'">
             <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
           </el-button>
-          <el-button @click="showLog(scope.row)" plain size="medium" type="warning"
+          <el-button @click="showLog(scope.row)" plain size="mini" type="warning"
                      v-else-if="scope.row.syncStatus === 'WARNING'">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
@@ -78,6 +78,11 @@
                          prop="createTime">
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('account.regions')" min-width="100">
+          <template v-slot:default="scope">
+            <regions :row="scope.row"/>
           </template>
         </el-table-column>
         <el-table-column min-width="180" :label="$t('account.update_time')" sortable
@@ -345,6 +350,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {OSS_CONFIGS} from "@/business/components/common/components/search/search-components";
 import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver";
+import Regions from "@/business/components/account/home/Regions";
 
 /* eslint-disable */
 export default {
@@ -355,6 +361,7 @@ export default {
     TableHeader,
     TablePagination,
     DialogFooter,
+    Regions,
   },
   data() {
     return {
