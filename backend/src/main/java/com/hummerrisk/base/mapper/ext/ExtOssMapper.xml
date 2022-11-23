@@ -413,7 +413,7 @@
             IFNULL(t.object_number, 0) as 'value'
         FROM oss_bucket as t
         ORDER BY t.create_time DESC
-        Limit 20;
+        Limit 10;
     </select>
 
     <select id="severityChart" resultType="java.util.Map">
