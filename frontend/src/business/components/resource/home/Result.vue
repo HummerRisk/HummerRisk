@@ -3,7 +3,7 @@
 
     <el-card class="table-card el-row-card">
 
-      <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch" @selectAccount="selectAccount"/>
+      <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch" @selectAccount="selectAccount" @goReport="goReport"/>
 
       <el-divider><i class="el-icon-tickets"></i></el-divider>
 
@@ -546,7 +546,7 @@ import CenterChart from "../../common/components/CenterChart";
 import ResultLog from "./ResultLog";
 import {_filter, _sort, getCurrentAccountID} from "@/common/js/utils";
 import {ACCOUNT_ID} from "@/common/js/constants";
-import AccountChange from "@/business/components/common/head/AccountSwitch";
+import AccountChange from "@/business/components/resource/head/AccountSwitch";
 import TableSearchBar from '@/business/components/common/components/TableSearchBar';
 import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import {RESOURCE_CONFIGS} from "../../common/components/search/search-components";
@@ -1040,6 +1040,12 @@ export default {
     selectAccount(accountId, accountName) {
       this.accountId = accountId;
       this.currentAccount = accountName;
+    },
+    goReport() {
+      let p = '/report/cloudReport';
+      this.$router.push({
+        path: p
+      }).catch(error => error);
     },
   },
   computed: {

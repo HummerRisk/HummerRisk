@@ -5,27 +5,28 @@
     <el-submenu index="2" popper-class="submenu">
       <template v-slot:title>
         <span class="account-name" :title="currentAccount">
-          {{ $t('oss.oss_account') }}: {{ currentAccount }}
+          {{ $t('account.cloud_account') }}: {{ currentAccount }}
         </span>
       </template>
       <search-list @cloudAccountSwitch="cloudAccountSwitch" @selectAccount="selectAccount"/>
 
       <el-divider/>
 
-      <el-menu-item :index="'/oss/account'">
+      <el-menu-item :index="'/account/cloudaccount'">
         <font-awesome-icon :icon="['fa', 'plus']"/>
-        <span style="padding-left: 7px;">{{ $t("oss.create") }}</span>
+        <span style="padding-left: 7px;">{{ $t("account.create") }}</span>
       </el-menu-item>
-      <el-menu-item :index="'/oss/account'">
+      <el-menu-item :index="'/account/cloudaccount'">
         <font-awesome-icon :icon="['fa', 'list-ul']"/>
         <span style="padding-left: 7px;">{{ $t('commons.show_all') }}</span>
       </el-menu-item>
     </el-submenu>
+    <el-button class="el-btn-btm" type="success" plain size="small" @click="goReport">{{ $t('resource.statistics') }}</el-button>
   </el-menu>
 </template>
 
 <script>
-import SearchList from "@/business/components/oss/head/SearchList";
+import SearchList from "@/business/components/common/head/SearchList";
 import {ACCOUNT_NAME} from "../../../../common/js/constants";
 
 /* eslint-disable */
@@ -45,11 +46,11 @@ export default {
       this.currentAccount = accountName;
       this.$emit("cloudAccountSwitch", accountId);
     },
-    openDownload() {
-      this.$emit('openDownload');
-    },
     selectAccount(accountId, accountName) {
       this.$emit('selectAccount', accountId, accountName);
+    },
+    goReport() {
+      this.$emit('goReport');
     },
   },
 }
