@@ -54,7 +54,7 @@
 
     <!--oss bucket-->
     <el-drawer class="rtl" :title="$t('oss.oss_bucket')" :visible.sync="bucketVisible" size="80%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="ossResult.loading">
       <el-row class="el-btn">
         <el-button type="primary" icon="el-icon-upload2" size="medium" plain @click="upload">{{ $t('oss.i18n_upload') }}</el-button>
         <el-button type="success" icon="el-icon-folder-add" size="medium" plain @click="addDir">{{ $t('oss.add_dir') }}</el-button>
@@ -405,8 +405,7 @@ export default {
       if (this.path === '/') {
         this.showObject(item);
       } else {
-        this.thisObject = item;
-        this.getObjects(item.id);
+        this.selectObject(item);
       }
     },
     selectObject(item) {
@@ -470,10 +469,10 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/oss/deleteBucket/" + item.id, response => {
+            this.ossResult = this.$get("/oss/deleteBucket/" + item.id, response => {
               if (response.success) {
                 this.$success(this.$t('commons.delete_success'));
-                this.search();
+                this.refresh();
               } else {
                 this.$error(response.message);
               }
@@ -491,10 +490,10 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$post("/oss/deleteByBatch", this.selectIds, response => {
+            this.ossResult = this.$post("/oss/deleteByBatch", this.selectIds, response => {
               if (response.success) {
                 this.$success(this.$t('commons.delete_success'));
-                this.search();
+                this.refresh();
               } else {
                 this.$error(response.message);
               }
@@ -508,7 +507,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$download("/oss/downloadObject/" + item.bucketId, {
+            this.ossResult = this.$download("/oss/downloadObject/" + item.bucketId, {
               objectId: item.id
             }, response => {
               let blob = new Blob([response.data], {type: "'application/octet-stream'"});
@@ -525,10 +524,10 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$post("/oss/deleteObject/", item.bucketId, item.id,response => {
+            this.ossResult = this.$post("/oss/deleteObject/" + item.bucketId, {objectId: item.id},response => {
               if (response.success) {
                 this.$success(this.$t('commons.delete_success'));
-                this.search();
+                this.refresh();
               } else {
                 this.$error(response.message);
               }
@@ -542,10 +541,10 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$post("/oss/deleteObject/" + item.bucketId, item.id,response => {
+            this.ossResult = this.$post("/oss/deleteObject/" + item.bucketId, {objectId: item.id},response => {
               if (response.success) {
                 this.$success(this.$t('commons.delete_success'));
-                this.search();
+                this.refresh();
               } else {
                 this.$error(response.message);
               }
@@ -563,10 +562,10 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$post("/oss/deleteObjects/" + this.bucketOss.id, this.selectObjectIds, response => {
+            this.ossResult = this.$post("/oss/deleteObjects/" + this.bucketOss.id, Array.from(this.selectObjectIds), response => {
               if (response.success) {
                 this.$success(this.$t('commons.delete_success'));
-                this.search();
+                this.refresh();
               } else {
                 this.$error(response.message);
               }
@@ -583,7 +582,7 @@ export default {
       if (this.objectFile) {
         formData.append("objectFile", this.objectFile);
       }
-      formData.append("request", new Blob([JSON.stringify(this.uploadForm)], {type: "application/json"}));
+      formData.append("request", new Blob([JSON.stringify({path: this.path})], {type: "application/json"}));
       let axiosRequestConfig = {
         method: "POST",
         url: "/oss/uploadFile/" + this.bucketOss.id,
@@ -592,11 +591,13 @@ export default {
           "Content-Type": 'multipart/form-data'
         }
       };
-      this.result = this.$request(axiosRequestConfig, (res) => {
+      this.ossResult = this.$request(axiosRequestConfig, (res) => {
         if (res.success) {
           this.$success(this.$t('commons.save_success'));
-          this.search();
           this.innerDrawer1 = false;
+          this.objectFile = null;
+          this.uploadForm = {};
+          this.refresh();
         }
       });
     },
@@ -604,11 +605,12 @@ export default {
       this.innerDrawer2 = true;
     },
     submitDir() {
-      this.result = this.$post("/oss/createDir/" + this.bucketOss.id, {dir: this.path + this.dirForm.dir}, response => {
+      this.ossResult = this.$post("/oss/createDir/" + this.bucketOss.id, {dir: this.path + this.dirForm.dir}, response => {
         if (response.success) {
           this.$success(this.$t('commons.save_success'));
           this.dirForm = {};
           this.innerDrawer2 = false;
+          this.refresh();
         } else {
           this.$error(response.message);
         }
@@ -619,7 +621,11 @@ export default {
       this.innerDrawer2 = false;
     },
     refresh() {
-      this.showObject(this.bucketOss);
+      if (this.path === '/') {
+        this.showObject(this.bucketOss);
+      } else {
+        this.selectObject(this.thisObject);
+      }
     },
     appendUpload(file) {
       this.objectFile = file;
