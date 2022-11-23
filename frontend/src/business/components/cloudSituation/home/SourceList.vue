@@ -33,22 +33,21 @@
             <el-table-column prop="hummerId" :label="$t('resource.resource_id')" min-width="130" show-overflow-tooltip sortable></el-table-column>
             <el-table-column prop="regionName" :label="$t('event.region')" min-width="150"  show-overflow-tooltip sortable></el-table-column>
             <el-table-column prop="resourceType" :label="$t('dashboard.resource_type')" min-width="130" show-overflow-tooltip sortable></el-table-column>
+            <el-table-column
+              prop="ruleCount"
+              :label="$t('resource.risk')"
+              min-width="120">
+              <template v-slot:default="scope">
+                <resource-rule  :hummer-id="scope.row.hummerId" :risk-count="scope.row.riskCount" :account-id="scope.row.accountId"
+                                :region-id="scope.row.regionId" :resource-type="scope.row.resourceType"
+                                :account-name="getAccountName(scope.row.accountId)"
+                ></resource-rule>
+              </template>
+            </el-table-column>
             <el-table-column min-width="160" :label="$t('account.update_time')" sortable
                              prop="updateTime">
               <template v-slot:default="scope">
                 <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="ruleCount"
-              :label="$t('resource.risk')"
-              min-width="120"
-            >
-              <template v-slot:default="scope">
-                <resource-rule  :hummer-id="scope.row.hummerId" :risk-count="scope.row.riskCount" :account-id="scope.row.accountId"
-                               :region-id="scope.row.regionId" :resource-type="scope.row.resourceType"
-                               :account-name="getAccountName(scope.row.accountId)"
-                ></resource-rule>
               </template>
             </el-table-column>
           </el-table>
