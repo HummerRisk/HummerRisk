@@ -284,6 +284,9 @@
             <if test="name != null">
                 AND t.hummer_id like CONCAT('%',#{name},'%')
             </if>
+            <if test="groupId != null">
+                AND t6.id in (select rule_id from rule_group_mapping where group_id = #{groupId})
+            </if>
         </where>
         <if test="sort == null">
             ORDER BY t.create_time DESC
