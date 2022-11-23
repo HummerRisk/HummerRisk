@@ -102,18 +102,19 @@
     </sql>
     
     <select id="selectResourceSummary" resultMap="SummaryResultMap">
-        select resource_type , count(id) as count from cloud_resource_item
+        select a.resource_type , count(a.id) as count from cloud_resource_item a
+        join cloud_account b on a.account_id = b.id
         where 1=1
         <if test="accountId != null and accountId != ''">
-            and account_id = #{accountId}
+            and a.account_id = #{accountId}
         </if>
-        group by resource_type
+        group by a.resource_type
     </select>
 
     <select id="selectByRequest" resultMap="BaseResultMap" >
         select t.id, t.resource_id, t.hummer_id, t.resource_type, t.plugin_id, t.plugin_name, t.plugin_icon, t.account_id,
     t.region_id, t.region_name, t.create_time, t.update_time,t.resource,t2.risk_count from cloud_resource_item t
-       left join cloud_account account on account.id = t.account_id
+       join cloud_account account on account.id = t.account_id
        left join (select a.hummer_id,count(*) as risk_count FROM resource_item A
         join cloud_task_item_resource b
         on a.resource_id = b.resource_id
