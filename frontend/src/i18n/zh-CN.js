@@ -1195,6 +1195,12 @@ export default {
     ia: '低频访问',
     archive: '归档存储',
     cold: '冷存储',
+    by_oss: '按对象存储账号统计',
+    by_oss_bucket: '按存储桶统计',
+    oss_chart: '对象存储桶统计',
+    oss_chart_vuln: '存储桶统计',
+    oss_bucket_chart: '对象存储桶文件统计',
+    oss_bucket_chart_vuln: '存储桶文件统计',
   },
   task: {
     task_setting: '任务编排',

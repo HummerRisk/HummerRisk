@@ -418,8 +418,8 @@ public class SystemParameterService {
     }
 
     public void updateVulnDbOffline(MultipartFile objectFile) throws Exception {
-        String fileName = upload(objectFile, "/opt/hummerrisk/data/trivy/db");
-        String command = "tar -zxvf /opt/hummerrisk/data/trivy/db/" + fileName;
+        String fileName = upload(objectFile, "/root/.cache/trivy/db");
+        String command = "tar -zxvf /root/.cache/trivy/db" + fileName;
         LogUtil.info(" {updateVulnDbOffline}[command]: " + command);
         CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
     }

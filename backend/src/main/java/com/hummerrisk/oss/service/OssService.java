@@ -695,20 +695,25 @@ public class OssService {
 
     private static String basePath = "/tmp/";
 
-    public void uploadObject(String bucketId, MultipartFile multipartFile) throws Exception {
-        String objectId = multipartFile.getOriginalFilename();
+    public void uploadObject(String bucketId, String objectId, MultipartFile multipartFile) throws Exception {
         OssBucket bucket = getBucketByPrimaryKey(bucketId);
         OssWithBLOBs account = getAccountByPrimaryKey(bucket.getOssId());
         OssProvider ossProvider = getOssProvider(account.getPluginId());
 
-        String filePath = UUIDUtil.newUUID();
-        File localFile = new File(filePath);
+        File localFile = new File(basePath + objectId);
+        if (!localFile.getParentFile().exists())
+        {
+            localFile.getParentFile().mkdirs();
+        }
+        if (!localFile.exists())
+        {
+            localFile.createNewFile();
+        }
         long size = multipartFile.getSize();
-        multipartFile.transferTo(localFile);
-        commonThreadPool.addTask(() -> {
+        multipartFile.transferTo(localFile.toPath().toAbsolutePath());
             FileInputStream fis = null;
             try {
-                fis = new FileInputStream(basePath + filePath);
+                fis = new FileInputStream(basePath + objectId);
                 ossProvider.uploadFile(bucket, account, objectId, fis, size);
                 OperationLogService.log(SessionUtils.getUser(), bucket.getBucketName(), objectId, ResourceTypeConstants.OSS.name(), ResourceOperation.UPLOAD, "i18n_upload_oss");
             } catch (Exception e) {
@@ -724,7 +729,22 @@ public class OssService {
                     localFile.delete();
                 }
             }
-        });
+    }
+
+    public Map<String, Object> topInfo(Map<String, Object> params) {
+        return extOssMapper.topInfo(params);
+    }
+
+    public List<Map<String, Object>> ossChart() {
+        return extOssMapper.ossChart();
+    }
+
+    public List<Map<String, Object>> bucketChart() {
+        return extOssMapper.bucketChart();
+    }
+
+    public List<Map<String, Object>> severityChart() {
+        return extOssMapper.severityChart();
     }
 
 }

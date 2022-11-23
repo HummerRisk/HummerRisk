@@ -141,7 +141,7 @@
 
     <select id="configChart" resultType="java.util.Map">
         SELECT
-            t.name as 'name',
+            concat(t.name, ' (', t.return_sum, ')') as 'name',
             t.return_sum as 'value'
         FROM cloud_native_config_result as t
         ORDER BY t.update_time DESC

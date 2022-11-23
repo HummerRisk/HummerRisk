@@ -1195,6 +1195,12 @@ export default {
     ia: '低頻訪問',
     archive: '歸檔存儲',
     cold: '冷存儲',
+    by_oss: '按對象存儲賬號統計',
+    by_oss_bucket: '按存儲桶統計',
+    oss_chart: '對象存儲桶統計',
+    oss_chart_vuln: '存儲桶統計',
+    oss_bucket_chart: '對象存儲桶文件統計',
+    oss_bucket_chart_vuln: '存儲桶文件統計',
   },
   task: {
     task_setting: '任務編排',

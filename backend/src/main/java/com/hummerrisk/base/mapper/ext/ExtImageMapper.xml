@@ -126,11 +126,11 @@
 
     <select id="imageRepoChart" resultType="java.util.Map">
         SELECT
-            t.name as 'name',
+            concat(t.name, ' (', (SELECT IFNULL(count(t1.id), 0) from image_repo_item t1 where t1.repo_id = t.id), ')') as 'name',
             (SELECT IFNULL(count(t1.id), 0) as 'value' from image_repo_item t1 where t1.repo_id = t.id) as 'value'
         FROM image_repo as t
         ORDER BY t.update_time DESC
-            Limit 10;
+        Limit 10;
     </select>
 
     <select id="severityChart" resultType="java.util.Map">

@@ -24,12 +24,12 @@ export default {
   },
   methods: {
     init() {
-      this.$get("/code/projectChart", response => {
+      this.$get("/oss/ossChart", response => {
         let data = response.data;
         this.options = {
           title: {
-            text: this.$t('code.code_project_chart'),
-            subtext: this.$t('code.code_project_chart_vuln'),
+            text: this.$t('oss.oss_chart'),
+            subtext: this.$t('oss.oss_chart_vuln'),
             left: 'center'
           },
           tooltip: {
@@ -41,7 +41,7 @@ export default {
           },
           series: [
             {
-              name: 'Code',
+              name: 'Oss',
               type: 'pie',
               radius: '50%',
               data: data,

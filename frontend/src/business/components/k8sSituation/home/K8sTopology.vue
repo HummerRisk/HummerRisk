@@ -9,7 +9,7 @@
                 <div slot="header" class="clearfix">
                   <el-tabs v-if="k8sImage.images" v-model="activeName" @tab-click="handleClick" :stretch="true">
                     <el-tab-pane class="el-tab-pane-k8s" :label="k8sImage.images + ' Images'" name="image">
-                      <div class="text item">
+                      <div v-if="!vulnDetails" class="text item">
                         <slot name="header">
                           <el-input style="background-color: #364f6c;color: #FFF" prefix-icon="el-icon-search" @change="search" :placeholder="$t('image.search_by_name')" v-model="filterText" size="small" :clearable="true"/>
                         </slot>
@@ -59,7 +59,7 @@
                                       style="cursor:pointer;">
                               <el-table-column show-overflow-tooltip>
                                 <template v-slot:default="scope">
-                          <span
+                          <span @click="showVuln(scope.row)"
                             v-bind:class="{
                                   'icon-title box-critical': scope.row.severity === 'CRITICAL',
                                   'icon-title box-high': scope.row.severity === 'HIGH',
@@ -74,6 +74,55 @@
                           </el-collapse-item>
                         </el-collapse>
                       </div>
+                      <div v-if="vulnDetails" class="text item details">
+                        <slot name="header">
+                          <el-link icon="el-icon-back" @click="backImage" style="color: red; margin: 3px 3px 3px 5px;"> {{ $t('vis.back') }}</el-link>
+                          <el-button style="float: right" v-bind:class="{ 'box-critical-btn': vuln.severity === 'CRITICAL',
+                                'box-high-btn': vuln.severity === 'HIGH',
+                                'box-medium-btn': vuln.severity === 'MEDIUM',
+                                'box-low-btn': vuln.severity === 'LOW',
+                                'box-unknown-btn': vuln.severity === 'UNKNOWN' }" size="mini">
+                            {{ vuln.severity }}
+                          </el-button>
+                        </slot>
+                        <div class="table-card-btn">
+                            <el-row>
+                              <el-col :span="24" style="font-size: 12px;color: #fff;width: 100%;white-space: nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis;overflow: hidden;">
+                                {{ 'title: ' }}{{ vuln.title }}
+                              </el-col>
+                            </el-row>
+                            <el-row>
+                              <el-col :span="24" style="font-size: 12px;color: #fff;width: 100%;white-space: nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis;overflow: hidden;">
+                                {{ 'resource: ' }}{{ vuln.resource }}
+                              </el-col>
+                            </el-row>
+                            <el-row>
+                              <el-col :span="24" style="font-size: 12px;color: #fff;width: 100%;white-space: nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis;overflow: hidden;">
+                                {{ 'primaryLink: ' }}<i class="el-icon-s-opportunity"></i> {{ vuln.primaryLink }}
+                              </el-col>
+                            </el-row>
+                            <el-row>
+                              <el-col :span="24" style="font-size: 12px;color: #fff;width: 100%;white-space: nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis;overflow: hidden;">
+                                {{ 'vulnerabilityID: ' }}{{ vuln.vulnerabilityId }}
+                              </el-col>
+                            </el-row>
+                            <el-row>
+                              <el-col :span="24" style="font-size: 12px;color: #fff;width: 100%;white-space: nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis;overflow: hidden;">
+                                {{ 'score: ' }}{{ vuln.score }}
+                              </el-col>
+                            </el-row>
+                            <el-row>
+                              <el-col :span="24" style="font-size: 12px;color: #fff;width: 100%;white-space: nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis;overflow: hidden;">
+                                {{ 'fixedVersion: ' }}{{ vuln.fixedVersion }}
+                              </el-col>
+                            </el-row>
+                            <el-row>
+                              <el-col :span="24" style="font-size: 12px;color: #fff;width: 100%;white-space: nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis;overflow: hidden;">
+                                {{ 'installedVersion: ' }}{{ vuln.installedVersion }}
+                              </el-col>
+                            </el-row>
+                          </div>
+                      </div>
                     </el-tab-pane>
                     <el-tab-pane class="el-tab-pane-k8s" :label="nodes.length + ' Nodes'" name="node">
                       <div v-for="(node, index_n) in nodes" :key="index_n">
@@ -85,14 +134,18 @@
                               </div>
                             </el-tooltip>
                           </div>
-                          <div v-for="(o, index_o) in node.children" :key="index_o" class="text item">
+                          <div v-for="(o, index_o) in node.children" :key="index_o" class="text">
                             <el-card shadow="always" class="hr-card-index-o">
                               <span class="hr-card-data">
-                                  <span class="hr-card-data-unit"> {{ 'Pod: ' + o.name }}</span>
+                                <el-tooltip class="item" effect="dark" :content="'Pod: ' + o.name" placement="top">
+                                  <el-row class="hr-card-data-unit"> {{ '(' + (index_o + 1) + ') Pod: ' + o.name }}</el-row>
+                                </el-tooltip>
                               </span>
-                              <span class="hr-card-desc">
-                                  {{ 'NameSpace: ' + o.namespace }}
-                              </span>
+                              <el-tooltip class="item" effect="dark" :content="'NameSpace: ' + o.namespace" placement="top">
+                                <el-row class="hr-card-desc">
+                                    {{ 'NameSpace: ' + o.namespace }}
+                                </el-row>
+                              </el-tooltip>
                             </el-card>
                           </div>
                         </el-card>
@@ -107,7 +160,7 @@
               <el-row :gutter="24">
                 <el-card class="box-card-top">
                     <div style="float: left;color: white;margin: 11px 1%;min-width: 18%;">NameSpace<I style="color: turquoise;margin-left: 20px;">{{ k8sImage.nameSpaces }}</I></div>
-                    <div style="float: left;min-width: 56%;vertical-align: middle;height: 100%;background-color: #364f6c;">
+                    <div style="float: left;min-width: 53%;vertical-align: middle;height: 100%;background-color: #364f6c;">
                       <el-menu class="header-menu" :unique-opened="true" mode="horizontal" default-active="1" router background-color="#364f6c;" active-text-color="red">
                         <!-- 不激活项目路由-->
                         <el-menu-item index="1" v-show="false">Placeholder</el-menu-item>
@@ -119,7 +172,7 @@
                           </template>
                           <search-list v-if="items.length>0" :items="items" @cloudAccountSwitch="cloudAccountSwitch"/>
                         </el-submenu>
-                        <el-button type="text" @click="showRisk">{{ 'Show K8s Risk' }}</el-button>
+                        <el-button type="text text-2" @click="showRisk">{{ 'Show K8s Risk' }}</el-button>
                       </el-menu>
                     </div>
                     <div style="float: right;color: white;margin: 11px 1%;min-width: 18%;">Controller<I style="color: turquoise;margin-left: 20px;">{{ k8sImage.riskController }} / {{ k8sImage.controllers }} (Reset)</I></div>
@@ -261,7 +314,9 @@ export default {
       logData: [],
       radio: 'critical',
       nodes: [],
-      activeName: 'image'
+      activeName: 'image',
+      vuln: {},
+      vulnDetails: false,
     };
   },
   methods: {
@@ -678,7 +733,15 @@ export default {
       this.logVisible=false;
     },
     handleClick(tab, event) {
-    }
+    },
+    showVuln(item) {
+      this.vuln = item;
+      this.vulnDetails = true;
+    },
+    backImage() {
+      this.vuln = {};
+      this.vulnDetails = false;
+    },
   },
 
   mounted() {
@@ -700,6 +763,10 @@ svg {
 }
 .text {
   font-size: 14px;
+}
+.text-2 {
+  font-size: 14px;
+  margin-left: 10px;
 }
 .item {
   margin-bottom: 18px;
@@ -913,9 +980,10 @@ svg {
 }
 .hr-card-index-o {
   border-left-color: #5a9cf8;
-  border-left-width: 5px;
+  border-left-width: 3px;
   background-color: #364f6c;
-  margin: 3px;
+  margin: 5px 5px 0 5px;
+  padding: 3px;
 }
 .hr-card-data {
   text-align: left;
@@ -949,5 +1017,35 @@ svg {
   -o-text-overflow: ellipsis;
   overflow: hidden;
   margin: 0 3px;
+}
+.details {
+  background: #0f253d;
+  margin: 3px;
+  padding: 5px;
+}
+.box-critical-btn {
+  color: #FFF;
+  background: #8B0000;
+}
+.box-high-btn {
+  color: #FFF;
+  background: #FF4D4D;
+}
+.box-medium-btn {
+  color: #FFF;
+  background: #FF8000;
+}
+.box-low-btn {
+  color: #FFF;
+  background: #336D9F;
+}
+.box-unknown-btn {
+  color: #FFF;
+  background: #67C23A;
+}
+.table-card-btn {
+  background: #0f253d;
+  padding: 5px;
+  margin: 5px;
 }
 </style>

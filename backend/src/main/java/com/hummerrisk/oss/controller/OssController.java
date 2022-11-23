@@ -189,15 +189,15 @@ public class OssController {
     @I18n
     @ApiOperation("创建目录")
     @PostMapping("createDir/{bucketId}")
-    public void createDir(@PathVariable String bucketId, @RequestBody String dir) throws Exception{
-        ossService.createDir(bucketId, dir);
+    public void createDir(@PathVariable String bucketId, @RequestBody Map map) throws Exception{
+        ossService.createDir(bucketId, map.get("dir").toString());
     }
 
     @I18n
     @ApiOperation("删除对象")
     @PostMapping("deleteObject/{bucketId}")
-    public void deleteObject(@PathVariable String bucketId, @RequestBody String objectId) throws Exception{
-        ossService.deleteObject(bucketId, objectId);
+    public void deleteObject(@PathVariable String bucketId, @RequestBody Map map) throws Exception{
+        ossService.deleteObject(bucketId, map.get("objectId").toString());
     }
 
     @I18n
@@ -276,8 +276,42 @@ public class OssController {
     @I18n
     @ApiOperation(value = "上传文件")
     @PostMapping(value = "uploadFile/{bucketId}", consumes = {"multipart/form-data"})
-    public void uploadFile(@PathVariable String bucketId, @RequestPart(value = "objectFile", required = false) MultipartFile objectFile) throws Exception {
-        ossService.uploadObject(bucketId , objectFile);
+    public void uploadFile(@PathVariable String bucketId, @RequestPart(value = "request") Path request, @RequestPart(value = "objectFile", required = false) MultipartFile objectFile) throws Exception {
+        String path = request.getPath();
+        String objectId;
+        if(path.equalsIgnoreCase("/")){
+            objectId = objectFile.getOriginalFilename();
+        }else {
+            objectId = path.endsWith("/") ? path + objectFile.getOriginalFilename() : path + "/" + objectFile.getOriginalFilename();
+        }
+        ossService.uploadObject(bucketId , objectId, objectFile);
+    }
+
+    @I18n
+    @ApiOperation(value = "对象存储概览TOP统计")
+    @PostMapping("topInfo")
+    public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
+        return ossService.topInfo(params);
+    }
+
+    @I18n
+    @ApiOperation(value = "对象存储统计")
+    @GetMapping("ossChart")
+    public List<Map<String, Object>> ossChart() {
+        return ossService.ossChart();
+    }
+
+    @ApiOperation(value = "存储桶统计")
+    @GetMapping("bucketChart")
+    public List<Map<String, Object>> bucketChart() {
+        return ossService.bucketChart();
+    }
+
+    @I18n
+    @ApiOperation(value = "对象存储风险统计")
+    @GetMapping("severityChart")
+    public List<Map<String, Object>> severityChart() {
+        return ossService.severityChart();
     }
 
 }

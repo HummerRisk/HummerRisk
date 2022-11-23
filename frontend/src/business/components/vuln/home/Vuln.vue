@@ -13,11 +13,11 @@
       <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
                 :row-class-name="tableRowClassName"
                 @filter-change="filter" @select-all="select" @select="select">
-        <el-table-column type="selection" min-width="5%">
+        <el-table-column type="selection" min-width="50">
         </el-table-column>
-        <el-table-column type="index" min-width="5%"/>
-        <el-table-column prop="name" :label="$t('vuln.name')" min-width="15%" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('vuln.platform')" min-width="10%" show-overflow-tooltip>
+        <el-table-column type="index" min-width="50"/>
+        <el-table-column prop="name" :label="$t('vuln.name')" min-width="150" show-overflow-tooltip></el-table-column>
+        <el-table-column :label="$t('vuln.platform')" min-width="110" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -25,7 +25,7 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" min-width="10%" :label="$t('vuln.status')"
+        <el-table-column prop="status" min-width="90" :label="$t('vuln.status')"
                          column-key="status"
                          :filters="statusFilters"
                          :filter-method="filterStatus">
@@ -33,20 +33,20 @@
             <vuln-status :row="row"/>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('account.create_time')" sortable
+        <el-table-column min-width="150" :label="$t('account.create_time')" sortable
                          prop="createTime">
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('account.update_time')" sortable
+        <el-table-column min-width="150" :label="$t('account.update_time')" sortable
                          prop="updateTime">
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
-        <el-table-column min-width="17%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column prop="userName" :label="$t('account.creator')" min-width="90" show-overflow-tooltip/>
+        <el-table-column min-width="170" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>

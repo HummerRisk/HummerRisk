@@ -357,7 +357,7 @@
                   @sort-change="resourceSort" @filter-change="resourceFilter"
                   :row-class-name="tableRowClassName">
           <!-- 展开 start -->
-          <el-table-column type="expand" min-width="1%">
+          <el-table-column type="expand" min-width="50">
             <template v-slot:default="props">
 
               <el-divider><i class="el-icon-folder-opened"></i></el-divider>
@@ -368,14 +368,14 @@
             </template>
           </el-table-column>
           <!-- 展开 end -->
-          <el-table-column type="index" min-width="2%"/>
-          <el-table-column v-slot:default="scope" :label="$t('resource.Hummer_ID')" min-width="15%">
+          <el-table-column type="index" min-width="50"/>
+          <el-table-column v-slot:default="scope" :label="$t('resource.Hummer_ID')" min-width="140">
             {{ scope.row.hummerId }}
           </el-table-column>
-          <el-table-column v-slot:default="scope" :label="$t('rule.resource_type')" min-width="15%">
+          <el-table-column v-slot:default="scope" :label="$t('rule.resource_type')" min-width="150">
             {{ scope.row.resourceType }}
           </el-table-column>
-          <el-table-column prop="regionName" :label="$t('account.regions')" min-width="12%">
+          <el-table-column prop="regionName" :label="$t('account.regions')" min-width="110">
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -383,15 +383,15 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="12%"
+          <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="120"
                            :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
                            show-overflow-tooltip>
             <severity-type :row="scope.row"></severity-type>
           </el-table-column>
-          <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="16%" show-overflow-tooltip>
+          <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="160" show-overflow-tooltip>
               {{ scope.row.ruleName }}
           </el-table-column>
-          <el-table-column min-width="10%" :label="$t('commons.operating')" show-overflow-tooltip>
+          <el-table-column min-width="100" :label="$t('commons.operating')" show-overflow-tooltip>
             <template v-slot:default="scope">
               <table-operators v-if="!!scope.row.suggestion" :buttons="resource_buttons2" :row="scope.row"/>
               <table-operators v-if="!scope.row.suggestion" :buttons="resource_buttons" :row="scope.row"/>
