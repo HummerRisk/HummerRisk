@@ -268,21 +268,34 @@
         ORDER BY t.resource_type, t1.resource_name, t.region_id, t.hummer_id
     </select>
 
-    <resultMap id="ResourceBaseResultMap" type="com.hummerrisk.dto.ResourceDTO"
-               extends="com.hummerrisk.base.mapper.ResourceItemMapper.ResultMapWithBLOBs">
-        <result column="taskId" jdbcType="VARCHAR" property="taskId"/>
-        <result column="taskName" jdbcType="VARCHAR" property="taskName"/>
-        <result column="type" jdbcType="VARCHAR" property="type"/>
-        <result column="applyUser" jdbcType="VARCHAR" property="applyUser"/>
-        <result column="ruleId" jdbcType="VARCHAR" property="ruleId"/>
-        <result column="ruleName" jdbcType="VARCHAR" property="ruleName"/>
-        <result column="suggestion" jdbcType="VARCHAR" property="suggestion"/>
-        <result column="accountName" jdbcType="VARCHAR" property="accountName"/>
-        <association property="resourceWithBLOBs" column="resource_id" select="getResourceList">
-        </association>
-    </resultMap>
+    <sql id="resourceCombine">
+        <if test='${condition}.name != null'>
+            and t.hummer_id
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test='${condition}.ruleName != null'>
+            and t6.name
+            <include refid="condition">
+                <property name="object" value="${condition}.ruleName"/>
+            </include>
+        </if>
+        <if test='${condition}.severity != null'>
+            and t.severity
+            <include refid="condition">
+                <property name="object" value="${condition}.severity"/>
+            </include>
+        </if>
+        <if test='${condition}.applyUser != null'>
+            and t4.applyUser
+            <include refid="condition">
+                <property name="object" value="${condition}.applyUser"/>
+            </include>
+        </if>
+    </sql>
 
-    <select id="resourceList" parameterType="com.hummerrisk.controller.request.resource.ResourceRequest" resultMap="ResourceBaseResultMap">
+    <select id="resourceList" parameterType="com.hummerrisk.controller.request.resource.ResourceRequest" resultType="com.hummerrisk.dto.ResourceDTO">
         SELECT
         t4.task_name as taskName,
         t4.type,
@@ -305,54 +318,52 @@
         JOIN rule t6 ON t5.rule_id = t6.id
         JOIN cloud_account t7 ON t.account_id = t7.id
         <where>
-            <if test="combine != null">
-                <include refid="combine">
-                    <property name="condition" value="combine"/>
+            <if test="request.combine != null">
+                <include refid="resourceCombine">
+                    <property name="condition" value="request.combine"/>
                 </include>
             </if>
-            <if test="taskId != null">
-                AND t4.id = #{taskId}
+            <if test="request.taskId != null">
+                AND t4.id = #{request.taskId}
             </if>
-            <if test="accountId != null">
-                AND t.account_id = #{accountId}
+            <if test="request.accountId != null">
+                AND t.account_id = #{request.accountId}
             </if>
-            <if test="regionId != null">
-                AND t.region_id = #{regionId}
+            <if test="request.regionId != null">
+                AND t.region_id = #{request.regionId}
             </if>
-            <if test="taskName != null">
-                AND t4.task_name like CONCAT('%',#{taskName},'%')
+            <if test="request.taskName != null">
+                AND t4.task_name like CONCAT('%',#{request.taskName},'%')
             </if>
-            <if test="severity != null">
-                AND t.severity = #{severity}
+            <if test="request.severity != null">
+                AND t.severity = #{request.severity}
             </if>
-            <if test="tagKey != null">
-                AND t5.rule_id in (select tt.rule_id from rule_tag_mapping tt where tt.tag_key = #{tagKey})
+            <if test="request.tagKey != null">
+                AND t5.rule_id in (select tt.rule_id from rule_tag_mapping tt where tt.tag_key = #{request.tagKey})
             </if>
-            <if test="pluginName != null">
-                AND t.plugin_name = #{pluginName}
+            <if test="request.pluginName != null">
+                AND t.plugin_name = #{request.pluginName}
             </if>
-            <if test="resourceName != null">
-                AND t.resource_name like CONCAT('%',#{resourceName},'%')
+            <if test="request.resourceName != null">
+                AND t.resource_name like CONCAT('%',#{request.resourceName},'%')
             </if>
-            <if test="resourceStatus != null">
-                AND t.resource_status = #{resourceStatus}
+            <if test="request.resourceStatus != null">
+                AND t.resource_status = #{request.resourceStatus}
             </if>
-            <if test="resourceType != null">
-                AND t.resource_type = #{resourceType}
+            <if test="request.resourceType != null">
+                AND t.resource_type = #{request.resourceType}
             </if>
-            <if test="ruleId != null">
-                AND t5.rule_id = #{ruleId}
+            <if test="request.ruleId != null">
+                AND t5.rule_id = #{request.ruleId}
             </if>
-            <if test="ruleName != null">
-                AND t6.name like CONCAT('%',#{ruleName},'%')
+            <if test="request.ruleName != null">
+                AND t6.name like CONCAT('%',#{request.ruleName},'%')
             </if>
-            <if test="name != null">
-                AND t.hummer_id like CONCAT('%',#{name},'%')
+            <if test="request.name != null">
+                AND t.hummer_id like CONCAT('%',#{request.name},'%')
             </if>
         </where>
-        <if test="sort == null">
-            ORDER BY t.create_time DESC
-        </if>
+        ORDER BY t.create_time DESC
     </select>
 
     <select id="topInfo" parameterType="java.util.Map" resultType="java.util.Map">

@@ -689,8 +689,7 @@ public class OssService {
     }
 
     public List<ResourceDTO> resourceList(ResourceRequest resourceRequest) {
-        resourceRequest.setResourceTypes(Arrays.asList(OSSConstants.SUPPORT_RESOURCE_TYPE));
-        return extOssMapper.resourceList(resourceRequest);
+        return extOssMapper.resourceList(resourceRequest, Arrays.asList(OSSConstants.SUPPORT_RESOURCE_TYPE));
     }
 
     private static String basePath = "/tmp/";

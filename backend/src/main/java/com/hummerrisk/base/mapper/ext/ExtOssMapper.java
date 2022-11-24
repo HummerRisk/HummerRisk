@@ -23,7 +23,7 @@ public interface ExtOssMapper {
 
     List<ExportDTO> searchGroupExportData(ResourceRequest request, @Param("groupId") String groupId, @Param("accountId") String accountId);
 
-    List<ResourceDTO> resourceList(ResourceRequest resourceRequest);
+    List<ResourceDTO> resourceList(@Param("request") ResourceRequest request, @Param("resourceTypes") List<String> resourceTypes);
 
     Map<String, Object> topInfo(Map<String, Object> params);
 
