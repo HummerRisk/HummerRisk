@@ -143,9 +143,9 @@ public class QingcloudProvider implements OssProvider {
         MessageDigest md5 = MessageDigest.getInstance("MD5");
         // 这里只起示例作用, 如果 body size 有可能非常大, 按一定 size 做拆分以分段
         // 上传形式来分 part 计算 md5 上传才是比较经济的方式.
-        byte[] data = file.readAllBytes();
-        String contentMD5 = Base64.getEncoder().encodeToString(md5.digest(data));
-        input.setContentMD5(contentMD5);
+//        byte[] data = file.readAllBytes();
+//        String contentMD5 = Base64.getEncoder().encodeToString(md5.digest(data));
+//        input.setContentMD5(contentMD5);
         // 此时 stream 已经被 consume 掉, 但对象存储 server side 也需要读取 body 内容,
         //  所以在 setBodyInputStream 之前,  可以通过:
         //  1. 流已经读取为 bytes array, 直接构造 ByteArrayInputStream 即可;
