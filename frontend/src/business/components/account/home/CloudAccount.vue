@@ -10,14 +10,16 @@
 
         </template>
 
-        <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                  :row-class-name="tableRowClassName"
-                  @filter-change="filter" @select-all="select" @select="select">
+        <hide-table
+          :table-data="tableData"
+          :columns="checkedColumnNames"
+          :pagination="paginationConfig"
+        >
           <el-table-column type="selection" min-width="50">
           </el-table-column>
           <el-table-column type="index" min-width="50"/>
           <el-table-column prop="name" :label="$t('account.name')" min-width="150" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" min-width="150" show-overflow-tooltip>
+          <el-table-column prop="pluginName" :label="$t('account.cloud_platform')" min-width="150" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -33,7 +35,7 @@
               <account-status @search="search" :row="row"/>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('account.regions')" min-width="100">
+          <el-table-column prop="regions" :label="$t('account.regions')" min-width="100">
             <template v-slot:default="scope">
               <regions :row="scope.row"/>
             </template>
@@ -49,12 +51,12 @@
             </template>
           </el-table-column>
           <el-table-column prop="userName" :label="$t('account.creator')" min-width="100" show-overflow-tooltip/>
-          <el-table-column min-width="200" :label="$t('commons.operating')" fixed="right">
+          <el-table-column min-width="200" :label="$t('commons.operating')" prop="operating" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
           </el-table-column>
-        </el-table>
+        </hide-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
 
@@ -318,6 +320,42 @@ import ProxyDialogFooter from "@/business/components/common/components/ProxyDial
 import ProxyDialogCreateFooter from "@/business/components/common/components/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+const columnOptions = [
+  {
+    label: 'account.name',
+    props: 'name'
+  },
+  {
+    label: 'account.cloud_platform',
+    props: 'pluginName'
+  },
+  {
+    label: 'account.status',
+    props: 'status'
+  },
+  {
+    label: 'account.regions',
+    props: 'regions'
+  },
+  {
+    label: 'account.create_time',
+    props: 'createTime'
+  },
+  {
+    label: 'account.update_time',
+    props: 'updateTime'
+  },
+  {
+    label: 'account.creator',
+    props: 'userName'
+  },
+  {
+    label: 'commons.operating',
+    props: 'operating'
+  }
+]
 
 /* eslint-disable */
   export default {
@@ -331,7 +369,8 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
       TablePagination,
       DialogFooter,
       ProxyDialogFooter,
-      ProxyDialogCreateFooter
+      ProxyDialogCreateFooter,
+      HideTable,
     },
     provide() {
       return {
@@ -435,6 +474,13 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
         checkedGroups: [],
         groups: [],
         iamStrategyNotSupport: ['hummer-openstack-plugin', 'hummer-vsphere-plugin', 'hummer-nuclei-plugin', 'hummer-server-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin'],
+        checkedColumnNames: columnOptions.map((ele) => ele.props),
+        columnNames: columnOptions,
+        paginationConfig: {
+          currentPage: 1,
+          pageSize: 10,
+          total: 0
+        },
       }
     },
     watch: {
@@ -697,15 +743,6 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
             return false;
           }
         });
-      },
-      tableRowClassName({row, rowIndex}) {
-        if (rowIndex % 4 === 0) {
-          return 'success-row';
-        } else if (rowIndex % 2 === 0) {
-          return 'warning-row';
-        } else {
-          return '';
-        }
       },
       openScanGroup(account) {
         this.accountWithGroup = account;

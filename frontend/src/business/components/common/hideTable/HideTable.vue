@@ -17,7 +17,6 @@
       <table-body :columns="columns">
         <slot></slot>
       </table-body>
-      <slot name="__operation"></slot>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-table>
   </div>
@@ -152,84 +151,18 @@ export default {
     select() {
       this.$emit('select');
     },
-    tableRowClassName() {
-      this.$emit('tableRowClassName');
+    tableRowClassName({row, rowIndex}) {
+      if (rowIndex % 4 === 0) {
+        return 'success-row';
+      } else if (rowIndex % 2 === 0) {
+        return 'warning-row';
+      } else {
+        return '';
+      }
     },
   },
 };
 </script>
 
-<style lang="scss" scoped>
-.flex-table {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  justify-content: space-between;
-
-  ::v-deep.el-table-column--selection .cell {
-    padding: 0 14px;
-  }
-
-  .el-table::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    border-top: 1px solid rgba(31, 35, 41, 0.15);;
-  }
-
-  ::v-deep .el-table__fixed-body-wrapper {
-    tr {
-      background-color: var(--TableBG, #ffffff) !important;
-    }
-  }
-
-  .pagination-cont {
-    text-align: right;
-    margin-top: 10px;
-
-    ::v-deep .el-pager li {
-      background-color: #fff;
-      border: 1px solid #bbbfc4;
-      border-radius: 4px;
-      color: #1f2329;
-      box-sizing: border-box;
-      line-height: 26px;
-      font-family: SF Pro Text;
-      font-size: 14px;
-      font-weight: 400;
-    }
-
-    ::v-deep .btn-prev,
-    ::v-deep .btn-next {
-      background: #fff;
-      background-color: #fff;
-      border: 1px solid #bbbfc4;
-      border-radius: 4px;
-      color: #bbbfc4;
-    }
-
-    ::v-deep .el-pagination__total {
-      font-family: "PingFang SC";
-      font-style: normal;
-      font-weight: 400;
-      font-size: 14px;
-      line-height: 22px;
-      color: #1f2329;
-      line-height: 28px;
-    }
-
-    ::v-deep .number.active,
-    ::v-deep .el-input__inner:hover {
-      border-color:  #df913c;
-      color:  #df913c !important;
-      background-color: #fff !important;
-    }
-
-    ::v-deep .el-icon-more {
-      border: none !important;
-    }
-  }
-}
+<style scoped>
 </style>
