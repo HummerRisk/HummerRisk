@@ -2,31 +2,36 @@
   <div class="flex-table">
     <el-table
       ref="table"
+      class="adjust-table table-content"
+      border
+      @sort-change="sort"
+      @filter-change="filter"
+      @select-all="select"
+      @select="select"
+      :row-class-name="tableRowClassName"
       v-bind="$attrs"
       v-on="tableEvent"
-      height="2000"
+      min-height="2000"
       :data="tableData"
       :style="{ width: '100%' }">
       <table-body :columns="columns">
         <slot></slot>
       </table-body>
       <slot name="__operation"></slot>
+      <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-table>
-    <div class="pagination-cont">
-      <el-pagination
-        background
-        v-bind="paginationDefalut"
-        v-on="paginationEvent">
-      </el-pagination>
-    </div>
   </div>
 </template>
 
 <script>
 import TableBody from "./TableBody";
+import TablePagination from "@/business/components/common/pagination/TablePagination";
 
 export default {
-  components: {TableBody},
+  components: {
+    TableBody,
+    TablePagination,
+  },
   props: {
     columns: {
       type: Array,
@@ -56,16 +61,11 @@ export default {
   },
   data() {
     return {
-      paginationEvent: {},
-      paginationDefalut: {
-        currentPage: 1,
-        pageSizes: [10, 20, 50, 100],
-        pageSize: 10,
-        layout: "total, prev, pager, next, sizes, jumper",
-        total: 0,
-      },
       multipleSelectionCach: [],
       tableEvent: {},
+      currentPage: 1,
+      pageSize: 10,
+      total: 0,
     };
   },
   created() {
@@ -137,19 +137,23 @@ export default {
     },
     handleListeners() {
       Object.keys(this.$listeners).forEach((key) => {
-        if (
-          [
-            "size-change",
-            "current-change",
-            "prev-click",
-            "next-click",
-          ].includes(key)
-        ) {
-          this.paginationEvent[key] = this.$listeners[key];
-        } else {
-          this.tableEvent[key] = this.$listeners[key];
-        }
+        this.tableEvent[key] = this.$listeners[key];
       });
+    },
+    search() {
+      this.$emit('search');
+    },
+    sort() {
+      this.$emit('sort');
+    },
+    filter() {
+      this.$emit('filter');
+    },
+    select() {
+      this.$emit('select');
+    },
+    tableRowClassName() {
+      this.$emit('tableRowClassName');
     },
   },
 };
