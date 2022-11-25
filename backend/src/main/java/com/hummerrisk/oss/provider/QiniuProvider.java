@@ -49,16 +49,17 @@ public class QiniuProvider implements OssProvider {
         BucketManager bucketManager = getBucketManager(ossAccount);
         String[] buckets = bucketManager.buckets();
         for (String bucket : buckets) {
+            BucketInfo bucketInfo = bucketManager.getBucketInfo(bucket);
             OssBucket ossBucket = new OssBucket();
             ossBucket.setOssId(ossAccount.getId());
             ossBucket.setBucketName(bucket);
-            ossBucket.setLocation(Region.autoRegion().toString());
+            ossBucket.setLocation(bucketInfo.getRegion());
             ossBucket.setCreateTime(System.currentTimeMillis());
             ossBucket.setExtranetEndpoint("");
             ossBucket.setIntranetEndpoint("");
             ossBucket.setStorageClass("N/A");
             ossBucket.setCannedAcl("N/A");
-            ossBucket.setDomainName(Region.autoRegion().toString());
+            ossBucket.setDomainName(bucketInfo.getRegion());
             ossBucket.setSize("0");
             ossBucket.setObjectNumber(0L);
             resultList.add(ossBucket);
@@ -114,7 +115,7 @@ public class QiniuProvider implements OssProvider {
                 bucketObjectDTO.setObjectType("FILE");
                 bucketObjectDTO.setObjectName(item.key);
                 bucketObjectDTO.setObjectSize(SysListener.changeFlowFormat(item.fsize));
-                bucketObjectDTO.setLastModified(item.putTime);
+                bucketObjectDTO.setLastModified(item.putTime/10000);
                 result.add(bucketObjectDTO);
             }
             page++;
