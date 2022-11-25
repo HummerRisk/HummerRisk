@@ -5,7 +5,8 @@
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('oss.oss_account_list')"
                       @create="create" :createTip="$t('oss.create')"
-                      :show-validate="false" :show-create="true"/>
+                      @validate="validate" :validateTip="$t('account.one_validate')"
+                      :show-validate="true" :show-create="true"/>
 
       </template>
 

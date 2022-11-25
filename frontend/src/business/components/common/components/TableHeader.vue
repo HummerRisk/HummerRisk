@@ -12,8 +12,8 @@
                          :content="createTip" @click="create"/>
         <table-button v-if="showScan" icon="el-icon-video-play"
                               type="success" :content="scanTip" @click="scan"/>
-        <table-button v-if="showRun" icon="el-icon-video-play"
-                         type="primary" :content="runTip" @click="validate"/>
+        <table-button v-if="showValidate" icon="el-icon-video-play"
+                         type="primary" :content="validateTip" @click="validate"/>
         <table-button v-if="showDelete" icon="el-icon-remove-outline"
                       type="danger" :content="deleteTip" @click="deleteSelect"/>
         <slot name="button"></slot>
@@ -50,7 +50,7 @@ import TableAdvSearchBar from "./search/TableAdvSearchBar";
         type: Boolean,
         default: false
       },
-      showRun: {
+      showValidate: {
         type: Boolean,
         default: false
       },
@@ -73,7 +73,7 @@ import TableAdvSearchBar from "./search/TableAdvSearchBar";
           return this.$t('account.scan');
         }
       },
-      runTip: {
+      validateTip: {
         type: String,
         default() {
           return this.$t('account.validate');
