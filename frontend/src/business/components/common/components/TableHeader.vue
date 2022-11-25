@@ -9,17 +9,17 @@
     <el-row type="flex" justify="space-between" align="middle">
       <span class="operate-button">
         <table-button v-if="showCreate" icon="el-icon-circle-plus-outline"
-                         :content="createTip" @click="create"/>
+                      type="primary" :content="createTip" @click="create"/>
         <table-button v-if="showScan" icon="el-icon-video-play"
                               type="success" :content="scanTip" @click="scan"/>
         <table-button v-if="showValidate" icon="el-icon-video-play"
-                         type="primary" :content="validateTip" @click="validate"/>
+                         type="warning" :content="validateTip" @click="validate"/>
         <table-button v-if="showDelete" icon="el-icon-remove-outline"
                       type="danger" :content="deleteTip" @click="deleteSelect"/>
+        <table-search-bar :condition.sync="condition" @change="search" class="search-bar" :tip="tip" :items="items"/>
         <slot name="button"></slot>
       </span>
       <span>
-        <table-search-bar :condition.sync="condition" @change="search" class="search-bar" :tip="tip"/>
         <table-adv-search-bar :condition.sync="condition" :showOpen="showOpen" @search="search" v-if="isCombine"/>
       </span>
     </el-row>
@@ -98,6 +98,12 @@ import TableAdvSearchBar from "./search/TableAdvSearchBar";
       showName: {
         type: Boolean,
         default: true
+      },
+      items: {
+        type: [Object,Array],
+        default: () => [
+          {'id' : 'name', 'name' : 'commons.name'},
+        ],
       },
     },
     methods: {

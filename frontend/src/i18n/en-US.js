@@ -208,6 +208,9 @@ export default {
     offline_update_vuln_db: 'Offline update vulnerability database',
     online_update_vuln_db: 'Online update vulnerability database',
     upload_tip: 'Files up to {0} in size',
+    list: 'List',
+    search_by: 'Search by',
+    search: '',
   },
   workspace: {
     create:'Create a workspace',

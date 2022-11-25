@@ -6,7 +6,7 @@
                            :title="$t('account.cloud_account_list')"
                            @create="create" :createTip="$t('account.create')"
                            @validate="validate" :validateTip="$t('account.one_validate')"
-                           :show-validate="true" :show-create="true"/>
+                           :show-validate="true" :show-create="true" :items="items"/>
 
         </template>
 
@@ -485,6 +485,16 @@ const columnOptions = [
           pageSize: 10,
           total: 0
         },
+        items: [
+          {
+            name: 'account.name',
+            id: 'name'
+          },
+          {
+            name: 'account.creator',
+            id: 'userName'
+          }
+        ],
       }
     },
     watch: {

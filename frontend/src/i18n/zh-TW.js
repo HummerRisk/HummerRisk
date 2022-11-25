@@ -208,6 +208,9 @@ export default {
     offline_update_vuln_db: '離線更新漏洞庫',
     online_update_vuln_db: '在線更新漏洞庫',
     upload_tip: '大小不超過 {0} 的文件',
+    list: '列表',
+    search_by: '根據',
+    search: '搜索',
   },
   workspace: {
     create: '創建工作空間',

@@ -1,104 +1,31 @@
 <template>
   <span class="adv-search-bar">
     <el-button icon="el-icon-refresh" size="small" @click="refresh">{{ $t('commons.refresh') }}</el-button>
-    <el-button icon="el-icon-setting" size="small" @click="open" v-if="showOpen" style="margin: 0;">{{ $t('el.table.confirmFilter') }}</el-button>
-    <el-dialog :title="$t('commons.adv_search.combine')" :visible.sync="visible" custom-class="adv-dialog"
-               :append-to-body="true">
-      <div>
-        <div class="search-items">
-          <component class="search-item" v-for="(component, index) in config.components" :key="index"
-                     :is="component.name" :component="component"/>
-        </div>
-      </div>
-      <template v-slot:footer>
-        <div class="dialog-footer">
-          <el-button @click="reset">{{ $t('commons.adv_search.reset') }}</el-button>
-          <el-button type="primary" @click="search">{{ $t('commons.adv_search.search') }}</el-button>
-        </div>
-      </template>
-    </el-dialog>
+    <el-button icon="el-icon-download" size="small" @click="download">{{ $t('server.download') }}</el-button>
+    <el-button icon="el-icon-setting" size="small" @click="list">{{ $t('commons.list') }}</el-button>
   </span>
 </template>
 
 <script>
-import components from "./search-components";
-import {cloneDeep} from "lodash";
 /* eslint-disable */
   export default {
-    components: {...components},
     name: "TableAdvSearchBar",
     props: {
       condition: Object,
-      showOpen: {
-        type: Boolean,
-        default: true
-      },
     },
     data() {
       return {
-        visible: false,
-        config: this.init()
       }
     },
     methods: {
-      init() {
-        let config = cloneDeep(this.condition);
-        config.components.forEach(component => {
-          let operator = component.operator.value;
-          component.operator.value = operator === undefined ? component.operator.options[0].value : operator;
-        })
-        return config;
-      },
-      search() {
-        let condition = {}
-        this.config.components.forEach(component => {
-          let operator = component.operator.value;
-          let value = component.value;
-          if (Array.isArray(value)) {
-            if (value.length > 0) {
-              condition[component.key] = {
-                operator: operator,
-                value: value
-              }
-            }
-          } else {
-            if (value !== undefined && value !== null && value !== "") {
-              condition[component.key] = {
-                operator: operator,
-                value: value
-              }
-            }
-          }
-        });
-
-        // 清除name
-        if (this.condition.name) this.condition.name = undefined;
-        // 添加组合条件
-        this.condition.combine = condition;
-        this.$emit('update:condition', this.condition);
-        this.$emit('search', condition);
-        this.visible = false;
-      },
-      reset() {
-        let source = this.condition.components;
-        this.config.components.forEach((component, index) => {
-          if (component.operator.value !== undefined) {
-            let operator = source[index].operator.value;
-            component.operator.value = operator === undefined ? component.operator.options[0].value : operator;
-          }
-          if (component.value !== undefined) {
-            component.value = source[index].value;
-          }
-        })
-        this.condition.combine = undefined;
-        this.$emit('update:condition', this.condition);
-        this.$emit('search');
-      },
-      open() {
-        this.visible = true;
-      },
       refresh() {
         this.$emit('search');
+      },
+      list() {
+
+      },
+      download() {
+
       },
     }
   }
@@ -132,31 +59,4 @@ import {cloneDeep} from "lodash";
 </style>
 
 <style scoped>
-  .adv-search-bar {
-  }
-
-  .dialog-footer {
-    text-align: center;
-  }
-
-  .search-items {
-    width: 100%;
-  }
-
-  @media only screen and (max-width: 1469px) {
-    .search-item {
-      width: 100%;
-    }
-  }
-
-  @media only screen and (min-width: 1470px) {
-    .search-item {
-      width: 50%;
-    }
-  }
-
-  .search-item {
-    display: inline-block;
-    margin-top: 10px;
-  }
 </style>
