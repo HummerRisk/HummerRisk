@@ -93,6 +93,18 @@ public class OssService {
         return extOssMapper.ossBucketList(request);
     }
 
+    public boolean validate(List<String> ids) {
+        ids.forEach(id -> {
+            try {
+                ValidateDTO validate = validate(id);
+                if(!validate.isFlag()) throw new HRException(Translator.get("failed_oss"));
+            } catch (Exception e) {
+                throw new HRException(e.getMessage());
+            }
+        });
+        return true;
+    }
+
     public ValidateDTO validate(String id) {
         OssWithBLOBs oss = ossMapper.selectByPrimaryKey(id);
         //检验账号的有效性

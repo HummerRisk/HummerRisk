@@ -10,9 +10,14 @@
 
       </template>
 
-      <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
+      <el-table border :data="tableData" class="adjust-table table-content"
                 :row-class-name="tableRowClassName"
-                @filter-change="filter">
+                @sort-change="sort"
+                @filter-change="filter"
+                @select-all="select"
+                @select="select">
+        <el-table-column type="selection" min-width="50">
+        </el-table-column>
         <el-table-column type="index" min-width="50"/>
         <el-table-column prop="name" :label="$t('oss.name')" min-width="150" show-overflow-tooltip></el-table-column>
         <el-table-column :label="$t('account.cloud_platform')" min-width="150" show-overflow-tooltip>
@@ -28,7 +33,7 @@
                          :filters="statusFilters"
                          :filter-method="filterStatus">
           <template v-slot:default="{row}">
-            <div @click="validate(row)">
+            <div @click="validateRow(row)">
               <el-tag size="mini" type="warning" v-if="row.status === 'DELETE'">
                 {{ $t('account.DELETE') }}
               </el-tag>
@@ -473,6 +478,7 @@ export default {
       scanVisible: false,
       groups: [],
       checkedGroups: [],
+      selectIds: new Set(),
     }
   },
   methods: {
@@ -509,9 +515,16 @@ export default {
       });
     },
     init() {
+      this.selectIds.clear();
       this.search();
       this.activeAccount();
       this.activeProxy();
+    },
+    select(selection) {
+      this.selectIds.clear();
+      selection.forEach(s => {
+        this.selectIds.add(s.id)
+      });
     },
     sort(column) {
       _sort(column, this.condition);
@@ -736,8 +749,37 @@ export default {
       this.thisObject = item;
       this.getObjects(item.id);
     },
-    validate(row) {
-      this.$alert(this.$t('account.validate') + this.$t('account.oss_setting') + ' : ' + row.name +  " ？", '', {
+    //校验云账号
+    validate() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('account.please_choose_account'));
+        return;
+      }
+      this.$alert(this.$t('account.one_validate') + this.$t('oss.oss_setting') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: "/oss/validate",
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              if (res.data) {
+                this.$success(this.$t('account.success'));
+              } else {
+                this.$error(this.$t('account.error'));
+              }
+              this.search();
+            });
+          }
+        }
+      });
+    },
+    validateRow(row) {
+      this.$alert(this.$t('account.validate') + this.$t('oss.oss_setting') + ' : ' + row.name +  " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {

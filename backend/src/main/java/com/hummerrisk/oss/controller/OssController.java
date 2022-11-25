@@ -13,7 +13,6 @@ import com.hummerrisk.controller.request.rule.RuleGroupRequest;
 import com.hummerrisk.dto.ResourceDTO;
 import com.hummerrisk.dto.RuleGroupDTO;
 import com.hummerrisk.dto.ValidateDTO;
-import com.hummerrisk.oss.controller.request.OssBucketRequest;
 import com.hummerrisk.oss.controller.request.OssRequest;
 import com.hummerrisk.oss.dto.*;
 import com.hummerrisk.oss.service.OssService;
@@ -71,6 +70,12 @@ public class OssController {
     @GetMapping("iam/strategy/{accountId}")
     public String strategy(@PathVariable String accountId) throws Exception {
         return ossService.strategy(accountId);
+    }
+
+    @ApiOperation(value = "批量校验对象存储账号")
+    @PostMapping("validate")
+    public Boolean validate(@RequestBody List<String> selectIds) {
+        return ossService.validate(selectIds);
     }
 
     @ApiOperation(value = "校验对象存储账号")

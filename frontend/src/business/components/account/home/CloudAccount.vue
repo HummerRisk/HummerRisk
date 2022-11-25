@@ -14,6 +14,10 @@
           :table-data="tableData"
           :columns="checkedColumnNames"
           :pagination="paginationConfig"
+          @sort-change="sort"
+          @filter-change="filter"
+          @select-all="select"
+          @select="select"
         >
           <el-table-column type="selection" min-width="50">
           </el-table-column>
