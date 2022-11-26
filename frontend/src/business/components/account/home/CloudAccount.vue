@@ -6,7 +6,10 @@
                            :title="$t('account.cloud_account_list')"
                            @create="create" :createTip="$t('account.create')"
                            @validate="validate" :validateTip="$t('account.one_validate')"
-                           :show-validate="true" :show-create="true" :items="items"/>
+                           :show-validate="true" :show-create="true"
+                           :items="items" :columnNames="columnNames"
+                           :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                           @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
 
         </template>
 
@@ -19,9 +22,9 @@
           @select-all="select"
           @select="select"
         >
-          <el-table-column type="selection" min-width="50">
+          <el-table-column type="selection" prop="selection" min-width="50">
           </el-table-column>
-          <el-table-column type="index" min-width="50"/>
+          <el-table-column type="index" prop="index" :label="$t('commons.index')" min-width="50"/>
           <el-table-column prop="name" :label="$t('account.name')" min-width="150" show-overflow-tooltip></el-table-column>
           <el-table-column prop="pluginName" :label="$t('account.cloud_platform')" min-width="150" show-overflow-tooltip>
             <template v-slot:default="scope">
@@ -328,6 +331,10 @@ import HideTable from "@/business/components/common/hideTable/HideTable";
 
 const columnOptions = [
   {
+    label: 'commons.index',
+    props: 'index'
+  },
+  {
     label: 'account.name',
     props: 'name'
   },
@@ -359,7 +366,7 @@ const columnOptions = [
     label: 'commons.operating',
     props: 'operating'
   }
-]
+];
 
 /* eslint-disable */
   export default {
@@ -495,12 +502,29 @@ const columnOptions = [
             id: 'userName'
           }
         ],
+        checkAll: true,
+        isIndeterminate: false,
       }
     },
     watch: {
       '$route': 'init'
     },
     methods: {
+      handleCheckedColumnNamesChange(value) {
+        console.log(121, value)
+        const checkedCount = value.length;
+        this.checkAll = checkedCount === this.columnNames.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+        this.checkedColumnNames = value ? this.columnNames.map((ele) => {
+          console.log(444, ele.props, value.includes(ele.props));
+          if(value.includes(ele.props)) { return ele.props };
+        }) : [];
+      },
+      handleCheckAllChange(val) {
+        console.log(2212, val)
+        this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+        this.isIndeterminate = false;
+      },
       create() {
         this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
         this.createVisible = true;

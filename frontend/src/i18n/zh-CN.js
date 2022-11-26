@@ -211,6 +211,8 @@ export default {
     list: '列表',
     search_by: '根据',
     search: '搜索',
+    list_item: '列表项',
+    index: '序号',
   },
   workspace: {
     create: '创建工作空间',

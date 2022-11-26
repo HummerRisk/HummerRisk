@@ -20,7 +20,9 @@
         <slot name="button"></slot>
       </span>
       <span>
-        <table-adv-search-bar :condition.sync="condition" :showOpen="showOpen" @search="search" v-if="isCombine"/>
+        <table-adv-search-bar v-if="isCombine" :condition.sync="condition" :showOpen="showOpen" @search="search"
+                              :columnNames="columnNames" :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                              @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </span>
     </el-row>
   </div>
@@ -105,6 +107,14 @@ import TableAdvSearchBar from "./search/TableAdvSearchBar";
           {'id' : 'name', 'name' : 'commons.name'},
         ],
       },
+      columnNames: {
+        type: [Object,Array],
+      },
+      checkedColumnNames: {
+        type: [Object,Array],
+      },
+      checkAll: true,
+      isIndeterminate: false,
     },
     methods: {
       search(value) {
@@ -123,11 +133,22 @@ import TableAdvSearchBar from "./search/TableAdvSearchBar";
       deleteSelect() {
         this.$emit('deleteSelect');
       },
+      handleCheckAllChange(val) {
+        console.log(111)
+        this.$emit('handleCheckAllChange', val);
+      },
+      handleCheckedColumnNamesChange(value) {
+        console.log(222)
+        this.$emit('handleCheckedColumnNamesChange', value);
+      },
     },
     computed: {
       isCombine() {
         return this.condition.components !== undefined && this.condition.components.length > 0;
       }
+    },
+    created() {
+      console.log(this.columnNames)
     }
   }
 </script>
