@@ -5,7 +5,7 @@
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search" @create="create"
                       :create-tip="$t('user.create')" :title="$t('system.user_list')" :show-create="true"
-                      :items="items" :columnNames="columnNames"
+                      :items="items" :columnNames="columnNames" :show-open="false"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
@@ -16,7 +16,6 @@
         @filter-change="filter"
         @select-all="select"
         @select="select"
-        id="out-table"
       >
         <el-table-column type="index" min-width="50"/>
         <el-table-column prop="id" v-if="checkedColumnNames.includes('id')" label="ID" min-width="100"/>
@@ -180,6 +179,7 @@ import RolesTag from "../../common/components/RolesTag";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {USER_CONFIGS} from "../../common/components/search/search-components";
 
+//列表展示与隐藏
 const columnOptions = [
   {
     label: 'ID',
@@ -383,11 +383,11 @@ const columnOptions = [
       },
       sort(column) {
         _sort(column, this.condition);
-        this.init();
+        this.search();
       },
       filter(filters) {
         _filter(filters, this.condition);
-        this.init();
+        this.search();
       },
       create() {
         this.createVisible = true;

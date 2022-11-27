@@ -1,4 +1,4 @@
-package com.hummerrisk.controller.request.Plugin;
+package com.hummerrisk.controller.request.plugin;
 
 import io.swagger.annotations.ApiModelProperty;
 

@@ -16,7 +16,6 @@
         @filter-change="filter"
         @select-all="select"
         @select="select"
-        id="out-table"
       >
         <el-table-column type="index" min-width="50"/>
         <el-table-column prop="resourceUserName" v-if="checkedColumnNames.includes('resourceUserName')" :label="$t('dashboard.resource_user_name')" min-width="200" show-overflow-tooltip></el-table-column>
@@ -37,7 +36,7 @@
             <span> {{ scope.row.sourceIp?scope.row.sourceIp:'--' }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="160" v-if="checkedColumnNames.includes('time')" :label="$t('dashboard.time')" sortable prop="time">
+        <el-table-column min-width="170" v-if="checkedColumnNames.includes('time')" :label="$t('dashboard.time')" sortable prop="time">
           <template v-slot:default="scope">
             <span><i class="el-icon-time"></i> {{ scope.row.time | timestampFormatDate }}</span>
           </template>

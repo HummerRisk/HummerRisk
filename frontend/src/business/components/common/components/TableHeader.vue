@@ -19,7 +19,7 @@
         <table-search-bar :condition.sync="condition" @change="search" @search="search" class="search-bar" :tip="tip" :items="items"/>
         <slot name="button"></slot>
       </span>
-      <span>
+      <span class="operate-button">
         <table-adv-search-bar v-if="isCombine" :showOpen="showOpen" @search="search" @download="download"
                               :columnNames="columnNames" :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                               @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>

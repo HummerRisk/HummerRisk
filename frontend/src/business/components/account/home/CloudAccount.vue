@@ -19,7 +19,6 @@
           @filter-change="filter"
           @select-all="select"
           @select="select"
-          id="out-table"
         >
           <el-table-column type="selection" id="selection"  prop="selection" min-width="50">
           </el-table-column>

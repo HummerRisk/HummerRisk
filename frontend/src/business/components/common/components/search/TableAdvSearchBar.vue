@@ -1,8 +1,14 @@
 <template>
   <span class="adv-search-bar">
-    <el-button icon="el-icon-refresh" size="small" @click="refresh">{{ $t('commons.refresh') }}</el-button>
-    <el-button icon="el-icon-download" size="small" @click="download">{{ $t('server.download') }}</el-button>
-    <el-button icon="el-icon-setting" size="small" @click="list">{{ $t('commons.list') }}</el-button>
+    <el-button icon="el-icon-refresh" size="small" @click="refresh">
+      <span v-if="showOpen">{{ $t('commons.refresh') }}</span>
+    </el-button>
+    <el-button icon="el-icon-download" size="small" @click="download">
+      <span v-if="showOpen">{{ $t('server.download') }}</span>
+    </el-button>
+    <el-button icon="el-icon-setting" size="small" @click="list">
+      <span v-if="showOpen">{{ $t('commons.list') }}</span>
+    </el-button>
 
     <el-dialog :title="$t('commons.list_item')" :visible.sync="visible" custom-class="adv-dialog" width="60%"
                :append-to-body="true">
@@ -70,6 +76,10 @@
       },
       checkedColumnNames: {
         type: [Object,Array],
+      },
+      showOpen: {
+        type: Boolean,
+        default: true
       },
     },
     watch:{

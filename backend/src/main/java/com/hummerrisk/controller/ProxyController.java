@@ -7,6 +7,7 @@ import com.hummerrisk.commons.constants.RoleConstants;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
+import com.hummerrisk.controller.request.proxy.ProxyRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -35,7 +36,7 @@ public class ProxyController {
     @ApiOperation(value = "代理列表")
     @PostMapping("/list/{goPage}/{pageSize}")
     @RequiresRoles(RoleConstants.ADMIN)
-    public Pager<List<Proxy>> getProxyList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Proxy request) {
+    public Pager<List<Proxy>> getProxyList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ProxyRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, ProxyService.getProxyListWithRequest(request));
     }

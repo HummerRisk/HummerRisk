@@ -8,7 +8,7 @@ import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.commons.utils.ReadFileUtils;
-import com.hummerrisk.controller.request.Plugin.PluginRequest;
+import com.hummerrisk.controller.request.plugin.PluginRequest;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
