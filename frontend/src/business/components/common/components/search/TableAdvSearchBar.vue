@@ -57,7 +57,6 @@
   export default {
     name: "TableAdvSearchBar",
     props: {
-      condition: Object,
       columnNames: {
         type: [Object,Array],
       },

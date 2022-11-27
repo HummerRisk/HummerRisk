@@ -17,6 +17,10 @@ public class CloudAccountRequest {
     @FuzzyQuery
     private String name;
 
+    @ApiModelProperty(value = "用户名称,模糊匹配")
+    @FuzzyQuery
+    private String userName;
+
     @ApiModelProperty("插件ID")
     private String pluginId;
 
@@ -131,4 +135,11 @@ public class CloudAccountRequest {
         this.combine = combine;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 }

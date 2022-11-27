@@ -1,18 +1,19 @@
 <template>
-  <span>
-    <el-input size="small" :placeholder="$t('commons.search_by') + $t(selectName) + $t('commons.search')" v-model="condition.name" class="input-with-select search" maxlength="60" clearable>
-      <el-select v-model="select" slot="prepend" :placeholder="$t('commons.please_select')" @change="changeName">
+  <span class="adv-search-bar">
+    <el-input size="small" :placeholder="$t('commons.search_by') + $t(selectName) + $t('commons.search')"
+              v-model="filterText" class="input-with-select search" maxlength="60" @change="search" clearable>
+      <el-select v-model="select" slot="prepend" :placeholder="$t('commons.please_select')" @change="changeName" style="width:100%">
         <el-option
           v-for="item in items"
-          :key="item.id"
+          :key="item.id" style="width:100%"
           :label="$t(item.name)"
           :value="item.id">
           &nbsp;&nbsp; {{ $t(item.name) }}
           </el-option>
       </el-select>
-      <el-button slot="append" icon="el-icon-search" @change="search"></el-button>
+      <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
     </el-input>
-    <el-button icon="el-icon-setting" size="small" @click="open" v-if="showOpen" style="margin: 10px;">{{ $t('el.table.confirmFilter') }}</el-button>
+    <el-button icon="iconfont icon-shaixuan" size="small" @click="open" v-if="showOpen" style="margin: 10px;">{{ $t('el.table.confirmFilter') }}</el-button>
     <el-dialog :title="$t('commons.adv_search.combine')" :visible.sync="visible" custom-class="adv-dialog"
                :append-to-body="true">
       <div>
@@ -65,6 +66,7 @@ import {cloneDeep} from "lodash";
           config: this.init(),
           select: this.items[0].id,
           selectName: this.items[0].name,
+          filterText: '',
         }
       },
       methods: {
@@ -77,6 +79,9 @@ import {cloneDeep} from "lodash";
           }
         },
         search() {
+          for (let item of this.items) {
+            this.condition[item.id] = "";
+          }
           let condition = {}
           this.config.components.forEach(component => {
             let operator = component.operator.value;
@@ -99,7 +104,11 @@ import {cloneDeep} from "lodash";
           });
 
           // 清除name
-          if (this.condition.name) this.condition.name = undefined;
+          if (this.filterText) {
+            this.condition[this.select] = this.filterText;
+          } else {
+            this.condition[this.select] = undefined;
+          }
           // 添加组合条件
           this.condition.combine = condition;
           this.$emit('update:condition', this.condition);
@@ -167,11 +176,11 @@ import {cloneDeep} from "lodash";
 .adv-search-bar {
 }
 .search {
-  width: 400px;
+  width: 500px;
   margin-left: 10px;
 }
 .search >>> .el-select .el-input {
-  width: 100px;
+  width: 120px;
 }
 .search >>> .el-input-group__prepend {
   background-color: #fff;
@@ -199,5 +208,13 @@ import {cloneDeep} from "lodash";
 .search-item {
   display: inline-block;
   margin-top: 10px;
+}
+
+.adv-search-bar >>> .iconfont {
+  margin: 1px 3px 0 0;
+  width: 24px;
+  height: 18px;
+  text-align: center;
+  font-size: 12px;
 }
 </style>

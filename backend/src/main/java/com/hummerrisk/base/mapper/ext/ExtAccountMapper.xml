@@ -128,6 +128,9 @@
             <if test="request.name != null and request.name != ''">
                 and t.name like CONCAT('%', #{request.name},'%')
             </if>
+            <if test="request.userName != null and request.userName != ''">
+                and user.name like CONCAT('%', #{request.userName},'%')
+            </if>
             <if test="request.status != null and request.status != ''">
                 and t.status = #{request.status}
             </if>

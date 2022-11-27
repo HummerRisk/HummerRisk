@@ -16,11 +16,11 @@
                          type="warning" :content="validateTip" @click="validate"/>
         <table-button v-if="showDelete" icon="el-icon-remove-outline"
                       type="danger" :content="deleteTip" @click="deleteSelect"/>
-        <table-search-bar :condition.sync="condition" @change="search" class="search-bar" :tip="tip" :items="items"/>
+        <table-search-bar :condition.sync="condition" @change="search" @search="search" class="search-bar" :tip="tip" :items="items"/>
         <slot name="button"></slot>
       </span>
       <span>
-        <table-adv-search-bar v-if="isCombine" :condition.sync="condition" :showOpen="showOpen" @search="search" @download="download"
+        <table-adv-search-bar v-if="isCombine" :showOpen="showOpen" @search="search" @download="download"
                               :columnNames="columnNames" :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                               @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </span>
