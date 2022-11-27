@@ -213,6 +213,8 @@ export default {
     search: '搜索',
     list_item: '列表项',
     index: '序号',
+    list_field: '字段列表',
+    selected_fields: '已选择字段',
   },
   workspace: {
     create: '创建工作空间',

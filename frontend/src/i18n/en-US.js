@@ -211,6 +211,10 @@ export default {
     list: 'List',
     search_by: 'Search by',
     search: '',
+    list_item: 'List item',
+    index: 'Serial number',
+    list_field: 'Field list',
+    selected_fields: 'Selected fields',
   },
   workspace: {
     create:'Create a workspace',

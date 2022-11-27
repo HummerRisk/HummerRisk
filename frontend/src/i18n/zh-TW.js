@@ -211,6 +211,10 @@ export default {
     list: '列表',
     search_by: '根據',
     search: '搜索',
+    list_item: '列表項',
+    index: '序號',
+    list_field: '字段列表',
+    selected_fields: '已選擇字段',
   },
   workspace: {
     create: '創建工作空間',

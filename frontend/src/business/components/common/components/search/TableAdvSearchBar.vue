@@ -6,14 +6,17 @@
 
     <el-dialog :title="$t('commons.list_item')" :visible.sync="visible" custom-class="adv-dialog" width="50%"
                :append-to-body="true">
-      <div>
-        <div class="search-items">
+      <div class="columns">
+         <div class="fl">
           <el-row :gutter="10">
-            <el-checkbox class="check-all"
-              v-model="checkAll"
-              :indeterminate="isIndeterminate"
-              @change="handleCheckAllChange"
-            >{{ $t('account.i18n_sync_all') }}</el-checkbox>
+            <div class="ht">
+              <b>{{ $t('commons.list_field') }}</b>
+              <el-checkbox class="check-all"
+                v-model="checkAllChild"
+                :indeterminate="isIndeterminate"
+                @change="handleCheckAllChange">
+                {{ $t('account.i18n_sync_all') }}</el-checkbox>
+            </div>
           </el-row>
           <el-row :gutter="10">
             <el-checkbox-group
@@ -23,11 +26,22 @@
                 <el-checkbox border
                   :key="column.props"
                   :label="column.props"
+                  :disabled="column.disabled"
                 >{{ $t(column.label) }}</el-checkbox>
               </el-col>
               </el-checkbox-group>
           </el-row>
         </div>
+         <div class="fr">
+           <div class="ht"><b>{{ $t('commons.selected_fields') }}</b></div>
+           <ul>
+             <span v-for="(item, index) in columnNames" :key="index">
+               <li v-if="checkItem.includes(item.props)">
+                 {{ $t(item.label) }}
+               </li>
+             </span>
+           </ul>
+         </div>
       </div>
       <template v-slot:footer>
         <div class="dialog-footer">
@@ -47,8 +61,14 @@
       columnNames: {
         type: [Object,Array],
       },
-      checkAll: true,
-      isIndeterminate: false,
+      checkAll: {
+        type: Boolean,
+        default: true
+      },
+      isIndeterminate: {
+        type: Boolean,
+        default: false
+      },
       checkedColumnNames: {
         type: [Object,Array],
       },
@@ -56,12 +76,16 @@
     watch:{
       checkedColumnNames(){
         this.checkItem = this.checkedColumnNames;
+      },
+      checkAll() {
+        this.checkAllChild = this.checkAll;
       }
     },
     data() {
       return {
         visible: false,
         checkItem: this.checkedColumnNames,
+        checkAllChild: this.checkAll,
       }
     },
     methods: {
@@ -81,7 +105,6 @@
         this.visible = false;
       },
       handleCheckedColumnNamesChange(value) {
-        console.log("234231", value)
         this.$emit('handleCheckedColumnNamesChange', value);
       },
       handleCheckAllChange(val) {
@@ -128,4 +151,17 @@
   float: right;
   margin: 0 10px 5px 10px;
 }
+/deep/ .el-dialog__header{ padding:12px; border-bottom:1px solid #eee;}
+/deep/ .el-dialog__title{ font-size:16px;}
+/deep/ .el-dialog__body{padding:20px;}
+.column-dialog /deep/ .el-dialog{ width:40%; min-width:550px;}
+.columns{ display: flex;}
+.columns .ht{ margin-bottom:10px;}
+.columns .ht .ck{ margin-left:12px;}
+.columns .fl{ flex:1;}
+.columns .fl .el-checkbox-group{ overflow: hidden;}
+.columns .fl .el-checkbox-group .el-checkbox{ margin-right:0; float:left; width:50%; margin-top:10px;}
+.columns .fr{ width:200px; border-left:1px solid #f1f1f1; padding-left:20px; margin-left:20px;}
+.columns .fr ul{ max-height:375px; overflow-y:auto;}
+.columns .fr ul li{ margin-bottom:5px;}
 </style>

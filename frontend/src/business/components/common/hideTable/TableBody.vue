@@ -15,7 +15,7 @@ export default {
     if (!columns?.length) return children;
     children.forEach((ele) => {
       const { prop, type } = ele.componentOptions?.propsData || {};
-      if (columns.includes(prop) || type === "selection") {
+      if (columns.includes(prop) || type === "selection" || type === "index" || type === "operating") {
         nodes.push(ele);
       }
     });

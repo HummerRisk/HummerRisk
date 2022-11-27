@@ -15,7 +15,6 @@
 
         <hide-table
           :table-data="tableData"
-          :columns="checkedColumnNames"
           :pagination="paginationConfig"
           @sort-change="sort"
           @filter-change="filter"
@@ -24,9 +23,9 @@
         >
           <el-table-column type="selection" prop="selection" min-width="50">
           </el-table-column>
-          <el-table-column type="index" prop="index" :label="$t('commons.index')" min-width="50"/>
-          <el-table-column prop="name" :label="$t('account.name')" min-width="150" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="pluginName" :label="$t('account.cloud_platform')" min-width="150" show-overflow-tooltip>
+          <el-table-column type="index" prop="index" min-width="50"/>
+          <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('account.name')" min-width="150" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="pluginName" v-if="checkedColumnNames.includes('pluginName')" :label="$t('account.cloud_platform')" min-width="150" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -34,7 +33,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="status" min-width="100" :label="$t('account.status')"
+          <el-table-column prop="status" v-if="checkedColumnNames.includes('status')" min-width="100" :label="$t('account.status')"
                            column-key="status"
                            :filters="statusFilters"
                            :filter-method="filterStatus">
@@ -42,23 +41,23 @@
               <account-status @search="search" :row="row"/>
             </template>
           </el-table-column>
-          <el-table-column prop="regions" :label="$t('account.regions')" min-width="100">
+          <el-table-column prop="regions" v-if="checkedColumnNames.includes('regions')" :label="$t('account.regions')" min-width="100">
             <template v-slot:default="scope">
               <regions :row="scope.row"/>
             </template>
           </el-table-column>
-          <el-table-column min-width="200" :label="$t('account.create_time')" sortable prop="createTime">
+          <el-table-column min-width="200" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.create_time')" sortable prop="createTime">
             <template v-slot:default="scope">
               <span>{{ scope.row.createTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column min-width="200" :label="$t('account.update_time')" sortable prop="updateTime">
+          <el-table-column min-width="200" v-if="checkedColumnNames.includes('updateTime')" :label="$t('account.update_time')" sortable prop="updateTime">
             <template v-slot:default="scope">
               <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="userName" :label="$t('account.creator')" min-width="100" show-overflow-tooltip/>
-          <el-table-column min-width="200" :label="$t('commons.operating')" prop="operating" fixed="right">
+          <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :label="$t('account.creator')" min-width="100" show-overflow-tooltip/>
+          <el-table-column min-width="200" :label="$t('commons.operating')" prop="operating" type="operating" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
@@ -331,40 +330,39 @@ import HideTable from "@/business/components/common/hideTable/HideTable";
 
 const columnOptions = [
   {
-    label: 'commons.index',
-    props: 'index'
-  },
-  {
     label: 'account.name',
-    props: 'name'
+    props: 'name',
+    disabled: false
   },
   {
     label: 'account.cloud_platform',
-    props: 'pluginName'
+    props: 'pluginName',
+    disabled: false
   },
   {
     label: 'account.status',
-    props: 'status'
+    props: 'status',
+    disabled: false
   },
   {
     label: 'account.regions',
-    props: 'regions'
+    props: 'regions',
+    disabled: false
   },
   {
     label: 'account.create_time',
-    props: 'createTime'
+    props: 'createTime',
+    disabled: false
   },
   {
     label: 'account.update_time',
-    props: 'updateTime'
+    props: 'updateTime',
+    disabled: false
   },
   {
     label: 'account.creator',
-    props: 'userName'
-  },
-  {
-    label: 'commons.operating',
-    props: 'operating'
+    props: 'userName',
+    disabled: false
   }
 ];
 
@@ -511,19 +509,15 @@ const columnOptions = [
     },
     methods: {
       handleCheckedColumnNamesChange(value) {
-        console.log(121, value)
         const checkedCount = value.length;
         this.checkAll = checkedCount === this.columnNames.length;
         this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
-        this.checkedColumnNames = value ? this.columnNames.map((ele) => {
-          console.log(444, ele.props, value.includes(ele.props));
-          if(value.includes(ele.props)) { return ele.props };
-        }) : [];
+        this.checkedColumnNames = value;
       },
       handleCheckAllChange(val) {
-        console.log(2212, val)
         this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
         this.isIndeterminate = false;
+        this.checkAll = val;
       },
       create() {
         this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];

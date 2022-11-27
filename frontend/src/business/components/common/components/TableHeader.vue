@@ -134,11 +134,9 @@ import TableAdvSearchBar from "./search/TableAdvSearchBar";
         this.$emit('deleteSelect');
       },
       handleCheckAllChange(val) {
-        console.log(111)
         this.$emit('handleCheckAllChange', val);
       },
       handleCheckedColumnNamesChange(value) {
-        console.log(222)
         this.$emit('handleCheckedColumnNamesChange', value);
       },
     },
@@ -148,7 +146,6 @@ import TableAdvSearchBar from "./search/TableAdvSearchBar";
       }
     },
     created() {
-      console.log(this.columnNames)
     }
   }
 </script>
