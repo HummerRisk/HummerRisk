@@ -176,7 +176,7 @@ import {cloneDeep} from "lodash";
 .adv-search-bar {
 }
 .search {
-  width: 500px;
+  width: 450px;
   margin-left: 10px;
 }
 .search >>> .el-select .el-input {

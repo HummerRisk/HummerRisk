@@ -18,19 +18,16 @@
       <table-body :columns="columns">
         <slot></slot>
       </table-body>
-      <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-table>
   </div>
 </template>
 
 <script>
 import TableBody from "./TableBody";
-import TablePagination from "@/business/components/common/pagination/TablePagination";
 
 export default {
   components: {
     TableBody,
-    TablePagination,
   },
   props: {
     columns: {
@@ -40,11 +37,6 @@ export default {
     multipleSelection: {
       type: Array,
       default: () => [],
-    },
-    pagination: {
-      type: Object,
-      default: () => {
-      },
     },
     isRememberSelected: {
       type: Boolean,
@@ -63,9 +55,6 @@ export default {
     return {
       multipleSelectionCach: [],
       tableEvent: {},
-      currentPage: 1,
-      pageSize: 10,
-      total: 0,
     };
   },
   created() {
@@ -77,16 +66,6 @@ export default {
     },
   },
   watch: {
-    pagination: {
-      handler() {
-        this.paginationDefalut = {
-          ...this.paginationDefalut,
-          ...this.pagination,
-        };
-      },
-      deep: true,
-      immediate: true,
-    },
     tableData: {
       handler() {
         this.$nextTick(() => {

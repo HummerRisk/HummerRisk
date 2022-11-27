@@ -15,7 +15,6 @@
 
         <hide-table
           :table-data="tableData"
-          :pagination="paginationConfig"
           @sort-change="sort"
           @filter-change="filter"
           @select-all="select"
@@ -486,11 +485,6 @@ const columnOptions = [
         iamStrategyNotSupport: ['hummer-openstack-plugin', 'hummer-vsphere-plugin', 'hummer-nuclei-plugin', 'hummer-server-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin'],
         checkedColumnNames: columnOptions.map((ele) => ele.props),
         columnNames: columnOptions,
-        paginationConfig: {
-          currentPage: 1,
-          pageSize: 10,
-          total: 0
-        },
         items: [
           {
             name: 'account.name',
