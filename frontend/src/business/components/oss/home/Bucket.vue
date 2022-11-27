@@ -106,7 +106,7 @@
       </el-table>
 
       <el-drawer
-        size="70%"
+        size="40%"
         :title="$t('oss.i18n_upload')"
         :append-to-body="true"
         :before-close="innerDrawerClose"

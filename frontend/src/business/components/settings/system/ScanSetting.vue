@@ -77,7 +77,7 @@
     </div>
 
     <el-drawer
-      size="60%"
+      size="40%"
       :title="$t('commons.offline_update_vuln_db')"
       :append-to-body="true"
       :before-close="innerDrawerClose"
