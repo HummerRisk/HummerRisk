@@ -4,21 +4,30 @@
     <el-card class="table-card">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search" @create="create"
-                         :create-tip="$t('user.create')" :title="$t('system.user_list')"
-                          :show-create="true"/>
+                      :create-tip="$t('user.create')" :title="$t('system.user_list')" :show-create="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table border class="adjust-table" :data="tableData" style="width: 100%" :row-class-name="tableRowClassName">
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+        id="out-table"
+      >
         <el-table-column type="index" min-width="50"/>
-        <el-table-column prop="id" label="ID" min-width="100"/>
-        <el-table-column prop="name" :label="$t('commons.name')" min-width="110"/>
-        <el-table-column :label="$t('commons.role')" min-width="110">
+        <el-table-column prop="id" v-if="checkedColumnNames.includes('id')" label="ID" min-width="100"/>
+        <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('commons.name')" min-width="110"/>
+        <el-table-column v-if="checkedColumnNames.includes('roles')" :label="$t('commons.role')" min-width="110">
           <template v-slot:default="scope">
             <roles-tag :roles="scope.row.roles"/>
           </template>
         </el-table-column>
-        <el-table-column prop="email" :label="$t('commons.email')" min-width="200"/>
-        <el-table-column prop="status" :label="$t('commons.status')" min-width="100">
+        <el-table-column prop="email" v-if="checkedColumnNames.includes('email')" :label="$t('commons.email')" min-width="200"/>
+        <el-table-column prop="status" v-if="checkedColumnNames.includes('status')" :label="$t('commons.status')" min-width="100">
           <template v-slot:default="scope">
             <el-switch v-model="scope.row.status"
                        active-color="#13ce66"
@@ -28,12 +37,19 @@
                        @change="changeSwitch(scope.row)"/>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="160">
+        <el-table-column prop="createTime" v-if="checkedColumnNames.includes('createTime')" :label="$t('commons.create_time')" min-width="160">
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="source" :label="$t('user.source')" min-width="120"/>
+        <el-table-column prop="updateTime" v-if="checkedColumnNames.includes('updateTime')" :label="$t('commons.update_time')" min-width="160">
+          <template v-slot:default="scope">
+            <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="source" v-if="checkedColumnNames.includes('source')" :label="$t('user.source')" min-width="120"/>
+        <el-table-column prop="phone" v-if="checkedColumnNames.includes('phone')" :label="$t('commons.phone')" min-width="120"/>
+        <el-table-column prop="wechatAccount" v-if="checkedColumnNames.includes('wechatAccount')" :label="$t('system_parameter_setting.wechat_account')" min-width="120"/>
         <el-table-column :label="$t('commons.operating')" fixed="right" min-width="150">
           <template v-slot:default="scope">
             <table-operator @editClick="edit(scope.row)" @deleteClick="del(scope.row)">
@@ -44,10 +60,8 @@
             </table-operator>
           </template>
         </el-table-column>
-      </el-table>
-
-      <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize"
-                           :total="total"/>
+      </hide-table>
+      <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
     <!--Create user-->
@@ -154,18 +168,71 @@
   </div>
 </template>
 
-
-
-
 <script>
 import CreateBox from "../CreateBox";
 import TablePagination from "../../common/pagination/TablePagination";
-import TableHeader from "../../common/components/TableHeader";
+import TableHeader from "@/business/components/common/components/TableHeader";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/DialogFooter";
 import TableOperatorButton from "../../common/components/TableOperatorButton";
-import {listenGoBack, removeGoBackListener} from "@/common/js/utils";
+import {_filter, _sort, listenGoBack, removeGoBackListener} from "@/common/js/utils";
 import RolesTag from "../../common/components/RolesTag";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+import {USER_CONFIGS} from "../../common/components/search/search-components";
+
+const columnOptions = [
+  {
+    label: 'ID',
+    props: 'id',
+    disabled: false
+  },
+  {
+    label: 'commons.name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'commons.role',
+    props: 'roles',
+    disabled: false
+  },
+  {
+    label: 'commons.email',
+    props: 'email',
+    disabled: false
+  },
+  {
+    label: 'commons.status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'commons.create_time',
+    props: 'createTime',
+    disabled: false
+  },
+  {
+    label: 'commons.update_time',
+    props: 'updateTime',
+    disabled: false
+  },
+  {
+    label: 'user.source',
+    props: 'source',
+    disabled: false
+  },
+  {
+    label: 'commons.phone',
+    props: 'phone',
+    disabled: false
+  },
+  {
+    label: 'system_parameter_setting.wechat_account',
+    props: 'wechatAccount',
+    disabled: false
+  },
+];
+
 /* eslint-disable */
   export default {
     name: "User",
@@ -176,7 +243,8 @@ import RolesTag from "../../common/components/RolesTag";
       TableOperator,
       DialogFooter,
       TableOperatorButton,
-      RolesTag
+      RolesTag,
+      HideTable,
     },
     data() {
       return {
@@ -195,7 +263,9 @@ import RolesTag from "../../common/components/RolesTag";
         currentPage: 1,
         pageSize: 10,
         total: 0,
-        condition: {},
+        condition: {
+          components: USER_CONFIGS
+        },
         tableData: [],
         form: {
           roles: [{
@@ -259,8 +329,38 @@ import RolesTag from "../../common/components/RolesTag";
               message: this.$t('member.password_format_is_incorrect'),
               trigger: 'blur'
             }
-          ]
-        }
+          ],
+        },
+        items: [
+          {
+            name: 'ID',
+            id: 'id'
+          },
+          {
+            name: 'commons.name',
+            id: 'name'
+          },
+          {
+            name: 'commons.email',
+            id: 'email'
+          },
+          {
+            name: 'user.source',
+            id: 'source'
+          },
+          {
+            name: 'commons.phone',
+            id: 'phone',
+          },
+          {
+            name: 'system_parameter_setting.wechat_account',
+            id: 'wechatAccount',
+          },
+        ],
+        checkedColumnNames: columnOptions.map((ele) => ele.props),
+        columnNames: columnOptions,
+        checkAll: true,
+        isIndeterminate: false,
       }
     },
     activated() {
@@ -268,6 +368,27 @@ import RolesTag from "../../common/components/RolesTag";
       this.getAllRole();
     },
     methods: {
+      handleCheckedColumnNamesChange(value) {
+        const checkedCount = value.length;
+        this.checkAll = checkedCount === this.columnNames.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+        this.checkedColumnNames = value;
+      },
+      handleCheckAllChange(val) {
+        this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+        this.isIndeterminate = false;
+        this.checkAll = val;
+      },
+      select(selection) {
+      },
+      sort(column) {
+        _sort(column, this.condition);
+        this.init();
+      },
+      filter(filters) {
+        _filter(filters, this.condition);
+        this.init();
+      },
       create() {
         this.createVisible = true;
         this.form= {roles: [{id: ''}]};

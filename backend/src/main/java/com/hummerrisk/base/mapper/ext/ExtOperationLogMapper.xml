@@ -47,7 +47,7 @@
     </sql>
 
     <sql id="combine">
-        <if test='${condition}.resourceUserName != null'>
+        <if test='${condition}.resourceUserName != null and (${resourceUserName} == null or ${resourceUserName} == ""'>
             and t.resource_user_name
             <include refid="condition">
                 <property name="object" value="${condition}.resourceUserName"/>
@@ -81,7 +81,7 @@
             <if test="request.combine != null">
                 <include refid="combine">
                     <property name="condition" value="request.combine"/>
-                    <property name="name" value="request.resourceUserName"/>
+                    <property name="resourceUserName" value="request.resourceUserName"/>
                 </include>
             </if>
 

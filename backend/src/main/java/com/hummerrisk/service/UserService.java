@@ -232,7 +232,7 @@ public class UserService {
         return userMapper.selectByExample(example);
     }
 
-    public List<User> getUserListWithRequest(com.hummerrisk.controller.request.UserRequest request) {
+    public List<User> getUserListWithRequest(UserRequest request) {
         return extUserMapper.getUserList(request);
     }
 

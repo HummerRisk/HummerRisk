@@ -106,7 +106,6 @@ const columnOptions = [
   },
 ];
 
-
 /* eslint-disable */
   export default {
     name: "active",

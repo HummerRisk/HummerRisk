@@ -65,6 +65,16 @@ export const NAME = {
   },
 }
 
+export const EMAIL = {
+  key: "email", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "commons.email", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
 export const DESCRIPTION = {
   key: "description", // 返回结果Map的key
   name: "TableSearchInput", // Vue控件名称
@@ -746,6 +756,7 @@ export const ACTIVE_RESOURCE_TYPE = {
   }
 }
 
+export const USER_CONFIGS = [NAME, EMAIL, UPDATE_TIME, CREATE_TIME];
 export const ACTIVE_CONFIGS = [RESOURCE_USER_NAME, TIME, RESOURCE_USER_ID, ACTIVE_RESOURCE_TYPE];
 export const ACCOUNT_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const OSS_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, RESULT_STATUS, CREATOR];
