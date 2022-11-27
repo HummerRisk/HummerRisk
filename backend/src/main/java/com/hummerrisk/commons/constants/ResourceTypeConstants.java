@@ -16,7 +16,6 @@ public enum ResourceTypeConstants {
     QUOTA,
     PROXY,
     SERVER,
-    PACKAGE,
     IMAGE,
     CODE,
     SBOM,

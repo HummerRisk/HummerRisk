@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummerrisk.base.mapper.ext.ExtOperationLogMapper">
+    <resultMap id="BaseResultMap" type="com.hummerrisk.base.domain.OperationLog"
+               extends="com.hummerrisk.base.mapper.OperationLogMapper.BaseResultMap">
+    </resultMap>
+
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.resourceUserName != null'>
+            and t.resource_user_name
+            <include refid="condition">
+                <property name="object" value="${condition}.resourceUserName"/>
+            </include>
+        </if>
+        <if test='${condition}.resourceType != null'>
+            and t.resource_type
+            <include refid="condition">
+                <property name="object" value="${condition}.resourceType"/>
+            </include>
+        </if>
+        <if test="${condition}.time != null">
+            and t.time
+            <include refid="condition">
+                <property name="object" value="${condition}.time"/>
+            </include>
+        </if>
+        <if test="${condition}.resourceUserId != null">
+            and t.resource_user_id
+            <include refid="condition">
+                <property name="object" value="${condition}.resourceUserId"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="selectOperationLog" resultMap="BaseResultMap">
+        select
+        t.*
+        from operation_log as t
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.resourceUserName"/>
+                </include>
+            </if>
+
+            <if test="request.resourceUserName != null and request.resourceUserName != ''">
+                and t.resource_user_name like CONCAT('%', #{request.resourceUserName},'%')
+            </if>
+            <if test="request.resourceUserId != null and request.resourceUserId != ''">
+                and t.resource_user_id like CONCAT('%', #{request.resourceUserId},'%')
+            </if>
+            <if test="request.message != null and request.message != ''">
+                and t.message like CONCAT('%', #{request.message},'%')
+            </if>
+            <if test="request.resourceName != null and request.resourceName != ''">
+                and t.resource_name like CONCAT('%', #{request.resourceName},'%')
+            </if>
+            <if test="request.sourceIp != null and request.sourceIp != ''">
+                and t.source_ip like CONCAT('%', #{request.sourceIp},'%')
+            </if>
+        </where>
+        order by t.time desc
+    </select>
+
+
+</mapper>

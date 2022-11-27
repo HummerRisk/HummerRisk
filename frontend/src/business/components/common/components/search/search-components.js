@@ -573,8 +573,6 @@ export const SOURCE_NAMESPACE = {
   },
 }
 
-
-
 export const SOURCE_TYPE = {
   key: "sourceType",
   name: 'TableSearchSelect',
@@ -665,6 +663,90 @@ export const TAG = {
   },
 }
 
+export const RESOURCE_USER_NAME = {
+  key: "resourceUserName", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "dashboard.resource_user_name", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
+export const TIME = {
+  key: "time",
+  name: 'TableSearchDateTimePicker',
+  label: 'dashboard.time',
+  operator: {
+    options: [OPERATORS.BETWEEN, OPERATORS.GT, OPERATORS.GE, OPERATORS.LT, OPERATORS.LE, OPERATORS.EQ]
+  },
+}
+
+export const RESOURCE_USER_ID = {
+  key: "resourceUserId",
+  name: 'TableSearchSelect',
+  label: 'dashboard.resource_user_id',
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN, OPERATORS.CURRENT_USER],
+    change: function (component, value) { // 运算符change事件
+      if (value === OPERATORS.CURRENT_USER.value) {
+        component.value = value;
+      }
+    }
+  },
+  options: { // 异步获取候选项
+    url: "/user/list/all",
+    labelKey: "name",
+    valueKey: "id",
+    showLabel: option => {
+      return option.label + "(" + option.value + ")";
+    }
+  },
+  props: {
+    multiple: true
+  },
+  isShow: operator => {
+    return operator !== OPERATORS.CURRENT_USER.value;
+  }
+}
+
+export const ACTIVE_RESOURCE_TYPE = {
+  key: "resourceType",
+  name: 'TableSearchSelect',
+  label: 'dashboard.resource_type',
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN]
+  },
+  options: [
+    {label: 'USER', value: 'USER'},
+    {label: 'ROLE', value: 'ROLE'},
+    {label: 'ORGANIZATION', value: 'ORGANIZATION'},
+    {label: 'WORKSPACE', value: 'WORKSPACE'},
+    {label: 'CLOUD_ACCOUNT', value: 'CLOUD_ACCOUNT'},
+    {label: 'CLOUD_NATIVE', value: 'CLOUD_NATIVE'},
+    {label: 'CLOUD_NATIVE_CONFIG', value: 'CLOUD_NATIVE_CONFIG'},
+    {label: 'RULE', value: 'RULE'},
+    {label: 'RULE_TAG', value: 'RULE_TAG'},
+    {label: 'RESOURCE', value: 'RESOURCE'},
+    {label: 'TASK', value: 'TASK'},
+    {label: 'SYSTEM', value: 'SYSTEM'},
+    {label: 'QUOTA', value: 'QUOTA'},
+    {label: 'PROXY', value: 'PROXY'},
+    {label: 'SERVER', value: 'SERVER'},
+    {label: 'IMAGE', value: 'IMAGE'},
+    {label: 'CODE', value: 'CODE'},
+    {label: 'SBOM', value: 'SBOM'},
+    {label: 'SBOM_VERSION', value: 'SBOM_VERSION'},
+    {label: 'SYNC', value: 'SYNC'},
+    {label: 'FILE_SYSTEM', value: 'FILE_SYSTEM'},
+    {label: 'OSS', value: 'OSS'}
+  ],
+  props: { // 尾部控件的props，一般为element ui控件的props
+    multiple: true
+  }
+}
+
+export const ACTIVE_CONFIGS = [RESOURCE_USER_NAME, TIME, RESOURCE_USER_ID, ACTIVE_RESOURCE_TYPE];
 export const ACCOUNT_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const OSS_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, RESULT_STATUS, CREATOR];
 export const VULN_CONFIGS = [NAME, VULN_PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
