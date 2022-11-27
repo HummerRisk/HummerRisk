@@ -1,6 +1,7 @@
 <template>
   <div class="flex-table">
     <el-table
+      id="out-table"
       ref="table"
       class="adjust-table table-content"
       border

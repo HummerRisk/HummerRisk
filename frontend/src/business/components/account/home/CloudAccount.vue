@@ -20,8 +20,9 @@
           @filter-change="filter"
           @select-all="select"
           @select="select"
+          id="out-table"
         >
-          <el-table-column type="selection" prop="selection" min-width="50">
+          <el-table-column type="selection" id="selection"  prop="selection" min-width="50">
           </el-table-column>
           <el-table-column type="index" prop="index" min-width="50"/>
           <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('account.name')" min-width="150" show-overflow-tooltip></el-table-column>
@@ -57,7 +58,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :label="$t('account.creator')" min-width="100" show-overflow-tooltip/>
-          <el-table-column min-width="200" :label="$t('commons.operating')" prop="operating" type="operating" fixed="right">
+          <el-table-column min-width="200" id="fixed" :label="$t('commons.operating')" prop="operating" type="operating" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>

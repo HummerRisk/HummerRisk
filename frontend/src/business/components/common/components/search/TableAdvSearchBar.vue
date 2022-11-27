@@ -4,7 +4,7 @@
     <el-button icon="el-icon-download" size="small" @click="download">{{ $t('server.download') }}</el-button>
     <el-button icon="el-icon-setting" size="small" @click="list">{{ $t('commons.list') }}</el-button>
 
-    <el-dialog :title="$t('commons.list_item')" :visible.sync="visible" custom-class="adv-dialog" width="50%"
+    <el-dialog :title="$t('commons.list_item')" :visible.sync="visible" custom-class="adv-dialog" width="60%"
                :append-to-body="true">
       <div class="columns">
          <div class="fl">
@@ -96,7 +96,7 @@
         this.visible = true;
       },
       download() {
-
+        this.$emit('download');
       },
       reset() {
 
@@ -161,7 +161,7 @@
 .columns .fl{ flex:1;}
 .columns .fl .el-checkbox-group{ overflow: hidden;}
 .columns .fl .el-checkbox-group .el-checkbox{ margin-right:0; float:left; width:50%; margin-top:10px;}
-.columns .fr{ width:200px; border-left:1px solid #f1f1f1; padding-left:20px; margin-left:20px;}
+.columns .fr { width:200px; border-left:1px solid #f1f1f1; padding-left:20px; margin-left:20px;}
 .columns .fr ul{ max-height:375px; overflow-y:auto;}
 .columns .fr ul li{ margin-bottom:5px;}
 </style>
