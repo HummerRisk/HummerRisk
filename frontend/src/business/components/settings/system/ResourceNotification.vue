@@ -2,7 +2,7 @@
   <div>
     <el-row>
       <el-col :span="10">
-        <h3>{{ $t('system_parameter_setting.message.task_notification') }}</h3>
+        <h3 style="margin: 5px;">{{ $t('system_parameter_setting.message.task_notification') }}</h3>
         <el-button icon="el-icon-circle-plus-outline" plain size="mini" @click="handleAddTaskModel">
           {{ $t('system_parameter_setting.message.create_new_notification') }}
         </el-button>
@@ -18,7 +18,8 @@
     <el-row>
       <el-col :span="24">
         <el-table :data="resourceTask" class="tb-edit" border :cell-style="rowClass" :header-cell-style="headClass">
-          <el-table-column :label="$t('schedule.event')" min-width="15%" prop="events">
+          <el-table-column type="index" min-width="40"/>
+          <el-table-column :label="$t('schedule.event')" min-width="100" prop="events">
             <template slot-scope="scope">
               <el-select v-model="scope.row.event" :placeholder="$t('system_parameter_setting.message.select_events')"
                          size="mini" prop="events" :disabled="!scope.row.isSet">
@@ -26,15 +27,15 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('schedule.receiver')" prop="userIds" min-width="20%">
+          <el-table-column :label="$t('schedule.receiver')" prop="userIds" min-width="150">
             <template v-slot:default="{row}">
               <el-select v-model="row.userIds" filterable multiple size="mini"
-                         :placeholder="$t('commons.please_select')" style="width: 100%;" :disabled="!row.isSet">
+                         :placeholder="$t('commons.please_select')" :disabled="!row.isSet">
                 <el-option v-for="item in receiverOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('schedule.receiving_mode')" min-width="20%" prop="type">
+          <el-table-column :label="$t('schedule.receiving_mode')" min-width="120" prop="type" fixed="right">
             <template slot-scope="scope">
               <el-select v-model="scope.row.type" :placeholder="$t('system_parameter_setting.message.select_receiving_method')"
                          size="mini" :disabled="!scope.row.isSet" @change="handleEdit(scope.$index, scope.row)">
@@ -42,7 +43,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('commons.operating')" fixed="right" min-width="25%" prop="result">
+          <el-table-column :label="$t('commons.operating')" fixed="right" min-width="120" prop="result">
             <template v-slot:default="scope">
               <el-button type="primary" size="mini" v-if="scope.row.isSet" @click="handleAddTask(scope.$index,scope.row)">
                 {{ $t('commons.add') }}
@@ -228,7 +229,7 @@ export default {
       }
     },
     addTask(data) {
-      this.result = this.$post("/notice/save/message/cloudTask", data, () => {
+      this.result = this.$post("/notice/save/message/task", data, () => {
         this.initForm();
         this.$success(this.$t('commons.save_success'));
       })
