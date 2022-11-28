@@ -791,9 +791,45 @@ export const PROXY_IP = {
   },
 }
 
+export const SCAN_TYPE = {
+  key: "scanType",
+  name: 'TableSearchSelect',
+  label: 'system.plugin_scan_type',
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN]
+  },
+  options: [
+    {label: 'custodian', value: 'custodian'},
+    {label: 'native', value: 'native'},
+    {label: 'xray', value: 'xray'},
+    {label: 'nuclei', value: 'nuclei'},
+  ],
+  props: { // 尾部控件的props，一般为element ui控件的props
+    multiple: true
+  }
+}
+
+export const PLUGIN_TYPE = {
+  key: "type",
+  name: 'TableSearchSelect',
+  label: 'system.plugin_type',
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN]
+  },
+  options: [
+    {label: 'cloud', value: 'cloud'},
+    {label: 'native', value: 'native'},
+    {label: 'vuln', value: 'vuln'},
+  ],
+  props: { // 尾部控件的props，一般为element ui控件的props
+    multiple: true
+  }
+}
+
 export const USER_CONFIGS = [NAME, EMAIL, UPDATE_TIME, CREATE_TIME];
 export const PROXY_CONFIGS = [PROXY_TYPE, PROXY_IP, UPDATE_TIME, CREATE_TIME];
 export const MSG_CONFIGS = [READ_TIME, CREATE_TIME];
+export const PLUGIN_CONFIGS = [NAME, PLUGIN_NAME, SCAN_TYPE, PLUGIN_TYPE, UPDATE_TIME];
 export const ACTIVE_CONFIGS = [RESOURCE_USER_NAME, TIME, RESOURCE_USER_ID, ACTIVE_RESOURCE_TYPE];
 export const ACCOUNT_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const OSS_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, RESULT_STATUS, CREATOR];

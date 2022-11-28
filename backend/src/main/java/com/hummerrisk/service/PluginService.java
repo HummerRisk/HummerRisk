@@ -3,6 +3,7 @@ package com.hummerrisk.service;
 import com.hummerrisk.base.domain.Plugin;
 import com.hummerrisk.base.domain.PluginExample;
 import com.hummerrisk.base.mapper.PluginMapper;
+import com.hummerrisk.base.mapper.ext.ExtPluginMapper;
 import com.hummerrisk.commons.constants.ScanTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.LogUtil;
@@ -27,6 +28,9 @@ public class PluginService {
 
     @Resource
     private PluginMapper pluginMapper;
+
+    @Resource
+    private ExtPluginMapper extPluginMapper;
 
     public List<Plugin> getAllPlugin(String scanType) {
         PluginExample example = new PluginExample();
@@ -84,7 +88,7 @@ public class PluginService {
             PluginExample.Criteria criteria = example.createCriteria();
             criteria.andNameLike(request.getName());
         }
-        return pluginMapper.selectByExample(example);
+        return extPluginMapper.getPluginList(request);
     }
 
 }

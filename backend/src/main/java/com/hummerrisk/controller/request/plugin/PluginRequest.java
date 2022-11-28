@@ -1,8 +1,11 @@
 package com.hummerrisk.controller.request.plugin;
 
+import com.hummerrisk.base.domain.Plugin;
 import io.swagger.annotations.ApiModelProperty;
 
-public class PluginRequest {
+import java.util.Map;
+
+public class PluginRequest extends Plugin {
 
     @ApiModelProperty("插件ID")
     private String id;
@@ -15,6 +18,18 @@ public class PluginRequest {
 
     @ApiModelProperty(value = "排序key", hidden = true)
     private String sort;
+
+    private Map<String, Object> combine;
+
+    private String pluginId;
+
+    public Map<String, Object> getCombine() {
+        return combine;
+    }
+
+    public void setCombine(Map<String, Object> combine) {
+        this.combine = combine;
+    }
 
     public String getId() {
         return id;
@@ -44,7 +59,16 @@ public class PluginRequest {
         return sort;
     }
 
+
     public void setSort(String sort) {
         this.sort = sort;
+    }
+
+    public String getPluginId() {
+        return pluginId;
+    }
+
+    public void setPluginId(String pluginId) {
+        this.pluginId = pluginId;
     }
 }

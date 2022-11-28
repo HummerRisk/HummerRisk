@@ -164,7 +164,7 @@
                 AND t.id = #{id}
             </if>
             <if test="name != null">
-                AND LOWER(t.name) like CONCAT('%',#{name},'%')
+                AND LOWER(t.name) like CONCAT('%',LOWER(#{name}),'%')
             </if>
             <if test="pluginId != null">
                 AND t.plugin_id = #{pluginId}
@@ -191,7 +191,7 @@
                 AND t.id = #{id}
             </if>
             <if test="name != null">
-                AND LOWER(t.name) like CONCAT('%',#{name},'%')
+                AND LOWER(t.name) like CONCAT('%',LOWER(#{name}),'%')
             </if>
             <if test="pluginId != null">
                 AND t.plugin_id = #{pluginId}
