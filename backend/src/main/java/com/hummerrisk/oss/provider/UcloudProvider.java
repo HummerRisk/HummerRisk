@@ -1,15 +1,27 @@
 package com.hummerrisk.oss.provider;
 
 
+import cn.ucloud.ufile.UfileClient;
+import cn.ucloud.ufile.auth.BucketAuthorization;
+import cn.ucloud.ufile.auth.UfileBucketLocalAuthorization;
+import cn.ucloud.ufile.bean.BucketDescribeResponse;
+import cn.ucloud.ufile.bean.BucketInfoBean;
+import cn.ucloud.ufile.exception.UfileClientException;
+import cn.ucloud.ufile.exception.UfileServerException;
+import cn.ucloud.ufile.http.HttpClient;
 import com.hummerrisk.base.domain.OssBucket;
 import com.hummerrisk.base.domain.OssWithBLOBs;
 import com.hummerrisk.oss.dto.BucketObjectDTO;
 import com.hummerrisk.oss.dto.OssRegion;
+import com.hummerrisk.service.SysListener;
+import org.apache.poi.ss.formula.functions.T;
 
 import java.io.FilterInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class UcloudProvider implements OssProvider {
 
@@ -21,9 +33,28 @@ public class UcloudProvider implements OssProvider {
     }
 
     @Override
-    public List<OssBucket> getOssBucketList(OssWithBLOBs ossAccount) {
+    public List<OssBucket> getOssBucketList(OssWithBLOBs ossAccount) throws UfileServerException, UfileClientException {
         List<OssBucket> resultList = new ArrayList<>();
-        return resultList;
+        BucketAuthorization BUCKET_AUTHORIZER = new UfileBucketLocalAuthorization(
+                "Your PublicKey", "Your PrivateKey");
+
+        BucketDescribeResponse response = UfileClient.bucket(BUCKET_AUTHORIZER).describeBucket().execute();
+        List<BucketInfoBean> bucketInfoList = response.getBucketInfoList();
+        return bucketInfoList.stream().map(bucket->{
+            OssBucket ossBucket = new OssBucket();
+            ossBucket.setOssId(ossAccount.getId());
+            ossBucket.setBucketName(bucket.getBucketName());
+            ossBucket.setLocation(bucket.getRegion());
+            ossBucket.setCreateTime(System.currentTimeMillis());
+            ossBucket.setExtranetEndpoint("");
+            ossBucket.setIntranetEndpoint("");
+            ossBucket.setStorageClass("N/A");
+            ossBucket.setCannedAcl("N/A");
+            ossBucket.setDomainName(bucket.getRegion());
+            ossBucket.setSize("0");
+            ossBucket.setObjectNumber(0L);
+            return ossBucket;
+        }).collect(Collectors.toList());
     }
 
     @Override
