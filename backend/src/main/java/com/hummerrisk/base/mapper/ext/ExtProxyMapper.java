@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface ExtProxyMapper {
 
-    public List<Proxy> getProxyListWithRequest(@Param("request") ProxyRequest request);
+    List<Proxy> getProxyListWithRequest(@Param("request") ProxyRequest request);
 
 }

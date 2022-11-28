@@ -275,6 +275,15 @@ export const CREATE_TIME = {
   },
 }
 
+export const READ_TIME = {
+  key: "readTime",
+  name: 'TableSearchDateTimePicker',
+  label: 'commons.update_time',
+  operator: {
+    options: [OPERATORS.BETWEEN, OPERATORS.GT, OPERATORS.GE, OPERATORS.LT, OPERATORS.LE, OPERATORS.EQ]
+  },
+}
+
 export const ACCOUNT_STATUS = {
   key: "status",
   name: 'TableSearchSelect',
@@ -784,6 +793,7 @@ export const PROXY_IP = {
 
 export const USER_CONFIGS = [NAME, EMAIL, UPDATE_TIME, CREATE_TIME];
 export const PROXY_CONFIGS = [PROXY_TYPE, PROXY_IP, UPDATE_TIME, CREATE_TIME];
+export const MSG_CONFIGS = [READ_TIME, CREATE_TIME];
 export const ACTIVE_CONFIGS = [RESOURCE_USER_NAME, TIME, RESOURCE_USER_ID, ACTIVE_RESOURCE_TYPE];
 export const ACCOUNT_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const OSS_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, RESULT_STATUS, CREATOR];

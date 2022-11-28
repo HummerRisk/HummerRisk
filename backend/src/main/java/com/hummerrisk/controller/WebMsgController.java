@@ -6,6 +6,7 @@ import com.hummerrisk.base.domain.WebMsg;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
+import com.hummerrisk.controller.request.webMsg.WebMsgRequest;
 import com.hummerrisk.service.WebMsgService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,10 +26,9 @@ public class WebMsgController {
     @I18n
     @ApiOperation("分页查询")
     @PostMapping("/list/{goPage}/{pageSize}")
-    public Pager<List<WebMsg>> messages(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody WebMsg webMsg) {
+    public Pager<List<WebMsg>> messages(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody WebMsgRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        Pager<List<WebMsg>> listPager = PageUtils.setPageInfo(page, webMsgService.queryGrid(webMsg));
-        return listPager;
+        return PageUtils.setPageInfo(page, webMsgService.queryGrid(request));
     }
 
     @ApiOperation("查询未读数量")

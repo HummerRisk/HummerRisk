@@ -18,7 +18,7 @@
         @select="select"
       >
         <el-table-column type="index" min-width="40"/>
-        <el-table-column prop="proxyType" v-if="checkedColumnNames.includes('proxyType')"  :label="$t('commons.proxy_type')" min-width="100"/>
+        <el-table-column prop="proxyType" v-if="checkedColumnNames.includes('proxyType')" :label="$t('commons.proxy_type')" min-width="100"/>
         <el-table-column prop="proxyIp" v-if="checkedColumnNames.includes('proxyIp')" label="Proxy IP" min-width="100"/>
         <el-table-column prop="proxyPort" v-if="checkedColumnNames.includes('proxyPort')" :label="$t('commons.proxy_port')" min-width="100"/>
         <el-table-column prop="proxyName" v-if="checkedColumnNames.includes('proxyName')" :label="$t('commons.proxy_name')" min-width="120"/>

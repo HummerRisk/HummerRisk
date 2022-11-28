@@ -1,5 +1,7 @@
 package com.hummerrisk.base.mapper.ext;
 
+import com.hummerrisk.base.domain.WebMsg;
+import com.hummerrisk.controller.request.webMsg.WebMsgRequest;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -30,5 +32,7 @@ public interface ExtWebMsgMapper {
             "</script>"
     })
     int batchDelete(@Param("msgIds") List<Long> msgIds);
+
+    List<WebMsg> queryGrid(@Param("request") WebMsgRequest request);
 
 }

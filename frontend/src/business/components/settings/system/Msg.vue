@@ -1,47 +1,66 @@
 <template>
   <div v-loading="result.loading">
 
-    <el-radio-group v-model="selectType" style="margin-bottom: 15px;" @change="typeChange">
-      <el-radio-button v-for="(item,index) in msgTypes" :key="index" class="de-msg-radio-class" :label="item.value">
-        {{ $t(item.label) }}
-      </el-radio-button>
-    </el-radio-group>
-    <el-row style="margin: 0 5px 10px 5px;">
-      <el-button size="mini" :disabled="selectIds.length===0" @click="markReaded">{{ $t('webmsg.mark_readed') }}</el-button>
-      <el-button size="mini" :disabled="selectIds.length===0" @click="deleteBatch">{{ $t('commons.delete') }}</el-button>
-    </el-row>
+    <el-card class="table-card">
+      <el-radio-group v-model="selectType" style="margin: 10px 0 10px 0;" @change="typeChange">
+        <el-radio-button v-for="(item,index) in msgTypes" :key="index" class="de-msg-radio-class" :label="item.value">
+          {{ $t(item.label) }}
+        </el-radio-button>
+      </el-radio-group>
+      <el-row style="margin: 0 5px 10px 5px;">
+        <el-button size="mini" :disabled="selectIds.length===0" @click="markReaded">{{ $t('webmsg.mark_readed') }}</el-button>
+        <el-button size="mini" :disabled="selectIds.length===0" @click="deleteBatch">{{ $t('commons.delete') }}</el-button>
+      </el-row>
 
-    <el-table border class="adjust-table" :data="tableData" style="width: 100%;padding: 1%;" :row-class-name="tableRowClassName"
-              @select-all="select" @select="select">
-      <el-table-column type="selection" min-width="5%">
-      </el-table-column>
-      <el-table-column prop="content" :label="$t('webmsg.content')" min-width="55%">
-        <template slot-scope="scope">
-          <span style="display: flex;flex: 1;" @click="setReaded(scope.row)">
-            <span>
-              <i v-if="!scope.row.status" class="el-icon-message" style="color: red;" />
-              <i v-else class="el-icon-message"/>
+      <table-header :condition.sync="condition" @search="search"
+                    :title="$t('commons.proxy')"
+                    :items="items" :columnNames="columnNames" :show-open="false"
+                    :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                    @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
+
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
+        <el-table-column type="selection" min-width="40">
+        </el-table-column>
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column prop="content" v-if="checkedColumnNames.includes('content')" :label="$t('webmsg.content')" min-width="260">
+          <template slot-scope="scope">
+            <span style="display: flex;flex: 1;" @click="setReaded(scope.row)">
+              <span>
+                <i v-if="!scope.row.status" class="el-icon-message" style="color: red;" />
+                <i v-else class="el-icon-message"/>
+              </span>
+              <span style="margin-left: 6px;" class="de-msg-a">
+                {{ scope.row.content }}
+              </span>
             </span>
-            <span style="margin-left: 6px;" class="de-msg-a">
-              {{ scope.row.content }}
-            </span>
-          </span>
-        </template>
-      </el-table-column>
+          </template>
+        </el-table-column>
 
-      <el-table-column prop="createTime" sortable="custom" :label="$t('webmsg.sned_time')" min-width="20%">
-        <template slot-scope="scope">
-          <span>{{ scope.row.createTime | timestampFormatDate }}</span>
-        </template>
-      </el-table-column>
+        <el-table-column prop="createTime" v-if="checkedColumnNames.includes('createTime')" sortable="custom" :label="$t('webmsg.sned_time')" min-width="150">
+          <template slot-scope="scope">
+            <span>{{ scope.row.createTime | timestampFormatDate }}</span>
+          </template>
+        </el-table-column>
 
-      <el-table-column prop="type" sortable="custom" :label="$t('webmsg.type')" min-width="20%">
-        <template slot-scope="scope">
-          <span>{{ scope.row.type }}</span>
-        </template>
-      </el-table-column>
-    </el-table>
-    <table-pagination :change="search" :current-page.sync="paginationConfig.currentPage" :page-size.sync="paginationConfig.pageSize" :total="paginationConfig.total"/>
+        <el-table-column prop="type" sortable="custom" v-if="checkedColumnNames.includes('type')" :label="$t('webmsg.type')" min-width="140">
+          <template slot-scope="scope">
+            <span>{{ scope.row.type }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="scanType" sortable="custom" v-if="checkedColumnNames.includes('scanType')" :label="$t('system.plugin_scan_type')" min-width="120">
+          <template slot-scope="scope">
+            <span>{{ scope.row.scanType }}</span>
+          </template>
+        </el-table-column>
+      </hide-table>
+      <table-pagination :change="search" :current-page.sync="paginationConfig.currentPage" :page-size.sync="paginationConfig.pageSize" :total="paginationConfig.total"/>
+    </el-card>
   </div>
 </template>
 
@@ -49,11 +68,41 @@
 
 import bus from '@/common/js/bus';
 import TablePagination from "@/business/components/common/pagination/TablePagination";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+import {MSG_CONFIGS} from "../../common/components/search/search-components";
+import TableHeader from "@/business/components/common/components/TableHeader";
+import {_filter, _sort} from "@/common/js/utils";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'webmsg.content',
+    props: 'content',
+    disabled: false
+  },
+  {
+    label: 'webmsg.sned_time',
+    props: 'createTime',
+    disabled: false
+  },
+  {
+    label: 'webmsg.type',
+    props: 'type',
+    disabled: false
+  },
+  {
+    label: 'system.plugin_scan_type',
+    props: 'scanType',
+    disabled: false
+  },
+];
 
 export default {
   name: "Msg",
   components: {
     TablePagination,
+    HideTable,
+    TableHeader,
   },
   data() {
     return {
@@ -65,6 +114,9 @@ export default {
         { value: 1, label: this.$t('webmsg.read_msg') }
       ],
       tableData: [],
+      condition: {
+        components: MSG_CONFIGS
+      },
       columns: [],
       paginationConfig: {
         currentPage: 1,
@@ -72,9 +124,26 @@ export default {
         total: 0
       },
       orderConditions: [],
-      form: {status: 0},
       selectIds: [],
       loading: false,
+      items: [
+        {
+          name: 'webmsg.content',
+          id: 'content',
+        },
+        {
+          name: 'webmsg.type',
+          id: 'type',
+        },
+        {
+          name: 'system.plugin_scan_type',
+          id: 'scanType',
+        },
+      ],
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   mounted() {
@@ -84,27 +153,52 @@ export default {
   created() {
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
     select(selection) {
       this.selectIds = [];
       selection.forEach(s => {
         this.selectIds.push(s.id);
       });
     },
+    sort(column) {
+      _sort(column, this.condition);
+      this.search();
+    },
+    filter(filters) {
+      _filter(filters, this.condition);
+      this.search();
+    },
     search() {
       const { currentPage, pageSize } = this.paginationConfig;
-      if(this.selectType===2){
-        this.form = {};
+      if (this.selectType === 2) {
+        this.condition.status = null;
+      } else if(this.selectType === 1) {
+        this.condition.status = true;
+      } else if(this.selectType === 0) {
+        this.condition.status = false;
       }
-      this.result = this.$post('/webmsg/list/' + currentPage + '/' + pageSize, this.form, response => {
+      this.result = this.$post('/webmsg/list/' + currentPage + '/' + pageSize, this.condition, response => {
         this.tableData = response.data.listObject;
         this.paginationConfig.total = response.data.itemCount;
       });
     },
     typeChange(value) {
-      if(value!=2){
-        this.form.status = value;
-      }else{
-        this.form = {};
+      if(value === 2) {
+        this.condition.status = null;
+      } else if(value === 1) {
+        this.condition.status = true;
+      } else if(value === 0) {
+        this.condition.status = false;
       }
       this.search();
     },
@@ -137,15 +231,6 @@ export default {
         this.selectIds = [];
         this.search();
       });
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex%4 === 0) {
-        return 'success-row';
-      } else if (rowIndex%2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
   }
 
