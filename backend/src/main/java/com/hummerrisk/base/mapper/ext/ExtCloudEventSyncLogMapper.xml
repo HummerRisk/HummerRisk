@@ -84,18 +84,26 @@
     </sql>
 
     <select id="getCloudEventSyncLog" resultMap="BaseResultMap">
-        select id, account_id, region, data_count, `status`, start_time, end_time, request_start_time,
-               request_end_time, create_time, `exception`,region_name from   cloud_event_sync_log t where
-        1=1
-        <if test="request.combine != null">
-            <include refid="combine">
-                <property name="condition" value="request.combine"/>
-                <property name="name" value="request.name"/>
-            </include>
-        </if>
-        <if test="request.name != null and request.name != ''">
-            and t.region like CONCAT('%', #{request.name},'%')
-        </if>
+        select t.*
+        from cloud_event_sync_log t
+        left join cloud_account t1 on t.account_id = t1.id
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
+            </if>
+            <if test="request.regionName != null and request.regionName != ''">
+                and t.region_name like CONCAT('%', #{request.regionName},'%')
+            </if>
+            <if test="request.accountName != null and request.accountName != ''">
+                and t1.name like CONCAT('%', #{request.accountName},'%')
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and t.region like CONCAT('%', #{request.name},'%')
+            </if>
+        </where>
         order by create_time desc
     </select>
 

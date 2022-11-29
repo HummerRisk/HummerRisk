@@ -3,15 +3,21 @@
     <el-card class="table-card" >
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
-                      :title="$t('event.event_sync')"
+                      :title="$t('event.event_sync')" :show-create="true"
                       @create="create" :createTip="$t('event.sync')"
-                      :show-create="true"/>
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll2" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
-        <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                  :row-class-name="tableRowClassName"
-                  @filter-change="filter">
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
           <el-table-column type="index" min-width="50"/>
-          <el-table-column min-width="150" :label="$t('event.cloud_account_name')">
+          <el-table-column min-width="150" v-if="checkedColumnNames.includes('accountName')" :label="$t('event.cloud_account_name')">
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.accountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -19,17 +25,17 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="regionName" :label="$t('event.region')" min-width="110">
+          <el-table-column prop="regionName" v-if="checkedColumnNames.includes('regionName')" :label="$t('event.region')" min-width="110">
             <template v-slot:default="scope">
               <regions :logId="scope.row.id" :accountId="scope.row.accountId"></regions>
             </template>
           </el-table-column>
-          <el-table-column prop="createTime" :label="$t('event.sync_time')" min-width="160">
+          <el-table-column prop="createTime" v-if="checkedColumnNames.includes('createTime')" :label="$t('event.sync_time')" min-width="160">
             <template v-slot:default="scope">
               <span>{{ scope.row.createTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column v-slot:default="scope" :label="$t('event.sync_status')" min-width="120">
+          <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('event.sync_status')" min-width="120">
             <el-button @click="showTaskLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.status === 0">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
@@ -43,12 +49,12 @@
               <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
             </el-button>
           </el-table-column>
-          <el-table-column prop="dataCount" :label="$t('event.data_count')" min-width="90" v-slot:default="scope">
+          <el-table-column prop="dataCount" v-if="checkedColumnNames.includes('dataCount')" :label="$t('event.data_count')" min-width="90" v-slot:default="scope">
             <el-link type="primary" :underline="false" class="md-primary text-click" @click="showEvents(scope.row)">
               {{ scope.row.dataCount }}
             </el-link>
           </el-table-column>
-          <el-table-column :label="$t('event.sync_time_section')" min-width="300">
+          <el-table-column :label="$t('event.sync_time_section')" v-if="checkedColumnNames.includes('syncTime')" min-width="300">
             <template v-slot:default="scope">
               <span>{{ scope.row.requestStartTime | timestampFormatDate }} - {{ scope.row.requestEndTime | timestampFormatDate }}</span>
             </template>
@@ -58,7 +64,7 @@
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
           </el-table-column>
-        </el-table>
+        </hide-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
@@ -131,6 +137,41 @@ import RegionLog from "@/business/components/event/home/RegionLog";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import Regions from "@/business/components/event/home/Regions";
 import {_filter, _sort} from "@/common/js/utils";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'event.cloud_account_name',
+    props: 'accountName',
+    disabled: false
+  },
+  {
+    label: 'event.region',
+    props: 'regionName',
+    disabled: false
+  },
+  {
+    label: 'event.sync_time',
+    props: 'createTime',
+    disabled: false
+  },
+  {
+    label: 'event.sync_status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'event.data_count',
+    props: 'dataCount',
+    disabled: false
+  },
+  {
+    label: 'event.sync_time_section',
+    props: 'syncTime',
+    disabled: false
+  },
+];
 
 /* eslint-disable */
 export default {
@@ -143,7 +184,8 @@ export default {
     TableOperators,
     RegionLog,
     DialogFooter,
-    Regions
+    Regions,
+    HideTable,
   },
   data() {
     return {
@@ -195,6 +237,21 @@ export default {
           }
         }]
       },
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'event.cloud_account_name',
+          id: 'accountName'
+        },
+        {
+          name: 'event.region',
+          id: 'regionName'
+        }
+      ],
+      checkAll2: true,
+      isIndeterminate: false,
     }
   },
   created() {
@@ -207,6 +264,19 @@ export default {
     clearInterval(this.timer);
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll2 = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll2 = val;
+    },
+    select(selection) {
+    },
     reset(){
       this.dateTime=[]
       this.eventFrom={
@@ -257,12 +327,17 @@ export default {
       this.detailVisible=false;
     },
     showEvents(row){
-      this.$router.push({path:"/log/event",query:{
-          accountId:row.accountId,
-          region:row.region,
-          startTime:row.requestStartTime,
-          endTime:row.requestEndTime,
-        }})
+      this.$router.push(
+        {
+          path:"/log/event",
+          query:{
+            accountId:row.accountId,
+            region:row.region,
+            startTime:row.requestStartTime,
+            endTime:row.requestEndTime
+          }
+        }
+      )
     },
     getStatus () {
       if(this.checkStatus(this.tableData)){
@@ -340,7 +415,7 @@ export default {
       });
     },
     formatDate: function(value) {
-      let dt = new Date(value)
+      let dt = new Date(value);
       let year = dt.getFullYear();
       let month = (dt.getMonth() + 1).toString().padStart(2,'0');
       let date = dt.getDate().toString().padStart(2,'0');
@@ -391,15 +466,6 @@ export default {
     filter(filters) {
       _filter(filters, this.condition);
       this.search();
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 4 === 0) {
-        return 'success-row';
-      } else if (rowIndex % 2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
   },
 }
