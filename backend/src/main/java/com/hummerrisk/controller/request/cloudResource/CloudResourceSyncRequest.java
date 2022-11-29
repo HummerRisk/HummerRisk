@@ -14,6 +14,8 @@ public class CloudResourceSyncRequest {
 
     private String accountId;
 
+    private String accountName;
+
     private String pluginId;
 
     private String pluginName;
@@ -102,5 +104,13 @@ public class CloudResourceSyncRequest {
 
     public void setCombine(Map<String, Object> combine) {
         this.combine = combine;
+    }
+
+    public String getAccountName() {
+        return accountName;
+    }
+
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
     }
 }

@@ -77,6 +77,7 @@ import ResultReadOnly from "@/business/components/common/components/ResultReadOn
 import ResourceRule from "@/business/components/cloudSituation/home/ResourceRule";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 
+//列表展示与隐藏
 const columnOptions = [
   {
     label: 'event.cloud_account_name',
@@ -139,6 +140,7 @@ export default {
       currentPage: 1,
       pageSize: 10,
       total: 0,
+      //名称搜索
       items: [
         {
           name: 'event.cloud_account_name',

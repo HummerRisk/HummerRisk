@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ExtCloudResourceSyncMapper {
 
-    List<CloudResourceSync> selectByRequest(@Param("request")CloudResourceSyncRequest cloudResourceSyncRequest);
+    List<CloudResourceSync> selectByRequest(@Param("request")CloudResourceSyncRequest request);
 
     CloudTopology cloudTopology();
 

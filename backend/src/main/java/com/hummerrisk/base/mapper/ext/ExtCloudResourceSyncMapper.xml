@@ -74,29 +74,37 @@
                 <property name="object" value="${condition}.pluginName"/>
             </include>
         </if>
-
         <if test='${condition}.resourceTypes != null'>
             and t.resource_types
             <include refid="condition">
                 <property name="object" value="${condition}.resourceTypes"/>
             </include>
         </if>
+        <if test='${condition}.createTime != null'>
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
     </sql>
 
     <select id="selectByRequest" resultMap="BaseResultMap">
-        select id, `status`, apply_user, create_time, account_id, plugin_id, plugin_name, plugin_icon,
-               resource_types, resources_sum
+        select t.*
         from cloud_resource_sync t
-        where 1=1
-        <if test="request.combine != null">
-            <include refid="combine">
-                <property name="condition" value="request.combine"/>
-                <property name="name" value="request.name"/>
-            </include>
-        </if>
-        <if test="request.name != null and request.name != ''">
-            and t.resource_types like CONCAT('%', #{request.name},'%')
-        </if>
+        join cloud_account t1 on t.account_id = t1.id
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                </include>
+            </if>
+            <if test="request.accountName != null and request.accountName != ''">
+                and t1.name like CONCAT('%', #{request.accountName},'%')
+            </if>
+            <if test="request.resourceTypes != null and request.resourceTypes != ''">
+                and t.resource_types like CONCAT('%', #{request.resourceTypes},'%')
+            </if>
+        </where>
         order by create_time desc
     </select>
 

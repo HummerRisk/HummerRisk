@@ -214,6 +214,7 @@ const columnOptions = [
           {id: 'Http', value: "Http"},
           {id: 'Https', value: "Https"},
         ],
+        //名称搜索
         items: [
           {
             name: 'commons.proxy_type',

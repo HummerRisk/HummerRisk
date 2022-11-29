@@ -117,6 +117,7 @@ const columnOptions = [
         form: {
         },
         direction: 'rtl',
+        //名称搜索
         items: [
           {
             name: 'system.plugin_id',
@@ -175,15 +176,6 @@ const columnOptions = [
       },
       buildPagePath(path) {
         return path + "/" + this.currentPage + "/" + this.pageSize;
-      },
-      tableRowClassName({row, rowIndex}) {
-        if (rowIndex%4 === 0) {
-          return 'success-row';
-        } else if (rowIndex%2 === 0) {
-          return 'warning-row';
-        } else {
-          return '';
-        }
       },
     }
   }

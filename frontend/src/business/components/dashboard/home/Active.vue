@@ -127,6 +127,7 @@ const columnOptions = [
         condition: {
           components: ACTIVE_CONFIGS
         },
+        //名称搜索
         items: [
           {
             name: 'dashboard.resource_user_name',

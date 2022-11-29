@@ -2,28 +2,34 @@
   <main-container>
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
-        <table-header :condition.sync="condition" @search="search"
-                      :title="$t('account.sync_log_list')"
-                      @create="create" :createTip="$t('k8s.sync_log_create')"
-                      :show-create="true"/>
-
+        <table-header :condition.sync="condition"
+                      @search="search"  @create="create" :createTip="$t('k8s.sync_log_create')"
+                      :title="$t('account.sync_log_list')" :show-create="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                :row-class-name="tableRowClassName" @filter-change="filter">
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
         <el-table-column type="index" min-width="50"/>
-        <el-table-column prop="accountId" :label="$t('event.cloud_account_name')" width="200">
+        <el-table-column prop="accountName" v-if="checkedColumnNames.includes('accountName')" :label="$t('event.cloud_account_name')" width="200">
           <template v-slot:default="scope">
               <span><img :src="require(`@/assets/img/platform/${ scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                 {{ getAccountName(scope.row.accountId) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="resourceTypes" :label="$t('dashboard.resource_type')" min-width="150">
+        <el-table-column prop="resourceTypes" v-if="checkedColumnNames.includes('resourceTypes')" :label="$t('dashboard.resource_type')" min-width="150">
           <template v-slot:default="scope">
             <ResourceType :sync-id="scope.row.id" ></ResourceType>
           </template>
         </el-table-column>
-        <el-table-column prop="status" min-width="150" :label="$t('code.status')">
+        <el-table-column prop="status" min-width="150" v-if="checkedColumnNames.includes('status')" :label="$t('code.status')">
           <template v-slot:default="scope">
             <el-button @click="showTaskLog(scope.row)" plain size="mini" type="primary"
                        v-if="scope.row.status === 'UNCHECKED'">
@@ -55,8 +61,8 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="resourcesSum" :label="$t('event.data_count')" min-width="120"/>
-        <el-table-column prop="createTime" :label="$t('k8s.sync_time')" min-width="200" sortable>
+        <el-table-column prop="resourcesSum" v-if="checkedColumnNames.includes('resourcesSum')" :label="$t('event.data_count')" min-width="120"/>
+        <el-table-column prop="createTime" v-if="checkedColumnNames.includes('createTime')" :label="$t('k8s.sync_time')" min-width="200" sortable>
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
@@ -66,7 +72,7 @@
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
@@ -123,6 +129,37 @@ import {SITUATION_LOG_CONFIGS} from "../../common/components/search/search-compo
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import ResultLog from "./ResultLog";
 import ResourceType from "./ResourceType";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'event.cloud_account_name',
+    props: 'accountName',
+    disabled: false
+  },
+  {
+    label: 'dashboard.resource_type',
+    props: 'resourceTypes',
+    disabled: false
+  },
+  {
+    label: 'code.status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'event.data_count',
+    props: 'resourcesSum',
+    disabled: false
+  },
+  {
+    label: 'k8s.sync_time',
+    props: 'createTime',
+    disabled: false
+  },
+];
+
 /* eslint-disable */
 export default {
   components: {
@@ -134,7 +171,8 @@ export default {
     TableOperator,
     DialogFooter,
     ResultLog,
-    ResourceType
+    ResourceType,
+    HideTable,
   },
   data() {
     return {
@@ -174,11 +212,38 @@ export default {
           exec: this.handleDelete
         }
       ],
-      k8s: [],
-      accountList: []
+      accountList: [],
+      //名称搜索
+      items: [
+        {
+          name: 'event.cloud_account_name',
+          id: 'accountName'
+        },
+        {
+          name: 'dashboard.resource_type',
+          id: 'resourceTypes'
+        },
+      ],
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
+    select(selection) {
+    },
     create() {
       this.form = {};
       this.createVisible = true;
@@ -263,15 +328,6 @@ export default {
     filter(filters) {
       _filter(filters, this.condition);
       this.search();
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 4 === 0) {
-        return 'success-row';
-      } else if (rowIndex % 2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
   },
   created() {
