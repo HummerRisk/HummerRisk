@@ -3,12 +3,19 @@
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
-                      :title="$t('event.event_analysis')"/>
+                      :title="$t('event.event_analysis')"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
-      <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                :row-class-name="tableRowClassName"
-                @filter-change="filter">
-        <el-table-column type="expand" min-width="50">
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
+        <el-table-column type="expand" min-width="40">
           <template v-slot:default="props">
             <el-divider><i class="el-icon-folder-opened"></i></el-divider>
             <el-form>
@@ -18,8 +25,8 @@
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column type="index" min-width="50"/>
-        <el-table-column min-width="150" :label="$t('event.cloud_account_name')">
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column min-width="140" v-if="checkedColumnNames.includes('accountName')" :label="$t('event.cloud_account_name')">
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.cloudAccountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -27,25 +34,25 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="regionName" :label="$t('event.region')" min-width="150"></el-table-column>
-        <el-table-column prop="eventTime" :label="$t('event.event_time')" min-width="160">
+        <el-table-column prop="regionName" v-if="checkedColumnNames.includes('regionName')" :label="$t('event.region')" min-width="190"></el-table-column>
+        <el-table-column prop="eventTime" v-if="checkedColumnNames.includes('eventTime')" :label="$t('event.event_time')" min-width="160">
           <template v-slot:default="scope">
             <span>{{ scope.row.eventTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" :show-overflow-tooltip="true" :label="$t('event.user_name')" min-width="130"></el-table-column>
-        <el-table-column prop="sourceIpAddress" :show-overflow-tooltip="true" :label="$t('event.source_ip')" min-width="140"></el-table-column>
-        <el-table-column prop="eventName" :label="$t('event.event_name')" min-width="150"></el-table-column>
-        <el-table-column prop="resourceType" :show-overflow-tooltip="true" :label="$t('event.resource_type')" min-width="150" :formatter="resourceTypeFormat"></el-table-column>
-        <el-table-column prop="resourceName" :show-overflow-tooltip="true" :label="$t('event.resource_name')" min-width="150" :formatter="resourceNameFormat"></el-table-column>
-        <el-table-column :label="$t('event.risk_level')" prop="eventRating" min-width="150" sortable fixed="right">
+        <el-table-column :label="$t('event.risk_level')" v-if="checkedColumnNames.includes('eventRating')" prop="eventRating" min-width="120" sortable>
           <template v-slot:default="scope">
             <el-tag v-if="!scope.row.eventRating || scope.row.eventRating === 0" type="success">{{ $t('rule.LowRisk') }}</el-tag>
             <el-tag v-if="scope.row.eventRating=== 1" type="warning">{{ $t('rule.MediumRisk') }}</el-tag>
             <el-tag v-if="scope.row.eventRating === 2" type="danger">{{ $t('rule.HighRisk') }}</el-tag>
           </template>
         </el-table-column>
-      </el-table>
+        <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :show-overflow-tooltip="true" :label="$t('event.user_name')" min-width="150"></el-table-column>
+        <el-table-column prop="sourceIpAddress" v-if="checkedColumnNames.includes('sourceIpAddress')" :show-overflow-tooltip="true" :label="$t('event.source_ip')" min-width="150"></el-table-column>
+        <el-table-column prop="eventName" v-if="checkedColumnNames.includes('eventName')" :label="$t('event.event_name')" min-width="160"></el-table-column>
+        <el-table-column prop="resourceType" v-if="checkedColumnNames.includes('resourceType')" :show-overflow-tooltip="true" :label="$t('event.resource_type')" min-width="150" :formatter="resourceTypeFormat"></el-table-column>
+        <el-table-column prop="resourceName" v-if="checkedColumnNames.includes('resourceName')" :show-overflow-tooltip="true" :label="$t('event.resource_name')" min-width="150" :formatter="resourceNameFormat"></el-table-column>
+      </hide-table>
 
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
@@ -62,6 +69,58 @@ import {ACCOUNT_ID} from "@/common/js/constants";
 import TableOperators from "../../common/components/TableOperators";
 import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import {_filter, _sort} from "@/common/js/utils";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'event.cloud_account_name',
+    props: 'accountName',
+    disabled: false
+  },
+  {
+    label: 'event.region',
+    props: 'regionName',
+    disabled: false
+  },
+  {
+    label: 'event.event_time',
+    props: 'eventTime',
+    disabled: false
+  },
+  {
+    label: 'event.risk_level',
+    props: 'eventRating',
+    disabled: false
+  },
+  {
+    label: 'event.user_name',
+    props: 'userName',
+    disabled: false
+  },
+  {
+    label: 'event.source_ip',
+    props: 'sourceIpAddress',
+    disabled: false
+  },
+  {
+    label: 'event.event_name',
+    props: 'eventName',
+    disabled: false
+  },
+  {
+    label: 'event.resource_type',
+    props: 'resourceType',
+    disabled: false
+  },
+  {
+    label: 'event.resource_name',
+    props: 'resourceName',
+    disabled: false
+  },
+];
+
+
 /* eslint-disable */
 export default {
   name: "Event",
@@ -71,7 +130,8 @@ export default {
     TableHeader,
     TablePagination,
     MainContainer,
-    TableOperators
+    TableOperators,
+    HideTable,
   },
   data() {
     return {
@@ -93,6 +153,41 @@ export default {
           exec: this.handleDelete
         }
       ],
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'event.cloud_account_name',
+          id: 'accountName'
+        },
+        {
+          name: 'event.region',
+          id: 'regionName'
+        },
+        {
+          name: 'event.user_name',
+          id: 'userName',
+        },
+        {
+          name: 'event.source_ip',
+          id: 'sourceIpAddress',
+        },
+        {
+          name: 'event.event_name',
+          id: 'eventName',
+        },
+        {
+          name: 'event.resource_type',
+          id: 'resourceType',
+        },
+        {
+          name: 'event.resource_name',
+          id: 'resourceName',
+        },
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   created() {
@@ -111,12 +206,24 @@ export default {
       this.dateTime = [this.formatDate(startTime * 1), this.formatDate(endTime * 1)]
     } else {
       this.currentAccount = localStorage.getItem(ACCOUNT_ID)
-      // this.dateTime = [this.formatDate(new Date().getTime()-1000*60*60*24),this.formatDate(new Date().getTime())]
     }
     this.init()
   },
 
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
+    select(selection) {
+    },
     handleDelete(row) {
       this.$alert(this.$t('account.delete_confirm') + " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
@@ -209,15 +316,6 @@ export default {
     filter(filters) {
       _filter(filters, this.condition);
       this.search();
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 4 === 0) {
-        return 'success-row';
-      } else if (rowIndex % 2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
   },
   watch: {

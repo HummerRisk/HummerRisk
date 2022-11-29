@@ -11,6 +11,11 @@ public class CloudEventRequest {
     private String[] regions;
     private String accountName;
     private String regionName;
+    private String sourceIpAddress;
+    private String eventName;
+    private String resourceType;
+    private String resourceName;
+    private String userName;
     private Map<String, Object> combine;
 
 
@@ -84,5 +89,45 @@ public class CloudEventRequest {
 
     public void setRegionName(String regionName) {
         this.regionName = regionName;
+    }
+
+    public String getSourceIpAddress() {
+        return sourceIpAddress;
+    }
+
+    public void setSourceIpAddress(String sourceIpAddress) {
+        this.sourceIpAddress = sourceIpAddress;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
+
+    public String getResourceType() {
+        return resourceType;
+    }
+
+    public void setResourceType(String resourceType) {
+        this.resourceType = resourceType;
+    }
+
+    public String getResourceName() {
+        return resourceName;
+    }
+
+    public void setResourceName(String resourceName) {
+        this.resourceName = resourceName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }
