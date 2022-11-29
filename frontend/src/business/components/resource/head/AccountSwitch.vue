@@ -21,7 +21,7 @@
         <span style="padding-left: 7px;">{{ $t('commons.show_all') }}</span>
       </el-menu-item>
     </el-submenu>
-    <el-button class="el-btn-btm" type="success" plain size="small" @click="goReport">{{ $t('resource.statistics') }}</el-button>
+    <el-button class="el-btn-btm" type="success" plain size="small" @click="goReport">{{ $t('resource.statistics') }}<i class="el-icon-right el-icon--right"></i></el-button>
   </el-menu>
 </template>
 

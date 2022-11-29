@@ -128,71 +128,65 @@
           <el-tab-pane :label="$t('resource.result_list')" name="first"></el-tab-pane>
           <el-tab-pane :label="$t('resource.cloud_resource_detail_result')" name="second"></el-tab-pane>
         </el-tabs>
-        <table-header :condition.sync="condition"
-                      @search="search" :show-name="false"
-                      v-if="activeName === 'first'"/>
+        <table-header :condition.sync="condition" @search="search"
+                      :show-name="false" v-if="activeName === 'first'"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
       <!-- result first -->
-      <el-table class="adjust-table table-content"
-                border v-if="activeName === 'first'"
-                :data="tableData"
-                :row-class-name="tableRowClassName"
-                @sort-change="sort"
-                @filter-change="filter">
-        <el-table-column type="index" min-width="50"/>
-        <el-table-column v-slot:default="scope" :label="$t('resource.i18n_task_type')" min-width="160"
-                         show-overflow-tooltip>
-                <span>
-                  <template v-for="tag in tagSelect">
-                    <span :key="tag.value" v-if="scope.row.ruleTags">
-                      <span :key="tag.tagKey" v-if="scope.row.ruleTags.indexOf(tag.tagKey) > -1">
-                        {{ tag.tagName }}
-                      </span>
-                    </span>
-                  </template>
-                    {{ scope.row.resourceTypes }}
+      <hide-table
+        v-if="activeName === 'first'"
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resourceTypes')" :label="$t('resource.i18n_task_type')" min-width="160" show-overflow-tooltip>
+          <span>
+            <template v-for="tag in tagSelect">
+              <span :key="tag.value" v-if="scope.row.ruleTags">
+                <span :key="tag.tagKey" v-if="scope.row.ruleTags.indexOf(tag.tagKey) > -1">
+                  {{ tag.tagName }}
                 </span>
+              </span>
+            </template>
+              {{ scope.row.resourceTypes }}
+          </span>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="200" show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('taskName')" :label="$t('rule.rule_name')" min-width="200" show-overflow-tooltip>
           <el-link type="primary" :underline="false" class="md-primary text-click" @click="showTaskDetail(scope.row)">
             {{ scope.row.taskName }}
           </el-link>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="110"
-                         :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
-                         show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('severity')" :label="$t('rule.severity')" min-width="110"
+                         :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true" show-overflow-tooltip>
           <severity-type :row="scope.row"></severity-type>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="130" prop="status" sortable
-                         show-overflow-tooltip>
-          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary"
-                     v-if="scope.row.status === 'UNCHECKED'">
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('resource.status')" min-width="130" prop="status" sortable show-overflow-tooltip>
+          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.status === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary"
-                     v-else-if="scope.row.status === 'APPROVED'">
+          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.status === 'APPROVED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary"
-                     v-else-if="scope.row.status === 'PROCESSING'">
+          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="success"
-                     v-else-if="scope.row.status === 'FINISHED'">
+          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="success" v-else-if="scope.row.status === 'FINISHED'">
             <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
           </el-button>
-          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="danger"
-                     v-else-if="scope.row.status === 'ERROR'">
+          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="danger" v-else-if="scope.row.status === 'ERROR'">
             <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
           </el-button>
-          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="warning"
-                     v-else-if="scope.row.status === 'WARNING'">
+          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="warning" v-else-if="scope.row.status === 'WARNING'">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable
-                         show-overflow-tooltip min-width="80">
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('returnSum')" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="80">
           <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
             <span v-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
             <span v-if="(scope.row.returnSum != null) && (scope.row.returnSum == 0)">
@@ -205,15 +199,13 @@
             </span>
           </el-tooltip>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" sortable
-                         show-overflow-tooltip min-width="110">
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resourcesSum')" :label="$t('resource.status_on_off')" prop="returnSum" sortable show-overflow-tooltip min-width="110">
           <span v-if="scope.row.returnSum == 0" style="color: #46ad59;">{{ $t('resource.i18n_compliance_true') }}</span>
           <span v-else-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)"
                 style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
           <span v-else-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
         </el-table-column>
-        <el-table-column prop="createTime" min-width="160" :label="$t('account.update_time')" sortable
-                         show-overflow-tooltip>
+        <el-table-column prop="createTime" min-width="160" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.update_time')" sortable show-overflow-tooltip>
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
@@ -223,7 +215,7 @@
             <table-operators :buttons="rule_buttons" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
 
       <table-pagination v-if="activeName === 'first'" :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       <!-- result first -->
@@ -551,6 +543,46 @@ import TableSearchBar from '@/business/components/common/components/TableSearchB
 import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import {RESOURCE_CONFIGS} from "../../common/components/search/search-components";
 import SeverityType from "@/business/components/common/components/SeverityType";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'resource.i18n_task_type',
+    props: 'resourceTypes',
+    disabled: false
+  },
+  {
+    label: 'rule.rule_name',
+    props: 'taskName',
+    disabled: false
+  },
+  {
+    label: 'rule.severity',
+    props: 'severity',
+    disabled: false
+  },
+  {
+    label: 'resource.status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'resource.i18n_not_compliance',
+    props: 'returnSum',
+    disabled: false
+  },
+  {
+    label: 'resource.status_on_off',
+    props: 'resourcesSum',
+    disabled: false
+  },
+  {
+    label: 'account.update_time',
+    props: 'createTime',
+    disabled: false
+  }
+];
 
 /* eslint-disable */
 export default {
@@ -568,6 +600,7 @@ export default {
     TableSearchBar,
     ResultReadOnly,
     SeverityType,
+    HideTable,
   },
   data() {
     return {
@@ -685,12 +718,40 @@ export default {
       regulationVisible: false,
       rowIndex: '',
       progressResult: 0.0,
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'rule.rule_name',
+          id: 'taskName'
+        },
+        {
+          name: 'resource.i18n_task_type',
+          id: 'resourceTypes'
+        }
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   watch: {
     '$route': 'init'
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
+    select(selection) {
+    },
     sort(column) {
       _sort(column, this.condition);
       this.init();
@@ -845,15 +906,6 @@ export default {
         }
       }
       return sum == 0;
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 4 === 0) {
-        return 'success-row';
-      } else if (rowIndex % 2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
     ruleTableRowClassName({row, rowIndex}) {
       if (this.rowIndex) {
