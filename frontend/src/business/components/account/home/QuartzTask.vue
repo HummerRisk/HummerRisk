@@ -18,7 +18,7 @@
           @select-all="select"
           @select="select"
         >
-          <el-table-column type="index" min-width="50"/>
+          <el-table-column type="index" min-width="40"/>
           <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('account.task_input_name')" min-width="150" show-overflow-tooltip></el-table-column>
           <el-table-column prop="qzType" v-if="checkedColumnNames.includes('qzType')" :label="$t('account.choose_qztype')" min-width="120" show-overflow-tooltip>
             <template v-slot:default="scope">
@@ -180,7 +180,7 @@
       <!--Quartz Task log-->
 
       <!--Quartz Task detail-->
-      <el-drawer v-if="detailVisible" :close-on-click-modal="false" class="rtl" :visible.sync="detailVisible" size="75%" :show-close="false" :before-close="handleClose" :direction="direction"
+      <el-drawer v-if="detailVisible" :close-on-click-modal="false" class="rtl" :visible.sync="detailVisible" size="80%" :show-close="false" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <div slot="title" class="dialog-title">
           <span>{{ $t('account.qztype_details') }}</span>
@@ -250,22 +250,23 @@
 
                 <el-row class="el-form-item-dev" v-for="dto in detailForm.quartzTaskRelationDtos" :key="dto.id">
                   <el-table :show-header="true" :data="dto.cloudTaskList" class="adjust-table table-content">
-                    <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="20%">
+                    <el-table-column type="index" min-width="40"/>
+                    <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="140">
                         {{ scope.row.taskName }}
                     </el-table-column>
-                    <el-table-column v-slot:default="scope" :label="$t('account.cloud_account')" min-width="15%">
+                    <el-table-column v-slot:default="scope" :label="$t('account.cloud_account')" min-width="120">
                       <span class="grid-content-log-span">
                       <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                        &nbsp;&nbsp; {{ scope.row.accountName }}
                     </span>
                     </el-table-column>
-                    <el-table-column v-slot:default="scope" :label="$t('account.creator')" min-width="7%">
+                    <el-table-column v-slot:default="scope" :label="$t('account.creator')" min-width="70">
                       {{ scope.row.applyUser }}
                     </el-table-column>
-                    <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="8%" prop="severity">
+                    <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="80" prop="severity">
                       <severity-type :row="scope.row"></severity-type>
                     </el-table-column>
-                    <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="12%" prop="status">
+                    <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="120" prop="status">
                       <el-button plain size="mini" type="primary" v-if="scope.row.status === 'UNCHECKED'">
                         <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                       </el-button>
@@ -294,12 +295,12 @@
                         <el-link type="primary" class="text-click">{{ scope.row.returnSum }}/{{ scope.row.resourcesSum }}</el-link>
                       </span>
                     </el-table-column>
-                    <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" min-width="10%">
+                    <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" min-width="80">
                       <span v-if="scope.row.returnSum == 0" style="color: #46ad59;">{{ $t('resource.i18n_compliance_true') }}</span>
                       <span v-else-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)" style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
                       <span v-else-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
                     </el-table-column>
-                    <el-table-column prop="createTime" min-width="20%" :label="$t('account.update_time')">
+                    <el-table-column prop="createTime" min-width="150" :label="$t('account.update_time')">
                       <template v-slot:default="scope">
                         <span><i class="el-icon-time"></i> {{ scope.row.createTime | timestampFormatDate }}</span>
                       </template>
@@ -688,7 +689,7 @@ const columnOptions = [
         let url = "/cloud/task/show/account/" + row.id;
         this.$get(url,response => {
           this.detailForm = response.data;
-          this.detailVisible=true;
+          this.detailVisible = true;
         });
       },
     },
