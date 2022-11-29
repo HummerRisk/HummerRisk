@@ -11,6 +11,7 @@ import java.util.Map;
  */
 public class ResourceRequest extends Resource {
 
+    private String hummerId;
     private String taskId;
     private String tagKey;
     private String severity;
@@ -148,5 +149,13 @@ public class ResourceRequest extends Resource {
 
     public void setResourceTypes(List<String> resourceTypes) {
         this.resourceTypes = resourceTypes;
+    }
+
+    public String getHummerId() {
+        return hummerId;
+    }
+
+    public void setHummerId(String hummerId) {
+        this.hummerId = hummerId;
     }
 }

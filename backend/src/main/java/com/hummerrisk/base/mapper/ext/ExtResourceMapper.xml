@@ -194,16 +194,16 @@
     </select>
 
     <sql id="combine">
-        <if test='${condition}.name != null'>
-            and t.hummer_id
+        <if test='${condition}.regionId != null'>
+            and t.region_id
             <include refid="condition">
-                <property name="object" value="${condition}.name"/>
+                <property name="object" value="${condition}.regionId"/>
             </include>
         </if>
-        <if test='${condition}.ruleName != null'>
-            and t6.name
+        <if test='${condition}.resourceType != null'>
+            and t.resource_type
             <include refid="condition">
-                <property name="object" value="${condition}.ruleName"/>
+                <property name="object" value="${condition}.resourceType"/>
             </include>
         </if>
         <if test='${condition}.severity != null'>
@@ -216,6 +216,18 @@
             and t4.applyUser
             <include refid="condition">
                 <property name="object" value="${condition}.applyUser"/>
+            </include>
+        </if>
+        <if test='${condition}.createTime != null'>
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+        <if test='${condition}.updateTime != null'>
+            and t.update_time
+            <include refid="condition">
+                <property name="object" value="${condition}.updateTime"/>
             </include>
         </if>
     </sql>
@@ -240,52 +252,55 @@
         JOIN rule t6 ON t5.rule_id = t6.id
         JOIN cloud_account t7 ON t.account_id = t7.id
         <where>
-            <if test="combine != null">
+            <if test="request.combine != null">
                 <include refid="combine">
-                    <property name="condition" value="combine"/>
+                    <property name="condition" value="request.combine"/>
                 </include>
             </if>
-            <if test="taskId != null">
-                AND t4.id = #{taskId}
+            <if test="request.taskId != null">
+                AND t4.id = #{request.taskId}
             </if>
-            <if test="accountId != null">
-                AND t.account_id = #{accountId}
+            <if test="request.accountId != null">
+                AND t.account_id = #{request.accountId}
             </if>
-            <if test="regionId != null">
-                AND t.region_id = #{regionId}
+            <if test="request.regionId != null">
+                AND t.region_id = #{request.regionId}
             </if>
-            <if test="taskName != null">
-                AND t4.task_name like CONCAT('%',#{taskName},'%')
+            <if test="request.taskName != null">
+                AND t4.task_name like CONCAT('%',#{request.taskName},'%')
             </if>
-            <if test="severity != null">
-                AND t.severity = #{severity}
+            <if test="request.severity != null">
+                AND t.severity = #{request.severity}
             </if>
-            <if test="tagKey != null">
-                AND t5.rule_id in (select tt.rule_id from rule_tag_mapping tt where tt.tag_key = #{tagKey})
+            <if test="request.tagKey != null">
+                AND t5.rule_id in (select tt.rule_id from rule_tag_mapping tt where tt.tag_key = #{request.tagKey})
             </if>
-            <if test="pluginName != null">
-                AND t.plugin_name = #{pluginName}
+            <if test="request.pluginName != null">
+                AND t.plugin_name = #{request.pluginName}
             </if>
-            <if test="resourceName != null">
-                AND t.resource_name like CONCAT('%',#{resourceName},'%')
+            <if test="request.resourceName != null">
+                AND t.resource_name like CONCAT('%',#{request.resourceName},'%')
             </if>
-            <if test="resourceStatus != null">
-                AND t.resource_status = #{resourceStatus}
+            <if test="request.resourceStatus != null">
+                AND t.resource_status = #{request.resourceStatus}
             </if>
-            <if test="resourceType != null">
-                AND t.resource_type = #{resourceType}
+            <if test="request.resourceType != null">
+                AND t.resource_type like CONCAT('%',#{request.resourceType},'%')
             </if>
-            <if test="ruleId != null">
-                AND t5.rule_id = #{ruleId}
+            <if test="request.regionName != null">
+                AND t.region_name like CONCAT('%',#{request.regionName},'%')
             </if>
-            <if test="ruleName != null">
-                AND t6.name like CONCAT('%',#{ruleName},'%')
+            <if test="request.ruleId != null">
+                AND t5.rule_id = #{request.ruleId}
             </if>
-            <if test="name != null">
-                AND t.hummer_id like CONCAT('%',#{name},'%')
+            <if test="request.ruleName != null">
+                AND t6.name like CONCAT('%',#{request.ruleName},'%')
             </if>
-            <if test="groupId != null">
-                AND t6.id in (select rule_id from rule_group_mapping where group_id = #{groupId})
+            <if test="request.hummerId != null">
+                AND t.hummer_id like CONCAT('%',#{request.hummerId},'%')
+            </if>
+            <if test="request.groupId != null">
+                AND t6.id in (select rule_id from rule_group_mapping where group_id = #{request.groupId})
             </if>
         </where>
         <if test="sort == null">

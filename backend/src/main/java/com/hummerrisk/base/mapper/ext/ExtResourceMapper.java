@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public interface ExtResourceMapper {
 
-    List<ResourceDTO> getComplianceResult(ResourceRequest resourceRequest);
+    List<ResourceDTO> getComplianceResult(@Param("request") ResourceRequest request);
 
     List<ReportDTO> reportList(ResourceRequest resourceRequest);
 
