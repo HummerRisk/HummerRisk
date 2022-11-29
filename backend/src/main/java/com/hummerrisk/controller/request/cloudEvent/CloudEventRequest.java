@@ -16,6 +16,7 @@ public class CloudEventRequest {
     private String resourceType;
     private String resourceName;
     private String userName;
+    private String serviceName;
     private Map<String, Object> combine;
 
 
@@ -129,5 +130,13 @@ public class CloudEventRequest {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 }
