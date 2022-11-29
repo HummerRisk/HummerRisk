@@ -7,6 +7,7 @@ import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.cloudTask.CloudQuartzRequest;
+import com.hummerrisk.controller.request.cloudTask.ManualRequest;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.service.CloudTaskService;
 import com.hummerrisk.service.OrderService;
@@ -83,17 +84,10 @@ public class CloudTaskController {
 
     @I18n
     @PostMapping("manual/list/{goPage}/{pageSize}")
-    public Pager<List<CloudTask>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> param) throws Exception {
+    public Pager<List<CloudTask>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ManualRequest request) throws Exception {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        param.put("type", "manual");
-        return PageUtils.setPageInfo(page, cloudTaskService.selectManualTasks(param));
-    }
-
-    @I18n
-    @PostMapping("manual/AllList")
-    public List<CloudTask> getAllManualTasks(@RequestBody Map<String, Object> param) throws Exception {
-        param.put("type", "manual");
-        return cloudTaskService.selectManualTasks(param);
+        request.setType("manual");
+        return PageUtils.setPageInfo(page, cloudTaskService.selectManualTasks(request));
     }
 
     @GetMapping("manual/more/{taskId}")

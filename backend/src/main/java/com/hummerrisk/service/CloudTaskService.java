@@ -12,6 +12,7 @@ import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.cloudTask.CloudQuartzRequest;
+import com.hummerrisk.controller.request.cloudTask.ManualRequest;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
@@ -285,41 +286,9 @@ public class CloudTaskService {
         }
     }
 
-    public List<CloudTask> selectManualTasks(Map<String, Object> params) throws Exception {
-
+    public List<CloudTask> selectManualTasks(ManualRequest request) throws Exception {
         try {
-            CloudTaskExample example = new CloudTaskExample();
-            CloudTaskExample.Criteria criteria = example.createCriteria();
-            if (params.get("name") != null && StringUtils.isNotEmpty(params.get("name").toString())) {
-                criteria.andTaskNameLike("%" + params.get("name").toString() + "%");
-            }
-            if (params.get("type") != null && StringUtils.isNotEmpty(params.get("type").toString())) {
-                criteria.andTypeEqualTo(params.get("type").toString());
-            }
-            if (params.get("accountId") != null && StringUtils.isNotEmpty(params.get("accountId").toString())) {
-                criteria.andAccountIdEqualTo(params.get("accountId").toString());
-            }
-            if (params.get("cron") != null && StringUtils.isNotEmpty(params.get("cron").toString())) {
-                criteria.andCronLike(params.get("cron").toString());
-            }
-            if (params.get("status") != null && StringUtils.isNotEmpty(params.get("status").toString())) {
-                criteria.andStatusEqualTo(params.get("status").toString());
-            }
-            if (params.get("severity") != null && StringUtils.isNotEmpty(params.get("severity").toString())) {
-                criteria.andSeverityEqualTo(params.get("severity").toString());
-            }
-            if (params.get("pluginName") != null && StringUtils.isNotEmpty(params.get("pluginName").toString())) {
-                criteria.andPluginNameEqualTo(params.get("pluginName").toString());
-            }
-            if (params.get("ruleTag") != null && StringUtils.isNotEmpty(params.get("ruleTag").toString())) {
-                criteria.andRuleTagsLike("%" + params.get("ruleTag").toString() + "%");
-            }
-            if (params.get("resourceType") != null && StringUtils.isNotEmpty(params.get("resourceType").toString())) {
-                criteria.andResourceTypesLike("%" + params.get("resourceType").toString() + "%");
-            }
-            criteria.andPluginIdNotIn(PlatformUtils.getVulnPlugin());
-            example.setOrderByClause("FIELD(`status`, 'PROCESSING', 'APPROVED', 'FINISHED', 'WARNING', 'ERROR'), return_sum desc, create_time desc, FIELD(`severity`, 'HighRisk', 'MediumRisk', 'LowRisk')");
-            return cloudTaskMapper.selectByExample(example);
+            return extCloudTaskMapper.selectManualTasks(request);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
