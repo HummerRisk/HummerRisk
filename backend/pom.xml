@@ -1044,7 +1044,7 @@
         <dependency>
             <groupId>com.volcengine</groupId>
             <artifactId>volc-sdk-java</artifactId>
-            <version>1.0.56</version>
+            <version>1.0.71</version>
             <exclusions>
                 <exclusion>
                     <groupId>junit</groupId>
@@ -1086,7 +1086,7 @@
         <dependency>
             <groupId>com.baidubce</groupId>
             <artifactId>bce-java-sdk</artifactId>
-            <version>0.10.233</version>
+            <version>0.10.235</version>
             <exclusions>
                 <exclusion>
                     <artifactId>bcprov-jdk15on</artifactId>

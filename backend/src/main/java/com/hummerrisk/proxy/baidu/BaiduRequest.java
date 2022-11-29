@@ -80,6 +80,35 @@ public class BaiduRequest extends Request {
         return client;
     }
 
+    public <T> T getClient(Class<T> client) throws Exception {
+        if (getAccessKey() != null && getSecretKey() != null) {
+
+            BosClientConfiguration config = new BosClientConfiguration();
+
+            // 设置HTTP最大连接数为10
+            config.setMaxConnections(100);
+            // 设置TCP连接超时为5000毫秒
+            config.setConnectionTimeoutInMillis(50000);
+            // 设置Socket传输数据超时的时间为2000毫秒
+            config.setSocketTimeoutInMillis(20000);
+
+            config.setEndpoint(getEndpoint(getRegionId()));
+            config.setCredentials(new DefaultBceCredentials(baiduCredential.getAccessKeyId(), baiduCredential.getSecretAccessKey()));
+            try {
+                if(client == BosClient.class) {
+                    BosClient bosClient = new BosClient(config);
+                    return client.cast(bosClient);
+                }else {
+                    return null;
+                }
+            } catch (Exception e) {
+                LogUtil.error(e.getMessage(), e);
+                throw new PluginException(e);
+            }
+        }
+        return null;
+    }
+
     private String getEndpoint(String region) throws Exception {
 
         String endpoint = "";
