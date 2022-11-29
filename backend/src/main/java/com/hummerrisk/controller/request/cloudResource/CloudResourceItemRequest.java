@@ -24,6 +24,8 @@ public class CloudResourceItemRequest {
 
     private String accountId;
 
+    private String acountName;
+
     private String regionId;
 
     private String regionName;
@@ -146,5 +148,13 @@ public class CloudResourceItemRequest {
 
     public void setCombine(Map<String, Object> combine) {
         this.combine = combine;
+    }
+
+    public String getAcountName() {
+        return acountName;
+    }
+
+    public void setAcountName(String acountName) {
+        this.acountName = acountName;
     }
 }

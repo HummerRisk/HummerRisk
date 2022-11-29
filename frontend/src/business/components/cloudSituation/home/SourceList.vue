@@ -8,12 +8,20 @@
 
         <el-card class="table-card" v-loading="result.loading" style="margin-top: 10px;">
           <template v-slot:header>
-            <table-header :condition.sync="condition" @search="search"
-                          :title="$t('k8s.source_list')"/>
+            <table-header :condition.sync="condition"
+                          @search="search"
+                          :title="$t('k8s.source_list')"
+                          :items="items" :columnNames="columnNames"
+                          :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                          @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
           </template>
-          <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                    :row-class-name="tableRowClassName"
-                    @filter-change="filter">
+          <hide-table
+            :table-data="tableData"
+            @sort-change="sort"
+            @filter-change="filter"
+            @select-all="select"
+            @select="select"
+          >
             <el-table-column type="expand"  min-width="40">
               <template v-slot:default="scope">
                 <el-divider><i class="el-icon-folder-opened"></i></el-divider>
@@ -24,17 +32,17 @@
               </template>
             </el-table-column>
             <el-table-column type="index" min-width="40"/>
-            <el-table-column :label="$t('event.cloud_account_name')" min-width="130" show-overflow-tooltip>
+            <el-table-column prop="accountName" v-if="checkedColumnNames.includes('accountName')" :label="$t('event.cloud_account_name')" min-width="130" show-overflow-tooltip>
               <template v-slot:default="scope">
               <span><img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                 {{ getAccountName(scope.row.accountId) }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="hummerId" :label="$t('resource.resource_id')" min-width="130" show-overflow-tooltip sortable></el-table-column>
-            <el-table-column prop="regionName" :label="$t('event.region')" min-width="150"  show-overflow-tooltip sortable></el-table-column>
-            <el-table-column prop="resourceType" :label="$t('dashboard.resource_type')" min-width="130" show-overflow-tooltip sortable></el-table-column>
+            <el-table-column prop="hummerId" v-if="checkedColumnNames.includes('hummerId')" :label="$t('resource.resource_id')" min-width="130" show-overflow-tooltip sortable></el-table-column>
+            <el-table-column prop="regionName" v-if="checkedColumnNames.includes('regionName')" :label="$t('event.region')" min-width="150"  show-overflow-tooltip sortable></el-table-column>
+            <el-table-column prop="resourceType" v-if="checkedColumnNames.includes('resourceType')" :label="$t('dashboard.resource_type')" min-width="130" show-overflow-tooltip sortable></el-table-column>
             <el-table-column
-              prop="ruleCount"
+              prop="ruleCount" v-if="checkedColumnNames.includes('ruleCount')"
               :label="$t('resource.risk')"
               min-width="120">
               <template v-slot:default="scope">
@@ -44,13 +52,13 @@
                 ></resource-rule>
               </template>
             </el-table-column>
-            <el-table-column min-width="160" :label="$t('account.update_time')" sortable
+            <el-table-column min-width="160" v-if="checkedColumnNames.includes('updateTime')" :label="$t('account.update_time')" sortable
                              prop="updateTime">
               <template v-slot:default="scope">
                 <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
               </template>
             </el-table-column>
-          </el-table>
+          </hide-table>
           <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
         </el-card>
       </el-card>
@@ -67,6 +75,46 @@ import {_filter, _sort} from "@/common/js/utils";
 import {SITUATION_CONFIGS} from "../../common/components/search/search-components";
 import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import ResourceRule from "@/business/components/cloudSituation/home/ResourceRule";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+const columnOptions = [
+  {
+    label: 'event.cloud_account_name',
+    props: 'accountName',
+    disabled: false
+  },
+  {
+    label: 'resource.resource_id',
+    props: 'hummerId',
+    disabled: false
+  },
+  {
+    label: 'event.region',
+    props: 'regionName',
+    disabled: false
+  },
+  {
+    label: 'dashboard.resource_type',
+    props: 'resourceName',
+    disabled: false
+  },
+  {
+    label: 'dashboard.resource_type',
+    props: 'resourceType',
+    disabled: false
+  },
+  {
+    label: 'resource.risk',
+    props: 'ruleCount',
+    disabled: false
+  },
+  {
+    label: 'account.update_time',
+    props: 'updateTime',
+    disabled: false
+  },
+];
+
 /* eslint-disable */
 export default {
   components: {
@@ -75,7 +123,8 @@ export default {
     TablePagination,
     TableOperators,
     ResultReadOnly,
-    ResourceRule
+    ResourceRule,
+    HideTable,
   },
   data() {
     return {
@@ -90,6 +139,24 @@ export default {
       currentPage: 1,
       pageSize: 10,
       total: 0,
+      items: [
+        {
+          name: 'event.cloud_account_name',
+          id: 'acountName'
+        },
+        {
+          name: 'event.region',
+          id: 'regionName'
+        },
+        {
+          name: 'dashboard.resource_type',
+          id: 'resourceType'
+        },
+      ],
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   props: {
@@ -103,16 +170,28 @@ export default {
     }
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
+    select(selection) {
+    },
     init() {
       this.initAccount()
     },
-
     searchByAccount() {
       let accountId = ""
       if (!!this.selectNodeIds[0]) {
        accountId = this.selectNodeIds[0];
       }
-      this.result = this.$get("/cloud/resource/summary?accountId="+accountId, response => {
+      this.result = this.$get("/cloud/resource/summary/"+accountId, response => {
         let data = response.data;
         this.resourceSummary = data;
       });
@@ -121,10 +200,8 @@ export default {
       }else {
         this.condition["combine"] = {}
       }
-      this.search()
+      this.search();
     },
-
-
     resourceTypeClick(resourceType){
       let accountId = ""
       if (!!this.selectNodeIds[0]) {
@@ -135,7 +212,7 @@ export default {
       }
       this.condition["combine"]["resourceType"]={"value":resourceType}
       this.condition.resourceType = resourceType;
-      this.search()
+      this.search();
     },
 
     search() {
@@ -157,24 +234,15 @@ export default {
     },
     getAccountName(accountId){
       let result =  this.accountList.filter(item =>{
-        return item.id === accountId
+        return item.id === accountId;
       })
-      return result.length >0?result[0].name:""
+      return result.length >0?result[0].name:"";
     },
     initAccount() {
       this.$get("/account/allList", response => {
-        this.accountList = response.data
-        this.searchByAccount()
+        this.accountList = response.data;
+        this.searchByAccount();
       })
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 4 === 0) {
-        return 'success-row';
-      } else if (rowIndex % 2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
   },
   activated() {
