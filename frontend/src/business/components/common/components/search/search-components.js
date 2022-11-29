@@ -862,6 +862,85 @@ export const SECRET_KEY = {
   },
 }
 
+export const PREV_FIRE_TIME = {
+  key: "prevFireTime",
+  name: 'TableSearchDateTimePicker',
+  label: 'account.prev_fire_time',
+  operator: {
+    options: [OPERATORS.BETWEEN, OPERATORS.GT, OPERATORS.GE, OPERATORS.LT, OPERATORS.LE, OPERATORS.EQ]
+  },
+}
+
+export const LAST_FIRE_TIME = {
+  key: "lastFireTime",
+  name: 'TableSearchDateTimePicker',
+  label: 'account.last_fire_time',
+  operator: {
+    options: [OPERATORS.BETWEEN, OPERATORS.GT, OPERATORS.GE, OPERATORS.LT, OPERATORS.LE, OPERATORS.EQ]
+  },
+}
+
+export const CLOUD_QUARTZ_STATUS = {
+  key: "status",
+  name: 'TableSearchSelect',
+  label: 'account.task_status',
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN]
+  },
+  options: [
+    {label: 'account.PAUSE', value: 'PAUSE'},
+    {label: 'account.RUNNING', value: 'RUNNING'},
+    {label: 'account.ERROR', value: 'ERROR'},
+  ],
+  props: { // 尾部控件的props，一般为element ui控件的props
+    multiple: true
+  }
+}
+
+export const CLOUD_QUARTZ_TYPE = {
+  key: "qzType",
+  name: 'TableSearchSelect',
+  label: 'account.choose_qztype',
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN]
+  },
+  options: [
+    {label: 'account.qztype_account', value: 'ACCOUNT'},
+    {label: 'account.qztype_rule', value: 'RULE'},
+  ],
+  props: { // 尾部控件的props，一般为element ui控件的props
+    multiple: true
+  }
+}
+
+export const APPLY_USER = {
+  key: "applyUser",
+  name: 'TableSearchSelect',
+  label: 'resource.creator',
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN, OPERATORS.CURRENT_USER],
+    change: function (component, value) { // 运算符change事件
+      if (value === OPERATORS.CURRENT_USER.value) {
+        component.value = value;
+      }
+    }
+  },
+  options: { // 异步获取候选项
+    url: "/user/list/all",
+    labelKey: "name",
+    valueKey: "id",
+    showLabel: option => {
+      return option.label + "(" + option.value + ")";
+    }
+  },
+  props: {
+    multiple: true
+  },
+  isShow: operator => {
+    return operator !== OPERATORS.CURRENT_USER.value;
+  }
+}
+
 export const USER_CONFIGS = [NAME, EMAIL, UPDATE_TIME, CREATE_TIME];
 export const PROXY_CONFIGS = [PROXY_TYPE, PROXY_IP, UPDATE_TIME, CREATE_TIME];
 export const MSG_CONFIGS = [READ_TIME, CREATE_TIME];
@@ -869,6 +948,7 @@ export const PLUGIN_CONFIGS = [NAME, PLUGIN_NAME, SCAN_TYPE, PLUGIN_TYPE, UPDATE
 export const USER_KEY_CONFIGS = [ACCESS_KEY, SECRET_KEY, USER_KEY_STATUS, CREATE_TIME];
 export const ACTIVE_CONFIGS = [RESOURCE_USER_NAME, TIME, RESOURCE_USER_ID, ACTIVE_RESOURCE_TYPE];
 export const ACCOUNT_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
+export const CLOUD_TASK_CONFIGS = [NAME, APPLY_USER, CLOUD_QUARTZ_STATUS, CLOUD_QUARTZ_TYPE, PREV_FIRE_TIME, LAST_FIRE_TIME, CREATE_TIME];
 export const OSS_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, RESULT_STATUS, CREATOR];
 export const VULN_CONFIGS = [NAME, VULN_PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const VULN_RULE_CONFIGS = [RULE_NAME, VULN_PLUGIN_NAME, RULE_SEVERITY, VULN_RULE_RESOURCE_TYPE, VULN_RULE_GROUP];

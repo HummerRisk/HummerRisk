@@ -169,8 +169,8 @@
 .columns .ht .ck{ margin-left:12px;}
 .columns .fl{ flex:1;}
 .columns .fl .el-checkbox-group{ overflow: hidden;}
-.columns .fl .el-checkbox-group .el-checkbox{ margin-right:0; float:left; width:50%; margin-top:10px;}
-.columns .fr { width:200px; border-left:1px solid #f1f1f1; padding-left:20px; margin-left:20px;}
+.columns .fl .el-checkbox-group .el-checkbox{ margin-right:0; float:left; width:70%; margin-top:10px;}
+.columns .fr { width:180px; border-left:1px solid #f1f1f1; padding-left:20px; margin-left:20px;}
 .columns .fr ul{ max-height:375px; overflow-y:auto;}
 .columns .fr ul li{ margin-bottom:5px;}
 </style>

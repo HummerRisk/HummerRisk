@@ -327,6 +327,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 
+//列表展示与隐藏
 const columnOptions = [
   {
     label: 'account.name',

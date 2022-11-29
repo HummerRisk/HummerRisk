@@ -3,15 +3,24 @@
       <el-card class="table-card" v-loading="result.loading">
         <template v-slot:header>
           <table-header :condition.sync="condition" @search="search"
-                           :title="$t('account.quartz_task_list')"
-                           @create="create" :createTip="$t('account.quartz_task_add')"
-                           :show-create="true"/>
+                        :title="$t('account.quartz_task_list')"
+                        @create="create" :createTip="$t('account.quartz_task_add')"
+                        :show-create="true"
+                        :items="items" :columnNames="columnNames"
+                        :checkedColumnNames="checkedColumnNames" :checkAll="checkAll2" :isIndeterminate="isIndeterminate"
+                        @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
         </template>
 
-        <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
+        <hide-table
+          :table-data="tableData"
+          @sort-change="sort"
+          @filter-change="filter"
+          @select-all="select"
+          @select="select"
+        >
           <el-table-column type="index" min-width="50"/>
-          <el-table-column prop="name" :label="$t('account.task_input_name')" min-width="150" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="qzType" :label="$t('account.choose_qztype')" min-width="120" show-overflow-tooltip>
+          <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('account.task_input_name')" min-width="150" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="qzType" v-if="checkedColumnNames.includes('qzType')" :label="$t('account.choose_qztype')" min-width="120" show-overflow-tooltip>
             <template v-slot:default="scope">
               <el-link type="primary" @click="showAccount(scope.row)">
                 <span v-if="scope.row.qzType==='ACCOUNT'">
@@ -23,20 +32,20 @@
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="cron" :label="$t('account.cron_expression')" min-width="130" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="cronDesc" :label="$t('account.cron_expression_desc')" min-width="180" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="prevFireTime" :label="$t('account.prev_fire_time')" min-width="200" sortable>
+          <el-table-column prop="cron" v-if="checkedColumnNames.includes('cron')" :label="$t('account.cron_expression')" min-width="130" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="cronDesc" v-if="checkedColumnNames.includes('cronDesc')" :label="$t('account.cron_expression_desc')" min-width="180" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="prevFireTime" v-if="checkedColumnNames.includes('prevFireTime')" :label="$t('account.prev_fire_time')" min-width="200" sortable>
             <template v-slot:default="scope">
               <span v-if="scope.row.prevFireTime"><i class="el-icon-time"></i> {{ scope.row.prevFireTime | timestampFormatDate }}</span>
               <span v-if="!scope.row.prevFireTime"><i class="el-icon-time"></i> {{ '--' }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="lastFireTime" :label="$t('account.last_fire_time')" min-width="200" sortable>
+          <el-table-column prop="lastFireTime" v-if="checkedColumnNames.includes('lastFireTime')" :label="$t('account.last_fire_time')" min-width="200" sortable>
             <template v-slot:default="scope">
               <span><i class="el-icon-time"></i> {{ scope.row.lastFireTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="status" min-width="150" :label="$t('account.task_status')"
+          <el-table-column prop="status" v-if="checkedColumnNames.includes('status')" min-width="150" :label="$t('account.task_status')"
                            column-key="status"
                            :filters="statusFilters"
                            :filter-method="filterStatus">
@@ -52,7 +61,7 @@
               </el-button>
             </template>
           </el-table-column>
-          <el-table-column min-width="200" :label="$t('account.create_time')" sortable prop="createTime">
+          <el-table-column min-width="200" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.create_time')" sortable prop="createTime">
             <template v-slot:default="scope">
               <span><i class="el-icon-time"></i> {{ scope.row.createTime | timestampFormatDate }}</span>
             </template>
@@ -63,7 +72,7 @@
               <table-operators v-if="scope.row.status != 'PAUSE'" :buttons="buttons2" :row="scope.row"/>
             </template>
           </el-table-column>
-        </el-table>
+        </hide-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
 
@@ -321,6 +330,53 @@ import CronInput from 'vue-cron-generator/src/components/cron-input';
 import {DEFAULT_CRON_EXPRESSION} from 'vue-cron-generator/src/constant/filed';
 import QuartzTaskLog from "@/business/components/account/home/QuartzTaskLog";
 import SeverityType from "@/business/components/common/components/SeverityType";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+import {CLOUD_TASK_CONFIGS} from "../../common/components/search/search-components";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'account.task_input_name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'account.choose_qztype',
+    props: 'qzType',
+    disabled: false
+  },
+  {
+    label: 'account.cron_expression',
+    props: 'cron',
+    disabled: false
+  },
+  {
+    label: 'account.cron_expression_desc',
+    props: 'cronDesc',
+    disabled: false
+  },
+  {
+    label: 'account.prev_fire_time',
+    props: 'prevFireTime',
+    disabled: false
+  },
+  {
+    label: 'account.last_fire_time',
+    props: 'lastFireTime',
+    disabled: false
+  },
+  {
+    label: 'account.task_status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'account.create_time',
+    props: 'createTime',
+    disabled: false
+  }
+];
+
 
 /* eslint-disable */
   export default {
@@ -335,6 +391,7 @@ import SeverityType from "@/business/components/common/components/SeverityType";
       CronInput,
       QuartzTaskLog,
       SeverityType,
+      HideTable,
     },
     provide() {
       return {
@@ -345,6 +402,7 @@ import SeverityType from "@/business/components/common/components/SeverityType";
       return {
         result: {},
         condition: {
+          components: CLOUD_TASK_CONFIGS
         },
         tableData: [],
         currentPage: 1,
@@ -413,10 +471,42 @@ import SeverityType from "@/business/components/common/components/SeverityType";
         logTotal: 0,
         detailVisible: false,
         detailForm: {},
+        checkedColumnNames: columnOptions.map((ele) => ele.props),
+        columnNames: columnOptions,
+        //名称搜索
+        items: [
+          {
+            name: 'account.task_input_name',
+            id: 'name',
+          },
+          {
+            name: 'account.cron_expression',
+            id: 'cron',
+          },
+          {
+            name: 'account.cron_expression_desc',
+            id: 'cronDesc',
+          },
+        ],
+        checkAll2: true,
+        isIndeterminate: false,
       }
     },
 
     methods: {
+      handleCheckedColumnNamesChange(value) {
+        const checkedCount = value.length;
+        this.checkAll2 = checkedCount === this.columnNames.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+        this.checkedColumnNames = value;
+      },
+      handleCheckAllChange(val) {
+        this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+        this.isIndeterminate = false;
+        this.checkAll2 = val;
+      },
+      select(selection) {
+      },
       //查询列表
       search() {
         let url = "/cloud/task/quartz/list/" + this.currentPage + "/" + this.pageSize;
@@ -425,9 +515,9 @@ import SeverityType from "@/business/components/common/components/SeverityType";
           this.total = data.itemCount;
           this.tableData = data.listObject;
         });
-        this.$post("/account/list/1/100", {}, response => {
+        this.$get("/account/allList", response => {
           let data = response.data;
-          this.accounts = data.listObject;
+          this.accounts = data;
         });
       },
       init() {
@@ -440,15 +530,6 @@ import SeverityType from "@/business/components/common/components/SeverityType";
       filter(filters) {
         _filter(filters, this.condition);
         this.init();
-      },
-      tableRowClassName({row, rowIndex}) {
-        if (rowIndex % 4 === 0) {
-          return 'success-row';
-        } else if (rowIndex % 2 === 0) {
-          return 'warning-row';
-        } else {
-          return '';
-        }
       },
       create() {
         this.active = 1;

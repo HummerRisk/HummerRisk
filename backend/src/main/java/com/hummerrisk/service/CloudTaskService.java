@@ -7,9 +7,11 @@ import com.hummer.quartz.service.QuartzManageService;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCloudTaskMapper;
+import com.hummerrisk.base.mapper.ext.ExtQuartzTaskMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
+import com.hummerrisk.controller.request.cloudTask.CloudQuartzRequest;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
@@ -60,6 +62,8 @@ public class CloudTaskService {
     private ProxyMapper proxyMapper;
     @Resource
     private CloudAccountQuartzTaskMapper quartzTaskMapper;
+    @Resource
+    private ExtQuartzTaskMapper extQuartzTaskMapper;
     @Resource
     private CloudAccountQuartzTaskRelationMapper quartzTaskRelationMapper;
     @Resource
@@ -329,24 +333,14 @@ public class CloudTaskService {
         return count > 0;
     }
 
-    public List<CloudAccountQuartzTask> selectQuartzTasks(Map<String, Object> params) {
-
-        CloudAccountQuartzTaskExample example = new CloudAccountQuartzTaskExample();
-        CloudAccountQuartzTaskExample.Criteria criteria = example.createCriteria();
-        if (params.get("name") != null && StringUtils.isNotEmpty(params.get("name").toString())) {
-            criteria.andNameEqualTo("%" + params.get("name").toString() + "%");
-        }
-        if (params.get("cron") != null && StringUtils.isNotEmpty(params.get("cron").toString())) {
-            criteria.andCronLike(params.get("cron").toString());
-        }
-        example.setOrderByClause("create_time desc");
-        return quartzTaskMapper.selectByExample(example);
+    public List<CloudAccountQuartzTask> selectQuartzTasks(CloudQuartzRequest request) {
+        return extQuartzTaskMapper.selectQuartzTasks(request);
     }
 
     public boolean saveQuartzTask(CloudAccountQuartzTaskDTO dto) throws Exception {
         try {
             dto.setId(UUIDUtil.newUUID());
-            dto.setApplyUser(Objects.requireNonNull(SessionUtils.getUser()).getName());
+            dto.setApplyUser(SessionUtils.getUserId());
             dto.setCreateTime(System.currentTimeMillis());
             dto.setStatus(CloudTaskConstants.TASK_STATUS.RUNNING.name());
             dto.setCronDesc(DescCornUtils.descCorn(dto.getCron()));

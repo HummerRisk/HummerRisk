@@ -6,6 +6,7 @@ import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
+import com.hummerrisk.controller.request.cloudTask.CloudQuartzRequest;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.service.CloudTaskService;
 import com.hummerrisk.service.OrderService;
@@ -89,7 +90,7 @@ public class CloudTaskController {
     }
 
     @I18n
-    @PostMapping("manual/Alllist")
+    @PostMapping("manual/AllList")
     public List<CloudTask> getAllManualTasks(@RequestBody Map<String, Object> param) throws Exception {
         param.put("type", "manual");
         return cloudTaskService.selectManualTasks(param);
@@ -120,15 +121,9 @@ public class CloudTaskController {
 
     @I18n
     @PostMapping("quartz/list/{goPage}/{pageSize}")
-    public Pager<List<CloudAccountQuartzTask>> getQuartzTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> param) {
+    public Pager<List<CloudAccountQuartzTask>> getQuartzTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudQuartzRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, cloudTaskService.selectQuartzTasks(param));
-    }
-
-    @I18n
-    @PostMapping("quartz/Alllist")
-    public List<CloudAccountQuartzTask> getQuartzTasks(@RequestBody Map<String, Object> param) {
-        return cloudTaskService.selectQuartzTasks(param);
+        return PageUtils.setPageInfo(page, cloudTaskService.selectQuartzTasks(request));
     }
 
     @PostMapping("quartz/create")
