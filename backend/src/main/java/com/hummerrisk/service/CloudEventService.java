@@ -21,6 +21,7 @@ import com.amazonaws.services.cloudtrail.AWSCloudTrail;
 import com.amazonaws.services.cloudtrail.AWSCloudTrailClient;
 import com.amazonaws.services.cloudtrail.model.LookupAttributeKey;
 import com.amazonaws.services.cloudtrail.model.LookupEventsResult;
+import com.baidubce.services.bos.BosClient;
 import com.huaweicloud.sdk.core.auth.BasicCredentials;
 import com.huaweicloud.sdk.core.auth.ICredential;
 import com.huaweicloud.sdk.cts.v3.CtsClient;
@@ -39,6 +40,8 @@ import com.hummerrisk.base.mapper.ext.ExtCloudEventSyncLogMapper;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
 import com.hummerrisk.dto.CloudEventGroupDTO;
+import com.hummerrisk.proxy.baidu.BaiduCredential;
+import com.hummerrisk.proxy.baidu.BaiduRequest;
 import com.tencentcloudapi.cloudaudit.v20190319.CloudauditClient;
 import com.tencentcloudapi.cloudaudit.v20190319.models.DescribeEventsRequest;
 import com.tencentcloudapi.cloudaudit.v20190319.models.DescribeEventsResponse;
@@ -48,6 +51,8 @@ import com.tencentcloudapi.common.Credential;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import com.tencentcloudapi.common.profile.ClientProfile;
 import com.tencentcloudapi.common.profile.HttpProfile;
+import com.volcengine.service.cloudtrail.ICloudTrailService;
+import com.volcengine.service.cloudtrail.impl.CloudTrailServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -300,10 +305,50 @@ public class CloudEventService {
             case PlatformUtils.aws:
                 result = getAwsEvents(accountMap,startTime,endTime,pageNum,maxResult);
                 break;
+            case PlatformUtils.baidu:
+                result = getBaiduEvents(accountMap,startTime,endTime,pageNum,maxResult);
+                break;
+            case PlatformUtils.huoshan:
+                result = getVolcEvents(accountMap,startTime,endTime,pageNum,maxResult);
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + account.getPluginId());
         }
         return result;
+    }
+
+    private List<CloudEventWithBLOBs> getVolcEvents(Map<String, String> accountMap, String startTime, String endTime, int pageNum, int maxResult) throws Exception {
+        ICloudTrailService cloudTrailService = CloudTrailServiceImpl.getInstance();
+        cloudTrailService.setAccessKey(accountMap.get("AccessKeyId"));
+        cloudTrailService.setSecretKey(accountMap.get("SecretAccessKey"));
+        cloudTrailService.setRegion(accountMap.get("region"));
+        com.volcengine.model.request.cloudtrail.LookupEventsRequest request = new com.volcengine.model.request.cloudtrail.LookupEventsRequest();
+        request.setStartTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime).getTime());
+        request.setEndTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", endTime).getTime());
+        request.setMaxResults(maxResult);
+        if(accountMap.get("nextToken")!=null){
+            request.setNextToken(accountMap.get("nextToken"));
+        }
+        com.volcengine.model.response.cloudtrail.LookupEventsResponse lookupEventsResponse = cloudTrailService.lookupEvents(request);
+        List<com.volcengine.model.response.cloudtrail.LookupEventsResponse.TrailEvent> trails = lookupEventsResponse.getResult().getTrails();
+        String nextToken = lookupEventsResponse.getResult().getNextToken();
+        if(nextToken!=null){
+            accountMap.put("nextToken",nextToken);
+        }else{
+            accountMap.put("isEnd","true");
+        }
+        return null;
+    }
+
+    private List<CloudEventWithBLOBs> getBaiduEvents(Map<String, String> accountMap, String startTime, String endTime, int pageNum, int maxResult) throws Exception {
+        BaiduCredential baiduCredential = new BaiduCredential();
+        baiduCredential.setAccessKeyId(accountMap.get("ak"));
+        baiduCredential.setSecretAccessKey(accountMap.get("sk"));
+        BaiduRequest req = new BaiduRequest();
+        req.setBaiduCredential(baiduCredential);
+       // BosClient bosClient =  req.getClient();
+      //  bosClient.
+        return null;
     }
 
     private List<CloudEventWithBLOBs> getHuaweiCloudEvents(Map<String, String> accountMap, String startTime
