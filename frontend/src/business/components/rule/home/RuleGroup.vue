@@ -106,6 +106,7 @@
               </el-tag>
             </template>
           </el-table-column>
+          <el-table-column prop="level" v-if="checkedColumnNames.includes('level')" :label="$t('resource.equal_guarantee_level')" min-width="140" show-overflow-tooltip></el-table-column>
           <el-table-column min-width="200" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators v-if="!!scope.row.flag" :buttons="buttonsN" :row="scope.row"/>
@@ -334,6 +335,11 @@ const columnOptions = [
     props: 'flag',
     disabled: false
   },
+  {
+    label: 'resource.equal_guarantee_level',
+    props: 'level',
+    disabled: false
+  },
 ];
 
 const columnOptions2 = [
@@ -495,7 +501,11 @@ const columnOptions2 = [
           {
             name: 'commons.description',
             id: 'description'
-          }
+          },
+          {
+            name: 'resource.equal_guarantee_level',
+            id: 'level',
+          },
         ],
         checkAll: true,
         isIndeterminate: false,
