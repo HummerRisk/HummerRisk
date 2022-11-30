@@ -126,10 +126,10 @@
             </if>
 
             <if test="request.name != null and request.name != ''">
-                and t.name like CONCAT('%', #{request.name},'%')
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
             </if>
             <if test="request.userName != null and request.userName != ''">
-                and user.name like CONCAT('%', #{request.userName},'%')
+                and LOWER(user.name) like CONCAT('%', LOWER(#{request.userName}),'%')
             </if>
             <if test="request.status != null and request.status != ''">
                 and t.status = #{request.status}
@@ -161,7 +161,10 @@
             </if>
 
             <if test="request.name != null and request.name != ''">
-                and t.name like CONCAT('%', #{request.name},'%')
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.userName != null and request.userName != ''">
+                and LOWER(user.name) like CONCAT('%', LOWER(#{request.userName}),'%')
             </if>
             <if test="request.status != null and request.status != ''">
                 and t.status = #{request.status}

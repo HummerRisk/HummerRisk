@@ -5,19 +5,25 @@
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('vuln.vuln_settings_list')"
                       @create="create" :createTip="$t('vuln.create')"
-                      @validate="validate" :runTip="$t('account.one_validate')"
-                      :show-run="true" :show-create="true"/>
-
+                      @validate="validate" :validateTip="$t('account.one_validate')"
+                      :show-validate="true" :show-create="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                :row-class-name="tableRowClassName"
-                @filter-change="filter" @select-all="select" @select="select">
-        <el-table-column type="selection" min-width="50">
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
+        <el-table-column type="selection" min-width="40">
         </el-table-column>
-        <el-table-column type="index" min-width="50"/>
-        <el-table-column prop="name" :label="$t('vuln.name')" min-width="150" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('vuln.platform')" min-width="110" show-overflow-tooltip>
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('vuln.name')" min-width="150" show-overflow-tooltip></el-table-column>
+        <el-table-column :label="$t('vuln.platform')" v-if="checkedColumnNames.includes('pluginName')" min-width="110" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -25,7 +31,7 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" min-width="90" :label="$t('vuln.status')"
+        <el-table-column prop="status" min-width="90" v-if="checkedColumnNames.includes('status')" :label="$t('vuln.status')"
                          column-key="status"
                          :filters="statusFilters"
                          :filter-method="filterStatus">
@@ -33,25 +39,25 @@
             <vuln-status :row="row"/>
           </template>
         </el-table-column>
-        <el-table-column min-width="150" :label="$t('account.create_time')" sortable
+        <el-table-column min-width="150" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.create_time')" sortable
                          prop="createTime">
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="150" :label="$t('account.update_time')" sortable
+        <el-table-column min-width="150" v-if="checkedColumnNames.includes('updateTime')" :label="$t('account.update_time')" sortable
                          prop="updateTime">
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" :label="$t('account.creator')" min-width="90" show-overflow-tooltip/>
-        <el-table-column min-width="170" :label="$t('commons.operating')" fixed="right">
+        <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :label="$t('account.creator')" min-width="90" show-overflow-tooltip/>
+        <el-table-column min-width="200" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
@@ -189,6 +195,41 @@ import ProxyDialogFooter from "@/business/components/common/components/ProxyDial
 import ProxyDialogCreateFooter from "@/business/components/common/components/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {VULN_ID, VULN_NAME} from "@/common/js/constants";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'vuln.name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'vuln.platform',
+    props: 'pluginName',
+    disabled: false
+  },
+  {
+    label: 'vuln.status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'account.create_time',
+    props: 'createTime',
+    disabled: false
+  },
+  {
+    label: 'account.update_time',
+    props: 'updateTime',
+    disabled: false
+  },
+  {
+    label: 'account.creator',
+    props: 'userName',
+    disabled: false
+  }
+];
 
 /* eslint-disable */
 export default {
@@ -202,7 +243,8 @@ export default {
     TableOperator,
     DialogFooter,
     ProxyDialogFooter,
-    ProxyDialogCreateFooter
+    ProxyDialogCreateFooter,
+    HideTable,
   },
   provide() {
     return {
@@ -310,6 +352,21 @@ export default {
       ],
       accountWithGroup: {pluginIcon: 'xray.png'},
       groups: [],
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'vuln.name',
+          id: 'name'
+        },
+        {
+          name: 'account.creator',
+          id: 'userName'
+        }
+      ],
+      checkAll2: true,
+      isIndeterminate2: false,
     }
   },
 
@@ -318,6 +375,17 @@ export default {
   },
 
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll2 = checkedCount === this.columnNames.length;
+      this.isIndeterminate2 = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate2 = false;
+      this.checkAll2 = val;
+    },
     create() {
       this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
       this.createVisible = true;
@@ -558,15 +626,6 @@ export default {
           return false;
         }
       });
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 4 === 0) {
-        return 'success-row';
-      } else if (rowIndex % 2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
     openScanGroup(account) {
       this.accountWithGroup = account;
