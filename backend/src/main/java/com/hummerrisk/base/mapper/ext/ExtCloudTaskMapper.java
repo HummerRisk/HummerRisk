@@ -33,4 +33,6 @@ public interface ExtCloudTaskMapper {
     List<CloudTask> selectByHummerId(String hummerId,String regionId);
 
     List<CloudTask> selectManualTasks(@Param("request") ManualRequest request);
+
+    List<CloudTask> selectManualVulnTasks(@Param("request") ManualRequest request);
 }

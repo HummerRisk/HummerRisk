@@ -123,30 +123,26 @@
 
     <el-card class="table-card">
       <template v-slot:header>
-        <table-header :condition.sync="condition"
-                      @search="search"
-                      :title="$t('vuln.vuln_result_list')"/>
+        <table-header :condition.sync="condition" @search="search"
+                      :title="$t('vuln.vuln_result_list')"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table class="adjust-table table-content"
-                border
-                :data="tableData"
-                :row-class-name="tableRowClassName"
-                @sort-change="sort"
-                @filter-change="filter">
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
         <el-table-column type="index" min-width="50"/>
-        <el-table-column prop="name" :label="$t('vuln.name')" min-width="140" show-overflow-tooltip>
-          <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)"
-                     style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.accountName }}
-              </span>
-          </template>
-        </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('resource.i18n_task_type')" min-width="140"
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resourceTypes')" :label="$t('resource.i18n_task_type')" min-width="160"
                          show-overflow-tooltip>
           <span>
+            <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)"
+                 style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
             <template v-for="tag in tagSelect">
               <span :key="tag.value" v-if="scope.row.ruleTags">
                 <span :key="tag.tagKey" v-if="scope.row.ruleTags.indexOf(tag.tagKey) > -1"> {{ tag.tagName }}</span>
@@ -166,17 +162,17 @@
             </span>
           </span>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="150" show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('taskName')" :label="$t('rule.rule_name')" min-width="180" show-overflow-tooltip>
           <el-link type="primary" :underline="false" class="md-primary text-click" @click="showTaskDetail(scope.row)">
             {{ scope.row.taskName }}
           </el-link>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="110"
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('severity')" :label="$t('rule.severity')" min-width="110"
                          :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
                          show-overflow-tooltip>
           <severity-type :row="scope.row"></severity-type>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="140" prop="status" sortable
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('resource.status')" min-width="140" prop="status" sortable
                          show-overflow-tooltip>
           <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary"
                      v-if="scope.row.status === 'UNCHECKED'">
@@ -203,7 +199,7 @@
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('returnSum')" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable
                          show-overflow-tooltip min-width="90">
           <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
             <span v-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
@@ -217,14 +213,14 @@
             </span>
           </el-tooltip>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" sortable
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resourcesSum')" :label="$t('resource.status_on_off')" prop="resourcesSum" sortable
                          show-overflow-tooltip min-width="110">
           <span v-if="scope.row.returnSum == 0" style="color: #46ad59;">{{ $t('resource.i18n_compliance_true') }}</span>
           <span v-else-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)"
                 style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
           <span v-else-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
         </el-table-column>
-        <el-table-column prop="createTime" min-width="160" :label="$t('account.update_time')" sortable
+        <el-table-column prop="createTime" min-width="160" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.update_time')" sortable
                          show-overflow-tooltip>
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
@@ -235,7 +231,7 @@
             <table-operators :buttons="rule_buttons" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
 
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
@@ -354,6 +350,47 @@ import VulnSwitch from "@/business/components/common/head/VulnSwitch";
 import {getVulnID} from "@/common/js/utils";
 import {VULN_ID} from "@/common/js/constants";
 import SeverityType from "@/business/components/common/components/SeverityType";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+import {RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'resource.i18n_task_type',
+    props: 'resourceTypes',
+    disabled: false
+  },
+  {
+    label: 'rule.rule_name',
+    props: 'taskName',
+    disabled: false
+  },
+  {
+    label: 'rule.severity',
+    props: 'severity',
+    disabled: false
+  },
+  {
+    label: 'resource.status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'resource.i18n_not_compliance',
+    props: 'returnSum',
+    disabled: false
+  },
+  {
+    label: 'resource.status_on_off',
+    props: 'resourcesSum',
+    disabled: false
+  },
+  {
+    label: 'account.update_time',
+    props: 'createTime',
+    disabled: false
+  }
+];
 
 /* eslint-disable */
 export default {
@@ -369,6 +406,7 @@ export default {
     ResultLog,
     VulnSwitch,
     SeverityType,
+    HideTable,
   },
   data() {
     return {
@@ -379,7 +417,9 @@ export default {
       pageSize: 10,
       total: 0,
       loading: false,
-      condition: {},
+      condition: {
+        components: RESULT_CONFIGS
+      },
       direction: 'rtl',
       tagSelect: [],
       resourceTypes: [],
@@ -455,6 +495,21 @@ export default {
         indentWithTabs: true,
       },
       vulnList: [],
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'rule.rule_name',
+          id: 'taskName'
+        },
+        {
+          name: 'resource.i18n_task_type',
+          id: 'resourceTypes'
+        }
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   watch: {
@@ -463,6 +518,19 @@ export default {
     }
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
+    select(selection) {
+    },
     handleVuln() {
       window.open('http://www.cnnvd.org.cn/web/vulnerability/querylist.tag', '_blank', '');
     },
@@ -574,15 +642,6 @@ export default {
         }
       }
       return sum == 0;
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 4 === 0) {
-        return 'success-row';
-      } else if (rowIndex % 2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
     showTaskLog(cloudTask) {
       let showLogTaskId = cloudTask.id;

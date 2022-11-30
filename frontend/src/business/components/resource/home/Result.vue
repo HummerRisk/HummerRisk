@@ -199,7 +199,7 @@
             </span>
           </el-tooltip>
         </el-table-column>
-        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resourcesSum')" :label="$t('resource.status_on_off')" prop="returnSum" sortable show-overflow-tooltip min-width="110">
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resourcesSum')" :label="$t('resource.status_on_off')" prop="resourcesSum" sortable show-overflow-tooltip min-width="110">
           <span v-if="scope.row.returnSum == 0" style="color: #46ad59;">{{ $t('resource.i18n_compliance_true') }}</span>
           <span v-else-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)"
                 style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>

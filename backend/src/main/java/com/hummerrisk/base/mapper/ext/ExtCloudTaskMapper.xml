@@ -288,4 +288,33 @@
         </where>
         order by FIELD(t.`status`, 'PROCESSING', 'APPROVED', 'FINISHED', 'WARNING', 'ERROR'), t.return_sum desc, t.create_time desc, FIELD(t.`severity`, 'HighRisk', 'MediumRisk', 'LowRisk')
     </select>
+
+    <select id="selectManualVulnTasks" resultType="com.hummerrisk.base.domain.CloudTask">
+        select
+        t.*
+        from cloud_task as t
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.accountId != null and request.accountId != ''">
+                and t.account_id = #{request.accountId}
+            </if>
+            <if test="request.taskName != null and request.taskName != ''">
+                and t.task_name like CONCAT('%', #{request.taskName},'%')
+            </if>
+            <if test="request.resourceTypes != null and request.resourceTypes != ''">
+                and t.resource_types like CONCAT('%', #{request.resourceTypes},'%')
+            </if>
+            and t.plugin_id in ('hummer-nuclei-plugin', 'hummer-xray-plugin')
+            and t.type = 'manual'
+        </where>
+        order by FIELD(t.`status`, 'PROCESSING', 'APPROVED', 'FINISHED', 'WARNING', 'ERROR'), t.return_sum desc, t.create_time desc, FIELD(t.`severity`, 'HighRisk', 'MediumRisk', 'LowRisk')
+    </select>
 </mapper>

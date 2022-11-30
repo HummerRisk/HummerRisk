@@ -2,14 +2,15 @@ package com.hummerrisk.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.hummerrisk.base.domain.CloudTask;
 import com.hummerrisk.commons.utils.DashboardTarget;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.account.CloudAccountRequest;
+import com.hummerrisk.controller.request.cloudTask.ManualRequest;
 import com.hummerrisk.controller.request.rule.CreateRuleRequest;
 import com.hummerrisk.dto.AccountDTO;
-import com.hummerrisk.dto.CloudTaskDTO;
 import com.hummerrisk.dto.RuleDTO;
 import com.hummerrisk.service.VulnService;
 import io.swagger.annotations.Api;
@@ -48,10 +49,10 @@ public class VulnController {
     @I18n
     @ApiOperation(value = "漏洞结果列表")
     @PostMapping("manual/list/{goPage}/{pageSize}")
-    public Pager<List<CloudTaskDTO>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> param) throws Exception {
+    public Pager<List<CloudTask>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ManualRequest request) throws Exception {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        param.put("type", "manual");
-        return PageUtils.setPageInfo(page, vulnService.selectManualTasks(param));
+        request.setType("manual");
+        return PageUtils.setPageInfo(page, vulnService.selectManualTasks(request));
     }
 
     @I18n
