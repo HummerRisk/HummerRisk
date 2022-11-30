@@ -16,7 +16,7 @@
                          type="warning" :content="validateTip" @click="validate"/>
         <table-button v-if="showDelete" icon="el-icon-remove-outline"
                       type="danger" :content="deleteTip" @click="deleteSelect"/>
-        <table-search-bar :condition.sync="condition" @change="search" @search="search" class="search-bar" :tip="tip" :items="items"/>
+        <table-search-bar v-if="isCombine" :condition.sync="condition" @change="search" @search="search" class="search-bar" :tip="tip" :items="items"/>
         <slot name="button"></slot>
       </span>
       <span class="operate-button">

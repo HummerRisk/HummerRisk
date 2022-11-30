@@ -5,7 +5,7 @@
 
         <template v-slot:header>
 
-          <report-table-header :condition.sync="condition" @search="search"
+          <report-table-header :condition.sync="condition" @search="search" :items="items"
                               :currentAccount="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"
                                @openDownload="openDownload" @selectAccount="selectAccount" :show-open="true"/>
         </template>
@@ -148,13 +148,21 @@
         </el-card>
         <el-card v-if="resourceTableData.length>0" class="table-report-card-resource">
           <template v-slot:header>
-            <table-header :condition.sync="resourceCondition"
-                          @search="searchResource"
-                          :title="$t('resource.cloud_resource_detail_result')"/>
+            <table-header :condition.sync="resourceCondition" @search="searchResource"
+                          :title="$t('resource.cloud_resource_detail_result')"
+                          :items="items2" :columnNames="columnNames2"
+                          :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
+                          @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
           </template>
-          <el-table border :data="resourceTableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter" :row-class-name="tableRowClassName">
+          <hide-table
+            :table-data="resourceTableData"
+            @sort-change="sort"
+            @filter-change="filter"
+            @select-all="select2"
+            @select="select2"
+          >
             <!-- 展开 start -->
-            <el-table-column type="expand" min-width="1%">
+            <el-table-column type="expand" min-width="40">
               <template v-slot:default="props">
                 <el-divider><i class="el-icon-folder-opened"></i></el-divider>
                 <el-form v-if="props.row.resource !== '[]'">
@@ -164,14 +172,14 @@
               </template>
             </el-table-column>
             <!-- 展开 end -->
-            <el-table-column type="index" min-width="2%"/>
-            <el-table-column v-slot:default="scope" :label="$t('resource.Hummer_ID')" min-width="15%">
+            <el-table-column type="index" min-width="40"/>
+            <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('hummerId')" :label="$t('resource.Hummer_ID')" min-width="130">
               {{ scope.row.hummerId }}
             </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('rule.resource_type')" min-width="15%">
+            <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('resourceType')" :label="$t('rule.resource_type')" min-width="130">
               {{ scope.row.resourceType }}
             </el-table-column>
-            <el-table-column prop="regionName" :label="$t('account.regions')" min-width="12%">
+            <el-table-column prop="regionName" v-if="checkedColumnNames2.includes('regionName')" :label="$t('account.regions')" min-width="130">
               <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -179,27 +187,26 @@
               </span>
               </template>
             </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="12%"
+            <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('severity')"  :label="$t('rule.severity')" min-width="90"
                              :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
                              show-overflow-tooltip>
               <severity-type :row="scope.row"></severity-type>
             </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="16%" show-overflow-tooltip>
+            <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('ruleName')" :label="$t('rule.rule_name')" min-width="160" show-overflow-tooltip>
               {{ scope.row.ruleName }}
             </el-table-column>
-            <el-table-column min-width="10%" :label="$t('commons.operating')" show-overflow-tooltip>
+            <el-table-column min-width="100" :label="$t('commons.operating')" show-overflow-tooltip>
               <template v-slot:default="scope">
                 <table-operators v-if="!!scope.row.suggestion" :buttons="resource_buttons2" :row="scope.row"/>
                 <table-operators v-if="!scope.row.suggestion" :buttons="resource_buttons" :row="scope.row"/>
               </template>
             </el-table-column>
-          </el-table>
+          </hide-table>
           <table-pagination :change="searchResource" :current-page.sync="resourceCurrentPage" :page-size.sync="resourcePageSize" :total="resourceTotal"/>
         </el-card>
         <el-card class="table-report-card-resource">
           <template v-slot:header>
-            <table-header :condition.sync="riskCondition"
-                          @search="reportListSearch"
+            <table-header :condition.sync="riskCondition" @search="reportListSearch"
                           :title="$t('resource.regulation_list')"/>
           </template>
           <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter" :row-class-name="tableRowClassName">
@@ -458,20 +465,26 @@
       <!--rule list-->
       <el-drawer class="rtl" :title="$t('rule.rule_list')" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <table-header :condition.sync="ruleCondition"
-                      @search="handleListSearch"
-                      :show-create="false" :show-open="false" :show-name="false"
-                      style="margin: 0 15px 15px 15px;"/>
-        <el-table border :data="ruleData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                  @filter-change="filter">
-          <el-table-column type="index" min-width="2%"/>
-          <el-table-column prop="name" :label="$t('rule.rule_name')" min-width="18%" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.resource_type')" min-width="10%" show-overflow-tooltip>
+        <table-header :condition.sync="ruleCondition" @search="handleListSearch"
+                      :show-name="false"
+                      :items="items3" :columnNames="columnNames3"
+                      :checkedColumnNames="checkedColumnNames3" :checkAll="checkAll3" :isIndeterminate="isIndeterminate3"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange3" @handleCheckAllChange="handleCheckAllChange3"/>
+        <hide-table
+          :table-data="ruleData"
+          @sort-change="sort"
+          @filter-change="filter"
+          @select-all="select"
+          @select="select"
+        >
+          <el-table-column type="index" min-width="40"/>
+          <el-table-column prop="name" v-if="checkedColumnNames3.includes('name')" :label="$t('rule.rule_name')" min-width="160" show-overflow-tooltip></el-table-column>
+          <el-table-column :label="$t('rule.resource_type')" v-if="checkedColumnNames3.includes('resourceType')" min-width="100" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span v-for="(resourceType, index) in scope.row.types" :key="index">[{{ resourceType }}] </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" min-width="11%" show-overflow-tooltip>
+          <el-table-column :label="$t('account.cloud_platform')" v-if="checkedColumnNames3.includes('pluginName')" min-width="100" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -479,23 +492,23 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column min-width="8%" :label="$t('rule.severity')" column-key="severity">
+          <el-table-column min-width="80" :label="$t('rule.severity')" v-if="checkedColumnNames3.includes('severity')" column-key="severity">
             <template v-slot:default="{row}">
               <severity-type :row="row"></severity-type>
             </template>
           </el-table-column>
-          <el-table-column prop="description" :label="$t('rule.description')" min-width="28%" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.status')" min-width="7%" show-overflow-tooltip>
+          <el-table-column prop="description" :label="$t('rule.description')" v-if="checkedColumnNames3.includes('description')" min-width="180" show-overflow-tooltip></el-table-column>
+          <el-table-column :label="$t('rule.status')" min-width="60" show-overflow-tooltip>
             <template v-slot:default="scope">
               <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
             </template>
           </el-table-column>
-          <el-table-column prop="lastModified" min-width="15%" :label="$t('rule.last_modified')" sortable>
+          <el-table-column prop="lastModified" min-width="150" v-if="checkedColumnNames3.includes('lastModified')" :label="$t('rule.last_modified')" sortable>
             <template v-slot:default="scope">
               <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-        </el-table>
+        </hide-table>
         <table-pagination :change="handleListSearch" :current-page.sync="ruleListPage" :page-size.sync="ruleListPageSize" :total="ruleListTotal"/>
       </el-drawer>
       <!--rule list-->
@@ -518,12 +531,83 @@ import {severityOptions} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver.js";
 import FTablePagination from "../../common/pagination/FTablePagination";
 import ReportTableHeader from "@/business/components/report/head/ReportTableHeader";
-import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
+import {
+  REPORT_CONFIGS,
+  RESOURCE_CONFIGS,
+  RULE_CONFIGS
+} from "../../common/components/search/search-components";
 import HrChart from "@/business/components/common/chart/HrChart";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import ResultReadOnly from "@/business/components/report/head/ResultReadOnly";
 import echarts from 'echarts';
+import HideTable from "@/business/components/common/hideTable/HideTable";
 
+//列表展示与隐藏
+const columnOptions2 = [
+  {
+    label: 'resource.Hummer_ID',
+    props: 'hummerId',
+    disabled: false
+  },
+  {
+    label: 'rule.resource_type',
+    props: 'resourceType',
+    disabled: false
+  },
+  {
+    label: 'account.regions',
+    props: 'regionName',
+    disabled: false
+  },
+  {
+    label: 'rule.rule_name',
+    props: 'ruleName',
+    disabled: false
+  },
+  {
+    label: 'rule.severity',
+    props: 'severity',
+    disabled: false
+  },
+  {
+    label: 'account.update_time',
+    props: 'createTime',
+    disabled: false
+  }
+];
+//列表展示与隐藏
+const columnOptions3 = [
+  {
+    label: 'rule.rule_name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'rule.resource_type',
+    props: 'resourceType',
+    disabled: false
+  },
+  {
+    label: 'account.cloud_platform',
+    props: 'pluginName',
+    disabled: false
+  },
+  {
+    label: 'rule.severity',
+    props: 'severity',
+    disabled: false
+  },
+  {
+    label: 'rule.description',
+    props: 'description',
+    disabled: false
+  },
+  {
+    label: 'rule.status',
+    props: 'status',
+    disabled: false
+  },
+];
 /* eslint-disable */
   export default {
     components: {
@@ -541,7 +625,8 @@ import echarts from 'echarts';
       HrChart,
       SeverityType,
       ResultReadOnly,
-      echarts
+      echarts,
+      HideTable,
     },
     data() {
       return {
@@ -560,10 +645,12 @@ import echarts from 'echarts';
         ruleSetOptions: [],
         inspectionSeportOptions: [],
         condition: {
-          components: RULE_GROUP_CONFIGS
+          components: REPORT_CONFIGS
         },
         riskCondition: {},
-        resourceCondition: {},
+        resourceCondition: {
+          components: RESOURCE_CONFIGS
+        },
         buttons: [
           {
             tip: this.$t('resource.i18n_detail'), icon: "el-icon-notebook-2", type: "primary",
@@ -650,9 +737,88 @@ import echarts from 'echarts';
         ],
         regulationData: [],
         regulationVisible: false,
+        //名称搜索
+        items: [
+          {
+            name: 'rule.rule_set_name',
+            id: 'name'
+          },
+          {
+            name: 'commons.description',
+            id: 'description'
+          },
+          {
+            name: 'resource.equal_guarantee_level',
+            id: 'level',
+          },
+        ],
+        checkedColumnNames2: columnOptions2.map((ele) => ele.props),
+        columnNames2: columnOptions2,
+        //名称搜索
+        items2: [
+          {
+            name: 'rule.rule_name',
+            id: 'ruleName'
+          },
+          {
+            name: 'rule.resource_type',
+            id: 'resourceType'
+          },
+          {
+            name: 'resource.Hummer_ID',
+            id: 'hummerId',
+          },
+          {
+            name: 'account.regions',
+            id: 'regionName',
+          },
+        ],
+        checkAll2: true,
+        isIndeterminate2: false,
+        checkedColumnNames3: columnOptions3.map((ele) => ele.props),
+        columnNames3: columnOptions3,
+        //名称搜索
+        items3: [
+          {
+            name: 'rule.rule_name',
+            id: 'name'
+          },
+          {
+            name: 'account.cloud_platform',
+            id: 'pluginName'
+          },
+          {
+            name: 'rule.description',
+            id: 'description'
+          }
+        ],
+        checkAll3: true,
+        isIndeterminate3: false,
       }
     },
     methods: {
+      handleCheckedColumnNamesChange2(value) {
+        const checkedCount = value.length;
+        this.checkAll2 = checkedCount === this.columnNames2.length;
+        this.isIndeterminate2 = checkedCount > 0 && checkedCount < this.columnNames2.length;
+        this.checkedColumnNames2 = value;
+      },
+      handleCheckAllChange2(val) {
+        this.checkedColumnNames2 = val ? this.columnNames2.map((ele) => ele.props) : [];
+        this.isIndeterminate2 = false;
+        this.checkAll2 = val;
+      },
+      handleCheckedColumnNamesChange3(value) {
+        const checkedCount = value.length;
+        this.checkAll3 = checkedCount === this.columnNames3.length;
+        this.isIndeterminate3 = checkedCount > 0 && checkedCount < this.columnNames3.length;
+        this.checkedColumnNames3 = value;
+      },
+      handleCheckAllChange3(val) {
+        this.checkedColumnNames3 = val ? this.columnNames3.map((ele) => ele.props) : [];
+        this.isIndeterminate3 = false;
+        this.checkAll3 = val;
+      },
       sort(column) {
         _sort(column, this.condition);
         this.init();
@@ -666,6 +832,8 @@ import echarts from 'echarts';
         selection.forEach(s => {
           this.selectIds.add(s.id)
         });
+      },
+      select2(selection) {
       },
       cloudAccountSwitch (accountId) {
         this.accountId = accountId;

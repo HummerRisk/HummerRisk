@@ -303,9 +303,7 @@
                 AND t6.id in (select rule_id from rule_group_mapping where group_id = #{request.groupId})
             </if>
         </where>
-        <if test="sort == null">
-            ORDER BY t.create_time DESC
-        </if>
+        ORDER BY t.create_time DESC
     </select>
 
     <select id="resultPercentByCloud" resultType="java.lang.String">
@@ -667,6 +665,27 @@
         ORDER BY id
     </select>
 
+    <sql id="combine2">
+        <if test='${condition}.name != null'>
+            and t.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test='${condition}.description != null'>
+            and t.description
+            <include refid="condition">
+                <property name="object" value="${condition}.description"/>
+            </include>
+        </if>
+        <if test='${condition}.level != null'>
+            and t.level
+            <include refid="condition">
+                <property name="object" value="${condition}.level"/>
+            </include>
+        </if>
+    </sql>
+
     <select id="ruleGroupList" resultType="com.hummerrisk.dto.RuleGroupDTO">
         select
         t.*,
@@ -739,7 +758,7 @@
         join cloud_account c on t.plugin_id = c.plugin_id
         <where>
             <if test="request.combine != null">
-                <include refid="combine">
+                <include refid="combine2">
                     <property name="condition" value="request.combine"/>
                 </include>
             </if>
@@ -747,7 +766,13 @@
                 and c.id = #{request.accountId}
             </if>
             <if test="request.name != null and request.name != ''">
-                and t.name like concat('%', #{request.name}, '%')
+                and LOWER(t.name) like concat('%', LOWER(#{request.name}), '%')
+            </if>
+            <if test="request.description != null and request.description != ''">
+                and LOWER(t.description) like concat('%', LOWER(#{request.description}), '%')
+            </if>
+            <if test="request.level != null and request.level != ''">
+                and LOWER(t.level) like concat('%', LOWER(#{request.level}), '%')
             </if>
             <if test="request.pluginId != null and request.pluginId != ''">
                 and t.plugin_id = #{request.pluginId}

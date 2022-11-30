@@ -7,8 +7,7 @@
                         @selectAccount="selectAccount" @openDownload="openDownload"/>
       </span>
       <span>
-        <table-search-bar :condition.sync="condition" @change="search" class="search-bar" :tip="tip"/>
-        <table-adv-search-bar :condition.sync="condition" :showOpen="showOpen" @search="search" v-if="isCombine"/>
+        <table-search-bar :condition.sync="condition" @change="search" @search="search" class="search-bar" :tip="tip" :items="items"/>
       </span>
     </el-row>
   </div>
@@ -16,7 +15,7 @@
 </template>
 
 <script>
-import TableSearchBar from '@/business/components/common/components/TableSearchBar';
+import TableSearchBar from '@/business/components/report/head/TableSearchBar';
 import TableButton from '@/business/components/common/components/TableButton';
 import TableAdvSearchBar from "@/business/components/common/components/search/TableAdvSearchBar";
 import AccountChange from "@/business/components/report/head/AccountSwitch";
@@ -88,6 +87,12 @@ import {ACCOUNT_NAME} from "@/common/js/constants";
       currentAccount: {
         type: String,
         default: localStorage.getItem(ACCOUNT_NAME)
+      },
+      items: {
+        type: [Object,Array],
+        default: () => [
+          {'id' : 'name', 'name' : 'commons.name'},
+        ],
       },
     },
     methods: {

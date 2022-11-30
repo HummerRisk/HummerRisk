@@ -13,7 +13,8 @@
       </el-select>
       <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
     </el-input>
-    <el-button icon="iconfont icon-shaixuan" size="small" @click="open" v-if="showOpen && condition" style="margin: 10px;">{{ $t('el.table.confirmFilter') }}</el-button>
+    <el-button icon="iconfont icon-shaixuan" size="small" @click="open" v-if="showOpen" style="margin: 10px 0;"></el-button>
+    <el-button icon="el-icon-refresh" size="small" v-if="showOpen" style="margin: 10px 0;" @click="refresh"></el-button>
     <el-dialog :title="$t('commons.adv_search.combine')" :visible.sync="visible" custom-class="adv-dialog"
                :append-to-body="true">
       <div>
@@ -68,8 +69,6 @@ import {cloneDeep} from "lodash";
           selectName: this.items[0].name,
           filterText: '',
         }
-      },
-      created() {
       },
       methods: {
         changeName(id) {
@@ -142,6 +141,9 @@ import {cloneDeep} from "lodash";
         },
         open() {
           this.visible = true;
+        },
+        refresh() {
+          this.$emit('search');
         },
       }
     }
