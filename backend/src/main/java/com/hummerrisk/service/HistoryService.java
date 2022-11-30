@@ -293,9 +293,9 @@ public class HistoryService {
             String resultId = "";
             if (obj.getClass() == CloudTask.class || obj.getClass() == CloudTaskDTO.class) {
                 resultId = ((CloudTask) obj).getId();
-            } else if(obj.getClass() == ServerResult.class || obj.getClass() == ServerResultDTO.class) {
+            } else if(obj.getClass() == ServerResult.class || obj.getClass() == ServerResultLogWithBLOBs.class || obj.getClass() == ServerResultDTO.class) {
                 resultId = ((ServerResult) obj).getId();
-            } else if(obj.getClass() == CloudNativeResult.class) {
+            } else if(obj.getClass() == CloudNativeResult.class || obj.getClass() == CloudNativeResultWithBLOBs.class) {
                 resultId = ((CloudNativeResult) obj).getId();
             } else if(obj.getClass() == CloudNativeConfigResult.class) {
                 resultId = ((CloudNativeConfigResult) obj).getId();
