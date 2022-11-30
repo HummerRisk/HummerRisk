@@ -207,6 +207,12 @@
             <if test="pluginId != null">
                 AND t.plugin_id = #{pluginId}
             </if>
+            <if test="pluginName != null">
+                AND LOWER(t.plugin_name) like CONCAT('%',LOWER(#{pluginName}),'%')
+            </if>
+            <if test="description != null">
+                AND LOWER(t.description) like CONCAT('%',LOWER(#{description}),'%')
+            </if>
             AND p.type = 'vuln'
         </where>
         ORDER BY t.last_modified desc

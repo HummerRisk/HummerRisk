@@ -10,17 +10,23 @@
             :label="$t(tag.tagName)">
           </el-tab-pane>
         </el-tabs>
-        <table-header :condition.sync="condition"
-                      @search="search"
+        <table-header :condition.sync="condition" @search="search"
                       :title="$t('vuln.vuln_rule_list')"
-                      @create="create"
-                      :createTip="$t('vuln.create_rule')"
-                      :show-create="true"/>
+                      @create="create" :createTip="$t('vuln.create_rule')"
+                      :show-create="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
 
-      <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                @filter-change="filter" @select-all="select" @select="select">
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
         <!-- 展开 start -->
         <el-table-column type="expand" min-width="40">
           <template slot-scope="props">
@@ -48,8 +54,8 @@
         </el-table-column >
         <!-- 展开 end -->
         <el-table-column type="index" min-width="40"/>
-        <el-table-column prop="name" :label="$t('rule.rule_name')" min-width="180" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('vuln.platform')" min-width="120" show-overflow-tooltip>
+        <el-table-column prop="name" :label="$t('rule.rule_name')" v-if="checkedColumnNames.includes('name')" min-width="180" show-overflow-tooltip></el-table-column>
+        <el-table-column :label="$t('vuln.platform')" v-if="checkedColumnNames.includes('pluginName')" min-width="120" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -57,18 +63,18 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column min-width="90" :label="$t('rule.severity')" column-key="severity">
+        <el-table-column min-width="90" :label="$t('rule.severity')" v-if="checkedColumnNames.includes('severity')" column-key="severity">
           <template v-slot:default="{row}">
             <severity-type :row="row"></severity-type>
           </template>
         </el-table-column>
-        <el-table-column prop="description" :label="$t('rule.description')" min-width="250" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('rule.status')" min-width="70" show-overflow-tooltip>
+        <el-table-column prop="description" :label="$t('rule.description')" v-if="checkedColumnNames.includes('description')" min-width="250" show-overflow-tooltip></el-table-column>
+        <el-table-column :label="$t('rule.status')" v-if="checkedColumnNames.includes('status')" min-width="70" show-overflow-tooltip>
           <template v-slot:default="scope">
             <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
           </template>
         </el-table-column>
-        <el-table-column prop="lastModified" min-width="160" :label="$t('rule.last_modified')" sortable>
+        <el-table-column prop="lastModified" min-width="160" v-if="checkedColumnNames.includes('lastModified')" :label="$t('rule.last_modified')" sortable>
           <template v-slot:default="scope">
             <span>{{ scope.row.lastModified | timestampFormatDate }}</span>
           </template>
@@ -78,7 +84,7 @@
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
@@ -405,6 +411,37 @@ import {_filter, _sort} from "@/common/js/utils";
 import {VULN_RULE_CONFIGS} from "../../common/components/search/search-components";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {severityOptions} from "@/common/js/constants";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'rule.rule_name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'vuln.platform',
+    props: 'pluginName',
+    disabled: false
+  },
+  {
+    label: 'rule.severity',
+    props: 'severity',
+    disabled: false
+  },
+  {
+    label: 'rule.description',
+    props: 'description',
+    disabled: false
+  },
+  {
+    label: 'rule.status',
+    props: 'status',
+    disabled: false
+  },
+];
+
 
 /* eslint-disable */
 export default {
@@ -417,6 +454,7 @@ export default {
     TableOperator,
     DialogFooter,
     SeverityType,
+    HideTable,
   },
   data() {
     return {
@@ -490,8 +528,26 @@ export default {
       scanTypes: [
         {id: 'nuclei', name: 'Nuclei'},
         {id: 'xray', name: 'XRay'},
-        {id: 'tsunami', name: 'Tsunami'},
       ],
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'rule.rule_name',
+          id: 'name'
+        },
+        {
+          name: 'vuln.platform',
+          id: 'pluginName'
+        },
+        {
+          name: 'rule.description',
+          id: 'description'
+        }
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
 
@@ -500,6 +556,17 @@ export default {
   },
 
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
     create() {
       this.createRuleForm = { parameter: [], script : "", scanType: 'nuclei' };
       this.createVisible = true;
@@ -698,15 +765,6 @@ export default {
           return false;
         }
       });
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex%4 === 0) {
-        return 'success-row';
-      } else if (rowIndex%2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
     changeStatus (item) {
       this.result = this.$post('/rule/changeStatus', {id: item.id, status: item.status?1:0}, response => {
