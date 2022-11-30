@@ -15,8 +15,10 @@ import com.qingstor.sdk.config.EnvContext;
 import com.qingstor.sdk.exception.QSException;
 import com.qingstor.sdk.service.Bucket;
 import com.qingstor.sdk.service.QingStor;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.FilterInputStream;
 import java.io.InputStream;
 import java.security.MessageDigest;
@@ -60,14 +62,22 @@ public class QingcloudProvider implements OssProvider {
     public List<BucketObjectDTO> getBucketObjects(OssBucket bucket, OssWithBLOBs account, String prefix) throws QSException {
         QingStor qingStor = getStor(account);
         Bucket bucket1 = qingStor.getBucket(bucket.getBucketName(), bucket.getLocation());
-        Bucket.ListObjectsOutput listObjectsOutput = bucket1.listObjects(null);
+        Bucket.ListObjectsInput listObjectsInput = new Bucket.ListObjectsInput();
+        if(StringUtils.isNotEmpty(prefix)){
+            listObjectsInput.setPrefix(prefix);
+        }
+        Bucket.ListObjectsOutput listObjectsOutput = bucket1.listObjects(listObjectsInput);
         return listObjectsOutput.getKeys().stream().map(item -> {
             BucketObjectDTO bucketObjectDTO = new BucketObjectDTO();
             bucketObjectDTO.setBucketId(bucket.getId());
             bucketObjectDTO.setObjectName(item.getKey());
             bucketObjectDTO.setId(item.getKey());
             bucketObjectDTO.setDownloadUrl(item.getKey());
-            bucketObjectDTO.setObjectType("FILE");
+            if(item.getKey().indexOf("/")>-1&&item.getSize()==0){
+                bucketObjectDTO.setObjectType("DIR");
+            }else{
+                bucketObjectDTO.setObjectType("FILE");
+            }
             bucketObjectDTO.setObjectSize(SysListener.changeFlowFormat(item.getSize()));
             bucketObjectDTO.setLastModified((long)item.getModified()*1000);
             bucketObjectDTO.setStorageClass(item.getStorageClass());
@@ -132,7 +142,23 @@ public class QingcloudProvider implements OssProvider {
 
     @Override
     public void createDir(OssBucket bucket, OssWithBLOBs account, String dir) throws Exception {
-
+        QingStor stor = this.getStor(account);
+        dir = dir.endsWith("/") ? dir : dir + "/";
+        String[] split = dir.split("/");
+        String data = "";
+        for (String d : split) {
+            if(d.length()==0){
+                continue;
+            }
+            data += d + "/";
+            Bucket storBucket = stor.getBucket(bucket.getBucketName(), bucket.getLocation());
+            Bucket.PutObjectInput input = new Bucket.PutObjectInput();
+            input.setBodyInputStream(new ByteArrayInputStream(new byte[0]));
+            Bucket.PutObjectOutput putObjectOutput = storBucket.putObject(data, input);
+            if(putObjectOutput.getStatueCode()!=201){
+                throw new RuntimeException("create dir error");
+            }
+        }
     }
 
     @Override
@@ -140,7 +166,7 @@ public class QingcloudProvider implements OssProvider {
         QingStor stor = getStor(account);
         Bucket bucket = stor.getBucket(ossBucket.getBucketName(), ossBucket.getLocation());
         Bucket.PutObjectInput input = new Bucket.PutObjectInput();
-        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        //MessageDigest md5 = MessageDigest.getInstance("MD5");
         // 这里只起示例作用, 如果 body size 有可能非常大, 按一定 size 做拆分以分段
         // 上传形式来分 part 计算 md5 上传才是比较经济的方式.
 //        byte[] data = file.readAllBytes();
@@ -152,9 +178,12 @@ public class QingcloudProvider implements OssProvider {
         // body = new ByteArrayInputStream(data);
         //  2. 如果流支持 markSupported(), 可以重设到流的开始.
         //  下面是方式 2 的示例:
-        file.reset();
+        //file.reset();
         input.setBodyInputStream(file);
         Bucket.PutObjectOutput putObjectOutput =bucket.putObject(dir, input);
+        if(putObjectOutput.getStatueCode()!=201){
+            throw new RuntimeException("file upload error");
+        }
     }
 
     @Override
