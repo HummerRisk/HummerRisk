@@ -6,21 +6,24 @@
                       :title="$t('oss.oss_account_list')"
                       @create="create" :createTip="$t('oss.create')"
                       @validate="validate" :validateTip="$t('account.one_validate')"
-                      :show-validate="true" :show-create="true"/>
-
+                      :show-validate="true" :show-create="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table border :data="tableData" class="adjust-table table-content"
-                :row-class-name="tableRowClassName"
-                @sort-change="sort"
-                @filter-change="filter"
-                @select-all="select"
-                @select="select">
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
         <el-table-column type="selection" min-width="50">
         </el-table-column>
         <el-table-column type="index" min-width="50"/>
-        <el-table-column prop="name" :label="$t('oss.name')" min-width="150" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('account.cloud_platform')" min-width="150" show-overflow-tooltip>
+        <el-table-column prop="name" :label="$t('oss.name')" v-if="checkedColumnNames.includes('name')" min-width="150" show-overflow-tooltip></el-table-column>
+        <el-table-column :label="$t('account.cloud_platform')" v-if="checkedColumnNames.includes('pluginName')" min-width="150" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -28,7 +31,7 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" min-width="120" :label="$t('account.status')"
+        <el-table-column prop="status" min-width="120" v-if="checkedColumnNames.includes('status')" :label="$t('account.status')"
                          column-key="status"
                          :filters="statusFilters"
                          :filter-method="filterStatus">
@@ -46,7 +49,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('event.sync_status')" min-width="170" prop="status" sortable
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('syncStatus')" :label="$t('event.sync_status')" min-width="170" prop="status" sortable
                          show-overflow-tooltip>
           <el-button @click="showLog(scope.row)" plain size="mini" type="primary"
                      v-if="scope.row.syncStatus === 'UNCHECKED'">
@@ -73,37 +76,37 @@
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
-        <el-table-column :label="$t('oss.bucket')" min-width="110">
+        <el-table-column :label="$t('oss.bucket')" v-if="checkedColumnNames.includes('sum')" min-width="110">
           <template v-slot:default="scope">
             <el-link type="primary" @click="showBuckets(scope.row)">
               {{ scope.row.sum }}
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column min-width="180" :label="$t('account.create_time')" sortable
+        <el-table-column min-width="180" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.create_time')" sortable
                          prop="createTime">
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('account.regions')" min-width="100">
+        <el-table-column :label="$t('account.regions')" v-if="checkedColumnNames.includes('regions')" min-width="100">
           <template v-slot:default="scope">
             <regions :row="scope.row"/>
           </template>
         </el-table-column>
-        <el-table-column min-width="180" :label="$t('account.update_time')" sortable
+        <el-table-column min-width="180" v-if="checkedColumnNames.includes('updateTime')" :label="$t('account.update_time')" sortable
                          prop="updateTime">
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" :label="$t('account.creator')" min-width="110" show-overflow-tooltip/>
+        <el-table-column prop="userName" :label="$t('account.creator')" v-if="checkedColumnNames.includes('userName')" min-width="110" show-overflow-tooltip/>
         <el-table-column min-width="200" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
@@ -233,7 +236,6 @@
                     :show-name="false"
                     :show-validate="false" :show-create="false"/>
       <el-table border :data="bucketData" class="adjust-table table-content" @sort-change="sort"
-                :row-class-name="tableRowClassName"
                 @filter-change="filter">
         <el-table-column type="index" min-width="50"/>
         <el-table-column prop="bucketName" :label="$t('oss.bucket')" min-width="140" show-overflow-tooltip v-slot:default="scope">
@@ -357,6 +359,57 @@ import {OSS_CONFIGS} from "@/business/components/common/components/search/search
 import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver";
 import Regions from "@/business/components/account/home/Regions";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'oss.name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'account.cloud_platform',
+    props: 'pluginName',
+    disabled: false
+  },
+  {
+    label: 'account.status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'event.sync_status',
+    props: 'syncStatus',
+    disabled: false
+  },
+  {
+    label: 'oss.bucket',
+    props: 'sum',
+    disabled: false
+  },
+  {
+    label: 'account.create_time',
+    props: 'createTime',
+    disabled: false
+  },
+  {
+    label: 'account.regions',
+    props: 'regions',
+    disabled: false
+  },
+  {
+    label: 'account.update_time',
+    props: 'updateTime',
+    disabled: false
+  },
+  {
+    label: 'account.creator',
+    props: 'userName',
+    disabled: false
+  }
+];
+
 
 /* eslint-disable */
 export default {
@@ -368,6 +421,7 @@ export default {
     TablePagination,
     DialogFooter,
     Regions,
+    HideTable,
   },
   data() {
     return {
@@ -479,9 +533,35 @@ export default {
       groups: [],
       checkedGroups: [],
       selectIds: new Set(),
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'oss.name',
+          id: 'name'
+        },
+        {
+          name: 'account.creator',
+          id: 'userName'
+        }
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
     //查询列表
     search() {
       let url = "/oss/list/" + this.currentPage + "/" + this.pageSize;
@@ -536,15 +616,6 @@ export default {
     },
     filterStatus(value, row) {
       return row.status === value;
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 4 === 0) {
-        return 'success-row';
-      } else if (rowIndex % 2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
     create() {
       this.form = { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] };

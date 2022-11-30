@@ -128,8 +128,8 @@ export default {
     filter() {
       this.$emit('filter');
     },
-    select() {
-      this.$emit('select');
+    select(selection) {
+      this.$emit('select', selection);
     },
     tableRowClassName({row, rowIndex}) {
       if (rowIndex % 4 === 0) {
