@@ -729,6 +729,7 @@ public class OssService {
                 OperationLogService.log(SessionUtils.getUser(), bucket.getBucketName(), objectId, ResourceTypeConstants.OSS.name(), ResourceOperation.UPLOAD, "i18n_upload_oss");
             } catch (Exception e) {
                 LogUtil.error(String.format("Failed to upload file %s to %s, %s", objectId, bucket.getBucketName(), e.getMessage()));
+                throw new RuntimeException("Failed to upload file");
             } finally {
                 try {
                     if (fis != null)
