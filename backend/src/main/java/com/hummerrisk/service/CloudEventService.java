@@ -337,7 +337,27 @@ public class CloudEventService {
         }else{
             accountMap.put("isEnd","true");
         }
-        return null;
+        return trails.stream().map(item->{
+            CloudEventWithBLOBs cloudEventWithBLOBs = new CloudEventWithBLOBs();
+            JSONObject detail = JSONObject.parseObject(item.getEventDetail());
+            cloudEventWithBLOBs.setEventId(item.getEventID());
+            cloudEventWithBLOBs.setEventName(item.getEventName());
+            cloudEventWithBLOBs.setEventTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss",item.getEventTime().substring(0,19).replace("T"," ")).getTime());
+            cloudEventWithBLOBs.setRequestId(item.getRequestID());
+            cloudEventWithBLOBs.setSourceIpAddress(item.getSourceIPAddress());
+            cloudEventWithBLOBs.setEventSource(item.getEventSource());
+            cloudEventWithBLOBs.setUserName(item.getUserName());
+            cloudEventWithBLOBs.setAcsRegion(item.getRegion());
+            cloudEventWithBLOBs.setSyncRegion(accountMap.get("region"));
+            cloudEventWithBLOBs.setRegionName(accountMap.get("regionName"));
+            cloudEventWithBLOBs.setUserIdentity(detail.getString("UserIdentity"));
+            cloudEventWithBLOBs.setReferencedResources(detail.getString("Resources"));
+            cloudEventWithBLOBs.setEventType(detail.getString("EventType"));
+            cloudEventWithBLOBs.setRequestParameters(detail.getString("RequestParameters"));
+            cloudEventWithBLOBs.setResponseElements(detail.getString("ResponseElements"));
+            cloudEventWithBLOBs.setCloudAuditEvent(item.getEventDetail());
+            return cloudEventWithBLOBs;
+        }).collect(Collectors.toList());
     }
 
     private List<CloudEventWithBLOBs> getBaiduEvents(Map<String, String> accountMap, String startTime, String endTime, int pageNum, int maxResult) throws Exception {
