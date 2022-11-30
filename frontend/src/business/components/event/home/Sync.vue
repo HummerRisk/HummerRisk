@@ -193,7 +193,7 @@ export default {
         accountId: "",
         region: ""
       },
-      supportCloud:["hummer-aliyun-plugin","hummer-huawei-plugin","hummer-qcloud-plugin","hummer-aws-plugin"],
+      supportCloud:["hummer-aliyun-plugin","hummer-huawei-plugin","hummer-qcloud-plugin","hummer-aws-plugin","hummer-huoshan-plugin"],
       checkAll: false,
       showSync: false,
       syncLog: '',
