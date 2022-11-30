@@ -89,9 +89,11 @@
                     <property name="condition" value="request.combine"/>
                 </include>
             </if>
-
             <if test="request.name != null and request.name != ''">
-                and t.name like concat('%', #{request.name}, '%')
+                and LOWER(t.name) like concat('%', LOWER(#{request.name}), '%')
+            </if>
+            <if test="request.description != null and request.description != ''">
+                and LOWER(t.description) like concat('%', LOWER(#{request.description}), '%')
             </if>
             <if test="request.pluginId != null and request.pluginId != ''">
                 and t.plugin_id = #{request.pluginId}

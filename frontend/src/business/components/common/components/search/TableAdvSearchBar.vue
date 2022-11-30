@@ -1,5 +1,11 @@
 <template>
   <span class="adv-search-bar">
+    <el-button v-if="showList" icon="el-icon-more" size="small" @click="more">
+      <span v-if="showOpen">{{ $t('commons.show_more') }}</span>
+    </el-button>
+    <el-button v-if="showList" icon="el-icon-menu" size="small" @click="menu">
+      <span v-if="showOpen">{{ $t('commons.show_menu') }}</span>
+    </el-button>
     <el-button icon="el-icon-refresh" size="small" @click="refresh">
       <span v-if="showOpen">{{ $t('commons.refresh') }}</span>
     </el-button>
@@ -81,6 +87,10 @@
         type: Boolean,
         default: true
       },
+      showList: {
+        type: Boolean,
+        default: false
+      },
     },
     watch:{
       checkedColumnNames(){
@@ -104,11 +114,16 @@
       list() {
         this.visible = true;
       },
+      more() {
+        this.$emit('more');
+      },
+      menu() {
+        this.$emit('menu');
+      },
       download() {
         this.$emit('download');
       },
       reset() {
-
       },
       search() {
         this.visible = false;

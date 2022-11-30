@@ -585,8 +585,6 @@ const columnOptions = [
         this.isIndeterminate = false;
         this.checkAll = val;
       },
-      select(selection) {
-      },
       create() {
         this.createRuleForm = { parameter: [], script : "", scanType: 'custodian' };
         this.createVisible = true;

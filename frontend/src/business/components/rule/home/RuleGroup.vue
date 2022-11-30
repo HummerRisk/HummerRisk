@@ -2,12 +2,13 @@
     <main-container>
       <el-card class="table-card" v-loading="result.loading">
         <template v-slot:header>
-          <group-table-header :condition.sync="condition" @search="search"
-                        :title="$t('rule.rule_set_list')"
-                        @create="create" @list="list" @menu="menu"
-                        :createTip="$t('rule.create_rule_set')"
-                        :show-create="true"/>
-
+          <table-header :condition.sync="condition" @search="search"
+                        :title="$t('rule.rule_set_list')" @more="more" @menu="menu"
+                        @create="create" :createTip="$t('rule.create_rule_set')"
+                        :show-create="true" :show-list="true"
+                        :items="items" :columnNames="columnNames"
+                        :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                        @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
         </template>
 
         <el-row :gutter="20" class="el-row-body" v-if="listStatus === 2">
@@ -77,11 +78,16 @@
         </el-row>
         <f-table-pagination v-if="listStatus === 2" :change="search" :current-page.sync="fcurrentPage" :page-size.sync="fpageSize" :total="ftotal"/>
 
-        <el-table v-if="listStatus === 1" :border="true" :stripe="true" :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                  @filter-change="filter" @select-all="select" @select="select">
-          <el-table-column type="index" min-width="50"/>
-          <el-table-column prop="name" :label="$t('rule.rule_set_name')" min-width="180" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="description" :label="$t('commons.description')" min-width="600" show-overflow-tooltip></el-table-column>
+        <hide-table v-if="listStatus === 1"
+          :table-data="tableData"
+          @sort-change="sort"
+          @filter-change="filter"
+          @select-all="select"
+          @select="select"
+        >
+          <el-table-column type="index" min-width="40"/>
+          <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('rule.rule_set_name')" min-width="180" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="description" v-if="checkedColumnNames.includes('description')" :label="$t('commons.description')" min-width="600" show-overflow-tooltip></el-table-column>
           <el-table-column :label="$t('account.cloud_platform')" min-width="180" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
@@ -90,7 +96,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('rule.tag_flag')" min-width="140" show-overflow-tooltip>
+          <el-table-column :label="$t('rule.tag_flag')" v-if="checkedColumnNames.includes('flag')" min-width="140" show-overflow-tooltip>
             <template v-slot:default="scope">
               <el-tag size="mini" type="danger" v-if="scope.row.flag === true">
                 {{ $t('rule.tag_flag_true') }}
@@ -106,7 +112,7 @@
               <table-operators v-if="!scope.row.flag" :buttons="buttons" :row="scope.row"/>
             </template>
           </el-table-column>
-        </el-table>
+        </hide-table>
         <table-pagination v-if="listStatus === 1" :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
 
       </el-card>
@@ -198,20 +204,26 @@
       <!--rule list-->
       <el-drawer class="rtl" :title="$t('rule.rule_list')" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <table-header :condition.sync="ruleCondition"
-                      @search="handleListSearch"
-                      :show-create="false" :show-open="false" :show-name="false"
-                      style="margin: 0 15px 15px 15px;"/>
-        <el-table border :data="ruleForm" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                  @filter-change="filter">
-          <el-table-column type="index" min-width="2%"/>
-          <el-table-column prop="name" :label="$t('rule.rule_name')" min-width="18%" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.resource_type')" min-width="10%" show-overflow-tooltip>
+        <table-header :condition.sync="ruleCondition" @search="handleListSearch"
+                      :title="$t('rule.rule_set_list')"
+                      :items="items2" :columnNames="columnNames2"
+                      :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
+        <hide-table
+          :table-data="ruleForm"
+          @sort-change="sort"
+          @filter-change="filter"
+          @select-all="select"
+          @select="select"
+        >
+          <el-table-column type="index" min-width="40"/>
+          <el-table-column prop="name" v-if="checkedColumnNames2.includes('name')" :label="$t('rule.rule_name')" min-width="150" show-overflow-tooltip></el-table-column>
+          <el-table-column :label="$t('rule.resource_type')" v-if="checkedColumnNames2.includes('resourceType')" min-width="80" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span v-for="(resourceType, index) in scope.row.types" :key="index">[{{ resourceType }}] </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" min-width="11%" show-overflow-tooltip>
+          <el-table-column :label="$t('account.cloud_platform')" v-if="checkedColumnNames2.includes('pluginName')" min-width="110" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -219,23 +231,23 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column min-width="7%" :label="$t('rule.severity')" column-key="severity">
+          <el-table-column min-width="80" :label="$t('rule.severity')" v-if="checkedColumnNames2.includes('severity')" column-key="severity">
             <template v-slot:default="{row}">
               <severity-type :row="row"></severity-type>
             </template>
           </el-table-column>
-          <el-table-column prop="description" :label="$t('rule.description')" min-width="28%" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.status')" min-width="7%" show-overflow-tooltip>
+          <el-table-column prop="description" :label="$t('rule.description')" v-if="checkedColumnNames2.includes('description')" min-width="220" show-overflow-tooltip></el-table-column>
+          <el-table-column :label="$t('rule.status')" min-width="70" show-overflow-tooltip>
             <template v-slot:default="scope">
               <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
             </template>
           </el-table-column>
-          <el-table-column prop="lastModified" min-width="15%" :label="$t('rule.last_modified')" sortable>
+          <el-table-column prop="lastModified" min-width="150" v-if="checkedColumnNames2.includes('lastModified')" :label="$t('rule.last_modified')" sortable>
             <template v-slot:default="scope">
               <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-        </el-table>
+        </hide-table>
         <table-pagination :change="handleListSearch" :current-page.sync="ruleListPage" :page-size.sync="ruleListPageSize" :total="ruleListTotal"/>
       </el-drawer>
       <!--rule list-->
@@ -298,6 +310,65 @@ import DialogFooter from "../../common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'rule.rule_set_name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'commons.description',
+    props: 'description',
+    disabled: false
+  },
+  {
+    label: 'account.cloud_platform',
+    props: 'pluginName',
+    disabled: false
+  },
+  {
+    label: 'rule.tag_flag',
+    props: 'flag',
+    disabled: false
+  },
+];
+
+const columnOptions2 = [
+  {
+    label: 'rule.rule_name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'rule.resource_type',
+    props: 'resourceType',
+    disabled: false
+  },
+  {
+    label: 'account.cloud_platform',
+    props: 'pluginName',
+    disabled: false
+  },
+  {
+    label: 'rule.severity',
+    props: 'severity',
+    disabled: false
+  },
+  {
+    label: 'commons.description',
+    props: 'description',
+    disabled: false
+  },
+  {
+    label: 'rule.last_modified',
+    props: 'lastModified',
+    disabled: false
+  },
+];
+
 /* eslint-disable */
   export default {
     components: {
@@ -311,6 +382,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
       DialogFooter,
       SeverityType,
       TableHeader,
+      HideTable,
     },
     data() {
       return {
@@ -412,6 +484,36 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
         scanVisible: false,
         scanForm: {},
         accounts: [],
+        checkedColumnNames: columnOptions.map((ele) => ele.props),
+        columnNames: columnOptions,
+        //名称搜索
+        items: [
+          {
+            name: 'rule.rule_set_name',
+            id: 'name'
+          },
+          {
+            name: 'commons.description',
+            id: 'description'
+          }
+        ],
+        checkAll: true,
+        isIndeterminate: false,
+        checkedColumnNames2: columnOptions2.map((ele) => ele.props),
+        columnNames2: columnOptions2,
+        //名称搜索
+        items2: [
+          {
+            name: 'rule.rule_name',
+            id: 'name'
+          },
+          {
+            name: 'commons.description',
+            id: 'description'
+          }
+        ],
+        checkAll2: true,
+        isIndeterminate2: false,
       }
     },
 
@@ -420,6 +522,28 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
     },
 
     methods: {
+      handleCheckedColumnNamesChange(value) {
+        const checkedCount = value.length;
+        this.checkAll = checkedCount === this.columnNames.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+        this.checkedColumnNames = value;
+      },
+      handleCheckAllChange(val) {
+        this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+        this.isIndeterminate = false;
+        this.checkAll = val;
+      },
+      handleCheckedColumnNamesChange2(value) {
+        const checkedCount = value.length;
+        this.checkAll2 = checkedCount === this.columnNames2.length;
+        this.isIndeterminate2 = checkedCount > 0 && checkedCount < this.columnNames2.length;
+        this.checkedColumnNames2 = value;
+      },
+      handleCheckAllChange2(val) {
+        this.checkedColumnNames2 = val ? this.columnNames2.map((ele) => ele.props) : [];
+        this.isIndeterminate2 = false;
+        this.checkAll2 = val;
+      },
       create() {
         this.createForm = { level: '最佳实践' };
         this.createVisible = true;
@@ -533,16 +657,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
             }
         });
       },
-      tableRowClassName({row, rowIndex}) {
-        if (rowIndex%4 === 0) {
-          return 'success-row';
-        } else if (rowIndex%2 === 0) {
-          return 'warning-row';
-        } else {
-          return '';
-        }
-      },
-      list() {
+      more() {
         this.listStatus = 1;
         this.search();
       },

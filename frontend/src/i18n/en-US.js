@@ -215,6 +215,9 @@ export default {
     index: 'Serial number',
     list_field: 'Field list',
     selected_fields: 'Selected fields',
+    show_more: 'Rows and columns',
+    show_menu: 'Block',
+    show_list: 'Display',
   },
   workspace: {
     create:'Create a workspace',

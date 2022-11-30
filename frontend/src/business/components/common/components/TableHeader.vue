@@ -20,7 +20,7 @@
         <slot name="button"></slot>
       </span>
       <span class="operate-button">
-        <table-adv-search-bar v-if="isCombine" :showOpen="showOpen" @search="search" @download="download"
+        <table-adv-search-bar v-if="isCombine" :showOpen="showOpen" :showList="showList" @search="search" @download="download" @more="more" @menu="menu"
                               :columnNames="columnNames" :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                               @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </span>
@@ -101,6 +101,10 @@ import XLSX from "xlsx";
         type: Boolean,
         default: true
       },
+      showList: {
+        type: Boolean,
+        default: false
+      },
       showName: {
         type: Boolean,
         default: true
@@ -166,6 +170,12 @@ import XLSX from "xlsx";
       },
       handleCheckedColumnNamesChange(value) {
         this.$emit('handleCheckedColumnNamesChange', value);
+      },
+      more() {
+        this.$emit('more');
+      },
+      menu() {
+        this.$emit('menu');
       },
     },
     computed: {

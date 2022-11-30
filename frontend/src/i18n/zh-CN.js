@@ -215,6 +215,9 @@ export default {
     index: '序号',
     list_field: '字段列表',
     selected_fields: '已选择字段',
+    show_more: '行列',
+    show_menu: '组块',
+    show_list: '显示',
   },
   workspace: {
     create: '创建工作空间',
