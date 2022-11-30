@@ -147,6 +147,9 @@ public class NoticeCreateService {
             if (StringUtils.equals(ScanConstants.SCAN_TYPE.CLOUD.name(), scanType) || StringUtils.equals(ScanConstants.SCAN_TYPE.VULN.name(), scanType)) {
                 CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(item.getTaskId());
                 if (cloudTask == null) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
                     return false;
                 } else {
                     if (StringUtils.equalsIgnoreCase(cloudTask.getStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
@@ -161,6 +164,12 @@ public class NoticeCreateService {
                 }
             } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), scanType)) {
                 ServerResult serverResult = serverResultMapper.selectByPrimaryKey(item.getTaskId());
+                if (serverResult == null) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
+                    return false;
+                }
                 if (StringUtils.equalsIgnoreCase(serverResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
                         || StringUtils.equalsIgnoreCase(serverResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.WARNING.name())
                         || StringUtils.equalsIgnoreCase(serverResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.ERROR.name())) {
@@ -172,6 +181,12 @@ public class NoticeCreateService {
                 }
             } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), scanType)) {
                 ImageResult imageResult = imageResultMapper.selectByPrimaryKey(item.getTaskId());
+                if (imageResult == null) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
+                    return false;
+                }
                 if (StringUtils.equalsIgnoreCase(imageResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
                         || StringUtils.equalsIgnoreCase(imageResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.WARNING.name())
                         || StringUtils.equalsIgnoreCase(imageResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.ERROR.name())) {
@@ -183,6 +198,12 @@ public class NoticeCreateService {
                 }
             } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.K8S.name(), scanType)) {
                 CloudNativeResult cloudNativeResult = cloudNativeResultMapper.selectByPrimaryKey(item.getTaskId());
+                if (cloudNativeResult == null) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
+                    return false;
+                }
                 if (StringUtils.equalsIgnoreCase(cloudNativeResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
                         || StringUtils.equalsIgnoreCase(cloudNativeResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.WARNING.name())
                         || StringUtils.equalsIgnoreCase(cloudNativeResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.ERROR.name())) {
@@ -194,6 +215,12 @@ public class NoticeCreateService {
                 }
             } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CONFIG.name(), scanType)) {
                 CloudNativeConfigResult cloudNativeConfigResult = cloudNativeConfigResultMapper.selectByPrimaryKey(item.getTaskId());
+                if (cloudNativeConfigResult == null) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
+                    return false;
+                }
                 if (StringUtils.equalsIgnoreCase(cloudNativeConfigResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
                         || StringUtils.equalsIgnoreCase(cloudNativeConfigResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.WARNING.name())
                         || StringUtils.equalsIgnoreCase(cloudNativeConfigResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.ERROR.name())) {
@@ -205,6 +232,12 @@ public class NoticeCreateService {
                 }
             } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CODE.name(), scanType)) {
                 CodeResult codeResult = codeResultMapper.selectByPrimaryKey(item.getTaskId());
+                if (codeResult == null) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
+                    return false;
+                }
                 if (StringUtils.equalsIgnoreCase(codeResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
                         || StringUtils.equalsIgnoreCase(codeResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.WARNING.name())
                         || StringUtils.equalsIgnoreCase(codeResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.ERROR.name())) {
