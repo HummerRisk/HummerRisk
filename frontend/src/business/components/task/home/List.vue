@@ -2,13 +2,24 @@
   <main-container>
     <el-card v-loading="result.loading">
       <template v-slot:header>
-        <table-header :condition.sync="condition" @search="search" @create="create" :createTip="$t('task.task_add')" :show-create="true" :title="$t('task.task_list')"/>
+        <table-header :condition.sync="condition" @search="search"
+                      :title="$t('task.task_list')"
+                      @create="create" :createTip="$t('task.task_add')"
+                      :show-create="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table border class="adjust-table" :data="tableData" style="width: 100%" @sort-change="sort" @filter-change="filter"
-                :row-class-name="tableRowClassName">
-        <el-table-column type="index" min-width="3%"/>
-        <el-table-column :label="$t('task.task_name')" min-width="12%">
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column :label="$t('task.task_name')" v-if="checkedColumnNames.includes('taskName')" min-width="140">
           <template v-slot:default="scope">
             <el-link type="primary" :underline="false" class="md-primary text-click"  @click="showTaskDetail(scope.row)">
               <span>
@@ -17,49 +28,49 @@
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column prop="description" :label="$t('task.task_desc')" min-width="20%"/>
-        <el-table-column min-width="10%" :label="$t('task.task_type')" column-key="type">
+        <el-table-column prop="description" v-if="checkedColumnNames.includes('description')" :label="$t('task.task_desc')" min-width="200"/>
+        <el-table-column min-width="100" v-if="checkedColumnNames.includes('type')" :label="$t('task.task_type')" column-key="type">
           <template v-slot:default="{row}">
             <task-type :row="row"/>
           </template>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('userName')" :label="$t('account.creator')" min-width="80" show-overflow-tooltip>
           {{ scope.row.userName }}
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="13%" prop="status" sortable show-overflow-tooltip>
-          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.status === 'UNCHECKED'">
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('resource.status')" min-width="130" prop="status" sortable show-overflow-tooltip>
+          <el-button @click="showTaskLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.status === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.status === 'APPROVED'">
+          <el-button @click="showTaskLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.status === 'APPROVED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
+          <el-button @click="showTaskLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="success" v-else-if="scope.row.status === 'FINISHED'">
+          <el-button @click="showTaskLog(scope.row)" plain size="mini" type="success" v-else-if="scope.row.status === 'FINISHED'">
             <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
           </el-button>
-          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="danger" v-else-if="scope.row.status === 'ERROR'">
+          <el-button @click="showTaskLog(scope.row)" plain size="mini" type="danger" v-else-if="scope.row.status === 'ERROR'">
             <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
           </el-button>
-          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="warning" v-else-if="scope.row.status === 'WARNING'">
+          <el-button @click="showTaskLog(scope.row)" plain size="mini" type="warning" v-else-if="scope.row.status === 'WARNING'">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
-          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="warning" v-else-if="scope.row.status === 'WAITING'">
+          <el-button @click="showTaskLog(scope.row)" plain size="mini" type="warning" v-else-if="scope.row.status === 'WAITING'">
             <i class="el-icon-refresh-right"></i> {{ $t('task.waiting') }}
           </el-button>
         </el-table-column>
-        <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="15%" sortable>
+        <el-table-column prop="createTime" v-if="checkedColumnNames.includes('createTime')" :label="$t('commons.create_time')" min-width="150" sortable>
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="18%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="160" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
 
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
@@ -429,6 +440,41 @@ import UpdateRule from "@/business/components/task/home/UpdateRule";
 import AccountType from "@/business/components/task/home/AccountType";
 import MainContainer from "../.././common/components/MainContainer";
 import {TASK_CONFIGS} from "@/business/components/common/components/search/search-components";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'task.task_name',
+    props: 'taskName',
+    disabled: false
+  },
+  {
+    label: 'task.task_desc',
+    props: 'description',
+    disabled: false
+  },
+  {
+    label: 'task.task_type',
+    props: 'type',
+    disabled: false
+  },
+  {
+    label: 'account.creator',
+    props: 'userName',
+    disabled: false
+  },
+  {
+    label: 'resource.status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'commons.create_time',
+    props: 'createTime',
+    disabled: false
+  },
+];
 
 /* eslint-disable */
 export default {
@@ -444,6 +490,7 @@ export default {
     UpdateRule,
     AccountType,
     MainContainer,
+    HideTable,
   },
   data() {
     return {
@@ -504,9 +551,41 @@ export default {
       itemKey: Math.random(),
       account: {},
       taskOrder: {},
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'task.task_name',
+          id: 'taskName'
+        },
+        {
+          name: 'task.task_desc',
+          id: 'description'
+        },
+        {
+          name: 'account.creator',
+          id: 'userName'
+        },
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
+    select(selection) {
+    },
     sort(column) {
       _sort(column, this.condition);
       this.init();
@@ -552,15 +631,6 @@ export default {
       this.updateVisible =  false;
       this.detailVisible =  false;
       this.taskLogListVisible = false;
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex%4 === 0) {
-        return 'success-row';
-      } else if (rowIndex%2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
     create() {
       this.$router.push({

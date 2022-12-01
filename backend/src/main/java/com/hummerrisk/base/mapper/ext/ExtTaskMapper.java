@@ -3,6 +3,7 @@ package com.hummerrisk.base.mapper.ext;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.controller.request.task.*;
 import com.hummerrisk.dto.*;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -66,7 +67,7 @@ public interface ExtTaskMapper {
 
     List<TaskTagGroupDTO> detailGroup(RuleVo ruleVo);
 
-    List<TaskVo> taskList(TaskRequest request);
+    List<TaskVo> taskList(@Param("request") TaskRequest request);
 
     List<TaskLogVo> taskLogList(TaskRequest request);
 

@@ -80,10 +80,10 @@
                 <property name="object" value="${condition}.taskName"/>
             </include>
         </if>
-        <if test='${condition}.severity != null'>
-            and t.severity
+        <if test="${condition}.createTime != null">
+            and t.create_time
             <include refid="condition">
-                <property name="object" value="${condition}.severity"/>
+                <property name="object" value="${condition}.createTime"/>
             </include>
         </if>
     </sql>
@@ -1121,8 +1121,7 @@
 
     </select>
 
-    <select id="taskList" parameterType="com.hummerrisk.controller.request.task.TaskRequest"
-            resultType="com.hummerrisk.controller.request.task.TaskVo">
+    <select id="taskList" resultType="com.hummerrisk.controller.request.task.TaskVo">
         SELECT
         t.*,
         t1.name as userName
@@ -1130,16 +1129,24 @@
         left join user t1 on t1.id = t.apply_user
 
         <where>
-            <if test="id != null">
-                AND t.id = #{id}
-            </if>
-            <if test="taskName != null">
-                AND t.task_name like CONCAT('%',#{taskName},'%')
-            </if>
-            <if test="combine != null">
+            <if test="request.combine != null">
                 <include refid="combine">
-                    <property name="condition" value="combine"/>
+                    <property name="condition" value="request.combine"/>
+                    <property name="taskName" value="request.taskName"/>
                 </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.taskName != null and request.taskName != ''">
+                and LOWER(t.task_name) like CONCAT('%',LOWER(#{request.taskName}),'%')
+            </if>
+            <if test="request.description != null and request.description != ''">
+                and LOWER(t.description) like CONCAT('%',LOWER(#{request.description}),'%')
+            </if>
+            <if test="request.userName != null and request.userName != ''">
+                and LOWER(t1.name) like CONCAT('%',LOWER(#{request.userName}),'%')
             </if>
         </where>
         ORDER BY t.create_time desc
