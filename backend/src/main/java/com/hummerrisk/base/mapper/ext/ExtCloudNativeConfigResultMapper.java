@@ -5,13 +5,14 @@ import com.hummerrisk.dto.CloudNativeConfigResultDTO;
 import com.hummerrisk.dto.HistoryCloudNativeConfigResultDTO;
 import com.hummerrisk.dto.HistoryCloudNativeResultDTO;
 import com.hummerrisk.dto.MetricChartDTO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
 
 public interface ExtCloudNativeConfigResultMapper {
 
-    List<CloudNativeConfigResultDTO> resultList(ConfigResultRequest request);
+    List<CloudNativeConfigResultDTO> resultList(@Param("request") ConfigResultRequest request);
 
     MetricChartDTO metricChart (String resultId);
 

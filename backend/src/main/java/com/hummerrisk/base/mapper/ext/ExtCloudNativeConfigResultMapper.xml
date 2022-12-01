@@ -51,7 +51,7 @@
             </include>
         </if>
         <if test="${condition}.creator != null">
-            and user.id
+            and u.id
             <include refid="condition">
                 <property name="object" value="${condition}.creator"/>
             </include>
@@ -64,7 +64,7 @@
         </if>
     </sql>
 
-    <select id="resultList" parameterType="com.hummerrisk.controller.request.config.ConfigResultRequest" resultType="com.hummerrisk.dto.CloudNativeConfigResultDTO">
+    <select id="resultList" resultType="com.hummerrisk.dto.CloudNativeConfigResultDTO">
         SELECT
         t.*,
         (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
@@ -75,16 +75,18 @@
         FROM cloud_native_config_result t
         left join user u on t.apply_user = u.id
         <where>
-            <if test="id != null">
-                AND t.id = #{id}
-            </if>
-            <if test="name != null">
-                AND LOWER(t.name) like CONCAT('%',#{name},'%')
-            </if>
-            <if test="combine != null">
+            <if test="request.combine != null">
                 <include refid="combine">
-                    <property name="condition" value="combine"/>
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
                 </include>
+            </if>
+
+            <if test="request.name != null and request.name != ''">
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.userName != null and request.userName != ''">
+                and LOWER(u.name) like CONCAT('%', LOWER(#{request.userName}),'%')
             </if>
         </where>
         ORDER BY t.update_time desc
