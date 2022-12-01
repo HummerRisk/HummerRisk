@@ -35,6 +35,12 @@ public class CloudResourceController {
     }
 
     @I18n
+    @GetMapping(value = "summary/{accountId}")
+    public List<CloudResourceSummary> summaryByAccountId(@PathVariable String accountId) throws Exception {
+        return cloudResourceService.getSummary(accountId);
+    }
+
+    @I18n
     @PostMapping(value = "list/{goPage}/{pageSize}")
     public Pager<List<CloudResourceItemDTO>> listResource(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudResourceItemRequest cloudResourceItemRequest) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
