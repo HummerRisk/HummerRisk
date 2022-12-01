@@ -181,6 +181,28 @@
         order by t.create_time desc
     </select>
 
+
+    <sql id="combine3">
+        <if test='${condition}.name != null'>
+            and t.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test='${condition}.description != null'>
+            and t.description
+            <include refid="condition">
+                <property name="object" value="${condition}.description"/>
+            </include>
+        </if>
+        <if test='${condition}.level != null'>
+            and t.level
+            <include refid="condition">
+                <property name="object" value="${condition}.level"/>
+            </include>
+        </if>
+    </sql>
+
     <select id="ruleGroupList" resultType="com.hummerrisk.dto.RuleGroupDTO">
         select
         t.*,
@@ -254,7 +276,7 @@
         <where>
             and t.level = '对象存储'
             <if test="request.combine != null">
-                <include refid="combine">
+                <include refid="combine3">
                     <property name="condition" value="request.combine"/>
                 </include>
             </if>
@@ -262,7 +284,10 @@
                 and c.id = #{request.accountId}
             </if>
             <if test="request.name != null and request.name != ''">
-                and t.name like concat('%', #{request.name}, '%')
+                and LOWER(t.name) like concat('%', LOWER(#{request.name}), '%')
+            </if>
+            <if test="request.description != null and request.description != ''">
+                and LOWER(t.description) like concat('%', LOWER(#{request.description}), '%')
             </if>
             <if test="request.pluginId != null and request.pluginId != ''">
                 and t.plugin_id = #{request.pluginId}
