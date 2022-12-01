@@ -7,6 +7,7 @@ import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.ResultHolder;
 import com.hummerrisk.controller.handler.annotation.I18n;
+import com.hummerrisk.controller.request.cloudTask.ManualRequest;
 import com.hummerrisk.controller.request.excel.ExcelExportRequest;
 import com.hummerrisk.controller.request.resource.ResourceRequest;
 import com.hummerrisk.controller.request.rule.RuleGroupRequest;
@@ -265,10 +266,10 @@ public class OssController {
     @I18n
     @ApiIgnore
     @PostMapping("manual/list/{goPage}/{pageSize}")
-    public Pager<List<CloudTask>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> param) throws Exception {
+    public Pager<List<CloudTask>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ManualRequest request) throws Exception {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        param.put("type", "manual");
-        return PageUtils.setPageInfo(page, ossService.selectManualTasks(param));
+        request.setType("manual");
+        return PageUtils.setPageInfo(page, ossService.selectManualTasks(request));
     }
 
     @I18n

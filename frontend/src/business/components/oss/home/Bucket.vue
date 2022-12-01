@@ -239,7 +239,7 @@ import MainContainer from "../../common/components/MainContainer";
 import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
-import {OSS_CONFIGS} from "@/business/components/common/components/search/search-components";
+import {OSS_BUCKET_CONFIGS} from "@/business/components/common/components/search/search-components";
 import {saveAs} from "@/common/js/FileSaver";
 import Upload from "@/business/components/oss/head/Upload";
 import HideTable from "@/business/components/common/hideTable/HideTable";
@@ -300,7 +300,7 @@ export default {
       result: {},
       ossResult: {},
       condition: {
-        components: OSS_CONFIGS
+        components: OSS_BUCKET_CONFIGS
       },
       tableData: [],
       currentPage: 1,

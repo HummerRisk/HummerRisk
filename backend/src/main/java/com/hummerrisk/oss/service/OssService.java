@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
+import com.hummerrisk.base.mapper.ext.ExtCloudTaskMapper;
 import com.hummerrisk.base.mapper.ext.ExtOssMapper;
 import com.hummerrisk.commons.constants.CloudAccountConstants;
 import com.hummerrisk.commons.constants.CloudTaskConstants;
@@ -12,6 +13,7 @@ import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.ResultHolder;
+import com.hummerrisk.controller.request.cloudTask.ManualRequest;
 import com.hummerrisk.controller.request.excel.ExcelExportRequest;
 import com.hummerrisk.controller.request.resource.ResourceRequest;
 import com.hummerrisk.controller.request.rule.RuleGroupRequest;
@@ -76,6 +78,8 @@ public class OssService {
     private RuleGroupMapper ruleGroupMapper;
     @Resource
     private CloudTaskMapper cloudTaskMapper;
+    @Resource
+    private ExtCloudTaskMapper extCloudTaskMapper;
 
     private static final String BASE_CANNED_ACL_TYPE = "cannedACL";
     private static final String BASE_STORAGE_CLASS_TYPE = "storageClass";
@@ -643,58 +647,10 @@ public class OssService {
         return extOssMapper.searchGroupExportData(request, groupId, accountId);
     }
 
-    public List<CloudTask> selectManualTasks(Map<String, Object> params) throws Exception {
+    public List<CloudTask> selectManualTasks(ManualRequest request) throws Exception {
 
         try {
-            CloudTaskExample example = new CloudTaskExample();
-            CloudTaskExample.Criteria criteria = example.createCriteria();
-            if (params.get("name") != null && StringUtils.isNotEmpty(params.get("name").toString())) {
-                criteria.andTaskNameLike("%" + params.get("name").toString() + "%");
-            }
-            if (params.get("type") != null && StringUtils.isNotEmpty(params.get("type").toString())) {
-                criteria.andTypeEqualTo(params.get("type").toString());
-            }
-            if (params.get("accountId") != null && StringUtils.isNotEmpty(params.get("accountId").toString())) {
-                criteria.andAccountIdEqualTo(params.get("accountId").toString());
-            }
-            if (params.get("cron") != null && StringUtils.isNotEmpty(params.get("cron").toString())) {
-                criteria.andCronLike(params.get("cron").toString());
-            }
-            if (params.get("status") != null && StringUtils.isNotEmpty(params.get("status").toString())) {
-                criteria.andStatusEqualTo(params.get("status").toString());
-            }
-            if (params.get("severity") != null && StringUtils.isNotEmpty(params.get("severity").toString())) {
-                criteria.andSeverityEqualTo(params.get("severity").toString());
-            }
-            if (params.get("pluginName") != null && StringUtils.isNotEmpty(params.get("pluginName").toString())) {
-                criteria.andPluginNameEqualTo(params.get("pluginName").toString());
-            }
-            if (params.get("ruleTag") != null && StringUtils.isNotEmpty(params.get("ruleTag").toString())) {
-                criteria.andRuleTagsLike("%" + params.get("ruleTag").toString() + "%");
-            }
-            OssWithBLOBs oss = ossMapper.selectByPrimaryKey(params.get("accountId").toString());
-            if (StringUtils.equals(oss.getPluginId(), OSSConstants.aws)) {
-                criteria.andResourceTypesLike("%aws.s3%");
-            } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.aliyun)) {
-                criteria.andResourceTypesLike("%aliyun.oss%");
-            } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.tencent)) {
-                criteria.andResourceTypesLike("%aliyun.cos%");
-            } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.huawei)) {
-                criteria.andResourceTypesLike("%huawei.obs%");
-            } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.baidu)) {
-                criteria.andResourceTypesLike("%baidu.bos%");
-            } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.ucloud)) {
-                criteria.andResourceTypesLike("%ucloud.oss%");
-            } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.qingcloud)) {
-                criteria.andResourceTypesLike("%qingcloud.oss%");
-            } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.qiniu)) {
-                criteria.andResourceTypesLike("%qiniu.oss%");
-            } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.huoshan)) {
-                criteria.andResourceTypesLike("%vloc.oss%");
-            }
-            criteria.andPluginIdNotIn(PlatformUtils.getVulnPlugin());
-            example.setOrderByClause("FIELD(`status`, 'PROCESSING', 'APPROVED', 'FINISHED', 'WARNING', 'ERROR'), return_sum desc, create_time desc, FIELD(`severity`, 'HighRisk', 'MediumRisk', 'LowRisk')");
-            return cloudTaskMapper.selectByExample(example);
+            return extCloudTaskMapper.selectOssManualTasks(request);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

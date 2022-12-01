@@ -35,4 +35,6 @@ public interface ExtCloudTaskMapper {
     List<CloudTask> selectManualTasks(@Param("request") ManualRequest request);
 
     List<CloudTask> selectManualVulnTasks(@Param("request") ManualRequest request);
+
+    List<CloudTask> selectOssManualTasks(@Param("request") ManualRequest request);
 }
