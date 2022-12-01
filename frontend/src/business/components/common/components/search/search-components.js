@@ -971,6 +971,46 @@ export const REPO = {
   },
 }
 
+export const ITEM_SORT_FIRST_LEVEL = {
+  key: "itemSortFirstLevel", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "resource.security_level", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
+export const ITEM_SORT_SECOND_LEVEL = {
+  key: "itemSortSecondLevel", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "resource.control_point", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
+export const PROJECT = {
+  key: "project", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "resource.basic_requirements_for_grade_protection", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
+export const IMPROVEMENT = {
+  key: "improvement", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "resource.suggestions_for_improvement", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
 export const USER_CONFIGS = [NAME, EMAIL, UPDATE_TIME, CREATE_TIME];
 export const PROXY_CONFIGS = [PROXY_TYPE, PROXY_IP, UPDATE_TIME, CREATE_TIME];
 export const MSG_CONFIGS = [READ_TIME, CREATE_TIME];
@@ -1015,3 +1055,4 @@ export const CLOUD_EVENT_CONFIGS = [EVENT_ACCOUNT, REGION, EVENT_TIME,USER, EVEN
 export const SBOM_CONFIGS = [NAME, UPDATE_TIME, CREATE_TIME, CREATOR];
 export const FS_CONFIGS = [NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const FS_RESULT_CONFIGS = [NAME, RULE_NAME, RULE_SEVERITY, K8S_RESULT_STATUS, CREATOR, UPDATE_TIME];
+export const RULE_INSPECTION_REPORT_CONFIGS = [ITEM_SORT_FIRST_LEVEL, ITEM_SORT_SECOND_LEVEL, PROJECT, IMPROVEMENT];
