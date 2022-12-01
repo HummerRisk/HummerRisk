@@ -126,7 +126,34 @@
         order by t.update_time desc
     </select>
 
-    <select id="ossBucketList" resultType="com.hummerrisk.oss.dto.OssBucketDTO" parameterType="com.hummerrisk.oss.controller.request.OssRequest">
+    <sql id="combine2">
+        <if test='${condition}.name != null and (${name} == null or ${name} == "")'>
+            and t1.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test="${condition}.bucketName != null">
+            and t.bucket_name
+            <include refid="condition">
+                <property name="object" value="${condition}.bucketName"/>
+            </include>
+        </if>
+        <if test="${condition}.pluginId != null">
+            and t1.plugin_id
+            <include refid="condition">
+                <property name="object" value="${condition}.pluginId"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="ossBucketList" resultType="com.hummerrisk.oss.dto.OssBucketDTO">
         select
         t.*,
         t1.name as name,
@@ -136,19 +163,19 @@
         left join oss t1 on t.oss_id = t1.id
         <where>
             <if test="request.combine != null">
-                <include refid="combine">
+                <include refid="combine2">
                     <property name="condition" value="request.combine"/>
                     <property name="name" value="request.name"/>
                 </include>
             </if>
-            <if test="request.id != null and request.id != ''">
-                and t.oss_id like CONCAT('%', #{request.id},'%')
+            <if test="request.ossId != null and request.ossId != ''">
+                and t.oss_id = #{request.ossId}
             </if>
             <if test="request.name != null and request.name != ''">
-                and t.name like CONCAT('%', #{request.name},'%')
+                and LOWER(t1.name) like CONCAT('%', LOWER(#{request.name}),'%')
             </if>
-            <if test="request.status != null and request.status != ''">
-                and t.status = #{request.status}
+            <if test="request.bucketName != null and request.bucketName != ''">
+                and LOWER(t.bucket_name) like CONCAT('%', LOWER(#{request.bucketName}),'%')
             </if>
         </where>
         order by t.create_time desc

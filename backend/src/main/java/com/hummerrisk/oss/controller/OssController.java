@@ -13,6 +13,7 @@ import com.hummerrisk.controller.request.rule.RuleGroupRequest;
 import com.hummerrisk.dto.ResourceDTO;
 import com.hummerrisk.dto.RuleGroupDTO;
 import com.hummerrisk.dto.ValidateDTO;
+import com.hummerrisk.oss.controller.request.OssBucketRequest;
 import com.hummerrisk.oss.controller.request.OssRequest;
 import com.hummerrisk.oss.dto.*;
 import com.hummerrisk.oss.service.OssService;
@@ -128,7 +129,7 @@ public class OssController {
     @ApiOperation(value = "对象存储桶列表")
     @PostMapping("bucketList/{goPage}/{pageSize}")
     public Pager<List<OssBucketDTO>> ossBucketList(
-            @PathVariable int goPage, @PathVariable int pageSize, @RequestBody OssRequest request) {
+            @PathVariable int goPage, @PathVariable int pageSize, @RequestBody OssBucketRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, ossService.ossBucketList(request));
     }

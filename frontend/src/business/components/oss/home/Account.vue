@@ -234,16 +234,23 @@
                :destroy-on-close="true">
       <table-header :condition.sync="bucketCondition" @search="searchBuckets"
                     :show-name="false"
-                    :show-validate="false" :show-create="false"/>
-      <el-table border :data="bucketData" class="adjust-table table-content" @sort-change="sort"
-                @filter-change="filter">
+                    :items="items2" :columnNames="columnNames2"
+                    :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
+                    @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
+      <hide-table
+        :table-data="bucketData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
         <el-table-column type="index" min-width="50"/>
-        <el-table-column prop="bucketName" :label="$t('oss.bucket')" min-width="140" show-overflow-tooltip v-slot:default="scope">
+        <el-table-column prop="bucketName" v-if="checkedColumnNames2.includes('bucketName')" :label="$t('oss.bucket')" min-width="140" show-overflow-tooltip v-slot:default="scope">
           <el-link type="primary" @click="showObject(scope.row)">
             {{ scope.row.bucketName }}
           </el-link>
         </el-table-column>
-        <el-table-column :label="$t('oss.name')" min-width="110" show-overflow-tooltip>
+        <el-table-column :label="$t('oss.name')" v-if="checkedColumnNames2.includes('name')" min-width="110" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -251,23 +258,23 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="location" :label="$t('oss.location')" min-width="110" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="canned_acl" :label="$t('oss.acl')" min-width="110" show-overflow-tooltip v-slot:default="scope">
+        <el-table-column prop="location" :label="$t('oss.location')" v-if="checkedColumnNames2.includes('location')" min-width="110" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="cannedAcl" :label="$t('oss.acl')" v-if="checkedColumnNames2.includes('cannedAcl')" min-width="110" show-overflow-tooltip v-slot:default="scope">
           <span v-if="scope.row.cannedAcl === 'public-read-write' || scope.row.cannedAcl === 'PublicReadWrite'">{{ $t('oss.public_read_write') }}</span>
           <span v-else-if="scope.row.cannedAcl === 'public-read' || scope.row.cannedAcl === 'PublicRead'">{{ $t('oss.public_read') }}</span>
           <span v-else-if="scope.row.cannedAcl === 'private' || scope.row.cannedAcl === 'Private'">{{ $t('oss.private') }}</span>
           <span v-else>{{ scope.row.cannedAcl }}</span>
         </el-table-column>
-        <el-table-column prop="storageClass" :label="$t('oss.storage_class')" min-width="110" show-overflow-tooltip v-slot:default="scope">
+        <el-table-column prop="storageClass" :label="$t('oss.storage_class')" v-if="checkedColumnNames2.includes('storageClass')" min-width="110" show-overflow-tooltip v-slot:default="scope">
           <span v-if="scope.row.storageClass === 'Standard' || scope.row.storageClass === 'STANDARD'">{{ $t('oss.standard') }}</span>
           <span v-else-if="scope.row.storageClass === 'IA' || scope.row.storageClass === 'STANDARD_IA' || scope.row.storageClass === 'WARM'">{{ $t('oss.ia') }}</span>
           <span v-else-if="scope.row.storageClass === 'Archive' || scope.row.storageClass === 'ARCHIVE'">{{ $t('oss.archive') }}</span>
           <span v-else-if="scope.row.storageClass === 'COLD'">{{ $t('oss.cold') }}</span>
           <span v-else>{{ scope.row.storageClass }}</span>
         </el-table-column>
-        <el-table-column prop="size" :label="$t('oss.oss_size')" min-width="100" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="objectNumber" :label="$t('oss.object_number')" min-width="100" show-overflow-tooltip></el-table-column>
-      </el-table>
+        <el-table-column prop="size" :label="$t('oss.oss_size')" v-if="checkedColumnNames2.includes('size')" min-width="100" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="objectNumber" :label="$t('oss.object_number')" v-if="checkedColumnNames2.includes('objectNumber')" min-width="100" show-overflow-tooltip></el-table-column>
+      </hide-table>
       <table-pagination :change="searchBuckets" :current-page.sync="bucketPage" :page-size.sync="bucketPageSize" :total="bucketTotal"/>
 
       <el-drawer
@@ -355,7 +362,7 @@ import MainContainer from "../../common/components/MainContainer";
 import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
-import {OSS_CONFIGS} from "@/business/components/common/components/search/search-components";
+import {OSS_BUCKET_CONFIGS, OSS_CONFIGS} from "@/business/components/common/components/search/search-components";
 import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver";
 import Regions from "@/business/components/account/home/Regions";
@@ -409,7 +416,43 @@ const columnOptions = [
     disabled: false
   }
 ];
-
+const columnOptions2 = [
+  {
+    label: 'oss.bucket',
+    props: 'bucketName',
+    disabled: false
+  },
+  {
+    label: 'oss.name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'oss.location',
+    props: 'location',
+    disabled: false
+  },
+  {
+    label: 'oss.acl',
+    props: 'cannedAcl',
+    disabled: false
+  },
+  {
+    label: 'oss.storage_class',
+    props: 'storageClass',
+    disabled: false
+  },
+  {
+    label: 'oss.oss_size',
+    props: 'size',
+    disabled: false
+  },
+  {
+    label: 'oss.object_number',
+    props: 'objectNumber',
+    disabled: false
+  },
+];
 
 /* eslint-disable */
 export default {
@@ -433,7 +476,7 @@ export default {
         components: OSS_CONFIGS
       },
       bucketCondition: {
-        components: OSS_CONFIGS
+        components: OSS_BUCKET_CONFIGS
       },
       tableData: [],
       currentPage: 1,
@@ -548,6 +591,21 @@ export default {
       ],
       checkAll: true,
       isIndeterminate: false,
+      checkedColumnNames2: columnOptions2.map((ele) => ele.props),
+      columnNames2: columnOptions2,
+      //名称搜索
+      items2: [
+        {
+          name: 'oss.name',
+          id: 'name'
+        },
+        {
+          name: 'oss.bucket',
+          id: 'bucketName',
+        }
+      ],
+      checkAll2: true,
+      isIndeterminate2: false,
     }
   },
   methods: {
@@ -561,6 +619,17 @@ export default {
       this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
       this.isIndeterminate = false;
       this.checkAll = val;
+    },
+    handleCheckedColumnNamesChange2(value) {
+      const checkedCount = value.length;
+      this.checkAll2 = checkedCount === this.columnNames2.length;
+      this.isIndeterminate2 = checkedCount > 0 && checkedCount < this.columnNames2.length;
+      this.checkedColumnNames2 = value;
+    },
+    handleCheckAllChange2(val) {
+      this.checkedColumnNames2 = val ? this.columnNames2.map((ele) => ele.props) : [];
+      this.isIndeterminate2 = false;
+      this.checkAll2 = val;
     },
     //查询列表
     search() {

@@ -17,6 +17,10 @@ public class OssRequest {
 
     private String status;
 
+    private String userName;
+
+    private String bucketName;
+
     private Map<String, Object> combine;
 
     public String getId() {
@@ -65,5 +69,21 @@ public class OssRequest {
 
     public void setCombine(Map<String, Object> combine) {
         this.combine = combine;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getBucketName() {
+        return bucketName;
+    }
+
+    public void setBucketName(String bucketName) {
+        this.bucketName = bucketName;
     }
 }

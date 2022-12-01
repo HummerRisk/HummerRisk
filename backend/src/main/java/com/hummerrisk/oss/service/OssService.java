@@ -89,7 +89,7 @@ public class OssService {
         return extOssMapper.ossList(request);
     }
 
-    public List<OssBucketDTO> ossBucketList(OssRequest request) {
+    public List<OssBucketDTO> ossBucketList(OssBucketRequest request) {
         return extOssMapper.ossBucketList(request);
     }
 
