@@ -12,6 +12,8 @@ public class ImageResultRequest extends ImageResult {
 
     private String name;
 
+    private String imageUrl;
+
     private Map<String, Object> combine;
 
     public String getName() {
@@ -20,6 +22,14 @@ public class ImageResultRequest extends ImageResult {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public Map<String, Object> getCombine() {

@@ -322,6 +322,24 @@ export const RESULT_STATUS = {
   }
 }
 
+export const K8S_RESULT_STATUS = {
+  key: "resultStatus",
+  name: 'TableSearchSelect',
+  label: 'commons.status',
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN]
+  },
+  options: [
+    {label: 'resource.i18n_in_process', value: 'APPROVED'},
+    {label: 'resource.i18n_done', value: 'FINISHED'},
+    {label: 'resource.i18n_has_exception', value: 'ERROR'},
+    {label: 'resource.i18n_has_warn', value: 'WARNING'},
+  ],
+  props: { // 尾部控件的props，一般为element ui控件的props
+    multiple: true
+  }
+}
+
 export const CREATOR = {
   key: "creator",
   name: 'TableSearchSelect',
@@ -979,7 +997,7 @@ export const IMAGE_CONFIGS = [NAME, IMAGE_URL, ACCOUNT_STATUS, CREATOR, CREATE_T
 export const IMAGE_REPO_CONFIGS = [NAME, REPO, ACCOUNT_STATUS, CREATOR, UPDATE_TIME];
 export const IMAGE_REPO_IMAGE_CONFIGS = [REPOSITORY, PATH, SIZE, TAG];
 export const IMAGE_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
-export const IMAGE_RESULT_CONFIGS = [NAME, IMAGE_URL, RULE_NAME, RULE_SEVERITY, RESULT_STATUS, CREATOR, UPDATE_TIME];
+export const IMAGE_RESULT_CONFIGS = [NAME, IMAGE_URL, RULE_NAME, K8S_RESULT_STATUS, CREATE_TIME, UPDATE_TIME];
 export const K8S_CONFIGS = [NAME, K8S_PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const K8S_SITUATION_CONFIGS = [SOURCE_NAME, SOURCE_NAMESPACE, SOURCE_TYPE, CREATOR, UPDATE_TIME, CREATE_TIME];
 export const K8S_SITUATION_LOG_CONFIGS = [K8S_PLUGIN_NAME ,CREATE_TIME];

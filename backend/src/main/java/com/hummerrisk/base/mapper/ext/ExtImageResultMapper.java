@@ -5,6 +5,7 @@ import com.hummerrisk.dto.HistoryImageReportDTO;
 import com.hummerrisk.dto.HistoryImageResultDTO;
 import com.hummerrisk.dto.ImageResultDTO;
 import com.hummerrisk.dto.ImageResultWithBLOBsDTO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,7 @@ public interface ExtImageResultMapper {
 
     List<ImageResultWithBLOBsDTO> resultListWithBLOBs(ImageResultRequest request);
 
-    List<ImageResultDTO> resultList(ImageResultRequest request);
+    List<ImageResultDTO> resultList(@Param("request") ImageResultRequest request);
 
     HistoryImageReportDTO getImageResultDto(String resultId);
 
