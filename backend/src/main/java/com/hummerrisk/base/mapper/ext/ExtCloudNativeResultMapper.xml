@@ -117,7 +117,22 @@
         ORDER BY t.update_time desc
     </select>
 
-    <select id="syncList" parameterType="com.hummerrisk.controller.request.cloudNative.CloudNativeSyncLogRequest" resultType="com.hummerrisk.dto.CloudNativeSourceSyncLogWithBLOBsDTO">
+    <sql id="combine2">
+        <if test='${condition}.pluginId != null'>
+            and t1.plugin_id
+            <include refid="condition">
+                <property name="object" value="${condition}.pluginId"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="syncList" resultType="com.hummerrisk.dto.CloudNativeSourceSyncLogWithBLOBsDTO">
         SELECT
         t.*,
         t1.name as k8sName,
@@ -125,16 +140,20 @@
         FROM cloud_native_source_sync_log t
         LEFT JOIN cloud_native t1 on t.cloud_native_id = t1.id
         <where>
-            <if test="id != null">
-                AND t.id = #{id}
-            </if>
-            <if test="name != null">
-                AND LOWER(t.name) like CONCAT('%',#{name},'%')
-            </if>
-            <if test="combine != null">
-                <include refid="combine">
-                    <property name="condition" value="combine"/>
+            <if test="request.combine != null">
+                <include refid="combine2">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
                 </include>
+            </if>
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.k8sName != null and request.k8sName != ''">
+                and LOWER(t1.name) like CONCAT('%', LOWER(#{request.k8sName}),'%')
+            </if>
+            <if test="request.operator != null and request.operator != ''">
+                and LOWER(t.operator) like CONCAT('%', LOWER(#{request.operator}),'%')
             </if>
         </where>
         ORDER BY t.create_time desc
@@ -146,6 +165,45 @@
         <result column="imageRepoName" property="imageRepoName"/>
     </resultMap>
 
+    <sql id="combine3">
+        <if test='${condition}.name != null'>
+            and t.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test="${condition}.updateTime != null">
+            and t.update_time
+            <include refid="condition">
+                <property name="object" value="${condition}.updateTime"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+        <if test="${condition}.status != null">
+            and t.status
+            <include refid="condition">
+                <property name="object" value="${condition}.status"/>
+            </include>
+        </if>
+        <if test="${condition}.creator != null">
+            and u.id
+            <include refid="condition">
+                <property name="object" value="${condition}.creator"/>
+            </include>
+        </if>
+        <if test="${condition}.pluginId != null">
+            and t1.plugin_id
+            <include refid="condition">
+                <property name="object" value="${condition}.pluginId"/>
+            </include>
+        </if>
+    </sql>
+
     <select id="imageList" resultMap="ImageMap">
         select
         t.*,
@@ -156,7 +214,7 @@
         left join user u on t.creator = u.id
         <where>
             <if test="request.combine != null">
-                <include refid="combine">
+                <include refid="combine3">
                     <property name="condition" value="request.combine"/>
                     <property name="name" value="request.name"/>
                 </include>

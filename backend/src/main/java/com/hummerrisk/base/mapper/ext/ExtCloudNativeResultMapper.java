@@ -16,7 +16,7 @@ public interface ExtCloudNativeResultMapper {
 
     List<ImageDTO> imageList(@Param("request") ImageRequest request);
 
-    List<CloudNativeSourceSyncLogWithBLOBsDTO> syncList(CloudNativeSyncLogRequest request);
+    List<CloudNativeSourceSyncLogWithBLOBsDTO> syncList(@Param("request") CloudNativeSyncLogRequest request);
 
     MetricChartDTO metricChart (String resultId);
 

@@ -5,14 +5,21 @@
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('k8s.sync_log_list')"
                       @create="create" :createTip="$t('k8s.sync_log_create')"
-                      :show-create="true"/>
-
+                      :show-create="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                :row-class-name="tableRowClassName" @filter-change="filter">
-        <el-table-column type="index" min-width="2%"/>
-        <el-table-column :label="$t('k8s.platform')" min-width="15%" show-overflow-tooltip>
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column :label="$t('k8s.platform')" v-if="checkedColumnNames.includes('k8sName')" min-width="150" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -20,9 +27,9 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="operation" :label="$t('k8s.sync_log')" min-width="15%"/>
-        <el-table-column prop="operator" :label="$t('resource.creator')" min-width="10%"/>
-        <el-table-column prop="status" min-width="10%" :label="$t('code.status')">
+        <el-table-column prop="operation" v-if="checkedColumnNames.includes('operation')" :label="$t('k8s.sync_log')" min-width="150"/>
+        <el-table-column prop="operator" v-if="checkedColumnNames.includes('operator')" :label="$t('resource.creator')" min-width="100"/>
+        <el-table-column prop="status" v-if="checkedColumnNames.includes('status')" min-width="100" :label="$t('code.status')">
           <template v-slot:default="scope">
             <el-tooltip class="item" effect="dark" :content="scope.row.output" placement="top">
               <el-tag size="mini" type="success" v-if="scope.row.result">
@@ -37,18 +44,18 @@
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column prop="sum" :label="$t('resource.i18n_not_compliance')" min-width="8%"/>
-        <el-table-column prop="createTime" :label="$t('k8s.sync_time')" min-width="15%" sortable>
+        <el-table-column prop="sum" v-if="checkedColumnNames.includes('sum')" :label="$t('resource.i18n_not_compliance')" min-width="100"/>
+        <el-table-column prop="createTime" v-if="checkedColumnNames.includes('createTime')" :label="$t('k8s.sync_time')" min-width="160" sortable>
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="50" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
@@ -90,6 +97,41 @@ import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import {K8S_SITUATION_LOG_CONFIGS} from "../../common/components/search/search-components";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'k8s.platform',
+    props: 'k8sName',
+    disabled: false
+  },
+  {
+    label: 'k8s.sync_log',
+    props: 'operation',
+    disabled: false
+  },
+  {
+    label: 'resource.creator',
+    props: 'operator',
+    disabled: false
+  },
+  {
+    label: 'code.status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'resource.i18n_not_compliance',
+    props: 'sum',
+    disabled: false
+  },
+  {
+    label: 'k8s.sync_time',
+    props: 'createTime',
+    disabled: false
+  },
+];
 
 /* eslint-disable */
 export default {
@@ -101,6 +143,7 @@ export default {
     TablePagination,
     TableOperator,
     DialogFooter,
+    HideTable,
   },
   data() {
     return {
@@ -135,9 +178,37 @@ export default {
         }
       ],
       k8s: [],
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'k8s.platform',
+          id: 'k8sName'
+        },
+        {
+          name: 'resource.creator',
+          id: 'operator'
+        }
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
+    select(selection) {
+    },
     create() {
       this.form = {};
       this.createVisible = true;
@@ -190,15 +261,6 @@ export default {
     filter(filters) {
       _filter(filters, this.condition);
       this.search();
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 4 === 0) {
-        return 'success-row';
-      } else if (rowIndex % 2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
   },
   created() {
