@@ -4,15 +4,22 @@
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('fs.fs_settings_list')"
-                      @create="create" :createTip="$t('fs.fs_create')" :show-create="true"/>
-
+                      @create="create" :createTip="$t('fs.fs_create')"
+                      :show-create="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                :row-class-name="tableRowClassName"
-                @filter-change="filter">
-        <el-table-column type="index" min-width="2%"/>
-        <el-table-column prop="name" :label="$t('fs.name')" min-width="15%" show-overflow-tooltip>
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column prop="name" :label="$t('fs.name')" v-if="checkedColumnNames.includes('name')" min-width="150" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/fs/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -20,21 +27,21 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="fileName" :label="$t('fs.file_name')" min-width="20%" show-overflow-tooltip/>
-        <el-table-column prop="size" :label="$t('fs.size')" min-width="8%" show-overflow-tooltip/>
-        <el-table-column min-width="13%" :label="$t('account.update_time')" sortable
+        <el-table-column prop="fileName" v-if="checkedColumnNames.includes('fileName')" :label="$t('fs.file_name')" min-width="200" show-overflow-tooltip/>
+        <el-table-column prop="size" v-if="checkedColumnNames.includes('size')" :label="$t('fs.size')" min-width="100" show-overflow-tooltip/>
+        <el-table-column min-width="160" v-if="checkedColumnNames.includes('updateTime')" :label="$t('commons.update_time')" sortable
                          prop="updateTime">
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
-        <el-table-column min-width="12%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column prop="userName" :label="$t('account.creator')" v-if="checkedColumnNames.includes('userName')" min-width="90" show-overflow-tooltip/>
+        <el-table-column min-width="140" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
@@ -162,6 +169,36 @@ import {_filter, _sort} from "@/common/js/utils";
 import {FS_CONFIGS} from "../../common/components/search/search-components";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import TarUpload from "../head/TarUpload";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'fs.name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'fs.file_name',
+    props: 'fileName',
+    disabled: false
+  },
+  {
+    label: 'fs.size',
+    props: 'size',
+    disabled: false
+  },
+  {
+    label: 'commons.update_time',
+    props: 'updateTime',
+    disabled: false
+  },
+  {
+    label: 'account.creator',
+    props: 'userName',
+    disabled: false
+  },
+];
 
 /* eslint-disable */
 export default {
@@ -174,6 +211,7 @@ export default {
     TableOperator,
     DialogFooter,
     TarUpload,
+    HideTable,
   },
   provide() {
     return {
@@ -236,12 +274,44 @@ export default {
       sboms: [],
       versions: [],
       tarFile: Object,
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'fs.name',
+          id: 'name'
+        },
+        {
+          name: 'fs.file_name',
+          id: 'fileName'
+        },
+        {
+          name: 'account.creator',
+          id: 'userName'
+        },
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   watch: {
     '$route': 'init'
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
+    select(selection) {
+    },
     create() {
       this.addAccountForm = {};
       this.createVisible = true;
@@ -385,15 +455,6 @@ export default {
         }
       });
     },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 4 === 0) {
-        return 'success-row';
-      } else if (rowIndex % 2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
-    },
     handleScan(item) {
       this.$alert(this.$t('image.one_scan') + item.name + " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
@@ -472,6 +533,12 @@ export default {
   color: red;
   font-size: 25px;
   vertical-align: middle;
+}
+.table-card >>> .search {
+  width: 450px !important;
+}
+.table-card >>> .search .el-input {
+  width: 140px !important;
 }
 </style>
 
