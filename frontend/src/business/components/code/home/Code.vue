@@ -5,18 +5,24 @@
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('code.code_settings_list')"
                       @create="create" :createTip="$t('code.code_create')"
-                      @validate="validate" :runTip="$t('account.one_validate')"
-                      :show-run="true" :show-create="true"/>
-
+                      @validate="validate" :validateTip="$t('account.one_validate')"
+                      :show-create="true" :show-validate="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                :row-class-name="tableRowClassName"
-                @filter-change="filter" @select-all="select" @select="select">
-        <el-table-column type="selection" min-width="5%">
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
+        <el-table-column type="selection" min-width="40">
         </el-table-column>
-        <el-table-column type="index" min-width="1%"/>
-        <el-table-column prop="name" :label="$t('code.name')" min-width="15%" show-overflow-tooltip>
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column prop="name" :label="$t('code.name')" v-if="checkedColumnNames.includes('name')"  min-width="150" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/code/${scope.row.pluginIcon}`)" style="width: 40px; height: 25px; vertical-align:middle" alt=""/>
@@ -24,7 +30,7 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" min-width="10%" :label="$t('code.status')"
+        <el-table-column prop="status" min-width="100" v-if="checkedColumnNames.includes('status')" :label="$t('code.status')"
                          column-key="status"
                          :filters="statusFilters"
                          :filter-method="filterStatus">
@@ -32,25 +38,25 @@
             <code-status :row="row"/>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('account.create_time')" sortable
+        <el-table-column min-width="160" v-if="checkedColumnNames.includes('createTime')" :label="$t('commons.create_time')" sortable
                          prop="createTime">
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('account.update_time')" sortable
+        <el-table-column min-width="160" v-if="checkedColumnNames.includes('updateTime')" :label="$t('commons.update_time')" sortable
                          prop="updateTime">
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
-        <el-table-column min-width="17%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column prop="userName" :label="$t('account.creator')" v-if="checkedColumnNames.includes('userName')" min-width="80" show-overflow-tooltip/>
+        <el-table-column min-width="150" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
@@ -215,6 +221,36 @@ import {CODE_CONFIGS} from "../../common/components/search/search-components";
 import ProxyDialogFooter from "@/business/components/common/components/ProxyDialogFooter";
 import ProxyDialogCreateFooter from "@/business/components/common/components/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'code.name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'code.status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'commons.create_time',
+    props: 'createTime',
+    disabled: false
+  },
+  {
+    label: 'commons.update_time',
+    props: 'updateTime',
+    disabled: false
+  },
+  {
+    label: 'account.creator',
+    props: 'userName',
+    disabled: false
+  },
+];
 
 /* eslint-disable */
 export default {
@@ -229,6 +265,7 @@ export default {
     DialogFooter,
     ProxyDialogFooter,
     ProxyDialogCreateFooter,
+    HideTable,
   },
   provide() {
     return {
@@ -314,12 +351,38 @@ export default {
       ],
       sboms: [],
       versions: [],
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'code.name',
+          id: 'name'
+        },
+        {
+          name: 'account.creator',
+          id: 'userName'
+        },
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   watch: {
     '$route': 'init'
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
     create() {
       this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
       this.createVisible = true;
@@ -552,15 +615,6 @@ export default {
           return false;
         }
       });
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 4 === 0) {
-        return 'success-row';
-      } else if (rowIndex % 2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
     addAccount (addAccountForm) {
       let newParam = { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] };
