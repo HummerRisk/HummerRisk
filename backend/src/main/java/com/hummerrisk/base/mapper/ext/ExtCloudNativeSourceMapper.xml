@@ -112,10 +112,21 @@
                 </include>
             </if>
 
-            <if test="request.name != null and request.name != ''">
-                and t.source_name like CONCAT('%', #{request.name},'%')
+            <if test="request.cloudNativeName != null and request.cloudNativeName != ''">
+                and LOWER(t1.name) like CONCAT('%', LOWER(#{request.cloudNativeName}),'%')
             </if>
-
+            <if test="request.userName != null and request.userName != ''">
+                and LOWER(t2.name) like CONCAT('%', LOWER(#{request.userName}),'%')
+            </if>
+            <if test="request.sourceName != null and request.sourceName != ''">
+                and LOWER(t.source_name) like CONCAT('%', LOWER(#{request.sourceName}),'%')
+            </if>
+            <if test="request.sourceNamespace != null and request.sourceNamespace != ''">
+                and LOWER(t.source_namespace) like CONCAT('%', LOWER(#{request.sourceNamespace}),'%')
+            </if>
+            <if test="request.sourceType != null and request.sourceType != ''">
+                and LOWER(t.source_type) like CONCAT('%', LOWER(#{request.sourceType}),'%')
+            </if>
             <if test="request.cloudNativeId != null and request.cloudNativeId != ''">
                 and t.cloud_native_id = #{request.cloudNativeId}
             </if>

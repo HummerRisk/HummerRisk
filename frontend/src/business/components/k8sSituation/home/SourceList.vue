@@ -151,35 +151,42 @@
         <el-card class="table-card" v-loading="result.loading">
           <template v-slot:header>
             <table-header :condition.sync="condition" @search="search"
-                          :title="$t('k8s.source_list')"/>
+                          :title="$t('k8s.source_list')"
+                          :items="items" :columnNames="columnNames"
+                          :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                          @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
           </template>
-          <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                    :row-class-name="tableRowClassName"
-                    @filter-change="filter">
-            <el-table-column type="index" min-width="50"/>
-            <el-table-column :label="$t('k8s.platform')" min-width="160" show-overflow-tooltip>
+          <hide-table
+            :table-data="tableData"
+            @sort-change="sort"
+            @filter-change="filter"
+            @select-all="select"
+            @select="select"
+          >
+            <el-table-column type="index" min-width="40"/>
+            <el-table-column :label="$t('k8s.platform')" v-if="checkedColumnNames.includes('cloudNativeName')" min-width="160" show-overflow-tooltip>
               <template v-slot:default="scope">
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.cloudNativeName }}
               </template>
             </el-table-column>
-            <el-table-column prop="sourceName" :label="$t('k8s.source_name')" min-width="200" show-overflow-tooltip>
+            <el-table-column prop="sourceName" v-if="checkedColumnNames.includes('sourceName')" :label="$t('k8s.source_name')" min-width="200" show-overflow-tooltip>
               <template v-slot:default="scope">
                 <el-link type="primary" @click="showYaml(scope.row)">
                   &nbsp;&nbsp; <i class="el-icon-info"></i> {{ scope.row.sourceName }}
                 </el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="sourceNamespace" :label="$t('k8s.source_namespace')" min-width="180" show-overflow-tooltip sortable></el-table-column>
-            <el-table-column min-width="170" :label="$t('k8s.sync_time')" sortable
+            <el-table-column prop="sourceNamespace" v-if="checkedColumnNames.includes('sourceNamespace')" :label="$t('k8s.source_namespace')" min-width="180" show-overflow-tooltip sortable></el-table-column>
+            <el-table-column min-width="170" :label="$t('k8s.sync_time')" sortable v-if="checkedColumnNames.includes('createTime')"
                              prop="createTime">
               <template v-slot:default="scope">
                 <span>{{ scope.row.createTime | timestampFormatDate }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="userName" :label="$t('account.creator')" min-width="110" show-overflow-tooltip/>
-            <el-table-column prop="sourceType" :label="$t('k8s.source_type')" min-width="160" show-overflow-tooltip sortable fixed="right"></el-table-column>
-          </el-table>
+            <el-table-column prop="userName" :label="$t('account.creator')" v-if="checkedColumnNames.includes('userName')" min-width="110" show-overflow-tooltip/>
+            <el-table-column prop="sourceType" :label="$t('k8s.source_type')" v-if="checkedColumnNames.includes('sourceType')" min-width="160" show-overflow-tooltip sortable fixed="right"></el-table-column>
+          </hide-table>
           <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
         </el-card>
       </el-card>
@@ -223,13 +230,50 @@ import TablePagination from "../../common/pagination/TablePagination";
 import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import {K8S_SITUATION_CONFIGS} from "../../common/components/search/search-components";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'k8s.platform',
+    props: 'cloudNativeName',
+    disabled: false
+  },
+  {
+    label: 'k8s.source_name',
+    props: 'sourceName',
+    disabled: false
+  },
+  {
+    label: 'k8s.source_namespace',
+    props: 'sourceNamespace',
+    disabled: false
+  },
+  {
+    label: 'k8s.sync_time',
+    props: 'createTime',
+    disabled: false
+  },
+  {
+    label: 'account.creator',
+    props: 'userName',
+    disabled: false
+  },
+  {
+    label: 'k8s.source_type',
+    props: 'sourceType',
+    disabled: false
+  }
+];
+
 /* eslint-disable */
 export default {
   components: {
     Container,
     TableHeader,
     TablePagination,
-    TableOperators
+    TableOperators,
+    HideTable,
   },
   data() {
     return {
@@ -262,6 +306,33 @@ export default {
       activeName: 'yaml',
       imageData: [],
       showImage: false,
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'k8s.platform',
+          id: 'cloudNativeName'
+        },
+        {
+          name: 'account.creator',
+          id: 'userName'
+        },
+        {
+          name: 'k8s.source_name',
+          id: 'sourceName',
+        },
+        {
+          name: 'k8s.source_namespace',
+          id: 'sourceNamespace',
+        },
+        {
+          name: 'k8s.source_type',
+          id: 'sourceType',
+        }
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   props: {
@@ -276,6 +347,19 @@ export default {
     }
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
+    select(selection) {
+    },
     init() {
       this.searchInfo();
       this.search();
@@ -302,6 +386,7 @@ export default {
       } else {
         this.condition.cloudNativeId = null;
       }
+      console.log(this.condition)
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -315,15 +400,6 @@ export default {
     filter(filters) {
       _filter(filters, this.condition);
       this.init();
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 4 === 0) {
-        return 'success-row';
-      } else if (rowIndex % 2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
     handleClose() {
       this.visible =  false;

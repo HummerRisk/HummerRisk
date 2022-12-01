@@ -11,6 +11,10 @@ public class CloudNativeSourceRequest extends CloudNativeSource {
 
     private String name;
 
+    private String cloudNativeName;
+
+    private String userName;
+
     private Map<String, Object> combine;
 
     public String getName() {
@@ -29,4 +33,19 @@ public class CloudNativeSourceRequest extends CloudNativeSource {
         this.combine = combine;
     }
 
+    public String getCloudNativeName() {
+        return cloudNativeName;
+    }
+
+    public void setCloudNativeName(String cloudNativeName) {
+        this.cloudNativeName = cloudNativeName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 }
