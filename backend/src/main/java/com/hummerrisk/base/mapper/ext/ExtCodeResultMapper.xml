@@ -80,7 +80,7 @@
             </choose>
         </if>
         <if test="${condition}.creator != null">
-            and user.id
+            and u.id
             <include refid="condition">
                 <property name="object" value="${condition}.creator"/>
             </include>
@@ -137,7 +137,7 @@
         (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'LOW') as low,
         (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown
         FROM code_result t
-        left join user on t.creator = user.id
+        left join user u on t.apply_user = u.id
         <where>
             <if test="request.combine != null">
                 <include refid="combine">
