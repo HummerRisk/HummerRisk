@@ -2,14 +2,24 @@
   <main-container>
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
-        <table-header :condition.sync="condition" @search="search" @create="create"
-                      :create-tip="$t('image.repo_create')" :title="$t('image.image_repo_list')" :show-create="true"/>
+        <table-header :condition.sync="condition" @search="search"
+                      :title="$t('image.image_repo_list')"
+                      @create="create" :createTip="$t('image.repo_create')"
+                      :show-create="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table border class="adjust-table" :data="tableData" style="width: 100%" @sort-change="sort" @filter-change="filter"
-                :row-class-name="tableRowClassName">
-        <el-table-column type="index" min-width="3%"/>
-        <el-table-column prop="name" :label="$t('image.image_repo_name')" min-width="18%">
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('image.image_repo_name')" min-width="160">
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/repo/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
@@ -17,9 +27,9 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="repo" :label="$t('image.image_repo_url')" min-width="18%"/>
-        <el-table-column prop="userName" :label="$t('image.image_repo_user_name')" min-width="12%"/>
-        <el-table-column prop="status" min-width="10%" :label="$t('image.image_repo_status')"
+        <el-table-column prop="repo" v-if="checkedColumnNames.includes('repo')" :label="$t('image.image_repo_url')" min-width="200"/>
+        <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :label="$t('image.image_repo_user_name')" min-width="110"/>
+        <el-table-column prop="status" v-if="checkedColumnNames.includes('status')" min-width="100" :label="$t('image.image_repo_status')"
                          column-key="status"
                          :filters="statusFilters"
                          :filter-method="filterStatus">
@@ -27,18 +37,18 @@
             <image-status :row="row"/>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="15%" sortable>
+        <el-table-column prop="createTime" v-if="checkedColumnNames.includes('createTime')" :label="$t('commons.create_time')" min-width="160" sortable>
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="180" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators v-if="scope.row.pluginIcon !== 'other.png'" :buttons="buttons" :row="scope.row"/>
             <table-operators v-if="scope.row.pluginIcon === 'other.png'" :buttons="buttons2" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
 
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
@@ -301,6 +311,37 @@ import {
   IMAGE_REPO_CONFIGS,
   IMAGE_REPO_IMAGE_CONFIGS
 } from "@/business/components/common/components/search/search-components";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'image.image_repo_name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'image.image_repo_url',
+    props: 'repo',
+    disabled: false
+  },
+  {
+    label: 'image.image_repo_user_name',
+    props: 'userName',
+    disabled: false
+  },
+  {
+    label: 'image.image_repo_status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'commons.create_time',
+    props: 'createTime',
+    disabled: false
+  },
+];
+
 /* eslint-disable */
 export default {
   name: "ImageRepo",
@@ -312,6 +353,7 @@ export default {
     TableOperators,
     MainContainer,
     SyncTableHeader,
+    HideTable,
   },
   data() {
     return {
@@ -411,9 +453,39 @@ export default {
       innerK8s: false,
       k8sData: [],
       handleItem: {},
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'image.image_repo_name',
+          id: 'name'
+        },
+        {
+          name: 'image.image_repo_url',
+          id: 'repo'
+        },
+        {
+          name: 'image.image_repo_user_name',
+          id: 'userName'
+        },
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
     create() {
       this.form = {};
       this.createVisible = true;
@@ -455,15 +527,6 @@ export default {
     },
     buildPagePath(path) {
       return path + this.currentPage + "/" + this.pageSize;
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex%4 === 0) {
-        return 'success-row';
-      } else if (rowIndex%2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
     editRepo(form) {
       this.$refs[form].validate(valid => {
@@ -654,6 +717,11 @@ export default {
 .rtl >>> .el-form-item__content {
   width: 80%;
 }
-
+.table-card >>> .search {
+  width: 450px !important;
+}
+.table-card >>> .search .el-input {
+  width: 140px !important;
+}
 /deep/ :focus{outline:0;}
 </style>
