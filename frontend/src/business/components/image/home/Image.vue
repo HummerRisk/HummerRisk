@@ -2,8 +2,13 @@
   <main-container>
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
-        <table-header :condition.sync="condition" @search="search" @create="create"
-                      :create-tip="$t('image.create')" :title="$t('image.image_list')" :show-create="true"/>
+        <table-header :condition.sync="condition" @search="search"
+                      :title="$t('image.image_list')"
+                      @create="create" :createTip="$t('image.create')"
+                      :show-create="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
       <el-card class="table-card el-row-card" :body-style="{ padding: '0' }" :key="index" v-for="(data, index) in tableData">
@@ -24,20 +29,20 @@
             <el-row>
               <el-col :span="20" class="cl-ver-col">
                 <el-row class="cl-mid-row">
-                  <el-col :span="3" class="cl-span-col">{{ $t('image.image_name') }}</el-col>
-                  <el-col :span="3" class="cl-span-col">{{ $t('image.image_status') }}</el-col>
-                  <el-col :span="data.type==='tar'?5:8" class="cl-span-col">{{ $t('image.image_url') }}</el-col>
-                  <el-col :span="3" v-if="data.type==='tar'" class="cl-span-col">{{ $t('image.image_size') }}</el-col>
-                  <el-col :span="5" class="cl-span-col">{{ $t('image.image_repo_name') }}</el-col>
-                  <el-col :span="5" class="cl-span-col">{{ $t('commons.update_time') }}</el-col>
+                  <el-col :span="3" v-if="checkedColumnNames.includes('name')" class="cl-span-col">{{ $t('image.image_name') }}</el-col>
+                  <el-col :span="3" v-if="checkedColumnNames.includes('status')" class="cl-span-col">{{ $t('image.image_status') }}</el-col>
+                  <el-col :span="data.type==='tar'?5:8" v-if="checkedColumnNames.includes('type')" class="cl-span-col">{{ $t('image.image_url') }}</el-col>
+                  <el-col :span="3" v-if="data.type==='tar' && checkedColumnNames.includes('tar')" class="cl-span-col">{{ $t('image.image_size') }}</el-col>
+                  <el-col :span="5" v-if="checkedColumnNames.includes('imageRepoName')" class="cl-span-col">{{ $t('image.image_repo_name') }}</el-col>
+                  <el-col :span="5" v-if="checkedColumnNames.includes('updateTime')" class="cl-span-col">{{ $t('commons.update_time') }}</el-col>
                 </el-row>
                 <el-row class="cl-mid-row">
-                  <el-col :span="3" class="cl-data-col">
+                  <el-col :span="3" class="cl-data-col" v-if="checkedColumnNames.includes('name')">
                     <el-tooltip class="item" effect="dark" :content="data.name" placement="top-start">
                       <span class="word-wrap">{{ data.name }}</span>
                     </el-tooltip>
                   </el-col>
-                  <el-col :span="3" class="cl-data-col">
+                  <el-col :span="3" class="cl-data-col" v-if="checkedColumnNames.includes('status')">
                     <el-tag size="mini" type="warning" v-if="data.status === 'DELETE'">
                       {{ $t('server.DELETE') }}
                     </el-tag>
@@ -48,7 +53,7 @@
                       {{ $t('server.INVALID') }}
                     </el-tag>
                   </el-col>
-                  <el-col :span="data.type==='tar'?5:8" class="cl-data-col">
+                  <el-col :span="data.type==='tar'?5:8" class="cl-data-col" v-if="checkedColumnNames.includes('type')">
                     <div v-if="data.type==='repo'">
                       <el-tooltip class="item" effect="dark" :content="data.imageUrl + ':' + data.imageTag" placement="top-start">
                         <span class="word-wrap">{{ data.imageUrl + ':' + data.imageTag }}</span>
@@ -65,9 +70,9 @@
                       </el-tooltip>
                     </div>
                   </el-col>
-                  <el-col :span="3" v-if="data.type==='tar'" class="cl-data-col">{{ data.size }}</el-col>
-                  <el-col :span="5" class="cl-data-col">{{ data.imageRepoName?data.imageRepoName:$t('image.no_image_repo') }}</el-col>
-                  <el-col :span="5" class="cl-data-col">{{ data.updateTime | timestampFormatDate }}</el-col>
+                  <el-col :span="3" v-if="data.type==='tar' && checkedColumnNames.includes('tar')" class="cl-data-col">{{ data.size }}</el-col>
+                  <el-col :span="5" class="cl-data-col" v-if="checkedColumnNames.includes('imageRepoName')">{{ data.imageRepoName?data.imageRepoName:$t('image.no_image_repo') }}</el-col>
+                  <el-col :span="5" class="cl-data-col" v-if="checkedColumnNames.includes('updateTime')">{{ data.updateTime | timestampFormatDate }}</el-col>
                 </el-row>
               </el-col>
               <el-col :span="4" class="cl-ver-col">
@@ -340,6 +345,40 @@ import ImageTarUpload from "../head/ImageTarUpload";
 import MainContainer from "../.././common/components/MainContainer";
 import {IMAGE_CONFIGS} from "@/business/components/common/components/search/search-components";
 
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'image.image_name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'image.image_status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'image.image_url',
+    props: 'type',
+    disabled: false
+  },
+  {
+    label: 'image.image_size',
+    props: 'tar',
+    disabled: false
+  },
+  {
+    label: 'image.image_repo_name',
+    props: 'imageRepoName',
+    disabled: false
+  },
+  {
+    label: 'commons.update_time',
+    props: 'updateTime',
+    disabled: false
+  },
+];
+
 /* eslint-disable */
 export default {
   name: "imageSetting",
@@ -416,6 +455,25 @@ export default {
       sboms: [],
       versions: [],
       images: [],
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'image.image_name',
+          id: 'name'
+        },
+        {
+          name: 'image.image_url',
+          id: 'repo'
+        },
+        {
+          name: 'image.image_repo_name',
+          id: 'imageRepoName'
+        },
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   activated() {
@@ -425,6 +483,17 @@ export default {
     this.location = window.location.href.split("#")[0];
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
     create() {
       this.form = {type: 'image'};
       if(this.sboms && this.sboms.length > 0) {
