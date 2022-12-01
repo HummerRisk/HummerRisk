@@ -86,6 +86,17 @@
                 <property name="object" value="${condition}.createTime"/>
             </include>
         </if>
+        <if test='${condition}.ruleTag != null and ${condition}.ruleTag.value != "all"'>
+            and #{${condition}.ruleTag.value}
+            <choose>
+                <when test='${condition}.ruleTag.operator == "in"'>
+                    in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
+                </when>
+                <when test='${condition}.ruleTag.operator == "not in"'>
+                    not in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
+                </when>
+            </choose>
+        </if>
         <if test="${condition}.updateTime != null">
             and t.update_time
             <include refid="condition">
@@ -94,8 +105,7 @@
         </if>
     </sql>
 
-    <select id="resultListWithBLOBs" parameterType="com.hummerrisk.controller.request.image.ImageResultRequest"
-            resultType="com.hummerrisk.dto.ImageResultWithBLOBsDTO">
+    <select id="resultListWithBLOBs" resultType="com.hummerrisk.dto.ImageResultWithBLOBsDTO">
         SELECT
         t.*,
         (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,

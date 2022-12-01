@@ -12,7 +12,7 @@ import java.util.Map;
 
 public interface ExtImageResultMapper {
 
-    List<ImageResultWithBLOBsDTO> resultListWithBLOBs(ImageResultRequest request);
+    List<ImageResultWithBLOBsDTO> resultListWithBLOBs(@Param("request") ImageResultRequest request);
 
     List<ImageResultDTO> resultList(@Param("request") ImageResultRequest request);
 
