@@ -50,6 +50,12 @@
     </sql>
 
     <sql id="combine">
+        <if test='${condition}.project != null'>
+            and t.project
+            <include refid="condition">
+                <property name="object" value="${condition}.project"/>
+            </include>
+        </if>
         <if test='${condition}.repository != null'>
             and t.repository
             <include refid="condition">
@@ -84,15 +90,27 @@
             <if test="request.combine != null">
                 <include refid="combine">
                     <property name="condition" value="request.combine"/>
-                    <property name="name" value="request.name"/>
+                    <property name="project" value="request.project"/>
                 </include>
             </if>
 
             <if test="request.repoId != null and request.repoId != ''">
                 and t.repo_id = #{request.repoId}
             </if>
+            <if test="request.project != null and request.project != ''">
+                and LOWER(t.project) like CONCAT('%', LOWER(#{request.project}),'%')
+            </if>
+            <if test="request.repository != null and request.repository != ''">
+                and LOWER(t.repository) like CONCAT('%', LOWER(#{request.repository}),'%')
+            </if>
             <if test="request.path != null and request.path != ''">
-                and t.path like CONCAT('%', #{path},'%')
+                and LOWER(t.path) like CONCAT('%', LOWER(#{request.path}),'%')
+            </if>
+            <if test="request.size != null and request.size != ''">
+                and LOWER(t.size) like CONCAT('%', LOWER(#{request.size}),'%')
+            </if>
+            <if test="request.arch != null and request.arch != ''">
+                and LOWER(t.arch) like CONCAT('%', LOWER(#{request.arch}),'%')
             </if>
         </where>
         order by t.path
