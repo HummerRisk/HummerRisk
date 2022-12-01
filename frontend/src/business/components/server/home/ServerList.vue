@@ -1020,7 +1020,7 @@ const columnOptions = [
   .table-card >>> .search {
     width: 300px !important;
   }
-  /deep/ .table-card .search >>> .el-input {
+  .table-card >>> .search .el-input {
     width: 90px !important;
   }
 </style>

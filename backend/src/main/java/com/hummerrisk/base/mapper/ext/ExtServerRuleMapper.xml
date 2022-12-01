@@ -56,12 +56,6 @@
                 <property name="object" value="${condition}.severity"/>
             </include>
         </if>
-        <if test='${condition}.pluginId != null'>
-            and t.plugin_id
-            <include refid="condition">
-                <property name="object" value="${condition}.pluginId"/>
-            </include>
-        </if>
         <if test='${condition}.ruleTag != null and ${condition}.ruleTag.value != "all"'>
             and #{${condition}.ruleTag.value}
             <choose>
@@ -97,16 +91,21 @@
         left join rule_tag t2 on t1.tag_key = t2.tag_key
 
         <where>
-            <if test="id != null">
-                AND t.id = #{id}
-            </if>
-            <if test="name != null">
-                AND LOWER(t.name) like CONCAT('%',#{name},'%')
-            </if>
-            <if test="combine != null">
+            <if test="request.combine != null">
                 <include refid="combine">
-                    <property name="condition" value="combine"/>
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
                 </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and LOWER(t.name) like CONCAT('%',LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.description != null and request.description != ''">
+                and LOWER(t.description) like CONCAT('%',LOWER(#{request.description}),'%')
             </if>
         </where>
         ORDER BY t.last_modified desc

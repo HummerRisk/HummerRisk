@@ -10,18 +10,24 @@
             :label="$t(tag.tagName)">
           </el-tab-pane>
         </el-tabs>
-        <table-header :condition.sync="condition"
-                      @search="search"
+        <table-header :condition.sync="condition" @search="search"
                       :title="$t('server.rule_list')"
-                      @create="create"
-                      :createTip="$t('server.create_rule')"
-                      :show-create="true"/>
+                      @create="create" :createTip="$t('server.create_rule')"
+                      :show-create="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                @filter-change="filter">
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
         <!-- 展开 start -->
-        <el-table-column type="expand" min-width="1%">
+        <el-table-column type="expand" min-width="40">
           <template slot-scope="props">
             <el-form>
               <codemirror ref="cmEditor" v-model="props.row.script" class="code-mirror" :options="cmOptions" />
@@ -46,30 +52,30 @@
           </template>
         </el-table-column >
         <!-- 展开 end -->
-        <el-table-column type="index" min-width="3%"/>
-        <el-table-column prop="name" :label="$t('package.rule_name')" min-width="18%" show-overflow-tooltip></el-table-column>
-        <el-table-column min-width="7%" :label="$t('package.severity')" column-key="severity">
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('package.rule_name')" min-width="150" show-overflow-tooltip></el-table-column>
+        <el-table-column min-width="70" v-if="checkedColumnNames.includes('severity')" :label="$t('package.severity')" column-key="severity">
           <template v-slot:default="{row}">
             <rule-type :row="row"/>
           </template>
         </el-table-column>
-        <el-table-column prop="description" :label="$t('package.description')" min-width="24%" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('package.status')" min-width="7%" show-overflow-tooltip>
+        <el-table-column prop="description" v-if="checkedColumnNames.includes('description')" :label="$t('package.description')" min-width="250" show-overflow-tooltip></el-table-column>
+        <el-table-column :label="$t('package.status')" v-if="checkedColumnNames.includes('status')" min-width="70" show-overflow-tooltip>
           <template v-slot:default="scope">
             <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
           </template>
         </el-table-column>
-        <el-table-column prop="lastModified" min-width="14%" :label="$t('package.last_modified')" sortable>
+        <el-table-column prop="lastModified" v-if="checkedColumnNames.includes('lastModified')" min-width="160" :label="$t('package.last_modified')" sortable>
           <template v-slot:default="scope">
             <span>{{ scope.row.lastModified | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="10%" :label="$t('commons.operating')">
+        <el-table-column min-width="100" :label="$t('commons.operating')">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
@@ -218,6 +224,36 @@ import {_filter, _sort} from "@/common/js/utils";
 import RuleType from "./RuleType";
 import {SERVER_RULE_CONFIGS} from "../../common/components/search/search-components";
 import {severityOptions} from "@/common/js/constants";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'package.rule_name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'package.severity',
+    props: 'severity',
+    disabled: false
+  },
+  {
+    label: 'package.description',
+    props: 'description',
+    disabled: false
+  },
+  {
+    label: 'package.status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'package.last_modified',
+    props: 'lastModified',
+    disabled: false
+  },
+];
 
 /* eslint-disable */
 export default {
@@ -229,7 +265,8 @@ export default {
     TablePagination,
     TableOperator,
     DialogFooter,
-    RuleType
+    RuleType,
+    HideTable,
   },
   data() {
     return {
@@ -291,6 +328,21 @@ export default {
         line: true,
         indentWithTabs: true,
       },
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'package.rule_name',
+          id: 'name'
+        },
+        {
+          name: 'package.description',
+          id: 'description'
+        },
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
 
@@ -299,6 +351,19 @@ export default {
   },
 
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
+    select(selection) {
+    },
     create() {
       this.createRuleForm = { parameter: [], script : "" };
       this.createVisible = true;
@@ -437,15 +502,6 @@ export default {
           return false;
         }
       });
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex%4 === 0) {
-        return 'success-row';
-      } else if (rowIndex%2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
     changeStatus (item) {
       this.result = this.$post('/rule/changeStatus', {id: item.id, status: item.status?1:0}, response => {
