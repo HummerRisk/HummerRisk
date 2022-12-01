@@ -12,6 +12,8 @@ public class K8sResultRequest extends CloudNativeResult {
 
     private String name;
 
+    private String userName;
+
     private String resultId;
 
     private Map<String, Object> combine;
@@ -38,5 +40,15 @@ public class K8sResultRequest extends CloudNativeResult {
 
     public void setCombine(Map<String, Object> combine) {
         this.combine = combine;
+    }
+
+    @Override
+    public String getUserName() {
+        return userName;
+    }
+
+    @Override
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

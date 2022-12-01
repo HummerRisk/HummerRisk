@@ -2,15 +2,22 @@
   <main-container>
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
-        <table-header :condition.sync="condition"
-                             @search="search"
-                             :title="$t('k8s.result_list')"/>
+        <table-header :condition.sync="condition" @search="search"
+                      :title="$t('k8s.result_list')"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                @filter-change="filter">
-        <el-table-column type="index" min-width="1%"/>
-        <el-table-column prop="name" :label="$t('k8s.name')" min-width="13%" show-overflow-tooltip>
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('k8s.name')" min-width="160" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -18,8 +25,8 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" :label="$t('account.creator')" min-width="7%" show-overflow-tooltip/>
-        <el-table-column v-slot:default="scope" :label="$t('k8s.vuln_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="17%">
+        <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :label="$t('account.creator')" min-width="70" show-overflow-tooltip/>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('result')" :label="$t('k8s.vuln_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="200">
           <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown" placement="top">
             <div class="txt-click" @click="goResource(scope.row)">
               <span style="background-color: #8B0000;color: white;padding: 3px;">{{ 'C:' + scope.row.critical }}</span>
@@ -30,7 +37,7 @@
             </div>
           </el-tooltip>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('k8s.config_compliance')" prop="returnConfigSum" sortable show-overflow-tooltip min-width="17%">
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('configResult')" :label="$t('k8s.config_compliance')" prop="returnConfigSum" sortable show-overflow-tooltip min-width="200">
           <el-tooltip effect="dark" :content="$t('history.config_result') + ' CRITICAL:' + scope.row.configCritical + ' HIGH:' +  scope.row.configHigh + ' MEDIUM:' + scope.row.configMedium + ' LOW:' + scope.row.configLow" placement="top">
             <div class="txt-click" @click="goConfigResource(scope.row)">
               <span style="background-color: #8B0000;color: white;padding: 3px;">{{ 'C:' + scope.row.configCritical }}</span>
@@ -40,7 +47,7 @@
             </div>
           </el-tooltip>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="10%" prop="resultStatus" sortable show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('image.result_status')" min-width="130" prop="resultStatus" sortable show-overflow-tooltip>
           <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
@@ -60,17 +67,17 @@
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
-        <el-table-column prop="updateTime" min-width="14%" :label="$t('image.last_modified')" sortable>
+        <el-table-column prop="updateTime" v-if="checkedColumnNames.includes('updateTime')" min-width="160" :label="$t('image.last_modified')" sortable>
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="12%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="130" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
@@ -142,6 +149,41 @@ import {_filter, _sort} from "@/common/js/utils";
 import {K8S_RESULT_CONFIGS} from "../../common/components/search/search-components";
 import LogForm from "@/business/components/k8s/home/LogForm";
 import {saveAs} from "@/common/js/FileSaver";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'k8s.name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'account.creator',
+    props: 'userName',
+    disabled: false
+  },
+  {
+    label: 'k8s.vuln_compliance',
+    props: 'result',
+    disabled: false
+  },
+  {
+    label: 'k8s.config_compliance',
+    props: 'configResult',
+    disabled: false
+  },
+  {
+    label: 'image.result_status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'image.last_modified',
+    props: 'updateTime',
+    disabled: false
+  },
+];
 
 /* eslint-disable */
 export default {
@@ -154,6 +196,7 @@ export default {
     TableOperator,
     DialogFooter,
     LogForm,
+    HideTable,
   },
   data() {
     return {
@@ -198,12 +241,40 @@ export default {
         indentWithTabs: true,
         location: "",
       },
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'k8s.name',
+          id: 'name'
+        },
+        {
+          name: 'account.creator',
+          id: 'userName'
+        }
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   watch: {
     '$route': 'init'
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
+    select(selection) {
+    },
     //查询列表
     search() {
       let url = "/k8s/resultList/" + this.currentPage + "/" + this.pageSize;
@@ -256,15 +327,6 @@ export default {
     filter(filters) {
       _filter(filters, this.condition);
       this.init();
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex%4 === 0) {
-        return 'success-row';
-      } else if (rowIndex%2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
     handleScans (item) {
       this.$alert(this.$t('resource.handle_scans'), '', {
