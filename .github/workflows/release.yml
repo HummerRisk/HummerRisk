@@ -54,7 +54,7 @@ jobs:
             如果您已经部署旧版本，可通过如下命令一键升级至最新版本:
             ```sh
               # 升级
-              hrctl upgrade v0.5.2
+              hrctl upgrade v0.6.0
             ```
             # 产品文档
             点击 [完整文档](https://docs.hummerrisk.com/) 查看完整的安装和使用文档
