@@ -5,19 +5,25 @@
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('k8s.k8s_settings_list')"
                       @create="create" :createTip="$t('k8s.k8s_create')"
-                      @validate="validate" :runTip="$t('account.one_validate')"
-                      :show-run="true" :show-create="true"/>
-
+                      @validate="validate" :validateTip="$t('account.one_validate')"
+                      :show-validate="true" :show-create="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                :row-class-name="tableRowClassName"
-                @filter-change="filter" @select-all="select" @select="select">
-        <el-table-column type="selection" min-width="50">
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
+        <el-table-column type="selection" min-width="40">
         </el-table-column>
-        <el-table-column type="index" min-width="50"/>
-        <el-table-column prop="name" :label="$t('k8s.name')" min-width="150" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('k8s.platform')" min-width="140" show-overflow-tooltip>
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('k8s.name')" min-width="150" show-overflow-tooltip></el-table-column>
+        <el-table-column :label="$t('k8s.platform')" v-if="checkedColumnNames.includes('pluginName')" min-width="140" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -25,7 +31,7 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" min-width="110" :label="$t('k8s.status')"
+        <el-table-column prop="status" v-if="checkedColumnNames.includes('status')" min-width="110" :label="$t('k8s.status')"
                          column-key="status"
                          :filters="statusFilters"
                          :filter-method="filterStatus">
@@ -43,7 +49,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="operatorStatus" min-width="130" :label="$t('k8s.operator_status')"
+        <el-table-column prop="operatorStatus" v-if="checkedColumnNames.includes('operatorStatus')" min-width="130" :label="$t('k8s.operator_status')"
                          column-key="status"
                          :filters="statusFilters"
                          :filter-method="filterStatus">
@@ -61,19 +67,19 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column min-width="160" :label="$t('account.update_time')" sortable
+        <el-table-column min-width="160" v-if="checkedColumnNames.includes('updateTime')" :label="$t('account.update_time')" sortable
                          prop="updateTime">
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" :label="$t('account.creator')" min-width="110" show-overflow-tooltip/>
+        <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :label="$t('account.creator')" min-width="110" show-overflow-tooltip/>
         <el-table-column min-width="150" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
@@ -204,6 +210,41 @@ import ProxyDialogFooter from "@/business/components/common/components/ProxyDial
 import ProxyDialogCreateFooter from "@/business/components/common/components/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import HrCodeEdit from "@/business/components/common/components/HrCodeEdit";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'k8s.name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'k8s.platform',
+    props: 'pluginName',
+    disabled: false
+  },
+  {
+    label: 'k8s.status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'k8s.operator_status',
+    props: 'operatorStatus',
+    disabled: false
+  },
+  {
+    label: 'account.update_time',
+    props: 'updateTime',
+    disabled: false
+  },
+  {
+    label: 'account.creator',
+    props: 'userName',
+    disabled: false
+  }
+];
 
 /* eslint-disable */
 export default {
@@ -218,6 +259,7 @@ export default {
     ProxyDialogFooter,
     ProxyDialogCreateFooter,
     HrCodeEdit,
+    HideTable,
   },
   provide() {
     return {
@@ -315,12 +357,38 @@ export default {
         '# 4.检测operator是否启动成功\n' +
         'kubectl get pod -A|grep trivy-operator\n' +
         'trivy-system   trivy-operator-69f99f79c4-lvzvs           1/1     Running            0          118s',
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'k8s.name',
+          id: 'name'
+        },
+        {
+          name: 'account.creator',
+          id: 'userName'
+        }
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   watch: {
     '$route': 'init'
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
     create() {
       this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
       this.createVisible = true;
@@ -591,15 +659,6 @@ export default {
           return false;
         }
       });
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 4 === 0) {
-        return 'success-row';
-      } else if (rowIndex % 2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
     addAccount (addAccountForm) {
       let newParam = { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] };

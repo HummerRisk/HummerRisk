@@ -66,7 +66,7 @@
             </include>
         </if>
         <if test="${condition}.pluginId != null">
-            and plugin.id
+            and p1.id
             <include refid="condition">
                 <property name="object" value="${condition}.pluginId"/>
             </include>
@@ -87,12 +87,6 @@
             and user.id
             <include refid="condition">
                 <property name="object" value="${condition}.creator"/>
-            </include>
-        </if>
-        <if test='${condition}.ip != null'>
-            and sg.ip
-            <include refid="condition">
-                <property name="object" value="${condition}.ip"/>
             </include>
         </if>
     </sql>
@@ -119,7 +113,10 @@
             </if>
 
             <if test="request.name != null and request.name != ''">
-                and t.name like CONCAT('%', #{request.name},'%')
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.userName != null and request.userName != ''">
+                and user.name like CONCAT('%', #{request.userName},'%')
             </if>
             <if test="request.status != null and request.status != ''">
                 and t.status = #{request.status}
