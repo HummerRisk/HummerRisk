@@ -2,24 +2,31 @@
   <main-container>
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
-        <table-header :condition.sync="condition" @search="search" :title="$t('oss.oss_bucket')"
-                      @create="create" :createTip="$t('oss.create_bucket')" :show-create="true"
-                      @deleteSelect="deleteSelect" :deleteTip="$t('oss.delete_batch')" :show-delete="true"/>
-
+        <table-header :condition.sync="condition" @search="search"
+                      :title="$t('oss.oss_bucket')"
+                      @create="create" :createTip="$t('oss.create_bucket')"
+                      @deleteSelect="deleteSelect" :deleteTip="$t('oss.delete_batch')" :show-delete="true" :show-create="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table :border="true" :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                :row-class-name="tableRowClassName"
-                @filter-change="filter" @select-all="select" @select="select">
-        <el-table-column type="selection" min-width="50">
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
+        <el-table-column type="selection" min-width="40">
         </el-table-column>
-        <el-table-column type="index" min-width="50"/>
-        <el-table-column prop="bucketName" :label="$t('oss.bucket')" min-width="160" show-overflow-tooltip v-slot:default="scope">
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column prop="bucketName" :label="$t('oss.bucket')" v-if="checkedColumnNames.includes('bucketName')" min-width="160" show-overflow-tooltip v-slot:default="scope">
           <el-link type="primary" @click="showObject(scope.row)">
             {{ scope.row.bucketName }}
           </el-link>
         </el-table-column>
-        <el-table-column :label="$t('oss.name')" min-width="110" show-overflow-tooltip>
+        <el-table-column :label="$t('oss.name')" v-if="checkedColumnNames.includes('name')" min-width="110" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -27,28 +34,28 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="location" :label="$t('oss.location')" min-width="110" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="canned_acl" :label="$t('oss.acl')" min-width="110" show-overflow-tooltip v-slot:default="scope">
+        <el-table-column prop="location" v-if="checkedColumnNames.includes('location')" :label="$t('oss.location')" min-width="110" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="cannedAcl" v-if="checkedColumnNames.includes('cannedAcl')" :label="$t('oss.acl')" min-width="110" show-overflow-tooltip v-slot:default="scope">
           <span v-if="scope.row.cannedAcl === 'public-read-write' || scope.row.cannedAcl === 'PublicReadWrite'">{{ $t('oss.public_read_write') }}</span>
           <span v-else-if="scope.row.cannedAcl === 'public-read' || scope.row.cannedAcl === 'PublicRead'">{{ $t('oss.public_read') }}</span>
           <span v-else-if="scope.row.cannedAcl === 'private' || scope.row.cannedAcl === 'Private'">{{ $t('oss.private') }}</span>
           <span v-else>{{ scope.row.cannedAcl }}</span>
         </el-table-column>
-        <el-table-column prop="storageClass" :label="$t('oss.storage_class')" min-width="100" show-overflow-tooltip v-slot:default="scope">
+        <el-table-column prop="storageClass" v-if="checkedColumnNames.includes('storageClass')" :label="$t('oss.storage_class')" min-width="100" show-overflow-tooltip v-slot:default="scope">
           <span v-if="scope.row.storageClass === 'Standard' || scope.row.storageClass === 'STANDARD'">{{ $t('oss.standard') }}</span>
           <span v-else-if="scope.row.storageClass === 'IA' || scope.row.storageClass === 'STANDARD_IA' || scope.row.storageClass === 'WARM'">{{ $t('oss.ia') }}</span>
           <span v-else-if="scope.row.storageClass === 'Archive' || scope.row.storageClass === 'ARCHIVE'">{{ $t('oss.archive') }}</span>
           <span v-else-if="scope.row.storageClass === 'COLD'">{{ $t('oss.cold') }}</span>
           <span v-else>{{ scope.row.storageClass }}</span>
         </el-table-column>
-        <el-table-column prop="size" :label="$t('oss.oss_size')" min-width="90" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="objectNumber" :label="$t('oss.object_number')" min-width="90" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="size" v-if="checkedColumnNames.includes('size')" :label="$t('oss.oss_size')" min-width="90" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="objectNumber" v-if="checkedColumnNames.includes('objectNumber')" :label="$t('oss.object_number')" min-width="90" show-overflow-tooltip></el-table-column>
         <el-table-column min-width="50" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="bucketButtons" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
@@ -235,6 +242,45 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {OSS_CONFIGS} from "@/business/components/common/components/search/search-components";
 import {saveAs} from "@/common/js/FileSaver";
 import Upload from "@/business/components/oss/head/Upload";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+const columnOptions = [
+  {
+    label: 'oss.bucket',
+    props: 'bucketName',
+    disabled: false
+  },
+  {
+    label: 'oss.name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'oss.location',
+    props: 'location',
+    disabled: false
+  },
+  {
+    label: 'oss.acl',
+    props: 'cannedAcl',
+    disabled: false
+  },
+  {
+    label: 'oss.storage_class',
+    props: 'storageClass',
+    disabled: false
+  },
+  {
+    label: 'oss.oss_size',
+    props: 'size',
+    disabled: false
+  },
+  {
+    label: 'oss.object_number',
+    props: 'objectNumber',
+    disabled: false
+  },
+];
 
 /* eslint-disable */
 export default {
@@ -247,6 +293,7 @@ export default {
     TablePagination,
     DialogFooter,
     Upload,
+    HideTable,
   },
   data() {
     return {
@@ -333,9 +380,35 @@ export default {
       objectFile: Object,
       uploadForm: {},
       dirForm: {},
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'oss.name',
+          id: 'name'
+        },
+        {
+          name: 'oss.bucket',
+          id: 'bucketName',
+        }
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
     select(selection) {
       this.selectIds.clear();
       selection.forEach(s => {
@@ -374,15 +447,6 @@ export default {
       this.selectObjectIds.clear();
       this.search();
       this.activeAccount();
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 4 === 0) {
-        return 'success-row';
-      } else if (rowIndex % 2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
     showObject(bucket) {
       this.path = '/';
