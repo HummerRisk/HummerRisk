@@ -5,18 +5,21 @@
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('config.config_settings_list')"
                       @create="create" :createTip="$t('config.config_create')"
-                      @validate="validate" :runTip="$t('account.one_validate')"
-                      :show-run="true" :show-create="true"/>
-
+                      :show-create="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                :row-class-name="tableRowClassName"
-                @filter-change="filter" @select-all="select" @select="select">
-        <el-table-column type="selection" min-width="5%">
-        </el-table-column>
-        <el-table-column type="index" min-width="5%"/>
-        <el-table-column :label="$t('config.name')" min-width="10%" show-overflow-tooltip>
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column :label="$t('config.name')" v-if="checkedColumnNames.includes('name')" min-width="130" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/config/yaml.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -24,7 +27,7 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" min-width="10%" :label="$t('config.status')"
+        <el-table-column prop="status" min-width="90" v-if="checkedColumnNames.includes('status')" :label="$t('config.status')"
                          column-key="status"
                          :filters="statusFilters"
                          :filter-method="filterStatus">
@@ -32,25 +35,25 @@
             <config-status :row="row"/>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('account.create_time')" sortable
+        <el-table-column min-width="160" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.create_time')" sortable
                          prop="createTime">
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('account.update_time')" sortable
+        <el-table-column min-width="160" v-if="checkedColumnNames.includes('updateTime')" :label="$t('account.update_time')" sortable
                          prop="updateTime">
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
-        <el-table-column min-width="17%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :label="$t('account.creator')" min-width="90" show-overflow-tooltip/>
+        <el-table-column min-width="150" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
@@ -181,6 +184,36 @@ import ProxyDialogFooter from "@/business/components/common/components/ProxyDial
 import ProxyDialogCreateFooter from "@/business/components/common/components/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import YamlUpload from "@/business/components/config/home/YamlUpload";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'config.name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'config.status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'account.create_time',
+    props: 'createTime',
+    disabled: false
+  },
+  {
+    label: 'account.update_time',
+    props: 'updateTime',
+    disabled: false
+  },
+  {
+    label: 'account.creator',
+    props: 'userName',
+    disabled: false
+  }
+];
 
 /* eslint-disable */
 export default {
@@ -197,6 +230,7 @@ export default {
     ProxyDialogFooter,
     ProxyDialogCreateFooter,
     YamlUpload,
+    HideTable,
   },
   data() {
     return {
@@ -291,9 +325,35 @@ export default {
       configType: 'menu',
       isProxy: false,
       sourceId: '',
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'config.name',
+          id: 'name'
+        },
+        {
+          name: 'account.creator',
+          id: 'userName'
+        }
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
     create() {
       this.form = {};
       this.createVisible = true;
@@ -310,36 +370,6 @@ export default {
       let url = "/k8s/allCloudNativeSource2YamlList";
       this.result = this.$get(url, response => {
         this.k8s = response.data;
-      });
-    },
-    //校验云原生账号
-    validate() {
-      if (this.selectIds.size === 0) {
-        this.$warning(this.$t('k8s.please_choose_k8s'));
-        return;
-      }
-      this.$alert(this.$t('account.one_validate') + this.$t('k8s.k8s_setting') + " ？", '', {
-        confirmButtonText: this.$t('commons.confirm'),
-        callback: (action) => {
-          if (action === 'confirm') {
-            let formData = new FormData();
-            this.result = this.$request({
-              method: 'POST',
-              url: "/k8s/validate",
-              data: Array.from(this.selectIds),
-              headers: {
-                'Content-Type': undefined
-              }
-            }, res => {
-              if (res.data) {
-                this.$success(this.$t('commons.success'));
-              } else {
-                this.$error(this.$t('commons.error'));
-              }
-              this.search();
-            });
-          }
-        }
       });
     },
     select(selection) {
@@ -377,15 +407,6 @@ export default {
     },
     filterStatus(value, row) {
       return row.status === value;
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 4 === 0) {
-        return 'success-row';
-      } else if (rowIndex % 2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
     changeSearch(value){
       this.form.configYaml = value;
@@ -548,6 +569,12 @@ export default {
 .code-mirror >>> .CodeMirror {
   /* Set height, width, borders, and global font properties here */
   height: 600px !important;
+}
+.table-card >>> .search {
+  width: 450px !important;
+}
+.table-card >>> .search .el-input {
+  width: 140px !important;
 }
 </style>
 

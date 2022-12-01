@@ -35,6 +35,8 @@ public class ConfigRequest {
     @ApiModelProperty("更新时间")
     private Integer updateTimeEnd;
 
+    private String userName;
+
     private Map<String, Object> combine;
 
     public String getId() {
@@ -109,4 +111,11 @@ public class ConfigRequest {
         this.combine = combine;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 }
