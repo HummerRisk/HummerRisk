@@ -2,20 +2,26 @@
   <main-container>
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
-        <table-header :condition.sync="condition"
-                      @search="search"
+        <table-header :condition.sync="condition" @search="search"
                       :title="$t('server.certificate_list')"
-                      @create="create"
-                      :createTip="$t('server.create_certificate')"
-                      :show-create="true"/>
+                      @create="create" :createTip="$t('server.create_certificate')"
+                      :show-create="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                @filter-change="filter">
-        <el-table-column type="index" min-width="2%"/>
-        <el-table-column prop="name" :label="$t('commons.name')" min-width="15%" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="description" :label="$t('commons.description')" min-width="18%" show-overflow-tooltip></el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('server.is_public_key')" min-width="10%" show-overflow-tooltip>
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('commons.name')" min-width="150" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="description" v-if="checkedColumnNames.includes('description')" :label="$t('commons.description')" min-width="160" show-overflow-tooltip></el-table-column>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('key')" :label="$t('server.is_public_key')" min-width="110" show-overflow-tooltip>
           <el-tag size="mini" type="success" v-if="scope.row.isPublicKey === 'no'">
             {{ $t('server.no_public_key')}}
           </el-tag>
@@ -26,20 +32,20 @@
             {{ $t('server.str_public_key') }}
           </el-tag>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('account.creator')" min-width="10%" show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('user')" :label="$t('account.creator')" min-width="100" show-overflow-tooltip>
           {{ scope.row.user }}
         </el-table-column>
-        <el-table-column prop="lastModified" min-width="15%" :label="$t('package.last_modified')" sortable>
+        <el-table-column prop="lastModified" min-width="160" v-if="checkedColumnNames.includes('lastModified')" :label="$t('package.last_modified')" sortable>
           <template v-slot:default="scope">
             <span>{{ scope.row.lastModified | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="10%" :label="$t('commons.operating')">
+        <el-table-column min-width="100" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
@@ -133,6 +139,36 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import {SERVER_CERTIFICATE_CONFIGS} from "../../common/components/search/search-components";
 import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'commons.name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'commons.description',
+    props: 'description',
+    disabled: false
+  },
+  {
+    label: 'server.is_public_key',
+    props: 'key',
+    disabled: false
+  },
+  {
+    label: 'account.creator',
+    props: 'user',
+    disabled: false
+  },
+  {
+    label: 'package.last_modified',
+    props: 'lastModified',
+    disabled: false
+  },
+];
 
 /* eslint-disable */
 export default {
@@ -145,6 +181,7 @@ export default {
     TableOperator,
     DialogFooter,
     ServerKeyUpload,
+    HideTable,
   },
   data() {
     return {
@@ -205,6 +242,25 @@ export default {
         indentWithTabs: true,
       },
       keyFile: Object,
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'commons.name',
+          id: 'name'
+        },
+        {
+          name: 'commons.description',
+          id: 'description'
+        },
+        {
+          name: 'account.creator',
+          id: 'creator',
+        },
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
 
@@ -213,6 +269,19 @@ export default {
   },
 
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
+    select(selection) {
+    },
     create() {
       this.createForm = { isPublicKey: 'no' };
       this.createVisible = true;
@@ -257,15 +326,6 @@ export default {
     filter(filters) {
       _filter(filters, this.condition);
       this.init();
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex%4 === 0) {
-        return 'success-row';
-      } else if (rowIndex%2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
     append(file) {
       this.keyFile = file;

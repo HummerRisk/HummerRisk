@@ -55,7 +55,7 @@
                 <property name="object" value="${condition}.name"/>
             </include>
         </if>
-        <if test='${condition}.description != null and (${description} == null or ${description} == "")'>
+        <if test='${condition}.description != null'>
             and t.description
             <include refid="condition">
                 <property name="object" value="${condition}.description"/>
@@ -93,7 +93,13 @@
                 and t.id = #{request.id}
             </if>
             <if test="request.name != null and request.name != ''">
-                and t.name like CONCAT('%', #{request.name},'%')
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.description != null and request.description != ''">
+                and LOWER(t.description) like CONCAT('%', LOWER(#{request.description}),'%')
+            </if>
+            <if test="request.creator != null and request.creator != ''">
+                and LOWER(user.name) like CONCAT('%', LOWER(#{request.creator}),'%')
             </if>
         </where>
         order by t.last_modified desc
