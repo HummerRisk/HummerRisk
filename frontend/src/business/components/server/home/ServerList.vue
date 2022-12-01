@@ -3,20 +3,26 @@
       <el-card class="table-card" v-loading="result.loading">
         <template v-slot:header>
           <table-header :condition.sync="condition" @search="search"
-                           :title="$t('server.server_list')"
-                           @create="create" :createTip="$t('server.server_create')"
-                           @scan="scan" :scanTip="$t('server.one_scan')"
-                           @validate="validate" :runTip="$t('server.one_validate')"
-                           :show-run="true" :show-scan="true" :show-create="true"/>
-
+                        :title="$t('server.server_list')" class="table-header-l"
+                        @create="create" :createTip="$t('server.server_create')"
+                        @scan="scan" :scanTip="$t('server.one_scan')"
+                        @validate="validate" :validateTip="$t('server.one_validate')"
+                        :show-validate="true" :show-scan="true" :show-create="true"
+                        :items="items" :columnNames="columnNames" :show-open="false"
+                        :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                        @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
         </template>
 
-        <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                  :row-class-name="tableRowClassName"
-                  @filter-change="filter" @select-all="select" @select="select">
+        <hide-table
+          :table-data="tableData"
+          @sort-change="sort"
+          @filter-change="filter"
+          @select-all="select"
+          @select="select"
+        >
           <el-table-column type="selection" min-width="50"/>
           <el-table-column type="index" min-width="50"/>
-          <el-table-column prop="name" :label="$t('server.server_name')" min-width="170" show-overflow-tooltip>
+          <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('server.server_name')" min-width="170" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -24,11 +30,11 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="ip" :label="'IP:Port'" min-width="170" show-overflow-tooltip v-slot:default="scope">
+          <el-table-column prop="ip" :label="'IP:Port'" v-if="checkedColumnNames.includes('ip')" min-width="170" show-overflow-tooltip v-slot:default="scope">
             {{ scope.row.ip }} : {{ scope.row.port }}
           </el-table-column>
-          <el-table-column prop="userName" :label="$t('server.server_user_name')" min-width="100" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="status" min-width="100" :label="$t('server.server_status')"
+          <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :label="$t('server.server_user_name')" min-width="100" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="status" v-if="checkedColumnNames.includes('status')" min-width="100" :label="$t('server.server_status')"
                            column-key="status"
                            :filters="statusFilters"
                            :filter-method="filterStatus">
@@ -46,19 +52,19 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column min-width="160" :label="$t('account.update_time')" sortable
+          <el-table-column min-width="160" v-if="checkedColumnNames.includes('updateTime')" :label="$t('account.update_time')" sortable
                            prop="updateTime">
             <template v-slot:default="scope">
               <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="user" :label="$t('account.creator')" min-width="110" show-overflow-tooltip/>
-          <el-table-column min-width="130" :label="$t('commons.operating')" fixed="right">
+          <el-table-column prop="user" v-if="checkedColumnNames.includes('user')" :label="$t('account.creator')" min-width="110" show-overflow-tooltip/>
+          <el-table-column min-width="140" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
           </el-table-column>
-        </el-table>
+        </hide-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
 
@@ -413,6 +419,41 @@ import {_filter, _sort} from "@/common/js/utils";
 import {SERVER_CONFIGS} from "../../common/components/search/search-components";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'server.server_name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'IP:Port',
+    props: 'ip',
+    disabled: false
+  },
+  {
+    label: 'server.server_user_name',
+    props: 'userName',
+    disabled: false
+  },
+  {
+    label: 'server.server_status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'account.update_time',
+    props: 'updateTime',
+    disabled: false
+  },
+  {
+    label: 'account.creator',
+    props: 'user',
+    disabled: false
+  },
+];
 
 /* eslint-disable */
   export default {
@@ -425,6 +466,7 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
       TableOperator,
       DialogFooter,
       ServerKeyUpload,
+      HideTable,
     },
     provide() {
       return {
@@ -498,6 +540,29 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
         },
         rowindex: 0,
         itemKey: Math.random(),
+        checkedColumnNames: columnOptions.map((ele) => ele.props),
+        columnNames: columnOptions,
+        //名称搜索
+        items: [
+          {
+            name: 'server.server_name',
+            id: 'name'
+          },
+          {
+            name: 'IP',
+            id: 'ip'
+          },
+          {
+            name: 'Port',
+            id: 'port',
+          },
+          {
+            name: 'server.server_user_name',
+            id: 'userName',
+          },
+        ],
+        checkAll: true,
+        isIndeterminate: false,
       }
     },
     props: {
@@ -511,6 +576,17 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
     },
 
     methods: {
+      handleCheckedColumnNamesChange(value) {
+        const checkedCount = value.length;
+        this.checkAll = checkedCount === this.columnNames.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+        this.checkedColumnNames = value;
+      },
+      handleCheckAllChange(val) {
+        this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+        this.isIndeterminate = false;
+        this.checkAll = val;
+      },
       create() {
         this.servers = [];
         this.createVisible = true;
@@ -659,15 +735,6 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
       },
       filterStatus(value, row) {
         return row.status === value;
-      },
-      tableRowClassName({row, rowIndex}) {
-        if (rowIndex % 4 === 0) {
-          return 'success-row';
-        } else if (rowIndex % 2 === 0) {
-          return 'warning-row';
-        } else {
-          return '';
-        }
       },
       scan (){
         if (this.selectIds.size === 0) {
@@ -949,5 +1016,11 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
   /deep/ :focus{outline:0;}
   .el-box-card {
     margin: 10px 0;
+  }
+  .table-card >>> .search {
+    width: 300px !important;
+  }
+  /deep/ .table-card .search >>> .el-input {
+    width: 90px !important;
   }
 </style>
