@@ -1,5 +1,6 @@
 package com.hummerrisk.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.hummer.quartz.anno.QuartzScheduled;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
@@ -348,6 +349,16 @@ public class NoticeCreateService {
 
         LogUtil.debug(Translator.get("i18n_start_msg") + messageOrder.getAccountName());
         WebMsg msg = new WebMsg();
+        MessageOrderItemExample example = new MessageOrderItemExample();
+        example.createCriteria().andMessageOrderIdEqualTo(messageOrder.getId());
+        List<MessageOrderItem> list = messageOrderItemMapper.selectByExample(example);
+        if(list.size() > 0) {
+            JSONArray jsonArray = new JSONArray();
+            for (MessageOrderItem item : list) {
+                jsonArray.add(item.getTaskId());
+            }
+            msg.setResultId(jsonArray.toJSONString());
+        }
         msg.setStatus(false);
         msg.setType(subject);
         msg.setCreateTime(System.currentTimeMillis());
