@@ -54,7 +54,7 @@
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
-        <el-table-column prop="isSeverity" v-if="checkedColumnNames.includes('isSeverity')" :label="$t('server.is_severity')" min-width="100" show-overflow-tooltip v-slot:default="scope" sortable>
+        <el-table-column prop="isSeverity" v-if="checkedColumnNames.includes('isSeverity')" :label="$t('server.is_severity')" min-width="110" show-overflow-tooltip v-slot:default="scope" sortable>
           <el-tooltip class="item" effect="dark" :content="scope.row.returnLog" placement="top">
             <span v-if="scope.row.isSeverity" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
             <span v-if="!scope.row.isSeverity" style="color: #f84846">{{ $t('resource.risky') }}</span>

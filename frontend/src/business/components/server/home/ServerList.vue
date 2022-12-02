@@ -744,6 +744,16 @@ const columnOptions = [
           this.$warning(this.$t('server.please_choose_server'));
           return;
         }
+        for (let id of this.selectIds) {
+          for(let data of this.tableData) {
+            if (id === data.id) {
+              if(data.status === 'INVALID') {
+                this.$warning(this.$t('server.failed_server') + data.name);
+                return;
+              }
+            }
+          }
+        }
         this.$alert(this.$t('server.one_scan') + this.$t('server.server_rule') + " ？", '', {
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
