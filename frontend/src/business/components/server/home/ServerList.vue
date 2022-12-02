@@ -630,7 +630,6 @@ const columnOptions = [
                 } else {
                   let name = '';
                   for (let item of res.data) {
-                    console.log(item)
                     name = name + ' ' + item.server.name + ';';
                   }
                   this.$error(this.$t('server.failed_server') + name);
