@@ -907,7 +907,7 @@ export default {
     all_server: '全部主機分組',
     server_name: '主機名稱',
     server_user_name: '用戶名',
-    server_status: '狀態',
+    server_status: '連接狀態',
     server_group_name: '主機分組名稱',
     server_group_create: '創建主機分組',
     server_group_rename: '修改主機分組名稱',

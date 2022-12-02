@@ -907,7 +907,7 @@ export default {
     all_server: 'All host groups',
     server_name: 'Host name',
     server_user_name: 'Username',
-    server_status: 'Status',
+    server_status: 'Connection status',
     server_group_name: 'Host group name',
     server_group_create: 'Create a host group',
     server_group_rename: 'Modify the host group name',

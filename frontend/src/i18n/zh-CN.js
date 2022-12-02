@@ -907,7 +907,7 @@ export default {
     all_server: '全部主机分组',
     server_name: '主机名称',
     server_user_name: '用户名',
-    server_status: '状态',
+    server_status: '连接状态',
     server_group_name: '主机分组名称',
     server_group_create: '创建主机分组',
     server_group_rename: '修改主机分组名称',

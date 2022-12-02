@@ -58,7 +58,8 @@
               <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="user" v-if="checkedColumnNames.includes('user')" :label="$t('account.creator')" min-width="110" show-overflow-tooltip/>
+          <el-table-column prop="groupName" v-if="checkedColumnNames.includes('groupName')" :label="$t('server.server_group')" min-width="110" show-overflow-tooltip/>
+          <el-table-column prop="user" v-if="checkedColumnNames.includes('user')" :label="$t('account.creator')" min-width="100" show-overflow-tooltip/>
           <el-table-column min-width="140" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
@@ -255,7 +256,7 @@
         <div v-loading="rstResult.loading">
           <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="createServerForm">
             <el-form-item :label="$t('server.server_group_name')" ref="groupId" prop="groupId">
-              <el-select style="width: 100%;" filterable :clearable="true" v-model="form.groupId" :placeholder="$t('server.server_group_name')">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="form.serverGroupId" :placeholder="$t('server.server_group_name')">
                 <el-option
                   v-for="item in groups"
                   :key="item.id"
@@ -332,8 +333,8 @@
                  :destroy-on-close="true">
         <div v-loading="rstResult.loading">
           <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="createServerForm">
-            <el-form-item :label="$t('server.server_group_name')" ref="groupId" prop="groupId">
-              <el-select style="width: 100%;" filterable :clearable="true" v-model="form.groupId" :placeholder="$t('server.server_group_name')">
+            <el-form-item :label="$t('server.server_group_name')" ref="serverGroupId" prop="serverGroupId">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="form.serverGroupId" :placeholder="$t('server.server_group_name')">
                 <el-option
                   v-for="item in groups"
                   :key="item.id"
@@ -446,6 +447,11 @@ const columnOptions = [
   {
     label: 'account.update_time',
     props: 'updateTime',
+    disabled: false
+  },
+  {
+    label: 'server.server_group',
+    props: 'groupName',
     disabled: false
   },
   {
