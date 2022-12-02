@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -69,16 +70,17 @@ public class ServerService {
     @Resource
     private HistoryServerResultMapper historyServerResultMapper;
 
-    public boolean validate(List<String> ids) {
+    public List<ServerValidateDTO> validate(List<String> ids) {
+        List<ServerValidateDTO> list = new ArrayList<>();
         ids.forEach(id -> {
             try {
                 ServerValidateDTO validate = validate(id);
-                if (!validate.isFlag()) throw new HRException(Translator.get("failed_server"));
+                if(!validate.isFlag()) list.add(validate);
             } catch (Exception e) {
-                throw new HRException(e.getMessage());
+                throw new HRException(Translator.get("failed_server") + e.getMessage());
             }
         });
-        return true;
+        return list;
     }
 
 
@@ -113,7 +115,7 @@ public class ServerService {
         Integer scanId = historyService.insertScanHistory(server);
         if (StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.VALID.name())) {
             deleteServerResultById(id);
-            List<ServerRuleDTO> ruleList = ruleList(null);
+            List<ServerRuleDTO> ruleList = ruleList(new ServerRuleRequest());
             ServerResult result = new ServerResult();
             String serverGroupName = serverGroupMapper.selectByPrimaryKey(server.getServerGroupId()).getName();
             for (ServerRuleDTO dto : ruleList) {

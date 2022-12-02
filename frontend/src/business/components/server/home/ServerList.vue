@@ -39,7 +39,7 @@
                            :filters="statusFilters"
                            :filter-method="filterStatus">
             <template v-slot:default="{row}">
-              <div @click="validateStatus(row)">
+              <div @click="validateStatus(row)" style="cursor:pointer;">
                 <el-tag size="mini" type="warning" v-if="row.status === 'DELETE'">
                   {{ $t('server.DELETE') }}
                 </el-tag>
@@ -617,7 +617,6 @@ const columnOptions = [
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              let formData = new FormData();
               this.result = this.$request({
                 method: 'POST',
                 url: "/server/validate",
@@ -626,10 +625,15 @@ const columnOptions = [
                   'Content-Type': undefined
                 }
               }, res => {
-                if (res.data) {
+                if (res.data.length == 0) {
                   this.$success(this.$t('account.success'));
                 } else {
-                  this.$error(this.$t('account.error'));
+                  let name = '';
+                  for (let item of res.data) {
+                    console.log(item)
+                    name = name + ' ' + item.server.name + ';';
+                  }
+                  this.$error(this.$t('server.failed_server') + name);
                 }
                 this.search();
               });

@@ -979,6 +979,7 @@ export default {
     server_risk_chart_vuln: 'Host detection result risk statistics',
     all_label: 'All hosts',
     to_be_set: 'To be set',
+    failed_server: 'There is a host configuration that failed verification:',
   },
   image: {
     image_repo: 'Mirror repository',

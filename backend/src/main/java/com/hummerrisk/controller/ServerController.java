@@ -58,7 +58,7 @@ public class ServerController {
 
     @ApiOperation(value = "批量校验主机连通性")
     @PostMapping("validate")
-    public Boolean validate(@RequestBody List<String> selectIds) {
+    public List<ServerValidateDTO> validate(@RequestBody List<String> selectIds) {
         return serverService.validate(selectIds);
     }
 

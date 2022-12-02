@@ -979,6 +979,7 @@ export default {
     server_risk_chart_vuln: '主机检测结果风险统计',
     all_label: '所有主机',
     to_be_set: '待设置',
+    failed_server: '存在验证失败的主机配置:',
   },
   image: {
     image_repo: '镜像仓库',

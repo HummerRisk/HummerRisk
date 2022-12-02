@@ -54,6 +54,7 @@
     "d3": "^7.6.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
+    "file-saver": "^2.0.5",
     "file-writer": "^1.0.2",
     "function.prototype.name": "^1.1.1",
     "less": "^2.3.1",
@@ -61,8 +62,7 @@
     "vue-particles": "^1.0.9",
     "vue-template-compiler": "^2.6.10",
     "vue2-ace-editor": "0.0.15",
-    "webpack": "^5.73.0",
-    "file-saver": "^2.0.5"
+    "webpack": "^5.73.0"
   },
   "eslintConfig": {
     "root": false,
