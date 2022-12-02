@@ -33,11 +33,7 @@ public class SshUtil {
     private static String tipStr = "=======================%s============================";
     private static String splitStr = "=====================================================";
 
-    /**
-     * 登录主机
-     * @return 登录成功返回true，否则返回false
-     */
-    public static Connection login(Server server, Proxy proxy) throws Exception {
+    public static void validateSsh2(Server server, Proxy proxy) throws Exception {
         boolean isAuthenticated = false;
         Connection conn = null;
         long startTime = Calendar.getInstance().getTimeInMillis();
@@ -72,10 +68,10 @@ public class SshUtil {
         }
         long endTime = Calendar.getInstance().getTimeInMillis();
         LogUtil.info("ssh2 登录用时: " + (endTime - startTime)/1000.0 + "s\n" + splitStr);
-        return conn;
+        conn.close();
     }
 
-    public static void loginSshd(Server server, Proxy proxy) throws Exception {
+    public static void validateSshd(Server server, Proxy proxy) throws Exception {
         SshClient client = SshClient.setUpDefaultClient();
         ClientSession session = null;
         client.start();
@@ -116,9 +112,52 @@ public class SshUtil {
         }
         long endTime = Calendar.getInstance().getTimeInMillis();
         LogUtil.info("sshd 登录用时: " + (endTime - startTime)/1000.0 + "s\n" + splitStr);
+        session.close();
     }
 
-    public static ClientSession loginExecute(Server server, Proxy proxy) throws Exception {
+    /**
+     * 登录主机
+     * @return 登录成功返回true，否则返回false
+     */
+    public static Connection loginSsh2(Server server, Proxy proxy) throws Exception {
+        boolean isAuthenticated = false;
+        Connection conn = null;
+        long startTime = Calendar.getInstance().getTimeInMillis();
+        try {
+            if(proxy.getProxyIp() != null) {
+                HTTPProxyData httpProxyData = new HTTPProxyData(proxy.getProxyIp(), Integer.valueOf(proxy.getProxyPort()), proxy.getProxyName(), proxy.getProxyPassword());
+                conn = new Connection(server.getIp(), Integer.valueOf(server.getPort()), httpProxyData);
+            } else {
+                conn = new Connection(server.getIp(), Integer.valueOf(server.getPort()));
+            }
+
+            conn.connect(); // 连接主机
+
+            if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
+                isAuthenticated = conn.authenticateWithPublicKey(server.getUserName(), server.getPublicKey().toCharArray(), server.getPassword());
+            } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
+                isAuthenticated = conn.authenticateWithPublicKey(server.getUserName(), server.getPublicKey().toCharArray(), server.getPassword());
+            } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "no")) {
+                isAuthenticated = conn.authenticateWithPassword(server.getUserName(), server.getPassword()); // 认证
+            }
+
+            if(isAuthenticated){
+                LogUtil.info(String.format(tipStr, "ssh2 认证成功"));
+            } else {
+                LogUtil.error(String.format(tipStr, "ssh2 认证失败"));
+                throw new Exception("ssh2 认证失败");
+            }
+
+        } catch (IOException e) {
+            LogUtil.error(String.format(tipStr, "ssh2登录失败") + e.getMessage());
+            throw e;
+        }
+        long endTime = Calendar.getInstance().getTimeInMillis();
+        LogUtil.info("ssh2 登录用时: " + (endTime - startTime)/1000.0 + "s\n" + splitStr);
+        return conn;
+    }
+
+    public static ClientSession loginSshd(Server server, Proxy proxy) throws Exception {
         SshClient client = SshClient.setUpDefaultClient();
         ClientSession session = null;
         client.start();
@@ -167,7 +206,7 @@ public class SshUtil {
      * @param cmd 即将执行的命令
      * @return 命令执行完后返回的结果值
      */
-    public static String execute(Connection conn, String cmd) throws Exception {
+    public static String executeSsh2(Connection conn, String cmd) throws Exception {
         String result = "";
         Session session = null;
         try {
@@ -265,13 +304,9 @@ public class SshUtil {
             result = result + s + " ";
         }
         result = result.trim();
-        session.close(false);
+        session.close();
         return result;
     }
 
-    //将空格替换成‘;’
-    public static String replaceSpace(StringBuffer str) {
-        return str.toString().replaceAll("\\s", ";");
-    }
 }
 
