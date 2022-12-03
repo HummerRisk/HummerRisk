@@ -693,7 +693,7 @@ export default {
       this.tarFile = file;
     },
     changeImage(id) {
-      this.$get("/image/repoItemList/" + id, response => {
+      this.$post("/image/repoItemList", {repoId: id}, response => {
         this.images = response.data;
       });
     },
