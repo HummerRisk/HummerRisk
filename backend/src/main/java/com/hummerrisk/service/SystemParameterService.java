@@ -418,10 +418,7 @@ public class SystemParameterService {
     }
 
     public void updateVulnDbOffline(MultipartFile objectFile) throws Exception {
-        String fileName = upload(objectFile, "/root/.cache/trivy/db");
-        String command = "tar -zxvf /root/.cache/trivy/db" + fileName;
-        LogUtil.info(" {updateVulnDbOffline}[command]: " + command);
-        CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
+        CommandUtils.upzipTar(objectFile.getOriginalFilename(), "/tmp/test/trivy/db/");
     }
 
     /**
@@ -431,11 +428,11 @@ public class SystemParameterService {
      * @return 文件名称
      * @throws Exception
      */
-    public static final String upload(MultipartFile file, String dir) throws IOException {
+    public static final String uploadVulnDb(MultipartFile file, String dir) throws IOException {
         try {
             //png、html等小文件存放路径，页面需要显示，项目内目录
             //jar包等大文件存放路径，项目外目录
-            return FileUploadUtils.upload(dir, file);
+            return FileUploadUtils.uploadVulnDb(dir, file);
         } catch (Exception e) {
             throw new IOException(e.getMessage(), e);
         }

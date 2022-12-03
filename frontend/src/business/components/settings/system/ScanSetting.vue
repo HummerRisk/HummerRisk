@@ -77,7 +77,7 @@
     </div>
 
     <el-drawer
-      size="40%"
+      size="50%"
       :title="$t('commons.offline_update_vuln_db')"
       :append-to-body="true"
       :before-close="innerDrawerClose"
@@ -235,6 +235,8 @@ export default {
       });
     },
     updateVulnDbOffline() {
+      this.form = {};
+      this.objectFile = Object;
       this.innerDrawer = true;
     },
     innerDrawerClose() {
@@ -260,7 +262,7 @@ export default {
       this.result = this.$request(axiosRequestConfig, (res) => {
         if (res.success) {
           this.$success(this.$t('commons.save_success'));
-          this.search();
+          this.query();
           this.innerDrawer = false;
         }
       });

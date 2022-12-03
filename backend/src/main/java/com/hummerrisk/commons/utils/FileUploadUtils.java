@@ -227,4 +227,15 @@ public class FileUploadUtils
         return filename;
     }
 
+    //上传漏洞库
+    public static final String uploadVulnDb(String baseDir, MultipartFile file)
+            throws FileSizeLimitExceededException, IOException, FileNameLengthLimitExceededException
+    {
+
+        File desc = getAbsoluteFile(baseDir, file.getOriginalFilename());
+        file.transferTo(desc.toPath().toAbsolutePath());
+
+        return file.getOriginalFilename();
+    }
+
 }

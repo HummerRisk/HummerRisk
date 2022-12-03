@@ -173,4 +173,25 @@ public class CommandUtils {
 
     }
 
+    public static boolean upzipTar(String fileName, String targetPath){
+        Runtime run = Runtime.getRuntime();
+        String cmd = "tar xZf " + fileName + " -C " + targetPath;
+        try {
+
+            Process process = run.exec(cmd);
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+            if(in.readLine() != null){ //解压缩失败
+                LogUtil.error("unzip fail "+fileName);
+                return false;
+            }else{          //解压缩成功
+                LogUtil.info(" success unzip "+ fileName);
+            }
+        } catch (IOException e) {
+            LogUtil.error("IOException occured"+e.getMessage());
+        }
+        return true;
+    }
+
 }
