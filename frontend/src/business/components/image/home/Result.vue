@@ -169,7 +169,7 @@ const columnOptions = [
   },
   {
     label: 'image.result_status',
-    props: 'status',
+    props: 'resultStatus',
     disabled: false
   },
   {
