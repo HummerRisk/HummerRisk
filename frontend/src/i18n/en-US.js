@@ -218,6 +218,7 @@ export default {
     show_more: 'Rows and columns',
     show_menu: 'Block',
     show_list: 'Display',
+    clear_select: 'Clear selected items',
   },
   workspace: {
     create:'Create a workspace',

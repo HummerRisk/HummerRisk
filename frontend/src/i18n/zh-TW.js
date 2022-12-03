@@ -218,6 +218,7 @@ export default {
     show_more: '行列',
     show_menu: '組塊',
     show_list: '显示',
+    clear_select: '清除選中項',
   },
   workspace: {
     create: '創建工作空間',
