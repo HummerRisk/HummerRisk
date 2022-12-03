@@ -889,6 +889,8 @@ export default {
     resource_situation: '雲資源態勢',
     sync_log: '雲資源同步日誌',
     sync_log_list: '雲資源同步日誌列表',
+    failed_cloud: '存在驗證失敗的雲賬號配置:',
+    failed_status: '雲賬號無效狀態不可執行檢測',
   },
   server: {
     server_setting: '主機檢測',

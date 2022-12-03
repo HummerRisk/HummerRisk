@@ -889,6 +889,8 @@ export default {
     resource_situation: '云资源态势',
     sync_log: '云资源同步日志',
     sync_log_list: '云资源同步日志列表',
+    failed_cloud: '存在验证失败的云账号配置:',
+    failed_status: '云账号无效状态不可执行检测',
   },
   server: {
     server_setting: '主机检测',

@@ -87,7 +87,7 @@ public class AccountController {
 
     @ApiOperation(value = "批量校验云账号")
     @PostMapping("validate")
-    public Boolean validate(@RequestBody List<String> selectIds) {
+    public List<ValidateDTO> validate(@RequestBody List<String> selectIds) {
         return accountService.validate(selectIds);
     }
 

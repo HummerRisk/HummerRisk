@@ -433,9 +433,9 @@ export default {
               } else {
                 let name = '';
                 for (let item of res.data) {
-                  name = name + ' ' + item.server.name + ';';
+                  name = name + ' ' + item.name + ';';
                 }
-                this.$error(this.$t('k8s.failed_server') + name);
+                this.$error(this.$t('k8s.failed_k8s') + name);
               }
               this.search();
             });

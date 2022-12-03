@@ -889,6 +889,8 @@ export default {
     resource_situation: 'Cloud resource situation',
     sync_log: 'Cloud resource synchronization log',
     sync_log_list: 'Cloud resource synchronization log list',
+    failed_cloud: 'There is a cloud account configuration that failed verification:',
+    failed_status: 'Cloud account invalid status cannot perform detection',
   },
   server: {
     server_setting: 'Host scan',
