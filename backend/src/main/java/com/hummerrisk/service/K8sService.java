@@ -89,17 +89,24 @@ public class K8sService {
         return cloudNativeMapper.selectByPrimaryKey(id);
     }
 
-    public boolean validate(List<String> ids) {
+    public List<ValidateDTO> validate(List<String> ids) {
+        List<ValidateDTO> list = new ArrayList<>();
         ids.forEach(id -> {
             try {
-                ValidateDTO validate = validate(id);
-                if(!validate.isFlag()) throw new HRException(Translator.get("failed_cloud_native"));
+                CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
+                ValidateDTO validate = validateAccount(cloudNative);
+                if (validate.isFlag()) {
+                    cloudNative.setStatus(CloudAccountConstants.Status.VALID.name());
+                } else {
+                    cloudNative.setStatus(CloudAccountConstants.Status.INVALID.name());
+                    list.add(validate);
+                }
+                cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
             } catch (Exception e) {
-                LogUtil.error(e.getMessage());
-                throw new HRException(e.getMessage());
+                throw new HRException(Translator.get("failed_cloud_native") + e.getMessage());
             }
         });
-        return true;
+        return list;
     }
 
 
@@ -159,6 +166,7 @@ public class K8sService {
 
     private ValidateDTO validateAccount(CloudNative cloudNative) {
         ValidateDTO validateDTO = new ValidateDTO();
+        validateDTO.setName(cloudNative.getName());
         try {
             Proxy proxy = new Proxy();
             if (cloudNative.getProxyId() != null) proxy = proxyMapper.selectByPrimaryKey(cloudNative.getProxyId());

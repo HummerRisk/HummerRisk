@@ -1338,6 +1338,8 @@ export default {
     namespace_perspective: 'Namespace perspective',
     k8s_perspective: 'K8s risk perspective',
     image_risk: 'Resources at risk',
+    failed_k8s: 'There is a K8s configuration that failed verification:',
+    failed_status: 'K8s account invalid status cannot perform detection',
   },
   config: {
     config_settings: 'Deployment configuration',

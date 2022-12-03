@@ -1338,6 +1338,8 @@ export default {
     namespace_perspective: '命名空間視角',
     k8s_perspective: 'K8s 風險視角',
     image_risk: '存在風險的資源',
+    failed_k8s: '存在驗證失敗的 K8s 配置:',
+    failed_status: 'K8s 賬號無效狀態不可執行檢測',
   },
   config: {
     config_settings: '部署配置',

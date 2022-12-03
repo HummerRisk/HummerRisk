@@ -55,7 +55,7 @@ public class K8sController {
 
     @ApiOperation(value = "批量校验云原生账号")
     @PostMapping("validate")
-    public Boolean validate(@RequestBody List<String> selectIds) {
+    public List<ValidateDTO> validate(@RequestBody List<String> selectIds) {
         return k8sService.validate(selectIds);
     }
 
