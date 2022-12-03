@@ -496,7 +496,8 @@
             CONCAT('NameSpace: \r', t.source_name, '\r(共 ',
                    (
                        select count(t1.id) from cloud_native_source t1
-                       where t1.cloud_native_id = t.cloud_native_id and t1.source_type in ('Namespace', 'Pod', 'Node', 'Deployment', 'Service')
+                       where t1.cloud_native_id = t.cloud_native_id and t1.source_namespace = t.source_name
+                         and t1.source_type in ('Namespace', 'Pod', 'Node', 'Deployment', 'Service')
                    ), ' 个资源)'
                 ) as name,
             t.cloud_native_id as k8sId,
