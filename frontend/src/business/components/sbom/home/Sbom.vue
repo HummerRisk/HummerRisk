@@ -35,7 +35,7 @@
           </el-card>
         </el-col>
         <el-col :span="18" style="max-height: 468px;padding: 0;">
-          <el-card class="box-card" style="max-height: 468px;">
+          <el-card class="box-card x-card" style="max-height: 468px;">
             <template v-slot:header>
               <div class="clearfix">
                 <el-col :span="24">
@@ -73,8 +73,8 @@
 
             <!-- code start -->
             <el-table border v-if="tag=='code'" :data="codeData" class="adjust-table table-content" stripe style="min-height: 317px;cursor:pointer;" max-height="318" @row-click="selectVuln">
-              <el-table-column type="index" min-width="1%"/>
-              <el-table-column prop="name" :label="$t('code.name')" min-width="10%" show-overflow-tooltip>
+              <el-table-column type="index" min-width="40"/>
+              <el-table-column prop="name" :label="$t('code.name')" min-width="130" show-overflow-tooltip>
                 <template v-slot:default="scope">
                   <span>
                     <img :src="require(`@/assets/img/code/${scope.row.pluginIcon}`)" style="width: 16px; height: 12px; vertical-align:middle" alt=""/>
@@ -82,12 +82,12 @@
                   </span>
                 </template>
               </el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="6%">
+              <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="80">
                 <el-tooltip effect="dark" :content="$t('history.result')" placement="top">
                   <el-link type="primary" class="text-click" @click="showCodeResource(scope.row)">{{ scope.row.returnSum }}</el-link>
                 </el-tooltip>
               </el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="12%" prop="resultStatus" sortable show-overflow-tooltip>
+              <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="130" prop="resultStatus" sortable show-overflow-tooltip>
                 <el-button @click="showCodeResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
                   <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                 </el-button>
@@ -107,12 +107,12 @@
                   <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
                 </el-button>
               </el-table-column>
-              <el-table-column prop="updateTime" min-width="15%" :label="$t('image.last_modified')" sortable>
+              <el-table-column prop="updateTime" min-width="160" :label="$t('image.last_modified')" sortable>
                 <template v-slot:default="scope">
                   <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
                 </template>
               </el-table-column>
-              <el-table-column min-width="12%" v-slot:default="scope" :label="$t('commons.operating')">
+              <el-table-column min-width="130" v-slot:default="scope" :label="$t('commons.operating')" fixed="right">
                 <download :params="scope.row"/>
               </el-table-column>
             </el-table>
@@ -187,8 +187,8 @@
 
             <!-- image start -->
             <el-table border v-if="tag=='image'" :data="imageData" class="adjust-table table-content" stripe style="min-height: 317px;cursor:pointer;" max-height="318" @row-click="selectVuln">
-              <el-table-column type="index" min-width="1%"/>
-              <el-table-column prop="name" :label="$t('image.image_name')" min-width="10%" show-overflow-tooltip>
+              <el-table-column type="index" min-width="40"/>
+              <el-table-column prop="name" :label="$t('image.image_name')" min-width="120" show-overflow-tooltip>
                 <template v-slot:default="scope">
                   <span>
                     <img :src="require(`@/assets/img/platform/docker.png`)" style="width: 16px; height: 12px; vertical-align:middle" alt=""/>
@@ -196,17 +196,17 @@
                   </span>
                 </template>
               </el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('image.image_url')" min-width="17%" show-overflow-tooltip>
+              <el-table-column v-slot:default="scope" :label="$t('image.image_url')" min-width="160" show-overflow-tooltip>
                 <el-row v-if="scope.row.type==='repo'">{{ scope.row.imageUrl }}:{{ scope.row.imageTag }}</el-row>
                 <el-row v-if="scope.row.type==='image'">{{ scope.row.imageUrl }}:{{ scope.row.imageTag }}</el-row>
                 <el-row v-if="scope.row.type==='tar'">{{ scope.row.path }}</el-row>
               </el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="7%">
+              <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="80">
                 <el-tooltip effect="dark" :content="$t('history.result')" placement="top">
                   <el-link type="primary" class="text-click" @click="showImageResource(scope.row)">{{ scope.row.returnSum }}</el-link>
                 </el-tooltip>
               </el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="11%" prop="resultStatus" sortable show-overflow-tooltip>
+              <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="120" prop="resultStatus" sortable show-overflow-tooltip>
                 <el-button @click="showImageResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
                   <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                 </el-button>
@@ -226,12 +226,12 @@
                   <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
                 </el-button>
               </el-table-column>
-              <el-table-column prop="updateTime" min-width="14%" :label="$t('image.last_modified')" sortable>
+              <el-table-column prop="updateTime" min-width="160" :label="$t('image.last_modified')" sortable>
                 <template v-slot:default="scope">
                   <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
                 </template>
               </el-table-column>
-              <el-table-column min-width="14%" v-slot:default="scope" :label="$t('commons.operating')">
+              <el-table-column min-width="130" v-slot:default="scope" :label="$t('commons.operating')" fixed="right">
                 <download :params="scope.row"/>
               </el-table-column>
             </el-table>
@@ -306,8 +306,8 @@
 
             <!-- fs start -->
             <el-table border v-if="tag=='fs'" :data="fsData" class="adjust-table table-content" stripe style="min-height: 317px;cursor:pointer;" max-height="318" @row-click="selectVuln">
-              <el-table-column type="index" min-width="1%"/>
-              <el-table-column prop="name" :label="$t('fs.name')" min-width="10%" show-overflow-tooltip>
+              <el-table-column type="index" min-width="40"/>
+              <el-table-column prop="name" :label="$t('fs.name')" min-width="120" show-overflow-tooltip>
                 <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/fs/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
@@ -315,44 +315,42 @@
               </span>
                 </template>
               </el-table-column>
-              <el-table-column prop="fileName" :label="$t('fs.file_name')" min-width="10%" show-overflow-tooltip>
+              <el-table-column prop="fileName" :label="$t('fs.file_name')" min-width="120" show-overflow-tooltip>
                 <template v-slot:default="scope">
                   &nbsp;&nbsp; {{ scope.row.fileName }}
                 </template>
               </el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="15%">
-                <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown" placement="top">
-                  <el-link type="primary" class="text-click" @click="showFsResource(scope.row)">
-                    {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown}}
-                  </el-link>
+              <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="80">
+                <el-tooltip effect="dark" :content="$t('history.result')" placement="top">
+                  <el-link type="primary" class="text-click" @click="showFsResource(scope.row)">{{ scope.row.returnSum }}</el-link>
                 </el-tooltip>
               </el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="12%" prop="resultStatus" sortable show-overflow-tooltip>
-                <el-button @click="showFsResultLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
+              <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="120" prop="resultStatus" sortable show-overflow-tooltip>
+                <el-button @click="showFsResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
                   <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                 </el-button>
-                <el-button @click="showFsResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
+                <el-button @click="showFsResultLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
                   <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                 </el-button>
-                <el-button @click="showFsResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
+                <el-button @click="showFsResultLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
                   <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                 </el-button>
-                <el-button @click="showFsResultLog(scope.row)" plain size="medium" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
+                <el-button @click="showFsResultLog(scope.row)" plain size="mini" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
                   <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
                 </el-button>
-                <el-button @click="showFsResultLog(scope.row)" plain size="medium" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+                <el-button @click="showFsResultLog(scope.row)" plain size="mini" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
                   <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
                 </el-button>
-                <el-button @click="showFsResultLog(scope.row)" plain size="medium" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+                <el-button @click="showFsResultLog(scope.row)" plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
                   <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
                 </el-button>
               </el-table-column>
-              <el-table-column prop="updateTime" min-width="14%" :label="$t('image.last_modified')" sortable>
+              <el-table-column prop="updateTime" min-width="160" :label="$t('image.last_modified')" sortable>
                 <template v-slot:default="scope">
                   <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
                 </template>
               </el-table-column>
-              <el-table-column min-width="14%" v-slot:default="scope" :label="$t('commons.operating')">
+              <el-table-column min-width="130" v-slot:default="scope" :label="$t('commons.operating')" fixed="right">
                 <download :params="scope.row"/>
               </el-table-column>
             </el-table>
@@ -774,5 +772,8 @@ export default {
 }
 * { touch-action: pan-y; }
 /deep/ :focus{outline:0;}
+.x-card >>> .el-card__body {
+  padding: 0 20px 20px 20px;
+}
 </style>
 
