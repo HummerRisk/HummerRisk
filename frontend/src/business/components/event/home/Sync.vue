@@ -189,6 +189,7 @@ export default {
   },
   data() {
     return {
+      pickerMinDate:"",
       eventFrom:{
         accountId: "",
         region: ""
@@ -235,7 +236,18 @@ export default {
             start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
             picker.$emit('pick', [start, end]);
           }
-        }]
+        }],
+        onPick: obj => {
+          this.pickerMinDate = new Date(obj.minDate).getTime();
+        },
+        disabledDate: time => {
+          if (this.pickerMinDate) {
+            const day1 = 14 * 24 * 3600 * 1000;
+            let maxTime = this.pickerMinDate + day1;
+            let minTime = this.pickerMinDate - day1;
+            return time.getTime() > maxTime || time.getTime() < minTime;
+          }
+        }
       },
       checkedColumnNames: columnOptions.map((ele) => ele.props),
       columnNames: columnOptions,
