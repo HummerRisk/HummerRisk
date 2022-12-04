@@ -560,11 +560,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.jacoco</groupId>
-            <artifactId>org.jacoco.agent</artifactId>
-            <version>0.8.4</version>
-        </dependency>
-        <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>openapiutil</artifactId>
             <version>0.0.8</version>
@@ -584,25 +579,6 @@
             <groupId>com.aliyun</groupId>
             <artifactId>tea-util</artifactId>
             <version>0.2.9</version>
-        </dependency>
-        <dependency>
-            <groupId>com.aliyun</groupId>
-            <artifactId>aliyun-java-sdk-core</artifactId>
-            <version>4.6.0</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-codec</artifactId>
-                    <groupId>commons-codec</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-lang3</artifactId>
-                    <groupId>org.apache.commons</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>org.jacoco.agent</artifactId>
-                    <groupId>org.jacoco</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.aliyun</groupId>
@@ -629,6 +605,12 @@
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>
             <version>3.15.2</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>org.jacoco.agent</artifactId>
+                    <groupId>org.jacoco</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- aliyun -->
 
@@ -808,20 +790,12 @@
             <version>3.2.0</version>
             <exclusions>
                 <exclusion>
-                    <artifactId>commons-codec</artifactId>
-                    <groupId>commons-codec</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.google.code.findbugs</groupId>
                     <artifactId>jsr305</artifactId>
+                    <groupId>com.google.code.findbugs</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -829,43 +803,11 @@
             <groupId>org.pacesys</groupId>
             <artifactId>openstack4j</artifactId>
             <version>3.2.0</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-io</artifactId>
-                    <groupId>commons-io</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>activation</artifactId>
-                    <groupId>javax.activation</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>openstack4j-core</artifactId>
-                    <groupId>org.pacesys</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>guava</artifactId>
-                    <groupId>com.google.guava</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>resteasy-client</artifactId>
-                    <groupId>org.jboss.resteasy</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jsr305</artifactId>
-                    <groupId>com.google.code.findbugs</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.pacesys.openstack4j.connectors</groupId>
             <artifactId>openstack4j-httpclient</artifactId>
             <version>3.2.0</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>guava</artifactId>
-                    <groupId>com.google.guava</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!-- OpenStack -->
 
@@ -874,27 +816,11 @@
             <groupId>com.toastcoders</groupId>
             <artifactId>yavijava</artifactId>
             <version>6.0.05</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>log4j</artifactId>
-                    <groupId>log4j</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>dom4j</artifactId>
-                    <groupId>dom4j</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.vmware</groupId>
             <artifactId>vijava</artifactId>
             <version>5.1</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>dom4j</artifactId>
-                    <groupId>dom4j</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!-- VMware -->
 
