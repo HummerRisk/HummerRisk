@@ -242,7 +242,10 @@ public class CloudEventService {
                 cloudEventMap.put(item.getEventId(),item);
             });
 
-            List<CloudEventWithBLOBs> result  = new ArrayList<>(cloudEventMap.values());
+            List<CloudEventWithBLOBs> resultTemp  = new ArrayList<>(cloudEventMap.values());
+            List<CloudEventWithBLOBs> result = resultTemp.stream().filter(item->{
+                return item.getSyncRegion().equals(item.getAcsRegion());
+            }).collect(Collectors.toList());
             template.execute(new TransactionCallbackWithoutResult() {
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus arg0) {
