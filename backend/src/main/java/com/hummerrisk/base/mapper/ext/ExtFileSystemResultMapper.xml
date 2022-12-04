@@ -123,6 +123,9 @@
             <if test="request.fileName != null and request.fileName != ''">
                 and LOWER(t1.file_name) like CONCAT('%', LOWER(#{request.fileName}),'%')
             </if>
+            <if test="request.sbomVersionId != null and request.sbomVersionId != ''">
+                and t.sbom_version_id = #{request.sbomVersionId}
+            </if>
         </where>
         ORDER BY t.update_time desc
     </select>

@@ -107,20 +107,41 @@ public class SbomController {
 
     @I18n
     @ApiOperation(value = "所有已绑定项目的源码的检测结果")
+    @GetMapping("codeResult/{sbomVersionId}")
+    public List<CodeResultDTO> codeResult(@PathVariable String sbomVersionId) {
+        return sbomService.codeResult(sbomVersionId);
+    }
+
+    @I18n
+    @ApiOperation(value = "所有已绑定项目的镜像的检测结果")
+    @GetMapping("imageResult/{sbomVersionId}")
+    public List<ImageResultDTO> imageResult(@PathVariable String sbomVersionId) throws Exception {
+        return sbomService.imageResult(sbomVersionId);
+    }
+
+    @I18n
+    @ApiOperation(value = "所有已绑定项目的文件系统的检测结果")
+    @GetMapping("fsResult/{sbomVersionId}")
+    public List<FsResultDTO> fsResult(@PathVariable String sbomVersionId) throws Exception {
+        return sbomService.fsResult(sbomVersionId);
+    }
+
+    @I18n
+    @ApiOperation(value = "所有已绑定项目的源码的历史检测结果")
     @GetMapping("historyCodeResult/{sbomVersionId}")
     public List<HistoryCodeResult> historyCodeResult(@PathVariable String sbomVersionId) {
         return sbomService.historyCodeResult(sbomVersionId);
     }
 
     @I18n
-    @ApiOperation(value = "所有已绑定项目的镜像的检测结果")
+    @ApiOperation(value = "所有已绑定项目的镜像的历史检测结果")
     @GetMapping("historyImageResult/{sbomVersionId}")
     public List<HistoryImageResultDTO> historyImageResult(@PathVariable String sbomVersionId) throws Exception {
         return sbomService.historyImageResult(sbomVersionId);
     }
 
     @I18n
-    @ApiOperation(value = "所有已绑定项目的文件系统的检测结果")
+    @ApiOperation(value = "所有已绑定项目的文件系统的历史检测结果")
     @GetMapping("historyFsResult/{sbomVersionId}")
     public List<HistoryFsResultDTO> historyFsResult(@PathVariable String sbomVersionId) throws Exception {
         return sbomService.historyFsResult(sbomVersionId);

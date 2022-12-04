@@ -541,13 +541,13 @@ export default {
     },
     searchScan() {
       if(this.sbomVersion) {
-        this.$get("/sbom/historyCodeResult/" + this.sbomVersion.id, response => {
+        this.$get("/sbom/codeResult/" + this.sbomVersion.id, response => {
           this.codeData = response.data;
         });
-        this.$get("/sbom/historyImageResult/" + this.sbomVersion.id, response => {
+        this.$get("/sbom/imageResult/" + this.sbomVersion.id, response => {
           this.imageData = response.data;
         });
-        this.$get("/sbom/historyFsResult/" + this.sbomVersion.id, response => {
+        this.$get("/sbom/fsResult/" + this.sbomVersion.id, response => {
           this.fsData = response.data;
         });
       }

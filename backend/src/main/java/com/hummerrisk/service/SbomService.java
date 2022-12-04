@@ -2,13 +2,18 @@ package com.hummerrisk.service;
 
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
+import com.hummerrisk.base.mapper.ext.ExtCodeResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtFileSystemResultMapper;
+import com.hummerrisk.base.mapper.ext.ExtImageResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtSbomMapper;
 import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.utils.BeanUtils;
 import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.commons.utils.UUIDUtil;
+import com.hummerrisk.controller.request.code.CodeResultRequest;
+import com.hummerrisk.controller.request.fs.FsResultRequest;
+import com.hummerrisk.controller.request.image.ImageResultRequest;
 import com.hummerrisk.controller.request.sbom.DownloadRequest;
 import com.hummerrisk.controller.request.sbom.SbomRequest;
 import com.hummerrisk.controller.request.sbom.SbomVersionRequest;
@@ -57,6 +62,10 @@ public class SbomService {
     private HistoryFileSystemResultMapper historyFileSystemResultMapper;
     @Resource
     private CodeResultLogMapper codeResultLogMapper;
+    @Resource
+    private ExtCodeResultMapper extCodeResultMapper;
+    @Resource
+    private ExtImageResultMapper extImageResultMapper;
 
 
     public List<SbomDTO> sbomList(SbomRequest request) {
@@ -179,6 +188,27 @@ public class SbomService {
 
     public List<ApplicationDTO> applications(SbomRequest request) throws Exception {
         return extSbomMapper.applications(request);
+    }
+
+    public List<CodeResultDTO> codeResult(String sbomVersionId) {
+        CodeResultRequest request = new CodeResultRequest();
+        request.setSbomVersionId(sbomVersionId);
+        List<CodeResultDTO> list = extCodeResultMapper.resultList(request);
+        return list;
+    }
+
+    public List<ImageResultDTO> imageResult(String sbomVersionId) {
+        ImageResultRequest request = new ImageResultRequest();
+        request.setSbomVersionId(sbomVersionId);
+        List<ImageResultDTO> list = extImageResultMapper.resultList(request);
+        return list;
+    }
+
+    public List<FsResultDTO> fsResult(String sbomVersionId) {
+        FsResultRequest request = new FsResultRequest();
+        request.setSbomVersionId(sbomVersionId);
+        List<FsResultDTO> list = extFileSystemResultMapper.resultList(request);
+        return list;
     }
 
     public List<HistoryCodeResult> historyCodeResult(String sbomVersionId) {

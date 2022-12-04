@@ -143,6 +143,9 @@
             <if test="request.imageUrl != null and request.imageUrl != ''">
                 and LOWER(t.image_url) like CONCAT('%', LOWER(#{request.imageUrl}),'%')
             </if>
+            <if test="request.sbomVersionId != null and request.sbomVersionId != ''">
+                and t.sbom_version_id = #{request.sbomVersionId}
+            </if>
         </where>
         ORDER BY t.update_time desc
     </select>
@@ -184,6 +187,9 @@
             </if>
             <if test="request.imageUrl != null and request.imageUrl != ''">
                 and LOWER(t.image_url) like CONCAT('%', LOWER(#{request.imageUrl}),'%')
+            </if>
+            <if test="request.sbomVersionId != null and request.sbomVersionId != ''">
+                and t.sbom_version_id = #{request.sbomVersionId}
             </if>
         </where>
         ORDER BY t.update_time desc

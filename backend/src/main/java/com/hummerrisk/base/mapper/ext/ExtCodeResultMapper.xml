@@ -124,6 +124,9 @@
             <if test="request.userName != null and request.userName != ''">
                 and LOWER(user.name) like CONCAT('%', LOWER(#{request.userName}),'%')
             </if>
+            <if test="request.sbomVersionId != null and request.sbomVersionId != ''">
+                and t.sbom_version_id = #{request.sbomVersionId}
+            </if>
         </where>
         ORDER BY t.update_time desc
     </select>
@@ -157,6 +160,9 @@
             </if>
             <if test="request.userName != null and request.userName != ''">
                 and LOWER(user.name) like CONCAT('%', LOWER(#{request.userName}),'%')
+            </if>
+            <if test="request.sbomVersionId != null and request.sbomVersionId != ''">
+                and t.sbom_version_id = #{request.sbomVersionId}
             </if>
         </where>
         ORDER BY t.update_time desc
