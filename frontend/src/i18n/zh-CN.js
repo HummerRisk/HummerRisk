@@ -1491,6 +1491,7 @@ export default {
     start_time:"开始日期",
     end_time:"结束日期",
     week:"最近一周",
+    two_week:"最近两周",
     month:"最近一个月",
     error:"云账号和区域还有日期范围不能为空",
     middle_level: "中风险",
