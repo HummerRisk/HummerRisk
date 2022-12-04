@@ -322,6 +322,24 @@ export const RESULT_STATUS = {
   }
 }
 
+export const K8S_RESULT_STATUS = {
+  key: "resultStatus",
+  name: 'TableSearchSelect',
+  label: 'commons.status',
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN]
+  },
+  options: [
+    {label: 'resource.i18n_in_process', value: 'APPROVED'},
+    {label: 'resource.i18n_done', value: 'FINISHED'},
+    {label: 'resource.i18n_has_exception', value: 'ERROR'},
+    {label: 'resource.i18n_has_warn', value: 'WARNING'},
+  ],
+  props: { // 尾部控件的props，一般为element ui控件的props
+    multiple: true
+  }
+}
+
 export const CREATOR = {
   key: "creator",
   name: 'TableSearchSelect',
@@ -943,6 +961,56 @@ export const APPLY_USER = {
   }
 }
 
+export const REPO = {
+  key: "repo", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "image.image_repo_url", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
+export const ITEM_SORT_FIRST_LEVEL = {
+  key: "itemSortFirstLevel", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "resource.security_level", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
+export const ITEM_SORT_SECOND_LEVEL = {
+  key: "itemSortSecondLevel", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "resource.control_point", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
+export const PROJECT = {
+  key: "project", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "resource.basic_requirements_for_grade_protection", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
+export const IMPROVEMENT = {
+  key: "improvement", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "resource.suggestions_for_improvement", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
 export const USER_CONFIGS = [NAME, EMAIL, UPDATE_TIME, CREATE_TIME];
 export const PROXY_CONFIGS = [PROXY_TYPE, PROXY_IP, UPDATE_TIME, CREATE_TIME];
 export const MSG_CONFIGS = [READ_TIME, CREATE_TIME];
@@ -966,24 +1034,25 @@ export const SERVER_CERTIFICATE_CONFIGS = [NAME, DESCRIPTION, CREATOR, LAST_MODI
 export const SERVER_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
 export const SERVER_RESULT_CONFIGS = [NAME, IP, SERVER_RULE_NAME, RULE_SEVERITY, RESULT_STATUS, CREATOR, UPDATE_TIME];
 export const IMAGE_CONFIGS = [NAME, IMAGE_URL, ACCOUNT_STATUS, CREATOR, CREATE_TIME, UPDATE_TIME];
-export const IMAGE_REPO_CONFIGS = [NAME, ACCOUNT_STATUS, CREATOR, UPDATE_TIME];
+export const IMAGE_REPO_CONFIGS = [NAME, REPO, ACCOUNT_STATUS, CREATOR, UPDATE_TIME];
 export const IMAGE_REPO_IMAGE_CONFIGS = [REPOSITORY, PATH, SIZE, TAG];
 export const IMAGE_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
-export const IMAGE_RESULT_CONFIGS = [NAME, IMAGE_URL, RULE_NAME, RULE_SEVERITY, RESULT_STATUS, CREATOR, UPDATE_TIME];
+export const IMAGE_RESULT_CONFIGS = [NAME, IMAGE_URL, RULE_NAME, K8S_RESULT_STATUS, CREATE_TIME, UPDATE_TIME];
 export const K8S_CONFIGS = [NAME, K8S_PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const K8S_SITUATION_CONFIGS = [SOURCE_NAME, SOURCE_NAMESPACE, SOURCE_TYPE, CREATOR, UPDATE_TIME, CREATE_TIME];
 export const K8S_SITUATION_LOG_CONFIGS = [K8S_PLUGIN_NAME ,CREATE_TIME];
 export const SITUATION_CONFIGS = [EVENT_ACCOUNT, PLUGIN_NAME, REGIONID, RULE_RESOURCE_TYPE, UPDATE_TIME, CREATE_TIME];
 export const SITUATION_LOG_CONFIGS = [EVENT_ACCOUNT, PLUGIN_NAME ,CREATE_TIME];
-export const K8S_RESULT_CONFIGS = [NAME, K8S_PLUGIN_NAME, CREATOR, RESULT_STATUS, CREATE_TIME, UPDATE_TIME];
+export const K8S_RESULT_CONFIGS = [NAME, K8S_PLUGIN_NAME, CREATOR, K8S_RESULT_STATUS, CREATE_TIME, UPDATE_TIME];
 export const CONFIG_CONFIGS = [NAME, ACCOUNT_STATUS, UPDATE_TIME, CREATE_TIME, CREATOR];
-export const CONFIG_RESULT_CONFIGS = [NAME, CREATOR, UPDATE_TIME];
+export const CONFIG_RESULT_CONFIGS = [NAME, K8S_RESULT_STATUS, CREATOR, UPDATE_TIME];
 export const TASK_CONFIGS = [NAME, CREATOR, CREATE_TIME, UPDATE_TIME];
 export const CODE_CONFIGS = [NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const CODE_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
-export const CODE_RESULT_CONFIGS = [NAME, RULE_NAME, RULE_SEVERITY, RESULT_STATUS, CREATOR, UPDATE_TIME];
+export const CODE_RESULT_CONFIGS = [NAME, RULE_NAME, RULE_SEVERITY, K8S_RESULT_STATUS, CREATOR, UPDATE_TIME];
 export const CLOUD_EVENT_SYNC_CONFIGS = [EVENT_ACCOUNT, REGION, CREATE_TIME];
 export const CLOUD_EVENT_CONFIGS = [EVENT_ACCOUNT, REGION, EVENT_TIME,USER, EVENT_NAME, RESOURCE_TYPE, RESOURCE_NAME, EVENT_RATING];
-export const SBOM_CONFIGS = [NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
+export const SBOM_CONFIGS = [NAME, UPDATE_TIME, CREATE_TIME, CREATOR];
 export const FS_CONFIGS = [NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
-export const FS_RESULT_CONFIGS = [NAME, RULE_NAME, RULE_SEVERITY, RESULT_STATUS, CREATOR, UPDATE_TIME];
+export const FS_RESULT_CONFIGS = [NAME, RULE_NAME, RULE_SEVERITY, K8S_RESULT_STATUS, CREATOR, UPDATE_TIME];
+export const RULE_INSPECTION_REPORT_CONFIGS = [ITEM_SORT_FIRST_LEVEL, ITEM_SORT_SECOND_LEVEL, PROJECT, IMPROVEMENT];

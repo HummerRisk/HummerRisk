@@ -99,16 +99,24 @@
         left join server_group sg on sg.id = s.server_group_id
 
         <where>
-            <if test="id != null">
-                AND t.id = #{id}
-            </if>
-            <if test="name != null">
-                AND LOWER(t.server_name) like CONCAT('%',#{name},'%')
-            </if>
-            <if test="combine != null">
+            <if test="request.combine != null">
                 <include refid="combine">
-                    <property name="condition" value="combine"/>
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
                 </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.serverName != null and request.serverName != ''">
+                and LOWER(t.server_name) like CONCAT('%',LOWER(#{request.serverName}),'%')
+            </if>
+            <if test="request.ip != null and request.ip != ''">
+                and LOWER(t.ip) like CONCAT('%',LOWER(#{request.ip}),'%')
+            </if>
+            <if test="request.ruleName != null and request.ruleName != ''">
+                and LOWER(t.rule_name) like CONCAT('%',LOWER(#{request.ruleName}),'%')
             </if>
         </where>
         ORDER BY FIELD(t.result_status, 'APPROVED', 'FINISHED', 'ERROR'), t.is_severity, FIELD(t.severity, 'HighRisk', 'MediumRisk', 'LowRisk'), t.server_name, t.update_time desc

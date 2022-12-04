@@ -61,12 +61,6 @@
                 <property name="object" value="${condition}.updateTime"/>
             </include>
         </if>
-        <if test="${condition}.pluginId != null">
-            and plugin.id
-            <include refid="condition">
-                <property name="object" value="${condition}.pluginId"/>
-            </include>
-        </if>
         <if test="${condition}.createTime != null">
             and t.create_time
             <include refid="condition">
@@ -114,7 +108,16 @@
                 and t.id = #{request.id}
             </if>
             <if test="request.name != null and request.name != ''">
-                and t.name like CONCAT('%', #{request.name},'%')
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.ip != null and request.ip != ''">
+                and LOWER(t.ip) like CONCAT('%', LOWER(#{request.ip}),'%')
+            </if>
+            <if test="request.port != null and request.port != ''">
+                and LOWER(t.port) like CONCAT('%', LOWER(#{request.port}),'%')
+            </if>
+            <if test="request.userName != null and request.userName != ''">
+                and LOWER(t.user_name) like CONCAT('%', LOWER(#{request.userName}),'%')
             </if>
             <if test="request.status != null and request.status != ''">
                 and t.status = #{request.status}

@@ -218,6 +218,7 @@ export default {
     show_more: '行列',
     show_menu: '組塊',
     show_list: '显示',
+    clear_select: '清除選中項',
   },
   workspace: {
     create: '創建工作空間',
@@ -889,6 +890,8 @@ export default {
     resource_situation: '雲資源態勢',
     sync_log: '雲資源同步日誌',
     sync_log_list: '雲資源同步日誌列表',
+    failed_cloud: '存在驗證失敗的雲賬號配置:',
+    failed_status: '雲賬號無效狀態不可執行檢測',
   },
   server: {
     server_setting: '主機檢測',
@@ -907,7 +910,7 @@ export default {
     all_server: '全部主機分組',
     server_name: '主機名稱',
     server_user_name: '用戶名',
-    server_status: '狀態',
+    server_status: '連接狀態',
     server_group_name: '主機分組名稱',
     server_group_create: '創建主機分組',
     server_group_rename: '修改主機分組名稱',
@@ -979,6 +982,7 @@ export default {
     server_risk_chart_vuln: '主機檢測結果風險統計',
     all_label: '所有主機',
     to_be_set: '待設置',
+    failed_server: '存在驗證失敗的主機配置:',
   },
   image: {
     image_repo: '鏡像倉庫',
@@ -1337,6 +1341,8 @@ export default {
     namespace_perspective: '命名空間視角',
     k8s_perspective: 'K8s 風險視角',
     image_risk: '存在風險的資源',
+    failed_k8s: '存在驗證失敗的 K8s 配置:',
+    failed_status: 'K8s 賬號無效狀態不可執行檢測',
   },
   config: {
     config_settings: '部署配置',

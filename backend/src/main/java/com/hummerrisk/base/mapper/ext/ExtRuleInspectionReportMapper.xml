@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.hummerrisk.base.mapper.ext.ExtRuleTagMapper">
-    <resultMap id="BaseResultMap" type="com.hummerrisk.base.domain.RuleTag">
+<mapper namespace="com.hummerrisk.base.mapper.ext.ExtRuleInspectionReportMapper">
+    <resultMap id="BaseResultMap" type="com.hummerrisk.base.domain.RuleInspectionReport"
+               extends="com.hummerrisk.base.mapper.RuleInspectionReportMapper.BaseResultMap">
     </resultMap>
 
     <sql id="condition">
@@ -46,36 +47,36 @@
     </sql>
 
     <sql id="combine">
-        <if test='${condition}.tagKey != null'>
-            and t.tag_key
+        <if test='${condition}.itemSortFirstLevel != null'>
+            and t.item_sort_first_level
             <include refid="condition">
-                <property name="object" value="${condition}.tagKey"/>
+                <property name="object" value="${condition}.itemSortFirstLevel"/>
             </include>
         </if>
-        <if test='${condition}.tagName != null'>
-            and t.tag_name
+        <if test='${condition}.itemSortSecondLevel != null'>
+            and t.item_sort_second_level
             <include refid="condition">
-                <property name="object" value="${condition}.tagName"/>
+                <property name="object" value="${condition}.itemSortSecondLevel"/>
             </include>
         </if>
-        <if test='${condition}.index != null'>
-            and t._index
+        <if test="${condition}.project != null">
+            and t.project
             <include refid="condition">
-                <property name="object" value="${condition}.index"/>
+                <property name="object" value="${condition}.project"/>
             </include>
         </if>
-        <if test='${condition}.flag != null'>
-            and t.flag
+        <if test="${condition}.improvement != null">
+            and t.improvement
             <include refid="condition">
-                <property name="object" value="${condition}.flag"/>
+                <property name="object" value="${condition}.improvement"/>
             </include>
         </if>
     </sql>
 
-    <select id="list" resultMap="BaseResultMap" parameterType="com.hummerrisk.controller.request.rule.RuleTagRequest">
+    <select id="getRuleInspectionReportList" resultMap="BaseResultMap">
         select
         t.*
-        from rule_tag as t
+        from rule_inspection_report as t
         <where>
             <if test="request.combine != null">
                 <include refid="combine">
@@ -83,14 +84,21 @@
                 </include>
             </if>
 
-            <if test="request.tagKey != null and request.tagKey != ''">
-                and LOWER(t.tag_key) like concat('%', LOWER(#{request.tagKey}), '%')
+            <if test="request.id != null and request.id != ''">
+                and LOWER(t.id) like CONCAT('%', LOWER(#{request.id}),'%')
             </if>
-            <if test="request.tagName != null and request.tagName != ''">
-                and LOWER(t.tag_name) like concat('%', LOWER(#{request.tagName}), '%')
+            <if test="request.itemSortFirstLevel != null and request.itemSortFirstLevel != ''">
+                and LOWER(t.item_sort_first_level) like CONCAT('%', LOWER(#{request.itemSortFirstLevel}),'%')
+            </if>
+            <if test="request.itemSortSecondLevel != null and request.itemSortSecondLevel != ''">
+                and LOWER(t.item_sort_second_level) like CONCAT('%', LOWER(#{request.itemSortSecondLevel}),'%')
+            </if>
+            <if test="request.project != null and request.project != ''">
+                and LOWER(t.project) like CONCAT('%', LOWER(#{request.project}),'%')
             </if>
         </where>
-        order by t._index
+        order by t.id
     </select>
+
 
 </mapper>

@@ -14,7 +14,7 @@
       <el-row>
         <el-col>
           <el-form-item :label="$t('system_parameter_setting.SMTP_port')" prop="port">
-            <el-input v-model="formInline.port" :placeholder="$t('system_parameter_setting.SMTP_port')"
+            <el-input type="number" max="65535" v-model="formInline.port" :placeholder="$t('system_parameter_setting.SMTP_port')"
                       v-on:input="change()"></el-input>
           </el-form-item>
         </el-col>
@@ -92,7 +92,8 @@ export default {
             required: true,
             message: this.$t('system_parameter_setting.port'),
             trigger: ['change', 'blur']
-          }
+          },
+          {min: 0, max: 5, message: this.$t('commons.input_limit', [0, 5]), trigger: 'blur'},
         ],
         account: [
           {

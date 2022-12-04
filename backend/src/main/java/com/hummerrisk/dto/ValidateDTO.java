@@ -2,9 +2,11 @@ package com.hummerrisk.dto;
 
 public class ValidateDTO {
 
-   private String message;
+    private String message;
 
-   private boolean flag;
+    private boolean flag;
+
+    private String name;
 
     public String getMessage() {
         return message;
@@ -20,5 +22,13 @@ public class ValidateDTO {
 
     public void setFlag(boolean flag) {
         this.flag = flag;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

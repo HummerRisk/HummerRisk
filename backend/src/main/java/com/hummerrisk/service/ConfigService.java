@@ -222,8 +222,8 @@ public class ConfigService {
                 result.setSeverity(rule.getSeverity());
                 cloudNativeConfigResultMapper.insertSelective(result);
 
-                saveCloudNativeConfigResultLog(result.getId(), "i18n_start_k8s_result_config", "", true);
-                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.CREATE, "i18n_start_k8s_result_config");
+                saveCloudNativeConfigResultLog(result.getId(), "i18n_start_config_result", "", true);
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.CREATE, "i18n_start_config_result");
 
                 historyService.insertScanTaskHistory(result, scanId, cloudNativeConfig.getId(), TaskEnum.configAccount.getType());
 
@@ -242,9 +242,9 @@ public class ConfigService {
 
         reScanDeleteCloudNativeConfigResult(id);
 
-        saveCloudNativeConfigResultLog(result.getId(), "i18n_restart_k8s_result_config", "", true);
+        saveCloudNativeConfigResultLog(result.getId(), "i18n_restart_config_result", "", true);
 
-        OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.CREATE, "i18n_restart_k8s_result_config");
+        OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.CREATE, "i18n_restart_config_result");
 
         historyService.updateHistoryCloudNativeConfigResult(BeanUtils.copyBean(new HistoryCloudNativeConfigResult(), result));
 
@@ -301,7 +301,7 @@ public class ConfigService {
             cloudNativeConfigResultMapper.updateByPrimaryKeySelective(result);
 
             noticeService.createCloudNativeConfigMessageOrder(result);
-            saveCloudNativeConfigResultLog(result.getId(), "i18n_end_k8s_result_config", "", true);
+            saveCloudNativeConfigResultLog(result.getId(), "i18n_end_config_result", "", true);
 
             historyService.updateHistoryCloudNativeConfigResult(BeanUtils.copyBean(new HistoryCloudNativeConfigResult(), result));
         } catch (Exception e) {

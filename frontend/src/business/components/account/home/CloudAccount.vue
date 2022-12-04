@@ -545,10 +545,14 @@ const columnOptions = [
                   'Content-Type': undefined
                 }
               }, res => {
-                if (res.data) {
-                  this.$success(this.$t('account.success'));
+                if (res.data.length == 0) {
+                  this.$success(this.$t('commons.success'));
                 } else {
-                  this.$error(this.$t('account.error'));
+                  let name = '';
+                  for (let item of res.data) {
+                    name = name + ' ' + item.name + ';';
+                  }
+                  this.$error(this.$t('account.failed_cloud') + name);
                 }
                 this.search();
               });
@@ -773,6 +777,10 @@ const columnOptions = [
         });
       },
       openScanGroup(account) {
+        if (account.status === 'INVALID') {
+          this.$warning(account.name + ':' + this.$t('account.failed_status'));
+          return;
+        }
         this.accountWithGroup = account;
         localStorage.setItem(ACCOUNT_ID, account.id);
         localStorage.setItem(ACCOUNT_NAME, account.name);

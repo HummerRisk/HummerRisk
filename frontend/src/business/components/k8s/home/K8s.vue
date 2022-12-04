@@ -36,7 +36,7 @@
                          :filters="statusFilters"
                          :filter-method="filterStatus">
           <template v-slot:default="{row}">
-            <div @click="validateK8s(row)">
+            <div @click="validateK8s(row)" style="cursor:pointer;">
               <el-tag size="mini" type="warning" v-if="row.status === 'DELETE'">
                 {{ $t('account.DELETE') }}
               </el-tag>
@@ -54,7 +54,7 @@
                          :filters="statusFilters"
                          :filter-method="filterStatus">
           <template v-slot:default="{row}">
-            <div @click="validateOperator(row)">
+            <div @click="validateOperator(row)" style="cursor:pointer;">
               <el-tag size="mini" type="warning" v-if="row.operatorStatus === 'DELETE'">
                 {{ $t('account.DELETE') }}
               </el-tag>
@@ -420,7 +420,6 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            let formData = new FormData();
             this.result = this.$request({
               method: 'POST',
               url: "/k8s/validate",
@@ -429,10 +428,14 @@ export default {
                 'Content-Type': undefined
               }
             }, res => {
-              if (res.data) {
+              if (res.data.length == 0) {
                 this.$success(this.$t('commons.success'));
               } else {
-                this.$error(this.$t('commons.error'));
+                let name = '';
+                for (let item of res.data) {
+                  name = name + ' ' + item.name + ';';
+                }
+                this.$error(this.$t('k8s.failed_k8s') + name);
               }
               this.search();
             });
@@ -673,6 +676,10 @@ export default {
       }
     },
     handleScan(item) {
+      if (item.status === 'INVALID') {
+        this.$warning(item.name + ':' + this.$t('k8s.failed_status'));
+        return;
+      }
       this.$alert(this.$t('image.one_scan') + item.name + " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {

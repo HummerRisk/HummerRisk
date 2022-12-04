@@ -4,14 +4,22 @@
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('sbom.project_list')"
-                      @create="create" :createTip="$t('sbom.sbom_create')" :show-create="true"/>
-
+                      @create="create" :createTip="$t('sbom.sbom_create')"
+                      :show-create="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                :row-class-name="tableRowClassName" @filter-change="filter">
-        <el-table-column type="index" min-width="3%"/>
-        <el-table-column prop="name" :label="$t('sbom.name')" min-width="15%" show-overflow-tooltip>
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('sbom.name')" min-width="140" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <i class="iconfont icon-SBOM sbom-icon"></i>
@@ -19,30 +27,30 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="description" :label="$t('sbom.desc')" min-width="20%" show-overflow-tooltip>
+        <el-table-column prop="description" v-if="checkedColumnNames.includes('description')" :label="$t('sbom.desc')" min-width="200" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span slot="title">{{ scope.row.description }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('account.create_time')" sortable
+        <el-table-column min-width="150" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.create_time')" sortable
                          prop="createTime">
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('account.update_time')" sortable
+        <el-table-column min-width="150" v-if="checkedColumnNames.includes('updateTime')" :label="$t('account.update_time')" sortable
                          prop="updateTime">
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
-        <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :label="$t('account.creator')" min-width="80" show-overflow-tooltip/>
+        <el-table-column min-width="150" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
@@ -100,7 +108,7 @@
         </template>
 
         <el-table border :data="versionTableData" class="adjust-table table-content" @sort-change="sort"
-                  :row-class-name="tableRowClassName" @filter-change="filter">
+                  @filter-change="filter">
           <el-table-column type="index" min-width="3%"/>
           <el-table-column prop="name" :label="$t('sbom.version_name')" min-width="15%" show-overflow-tooltip>
             <template v-slot:default="scope">
@@ -236,6 +244,36 @@ import {_filter, _sort} from "@/common/js/utils";
 import {SBOM_CONFIGS} from "../../common/components/search/search-components";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import VersionTableHeader from "../head/VersionTableHeader";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'sbom.name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'sbom.desc',
+    props: 'description',
+    disabled: false
+  },
+  {
+    label: 'account.create_time',
+    props: 'createTime',
+    disabled: false
+  },
+  {
+    label: 'account.update_time',
+    props: 'updateTime',
+    disabled: false
+  },
+  {
+    label: 'account.creator',
+    props: 'userName',
+    disabled: false
+  },
+];
 
 /* eslint-disable */
 export default {
@@ -248,6 +286,7 @@ export default {
     TableOperator,
     DialogFooter,
     VersionTableHeader,
+    HideTable,
   },
   data() {
     return {
@@ -333,12 +372,44 @@ export default {
       imageData: [],
       fsValue: [],
       fsData: [],
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'sbom.name',
+          id: 'name'
+        },
+        {
+          name: 'sbom.desc',
+          id: 'description'
+        },
+        {
+          name: 'account.creator',
+          id: 'userName'
+        },
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   watch: {
     '$route': 'init'
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
+    select(selection) {
+    },
     create() {
       this.addForm = {};
       this.createVisible = true;
@@ -470,15 +541,6 @@ export default {
           });
         }
       });
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 4 === 0) {
-        return 'success-row';
-      } else if (rowIndex % 2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
     },
     searchVersion() {
       let url = "/sbom/sbomVersionList/" + this.versionPage + "/" + this.versionPageSize;

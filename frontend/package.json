@@ -54,6 +54,7 @@
     "d3": "^7.6.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
+    "file-saver": "^2.0.5",
     "file-writer": "^1.0.2",
     "function.prototype.name": "^1.1.1",
     "less": "^2.3.1",

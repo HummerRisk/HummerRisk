@@ -50,6 +50,18 @@
                 <property name="object" value="${condition}.name"/>
             </include>
         </if>
+        <if test='${condition}.status != null'>
+            and t.result_status
+            <include refid="condition">
+                <property name="object" value="${condition}.status"/>
+            </include>
+        </if>
+        <if test='${condition}.imageUrl != null'>
+            and i.image_url
+            <include refid="condition">
+                <property name="object" value="${condition}.imageUrl"/>
+            </include>
+        </if>
         <if test='${condition}.ruleName != null'>
             and t.rule_name
             <include refid="condition">
@@ -61,17 +73,6 @@
             <include refid="condition">
                 <property name="object" value="${condition}.severity"/>
             </include>
-        </if>
-        <if test='${condition}.ruleTag != null and ${condition}.ruleTag.value != "all"'>
-            and #{${condition}.ruleTag.value}
-            <choose>
-                <when test='${condition}.ruleTag.operator == "in"'>
-                    in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
-                </when>
-                <when test='${condition}.ruleTag.operator == "not in"'>
-                    not in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
-                </when>
-            </choose>
         </if>
         <if test="${condition}.creator != null">
             and user.id
@@ -85,10 +86,26 @@
                 <property name="object" value="${condition}.createTime"/>
             </include>
         </if>
+        <if test='${condition}.ruleTag != null and ${condition}.ruleTag.value != "all"'>
+            and #{${condition}.ruleTag.value}
+            <choose>
+                <when test='${condition}.ruleTag.operator == "in"'>
+                    in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
+                </when>
+                <when test='${condition}.ruleTag.operator == "not in"'>
+                    not in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
+                </when>
+            </choose>
+        </if>
+        <if test="${condition}.updateTime != null">
+            and t.update_time
+            <include refid="condition">
+                <property name="object" value="${condition}.updateTime"/>
+            </include>
+        </if>
     </sql>
 
-    <select id="resultListWithBLOBs" parameterType="com.hummerrisk.controller.request.image.ImageResultRequest"
-            resultType="com.hummerrisk.dto.ImageResultWithBLOBsDTO">
+    <select id="resultListWithBLOBs" resultType="com.hummerrisk.dto.ImageResultWithBLOBsDTO">
         SELECT
         t.*,
         (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
@@ -110,23 +127,27 @@
         left join image i on t.image_id = i.id
 
         <where>
-            <if test="id != null">
-                AND t.id = #{id}
-            </if>
-            <if test="name != null">
-                AND LOWER(t.name) like CONCAT('%',#{name},'%')
-            </if>
-            <if test="combine != null">
+            <if test="request.combine != null">
                 <include refid="combine">
-                    <property name="condition" value="combine"/>
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
                 </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.imageUrl != null and request.imageUrl != ''">
+                and LOWER(t.image_url) like CONCAT('%', LOWER(#{request.imageUrl}),'%')
             </if>
         </where>
         ORDER BY t.update_time desc
     </select>
 
-    <select id="resultList" parameterType="com.hummerrisk.controller.request.image.ImageResultRequest"
-            resultType="com.hummerrisk.dto.ImageResultDTO">
+    <select id="resultList" resultType="com.hummerrisk.dto.ImageResultDTO">
         SELECT
         t.*,
         (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
@@ -148,16 +169,21 @@
         left join image i on t.image_id = i.id
 
         <where>
-            <if test="id != null">
-                AND t.id = #{id}
-            </if>
-            <if test="name != null">
-                AND LOWER(t.name) like CONCAT('%',#{name},'%')
-            </if>
-            <if test="combine != null">
+            <if test="request.combine != null">
                 <include refid="combine">
-                    <property name="condition" value="combine"/>
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
                 </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.imageUrl != null and request.imageUrl != ''">
+                and LOWER(t.image_url) like CONCAT('%', LOWER(#{request.imageUrl}),'%')
             </if>
         </where>
         ORDER BY t.update_time desc

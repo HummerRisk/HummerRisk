@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -69,16 +70,28 @@ public class ServerService {
     @Resource
     private HistoryServerResultMapper historyServerResultMapper;
 
-    public boolean validate(List<String> ids) {
+    public List<ServerValidateDTO> validate(List<String> ids) {
+        List<ServerValidateDTO> list = new ArrayList<>();
         ids.forEach(id -> {
             try {
-                ServerValidateDTO validate = validate(id);
-                if (!validate.isFlag()) throw new HRException(Translator.get("failed_server"));
+                Proxy proxy = new Proxy();
+                Server server = serverMapper.selectByPrimaryKey(id);
+                if (server.getIsProxy() != null && server.getIsProxy()) {
+                    proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
+                }
+                ServerValidateDTO validate = validateAccount(server, proxy);
+                if (validate.isFlag()) {
+                    server.setStatus(CloudAccountConstants.Status.VALID.name());
+                } else {
+                    server.setStatus(CloudAccountConstants.Status.INVALID.name());
+                    list.add(validate);
+                }
+                serverMapper.updateByPrimaryKeySelective(server);
             } catch (Exception e) {
-                throw new HRException(e.getMessage());
+                throw new HRException(Translator.get("failed_server") + e.getMessage());
             }
         });
-        return true;
+        return list;
     }
 
 
@@ -113,7 +126,7 @@ public class ServerService {
         Integer scanId = historyService.insertScanHistory(server);
         if (StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.VALID.name())) {
             deleteServerResultById(id);
-            List<ServerRuleDTO> ruleList = ruleList(null);
+            List<ServerRuleDTO> ruleList = ruleList(new ServerRuleRequest());
             ServerResult result = new ServerResult();
             String serverGroupName = serverGroupMapper.selectByPrimaryKey(server.getServerGroupId()).getName();
             for (ServerRuleDTO dto : ruleList) {
@@ -242,7 +255,7 @@ public class ServerService {
             if (server.getIsProxy() != null && server.getIsProxy()) {
                 proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
             }
-            serverValidateDTO= login(server, proxy);
+            serverValidateDTO= validateAccount(server, proxy);
             return serverValidateDTO;
         } catch (Exception e) {
             LogUtil.error(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), e.getMessage()), e);
@@ -334,7 +347,7 @@ public class ServerService {
             server.setIsCertificate(false);
         }
 
-        ServerValidateDTO serverValidateDTO = login(server, proxy);
+        ServerValidateDTO serverValidateDTO = validateAccount(server, proxy);
 
         OperationLogService.log(SessionUtils.getUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_create_server");
         serverMapper.insertSelective(serverValidateDTO.getServer());
@@ -374,7 +387,7 @@ public class ServerService {
             server.setIsCertificate(false);
         }
 
-        ServerValidateDTO serverValidateDTO = login(server, proxy);
+        ServerValidateDTO serverValidateDTO = validateAccount(server, proxy);
 
         OperationLogService.log(SessionUtils.getUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "i18n_update_server");
         serverMapper.updateByPrimaryKeySelective(serverValidateDTO.getServer());
@@ -416,7 +429,7 @@ public class ServerService {
             server.setIsCertificate(false);
         }
 
-        ServerValidateDTO serverValidateDTO = login(server, proxy);
+        ServerValidateDTO serverValidateDTO = validateAccount(server, proxy);
 
         OperationLogService.log(SessionUtils.getUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.COPY, "i18n_copy_server");
         serverMapper.insertSelective(serverValidateDTO.getServer());
@@ -428,23 +441,22 @@ public class ServerService {
         OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server");
     }
 
-
-    public ServerValidateDTO login(Server server, Proxy proxy) throws Exception {
+    public ServerValidateDTO validateAccount(Server server, Proxy proxy) throws Exception {
         ServerValidateDTO serverValidateDTO = new ServerValidateDTO();
         try {
-            SshUtil.login(server, proxy);
+            SshUtil.validateSsh2(server, proxy);
             server.setStatus(CloudAccountConstants.Status.VALID.name());
             server.setAuthType("ssh2");
             serverValidateDTO.setFlag(true);
             serverValidateDTO.setMessage("Verification succeeded!");
         } catch (Exception e) {
             try {
-                SshUtil.loginSshd(server, proxy);
+                SshUtil.validateSshd(server, proxy);
                 server.setStatus(CloudAccountConstants.Status.VALID.name());
                 server.setAuthType("sshd");
                 serverValidateDTO.setFlag(true);
                 serverValidateDTO.setMessage("Verification succeeded!");
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 server.setStatus(CloudAccountConstants.Status.INVALID.name());
                 server.setAuthType("sshd");
                 serverValidateDTO.setFlag(false);
@@ -458,9 +470,9 @@ public class ServerService {
     public String execute(Server server, String cmd, Proxy proxy) throws Exception {
         try {
             if (StringUtils.equalsIgnoreCase(server.getAuthType(), "ssh2")) {
-                return SshUtil.execute(SshUtil.login(server, proxy), cmd);
+                return SshUtil.executeSsh2(SshUtil.loginSsh2(server, proxy), cmd);
             } else {
-                return SshUtil.executeSshd(SshUtil.loginExecute(server, proxy), cmd);
+                return SshUtil.executeSshd(SshUtil.loginSshd(server, proxy), cmd);
             }
         } catch (Exception e) {
             return "";

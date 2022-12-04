@@ -218,6 +218,7 @@ export default {
     show_more: '行列',
     show_menu: '组块',
     show_list: '显示',
+    clear_select: '清除选中项',
   },
   workspace: {
     create: '创建工作空间',
@@ -889,6 +890,8 @@ export default {
     resource_situation: '云资源态势',
     sync_log: '云资源同步日志',
     sync_log_list: '云资源同步日志列表',
+    failed_cloud: '存在验证失败的云账号配置:',
+    failed_status: '云账号无效状态不可执行检测',
   },
   server: {
     server_setting: '主机检测',
@@ -907,7 +910,7 @@ export default {
     all_server: '全部主机分组',
     server_name: '主机名称',
     server_user_name: '用户名',
-    server_status: '状态',
+    server_status: '连接状态',
     server_group_name: '主机分组名称',
     server_group_create: '创建主机分组',
     server_group_rename: '修改主机分组名称',
@@ -979,6 +982,7 @@ export default {
     server_risk_chart_vuln: '主机检测结果风险统计',
     all_label: '所有主机',
     to_be_set: '待设置',
+    failed_server: '存在验证失败的主机配置:',
   },
   image: {
     image_repo: '镜像仓库',
@@ -1337,6 +1341,8 @@ export default {
     namespace_perspective: '命名空间视角',
     k8s_perspective: 'K8s 风险视角',
     image_risk: '存在风险的资源',
+    failed_k8s: '存在验证失败的 K8s 配置:',
+    failed_status: 'K8s 账号无效状态不可执行检测',
   },
   config: {
     config_settings: '部署配置',

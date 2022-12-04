@@ -278,12 +278,14 @@
     </sql>
 
     <select id="historyScanVo" parameterType="com.hummerrisk.controller.request.dashboard.HistoryScanVo" resultType="com.hummerrisk.controller.request.dashboard.HistoryScanVo">
+        select * from (
         select
         t.*,
-        IFNULL(t9.name, IFNULL(t7.name, IFNULL(t6.name, IFNULL(t5.name, IFNULL(t3.name, IFNULL(t2.server_name, t1.name)))))) as accountName,
+        IFNULL(t9.name, IFNULL(t7.name, IFNULL(t6.name, IFNULL(t5.name, IFNULL(t3.name, IFNULL(t2.server_name,t1.task_name)))))) as accountName,
+        IFNULL(t9.severity, IFNULL(t7.severity, IFNULL(t6.severity, IFNULL(t5.severity, IFNULL(t3.severity,IFNULL(t2.severity, t1.severity)))))) as severityType,
         t8.name as userName
         from history_scan t
-        left join cloud_account t1 on t.account_id = t1.id
+        left join cloud_task t1 on t.account_id = t1.id
         left join server_result t2 on t.account_id = t2.id
         left join image_result t3 on t.account_id = t3.id
         left join code_result t5 on t.account_id = t5.id
@@ -291,26 +293,30 @@
         left join cloud_native_config_result t7 on t.account_id = t7.id
         left join file_system_result t9 on t.account_id = t9.id
         left join user t8 on t.operator = t8.id
+        ) as tt
         <where>
             <if test="combine != null">
                 <include refid="combine">
                     <property name="condition" value="combine"/>
                 </include>
             </if>
-            <if test="scanType != null">
-                AND t.account_type = #{scanType}
+            <if test="scanType != null and scanType != ''">
+                AND tt.account_type = #{scanType}
             </if>
-            <if test="accountId != null">
-                AND t.account_id = #{accountId}
+            <if test="accountId != null and accountId != ''">
+                AND tt.account_id = #{accountId}
             </if>
-            <if test="users != null">
-                AND t.operator = #{users}
+            <if test="users != null and users != ''">
+                AND tt.operator = #{users}
+            </if>
+            <if test="severityType != null and severityType != ''">
+                AND tt.severityType = #{severityType}
             </if>
             <if test="startTime != null and endTime != null">
-                AND t.create_time between #{startTime} and #{endTime}
+                AND tt.create_time between #{startTime} and #{endTime}
             </if>
-            AND (t1.name is not null OR t2.server_name is not null OR t3.name is not null OR t5.name is not null OR t6.name is not null OR t7.name is not null OR t9.name is not null)
+            AND tt.accountName is not null
         </where>
-        order by t.create_time desc
+        order by tt.create_time desc
     </select>
 </mapper>

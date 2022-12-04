@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
-import com.hummerrisk.base.mapper.ext.ExtRuleGroupMapper;
-import com.hummerrisk.base.mapper.ext.ExtRuleMapper;
-import com.hummerrisk.base.mapper.ext.ExtRuleTagMapper;
-import com.hummerrisk.base.mapper.ext.ExtRuleTypeMapper;
+import com.hummerrisk.base.mapper.ext.*;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
@@ -84,6 +81,9 @@ public class RuleService {
     @Resource
     @Lazy
     private RuleInspectionReportMapper ruleInspectionReportMapper;
+    @Resource
+    @Lazy
+    private ExtRuleInspectionReportMapper extRuleInspectionReportMapper;
     @Resource
     @Lazy
     private RuleInspectionReportMappingMapper ruleInspectionReportMappingMapper;
@@ -543,17 +543,8 @@ public class RuleService {
         return ruleGroupMapper.selectByExample(example);
     }
 
-    public List<RuleInspectionReport> getRuleInspectionReport(RuleInspectionReport ruleInspectionReport) {
-        RuleInspectionReportExample example = new RuleInspectionReportExample();
-        RuleInspectionReportExample.Criteria criteria = example.createCriteria();
-        if (ruleInspectionReport.getProject() != null) criteria.andProjectLike(ruleInspectionReport.getProject());
-        if (ruleInspectionReport.getItemSortFirstLevel() != null)
-            criteria.andItemSortFirstLevelLike(ruleInspectionReport.getItemSortFirstLevel());
-        if (ruleInspectionReport.getItemSortSecondLevel() != null)
-            criteria.andItemSortSecondLevelLike(ruleInspectionReport.getItemSortSecondLevel());
-        if (ruleInspectionReport.getImprovement() != null)
-            criteria.andImprovementLike(ruleInspectionReport.getImprovement());
-        return ruleInspectionReportMapper.selectByExample(example);
+    public List<RuleInspectionReport> getRuleInspectionReportList(RuleInspectionReportRequest request) {
+        return extRuleInspectionReportMapper.getRuleInspectionReportList(request);
     }
 
     public String getResourceTypesById(String ruleId) {

@@ -218,6 +218,7 @@ export default {
     show_more: 'Rows and columns',
     show_menu: 'Block',
     show_list: 'Display',
+    clear_select: 'Clear selected items',
   },
   workspace: {
     create:'Create a workspace',
@@ -889,6 +890,8 @@ export default {
     resource_situation: 'Cloud resource situation',
     sync_log: 'Cloud resource synchronization log',
     sync_log_list: 'Cloud resource synchronization log list',
+    failed_cloud: 'There is a cloud account configuration that failed verification:',
+    failed_status: 'Cloud account invalid status cannot perform detection',
   },
   server: {
     server_setting: 'Host scan',
@@ -907,7 +910,7 @@ export default {
     all_server: 'All host groups',
     server_name: 'Host name',
     server_user_name: 'Username',
-    server_status: 'Status',
+    server_status: 'Connection status',
     server_group_name: 'Host group name',
     server_group_create: 'Create a host group',
     server_group_rename: 'Modify the host group name',
@@ -979,6 +982,7 @@ export default {
     server_risk_chart_vuln: 'Host detection result risk statistics',
     all_label: 'All hosts',
     to_be_set: 'To be set',
+    failed_server: 'There is a host configuration that failed verification:',
   },
   image: {
     image_repo: 'Mirror repository',
@@ -1337,6 +1341,8 @@ export default {
     namespace_perspective: 'Namespace perspective',
     k8s_perspective: 'K8s risk perspective',
     image_risk: 'Resources at risk',
+    failed_k8s: 'There is a K8s configuration that failed verification:',
+    failed_status: 'K8s account invalid status cannot perform detection',
   },
   config: {
     config_settings: 'Deployment configuration',

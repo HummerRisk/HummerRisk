@@ -19,7 +19,8 @@
                               <div style="width: 100%;white-space: nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis;overflow: hidden;">
                                 <el-row :gutter="24">
                                   <el-col :span="4">
-                                    <span style="color: red">{{ index+1 }} <i class="iconfont icon-jingxiang2"></i> </span>
+                                    <span v-if="nameSpaceImage.cloudNativeResultItemList.length == 0">{{ index+1 }} <i class="iconfont icon-jingxiang2"></i> </span>
+                                    <span v-if="nameSpaceImage.cloudNativeResultItemList.length > 0" style="color: red">{{ index+1 }} <i class="iconfont icon-jingxiang2"></i> </span>
                                   </el-col>
                                   <el-col :span="20">
                                     <el-tooltip class="item" effect="dark" :content="nameSpaceImage.image" placement="top">
@@ -183,8 +184,8 @@
               </el-row>
             </el-col>
             <el-col :span="3" style="cursor:pointer;">
-              <el-card class="box-card-right">
-                <div class="item-left" style="color: #FFF;font-size: 12px;" @click="clearK8sRisk">
+              <el-card class="box-card-right hr-card-index-left1">
+                <div class="item-left" style="color: #FFF;text-align: center;" @click="clearK8sRisk">
                   {{ $t('k8s.image_risk') }}
                 </div>
               </el-card>
@@ -211,6 +212,11 @@
               <el-card class="box-card-right2 hr-card-index-5">
                 <div class="item-left">
                   <el-radio v-model="radio" label="unknown" style="color: #FFFFFF" @click="searchK8sRisk">{{ 'Unknown: ' }} {{ k8sImage.unknown }}</el-radio>
+                </div>
+              </el-card>
+              <el-card class="box-card-right2 hr-card-index-left2">
+                <div class="item-left" style="text-align: center;" @click="clearK8sRisk">
+                  {{ $t('commons.clear_select') }}
                 </div>
               </el-card>
             </el-col>
@@ -626,7 +632,6 @@ export default {
       }
       this.result = this.$post("/k8s/riskTopology", param, response => {
         let data = response.data;
-        console.log(data)
 
         d3.select("#risk-topo").selectAll('*').remove();//清空SVG中的内容
         let width = 932, height = width;
@@ -886,6 +891,16 @@ svg {
 .grid-content {
   border-radius: 4px;
   min-height: 36px;
+}
+
+.hr-card-index-left1 {
+  border-left-color: #9ec1e5;
+  border-left-width: 5px;
+}
+
+.hr-card-index-left2 {
+  border-left-color: #364f6c;
+  border-left-width: 5px;
 }
 
 .hr-card-index-1 {

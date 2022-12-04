@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -77,16 +78,24 @@ public class AccountService {
        return accountMapper.selectByPrimaryKey(id);
     }
 
-    public boolean validate(List<String> ids) {
+    public List<ValidateDTO> validate(List<String> ids) {
+        List<ValidateDTO> list = new ArrayList<>();
         ids.forEach(id -> {
             try {
-                ValidateDTO validate = validate(id);
-                if(!validate.isFlag()) throw new HRException(Translator.get("failed_cloud_account"));
+                AccountWithBLOBs account = accountMapper.selectByPrimaryKey(id);
+                ValidateDTO validate = validateAccount(account);
+                if (validate.isFlag()) {
+                    account.setStatus(CloudAccountConstants.Status.VALID.name());
+                } else {
+                    account.setStatus(CloudAccountConstants.Status.INVALID.name());
+                    list.add(validate);
+                }
+                accountMapper.updateByPrimaryKeySelective(account);
             } catch (Exception e) {
-                throw new HRException(e.getMessage());
+                throw new HRException(Translator.get("failed_cloud_account") + e.getMessage());
             }
         });
-        return true;
+        return list;
     }
 
 
@@ -105,6 +114,7 @@ public class AccountService {
 
     private ValidateDTO validateAccount(AccountWithBLOBs account) {
         ValidateDTO validateDTO = new ValidateDTO();
+        validateDTO.setName(account.getName());
         try {
             Proxy proxy = new Proxy();
             if (account.getProxyId() != null) proxy = proxyMapper.selectByPrimaryKey(account.getProxyId());

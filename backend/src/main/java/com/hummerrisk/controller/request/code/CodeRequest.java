@@ -9,6 +9,16 @@ import java.util.Map;
  */
 public class CodeRequest extends Code {
 
+    private String userName;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
     private Map<String, Object> combine;
 
     public Map<String, Object> getCombine() {

@@ -40,7 +40,10 @@ public class TranslatorKeys {
                     "i18n_end_k8s_result",
                     "i18n_restart_k8s_result",
                     "i18n_in_process",
-                    "i18n_export_report"
+                    "i18n_export_report",
+                    "i18n_start_config_result",
+                    "i18n_end_config_result",
+                    "i18n_restart_config_result"
             ));
 
 }
