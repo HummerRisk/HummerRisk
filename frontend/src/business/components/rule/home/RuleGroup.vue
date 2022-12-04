@@ -2,16 +2,16 @@
     <main-container>
       <el-card class="table-card" v-loading="result.loading">
         <template v-slot:header>
-          <table-header :condition.sync="condition" @search="search"
+          <group-table-header :condition.sync="condition" @search="search"
                         :title="$t('rule.rule_set_list')" @more="more" @menu="menu"
                         @create="create" :createTip="$t('rule.create_rule_set')"
-                        :show-create="true" :show-list="true"
+                        :show-create="true" :show-list="true" :listStatus="listStatus"
                         :items="items" :columnNames="columnNames"
                         :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                         @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
         </template>
 
-        <el-row :gutter="20" class="el-row-body" v-if="listStatus === 2">
+        <el-row :gutter="20" class="el-row-body" v-show="listStatus === 2">
           <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in ftableData"
                   :key="index" class="el-col el-col-su">
             <el-card :body-style="{ padding: '15px' }">
@@ -76,9 +76,9 @@
             </el-card>
           </el-col>
         </el-row>
-        <f-table-pagination v-if="listStatus === 2" :change="search" :current-page.sync="fcurrentPage" :page-size.sync="fpageSize" :total="ftotal"/>
+        <f-table-pagination v-show="listStatus === 2" :change="search" :current-page.sync="fcurrentPage" :page-size.sync="fpageSize" :total="ftotal"/>
 
-        <hide-table v-if="listStatus === 1"
+        <hide-table v-show="listStatus === 1"
           :table-data="tableData"
           @sort-change="sort"
           @filter-change="filter"
@@ -114,7 +114,7 @@
             </template>
           </el-table-column>
         </hide-table>
-        <table-pagination v-if="listStatus === 1" :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
+        <table-pagination v-show="listStatus === 1" :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
 
       </el-card>
 

@@ -30,9 +30,9 @@
 </template>
 
 <script>
-import TableSearchBar from './TableSearchBar';
-import TableButton from './TableButton';
-import TableAdvSearchBar from "./search/TableAdvSearchBar";
+import TableSearchBar from '@/business/components/common/components/TableSearchBar';
+import TableButton from '@/business/components/common/components/TableButton';
+import TableAdvSearchBar from "@/business/components/common/components/search/TableAdvSearchBar";
 // 引入导出Excel表格依赖
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
@@ -140,7 +140,15 @@ import XLSX from "xlsx";
       },
       download() {
         /* 从表生成工作簿对象 */
-        let wb = XLSX.utils.table_to_book(document.querySelector("#out-table"),{raw:true});
+        // 判断要导出的节点中是否有fixed的表格，如果有，转换excel时先将该dom移除，然后append回去，
+        let fix = document.querySelector("#out-table .el-table__fixed");
+        let wb;
+        if (fix) {
+          wb = XLSX.utils.table_to_book(document.querySelector("#out-table").removeChild(fix));
+          document.querySelector("#out-table").appendChild(fix);
+        } else {
+          wb = XLSX.utils.table_to_book(document.querySelector("#out-table"),{raw:true});
+        }
         /* 获取二进制字符串作为输出 */
         var wbout = XLSX.write(wb, {
           bookType: "xlsx",
