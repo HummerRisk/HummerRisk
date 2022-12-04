@@ -104,6 +104,7 @@
         </el-form-item>
         <el-form-item :label="$t('event.sync_time_section')" ref="dateTime" prop="dateTime">
           <el-date-picker
+            style="width: 100%"
             @change="changeDateTime"
             v-model="dateTime"
             type="datetimerange"
@@ -229,13 +230,13 @@ export default {
             picker.$emit('pick', [start, end]);
           }
         }, {
-          text: this.$t('event.month'),
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-            picker.$emit('pick', [start, end]);
-          }
+            text: this.$t('event.two_week'),
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 14);
+              picker.$emit('pick', [start, end]);
+            }
         }],
         onPick: obj => {
           this.pickerMinDate = new Date(obj.minDate).getTime();

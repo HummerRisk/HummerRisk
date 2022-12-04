@@ -1491,6 +1491,7 @@ export default {
     start_time:"start date",
     end_time: "end date",
     week: "last week",
+    two_week:"last two week",
     month:"Last month",
     error: "The cloud account, region and date range cannot be empty",
     middle_level: "Medium Risk",
