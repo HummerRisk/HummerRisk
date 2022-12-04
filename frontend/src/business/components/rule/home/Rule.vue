@@ -79,7 +79,7 @@
               <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
             </template>
           </el-table-column>
-          <el-table-column min-width="120" :label="$t('commons.operating')">
+          <el-table-column min-width="130" :label="$t('commons.operating')">
             <template v-slot:default="scope">
               <table-operators v-if="!scope.row.flag" :buttons="buttons" :row="scope.row"/>
               <table-operators v-if="scope.row.flag" :buttons="buttons2" :row="scope.row"/>

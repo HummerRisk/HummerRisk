@@ -79,7 +79,7 @@
             <span>{{ scope.row.lastModified | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="140" :label="$t('commons.operating')">
+        <el-table-column min-width="130" :label="$t('commons.operating')">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>

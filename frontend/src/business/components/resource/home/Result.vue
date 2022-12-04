@@ -210,7 +210,7 @@
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="120" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
+        <el-table-column min-width="110" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
           <template v-slot:default="scope">
             <table-operators :buttons="rule_buttons" :row="scope.row"/>
           </template>

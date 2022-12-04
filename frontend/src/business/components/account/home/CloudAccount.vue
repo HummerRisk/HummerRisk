@@ -56,7 +56,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :label="$t('account.creator')" min-width="100" show-overflow-tooltip/>
-          <el-table-column min-width="200" id="fixed" :label="$t('commons.operating')" prop="operating" type="operating" fixed="right">
+          <el-table-column min-width="170" id="fixed" :label="$t('commons.operating')" prop="operating" type="operating" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>

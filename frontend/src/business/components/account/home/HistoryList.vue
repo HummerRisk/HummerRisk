@@ -4,8 +4,8 @@
       <el-card class="box-card" shadow="always">
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                   @filter-change="filter" @select-all="select" @select="select">
-          <el-table-column type="index" min-width="5%"/>
-          <el-table-column :label="$t('history.cloud_account')" min-width="20%" show-overflow-tooltip>
+          <el-table-column type="index" min-width="40"/>
+          <el-table-column :label="$t('history.cloud_account')" min-width="150" show-overflow-tooltip>
             <template v-slot:default="scope">
               <el-row type="primary">
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -13,24 +13,24 @@
               </el-row>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('history.scan_score')" min-width="15%" show-overflow-tooltip>
+          <el-table-column :label="$t('history.scan_score')" min-width="100" show-overflow-tooltip>
             <template v-slot:default="scope">
               {{ scope.row.scanScore }}
             </template>
           </el-table-column>
-          <el-table-column :label="$t('history.resource_result')" min-width="20%" show-overflow-tooltip>
+          <el-table-column :label="$t('history.resource_result')" min-width="150" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span> {{ scope.row.returnSum?scope.row.returnSum:0 }}/{{ scope.row.resourcesSum?scope.row.resourcesSum:0 }}</span>
               <span> &nbsp;&nbsp;<i :class="scope.row.assets" ></i></span>
             </template>
           </el-table-column>
-          <el-table-column min-width="20%" :label="$t('history.create_time')" sortable
+          <el-table-column min-width="130" :label="$t('history.create_time')" sortable
                            prop="createTime">
             <template v-slot:default="scope">
               <span>{{ scope.row.createTime | timestampFormatDayDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('resource.resource_result')" min-width="20%" show-overflow-tooltip>
+          <el-table-column :label="$t('resource.resource_result')" min-width="90" show-overflow-tooltip>
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
@@ -45,8 +45,8 @@
                  :destroy-on-close="true">
         <div>
           <el-table border :data="outputListData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
-            <el-table-column type="index" min-width="2%"/>
-            <el-table-column prop="name" :label="$t('resource.resource_result')" min-width="15%" show-overflow-tooltip>
+            <el-table-column type="index" min-width="40"/>
+            <el-table-column prop="name" :label="$t('resource.resource_result')" min-width="170" show-overflow-tooltip>
               <template v-slot:default="scope">
                 <span>
                   <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -54,12 +54,12 @@
                 </span>
               </template>
             </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="15%" :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
+            <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="100" :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
               <severity-type :row="scope.row"></severity-type>
             </el-table-column>
-            <el-table-column :label="$t('resource.status')" min-width="15%" prop="resourceStatus" show-overflow-tooltip>
+            <el-table-column :label="$t('resource.status')" min-width="100" prop="resourceStatus" show-overflow-tooltip>
             </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="10%">
+            <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="80">
               <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
                 <span v-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
                 <span v-if="(scope.row.returnSum != null) && (scope.row.returnSum == 0)">
@@ -70,17 +70,17 @@
                 </span>
               </el-tooltip>
             </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" sortable show-overflow-tooltip min-width="10%">
+            <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" sortable show-overflow-tooltip min-width="100">
               <span v-if="scope.row.returnSum == 0" style="color: #46ad59;">{{ $t('resource.i18n_compliance_true') }}</span>
               <span v-else-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)" style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
               <span v-else-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
             </el-table-column>
-            <el-table-column prop="createTime" min-width="15%" :label="$t('account.create_time')" sortable show-overflow-tooltip>
+            <el-table-column prop="createTime" min-width="150" :label="$t('account.create_time')" sortable show-overflow-tooltip>
               <template v-slot:default="scope">
                 <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
               </template>
             </el-table-column>
-            <el-table-column min-width="17%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
+            <el-table-column min-width="90" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
               <template v-slot:default="scope">
                 <table-operators :buttons="listButtons" :row="scope.row"/>
               </template>
@@ -110,8 +110,8 @@
                    :append-to-body="true"
                    :before-close="innerDrawerClose">
           <el-table border :data="historys" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
-            <el-table-column type="index" min-width="2%"/>
-            <el-table-column prop="name" :label="$t('resource.resource_result')" min-width="15%" show-overflow-tooltip>
+            <el-table-column type="index" min-width="40"/>
+            <el-table-column prop="name" :label="$t('resource.resource_result')" min-width="170" show-overflow-tooltip>
               <template v-slot:default="scope">
                 <span>
                   <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -119,12 +119,12 @@
                 </span>
               </template>
             </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="15%" :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
+            <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="100" :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
               <severity-type :row="scope.row"></severity-type>
             </el-table-column>
-            <el-table-column :label="$t('resource.status')" min-width="15%" prop="resourceStatus" show-overflow-tooltip>
+            <el-table-column :label="$t('resource.status')" min-width="100" prop="resourceStatus" show-overflow-tooltip>
             </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="10%">
+            <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="80">
               <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
                 <span v-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
                 <span v-if="(scope.row.returnSum != null) && (scope.row.returnSum == 0)">
@@ -135,17 +135,17 @@
                 </span>
               </el-tooltip>
             </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" sortable show-overflow-tooltip min-width="10%">
+            <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" sortable show-overflow-tooltip min-width="100">
               <span v-if="scope.row.returnSum == 0" style="color: #46ad59;">{{ $t('resource.i18n_compliance_true') }}</span>
               <span v-else-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)" style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
               <span v-else-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
             </el-table-column>
-            <el-table-column prop="createTime" min-width="15%" :label="$t('account.create_time')" sortable show-overflow-tooltip>
+            <el-table-column prop="createTime" min-width="150" :label="$t('account.create_time')" sortable show-overflow-tooltip>
               <template v-slot:default="scope">
                 <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
               </template>
             </el-table-column>
-            <el-table-column min-width="17%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
+            <el-table-column min-width="50" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
               <template v-slot:default="scope">
                 <table-operators :buttons="diffButtons" :row="scope.row"/>
               </template>

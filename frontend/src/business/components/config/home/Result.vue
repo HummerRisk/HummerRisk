@@ -519,6 +519,12 @@ export default {
   color: aliceblue;
   text-shadow: 1px 1px 1px #000;
 }
+.table-card >>> .search {
+  width: 450px !important;
+}
+.table-card >>> .search .el-input {
+  width: 140px !important;
+}
 * { touch-action: pan-y; }
 /deep/ :focus{outline:0;}
 </style>
