@@ -355,7 +355,7 @@
           @select="select"
         >
           <!-- 展开 start -->
-          <el-table-column type="expand" min-width="50">
+          <el-table-column type="expand" min-width="40">
             <template v-slot:default="props">
 
               <el-divider><i class="el-icon-folder-opened"></i></el-divider>
@@ -366,14 +366,14 @@
             </template>
           </el-table-column>
           <!-- 展开 end -->
-          <el-table-column type="index" min-width="50"/>
-          <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('hummerId')" :label="$t('resource.Hummer_ID')" min-width="140">
+          <el-table-column type="index" min-width="40"/>
+          <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('hummerId')" :label="$t('resource.Hummer_ID')" min-width="150">
             {{ scope.row.hummerId }}
           </el-table-column>
-          <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('resourceType')" :label="$t('rule.resource_type')" min-width="150">
+          <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('resourceType')" :label="$t('rule.resource_type')" min-width="100">
             {{ scope.row.resourceType }}
           </el-table-column>
-          <el-table-column prop="regionName" v-if="checkedColumnNames2.includes('regionName')" :label="$t('account.regions')" min-width="110">
+          <el-table-column prop="regionName" v-if="checkedColumnNames2.includes('regionName')" :label="$t('account.regions')" min-width="130">
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -381,20 +381,20 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('severity')" :label="$t('rule.severity')" min-width="120"
+          <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('severity')" :label="$t('rule.severity')" min-width="90"
                            :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
                            show-overflow-tooltip>
             <severity-type :row="scope.row"></severity-type>
           </el-table-column>
-          <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('ruleName')" :label="$t('rule.rule_name')" min-width="160" show-overflow-tooltip>
+          <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('ruleName')" :label="$t('rule.rule_name')" min-width="200" show-overflow-tooltip>
               {{ scope.row.ruleName }}
           </el-table-column>
-          <el-table-column prop="createTime" min-width="160" v-if="checkedColumnNames2.includes('createTime')" :label="$t('account.update_time')" sortable show-overflow-tooltip>
+          <el-table-column prop="createTime" min-width="150" v-if="checkedColumnNames2.includes('createTime')" :label="$t('account.update_time')" sortable show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>{{ scope.row.createTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column min-width="100" :label="$t('commons.operating')" show-overflow-tooltip>
+          <el-table-column min-width="90" :label="$t('commons.operating')" show-overflow-tooltip>
             <template v-slot:default="scope">
               <table-operators v-if="!!scope.row.suggestion" :buttons="resource_buttons2" :row="scope.row"/>
               <table-operators v-if="!scope.row.suggestion" :buttons="resource_buttons" :row="scope.row"/>
@@ -921,7 +921,6 @@ export default {
       }
       this.activeName = 'second';
       this.highRuleRow = true;
-      this.resourceCondition.taskId = params.id;
       for (let i=0; i < this.ruleData.length; i++) {
         if (params.id === this.ruleData[i].id) {
           this.rowIndex = i;
@@ -930,6 +929,15 @@ export default {
           this.rowIndex = '';
         }
       }
+      this.regionCondition.taskId = params.id;
+      this.regionDataSearch();
+      this.severityCondition.taskId = params.id;
+      this.severityDataSearch();
+      this.resourceTypeCondition.taskId = params.id;
+      this.resourceTypeDataSearch();
+      this.ruleCondition.taskId = params.id;
+      this.ruleDataSearch();
+      this.resourceCondition.taskId = params.id;
       this.resourceSearch();
     },
     init() {
@@ -1058,6 +1066,10 @@ export default {
       }, 50);
     },
     handleClick(tab, event) {
+      this.regionCondition.taskId = null;
+      this.severityCondition.taskId = null;
+      this.resourceTypeCondition.taskId = null;
+      this.ruleCondition.taskId = null;
       this.resourceCondition.taskId = null;
       this.regionDataSearch();
       this.severityDataSearch();

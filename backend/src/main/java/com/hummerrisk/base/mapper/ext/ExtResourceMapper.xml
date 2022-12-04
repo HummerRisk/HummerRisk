@@ -608,10 +608,18 @@
                t.region_name as name,
                sum(IFNULL(t.return_sum, 0)) as sum
         FROM resource t
-        WHERE t.account_id = #{id}
-        <if test="name != null">
-            AND LOWER(t.region_name) like CONCAT('%',#{name},'%')
-        </if>
+        JOIN cloud_task_item_resource t1 on t.id = t1.resource_id
+        <where>
+            <if test="id != null and id != ''">
+                AND t.account_id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                AND LOWER(t.region_name) like CONCAT('%',LOWER(#{name}),'%')
+            </if>
+            <if test="taskId != null and taskId != ''">
+                AND t1.task_id = #{taskId}
+            </if>
+        </where>
         GROUP BY t.region_id,t.region_name
         ORDER BY sum desc
     </select>
@@ -621,10 +629,18 @@
                t.severity as name,
                sum(IFNULL(t.return_sum, 0)) as sum
         FROM resource t
-        WHERE t.account_id = #{id}
-        <if test="name != null">
-            AND LOWER(t.severity) like CONCAT('%',#{name},'%')
-        </if>
+        JOIN cloud_task_item_resource t1 on t.id = t1.resource_id
+        <where>
+            <if test="id != null and id != ''">
+                AND t.account_id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                AND LOWER(t.severity) like CONCAT('%',LOWER(#{name}),'%')
+            </if>
+            <if test="taskId != null and taskId != ''">
+                AND t1.task_id = #{taskId}
+            </if>
+        </where>
         GROUP BY t.severity
         ORDER BY sum desc
     </select>
@@ -634,10 +650,18 @@
                t.resource_type as name,
                sum(IFNULL(t.return_sum, 0)) as sum
         FROM resource t
-        WHERE t.account_id = #{id}
-        <if test="name != null">
-            AND LOWER(t.resource_type) like CONCAT('%',#{name},'%')
-        </if>
+        JOIN cloud_task_item_resource t1 on t.id = t1.resource_id
+        <where>
+            <if test="id != null and id != ''">
+                AND t.account_id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                AND LOWER(t.resource_type) like CONCAT('%',LOWER(#{name}),'%')
+            </if>
+            <if test="taskId != null and taskId != ''">
+                AND t1.task_id = #{taskId}
+            </if>
+        </where>
         GROUP BY t.resource_type
         ORDER BY sum desc
     </select>
@@ -649,10 +673,17 @@
         FROM cloud_task_item_resource t
         JOIN resource t1 ON t.resource_id = t1.id
         JOIN cloud_task t2 ON t.task_id = t2.id
-        WHERE t2.account_id = #{id}
-        <if test="name != null">
-            AND LOWER(t2.task_name) like CONCAT('%',#{name},'%')
-        </if>
+        <where>
+            <if test="id != null and id != ''">
+                AND t2.account_id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                AND LOWER(t2.task_name) like CONCAT('%',LOWER(#{name}),'%')
+            </if>
+            <if test="taskId != null and taskId != ''">
+                AND t.task_id = #{taskId}
+            </if>
+        </where>
         GROUP BY t.task_id
         ORDER BY sum desc
     </select>
