@@ -418,7 +418,7 @@ public class SystemParameterService {
     }
 
     public void updateVulnDbOffline(MultipartFile objectFile) throws Exception {
-        CommandUtils.upzipTar(objectFile.getOriginalFilename(), "/tmp/test/trivy/db/");
+        CommandUtils.upzipTar(objectFile.getOriginalFilename(), "/root/.cache/trivy/db/");
     }
 
     /**
