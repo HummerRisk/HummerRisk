@@ -316,7 +316,7 @@ public class PlatformUtils {
                                     "      project_id: " + oProjectId + "\n" +
                                     "      domain_name: " + oDomainId + "\n" +
                                     "      auth_url: " + oEndpoint + "\n";
-                    CommandUtils.saveAsFile(clouds, dirPath, "clouds.yml", true);
+                    CommandUtils.saveAsFile(clouds, dirPath, "clouds.yml", false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -334,7 +334,7 @@ public class PlatformUtils {
                 String credential = params.get("credential");
                 try {
                     CommandUtils.commonExecCmdWithResult("export GOOGLE_APPLICATION_CREDENTIALS=" + credential, dirPath);
-                    CommandUtils.saveAsFile(credential, dirPath, "google_application_credentials.json", true);
+                    CommandUtils.saveAsFile(credential, dirPath, "google_application_credentials.json", false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -383,7 +383,7 @@ public class PlatformUtils {
             case nuclei:
                 try {
                     String nucleiCredential = params.get("nucleiCredential");
-                    CommandUtils.saveAsFile(nucleiCredential, dirPath, "urls.txt", true);
+                    CommandUtils.saveAsFile(nucleiCredential, dirPath, "urls.txt", false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -394,7 +394,7 @@ public class PlatformUtils {
             case xray:
                 try {
                     String xrayCredential = params.get("xrayCredential");
-                    CommandUtils.saveAsFile(xrayCredential, dirPath, "urls.txt", true);
+                    CommandUtils.saveAsFile(xrayCredential, dirPath, "urls.txt", false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
