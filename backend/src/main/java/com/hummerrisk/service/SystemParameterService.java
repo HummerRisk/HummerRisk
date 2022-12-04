@@ -37,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -418,7 +419,9 @@ public class SystemParameterService {
     }
 
     public void updateVulnDbOffline(MultipartFile objectFile) throws Exception {
-        CommandUtils.upzipTar(objectFile.getOriginalFilename(), "/root/.cache/trivy/db/");
+        // 容器里的目录地址： /root/.cache/trivy/db/
+        String fileName = uploadVulnDb(objectFile, "/root/.cache/trivy/db/");
+        CommandUtils.extractTarGZ(new File("/tmp/cache/trivy/db/" + fileName), "/root/.cache/trivy/db/");
     }
 
     /**
