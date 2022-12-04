@@ -15,6 +15,7 @@ import com.qingstor.sdk.config.EnvContext;
 import com.qingstor.sdk.exception.QSException;
 import com.qingstor.sdk.service.Bucket;
 import com.qingstor.sdk.service.QingStor;
+import com.qingstor.sdk.service.Types;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedInputStream;
@@ -42,12 +43,28 @@ public class QingcloudProvider implements OssProvider {
         QingStor qingStor = getStor(ossAccount);
         QingStor.ListBucketsOutput listOutput = qingStor.listBuckets(null);
         return listOutput.getBuckets().stream().map(item->{
+
             OssBucket ossBucket = new OssBucket();
             ossBucket.setOssId(ossAccount.getId());
             ossBucket.setBucketName(item.getName());
             ossBucket.setLocation(item.getLocation());
             ossBucket.setDomainName(item.getURL().replaceAll("https://",""));
             ossBucket.setIntranetEndpoint("N/A");
+            ossBucket.setCannedAcl("private");
+            ossBucket.setStorageClass("N/A");
+            ossBucket.setSize("0B");
+            ossBucket.setObjectNumber(0L);
+            try {
+                Bucket.GetBucketACLOutput acl = qingStor.getBucket(item.getName(), item.getLocation()).getACL();
+                List<Types.ACLModel> acl1 = acl.getACL();
+                acl1.forEach(aclModel -> {
+                    if("QS_ALL_USERS".equals(aclModel.getGrantee().getName())){
+                        ossBucket.setCannedAcl("public");
+                    }
+                });
+            } catch (QSException e) {
+                throw new RuntimeException(e);
+            }
             return ossBucket;
         }).collect(Collectors.toList());
     }
@@ -65,6 +82,8 @@ public class QingcloudProvider implements OssProvider {
         Bucket.ListObjectsInput listObjectsInput = new Bucket.ListObjectsInput();
         if(StringUtils.isNotEmpty(prefix)){
             listObjectsInput.setPrefix(prefix);
+        }else{
+            listObjectsInput.setPrefix("");
         }
         Bucket.ListObjectsOutput listObjectsOutput = bucket1.listObjects(listObjectsInput);
         return listObjectsOutput.getKeys().stream().map(item -> {
