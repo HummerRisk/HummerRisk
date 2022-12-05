@@ -15,6 +15,7 @@ import com.hummerrisk.oss.dto.BucketObjectDTO;
 import com.hummerrisk.oss.dto.OssRegion;
 import com.hummerrisk.proxy.qiniu.QiniuCredential;
 import com.hummerrisk.service.SysListener;
+import com.qingstor.sdk.service.Bucket;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.*;
@@ -27,6 +28,7 @@ import com.qiniu.util.StringUtils;
 import org.ini4j.Reg;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.FilterInputStream;
 import java.io.InputStream;
 import java.net.URL;
@@ -124,7 +126,11 @@ public class QiniuProvider implements OssProvider {
             for (FileInfo item : fileListing.items) {
                 BucketObjectDTO bucketObjectDTO = new BucketObjectDTO();
                 bucketObjectDTO.setBucketId(bucket.getId());
-                bucketObjectDTO.setObjectType("FILE");
+                if(item.key.contains("/")){
+                    bucketObjectDTO.setObjectType("DIR");
+                }else{
+                    bucketObjectDTO.setObjectType("FILE");
+                }
                 bucketObjectDTO.setId(item.key);
                 bucketObjectDTO.setObjectName(item.key);
                 bucketObjectDTO.setObjectSize(SysListener.changeFlowFormat(item.fsize));
@@ -183,7 +189,18 @@ public class QiniuProvider implements OssProvider {
 
     @Override
     public void createDir(OssBucket bucket, OssWithBLOBs account, String dir) throws Exception {
-
+        dir = dir.endsWith("/") ? dir : dir + "/";
+        String[] split = dir.split("/");
+        String data = "";
+        Auth auth = getAuth(account);
+        String upToken = auth.uploadToken(bucket.getBucketName());
+        for (String d : split) {
+            if(d.length()==0){
+                continue;
+            }
+            data += d + "/";
+            Response response = getUploadManager(account).put(new ByteArrayInputStream("".getBytes()), data, upToken,null,null);
+        }
     }
 
     @Override
