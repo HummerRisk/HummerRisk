@@ -854,7 +854,7 @@ export default {
     },
     searchBuckets() {
       let url = "/oss/bucketList/" + this.bucketPage + "/" + this.bucketPageSize;
-      this.bucketCondition.id = this.ossId;
+      this.bucketCondition.ossId = this.ossId;
       this.result = this.$post(url, this.bucketCondition, response => {
         let data = response.data;
         this.bucketTotal = data.itemCount;
