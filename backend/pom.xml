@@ -807,6 +807,11 @@
 
         <!-- OpenStack -->
         <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.pacesys</groupId>
             <artifactId>openstack4j-core</artifactId>
             <version>3.2.0</version>
