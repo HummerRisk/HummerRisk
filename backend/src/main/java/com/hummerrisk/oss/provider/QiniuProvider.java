@@ -16,18 +16,21 @@ import com.hummerrisk.oss.dto.OssRegion;
 import com.hummerrisk.proxy.qiniu.QiniuCredential;
 import com.hummerrisk.service.SysListener;
 import com.qiniu.common.QiniuException;
-import com.qiniu.storage.BucketManager;
-import com.qiniu.storage.Configuration;
-import com.qiniu.storage.Region;
+import com.qiniu.http.Response;
+import com.qiniu.storage.*;
 import com.qiniu.storage.model.BucketInfo;
+import com.qiniu.storage.model.FetchRet;
 import com.qiniu.storage.model.FileInfo;
 import com.qiniu.storage.model.FileListing;
 import com.qiniu.util.Auth;
 import com.qiniu.util.StringUtils;
 import org.ini4j.Reg;
 
+import java.io.BufferedInputStream;
 import java.io.FilterInputStream;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +53,7 @@ public class QiniuProvider implements OssProvider {
         String[] buckets = bucketManager.buckets();
         for (String bucket : buckets) {
             BucketInfo bucketInfo = bucketManager.getBucketInfo(bucket);
+            String[] domains = bucketManager.domainList(bucket);
             OssBucket ossBucket = new OssBucket();
             ossBucket.setOssId(ossAccount.getId());
             ossBucket.setBucketName(bucket);
@@ -58,8 +62,8 @@ public class QiniuProvider implements OssProvider {
             ossBucket.setExtranetEndpoint("");
             ossBucket.setIntranetEndpoint("");
             ossBucket.setStorageClass("N/A");
-            ossBucket.setCannedAcl("N/A");
-            ossBucket.setDomainName(bucketInfo.getRegion());
+            ossBucket.setCannedAcl(bucketInfo.getPrivate()==1?"private":"public");
+            ossBucket.setDomainName(domains.length>0?domains[0]:"");
             ossBucket.setSize("0");
             ossBucket.setObjectNumber(0L);
             resultList.add(ossBucket);
@@ -70,11 +74,19 @@ public class QiniuProvider implements OssProvider {
 
     private BucketManager getBucketManager(OssWithBLOBs ossAccount) {
         Configuration cfg = new Configuration(Region.autoRegion());
-        QiniuCredential qiniuCredential = JSON.parseObject(ossAccount.getCredential(), QiniuCredential.class);
-        Auth auth = Auth.create(qiniuCredential.getAccessKey(), qiniuCredential.getSecretKey());
+        Auth auth = getAuth(ossAccount);
         return new BucketManager(auth, cfg);
     }
 
+    private UploadManager getUploadManager(OssWithBLOBs ossAccount){
+        Configuration cfg = new Configuration(Region.autoRegion());
+        return new UploadManager(cfg);
+    }
+
+    private Auth getAuth(OssWithBLOBs ossAccount){
+        QiniuCredential qiniuCredential = JSON.parseObject(ossAccount.getCredential(), QiniuCredential.class);
+        return Auth.create(qiniuCredential.getAccessKey(), qiniuCredential.getSecretKey());
+    }
     private Region getRegion(String region) {
         switch (region) {
             case "z0":
@@ -113,6 +125,7 @@ public class QiniuProvider implements OssProvider {
                 BucketObjectDTO bucketObjectDTO = new BucketObjectDTO();
                 bucketObjectDTO.setBucketId(bucket.getId());
                 bucketObjectDTO.setObjectType("FILE");
+                bucketObjectDTO.setId(item.key);
                 bucketObjectDTO.setObjectName(item.key);
                 bucketObjectDTO.setObjectSize(SysListener.changeFlowFormat(item.fsize));
                 bucketObjectDTO.setLastModified(item.putTime/10000);
@@ -126,8 +139,14 @@ public class QiniuProvider implements OssProvider {
 
     @Override
     public FilterInputStream downloadObject(OssBucket bucket, OssWithBLOBs account, final String objectId) throws Exception {
-        FilterInputStream filterInputStream = null;
-        return filterInputStream;
+        String domainOfBucket = "http://"+bucket.getDomainName();
+        String encodedFileName = URLEncoder.encode(objectId, "utf-8").replace("+", "%20");
+        String publicUrl = String.format("%s/%s", domainOfBucket, encodedFileName);
+        Auth auth = getAuth(account);
+        long expireInSeconds = 300;
+        String finalUrl = auth.privateDownloadUrl(publicUrl, expireInSeconds);
+        return new BufferedInputStream(new URL(finalUrl).openStream());
+
     }
 
     @Override
@@ -152,7 +171,14 @@ public class QiniuProvider implements OssProvider {
 
     @Override
     public void deletetObjects(OssBucket bucket, OssWithBLOBs account, List<String> objectIds) throws Exception {
-
+        BucketManager bucketManager = getBucketManager(account);
+        objectIds.forEach(item->{
+            try {
+                bucketManager.delete(bucket.getBucketName(), item);
+            } catch (QiniuException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Override
@@ -162,7 +188,9 @@ public class QiniuProvider implements OssProvider {
 
     @Override
     public void uploadFile(OssBucket bucket, OssWithBLOBs account, String dir, InputStream file, long size) throws Exception {
-
+        Auth auth = getAuth(account);
+        String upToken = auth.uploadToken(bucket.getBucketName());
+        Response response = getUploadManager(account).put(file, dir, upToken,null,null);
     }
 
     @Override
