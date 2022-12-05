@@ -153,6 +153,11 @@ public class AccountService {
                 HRException.throwException(Translator.get("i18n_ex_cloud_account_no_exist_plugin"));
             } else {
                 BeanUtils.copyBean(account, request);
+
+                if(!validateAccount(account).isFlag()) {
+                    return null;
+                }
+
                 account.setPluginIcon(Objects.requireNonNull(plugin.getIcon()));
                 account.setPluginName(plugin.getName());
                 account.setCreateTime(System.currentTimeMillis());
@@ -168,7 +173,7 @@ public class AccountService {
         } catch (HRException | ClientException e) {
             HRException.throwException(e.getMessage());
         } catch (Exception e) {
-            throw new Exception(e.getMessage());
+            HRException.throwException(e.getMessage());
         }
         return null;
     }
@@ -204,6 +209,11 @@ public class AccountService {
                 HRException.throwException(Translator.get("i18n_ex_cloud_account_no_exist_plugin"));
             } else {
                 BeanUtils.copyBean(account, request);
+
+                if(!validateAccount(account).isFlag()) {
+                    return null;
+                }
+
                 account.setPluginIcon(plugin.getIcon());
                 account.setPluginName(plugin.getName());
                 account.setUpdateTime(System.currentTimeMillis());

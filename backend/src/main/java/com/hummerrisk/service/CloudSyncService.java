@@ -57,26 +57,27 @@ public class CloudSyncService {
 
     /**
      * 获取同步日志
+     *
      * @param resourceSyncRequest
      * @return
      */
-    public List<CloudResourceSync> getCloudResourceSyncLogs(CloudResourceSyncRequest resourceSyncRequest){
+    public List<CloudResourceSync> getCloudResourceSyncLogs(CloudResourceSyncRequest resourceSyncRequest) {
         return extCloudResourceSyncMapper.selectByRequest(resourceSyncRequest);
     }
 
-    public List<Map<String,Object>> getResourceType(String syncId){
+    public List<Map<String, Object>> getResourceType(String syncId) {
         return extCloudResourceSyncItemMapper.selectResourceTypeBySyncId(syncId);
     }
 
-    public List<CloudResourceSyncItemDto> getCloudResourceSyncItem(String syncId){
+    public List<CloudResourceSyncItemDto> getCloudResourceSyncItem(String syncId) {
         List<CloudResourceSyncItemDto> cloudResourceSyncItemDtos = extCloudResourceSyncItemMapper.selectBySyncId(syncId);
         List<CloudResourceSyncItemLog> cloudResourceSyncItemLogs = extCloudResourceSyncItemMapper.selectSyncItemLogBySyncId(syncId);
-        Map<String,CloudResourceSyncItemDto> cloudResourceSyncItemDtoMap = cloudResourceSyncItemDtos.stream().collect(Collectors.toMap(CloudResourceSyncItemDto::getId, Function.identity()));
-        for(CloudResourceSyncItemLog cloudResourceSyncItemLog:cloudResourceSyncItemLogs){
+        Map<String, CloudResourceSyncItemDto> cloudResourceSyncItemDtoMap = cloudResourceSyncItemDtos.stream().collect(Collectors.toMap(CloudResourceSyncItemDto::getId, Function.identity()));
+        for (CloudResourceSyncItemLog cloudResourceSyncItemLog : cloudResourceSyncItemLogs) {
             CloudResourceSyncItemDto cloudResourceSyncItemDto = cloudResourceSyncItemDtoMap.get(cloudResourceSyncItemLog.getSyncItemId());
-            if(cloudResourceSyncItemDto!=null){
+            if (cloudResourceSyncItemDto != null) {
                 List<CloudResourceSyncItemLog> cloudResourceSyncItemLogs1 = cloudResourceSyncItemDto.getCloudResourceSyncItemLogs();
-                if(cloudResourceSyncItemLogs1 == null){
+                if (cloudResourceSyncItemLogs1 == null) {
                     cloudResourceSyncItemLogs1 = new ArrayList<>();
                     cloudResourceSyncItemDto.setCloudResourceSyncItemLogs(cloudResourceSyncItemLogs1);
                 }
@@ -115,13 +116,13 @@ public class CloudSyncService {
         cloudResourceSync.setAccountId(accountId);
         cloudResourceSync.setCreateTime(System.currentTimeMillis());
         cloudResourceSync.setApplyUser(Objects.requireNonNull(SessionUtils.getUser()).getId());
-        cloudResourceSync.setResourceTypes(StringUtils.join(resourceTypes,","));
+        cloudResourceSync.setResourceTypes(StringUtils.join(resourceTypes, ","));
         cloudResourceSync.setStatus(CloudTaskConstants.TASK_STATUS.APPROVED.name());
         //云资源同步主表
         cloudResourceSyncMapper.insertSelective(cloudResourceSync);
 
-        for(String resourceType : resourceTypes) {
-            for(String region : regions) {
+        for (String resourceType : resourceTypes) {
+            for (String region : regions) {
                 CloudResourceSyncItem cloudResourceSyncItem = new CloudResourceSyncItem();
                 String uuid = UUIDUtil.newUUID();
                 cloudResourceSyncItem.setId(uuid);
@@ -137,7 +138,7 @@ public class CloudSyncService {
                 //云资源同步子表（区分区域与资源类型）
                 cloudResourceSyncItemMapper.insertSelective(cloudResourceSyncItem);
 
-                saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_start_sync_resource", "", true,accountId);
+                saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_start_sync_resource", "", true, accountId);
 
                 final String finalScript = CloudTaskConstants.policy.replace("{resourceType}", resourceType);
 
@@ -146,7 +147,7 @@ public class CloudSyncService {
                         cloudResourceSyncItem.setCount(0);
                         cloudResourceSyncItem.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());
                         cloudResourceSyncItemMapper.updateByPrimaryKey(cloudResourceSyncItem);
-                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "不支持该区域", true,accountId);
+                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "不支持该区域", true, accountId);
                         return;
                     }
                     String dirPath = "", resultStr = "", fileName = "policy.yml";
@@ -162,7 +163,7 @@ public class CloudSyncService {
                         if (LogUtil.getLogger().isDebugEnabled()) {
                             LogUtil.getLogger().debug("resource created: {}", resultStr);
                         }
-                        if(PlatformUtils.isUserForbidden(resultStr)){
+                        if (PlatformUtils.isUserForbidden(resultStr)) {
                             resultStr = Translator.get("i18n_create_resource_region_failed");
                             readResource = false;
                         }
@@ -172,7 +173,7 @@ public class CloudSyncService {
                         String custodianRun = ReadFileUtils.readToBuffer(dirPath + "/all-resources/" + CloudTaskConstants.CUSTODIAN_RUN_RESULT_FILE);
                         String metadata = ReadFileUtils.readJsonFile(dirPath + "/all-resources/", CloudTaskConstants.METADATA_RESULT_FILE);
                         String resources = "[]";
-                        if(readResource){
+                        if (readResource) {
                             resources = ReadFileUtils.readJsonFile(dirPath + "/all-resources/", CloudTaskConstants.RESOURCES_RESULT_FILE);
                         }
                         CloudResourceWithBLOBs cloudResourceWithBLOBs = new CloudResourceWithBLOBs();
@@ -220,13 +221,13 @@ public class CloudSyncService {
                         cloudResourceSyncItem.setCount(resourcesArr.size());
                         cloudResourceSyncItem.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());
                         cloudResourceSyncItemMapper.updateByPrimaryKey(cloudResourceSyncItem);
-                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "资源总数:"+resourcesArr.size(), true,accountId);
+                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "资源总数:" + resourcesArr.size(), true, accountId);
 
                     } catch (Exception e) {
                         e.printStackTrace();
                         cloudResourceSyncItem.setStatus(CloudTaskConstants.TASK_STATUS.ERROR.name());
                         cloudResourceSyncItemMapper.updateByPrimaryKey(cloudResourceSyncItem);
-                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_error_sync_resource", e.getMessage(), false,accountId);
+                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_error_sync_resource", e.getMessage(), false, accountId);
                         LogUtil.error("Sync Resources error :{}", uuid + "/" + region, e.getMessage());
                     }
 
@@ -237,7 +238,7 @@ public class CloudSyncService {
         }
     }
 
-    void saveCloudResourceSyncItemLog(String syncItemId, String operation, String output, boolean result,String accountId)  {
+    void saveCloudResourceSyncItemLog(String syncItemId, String operation, String output, boolean result, String accountId) {
         CloudResourceSyncItemLog log = new CloudResourceSyncItemLog();
         String operator = "system";
         try {
@@ -280,7 +281,7 @@ public class CloudSyncService {
         cloudResourceItemMapper.deleteByExample(cloudResourceItemExample);
     }
 
-    public void syncResources () throws Exception {
+    public void syncResources() throws Exception {
         AccountExample example = new AccountExample();
         example.createCriteria().andStatusEqualTo("VALID");
         List<Account> accounts = accountMapper.selectByExample(example);

@@ -1009,7 +1009,6 @@ public class PlatformUtils {
                     OpenStackRequest openStackRequest = OpenStackUtils.convert2OpenStackRequest(openStackReq);
                     return openStackRequest.getOpenStackClient() != null;
                 } catch (Exception e) {
-                    e.printStackTrace();
                     throw new PluginException("Failed to valid credential：" + e.getMessage());
                 }
             case vsphere:
