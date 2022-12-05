@@ -15,6 +15,7 @@ import com.hummerrisk.commons.constants.CloudAccountConstants;
 import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
+import com.hummerrisk.commons.exception.PluginException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.account.CloudAccountRequest;
 import com.hummerrisk.controller.request.account.CreateCloudAccountRequest;
@@ -154,9 +155,7 @@ public class AccountService {
             } else {
                 BeanUtils.copyBean(account, request);
 
-                if(!validateAccount(account).isFlag()) {
-                    return null;
-                }
+                validateAccount(account);
 
                 account.setPluginIcon(Objects.requireNonNull(plugin.getIcon()));
                 account.setPluginName(plugin.getName());
@@ -170,7 +169,7 @@ public class AccountService {
                 cloudSyncService.sync(account.getId());
                 return getCloudAccountById(account.getId());
             }
-        } catch (HRException | ClientException e) {
+        } catch (HRException | ClientException | PluginException e) {
             HRException.throwException(e.getMessage());
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
@@ -210,9 +209,7 @@ public class AccountService {
             } else {
                 BeanUtils.copyBean(account, request);
 
-                if(!validateAccount(account).isFlag()) {
-                    return null;
-                }
+                validateAccount(account);
 
                 account.setPluginIcon(plugin.getIcon());
                 account.setPluginName(plugin.getName());
@@ -226,7 +223,7 @@ public class AccountService {
                 return getCloudAccountById(account.getId());
             }
 
-        } catch (HRException | ClientException e) {
+        } catch (HRException | ClientException | PluginException e) {
             HRException.throwException(e.getMessage());
         } catch (Exception e) {
             throw new Exception(e.getMessage());
