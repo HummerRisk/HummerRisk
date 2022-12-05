@@ -343,7 +343,7 @@
             </if>
             and t.plugin_id not in ('hummer-nuclei-plugin', 'hummer-xray-plugin')
             and t.type = 'manual'
-            and t.resource_types in ('aws.s3', 'aliyun.oss', 'tencent.cos', 'huawei.obs', 'baidu.bos', 'ucloud.oss', 'qingcloud.oss', 'qiniu.kodo', 'vloc.oss')
+            and t.resource_types in ('aws.s3', 'aliyun.oss', 'tencent.cos', 'huawei.obs', 'baidu.bos', 'ucloud.oss', 'qingcloud.qingstor', 'qiniu.kodo', 'vloc.oss')
         </where>
         order by FIELD(t.`status`, 'PROCESSING', 'APPROVED', 'FINISHED', 'WARNING', 'ERROR'), t.return_sum desc, t.create_time desc, FIELD(t.`severity`, 'HighRisk', 'MediumRisk', 'LowRisk')
     </select>

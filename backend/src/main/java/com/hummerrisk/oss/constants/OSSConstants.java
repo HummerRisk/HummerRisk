@@ -34,6 +34,6 @@ public interface OSSConstants {
     public final static String qingcloud = "hummer-qingcloud-plugin";
     public final static String ucloud = "hummer-ucloud-plugin";
 
-    public final static String[] SUPPORT_RESOURCE_TYPE = {"aliyun.oss", "tencent.cos", "huawei.obs", "aws.s3", "baidu.bos", "ucloud.oss", "qingcloud.oss", "qiniu.oss", "vloc.oss"};
+    public final static String[] SUPPORT_RESOURCE_TYPE = {"aliyun.oss", "tencent.cos", "huawei.obs", "aws.s3", "baidu.bos", "ucloud.oss", "qingcloud.qingstor", "qiniu.kodo", "vloc.oss"};
 
 }
