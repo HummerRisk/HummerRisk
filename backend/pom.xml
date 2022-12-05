@@ -339,8 +339,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>20.0</version>
-            <scope>compile</scope>
+            <version>31.1-jre</version>
         </dependency>
         <!-- swagger 解析 -->
 
