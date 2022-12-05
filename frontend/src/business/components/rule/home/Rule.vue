@@ -2,7 +2,7 @@
     <main-container>
       <el-card class="table-card" v-loading="result.loading">
         <template v-slot:header>
-          <el-tabs type="card" @tab-click="filterRules">
+          <el-tabs type="card" @tab-click="changeTag">
             <el-tab-pane :label="$t('rule.all')"></el-tab-pane>
             <el-tab-pane
               :key="tag.tagKey"
@@ -10,7 +10,7 @@
               :label="$t(tag.tagName)">
             </el-tab-pane>
           </el-tabs>
-          <table-header :condition.sync="condition" @search="search"
+          <table-header :condition="condition" @search="search"
                         :title="$t('rule.rule_list')"
                         @create="create" :createTip="$t('rule.create_rule')"
                         :show-create="true"
@@ -466,6 +466,7 @@ const columnOptions = [
     },
     data() {
       return {
+        tagKey:"all",
         result: {},
         condition: {
           components: RULE_CONFIGS
@@ -651,6 +652,7 @@ const columnOptions = [
       },
       //查询列表
       search() {
+        this.filterRules(this.tagKey)
         let url = "/rule/list/" + this.currentPage + "/" + this.pageSize;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
@@ -664,7 +666,7 @@ const columnOptions = [
           this.tags = response.data;
         });
       },
-      filterRules (tag) {
+      changeTag(tag){
         let key = "";
         for (let obj of this.tags) {
           if (tag.label == obj.tagName) {
@@ -674,12 +676,16 @@ const columnOptions = [
             key = 'all';
           }
         }
+        this.tagKey = key
+        this.search()
+      },
+      filterRules (key) {
         if (this.condition.combine) {
           this.condition.combine.ruleTag = {operator: 'in', value: key};
         } else {
           this.condition.combine = {ruleTag: {operator: 'in', value: key }};
         }
-        this.search();
+        //this.search();
       },
       severityOptionsFnc () {
         this.severityOptions = severityOptions;
