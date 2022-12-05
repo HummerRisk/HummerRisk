@@ -2,7 +2,7 @@
   <main-container>
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
-        <el-tabs type="card" @tab-click="filterRules">
+        <el-tabs type="card" @tab-click="changeTag">
           <el-tab-pane :label="$t('rule.all')"></el-tab-pane>
           <el-tab-pane
             :key="tag.tagKey"
@@ -458,6 +458,7 @@ export default {
   },
   data() {
     return {
+      tagKey:"all",
       result: {},
       condition: {
         components: VULN_RULE_CONFIGS
@@ -635,6 +636,7 @@ export default {
     },
     //查询列表
     search() {
+      this.filterRules(this.tagKey)
       let url = "/vuln/vulnRuleList/" + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
@@ -648,7 +650,7 @@ export default {
         this.tags = response.data;
       });
     },
-    filterRules (tag) {
+    changeTag(tag){
       let key = "";
       for (let obj of this.tags) {
         if (tag.label == obj.tagName) {
@@ -658,12 +660,16 @@ export default {
           key = 'all';
         }
       }
+      this.tagKey = key
+      this.search()
+    },
+    filterRules (key) {
       if (this.condition.combine) {
         this.condition.combine.ruleTag = {operator: 'in', value: key};
       } else {
         this.condition.combine = {ruleTag: {operator: 'in', value: key }};
       }
-      this.search();
+      //this.search();
     },
     severityOptionsFnc () {
       this.severityOptions = severityOptions;
