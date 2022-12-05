@@ -1579,6 +1579,7 @@ export default {
     all_msg: 'All messages',
     unread_msg: 'Unread message',
     read_msg: 'read messages',
+    can_not_conn: 'Not associated detection results',
   },
   system: {
     system: 'System parameters',

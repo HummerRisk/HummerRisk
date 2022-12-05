@@ -5,6 +5,7 @@ import com.hummer.quartz.anno.QuartzScheduled;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCloudTaskMapper;
+import com.hummerrisk.base.mapper.ext.ExtNoticeMapper;
 import com.hummerrisk.commons.constants.CloudTaskConstants;
 import com.hummerrisk.commons.constants.NoticeConstants;
 import com.hummerrisk.commons.constants.ScanConstants;
@@ -56,6 +57,10 @@ public class NoticeCreateService {
     private CloudNativeResultMapper cloudNativeResultMapper;
     @Resource
     private CloudNativeConfigResultMapper cloudNativeConfigResultMapper;
+    @Resource
+    private ExtNoticeMapper extNoticeMapper;
+    @Resource
+    private FileSystemResultMapper fileSystemResultMapper;
 
     @QuartzScheduled(cron = "${cron.expression.notice}")
     public void handleTasks() {
@@ -103,6 +108,7 @@ public class NoticeCreateService {
         try {
             List<MessageOrderItem> messageOrderItemList = messageOrderItemMapper.selectByExample(messageOrderItemExample);
             if (messageOrderItemList.isEmpty()) {
+                messageOrderMapper.deleteByPrimaryKey(messageOrder.getId());
                 return;
             }
             int successCount = 0;
@@ -248,6 +254,23 @@ public class NoticeCreateService {
                 } else {
                     handleMessageOrderItem(item);
                 }
+            } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.FS.name(), scanType)) {
+                FileSystemResult fileSystemResult = fileSystemResultMapper.selectByPrimaryKey(item.getTaskId());
+                if (fileSystemResult == null) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
+                    return false;
+                }
+                if (StringUtils.equalsIgnoreCase(fileSystemResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
+                        || StringUtils.equalsIgnoreCase(fileSystemResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.WARNING.name())
+                        || StringUtils.equalsIgnoreCase(fileSystemResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.ERROR.name())) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
+                } else {
+                    handleMessageOrderItem(item);
+                }
             }
 
             return true;
@@ -336,14 +359,22 @@ public class NoticeCreateService {
 
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), messageOrder.getScanType())) {
             subject = "i18n_server_messageorder";
+            details = "i18n_resource_manage " + extNoticeMapper.serverSum(messageOrder);
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), messageOrder.getScanType())) {
             subject = "i18n_image_messageorder";
+            details = "i18n_resource_manage " + extNoticeMapper.imageSum(messageOrder);
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CODE.name(), messageOrder.getScanType())) {
             subject = "i18n_code_messageorder";
+            details = "i18n_resource_manage " + extNoticeMapper.codeSum(messageOrder);
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CONFIG.name(), messageOrder.getScanType())) {
             subject = "i18n_config_messageorder";
+            details = "i18n_resource_manage " + extNoticeMapper.configSum(messageOrder);
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.K8S.name(), messageOrder.getScanType())) {
             subject = "i18n_k8s_messageorder";
+            details = "i18n_resource_manage " + extNoticeMapper.k8sSum(messageOrder);
+        } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.FS.name(), messageOrder.getScanType())) {
+            subject = "i18n_fs_messageorder";
+            details = "i18n_resource_manage " + extNoticeMapper.fsSum(messageOrder);
         }
 
 

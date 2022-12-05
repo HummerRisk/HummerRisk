@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hummerrisk.base.mapper.ext.ExtNoticeMapper">
+
+
+    <select id="serverSum" resultType="java.lang.Integer">
+        SELECT count(IFNULL(IF(t.is_severity = 1, 0, 1), 0))
+        FROM server_result t
+        JOIN message_order_item t1 ON t.id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="imageSum" resultType="java.lang.Integer">
+        SELECT IFNULL(sum(IFNULL(t.return_sum, 0)), 0)
+        FROM image_result t
+        JOIN message_order_item t1 ON t.id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="codeSum" resultType="java.lang.Integer">
+        SELECT IFNULL(sum(IFNULL(t.return_sum, 0)), 0)
+        FROM code_result t
+         JOIN message_order_item t1 ON t.id = t1.task_id
+         JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="configSum" resultType="java.lang.Integer">
+        SELECT IFNULL(sum(IFNULL(t.return_sum, 0)), 0)
+        FROM cloud_native_config_result t
+                 JOIN message_order_item t1 ON t.id = t1.task_id
+                 JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="k8sSum" resultType="java.lang.Integer">
+        SELECT IFNULL(sum(IFNULL(t.return_sum, 0)), 0)
+        FROM cloud_native_result t
+                 JOIN message_order_item t1 ON t.id = t1.task_id
+                 JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="fsSum" resultType="java.lang.Integer">
+        SELECT IFNULL(sum(IFNULL(t.return_sum, 0)), 0)
+        FROM file_system_result t
+                 JOIN message_order_item t1 ON t.id = t1.task_id
+                 JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+
+</mapper>

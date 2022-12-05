@@ -1579,6 +1579,7 @@ export default {
     all_msg: '所有消息',
     unread_msg: '未讀消息',
     read_msg: '已讀消息',
+    can_not_conn: '未關聯檢測結果',
   },
   system: {
     system: '系統參數',

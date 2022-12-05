@@ -53,11 +53,18 @@
             <span>{{ scope.row.type }}</span>
           </template>
         </el-table-column>
+
         <el-table-column prop="scanType" sortable="custom" v-if="checkedColumnNames.includes('scanType')" :label="$t('system.plugin_scan_type')" min-width="120">
           <template slot-scope="scope">
             <span>{{ scope.row.scanType }}</span>
           </template>
         </el-table-column>
+
+<!--        <el-table-column min-width="50" id="fixed" :label="$t('commons.operating')" prop="operating" type="operating" fixed="right">-->
+<!--          <template v-slot:default="scope">-->
+<!--            <table-operators :buttons="buttons" :row="scope.row"/>-->
+<!--          </template>-->
+<!--        </el-table-column>-->
       </hide-table>
       <table-pagination :change="search" :current-page.sync="paginationConfig.currentPage" :page-size.sync="paginationConfig.pageSize" :total="paginationConfig.total"/>
     </el-card>
@@ -72,6 +79,7 @@ import HideTable from "@/business/components/common/hideTable/HideTable";
 import {MSG_CONFIGS} from "../../common/components/search/search-components";
 import TableHeader from "@/business/components/common/components/TableHeader";
 import {_filter, _sort} from "@/common/js/utils";
+import TableOperators from "@/business/components/common/components/TableOperators";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -103,6 +111,7 @@ export default {
     TablePagination,
     HideTable,
     TableHeader,
+    TableOperators,
   },
   data() {
     return {
@@ -126,6 +135,12 @@ export default {
       orderConditions: [],
       selectIds: [],
       loading: false,
+      buttons: [
+        {
+          tip: this.$t('commons.detail'), icon: "el-icon-document", type: "success",
+          exec: this.details
+        },
+      ],
       //名称搜索
       items: [
         {
@@ -233,6 +248,13 @@ export default {
         this.search();
       });
     },
+    detail(item) {
+      if(!item.resultId) {
+        this.$warning(this.$t('webmsg.can_not_conn'));
+        return;
+      }
+
+    }
   }
 
 }
