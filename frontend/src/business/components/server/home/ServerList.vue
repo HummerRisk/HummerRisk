@@ -1037,9 +1037,9 @@ const columnOptions = [
     margin: 10px 0;
   }
   .table-card >>> .search {
-    width: 300px !important;
+    width: 310px !important;
   }
   .table-card >>> .search .el-input {
-    width: 90px !important;
+    width: 100px !important;
   }
 </style>
