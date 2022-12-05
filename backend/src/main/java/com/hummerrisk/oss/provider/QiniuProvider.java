@@ -17,10 +17,7 @@ import com.hummerrisk.proxy.qiniu.QiniuCredential;
 import com.hummerrisk.service.SysListener;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
-import com.qiniu.storage.BucketManager;
-import com.qiniu.storage.Configuration;
-import com.qiniu.storage.DownloadUrl;
-import com.qiniu.storage.Region;
+import com.qiniu.storage.*;
 import com.qiniu.storage.model.BucketInfo;
 import com.qiniu.storage.model.FetchRet;
 import com.qiniu.storage.model.FileInfo;
@@ -81,6 +78,11 @@ public class QiniuProvider implements OssProvider {
         return new BucketManager(auth, cfg);
     }
 
+    private UploadManager getUploadManager(OssWithBLOBs ossAccount){
+        Configuration cfg = new Configuration(Region.autoRegion());
+        return new UploadManager(cfg);
+    }
+
     private Auth getAuth(OssWithBLOBs ossAccount){
         QiniuCredential qiniuCredential = JSON.parseObject(ossAccount.getCredential(), QiniuCredential.class);
         return Auth.create(qiniuCredential.getAccessKey(), qiniuCredential.getSecretKey());
@@ -137,12 +139,11 @@ public class QiniuProvider implements OssProvider {
 
     @Override
     public FilterInputStream downloadObject(OssBucket bucket, OssWithBLOBs account, final String objectId) throws Exception {
-        String fileName = objectId;
         String domainOfBucket = "http://"+bucket.getDomainName();
-        String encodedFileName = URLEncoder.encode(fileName, "utf-8").replace("+", "%20");
+        String encodedFileName = URLEncoder.encode(objectId, "utf-8").replace("+", "%20");
         String publicUrl = String.format("%s/%s", domainOfBucket, encodedFileName);
         Auth auth = getAuth(account);
-        long expireInSeconds = 300;//1小时，可以自定义链接过期时间
+        long expireInSeconds = 300;
         String finalUrl = auth.privateDownloadUrl(publicUrl, expireInSeconds);
         return new BufferedInputStream(new URL(finalUrl).openStream());
 
@@ -170,7 +171,14 @@ public class QiniuProvider implements OssProvider {
 
     @Override
     public void deletetObjects(OssBucket bucket, OssWithBLOBs account, List<String> objectIds) throws Exception {
-
+        BucketManager bucketManager = getBucketManager(account);
+        objectIds.forEach(item->{
+            try {
+                bucketManager.delete(bucket.getBucketName(), item);
+            } catch (QiniuException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Override
@@ -180,7 +188,9 @@ public class QiniuProvider implements OssProvider {
 
     @Override
     public void uploadFile(OssBucket bucket, OssWithBLOBs account, String dir, InputStream file, long size) throws Exception {
-
+        Auth auth = getAuth(account);
+        String upToken = auth.uploadToken(bucket.getBucketName());
+        Response response = getUploadManager(account).put(file, dir, upToken,null,null);
     }
 
     @Override
