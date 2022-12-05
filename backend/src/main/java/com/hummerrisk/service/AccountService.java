@@ -130,7 +130,7 @@ public class AccountService {
         }
     }
 
-    public AccountWithBLOBs addAccount(CreateCloudAccountRequest request) throws Exception {
+    public AccountWithBLOBs addAccount(CreateCloudAccountRequest request) throws PluginException {
         try{
             //参数校验
             if (StringUtils.isEmpty(request.getCredential())
@@ -155,22 +155,26 @@ public class AccountService {
             } else {
                 BeanUtils.copyBean(account, request);
 
-                validateAccount(account);
-
                 account.setPluginIcon(Objects.requireNonNull(plugin.getIcon()));
                 account.setPluginName(plugin.getName());
                 account.setCreateTime(System.currentTimeMillis());
                 account.setUpdateTime(System.currentTimeMillis());
                 account.setCreator(Objects.requireNonNull(SessionUtils.getUser()).getId());
                 account.setId(UUIDUtil.newUUID());
+
+                ValidateDTO validate = validateAccount(account);
+                if (validate.isFlag()) {
+                    account.setStatus(CloudAccountConstants.Status.VALID.name());
+                    cloudSyncService.sync(account.getId());
+                } else {
+                    account.setStatus(CloudAccountConstants.Status.INVALID.name());
+                }
+
                 accountMapper.insertSelective(account);
-                updateRegions(account);
+                updateRegionsThrows(account);
                 OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "i18n_create_cloud_account");
-                cloudSyncService.sync(account.getId());
                 return getCloudAccountById(account.getId());
             }
-        } catch (HRException | ClientException | PluginException e) {
-            HRException.throwException(e.getMessage());
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
@@ -209,24 +213,30 @@ public class AccountService {
             } else {
                 BeanUtils.copyBean(account, request);
 
-                validateAccount(account);
-
                 account.setPluginIcon(plugin.getIcon());
                 account.setPluginName(plugin.getName());
                 account.setUpdateTime(System.currentTimeMillis());
                 accountMapper.updateByPrimaryKeySelective(account);
+
+                ValidateDTO validate = validateAccount(account);
+                if (validate.isFlag()) {
+                    account.setStatus(CloudAccountConstants.Status.VALID.name());
+                    cloudSyncService.sync(account.getId());
+                } else {
+                    account.setStatus(CloudAccountConstants.Status.INVALID.name());
+                }
+
                 account = accountMapper.selectByPrimaryKey(account.getId());
-                updateRegions(account);
+
+                updateRegionsThrows(account);
 
                 //检验账号已更新状态
                 OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.UPDATE, "i18n_update_cloud_account");
                 return getCloudAccountById(account.getId());
             }
 
-        } catch (HRException | ClientException | PluginException e) {
-            HRException.throwException(e.getMessage());
         } catch (Exception e) {
-            throw new Exception(e.getMessage());
+            HRException.throwException(e.getMessage());
         }
         return null;
     }
@@ -284,6 +294,21 @@ public class AccountService {
         }
         catch (Exception e) {
             LogUtil.error(e.getMessage());
+        }
+    }
+
+    public void updateRegionsThrows(AccountWithBLOBs account) throws Exception {
+        try {
+            Proxy proxy = new Proxy();
+            if (account.getProxyId() != null) proxy = proxyMapper.selectByPrimaryKey(account.getProxyId());
+            JSONArray jsonArray = PlatformUtils._getRegions(account, proxy, validate(account.getId()).isFlag());
+            if (!jsonArray.isEmpty()) {
+                account.setRegions(jsonArray.toJSONString());
+                accountMapper.updateByPrimaryKeySelective(account);
+            }
+        }
+        catch (Exception e) {
+            HRException.throwException(e.getMessage());
         }
     }
 

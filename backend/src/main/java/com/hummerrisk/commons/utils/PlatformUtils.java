@@ -96,7 +96,6 @@ import org.openstack4j.api.OSClient;
 import org.openstack4j.api.types.ServiceType;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -923,7 +922,7 @@ public class PlatformUtils {
         }
     }
 
-    public static boolean validateCredential(AccountWithBLOBs account, Proxy proxy) throws IOException, PluginException {
+    public static boolean validateCredential(AccountWithBLOBs account, Proxy proxy) throws Exception {
         switch (account.getPluginId()) {
             case aws:
                 try {
@@ -955,7 +954,7 @@ public class PlatformUtils {
                     }
                     return true;
                 } catch (Exception e) {
-                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
+                    throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case azure:
                 try {
@@ -964,7 +963,7 @@ public class PlatformUtils {
                     AzureClient azureClient = req.getAzureClient(proxy);
                     return azureClient.getCurrentSubscription() != null;
                 } catch (Exception e) {
-                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
+                    throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case aliyun:
                 AliyunRequest aliyunRequest = new AliyunRequest();
@@ -977,7 +976,7 @@ public class PlatformUtils {
                     describeRegionsResponse.getRegions();
                     return true;
                 } catch (Exception e) {
-                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
+                    throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 } finally {
                     aliyunClient.shutdown();
                 }
@@ -989,7 +988,7 @@ public class PlatformUtils {
                     ShowCredential showCredential = AuthUtil.validate(iamClient, huaweiCloudCredential.getAk());
                     return null != showCredential;
                 } catch (Exception e) {
-                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
+                    throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case tencent:
                 com.tencentcloudapi.cvm.v20170312.models.DescribeRegionsRequest request = new com.tencentcloudapi.cvm.v20170312.models.DescribeRegionsRequest();
@@ -1000,7 +999,7 @@ public class PlatformUtils {
                     client.DescribeRegions(request);
                     return true;
                 } catch (Exception e) {
-                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
+                    throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case openstack:
                 try {
@@ -1009,7 +1008,7 @@ public class PlatformUtils {
                     OpenStackRequest openStackRequest = OpenStackUtils.convert2OpenStackRequest(openStackReq);
                     return openStackRequest.getOpenStackClient() != null;
                 } catch (Exception e) {
-                    throw new PluginException("Failed to valid credential：" + e.getMessage());
+                    throw new Exception("Failed to valid credential：" + e.getMessage());
                 }
             case vsphere:
                 VsphereClient vsphereClient = null;
@@ -1019,15 +1018,11 @@ public class PlatformUtils {
                     VsphereBaseRequest vsphereBaseRequest = new VsphereBaseRequest(vsphereRequest);
                     vsphereClient = vsphereBaseRequest.getVsphereClient();
                     if (!vsphereClient.isUseCustomSpec()) {
-                        throw new PluginException("This version of vCenter is not supported!");
+                        throw new Exception("This version of vCenter is not supported!");
                     }
                     return true;
                 } catch (Exception e) {
-                    LogUtil.error("Verify that the account has an error！", e);
-                    if (e instanceof PluginException) {
-                        throw (PluginException) e;
-                    }
-                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
+                    throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 } finally {
                     if (vsphereClient != null) {
                         vsphereClient.closeConnection();
@@ -1042,7 +1037,7 @@ public class PlatformUtils {
                     gcpClient = gcpBaseRequest.getGcpClient();
                     return gcpClient.authExplicit(gcpBaseRequest.getGcpCredential());
                 } catch (Exception e) {
-                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
+                    throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case nuclei:
                 return true;
@@ -1063,7 +1058,7 @@ public class PlatformUtils {
                     ListUsersResponse listUsersResponse = iamService.listUsers(listUsersRequest);
                     return listUsersResponse.getResult()!=null;
                 } catch (Exception e) {
-                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
+                    throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case baidu:
                 BaiduCredential baiduCredential = new Gson().fromJson(account.getCredential(), BaiduCredential.class);
@@ -1074,7 +1069,7 @@ public class PlatformUtils {
                     config.setEndpoint(baiduCredential.getEndpoint());
                     return new BccClient(config)!=null;
                 } catch (Exception e) {
-                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
+                    throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case qiniu:
                 QiniuCredential qiniuCredential = new Gson().fromJson(account.getCredential(), QiniuCredential.class);
@@ -1084,7 +1079,7 @@ public class PlatformUtils {
                     String upToken = auth.uploadToken(qiniuCredential.getBucket());
                     return upToken!=null;
                 } catch (Exception e) {
-                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
+                    throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case qingcloud:
                 QingCloudCredential qingCloudCredential = new Gson().fromJson(account.getCredential(), QingCloudCredential.class);
@@ -1104,7 +1099,7 @@ public class PlatformUtils {
                     InstanceService.DescribeInstancesOutput output = service.describeInstances(input);
                     return output!=null;
                 } catch (Exception e) {
-                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
+                    throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case ucloud:
                 UCloudCredential uCloudCredential = new Gson().fromJson(account.getCredential(), UCloudCredential.class);
@@ -1118,7 +1113,7 @@ public class PlatformUtils {
                     ));
                     return ucloudClient!=null;
                 } catch (Exception e) {
-                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
+                    throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case k8s:
                 /**创建默认 Api 客户端**/
@@ -1133,7 +1128,7 @@ public class PlatformUtils {
                             null, null, null, null, null, null, null);
                     return result != null;
                 } catch (Exception e) {
-                    throw new PluginException(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
+                    throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             default:
                 throw new IllegalStateException("Unexpected value: " + account.getPluginId());
