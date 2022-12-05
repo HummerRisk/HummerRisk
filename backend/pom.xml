@@ -408,11 +408,6 @@
             <artifactId>kotlin-stdlib</artifactId>
             <version>1.7.20-RC</version>
         </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-client</artifactId>
-            <version>6.2.0.Final</version>
-        </dependency>
 
         <!-- okhttp3 -->
         <dependency>
@@ -840,8 +835,8 @@
                     <groupId>com.google.code.findbugs</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>resteasy-client</artifactId>
-                    <groupId>org.jboss.resteasy</groupId>
+                    <artifactId>commons-io</artifactId>
+                    <groupId>commons-io</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
