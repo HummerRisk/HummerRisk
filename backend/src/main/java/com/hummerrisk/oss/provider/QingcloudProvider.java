@@ -47,7 +47,6 @@ public class QingcloudProvider implements OssProvider {
         QingStor qingStor = getStor(ossAccount);
         QingStor.ListBucketsOutput listOutput = qingStor.listBuckets(null);
         return listOutput.getBuckets().stream().map(item->{
-
             OssBucket ossBucket = new OssBucket();
             ossBucket.setOssId(ossAccount.getId());
             ossBucket.setBucketName(item.getName());
@@ -153,12 +152,28 @@ public class QingcloudProvider implements OssProvider {
 
     @Override
     public void deleteBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
-
+        QingStor qingStor = getStor(ossAccount);
+        Bucket bucket1 = qingStor.getBucket(bucket.getBucketName(), bucket.getLocation());
+        Bucket.DeleteBucketOutput delete = bucket1.delete();
+        if( delete.getStatueCode()!= 201){
+            throw new RuntimeException(delete.getMessage());
+        }
     }
 
     @Override
     public List<OssRegion> getOssRegions(OssWithBLOBs ossAccount) throws Exception {
-        String result = ReadFileUtils.readConfigFile(BASE_REGION_DIC, ossAccount.getPluginId(), JSON_EXTENSION);
+        String result ="[{\n" +
+                "    \"regionId\": \"pek3b\",\n" +
+                "    \"regionName\": \"北京3\"\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"regionId\": \"gd2\",\n" +
+                "    \"regionName\": \"广东2\"\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"regionId\": \"sh1a\",\n" +
+                "    \"regionName\": \"上海1\"\n" +
+                "  }]";
         return new Gson().fromJson(result, new TypeToken<ArrayList<OssRegion>>() {
         }.getType());
     }
