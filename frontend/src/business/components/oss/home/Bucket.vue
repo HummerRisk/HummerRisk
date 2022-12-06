@@ -538,7 +538,7 @@ export default {
                 this.$success(this.$t('commons.delete_success'));
                 this.refresh();
               } else {
-                this.$error(response.message);
+                //this.$error(response.message);
               }
             });
           }

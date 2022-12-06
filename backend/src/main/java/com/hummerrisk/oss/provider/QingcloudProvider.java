@@ -155,7 +155,7 @@ public class QingcloudProvider implements OssProvider {
         QingStor qingStor = getStor(ossAccount);
         Bucket bucket1 = qingStor.getBucket(bucket.getBucketName(), bucket.getLocation());
         Bucket.DeleteBucketOutput delete = bucket1.delete();
-        if( delete.getStatueCode()!= 201){
+        if( delete.getStatueCode()!= 204){
             throw new RuntimeException(delete.getMessage());
         }
     }
