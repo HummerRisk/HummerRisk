@@ -7,39 +7,58 @@
         from (
               (SELECT IFNULL(count(user.id), 0) as users from user) as users,
               (SELECT IFNULL(count(task.id), 0) as tasks from task) as tasks,
-              (SELECT (SELECT IFNULL(count(t.id), 0) from cloud_account t) + (SELECT IFNULL(count(t.id), 0) from image t) + (SELECT IFNULL(count(t.id), 0) from package t) + (SELECT IFNULL(count(t.id), 0) from server t) as accounts) as accounts,
+              (SELECT
+                  (SELECT IFNULL(count(t.id), 0) from cloud_account t) +
+                  (SELECT IFNULL(count(t.id), 0) from server t) +
+                  (SELECT IFNULL(count(t.id), 0) from image t) +
+                  (SELECT IFNULL(count(t.id), 0) from code t) +
+                  (SELECT IFNULL(count(t.id), 0) from cloud_native t) +
+                  (SELECT IFNULL(count(t.id), 0) from cloud_native_config t) +
+                  (SELECT IFNULL(count(t.id), 0) from file_system t)
+                  as accounts) as accounts,
               (SELECT IFNULL(count(t.id), 0) as cloudAccounts from cloud_account t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'cloud') as cloudAccounts,
               (SELECT IFNULL(count(t.id), 0) as vulnAccounts from cloud_account t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'vuln') as vulnAccounts,
               (SELECT IFNULL(count(t.id), 0) as serverAccounts from server t) as serverAccounts,
-              (SELECT IFNULL(count(t.id), 0) as packageAccounts from package t) as packageAccounts,
               (SELECT IFNULL(count(t.id), 0) as imageAccounts from image t) as imageAccounts,
-              (SELECT (SELECT IFNULL(count(t.id), 0) from rule t) + (SELECT IFNULL(count(t.id), 0) from image_rule t) + (SELECT IFNULL(count(t.id), 0) from package_rule t) + (SELECT IFNULL(count(t.id), 0) from server_rule t) as rules) as rules,
+              (SELECT IFNULL(count(t.id), 0) as codeAccounts from code t) as codeAccounts,
+              (SELECT IFNULL(count(t.id), 0) as k8sAccounts from cloud_native t) as k8sAccounts,
+              (SELECT IFNULL(count(t.id), 0) as configAccounts from cloud_native_config t) as configAccounts,
+              (SELECT IFNULL(count(t.id), 0) as fsAccounts from file_system t) as fsAccounts,
+              (SELECT
+                  (SELECT IFNULL(count(t.id), 0) from rule t) +
+                  (SELECT IFNULL(count(t.id), 0) from image_rule t) +
+                  (SELECT IFNULL(count(t.id), 0) from server_rule t) +
+                  (SELECT IFNULL(count(t.id), 0) from code_rule t) +
+                  (SELECT IFNULL(count(t.id), 0) from cloud_native_rule t) +
+                  (SELECT IFNULL(count(t.id), 0) from cloud_native_config_rule t) +
+                  (SELECT IFNULL(count(t.id), 0) from file_system_rule t)
+                  as rules) as rules,
               (SELECT IFNULL(count(t.id), 0) as cloudRules from rule t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'cloud') as cloudRules,
               (SELECT IFNULL(count(t.id), 0) as vulnRules from rule t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'vuln') as vulnRules,
               (SELECT IFNULL(count(t.id), 0) as imageRules from image_rule t) as imageRules,
-              (SELECT IFNULL(count(t.id), 0) as packageRules from package_rule t) as packageRules,
               (SELECT IFNULL(count(t.id), 0) as serverRules from server_rule t) as serverRules,
-              (SELECT (SELECT IFNULL(count(t.id), 0) from resource_item t) + (SELECT IFNULL(count(t.id), 0) from image_result t) + (SELECT IFNULL(count(t.id), 0) from package_result t) + (SELECT IFNULL(count(t.id), 0) from server_result t) as results) as results,
+              (SELECT IFNULL(count(t.id), 0) as codeRules from code_rule t) as codeRules,
+              (SELECT IFNULL(count(t.id), 0) as k8sRules from cloud_native_rule t) as k8sRules,
+              (SELECT IFNULL(count(t.id), 0) as configRules from cloud_native_config_rule t) as configRules,
+              (SELECT IFNULL(count(t.id), 0) as fsRules from file_system_rule t) as fsRules,
+              (SELECT
+                  (SELECT IFNULL(count(t.id), 0) from resource_item t) +
+                  (SELECT IFNULL(count(t.id), 0) from image_result t) +
+                  (SELECT IFNULL(count(t.id), 0) from server_result t) +
+                  (SELECT IFNULL(count(t.id), 0) from code_result t) +
+                  (SELECT IFNULL(count(t.id), 0) from cloud_native_result t) +
+                  (SELECT IFNULL(count(t.id), 0) from cloud_native_config_result t) +
+                  (SELECT IFNULL(count(t.id), 0) from file_system_result t)
+                  as results) as results,
               (SELECT IFNULL(count(t.id), 0) as cloudResult from resource_item t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'cloud') as cloudResult,
               (SELECT IFNULL(count(t.id), 0) as vulnResult from resource_item t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'vuln') as vulnResult,
               (SELECT IFNULL(count(t.id), 0) as imageResult from image_result t) as imageResult,
-              (SELECT IFNULL(count(t.id), 0) as packageResult from package_result t) as packageResult,
+              (SELECT IFNULL(count(t.id), 0) as k8sResult from cloud_native_result t) as k8sResult,
+              (SELECT IFNULL(count(t.id), 0) as configResult from cloud_native_config_result t) as configResult,
+              (SELECT IFNULL(count(t.id), 0) as codeResult from code_result t) as codeResult,
+              (SELECT IFNULL(count(t.id), 0) as fsResult from file_system_result t) as fsResult,
               (SELECT IFNULL(count(t.id), 0) as serverResult from server_result t) as serverResult
-                 )
-    </select>
-
-    <select id="packageChartX" parameterType="java.util.Map" resultType="java.lang.String">
-        select name
-        from package_result
-        order by update_time desc
-        limit 10;
-    </select>
-
-    <select id="packageChartY" parameterType="java.util.Map" resultType="java.lang.Integer">
-        select IFNULL(return_sum, 0) as returnSum
-        from package_result
-        order by update_time desc
-        limit 10;
+         )
     </select>
 
     <select id="imageChartX" parameterType="java.util.Map" resultType="java.lang.String">
@@ -52,6 +71,62 @@
     <select id="imageChartY" parameterType="java.util.Map" resultType="java.lang.Integer">
         select IFNULL(return_sum, 0) as returnSum
         from image_result
+        order by update_time desc
+        limit 10;
+    </select>
+
+    <select id="codeChartX" parameterType="java.util.Map" resultType="java.lang.String">
+        select name
+        from code_result
+        order by update_time desc
+            limit 10;
+    </select>
+
+    <select id="codeChartY" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select IFNULL(return_sum, 0) as returnSum
+        from code_result
+        order by update_time desc
+            limit 10;
+    </select>
+
+    <select id="cloudNativeChartX" parameterType="java.util.Map" resultType="java.lang.String">
+        select name
+        from cloud_native_result
+        order by update_time desc
+            limit 10;
+    </select>
+
+    <select id="cloudNativeChartY" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select IFNULL(return_sum, 0) as returnSum
+        from cloud_native_result
+        order by update_time desc
+            limit 10;
+    </select>
+
+    <select id="configChartX" parameterType="java.util.Map" resultType="java.lang.String">
+        select name
+        from cloud_native_config_result
+        order by update_time desc
+            limit 10;
+    </select>
+
+    <select id="configChartY" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select IFNULL(return_sum, 0) as returnSum
+        from cloud_native_config_result
+        order by update_time desc
+            limit 10;
+    </select>
+
+    <select id="fsChartX" parameterType="java.util.Map" resultType="java.lang.String">
+        select name
+        from file_system_result
+        order by update_time desc
+        limit 10;
+    </select>
+
+    <select id="fsChartY" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select IFNULL(return_sum, 0) as returnSum
+        from file_system_result
         order by update_time desc
         limit 10;
     </select>
@@ -75,7 +150,10 @@
         left join cloud_account t1 on t.account_id = t1.id
         left join server_result t2 on t.account_id = t2.id
         left join image_result t3 on t.account_id = t3.id
-        left join package_result t4 on t.account_id = t4.id
+        left join code_result t5 on t.account_id = t5.id
+        left join cloud_native_result t6 on t.account_id = t6.id
+        left join cloud_native_config_result t7 on t.account_id = t7.id
+        left join file_system_result t8 on t.account_id = t8.id
         JOIN (
         SELECT FROM_UNIXTIME( create_time/1000, '%Y-%m-%d') as date,
         MAX( create_time ) max_time
@@ -98,7 +176,7 @@
                     #{item}
                 </foreach>
             </if>
-            AND (t1.name is not null OR t2.server_name is not null OR t3.name is not null OR t4.name is not null)
+            AND (t1.name is not null OR t2.server_name is not null OR t3.name is not null OR t5.name is not null OR t6.name is not null OR t7.name is not null OR t8.name is not null)
         </where>
         ORDER BY t.create_time
         limit #{cycle};
@@ -111,7 +189,10 @@
         left join cloud_account t1 on t.account_id = t1.id
         left join server_result t2 on t.account_id = t2.id
         left join image_result t3 on t.account_id = t3.id
-        left join package_result t4 on t.account_id = t4.id
+        left join code_result t5 on t.account_id = t5.id
+        left join cloud_native_result t6 on t.account_id = t6.id
+        left join cloud_native_config_result t7 on t.account_id = t7.id
+        left join file_system_result t8 on t.account_id = t8.id
         JOIN (
         SELECT FROM_UNIXTIME( create_time/1000, '%Y-%m-%d') as date,
             MAX( create_time ) max_time
@@ -134,7 +215,7 @@
                     #{item}
                 </foreach>
             </if>
-            AND (t1.name is not null OR t2.server_name is not null OR t3.name is not null OR t4.name is not null)
+            AND (t1.name is not null OR t2.server_name is not null OR t3.name is not null OR t5.name is not null OR t6.name is not null OR t7.name is not null OR t8.name is not null)
         </where>
         ORDER BY t.create_time
         limit #{cycle};
@@ -197,36 +278,45 @@
     </sql>
 
     <select id="historyScanVo" parameterType="com.hummerrisk.controller.request.dashboard.HistoryScanVo" resultType="com.hummerrisk.controller.request.dashboard.HistoryScanVo">
+        select * from (
         select
         t.*,
-        IFNULL(t4.name, IFNULL(t3.name, IFNULL(t2.server_name, t1.name))) as accountName,
-        t5.name as userName
+        IFNULL(t9.name, IFNULL(t7.name, IFNULL(t6.name, IFNULL(t5.name, IFNULL(t3.name, IFNULL(t2.server_name,t1.task_name)))))) as accountName,
+        IFNULL(t9.severity, IFNULL(t7.severity, IFNULL(t6.severity, IFNULL(t5.severity, IFNULL(t3.severity,IFNULL(t2.severity, t1.severity)))))) as severityType,
+        t8.name as userName
         from history_scan t
-        left join cloud_account t1 on t.account_id = t1.id
+        left join cloud_task t1 on t.account_id = t1.id
         left join server_result t2 on t.account_id = t2.id
         left join image_result t3 on t.account_id = t3.id
-        left join package_result t4 on t.account_id = t4.id
-        left join user t5 on t.operator = t5.id
+        left join code_result t5 on t.account_id = t5.id
+        left join cloud_native_result t6 on t.account_id = t6.id
+        left join cloud_native_config_result t7 on t.account_id = t7.id
+        left join file_system_result t9 on t.account_id = t9.id
+        left join user t8 on t.operator = t8.id
+        ) as tt
         <where>
             <if test="combine != null">
                 <include refid="combine">
                     <property name="condition" value="combine"/>
                 </include>
             </if>
-            <if test="scanType != null">
-                AND t.account_type = #{scanType}
+            <if test="scanType != null and scanType != ''">
+                AND tt.account_type = #{scanType}
             </if>
-            <if test="accountId != null">
-                AND t.account_id = #{accountId}
+            <if test="accountId != null and accountId != ''">
+                AND tt.account_id = #{accountId}
             </if>
-            <if test="users != null">
-                AND t.operator = #{users}
+            <if test="users != null and users != ''">
+                AND tt.operator = #{users}
+            </if>
+            <if test="severityType != null and severityType != ''">
+                AND tt.severityType = #{severityType}
             </if>
             <if test="startTime != null and endTime != null">
-                AND t.create_time between #{startTime} and #{endTime}
+                AND tt.create_time between #{startTime} and #{endTime}
             </if>
-            AND (t1.name is not null OR t2.server_name is not null OR t3.name is not null OR t4.name is not null)
+            AND tt.accountName is not null
         </where>
-        order by t.create_time desc
+        order by tt.create_time desc
     </select>
 </mapper>

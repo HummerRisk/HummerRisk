@@ -6,6 +6,7 @@ import com.hummerrisk.base.domain.WebMsgExample;
 import com.hummerrisk.base.mapper.WebMsgMapper;
 import com.hummerrisk.base.mapper.ext.ExtWebMsgMapper;
 import com.hummerrisk.commons.utils.SessionUtils;
+import com.hummerrisk.controller.request.webMsg.WebMsgRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -23,7 +24,7 @@ public class WebMsgService {
         String orderClause = " create_time desc";
         WebMsgExample example = new WebMsgExample();
         WebMsgExample.Criteria criteria = example.createCriteria();
-        if(webMsg.getStatus()!=null) {
+        if (webMsg.getStatus() != null) {
             criteria.andStatusEqualTo(webMsg.getStatus());
         }
         example.setOrderByClause(orderClause);
@@ -31,15 +32,8 @@ public class WebMsgService {
         return Msgs;
     }
 
-    public List<WebMsg> queryGrid(WebMsg webMsg) {
-        String orderClause = " create_time desc";
-        WebMsgExample example = new WebMsgExample();
-        WebMsgExample.Criteria criteria = example.createCriteria();
-        if(webMsg.getStatus()!=null) {
-            criteria.andStatusEqualTo(webMsg.getStatus());
-        }
-        example.setOrderByClause(orderClause);
-        List<WebMsg> msgGridDtos = webMsgMapper.selectByExample(example);
+    public List<WebMsg> queryGrid(WebMsgRequest request) {
+        List<WebMsg> msgGridDtos = extWebMsgMapper.queryGrid(request);
         return msgGridDtos;
     }
 

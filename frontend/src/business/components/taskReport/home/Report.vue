@@ -100,21 +100,18 @@
                       <el-table-column v-slot:default="scope" :label="$t('account.creator')" min-width="6%" show-overflow-tooltip>
                         {{ scope.row.applyUser }}
                       </el-table-column>
-                      <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="8%" :sort-by="['HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
-                        <span v-if="scope.row.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
-                        <span v-else-if="scope.row.severity == 'MediumRisk'" style="color: #fe9636;"> {{ $t('rule.MediumRisk') }}</span>
-                        <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
-                        <span v-else> N/A</span>
+                      <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="8%" :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
+                        <severity-type :row="scope.row"></severity-type>
                       </el-table-column>
                       <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="10%" prop="status" sortable show-overflow-tooltip>
                         <el-button plain size="medium" type="primary" v-if="scope.row.status === 'UNCHECKED'">
-                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                         </el-button>
                         <el-button plain size="medium" type="primary" v-else-if="scope.row.status === 'APPROVED'">
-                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                         </el-button>
                         <el-button plain size="medium" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
-                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                         </el-button>
                         <el-button plain size="medium" type="success" v-else-if="scope.row.status === 'FINISHED'">
                           <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
@@ -156,7 +153,12 @@
                     <el-card class="box-card">
                       <div slot="header" class="clearfix">
                         <el-row>
-                          <el-col class="icon-title" :span="3">
+                          <el-col v-bind:class="{ 'icon-title box-critical': historyCloudResource.severity === 'CRITICAL',
+                                'icon-title box-high': historyCloudResource.severity === 'HIGH',
+                                'icon-title box-medium': historyCloudResource.severity === 'MEDIUM',
+                                'icon-title box-low': historyCloudResource.severity === 'LOW',
+                                'icon-title box-unknown': historyCloudResource.severity === 'UNKNOWN' }"
+                                  :span="3">
                             <span>{{ historyCloudResource.severity.substring(0, 1) }}</span>
                           </el-col>
                           <el-col :span="15" style="margin: -7px 0 0 15px;">
@@ -218,7 +220,7 @@
                         <template v-slot:default="scope">
                           <span>
                             <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                             &nbsp;&nbsp; {{ $t(scope.row.accountName) }}
+                             &nbsp;&nbsp; {{ scope.row.accountName }}
                           </span>
                         </template>
                       </el-table-column>
@@ -247,21 +249,18 @@
                       <el-table-column v-slot:default="scope" :label="$t('account.creator')" min-width="6%" show-overflow-tooltip>
                         {{ scope.row.applyUser }}
                       </el-table-column>
-                      <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="8%" :sort-by="['HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
-                        <span v-if="scope.row.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
-                        <span v-else-if="scope.row.severity == 'MediumRisk'" style="color: #fe9636;"> {{ $t('rule.MediumRisk') }}</span>
-                        <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
-                        <span v-else> N/A</span>
+                      <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="8%" :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
+                        <severity-type :row="scope.row"></severity-type>
                       </el-table-column>
                       <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="12%" prop="status" sortable show-overflow-tooltip>
                         <el-button plain size="medium" type="primary" v-if="scope.row.status === 'UNCHECKED'">
-                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                         </el-button>
                         <el-button plain size="medium" type="primary" v-else-if="scope.row.status === 'APPROVED'">
-                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                         </el-button>
                         <el-button plain size="medium" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
-                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                         </el-button>
                         <el-button plain size="medium" type="success" v-else-if="scope.row.status === 'FINISHED'">
                           <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
@@ -303,7 +302,12 @@
                     <el-card class="box-card">
                       <div slot="header" class="clearfix">
                         <el-row>
-                          <el-col class="icon-title" :span="3">
+                          <el-col v-bind:class="{ 'icon-title box-critical': historyVulnResource.severity === 'CRITICAL',
+                                'icon-title box-high': historyVulnResource.severity === 'HIGH',
+                                'icon-title box-medium': historyVulnResource.severity === 'MEDIUM',
+                                'icon-title box-low': historyVulnResource.severity === 'LOW',
+                                'icon-title box-unknown': historyVulnResource.severity === 'UNKNOWN' }"
+                                  :span="3">
                             <span>{{ historyVulnResource.severity.substring(0, 1) }}</span>
                           </el-col>
                           <el-col :span="15" style="margin: -7px 0 0 15px;">
@@ -353,14 +357,14 @@
               </el-collapse-item>
               <!-- 漏洞检测 end -->
               <!-- 虚拟机 start -->
-              <el-collapse-item name="3" v-if="report.historyServerTaskList && JSON.stringify(report.historyServerTaskList) !== '[]'">
+              <el-collapse-item name="3" v-if="report.historyServerResultList && JSON.stringify(report.historyServerResultList) !== '[]'">
                 <template slot="title">
                   {{ $t('server.server_setting') }} <i class="el-icon-monitor" style="margin-left: 5px;padding-top: 2px;"></i>
                 </template>
                 <div>
                   <h2>Details:&nbsp;</h2>
                   <div style="margin: 10px 0 0 0;">
-                    <el-table :data="report.historyServerTaskList" border stripe style="width: 100%">
+                    <el-table :data="report.historyServerResultList" border stripe style="width: 100%">
                       <el-table-column type="index" min-width="3%"/>
                       <el-table-column prop="serverGroupName" :label="$t('server.server_group_name')" min-width="11%" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="serverName" :label="$t('server.server_name')" min-width="11%" show-overflow-tooltip></el-table-column>
@@ -373,13 +377,13 @@
                       </el-table-column>
                       <el-table-column v-slot:default="scope" :label="$t('server.result_status')" min-width="15%" prop="resultStatus" sortable show-overflow-tooltip>
                         <el-button plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
-                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                         </el-button>
                         <el-button plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
-                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                         </el-button>
                         <el-button plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
-                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                         </el-button>
                         <el-button plain size="medium" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
                           <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
@@ -407,356 +411,50 @@
                   {{ $t('image.image_scan') }} <i class="el-icon-picture-outline" style="margin-left: 5px;padding-top: 2px;"></i>
                 </template>
                 <div v-for="historyImageReport in report.historyImageReportDTOList" :key="historyImageReport.id" style="border-style:ridge;padding: 15px;">
-                  <h2>Summary:&nbsp;</h2>
-                  <ul style="margin-left: 60px;">
-                    <li><i>Scan Name</i>: {{ historyImageReport.name }}</li>
-                    <li><i>Rule Name</i>: {{ historyImageReport.ruleDesc }}</li>
-                    <li><i>Scan User</i>:&nbsp;{{ historyImageReport.userName }}</li>
-                    <li><i>Severity</i>:&nbsp;{{ historyImageReport.severity }}</li>
-                    <li><i>Create Time</i>:&nbsp;{{ historyImageReport.createTime | timestampFormatDate }}</li>
-                    <li><i>Result Status</i>:&nbsp;{{ historyImageReport.resultStatus }}</li>
-                    <li><i>Vulnerabilities Found</i>: {{ historyImageReport.returnSum }}</li>
-                  </ul>
-                  <div style="margin: 10px 0 0 0;" v-if="JSON.stringify(historyImageReport.imageGrypeTableList) !== '[]'">
-                    <h3>Vuln:&nbsp;</h3>
-                    <el-table :data="historyImageReport.imageGrypeTableList" border stripe style="width: 100%">
-                      <el-table-column type="index" min-width="5%"/>
-                      <el-table-column :label="'Name'" min-width="15%" prop="name">
-                      </el-table-column>
-                      <el-table-column :label="'Installed'" min-width="15%" prop="installed">
-                      </el-table-column>
-                      <el-table-column min-width="10%" :label="'FixedIn'" prop="fixedIn">
-                      </el-table-column>
-                      <el-table-column min-width="10%" :label="'Type'" prop="type">
-                      </el-table-column>
-                      <el-table-column min-width="15%" :label="'Vulnerability'" prop="vulnerability">
-                      </el-table-column>
-                      <el-table-column min-width="15%" :label="'Severity'" prop="severity">
-                      </el-table-column>
-                    </el-table>
-                  </div>
-                  <div style="margin: 10px 0 0 0;">
-                    <h3>Sbom:&nbsp;</h3>
-                    <el-table :data="historyImageReport.imageSyftTableList" border stripe style="width: 100%">
-                      <el-table-column type="index" min-width="5%"/>
-                      <el-table-column :label="'Name'" min-width="35%" prop="name">
-                      </el-table-column>
-                      <el-table-column :label="'Version'" min-width="35%" prop="version">
-                      </el-table-column>
-                      <el-table-column min-width="20%" :label="'Type'" prop="type">
-                      </el-table-column>
-                    </el-table>
-                  </div>
-                  <h2>Details:&nbsp;</h2>
-                  <el-tabs v-model="imageJsonActiveName">
-                    <el-tab-pane label="Vuln" name="imageGrypeJson">
-                      <div style="margin: 10px 0 0 0;">
-                        <el-collapse v-model="activeNames">
-                          <el-collapse-item title="Vuln:" name="6">
-                            <div style="margin: 10px 0 0 0;" :key="imageGrypeJson.id" v-for="imageGrypeJson in historyImageReport.imageGrypeJsonList">
-                              <el-card class="box-card">
-                                <div slot="header" class="clearfix">
-                                  <el-row>
-                                    <el-col class="icon-title" :span="3">
-                                      <span>{{ imageGrypeJson.severity.substring(0, 1) }}</span>
-                                    </el-col>
-                                    <el-col :span="15" style="margin: -7px 0 0 15px;">
-                                      <span style="font-size: 24px;font-weight: 500;">{{ imageGrypeJson.name }}</span>
-                                      <span style="font-size: 20px;color: #888;margin-left: 5px;"> - {{ imageGrypeJson.version }}</span>
-                                    </el-col>
-                                    <el-col :span="6" style="float: right;">
-                                      <span style="font-size: 20px;color: #999;float: right;">{{ 'OTHER RELATED VULNERABILITIES' }}</span>
-                                    </el-col>
-                                  </el-row>
-                                  <el-row style="font-size: 18px;padding: 10px;">
-                                    <el-col :span="20">
-                                      <span style="color: #888;margin: 5px;">{{ 'VULNERABILITY' }}</span>
-                                      <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                      <span style="margin: 5px;"><a :href="imageGrypeJson.datasource">{{ imageGrypeJson.cve }}</a></span>
-                                      <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                      <span style="margin: 5px;"><el-button type="danger" size="mini">{{ imageGrypeJson.severity }}</el-button></span>
-                                      <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                      <span style="color: #444;margin: 5px;">TYPE: {{ imageGrypeJson.type }}</span>
-                                      <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                      <span style="color: #444;margin: 5px;">NAMESPACE: {{ imageGrypeJson.namespace }}</span>
-                                    </el-col>
-                                    <el-col :span="4" style="float: right;">
-                                      <span style="font-size: 20px;color: #000;float: right;">{{ JSON.parse(imageGrypeJson.relatedVulnerabilities).length }}</span>
-                                    </el-col>
-                                  </el-row>
-                                </div>
-                                <div class="text item div-desc">
-                                  <el-row>
-                                    <i class="el-icon-s-opportunity"></i> {{ imageGrypeJson.datasource }}
-                                  </el-row>
-                                  <el-row>
-                                    {{ imageGrypeJson.description }}
-                                  </el-row>
-                                </div>
-                                <div class="text div-json">
-                                  <el-descriptions title="Vulnerability" :column="2">
-                                    <el-descriptions-item v-for="(vuln, index) in filterJson(imageGrypeJson.vulnerability)" :key="index" :label="vuln.key">
-                                      <span v-if="!vuln.flag" show-overflow-tooltip>
-                                        <el-tooltip class="item" effect="dark" :content="JSON.stringify(vuln.value)" placement="top-start">
-                                          <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
-                                        </el-tooltip>
-                                      </span>
-                                      <el-tooltip v-if="vuln.flag && vuln.value" class="item" effect="light" :content="typeof(vuln.value) === 'boolean'?vuln.value.toString():vuln.value" placement="top-start">
-                                        <span class="table-expand-span-value">
-                                            {{ vuln.value }}
-                                        </span>
-                                      </el-tooltip>
-                                      <span v-if="vuln.flag && !vuln.value"> N/A</span>
-                                    </el-descriptions-item>
-                                  </el-descriptions>
-                                </div>
-                                <div class="text div-json">
-                                  <el-descriptions title="Artifact" :column="2">
-                                    <el-descriptions-item v-for="(artifact, index) in filterJson(imageGrypeJson.artifact)" :key="index" :label="artifact.key">
-                                      <span v-if="!artifact.flag" show-overflow-tooltip>
-                                        <el-tooltip class="item" effect="dark" :content="JSON.stringify(artifact.value)" placement="top-start">
-                                          <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
-                                        </el-tooltip>
-                                      </span>
-                                      <el-tooltip v-if="artifact.flag && artifact.value" class="item" effect="light" :content="typeof(artifact.value) === 'boolean'?artifact.value.toString():artifact.value" placement="top-start">
-                                        <span class="table-expand-span-value">
-                                            {{ artifact.value }}
-                                        </span>
-                                      </el-tooltip>
-                                      <span v-if="artifact.flag && !artifact.value"> N/A</span>
-                                    </el-descriptions-item>
-                                  </el-descriptions>
-                                </div>
-                                <div class="text div-json">
-                                  <el-descriptions title="MatchDetails" :column="2">
-                                    <el-descriptions-item v-for="(matchDetail, index) in JSON.parse(imageGrypeJson.matchDetails)" :key="index" :label="matchDetail.matcher">
-                                      <span> {{ matchDetail.type }}</span>
-                                    </el-descriptions-item>
-                                  </el-descriptions>
-                                </div>
-                              </el-card>
-                            </div>
-                          </el-collapse-item>
-                        </el-collapse>
-                      </div>
-                    </el-tab-pane>
-                    <el-tab-pane label="Sbom" name="imageSyftJson">
-                      <div style="margin: 10px 0 0 0;">
-                        <el-collapse-item title="Sbom:" name="7">
-                          <div style="margin: 10px 0 0 0;" :key="index" v-for="(imageSyftJson,index) in historyImageReport.imageSyftJsonList">
-                            <el-card class="box-card">
-                              <div slot="header" class="clearfix">
-                                <el-row>
-                                  <el-col :span="15" style="margin: -7px 0 0 15px;">
-                                    <span style="font-size: 24px;font-weight: 500;">{{ imageSyftJson.name }}</span>
-                                    <span style="font-size: 20px;color: #888;margin-left: 5px;">- {{ imageSyftJson.version?imageSyftJson.version:'N/A' }}</span>
-                                  </el-col>
-                                  <el-col :span="8" style="float: right;">
-                                    <span style="font-size: 20px;color: #999;float: right;">{{ 'LANGUAGE' }}</span>
-                                  </el-col>
-                                </el-row>
-                                <el-row style="font-size: 18px;padding: 10px;">
-                                  <el-col :span="20">
-                                    <span style="color: #888;margin: 5px;">{{ 'SBOM' }}</span>
-                                    <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                    <span style="color: #444;margin: 5px;">TYPE: {{ imageSyftJson.type }}</span>
-                                    <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                    <span style="color: #444;margin: 5px;">FOUNDBY: {{ imageSyftJson.foundBy }}</span>
-                                    <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                    <span style="color: #444;margin: 5px;">METADATA TYPE: {{ imageSyftJson.metadataType }}</span>
-                                  </el-col>
-                                  <el-col :span="4" style="float: right;">
-                                    <span style="font-size: 20px;color: #000;float: right;">{{ imageSyftJson.language }}</span>
-                                  </el-col>
-                                </el-row>
-                                <el-row style="font-size: 18px;padding: 10px;">
-                                  <span style="color: #444;margin: 5px;">PURL: {{ imageSyftJson.purl }}</span>
-                                </el-row>
-                              </div>
-                              <div class="text div-json">
-                                <el-descriptions title="Metadata" :column="2">
-                                  <el-descriptions-item v-for="(meta, index) in filterJson(imageSyftJson.metadata)" :key="index" :label="meta.key">
-                                    <span v-if="!meta.flag" show-overflow-tooltip>
-                                      <el-tooltip class="item" effect="dark" :content="JSON.stringify(meta.value)" placement="top-start">
-                                        <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
-                                      </el-tooltip>
-                                    </span>
-                                    <el-tooltip v-if="meta.flag && meta.value" class="item" effect="light" :content="typeof(meta.value) === 'boolean'?meta.value.toString():meta.value" placement="top-start">
-                                    <span class="table-expand-span-value">
-                                        {{ meta.value }}
-                                    </span>
-                                    </el-tooltip>
-                                    <span v-if="meta.flag && !meta.value"> N/A</span>
-                                  </el-descriptions-item>
-                                </el-descriptions>
-                              </div>
-                              <div class="text div-json">
-                                <el-descriptions title="Locations" :column="2">
-                                  <el-descriptions-item v-for="(location, index) in JSON.parse(imageSyftJson.locations)" :key="index" :label="location.path">
-                                    <span> {{ location.layerID }}</span>
-                                  </el-descriptions-item>
-                                  <el-descriptions-item label="Licenses">
-                                    <span> {{ imageSyftJson.licenses }}</span>
-                                  </el-descriptions-item>
-                                  <el-descriptions-item label="Cpes">
-                                    <span> {{ imageSyftJson.cpes }}</span>
-                                  </el-descriptions-item>
-                                </el-descriptions>
-                              </div>
-                            </el-card>
-                          </div>
-                        </el-collapse-item>
-                      </div>
-                    </el-tab-pane>
-                  </el-tabs>
+                  <image-log-form :logForm="historyImageReport"/>
                 </div>
               </el-collapse-item>
               <!-- 镜像检测 end -->
-              <!-- 软件包检测 start -->
-              <el-collapse-item name="5" v-if="report.historyPackageReportDTOList && JSON.stringify(report.historyPackageReportDTOList) !== '[]'">
+              <!-- 源码检测 start -->
+              <el-collapse-item name="10" v-if="report.historyCodeReportDTOList && JSON.stringify(report.historyCodeReportDTOList) !== '[]'">
                 <template slot="title">
-                  {{ $t('package.package_scan') }} <i class="el-icon-box" style="margin-left: 5px;padding-top: 2px;"></i>
+                  {{ $t('code.code_scan') }} <i class="el-icon-box" style="margin-left: 5px;padding-top: 2px;"></i>
                 </template>
-                <div v-for="historyPackageReport in report.historyPackageReportDTOList" :key="historyPackageReport.id" style="border-style:ridge;padding: 15px;">
-                  <h2>Summary:&nbsp;</h2>
-                  <ul style="margin-left: 60px;">
-                    <li><i>Scan Name</i>: {{ historyPackageReport.name }}</li>
-                    <li><i>Package Name</i>: {{ historyPackageReport.packageName }}</li>
-                    <li><i>Package Size</i>:&nbsp;{{ historyPackageReport.size }}</li>
-                    <li><i>Rule Name</i>: {{ historyPackageReport.ruleDesc }}</li>
-                    <li><i>Scan User</i>:&nbsp;{{ historyPackageReport.userName }}</li>
-                    <li><i>Severity</i>:&nbsp;{{ historyPackageReport.severity }}</li>
-                    <li><i>Create Time</i>:&nbsp;{{ historyPackageReport.createTime | timestampFormatDate }}</li>
-                    <li><i>Result Status</i>:&nbsp;{{ historyPackageReport.resultStatus }}</li>
-                    <li><i>Vulnerabilities Found</i>: {{ historyPackageReport.returnSum }}</li>
-                  </ul>
-                  <div style="margin: 10px 0 0 0;" v-if="JSON.stringify(historyPackageReport.packageDependencyJsonList) !== '[]'">
-                    <h3>Vuln:&nbsp;</h3>
-                    <el-table :data="historyPackageReport.packageDependencyJsonList" border stripe style="width: 100%">
-                      <el-table-column type="index" min-width="5%"/>
-                      <el-table-column :label="'FileName'" min-width="20%" prop="fileName">
-                      </el-table-column>
-                      <el-table-column :label="'FilePath'" min-width="25%" prop="filePath">
-                      </el-table-column>
-                      <el-table-column min-width="5%" :label="'IsVirtual'" prop="isVirtual">
-                      </el-table-column>
-                      <el-table-column min-width="10%" :label="'Md5'" prop="md5">
-                      </el-table-column>
-                      <el-table-column min-width="15%" :label="'Sha1'" prop="sha1">
-                      </el-table-column>
-                      <el-table-column min-width="15%" :label="'Sha256'" prop="sha256">
-                      </el-table-column>
-                    </el-table>
-                  </div>
-                  <div style="margin: 10px 0 0 0;">
-                    <h2>Details:&nbsp;</h2>
-<!--                    <div class="filter-wrapper">-->
-<!--                      <el-input-->
-<!--                        class="search"-->
-<!--                        type="text"-->
-<!--                        size="small"-->
-<!--                        :placeholder="$t('task.filter_okr')"-->
-<!--                        prefix-icon="el-icon-search"-->
-<!--                        maxlength="60"-->
-<!--                        v-model="filterText" clearable/>-->
-<!--                    </div>-->
-                  </div>
-                  <el-tabs v-model="packageActiveName">
-                    <el-tab-pane label="Sbom" name="packageSbom">
-                      <div style="margin: 10px 0 0 0;" v-if="JSON.stringify(historyPackageReport.packageDependencyJsonList) !== '[]'">
-                        <el-collapse-item title="Sbom:" name="8">
-                          <div v-for="(packageDependencyJson, index) in historyPackageReport.packageDependencyJsonList" :key="index">
-                            <h3>Vuln:&nbsp;{{ index+1 }}</h3>
-                            <ul style="margin-left: 60px;">
-                              <li><i>FileName</i>: {{ packageDependencyJson.fileName }}</li>
-                              <li><i>FilePath</i>: {{ packageDependencyJson.filePath }}</li>
-                              <li><i>IsVirtual</i>:&nbsp;{{ packageDependencyJson.isVirtual }}</li>
-                              <li><i>Md5</i>: {{ packageDependencyJson.md5 }}</li>
-                              <li><i>Sha1</i>:&nbsp;{{ packageDependencyJson.sha1 }}</li>
-                              <li><i>Sha256</i>:&nbsp;{{ packageDependencyJson.sha256 }}</li>
-                            </ul>
-                            <div style="margin: 10px;">
-                              <vue-okr-tree
-                                ref="tree"
-                                :data="packageDependencyJson.vulnerabilities | packageDependencyJsonRight"
-                                :left-data="packageDependencyJson.vulnerabilities | packageDependencyJsonLeft"
-                                only-both-tree
-                                direction="horizontal"
-                                show-collapsable
-                                node-key="id"
-                                label-class-name='no-padding'
-                                default-expand-all
-                                :render-content="renderContent"
-                                :filter-node-method="filterNode"
-                              ></vue-okr-tree>
-                            </div>
-                          </div>
-                        </el-collapse-item>
-                      </div>
-                    </el-tab-pane>
-                    <el-tab-pane label="Dependency" name="packageDependency">
-                      <div style="margin: 10px 0 0 0;" v-if="JSON.stringify(historyPackageReport.packageDependencyJsonList) !== '[]'">
-                        <el-collapse-item title="Dependency:" name="9">
-                          <div style="margin: 10px 0 0 0;" :key="index" v-for="(packageDependencyJson,index) in historyPackageReport.packageDependencyJsonList">
-                            <el-card class="box-card">
-                              <div slot="header" class="clearfix">
-                                <el-row>
-                                  <el-col :span="24" style="margin: -7px 0 0 15px;">
-                                    <span style="font-size: 24px;font-weight: 500;">{{ packageDependencyJson.fileName }}</span>
-                                    <span style="font-size: 20px;color: #888;margin-left: 5px;">- IsVirtual:  {{ packageDependencyJson.isVirtual }}</span>
-                                  </el-col>
-                                </el-row>
-                                <el-row style="font-size: 18px;padding: 10px;">
-                                  <el-col :span="20">
-                                    <span style="color: #888;margin: 5px;">{{ 'SBOM' }}</span>
-                                    <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                                    <span style="color: #444;margin: 5px;">FilePath: {{ packageDependencyJson.filePath }}</span>
-                                  </el-col>
-                                </el-row>
-                              </div>
-                              <div class="text div-json">
-                                <el-descriptions :column="2" v-for="(packagex, index) in JSON.parse(packageDependencyJson.packages)" :key="index" :title="'Package'+(index+1)">
-                                  <el-descriptions-item v-for="(meta, index) in filterJson(packagex?packagex:{package: 'N/A'})" :key="index" :label="meta.key">
-                                    <span v-if="!meta.flag" show-overflow-tooltip>
-                                      <el-tooltip class="item" effect="dark" :content="JSON.stringify(meta.value)" placement="top-start">
-                                        <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
-                                      </el-tooltip>
-                                    </span>
-                                    <el-tooltip v-if="meta.flag && meta.value" class="item" effect="light" :content="typeof(meta.value) === 'boolean'?meta.value.toString():meta.value" placement="top-start">
-                                      <span class="table-expand-span-value">
-                                          {{ meta.value }}
-                                      </span>
-                                    </el-tooltip>
-                                    <span v-if="meta.flag && !meta.value"> N/A</span>
-                                  </el-descriptions-item>
-                                </el-descriptions>
-                              </div>
-                              <div class="text div-json">
-                                <el-descriptions :column="2" v-for="(vulnerability, index) in JSON.parse(packageDependencyJson.vulnerabilities)" :key="index" :title="'Vulnerabilitie'+(index+1)">
-                                  <el-descriptions-item v-for="(meta, index) in filterJson(vulnerability?vulnerability:{vulnerability: 'N/A'})" :key="index" :label="meta.key">
-                                    <span v-if="!meta.flag" show-overflow-tooltip>
-                                      <el-tooltip class="item" effect="dark" :content="JSON.stringify(meta.value)" placement="top-start">
-                                        <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
-                                      </el-tooltip>
-                                    </span>
-                                    <el-tooltip v-if="meta.flag && meta.value" class="item" effect="light" :content="typeof(meta.value) === 'boolean'?meta.value.toString():meta.value" placement="top-start">
-                                      <span class="table-expand-span-value">
-                                        {{ meta.value }}
-                                      </span>
-                                    </el-tooltip>
-                                    <span v-if="meta.flag && !meta.value"> N/A</span>
-                                  </el-descriptions-item>
-                                </el-descriptions>
-                              </div>
-                            </el-card>
-                          </div>
-                        </el-collapse-item>
-                      </div>
-                    </el-tab-pane>
-                  </el-tabs>
+                <div v-for="historyCodeReport in report.historyCodeReportDTOList" :key="historyCodeReport.id" style="border-style:ridge;padding: 15px;">
+                  <code-log-form :logForm="historyCodeReport"/>
                 </div>
               </el-collapse-item>
-              <!-- 软件包检测 end -->
+              <!-- 源码检测 end -->
+              <!-- K8s 检测 start -->
+              <el-collapse-item name="11" v-if="report.historyK8sReportDTOList && JSON.stringify(report.historyK8sReportDTOList) !== '[]'">
+                <template slot="title">
+                  {{ $t('dashboard.k8s_scan') }} <i class="el-icon-box" style="margin-left: 5px;padding-top: 2px;"></i>
+                </template>
+                <div v-for="historyK8sReport in report.historyK8sReportDTOList" :key="historyK8sReport.id" style="border-style:ridge;padding: 15px;">
+                  <k8s-log-form :logForm="historyK8sReport"/>
+                </div>
+              </el-collapse-item>
+              <!-- K8s 检测 end -->
+              <!-- 部署检测 start -->
+              <el-collapse-item name="12" v-if="report.historyConfigReportDTOList && JSON.stringify(report.historyConfigReportDTOList) !== '[]'">
+                <template slot="title">
+                  {{ $t('dashboard.config_scan') }} <i class="el-icon-box" style="margin-left: 5px;padding-top: 2px;"></i>
+                </template>
+                <div v-for="historyConfigReport in report.historyConfigReportDTOList" :key="historyConfigReport.id" style="border-style:ridge;padding: 15px;">
+                  <config-log-form :logForm="historyConfigReport"/>
+                </div>
+              </el-collapse-item>
+              <!-- 部署检测 end -->
+              <!-- 文件检测 start -->
+              <el-collapse-item name="13" v-if="report.historyFsReportDTOList && JSON.stringify(report.historyFsReportDTOList) !== '[]'">
+                <template slot="title">
+                  {{ $t('fs.file_system') }} <i class="el-icon-box" style="margin-left: 5px;padding-top: 2px;"></i>
+                </template>
+                <div v-for="historyFsReport in report.historyFsReportDTOList" :key="historyFsReport.id" style="border-style:ridge;padding: 15px;">
+                  <fs-log-form :logForm="historyFsReport"/>
+                </div>
+              </el-collapse-item>
+              <!-- 文件检测 end -->
             </el-collapse>
           </div>
         </el-row>
@@ -771,13 +469,25 @@
 //OKR树
 import {VueOkrTree} from 'vue-okr-tree';
 import RuleType from "@/business/components/task/home/RuleType";
-import SeverityType from "@/business/components/task/home/SeverityType";
+import SeverityType from "@/business/components/common/components/SeverityType";
+import CodeLogForm from "@/business/components/code/home/LogForm";
+import ImageLogForm from "@/business/components/image/home/LogForm";
+import FsLogForm from "@/business/components/fs/home/LogForm";
+import K8sLogForm from "@/business/components/k8s/home/LogForm";
+import ConfigLogForm from "@/business/components/config/home/LogForm";
+
+
 /* eslint-disable */
 export default {
   components: {
     VueOkrTree,
     RuleType,
     SeverityType,
+    CodeLogForm,
+    ImageLogForm,
+    FsLogForm,
+    K8sLogForm,
+    ConfigLogForm,
   },
   data () {
     return {
@@ -786,14 +496,12 @@ export default {
       filterText: '',
       tasks: [],
       selectedTask: null,
-      activeNames: ['1','2','3','4','5','6','7','8','9'],
+      activeNames: ['1','2','3','4','5','6','7','8','9', '10', '11', '12', '13'],
       version: 'v1.0.0',
       report: {},
       tagSelect: [],
       resourceTypes: [],
       filterJson: this.filterJsonKeyAndValue,
-      imageJsonActiveName: 'imageGrypeJson',
-      packageActiveName: 'packageSbom',
     }
   },
   watch: {
@@ -855,7 +563,7 @@ export default {
         return (
           <div class={cls}>
             <div class="diy-con-name">
-              Package Scan: {node.data.name}
+              Scan: {node.data.name}
             </div>
             <div class="diy-con-content">
               Description: {node.data.description}
@@ -1067,12 +775,12 @@ export default {
 .icon-title {
   color: #fff;
   width: 30px;
-  background-color: #32CD32;
   height: 30px;
   line-height: 30px;
   text-align: center;
   border-radius: 30px;
   font-size: 14px;
+  margin: -7px 0 0 15px;
 }
 
 </style>

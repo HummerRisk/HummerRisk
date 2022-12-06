@@ -1,20 +1,22 @@
 <template>
   <div>
-    <hr-chart :options="options" :width="280" :height="300"></hr-chart>
+    <hr-chart :key="cascaderKey" :options="options" :width="280" :height="300"></hr-chart>
   </div>
 </template>
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
-
+import echarts from 'echarts';
 /* eslint-disable */
 export default {
   name: "ScorePieChart",
   components: {
     HrChart,
+    echarts,
   },
   data() {
     return {
+      cascaderKey: 1,
       options: {},
     }
   },

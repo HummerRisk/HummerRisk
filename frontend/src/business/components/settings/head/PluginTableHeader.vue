@@ -11,7 +11,6 @@
         <slot name="button"></slot>
       </span>
       <span>
-        <el-button icon="el-icon-refresh" size="small" @click="refresh">{{ $t('commons.refresh') }}</el-button>
         <table-search-bar :condition.sync="condition" @change="search" class="search-bar" :tip="tip"/>
         <table-adv-search-bar :condition.sync="condition" @search="search" v-if="isCombine"/>
       </span>
@@ -49,9 +48,6 @@ import TableAdvSearchBar from "@/business/components/common/components/search/Ta
       search(value) {
         this.$emit('update:condition', this.condition);
         this.$emit('search', value);
-      },
-      refresh() {
-        this.$emit('search');
       },
     },
     computed: {

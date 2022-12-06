@@ -9,7 +9,7 @@ export default {
   children: [
     {
       path: "imageRepo",
-      name: "imageRepo",
+      name: "ImageRepo",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/ImageRepo'),
     },
     {
@@ -19,18 +19,28 @@ export default {
     },
     {
       path: "rule",
-      name: "imageRule",
+      name: "ImageRule",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/Rule'),
     },
     {
       path: "result",
-      name: "imageResult",
+      name: "ImageResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/Result'),
     },
     {
       path: "resultdetails/:id",
-      name: "imageResultDetails",
+      name: "ImageResultDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/image/home/ResultDetails"),
+    },
+    {
+      path: "overview",
+      name: "ImageOverview",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/image/home/Overview"),
+    },
+    {
+      path: "history",
+      name: "ImageHistory",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/image/home/History"),
     },
   ]
 }

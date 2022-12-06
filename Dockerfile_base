@@ -1,0 +1,23 @@
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/nuclei:v0.6 as nuclei-env
+
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/prowler:v0.6 as prowler-env
+
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/xray:v0.6 as xray-env
+
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/cloud-custodian:v0.6.0
+
+WORKDIR /usr
+
+COPY --from=nuclei-env /usr/local/bin/nuclei /usr/local/bin/nuclei
+
+COPY --from=prowler-env /prowler /prowler
+
+COPY --from=xray-env /opt/hummerrisk/xray/ /opt/hummerrisk/xray/
+
+RUN apk add aws-cli git bash && \
+    pip3 install detect-secrets==1.0.3 && \
+    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.35.0
+
+RUN mkdir -p /opt/apps
+
+

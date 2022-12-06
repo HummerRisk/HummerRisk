@@ -5,13 +5,13 @@ RENAME TABLE cloud_scan_task_history TO history_scan_task;
 
 ALTER TABLE history_scan ADD `status` varchar(20) DEFAULT NULL COMMENT '状态';
 
-ALTER TABLE history_scan ADD `account_type` varchar(50) DEFAULT NULL COMMENT '资源类型：cloudAccount/vulnAccount/serverAccount/imageAccount/packageAccount';
+ALTER TABLE history_scan ADD `account_type` varchar(50) DEFAULT NULL COMMENT '资源类型：cloudAccount/vulnAccount/k8sAccount/codeAccouunt/serverAccount/imageAccount/packageAccount';
 
 ALTER TABLE history_scan_task ADD `status` varchar(20) DEFAULT NULL COMMENT '状态';
 
 ALTER TABLE history_scan_task ADD `account_id` varchar(50) DEFAULT NULL COMMENT '资源ID';
 
-ALTER TABLE history_scan_task ADD `account_type` varchar(50) DEFAULT NULL COMMENT '资源类型：cloudAccount/vulnAccount/serverAccount/imageAccount/packageAccount';
+ALTER TABLE history_scan_task ADD `account_type` varchar(50) DEFAULT NULL COMMENT '资源类型：cloudAccount/vulnAccount/k8sAccount/codeAccouunt/serverAccount/imageAccount/packageAccount';
 
 CREATE TABLE IF NOT EXISTS `history_cloud_task` (
     `id`                            varchar(50)           NOT NULL COMMENT '任务ID',
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `history_cloud_task` (
     `apply_user`                    varchar(50)           DEFAULT NULL COMMENT '申请人',
     `create_time`                   bigint(13)            DEFAULT NULL COMMENT '创建时间',
     `task_name`                     varchar(256)          DEFAULT NULL COMMENT '任务名称',
-    `description`                   varchar(255)          DEFAULT NULL COMMENT '描述',
+    `description`                   varchar(1024)         DEFAULT NULL COMMENT '描述',
     `cron`                          varchar(128)          DEFAULT NULL COMMENT 'cron表达式',
     `trigger_id`                    varchar(255)          DEFAULT NULL COMMENT '触发ID',
     `prev_fire_time`                bigint(20)            DEFAULT NULL COMMENT '上次执行时间',
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `history_cloud_task_log` (
     `resource_id`                  varchar(50)         DEFAULT NULL COMMENT '资源ID',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
-    `operation`                    varchar(255)        DEFAULT NULL COMMENT '操作内容',
+    `operation`                    mediumtext          DEFAULT NULL COMMENT '操作内容',
     `output`                       mediumtext          DEFAULT NULL COMMENT '输出',
     `result`                       tinyint(1)          DEFAULT NULL COMMENT '结果',
     PRIMARY KEY (`id`)
@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS `history_vuln_task` (
     `apply_user`                    varchar(50)           DEFAULT NULL COMMENT '申请人',
     `create_time`                   bigint(13)            DEFAULT NULL COMMENT '创建时间',
     `task_name`                     varchar(256)          DEFAULT NULL COMMENT '任务名称',
-    `description`                   varchar(255)          DEFAULT NULL COMMENT '描述',
+    `description`                   varchar(1024)         DEFAULT NULL COMMENT '描述',
     `cron`                          varchar(128)          DEFAULT NULL COMMENT 'cron表达式',
     `trigger_id`                    varchar(255)          DEFAULT NULL COMMENT '触发ID',
     `prev_fire_time`                bigint(20)            DEFAULT NULL COMMENT '上次执行时间',
@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS `history_vuln_task_log` (
     `resource_id`                  varchar(50)         DEFAULT NULL COMMENT '资源ID',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
-    `operation`                    varchar(255)        DEFAULT NULL COMMENT '操作内容',
+    `operation`                    mediumtext          DEFAULT NULL COMMENT '操作内容',
     `output`                       mediumtext          DEFAULT NULL COMMENT '输出',
     `result`                       tinyint(1)          DEFAULT NULL COMMENT '结果',
     PRIMARY KEY (`id`)
@@ -192,7 +192,7 @@ CREATE TABLE IF NOT EXISTS `history_server_task`
     `server_name`                varchar(256)        DEFAULT NULL COMMENT '虚拟机名称',
     `rule_id`                    varchar(50)         DEFAULT NULL COMMENT '虚拟机规则ID',
     `rule_name`                  varchar(50)         DEFAULT NULL COMMENT '虚拟机规则名称',
-    `rule_desc`                  varchar(50)         DEFAULT NULL COMMENT '虚拟机规则描述',
+    `rule_desc`                  varchar(256)        DEFAULT NULL COMMENT '虚拟机规则描述',
     `result_status`              varchar(45)         DEFAULT NULL COMMENT '检测状态',
     `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
     `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
@@ -214,7 +214,7 @@ CREATE TABLE IF NOT EXISTS `history_server_task_log` (
     `result_id`                    varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
-    `operation`                    varchar(255)        DEFAULT NULL COMMENT '操作内容',
+    `operation`                    mediumtext          DEFAULT NULL COMMENT '操作内容',
     `output`                       mediumtext          DEFAULT NULL COMMENT '输出',
     `result`                       tinyint(1)          DEFAULT NULL COMMENT '结果',
     PRIMARY KEY (`id`)
@@ -229,7 +229,7 @@ CREATE TABLE IF NOT EXISTS `history_image_task`
     `plugin_icon`                varchar(256)        DEFAULT 'docker.png' COMMENT '图标地址',
     `rule_id`                    varchar(50)         DEFAULT NULL COMMENT '镜像检测规则ID',
     `rule_name`                  varchar(50)         DEFAULT NULL COMMENT '镜像检测规则名称',
-    `rule_desc`                  varchar(50)         DEFAULT NULL COMMENT '镜像检测规则描述',
+    `rule_desc`                  varchar(256)        DEFAULT NULL COMMENT '镜像检测规则描述',
     `result_status`              varchar(45)         DEFAULT NULL COMMENT '检测状态',
     `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
     `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
@@ -250,7 +250,7 @@ CREATE TABLE IF NOT EXISTS `history_image_task_log` (
     `result_id`                    varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
-    `operation`                    varchar(1024)       DEFAULT NULL COMMENT '操作内容',
+    `operation`                    mediumtext          DEFAULT NULL COMMENT '操作内容',
     `output`                       mediumtext          DEFAULT NULL COMMENT '输出',
     `result`                       tinyint(1)          DEFAULT NULL COMMENT '结果',
     PRIMARY KEY (`id`)
@@ -266,7 +266,7 @@ CREATE TABLE IF NOT EXISTS `history_package_task`
     `plugin_icon`                varchar(256)        DEFAULT 'package.png' COMMENT '图标地址',
     `rule_id`                    varchar(50)         DEFAULT NULL COMMENT '软件包规则ID',
     `rule_name`                  varchar(50)         DEFAULT NULL COMMENT '软件包规则名称',
-    `rule_desc`                  varchar(50)         DEFAULT NULL COMMENT '软件包规则描述',
+    `rule_desc`                  varchar(256)        DEFAULT NULL COMMENT '软件包规则描述',
     `result_status`              varchar(45)         DEFAULT NULL COMMENT '检测状态',
     `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
     `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
@@ -285,7 +285,7 @@ CREATE TABLE IF NOT EXISTS `history_package_task_log` (
     `result_id`                    varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
-    `operation`                    varchar(1024)       DEFAULT NULL COMMENT '操作内容',
+    `operation`                    mediumtext          DEFAULT NULL COMMENT '操作内容',
     `output`                       mediumtext          DEFAULT NULL COMMENT '输出',
     `result`                       tinyint(1)          DEFAULT NULL COMMENT '结果',
     PRIMARY KEY (`id`)

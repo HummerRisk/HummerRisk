@@ -14,13 +14,28 @@ export default {
     },
     {
       path: "result",
-      name: "k8sResult",
+      name: "K8sResult",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/Result"),
     },
     {
       path: "resultdetails/:id",
-      name: "k8sResultDetails",
+      name: "K8sResultDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/ResultDetails"),
+    },
+    {
+      path: "resultconfigdetails/:id",
+      name: "K8sResultConfigDetails",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/ResultConfigDetails"),
+    },
+    {
+      path: "overview",
+      name: "K8sOverview",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/Overview"),
+    },
+    {
+      path: "history",
+      name: "K8sHistory",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/History"),
     },
   ]
 }

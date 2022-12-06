@@ -15,7 +15,7 @@
 import CodeHeaderMenus from "./head/CodeHeaderMenus";
 
 export default {
-    name: "code",
+    name: "SourceCode",
     components: {CodeHeaderMenus},
     data() {
       return {

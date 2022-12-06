@@ -1,6 +1,6 @@
 <template>
-  <container>
-    <aside-container :enable-aside-hidden="false">
+  <container class="header-menu">
+    <aside-container :enable-aside-hidden="false" :width="'200px'">
       <server-group
         @nodeSelectEvent="nodeChange"
         @refreshTable="refresh"
@@ -75,7 +75,10 @@ export default {
 </script>
 
 <style scoped>
-
+.header-menu >>> .main-container {
+  padding: 0;
+  margin: 0 0 0 10px;
+}
 
 </style>
 

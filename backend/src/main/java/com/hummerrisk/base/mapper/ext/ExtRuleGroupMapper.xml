@@ -78,6 +78,36 @@
     <select id="list" resultMap="BaseResultMap">
         select
         t.*,
+        (select count(g.id) from rule_group_mapping g where g.group_id = t.id) as ruleSum,
+        t1.name as pluginName,
+        t1.icon as pluginIcon
+        from rule_group as t
+        left join plugin t1 on t.plugin_id = t1.id
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                </include>
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and LOWER(t.name) like concat('%', LOWER(#{request.name}), '%')
+            </if>
+            <if test="request.description != null and request.description != ''">
+                and LOWER(t.description) like concat('%', LOWER(#{request.description}), '%')
+            </if>
+            <if test="request.level != null and request.level != ''">
+                and LOWER(t.level) like concat('%', LOWER(#{request.level}), '%')
+            </if>
+            <if test="request.pluginId != null and request.pluginId != ''">
+                and t.plugin_id = #{request.pluginId}
+            </if>
+        </where>
+        order by t.name
+    </select>
+
+    <select id="allCloudRuleGroups" resultMap="BaseResultMap">
+        select
+        t.*,
         t1.name as pluginName,
         t1.icon as pluginIcon
         from rule_group as t
@@ -95,8 +125,34 @@
             <if test="request.pluginId != null and request.pluginId != ''">
                 and t.plugin_id = #{request.pluginId}
             </if>
+            and t1.type = 'cloud'
         </where>
-        order by t.id
+        order by t.name
+    </select>
+
+    <select id="allVulnRuleGroups" resultMap="BaseResultMap">
+        select
+        t.*,
+        t1.name as pluginName,
+        t1.icon as pluginIcon
+        from rule_group as t
+        left join plugin t1 on t.plugin_id = t1.id
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                </include>
+            </if>
+
+            <if test="request.name != null and request.name != ''">
+                and t.name like concat('%', #{request.name}, '%')
+            </if>
+            <if test="request.pluginId != null and request.pluginId != ''">
+                and t.plugin_id = #{request.pluginId}
+            </if>
+            and t1.type = 'vuln'
+        </where>
+        order by t.name
     </select>
 
     <select id="getRules" resultMap="com.hummerrisk.base.mapper.ext.ExtRuleMapper.BaseResultMap2">

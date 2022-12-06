@@ -1,0 +1,9 @@
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/alpine:3.16
+
+WORKDIR /db
+
+ARG triy_db_version=2022111508
+
+ENV triy_db=trivy-offline-v1-${triy_db_version}.db.tar.gz
+
+RUN wget https://company.hummercloud.com/offline-package/trivy/trivy-db/$triy_db

@@ -95,8 +95,7 @@ public class APITest {
                 System.out.println("找不到指定的文件");
             }
         } catch (Exception error) {
-            LogUtil.error(error.getMessage(), "读取文件内容出错");
-            throw new Exception(error.getMessage());
+            throw new Exception("读取文件内容出错:" + error.getMessage());
         }
     }
 

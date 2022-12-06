@@ -2,6 +2,12 @@
     <main-container>
       <el-card class="table-card" v-loading="result.loading">
 
+        <section class="report-container">
+          <main>
+            <metric-chart :content="content"/>
+          </main>
+        </section>
+
         <template v-slot:header>
           <table-header :condition.sync="condition"
                         @search="search"
@@ -11,20 +17,29 @@
         </template>
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter">
-          <el-table-column type="index" min-width="5%"/>
-          <el-table-column :label="'Name'" min-width="15%" prop="name">
+          <el-table-column type="index" min-width="2%"/>
+          <el-table-column min-width="10%" :label="'PkgName'" prop="pkgName" v-slot:default="scope">
+            <span style="font-weight:bold;color: #000000;">{{ scope.row.pkgName }}</span>
           </el-table-column>
-          <el-table-column :label="'Installed'" min-width="15%" prop="installed">
+          <el-table-column min-width="10%" :label="'VulnerabilityID'" prop="vulnerabilityId">
           </el-table-column>
-          <el-table-column min-width="10%" :label="'FixedIn'" prop="fixedIn">
+          <el-table-column min-width="7%" :label="'Severity'" prop="severity" v-slot:default="scope">
+            <span v-if="scope.row.severity === 'CRITICAL'" style="color: #8B0000;">{{ scope.row.severity }}</span>
+            <span v-if="scope.row.severity === 'HIGH'" style="color: #FF4D4D;">{{ scope.row.severity }}</span>
+            <span v-if="scope.row.severity === 'MEDIUM'" style="color: #FF8000;">{{ scope.row.severity }}</span>
+            <span v-if="scope.row.severity === 'LOW'" style="color: #336D9F;">{{ scope.row.severity }}</span>
+            <span v-if="scope.row.severity === 'UNKNOWN'" style="color: #67C23A;">{{ scope.row.severity }}</span>
           </el-table-column>
-          <el-table-column min-width="10%" :label="'Type'" prop="type">
+          <el-table-column :label="'InstalledVersion'" min-width="10%" prop="installedVersion">
           </el-table-column>
-          <el-table-column min-width="15%" :label="'Vulnerability'" prop="vulnerability">
+          <el-table-column min-width="10%" :label="'FixedVersion'" prop="fixedVersion">
           </el-table-column>
-          <el-table-column min-width="15%" :label="'Severity'" prop="severity">
+          <el-table-column min-width="25%" :label="'PrimaryURL'" prop="primaryUrl" v-slot:default="scope">
+            <span>{{ scope.row.title }}</span>
+            <br>
+            <el-link type="primary" style="color: #0000e4;" :href="scope.row.primaryUrl" target="_blank">{{ scope.row.primaryUrl }}</el-link>
           </el-table-column>
-          <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right">
+          <el-table-column min-width="5%" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
@@ -33,12 +48,6 @@
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
 
-      <!--file-->
-      <el-drawer class="rtl" :title="string2Key" :visible.sync="visible"  size="80%" :before-close="handleClose" :direction="direction" :destroy-on-close="true">
-        <codemirror ref="cmEditor" v-model="string2PrettyFormat" class="code-mirror" :options="cmOptions" />
-      </el-drawer>
-      <!--file-->
-
     </main-container>
 </template>
 
@@ -46,14 +55,14 @@
 import TableOperators from "../../common/components/TableOperators";
 import MainContainer from "../../common/components/MainContainer";
 import Container from "../../common/components/Container";
-import TableHeader from "../head/DetailTableHeader";
+import TableHeader from "@/business/components/common/components/DetailTableHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/RuleDialogFooter";
 import CenterChart from "../../common/components/CenterChart";
-import ResultReadOnly from "./ResultReadOnly";
 import {_filter, _sort} from "@/common/js/utils";
-import RuleType from "@/business/components/image/home/RuleType";
+import MetricChart from "@/business/components/common/chart/MetricChart";
+
 /* eslint-disable */
   export default {
     name: "ResultDetails",
@@ -65,9 +74,8 @@ import RuleType from "@/business/components/image/home/RuleType";
       TablePagination,
       TableOperator,
       DialogFooter,
-      ResultReadOnly,
       CenterChart,
-      RuleType,
+      MetricChart,
     },
     data() {
       return {
@@ -81,34 +89,27 @@ import RuleType from "@/business/components/image/home/RuleType";
         },
         tagSelect: [],
         resourceTypes: [],
-        direction: 'rtl',
         buttons: [
           {
             tip: this.$t('resource.scan_vuln_search'), icon: "el-icon-share", type: "primary",
             exec: this.handleVuln
           },
         ],
-        string2Key: "",
-        string2PrettyFormat: "",
-        visible: false,
-        cmOptions: {
-          tabSize: 4,
-          mode: {
-            name: 'shell',
-            json: true
-          },
-          theme: 'bespin',
-          lineNumbers: true,
-          line: true,
-          indentWithTabs: true,
-        },
         resultId: "",
+        content: {
+          critical: 0,
+          high: 0,
+          medium: 0,
+          low: 0,
+          unknown: 0,
+          total: 0,
+        },
       }
     },
     props: ["id"],
     methods: {
       handleVuln() {
-        window.open('http://www.cnnvd.org.cn/web/vulnerability/queryLds.tag','_blank','');
+        window.open('http://www.cnnvd.org.cn/web/vulnerability/querylist.tag','_blank','');
       },
       sort(column) {
         _sort(column, this.condition);
@@ -118,22 +119,6 @@ import RuleType from "@/business/components/image/home/RuleType";
         _filter(filters, this.condition);
         this.init();
       },
-      showInformation (row, details, title) {
-        this.string2Key = title;
-        this.string2PrettyFormat = "";
-        if (row) {
-          this.$post("/resource/string2PrettyFormat", {json: details}, res => {
-            this.string2PrettyFormat = res.data;
-          });
-        } else {
-          this.string2PrettyFormat = details;
-        }
-
-        this.visible =  true;
-      },
-      handleClose() {
-        this.visible =  false;
-      },
       search () {
         let url = "/image/resultItemList/" + this.currentPage + "/" + this.pageSize;
         this.condition.resultId = this.resultId;
@@ -141,6 +126,9 @@ import RuleType from "@/business/components/image/home/RuleType";
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;
+        });
+        this.result = this.$get("/sbom/imageMetricChart/"+ this.resultId, response => {
+          this.content = response.data;
         });
       },
       init() {
@@ -155,17 +143,12 @@ import RuleType from "@/business/components/image/home/RuleType";
           }).catch(error => error);
         } else if (path.indexOf("/resource") >= 0) {
           this.$router.push({
-            path: '/resource/imageResult',
+            path: '/resource/ImageResult',
           }).catch(error => error);
         }
       },
     },
-    computed: {
-      codemirror() {
-        return this.$refs.cmEditor.codemirror
-      }
-    },
-    created() {
+    activated() {
       this.init();
     }
   }

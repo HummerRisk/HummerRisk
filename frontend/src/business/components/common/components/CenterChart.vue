@@ -4,10 +4,11 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import echarts from 'echarts';
 /* eslint-disable */
   export default {
     name: "CenterChart",
-    components: {HrChart},
+    components: {HrChart,echarts},
     props: {
       row: String
     },

@@ -4,18 +4,24 @@
         <template v-slot:header>
           <table-header :condition.sync="condition" @search="search"
                         :title="$t('rule.rule_tag_list')"
-                        @create="create"
-                        :createTip="$t('rule.create_tag')"
-                        :show-create="true"/>
-
+                        @create="create" :createTip="$t('rule.create_tag')"
+                        :show-create="true"
+                        :items="items" :columnNames="columnNames"
+                        :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                        @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
         </template>
 
-        <el-table :border="true" :stripe="true" :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                  @filter-change="filter" @select-all="select" @select="select">
-          <el-table-column min-width="1%"></el-table-column>
-          <el-table-column prop="tagKey" :label="$t('rule.tag_key')" min-width="20%" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="tagName" :label="$t('rule.tag_name')" min-width="20%" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.tag_flag')" min-width="20%" show-overflow-tooltip>
+        <hide-table
+          :table-data="tableData"
+          @sort-change="sort"
+          @filter-change="filter"
+          @select-all="select"
+          @select="select"
+        >
+          <el-table-column type="index" min-width="40"></el-table-column>
+          <el-table-column prop="tagKey" v-if="checkedColumnNames.includes('tagKey')" :label="$t('rule.tag_key')" min-width="150" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="tagName" :label="$t('rule.tag_name')" v-if="checkedColumnNames.includes('tagName')" min-width="150" show-overflow-tooltip></el-table-column>
+          <el-table-column :label="$t('rule.tag_flag')" v-if="checkedColumnNames.includes('flag')" min-width="130" show-overflow-tooltip>
             <template v-slot:default="scope">
               <el-tag size="mini" type="danger" v-if="scope.row.flag === true">
                 {{ $t('rule.tag_flag_true') }}
@@ -25,14 +31,14 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="index" :label="$t('rule._index')" min-width="20%" show-overflow-tooltip></el-table-column>
-          <el-table-column min-width="20%" :label="$t('commons.operating')" fixed="right">
+          <el-table-column prop="index" v-if="checkedColumnNames.includes('index')" :label="$t('rule._index')" min-width="130" show-overflow-tooltip></el-table-column>
+          <el-table-column min-width="140" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators v-if="!!scope.row.flag" :buttons="buttonsN" :row="scope.row"/>
               <table-operators v-if="!scope.row.flag" :buttons="buttons" :row="scope.row"/>
             </template>
           </el-table-column>
-        </el-table>
+        </hide-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
 
@@ -94,18 +100,18 @@
       <!--Info ruleTag-->
 
       <!--rule list-->
-      <el-drawer class="rtl" :title="$t('rule.rule_list')" :visible.sync="listVisible" size="80%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="rtl" :title="$t('rule.rule_list')" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-table border :data="ruleForm" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                   @filter-change="filter" @select-all="select" @select="select">
-          <el-table-column type="index" min-width="4%"/>
-          <el-table-column prop="name" :label="$t('rule.rule_name')" min-width="18%" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.resource_type')" min-width="10%" show-overflow-tooltip>
+          <el-table-column type="index" min-width="40"/>
+          <el-table-column prop="name" :label="$t('rule.rule_name')" min-width="150" show-overflow-tooltip></el-table-column>
+          <el-table-column :label="$t('rule.resource_type')" min-width="110" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span v-for="(resourceType, index) in scope.row.types" :key="index">[{{ resourceType }}] </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" min-width="11%" show-overflow-tooltip>
+          <el-table-column :label="$t('account.cloud_platform')" min-width="110" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -113,18 +119,18 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column min-width="7%" :label="$t('rule.severity')" column-key="severity">
+          <el-table-column min-width="70" :label="$t('rule.severity')" column-key="severity">
             <template v-slot:default="{row}">
-              <rule-type :row="row"/>
+              <severity-type :row="row"></severity-type>
             </template>
           </el-table-column>
-          <el-table-column prop="description" :label="$t('rule.description')" min-width="28%" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.status')" min-width="7%" show-overflow-tooltip>
+          <el-table-column prop="description" :label="$t('rule.description')" min-width="200" show-overflow-tooltip></el-table-column>
+          <el-table-column :label="$t('rule.status')" min-width="60" show-overflow-tooltip>
             <template v-slot:default="scope">
               <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
             </template>
           </el-table-column>
-          <el-table-column prop="lastModified" min-width="15%" :label="$t('rule.last_modified')" sortable>
+          <el-table-column prop="lastModified" min-width="150" :label="$t('rule.last_modified')" sortable>
             <template v-slot:default="scope">
               <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
             </template>
@@ -146,8 +152,34 @@ import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
-import RuleType from "./RuleType";
+import SeverityType from "@/business/components/common/components/SeverityType";
 import {RULE_CONFIGS, RULE_TAG_CONFIGS} from "../../common/components/search/search-components";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'rule.tag_key',
+    props: 'tagKey',
+    disabled: false
+  },
+  {
+    label: 'rule.tag_name',
+    props: 'tagName',
+    disabled: false
+  },
+  {
+    label: 'rule.tag_flag',
+    props: 'flag',
+    disabled: false
+  },
+  {
+    label: 'rule._index',
+    props: 'index',
+    disabled: false
+  },
+];
+
 /* eslint-disable */
   export default {
     components: {
@@ -158,7 +190,8 @@ import {RULE_CONFIGS, RULE_TAG_CONFIGS} from "../../common/components/search/sea
       TablePagination,
       TableOperator,
       DialogFooter,
-      RuleType
+      SeverityType,
+      HideTable,
     },
     data() {
       return {
@@ -192,7 +225,7 @@ import {RULE_CONFIGS, RULE_TAG_CONFIGS} from "../../common/components/search/sea
           ],
           tagName: [
             {required: true, message: this.$t('rule.tag_name') + this.$t('commons.cannot_be_empty'), trigger: 'blur'},
-            {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+            {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
             {
               required: true,
               message: this.$t('rule.special_characters_are_not_supported'),
@@ -234,6 +267,21 @@ import {RULE_CONFIGS, RULE_TAG_CONFIGS} from "../../common/components/search/sea
         ruleListPage: 1,
         ruleListPageSize: 10,
         ruleListTotal: 0,
+        checkedColumnNames: columnOptions.map((ele) => ele.props),
+        columnNames: columnOptions,
+        //名称搜索
+        items: [
+          {
+            name: 'rule.tag_key',
+            id: 'tagKey',
+          },
+          {
+            name: 'rule.tag_name',
+            id: 'tagName',
+          },
+        ],
+        checkAll: true,
+        isIndeterminate: false,
       }
     },
 
@@ -242,6 +290,17 @@ import {RULE_CONFIGS, RULE_TAG_CONFIGS} from "../../common/components/search/sea
     },
 
     methods: {
+      handleCheckedColumnNamesChange(value) {
+        const checkedCount = value.length;
+        this.checkAll = checkedCount === this.columnNames.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+        this.checkedColumnNames = value;
+      },
+      handleCheckAllChange(val) {
+        this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+        this.isIndeterminate = false;
+        this.checkAll = val;
+      },
       create() {
         this.createForm = {};
         this.createVisible = true;

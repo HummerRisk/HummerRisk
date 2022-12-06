@@ -5,19 +5,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
-import com.hummerrisk.base.mapper.ext.ExtRuleGroupMapper;
-import com.hummerrisk.base.mapper.ext.ExtRuleMapper;
-import com.hummerrisk.base.mapper.ext.ExtRuleTagMapper;
-import com.hummerrisk.base.mapper.ext.ExtRuleTypeMapper;
-import com.hummerrisk.commons.constants.ResourceOperation;
-import com.hummerrisk.commons.constants.ResourceTypeConstants;
-import com.hummerrisk.commons.constants.ScanTypeConstants;
-import com.hummerrisk.commons.constants.TaskEnum;
+import com.hummerrisk.base.mapper.ext.*;
+import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
-import com.hummerrisk.controller.request.rule.CreateRuleRequest;
-import com.hummerrisk.controller.request.rule.RuleGroupRequest;
-import com.hummerrisk.controller.request.rule.RuleTagRequest;
+import com.hummerrisk.controller.request.rule.*;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
@@ -29,10 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.alibaba.fastjson.JSON.parseArray;
 
@@ -43,52 +33,75 @@ import static com.alibaba.fastjson.JSON.parseArray;
 @Transactional(rollbackFor = Exception.class)
 public class RuleService {
 
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private RuleMapper ruleMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private RuleTagMapper ruleTagMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private RuleTagMappingMapper ruleTagMappingMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private PluginMapper pluginMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private ExtRuleMapper extRuleMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private RuleTypeMapper ruleTypeMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private ExtRuleTagMapper extRuleTagMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private ExtRuleTypeMapper extRuleTypeMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private CloudTaskService cloudTaskService;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private ResourceRuleMapper resourceRuleMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private CommonThreadPool commonThreadPool;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private AccountMapper accountMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private AccountService accountService;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private RuleGroupMapper ruleGroupMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private RuleGroupMappingMapper ruleGroupMappingMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private RuleInspectionReportMapper ruleInspectionReportMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
+    private ExtRuleInspectionReportMapper extRuleInspectionReportMapper;
+    @Resource
+    @Lazy
     private RuleInspectionReportMappingMapper ruleInspectionReportMappingMapper;
-    @Resource @Lazy
-    private OrderService orderService;
-    @Resource @Lazy
-    private HistoryScanMapper historyScanMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private ExtRuleGroupMapper extRuleGroupMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private CloudTaskItemMapper cloudTaskItemMapper;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private NoticeService noticeService;
-    @Resource @Lazy
+    @Resource
+    @Lazy
     private HistoryService historyService;
+    @Resource
+    @Lazy
+    private CloudTaskMapper cloudTaskMapper;
 
     public List<RuleDTO> cloudList(CreateRuleRequest ruleRequest) {
         return extRuleMapper.cloudList(ruleRequest);
@@ -106,6 +119,14 @@ public class RuleService {
 
     public List<RuleGroupDTO> ruleGroupList(RuleGroupRequest request) {
         return extRuleGroupMapper.list(request);
+    }
+
+    public List<RuleGroupDTO> allCloudRuleGroups(RuleGroupRequest request) {
+        return extRuleGroupMapper.allCloudRuleGroups(request);
+    }
+
+    public List<RuleGroupDTO> allVulnRuleGroups(RuleGroupRequest request) {
+        return extRuleGroupMapper.allVulnRuleGroups(request);
     }
 
     public Rule saveRules(CreateRuleRequest ruleRequest) {
@@ -126,6 +147,7 @@ public class RuleService {
                 ruleRequest.setPluginIcon(plugin.getIcon());
                 ruleRequest.setFlag(false);
                 ruleMapper.insertSelective(ruleRequest);
+                OperationLogService.log(SessionUtils.getUser(), ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.CREATE, "i18n_create_rule");
             } else {
                 Plugin plugin = pluginMapper.selectByPrimaryKey(ruleRequest.getPluginId());
                 ruleRequest.setPluginId(plugin.getId());
@@ -134,6 +156,7 @@ public class RuleService {
                 ruleRequest.setFlag(false);
                 ruleRequest.setLastModified(System.currentTimeMillis());
                 ruleMapper.updateByPrimaryKeySelective(ruleRequest);
+                OperationLogService.log(SessionUtils.getUser(), ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.UPDATE, "i18n_update_rule");
             }
 
             saveRuleTagMapping(ruleRequest.getId(), ruleRequest.getTagKey());
@@ -141,7 +164,6 @@ public class RuleService {
             saveRuleInspectionReportMapping(ruleRequest.getId(), ruleRequest.getInspectionSeports());
             saveRuleType(ruleRequest);
 
-            OperationLogService.log(SessionUtils.getUser(), ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.CREATE, "i18n_create_rule");
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
@@ -181,7 +203,7 @@ public class RuleService {
                         }
                     }
                 }
-            } else if(StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.nuclei.name())){
+            } else if (StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.nuclei.name())) {
                 String resourceType = "nuclei";
                 example.createCriteria().andRuleIdEqualTo(ruleRequest.getId()).andResourceTypeEqualTo(resourceType);
                 List<RuleType> ruleTypes = ruleTypeMapper.selectByExample(example);
@@ -190,7 +212,7 @@ public class RuleService {
                     ruleType.setResourceType(resourceType);
                     ruleTypeMapper.insertSelective(ruleType);
                 }
-            }  else if(StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.xray.name())){
+            } else if (StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.xray.name())) {
                 String groupName = "xss";
                 JSONArray jsonArray = JSON.parseArray(ruleRequest.getParameter());
                 for (Object o : jsonArray) {
@@ -204,16 +226,7 @@ public class RuleService {
                     ruleType.setResourceType(groupName);
                     ruleTypeMapper.insertSelective(ruleType);
                 }
-            }  else if(StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.tsunami.name())){
-                String resourceType = "tsunami";
-                example.createCriteria().andRuleIdEqualTo(ruleRequest.getId()).andResourceTypeEqualTo(resourceType);
-                List<RuleType> ruleTypes = ruleTypeMapper.selectByExample(example);
-                if (ruleTypes.isEmpty()) {
-                    ruleType.setId(UUIDUtil.newUUID());
-                    ruleType.setResourceType(resourceType);
-                    ruleTypeMapper.insertSelective(ruleType);
-                }
-            } else if(StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.prowler.name())){
+            } else if (StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.prowler.name())) {
                 String resourceType = "prowler";
                 example.createCriteria().andRuleIdEqualTo(ruleRequest.getId()).andResourceTypeEqualTo(resourceType);
                 List<RuleType> ruleTypes = ruleTypeMapper.selectByExample(example);
@@ -463,11 +476,13 @@ public class RuleService {
 
     public RuleTag saveRuleTag(RuleTag ruleTag) {
         ruleTagMapper.insertSelective(ruleTag);
+        OperationLogService.log(SessionUtils.getUser(), ruleTag.getTagKey(), ruleTag.getTagName(), ResourceTypeConstants.RULE_TAG.name(), ResourceOperation.CREATE, "i18n_create_rule_tag");
         return ruleTag;
     }
 
     public RuleTag updateRuleTag(RuleTag ruleTag) {
         ruleTagMapper.updateByPrimaryKey(ruleTag);
+        OperationLogService.log(SessionUtils.getUser(), ruleTag.getTagKey(), ruleTag.getTagName(), ResourceTypeConstants.RULE_TAG.name(), ResourceOperation.UPDATE, "i18n_update_rule_tag");
         return ruleTag;
     }
 
@@ -514,20 +529,22 @@ public class RuleService {
         return extRuleTypeMapper.selectByExample();
     }
 
+    public List<Map<String, String>> cloudResourceTypes() {
+        return extRuleTypeMapper.cloudResourceTypes();
+    }
+
+    public List<Map<String, String>> vulnResourceTypes() {
+        return extRuleTypeMapper.vulnResourceTypes();
+    }
+
     public List<RuleGroup> getRuleGroups(String pluginId) {
         RuleGroupExample example = new RuleGroupExample();
         example.createCriteria().andPluginIdEqualTo(pluginId);
         return ruleGroupMapper.selectByExample(example);
     }
 
-    public List<RuleInspectionReport> getRuleInspectionReport(RuleInspectionReport ruleInspectionReport) {
-        RuleInspectionReportExample example = new RuleInspectionReportExample();
-        RuleInspectionReportExample.Criteria criteria = example.createCriteria();
-        if(ruleInspectionReport.getProject()!=null) criteria.andProjectLike(ruleInspectionReport.getProject());
-        if(ruleInspectionReport.getItemSortFirstLevel()!=null) criteria.andItemSortFirstLevelLike(ruleInspectionReport.getItemSortFirstLevel());
-        if(ruleInspectionReport.getItemSortSecondLevel()!=null) criteria.andItemSortSecondLevelLike(ruleInspectionReport.getItemSortSecondLevel());
-        if(ruleInspectionReport.getImprovement()!=null) criteria.andImprovementLike(ruleInspectionReport.getImprovement());
-        return ruleInspectionReportMapper.selectByExample(example);
+    public List<RuleInspectionReport> getRuleInspectionReportList(RuleInspectionReportRequest request) {
+        return extRuleInspectionReportMapper.getRuleInspectionReportList(request);
     }
 
     public String getResourceTypesById(String ruleId) {
@@ -539,24 +556,24 @@ public class RuleService {
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
-    public void scan(List<String> scanCheckedGroups) throws Exception {
-        List<String> accountIds = new ArrayList<>();
-        Integer scanId = 0;
-        for (String scan : scanCheckedGroups) {
-            String[] str = scan.split("/");
-            AccountWithBLOBs account = accountMapper.selectByPrimaryKey(str[0]);
-            if (!accountIds.contains(account.getId())) {
-                accountIds.add(account.getId());
-                scanId = historyService.insertScanHistory(account);
-            }
-            this.scanGroups(account, scanId, str[1]);
+    public void scan(ScanGroupRequest request) throws Exception {
+        AccountWithBLOBs account = accountMapper.selectByPrimaryKey(request.getAccountId());
+        Integer scanId = historyService.insertScanHistory(account);
+        for (Integer groupId : request.getGroups()) {
+            this.scanGroups(request.getAccountId(), scanId, groupId.toString());
         }
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
     public void reScans(String accountId) throws Exception {
-        AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
-        this.scan(account);
+        List<String> status = Arrays.stream(new String[]{CloudTaskConstants.TASK_STATUS.APPROVED.name(), CloudTaskConstants.TASK_STATUS.PROCESSING.name()}).collect(Collectors.toList());
+        CloudTaskExample example = new CloudTaskExample();
+        example.createCriteria().andAccountIdEqualTo(accountId).andStatusNotIn(status);
+        List<CloudTask> cloudTaskList = cloudTaskMapper.selectByExample(example);
+        for (CloudTask cloudTask : cloudTaskList) {
+            cloudTask.setStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+            cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
+        }
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
@@ -571,12 +588,12 @@ public class RuleService {
         return this.dealTask(rule, account, scanId, null);
     }
 
-    private void scanGroups(AccountWithBLOBs account, Integer scanId, String groupId) {
+    private void scanGroups(String accountId, Integer scanId, String groupId) {
         try {
-
+            AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
             String messageOrderId = noticeService.createMessageOrder(account);
 
-            List<RuleDTO> ruleDTOS = extRuleGroupMapper.getRules(account.getId(), groupId);
+            List<RuleDTO> ruleDTOS = extRuleGroupMapper.getRules(accountId, groupId);
             for (RuleDTO rule : ruleDTOS) {
                 this.dealTask(rule, account, scanId, messageOrderId);
             }
@@ -600,15 +617,16 @@ public class RuleService {
         }
     }
 
-    private String dealTask (RuleDTO rule, AccountWithBLOBs account, Integer scanId, String messageOrderId) {
+    private String dealTask(RuleDTO rule, AccountWithBLOBs account, Integer scanId, String messageOrderId) {
         try {
-            if (rule.getStatus()) {
+            if (rule.getStatus() && !cloudTaskService.checkRuleTaskStatus(account.getId(),rule.getId(),
+                            new String[]{CloudTaskConstants.TASK_STATUS.APPROVED.name(), CloudTaskConstants.TASK_STATUS.PROCESSING.name()})){
                 QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
                 BeanUtils.copyBean(quartzTaskDTO, rule);
                 List<SelectTag> selectTags = new LinkedList<>();
                 SelectTag s = new SelectTag();
                 s.setAccountId(account.getId());
-                JSONArray array = parseArray(rule.getRegions()!=null?rule.getRegions():account.getRegions());
+                JSONArray array = parseArray(rule.getRegions() != null ? rule.getRegions() : account.getRegions());
                 JSONObject object;
                 List<String> regions = new ArrayList<>();
                 for (int i = 0; i < array.size(); i++) {
@@ -628,14 +646,19 @@ public class RuleService {
                 quartzTaskDTO.setAccountId(account.getId());
                 quartzTaskDTO.setTaskName(rule.getName());
                 CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, messageOrderId);
-                historyService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.cloudAccount.getType());
+                if(scanId!=null) {
+                    if (PlatformUtils.isSupportCloudAccount(cloudTask.getPluginId())) {
+                        historyService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.cloudAccount.getType());
+                    } else {
+                        historyService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.vulnAccount.getType());
+                    }
+                }
                 return cloudTask.getId();
             } else {
+                historyService.deleteScanTaskHistory(scanId);
                 LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
-                HRException.throwException(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
             }
         } catch (Exception e) {
-            LogUtil.error(e);
             HRException.throwException(e.getMessage());
         }
         return "";
@@ -666,7 +689,55 @@ public class RuleService {
             groupDTO.setGroups(extRuleGroupMapper.list(request));
             groupDTOS.add(groupDTO);
         }
-
         return groupDTOS;
+    }
+
+    public List<RuleGroup> groupsByAccountId(String pluginId) {
+        RuleGroupExample example = new RuleGroupExample();
+        example.createCriteria().andPluginIdEqualTo(pluginId);
+        List<RuleGroup> groups = ruleGroupMapper.selectByExample(example);
+        return groups;
+    }
+
+    public List<Rule> allBindList(String id) {
+        List<String> ids = new ArrayList<>();
+        RuleGroupMappingExample example = new RuleGroupMappingExample();
+        example.createCriteria().andGroupIdEqualTo(id);
+        List<RuleGroupMapping> list = ruleGroupMappingMapper.selectByExample(example);
+        for (RuleGroupMapping groupMapping : list) {
+            ids.add(groupMapping.getRuleId());
+        }
+        RuleExample ruleExample = new RuleExample();
+        if (ids.size() > 0) {
+            ruleExample.createCriteria().andIdIn(ids);
+            ruleExample.setOrderByClause("name");
+            return ruleMapper.selectByExample(ruleExample);
+        }
+        return new ArrayList<>();
+    }
+
+    public List<Rule> unBindList(Integer id) {
+        RuleGroup ruleGroup = ruleGroupMapper.selectByPrimaryKey(id);
+        RuleExample ruleExample = new RuleExample();
+        ruleExample.createCriteria().andPluginIdEqualTo(ruleGroup.getPluginId());
+        ruleExample.setOrderByClause("name");
+        return ruleMapper.selectByExample(ruleExample);
+    }
+
+    public void bindRule(BindRuleRequest request) throws Exception {
+        String groupId = request.getGroupId();
+        RuleGroupMappingExample example = new RuleGroupMappingExample();
+        example.createCriteria().andGroupIdEqualTo(groupId);
+        ruleGroupMappingMapper.deleteByExample(example);
+        for (String id : request.getCloudValue()) {
+            RuleGroupMapping record = new RuleGroupMapping();
+            record.setRuleId(id);
+            record.setGroupId(groupId);
+            ruleGroupMappingMapper.insertSelective(record);
+        }
+    }
+
+    public void scanByGroup(String groupId, String accountId){
+        scanGroups(accountId, null, groupId);
     }
 }

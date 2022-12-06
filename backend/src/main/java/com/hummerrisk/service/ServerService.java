@@ -5,30 +5,30 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
+import com.hummerrisk.base.mapper.ext.ExtServerCertificateMapper;
 import com.hummerrisk.base.mapper.ext.ExtServerMapper;
 import com.hummerrisk.base.mapper.ext.ExtServerResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtServerRuleMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
-import com.hummerrisk.commons.utils.BeanUtils;
-import com.hummerrisk.commons.utils.LogUtil;
-import com.hummerrisk.commons.utils.SessionUtils;
-import com.hummerrisk.commons.utils.UUIDUtil;
+import com.hummerrisk.commons.utils.*;
+import com.hummerrisk.controller.request.server.ServerCertificateRequest;
 import com.hummerrisk.controller.request.server.ServerRequest;
 import com.hummerrisk.controller.request.server.ServerResultRequest;
 import com.hummerrisk.controller.request.server.ServerRuleRequest;
-import com.hummerrisk.dto.ServerDTO;
-import com.hummerrisk.dto.ServerResultDTO;
-import com.hummerrisk.dto.ServerRuleDTO;
-import com.hummerrisk.dto.SshServerDTO;
+import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.proxy.server.SshUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author harris
@@ -63,26 +63,43 @@ public class ServerService {
     private NoticeService noticeService;
     @Resource
     private HistoryService historyService;
+    @Resource
+    private ServerCertificateMapper serverCertificateMapper;
+    @Resource
+    private ExtServerCertificateMapper extServerCertificateMapper;
+    @Resource
+    private HistoryServerResultMapper historyServerResultMapper;
 
-    public boolean validate(List<String> ids) {
+    public List<ServerValidateDTO> validate(List<String> ids) {
+        List<ServerValidateDTO> list = new ArrayList<>();
         ids.forEach(id -> {
             try {
-                boolean validate = validate(id);
-                if(!validate) throw new HRException(Translator.get("failed_server"));
+                Proxy proxy = new Proxy();
+                Server server = serverMapper.selectByPrimaryKey(id);
+                if (server.getIsProxy() != null && server.getIsProxy()) {
+                    proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
+                }
+                ServerValidateDTO validate = validateAccount(server, proxy);
+                if (validate.isFlag()) {
+                    server.setStatus(CloudAccountConstants.Status.VALID.name());
+                } else {
+                    server.setStatus(CloudAccountConstants.Status.INVALID.name());
+                    list.add(validate);
+                }
+                serverMapper.updateByPrimaryKeySelective(server);
             } catch (Exception e) {
-                LogUtil.error(e.getMessage());
-                throw new HRException(e.getMessage());
+                throw new HRException(Translator.get("failed_server") + e.getMessage());
             }
         });
-        return true;
+        return list;
     }
 
 
-    public boolean validate(String id) {
+    public ServerValidateDTO validate(String id) {
         Server server = serverMapper.selectByPrimaryKey(id);
-        //检验虚拟机的有效性
-        boolean valid = validateAccount(server);
-        if (valid) {
+        //检验主机的有效性
+        ServerValidateDTO valid = validateAccount(server);
+        if (valid.isFlag()) {
             server.setStatus(CloudAccountConstants.Status.VALID.name());
         } else {
             server.setStatus(CloudAccountConstants.Status.INVALID.name());
@@ -96,49 +113,48 @@ public class ServerService {
             try {
                 scan(id);
             } catch (Exception e) {
-                LogUtil.error(e.getMessage());
                 throw new HRException(e.getMessage());
             }
         });
         return true;
     }
 
-    public Boolean scan(String id) throws Exception{
-            ServerRequest request = new ServerRequest();
-            request.setId(id);//serverId
-            Server server = BeanUtils.copyBean(new Server(), getServerList(request).get(0));
-            Integer scanId = historyService.insertScanHistory(server);
-            if(StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.VALID.name())) {
-                deleteServerResult(id);
-                List<ServerRuleDTO> ruleList = ruleList(null);
-                ServerResult result = new ServerResult();
-                String serverGroupName = serverGroupMapper.selectByPrimaryKey(server.getServerGroupId()).getName();
-                for(ServerRuleDTO dto : ruleList) {
-                    BeanUtils.copyBean(result, server);
-                    result.setId(UUIDUtil.newUUID());
-                    result.setServerId(id);
-                    result.setServerGroupId(server.getServerGroupId());
-                    result.setServerGroupName(serverGroupName);
-                    result.setApplyUser(SessionUtils.getUserId());
-                    result.setCreateTime(System.currentTimeMillis());
-                    result.setUpdateTime(System.currentTimeMillis());
-                    result.setServerName(server.getName());
-                    result.setRuleId(dto.getId());
-                    result.setRuleName(dto.getName());
-                    result.setRuleDesc(dto.getDescription());
-                    result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-                    result.setSeverity(dto.getSeverity());
-                    serverResultMapper.insertSelective(result);
+    public Boolean scan(String id) throws Exception {
+        ServerRequest request = new ServerRequest();
+        request.setId(id);//serverId
+        Server server = BeanUtils.copyBean(new Server(), getServerList(request).get(0));
+        Integer scanId = historyService.insertScanHistory(server);
+        if (StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.VALID.name())) {
+            deleteServerResultById(id);
+            List<ServerRuleDTO> ruleList = ruleList(new ServerRuleRequest());
+            ServerResult result = new ServerResult();
+            String serverGroupName = serverGroupMapper.selectByPrimaryKey(server.getServerGroupId()).getName();
+            for (ServerRuleDTO dto : ruleList) {
+                BeanUtils.copyBean(result, server);
+                result.setId(UUIDUtil.newUUID());
+                result.setServerId(id);
+                result.setServerGroupId(server.getServerGroupId());
+                result.setServerGroupName(serverGroupName);
+                result.setApplyUser(SessionUtils.getUserId());
+                result.setCreateTime(System.currentTimeMillis());
+                result.setUpdateTime(System.currentTimeMillis());
+                result.setServerName(server.getName());
+                result.setRuleId(dto.getId());
+                result.setRuleName(dto.getName());
+                result.setRuleDesc(dto.getDescription());
+                result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+                result.setSeverity(dto.getSeverity());
+                serverResultMapper.insertSelective(result);
 
-                    saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
+                saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
 
-                    OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_start_server_result");
+                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.SCAN, "i18n_start_server_result");
 
-                    historyService.insertScanTaskHistory(result, scanId, server.getId(), TaskEnum.serverAccount.getType());
+                historyService.insertScanTaskHistory(result, scanId, server.getId(), TaskEnum.serverAccount.getType());
 
-                    historyService.insertHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
-                }
+                historyService.insertHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
             }
+        }
         return true;
     }
 
@@ -158,11 +174,19 @@ public class ServerService {
                 }
             }
             Proxy proxy = new Proxy();
-            if(server.getIsProxy()!=null && server.getIsProxy()) {
+            if (server.getIsProxy() != null && server.getIsProxy()) {
                 proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
             }
-            LogUtil.info(server.getId() + " {server}[command]: " + server.getName() + "   "  + script);
             String returnLog = execute(server, script, proxy);
+            if (returnLog.contains(ServerConstants.HUMMER_SUCCESS)) {
+                result.setIsSeverity(true);
+            } else if (returnLog.contains(ServerConstants.HUMMER_ERROR)) {
+                result.setIsSeverity(false);
+            } else if (StringUtils.isBlank(returnLog)) {
+                returnLog = ServerConstants.HUMMER_ERROR + ": 没有获取到返回值";
+                result.setIsSeverity(false);
+            }
+            result.setCommand(script);
             result.setReturnLog(returnLog);
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
@@ -170,15 +194,16 @@ public class ServerService {
 
             noticeService.createServerMessageOrder(result);
 
-            saveServerResultLog(result.getId(), "i18n_end_server_result", returnLog, true);
+            saveServerResultLog(result.getId(), "i18n_end_server_result", returnLog, result.getIsSeverity());
 
-            historyService.updateHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
+            historyService.updateHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
+            LogUtil.error(result.getServerName() + "{}" + result.getIp() + "[error]: " + e.getMessage());
+            result.setReturnLog(result.getServerName() + "{}" + result.getIp() + "[error]: " + e.getMessage());
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             serverResultMapper.updateByPrimaryKeySelective(result);
-            historyService.updateHistoryServerTask(BeanUtils.copyBean(new HistoryServerTask(), result));
+            historyService.updateHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
             saveServerResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
         }
     }
@@ -189,24 +214,22 @@ public class ServerService {
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         serverResultMapper.updateByPrimaryKeySelective(result);
+        OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.RESCAN, "i18n_restart_server_result");
         return result.getId();
     }
 
-    public void deleteServerResult(String id) {
+    public void deleteServerResultById(String id) {
         ServerResultExample example = new ServerResultExample();
         example.createCriteria().andServerIdEqualTo(id);//serverId
-        List<ServerResult> list = serverResultMapper.selectByExample(example);
-
-        for (ServerResult result : list) {
-            ServerResultLogExample logExample = new ServerResultLogExample();
-            logExample.createCriteria().andResultIdEqualTo(result.getRuleId());
-            serverResultLogMapper.deleteByExample(logExample);
-        }
         serverResultMapper.deleteByExample(example);
     }
 
+    public void deleteServerResult(String id) {
+        serverResultMapper.deleteByPrimaryKey(id);
+    }
+
     public void saveServerResultLog(String resultId, String operation, String output, boolean result) throws Exception {
-        ServerResultLog serverResultLog = new ServerResultLog();
+        ServerResultLogWithBLOBs serverResultLog = new ServerResultLogWithBLOBs();
         String operator = "system";
         try {
             if (SessionUtils.getUser() != null) {
@@ -223,19 +246,22 @@ public class ServerService {
         serverResultLog.setResult(result);
         serverResultLogMapper.insertSelective(serverResultLog);
 
-        historyService.insertHistoryServerTaskLog(BeanUtils.copyBean(new HistoryServerTaskLog(), serverResultLog));
     }
 
-    private boolean validateAccount(Server server) {
+    private ServerValidateDTO validateAccount(Server server) {
+        ServerValidateDTO serverValidateDTO = new ServerValidateDTO();
         try {
             Proxy proxy = new Proxy();
-            if(server.getIsProxy()!=null && server.getIsProxy()) {
+            if (server.getIsProxy() != null && server.getIsProxy()) {
                 proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
             }
-            return login(server, proxy);
+            serverValidateDTO= validateAccount(server, proxy);
+            return serverValidateDTO;
         } catch (Exception e) {
             LogUtil.error(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), e.getMessage()), e);
-            return false;
+            serverValidateDTO.setFlag(false);
+            serverValidateDTO.setMessage(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), e.getMessage()));
+            return serverValidateDTO;
         }
     }
 
@@ -243,8 +269,16 @@ public class ServerService {
         return serverGroupMapper.selectByExample(null);
     }
 
+    public List<Server> allServerList() {
+        return serverMapper.selectByExampleWithBLOBs(null);
+    }
+
     public List<ServerDTO> getServerList(ServerRequest server) {
         return extServerMapper.getServerList(server);
+    }
+
+    public Server getServer(String id) {
+        return serverMapper.selectByPrimaryKey(id);
     }
 
     public int addServerGroup(ServerGroup serverGroup) {
@@ -277,38 +311,129 @@ public class ServerService {
 
     }
 
-    public int addServer(Server server) throws Exception {
+    public ServerValidateDTO addServer(MultipartFile keyFile, Server server) throws Exception {
         String id = UUIDUtil.newUUID();
         server.setId(id);
         server.setCreator(SessionUtils.getUserId());
         server.setCreateTime(System.currentTimeMillis());
         server.setUpdateTime(System.currentTimeMillis());
         Proxy proxy = new Proxy();
-        if(server.getIsProxy()!=null && server.getIsProxy()) {
+        if (server.getIsProxy() != null && server.getIsProxy()) {
             proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
         }
-        server.setStatus(
-                login(server, proxy)?
-                        CloudAccountConstants.Status.VALID.name():
-                        CloudAccountConstants.Status.INVALID.name());
+        if (server.getIsCertificate() != null) {
+            if (!server.getIsCertificate()) {
+                if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
+                    String keyFilePath = upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
+                    String publicKey = ReadFileUtils.readToBuffer(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+                    server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+                    server.setPublicKey(publicKey);
+                } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
+                    String uuid = UUIDUtil.newUUID();
+                    CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA, false);
+                    server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
+                }
+            } else {
+                ServerCertificate serverCertificate = serverCertificateMapper.selectByPrimaryKey(server.getCertificateId());
+                server.setIsPublicKey(serverCertificate.getIsPublicKey());
+                if (StringUtils.equalsIgnoreCase(serverCertificate.getIsPublicKey(), "no")) {
+                    server.setPassword(serverCertificate.getPassword());
+                } else {
+                    server.setPublicKey(serverCertificate.getPublicKey());
+                    server.setPublicKeyPath(serverCertificate.getPublicKeyPath());
+                }
+            }
+        } else {
+            server.setIsCertificate(false);
+        }
+
+        ServerValidateDTO serverValidateDTO = validateAccount(server, proxy);
 
         OperationLogService.log(SessionUtils.getUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_create_server");
-        return serverMapper.insertSelective(server);
+        serverMapper.insertSelective(serverValidateDTO.getServer());
+        return serverValidateDTO;
     }
 
-    public int editServer(Server server) throws Exception {
+    public ServerValidateDTO editServer(MultipartFile keyFile, Server server) throws Exception {
         server.setUpdateTime(System.currentTimeMillis());
         Proxy proxy = new Proxy();
-        if(server.getIsProxy()!=null && server.getIsProxy()) {
+        if (server.getIsProxy() != null && server.getIsProxy()) {
             proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
         }
-        server.setStatus(
-                login(server, proxy)?
-                        CloudAccountConstants.Status.VALID.name():
-                        CloudAccountConstants.Status.INVALID.name());
+
+        if (server.getIsCertificate() != null) {
+            if (!server.getIsCertificate()) {
+                if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
+                    String keyFilePath = upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
+                    String publicKey = ReadFileUtils.readToBuffer(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+                    server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+                    server.setPublicKey(publicKey);
+                } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
+                    String uuid = UUIDUtil.newUUID();
+                    CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA, false);
+                    server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
+                }
+            } else {
+                ServerCertificate serverCertificate = serverCertificateMapper.selectByPrimaryKey(server.getCertificateId());
+                server.setIsPublicKey(serverCertificate.getIsPublicKey());
+                if (StringUtils.equalsIgnoreCase(serverCertificate.getIsPublicKey(), "no")) {
+                    server.setPassword(serverCertificate.getPassword());
+                } else {
+                    server.setPublicKey(serverCertificate.getPublicKey());
+                    server.setPublicKeyPath(serverCertificate.getPublicKeyPath());
+                }
+            }
+        } else {
+            server.setIsCertificate(false);
+        }
+
+        ServerValidateDTO serverValidateDTO = validateAccount(server, proxy);
 
         OperationLogService.log(SessionUtils.getUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "i18n_update_server");
-        return serverMapper.updateByPrimaryKeySelective(server);
+        serverMapper.updateByPrimaryKeySelective(serverValidateDTO.getServer());
+        return serverValidateDTO;
+    }
+
+    public ServerValidateDTO copyServer(MultipartFile keyFile, Server server) throws Exception {
+        String id = UUIDUtil.newUUID();
+        server.setId(id);
+        server.setUpdateTime(System.currentTimeMillis());
+        Proxy proxy = new Proxy();
+        if (server.getIsProxy() != null && server.getIsProxy()) {
+            proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
+        }
+
+        if (server.getIsCertificate() != null) {
+            if (!server.getIsCertificate()) {
+                if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
+                    String keyFilePath = upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
+                    String publicKey = ReadFileUtils.readToBuffer(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+                    server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+                    server.setPublicKey(publicKey);
+                } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
+                    String uuid = UUIDUtil.newUUID();
+                    CommandUtils.saveAsFile(server.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA, false);
+                    server.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
+                }
+            } else {
+                ServerCertificate serverCertificate = serverCertificateMapper.selectByPrimaryKey(server.getCertificateId());
+                server.setIsPublicKey(serverCertificate.getIsPublicKey());
+                if (StringUtils.equalsIgnoreCase(serverCertificate.getIsPublicKey(), "no")) {
+                    server.setPassword(serverCertificate.getPassword());
+                } else {
+                    server.setPublicKey(serverCertificate.getPublicKey());
+                    server.setPublicKeyPath(serverCertificate.getPublicKeyPath());
+                }
+            }
+        } else {
+            server.setIsCertificate(false);
+        }
+
+        ServerValidateDTO serverValidateDTO = validateAccount(server, proxy);
+
+        OperationLogService.log(SessionUtils.getUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.COPY, "i18n_copy_server");
+        serverMapper.insertSelective(serverValidateDTO.getServer());
+        return serverValidateDTO;
     }
 
     public void deleteServer(String id) throws Exception {
@@ -316,37 +441,40 @@ public class ServerService {
         OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server");
     }
 
-    public boolean login(Server server, Proxy proxy) throws Exception {
+    public ServerValidateDTO validateAccount(Server server, Proxy proxy) throws Exception {
+        ServerValidateDTO serverValidateDTO = new ServerValidateDTO();
         try {
-            SshServerDTO sshServerDTO = new SshServerDTO();
-            sshServerDTO.setSshIp(server.getIp());
-            sshServerDTO.setSshPort(Integer.valueOf(server.getPort()));
-            sshServerDTO.setSshUserName(server.getUserName());
-            sshServerDTO.setSshPassword(server.getPassword());
-            sshServerDTO.setIsPublicKey(server.getIsPublicKey());
-            sshServerDTO.setPublicKey(server.getPublicKey());
-            sshServerDTO.setSshPassword(server.getPassword());
-            sshServerDTO.setProxy(proxy);
-            SshUtil.login(sshServerDTO);
-        }catch (Exception e) {
-            return false;
+            SshUtil.validateSsh2(server, proxy);
+            server.setStatus(CloudAccountConstants.Status.VALID.name());
+            server.setAuthType("ssh2");
+            serverValidateDTO.setFlag(true);
+            serverValidateDTO.setMessage("Verification succeeded!");
+        } catch (Exception e) {
+            try {
+                SshUtil.validateSshd(server, proxy);
+                server.setStatus(CloudAccountConstants.Status.VALID.name());
+                server.setAuthType("sshd");
+                serverValidateDTO.setFlag(true);
+                serverValidateDTO.setMessage("Verification succeeded!");
+            } catch (Exception ex) {
+                server.setStatus(CloudAccountConstants.Status.INVALID.name());
+                server.setAuthType("sshd");
+                serverValidateDTO.setFlag(false);
+                serverValidateDTO.setMessage(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), ex.getMessage()));
+            }
         }
-        return true;
+        serverValidateDTO.setServer(server);
+        return serverValidateDTO;
     }
 
     public String execute(Server server, String cmd, Proxy proxy) throws Exception {
         try {
-            SshServerDTO sshServerDTO = new SshServerDTO();
-            sshServerDTO.setSshIp(server.getIp());
-            sshServerDTO.setSshPort(Integer.valueOf(server.getPort()));
-            sshServerDTO.setSshUserName(server.getUserName());
-            sshServerDTO.setSshPassword(server.getPassword());
-            sshServerDTO.setIsPublicKey(server.getIsPublicKey());
-            sshServerDTO.setPublicKey(server.getPublicKey());
-            sshServerDTO.setSshPassword(server.getPassword());
-            sshServerDTO.setProxy(proxy);
-            return SshUtil.execute(SshUtil.login(sshServerDTO), cmd);
-        }catch (Exception e) {
+            if (StringUtils.equalsIgnoreCase(server.getAuthType(), "ssh2")) {
+                return SshUtil.executeSsh2(SshUtil.loginSsh2(server, proxy), cmd);
+            } else {
+                return SshUtil.executeSshd(SshUtil.loginSshd(server, proxy), cmd);
+            }
+        } catch (Exception e) {
             return "";
         }
     }
@@ -412,12 +540,113 @@ public class ServerService {
     public ServerResultDTO getServerResult(String resultId) {
         ServerResultRequest request = new ServerResultRequest();
         request.setId(resultId);
-        return extServerResultMapper.resultList(request) !=null?extServerResultMapper.resultList(request).get(0):new ServerResultDTO();
+        return extServerResultMapper.resultList(request) != null ? extServerResultMapper.resultList(request).get(0) : new ServerResultDTO();
     }
 
-    public List<ServerResultLog> getServerResultLog(String resultId) {
+    public List<ServerResultLogWithBLOBs> getServerResultLog(String resultId) {
         ServerResultLogExample example = new ServerResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
         return serverResultLogMapper.selectByExampleWithBLOBs(example);
     }
+
+    public List<ServerCertificate> allCertificateList() {
+        return serverCertificateMapper.selectByExampleWithBLOBs(null);
+    }
+
+    public List<ServerCertificateDTO> certificateList(ServerCertificateRequest request) {
+        return extServerCertificateMapper.certificateList(request);
+    }
+
+    public int addCertificate(MultipartFile keyFile, ServerCertificate certificate) throws Exception {
+        String id = UUIDUtil.newUUID();
+        certificate.setId(id);
+        certificate.setCreator(SessionUtils.getUserId());
+        certificate.setLastModified(System.currentTimeMillis());
+
+        if (StringUtils.equalsIgnoreCase(certificate.getIsPublicKey(), "file")) {
+            String keyFilePath = upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
+            String publicKey = ReadFileUtils.readToBuffer(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+            certificate.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+            certificate.setPublicKey(publicKey);
+        } else if (StringUtils.equalsIgnoreCase(certificate.getIsPublicKey(), "str")) {
+            String uuid = UUIDUtil.newUUID();
+            CommandUtils.saveAsFile(certificate.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA, false);
+            certificate.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
+        }
+
+        OperationLogService.log(SessionUtils.getUser(), certificate.getId(), certificate.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_create_server_certificate");
+        return serverCertificateMapper.insertSelective(certificate);
+    }
+
+    public int editCertificate(MultipartFile keyFile, ServerCertificate certificate) throws Exception {
+        certificate.setLastModified(System.currentTimeMillis());
+        if (StringUtils.equalsIgnoreCase(certificate.getIsPublicKey(), "file")) {
+            String keyFilePath = upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
+            String publicKey = ReadFileUtils.readToBuffer(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+            certificate.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR + keyFilePath);
+            certificate.setPublicKey(publicKey);
+        } else if (StringUtils.equalsIgnoreCase(certificate.getIsPublicKey(), "str")) {
+            String uuid = UUIDUtil.newUUID();
+            CommandUtils.saveAsFile(certificate.getPublicKey(), ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/", ServerConstants.HUMMER_RSA, false);
+            certificate.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
+        }
+
+        OperationLogService.log(SessionUtils.getUser(), certificate.getId(), certificate.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "i18n_update_server_certificate");
+        return serverCertificateMapper.updateByPrimaryKeySelective(certificate);
+    }
+
+    public void deleteCertificate(String id) throws Exception {
+        serverCertificateMapper.deleteByPrimaryKey(id);
+        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server_certificate");
+    }
+
+    /**
+     * 以默认配置进行文件上传
+     *
+     * @param file 上传的文件
+     * @return 文件名称
+     * @throws Exception
+     */
+    public static final String upload(MultipartFile file, String dir) throws IOException {
+        try {
+            String fileName = file.getOriginalFilename();
+            String extension = StringUtils.isNotBlank(fileName) && fileName.contains(".") ? fileName.split("\\.")[fileName.split("\\.").length - 1] : "";
+            //png、html等小文件存放路径，页面需要显示，项目内目录
+            //jar包等大文件存放路径，项目外目录
+            return FileUploadUtils.uploadCertificate(dir, file, extension.contains(".") ? "." + extension : "");
+        } catch (Exception e) {
+            throw new IOException(e.getMessage(), e);
+        }
+    }
+
+    public Map<String, Object> topInfo(Map<String, Object> params) {
+        return extServerMapper.topInfo(params);
+    }
+
+    public List<Map<String, Object>> serverChart() {
+        return extServerResultMapper.serverChart();
+    }
+
+    public List<Map<String, Object>> severityChart() {
+        return extServerResultMapper.severityChart();
+    }
+
+    public ChartDTO serverLineChart(Map<String, Object> params) {
+        ChartDTO codeChartDTO = new ChartDTO();
+        List<String> xAxis = extServerResultMapper.serverChartX(params);
+        List<Integer> yAxis = extServerResultMapper.serverChartY(params);
+        codeChartDTO.setxAxis(xAxis);
+        codeChartDTO.setyAxis(yAxis);
+        return codeChartDTO;
+    }
+
+    public List<HistoryServerResultDTO> history(Map<String, Object> params) {
+        List<HistoryServerResultDTO> historyList = extServerResultMapper.history(params);
+        return historyList;
+    }
+
+    public void deleteHistoryServerResult(String id) throws Exception {
+        historyServerResultMapper.deleteByPrimaryKey(id);
+    }
+
 }

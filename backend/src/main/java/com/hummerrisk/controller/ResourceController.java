@@ -4,12 +4,15 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.CloudTaskItem;
 import com.hummerrisk.base.domain.ResourceWithBLOBs;
+import com.hummerrisk.base.domain.RuleGroup;
+import com.hummerrisk.base.domain.RuleInspectionReport;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.excel.ExcelExportRequest;
 import com.hummerrisk.controller.request.resource.JsonRequest;
 import com.hummerrisk.controller.request.resource.ResourceRequest;
+import com.hummerrisk.controller.request.rule.RuleGroupRequest;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.service.ResourceService;
 import io.swagger.annotations.Api;
@@ -105,10 +108,23 @@ public class ResourceController {
         return resourceService.getResourceLog(resourceId);
     }
 
-    @ApiOperation(value = "导出检测报告")
+    @ApiOperation(value = "导出整个云检测报告")
     @PostMapping("export")
     public ResponseEntity<byte[]> exportReport(@RequestBody ExcelExportRequest request) throws Exception {
         byte[] bytes = resourceService.export(request);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", "不合规资源检测报告.xlsx");
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .headers(headers)
+                .body(bytes);
+    }
+
+    @ApiOperation(value = "导出规则组检测报告")
+    @PostMapping("groupExport")
+    public ResponseEntity<byte[]> exportGroupReport(@RequestBody ExcelExportRequest request) throws Exception {
+        byte[] bytes = resourceService.exportGroupReport(request);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentDispositionFormData("attachment", "不合规资源检测报告.xlsx");
@@ -153,5 +169,56 @@ public class ResourceController {
     @PostMapping("resourceLog")
     public ResourceWithBLOBs resource(@RequestBody CloudTaskItem cloudTaskItem) {
         return resourceService.resource(cloudTaskItem);
+    }
+
+    @I18n
+    @ApiOperation(value = "区域统计")
+    @PostMapping("regionData")
+    public List<Map<String, Object>> regionData(@RequestBody Map<String, Object> map) {
+        return resourceService.regionData(map);
+    }
+
+    @I18n
+    @ApiOperation(value = "风险统计")
+    @PostMapping("severityData")
+    public List<Map<String, Object>> severityData(@RequestBody Map<String, Object> map) {
+        return resourceService.severityData(map);
+    }
+
+    @I18n
+    @ApiOperation(value = "资源类型统计")
+    @PostMapping("resourceTypeData")
+    public List<Map<String, Object>> resourceTypeData(@RequestBody Map<String, Object> map) {
+        return resourceService.resourceTypeData(map);
+    }
+
+    @I18n
+    @ApiOperation(value = "规则统计")
+    @PostMapping("ruleData")
+    public List<Map<String, Object>> ruleData(@RequestBody Map<String, Object> map) {
+        return resourceService.ruleData(map);
+    }
+
+    @I18n
+    @ApiOperation(value = "风险条例")
+    @GetMapping("regulation/{ruleId}")
+    public List<RuleInspectionReport> regulation(@PathVariable String ruleId) {
+        return resourceService.regulation(ruleId);
+    }
+
+    @I18n
+    @ApiOperation(value = "合规报告规则组列表")
+    @PostMapping(value = "ruleGroup/list/{goPage}/{pageSize}")
+    public Pager<List<RuleGroupDTO>> ruleGroupList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleGroupRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, resourceService.ruleGroupList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "合规报告资源列表")
+    @PostMapping(value = "resourceList/{goPage}/{pageSize}")
+    public Pager<List<ResourceDTO>> resourceList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, resourceService.resourceList(request));
     }
 }

@@ -6,7 +6,7 @@ package com.hummerrisk.commons.constants;
 public class ScanConstants {
 
     public enum SCAN_TYPE {
-        CLOUD, CLOUD_NATIVE, VULN, SERVER, PACKAGE, IMAGE
+        CLOUD, K8S, CONFIG, VULN, SERVER, PACKAGE, IMAGE, CODE, FS
     }
 
 }

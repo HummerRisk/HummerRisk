@@ -18,12 +18,12 @@
           <el-table-column
             prop="resourceUserId"
             :label="$t('dashboard.resource_user_id')"
-            min-width="25%">
+            min-width="70">
           </el-table-column>
           <el-table-column
             prop="operation"
             :label="$t('commons.operating')"
-            min-width="23%">
+            min-width="60">
             <template v-slot:default="scope">
               {{ $t(scope.row.operation) }}
             </template>
@@ -31,7 +31,7 @@
           <el-table-column
             prop="time"
             :label="$t('dashboard.time')"
-            min-width="52%">
+            min-width="140">
             <template v-slot:default="scope">
               <span>{{ scope.row.time | timestampFormatMinutesDate }}</span>
             </template>

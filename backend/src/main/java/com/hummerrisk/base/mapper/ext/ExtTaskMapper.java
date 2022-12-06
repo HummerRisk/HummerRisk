@@ -1,11 +1,9 @@
 package com.hummerrisk.base.mapper.ext;
 
-import com.hummerrisk.base.domain.AccountExample;
-import com.hummerrisk.base.domain.ImageExample;
-import com.hummerrisk.base.domain.PackageExample;
-import com.hummerrisk.base.domain.ServerExample;
+import com.hummerrisk.base.domain.*;
 import com.hummerrisk.controller.request.task.*;
 import com.hummerrisk.dto.*;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,7 +17,13 @@ public interface ExtTaskMapper {
 
     List<ImageVo> selectImageByExample(ImageExample example);
 
-    List<PackageVo> selectPackageByExample(PackageExample example);
+    List<CodeVo> selectCodeByExample(CodeExample example);
+
+    List<FileSystemVo> selectFsByExample(FileSystemExample example);
+
+    List<K8sVo> selectK8sByExample(CloudNativeExample example);
+
+    List<ConfigVo> selectConfigByExample(CloudNativeConfigExample example);
 
     List<RuleVo> ruleList(RuleVo ruleVo);
 
@@ -29,9 +33,15 @@ public interface ExtTaskMapper {
 
     List<RuleVo> serverRuleList(RuleVo ruleVo);
 
+    List<RuleVo> k8sRuleList(RuleVo ruleVo);
+
+    List<RuleVo> configRuleList(RuleVo ruleVo);
+
     List<RuleVo> imageRuleList(RuleVo ruleVo);
 
-    List<RuleVo> packageRuleList(RuleVo ruleVo);
+    List<RuleVo> codeRuleList(RuleVo ruleVo);
+
+    List<RuleVo> fsRuleList(RuleVo ruleVo);
 
     List<RuleVo> ruleTagList(RuleVo ruleVo);
 
@@ -43,15 +53,21 @@ public interface ExtTaskMapper {
 
     ServerRuleDTO serverDetailRule(RuleVo ruleVo);
 
+    K8sRuleDTO k8sDetailRule(RuleVo ruleVo);
+
+    ConfigRuleDTO configDetailRule(RuleVo ruleVo);
+
     ImageRuleDTO imageDetailRule(RuleVo ruleVo);
 
-    PackageRuleDTO packageDetailRule(RuleVo ruleVo);
+    CodeRuleDTO codeDetailRule(RuleVo ruleVo);
+
+    FsRuleDTO fsDetailRule(RuleVo ruleVo);
 
     List<TaskTagGroupDTO> detailTag(RuleVo ruleVo);
 
     List<TaskTagGroupDTO> detailGroup(RuleVo ruleVo);
 
-    List<TaskVo> taskList(TaskRequest request);
+    List<TaskVo> taskList(@Param("request") TaskRequest request);
 
     List<TaskLogVo> taskLogList(TaskRequest request);
 

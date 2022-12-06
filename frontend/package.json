@@ -15,8 +15,9 @@
     "@fortawesome/free-regular-svg-icons": "^5.12.0",
     "@fortawesome/free-solid-svg-icons": "^5.12.0",
     "@fortawesome/vue-fontawesome": "^0.1.9",
-    "axios": "^0.19.0",
+    "axios": "^0.21.2",
     "core-js": "^3.4.3",
+    "default-passive-events": "^2.0.0",
     "diffable-html": "^4.0.0",
     "echarts": "^4.6.0",
     "element-ui": "^2.15.7",
@@ -42,7 +43,7 @@
     "vue-select-image": "^1.9.0",
     "vuedraggable": "^2.23.2",
     "vuex": "^3.1.2",
-    "xlsx": "^0.16.0"
+    "xlsx": "^0.17.0"
   },
   "devDependencies": {
     "@soda/friendly-errors-webpack-plugin": "^1.8.1",
@@ -50,8 +51,10 @@
     "@vue/cli-plugin-eslint": "^4.1.0",
     "@vue/cli-service": "^4.1.0",
     "babel-eslint": "^10.0.3",
+    "d3": "^7.6.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
+    "file-saver": "^2.0.5",
     "file-writer": "^1.0.2",
     "function.prototype.name": "^1.1.1",
     "less": "^2.3.1",

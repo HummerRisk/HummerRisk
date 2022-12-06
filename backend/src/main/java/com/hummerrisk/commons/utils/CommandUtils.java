@@ -1,9 +1,14 @@
 package com.hummerrisk.commons.utils;
 
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.exec.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
+
+import static org.springframework.util.FileCopyUtils.BUFFER_SIZE;
 
 /**
  * @author harris
@@ -109,15 +114,15 @@ public class CommandUtils {
      * @return 文件目录
      * @throws Exception Io异常
      */
-    public static String saveAsFile(String content, String dirPath, String fileName) throws Exception {
+    public static String saveAsFile(String content, String dirPath, String fileName, boolean append) throws Exception {
         File file = new File(dirPath);
         if (!file.exists()) {
             file.mkdirs();
         }
         FileWriter fwriter = null;
         try {
-            // true表示不覆盖原来的内容，而是加到文件的后面。若要覆盖原来的内容，直接省略这个参数就好
-            fwriter = new FileWriter(dirPath + "/" + fileName, false);
+            // true表示不覆盖原来的内容，而是加到文件的后面。若要覆盖原来的内容，false
+            fwriter = new FileWriter(dirPath + "/" + fileName, append);
             fwriter.write(content);
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -171,6 +176,62 @@ public class CommandUtils {
             fileOutputStream.close();
         }
 
+    }
+
+    public static boolean upzipTar(String fileName, String targetPath){
+        Runtime run = Runtime.getRuntime();
+        String cmd = "tar xZf " + fileName + " -C " + targetPath;
+        try {
+
+            Process process = run.exec(cmd);
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+            if(in.readLine() != null){ //解压缩失败
+                LogUtil.error("unzip fail "+fileName);
+                return false;
+            }else{          //解压缩成功
+                LogUtil.info(" success unzip "+ fileName);
+            }
+        } catch (IOException e) {
+            LogUtil.error("IOException occured"+e.getMessage());
+        }
+        return true;
+    }
+
+    /**
+     * 解压 tar.gz 文件到指定目录
+     *
+     * @param tarGzFile  tar.gz 文件路径
+     * @param destDir  解压到 destDir 目录，如果没有则自动创建
+     *
+     */
+    public static void extractTarGZ(File tarGzFile, String destDir) throws IOException {
+
+        GzipCompressorInputStream gzipIn = new GzipCompressorInputStream(new FileInputStream(tarGzFile));
+        try (TarArchiveInputStream tarIn = new TarArchiveInputStream(gzipIn)) {
+            TarArchiveEntry entry;
+
+            while ((entry = (TarArchiveEntry) tarIn.getNextEntry()) != null) {
+                if (entry.isDirectory()) {
+                    File f = new File(destDir + "/" + entry.getName());
+                    boolean created = f.mkdirs();
+                    if (!created) {
+                        System.out.printf("Unable to create directory '%s', during extraction of archive contents.\n",
+                                f.getAbsolutePath());
+                    }
+                } else {
+                    int count;
+                    byte [] data = new byte[BUFFER_SIZE];
+                    FileOutputStream fos = new FileOutputStream(destDir + "/" + entry.getName(), false);
+                    try (BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER_SIZE)) {
+                        while ((count = tarIn.read(data, 0, BUFFER_SIZE)) != -1) {
+                            dest.write(data, 0, count);
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

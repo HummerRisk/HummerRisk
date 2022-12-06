@@ -10,7 +10,7 @@
             :label="$t(tag.tagName)">
           </el-tab-pane>
         </el-tabs>
-        <image-rule-header :condition.sync="condition"
+        <table-header :condition.sync="condition"
                              @search="search"
                              :title="$t('image.rule_list')"
                              @create="create"
@@ -50,7 +50,7 @@
         <el-table-column prop="name" :label="$t('package.rule_name')" min-width="18%" show-overflow-tooltip></el-table-column>
         <el-table-column min-width="7%" :label="$t('package.severity')" column-key="severity">
           <template v-slot:default="{row}">
-            <rule-type :row="row"/>
+            <severity-type :row="row"></severity-type>
           </template>
         </el-table-column>
         <el-table-column prop="description" :label="$t('package.description')" min-width="24%" show-overflow-tooltip></el-table-column>
@@ -84,7 +84,7 @@
           <el-input v-model="createRuleForm.description" autocomplete="off" :placeholder="$t('rule.rule_description')"/>
         </el-form-item>
         <el-form-item :label="$t('rule.rule_tag')" :rules="{required: true, message: $t('rule.rule_tag'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="createRuleForm.tagKey" :placeholder="$t('rule.please_choose_tag')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="createRuleForm.tagKey" :placeholder="$t('rule.please_choose_tag')">
             <el-option
               v-for="item in tags"
               :key="item.tagKey"
@@ -94,7 +94,7 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('rule.severity')" :rules="{required: true, message: $t('rule.severity'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="createRuleForm.severity" :placeholder="$t('rule.please_choose_severity')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="createRuleForm.severity" :placeholder="$t('rule.please_choose_severity')">
             <el-option
               v-for="item in severityOptions"
               :key="item.value"
@@ -149,7 +149,7 @@
           <el-input v-model="updateRuleForm.description" autocomplete="off" :placeholder="$t('rule.rule_description')"/>
         </el-form-item>
         <el-form-item :label="$t('rule.rule_tag')" :rules="{required: true, message: $t('rule.rule_tag'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="updateRuleForm.tagKey" :placeholder="$t('rule.please_choose_tag')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="updateRuleForm.tagKey" :placeholder="$t('rule.please_choose_tag')">
             <el-option
               v-for="item in tags"
               :key="item.tagKey"
@@ -159,7 +159,7 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('rule.severity')" :rules="{required: true, message: $t('rule.severity'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="updateRuleForm.severity" :placeholder="$t('rule.please_choose_severity')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="updateRuleForm.severity" :placeholder="$t('rule.please_choose_severity')">
             <el-option
               v-for="item in severityOptions"
               :key="item.value"
@@ -210,13 +210,14 @@
 import TableOperators from "../../common/components/TableOperators";
 import MainContainer from "../../common/components/MainContainer";
 import Container from "../../common/components/Container";
-import ImageRuleHeader from "../head/ImageRuleHeader";
+import TableHeader from "@/business/components/common/components/TableHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
-import DialogFooter from "../head/DialogRuleFooter";
+import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
-import RuleType from "./RuleType";
 import {IMAGE_RULE_CONFIGS} from "../../common/components/search/search-components";
+import SeverityType from "@/business/components/common/components/SeverityType";
+import {severityOptions} from "@/common/js/constants";
 
 /* eslint-disable */
 export default {
@@ -224,11 +225,11 @@ export default {
     TableOperators,
     MainContainer,
     Container,
-    ImageRuleHeader,
+    TableHeader,
     TablePagination,
     TableOperator,
     DialogFooter,
-    RuleType
+    SeverityType,
   },
   data() {
     return {
@@ -251,7 +252,7 @@ export default {
       rule: {
         name: [
           {required: true, message: this.$t('rule.input_name'), trigger: 'blur'},
-          {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+          {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
           {
             required: true,
             message: this.$t('rule.special_characters_are_not_supported'),
@@ -357,11 +358,7 @@ export default {
       this.search();
     },
     severityOptionsFnc () {
-      this.severityOptions = [
-        {key: '低风险', value: "LowRisk"},
-        {key: '中风险', value: "MediumRisk"},
-        {key: '高风险', value: "HighRisk"}
-      ];
+      this.severityOptions = severityOptions;
     },
     init() {
       this.tagLists();

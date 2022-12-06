@@ -67,7 +67,7 @@
             <if test="accountId != null">
                 AND t4.id = #{accountId}
             </if>
-            and p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
+            and p.type = 'cloud'
         </where>
         ORDER BY CONVERT(ratio, signed), ruSum desc
     </select>
@@ -347,7 +347,7 @@
                 LEFT JOIN plugin p on t2.plugin_id = p.id
         WHERE
             t.tag_key NOT IN ( 'cost', 'safety', 'tagging' )
-          AND p.type = 'vuln'
+            AND p.type = 'vuln'
     </select>
 
     <select id="vulnRuleGroup" resultType="com.hummerrisk.commons.utils.ChartData">
@@ -387,8 +387,8 @@
         <where>
             <if test="accountId != null">
                 AND t.account_id = #{accountId}
-                AND p.type = 'cloud'
             </if>
+            AND p.type = 'cloud'
         </where>
         GROUP BY
             t.region_id,t.region_name
@@ -405,12 +405,11 @@
         SELECT
             IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,
             IFNULL( sum( t4.resources_sum ), 0 ) AS yAxis2,
-            concat(truncate(IFNULL(sum( t4.resources_sum ), 0) / (select IFNULL(sum(resources_sum), 1) from resource)*100,2),'%') as everyTotalPecent,
             (select count(tag_name) from rule_tag) AS critical,
             t.tag_name AS groupName,
             t.tag_key AS xAxis,
-            (select IFNULL( sum( return_sum ), 0 ) from resource) AS returnTotal,
-            (select IFNULL( sum( resources_sum ), 0 ) from resource) AS resourceTotal
+            (select IFNULL( sum( return_sum ), 0 ) from resource LEFT JOIN plugin p on plugin_id = p.id WHERE p.type = 'cloud') AS returnTotal,
+            (select IFNULL( sum( resources_sum ), 0 ) from resource LEFT JOIN plugin p on plugin_id = p.id WHERE p.type = 'cloud') AS resourceTotal
         FROM
             rule_tag t
             LEFT JOIN rule_tag_mapping t1 ON t.tag_key = t1.tag_key
@@ -427,12 +426,11 @@
         SELECT
             IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,
             IFNULL( sum( t4.resources_sum ), 0 ) AS yAxis2,
-            concat(truncate(IFNULL(sum( t4.resources_sum ), 0)/(select IFNULL(sum(resources_sum), 1) from resource)*100,2),'%') as everyTotalPecent,
             (select count(tag_name) from rule_tag) AS critical,
             '其他' AS groupName,
             'other' AS xAxis,
-            (select IFNULL( sum( return_sum ), 0 ) from resource) AS returnTotal,
-            (select IFNULL( sum( resources_sum ), 0 ) from resource) AS resourceTotal
+            (select IFNULL( sum( return_sum ), 0 ) from resource LEFT JOIN plugin p on plugin_id = p.id WHERE p.type = 'cloud') AS returnTotal,
+            (select IFNULL( sum( resources_sum ), 0 ) from resource LEFT JOIN plugin p on plugin_id = p.id WHERE p.type = 'cloud') AS resourceTotal
         FROM
             rule_tag t
             LEFT JOIN rule_tag_mapping t1 ON t.tag_key = t1.tag_key
@@ -449,19 +447,18 @@
         SELECT
             IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,
             IFNULL( sum( t4.resources_sum ), 0 ) AS yAxis2,
-            concat(truncate(IFNULL(sum( t4.resources_sum ), 0) / (select IFNULL(sum(resources_sum), 1) from resource)*100,2),'%') as everyTotalPecent,
             (select count(tag_name) from rule_tag) AS critical,
             t.tag_name AS groupName,
             t.tag_key AS xAxis,
-            (select IFNULL( sum( return_sum ), 0 ) from resource) AS returnTotal,
-            (select IFNULL( sum( resources_sum ), 0 ) from resource) AS resourceTotal
+            (select IFNULL( sum( return_sum ), 0 ) from resource LEFT JOIN plugin p on plugin_id = p.id WHERE p.type = 'vuln') AS returnTotal,
+            (select IFNULL( sum( resources_sum ), 0 ) from resource LEFT JOIN plugin p on plugin_id = p.id WHERE p.type = 'vuln') AS resourceTotal
         FROM
             rule_tag t
                 LEFT JOIN rule_tag_mapping t1 ON t.tag_key = t1.tag_key
                 LEFT JOIN rule t2 ON t1.rule_id = t2.id
                 LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
                 LEFT JOIN resource t4 ON t3.resource_id = t4.id
-                LEFT JOIN plugin p on t2.plugin_id = p.id
+                LEFT JOIN plugin p on t4.plugin_id = p.id
         WHERE p.type = 'vuln'
         GROUP BY
             t.tag_key
@@ -471,19 +468,18 @@
         SELECT
             IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,
             IFNULL( sum( t4.resources_sum ), 0 ) AS yAxis2,
-            concat(truncate(IFNULL(sum( t4.resources_sum ), 0)/(select IFNULL(sum(resources_sum), 1) from resource)*100,2),'%') as everyTotalPecent,
             (select count(tag_name) from rule_tag) AS critical,
             '其他' AS groupName,
             'other' AS xAxis,
-            (select IFNULL( sum( return_sum ), 0 ) from resource) AS returnTotal,
-            (select IFNULL( sum( resources_sum ), 0 ) from resource) AS resourceTotal
+            (select IFNULL( sum( return_sum ), 0 ) from resource LEFT JOIN plugin p on plugin_id = p.id WHERE p.type = 'vuln') AS returnTotal,
+            (select IFNULL( sum( resources_sum ), 0 ) from resource LEFT JOIN plugin p on plugin_id = p.id WHERE p.type = 'vuln') AS resourceTotal
         FROM
             rule_tag t
                 LEFT JOIN rule_tag_mapping t1 ON t.tag_key = t1.tag_key
                 LEFT JOIN rule t2 ON t1.rule_id = t2.id
                 LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
                 LEFT JOIN resource t4 ON t3.resource_id = t4.id
-                LEFT JOIN plugin p on t2.plugin_id = p.id
+                LEFT JOIN plugin p on t4.plugin_id = p.id
         WHERE
             t.tag_key NOT IN ( 'cost', 'safety', 'tagging' )
           AND p.type = 'vuln'
@@ -501,8 +497,8 @@
         <where>
             <if test="accountId != null">
                 AND t.account_id = #{accountId}
-                AND p.type = 'vuln'
             </if>
+            AND p.type = 'vuln'
         </where>
         GROUP BY
         t.id

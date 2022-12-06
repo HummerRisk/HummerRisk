@@ -4,11 +4,11 @@
     <el-menu-item index="1" v-show="false">Placeholder</el-menu-item>
     <el-submenu index="2" popper-class="submenu">
       <template v-slot:title>
-        <span class="account-name" :title="currentAccount" style="width: 250px;">
+        <span class="account-name" :title="currentAccount">
           {{ $t('account.cloud_account') }}: {{ currentAccount }}
         </span>
       </template>
-      <search-list @cloudAccountSwitch="cloudAccountSwitch"/>
+      <search-list @cloudAccountSwitch="cloudAccountSwitch" @selectAccount="selectAccount"/>
 
       <el-divider/>
 
@@ -21,7 +21,6 @@
         <span style="padding-left: 7px;">{{ $t('commons.show_all') }}</span>
       </el-menu-item>
     </el-submenu>
-
   </el-menu>
 </template>
 
@@ -46,6 +45,9 @@ export default {
       this.currentAccount = accountName;
       this.$emit("cloudAccountSwitch", accountId);
     },
+    selectAccount(accountId, accountName) {
+      this.$emit('selectAccount', accountId, accountName);
+    },
   },
 }
 </script>
@@ -53,7 +55,7 @@ export default {
 <style scoped>
 .account-name {
   display: inline-block;
-  width: 130px;
+  width: 250px;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
@@ -61,5 +63,10 @@ export default {
 
 .el-divider--horizontal {
   margin: 0;
+}
+
+.el-btn-btm {
+  vertical-align: middle;
+  margin: 3px 0;
 }
 </style>

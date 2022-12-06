@@ -6,10 +6,7 @@ import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
-import com.hummerrisk.controller.request.image.ImageRepoRequest;
-import com.hummerrisk.controller.request.image.ImageRequest;
-import com.hummerrisk.controller.request.image.ImageResultRequest;
-import com.hummerrisk.controller.request.image.ImageRuleRequest;
+import com.hummerrisk.controller.request.image.*;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.service.ImageService;
 import io.swagger.annotations.Api;
@@ -20,6 +17,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "镜像管理")
 @RestController
@@ -66,12 +64,41 @@ public class ImageController {
     }
 
     @I18n
+    @ApiOperation(value = "镜像仓库中的镜像列表")
+    @PostMapping("repoItemList/{goPage}/{pageSize}")
+    public Pager<List<ImageRepoItemDTO>> repoItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageRepoItemRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, imageService.repoItemList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "镜像仓库中的镜像列表")
+    @PostMapping("repoItemList")
+    public List<ImageRepoItemDTO> repoItemList(@RequestBody ImageRepoItemRequest request) {
+        return imageService.repoItemList(request);
+    }
+
+    @I18n
     @ApiOperation(value = "镜像列表")
     @PostMapping("imageList/{goPage}/{pageSize}")
     public Pager<List<ImageDTO>> imageList(
             @PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, imageService.imageList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "所有已绑定项目的镜像")
+    @GetMapping("allBindList/{sbomVersionId}")
+    public List<Image> allBindList(@PathVariable String sbomVersionId) {
+        return imageService.allBindList(sbomVersionId);
+    }
+
+    @I18n
+    @ApiOperation(value = "所有未绑定项目的镜像")
+    @GetMapping("unBindList")
+    public List<Image> unBindList() {
+        return imageService.unBindList();
     }
 
     @I18n
@@ -169,7 +196,7 @@ public class ImageController {
     @I18n
     @ApiIgnore
     @GetMapping(value = "getImageResult/{resultId}")
-    public ImageResult getImageResult(@PathVariable String resultId) {
+    public ImageResultDTO getImageResult(@PathVariable String resultId) {
         return imageService.getImageResult(resultId);
     }
 
@@ -183,7 +210,7 @@ public class ImageController {
     @I18n
     @ApiOperation(value = "镜像检测日志")
     @GetMapping(value = "log/{resultId}")
-    public List<ImageResultLog> getImageResultLog(@PathVariable String resultId) {
+    public List<ImageResultLogWithBLOBs> getImageResultLog(@PathVariable String resultId) {
         return imageService.getImageResultLog(resultId);
     }
 
@@ -196,8 +223,92 @@ public class ImageController {
     @I18n
     @ApiOperation(value = "检测结果详情")
     @PostMapping("resultItemList/{goPage}/{pageSize}")
-    public Pager<List<ImageGrypeTable>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageGrypeTable request) {
+    public Pager<List<ImageResultItemWithBLOBs>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultItem request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, imageService.resultItemList(request));
     }
+
+    @I18n
+    @ApiOperation(value = "镜像仓库同步日志列表")
+    @GetMapping("repoSyncList/{id}")
+    public List<ImageRepoSyncLogWithBLOBs> repoSyncList(@PathVariable String id) {
+        return imageService.repoSyncList(id);
+    }
+
+    @I18n
+    @ApiOperation(value = "同步镜像")
+    @GetMapping("syncImage/{id}")
+    public void syncImage(@PathVariable String id) throws Exception {
+        imageService.syncImage(id);
+    }
+
+    @I18n
+    @ApiOperation(value = "执行镜像仓库中的镜像")
+    @PostMapping("scanImageRepo")
+    public void scanImageRepo(@RequestBody ScanImageRepoRequest request) throws Exception {
+        imageService.scanImageRepo(request);
+    }
+
+    @ApiOperation(value = "批量执行镜像仓库中的镜像")
+    @PostMapping("scanImagesRepo")
+    public void scanImagesRepo(@RequestBody List<String> selectIds) {
+        imageService.scanImagesRepo(selectIds);
+    }
+
+    @ApiOperation(value = "下载检测报告")
+    @PostMapping("download")
+    public String download(@RequestBody Map<String, Object> map) throws Exception {
+        return imageService.download(map);
+    }
+
+    @I18n
+    @ApiOperation(value = "概览TOP统计")
+    @PostMapping("topInfo")
+    public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
+        return imageService.topInfo(params);
+    }
+
+    @I18n
+    @ApiOperation(value = "镜像仓库统计")
+    @GetMapping("imageRepoChart")
+    public List<Map<String, Object>> imageRepoChart() {
+        return imageService.imageRepoChart();
+    }
+
+    @I18n
+    @ApiOperation(value = "风险统计")
+    @GetMapping("severityChart")
+    public List<Map<String, Object>> severityChart() {
+        return imageService.severityChart();
+    }
+
+    @I18n
+    @ApiOperation(value = "所有镜像")
+    @GetMapping("allList")
+    public List<Image> allList() {
+        return imageService.allList();
+    }
+
+    @I18n
+    @ApiOperation(value = "镜像检测历史记录")
+    @PostMapping("history/{goPage}/{pageSize}")
+    public Pager<List<HistoryImageResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, imageService.history(params));
+    }
+
+    @I18n
+    @ApiOperation(value = "检测结果历史详情")
+    @PostMapping("historyResultItemList")
+    public List<ImageResultItemWithBLOBs> historyResultItemList(@RequestBody ImageResultItem request) {
+        return imageService.historyResultItemList(request);
+    }
+
+    @ApiOperation(value = "删除检测历史记录")
+    @GetMapping("deleteHistoryImageResult/{id}")
+    public void deleteHistoryImageResult(@PathVariable String id) throws Exception {
+        imageService.deleteHistoryImageResult(id);
+    }
+
+
 }

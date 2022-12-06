@@ -200,7 +200,7 @@
                     :label="item.name"
                     :value="item.id">
                     <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                    &nbsp;&nbsp; {{ $t(item.name) }}
+                    &nbsp;&nbsp; {{ item.name }}
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -283,7 +283,7 @@
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ $t(scope.row.pluginName) }}
+                 &nbsp;&nbsp; {{ scope.row.pluginName }}
               </span>
             </template>
           </el-table-column>
@@ -316,14 +316,14 @@
 import TableOperators from "@/business/components/common/components/TableOperators";
 import MainContainer from "@/business/components/common/components/MainContainer";
 import Container from "@/business/components/common/components/Container";
-import TableHeader from "../head/ResourceTableHeader";
+import TableHeader from "@/business/components/common/components/TableHeader";
 import TablePagination from "@/business/components/common/pagination/TablePagination";
 import TableOperator from "@/business/components/common/components/TableOperator";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import CenterChart from "@/business/components/common/components/CenterChart";
 import MetricChart from "./MetricChart";
 import {_filter, _sort, getVulnID} from "@/common/js/utils";
-import {VULN_ID} from "@/common/js/constants";
+import {severityOptions, VULN_ID} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver.js";
 import VulnSwitch from "@/business/components/common/head/VulnSwitch";
 
@@ -477,11 +477,7 @@ import VulnSwitch from "@/business/components/common/head/VulnSwitch";
         });
       },
       severityOptionsFnc () {
-        this.severityOptions = [
-          {key: '低风险', value: "LowRisk"},
-          {key: '中风险', value: "MediumRisk"},
-          {key: '高风险', value: "HighRisk"}
-        ];
+        this.severityOptions = severityOptions;
       },
       ruleSetOptionsFnc () {
         this.$get("/rule/ruleGroups/" + null, res => {

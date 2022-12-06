@@ -13,9 +13,12 @@ import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.resource.ResourceRequest;
 import com.hummerrisk.dto.ResourceDTO;
 import com.hummerrisk.i18n.Translator;
+import com.hummerrisk.oss.constants.OSSConstants;
+import com.hummerrisk.oss.service.OssService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -48,7 +51,7 @@ public class ResourceCreateService {
     private AccountMapper accountMapper;
     @Resource
     private ResourceMapper resourceMapper;
-    @Resource
+    @Resource @Lazy
     private OrderService orderService;
     @Resource
     private ProxyMapper proxyMapper;
@@ -58,10 +61,6 @@ public class ResourceCreateService {
     private ProwlerService prowlerService;
     @Resource
     private XrayService xrayService;
-    @Resource
-    private PackageService packageService;
-    @Resource
-    private PackageResultMapper packageResultMapper;
     @Resource
     private ServerService serverService;
     @Resource
@@ -89,17 +88,39 @@ public class ResourceCreateService {
     @Resource
     private HistoryVulnTaskMapper historyVulnTaskMapper;
     @Resource
-    private HistoryServerTaskMapper historyServerTaskMapper;
+    private HistoryServerResultMapper historyServerResultMapper;
     @Resource
-    private HistoryImageTaskMapper historyImageTaskMapper;
-    @Resource
-    private HistoryPackageTaskMapper historyPackageTaskMapper;
+    private HistoryImageResultMapper historyImageResultMapper;
     @Resource
     private TaskItemResourceLogMapper taskItemResourceLogMapper;
     @Resource
     private CloudNativeResultMapper cloudNativeResultMapper;
     @Resource
+    private CloudNativeConfigResultMapper cloudNativeConfigResultMapper;
+    @Resource
     private K8sService k8sService;
+    @Resource
+    private ConfigService configService;
+    @Resource
+    private CodeResultMapper codeResultMapper;
+    @Resource
+    private CodeService codeService;
+    @Resource
+    private HistoryCodeResultMapper historyCodeResultMapper;
+    @Resource
+    private FileSystemResultMapper fileSystemResultMapper;
+    @Resource
+    private FileSystemService fileSystemService;
+    @Resource
+    private CloudResourceSyncItemMapper cloudResourceSyncItemMapper;
+    @Resource
+    private CloudResourceSyncMapper cloudResourceSyncMapper;
+    @Resource
+    private HistoryFileSystemResultMapper historyFileSystemResultMapper;
+    @Resource
+    private OssService ossService;
+    @Resource
+    private OssMapper ossMapper;
 
     @QuartzScheduled(cron = "${cron.expression.local}")
     public void handleTasks() throws Exception {
@@ -129,7 +150,7 @@ public class ResourceCreateService {
                     try {
                         handleTask(cloudTaskToBeProceed);
                     } catch (Exception e) {
-                        LogUtil.error(e);
+                        LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(cloudTaskToBeProceed.getId());
                     }
@@ -137,40 +158,7 @@ public class ResourceCreateService {
             });
         }
 
-        //软件包检测
-        final PackageResultExample packageResultExample = new PackageResultExample();
-        PackageResultExample.Criteria packageCriteria = packageResultExample.createCriteria();
-        packageCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
-            packageCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
-        }
-        packageResultExample.setOrderByClause("create_time limit 10");
-        List<PackageResultWithBLOBs> packageResults = packageResultMapper.selectByExampleWithBLOBs(packageResultExample);
-        if (CollectionUtils.isNotEmpty(packageResults)) {
-            packageResults.forEach(packageResult -> {
-                final PackageResultWithBLOBs packageToBeProceed;
-                try {
-                    packageToBeProceed = BeanUtils.copyBean(new PackageResultWithBLOBs(), packageResult);
-                } catch (Exception e) {
-                    throw new RuntimeException(e.getMessage());
-                }
-                if (processingGroupIdMap.get(packageToBeProceed.getId()) != null) {
-                    return;
-                }
-                processingGroupIdMap.put(packageToBeProceed.getId(), packageToBeProceed.getId());
-                commonThreadPool.addTask(() -> {
-                    try {
-                        packageService.createScan(packageToBeProceed);
-                    } catch (Exception e) {
-                        LogUtil.error(e);
-                    } finally {
-                        processingGroupIdMap.remove(packageToBeProceed.getId());
-                    }
-                });
-            });
-        }
-
-        //虚拟机检测
+        //主机检测
         final ServerResultExample serverResultExample = new ServerResultExample();
         ServerResultExample.Criteria serverCriteria = serverResultExample.createCriteria();
         serverCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
@@ -195,7 +183,7 @@ public class ResourceCreateService {
                     try {
                         serverService.createScan(serverToBeProceed);
                     } catch (Exception e) {
-                        LogUtil.error(e);
+                        LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(serverToBeProceed.getId());
                     }
@@ -228,7 +216,7 @@ public class ResourceCreateService {
                     try {
                         imageService.createScan(imageToBeProceed);
                     } catch (Exception e) {
-                        LogUtil.error(e);
+                        LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(imageToBeProceed.getId());
                     }
@@ -236,9 +224,7 @@ public class ResourceCreateService {
             });
         }
 
-        //网络检测
-
-        //云原生检测
+        //K8s检测
         final CloudNativeResultExample cloudNativeResultExample = new CloudNativeResultExample();
         CloudNativeResultExample.Criteria cloudNativeCriteria = cloudNativeResultExample.createCriteria();
         cloudNativeCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
@@ -263,9 +249,141 @@ public class ResourceCreateService {
                     try {
                         k8sService.createScan(cloudNativeToBeProceed);
                     } catch (Exception e) {
-                        LogUtil.error(e);
+                        LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(cloudNativeToBeProceed.getId());
+                    }
+                });
+            });
+        }
+
+        //部署检测
+        final CloudNativeConfigResultExample cloudNativeConfigResultExample = new CloudNativeConfigResultExample();
+        CloudNativeConfigResultExample.Criteria cloudNativeConfigCriteria = cloudNativeConfigResultExample.createCriteria();
+        cloudNativeConfigCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
+            cloudNativeConfigCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+        }
+        cloudNativeConfigResultExample.setOrderByClause("create_time limit 10");
+        List<CloudNativeConfigResult> cloudNativeConfigResults = cloudNativeConfigResultMapper.selectByExampleWithBLOBs(cloudNativeConfigResultExample);
+        if (CollectionUtils.isNotEmpty(cloudNativeConfigResults)) {
+            cloudNativeConfigResults.forEach(cloudNativeConfigResult -> {
+                final CloudNativeConfigResult cloudNativeConfigToBeProceed;
+                try {
+                    cloudNativeConfigToBeProceed = BeanUtils.copyBean(new CloudNativeConfigResult(), cloudNativeConfigResult);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                if (processingGroupIdMap.get(cloudNativeConfigToBeProceed.getId()) != null) {
+                    return;
+                }
+                processingGroupIdMap.put(cloudNativeConfigToBeProceed.getId(), cloudNativeConfigToBeProceed.getId());
+                commonThreadPool.addTask(() -> {
+                    try {
+                        configService.createScan(cloudNativeConfigToBeProceed);
+                    } catch (Exception e) {
+                        LogUtil.error(e.getMessage());
+                    } finally {
+                        processingGroupIdMap.remove(cloudNativeConfigToBeProceed.getId());
+                    }
+                });
+            });
+        }
+
+        //源码检测
+        final CodeResultExample codeResultExample = new CodeResultExample();
+        CodeResultExample.Criteria codeCriteria = codeResultExample.createCriteria();
+        codeCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
+            codeCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+        }
+        codeResultExample.setOrderByClause("create_time limit 10");
+        List<CodeResult> codeResults = codeResultMapper.selectByExampleWithBLOBs(codeResultExample);
+        if (CollectionUtils.isNotEmpty(codeResults)) {
+            codeResults.forEach(codeResult -> {
+                final CodeResult codeToBeProceed;
+                try {
+                    codeToBeProceed = BeanUtils.copyBean(new CodeResult(), codeResult);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                if (processingGroupIdMap.get(codeToBeProceed.getId()) != null) {
+                    return;
+                }
+                processingGroupIdMap.put(codeToBeProceed.getId(), codeToBeProceed.getId());
+                commonThreadPool.addTask(() -> {
+                    try {
+                        codeService.createScan(codeToBeProceed);
+                    } catch (Exception e) {
+                        LogUtil.error(e.getMessage());
+                    } finally {
+                        processingGroupIdMap.remove(codeToBeProceed.getId());
+                    }
+                });
+            });
+        }
+
+        //文件系统检测
+        final FileSystemResultExample fileSystemResultExample = new FileSystemResultExample();
+        FileSystemResultExample.Criteria fsCriteria = fileSystemResultExample.createCriteria();
+        fsCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
+            codeCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+        }
+        fileSystemResultExample.setOrderByClause("create_time limit 10");
+        List<FileSystemResult> fileSystemResults = fileSystemResultMapper.selectByExampleWithBLOBs(fileSystemResultExample);
+        if (CollectionUtils.isNotEmpty(fileSystemResults)) {
+            fileSystemResults.forEach(fileSystemResult -> {
+                final FileSystemResult fsToBeProceed;
+                try {
+                    fsToBeProceed = BeanUtils.copyBean(new FileSystemResult(), fileSystemResult);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                if (processingGroupIdMap.get(fsToBeProceed.getId()) != null) {
+                    return;
+                }
+                processingGroupIdMap.put(fsToBeProceed.getId(), fsToBeProceed.getId());
+                commonThreadPool.addTask(() -> {
+                    try {
+                        fileSystemService.createScan(fsToBeProceed);
+                    } catch (Exception e) {
+                        LogUtil.error(e.getMessage());
+                    } finally {
+                        processingGroupIdMap.remove(fsToBeProceed.getId());
+                    }
+                });
+            });
+        }
+
+        //对象存储
+        final OssExample ossExample = new OssExample();
+        OssExample.Criteria ossCriteria = ossExample.createCriteria();
+        ossCriteria.andSyncStatusEqualTo(OSSConstants.SYNC_STATUS.APPROVED.toString());
+        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
+            ossCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+        }
+        ossExample.setOrderByClause("create_time limit 10");
+        List<Oss> ossList = ossMapper.selectByExample(ossExample);
+        if (CollectionUtils.isNotEmpty(ossList)) {
+            ossList.forEach(oss -> {
+                final Oss ossToBeProceed;
+                try {
+                    ossToBeProceed = BeanUtils.copyBean(new Oss(), oss);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                if (processingGroupIdMap.get(ossToBeProceed.getId()) != null) {
+                    return;
+                }
+                processingGroupIdMap.put(ossToBeProceed.getId(), ossToBeProceed.getId());
+                commonThreadPool.addTask(() -> {
+                    try {
+                        ossService.syncBatch(ossToBeProceed.getId());
+                    } catch (Exception e) {
+                        LogUtil.error(e.getMessage());
+                    } finally {
+                        processingGroupIdMap.remove(ossToBeProceed.getId());
                     }
                 });
             });
@@ -296,61 +414,135 @@ public class ResourceCreateService {
             HistoryScanTaskExample.Criteria historyScanTaskCriteria = historyScanTaskExample.createCriteria();
             historyScanTaskCriteria.andScanIdEqualTo(historyScan.getId()).andStatusNotIn(historyScanStatus);
             List<HistoryScanTask> historyScanTasks = historyScanTaskMapper.selectByExample(historyScanTaskExample);
+            if(historyScanTasks.size() == 0) {
+                historyScan.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                historyScanMapper.updateByPrimaryKey(historyScan);
+            }
             JSONArray jsonArray = new JSONArray();
+            historyScanTaskCriteria.andStatusIn(historyScanStatus);
             for (HistoryScanTask historyScanTask : historyScanTasks) {
                 if (StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.cloudAccount.getType())) {
                     CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(historyScanTask.getTaskId());
                     if (cloudTask != null && historyScanStatus.contains(cloudTask.getStatus())) {
                         historyScanTask.setStatus(cloudTask.getStatus());
-                        historyScanTask.setOutput(jsonArray.toJSONString());
                         historyScanTask.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
                         historyScanTask.setReturnSum(cloudTask.getReturnSum()!=null? cloudTask.getReturnSum():0);
                         historyScanTask.setScanScore(historyService.calculateScore(cloudTask.getAccountId(), cloudTask, TaskEnum.cloudAccount.getType()));
-                        historyService.updateScanTaskHistory(historyScanTask);
+                    } else {
+                        historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                        historyScanTask.setResourcesSum(0L);
+                        historyScanTask.setReturnSum(0L);
+                        historyScanTask.setScanScore(0);
                     }
+                    historyScanTask.setOutput(jsonArray.toJSONString());
+                    historyService.updateScanTaskHistory(historyScanTask);
                 } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.vulnAccount.getType())) {
                     CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(historyScanTask.getTaskId());
                     if (cloudTask != null && historyScanStatus.contains(cloudTask.getStatus())) {
                         historyScanTask.setStatus(cloudTask.getStatus());
-                        historyScanTask.setOutput(jsonArray.toJSONString());
                         historyScanTask.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
                         historyScanTask.setReturnSum(cloudTask.getReturnSum()!=null? cloudTask.getReturnSum():0);
                         historyScanTask.setScanScore(historyService.calculateScore(cloudTask.getAccountId(), cloudTask, TaskEnum.vulnAccount.getType()));
-                        historyService.updateScanTaskHistory(historyScanTask);
+                    } else {
+                        historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                        historyScanTask.setResourcesSum(0L);
+                        historyScanTask.setReturnSum(0L);
+                        historyScanTask.setScanScore(0);
                     }
+                    historyScanTask.setOutput(jsonArray.toJSONString());
+                    historyService.updateScanTaskHistory(historyScanTask);
                 } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.serverAccount.getType())) {
                     ServerResult serverResult = serverResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
                     if (serverResult != null && historyScanStatus.contains(serverResult.getResultStatus())) {
                         historyScanTask.setStatus(serverResult.getResultStatus());
-                        historyScanTask.setOutput(jsonArray.toJSONString());
                         historyScanTask.setResourcesSum(1L);
                         historyScanTask.setReturnSum(1L);
                         historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), serverResult, TaskEnum.serverAccount.getType()));
-                        historyService.updateScanTaskHistory(historyScanTask);
+                    } else {
+                        historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                        historyScanTask.setResourcesSum(0L);
+                        historyScanTask.setReturnSum(0L);
+                        historyScanTask.setScanScore(0);
                     }
+                    historyScanTask.setOutput(jsonArray.toJSONString());
+                    historyService.updateScanTaskHistory(historyScanTask);
                 } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.imageAccount.getType())) {
                     ImageResult imageResult = imageResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
                     if (imageResult != null && historyScanStatus.contains(imageResult.getResultStatus())) {
                         historyScanTask.setStatus(imageResult.getResultStatus());
-                        historyScanTask.setOutput(jsonArray.toJSONString());
                         historyScanTask.setResourcesSum(imageResult.getReturnSum()!=null? imageResult.getReturnSum():0);
                         historyScanTask.setReturnSum(imageResult.getReturnSum()!=null? imageResult.getReturnSum():0);
                         historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), imageResult, TaskEnum.imageAccount.getType()));
-                        historyService.updateScanTaskHistory(historyScanTask);
+                    } else {
+                        historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                        historyScanTask.setResourcesSum(0L);
+                        historyScanTask.setReturnSum(0L);
+                        historyScanTask.setScanScore(0);
                     }
-                } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.packageAccount.getType())) {
-                    PackageResult packageResult = packageResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
-                    if (packageResult != null && historyScanStatus.contains(packageResult.getResultStatus())) {
-                        historyScanTask.setStatus(packageResult.getResultStatus());
-                        historyScanTask.setOutput(jsonArray.toJSONString());
-                        historyScanTask.setResourcesSum(packageResult.getReturnSum()!=null? packageResult.getReturnSum():0);
-                        historyScanTask.setReturnSum(packageResult.getReturnSum()!=null? packageResult.getReturnSum():0);
-                        historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), packageResult, TaskEnum.packageAccount.getType()));
-                        historyService.updateScanTaskHistory(historyScanTask);
+                    historyScanTask.setOutput(jsonArray.toJSONString());
+                    historyService.updateScanTaskHistory(historyScanTask);
+                } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.codeAccount.getType())) {
+                    CodeResult codeResult = codeResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                    if (codeResult != null && historyScanStatus.contains(codeResult.getResultStatus())) {
+                        historyScanTask.setStatus(codeResult.getResultStatus());
+                        historyScanTask.setResourcesSum(codeResult.getReturnSum()!=null? codeResult.getReturnSum():0);
+                        historyScanTask.setReturnSum(codeResult.getReturnSum()!=null? codeResult.getReturnSum():0);
+                        historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), codeResult, TaskEnum.codeAccount.getType()));
+                    } else {
+                        historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                        historyScanTask.setResourcesSum(0L);
+                        historyScanTask.setReturnSum(0L);
+                        historyScanTask.setScanScore(0);
                     }
+                    historyScanTask.setOutput(jsonArray.toJSONString());
+                    historyService.updateScanTaskHistory(historyScanTask);
+                }  else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.fsAccount.getType())) {
+                    FileSystemResult fileSystemResult = fileSystemResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                    if (fileSystemResult != null && historyScanStatus.contains(fileSystemResult.getResultStatus())) {
+                        historyScanTask.setStatus(fileSystemResult.getResultStatus());
+                        historyScanTask.setResourcesSum(fileSystemResult.getReturnSum()!=null? fileSystemResult.getReturnSum():0);
+                        historyScanTask.setReturnSum(fileSystemResult.getReturnSum()!=null? fileSystemResult.getReturnSum():0);
+                        historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), fileSystemResult, TaskEnum.fsAccount.getType()));
+                    } else {
+                        historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                        historyScanTask.setResourcesSum(0L);
+                        historyScanTask.setReturnSum(0L);
+                        historyScanTask.setScanScore(0);
+                    }
+                    historyScanTask.setOutput(jsonArray.toJSONString());
+                    historyService.updateScanTaskHistory(historyScanTask);
+                } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.k8sAccount.getType())) {
+                    CloudNativeResult cloudNativeResult = cloudNativeResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                    if (cloudNativeResult != null && historyScanStatus.contains(cloudNativeResult.getResultStatus())) {
+                        historyScanTask.setStatus(cloudNativeResult.getResultStatus());
+                        historyScanTask.setResourcesSum(cloudNativeResult.getReturnSum()!=null? cloudNativeResult.getReturnSum():0);
+                        historyScanTask.setReturnSum(cloudNativeResult.getReturnSum()!=null? cloudNativeResult.getReturnSum():0);
+                        historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), cloudNativeResult, TaskEnum.k8sAccount.getType()));
+                    } else {
+                        historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                        historyScanTask.setResourcesSum(0L);
+                        historyScanTask.setReturnSum(0L);
+                        historyScanTask.setScanScore(0);
+                    }
+                    historyScanTask.setOutput(jsonArray.toJSONString());
+                    historyService.updateScanTaskHistory(historyScanTask);
+                } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.configAccount.getType())) {
+                    CloudNativeConfigResult cloudNativeConfigResult = cloudNativeConfigResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                    if (cloudNativeConfigResult != null && historyScanStatus.contains(cloudNativeConfigResult.getResultStatus())) {
+                        historyScanTask.setStatus(cloudNativeConfigResult.getResultStatus());
+                        historyScanTask.setResourcesSum(cloudNativeConfigResult.getReturnSum()!=null? cloudNativeConfigResult.getReturnSum():0);
+                        historyScanTask.setReturnSum(cloudNativeConfigResult.getReturnSum()!=null? cloudNativeConfigResult.getReturnSum():0);
+                        historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), cloudNativeConfigResult, TaskEnum.configAccount.getType()));
+                    } else {
+                        historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                        historyScanTask.setResourcesSum(0L);
+                        historyScanTask.setReturnSum(0L);
+                        historyScanTask.setScanScore(0);
+                    }
+                    historyScanTask.setOutput(jsonArray.toJSONString());
+                    historyService.updateScanTaskHistory(historyScanTask);
                 }
             }
-            historyScanTaskCriteria.andStatusIn(historyScanStatus);
             long count = historyScanTaskMapper.countByExample(historyScanTaskExample);
             if(historyScanTasks.size() == count) {
                 historyScan.setStatus(TaskConstants.TASK_STATUS.FINISHED.name());
@@ -405,19 +597,24 @@ public class ResourceCreateService {
                         n = historyVulnTaskMapper.countByExample(example);
                         i = i + n;
                     } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.serverAccount.getType())) {
-                        HistoryServerTaskExample example = new HistoryServerTaskExample();
+                        HistoryServerResultExample example = new HistoryServerResultExample();
                         example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
-                        n = historyServerTaskMapper.countByExample(example);
+                        n = historyServerResultMapper.countByExample(example);
                         i = i + n;
                     } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.imageAccount.getType())) {
-                        HistoryImageTaskExample example = new HistoryImageTaskExample();
+                        HistoryImageResultExample example = new HistoryImageResultExample();
                         example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
-                        n = historyImageTaskMapper.countByExample(example);
+                        n = historyImageResultMapper.countByExample(example);
                         i = i + n;
-                    } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.packageAccount.getType())) {
-                        HistoryPackageTaskExample example = new HistoryPackageTaskExample();
+                    } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.codeAccount.getType())) {
+                        HistoryCodeResultExample example = new HistoryCodeResultExample();
                         example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
-                        n = historyPackageTaskMapper.countByExample(example);
+                        n = historyCodeResultMapper.countByExample(example);
+                        i = i + n;
+                    } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.fsAccount.getType())) {
+                        HistoryFileSystemResultExample example = new HistoryFileSystemResultExample();
+                        example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
+                        n = historyFileSystemResultMapper.countByExample(example);
                         i = i + n;
                     }
                     if (n > 0) {//任务结束时插入结束日志，但是只保留一条
@@ -444,6 +641,50 @@ public class ResourceCreateService {
             processingGroupIdMap.remove(taskToBeProceed.getId());
         }
 
+        //云资源同步
+        CloudResourceSyncExample cloudResourceSyncExample = new CloudResourceSyncExample();
+        List<String> statusList = new ArrayList<>();
+        statusList.add(CloudTaskConstants.TASK_STATUS.APPROVED.name());
+        statusList.add(CloudTaskConstants.TASK_STATUS.RUNNING.name());
+        cloudResourceSyncExample.createCriteria().andStatusIn(statusList);
+        List<CloudResourceSync> cloudResourceSyncs = cloudResourceSyncMapper.selectByExample(cloudResourceSyncExample);
+        cloudResourceSyncs.forEach(cloudResourceSync -> {
+            String id = cloudResourceSync.getId();
+            CloudResourceSyncItemExample cloudResourceSyncItemExample = new CloudResourceSyncItemExample();
+            cloudResourceSyncItemExample.createCriteria().andSyncIdEqualTo(id);
+            List<CloudResourceSyncItem> cloudResourceSyncItems = cloudResourceSyncItemMapper.selectByExample(cloudResourceSyncItemExample);
+            int errorCount = 0;
+            int successCount = 0;
+            int runningCount = 0;
+            long resourceSum = 0;
+            for (CloudResourceSyncItem cloudResourceSyncItem : cloudResourceSyncItems) {
+                resourceSum += cloudResourceSyncItem.getCount()==null?0:cloudResourceSyncItem.getCount();
+                if(CloudTaskConstants.TASK_STATUS.APPROVED.name().equals(cloudResourceSyncItem.getStatus())
+                        ||CloudTaskConstants.TASK_STATUS.RUNNING.name().equals(cloudResourceSyncItem.getStatus())
+                        ||CloudTaskConstants.TASK_STATUS.UNCHECKED.name().equals(cloudResourceSyncItem.getStatus())) {
+                    runningCount++;
+                }else if (CloudTaskConstants.TASK_STATUS.ERROR.name().equals(cloudResourceSyncItem.getStatus())){
+                    errorCount++;
+                } else if (CloudTaskConstants.TASK_STATUS.FINISHED.name().equals(cloudResourceSyncItem.getStatus())) {
+                    successCount++;
+                }
+            }
+            String syncStatus = CloudTaskConstants.TASK_STATUS.RUNNING.name();
+            if(cloudResourceSyncItems.size() == 0){
+                syncStatus =  CloudTaskConstants.TASK_STATUS.FINISHED.name();
+            } else if (runningCount == 0 && errorCount>0 && successCount > 0){
+                syncStatus = CloudTaskConstants.TASK_STATUS.WARNING.name();
+            } else if (runningCount == 0 && errorCount > 0) {
+                syncStatus = CloudTaskConstants.TASK_STATUS.ERROR.name();
+            }else if (runningCount == 0){
+                syncStatus =  CloudTaskConstants.TASK_STATUS.FINISHED.name();
+            }
+            CloudResourceSync cloudResourceSync1 = new CloudResourceSync();
+            cloudResourceSync1.setId(cloudResourceSync.getId());
+            cloudResourceSync1.setStatus(syncStatus);
+            cloudResourceSync1.setResourcesSum(resourceSum);
+            cloudResourceSyncMapper.updateByPrimaryKeySelective(cloudResourceSync1);
+        });
 
     }
 
@@ -575,8 +816,10 @@ public class ResourceCreateService {
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
             String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, fileName, map);
-            LogUtil.info(cloudTask.getId() + " {}[command]: " + command);
-            CommandUtils.saveAsFile(taskItem.getDetails(), dirPath, fileName);//重启服务后容器内文件在/tmp目录下会丢失
+            LogUtil.debug(cloudTask.getId() + " {custodian}[command]: " + command);
+            taskItem.setCommand(command);
+            cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItem);
+            CommandUtils.saveAsFile(taskItem.getDetails(), dirPath, fileName, false);//重启服务后容器内文件在/tmp目录下会丢失
             resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
             if (LogUtil.getLogger().isDebugEnabled()) {
                 LogUtil.getLogger().debug("resource created: {}", resultStr);

@@ -4,8 +4,20 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
+          <el-menu-item :index="'/code/overview'">
+            {{ $t("code.overview") }}
+          </el-menu-item>
+
           <el-menu-item :index="'/code/code'">
-            {{ $t("commons.code_scan") }}
+            {{ $t("code.code_setting") }}
+          </el-menu-item>
+
+          <el-menu-item :index="'/code/result'">
+            {{ $t("code.code_result") }}
+          </el-menu-item>
+
+          <el-menu-item :index="'/code/history'">
+            {{ $t("code.history") }}
           </el-menu-item>
 
         </el-menu>

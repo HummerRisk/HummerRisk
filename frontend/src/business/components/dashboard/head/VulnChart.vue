@@ -6,11 +6,13 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import echarts from 'echarts';
 /* eslint-disable */
 export default {
   name: "VulnChart",
   components: {
     HrChart,
+    echarts
   },
   props: {
     data: {},
@@ -31,9 +33,9 @@ export default {
         let legendData = [];
         let seriesData = [];
         for (let obj of response.data) {
-          legendData.push(obj.groupName + ' ' + obj.xAxis + ' 分(' + obj.yAxis + '/' + obj.yAxis2 + ')');
+          legendData.push(obj.groupName + ' ' + obj.yAxis + '/' + obj.yAxis2 + '(' + obj.xAxis + '分)');
           seriesData.push({
-            name: obj.groupName + ' ' + obj.xAxis + ' 分(' + obj.yAxis + '/' + obj.yAxis2 + ')',
+            name: obj.groupName + ' ' + obj.yAxis + '/' + obj.yAxis2 + '(' + obj.xAxis + '分)',
             value: obj.yAxis
           });
         }

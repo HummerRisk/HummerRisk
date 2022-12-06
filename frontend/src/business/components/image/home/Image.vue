@@ -1,10 +1,14 @@
 <template>
-  <div v-loading="result.loading">
-
-    <el-card class="table-card">
+  <main-container>
+    <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
-        <table-header :condition.sync="condition" @search="search" @create="create"
-                      :create-tip="$t('image.create')" :title="$t('image.image_list')"/>
+        <table-header :condition.sync="condition" @search="search"
+                      :title="$t('image.image_list')"
+                      @create="create" :createTip="$t('image.create')"
+                      :show-create="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
       <el-card class="table-card el-row-card" :body-style="{ padding: '0' }" :key="index" v-for="(data, index) in tableData">
@@ -25,16 +29,20 @@
             <el-row>
               <el-col :span="20" class="cl-ver-col">
                 <el-row class="cl-mid-row">
-                  <el-col :span="3" class="cl-span-col">{{ $t('image.image_name') }}</el-col>
-                  <el-col :span="3" class="cl-span-col">{{ $t('image.image_status') }}</el-col>
-                  <el-col :span="data.type==='tar'?5:8" class="cl-span-col">{{ $t('image.image_url') }}</el-col>
-                  <el-col :span="3" v-if="data.type==='tar'" class="cl-span-col">{{ $t('image.image_size') }}</el-col>
-                  <el-col :span="5" class="cl-span-col">{{ $t('image.image_repo_name') }}</el-col>
-                  <el-col :span="5" class="cl-span-col">{{ $t('commons.update_time') }}</el-col>
+                  <el-col :span="3" v-if="checkedColumnNames.includes('name')" class="cl-span-col">{{ $t('image.image_name') }}</el-col>
+                  <el-col :span="3" v-if="checkedColumnNames.includes('status')" class="cl-span-col">{{ $t('image.image_status') }}</el-col>
+                  <el-col :span="data.type==='tar'?5:8" v-if="checkedColumnNames.includes('type')" class="cl-span-col">{{ $t('image.image_url') }}</el-col>
+                  <el-col :span="3" v-if="data.type==='tar' && checkedColumnNames.includes('tar')" class="cl-span-col">{{ $t('image.image_size') }}</el-col>
+                  <el-col :span="5" v-if="checkedColumnNames.includes('imageRepoName')" class="cl-span-col">{{ $t('image.image_repo_name') }}</el-col>
+                  <el-col :span="5" v-if="checkedColumnNames.includes('updateTime')" class="cl-span-col">{{ $t('commons.update_time') }}</el-col>
                 </el-row>
                 <el-row class="cl-mid-row">
-                  <el-col :span="3" class="cl-data-col">{{ data.name }}</el-col>
-                  <el-col :span="3" class="cl-data-col">
+                  <el-col :span="3" class="cl-data-col" v-if="checkedColumnNames.includes('name')">
+                    <el-tooltip class="item" effect="dark" :content="data.name" placement="top-start">
+                      <span class="word-wrap">{{ data.name }}</span>
+                    </el-tooltip>
+                  </el-col>
+                  <el-col :span="3" class="cl-data-col" v-if="checkedColumnNames.includes('status')">
                     <el-tag size="mini" type="warning" v-if="data.status === 'DELETE'">
                       {{ $t('server.DELETE') }}
                     </el-tag>
@@ -45,12 +53,26 @@
                       {{ $t('server.INVALID') }}
                     </el-tag>
                   </el-col>
-                  <el-col :span="data.type==='tar'?5:8" class="cl-data-col">
-                    {{ data.type==='image'?(data.imageUrl + ':' + data.imageTag):data.path }}
+                  <el-col :span="data.type==='tar'?5:8" class="cl-data-col" v-if="checkedColumnNames.includes('type')">
+                    <div v-if="data.type==='repo'">
+                      <el-tooltip class="item" effect="dark" :content="data.imageUrl + ':' + data.imageTag" placement="top-start">
+                        <span class="word-wrap">{{ data.imageUrl + ':' + data.imageTag }}</span>
+                      </el-tooltip>
+                    </div>
+                    <div v-if="data.type==='image'">
+                      <el-tooltip class="item" effect="dark" :content="data.imageUrl + ':' + data.imageTag" placement="top-start">
+                        <span class="word-wrap">{{ data.imageUrl + ':' + data.imageTag }}</span>
+                      </el-tooltip>
+                    </div>
+                    <div v-if="data.type==='tar'">
+                      <el-tooltip class="item" effect="dark" :content="data.path" placement="top-start">
+                        <span class="word-wrap">{{ data.path }}</span>
+                      </el-tooltip>
+                    </div>
                   </el-col>
-                  <el-col :span="3" v-if="data.type==='tar'" class="cl-data-col">{{ data.size }}</el-col>
-                  <el-col :span="5" class="cl-data-col">{{ data.imageRepoName?data.imageRepoName:$t('image.no_image_repo') }}</el-col>
-                  <el-col :span="5" class="cl-data-col">{{ data.updateTime | timestampFormatDate }}</el-col>
+                  <el-col :span="3" v-if="data.type==='tar' && checkedColumnNames.includes('tar')" class="cl-data-col">{{ data.size }}</el-col>
+                  <el-col :span="5" class="cl-data-col" v-if="checkedColumnNames.includes('imageRepoName')">{{ data.imageRepoName?data.imageRepoName:$t('image.no_image_repo') }}</el-col>
+                  <el-col :span="5" class="cl-data-col" v-if="checkedColumnNames.includes('updateTime')">{{ data.updateTime | timestampFormatDate }}</el-col>
                 </el-row>
               </el-col>
               <el-col :span="4" class="cl-ver-col">
@@ -92,6 +114,30 @@
     <el-drawer class="rtl" :title="$t('image.create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form" :rules="rule">
+        <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(form)">
+            <el-option
+              v-for="item in sboms"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+              <i class="iconfont icon-SBOM sbom-icon"></i>
+              {{ item.name }}
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="$t('sbom.sbom_project_version')" :rules="{required: true, message: $t('sbom.sbom_project_version') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
+            <el-option
+              v-for="item in versions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+              <i class="iconfont icon-lianmenglian sbom-icon-2"></i>
+              {{ item.name }}
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item :label="$t('image.image_name')" ref="name" prop="name">
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_name')"/>
         </el-form-item>
@@ -99,7 +145,7 @@
           <el-switch v-model="form.isImageRepo"></el-switch>
         </el-form-item>
         <el-form-item v-if="form.isImageRepo" :label="$t('image.image_repo')" :rules="{required: true, message: $t('image.image_repo') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.repoId" :placeholder="$t('image.image_repo_url')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.repoId" :placeholder="$t('image.image_repo_url')" @change="changeImage">
             <el-option
               v-for="item in repos"
               :key="item.id"
@@ -113,7 +159,7 @@
           <el-switch v-model="form.isProxy"></el-switch>
         </el-form-item>
         <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
             <el-option
               v-for="item in proxys"
               :key="item.id"
@@ -138,8 +184,20 @@
           </el-popover>
         </el-form-item>
         <el-form-item :label="$t('image.image_type')" ref="type" prop="type">
+          <el-radio v-model="form.type" label="repo">{{ $t('image.image_rp') }}</el-radio>
           <el-radio v-model="form.type" label="image">{{ $t('image.image_u') }}</el-radio>
           <el-radio v-model="form.type" label="tar">{{ $t('image.image_tar') }}</el-radio>
+        </el-form-item>
+        <el-form-item v-if="form.type==='repo'" :label="$t('image.image_list')" ref="type" prop="type">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.imageUrl" :placeholder="$t('image.image_list')">
+            <el-option
+              v-for="item in images"
+              :key="item.id"
+              :label="item.path"
+              :value="item.id">
+              &nbsp;&nbsp; {{ item.path }}
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item v-if="form.type==='image'" :label="$t('image.image_url_tag')" ref="type" prop="type">
           <el-input class="input-inline-i" v-model="form.imageUrl" autocomplete="off" :placeholder="$t('image.image_url')"/>
@@ -165,6 +223,30 @@
     <el-drawer class="rtl" :title="$t('image.update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form" :rules="rule">
+        <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(form)">
+            <el-option
+              v-for="item in sboms"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+              <i class="iconfont icon-SBOM sbom-icon"></i>
+              {{ item.name }}
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="$t('sbom.sbom_project_version')" :rules="{required: true, message: $t('sbom.sbom_project_version') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
+            <el-option
+              v-for="item in versions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+              <i class="iconfont icon-lianmenglian sbom-icon-2"></i>
+              {{ item.name }}
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item :label="$t('image.image_name')" ref="name" prop="name">
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_name')"/>
         </el-form-item>
@@ -172,7 +254,7 @@
           <el-switch v-model="form.isImageRepo"></el-switch>
         </el-form-item>
         <el-form-item v-if="form.isImageRepo" :label="$t('image.image_repo')" :rules="{required: true, message: $t('image.image_repo') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.repoId" :placeholder="$t('image.image_repo_url')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.repoId" :placeholder="$t('image.image_repo_url')" @change="changeImage">
             <el-option
               v-for="item in repos"
               :key="item.id"
@@ -186,7 +268,7 @@
           <el-switch v-model="form.isProxy"></el-switch>
         </el-form-item>
         <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
             <el-option
               v-for="item in proxys"
               :key="item.id"
@@ -211,8 +293,20 @@
           </el-popover>
         </el-form-item>
         <el-form-item :label="$t('image.image_type')" ref="type" prop="type">
+          <el-radio v-model="form.type" label="repo">{{ $t('image.image_rp') }}</el-radio>
           <el-radio v-model="form.type" label="image">{{ $t('image.image_u') }}</el-radio>
           <el-radio v-model="form.type" label="tar">{{ $t('image.image_tar') }}</el-radio>
+        </el-form-item>
+        <el-form-item v-if="form.type==='repo'" :label="$t('image.image_list')" ref="type" prop="type">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.imageUrl" :placeholder="$t('image.image_list')">
+            <el-option
+              v-for="item in images"
+              :key="item.id"
+              :label="item.path"
+              :value="item.id">
+              &nbsp;&nbsp; {{ item.path }}
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item v-if="form.type==='image'" :label="$t('image.image_url_tag')" ref="type" prop="type">
           <el-input class="input-inline-i" v-model="form.imageUrl" autocomplete="off" :placeholder="$t('image.image_url')"/>
@@ -234,7 +328,7 @@
     </el-drawer>
     <!--Update image-->
 
-  </div>
+  </main-container>
 </template>
 
 <script>
@@ -248,6 +342,42 @@ import {_filter, _sort} from "@/common/js/utils";
 import HrCodeEdit from "@/business/components/common/components/HrCodeEdit";
 import ImageUpload from "../head/ImageUpload";
 import ImageTarUpload from "../head/ImageTarUpload";
+import MainContainer from "../.././common/components/MainContainer";
+import {IMAGE_CONFIGS} from "@/business/components/common/components/search/search-components";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'image.image_name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'image.image_status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'image.image_url',
+    props: 'type',
+    disabled: false
+  },
+  {
+    label: 'image.image_size',
+    props: 'tar',
+    disabled: false
+  },
+  {
+    label: 'image.image_repo_name',
+    props: 'imageRepoName',
+    disabled: false
+  },
+  {
+    label: 'commons.update_time',
+    props: 'updateTime',
+    disabled: false
+  },
+];
 
 /* eslint-disable */
 export default {
@@ -262,6 +392,7 @@ export default {
     HrCodeEdit,
     ImageUpload,
     ImageTarUpload,
+    MainContainer,
   },
   data() {
     return {
@@ -279,14 +410,16 @@ export default {
       currentPage: 1,
       pageSize: 10,
       total: 0,
-      condition: {},
+      condition: {
+        components: IMAGE_CONFIGS
+      },
       tableData: [],
       form: {},
       direction: 'rtl',
       rule: {
         name: [
           {required: true, message: this.$t('commons.input_name'), trigger: 'blur'},
-          {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+          {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
           {
             required: true,
             message: this.$t('workspace.special_characters_are_not_supported'),
@@ -319,6 +452,28 @@ export default {
       content: this.$t('image.image_support'),
       iconFile: Object,
       tarFile: Object,
+      sboms: [],
+      versions: [],
+      images: [],
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'image.image_name',
+          id: 'name'
+        },
+        {
+          name: 'image.image_url',
+          id: 'repo'
+        },
+        {
+          name: 'image.image_repo_name',
+          id: 'imageRepoName'
+        },
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   activated() {
@@ -328,17 +483,51 @@ export default {
     this.location = window.location.href.split("#")[0];
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
     create() {
       this.form = {type: 'image'};
+      if(this.sboms && this.sboms.length > 0) {
+        this.form.sbomId = this.sboms[0].id;
+        this.initSbom({sbomId: this.form.sbomId});
+      }
       this.createVisible = true;
+    },
+    async initSbom(params) {
+      await this.$post("/sbom/allSbomVersionList", params,response => {
+        this.versions = response.data;
+        if(this.versions && this.versions.length > 0) this.form.sbomVersionId = this.versions[0].id;
+      });
+    },
+    initSboms() {
+      this.result = this.$post("/sbom/allSbomList", {},response => {
+        this.sboms = response.data;
+      });
+    },
+    changeSbom(item) {
+      let params = {
+        sbomId: item.sbomId
+      };
+      this.result = this.$post("/sbom/allSbomVersionList", params,response => {
+        this.versions = response.data;
+      });
     },
     sort(column) {
       _sort(column, this.condition);
-      this.init();
+      this.search();
     },
     filter(filters) {
       _filter(filters, this.condition);
-      this.init();
+      this.search();
     },
     filterStatus(value, row) {
       return row.status === value;
@@ -437,11 +626,13 @@ export default {
       });
     },
     handleEdit(row) {
+      this.changeSbom({sbomId: row.sbomId});
       this.updateVisible = true;
       this.form = row;
       if(this.form.repo) this.form.isImageRepo = true;
       if(this.form.proxyId) this.form.isProxy = true;
       if(this.form.pluginIcon !== 'docker.png') this.form.isImageIcon = true;
+      this.changeImage(row.repoId);
     },
     search() {
       this.result = this.$post(this.buildPagePath(this.queryPath), this.condition, response => {
@@ -449,6 +640,7 @@ export default {
         this.total = data.itemCount;
         this.tableData = data.listObject;
       });
+      this.initSboms();
     },
     handleClose() {
       this.form = {};
@@ -499,6 +691,11 @@ export default {
     },
     appendTar(file) {
       this.tarFile = file;
+    },
+    changeImage(id) {
+      this.$post("/image/repoItemList", {repoId: id}, response => {
+        this.images = response.data;
+      });
     },
   }
 }
@@ -576,5 +773,12 @@ export default {
 .co-el-i{
   width: 70px;
   height: 70px;
+}
+.word-wrap{
+  width: 98%;
+  display:block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 </style>

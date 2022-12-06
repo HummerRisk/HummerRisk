@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="result.loading">
+  <div v-loading="result.loading" style="width: 300px;">
     <el-input :placeholder="$t('resource.search_by_name')"
               prefix-icon="el-icon-search"
               v-model="searchString"
@@ -27,12 +27,12 @@
 </template>
 
 <script>
-import {getVulnID, getCurrentUser, hasRoles} from "@/common/js/utils";
-import {VULN_ID, VULN_NAME, ROLE_ADMIN} from "@/common/js/constants";
+import {getCurrentUser, getVulnID, hasRoles} from "@/common/js/utils";
+import {ROLE_ADMIN, VULN_ID, VULN_NAME} from "@/common/js/constants";
 
 /* eslint-disable */
 export default {
-  name: "SearchList",
+  name: "VulnList",
   props: {
     options: Object,
     vulnAccount: String

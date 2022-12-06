@@ -7,6 +7,7 @@ public enum ResourceTypeConstants {
     WORKSPACE,
     CLOUD_ACCOUNT,
     CLOUD_NATIVE,
+    CLOUD_NATIVE_CONFIG,
     RULE,
     RULE_TAG,
     RESOURCE,
@@ -15,6 +16,11 @@ public enum ResourceTypeConstants {
     QUOTA,
     PROXY,
     SERVER,
-    PACKAGE,
     IMAGE,
+    CODE,
+    SBOM,
+    SBOM_VERSION,
+    SYNC,
+    FILE_SYSTEM,
+    OSS
 }

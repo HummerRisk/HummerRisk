@@ -50,10 +50,16 @@
                 <property name="object" value="${condition}.name"/>
             </include>
         </if>
-        <if test='${condition}.packageName != null'>
-            and t.package_name
+        <if test='${condition}.status != null'>
+            and t.result_status
             <include refid="condition">
-                <property name="object" value="${condition}.packageName"/>
+                <property name="object" value="${condition}.status"/>
+            </include>
+        </if>
+        <if test='${condition}.imageUrl != null'>
+            and i.image_url
+            <include refid="condition">
+                <property name="object" value="${condition}.imageUrl"/>
             </include>
         </if>
         <if test='${condition}.ruleName != null'>
@@ -68,17 +74,6 @@
                 <property name="object" value="${condition}.severity"/>
             </include>
         </if>
-        <if test='${condition}.ruleTag != null and ${condition}.ruleTag.value != "all"'>
-            and #{${condition}.ruleTag.value}
-            <choose>
-                <when test='${condition}.ruleTag.operator == "in"'>
-                    in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
-                </when>
-                <when test='${condition}.ruleTag.operator == "not in"'>
-                    not in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
-                </when>
-            </choose>
-        </if>
         <if test="${condition}.creator != null">
             and user.id
             <include refid="condition">
@@ -91,12 +86,33 @@
                 <property name="object" value="${condition}.createTime"/>
             </include>
         </if>
+        <if test='${condition}.ruleTag != null and ${condition}.ruleTag.value != "all"'>
+            and #{${condition}.ruleTag.value}
+            <choose>
+                <when test='${condition}.ruleTag.operator == "in"'>
+                    in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
+                </when>
+                <when test='${condition}.ruleTag.operator == "not in"'>
+                    not in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
+                </when>
+            </choose>
+        </if>
+        <if test="${condition}.updateTime != null">
+            and t.update_time
+            <include refid="condition">
+                <property name="object" value="${condition}.updateTime"/>
+            </include>
+        </if>
     </sql>
 
-    <select id="resultListWithBLOBs" parameterType="com.hummerrisk.controller.request.image.ImageResultRequest"
-            resultType="com.hummerrisk.dto.ImageResultWithBLOBsDTO">
+    <select id="resultListWithBLOBs" resultType="com.hummerrisk.dto.ImageResultWithBLOBsDTO">
         SELECT
         t.*,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'HIGH') as high,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'MEDIUM') as medium,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'LOW') as low,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown,
         t1.tag_key as tagKey,
         t2.tag_name as tagName,
         u.name as user,
@@ -111,25 +127,37 @@
         left join image i on t.image_id = i.id
 
         <where>
-            <if test="id != null">
-                AND t.id = #{id}
-            </if>
-            <if test="name != null">
-                AND t.name like CONCAT('%',#{name},'%')
-            </if>
-            <if test="combine != null">
+            <if test="request.combine != null">
                 <include refid="combine">
-                    <property name="condition" value="combine"/>
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
                 </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.imageUrl != null and request.imageUrl != ''">
+                and LOWER(t.image_url) like CONCAT('%', LOWER(#{request.imageUrl}),'%')
+            </if>
+            <if test="request.sbomVersionId != null and request.sbomVersionId != ''">
+                and t.sbom_version_id = #{request.sbomVersionId}
             </if>
         </where>
         ORDER BY t.update_time desc
     </select>
 
-    <select id="resultList" parameterType="com.hummerrisk.controller.request.image.ImageResultRequest"
-            resultType="com.hummerrisk.dto.ImageResultDTO">
+    <select id="resultList" resultType="com.hummerrisk.dto.ImageResultDTO">
         SELECT
         t.*,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'HIGH') as high,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'MEDIUM') as medium,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'LOW') as low,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown,
         t1.tag_key as tagKey,
         t2.tag_name as tagName,
         u.name as user,
@@ -144,60 +172,96 @@
         left join image i on t.image_id = i.id
 
         <where>
-            <if test="id != null">
-                AND t.id = #{id}
-            </if>
-            <if test="name != null">
-                AND t.name like CONCAT('%',#{name},'%')
-            </if>
-            <if test="combine != null">
+            <if test="request.combine != null">
                 <include refid="combine">
-                    <property name="condition" value="combine"/>
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
                 </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.imageUrl != null and request.imageUrl != ''">
+                and LOWER(t.image_url) like CONCAT('%', LOWER(#{request.imageUrl}),'%')
+            </if>
+            <if test="request.sbomVersionId != null and request.sbomVersionId != ''">
+                and t.sbom_version_id = #{request.sbomVersionId}
             </if>
         </where>
         ORDER BY t.update_time desc
     </select>
 
-    <resultMap id="HistoryImageReportDTOMap" type="com.hummerrisk.dto.HistoryImageReportDTO" extends="com.hummerrisk.base.mapper.HistoryImageTaskMapper.BaseResultMap">
-        <collection property="imageGrypeTableList" ofType="com.hummerrisk.base.domain.ImageGrypeTable" javaType="list" select="getImageGrypeTableList" column="id">
-        </collection>
-        <collection property="imageGrypeJsonList" ofType="com.hummerrisk.base.domain.ImageGrypeJson" javaType="list" select="getImageGrypeJsonList" column="id">
-        </collection>
-        <collection property="imageSyftTableList" ofType="com.hummerrisk.base.domain.ImageSyftTable" javaType="list" select="getImageSyftTableList" column="id">
-        </collection>
-        <collection property="imageSyftJsonList" ofType="com.hummerrisk.base.domain.ImageSyftJson" javaType="list" select="getImageSyftJsonList" column="id">
+    <select id="getImageResult" parameterType="java.lang.String" resultType="com.hummerrisk.dto.ImageResultDTO">
+        SELECT
+        t.*,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'HIGH') as high,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'MEDIUM') as medium,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'LOW') as low,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown,
+        t1.tag_key as tagKey,
+        t2.tag_name as tagName,
+        u.name as user,
+        i.type as type,
+        i.image_url as imageUrl,
+        i.image_tag as imageTag,
+        i.path as path
+        FROM image_result t
+        left join rule_tag_mapping t1 on t1.rule_id = t.rule_id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+        left join user u on t.apply_user = u.id
+        left join image i on t.image_id = i.id
+
+        <where>
+            <if test="resultId != null">
+                AND t.id = #{resultId}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="HistoryImageReportDTOMap" type="com.hummerrisk.dto.HistoryImageReportDTO" extends="com.hummerrisk.base.mapper.HistoryImageResultMapper.BaseResultMap">
+        <collection property="imageResultItemWithBLOBsList" ofType="com.hummerrisk.base.domain.ImageResultItemWithBLOBs" javaType="list" select="getimageResultItemWithBLOBsList" column="id">
         </collection>
     </resultMap>
 
     <select id="getImageResultDto" resultMap="HistoryImageReportDTOMap" parameterType="java.lang.String">
         SELECT t.*
-        FROM history_image_task t
+        FROM history_image_result t
         WHERE t.id = #{id}
     </select>
 
-    <select id="getImageGrypeTableList" resultType="com.hummerrisk.base.domain.ImageGrypeTable" parameterType="java.lang.String">
+    <select id="getimageResultItemWithBLOBsList" resultType="com.hummerrisk.base.domain.ImageResultItemWithBLOBs" parameterType="java.lang.String">
         SELECT t.*
-        FROM image_grype_table t
+        FROM image_result_item t
         WHERE t.result_id = #{id}
     </select>
 
-    <select id="getImageGrypeJsonList" resultType="com.hummerrisk.base.domain.ImageGrypeJsonWithBLOBs" parameterType="java.lang.String">
-        SELECT t.*
-        FROM image_grype_json t
-        WHERE t.result_id = #{id}
-    </select>
+    <select id="history" parameterType="java.util.Map" resultType="com.hummerrisk.dto.HistoryImageResultDTO">
+        SELECT
+        t.*,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'HIGH') as high,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'MEDIUM') as medium,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'LOW') as low,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown
+        FROM history_image_result t
 
-    <select id="getImageSyftTableList" resultType="com.hummerrisk.base.domain.ImageSyftTable" parameterType="java.lang.String">
-        SELECT t.*
-        FROM image_syft_table t
-        WHERE t.result_id = #{id}
-    </select>
-
-    <select id="getImageSyftJsonList" resultType="com.hummerrisk.base.domain.ImageSyftJsonWithBLOBs" parameterType="java.lang.String">
-        SELECT t.*
-        FROM image_syft_json t
-        WHERE t.result_id = #{id}
+        <where>
+            <if test="id != null">
+                AND t.id = #{id}
+            </if>
+            <if test="imageId != null">
+                AND t.image_id = #{imageId}
+            </if>
+            <if test="name != null">
+                AND LOWER(t.name) like CONCAT('%',#{name},'%')
+            </if>
+        </where>
+        ORDER BY t.update_time desc
     </select>
 
 </mapper>

@@ -1,52 +1,23 @@
 package com.hummerrisk.dto;
 
 
-import com.hummerrisk.base.domain.*;
+import com.hummerrisk.base.domain.HistoryImageResult;
+import com.hummerrisk.base.domain.ImageResultItemWithBLOBs;
 
 import java.util.List;
 
 /**
  * @author harris
  */
-public class HistoryImageReportDTO extends HistoryImageTask {
+public class HistoryImageReportDTO extends HistoryImageResult {
 
-    private List<ImageGrypeTable> imageGrypeTableList;//镜像检测grype结果table
+    private List<ImageResultItemWithBLOBs> imageResultItemWithBLOBsList;//镜像检测结果
 
-    private List<ImageGrypeJsonWithBLOBs> imageGrypeJsonList;//镜像检测grype结果json
-
-    private List<ImageSyftTable> imageSyftTableList;//镜像检测syft sbom结果table
-
-    private List<ImageSyftJsonWithBLOBs> imageSyftJsonList;//镜像检测syft sbom结果json
-
-    public List<ImageGrypeTable> getImageGrypeTableList() {
-        return imageGrypeTableList;
+    public List<ImageResultItemWithBLOBs> getImageResultItemWithBLOBsList() {
+        return imageResultItemWithBLOBsList;
     }
 
-    public void setImageGrypeTableList(List<ImageGrypeTable> imageGrypeTableList) {
-        this.imageGrypeTableList = imageGrypeTableList;
-    }
-
-    public List<ImageSyftTable> getImageSyftTableList() {
-        return imageSyftTableList;
-    }
-
-    public void setImageSyftTableList(List<ImageSyftTable> imageSyftTableList) {
-        this.imageSyftTableList = imageSyftTableList;
-    }
-
-    public List<ImageGrypeJsonWithBLOBs> getImageGrypeJsonList() {
-        return imageGrypeJsonList;
-    }
-
-    public void setImageGrypeJsonList(List<ImageGrypeJsonWithBLOBs> imageGrypeJsonList) {
-        this.imageGrypeJsonList = imageGrypeJsonList;
-    }
-
-    public List<ImageSyftJsonWithBLOBs> getImageSyftJsonList() {
-        return imageSyftJsonList;
-    }
-
-    public void setImageSyftJsonList(List<ImageSyftJsonWithBLOBs> imageSyftJsonList) {
-        this.imageSyftJsonList = imageSyftJsonList;
+    public void setImageResultItemWithBLOBsList(List<ImageResultItemWithBLOBs> imageResultItemWithBLOBsList) {
+        this.imageResultItemWithBLOBsList = imageResultItemWithBLOBsList;
     }
 }

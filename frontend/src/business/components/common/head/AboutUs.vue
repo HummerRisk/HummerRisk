@@ -3,111 +3,20 @@
     :title="$t('commons.about_us')"
     :visible.sync="dialogVisible" class="about-us">
 
-    <el-row>
-      <el-col class="version">
-        <el-link :underline="false" :href="websiteUrl" target="_blank">
-          <img class="logo github-icon" src="../../../../assets/img/logo/favicon-彩色.png"/>
+    <el-descriptions class="margin-top" title="" :column="1" size="medium" border>
+      <el-descriptions-item v-for="item in items" :key="item.url">
+        <template slot="label">
+          <img class="logo github-icon" :src="item.img"/>
+        </template>
+        <el-link class="url" :href="item.url" target="_blank">
+          <span>{{ item.url }}</span>
         </el-link>
-        <el-link class="url" :href="websiteUrl" target="_blank">
-          <span>{{ websiteUrl }}</span>
-        </el-link>
-      </el-col>
-    </el-row>
+      </el-descriptions-item>
+    </el-descriptions>
 
     <el-row>
       <el-col class="version">
-        <el-link :underline="false" :href="githubUrl" target="_blank">
-          <font-awesome-icon class="github-icon" :icon="['fab', 'github-square']"/>
-        </el-link>
-        <el-link class="url" :href="githubUrl" target="_blank">
-          <span>{{ githubUrl }}</span>
-        </el-link>
-      </el-col>
-    </el-row>
-
-    <el-row>
-      <el-col class="version">
-        <el-link :underline="false" href="https://docs.hummerrisk.com/question/rule" target="_blank">
-          <img class="logo github-icon" src="../../../../assets/img/engine/custodian.png"/>
-        </el-link>
-        <el-link class="url" href="https://docs.hummerrisk.com/question/rule" target="_blank">
-          <span>{{ 'https://docs.hummerrisk.com/question/rule' }}</span>
-        </el-link>
-      </el-col>
-    </el-row>
-
-    <el-row>
-      <el-col class="version">
-        <el-link :underline="false" href="https://docs.hummerrisk.com/question/prowler" target="_blank">
-          <img class="logo github-icon" src="../../../../assets/img/engine/prowler.png"/>
-        </el-link>
-        <el-link class="url" href="https://docs.hummerrisk.com/question/prowler" target="_blank">
-          <span>{{ 'https://docs.hummerrisk.com/question/prowler' }}</span>
-        </el-link>
-      </el-col>
-    </el-row>
-
-    <el-row>
-      <el-col class="version">
-        <el-link :underline="false" href="https://docs.hummerrisk.com/question/nuclei" target="_blank">
-          <img class="logo github-icon" src="../../../../assets/img/engine/nuclei.png"/>
-        </el-link>
-        <el-link class="url" href="https://docs.hummerrisk.com/question/nuclei" target="_blank">
-          <span>{{ 'https://docs.hummerrisk.com/question/nuclei' }}</span>
-        </el-link>
-      </el-col>
-    </el-row>
-
-
-    <el-row>
-      <el-col class="version">
-        <el-link :underline="false" href="https://docs.hummerrisk.com/question/xray" target="_blank">
-          <img class="logo github-icon" src="../../../../assets/img/engine/xray.png"/>
-        </el-link>
-        <el-link class="url" href="https://docs.hummerrisk.com/question/xray" target="_blank">
-          <span>{{ 'https://docs.hummerrisk.com/question/xray' }}</span>
-        </el-link>
-      </el-col>
-    </el-row>
-
-
-    <el-row>
-      <el-col class="version">
-        <el-link :underline="false" href="https://docs.hummerrisk.com/question/grype" target="_blank">
-          <img class="logo github-icon" src="../../../../assets/img/engine/grype.png"/>
-        </el-link>
-        <el-link class="url" href="https://docs.hummerrisk.com/question/grype" target="_blank">
-          <span>{{ 'https://docs.hummerrisk.com/question/grype' }}</span>
-        </el-link>
-      </el-col>
-    </el-row>
-
-
-    <el-row>
-      <el-col class="version">
-        <el-link :underline="false" href="https://docs.hummerrisk.com/question/syft" target="_blank">
-          <img class="logo github-icon" src="../../../../assets/img/engine/syft.png"/>
-        </el-link>
-        <el-link class="url" href="https://docs.hummerrisk.com/question/syft" target="_blank">
-          <span>{{ 'https://docs.hummerrisk.com/question/syft' }}</span>
-        </el-link>
-      </el-col>
-    </el-row>
-
-    <el-row>
-      <el-col class="version">
-        <el-link :underline="false" href="https://docs.hummerrisk.com/question/dependency" target="_blank">
-          <img class="logo github-icon" src="../../../../assets/img/engine/dependency.png"/>
-        </el-link>
-        <el-link class="url" href="https://docs.hummerrisk.com/question/dependency" target="_blank">
-          <span>{{ 'https://docs.hummerrisk.com/question/dependency' }}</span>
-        </el-link>
-      </el-col>
-    </el-row>
-
-    <el-row>
-      <el-col class="version">
-        <span><font-awesome-icon class="github-icon" :icon="['fas', 'code-branch']"/> {{ $t('commons.version') }}:</span> &nbsp;
+        <span><font-awesome-icon :icon="['fas', 'code-branch']"/> {{ $t('commons.version') }}:</span> &nbsp;
         <span>{{ version }}</span>
       </el-col>
     </el-row>
@@ -126,6 +35,15 @@
         githubUrl: 'https://github.com/HummerRisk/HummerRisk',
         websiteUrl: 'https://docs.hummerrisk.com',
         version: 'v1.0.0',
+        items: [
+          {img: require(`@/assets/img/about/docs.png`), url: 'https://docs.hummerrisk.com'},
+          {img: require(`@/assets/img/about/github.png`), url: 'https://github.com/HummerRisk/HummerRisk'},
+          {img: require(`@/assets/img/about/custodian.png`), url: 'https://docs.hummerrisk.com/question/rule'},
+          {img: require(`@/assets/img/about/prowler.png`), url: 'https://docs.hummerrisk.com/question/prowler'},
+          {img: require(`@/assets/img/about/nuclei.png`), url: 'https://docs.hummerrisk.com/question/nuclei'},
+          {img: require(`@/assets/img/about/xray.png`), url: 'https://docs.hummerrisk.com/question/xray'},
+          {img: require(`@/assets/img/about/trivy.png`), url: 'https://docs.hummerrisk.com/question/trivy'},
+        ],
       }
     },
     created() {
@@ -149,18 +67,22 @@
   .logo {
     height: 20px;
     line-height: 30px;
-    vertical-align: middle
+    vertical-align: middle;
   }
 
   .version {
     height: 30px;
     line-height: 30px;
-    margin-left: 5px;
+    margin: 15px 5px;
+    color: #215d9a;
   }
 
   .github-icon {
     font-size: 20px;
-    margin-left: 5px;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    text-align: center;
   }
 
   .el-row {
@@ -173,6 +95,10 @@
 
   .about-us >>> .el-dialog {
     width: 500px;
+  }
+
+  .margin-top >>> .el-descriptions-item__label {
+    text-align: center;
   }
 
 </style>

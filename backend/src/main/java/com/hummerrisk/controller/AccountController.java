@@ -2,6 +2,7 @@ package com.hummerrisk.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.hummerrisk.base.domain.Account;
 import com.hummerrisk.base.domain.AccountWithBLOBs;
 import com.hummerrisk.base.domain.RuleAccountParameter;
 import com.hummerrisk.commons.constants.CloudAccountConstants;
@@ -14,6 +15,7 @@ import com.hummerrisk.controller.request.account.UpdateCloudAccountRequest;
 import com.hummerrisk.dto.AccountDTO;
 import com.hummerrisk.dto.QuartzTaskDTO;
 import com.hummerrisk.dto.RuleDTO;
+import com.hummerrisk.dto.ValidateDTO;
 import com.hummerrisk.service.AccountService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -50,6 +52,13 @@ public class AccountController {
     }
 
     @I18n
+    @ApiOperation(value = "规则组获取云账号")
+    @GetMapping("listByGroup/{pluginId}")
+    public List<Account> listByGroup(@PathVariable String pluginId) {
+        return accountService.listByGroup(pluginId);
+    }
+
+    @I18n
     @ApiOperation(value = "所有漏洞检测")
     @GetMapping("vulnList")
     public List<AccountDTO> vulnList() {
@@ -78,20 +87,20 @@ public class AccountController {
 
     @ApiOperation(value = "批量校验云账号")
     @PostMapping("validate")
-    public Boolean validate(@RequestBody List<String> selectIds) {
+    public List<ValidateDTO> validate(@RequestBody List<String> selectIds) {
         return accountService.validate(selectIds);
     }
 
     @ApiOperation(value = "校验云账号")
     @PostMapping("validate/{id}")
-    public Boolean validate(@PathVariable String id) {
+    public ValidateDTO validate(@PathVariable String id) {
         return accountService.validate(id);
     }
 
     @I18n
     @ApiOperation(value = "添加云账号")
     @PostMapping("add")
-    public AccountWithBLOBs addAccount(@RequestBody CreateCloudAccountRequest request) {
+    public AccountWithBLOBs addAccount(@RequestBody CreateCloudAccountRequest request) throws Exception {
         return accountService.addAccount(request);
     }
 

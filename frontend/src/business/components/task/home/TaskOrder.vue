@@ -55,7 +55,7 @@
                 <el-link type="primary" :underline="false" class="md-primary text-click"  @click="showTaskDetail(scope.row)">
                   <span>
                     <img v-if="scope.row.icon" :src="require(`@/assets/img/platform/${scope.row.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                     &nbsp;&nbsp; {{ $t(scope.row.accountName) }}
+                     &nbsp;&nbsp; {{ scope.row.accountName }}
                   </span>
                 </el-link>
               </template>
@@ -121,10 +121,7 @@
                     <span> {{ detailForm.tagName }}</span>
                   </el-form-item>
                   <el-form-item :label="$t('rule.severity')">
-                    <span v-if="detailForm.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
-                    <span v-else-if="detailForm.severity == 'MediumRisk'" style="color: #fe9636;"> {{ $t('rule.MediumRisk') }}</span>
-                    <span v-else-if="detailForm.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
-                    <span v-else> N/A</span>
+                    <severity-type :row="detailForm"></severity-type>
                   </el-form-item>
                   <el-form-item :label="$t('account.create_time')">
                     <span>{{ detailForm.lastModified | timestampFormatDate }}</span>
@@ -221,10 +218,10 @@ import MainContainer from "../../common/components/MainContainer";
 import Container from "../../common/components/Container";
 import TableHeader from "../../common/components/TableHeader";
 import TableOperator from "../../common/components/TableOperator";
-import DialogFooter from "../head/DialogFooter";
+import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter} from "@/common/js/utils";
-import RuleType from "./RuleType";
-import SeverityType from "./SeverityType";
+import SeverityType from "@/business/components/common/components/SeverityType";
+import {severityOptions} from "@/common/js/constants";
 
 /* eslint-disable */
   export default {
@@ -235,7 +232,6 @@ import SeverityType from "./SeverityType";
       TableHeader,
       TableOperator,
       DialogFooter,
-      RuleType,
       SeverityType,
     },
     data() {
@@ -338,11 +334,7 @@ import SeverityType from "./SeverityType";
         });
       },
       severityOptionsFnc () {
-        this.severityOptions = [
-          {key: '低风险', value: "LowRisk"},
-          {key: '中风险', value: "MediumRisk"},
-          {key: '高风险', value: "HighRisk"}
-        ];
+        this.severityOptions = severityOptions;
       },
       filter(filters) {
         _filter(filters, this.condition);
@@ -390,8 +382,6 @@ import SeverityType from "./SeverityType";
                 this.detailForm = data.serverRuleDTO;
               } else if(item.accountType === 'imageAccount') {
                 this.detailForm = data.imageRuleDTO;
-              } else if(item.accountType === 'packageAccount') {
-                this.detailForm = data.packageRuleDTO;
               }
               this.detailVisible = true;
             }

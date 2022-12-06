@@ -1,6 +1,5 @@
 <template>
-  <container>
-
+  <container class="header-menu">
     <aside-container>
       <current-user/>
       <el-divider/>
@@ -44,5 +43,9 @@ export default {
     font-weight: 500;
   }
 
+  .header-menu >>> .main-container {
+    padding: 0;
+    margin: 0 0 0 10px;
+  }
 </style>
 

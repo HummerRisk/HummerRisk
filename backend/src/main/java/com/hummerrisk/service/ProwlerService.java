@@ -72,7 +72,7 @@ public class ProwlerService {
 
         String script = quartzTaskDTO.getScript();
         JSONArray jsonArray = JSON.parseArray(quartzTaskDTO.getParameter());
-        String groupName = "group1";
+        String groupName = "check11";
         for (Object o : jsonArray) {
             JSONObject jsonObject = (JSONObject) o;
             groupName = jsonObject.getString("defaultValue");
@@ -151,7 +151,7 @@ public class ProwlerService {
             }
         }
         //向首页活动添加操作信息
-        OperationLogService.log(SessionUtils.getUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.CREATE, "i18n_create_scan_task");
+        OperationLogService.log(SessionUtils.getUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.SCAN, "i18n_create_scan_task");
         return cloudTask;
     }
 
@@ -233,7 +233,7 @@ public class ProwlerService {
         LogUtil.info("createResource for taskItem: {}", toJSONString(taskItem));
         String operation = "i18n_create_resource";
         String resultStr = "";
-        String fileName = cloudTask.getResourceTypes().replace("[", "").replace("]", "");
+        String fileName = cloudTask.getResourceTypes() == null ? "" : cloudTask.getResourceTypes().replace("[", "").replace("]", "");
         try {
             CloudTaskItemResourceExample example = new CloudTaskItemResourceExample();
             example.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andTaskItemIdEqualTo(taskItem.getId());
@@ -244,7 +244,9 @@ public class ProwlerService {
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
             String command = PlatformUtils.fixedCommand(CommandEnum.prowler.getCommand(), CommandEnum.run.getCommand(), dirPath, fileName, map);
-            LogUtil.info(cloudTask.getId() + " {}[command]: " + command);
+            LogUtil.info(cloudTask.getId() + " {prowler}[command]: " + command);
+            taskItem.setCommand(command);
+            cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItem);
             resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
             if (LogUtil.getLogger().isDebugEnabled()) {
                 LogUtil.getLogger().debug("resource created: {}", resultStr);
@@ -340,12 +342,10 @@ public class ProwlerService {
                     read.close();
 
                 } else {
-                    LogUtil.error(Translator.get("i18n_not_found_file"));
                     throw new Exception(Translator.get("i18n_not_found_file"));
                 }
             } catch (Exception error) {
-                LogUtil.error(error.getMessage(), Translator.get("i18n_read_file_error"));
-                throw new Exception(error.getMessage());
+                throw new Exception(Translator.get("i18n_read_file_error") + error.getMessage());
             }
 
             //资源、规则、申请人关联表
@@ -370,7 +370,6 @@ public class ProwlerService {
             cloudTask.setReturnSum((long) returnSum);
             cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
 
@@ -423,7 +422,6 @@ public class ProwlerService {
             resourceItemMapper.insertSelective(resourceItem);
 
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             throw e;
         }
     }

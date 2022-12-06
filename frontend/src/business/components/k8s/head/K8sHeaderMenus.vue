@@ -4,12 +4,20 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
+          <el-menu-item :index="'/k8s/overview'">
+            {{ $t("k8s.overview") }}
+          </el-menu-item>
+
           <el-menu-item :index="'/k8s/k8s'">
             {{ $t("k8s.k8s_setting") }}
           </el-menu-item>
 
           <el-menu-item :index="'/k8s/result'">
             {{ $t("k8s.result") }}
+          </el-menu-item>
+
+          <el-menu-item :index="'/k8s/history'">
+            {{ $t("k8s.history") }}
           </el-menu-item>
 
         </el-menu>

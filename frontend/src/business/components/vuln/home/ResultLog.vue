@@ -17,13 +17,13 @@
                        &nbsp;&nbsp; {{ scope.row.rule.pluginName }} | {{ scope.row.cloudTaskItem.regionName }}
                     </span>
                     <span class="grid-content-status-span" v-if="scope.row.cloudTaskItem.status === 'UNCHECKED'" style="color: #919398">
-                      <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                      <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                     </span>
                     <span class="grid-content-status-span" v-else-if="scope.row.cloudTaskItem.status === 'APPROVED'" style="color: #579df8">
-                      <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                      <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                     </span>
                     <span class="grid-content-status-span" v-else-if="scope.row.cloudTaskItem.status === 'PROCESSING'" style="color: #579df8">
-                      <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                      <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                     </span>
                     <span class="grid-content-status-span" v-else-if="scope.row.cloudTaskItem.status === 'FINISHED'" style="color: #7ebf50">
                       <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}

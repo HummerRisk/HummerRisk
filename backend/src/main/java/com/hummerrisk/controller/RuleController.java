@@ -6,9 +6,7 @@ import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
-import com.hummerrisk.controller.request.rule.CreateRuleRequest;
-import com.hummerrisk.controller.request.rule.RuleGroupRequest;
-import com.hummerrisk.controller.request.rule.RuleTagRequest;
+import com.hummerrisk.controller.request.rule.*;
 import com.hummerrisk.dto.GroupDTO;
 import com.hummerrisk.dto.RuleDTO;
 import com.hummerrisk.dto.RuleGroupDTO;
@@ -62,6 +60,27 @@ public class RuleController {
     public Pager<List<RuleGroupDTO>> ruleGroupList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleGroupRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, ruleService.ruleGroupList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "所有规则组")
+    @GetMapping(value = "allRuleGroups")
+    public List<RuleGroupDTO> allRuleGroups() {
+        return ruleService.ruleGroupList(new RuleGroupRequest());
+    }
+
+    @I18n
+    @ApiOperation(value = "所有云检测规则组")
+    @GetMapping(value = "allCloudRuleGroups")
+    public List<RuleGroupDTO> allCloudRuleGroups() {
+        return ruleService.allCloudRuleGroups(new RuleGroupRequest());
+    }
+
+    @I18n
+    @ApiOperation(value = "所有漏洞检测规则组")
+    @GetMapping(value = "allVulnRuleGroups")
+    public List<RuleGroupDTO> allVulnRuleGroups() {
+        return ruleService.allVulnRuleGroups(new RuleGroupRequest());
     }
 
     @I18n
@@ -138,6 +157,18 @@ public class RuleController {
         return ruleService.getAllResourceTypes();
     }
 
+    @ApiOperation(value = "云检测规则类型")
+    @GetMapping(value = "all/cloudResourceTypes")
+    public List<Map<String, String>> cloudResourceTypes() {
+        return ruleService.cloudResourceTypes();
+    }
+
+    @ApiOperation(value = "漏洞检测规则类型")
+    @GetMapping(value = "all/vulnResourceTypes")
+    public List<Map<String, String>> vulnResourceTypes() {
+        return ruleService.vulnResourceTypes();
+    }
+
     @I18n
     @ApiOperation(value = "规则组")
     @GetMapping(value = "ruleGroups/{pluginId}")
@@ -148,16 +179,16 @@ public class RuleController {
     @I18n
     @ApiOperation(value = "规则条例")
     @PostMapping(value = "ruleInspectionReports/{goPage}/{pageSize}")
-    public Pager<List<RuleInspectionReport>> getRuleInspectionReports(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleInspectionReport ruleInspectionReport) {
+    public Pager<List<RuleInspectionReport>> getRuleInspectionReports(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleInspectionReportRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, ruleService.getRuleInspectionReport(ruleInspectionReport));
+        return PageUtils.setPageInfo(page, ruleService.getRuleInspectionReportList(request));
     }
 
     @I18n
     @ApiIgnore
     @GetMapping(value = "all/ruleInspectionReport")
     public List<RuleInspectionReport> getRuleInspectionReport() {
-        return ruleService.getRuleInspectionReport(new RuleInspectionReport());
+        return ruleService.getRuleInspectionReportList(new RuleInspectionReportRequest());
     }
 
     @ApiIgnore
@@ -184,10 +215,10 @@ public class RuleController {
         ruleService.reScan(taskId, accountId);
     }
 
-    @ApiOperation(value = "批量检测")
+    @ApiOperation(value = "执行检测")
     @PostMapping("scan")
-    public void scan(@RequestPart(value = "scanCheckedGroups") List<String> scanCheckedGroups) throws Exception {
-        ruleService.scan(scanCheckedGroups);
+    public void scan(@RequestBody ScanGroupRequest request) throws Exception {
+        ruleService.scan(request);
     }
 
     @I18n
@@ -215,5 +246,40 @@ public class RuleController {
     @PostMapping("groups")
     public List<GroupDTO> groups(@RequestPart(value = "selectIds") List<String> ids) {
         return ruleService.groups(ids);
+    }
+
+    @I18n
+    @ApiIgnore
+    @GetMapping("groupsByAccountId/{pluginId}")
+    public List<RuleGroup> groupsByAccountId(@PathVariable String pluginId) {
+        return ruleService.groupsByAccountId(pluginId);
+    }
+
+    @I18n
+    @ApiOperation(value = "所有已绑定规则组的规则")
+    @GetMapping("allBindList/{id}")
+    public List<Rule> allBindList(@PathVariable String id) {
+        return ruleService.allBindList(id);
+    }
+
+    @I18n
+    @ApiOperation(value = "所有未绑定规则组的规则")
+    @GetMapping("unBindList/{id}")
+    public List<Rule> unBindList(@PathVariable Integer id) {
+        return ruleService.unBindList(id);
+    }
+
+    @I18n
+    @ApiOperation(value = "规则组绑定规则")
+    @PostMapping(value = "bindRule")
+    public void bindRule(@RequestBody BindRuleRequest request) throws Exception {
+        ruleService.bindRule(request);
+    }
+
+    @I18n
+    @ApiOperation(value = "规则组检测云账号")
+    @GetMapping("scanByGroup/{groupId}/{accountId}")
+    public void scanByGroup(@PathVariable String groupId, @PathVariable String accountId) {
+        ruleService.scanByGroup(groupId, accountId);
     }
 }

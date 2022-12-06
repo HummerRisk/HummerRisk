@@ -73,7 +73,7 @@
             </include>
         </if>
         <if test="${condition}.pluginId != null">
-            and plugin.id
+            and p1.id
             <include refid="condition">
                 <property name="object" value="${condition}.pluginId"/>
             </include>
@@ -126,12 +126,15 @@
             </if>
 
             <if test="request.name != null and request.name != ''">
-                and t.name like CONCAT('%', #{request.name},'%')
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.userName != null and request.userName != ''">
+                and LOWER(user.name) like CONCAT('%', LOWER(#{request.userName}),'%')
             </if>
             <if test="request.status != null and request.status != ''">
                 and t.status = #{request.status}
             </if>
-            AND p1.type = 'cloud' OR p1.id = 'hummer-k8s-plugin'
+            AND p1.type = 'cloud'
         </where>
         order by t.update_time desc
     </select>
@@ -158,7 +161,10 @@
             </if>
 
             <if test="request.name != null and request.name != ''">
-                and t.name like CONCAT('%', #{request.name},'%')
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.userName != null and request.userName != ''">
+                and LOWER(user.name) like CONCAT('%', LOWER(#{request.userName}),'%')
             </if>
             <if test="request.status != null and request.status != ''">
                 and t.status = #{request.status}
@@ -189,10 +195,13 @@
             t.scan_type as scan_type,
             t1.regions
         FROM rule t
+        <if test="accountId != null">
+        left join cloud_account account on account.plugin_id = t.plugin_id
+        </if>
             LEFT JOIN rule_account_parameter t1 ON t.id = t1.rule_id
         <where>
             <if test="accountId != null">
-                AND t1.account_id = #{accountId}
+                AND account.id = #{accountId}
             </if>
             <if test="pluginId != null">
                 AND t.plugin_id = #{pluginId}
@@ -221,7 +230,7 @@
             <if test="accountId != null">
                 AND t4.account_id = #{accountId}
             </if>
-            and p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
+            and p.type = 'cloud'
         </where>
         GROUP BY
             t.id
@@ -244,7 +253,7 @@
             JOIN resource_item t5 ON t4.id = t5.resource_id
             LEFT JOIN plugin p on t2.plugin_id = p.id
             WHERE t1.report_id = t.id
-            AND p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
+            AND p.type = 'cloud'
             <if test="accountId != null">
                 AND t4.account_id = #{accountId}
             </if>
@@ -261,7 +270,7 @@
             <if test="accountId != null">
                 AND t4.account_id = #{accountId}
             </if>
-            AND p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
+            AND p.type = 'cloud'
         </where>
         GROUP BY
             t.id
@@ -288,7 +297,7 @@
             <if test="accountId != null">
                 AND t4.account_id = #{accountId}
             </if>
-            AND p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
+            AND p.type = 'cloud'
         </where>
         GROUP BY
             t.tag_key
@@ -314,7 +323,7 @@
             <if test="accountId != null">
                 AND t1.account_id = #{accountId}
             </if>
-            AND p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
+            AND p.type = 'cloud'
         </where>
         GROUP BY
             t1.region_id, t1.region_name, t1.account_label, t1.account_url
@@ -344,7 +353,7 @@
                 AND t.account_id = #{accountId}
             </if>
             AND t4.task_name IS NOT NULL
-            AND p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
+            AND p.type = 'cloud'
         </where>
         ORDER BY t.create_time DESC
     </select>
@@ -359,7 +368,7 @@
         sg.id as groupItemId,
         user.name as user
         from cloud_account as t
-        left join plugin on t.plugin_id = plugin.id
+        left join plugin p1 on t.plugin_id = p1.id
         left join user on t.creator = user.id
         left join server_group_item sg on sg.server_id = t.id
         <where>
@@ -410,7 +419,7 @@
             <if test="id != null">
                 AND t.id = #{id}
             </if>
-            AND p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
+            AND p.type = 'cloud'
         </where>
         ORDER BY t5.create_time DESC
     </select>
@@ -442,7 +451,7 @@
             <if test="pluginName != null">
                 AND t5.plugin_name = #{pluginName}
             </if>
-            AND p.type = 'cloud' or p.id = 'hummer-k8s-plugin'
+            AND p.type = 'cloud'
         </where>
         ORDER BY t5.create_time DESC
     </select>

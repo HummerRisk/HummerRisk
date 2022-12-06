@@ -44,9 +44,9 @@
       </el-card>
       <el-card class="table-card" v-loading="result.loading">
         <template v-slot:header>
-          <span class="title">{{ $t('dashboard.package_statistics') }}</span>
+          <span class="title">{{ $t('dashboard.k8s_statistics') }}</span>
         </template>
-        <package-chart/>
+        <cloud-native-chart/>
       </el-card>
     </el-col>
   </container>
@@ -56,8 +56,8 @@
 import Container from "../.././common/components/Container";
 import CloudChart from "@/business/components/dashboard/head/CloudChart";
 import VulnChart from "@/business/components/dashboard/head/VulnChart";
-import PackageChart from "@/business/components/dashboard/head/PackageChart";
 import ServerChart from "@/business/components/dashboard/head/ServerChart";
+import CloudNativeChart from "@/business/components/dashboard/head/CloudNativeChart";
 
 /* eslint-disable */
 export default {
@@ -65,8 +65,8 @@ export default {
     Container,
     CloudChart,
     VulnChart,
-    PackageChart,
     ServerChart,
+    CloudNativeChart,
   },
   data() {
     return {

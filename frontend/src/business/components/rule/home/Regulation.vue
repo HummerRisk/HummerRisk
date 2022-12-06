@@ -2,30 +2,37 @@
     <main-container>
       <el-card class="table-card" v-loading="result.loading">
         <template v-slot:header>
-          <table-header :condition.sync="condition"
-                        @search="search"
-                        :title="$t('resource.regulation_list')"/>
+          <table-header :condition.sync="condition" @search="search"
+                        :title="$t('resource.regulation_list')"
+                        :items="items" :columnNames="columnNames"
+                        :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                        @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
         </template>
 
-        <el-table :border="true" :stripe="true" :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                  @filter-change="filter" @select-all="select" @select="select">
-          <el-table-column type="index" min-width="5%"/>
-          <el-table-column prop="itemSortFirstLevel" :label="$t('resource.security_level')" min-width="13%" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="itemSortSecondLevel" :label="$t('resource.control_point')" min-width="12%" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="project" :label="$t('resource.basic_requirements_for_grade_protection')" min-width="50%" show-overflow-tooltip></el-table-column>
-          <el-table-column v-slot:default="scope" :label="$t('resource.suggestions_for_improvement')" min-width="10%">
+        <hide-table
+          :table-data="tableData"
+          @sort-change="sort"
+          @filter-change="filter"
+          @select-all="select"
+          @select="select"
+        >
+          <el-table-column type="index" min-width="40"/>
+          <el-table-column prop="itemSortFirstLevel" v-if="checkedColumnNames.includes('itemSortFirstLevel')" :label="$t('resource.security_level')" min-width="140" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="itemSortSecondLevel" v-if="checkedColumnNames.includes('itemSortSecondLevel')" :label="$t('resource.control_point')" min-width="120" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="project" v-if="checkedColumnNames.includes('project')" :label="$t('resource.basic_requirements_for_grade_protection')" min-width="300" show-overflow-tooltip></el-table-column>
+          <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('improvement')" :label="$t('resource.suggestions_for_improvement')" min-width="100">
             <el-tooltip class="item" effect="dark" :content="scope.row.improvement" placement="top">
               <span style="color: #0066ac;">
                 {{ $t('resource.suggestions_for_improvement') }} <i class="el-icon-question"></i>
               </span>
             </el-tooltip>
           </el-table-column>
-          <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
+          <el-table-column min-width="90" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
           </el-table-column>
-        </el-table>
+        </hide-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
 
@@ -97,12 +104,42 @@
 import TableOperators from "../../common/components/TableOperators";
 import MainContainer from "../../common/components/MainContainer";
 import Container from "../../common/components/Container";
-import TableHeader from "@/business/components/resource/head/ResourceTableHeader";
+import TableHeader from "@/business/components/common/components/TableHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
-import RuleType from "./RuleType";
+import SeverityType from "@/business/components/common/components/SeverityType";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+import {
+  FS_CONFIGS,
+  RULE_INSPECTION_REPORT_CONFIGS
+} from "@/business/components/common/components/search/search-components";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'resource.security_level',
+    props: 'itemSortFirstLevel',
+    disabled: false
+  },
+  {
+    label: 'resource.control_point',
+    props: 'itemSortSecondLevel',
+    disabled: false
+  },
+  {
+    label: 'resource.basic_requirements_for_grade_protection',
+    props: 'project',
+    disabled: false
+  },
+  {
+    label: 'resource.suggestions_for_improvement',
+    props: 'improvement',
+    disabled: false
+  },
+];
+
 /* eslint-disable */
   export default {
     components: {
@@ -113,12 +150,14 @@ import RuleType from "./RuleType";
       TablePagination,
       TableOperator,
       DialogFooter,
-      RuleType
+      SeverityType,
+      HideTable,
     },
     data() {
       return {
         result: {},
         condition: {
+          components: RULE_INSPECTION_REPORT_CONFIGS
         },
         tableData: [],
         ruleForm: [],
@@ -147,6 +186,25 @@ import RuleType from "./RuleType";
         ruleListPageSize: 10,
         ruleListTotal: 0,
         itemId: "",
+        checkedColumnNames: columnOptions.map((ele) => ele.props),
+        columnNames: columnOptions,
+        //名称搜索
+        items: [
+          {
+            name: 'resource.security_level',
+            id: 'itemSortFirstLevel',
+          },
+          {
+            name: 'resource.control_point',
+            id: 'itemSortSecondLevel',
+          },
+          {
+            name: 'resource.basic_requirements_for_grade_protection',
+            id: 'project',
+          },
+        ],
+        checkAll: true,
+        isIndeterminate: false,
       }
     },
 
@@ -155,6 +213,17 @@ import RuleType from "./RuleType";
     },
 
     methods: {
+      handleCheckedColumnNamesChange(value) {
+        const checkedCount = value.length;
+        this.checkAll = checkedCount === this.columnNames.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+        this.checkedColumnNames = value;
+      },
+      handleCheckAllChange(val) {
+        this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+        this.isIndeterminate = false;
+        this.checkAll = val;
+      },
       handleList(item) {
         this.ruleListPage = 1;
         this.ruleListPageSize = 10;
@@ -276,4 +345,10 @@ import RuleType from "./RuleType";
     width: 60%;
   }
   /deep/ :focus{outline:0;}
+  .table-card >>> .search {
+    width: 450px !important;
+  }
+  .table-card >>> .search .el-input {
+    width: 140px !important;
+  }
 </style>

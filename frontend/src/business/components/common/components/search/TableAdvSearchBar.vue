@@ -1,18 +1,63 @@
 <template>
   <span class="adv-search-bar">
-    <el-link type="primary" @click="open">{{ $t('commons.adv_search.title') }}</el-link>
-    <el-dialog :title="$t('commons.adv_search.combine')" :visible.sync="visible" custom-class="adv-dialog"
+    <el-button v-if="showList" icon="el-icon-more" size="small" @click="more">
+      <span v-if="showOpen">{{ $t('commons.show_more') }}</span>
+    </el-button>
+    <el-button v-if="showList" icon="el-icon-menu" size="small" @click="menu">
+      <span v-if="showOpen">{{ $t('commons.show_menu') }}</span>
+    </el-button>
+    <el-button icon="el-icon-refresh" size="small" @click="refresh">
+      <span v-if="showOpen">{{ $t('commons.refresh') }}</span>
+    </el-button>
+    <el-button icon="el-icon-download" size="small" @click="download">
+      <span v-if="showOpen">{{ $t('server.download') }}</span>
+    </el-button>
+    <el-button icon="el-icon-setting" size="small" @click="list">
+      <span v-if="showOpen">{{ $t('commons.list') }}</span>
+    </el-button>
+
+    <el-dialog :title="$t('commons.list_item')" :visible.sync="visible" custom-class="adv-dialog" width="60%"
                :append-to-body="true">
-      <div>
-        <div class="search-items">
-          <component class="search-item" v-for="(component, index) in config.components" :key="index"
-                     :is="component.name" :component="component"/>
+      <div class="columns">
+         <div class="fl">
+          <el-row :gutter="10">
+            <div class="ht">
+              <b>{{ $t('commons.list_field') }}</b>
+              <el-checkbox class="check-all"
+                v-model="checkAllChild"
+                :indeterminate="isIndeterminate"
+                @change="handleCheckAllChange">
+                {{ $t('account.i18n_sync_all') }}</el-checkbox>
+            </div>
+          </el-row>
+          <el-row :gutter="10">
+            <el-checkbox-group
+              v-model="checkItem"
+              @change="handleCheckedColumnNamesChange">
+              <el-col v-for="column in columnNames" :key="column.props" :span="11" class="search-item">
+                <el-checkbox border
+                  :key="column.props"
+                  :label="column.props"
+                  :disabled="column.disabled"
+                >{{ $t(column.label) }}</el-checkbox>
+              </el-col>
+              </el-checkbox-group>
+          </el-row>
         </div>
+         <div class="fr">
+           <div class="ht"><b>{{ $t('commons.selected_fields') }}</b></div>
+           <ul>
+             <span v-for="(item, index) in columnNames" :key="index">
+               <li v-if="checkItem.includes(item.props)">
+                 {{ $t(item.label) }}
+               </li>
+             </span>
+           </ul>
+         </div>
       </div>
       <template v-slot:footer>
         <div class="dialog-footer">
-          <el-button @click="reset">{{ $t('commons.adv_search.reset') }}</el-button>
-          <el-button type="primary" @click="search">{{ $t('commons.adv_search.search') }}</el-button>
+          <el-button type="primary" @click="search">{{ $t('commons.confirm') }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -20,78 +65,77 @@
 </template>
 
 <script>
-import components from "./search-components";
-import {cloneDeep} from "lodash";
 /* eslint-disable */
   export default {
-    components: {...components},
     name: "TableAdvSearchBar",
     props: {
-      condition: Object,
+      columnNames: {
+        type: [Object,Array],
+      },
+      checkAll: {
+        type: Boolean,
+        default: true
+      },
+      isIndeterminate: {
+        type: Boolean,
+        default: false
+      },
+      checkedColumnNames: {
+        type: [Object,Array],
+      },
+      showOpen: {
+        type: Boolean,
+        default: true
+      },
+      showList: {
+        type: Boolean,
+        default: false
+      },
+    },
+    watch:{
+      checkedColumnNames(){
+        this.checkItem = this.checkedColumnNames;
+      },
+      checkAll() {
+        this.checkAllChild = this.checkAll;
+      }
     },
     data() {
       return {
         visible: false,
-        config: this.init()
+        checkItem: this.checkedColumnNames,
+        checkAllChild: this.checkAll,
       }
     },
     methods: {
-      init() {
-        let config = cloneDeep(this.condition);
-        config.components.forEach(component => {
-          let operator = component.operator.value;
-          component.operator.value = operator === undefined ? component.operator.options[0].value : operator;
-        })
-        return config;
-      },
-      search() {
-        let condition = {}
-        this.config.components.forEach(component => {
-          let operator = component.operator.value;
-          let value = component.value;
-          if (Array.isArray(value)) {
-            if (value.length > 0) {
-              condition[component.key] = {
-                operator: operator,
-                value: value
-              }
-            }
-          } else {
-            if (value !== undefined && value !== null && value !== "") {
-              condition[component.key] = {
-                operator: operator,
-                value: value
-              }
-            }
-          }
-        });
-
-        // 清除name
-        if (this.condition.name) this.condition.name = undefined;
-        // 添加组合条件
-        this.condition.combine = condition;
-        this.$emit('update:condition', this.condition);
-        this.$emit('search', condition);
-        this.visible = false;
-      },
-      reset() {
-        let source = this.condition.components;
-        this.config.components.forEach((component, index) => {
-          if (component.operator.value !== undefined) {
-            let operator = source[index].operator.value;
-            component.operator.value = operator === undefined ? component.operator.options[0].value : operator;
-          }
-          if (component.value !== undefined) {
-            component.value = source[index].value;
-          }
-        })
-        this.condition.combine = undefined;
-        this.$emit('update:condition', this.condition);
+      refresh() {
         this.$emit('search');
       },
-      open() {
+      list() {
         this.visible = true;
-      }
+      },
+      more() {
+        this.$emit('more');
+      },
+      menu() {
+        this.$emit('menu');
+      },
+      download() {
+        this.$emit('download');
+      },
+      reset() {
+      },
+      search() {
+        this.visible = false;
+      },
+      handleCheckedColumnNamesChange(value) {
+        this.$emit('handleCheckedColumnNamesChange', value);
+      },
+      handleCheckAllChange(val) {
+        this.$emit('handleCheckAllChange', val);
+      },
+    },
+    created() {
     }
   }
 </script>
@@ -124,32 +168,24 @@ import {cloneDeep} from "lodash";
 </style>
 
 <style scoped>
-  .adv-search-bar {
-    margin-left: 5px;
-  }
-
-  .dialog-footer {
-    text-align: center;
-  }
-
-  .search-items {
-    width: 100%;
-  }
-
-  @media only screen and (max-width: 1469px) {
-    .search-item {
-      width: 100%;
-    }
-  }
-
-  @media only screen and (min-width: 1470px) {
-    .search-item {
-      width: 50%;
-    }
-  }
-
-  .search-item {
-    display: inline-block;
-    margin-top: 10px;
-  }
+.search-item {
+  margin: 0 0 5px 10px;
+}
+.check-all {
+  float: right;
+  margin: 0 10px 5px 10px;
+}
+/deep/ .el-dialog__header{ padding:12px; border-bottom:1px solid #eee;}
+/deep/ .el-dialog__title{ font-size:16px;}
+/deep/ .el-dialog__body{padding:20px;}
+.column-dialog /deep/ .el-dialog{ width:40%; min-width:550px;}
+.columns{ display: flex;}
+.columns .ht{ margin-bottom:10px;}
+.columns .ht .ck{ margin-left:12px;}
+.columns .fl{ flex:1;}
+.columns .fl .el-checkbox-group{ overflow: hidden;}
+.columns .fl .el-checkbox-group .el-checkbox{ margin-right:0; float:left; width:70%; margin-top:10px;}
+.columns .fr { width:180px; border-left:1px solid #f1f1f1; padding-left:20px; margin-left:20px;}
+.columns .fr ul{ max-height:375px; overflow-y:auto;}
+.columns .fr ul li{ margin-bottom:5px;}
 </style>

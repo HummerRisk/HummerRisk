@@ -1,5 +1,5 @@
 <template>
-  <container>
+  <container class="header-menu">
     <aside-container :enable-aside-hidden="false">
       <scenario-module
         @nodeSelectEvent="nodeChange"
@@ -75,7 +75,10 @@ import MainContainer from "../.././common/components/MainContainer";
 </script>
 
 <style scoped>
-
+.header-menu >>> .main-container {
+  padding: 0;
+  margin: 0 0 0 10px;
+}
 
 </style>
 

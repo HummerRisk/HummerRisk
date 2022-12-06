@@ -24,19 +24,19 @@ export default {
   },
   methods: {
     init() {
-      this.$post("/dashboard/distribution", {group: "accountList"}, response => {
+      this.$post("/dashboard/distribution", {group: "vulnList"}, response => {
         let legendData = [];
         let seriesData = [];
         for (let obj of response.data) {
-          legendData.push(obj.groupName + ' ' + obj.xAxis + ' 分(' + obj.yAxis + '/' + obj.yAxis2 + ')');
+          legendData.push(obj.groupName + ' ' + obj.yAxis + '/' + obj.yAxis2 + '(' + obj.xAxis + '分)');
           seriesData.push({
-            name: obj.groupName + ' ' + obj.xAxis + ' 分(' + obj.yAxis + '/' + obj.yAxis2 + ')',
+            name: obj.groupName + ' ' + obj.yAxis + '/' + obj.yAxis2 + '(' + obj.xAxis + '分)',
             value: obj.yAxis
           });
         }
         this.options = {
           title: {
-            text: this.$t('dashboard.cloud_account_statistics'),
+            text: this.$t('dashboard.vuln_statistics'),
             subtext: this.$t('resource.resource_result_score'),
             left: 'center'
           },
@@ -71,7 +71,7 @@ export default {
               }
             }
           ],
-          color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4' ]
+          color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4', '#8B0000', '#FF4D4D', '#FF8000', '#336D9F']
         };
       });
     },

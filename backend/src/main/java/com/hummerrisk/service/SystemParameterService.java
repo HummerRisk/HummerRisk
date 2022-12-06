@@ -13,8 +13,11 @@ import com.hummerrisk.base.domain.SystemParameter;
 import com.hummerrisk.base.domain.SystemParameterExample;
 import com.hummerrisk.base.mapper.SystemParameterMapper;
 import com.hummerrisk.commons.constants.ParamConstants;
+import com.hummerrisk.commons.constants.TrivyConstants;
 import com.hummerrisk.commons.exception.HRException;
+import com.hummerrisk.commons.utils.CommandUtils;
 import com.hummerrisk.commons.utils.EncryptUtils;
+import com.hummerrisk.commons.utils.FileUploadUtils;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.message.NotificationBasicResponse;
@@ -28,10 +31,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -135,7 +142,7 @@ public class SystemParameterService {
         });
     }
 
-    public void editMessage(List<SystemParameter> parameters) {
+    public void edit(List<SystemParameter> parameters) {
         parameters.forEach(parameter -> {
             SystemParameterExample example = new SystemParameterExample();
             example.createCriteria().andParamKeyEqualTo(parameter.getParamKey());
@@ -354,6 +361,28 @@ public class SystemParameterService {
         return paramList;
     }
 
+    public List<SystemParameter> scanSettingInfo(String type) {
+        List<SystemParameter> paramList = this.getParamList(type);
+        if (!StringUtils.equalsIgnoreCase(type, ParamConstants.Classify.SCAN.getValue())) return paramList;
+        if (CollectionUtils.isEmpty(paramList)) {
+            paramList = new ArrayList<>();
+            ParamConstants.SCAN[] values = ParamConstants.SCAN.values();
+            for (ParamConstants.SCAN value : values) {
+                SystemParameter systemParameter = new SystemParameter();
+                if (value.equals(ParamConstants.SCAN.SkipDbUpdate) || value.equals(ParamConstants.SCAN.IgnoreUnfixed)) {
+                    systemParameter.setType(ParamConstants.Type.BOOLEAN.getValue());
+                } else {
+                    systemParameter.setType(ParamConstants.Type.TEXT.getValue());
+                }
+                systemParameter.setParamKey(value.getKey());
+                systemParameter.setSort(value.getValue());
+                paramList.add(systemParameter);
+            }
+        }
+        paramList.sort(Comparator.comparingInt(SystemParameter::getSort));
+        return paramList;
+    }
+
     public String getValue(String key) {
         SystemParameter param = systemParameterMapper.selectByPrimaryKey(key);
         if (param == null) {
@@ -364,7 +393,7 @@ public class SystemParameterService {
 
     public void updateSystem() throws Exception {
         ConcurrentHashMap<String, String> maps = sysListener.getMaps();
-        maps.forEach((key,value)-> {
+        maps.forEach((key, value) -> {
             if (!value.isEmpty() && !value.contains("null") && !value.contains("NaN")) {
                 SystemParameterExample example = new SystemParameterExample();
                 example.createCriteria().andParamKeyEqualTo(key);
@@ -382,4 +411,34 @@ public class SystemParameterService {
             }
         });
     }
+
+    public void updateVulnDb() throws Exception {
+        String command = "trivy image --download-db-only";
+        LogUtil.info(" {updateVulnDbOnline}[command]: " + command);
+        CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
+    }
+
+    public void updateVulnDbOffline(MultipartFile objectFile) throws Exception {
+        // 容器里的目录地址： /root/.cache/trivy/db/
+        String fileName = uploadVulnDb(objectFile, "/root/.cache/trivy/db/");
+        CommandUtils.extractTarGZ(new File("/tmp/cache/trivy/db/" + fileName), "/root/.cache/trivy/db/");
+    }
+
+    /**
+     * 以默认配置进行文件上传
+     *
+     * @param file 上传的文件
+     * @return 文件名称
+     * @throws Exception
+     */
+    public static final String uploadVulnDb(MultipartFile file, String dir) throws IOException {
+        try {
+            //png、html等小文件存放路径，页面需要显示，项目内目录
+            //jar包等大文件存放路径，项目外目录
+            return FileUploadUtils.uploadVulnDb(dir, file);
+        } catch (Exception e) {
+            throw new IOException(e.getMessage(), e);
+        }
+    }
+
 }

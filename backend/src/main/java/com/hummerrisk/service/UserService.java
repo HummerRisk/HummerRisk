@@ -232,13 +232,13 @@ public class UserService {
         return userMapper.selectByExample(example);
     }
 
-    public List<User> getUserListWithRequest(com.hummerrisk.controller.request.UserRequest request) {
+    public List<User> getUserListWithRequest(UserRequest request) {
         return extUserMapper.getUserList(request);
     }
 
     public void deleteUser(String userId) {
         SessionUser user = SessionUtils.getUser();
-        if(user == null) return;
+        if (user == null) return;
         if (StringUtils.equals(user.getId(), userId)) {
             HRException.throwException(Translator.get("cannot_delete_current_user"));
         }

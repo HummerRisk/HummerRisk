@@ -2,19 +2,102 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.hummerrisk.base.mapper.ext.ExtUserMapper">
 
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.name != null'>
+            and u.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test='${condition}.email != null'>
+            and u.email
+            <include refid="condition">
+                <property name="object" value="${condition}.email"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and u.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+        <if test="${condition}.updateTime != null">
+            and u.update_time
+            <include refid="condition">
+                <property name="object" value="${condition}.updateTime"/>
+            </include>
+        </if>
+    </sql>
+
     <select id="getUserList" resultMap="com.hummerrisk.base.mapper.UserMapper.BaseResultMap">
-        select u.id, u.name, u.email, u.phone, u.language, u.status, u.source,
-        u.last_account_id, u.language, u.create_time, u.update_time, u.wechat_account
+        select u.*
         from `user` u
         <where>
-            <if test="userRequest.id != null">
-                AND u.id like CONCAT('%', #{userRequest.id},'%')
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
             </if>
-            <if test="userRequest.name != null">
-                AND u.name like CONCAT('%', #{userRequest.name},'%')
+
+            <if test="request.id != null and request.id != ''">
+                AND u.id like CONCAT('%', #{request.id},'%')
             </if>
-            <if test="userRequest.email != null">
-                AND u.email like CONCAT('%', #{userRequest.email},'%')
+            <if test="request.name != null and request.name != ''">
+                AND u.name like CONCAT('%', #{request.name},'%')
+            </if>
+            <if test="request.email != null and request.email != ''">
+                AND u.email like CONCAT('%', #{request.email},'%')
+            </if>
+            <if test="request.source != null and request.source != ''">
+                AND u.source like CONCAT('%', #{request.source},'%')
+            </if>
+            <if test="request.phone != null and request.phone != ''">
+                AND u.phone like CONCAT('%', #{request.phone},'%')
+            </if>
+            <if test="request.wechatAccount != null and request.wechatAccount != ''">
+                AND u.wechat_account like CONCAT('%', #{request.wechatAccount},'%')
             </if>
         </where>
         order by u.update_time desc

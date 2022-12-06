@@ -24,12 +24,26 @@ public class TranslatorKeys {
                     "i18n_server_messageorder",
                     "i18n_package_messageorder",
                     "i18n_image_messageorder",
+                    "i18n_code_messageorder",
+                    "i18n_config_messageorder",
+                    "i18n_k8s_messageorder",
                     "i18n_start_msg",
                     "i18n_ex_rule_not_exist",
                     "i18n_cloud_account",
                     "i18n_bug_fix",
                     "i18n_more_resource",
-                    "i18n_end_msg"
+                    "i18n_end_msg",
+                    "i18n_sync_image_error",
+                    "i18n_sync_k8s_error",
+                    "i18n_sync_k8s_start",
+                    "i18n_start_k8s_result",
+                    "i18n_end_k8s_result",
+                    "i18n_restart_k8s_result",
+                    "i18n_in_process",
+                    "i18n_export_report",
+                    "i18n_start_config_result",
+                    "i18n_end_config_result",
+                    "i18n_restart_config_result"
             ));
 
 }

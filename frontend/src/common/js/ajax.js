@@ -53,6 +53,9 @@ export default {
         if (response.data.message) {
           Message.warning(response.data.message);
         }
+        if (response.status === 200) {
+          success(response);
+        }
       }
       result.loading = false;
     }

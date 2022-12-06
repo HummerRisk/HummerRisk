@@ -154,7 +154,7 @@ public class XrayService {
             }
         }
         //向首页活动添加操作信息
-        OperationLogService.log(SessionUtils.getUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.CREATE, "创建检测任务");
+        OperationLogService.log(SessionUtils.getUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.SCAN, "i18n_create_scan_task");
         return cloudTask;
     }
 
@@ -234,7 +234,7 @@ public class XrayService {
         LogUtil.info("createResource for taskItem: {}", toJSONString(taskItem));
         String operation = "i18n_create_resource";
         String resultStr = "";
-        String fileName = cloudTask.getResourceTypes().replace("[", "").replace("]", "");
+        String fileName = cloudTask.getResourceTypes() == null ? "" : cloudTask.getResourceTypes().replace("[", "").replace("]", "");
         try {
             CloudTaskItemResourceExample example = new CloudTaskItemResourceExample();
             example.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andTaskItemIdEqualTo(taskItem.getId());
@@ -245,8 +245,9 @@ public class XrayService {
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
             String command = PlatformUtils.fixedCommand(CommandEnum.xray.getCommand(), CommandEnum.run.getCommand(), dirPath, fileName, map);
-
-            LogUtil.info(cloudTask.getId() + " {}[command]: " + command);
+            LogUtil.debug(cloudTask.getId() + " {xray}[command]: " + command);
+            taskItem.setCommand(command);
+            cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItem);
             resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
             if (LogUtil.getLogger().isDebugEnabled()) {
                 LogUtil.getLogger().debug("resource created: {}", resultStr);
@@ -365,7 +366,6 @@ public class XrayService {
             cloudTask.setReturnSum((long) returnSum);
             cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
 
@@ -393,7 +393,6 @@ public class XrayService {
             resourceItemMapper.insertSelective(resourceItem);
 
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             throw e;
         }
     }

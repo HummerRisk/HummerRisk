@@ -10,7 +10,27 @@ export default {
     {
       path: "config",
       name: "config",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/log/home/event'),
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/config/home/Config'),
+    },
+    {
+      path: "result",
+      name: "ConfigResult",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/config/home/Result'),
+    },
+    {
+      path: "resultdetails/:id",
+      name: "ConfigResultDetails",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/config/home/ResultDetails"),
+    },
+    {
+      path: "overview",
+      name: "ConfigOverview",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/config/home/Overview"),
+    },
+    {
+      path: "history",
+      name: "ConfigHistory",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/config/home/History"),
     },
   ]
 }

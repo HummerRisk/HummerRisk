@@ -5,28 +5,33 @@
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('vuln.vuln_settings_list')"
                       @create="create" :createTip="$t('vuln.create')"
-                      @scan="scan" :scanTip="$t('account.one_scan')"
-                      @validate="validate" :runTip="$t('account.one_validate')"
-                      :show-run="true" :show-scan="true" :show-create="true"/>
-
+                      @validate="validate" :validateTip="$t('account.one_validate')"
+                      :show-validate="true" :show-create="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                :row-class-name="tableRowClassName"
-                @filter-change="filter" @select-all="select" @select="select">
-        <el-table-column type="selection" min-width="5%">
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
+        <el-table-column type="selection" min-width="40">
         </el-table-column>
-        <el-table-column type="index" min-width="5%"/>
-        <el-table-column prop="name" :label="$t('vuln.name')" min-width="15%" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('vuln.platform')" min-width="10%" show-overflow-tooltip>
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('vuln.name')" min-width="150" show-overflow-tooltip></el-table-column>
+        <el-table-column :label="$t('vuln.platform')" v-if="checkedColumnNames.includes('pluginName')" min-width="110" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ $t(scope.row.pluginName) }}
+                 &nbsp;&nbsp; {{ scope.row.pluginName }}
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" min-width="10%" :label="$t('vuln.status')"
+        <el-table-column prop="status" min-width="90" v-if="checkedColumnNames.includes('status')" :label="$t('vuln.status')"
                          column-key="status"
                          :filters="statusFilters"
                          :filter-method="filterStatus">
@@ -34,25 +39,25 @@
             <vuln-status :row="row"/>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('account.create_time')" sortable
+        <el-table-column min-width="150" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.create_time')" sortable
                          prop="createTime">
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('account.update_time')" sortable
+        <el-table-column min-width="150" v-if="checkedColumnNames.includes('updateTime')" :label="$t('account.update_time')" sortable
                          prop="updateTime">
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
-        <el-table-column min-width="17%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :label="$t('account.creator')" min-width="90" show-overflow-tooltip/>
+        <el-table-column min-width="170" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
@@ -65,14 +70,14 @@
             <el-input v-model="form.name" autocomplete="off" :placeholder="$t('vuln.name')"/>
           </el-form-item>
           <el-form-item :label="$t('vuln.platform')" :rules="{required: true, message: $t('vuln.platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.pluginId" :placeholder="$t('vuln.platform')" @change="changePluginForAdd(form)">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.pluginId" :placeholder="$t('vuln.platform')" @change="changePluginForAdd(form)">
               <el-option
                 v-for="item in plugins"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id">
                 <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                &nbsp;&nbsp; {{ $t(item.name) }}
+                &nbsp;&nbsp; {{ item.name }}
               </el-option>
             </el-select>
           </el-form-item>
@@ -85,7 +90,7 @@
             </el-form-item>
           </div>
           <el-form-item v-if="form.isProxy && form.pluginId" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
               <el-option
                 v-for="item in proxys"
                 :key="item.id"
@@ -126,7 +131,7 @@
               :label="item.name"
               :value="item.id">
               <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-              &nbsp;&nbsp; {{ $t(item.name) }}
+              &nbsp;&nbsp; {{ item.name }}
             </el-option>
           </el-select>
         </el-form-item>
@@ -151,24 +156,25 @@
                :title="$t('account.scan_group_quick')"
                :visible.sync="scanVisible"
                class="" width="70%">
-      <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAll">{{ $t('account.i18n_sync_all') }}</el-checkbox>
-      <el-card class="box-card el-box-card" v-for="(accountGroup, index) in accountGroups" :key="index">
-        <div slot="header" class="clearfix">
-            <span>
-              <img :src="require(`@/assets/img/platform/${accountGroup.accountWithBLOBs.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-               &nbsp;&nbsp; {{ accountGroup.accountWithBLOBs.pluginName }} {{ $t('rule.rule_set') }} | {{accountGroup.accountWithBLOBs.name}}
-            </span>
-          <el-button style="float: right; padding: 3px 0" type="text"  @click="handleCheckAllByAccount(accountGroup, index)">{{ $t('account.i18n_sync_all') }}</el-button>
-        </div>
-        <el-checkbox-group v-model="checkedGroups" @change="handleCheckedGroupsChange(accountGroup)">
-          <el-checkbox v-for="(group,index) in accountGroup.groups" :label="accountGroup.accountWithBLOBs.id + '/' + group.id" :value="accountGroup.accountWithBLOBs.id + '/' + group.id" :key="index" border >
-            {{ group.name }}
-          </el-checkbox>
-        </el-checkbox-group>
-      </el-card>
-      <dialog-footer
-        @cancel="scanVisible = false"
-        @confirm="scanGroup()"/>
+      <div v-loading="groupResult.loading">
+        <el-card class="box-card el-box-card">
+          <div slot="header" class="clearfix">
+              <span>
+                <img :src="require(`@/assets/img/platform/${accountWithGroup.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+             &nbsp;&nbsp; {{ accountWithGroup.pluginName }} {{ $t('rule.rule_set') }} | {{ accountWithGroup.name }}
+              </span>
+            <el-button style="float: right; padding: 3px 0" type="text"  @click="handleCheckAllByAccount">{{ $t('account.i18n_sync_all') }}</el-button>
+          </div>
+          <el-checkbox-group v-model="checkedGroups">
+            <el-checkbox v-for="(group, index) in groups" :label="group.id" :value="group.id" :key="index" border >
+              {{ group.name }}
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-card>
+        <dialog-footer
+          @cancel="scanVisible = false"
+          @confirm="scanGroup()"/>
+      </div>
     </el-dialog>
     <!-- 一键检测选择检测组 -->
 
@@ -177,7 +183,7 @@
 
 <script>
 import TablePagination from "../../common/pagination/TablePagination";
-import TableHeader from "../head/TableHeader";
+import TableHeader from "@/business/components/common/components/TableHeader";
 import TableOperator from "../../common/components/TableOperator";
 import Container from "../../common/components/Container";
 import MainContainer from "../../common/components/MainContainer";
@@ -185,10 +191,45 @@ import VulnStatus from "./VulnStatus";
 import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import {VULN_CONFIGS} from "../../common/components/search/search-components";
-import ProxyDialogFooter from "../head/ProxyDialogFooter";
-import ProxyDialogCreateFooter from "../head/ProxyDialogCreateFooter";
+import ProxyDialogFooter from "@/business/components/common/components/ProxyDialogFooter";
+import ProxyDialogCreateFooter from "@/business/components/common/components/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {VULN_ID, VULN_NAME} from "@/common/js/constants";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'vuln.name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'vuln.platform',
+    props: 'pluginName',
+    disabled: false
+  },
+  {
+    label: 'vuln.status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'account.create_time',
+    props: 'createTime',
+    disabled: false
+  },
+  {
+    label: 'account.update_time',
+    props: 'updateTime',
+    disabled: false
+  },
+  {
+    label: 'account.creator',
+    props: 'userName',
+    disabled: false
+  }
+];
 
 /* eslint-disable */
 export default {
@@ -202,7 +243,8 @@ export default {
     TableOperator,
     DialogFooter,
     ProxyDialogFooter,
-    ProxyDialogCreateFooter
+    ProxyDialogCreateFooter,
+    HideTable,
   },
   provide() {
     return {
@@ -213,6 +255,7 @@ export default {
     return {
       credential: {},
       result: {},
+      groupResult: {},
       condition: {
         components: VULN_CONFIGS
       },
@@ -239,7 +282,7 @@ export default {
       rule: {
         name: [
           {required: true, message: this.$t('commons.input_name'), trigger: 'blur'},
-          {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+          {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
           {
             required: true,
             message: this.$t("workspace.special_characters_are_not_supported"),
@@ -256,7 +299,7 @@ export default {
         ],
         proxyName: [
           {required: false, message: this.$t('proxy.proxy_name'), trigger: 'blur'},
-          {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+          {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
         ],
         proxyPassword: [
           {required: false, message: this.$t('proxy.proxy_password'), trigger: 'blur'},
@@ -265,7 +308,11 @@ export default {
       },
       buttons: [
         {
-          tip: this.$t('account.tuning'), icon: "el-icon-setting", type: "success",
+          tip: this.$t('account.one_scan'), icon: "el-icon-s-promotion", type: "success",
+          exec: this.openScanGroup
+        },
+        {
+          tip: this.$t('account.tuning'), icon: "el-icon-setting", type: "warning",
           exec: this.handleScan
         }, {
           tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
@@ -303,6 +350,23 @@ export default {
         {id: 'Http', value: "Http"},
         {id: 'Https', value: "Https"},
       ],
+      accountWithGroup: {pluginIcon: 'xray.png'},
+      groups: [],
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'vuln.name',
+          id: 'name'
+        },
+        {
+          name: 'account.creator',
+          id: 'userName'
+        }
+      ],
+      checkAll2: true,
+      isIndeterminate2: false,
     }
   },
 
@@ -311,6 +375,17 @@ export default {
   },
 
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll2 = checkedCount === this.columnNames.length;
+      this.isIndeterminate2 = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate2 = false;
+      this.checkAll2 = val;
+    },
     create() {
       this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
       this.createVisible = true;
@@ -552,35 +627,12 @@ export default {
         }
       });
     },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 4 === 0) {
-        return 'success-row';
-      } else if (rowIndex % 2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
-    },
-    scan (){
-      if (this.selectIds.size === 0) {
-        this.$warning(this.$t('vuln.please_choose_vuln'));
-        return;
-      }
-      for (let accountId of this.selectIds) {
-        for (let item of this.tableData) {
-          if (accountId === item.id) {
-            if (item.status === "INVALID") {
-              this.$warning(this.$t('account.invalid_cloud_account'));
-              return;
-            }
-          }
-        }
-      }
-      this.openScanGroup();
-    },
-    openScanGroup() {
+    openScanGroup(account) {
+      this.accountWithGroup = account;
+      localStorage.setItem(VULN_ID, account.id);
+      localStorage.setItem(VULN_NAME, account.name);
+      this.initGroups(account.pluginId);
       this.scanVisible = true;
-      this.initGroups();
     },
     scanGroup () {
       let account = this.$t('account.one_scan') + this.$t('vuln.vuln_rule');
@@ -588,31 +640,15 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            let formData = new FormData();
             if (this.checkedGroups.length === 0) {
               this.$warning(this.$t('account.please_choose_rule_group'));
               return;
             }
-            formData.append('scanCheckedGroups', new Blob([JSON.stringify(Array.from(this.checkedGroups))], {
-              type: "application/json"
-            }));
-            this.result = this.$request({
-              method: 'POST',
-              url: "/rule/scan",
-              data: formData,
-              headers: {
-                'Content-Type': undefined
-              }
-            }, () => {
-              for (let item of this.tableData) {
-                for (let id of this.selectIds) {
-                  if (id===item.id) {
-                    localStorage.setItem(VULN_ID, item.id);
-                    localStorage.setItem(VULN_NAME, item.name);
-                    break;
-                  }
-                }
-              }
+            let params = {
+              accountId: this.accountWithGroup.id,
+              groups: this.checkedGroups
+            }
+            this.groupResult = this.$post("/rule/scan", params, () => {
               this.$success(this.$t('account.i18n_hr_create_success'));
               this.scanVisible = false;
               this.$router.push({
@@ -635,6 +671,11 @@ export default {
           return false;
         }
       })
+    },
+    initGroups(pluginId) {
+      this.result = this.$get("/rule/groupsByAccountId/" + pluginId,response => {
+        this.groups = response.data;
+      });
     },
     updateProxy(updateProxyForm) {
       this.$refs[updateProxyForm].validate(valid => {
@@ -669,33 +710,6 @@ export default {
       let checkedCount = value.checkedGroups.length;
       this.checkAll = checkedCount === this.groupsSelect.length;
       this.isIndeterminate = checkedCount > 0 && checkedCount < this.groupsSelect.length;
-    },
-    initGroups() {
-      let formData = new FormData();
-      formData.append('selectIds', new Blob([JSON.stringify(Array.from(this.selectIds))], {
-        type: "application/json"
-      }));
-      this.result = this.$request({
-        method: 'POST',
-        url: "/rule/groups",
-        data: formData,
-        headers: {
-          'Content-Type': undefined
-        }
-      }, (res) => {
-        this.accountGroups = res.data;
-        for (let item of this.accountGroups) {
-          let accountGroup = {accountId: item.accountWithBLOBs.id, checkedGroups: []};
-          let checkedGroups = [];
-          for(let group of item.groups) {
-            checkedGroups.push(item.accountWithBLOBs.id + "/" + group.id);
-            this.checkedGroups.push(item.accountWithBLOBs.id + "/" + group.id);
-            this.groupsSelect.push(item.accountWithBLOBs.id + "/" + group.id);
-          }
-          accountGroup.checkedGroups = checkedGroups;
-          item.checkedGroups = checkedGroups;
-        }
-      });
     },
     isContain (arr1, arr2) {
       for (var i = arr2.length - 1; i >= 0; i--) {

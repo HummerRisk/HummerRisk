@@ -7,7 +7,7 @@ import {formatJson, formatXml} from "../../../../common/js/format-utils";
 import toDiffableHtml from 'diffable-html';
 /* eslint-disable */
     export default {
-      name: "RsCodeEdit",
+      name: "HrCodeEdit",
       components: { editor: require('vue2-ace-editor')},
       data() {
         return {

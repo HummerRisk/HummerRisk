@@ -61,12 +61,6 @@
                 <property name="object" value="${condition}.updateTime"/>
             </include>
         </if>
-        <if test="${condition}.pluginId != null">
-            and plugin.id
-            <include refid="condition">
-                <property name="object" value="${condition}.pluginId"/>
-            </include>
-        </if>
         <if test="${condition}.createTime != null">
             and t.create_time
             <include refid="condition">
@@ -114,7 +108,16 @@
                 and t.id = #{request.id}
             </if>
             <if test="request.name != null and request.name != ''">
-                and t.name like CONCAT('%', #{request.name},'%')
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.ip != null and request.ip != ''">
+                and LOWER(t.ip) like CONCAT('%', LOWER(#{request.ip}),'%')
+            </if>
+            <if test="request.port != null and request.port != ''">
+                and LOWER(t.port) like CONCAT('%', LOWER(#{request.port}),'%')
+            </if>
+            <if test="request.userName != null and request.userName != ''">
+                and LOWER(t.user_name) like CONCAT('%', LOWER(#{request.userName}),'%')
             </if>
             <if test="request.status != null and request.status != ''">
                 and t.status = #{request.status}
@@ -124,6 +127,18 @@
             </if>
         </where>
         order by t.update_time desc
+    </select>
+
+    <select id="topInfo" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT *
+        from (
+              (SELECT IFNULL(count(*), 0) as groups from server_group) as groups,
+              (SELECT IFNULL(count(*), 0) as servers from server) as servers,
+              (SELECT IFNULL(count(*), 0) as certificates from server_certificate) as certificates,
+              (SELECT IFNULL(count(t.id), 0) as high from server_result t where LOWER(t.severity) = 'highrisk' and is_severity = 0) as high,
+              (SELECT IFNULL(count(t.id), 0) as medium from server_result t where LOWER(t.severity) = 'mediumrisk' and is_severity = 0) as medium,
+              (SELECT IFNULL(count(t.id), 0) as low from server_result t where LOWER(t.severity) = 'lowrisk' and is_severity = 0) as low
+                 )
     </select>
 
 </mapper>

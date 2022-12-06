@@ -4,26 +4,35 @@
     <el-card class="table-card">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search" @create="create"
-                         :create-tip="$t('proxy.create')" :title="$t('commons.proxy')"/>
+                      :create-tip="$t('proxy.create')" :title="$t('commons.proxy')" :show-create="true"
+                      :items="items" :columnNames="columnNames" :show-open="false"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table border class="adjust-table" :data="tableData" style="width: 100%" :row-class-name="tableRowClassName">
-        <el-table-column type="index" min-width="5%"/>
-        <el-table-column prop="proxyType" :label="$t('commons.proxy_type')" min-width="10%"/>
-        <el-table-column prop="proxyIp" label="Proxy IP" min-width="15%"/>
-        <el-table-column prop="proxyPort" :label="$t('commons.proxy_port')" min-width="10%"/>
-        <el-table-column prop="proxyName" :label="$t('commons.proxy_name')" min-width="15%"/>
-        <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="15%">
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column prop="proxyType" v-if="checkedColumnNames.includes('proxyType')" :label="$t('commons.proxy_type')" min-width="100"/>
+        <el-table-column prop="proxyIp" v-if="checkedColumnNames.includes('proxyIp')" label="Proxy IP" min-width="100"/>
+        <el-table-column prop="proxyPort" v-if="checkedColumnNames.includes('proxyPort')" :label="$t('commons.proxy_port')" min-width="100"/>
+        <el-table-column prop="proxyName" v-if="checkedColumnNames.includes('proxyName')" :label="$t('commons.proxy_name')" min-width="120"/>
+        <el-table-column prop="createTime" v-if="checkedColumnNames.includes('createTime')" :label="$t('commons.create_time')" min-width="160">
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="updateTime" :label="$t('commons.update_time')" min-width="15%">
+        <el-table-column prop="updateTime" v-if="checkedColumnNames.includes('updateTime')" :label="$t('commons.update_time')" min-width="160">
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('commons.operating')" fixed="right" min-width="15%">
+        <el-table-column :label="$t('commons.operating')" fixed="right" min-width="100">
           <template v-slot:default="scope">
             <table-operator @editClick="edit(scope.row)" @deleteClick="del(scope.row)">
               <template v-slot:behind>
@@ -31,10 +40,8 @@
             </table-operator>
           </template>
         </el-table-column>
-      </el-table>
-
-      <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize"
-                           :total="total"/>
+      </hide-table>
+      <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
     <!--Create proxy-->
@@ -111,11 +118,48 @@
 <script>
 import CreateBox from "../CreateBox";
 import TablePagination from "../../common/pagination/TablePagination";
-import TableHeader from "../head/ProxyTableHeader";
+import TableHeader from "@/business/components/common/components/TableHeader";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/DialogFooter";
 import TableOperatorButton from "../../common/components/TableOperatorButton";
-import {listenGoBack, removeGoBackListener} from "@/common/js/utils";
+import {_filter, _sort, listenGoBack, removeGoBackListener} from "@/common/js/utils";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+import {PROXY_CONFIGS} from "../../common/components/search/search-components";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'commons.proxy_type',
+    props: 'proxyType',
+    disabled: false
+  },
+  {
+    label: 'Proxy IP',
+    props: 'proxyIp',
+    disabled: false
+  },
+  {
+    label: 'commons.proxy_port',
+    props: 'proxyPort',
+    disabled: false
+  },
+  {
+    label: 'commons.proxy_name',
+    props: 'proxyName',
+    disabled: false
+  },
+  {
+    label: 'commons.create_time',
+    props: 'createTime',
+    disabled: false
+  },
+  {
+    label: 'commons.update_time',
+    props: 'updateTime',
+    disabled: false
+  },
+];
+
 /* eslint-disable */
   export default {
     name: "Proxy",
@@ -126,6 +170,7 @@ import {listenGoBack, removeGoBackListener} from "@/common/js/utils";
       TableOperator,
       DialogFooter,
       TableOperatorButton,
+      HideTable,
     },
     data() {
       return {
@@ -140,7 +185,9 @@ import {listenGoBack, removeGoBackListener} from "@/common/js/utils";
         currentPage: 1,
         pageSize: 10,
         total: 0,
-        condition: {},
+        condition: {
+          components: PROXY_CONFIGS
+        },
         tableData: [],
         form: {
         },
@@ -156,23 +203,67 @@ import {listenGoBack, removeGoBackListener} from "@/common/js/utils";
           ],
           proxyName: [
             {required: false, message: this.$t('proxy.proxy_name'), trigger: 'blur'},
-            {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+            {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
           ],
           proxyPassword: [
             {required: false, message: this.$t('proxy.proxy_password'), trigger: 'blur'},
-            {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+            {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
           ],
         },
         proxyType: [
           {id: 'Http', value: "Http"},
           {id: 'Https', value: "Https"},
         ],
+        //名称搜索
+        items: [
+          {
+            name: 'commons.proxy_type',
+            id: 'proxyType',
+          },
+          {
+            name: 'Proxy IP',
+            id: 'proxyIp',
+          },
+          {
+            name: 'commons.proxy_port',
+            id: 'proxyPort',
+          },
+          {
+            name: 'commons.proxy_name',
+            id: 'proxyName',
+          },
+        ],
+        checkedColumnNames: columnOptions.map((ele) => ele.props),
+        columnNames: columnOptions,
+        checkAll: true,
+        isIndeterminate: false,
       }
     },
     activated() {
       this.search();
     },
     methods: {
+      handleCheckedColumnNamesChange(value) {
+        const checkedCount = value.length;
+        this.checkAll = checkedCount === this.columnNames.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+        this.checkedColumnNames = value;
+      },
+      handleCheckAllChange(val) {
+        this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+        this.isIndeterminate = false;
+        this.checkAll = val;
+      },
+      select(selection) {
+      },
+      sort(column) {
+        _sort(column, this.condition);
+        this.search();
+      },
+      filter(filters) {
+        _filter(filters, this.condition);
+        this.search();
+      },
       create() {
         this.createVisible = true;
         this.form= {};
@@ -224,11 +315,6 @@ import {listenGoBack, removeGoBackListener} from "@/common/js/utils";
         })
       },
       search() {
-        if (!!this.condition.name) {
-          this.condition.proxyIp = this.condition.name;
-        } else {
-          this.condition.proxyIp = null;
-        }
         this.result = this.$post(this.buildPagePath(this.queryPath), this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;

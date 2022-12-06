@@ -111,9 +111,7 @@ public class NucleiService {
                     String sc = "";
                     String dirPath = "";
                     try {
-                        LogUtil.info(" ::: Generate nuclei.yml file start ::: ");
-                        dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + regionId, "nuclei.yml");
-                        LogUtil.info(" ::: Generate nuclei.yml file end ::: " + dirPath);
+                        dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + regionId, "nuclei.yml", false);
                     } catch (Exception e) {
                         LogUtil.error("[{}] Generate nuclei.yml file，and nuclei run failed:{}", taskId + "/" + regionId, e.getMessage());
                     }
@@ -175,7 +173,7 @@ public class NucleiService {
             }
         }
         //向首页活动添加操作信息
-        OperationLogService.log(SessionUtils.getUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.CREATE, "i18n_create_scan_task");
+        OperationLogService.log(SessionUtils.getUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.SCAN, "i18n_create_scan_task");
         return cloudTask;
     }
 
@@ -270,8 +268,10 @@ public class NucleiService {
             if(taskItem.getDetails().contains("workflows:")) {
                 command = command.replace("-t", "-w");
             }
-            LogUtil.info(cloudTask.getId() + " {}[command]: " + command);
-            CommandUtils.saveAsFile(taskItem.getDetails(), dirPath, fileName);//重启服务后容器内文件在/tmp目录下会丢失
+            LogUtil.debug(cloudTask.getId() + " {nuclei}[command]: " + command);
+            taskItem.setCommand(command);
+            cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItem);
+            CommandUtils.saveAsFile(taskItem.getDetails(), dirPath, fileName, false);//重启服务后容器内文件在/tmp目录下会丢失
             resultStr = CommandUtils.commonExecCmdWithResultByNuclei(command, dirPath);
             if (LogUtil.getLogger().isDebugEnabled()) {
                 LogUtil.getLogger().debug("resource created: {}", resultStr);
@@ -381,7 +381,6 @@ public class NucleiService {
             cloudTask.setReturnSum((long) returnSum);
             cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
 
@@ -443,7 +442,6 @@ public class NucleiService {
             }
 
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             throw e;
         }
     }

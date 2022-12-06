@@ -4,9 +4,10 @@ import com.hummerrisk.base.domain.OperationLog;
 import com.hummerrisk.base.domain.OperationLogExample;
 import com.hummerrisk.base.domain.User;
 import com.hummerrisk.base.mapper.OperationLogMapper;
+import com.hummerrisk.base.mapper.ext.ExtOperationLogMapper;
 import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.commons.utils.UUIDUtil;
-import com.hummerrisk.controller.request.log.OperayionLogRequest;
+import com.hummerrisk.controller.request.log.OperatorLogRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,9 @@ import java.util.List;
 public class OperationLogService {
 
     private static OperationLogMapper operationLogMapper;
+
+    @Resource
+    private ExtOperationLogMapper extOperationLogMapper;
 
     public static void log(String resourceId, String resourceName, String resourceType, String operation, String message) {
         User user = SessionUtils.getUser();
@@ -65,13 +69,8 @@ public class OperationLogService {
         OperationLogService.operationLogMapper = operationLogMapper;
     }
 
-    public List<OperationLog> selectOperationLog(OperayionLogRequest dto) {
-        OperationLogExample example = new OperationLogExample();
-        if (StringUtils.isNotEmpty(dto.getName())) {
-            example.createCriteria().andResourceUserIdLike(dto.getName());
-        }
-        example.setOrderByClause("time desc");
-        return operationLogMapper.selectByExampleWithBLOBs(example);
+    public List<OperationLog> selectOperationLog(OperatorLogRequest log) {
+        return extOperationLogMapper.selectOperationLog(log);
     }
 
     public List<OperationLog> selectRersourceOperationLog(String resourceId) {

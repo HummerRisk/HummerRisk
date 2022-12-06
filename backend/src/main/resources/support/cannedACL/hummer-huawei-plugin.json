@@ -1,0 +1,14 @@
+[
+  {
+    "key": "私有",
+    "value": "private"
+  },
+  {
+    "key": "公共（读）",
+    "value": "public-read"
+  },
+  {
+    "key": "公共(读写)",
+    "value": "public-read-write"
+  }
+]

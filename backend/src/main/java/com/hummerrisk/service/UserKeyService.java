@@ -3,18 +3,22 @@ package com.hummerrisk.service;
 import com.hummerrisk.base.domain.UserKey;
 import com.hummerrisk.base.domain.UserKeyExample;
 import com.hummerrisk.base.mapper.UserKeyMapper;
+import com.hummerrisk.base.mapper.ext.ExtUserKeyMapper;
 import com.hummerrisk.commons.constants.ApiKeyConstants;
 import com.hummerrisk.commons.constants.ResourceConstants;
 import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.SessionUtils;
+import com.hummerrisk.controller.request.user.UserKeyRequest;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -27,13 +31,15 @@ public class UserKeyService {
     private UserKeyMapper userKeyMapper;
 
     @Resource
+    private ExtUserKeyMapper extUserKeyMapper;
+
+    @Resource
     private UserService userService;
 
-    public List<UserKey> getUserKeysInfo(String userId) {
-        UserKeyExample userKeysExample = new UserKeyExample();
-        userKeysExample.createCriteria().andUserIdEqualTo(userId);
-        userKeysExample.setOrderByClause("create_time");
-        return userKeyMapper.selectByExample(userKeysExample);
+    public List<UserKey> getUserKeysInfo(UserKeyRequest request) {
+        String userId = Objects.requireNonNull(SessionUtils.getUser()).getId();
+        if (!StringUtils.equals(userId, "admin")) request.setUserId(userId);
+        return extUserKeyMapper.getUserKeysInfo(request);
     }
 
     public UserKey generateUserKey(String userId) {

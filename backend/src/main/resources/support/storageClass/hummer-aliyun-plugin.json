@@ -1,0 +1,14 @@
+[
+  {
+    "key": "标准存储",
+    "value": "Standard"
+  },
+  {
+    "key": "低频访问",
+    "value": "IA"
+  },
+  {
+    "key": "归档存储",
+    "value": "Archive"
+  }
+]

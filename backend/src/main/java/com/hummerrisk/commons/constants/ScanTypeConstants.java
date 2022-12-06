@@ -1,5 +1,5 @@
 package com.hummerrisk.commons.constants;
 
 public enum ScanTypeConstants {
-    custodian, nuclei, prowler, tsunami, xray
+    custodian, nuclei, prowler, xray
 }

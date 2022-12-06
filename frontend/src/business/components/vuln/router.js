@@ -14,7 +14,7 @@ export default {
     },
     {
       path: "vuln",
-      name: "Vuln",
+      name: "VulnList",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/vuln/home/Vuln'),
     },
     {

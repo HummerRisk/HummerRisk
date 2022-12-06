@@ -46,7 +46,7 @@ jobs:
           body: |
             # 快速开始
             仅需两步快速安装 HummerRisk：
-              1.  准备一台不小于 4 核 8 G 内存的 64位 Linux (建议首选 CentOS 7 以上) 主机；
+              1.  准备一台不小于 4 核 8 G 内存的 64位 Linux 主机；
               2.  以 root 用户执行如下命令一键安装 HummerRisk。
             ```sh
               curl -sSL https://github.com/HummerRisk/HummerRisk/releases/latest/download/quick_start.sh | bash
@@ -54,10 +54,13 @@ jobs:
             如果您已经部署旧版本，可通过如下命令一键升级至最新版本:
             ```sh
               # 升级
-              hrctl upgrade v0.2.1
+              hrctl upgrade v0.6.0
             ```
             # 产品文档
             点击 [完整文档](https://docs.hummerrisk.com/) 查看完整的安装和使用文档
+            
+            # 更新内容
+            
             
             # 离线安装包
             百度网盘下载链接: https://pan.baidu.com/s/1LeDx5hF_RkkpO8HcsYUDAQ 提取码: 4ljt

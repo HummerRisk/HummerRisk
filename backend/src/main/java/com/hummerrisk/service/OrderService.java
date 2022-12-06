@@ -7,7 +7,6 @@ import com.hummer.quartz.service.QuartzManageService;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCloudTaskMapper;
-import com.hummerrisk.base.mapper.ext.ExtResourceMapper;
 import com.hummerrisk.commons.constants.CloudTaskConstants;
 import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
@@ -51,6 +50,8 @@ public class OrderService {
     @Resource @Lazy
     private CloudTaskItemLogMapper cloudTaskItemLogMapper;
     @Resource @Lazy
+    private CloudResourceItemMapper cloudResourceItemMapper;
+    @Resource @Lazy
     private CommonThreadPool commonThreadPool;
     @Resource @Lazy
     private CloudTaskItemResourceMapper cloudTaskItemResourceMapper;
@@ -66,12 +67,6 @@ public class OrderService {
     private ResourceRuleMapper resourceRuleMapper;
     @Resource @Lazy
     private RuleTagMappingMapper ruleTagMappingMapper;
-    @Resource @Lazy
-    private ExtResourceMapper extResourceMapper;
-    @Resource @Lazy
-    private HistoryScanMapper historyScanMapper;
-    @Resource @Lazy
-    private HistoryScanTaskMapper historyScanTaskMapper;
     @Resource @Lazy
     private NoticeService noticeService;
     @Resource @Lazy
@@ -128,9 +123,7 @@ public class OrderService {
                     String sc = "";
                     String dirPath = "";
                     try {
-                        LogUtil.info(" ::: Generate policy.yml file start ::: ");
-                        dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + regionId, "policy.yml");
-                        LogUtil.info(" ::: Generate policy.yml file end ::: " + dirPath);
+                        dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + regionId, "policy.yml", false);
                     } catch (Exception e) {
                         LogUtil.error("[{}] Generate policy.yml file，and custodian run failed:{}", taskId + "/" + regionId, e.getMessage());
                     }
@@ -190,7 +183,10 @@ public class OrderService {
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
-
+                        CloudResourceItemExample cloudResourceItemExample = new CloudResourceItemExample();
+                        cloudResourceItemExample.createCriteria().andAccountIdEqualTo(quartzTaskDTO.getAccountId()).andResourceTypeIn(resourceTypes);
+                        long resourceSum = cloudResourceItemMapper.countByExample(cloudResourceItemExample);
+                        cloudTask.setResourcesSum(resourceSum);
                         cloudTask.setResourceTypes(new HashSet<>(resourceTypes).toString());
                         cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
 
@@ -204,7 +200,7 @@ public class OrderService {
             }
         }
         //向首页活动添加操作信息
-        OperationLogService.log(SessionUtils.getUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.CREATE, "i18n_create_scan_task");
+        OperationLogService.log(SessionUtils.getUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.SCAN, "i18n_create_scan_task");
         return cloudTask;
     }
 
@@ -291,7 +287,7 @@ public class OrderService {
     }
 
     void saveTaskItemLog(String taskItemId, String resourcePrimaryKey, String operation, String output, boolean success, String historyType) throws Exception {
-        CloudTaskItemLog cloudTaskItemLog = new CloudTaskItemLog();
+        CloudTaskItemLogWithBLOBs cloudTaskItemLog = new CloudTaskItemLogWithBLOBs();
         String operator = "system";
         try {
             if (SessionUtils.getUser() != null) {
@@ -310,9 +306,9 @@ public class OrderService {
         cloudTaskItemLogMapper.insertSelective(cloudTaskItemLog);
 
         if (StringUtils.equalsIgnoreCase(historyType, CloudTaskConstants.HISTORY_TYPE.Cloud.name())) {
-            historyService.insertHistoryCloudTaskLog(BeanUtils.copyBean(new HistoryCloudTaskLog(), cloudTaskItemLog));
+            historyService.insertHistoryCloudTaskLog(BeanUtils.copyBean(new HistoryCloudTaskLogWithBLOBs(), cloudTaskItemLog));
         } else if (StringUtils.equalsIgnoreCase(historyType, CloudTaskConstants.HISTORY_TYPE.Vuln.name())) {
-            historyService.insertHistoryVulnTaskLog(BeanUtils.copyBean(new HistoryVulnTaskLog(), cloudTaskItemLog));
+            historyService.insertHistoryVulnTaskLog(BeanUtils.copyBean(new HistoryVulnTaskLogWithBLOBs(), cloudTaskItemLog));
         }
 
     }
@@ -374,14 +370,14 @@ public class OrderService {
         return cloudTaskItemMapper.selectByPrimaryKey(taskItemId);
     }
 
-    public List<CloudTaskItemLog> getQuartzLogByTaskItemId(CloudTaskItemWithBLOBs taskItemWithBLOBs) {
+    public List<CloudTaskItemLogWithBLOBs> getQuartzLogByTaskItemId(CloudTaskItemWithBLOBs taskItemWithBLOBs) {
         CloudTaskItemLogExample cloudTaskItemLogExample = new CloudTaskItemLogExample();
         cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(taskItemWithBLOBs.getId());
         cloudTaskItemLogExample.setOrderByClause("create_time desc");
         return cloudTaskItemLogMapper.selectByExampleWithBLOBs(cloudTaskItemLogExample);
     }
 
-    public List<CloudAccountQuartzTaskRelaLog> getQuartzLogsById(String qzTaskId) {
+    public List<CloudAccountQuartzTaskRelaLogWithBLOBs> getQuartzLogsById(String qzTaskId) {
         CloudAccountQuartzTaskRelaLogExample example = new CloudAccountQuartzTaskRelaLogExample();
         example.createCriteria().andQuartzTaskIdEqualTo(qzTaskId);
         example.setOrderByClause("create_time desc");
@@ -478,8 +474,8 @@ public class OrderService {
                     if (item.getStatus().equals(CloudTaskConstants.TASK_STATUS.ERROR.name())) {
                         CloudTaskItemLogExample cloudTaskItemLogExample = new CloudTaskItemLogExample();
                         cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(item.getId()).andResourceIdIsNotNull().andResultEqualTo(false);
-                        List<CloudTaskItemLog> cloudTaskItemLogs = cloudTaskItemLogMapper.selectByExample(cloudTaskItemLogExample);
-                        resourceIdSet2BeReleased.addAll(cloudTaskItemLogs.stream().map(CloudTaskItemLog::getResourceId).collect(Collectors.toList()));
+                        List<CloudTaskItemLogWithBLOBs> cloudTaskItemLogs = cloudTaskItemLogMapper.selectByExampleWithBLOBs(cloudTaskItemLogExample);
+                        resourceIdSet2BeReleased.addAll(cloudTaskItemLogs.stream().map(CloudTaskItemLogWithBLOBs::getResourceId).collect(Collectors.toList()));
                     }
 
                     //释放资源
@@ -495,7 +491,7 @@ public class OrderService {
                         //清除日志关联
                         CloudTaskItemLogExample cloudTaskItemLogExample = new CloudTaskItemLogExample();
                         cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(item.getId()).andResourceIdEqualTo(resourceId);
-                        CloudTaskItemLog cloudTaskItemLog = new CloudTaskItemLog();
+                        CloudTaskItemLogWithBLOBs cloudTaskItemLog = new CloudTaskItemLogWithBLOBs();
                         cloudTaskItemLog.setTaskItemId(newTaskItemId);
                         cloudTaskItemLogMapper.updateByExampleSelective(cloudTaskItemLog, cloudTaskItemLogExample);
                     }
@@ -529,7 +525,7 @@ public class OrderService {
                             String sc = "";
                             String dirPath = "";
                             try {
-                                dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + item.getRegion(), "policy.yml");
+                                dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + item.getRegion(), "policy.yml", false);
                             } catch (Exception e) {
                                 LogUtil.error("[{}] Generate policy.yml file，and custodian run failed:{}", taskId + "/" + item.getRegion(), e.getMessage());
                             }
@@ -633,7 +629,7 @@ public class OrderService {
                         cloudTask.setPrevFireTime(quartzTask.getPrevFireTime());
                         cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
                     }
-                    CloudAccountQuartzTaskRelaLog quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLog();
+                    CloudAccountQuartzTaskRelaLogWithBLOBs quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLogWithBLOBs();
                     quartzTaskRelaLog.setCreateTime(System.currentTimeMillis());
                     quartzTaskRelaLog.setQuartzTaskId(quartzTaskId);
                     quartzTaskRelaLog.setQuartzTaskRelaId(quartzTaskRelation.getId());

@@ -10,15 +10,7 @@ import java.util.Map;
  */
 public class RuleGroupRequest extends RuleGroup {
 
-    private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    private String accountId;
 
     private Map<String, Object> combine;
 
@@ -28,5 +20,13 @@ public class RuleGroupRequest extends RuleGroup {
 
     public void setCombine(Map<String, Object> combine) {
         this.combine = combine;
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
     }
 }

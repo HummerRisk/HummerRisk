@@ -1,0 +1,116 @@
+[
+  {
+    "regionId": "oss-cn-hangzhou",
+    "regionName": "华东 1",
+    "extranetEndpoint": "oss-cn-hangzhou.aliyuncs.com",
+    "intranetEndpoint": "oss-cn-hangzhou-internal.aliyuncs.com"
+  },
+  {
+    "regionId": "oss-cn-shanghai",
+    "regionName": "华东 2",
+    "extranetEndpoint": "oss-cn-shanghai.aliyuncs.com",
+    "intranetEndpoint": "oss-cn-shanghai-internal.aliyuncs.com"
+  },
+  {
+    "regionId": "oss-cn-qingdao",
+    "regionName": "华北 1",
+    "extranetEndpoint": "oss-cn-qingdao.aliyuncs.com",
+    "intranetEndpoint": "oss-cn-qingdao-internal.aliyuncs.com"
+  },
+  {
+    "regionId": "oss-cn-beijing",
+    "regionName": "华北 2",
+    "extranetEndpoint": "oss-cn-beijing.aliyuncs.com",
+    "intranetEndpoint": "oss-cn-beijing-internal.aliyuncs.com"
+  },
+  {
+    "regionId": "oss-cn-zhangjiakou",
+    "regionName": "华北 3",
+    "extranetEndpoint": "oss-cn-zhangjiakou.aliyuncs.com",
+    "intranetEndpoint": "oss-cn-zhangjiakou-internal.aliyuncs.com"
+  },
+  {
+    "regionId": "oss-cn-huhehaote",
+    "regionName": "华北 5",
+    "extranetEndpoint": "oss-cn-huhehaote.aliyuncs.com",
+    "intranetEndpoint": "oss-cn-huhehaote-internal.aliyuncs.com"
+  },
+  {
+    "regionId": "oss-cn-shenzhen",
+    "regionName": "华南 1",
+    "extranetEndpoint": "oss-cn-shenzhen.aliyuncs.com",
+    "intranetEndpoint": "oss-cn-shenzhen-internal.aliyuncs.com"
+  },
+  {
+    "regionId": "oss-cn-hongkong",
+    "regionName": "香港",
+    "extranetEndpoint": "oss-cn-hongkong.aliyuncs.com",
+    "intranetEndpoint": "oss-cn-hongkong-internal.aliyuncs.com"
+  },
+  {
+    "regionId": "oss-us-west-1",
+    "regionName": "美国西部 1 （硅谷）",
+    "extranetEndpoint": "oss-us-west-1.aliyuncs.com",
+    "intranetEndpoint": "oss-us-west-1-internal.aliyuncs.com"
+  },
+  {
+    "regionId": "oss-us-east-1",
+    "regionName": "美国东部 1 （弗吉尼亚）",
+    "extranetEndpoint": "oss-us-east-1.aliyuncs.com",
+    "intranetEndpoint": "oss-us-east-1-internal.aliyuncs.com"
+  },
+  {
+    "regionId": "oss-ap-southeast-1",
+    "regionName": "亚太东南 1 （新加坡）",
+    "extranetEndpoint": "oss-ap-southeast-1.aliyuncs.com",
+    "intranetEndpoint": "oss-ap-southeast-1-internal.aliyuncs.com"
+  },
+  {
+    "regionId": "oss-ap-southeast-2",
+    "regionName": "亚太东南 2 （悉尼）",
+    "extranetEndpoint": "oss-ap-southeast-2.aliyuncs.com",
+    "intranetEndpoint": "oss-ap-southeast-2-internal.aliyuncs.com"
+  },
+  {
+    "regionId": "oss-ap-southeast-3",
+    "regionName": "亚太东南 3 （吉隆坡）",
+    "extranetEndpoint": "oss-ap-southeast-3.aliyuncs.com",
+    "intranetEndpoint": "oss-ap-southeast-3-internal.aliyuncs.com"
+  },
+  {
+    "regionId": "oss-ap-southeast-5",
+    "regionName": "亚太东南 5 (雅加达)",
+    "extranetEndpoint": "oss-ap-southeast-5.aliyuncs.com",
+    "intranetEndpoint": "oss-ap-southeast-5-internal.aliyuncs.com"
+  },
+  {
+    "regionId": "oss-ap-northeast-1",
+    "regionName": "亚太东北 1 （日本）",
+    "extranetEndpoint": "oss-ap-northeast-1.aliyuncs.com",
+    "intranetEndpoint": "oss-ap-northeast-1-internal.aliyuncs.com"
+  },
+  {
+    "regionId": "oss-ap-south-1",
+    "regionName": "亚太南部 1 （孟买）",
+    "extranetEndpoint": "oss-ap-south-1.aliyuncs.com",
+    "intranetEndpoint": "oss-ap-south-1-internal.aliyuncs.com"
+  },
+  {
+    "regionId": "oss-eu-central-1",
+    "regionName": "欧洲中部 1 （法兰克福）",
+    "extranetEndpoint": "oss-eu-central-1.aliyuncs.com",
+    "intranetEndpoint": "oss-eu-central-1-internal.aliyuncs.com"
+  },
+  {
+    "regionId": "oss-eu-west-1",
+    "regionName": "英国（伦敦）",
+    "extranetEndpoint": "oss-eu-west-1.aliyuncs.com",
+    "intranetEndpoint": "oss-eu-west-1-internal.aliyuncs.com"
+  },
+  {
+    "regionId": "oss-me-east-1",
+    "regionName": "中东东部 1 （迪拜）",
+    "extranetEndpoint": "oss-me-east-1.aliyuncs.com",
+    "intranetEndpoint": "oss-me-east-1-internal.aliyuncs.com"
+  }
+]

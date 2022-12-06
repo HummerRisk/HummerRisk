@@ -88,7 +88,7 @@ public class CompressUtils {
             gzip.finish();
             return obj.toByteArray();
         } catch (Exception e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
             return data;
         }
     }
@@ -116,7 +116,7 @@ public class CompressUtils {
             baos.flush();
             return baos.toByteArray();
         } catch (Exception e) {
-            LogUtil.error(e);
+            LogUtil.error(e.getMessage());
             return data;
         }
     }

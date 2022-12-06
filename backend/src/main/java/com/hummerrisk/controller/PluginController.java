@@ -6,7 +6,7 @@ import com.hummerrisk.base.domain.Plugin;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
-import com.hummerrisk.controller.request.Plugin.PluginRequest;
+import com.hummerrisk.controller.request.plugin.PluginRequest;
 import com.hummerrisk.service.PluginService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

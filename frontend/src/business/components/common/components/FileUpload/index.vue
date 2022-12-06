@@ -54,12 +54,6 @@ export default {
   },
   props:['url', 'param'],
   created() {
-    if(this.param.packageName) {
-      this.fileList = [
-        {name: this.param.packageName, path: this.param.path}
-      ];
-      this.percentage = 100;
-    }
   },
   methods:{
     handleChange(file, fileList) { //文件数量改变

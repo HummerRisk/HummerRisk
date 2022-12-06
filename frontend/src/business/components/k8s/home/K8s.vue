@@ -5,168 +5,251 @@
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('k8s.k8s_settings_list')"
                       @create="create" :createTip="$t('k8s.k8s_create')"
-                      @validate="validate" :runTip="$t('account.one_validate')"
-                      :show-run="true" :show-create="true"/>
-
+                      @validate="validate" :validateTip="$t('account.one_validate')"
+                      :show-validate="true" :show-create="true"
+                      :items="items" :columnNames="columnNames"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                :row-class-name="tableRowClassName"
-                @filter-change="filter" @select-all="select" @select="select">
-        <el-table-column type="selection" min-width="5%">
+      <hide-table
+        :table-data="tableData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+      >
+        <el-table-column type="selection" min-width="40">
         </el-table-column>
-        <el-table-column type="index" min-width="5%"/>
-        <el-table-column prop="name" :label="$t('k8s.name')" min-width="15%" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('k8s.platform')" min-width="10%" show-overflow-tooltip>
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('k8s.name')" min-width="150" show-overflow-tooltip></el-table-column>
+        <el-table-column :label="$t('k8s.platform')" v-if="checkedColumnNames.includes('pluginName')" min-width="140" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ $t(scope.row.pluginName) }}
+                 &nbsp;&nbsp; {{ scope.row.pluginName }}
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" min-width="10%" :label="$t('k8s.status')"
+        <el-table-column prop="status" v-if="checkedColumnNames.includes('status')" min-width="110" :label="$t('k8s.status')"
                          column-key="status"
                          :filters="statusFilters"
                          :filter-method="filterStatus">
           <template v-slot:default="{row}">
-            <k8s-status :row="row"/>
+            <div @click="validateK8s(row)" style="cursor:pointer;">
+              <el-tag size="mini" type="warning" v-if="row.status === 'DELETE'">
+                {{ $t('account.DELETE') }}
+              </el-tag>
+              <el-tag size="mini" type="success" v-else-if="row.status === 'VALID'">
+                {{ $t('account.VALID') }}
+              </el-tag>
+              <el-tag size="mini" type="danger" v-else-if="row.status === 'INVALID'">
+                {{ $t('account.INVALID') }}
+              </el-tag>
+            </div>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('account.create_time')" sortable
-                         prop="createTime">
-          <template v-slot:default="scope">
-            <span>{{ scope.row.createTime | timestampFormatDate }}</span>
+        <el-table-column prop="operatorStatus" v-if="checkedColumnNames.includes('operatorStatus')" min-width="130" :label="$t('k8s.operator_status')"
+                         column-key="status"
+                         :filters="statusFilters"
+                         :filter-method="filterStatus">
+          <template v-slot:default="{row}">
+            <div @click="validateOperator(row)" style="cursor:pointer;">
+              <el-tag size="mini" type="warning" v-if="row.operatorStatus === 'DELETE'">
+                {{ $t('account.DELETE') }}
+              </el-tag>
+              <el-tag size="mini" type="success" v-else-if="row.operatorStatus === 'VALID'">
+                {{ $t('account.VALID') }}
+              </el-tag>
+              <el-tag size="mini" type="danger" v-else-if="row.operatorStatus === 'INVALID'">
+                {{ $t('account.INVALID') }}
+              </el-tag>
+            </div>
           </template>
         </el-table-column>
-        <el-table-column min-width="15%" :label="$t('account.update_time')" sortable
+        <el-table-column min-width="160" v-if="checkedColumnNames.includes('updateTime')" :label="$t('account.update_time')" sortable
                          prop="updateTime">
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
-        <el-table-column min-width="17%" :label="$t('commons.operating')" fixed="right">
+        <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :label="$t('account.creator')" min-width="110" show-overflow-tooltip/>
+        <el-table-column min-width="150" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
         </el-table-column>
-      </el-table>
+      </hide-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
-    <!--Create vuln-->
+    <!--Create k8s-->
     <el-drawer class="rtl" :title="$t('k8s.k8s_create')" :visible.sync="createVisible" size="50%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
-      <div v-for="(form, index) in addAccountForm" :key="index">
-        <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" :ref="'addAccountForm' + index">
-          <el-form-item :label="$t('k8s.name')" ref="name" prop="name">
+      <div v-loading="k8sResult.loading">
+        <div v-for="(form, index) in addAccountForm" :key="index">
+          <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" :ref="'addAccountForm' + index">
+            <el-form-item :label="$t('k8s.name')" ref="name" prop="name">
+              <el-input v-model="form.name" autocomplete="off" :placeholder="$t('k8s.name')"/>
+            </el-form-item>
+            <el-form-item :label="$t('k8s.platform')" :rules="{required: true, message: $t('k8s.platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-select style="width: 100%;" v-model="form.pluginId" :placeholder="$t('k8s.platform')" @change="changePluginForAdd(form)">
+                <el-option
+                  v-for="item in plugins"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                  <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                  &nbsp;&nbsp; {{ item.name }}
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <div v-for="(tmp, index) in form.tmpList" :key="index">
+              <el-form-item v-if="tmp.inputType === 'password'" :label="tmp.label" style="margin-bottom: 29px">
+                <el-input :type="tmp.inputType" v-model="tmp.input" autocomplete="new-password" show-password :placeholder="tmp.description"/>
+              </el-form-item>
+              <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean'" :label="tmp.label">
+                <el-input v-if="tmp.inputType === 'textarea'" :type="tmp.inputType" :rows="10" v-model="tmp.input" autocomplete="off" :placeholder="tmp.description"/>
+                <el-input v-if="tmp.inputType !== 'textarea'" :type="tmp.inputType" v-model="tmp.input" autocomplete="off" :placeholder="tmp.description"/>
+              </el-form-item>
+            </div>
+            <el-form-item v-if="form.isProxy && form.pluginId" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+                <el-option
+                  v-for="item in proxys"
+                  :key="item.id"
+                  :label="item.proxyIp"
+                  :value="item.id">
+                  &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item v-if="form.pluginId" :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-switch v-model="form.isProxy"></el-switch>
+            </el-form-item>
+            <el-form-item v-if="index > 0" :label="$t('k8s.delete_this_k8s')">
+              <el-button type="danger" icon="el-icon-delete" plain size="small" @click="deleteAccount(addAccountForm, form)">{{ $t('commons.delete') }}</el-button>
+            </el-form-item>
+          </el-form>
+          <el-divider><i class="el-icon-first-aid-kit"> {{ (index + 1) }}</i></el-divider>
+          <div style="margin: 10px;">
+            <el-popover placement="right-end" title="Notice" width="800" trigger="click">
+              <hr-code-edit :read-only="true" width="800px" height="300px" :data.sync="content" :modes="modes" :mode="'html'"/>
+              <el-button icon="el-icon-warning" plain size="mini" slot="reference" style="color: red">
+                <span>{{ $t('k8s.k8s_note') }}</span>
+              </el-button>
+            </el-popover>
+          </div>
+        </div>
+        <proxy-dialog-create-footer
+          @cancel="createVisible = false"
+          @addAccount="addAccount(addAccountForm)"
+          @confirm="saveAccount(addAccountForm, 'add')"/>
+      </div>
+    </el-drawer>
+    <!--Create k8s-->
+
+    <!--Update k8s-->
+    <el-drawer class="rtl" :title="$t('k8s.k8s_update')" :visible.sync="updateVisible" size="50%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <div v-loading="k8sResult.loading">
+        <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="accountForm">
+          <el-form-item :label="$t('k8s.name')"  ref="name" prop="name">
             <el-input v-model="form.name" autocomplete="off" :placeholder="$t('k8s.name')"/>
           </el-form-item>
           <el-form-item :label="$t('k8s.platform')" :rules="{required: true, message: $t('k8s.platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.pluginId" :placeholder="$t('k8s.platform')" @change="changePluginForAdd(form)">
+            <el-select style="width: 100%;" disabled v-model="form.pluginId" :placeholder="$t('k8s.platform')" @change="changePlugin(form.pluginId)">
               <el-option
                 v-for="item in plugins"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id">
                 <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                &nbsp;&nbsp; {{ $t(item.name) }}
+                &nbsp;&nbsp; {{ item.name }}
               </el-option>
             </el-select>
           </el-form-item>
-          <div v-for="(tmp, index) in form.tmpList" :key="index">
+          <div v-for="(tmp, index) in tmpList" :key="index">
             <el-form-item v-if="tmp.inputType === 'password'" :label="tmp.label" style="margin-bottom: 29px">
-              <el-input :type="tmp.inputType" v-model="tmp.input" autocomplete="new-password" show-password :placeholder="tmp.description"/>
+              <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="new-password" show-password :placeholder="tmp.description"/>
             </el-form-item>
             <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean'" :label="tmp.label">
-              <el-input :type="tmp.inputType" v-model="tmp.input" autocomplete="off" :placeholder="tmp.description"/>
+              <el-input v-if="tmp.inputType === 'textarea'" :type="tmp.inputType" :rows="10" v-model="tmp.input" @input="change($event)" autocomplete="off" :placeholder="tmp.description"/>
+              <el-input v-if="tmp.inputType !== 'textarea'" :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="off" :placeholder="tmp.description"/>
             </el-form-item>
           </div>
-          <el-form-item v-if="form.isProxy && form.pluginId" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
-              <el-option
-                v-for="item in proxys"
-                :key="item.id"
-                :label="item.proxyIp"
-                :value="item.id">
-                &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item v-if="form.pluginId" :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-switch v-model="form.isProxy"></el-switch>
-          </el-form-item>
-          <el-form-item v-if="index > 0" :label="$t('k8s.delete_this_k8s')">
-            <el-button type="danger" icon="el-icon-delete" plain size="small" @click="deleteAccount(addAccountForm, form)">{{ $t('commons.delete') }}</el-button>
-          </el-form-item>
         </el-form>
-        <el-divider><i class="el-icon-first-aid-kit"> {{ (index + 1) }}</i></el-divider>
-      </div>
-      <proxy-dialog-create-footer
-        @cancel="createVisible = false"
-        @addAccount="addAccount(addAccountForm)"
-        @confirm="saveAccount(addAccountForm, 'add')"/>
-    </el-drawer>
-    <!--Create vuln-->
-
-    <!--Update vuln-->
-    <el-drawer class="rtl" :title="$t('k8s.k8s_update')" :visible.sync="updateVisible" size="50%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
-      <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="accountForm">
-        <el-form-item :label="$t('k8s.name')"  ref="name" prop="name">
-          <el-input v-model="form.name" autocomplete="off" :placeholder="$t('k8s.name')"/>
-        </el-form-item>
-        <el-form-item :label="$t('k8s.platform')" :rules="{required: true, message: $t('k8s.platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" disabled v-model="form.pluginId" :placeholder="$t('k8s.platform')" @change="changePlugin(form.pluginId)">
-            <el-option
-              v-for="item in plugins"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-              <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-              &nbsp;&nbsp; {{ $t(item.name) }}
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <div v-for="(tmp, index) in tmpList" :key="index">
-          <el-form-item v-if="tmp.inputType === 'password'" :label="tmp.label" style="margin-bottom: 29px">
-            <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="new-password" show-password :placeholder="tmp.description"/>
-          </el-form-item>
-          <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean'" :label="tmp.label">
-            <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="off" :placeholder="tmp.description"/>
-          </el-form-item>
+        <div style="margin: 10px;">
+          <el-popover placement="right-end" title="Notice" width="800" trigger="click">
+            <hr-code-edit :read-only="true" width="800px" height="300px" :data.sync="content" :modes="modes" :mode="'html'"/>
+            <el-button icon="el-icon-warning" plain size="mini" slot="reference" style="color: red">
+              <span>{{ $t('k8s.k8s_note') }}</span>
+            </el-button>
+          </el-popover>
         </div>
-      </el-form>
-      <proxy-dialog-footer
-        @cancel="updateVisible = false"
-        @confirm="editAccount(form, 'update')"/>
+        <proxy-dialog-footer
+          @cancel="updateVisible = false"
+          @confirm="editAccount(form, 'update')"/>
+      </div>
     </el-drawer>
-    <!--Update vuln-->
+    <!--Update k8s-->
 
   </main-container>
 </template>
 
 <script>
 import TablePagination from "../../common/pagination/TablePagination";
-import TableHeader from "../head/TableHeader";
+import TableHeader from "@/business/components/common/components/TableHeader";
 import TableOperator from "../../common/components/TableOperator";
 import Container from "../../common/components/Container";
 import MainContainer from "../../common/components/MainContainer";
-import K8sStatus from "./K8sStatus";
 import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import {K8S_CONFIGS} from "../../common/components/search/search-components";
-import ProxyDialogFooter from "../head/ProxyDialogFooter";
-import ProxyDialogCreateFooter from "../head/ProxyDialogCreateFooter";
+import ProxyDialogFooter from "@/business/components/common/components/ProxyDialogFooter";
+import ProxyDialogCreateFooter from "@/business/components/common/components/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
-import {K8S_ID, K8S_NAME} from "@/common/js/constants";
+import HrCodeEdit from "@/business/components/common/components/HrCodeEdit";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'k8s.name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'k8s.platform',
+    props: 'pluginName',
+    disabled: false
+  },
+  {
+    label: 'k8s.status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'k8s.operator_status',
+    props: 'operatorStatus',
+    disabled: false
+  },
+  {
+    label: 'account.update_time',
+    props: 'updateTime',
+    disabled: false
+  },
+  {
+    label: 'account.creator',
+    props: 'userName',
+    disabled: false
+  }
+];
 
 /* eslint-disable */
 export default {
   components: {
     TableOperators,
-    K8sStatus,
     MainContainer,
     Container,
     TableHeader,
@@ -174,7 +257,9 @@ export default {
     TableOperator,
     DialogFooter,
     ProxyDialogFooter,
-    ProxyDialogCreateFooter
+    ProxyDialogCreateFooter,
+    HrCodeEdit,
+    HideTable,
   },
   provide() {
     return {
@@ -185,6 +270,7 @@ export default {
     return {
       credential: {},
       result: {},
+      k8sResult: {},
       condition: {
         components: K8S_CONFIGS
       },
@@ -210,7 +296,7 @@ export default {
       rule: {
         name: [
           {required: true, message: this.$t('commons.input_name'), trigger: 'blur'},
-          {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+          {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
           {
             required: true,
             message: this.$t("workspace.special_characters_are_not_supported"),
@@ -227,11 +313,11 @@ export default {
         ],
         proxyName: [
           {required: false, message: this.$t('proxy.proxy_name'), trigger: 'blur'},
-          {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+          {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
         ],
         proxyPassword: [
           {required: false, message: this.$t('proxy.proxy_password'), trigger: 'blur'},
-          {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+          {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
         ],
       },
       buttons: [
@@ -255,12 +341,54 @@ export default {
         {id: 'Http', value: "Http"},
         {id: 'Https', value: "Https"},
       ],
+      modes: ['text', 'html'],
+      content: '# 1.添加 chart 仓库\n' +
+        'helm repo add hummer https://registry.hummercloud.com/repository/charts\n' +
+        '\n' +
+        '# 2.更新仓库源\n' +
+        'helm repo update\n' +
+        '\n' +
+        '# 3.开始安装, 可以自定义应用名称和NameSpace\n' +
+        'helm install trivy-operator hummer/trivy-operator \\\n' +
+        ' --namespace trivy-system \\\n' +
+        ' --set="image.repository=registry.cn-beijing.aliyuncs.com/hummerrisk/trivy-operator" \\\n' +
+        ' --create-namespace --set="trivy.ignoreUnfixed=true"\n' +
+        '\n' +
+        '# 4.检测operator是否启动成功\n' +
+        'kubectl get pod -A|grep trivy-operator\n' +
+        'trivy-system   trivy-operator-69f99f79c4-lvzvs           1/1     Running            0          118s',
+      checkedColumnNames: columnOptions.map((ele) => ele.props),
+      columnNames: columnOptions,
+      //名称搜索
+      items: [
+        {
+          name: 'k8s.name',
+          id: 'name'
+        },
+        {
+          name: 'account.creator',
+          id: 'userName'
+        }
+      ],
+      checkAll: true,
+      isIndeterminate: false,
     }
   },
   watch: {
     '$route': 'init'
   },
   methods: {
+    handleCheckedColumnNamesChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.columnNames.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+      this.checkedColumnNames = value;
+    },
+    handleCheckAllChange(val) {
+      this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+      this.isIndeterminate = false;
+      this.checkAll = val;
+    },
     create() {
       this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
       this.createVisible = true;
@@ -292,19 +420,66 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            let formData = new FormData();
             this.result = this.$request({
               method: 'POST',
-              url: "/cloud/native/validate",
+              url: "/k8s/validate",
               data: Array.from(this.selectIds),
               headers: {
                 'Content-Type': undefined
               }
             }, res => {
-              if (res.data) {
+              if (res.data.length == 0) {
                 this.$success(this.$t('commons.success'));
               } else {
-                this.$error(this.$t('commons.error'));
+                let name = '';
+                for (let item of res.data) {
+                  name = name + ' ' + item.name + ';';
+                }
+                this.$error(this.$t('k8s.failed_k8s') + name);
+              }
+              this.search();
+            });
+          }
+        }
+      });
+    },
+    validateK8s(row) {
+      this.$alert(this.$t('account.validate') + this.$t('k8s.k8s_setting') + ' : ' + row.name +  " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.$post("/k8s/validate/" + row.id, {}, response => {
+              let data = response.data;
+              if (data) {
+                if (data.flag) {
+                  this.$success(this.$t('account.success'));
+                } else {
+                  this.$error(data.message, 10000);
+                }
+              } else {
+                this.$error(this.$t('account.error'), 10000);
+              }
+              this.search();
+            });
+          }
+        }
+      });
+    },
+    validateOperator(row) {
+      this.$alert(this.$t('account.validate') + this.$t('k8s.k8s_setting') + ' : ' + row.name +  " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.$post("/k8s/operatorStatusValidate/" + row.id, {}, response => {
+              let data = response.data;
+              if (data) {
+                if (data.flag) {
+                  this.$success(this.$t('account.success'));
+                } else {
+                  this.$error(data.message, 10000);
+                }
+              } else {
+                this.$error(this.$t('account.error'));
               }
               this.search();
             });
@@ -320,7 +495,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/cloud/native/list/" + this.currentPage + "/" + this.pageSize;
+      let url = "/k8s/list/" + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -347,7 +522,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$post("/cloud/native/delete/" + obj.id, {}, () => {
+            this.result = this.$post("/k8s/delete/" + obj.id, {}, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -431,7 +606,7 @@ export default {
         if (item.isProxy) data["proxyId"] = item.proxyId;
 
         if (type === 'add') {
-          this.result = this.$post("/cloud/native/add", data,response => {
+          this.k8sResult = this.$post("/k8s/add", data,response => {
             if (response.success) {
               this.$success(this.$t('commons.create_success'));
               this.search();
@@ -461,7 +636,7 @@ export default {
           if (item.isProxy) data["proxyId"] = item.proxyId;
 
           if (type === 'add') {
-            this.result = this.$post("/cloud/native/add", data,response => {
+            this.k8sResult = this.$post("/k8s/add", data,response => {
               if (response.success) {
                 this.$success(this.$t('commons.create_success'));
                 this.search();
@@ -472,7 +647,7 @@ export default {
             });
           } else {
             data["id"] = item.id;
-            this.result = this.$post("/cloud/native/update", data,response => {
+            this.k8sResult = this.$post("/k8s/update", data,response => {
               if (response.success) {
                 this.$success(this.$t('commons.update_success'));
                 this.handleClose();
@@ -488,15 +663,6 @@ export default {
         }
       });
     },
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 4 === 0) {
-        return 'success-row';
-      } else if (rowIndex % 2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
-      }
-    },
     addAccount (addAccountForm) {
       let newParam = { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] };
       addAccountForm.push(newParam);
@@ -510,6 +676,10 @@ export default {
       }
     },
     handleScan(item) {
+      if (item.status === 'INVALID') {
+        this.$warning(item.name + ':' + this.$t('k8s.failed_status'));
+        return;
+      }
       this.$alert(this.$t('image.one_scan') + item.name + " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {

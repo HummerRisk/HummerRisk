@@ -3,10 +3,12 @@ package com.hummerrisk.service;
 import com.hummerrisk.base.domain.Proxy;
 import com.hummerrisk.base.domain.ProxyExample;
 import com.hummerrisk.base.mapper.ProxyMapper;
+import com.hummerrisk.base.mapper.ext.ExtProxyMapper;
 import com.hummerrisk.commons.constants.ResourceOperation;
 import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.SessionUtils;
+import com.hummerrisk.controller.request.proxy.ProxyRequest;
 import com.hummerrisk.i18n.Translator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,9 @@ public class ProxyService {
 
     @Resource
     private ProxyMapper proxyMapper;
+
+    @Resource
+    private ExtProxyMapper extProxyMapper;
 
     public Proxy insert(Proxy proxy) throws Exception {
 
@@ -51,11 +56,8 @@ public class ProxyService {
         return proxyMapper.selectByExample(example);
     }
 
-    public List<Proxy> getProxyListWithRequest(Proxy request) {
-        ProxyExample example = new ProxyExample();
-        example.setOrderByClause("update_time desc");
-        if(request.getProxyIp() != null) example.createCriteria().andProxyIpLike("%" + request.getProxyIp() + "%");
-        return proxyMapper.selectByExample(example);
+    public List<Proxy> getProxyListWithRequest(ProxyRequest request) {
+        return extProxyMapper.getProxyListWithRequest(request);
     }
 
     public void deleteProxy(int proxyId) {

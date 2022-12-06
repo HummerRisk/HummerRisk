@@ -4,8 +4,8 @@
     </a>
 </p>
 <h3 align="center">
-    云原生安全检测平台 
-    <a href="https://github.com/hummerrisk/hummerrisk/blob/master/README_EN.md" style="color: #df913c;">[英文版]</a>
+    云原生安全平台 
+    <a href="https://github.com/hummerrisk/hummerrisk/blob/master/README_EN.md" style="color: #df913c;">[English]</a>
 </h3>
 
 <p align="center">
@@ -19,80 +19,85 @@
 
 ## HummerRisk 是什么
 
-> HummerRisk 是开源的云原生安全平台，以非侵入的方式对云原生环境进行全面安全检测。我们核心解决三个方面的问题，底层的混合云安全合规，中层的K8S容器云安全和上层的软件安全。
+> HummerRisk 是开源的云原生安全平台，以非侵入的方式解决云原生的安全和治理问题。核心能力包括混合云的安全治理和K8S容器云安全检测。
+
+HummerRisk is an opensource cloud-native security platform. It resolve the  cloud-native security and governance issues in agentless way. Core capabilities include hybrid-cloud security and K8S container cloud detection.
+
 
 ![架构](./frontend/src/assets/img/readme/architecturev.png)
+
 ## HummerRisk 能做什么
-### **混合云安全**
-* 混合云安全合规检测：
-  对主流的公(私)有云资源进行安全合规检测，例如等保2.0预检、CIS 合规检查、各种基线检测，同时可自定义检测规则
-* 漏洞检测：
-  基于漏洞规则库，通过扫描等手段对指定的网络设备及应用服务的安全脆弱性进行检测
-* 合规报告：
-  一键获取合规报告，全面掌控安全态势
+
+### **混合云安全治理**
+
+* 混合云安全合规检测: 对主流的公(私)有云资源进行安全合规检测，例如等保2.0预检、CIS 合规检查、最佳实践检测、各种基线检测，同时可自定义检测规则；
+* 云资源态势: 同步云上资源，快速查看混合云的各种资源态势与云资源拓扑图；
+* 漏洞检测: 基于漏洞规则库，通过扫描等手段对指定的网络设备及应用服务的安全脆弱性进行检测；
+* 合规报告: 一键获取合规报告，全面掌控安全态势；
+* 操作审计: 统一监控多云环境上的账号活动，对云上产品和服务的访问和使用行为的操作日志进行审计；
+* 对象存储: 同步云上对象存储桶资源，查看、上传、下载存储对象。根据对象存储安全与合规要求，快速检测并生成报告。
+
   ![混合云安全合规](./frontend/src/assets/img/readme/multicloud.png)
->**优势是什么？**  
-> * 支持全面: 支持的几乎所有公有云,包括：阿里云、腾讯云、华为云、火山云、百度云、AWS、Azure、GCE，支持的私有云包括：OpenStack、VMware vSphere，并还在不断的扩充支持的范围。  
-> * 容易上手: 只需绑定云账号，就可以一键执行检测
-> * 开箱即用: 内置大量规则，并可按需自定义规则
+
+>**优势是什么？**
+
+* 支持全面: 支持的几乎所有公有云，包括：阿里云、腾讯云、华为云、火山引擎、百度云、青云、UCloud、Amazon Web Services、Microsoft Azure、Google Cloud，支持的私有云包括：OpenStack、VMware vSphere，并还在不断的扩充支持的范围；
+* 容易上手: 只需绑定云账号，就可以一键执行检测；
+* 灵活便捷: 多种维度查看检测结果，根据需求任务编排；
+* 开箱即用: 内置大量规则，并且不断迭代新增。用户可以按需自定义规则。
 
 
 ### **K8S 容器云安全**
-* K8S 资源态势：
-  可以关联多个 K8S 集群，统一查看各个关联环境的资源态势
-* 环境检测：
-  根据 K8S 安全基线进行检测，发现存在的配置错误、安全漏洞、危险动作等内容
-* 镜像检测：
-  全面检测镜像相关的漏洞，包括操作系统、软件包、应用程序依赖等方面
-* 容器检测：
-  对运行容器进行扫描检测，发现存在的安全问题和风险内容
-* 部署检测：
-  检测 K8S 的部署编排文件，在部署前发现其中的配置问题
-* 主机检测：
-  可以自定义检测内容，发现底层主机/虚机中存在问题
+
+* K8S 资源态势: 可以关联多个 K8S 集群，统一查看各个关联环境的资源态势；
+* 主机检测: 可以自定义检测内容，发现底层主机、虚机中存在问题；
+* K8s 检测: 根据 K8S 安全基线进行检测，发现存在的配置错误、安全漏洞、危险动作等内容；
+* 部署检测: 检测 K8S 的部署编排文件，在部署前发现其中的配置问题；
+* 镜像检测: 全面检测镜像相关的漏洞，包括操作系统、软件包、应用程序依赖等方面；
+* 源码检测: 检测开发者的源代码，提前发现其中的开源协议、依赖、漏洞、代码等问题；
+* 文件检测: 检测源码项目中特定的语言文件或文件夹，发现应用程序依赖的漏洞风险；
+* SBOM 管理: SBOM 的可视化管理和分析，检测 SBOM 的变更，快速发现和定位软件供应链中的风险和漏洞，给出合理地处理建议。
+
   ![K8S容器云安全](./frontend/src/assets/img/readme/k8s.png)
->**优势是什么？**
-> * 兼容性: 支持多种 K8S 发行版
-> * 独立性: 中立产品，客观检测
-> * 无侵入：无侵入式检测
 
-### **软件安全**
-
-以源码、软件、镜像相结合的检测为基础，帮助企业构建和持续管理 SBOM，提升软件供应链安全、开源安全
-* 源码检测：检测开发者的源代码，提前发现其中的开源协议、依赖、漏洞、代码等问题
-* 软件依赖检测：通过对软件成分的分析，发现依赖漏洞，同时构建 SBOM
-* 镜像依赖检测：检测镜像中的各种依赖信息，并发现安全漏洞
-* SBOM 管理: SBOM 的可视化管理和分析，检测 SBOM 的变更，快速发现和定位软件供应链中的风险和漏洞，给出合理的处理建议
- 
-  ![软件安全](./frontend/src/assets/img/readme/sbom.png)
 
 >**优势是什么？**
-> * 全生命周期: 覆盖开发、构建、运行等多个阶段、支持对接多种仓库
-> * 自动处理: SBOM 的处理和建设过程自动化完成
-> * 可视化: 为管理和分析提供了便捷的可视化界面
 
+* 兼容性: 支持多种 K8s 发行版；
+* 独立性: 中立产品，客观检测；
+* 可靠性: 急速响应，快速准确；
+* 无侵入：无侵入式检测。
+
+## UI 展示
+
+![UI 展示](./frontend/src/assets/img/gif/hummerrisk.gif)
+
+> 更多优质功能持续迭代中...
 
 ## 快速开始
 
 仅需两步快速安装 HummerRisk：
 
-1.  准备一台不小于 4 核 8 G 内存的 64 位 Linux (建议首选 CentOS 7 以上) 主机；
+1.  准备一台不小于 4 核 8 G 内存的 64 位 Linux 主机；
 2.  以 root 用户执行如下命令一键安装 HummerRisk。
 
 ```sh
 curl -sSL https://github.com/HummerRisk/HummerRisk/releases/latest/download/quick_start.sh | sh
 ```
+
 ## 帮助文档
+
 获取更多的产品信息和使用说明，可以访问我们的在线帮助文档
-> [帮助文档](https://docs.hummercloud.com)
+
+> [帮助文档](https://docs.hummerrisk.com)
 
 ## 技术优势
 
 - [x] 开源开放：HummerRisk 遵循 GPL v3 开源协议;
 - [x] 无侵入式：基于无侵入式的实现方式，快速上手，降低潜在风险;
-- [x] 支持全面：从底层基础环境到上层软件应用，覆盖云原生环境的全部方面;
+- [x] 支持全面：覆盖云原生环境的多种方面，几乎支持全部云;
 - [x] 规则丰富：大量内置检测规则，如 CIS 规则，等保2.0 规则等，同时支持自定义规则;
-- [x] 支持信创：支持在信创环境中部署
+- [x] 支持信创：支持在信创环境中部署。
 
 ## 微信群
 
@@ -117,11 +122,7 @@ curl -sSL https://github.com/HummerRisk/HummerRisk/releases/latest/download/quic
 - [Prowler](https://prowler.pro/)：使用了 Prowler 作为 AWS 检测引擎
 - [Nuclei](https://nuclei.projectdiscovery.io/)：使用了 Nuclei 作为漏洞检测引擎
 - [Xray](https://xray.cool/)：使用了 Xray 作为漏洞检测引擎
-- [Tsunami](https://github.com/google/tsunami-security-scanner/blob/master/docs/index.md)：使用了 Tsunami 作为网络安全扫描引擎
 - [Trivy](https://github.com/aquasecurity/trivy)：使用了 Trivy 作为云原生检测引擎
-- [Dependency Check](https://jeremylong.github.io/DependencyCheck/)：使用了 Dependency Check 作为软件依赖检查引擎
-- [Grype](https://github.com/anchore/grype)：使用了 Grype 作为镜像依赖检测引擎
-- [Syft](https://github.com/anchore/syft)：使用了 Syft 作为镜像物料清单检测引擎
 - [Element](https://element.eleme.cn/#/)：使用了 Element 提供的优秀组件库
 
 ## License & Copyright

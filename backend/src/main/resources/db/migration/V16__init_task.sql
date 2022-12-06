@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS `task` (
     `apply_user`                    varchar(50)           DEFAULT NULL COMMENT '申请人',
     `create_time`                   bigint(13)            DEFAULT NULL COMMENT '创建时间',
     `task_name`                     varchar(256)          DEFAULT NULL COMMENT '任务名称',
-    `description`                   varchar(255)          DEFAULT NULL COMMENT '描述',
+    `description`                   varchar(1024)         DEFAULT NULL COMMENT '描述',
     `cron`                          varchar(128)          DEFAULT NULL COMMENT 'cron表达式',
     `trigger_id`                    varchar(255)          DEFAULT NULL COMMENT '触发ID',
     `prev_fire_time`                bigint(20)            DEFAULT NULL COMMENT '上次执行时间',
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `task_item_resource_log` (
     `resource_id`                  varchar(50)         DEFAULT NULL COMMENT '检测资源结果ID',
     `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
-    `operation`                    varchar(255)        DEFAULT NULL COMMENT '操作内容',
+    `operation`                    mediumtext          DEFAULT NULL COMMENT '操作内容',
     `output`                       mediumtext          DEFAULT NULL COMMENT '输出',
     `result`                       tinyint(1)          DEFAULT NULL COMMENT '结果',
     PRIMARY KEY (`id`)

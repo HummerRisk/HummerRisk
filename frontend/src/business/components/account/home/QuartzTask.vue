@@ -3,33 +3,49 @@
       <el-card class="table-card" v-loading="result.loading">
         <template v-slot:header>
           <table-header :condition.sync="condition" @search="search"
-                           :title="$t('account.quartz_task_list')"
-                           @create="create" :createTip="$t('account.quartz_task_add')"
-                           :show-create="true"/>
+                        :title="$t('account.quartz_task_list')"
+                        @create="create" :createTip="$t('account.quartz_task_add')"
+                        :show-create="true"
+                        :items="items" :columnNames="columnNames"
+                        :checkedColumnNames="checkedColumnNames" :checkAll="checkAll2" :isIndeterminate="isIndeterminate"
+                        @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
         </template>
 
-        <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
-          <el-table-column type="index" min-width="3%"/>
-          <el-table-column prop="name" :label="$t('account.task_input_name')" min-width="10%" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="qzType" :label="$t('account.choose_qztype')" min-width="9%" show-overflow-tooltip>
+        <hide-table
+          :table-data="tableData"
+          @sort-change="sort"
+          @filter-change="filter"
+          @select-all="select"
+          @select="select"
+        >
+          <el-table-column type="index" min-width="40"/>
+          <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('account.task_input_name')" min-width="150" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="qzType" v-if="checkedColumnNames.includes('qzType')" :label="$t('account.choose_qztype')" min-width="120" show-overflow-tooltip>
             <template v-slot:default="scope">
-              <el-link type="primary" @click="showAccount(scope.row)">{{ $t(scope.row.qzType) }}</el-link>
+              <el-link type="primary" @click="showAccount(scope.row)">
+                <span v-if="scope.row.qzType==='ACCOUNT'">
+                  {{ $t('ACCOUNT') }}
+                </span>
+                <span v-if="scope.row.qzType==='RULE'">
+                  {{ $t('RULE') }}
+                </span>
+              </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="cron" :label="$t('account.cron_expression')" min-width="8%" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="cronDesc" :label="$t('account.cron_expression_desc')" min-width="12%" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="prevFireTime" :label="$t('account.prev_fire_time')" min-width="12%" sortable>
+          <el-table-column prop="cron" v-if="checkedColumnNames.includes('cron')" :label="$t('account.cron_expression')" min-width="130" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="cronDesc" v-if="checkedColumnNames.includes('cronDesc')" :label="$t('account.cron_expression_desc')" min-width="180" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="prevFireTime" v-if="checkedColumnNames.includes('prevFireTime')" :label="$t('account.prev_fire_time')" min-width="200" sortable>
             <template v-slot:default="scope">
               <span v-if="scope.row.prevFireTime"><i class="el-icon-time"></i> {{ scope.row.prevFireTime | timestampFormatDate }}</span>
               <span v-if="!scope.row.prevFireTime"><i class="el-icon-time"></i> {{ '--' }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="lastFireTime" :label="$t('account.last_fire_time')" min-width="13%" sortable>
+          <el-table-column prop="lastFireTime" v-if="checkedColumnNames.includes('lastFireTime')" :label="$t('account.last_fire_time')" min-width="200" sortable>
             <template v-slot:default="scope">
               <span><i class="el-icon-time"></i> {{ scope.row.lastFireTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="status" min-width="10%" :label="$t('account.task_status')"
+          <el-table-column prop="status" v-if="checkedColumnNames.includes('status')" min-width="150" :label="$t('account.task_status')"
                            column-key="status"
                            :filters="statusFilters"
                            :filter-method="filterStatus">
@@ -45,25 +61,25 @@
               </el-button>
             </template>
           </el-table-column>
-          <el-table-column min-width="12%" :label="$t('account.create_time')" sortable prop="createTime">
+          <el-table-column min-width="200" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.create_time')" sortable prop="createTime">
             <template v-slot:default="scope">
               <span><i class="el-icon-time"></i> {{ scope.row.createTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column min-width="11%" :label="$t('commons.operating')" fixed="right">
+          <el-table-column min-width="150" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators v-if="scope.row.status === 'PAUSE'" :buttons="buttons1" :row="scope.row"/>
               <table-operators v-if="scope.row.status != 'PAUSE'" :buttons="buttons2" :row="scope.row"/>
             </template>
           </el-table-column>
-        </el-table>
+        </hide-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
 
       <!--Create Quartz Task-->
       <el-drawer class="rtl" :title="$t('account.create_quartz_task')" :visible.sync="createVisible" size="50%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-          <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" :ref="'createForm'">
+          <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" ref="'createForm'">
             <el-steps :active="active"  finish-status="success">
               <el-step :title="$t('account.step1')">
               </el-step>
@@ -90,13 +106,13 @@
               </span>
               <el-input :placeholder="$t('account.please_input_name')" v-model="form.name" clearable>
               </el-input>
-              <el-select style="width: 100%;margin: 50px 0;" v-model="form.qzType" :placeholder="$t('account.please_choose_qztype')">
+              <el-select style="width: 100%;margin: 50px 0;" filterable :clearable="true" v-model="form.qzType" :placeholder="$t('account.please_choose_qztype')">
                 <el-option
                   v-for="item in qzTypes"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id">
-                  &nbsp;&nbsp; {{ $t(item.name) }}
+                  &nbsp;&nbsp; {{ item.name }}
                 </el-option>
               </el-select>
             </div>
@@ -113,7 +129,7 @@
                     :label="item.name"
                     :value="item.id">
                     <img :src="require(`@/assets/img/platform/${item.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                    &nbsp;&nbsp; {{ $t(item.name) }}
+                    &nbsp;&nbsp; {{ item.name }}
                   </el-option>
                 </el-select>
               </div>
@@ -126,7 +142,7 @@
                     :label="item.name"
                     :value="item.id">
                     <img :src="require(`@/assets/img/platform/${item.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                    &nbsp;&nbsp; {{ $t(item.name) }}
+                    &nbsp;&nbsp; {{ item.name }}
                   </el-option>
                 </el-select>
                 <el-select v-if="form.accountId" v-model="form.ruleIds" multiple filterable :collapse-tags="false" :placeholder="$t('rule.please_choose_rule')" :clearable="true" style="width: 100%;margin: 20px 0;">
@@ -137,7 +153,7 @@
                     :label="item.name"
                     :value="item.id">
                     <img :src="require(`@/assets/img/platform/${item.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                    &nbsp;&nbsp; {{ $t(item.name) }}
+                    &nbsp;&nbsp; {{ item.name }}
                   </el-option>
                 </el-select>
               </div>
@@ -164,7 +180,7 @@
       <!--Quartz Task log-->
 
       <!--Quartz Task detail-->
-      <el-drawer v-if="detailVisible" :close-on-click-modal="false" class="rtl" :visible.sync="detailVisible" size="75%" :show-close="false" :before-close="handleClose" :direction="direction"
+      <el-drawer v-if="detailVisible" :close-on-click-modal="false" class="rtl" :visible.sync="detailVisible" size="80%" :show-close="false" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <div slot="title" class="dialog-title">
           <span>{{ $t('account.qztype_details') }}</span>
@@ -183,7 +199,12 @@
                   </el-form-item>
                   <el-form-item :label="$t('account.choose_qztype')">
                     <el-tooltip class="item" effect="dark" :content="detailForm.qzType" placement="top-start">
-                      <div v-if="detailForm.qzType" class="view-text">{{ detailForm.qzType }}</div>
+                      <div v-if="detailForm.qzType==='ACCOUNT'" class="view-text">
+                        {{ $t('account.qztype_account') }}
+                      </div>
+                      <div v-if="detailForm.qzType==='RULE'" class="view-text">
+                        {{ $t('account.qztype_rule') }}
+                      </div>
                     </el-tooltip>
                   </el-form-item>
                   <el-form-item :label="$t('account.cron_expression')">
@@ -229,25 +250,23 @@
 
                 <el-row class="el-form-item-dev" v-for="dto in detailForm.quartzTaskRelationDtos" :key="dto.id">
                   <el-table :show-header="true" :data="dto.cloudTaskList" class="adjust-table table-content">
-                    <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="20%">
+                    <el-table-column type="index" min-width="40"/>
+                    <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="140">
                         {{ scope.row.taskName }}
                     </el-table-column>
-                    <el-table-column v-slot:default="scope" :label="$t('account.cloud_account')" min-width="15%">
+                    <el-table-column v-slot:default="scope" :label="$t('account.cloud_account')" min-width="120">
                       <span class="grid-content-log-span">
                       <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                        &nbsp;&nbsp; {{ scope.row.accountName }}
                     </span>
                     </el-table-column>
-                    <el-table-column v-slot:default="scope" :label="$t('account.creator')" min-width="7%">
+                    <el-table-column v-slot:default="scope" :label="$t('account.creator')" min-width="70">
                       {{ scope.row.applyUser }}
                     </el-table-column>
-                    <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="8%" prop="severity">
-                      <span v-if="scope.row.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
-                      <span v-else-if="scope.row.severity == 'MediumRisk'" style="color: #fe9636;"> {{ $t('rule.MediumRisk') }}</span>
-                      <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
-                      <span v-else> N/A</span>
+                    <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="80" prop="severity">
+                      <severity-type :row="scope.row"></severity-type>
                     </el-table-column>
-                    <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="12%" prop="status">
+                    <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="120" prop="status">
                       <el-button plain size="mini" type="primary" v-if="scope.row.status === 'UNCHECKED'">
                         <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                       </el-button>
@@ -276,12 +295,12 @@
                         <el-link type="primary" class="text-click">{{ scope.row.returnSum }}/{{ scope.row.resourcesSum }}</el-link>
                       </span>
                     </el-table-column>
-                    <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" min-width="10%">
+                    <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" min-width="80">
                       <span v-if="scope.row.returnSum == 0" style="color: #46ad59;">{{ $t('resource.i18n_compliance_true') }}</span>
                       <span v-else-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)" style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
                       <span v-else-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
                     </el-table-column>
-                    <el-table-column prop="createTime" min-width="20%" :label="$t('account.update_time')">
+                    <el-table-column prop="createTime" min-width="150" :label="$t('account.update_time')">
                       <template v-slot:default="scope">
                         <span><i class="el-icon-time"></i> {{ scope.row.createTime | timestampFormatDate }}</span>
                       </template>
@@ -307,11 +326,58 @@ import Container from "@/business/components/common/components/Container";
 import MainContainer from "@/business/components/common/components/MainContainer";
 import TablePagination from "@/business/components/common/pagination/TablePagination";
 import {_filter, _sort} from "@/common/js/utils";
-import RuleType from "@/business/components/rule/home/RuleType";
-import DialogFooter from "@/business/components/account/head/DialogFooter";
+import DialogFooter from "@/business/components/common/components/DialogNextFooter";
 import CronInput from 'vue-cron-generator/src/components/cron-input';
 import {DEFAULT_CRON_EXPRESSION} from 'vue-cron-generator/src/constant/filed';
 import QuartzTaskLog from "@/business/components/account/home/QuartzTaskLog";
+import SeverityType from "@/business/components/common/components/SeverityType";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+import {CLOUD_TASK_CONFIGS} from "../../common/components/search/search-components";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'account.task_input_name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'account.choose_qztype',
+    props: 'qzType',
+    disabled: false
+  },
+  {
+    label: 'account.cron_expression',
+    props: 'cron',
+    disabled: false
+  },
+  {
+    label: 'account.cron_expression_desc',
+    props: 'cronDesc',
+    disabled: false
+  },
+  {
+    label: 'account.prev_fire_time',
+    props: 'prevFireTime',
+    disabled: false
+  },
+  {
+    label: 'account.last_fire_time',
+    props: 'lastFireTime',
+    disabled: false
+  },
+  {
+    label: 'account.task_status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'account.create_time',
+    props: 'createTime',
+    disabled: false
+  }
+];
+
 
 /* eslint-disable */
   export default {
@@ -322,10 +388,11 @@ import QuartzTaskLog from "@/business/components/account/home/QuartzTaskLog";
       Container,
       MainContainer,
       TablePagination,
-      RuleType,
       DialogFooter,
       CronInput,
       QuartzTaskLog,
+      SeverityType,
+      HideTable,
     },
     provide() {
       return {
@@ -336,6 +403,7 @@ import QuartzTaskLog from "@/business/components/account/home/QuartzTaskLog";
       return {
         result: {},
         condition: {
+          components: CLOUD_TASK_CONFIGS
         },
         tableData: [],
         currentPage: 1,
@@ -381,7 +449,7 @@ import QuartzTaskLog from "@/business/components/account/home/QuartzTaskLog";
         rule: {
           name: [
             {required: true, message: this.$t('commons.input_name'), trigger: 'blur'},
-            {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+            {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
             {
               required: true,
               message: this.$t("workspace.special_characters_are_not_supported"),
@@ -404,10 +472,42 @@ import QuartzTaskLog from "@/business/components/account/home/QuartzTaskLog";
         logTotal: 0,
         detailVisible: false,
         detailForm: {},
+        checkedColumnNames: columnOptions.map((ele) => ele.props),
+        columnNames: columnOptions,
+        //名称搜索
+        items: [
+          {
+            name: 'account.task_input_name',
+            id: 'name',
+          },
+          {
+            name: 'account.cron_expression',
+            id: 'cron',
+          },
+          {
+            name: 'account.cron_expression_desc',
+            id: 'cronDesc',
+          },
+        ],
+        checkAll2: true,
+        isIndeterminate: false,
       }
     },
 
     methods: {
+      handleCheckedColumnNamesChange(value) {
+        const checkedCount = value.length;
+        this.checkAll2 = checkedCount === this.columnNames.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+        this.checkedColumnNames = value;
+      },
+      handleCheckAllChange(val) {
+        this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+        this.isIndeterminate = false;
+        this.checkAll2 = val;
+      },
+      select(selection) {
+      },
       //查询列表
       search() {
         let url = "/cloud/task/quartz/list/" + this.currentPage + "/" + this.pageSize;
@@ -416,9 +516,9 @@ import QuartzTaskLog from "@/business/components/account/home/QuartzTaskLog";
           this.total = data.itemCount;
           this.tableData = data.listObject;
         });
-        this.$post("/account/list/1/100", {}, response => {
+        this.$get("/account/allList", response => {
           let data = response.data;
-          this.accounts = data.listObject;
+          this.accounts = data;
         });
       },
       init() {
@@ -431,15 +531,6 @@ import QuartzTaskLog from "@/business/components/account/home/QuartzTaskLog";
       filter(filters) {
         _filter(filters, this.condition);
         this.init();
-      },
-      tableRowClassName({row, rowIndex}) {
-        if (rowIndex % 4 === 0) {
-          return 'success-row';
-        } else if (rowIndex % 2 === 0) {
-          return 'warning-row';
-        } else {
-          return '';
-        }
       },
       create() {
         this.active = 1;
@@ -598,7 +689,7 @@ import QuartzTaskLog from "@/business/components/account/home/QuartzTaskLog";
         let url = "/cloud/task/show/account/" + row.id;
         this.$get(url,response => {
           this.detailForm = response.data;
-          this.detailVisible=true;
+          this.detailVisible = true;
         });
       },
     },

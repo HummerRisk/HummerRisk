@@ -3,11 +3,10 @@ package com.hummerrisk.base.mapper.ext;
 
 import com.hummerrisk.base.domain.CloudTaskItem;
 import com.hummerrisk.base.domain.ResourceWithBLOBs;
+import com.hummerrisk.base.domain.RuleInspectionReport;
 import com.hummerrisk.controller.request.resource.ResourceRequest;
-import com.hummerrisk.dto.ExportDTO;
-import com.hummerrisk.dto.ReportDTO;
-import com.hummerrisk.dto.ResourceDTO;
-import com.hummerrisk.dto.SourceDTO;
+import com.hummerrisk.controller.request.rule.RuleGroupRequest;
+import com.hummerrisk.dto.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -18,7 +17,7 @@ import java.util.Map;
  */
 public interface ExtResourceMapper {
 
-    List<ResourceDTO> getComplianceResult(ResourceRequest resourceRequest);
+    List<ResourceDTO> getComplianceResult(@Param("request") ResourceRequest request);
 
     List<ReportDTO> reportList(ResourceRequest resourceRequest);
 
@@ -42,6 +41,20 @@ public interface ExtResourceMapper {
 
     List<ExportDTO> searchExportData(ResourceRequest resourceRequest, @Param("accountIds") List<String> accountIds);
 
+    List<ExportDTO> searchGroupExportData(ResourceRequest request, @Param("groupId") String groupId, @Param("accountId") String accountId);
+
     ResourceWithBLOBs resource(CloudTaskItem cloudTaskItem);
+
+    List<Map<String, Object>> regionData(Map<String, Object> map);
+
+    List<Map<String, Object>> severityData(Map<String, Object> map);
+
+    List<Map<String, Object>> resourceTypeData(Map<String, Object> map);
+
+    List<Map<String, Object>> ruleData(Map<String, Object> map);
+
+    List<RuleInspectionReport> regulation(String ruleId);
+
+    List<RuleGroupDTO> ruleGroupList(@Param("request") RuleGroupRequest request);
 
 }

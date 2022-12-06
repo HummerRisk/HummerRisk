@@ -50,10 +50,78 @@
                 <property name="object" value="${condition}.name"/>
             </include>
         </if>
+        <if test="${condition}.updateTime != null">
+            and t.update_time
+            <include refid="condition">
+                <property name="object" value="${condition}.updateTime"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+        <if test="${condition}.status != null">
+            and t.status
+            <include refid="condition">
+                <property name="object" value="${condition}.status"/>
+            </include>
+        </if>
         <if test="${condition}.creator != null">
-            and user.id
+            and u.id
             <include refid="condition">
                 <property name="object" value="${condition}.creator"/>
+            </include>
+        </if>
+        <if test="${condition}.pluginId != null">
+            and t1.plugin_id
+            <include refid="condition">
+                <property name="object" value="${condition}.pluginId"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="resultList" parameterType="com.hummerrisk.controller.request.k8s.K8sResultRequest" resultType="com.hummerrisk.dto.CloudNativeResultDTO">
+        SELECT
+        t.*,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'critical') as critical,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'high') as high,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'medium') as medium,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'low') as low,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'unknown') as unknown,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'critical') as configCritical,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'high') as configHigh,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'medium') as configMedium,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'low') as configLow,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'unknown') as configUnknown
+        FROM cloud_native_result t
+        left join user u on t.apply_user = u.id
+        left join cloud_native t1 on t1.id = t.cloud_native_id
+        <where>
+            <if test="combine != null">
+                <include refid="combine">
+                    <property name="condition" value="combine"/>
+                </include>
+            </if>
+            <if test="id != null and id != ''">
+                AND t.id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                AND LOWER(t.name) like CONCAT('%',#{name},'%')
+            </if>
+            <if test="userName != null and userName != ''">
+                AND LOWER(u.name) like CONCAT('%',#{userName},'%')
+            </if>
+        </where>
+        ORDER BY t.update_time desc
+    </select>
+
+    <sql id="combine2">
+        <if test='${condition}.pluginId != null'>
+            and t1.plugin_id
+            <include refid="condition">
+                <property name="object" value="${condition}.pluginId"/>
             </include>
         </if>
         <if test="${condition}.createTime != null">
@@ -64,26 +132,179 @@
         </if>
     </sql>
 
-    <select id="resultList" parameterType="com.hummerrisk.controller.request.k8s.K8sResultRequest" resultType="com.hummerrisk.base.domain.CloudNativeResult">
+    <select id="syncList" resultType="com.hummerrisk.dto.CloudNativeSourceSyncLogWithBLOBsDTO">
         SELECT
-        t.*
-        FROM cloud_native_result t
-        left join user u on t.apply_user = u.id
+        t.*,
+        t1.name as k8sName,
+        t1.plugin_icon as pluginIcon
+        FROM cloud_native_source_sync_log t
+        LEFT JOIN cloud_native t1 on t.cloud_native_id = t1.id
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine2">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
+            </if>
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.k8sName != null and request.k8sName != ''">
+                and LOWER(t1.name) like CONCAT('%', LOWER(#{request.k8sName}),'%')
+            </if>
+            <if test="request.operator != null and request.operator != ''">
+                and LOWER(t.operator) like CONCAT('%', LOWER(#{request.operator}),'%')
+            </if>
+        </where>
+        ORDER BY t.create_time desc
+    </select>
+
+    <resultMap id="ImageMap" type="com.hummerrisk.dto.ImageDTO"
+               extends="com.hummerrisk.base.mapper.ImageMapper.BaseResultMap">
+        <result column="user" property="user"/>
+        <result column="imageRepoName" property="imageRepoName"/>
+    </resultMap>
+
+    <sql id="combine3">
+        <if test='${condition}.name != null'>
+            and t.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test="${condition}.updateTime != null">
+            and t.update_time
+            <include refid="condition">
+                <property name="object" value="${condition}.updateTime"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+        <if test="${condition}.status != null">
+            and t.status
+            <include refid="condition">
+                <property name="object" value="${condition}.status"/>
+            </include>
+        </if>
+        <if test="${condition}.creator != null">
+            and u.id
+            <include refid="condition">
+                <property name="object" value="${condition}.creator"/>
+            </include>
+        </if>
+        <if test="${condition}.pluginId != null">
+            and t1.plugin_id
+            <include refid="condition">
+                <property name="object" value="${condition}.pluginId"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="imageList" resultMap="ImageMap">
+        select
+        t.*,
+        r.name as imageRepoName,
+        u.name as userName
+        from image as t
+        left join image_repo r on t.repo_id = r.id
+        left join user u on t.creator = u.id
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine3">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and t.name like CONCAT('%', #{request.name},'%')
+            </if>
+            <if test="request.status != null and request.status != ''">
+                and t.status = #{request.status}
+            </if>
+        </where>
+        order by t.update_time desc
+    </select>
+
+    <select id="metricChart" resultType="com.hummerrisk.dto.MetricChartDTO" parameterType="java.lang.String">
+        SELECT *
+        from (
+             (SELECT count(*) as critical FROM cloud_native_result_item t WHERE LOWER(t.severity) = 'critical' AND t.result_id = #{resultId}) as critical,
+             (SELECT count(*) as high FROM cloud_native_result_item t WHERE LOWER(t.severity) = 'high' AND t.result_id = #{resultId}) as high,
+             (SELECT count(*) as medium FROM cloud_native_result_item t WHERE LOWER(t.severity) = 'medium' AND t.result_id = #{resultId}) as medium,
+             (SELECT count(*) as low FROM cloud_native_result_item t WHERE LOWER(t.severity) = 'low' AND t.result_id = #{resultId}) as low,
+             (SELECT count(*) as unknown FROM cloud_native_result_item t WHERE LOWER(t.severity) = 'unknown' AND t.result_id = #{resultId}) as unknown,
+             (SELECT count(*) as total FROM cloud_native_result_item t WHERE t.result_id = #{resultId}) as total
+         )
+    </select>
+
+    <select id="metricConfigChart" resultType="com.hummerrisk.dto.MetricChartDTO" parameterType="java.lang.String">
+        SELECT *
+        from (
+             (SELECT count(*) as critical FROM cloud_native_result_config_item t WHERE LOWER(t.severity) = 'critical' AND t.result_id = #{resultId}) as critical,
+             (SELECT count(*) as high FROM cloud_native_result_config_item t WHERE LOWER(t.severity) = 'high' AND t.result_id = #{resultId}) as high,
+             (SELECT count(*) as medium FROM cloud_native_result_config_item t WHERE LOWER(t.severity) = 'medium' AND t.result_id = #{resultId}) as medium,
+             (SELECT count(*) as low FROM cloud_native_result_config_item t WHERE LOWER(t.severity) = 'low' AND t.result_id = #{resultId}) as low,
+             (SELECT count(*) as unknown FROM cloud_native_result_config_item t WHERE LOWER(t.severity) = 'unknown' AND t.result_id = #{resultId}) as unknown,
+             (SELECT count(*) as total FROM cloud_native_result_config_item t WHERE t.result_id = #{resultId}) as total
+         )
+    </select>
+
+    <select id="history" parameterType="java.util.Map" resultType="com.hummerrisk.dto.HistoryCloudNativeResultDTO">
+        SELECT
+        t.*,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'critical') as critical,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'high') as high,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'medium') as medium,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'low') as low,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'unknown') as unknown,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'critical') as configCritical,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'high') as configHigh,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'medium') as configMedium,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'low') as configLow,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'unknown') as configUnknown
+        FROM history_cloud_native_result t
+
         <where>
             <if test="id != null">
                 AND t.id = #{id}
             </if>
-            <if test="name != null">
-                AND t.name like CONCAT('%',#{name},'%')
+            <if test="cloudNativeId != null">
+                AND t.cloud_native_id = #{cloudNativeId}
             </if>
-            <if test="combine != null">
-                <include refid="combine">
-                    <property name="condition" value="combine"/>
-                </include>
+            <if test="name != null">
+                AND LOWER(t.name) like CONCAT('%',#{name},'%')
             </if>
         </where>
         ORDER BY t.update_time desc
     </select>
 
+    <select id="getCloudNativeResult" parameterType="java.lang.String" resultType="com.hummerrisk.dto.CloudNativeResultDTO">
+        SELECT
+        t.*,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'critical') as critical,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'high') as high,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'medium') as medium,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'low') as low,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'unknown') as unknown,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'critical') as configCritical,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'high') as configHigh,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'medium') as configMedium,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'low') as configLow,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'unknown') as configUnknown
+        FROM cloud_native_result t
+        <where>
+            <if test="resultId != null">
+                AND t.id = #{resultId}
+            </if>
+        </where>
+    </select>
 
 </mapper>

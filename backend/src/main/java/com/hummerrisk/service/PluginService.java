@@ -3,12 +3,13 @@ package com.hummerrisk.service;
 import com.hummerrisk.base.domain.Plugin;
 import com.hummerrisk.base.domain.PluginExample;
 import com.hummerrisk.base.mapper.PluginMapper;
+import com.hummerrisk.base.mapper.ext.ExtPluginMapper;
 import com.hummerrisk.commons.constants.ScanTypeConstants;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.commons.utils.ReadFileUtils;
-import com.hummerrisk.controller.request.Plugin.PluginRequest;
+import com.hummerrisk.controller.request.plugin.PluginRequest;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -28,11 +29,14 @@ public class PluginService {
     @Resource
     private PluginMapper pluginMapper;
 
+    @Resource
+    private ExtPluginMapper extPluginMapper;
+
     public List<Plugin> getAllPlugin(String scanType) {
         PluginExample example = new PluginExample();
         example.setOrderByClause("order_");
         PluginExample.Criteria criteria = example.createCriteria();
-        if (scanType!=null) {
+        if (scanType != null) {
             if (StringUtils.equalsIgnoreCase(scanType, ScanTypeConstants.prowler.name())) {
                 criteria.andIdEqualTo(PlatformUtils.aws).andTypeNotEqualTo(PlatformUtils.native_);
             } else {
@@ -80,11 +84,11 @@ public class PluginService {
 
         PluginExample example = new PluginExample();
         example.setOrderByClause("order_");
-        if(request.getName()!=null) {
+        if (request.getName() != null) {
             PluginExample.Criteria criteria = example.createCriteria();
             criteria.andNameLike(request.getName());
         }
-        return pluginMapper.selectByExample(example);
+        return extPluginMapper.getPluginList(request);
     }
 
 }

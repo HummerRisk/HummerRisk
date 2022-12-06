@@ -4,8 +4,12 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
+          <el-menu-item :index="'/sbom/project'">
+            {{ $t("sbom.project") }}
+          </el-menu-item>
+
           <el-menu-item :index="'/sbom/sbom'">
-            {{ $t("commons.sbom_dependency") }}
+            {{ $t("sbom.sbom_analyze") }}
           </el-menu-item>
 
         </el-menu>

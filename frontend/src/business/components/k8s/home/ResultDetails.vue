@@ -2,6 +2,12 @@
     <main-container>
       <el-card class="table-card" v-loading="result.loading">
 
+        <section class="report-container">
+          <main>
+            <metric-chart :content="content"/>
+          </main>
+        </section>
+
         <template v-slot:header>
           <table-header :condition.sync="condition"
                         @search="search"
@@ -12,26 +18,29 @@
 
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter">
           <el-table-column type="index" min-width="2%"/>
-          <el-table-column :label="'Title'" min-width="20%" prop="title" v-slot:default="scope">
-            {{ scope.row.title?scope.row.title:'N/A' }}
+          <el-table-column min-width="10%" :label="'Resource'" prop="resource" v-slot:default="scope">
+            <span style="font-weight:bold;color: #000000;">{{ scope.row.resource }}</span>
           </el-table-column>
-          <el-table-column :label="'VulnerabilityID'" min-width="13%" prop="vulnerabilityId" v-slot:default="scope">
-            {{ scope.row.vulnerabilityId?scope.row.vulnerabilityId:'N/A' }}
+          <el-table-column min-width="10%" :label="'VulnerabilityID'" prop="vulnerabilityId">
           </el-table-column>
-          <el-table-column min-width="8%" :label="'Severity'" prop="severity" v-slot:default="scope">
-            {{ scope.row.severity?scope.row.severity:'N/A' }}
+          <el-table-column min-width="7%" :label="'Severity'" prop="severity" v-slot:default="scope">
+            <span v-if="scope.row.severity === 'CRITICAL'" style="color: #8B0000;">{{ scope.row.severity }}</span>
+            <span v-if="scope.row.severity === 'HIGH'" style="color: #FF4D4D;">{{ scope.row.severity }}</span>
+            <span v-if="scope.row.severity === 'MEDIUM'" style="color: #FF8000;">{{ scope.row.severity }}</span>
+            <span v-if="scope.row.severity === 'LOW'" style="color: #336D9F;">{{ scope.row.severity }}</span>
+            <span v-if="scope.row.severity === 'UNKNOWN'" style="color: #67C23A;">{{ scope.row.severity }}</span>
           </el-table-column>
-          <el-table-column min-width="8%" :label="'Score'" prop="score" v-slot:default="scope">
+          <el-table-column min-width="5%" :label="'Score'" prop="score" v-slot:default="scope">
             {{ scope.row.score?scope.row.score:'N/A' }}
           </el-table-column>
-          <el-table-column min-width="20%" :label="'PrimaryLink'" prop="primaryLink" v-slot:default="scope">
-            <el-link type="primary" style="color: #0000e4;" :href="scope.row.primaryLink" target="_blank">{{ scope.row.primaryLink?scope.row.primaryLink:'N/A' }}</el-link>
+          <el-table-column :label="'InstalledVersion'" min-width="10%" prop="installedVersion">
           </el-table-column>
-          <el-table-column min-width="15%" :label="'InstalledVersion'" prop="installedVersion" v-slot:default="scope">
-            {{ scope.row.installedVersion?scope.row.installedVersion:'N/A' }}
+          <el-table-column min-width="10%" :label="'FixedVersion'" prop="fixedVersion">
           </el-table-column>
-          <el-table-column min-width="15%" :label="'FixedVersion'" prop="fixedVersion" v-slot:default="scope">
-            {{ scope.row.fixedVersion?scope.row.fixedVersion:'N/A' }}
+          <el-table-column min-width="25%" :label="'PrimaryLink'" prop="primaryLink" v-slot:default="scope">
+            <span>{{ scope.row.title }}</span>
+            <br>
+            <el-link type="primary" style="color: #0000e4;" :href="scope.row.primaryLink" target="_blank">{{ scope.row.primaryLink }}</el-link>
           </el-table-column>
           <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
@@ -48,13 +57,14 @@
 import TableOperators from "../../common/components/TableOperators";
 import MainContainer from "../../common/components/MainContainer";
 import Container from "../../common/components/Container";
-import TableHeader from "../head/DetailTableHeader";
+import TableHeader from "@/business/components/common/components/DetailTableHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/RuleDialogFooter";
 import CenterChart from "../../common/components/CenterChart";
 import {_filter, _sort} from "@/common/js/utils";
-import RuleType from "@/business/components/image/home/RuleType";
+import MetricChart from "@/business/components/common/chart/MetricChart";
+
 /* eslint-disable */
   export default {
     name: "ResultDetails",
@@ -67,7 +77,7 @@ import RuleType from "@/business/components/image/home/RuleType";
       TableOperator,
       DialogFooter,
       CenterChart,
-      RuleType,
+      MetricChart,
     },
     data() {
       return {
@@ -100,12 +110,20 @@ import RuleType from "@/business/components/image/home/RuleType";
           indentWithTabs: true,
         },
         resultId: "",
+        content: {
+          critical: 0,
+          high: 0,
+          medium: 0,
+          low: 0,
+          unknown: 0,
+          total: 0,
+        },
       }
     },
     props: ["id"],
     methods: {
       handleVuln() {
-        window.open('http://www.cnnvd.org.cn/web/vulnerability/queryLds.tag','_blank','');
+        window.open('http://www.cnnvd.org.cn/web/vulnerability/querylist.tag','_blank','');
       },
       sort(column) {
         _sort(column, this.condition);
@@ -119,10 +137,12 @@ import RuleType from "@/business/components/image/home/RuleType";
         let url = "/k8s/resultItemList/" + this.currentPage + "/" + this.pageSize;
         this.condition.resultId = this.resultId;
         this.result = this.$post(url, this.condition, response => {
-          console.log(response.data)
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;
+        });
+        this.result = this.$get("/k8s/metricChart/"+ this.resultId, response => {
+          this.content = response.data;
         });
       },
       init() {
@@ -137,12 +157,12 @@ import RuleType from "@/business/components/image/home/RuleType";
           }).catch(error => error);
         } else if (path.indexOf("/resource") >= 0) {
           this.$router.push({
-            path: '/resource/k8sResult',
+            path: '/resource/K8sResult',
           }).catch(error => error);
         }
       },
     },
-    created() {
+    activated() {
       this.init();
     }
   }

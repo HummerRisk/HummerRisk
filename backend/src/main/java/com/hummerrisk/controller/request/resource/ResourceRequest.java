@@ -3,11 +3,15 @@ package com.hummerrisk.controller.request.resource;
 import com.hummerrisk.base.domain.Resource;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author harris
  */
 public class ResourceRequest extends Resource {
 
+    private String hummerId;
     private String taskId;
     private String tagKey;
     private String severity;
@@ -20,9 +24,20 @@ public class ResourceRequest extends Resource {
     private String itemSortSecondLevel;
     private String name;
     private String groupId;
+    private List<String> resourceTypes;
 
     @ApiModelProperty(hidden = true)
     private String sort;
+
+    private Map<String, Object> combine;
+
+    public Map<String, Object> getCombine() {
+        return combine;
+    }
+
+    public void setCombine(Map<String, Object> combine) {
+        this.combine = combine;
+    }
 
     public String getTaskId() {
         return taskId;
@@ -126,5 +141,21 @@ public class ResourceRequest extends Resource {
 
     public void setGroupId(String groupId) {
         this.groupId = groupId;
+    }
+
+    public List<String> getResourceTypes() {
+        return resourceTypes;
+    }
+
+    public void setResourceTypes(List<String> resourceTypes) {
+        this.resourceTypes = resourceTypes;
+    }
+
+    public String getHummerId() {
+        return hummerId;
+    }
+
+    public void setHummerId(String hummerId) {
+        this.hummerId = hummerId;
     }
 }

@@ -106,6 +106,17 @@
                 </when>
             </choose>
         </if>
+        <if test='${condition}.groupId != null'>
+            and #{${condition}.groupId.value}
+            <choose>
+                <when test='${condition}.groupId.operator == "in"'>
+                    in (select group_id from rule_group_mapping where rule_id = t.id)
+                </when>
+                <when test='${condition}.groupId.operator == "not in"'>
+                    not in (select group_id from rule_group_mapping where rule_id = t.id)
+                </when>
+            </choose>
+        </if>
         <if test='${condition}.resourceType != null'>
             and #{${condition}.resourceType.value}
             <choose>
@@ -149,21 +160,27 @@
         FROM rule t
         LEFT JOIN plugin p on t.plugin_id = p.id
         <where>
-            <if test="id != null">
-                AND t.id = #{id}
-            </if>
-            <if test="name != null">
-                AND t.name like CONCAT('%',#{name},'%')
-            </if>
-            <if test="pluginId != null">
-                AND t.plugin_id = #{pluginId}
-            </if>
             <if test="combine != null">
                 <include refid="combine">
                     <property name="condition" value="combine"/>
                 </include>
             </if>
-            AND p.type = 'cloud' OR p.id = 'hummer-k8s-plugin'
+            <if test="id != null">
+                AND t.id = #{id}
+            </if>
+            <if test="name != null">
+                AND LOWER(t.name) like CONCAT('%',LOWER(#{name}),'%')
+            </if>
+            <if test="pluginId != null">
+                AND t.plugin_id = #{pluginId}
+            </if>
+            <if test="pluginName != null">
+                AND LOWER(t.plugin_name) like CONCAT('%',LOWER(#{pluginName}),'%')
+            </if>
+            <if test="description != null">
+                AND LOWER(t.description) like CONCAT('%',LOWER(#{description}),'%')
+            </if>
+            AND p.type = 'cloud'
         </where>
         ORDER BY t.plugin_id, t.last_modified desc
     </select>
@@ -179,16 +196,22 @@
             <if test="id != null">
                 AND t.id = #{id}
             </if>
-            <if test="name != null">
-                AND t.name like CONCAT('%',#{name},'%')
-            </if>
-            <if test="pluginId != null">
-                AND t.plugin_id = #{pluginId}
-            </if>
             <if test="combine != null">
                 <include refid="combine">
                     <property name="condition" value="combine"/>
                 </include>
+            </if>
+            <if test="name != null">
+                AND LOWER(t.name) like CONCAT('%',LOWER(#{name}),'%')
+            </if>
+            <if test="pluginId != null">
+                AND t.plugin_id = #{pluginId}
+            </if>
+            <if test="pluginName != null">
+                AND LOWER(t.plugin_name) like CONCAT('%',LOWER(#{pluginName}),'%')
+            </if>
+            <if test="description != null">
+                AND LOWER(t.description) like CONCAT('%',LOWER(#{description}),'%')
             </if>
             AND p.type = 'vuln'
         </where>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummerrisk.base.mapper.ext.ExtCloudEventMapper">
+
+  <sql id="condition">
+    <choose>
+      <when test='${object}.operator == "like"'>
+        like CONCAT('%', #{${object}.value},'%')
+      </when>
+      <when test='${object}.operator == "not like"'>
+        not like CONCAT('%', #{${object}.value},'%')
+      </when>
+      <when test='${object}.operator == "in"'>
+        in
+        <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+          #{v}
+        </foreach>
+      </when>
+      <when test='${object}.operator == "not in"'>
+        not in
+        <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+          #{v}
+        </foreach>
+      </when>
+      <when test='${object}.operator == "between"'>
+        between #{${object}.value[0]} and #{${object}.value[1]}
+      </when>
+      <when test='${object}.operator == "gt"'>
+        &gt; #{${object}.value}
+      </when>
+      <when test='${object}.operator == "lt"'>
+        &lt; #{${object}.value}
+      </when>
+      <when test='${object}.operator == "ge"'>
+        &gt;= #{${object}.value}
+      </when>
+      <when test='${object}.operator == "le"'>
+        &lt;= #{${object}.value}
+      </when>
+      <otherwise>
+        = #{${object}.value}
+      </otherwise>
+    </choose>
+  </sql>
+
+  <sql id="combine">
+    <if test='${condition}.accountId != null'>
+      and t.cloud_account_id
+      <include refid="condition">
+        <property name="object" value="${condition}.accountId"/>
+      </include>
+    </if>
+    <if test="${condition}.region != null">
+      and (t.sync_region
+      <include refid="condition">
+        <property name="object" value="${condition}.region"/>
+      </include>
+          or
+      t.region_name
+      <include refid="condition">
+        <property name="object" value="${condition}.region"/>
+      </include>
+          )
+    </if>
+    <if test="${condition}.eventRating != null">
+      and t.event_rating
+      <include refid="condition">
+        <property name="object" value="${condition}.eventRating"/>
+      </include>
+    </if>
+    <if test="${condition}.eventTime != null">
+      and t.event_time
+      <include refid="condition">
+        <property name="object" value="${condition}.eventTime"/>
+      </include>
+    </if>
+    <if test="${condition}.userName != null">
+      and t.user_name
+      <include refid="condition">
+        <property name="object" value="${condition}.userName"/>
+      </include>
+    </if>
+    <if test="${condition}.eventName != null">
+      and t.event_name
+      <include refid="condition">
+        <property name="object" value="${condition}.eventName"/>
+      </include>
+    </if>
+    <if test="${condition}.resourceType != null">
+      and t.resource_type
+      <include refid="condition">
+        <property name="object" value="${condition}.resourceType"/>
+      </include>
+    </if>
+    <if test='${condition}.resourceName != null'>
+      and t.resource_name
+      <include refid="condition">
+        <property name="object" value="${condition}.resourceName"/>
+      </include>
+    </if>
+  </sql>
+
+  <select id="getCloudEventList" resultType="com.hummerrisk.base.domain.CloudEventWithBLOBs">
+    select t.*
+    from cloud_event t
+    left join cloud_account t1 on t.cloud_account_id = t1.id
+    <where>
+      <if test="request.combine != null">
+        <include refid="combine">
+          <property name="condition" value="request.combine"/>
+        </include>
+      </if>
+      <if test="request.accountName != null and request.accountName != ''">
+        and t1.name like CONCAT('%', #{request.accountName},'%')
+      </if>
+      <if test="request.regionName != null and request.regionName != ''">
+        and t.region_name like CONCAT('%', #{request.regionName},'%')
+      </if>
+      <if test="request.userName != null and request.userName != ''">
+        and t.user_name like CONCAT('%', #{request.userName},'%')
+      </if>
+      <if test="request.sourceIpAddress != null and request.sourceIpAddress != ''">
+        and t.source_ip_address like CONCAT('%', #{request.sourceIpAddress},'%')
+      </if>
+      <if test="request.eventName != null and request.eventName != ''">
+        and t.event_name like CONCAT('%', #{request.eventName},'%')
+      </if>
+      <if test="request.resourceType != null and request.resourceType != ''">
+        and t.resource_type like CONCAT('%', #{request.resourceType},'%')
+      </if>
+      <if test="request.resourceName != null and request.resourceName != ''">
+        and t.resource_name like CONCAT('%', #{request.resourceName},'%')
+      </if>
+    </where>
+    order by event_time desc
+
+  </select>
+
+  <insert id="batchCloudEvents">
+    insert into cloud_event
+    (id,event_id, cloud_account_id, sync_region,
+    acs_region, event_name, event_type,
+    event_category, event_version, event_rw,
+    event_message, event_source, event_time,
+    source_ip_address, user_agent, user_identity,
+    service_name, additional_event_data, request_id,
+    request_parameters, resource_type, resource_name,
+    referenced_resources, api_version, response_elements,
+    user_name, event_rating, resource_id,
+    location_info, endpoint, resource_url,region_name,cloud_audit_event
+    ) values
+    <foreach item="item" index="index" collection="list" separator=",">
+      (#{item.id,jdbcType=VARCHAR},
+      #{item.eventId,jdbcType=VARCHAR}, #{item.cloudAccountId,jdbcType=VARCHAR}, #{item.syncRegion,jdbcType=VARCHAR},
+      #{item.acsRegion,jdbcType=VARCHAR}, #{item.eventName,jdbcType=VARCHAR}, #{item.eventType,jdbcType=VARCHAR},
+      #{item.eventCategory,jdbcType=VARCHAR}, #{item.eventVersion,jdbcType=VARCHAR}, #{item.eventRw,jdbcType=VARCHAR},
+      #{item.eventMessage,jdbcType=VARCHAR}, #{item.eventSource,jdbcType=VARCHAR}, #{item.eventTime,jdbcType=BIGINT},
+      #{item.sourceIpAddress,jdbcType=VARCHAR}, #{item.userAgent,jdbcType=VARCHAR}, #{item.userIdentity,jdbcType=VARCHAR},
+      #{item.serviceName,jdbcType=VARCHAR}, #{item.additionalEventData,jdbcType=VARCHAR}, #{item.requestId,jdbcType=VARCHAR},
+      #{item.requestParameters,jdbcType=VARCHAR}, #{item.resourceType,jdbcType=VARCHAR}, #{item.resourceName,jdbcType=VARCHAR},
+      #{item.referencedResources,jdbcType=VARCHAR}, #{item.apiVersion,jdbcType=VARCHAR}, #{item.responseElements,jdbcType=VARCHAR},
+      #{item.userName,jdbcType=VARCHAR}, #{item.eventRating,jdbcType=INTEGER}, #{item.resourceId,jdbcType=VARCHAR},
+      #{item.locationInfo,jdbcType=VARCHAR}, #{item.endpoint,jdbcType=VARCHAR}, #{item.resourceUrl,jdbcType=VARCHAR}, #{item.regionName,jdbcType=VARCHAR}
+      , #{item.cloudAuditEvent,jdbcType=LONGVARCHAR}
+      )
+    </foreach>
+  </insert>
+
+  <select id="topInfo" parameterType="java.util.Map" resultType="java.util.Map">
+    SELECT *
+    from (
+            (SELECT IFNULL(COUNT(*), 0) as accounts FROM (SELECT t.account_id from cloud_event_sync_log t group by t.account_id) as tt) as accounts,
+            (SELECT IFNULL(count(*), 0) as regions FROM (SELECT t.region from cloud_event_region_log t group by t.region) as tt) as regions,
+            (SELECT IFNULL(count(t.event_id), 0) as events from cloud_event t) as events,
+            (SELECT IFNULL(count(t.event_id), 0) as success from cloud_event t where t.event_rating = 0) as success,
+            (SELECT IFNULL(count(t.event_id), 0) as warning from cloud_event t where t.event_rating = 1) as warning,
+            (SELECT IFNULL(count(t.event_id), 0) as danger from cloud_event t where t.event_rating = 2) as danger
+         )
+  </select>
+
+  <select id="selectEventGroup" resultType="com.hummerrisk.dto.CloudEventGroupDTO">
+    select event_group.*
+    from (
+    SELECT
+        FROM_UNIXTIME(event_time/1000,'%Y-%m-%d') as event_date, cloud_account_id,region_name
+      ,event_name,user_name,service_name,source_ip_address,resource_name,
+      count(*) as event_sum
+      FROM cloud_event t
+      left join cloud_account t1 on t.cloud_account_id = t1.id
+    <where>
+      <if test="request.combine != null">
+        <include refid="combine">
+          <property name="condition" value="request.combine"/>
+        </include>
+      </if>
+      <if test="request.accountName != null and request.accountName != ''">
+        and t1.name like CONCAT('%', #{request.accountName},'%')
+      </if>
+      <if test="request.regionName != null and request.regionName != ''">
+        and t.region_name like CONCAT('%', #{request.regionName},'%')
+      </if>
+      <if test="request.userName != null and request.userName != ''">
+        and t.user_name like CONCAT('%', #{request.userName},'%')
+      </if>
+      <if test="request.sourceIpAddress != null and request.sourceIpAddress != ''">
+        and t.source_ip_address like CONCAT('%', #{request.sourceIpAddress},'%')
+      </if>
+      <if test="request.eventName != null and request.eventName != ''">
+        and t.event_name like CONCAT('%', #{request.eventName},'%')
+      </if>
+      <if test="request.resourceName != null and request.resourceName != ''">
+        and t.resource_name like CONCAT('%', #{request.resourceName},'%')
+      </if>
+      <if test="request.resourceName != null and request.resourceName != ''">
+        and t.resource_name like CONCAT('%', #{request.resourceName},'%')
+      </if>
+    </where>
+    group by region_name
+    ,event_name,user_name,service_name,source_ip_address,resource_name,cloud_account_id,FROM_UNIXTIME(event_time/1000,'%Y-%m-%d')
+    ) event_group order by event_group.event_date desc
+  </select>
+
+  <select id="cloudChart" resultType="java.util.Map">
+    SELECT
+    t1.name as 'name',
+    IFNULL(count(t.id), 0) as 'value'
+    FROM cloud_event as t
+    LEFT JOIN cloud_account t1 ON t.cloud_account_id = t1.id
+    GROUP BY t.cloud_account_id
+    Limit 10;
+  </select>
+
+  <select id="regionChart" resultType="java.util.Map">
+    SELECT
+    t.region_name as 'name',
+    IFNULL(count(t.id), 0) as 'value'
+    FROM cloud_event as t
+    GROUP BY t.region_name
+    Limit 10;
+  </select>
+
+  <select id="severityChart" resultType="java.util.Map">
+    SELECT
+      a.name as 'product',
+      (SELECT IFNULL(count(t1.id), 0) as High from cloud_event t1 where t1.cloud_account_id = t.account_id and t1.event_rating = 2) as High,
+      (SELECT IFNULL(count(t1.id), 0) as Medium from cloud_event t1 where t1.cloud_account_id = t.account_id and t1.event_rating = 1) as Medium,
+      (SELECT IFNULL(count(t1.id), 0) as Low from cloud_event t1 where t1.cloud_account_id = t.account_id and t1.event_rating = 0) as Low
+    FROM cloud_event_sync_log as t
+    LEFT JOIN cloud_account a on t.account_id = a.id
+    Limit 10;
+  </select>
+
+</mapper>

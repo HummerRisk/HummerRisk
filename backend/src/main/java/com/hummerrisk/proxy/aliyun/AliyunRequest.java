@@ -1,5 +1,6 @@
 package com.hummerrisk.proxy.aliyun;
 
+import com.aliyun.oss.OSSClient;
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
 import com.aliyuncs.http.HttpClientConfig;
@@ -53,6 +54,14 @@ public class AliyunRequest extends Request {
         return null;
     }
 
+    public String getEndPoint() {
+        aliyunCredential = getAliyunCredential();
+        if (aliyunCredential != null) {
+            return "http://oss-cn-hangzhou.aliyuncs.com";
+        }
+        return null;
+    }
+
     public IAcsClient getAliyunClient(Proxy proxy) throws IOException {
         if (getAccessKey() != null && getAccessKey().trim().length() > 0 && getSecretKey() != null && getSecretKey().trim().length() > 0) {
             String defaultRegionId = "cn-hangzhou";
@@ -75,6 +84,14 @@ public class AliyunRequest extends Request {
             DefaultAcsClient client = new DefaultAcsClient(profile);
             return client;
 
+        }
+        return null;
+    }
+
+    public OSSClient getAliyunOSSClient() {
+        if (getAccessKey() != null && getAccessKey().trim().length() > 0 && getSecretKey() != null && getSecretKey().trim().length() > 0) {
+            OSSClient ossClient = new OSSClient(getEndPoint(), getAccessKey(), getSecretKey());
+            return ossClient;
         }
         return null;
     }

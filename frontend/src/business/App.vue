@@ -49,7 +49,7 @@ import HrView from "./components/common/router/HrView";
 import HrUser from "./components/common/head/HeaderUser";
 import Help from "./components/common/head/Help";
 import HrLanguageSwitch from "./components/common/head/LanguageSwitch";
-import {saveLocalStorage} from "@/common/js/utils";
+import {saveLocalStorage, getIsCollapse} from "@/common/js/utils";
 import Notification from "@/business/components/common/head/Notification";
 
 export default {
@@ -57,9 +57,9 @@ export default {
     data() {
       return {
         auth: false,
-        isCollapse: true, //导航栏默认为展开
-        toggle: true, //第二个图标默认隐藏
-        block: false, //默认显示第一个图标
+        isCollapse: getIsCollapse()?getIsCollapse():false, //导航栏默认为展开false
+        toggle: getIsCollapse()?getIsCollapse():false, //第二个图标默认隐藏false
+        block: !(getIsCollapse()?getIsCollapse():false), //第一个图标默认显示true
       }
     },
     beforeCreate() {
@@ -82,6 +82,7 @@ export default {
         this.isCollapse = !this.isCollapse;
         this.toggle = !this.toggle;
         this.block = !this.block;
+        sessionStorage.setItem("IsCollapse", this.isCollapse);
       },
       goDashboard() {
         this.$router.push({

@@ -10,6 +10,9 @@
       <el-tab-pane :label="$t('system_parameter_setting.ding_service_settings')" name="ding">
         <ding-setting/>
       </el-tab-pane>
+      <el-tab-pane :label="$t('system_parameter_setting.trivy_settings')" name="scan">
+        <scan-setting/>
+      </el-tab-pane>
     </el-tabs>
   </el-card>
 </template>
@@ -18,11 +21,15 @@
 import EmailSetting from "./EmailSetting";
 import WechatSetting from "./WechatSetting";
 import DingSetting from "./DingSetting";
+import ScanSetting from "./ScanSetting";
 /* eslint-disable */
 export default {
   name: "SystemParameterSetting",
   components: {
-    EmailSetting, WechatSetting, DingSetting
+    EmailSetting,
+    WechatSetting,
+    DingSetting,
+    ScanSetting,
   },
   data() {
     return {

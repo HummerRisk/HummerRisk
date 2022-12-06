@@ -5,13 +5,19 @@ package com.hummerrisk.dto;
  */
 public class TaskRuleDTO {
 
-   private RuleDTO ruleDTO;
+    private RuleDTO ruleDTO;
 
-   private ServerRuleDTO serverRuleDTO;
+    private ServerRuleDTO serverRuleDTO;
 
-   private PackageRuleDTO packageRuleDTO;
+    private K8sRuleDTO k8sRuleDTO;
 
-   private ImageRuleDTO imageRuleDTO;
+    private ConfigRuleDTO configRuleDTO;
+
+    private ImageRuleDTO imageRuleDTO;
+
+    private CodeRuleDTO codeRuleDTO;
+
+    private FsRuleDTO fsRuleDTO;
 
     public RuleDTO getRuleDTO() {
         return ruleDTO;
@@ -29,19 +35,43 @@ public class TaskRuleDTO {
         this.serverRuleDTO = serverRuleDTO;
     }
 
-    public PackageRuleDTO getPackageRuleDTO() {
-        return packageRuleDTO;
-    }
-
-    public void setPackageRuleDTO(PackageRuleDTO packageRuleDTO) {
-        this.packageRuleDTO = packageRuleDTO;
-    }
-
     public ImageRuleDTO getImageRuleDTO() {
         return imageRuleDTO;
     }
 
     public void setImageRuleDTO(ImageRuleDTO imageRuleDTO) {
         this.imageRuleDTO = imageRuleDTO;
+    }
+
+    public CodeRuleDTO getCodeRuleDTO() {
+        return codeRuleDTO;
+    }
+
+    public void setCodeRuleDTO(CodeRuleDTO codeRuleDTO) {
+        this.codeRuleDTO = codeRuleDTO;
+    }
+
+    public K8sRuleDTO getK8sRuleDTO() {
+        return k8sRuleDTO;
+    }
+
+    public void setK8sRuleDTO(K8sRuleDTO k8sRuleDTO) {
+        this.k8sRuleDTO = k8sRuleDTO;
+    }
+
+    public ConfigRuleDTO getConfigRuleDTO() {
+        return configRuleDTO;
+    }
+
+    public void setConfigRuleDTO(ConfigRuleDTO configRuleDTO) {
+        this.configRuleDTO = configRuleDTO;
+    }
+
+    public FsRuleDTO getFsRuleDTO() {
+        return fsRuleDTO;
+    }
+
+    public void setFsRuleDTO(FsRuleDTO fsRuleDTO) {
+        this.fsRuleDTO = fsRuleDTO;
     }
 }

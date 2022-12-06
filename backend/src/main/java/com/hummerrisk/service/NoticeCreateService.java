@@ -1,9 +1,11 @@
 package com.hummerrisk.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.hummer.quartz.anno.QuartzScheduled;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCloudTaskMapper;
+import com.hummerrisk.base.mapper.ext.ExtNoticeMapper;
 import com.hummerrisk.commons.constants.CloudTaskConstants;
 import com.hummerrisk.commons.constants.NoticeConstants;
 import com.hummerrisk.commons.constants.ScanConstants;
@@ -46,19 +48,19 @@ public class NoticeCreateService {
     @Resource
     private WebMsgMapper webMsgMapper;
     @Resource
-    private AccountMapper accountMapper;
-    @Resource
-    private PackageService packageService;
-    @Resource
-    private PackageResultMapper packageResultMapper;
-    @Resource
-    private ServerService serverService;
-    @Resource
     private ServerResultMapper serverResultMapper;
     @Resource
-    private ServerMapper serverMapper;
+    private CodeResultMapper codeResultMapper;
     @Resource
-    private PackageMapper packageMapper;
+    private ImageResultMapper imageResultMapper;
+    @Resource
+    private CloudNativeResultMapper cloudNativeResultMapper;
+    @Resource
+    private CloudNativeConfigResultMapper cloudNativeConfigResultMapper;
+    @Resource
+    private ExtNoticeMapper extNoticeMapper;
+    @Resource
+    private FileSystemResultMapper fileSystemResultMapper;
 
     @QuartzScheduled(cron = "${cron.expression.notice}")
     public void handleTasks() {
@@ -88,7 +90,7 @@ public class NoticeCreateService {
                     try {
                         handleMessageOrder(messageOrderToBeProceed);
                     } catch (Exception e) {
-                        LogUtil.error(e);
+                        LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(messageOrderToBeProceed.getId());
                     }
@@ -106,6 +108,7 @@ public class NoticeCreateService {
         try {
             List<MessageOrderItem> messageOrderItemList = messageOrderItemMapper.selectByExample(messageOrderItemExample);
             if (messageOrderItemList.isEmpty()) {
+                messageOrderMapper.deleteByPrimaryKey(messageOrder.getId());
                 return;
             }
             int successCount = 0;
@@ -151,6 +154,9 @@ public class NoticeCreateService {
             if (StringUtils.equals(ScanConstants.SCAN_TYPE.CLOUD.name(), scanType) || StringUtils.equals(ScanConstants.SCAN_TYPE.VULN.name(), scanType)) {
                 CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(item.getTaskId());
                 if (cloudTask == null) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
                     return false;
                 } else {
                     if (StringUtils.equalsIgnoreCase(cloudTask.getStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
@@ -163,8 +169,14 @@ public class NoticeCreateService {
                         handleMessageOrderItem(item);
                     }
                 }
-            } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), scanType)) {
+            } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), scanType)) {
                 ServerResult serverResult = serverResultMapper.selectByPrimaryKey(item.getTaskId());
+                if (serverResult == null) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
+                    return false;
+                }
                 if (StringUtils.equalsIgnoreCase(serverResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
                         || StringUtils.equalsIgnoreCase(serverResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.WARNING.name())
                         || StringUtils.equalsIgnoreCase(serverResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.ERROR.name())) {
@@ -174,19 +186,91 @@ public class NoticeCreateService {
                 } else {
                     handleMessageOrderItem(item);
                 }
-            } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.PACKAGE.name(), scanType)) {
-                PackageResult packageResult = packageResultMapper.selectByPrimaryKey(item.getTaskId());
-                if (StringUtils.equalsIgnoreCase(packageResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
-                        || StringUtils.equalsIgnoreCase(packageResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.WARNING.name())
-                        || StringUtils.equalsIgnoreCase(packageResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.ERROR.name())) {
+            } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), scanType)) {
+                ImageResult imageResult = imageResultMapper.selectByPrimaryKey(item.getTaskId());
+                if (imageResult == null) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
+                    return false;
+                }
+                if (StringUtils.equalsIgnoreCase(imageResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
+                        || StringUtils.equalsIgnoreCase(imageResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.WARNING.name())
+                        || StringUtils.equalsIgnoreCase(imageResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.ERROR.name())) {
                     item.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
                     item.setSendTime(System.currentTimeMillis());
                     messageOrderItemMapper.updateByPrimaryKeySelective(item);
                 } else {
                     handleMessageOrderItem(item);
                 }
-            } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), scanType)) {
-
+            } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.K8S.name(), scanType)) {
+                CloudNativeResult cloudNativeResult = cloudNativeResultMapper.selectByPrimaryKey(item.getTaskId());
+                if (cloudNativeResult == null) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
+                    return false;
+                }
+                if (StringUtils.equalsIgnoreCase(cloudNativeResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
+                        || StringUtils.equalsIgnoreCase(cloudNativeResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.WARNING.name())
+                        || StringUtils.equalsIgnoreCase(cloudNativeResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.ERROR.name())) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
+                } else {
+                    handleMessageOrderItem(item);
+                }
+            } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CONFIG.name(), scanType)) {
+                CloudNativeConfigResult cloudNativeConfigResult = cloudNativeConfigResultMapper.selectByPrimaryKey(item.getTaskId());
+                if (cloudNativeConfigResult == null) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
+                    return false;
+                }
+                if (StringUtils.equalsIgnoreCase(cloudNativeConfigResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
+                        || StringUtils.equalsIgnoreCase(cloudNativeConfigResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.WARNING.name())
+                        || StringUtils.equalsIgnoreCase(cloudNativeConfigResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.ERROR.name())) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
+                } else {
+                    handleMessageOrderItem(item);
+                }
+            } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CODE.name(), scanType)) {
+                CodeResult codeResult = codeResultMapper.selectByPrimaryKey(item.getTaskId());
+                if (codeResult == null) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
+                    return false;
+                }
+                if (StringUtils.equalsIgnoreCase(codeResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
+                        || StringUtils.equalsIgnoreCase(codeResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.WARNING.name())
+                        || StringUtils.equalsIgnoreCase(codeResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.ERROR.name())) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
+                } else {
+                    handleMessageOrderItem(item);
+                }
+            } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.FS.name(), scanType)) {
+                FileSystemResult fileSystemResult = fileSystemResultMapper.selectByPrimaryKey(item.getTaskId());
+                if (fileSystemResult == null) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
+                    return false;
+                }
+                if (StringUtils.equalsIgnoreCase(fileSystemResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.FINISHED.name())
+                        || StringUtils.equalsIgnoreCase(fileSystemResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.WARNING.name())
+                        || StringUtils.equalsIgnoreCase(fileSystemResult.getResultStatus(), CloudTaskConstants.TASK_STATUS.ERROR.name())) {
+                    item.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
+                    item.setSendTime(System.currentTimeMillis());
+                    messageOrderItemMapper.updateByPrimaryKeySelective(item);
+                } else {
+                    handleMessageOrderItem(item);
+                }
             }
 
             return true;
@@ -208,59 +292,108 @@ public class NoticeCreateService {
         String failedContext = "failed";
         String subject = "i18n_cloud_messageorder";
         String event = NoticeConstants.Event.EXECUTE_SUCCESSFUL;
-
-        List<CloudTask> cloudTasks = extCloudTaskMapper.getTopTasksForEmail(messageOrder);
-
-        for (CloudTask cloudTask : cloudTasks) {
-            if (cloudTask.getReturnSum() == null) {
-                sendTask(messageOrder);
-                return;
-            }
-        }
-
+        String details = "";
         int returnSum = 0;
         int resourcesSum = 0;
-        String details = "";
 
         if (StringUtils.equals(ScanConstants.SCAN_TYPE.CLOUD.name(), messageOrder.getScanType())) {
             subject = "i18n_cloud_messageorder";
+            List<CloudTask> cloudTasks = extCloudTaskMapper.getTopTasksForEmail(messageOrder);
+
+            for (CloudTask cloudTask : cloudTasks) {
+                if (cloudTask.getReturnSum() == null) {
+                    sendTask(messageOrder);
+                    return;
+                }
+            }
+
             returnSum = extCloudTaskMapper.getReturnSumForEmail(messageOrder);
             resourcesSum = extCloudTaskMapper.getResourcesSumForEmail(messageOrder);
-            details =  "i18n_cloud_messageorder_sum" + returnSum  + "/" + resourcesSum;
-        } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.VULN.name(), messageOrder.getScanType())) {
+            details = "i18n_cloud_messageorder_sum" + returnSum + "/" + resourcesSum;
+
+            Map<String, Object> paramMap = new HashMap<>();
+            paramMap.put("resources", cloudTasks);
+            paramMap.put("returnSum", returnSum);
+            paramMap.put("resourcesSum", resourcesSum);
+            NoticeModel noticeModel = NoticeModel.builder()
+                    .successContext(successContext)
+                    .successMailTemplate("SuccessfulNotification")
+                    .failedContext(failedContext)
+                    .failedMailTemplate("FailedNotification")
+                    .event(event)
+                    .subject(subject)
+                    .paramMap(paramMap)
+                    .build();
+            noticeSendService.send(noticeModel);
+
+        } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.VULN.name(), messageOrder.getScanType())) {
             subject = "i18n_vuln_messageorder";
+
+            List<CloudTask> cloudTasks = extCloudTaskMapper.getTopTasksForEmail(messageOrder);
+
+            for (CloudTask cloudTask : cloudTasks) {
+                if (cloudTask.getReturnSum() == null) {
+                    sendTask(messageOrder);
+                    return;
+                }
+            }
+
             returnSum = extCloudTaskMapper.getReturnSumForEmail(messageOrder);
             resourcesSum = extCloudTaskMapper.getResourcesSumForEmail(messageOrder);
-            details =  "i18n_cloud_messageorder_sum" + returnSum  + "/" + resourcesSum;
-        } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), messageOrder.getScanType())) {
+            details = "i18n_cloud_messageorder_sum" + returnSum + "/" + resourcesSum;
+
+            Map<String, Object> paramMap = new HashMap<>();
+            paramMap.put("resources", cloudTasks);
+            paramMap.put("returnSum", returnSum);
+            paramMap.put("resourcesSum", resourcesSum);
+            NoticeModel noticeModel = NoticeModel.builder()
+                    .successContext(successContext)
+                    .successMailTemplate("SuccessfulNotification")
+                    .failedContext(failedContext)
+                    .failedMailTemplate("FailedNotification")
+                    .event(event)
+                    .subject(subject)
+                    .paramMap(paramMap)
+                    .build();
+            noticeSendService.send(noticeModel);
+
+        } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), messageOrder.getScanType())) {
             subject = "i18n_server_messageorder";
-        } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.PACKAGE.name(), messageOrder.getScanType())) {
-            subject = "i18n_package_messageorder";
-        } else if(StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), messageOrder.getScanType())) {
+            details = "i18n_resource_manage " + extNoticeMapper.serverSum(messageOrder);
+        } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), messageOrder.getScanType())) {
             subject = "i18n_image_messageorder";
+            details = "i18n_resource_manage " + extNoticeMapper.imageSum(messageOrder);
+        } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CODE.name(), messageOrder.getScanType())) {
+            subject = "i18n_code_messageorder";
+            details = "i18n_resource_manage " + extNoticeMapper.codeSum(messageOrder);
+        } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CONFIG.name(), messageOrder.getScanType())) {
+            subject = "i18n_config_messageorder";
+            details = "i18n_resource_manage " + extNoticeMapper.configSum(messageOrder);
+        } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.K8S.name(), messageOrder.getScanType())) {
+            subject = "i18n_k8s_messageorder";
+            details = "i18n_resource_manage " + extNoticeMapper.k8sSum(messageOrder);
+        } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.FS.name(), messageOrder.getScanType())) {
+            subject = "i18n_fs_messageorder";
+            details = "i18n_resource_manage " + extNoticeMapper.fsSum(messageOrder);
         }
 
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("resources", cloudTasks);
-        paramMap.put("returnSum", returnSum);
-        paramMap.put("resourcesSum", resourcesSum);
-        NoticeModel noticeModel = NoticeModel.builder()
-                .successContext(successContext)
-                .successMailTemplate("SuccessfulNotification")
-                .failedContext(failedContext)
-                .failedMailTemplate("FailedNotification")
-                .event(event)
-                .subject(subject)
-                .paramMap(paramMap)
-                .build();
-        noticeSendService.send(noticeModel);
 
         LogUtil.debug(Translator.get("i18n_start_msg") + messageOrder.getAccountName());
         WebMsg msg = new WebMsg();
+        MessageOrderItemExample example = new MessageOrderItemExample();
+        example.createCriteria().andMessageOrderIdEqualTo(messageOrder.getId());
+        List<MessageOrderItem> list = messageOrderItemMapper.selectByExample(example);
+        if(list.size() > 0) {
+            JSONArray jsonArray = new JSONArray();
+            for (MessageOrderItem item : list) {
+                jsonArray.add(item.getTaskId());
+            }
+            msg.setResultId(jsonArray.toJSONString());
+        }
         msg.setStatus(false);
         msg.setType(subject);
         msg.setCreateTime(System.currentTimeMillis());
-        msg.setContent(subject + "【" + messageOrder.getAccountName() + "】" +  messageOrder.getStatus() + details);
+        msg.setContent(subject + "【" + messageOrder.getAccountName() + "】" + messageOrder.getStatus() + details);
         msg.setScanType(messageOrder.getScanType());
         webMsgMapper.insertSelective(msg);
         LogUtil.debug(Translator.get("i18n_end_msg") + messageOrder.getAccountName());

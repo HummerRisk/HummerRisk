@@ -1,6 +1,6 @@
 package com.hummerrisk.dto;
 
-import com.hummerrisk.base.domain.HistoryServerTask;
+import com.hummerrisk.base.domain.HistoryServerResult;
 import com.hummerrisk.base.domain.Task;
 
 import java.util.List;
@@ -12,15 +12,21 @@ public class TaskReportDTO extends Task {
 
     private List<HistoryResourceReportDTO> historyCloudResourceReportDTOList;//云账号检测结果details
 
-    private List<HistoryVulnTaskDTO> historyVulnTaskDTOList;//漏洞检测结果table
+    private List<HistoryVulnTaskDTO> historyVulnTaskDTOList;//漏洞检测结果details
 
     private List<HistoryResourceReportDTO> historyVulnResourceReportDTOList;//漏洞检测结果details
 
-    private List<HistoryServerTask> historyServerTaskList;//虚拟机检测结果table
+    private List<HistoryServerResult> historyServerResultList;//主机检测结果details
 
     private List<HistoryImageReportDTO> historyImageReportDTOList;//镜像检测结果details
 
-    private List<HistoryPackageReportDTO> historyPackageReportDTOList;//软件包检测结果details
+    private List<HistoryCodeReportDTO> historyCodeReportDTOList;//源码检测结果details
+
+    private List<HistoryConfigReportDTO> historyConfigReportDTOList;//部署检测结果details
+
+    private List<HistoryK8sReportDTO> historyK8sReportDTOList;//K8s检测结果details
+
+    private List<HistoryFsReportDTO> historyFsReportDTOList;//文件检测结果details
 
     public List<HistoryCloudTaskDTO> getHistoryCloudTaskDTOList() {
         return historyCloudTaskDTOList;
@@ -54,12 +60,20 @@ public class TaskReportDTO extends Task {
         this.historyVulnResourceReportDTOList = historyVulnResourceReportDTOList;
     }
 
-    public List<HistoryServerTask> getHistoryServerTaskList() {
-        return historyServerTaskList;
+    public List<HistoryServerResult> getHistoryServerResultList() {
+        return historyServerResultList;
     }
 
-    public void setHistoryServerTaskList(List<HistoryServerTask> historyServerTaskList) {
-        this.historyServerTaskList = historyServerTaskList;
+    public void setHistoryServerResultList(List<HistoryServerResult> historyServerResultList) {
+        this.historyServerResultList = historyServerResultList;
+    }
+
+    public List<HistoryCodeReportDTO> getHistoryCodeReportDTOList() {
+        return historyCodeReportDTOList;
+    }
+
+    public void setHistoryCodeReportDTOList(List<HistoryCodeReportDTO> historyCodeReportDTOList) {
+        this.historyCodeReportDTOList = historyCodeReportDTOList;
     }
 
     public List<HistoryImageReportDTO> getHistoryImageReportDTOList() {
@@ -70,11 +84,27 @@ public class TaskReportDTO extends Task {
         this.historyImageReportDTOList = historyImageReportDTOList;
     }
 
-    public List<HistoryPackageReportDTO> getHistoryPackageReportDTOList() {
-        return historyPackageReportDTOList;
+    public List<HistoryFsReportDTO> getHistoryFsReportDTOList() {
+        return historyFsReportDTOList;
     }
 
-    public void setHistoryPackageReportDTOList(List<HistoryPackageReportDTO> historyPackageReportDTOList) {
-        this.historyPackageReportDTOList = historyPackageReportDTOList;
+    public void setHistoryFsReportDTOList(List<HistoryFsReportDTO> historyFsReportDTOList) {
+        this.historyFsReportDTOList = historyFsReportDTOList;
+    }
+
+    public List<HistoryConfigReportDTO> getHistoryConfigReportDTOList() {
+        return historyConfigReportDTOList;
+    }
+
+    public void setHistoryConfigReportDTOList(List<HistoryConfigReportDTO> historyConfigReportDTOList) {
+        this.historyConfigReportDTOList = historyConfigReportDTOList;
+    }
+
+    public List<HistoryK8sReportDTO> getHistoryK8sReportDTOList() {
+        return historyK8sReportDTOList;
+    }
+
+    public void setHistoryK8sReportDTOList(List<HistoryK8sReportDTO> historyK8sReportDTOList) {
+        this.historyK8sReportDTOList = historyK8sReportDTOList;
     }
 }

@@ -3,7 +3,6 @@ package com.hummerrisk.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hummerrisk.base.domain.Package;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtResourceMapper;
@@ -18,6 +17,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,28 +51,52 @@ public class HistoryService {
     @Resource @Lazy
     private HistoryVulnTaskResourceMapper historyVulnTaskResourceMapper;
     @Resource @Lazy
-    private HistoryServerTaskMapper historyServerTaskMapper;
+    private HistoryServerResultMapper historyServerResultMapper;
     @Resource @Lazy
-    private HistoryServerTaskLogMapper historyServerTaskLogMapper;
-    @Resource @Lazy
-    private HistoryPackageTaskMapper historyPackageTaskMapper;
-    @Resource @Lazy
-    private HistoryPackageTaskLogMapper historyPackageTaskLogMapper;
-    @Resource @Lazy
-    private HistoryImageTaskMapper historyImageTaskMapper;
-    @Resource @Lazy
-    private HistoryImageTaskLogMapper historyImageTaskLogMapper;
+    private HistoryImageResultMapper historyImageResultMapper;
     @Resource @Lazy
     private HistoryCloudNativeResultMapper historyCloudNativeResultMapper;
     @Resource @Lazy
-    private HistoryCloudNativeResultItemMapper historyCloudNativeResultItemMapper;
+    private HistoryCloudNativeConfigResultMapper historyCloudNativeConfigResultMapper;
     @Resource @Lazy
-    private HistoryCloudNativeResultLogMapper historyCloudNativeResultLogMapper;
+    private HistoryCodeResultMapper historyCodeResultMapper;
+    @Resource @Lazy
+    private HistoryFileSystemResultMapper historyFileSystemResultMapper;
+    @Resource @Lazy
+    private CloudTaskMapper cloudTaskMapper;
+    @Resource @Lazy
+    private AccountMapper accountMapper;
+    @Resource @Lazy
+    private ServerResultMapper serverResultMapper;
+    @Resource @Lazy
+    private ServerMapper serverMapper;
+    @Resource @Lazy
+    private ImageResultMapper imageResultMapper;
+    @Resource @Lazy
+    private ImageMapper imageMapper;
+    @Resource @Lazy
+    private CodeResultMapper codeResultMapper;
+    @Resource @Lazy
+    private CodeMapper codeMapper;
+    @Resource @Lazy
+    private FileSystemResultMapper fileSystemResultMapper;
+    @Resource @Lazy
+    private FileSystemMapper fileSystemMapper;
+    @Resource @Lazy
+    private CloudNativeResultMapper cloudNativeResultMapper;
+    @Resource @Lazy
+    private CloudNativeMapper cloudNativeMapper;
+    @Resource @Lazy
+    private CloudNativeConfigResultMapper cloudNativeConfigResultMapper;
+    @Resource @Lazy
+    private CloudNativeConfigMapper cloudNativeConfigMapper;
+
 
     public Integer insertScanHistory (Object obj) throws Exception {
 
-        String accountId = obj2Account(obj).get("accountId").toString();
-        String accountType = obj2Account(obj).get("accountType").toString();
+        Map map = obj2Account(obj);
+        String accountId = map.get("accountId").toString();
+        String accountType = map.get("accountType").toString();
 
         HistoryScan history = new HistoryScan();
         history.setOperator(SessionUtils.getUserId());
@@ -120,6 +144,102 @@ public class HistoryService {
         }
     }
 
+    public void deleteScanTaskHistory (Integer scanId) throws Exception {
+        try{
+            historyScanTaskMapper.deleteByPrimaryKey(scanId);
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
+
+    public void editUselessScanTaskHistory () throws Exception {
+        try{
+            final HistoryScanExample historyScanExample = new HistoryScanExample();
+            HistoryScanExample.Criteria historyScanCriteria = historyScanExample.createCriteria();
+            historyScanCriteria.andStatusEqualTo(TaskConstants.TASK_STATUS.APPROVED.toString());
+            List<HistoryScan> historyScans = historyScanMapper.selectByExample(historyScanExample);
+
+            List<String> historyScanStatus = Arrays.asList(TaskConstants.TASK_STATUS.ERROR.name(), TaskConstants.TASK_STATUS.FINISHED.name(), TaskConstants.TASK_STATUS.WARNING.name());
+            for (HistoryScan historyScan : historyScans) {
+                HistoryScanTaskExample historyScanTaskExample = new HistoryScanTaskExample();
+                HistoryScanTaskExample.Criteria historyScanTaskCriteria = historyScanTaskExample.createCriteria();
+                historyScanTaskCriteria.andScanIdEqualTo(historyScan.getId()).andStatusNotIn(historyScanStatus);
+                List<HistoryScanTask> historyScanTasks = historyScanTaskMapper.selectByExample(historyScanTaskExample);
+                if(historyScanTasks.size() == 0) {
+                    historyScan.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                    historyScanMapper.updateByPrimaryKey(historyScan);
+                }
+                for (HistoryScanTask historyScanTask : historyScanTasks) {
+                    if(historyScanTask.getTaskId()==null) {
+                        historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                        historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
+                    } else {
+                        if (StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.cloudAccount.getType())) {
+                            CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                            Account account = accountMapper.selectByPrimaryKey(historyScanTask.getAccountId());
+                            if(cloudTask == null || account == null) {
+                                historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                                historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
+                            }
+                        } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.vulnAccount.getType())) {
+                            CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                            Account account = accountMapper.selectByPrimaryKey(historyScanTask.getAccountId());
+                            if(cloudTask == null || account == null) {
+                                historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                                historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
+                            }
+                        } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.serverAccount.getType())) {
+                            ServerResult serverResult = serverResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                            Server server = serverMapper.selectByPrimaryKey(historyScanTask.getAccountId());
+                            if(serverResult == null || server == null) {
+                                historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                                historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
+                            }
+                        } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.imageAccount.getType())) {
+                            ImageResult imageResult = imageResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                            Image image = imageMapper.selectByPrimaryKey(historyScanTask.getAccountId());
+                            if(imageResult == null || image == null) {
+                                historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                                historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
+                            }
+                        } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.codeAccount.getType())) {
+                            CodeResult codeResult = codeResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                            Code code = codeMapper.selectByPrimaryKey(historyScanTask.getAccountId());
+                            if(codeResult == null || code == null) {
+                                historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                                historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
+                            }
+                        }  else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.fsAccount.getType())) {
+                            FileSystemResult fileSystemResult = fileSystemResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                            FileSystem fileSystem = fileSystemMapper.selectByPrimaryKey(historyScanTask.getAccountId());
+                            if(fileSystemResult == null || fileSystem == null) {
+                                historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                                historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
+                            }
+                        } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.k8sAccount.getType())) {
+                            CloudNativeResult cloudNativeResult = cloudNativeResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                            CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(historyScanTask.getAccountId());
+                            if(cloudNativeResult == null || cloudNative == null) {
+                                historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                                historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
+                            }
+                        } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.configAccount.getType())) {
+                            CloudNativeConfigResult cloudNativeConfigResult = cloudNativeConfigResultMapper.selectByPrimaryKey(historyScanTask.getTaskId());
+                            CloudNativeConfig cloudNativeConfig = cloudNativeConfigMapper.selectByPrimaryKey(historyScanTask.getAccountId());
+                            if(cloudNativeConfigResult == null || cloudNativeConfig == null) {
+                                historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
+                                historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
+                            }
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
     private boolean isJson(String str){
         try {
             JSONObject.parseObject(str);
@@ -147,12 +267,18 @@ public class HistoryService {
             } else if(obj.getClass() == Image.class || obj.getClass() == ImageDTO.class) {
                 accountId = ((Image) obj).getId();
                 map.put("accountType", TaskEnum.imageAccount.getType());
-            } else if(obj.getClass() == Package.class || obj.getClass() == PackageDTO.class) {
-                accountId = ((Package) obj).getId();
-                map.put("accountType", TaskEnum.packageAccount.getType());
             } else if(obj.getClass() == CloudNative.class || obj.getClass() == CloudNativeDTO.class) {
                 accountId = ((CloudNative) obj).getId();
                 map.put("accountType", TaskEnum.k8sAccount.getType());
+            } else if(obj.getClass() == CloudNativeConfig.class || obj.getClass() == CloudNativeConfigDTO.class) {
+                accountId = ((CloudNativeConfig) obj).getId();
+                map.put("accountType", TaskEnum.configAccount.getType());
+            } else if(obj.getClass() == Code.class || obj.getClass() == CodeDTO.class) {
+                accountId = ((Code) obj).getId();
+                map.put("accountType", TaskEnum.codeAccount.getType());
+            } else if(obj.getClass() == FileSystem.class || obj.getClass() == FsDTO.class) {
+                accountId = ((FileSystem) obj).getId();
+                map.put("accountType", TaskEnum.fsAccount.getType());
             }
             map.put("accountId", accountId);
             return map;
@@ -167,12 +293,20 @@ public class HistoryService {
             String resultId = "";
             if (obj.getClass() == CloudTask.class || obj.getClass() == CloudTaskDTO.class) {
                 resultId = ((CloudTask) obj).getId();
-            } else if(obj.getClass() == ServerResult.class || obj.getClass() == ServerResultDTO.class) {
+            } else if(obj.getClass() == ServerResult.class || obj.getClass() == ServerResultLogWithBLOBs.class || obj.getClass() == ServerResultDTO.class) {
                 resultId = ((ServerResult) obj).getId();
+            } else if(obj.getClass() == CloudNativeResult.class || obj.getClass() == CloudNativeResultWithBLOBs.class) {
+                resultId = ((CloudNativeResult) obj).getId();
+            } else if(obj.getClass() == CloudNativeConfigResult.class) {
+                resultId = ((CloudNativeConfigResult) obj).getId();
+            } else if(obj.getClass() == CodeResult.class || obj.getClass() == CodeResultDTO.class) {
+                resultId = ((CodeResult) obj).getId();
             } else if(obj.getClass() == ImageResult.class || obj.getClass() == ImageResultWithBLOBs.class || obj.getClass() == ImageResultDTO.class) {
                 resultId = ((ImageResult) obj).getId();
-            } else if(obj.getClass() == PackageResult.class || obj.getClass() == PackageResultWithBLOBs.class || obj.getClass() == PackageResultDTO.class) {
-                resultId = ((PackageResult) obj).getId();
+            } else if(obj.getClass() == FileSystemResult.class) {
+                resultId = ((FileSystemResult) obj).getId();
+            } else {
+                resultId = ((Map) obj).get("id").toString();
             }
             return resultId;
         } catch (Exception e) {
@@ -253,17 +387,62 @@ public class HistoryService {
             } else {
                 score = 100 - 41;
             }
-        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.packageAccount.getType())) {
-            PackageResult packageResult = (PackageResult) task;
-            if (packageResult.getReturnSum() >= 0 && packageResult.getReturnSum() < 10) {
+        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.codeAccount.getType())) {
+            CodeResult codeResult = (CodeResult) task;
+            if (codeResult.getReturnSum() >= 0 && codeResult.getReturnSum() < 10) {
                 score = 100 - 5;
-            } else if (packageResult.getReturnSum() >= 10 && packageResult.getReturnSum() < 50) {
+            } else if (codeResult.getReturnSum() >= 10 && codeResult.getReturnSum() < 50) {
                 score = 100 - 10;
-            } else if (packageResult.getReturnSum() >= 50 && packageResult.getReturnSum() < 100) {
+            } else if (codeResult.getReturnSum() >= 50 && codeResult.getReturnSum() < 100) {
                 score = 100 - 20;
-            } else if (packageResult.getReturnSum() >= 100 && packageResult.getReturnSum() < 200) {
+            } else if (codeResult.getReturnSum() >= 100 && codeResult.getReturnSum() < 200) {
                 score = 100 - 30;
-            } else if (packageResult.getReturnSum() >= 200 && packageResult.getReturnSum() < 500) {
+            } else if (codeResult.getReturnSum() >= 200 && codeResult.getReturnSum() < 500) {
+                score = 100 - 40;
+            } else {
+                score = 100 - 41;
+            }
+        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.fsAccount.getType())) {
+            FileSystemResult fsResult = (FileSystemResult) task;
+            if (fsResult.getReturnSum() >= 0 && fsResult.getReturnSum() < 10) {
+                score = 100 - 5;
+            } else if (fsResult.getReturnSum() >= 10 && fsResult.getReturnSum() < 50) {
+                score = 100 - 10;
+            } else if (fsResult.getReturnSum() >= 50 && fsResult.getReturnSum() < 100) {
+                score = 100 - 20;
+            } else if (fsResult.getReturnSum() >= 100 && fsResult.getReturnSum() < 200) {
+                score = 100 - 30;
+            } else if (fsResult.getReturnSum() >= 200 && fsResult.getReturnSum() < 500) {
+                score = 100 - 40;
+            } else {
+                score = 100 - 41;
+            }
+        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.k8sAccount.getType())) {
+            CloudNativeResult cloudNativeResult = (CloudNativeResult) task;
+            if (cloudNativeResult.getReturnSum() >= 0 && cloudNativeResult.getReturnSum() < 10) {
+                score = 100 - 5;
+            } else if (cloudNativeResult.getReturnSum() >= 10 && cloudNativeResult.getReturnSum() < 50) {
+                score = 100 - 10;
+            } else if (cloudNativeResult.getReturnSum() >= 50 && cloudNativeResult.getReturnSum() < 100) {
+                score = 100 - 20;
+            } else if (cloudNativeResult.getReturnSum() >= 100 && cloudNativeResult.getReturnSum() < 200) {
+                score = 100 - 30;
+            } else if (cloudNativeResult.getReturnSum() >= 200 && cloudNativeResult.getReturnSum() < 500) {
+                score = 100 - 40;
+            } else {
+                score = 100 - 41;
+            }
+        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.configAccount.getType())) {
+            CloudNativeConfigResult cloudNativeConfigResult = (CloudNativeConfigResult) task;
+            if (cloudNativeConfigResult.getReturnSum() >= 0 && cloudNativeConfigResult.getReturnSum() < 10) {
+                score = 100 - 5;
+            } else if (cloudNativeConfigResult.getReturnSum() >= 10 && cloudNativeConfigResult.getReturnSum() < 50) {
+                score = 100 - 10;
+            } else if (cloudNativeConfigResult.getReturnSum() >= 50 && cloudNativeConfigResult.getReturnSum() < 100) {
+                score = 100 - 20;
+            } else if (cloudNativeConfigResult.getReturnSum() >= 100 && cloudNativeConfigResult.getReturnSum() < 200) {
+                score = 100 - 30;
+            } else if (cloudNativeConfigResult.getReturnSum() >= 200 && cloudNativeConfigResult.getReturnSum() < 500) {
                 score = 100 - 40;
             } else {
                 score = 100 - 41;
@@ -305,7 +484,7 @@ public class HistoryService {
         }
     }
 
-    public void insertHistoryCloudTaskLog(HistoryCloudTaskLog historyCloudTaskLog) throws Exception {
+    public void insertHistoryCloudTaskLog(HistoryCloudTaskLogWithBLOBs historyCloudTaskLog) throws Exception {
         try {
             historyCloudTaskLogMapper.insertSelective(historyCloudTaskLog);
         } catch (Exception e) {
@@ -362,7 +541,7 @@ public class HistoryService {
         }
     }
 
-    public void insertHistoryVulnTaskLog(HistoryVulnTaskLog historyVulnTaskLog) throws Exception {
+    public void insertHistoryVulnTaskLog(HistoryVulnTaskLogWithBLOBs historyVulnTaskLog) throws Exception {
         try {
             historyVulnTaskLogMapper.insertSelective(historyVulnTaskLog);
         } catch (Exception e) {
@@ -387,40 +566,20 @@ public class HistoryService {
         }
     }
 
-    public void insertHistoryServerTask(HistoryServerTask record) {
-        historyServerTaskMapper.insertSelective(record);
+    public void insertHistoryServerResult(HistoryServerResult record) {
+        historyServerResultMapper.insertSelective(record);
     }
 
-    public void updateHistoryServerTask(HistoryServerTask record) {
-        historyServerTaskMapper.updateByPrimaryKeySelective(record);
+    public void updateHistoryServerResult(HistoryServerResult record) {
+        historyServerResultMapper.updateByPrimaryKeySelective(record);
     }
 
-    public void insertHistoryServerTaskLog(HistoryServerTaskLog record) {
-        historyServerTaskLogMapper.insertSelective(record);
+    public void insertHistoryImageResult(HistoryImageResultWithBLOBs record) {
+        historyImageResultMapper.insertSelective(record);
     }
 
-    public void insertHistoryPackageTask(HistoryPackageTaskWithBLOBs record) {
-        historyPackageTaskMapper.insertSelective(record);
-    }
-
-    public void updateHistoryPackageTask(HistoryPackageTaskWithBLOBs record) {
-        historyPackageTaskMapper.updateByPrimaryKeySelective(record);
-    }
-
-    public void insertHistoryPackageTaskLog(HistoryPackageTaskLog record) {
-        historyPackageTaskLogMapper.insertSelective(record);
-    }
-
-    public void insertHistoryImageTask(HistoryImageTaskWithBLOBs record) {
-        historyImageTaskMapper.insertSelective(record);
-    }
-
-    public void updateHistoryImageTask(HistoryImageTaskWithBLOBs record) {
-        historyImageTaskMapper.updateByPrimaryKeySelective(record);
-    }
-
-    public void insertHistoryImageTaskLog(HistoryImageTaskLog record) {
-        historyImageTaskLogMapper.insertSelective(record);
+    public void updateHistoryImageResult(HistoryImageResultWithBLOBs record) {
+        historyImageResultMapper.updateByPrimaryKeySelective(record);
     }
 
     public void insertHistoryCloudNativeResult(HistoryCloudNativeResultWithBLOBs record) {
@@ -431,24 +590,29 @@ public class HistoryService {
         historyCloudNativeResultMapper.updateByPrimaryKeySelective(record);
     }
 
-    public void insertHistoryCloudNativeResultItem(HistoryCloudNativeResultItem historyCloudNativeResultItem) throws Exception {
-        try {
-            historyCloudNativeResultItemMapper.insertSelective(historyCloudNativeResultItem);
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
+    public void insertHistoryCloudNativeConfigResult(HistoryCloudNativeConfigResult record) {
+        historyCloudNativeConfigResultMapper.insertSelective(record);
     }
 
-    public void updateHistoryCloudNativeResultItem(HistoryCloudNativeResultItem historyCloudNativeResultItem) throws Exception {
-        try {
-            historyCloudNativeResultItemMapper.updateByPrimaryKeySelective(historyCloudNativeResultItem);
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
+    public void updateHistoryCloudNativeConfigResult(HistoryCloudNativeConfigResult record) {
+        historyCloudNativeConfigResultMapper.updateByPrimaryKeySelective(record);
     }
 
-    public void insertHistoryCloudNativeResultLog(HistoryCloudNativeResultLog record) {
-        historyCloudNativeResultLogMapper.insertSelective(record);
+    public void insertHistoryCodeResult(HistoryCodeResult record) {
+        historyCodeResultMapper.insertSelective(record);
     }
+
+    public void updateHistoryCodeResult(HistoryCodeResult record) {
+        historyCodeResultMapper.updateByPrimaryKeySelective(record);
+    }
+
+    public void insertHistoryFileSystemResult(HistoryFileSystemResult record) {
+        historyFileSystemResultMapper.insertSelective(record);
+    }
+
+    public void updateHistoryFileSystemResult(HistoryFileSystemResult record) {
+        historyFileSystemResultMapper.updateByPrimaryKeySelective(record);
+    }
+
 
 }

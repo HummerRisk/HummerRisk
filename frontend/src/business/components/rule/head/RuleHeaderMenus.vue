@@ -27,14 +27,6 @@
             {{ $t("server.server_rule") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/rule/imageRule'">
-            {{ $t("image.image_rule") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/rule/packageRule'">
-            {{ $t("package.package_rule") }}
-          </el-menu-item>
-
         </el-menu>
       </el-col>
     </el-row>

@@ -1,9 +1,6 @@
 package com.hummerrisk.dto;
 
-import com.hummerrisk.controller.request.task.AccountVo;
-import com.hummerrisk.controller.request.task.ImageVo;
-import com.hummerrisk.controller.request.task.PackageVo;
-import com.hummerrisk.controller.request.task.ServerVo;
+import com.hummerrisk.controller.request.task.*;
 
 import java.util.List;
 
@@ -18,7 +15,13 @@ public class AccountTreeDTO {
 
     private List<ImageVo> imageAccount;
 
-    private List<PackageVo> packageAccount;
+    private List<CodeVo> codeAccount;
+
+    private List<K8sVo> k8sAccount;
+
+    private List<ConfigVo> configAccount;
+
+    private List<FileSystemVo> fsAccount;
 
     public List<AccountVo> getCloudAccount() {
         return cloudAccount;
@@ -52,11 +55,35 @@ public class AccountTreeDTO {
         this.imageAccount = imageAccount;
     }
 
-    public List<PackageVo> getPackageAccount() {
-        return packageAccount;
+    public List<CodeVo> getCodeAccount() {
+        return codeAccount;
     }
 
-    public void setPackageAccount(List<PackageVo> packageAccount) {
-        this.packageAccount = packageAccount;
+    public void setCodeAccount(List<CodeVo> codeAccount) {
+        this.codeAccount = codeAccount;
+    }
+
+    public List<K8sVo> getK8sAccount() {
+        return k8sAccount;
+    }
+
+    public void setK8sAccount(List<K8sVo> k8sAccount) {
+        this.k8sAccount = k8sAccount;
+    }
+
+    public List<ConfigVo> getConfigAccount() {
+        return configAccount;
+    }
+
+    public void setConfigAccount(List<ConfigVo> configAccount) {
+        this.configAccount = configAccount;
+    }
+
+    public List<FileSystemVo> getFsAccount() {
+        return fsAccount;
+    }
+
+    public void setFsAccount(List<FileSystemVo> fsAccount) {
+        this.fsAccount = fsAccount;
     }
 }

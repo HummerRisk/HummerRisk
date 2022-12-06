@@ -83,8 +83,11 @@
                 </include>
             </if>
 
-            <if test="request.name != null and request.name != ''">
-                and t.tag_name like concat('%', #{request.name}, '%')
+            <if test="request.tagKey != null and request.tagKey != ''">
+                and LOWER(t.tag_key) like concat('%', LOWER(#{request.tagKey}), '%')
+            </if>
+            <if test="request.tagName != null and request.tagName != ''">
+                and LOWER(t.tag_name) like concat('%', LOWER(#{request.tagName}), '%')
             </if>
         </where>
         order by t._index

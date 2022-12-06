@@ -10,7 +10,9 @@ import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.dashboard.AnslysisVo;
 import com.hummerrisk.controller.request.dashboard.HistoryScanVo;
 import com.hummerrisk.controller.request.dashboard.TaskCalendarVo;
-import com.hummerrisk.dto.*;
+import com.hummerrisk.dto.ChartDTO;
+import com.hummerrisk.dto.HistoryScanDTO;
+import com.hummerrisk.dto.TopInfoDTO;
 import com.hummerrisk.service.DashboardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -88,17 +90,38 @@ public class DashboardController {
     }
 
     @I18n
-    @ApiOperation(value = "首页软件包检测统计")
-    @PostMapping("packageChart")
-    public PackageChartDTO packageChart(@RequestBody Map<String, Object> params) {
-        return dashboardService.packageChart(params);
+    @ApiOperation(value = "首页镜像检测统计")
+    @PostMapping("imageChart")
+    public ChartDTO imageChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.imageChart(params);
     }
 
     @I18n
-    @ApiOperation(value = "首页镜像检测统计")
-    @PostMapping("imageChart")
-    public ImageChartDTO imageChart(@RequestBody Map<String, Object> params) {
-        return dashboardService.imageChart(params);
+    @ApiOperation(value = "首页源码检测统计")
+    @PostMapping("codeChart")
+    public ChartDTO codeChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.codeChart(params);
+    }
+
+    @I18n
+    @ApiOperation(value = "首页云原生检测统计")
+    @PostMapping("cloudNativeChart")
+    public ChartDTO cloudNativeChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.cloudNativeChart(params);
+    }
+
+    @I18n
+    @ApiOperation(value = "首页云原生检测统计")
+    @PostMapping("configChart")
+    public ChartDTO configChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.configChart(params);
+    }
+
+    @I18n
+    @ApiOperation(value = "首页文件系统检测统计")
+    @PostMapping("fsChart")
+    public ChartDTO fsChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.fsChart(params);
     }
 
     @ApiOperation(value = "首页任务日历")
@@ -129,7 +152,7 @@ public class DashboardController {
     @I18n
     @ApiOperation(value = "检测统计分析")
     @PostMapping("analysisChart")
-    public AnalysisChartDTO analysisChart() {
+    public ChartDTO analysisChart() {
         return dashboardService.analysisChart();
     }
 

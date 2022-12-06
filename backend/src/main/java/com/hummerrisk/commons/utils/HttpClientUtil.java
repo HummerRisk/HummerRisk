@@ -1,5 +1,6 @@
 package com.hummerrisk.commons.utils;
 
+import com.hummerrisk.commons.constants.CloudNativeConstants;
 import com.hummerrisk.service.impl.SSLSocketFactoryImp;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -242,6 +243,27 @@ public class HttpClientUtil {
             e.printStackTrace();
         }
         return builder.build();
+    }
+
+    //检测trivy-operator
+    public static boolean operatorStatus(String url, Map<String, String> param) throws Exception {
+        OkHttpClient client = getClient();
+        Request.Builder builder = new Request.Builder();
+        if (param != null) {
+            for (String key : param.keySet()) {
+                builder.addHeader(key, param.get(key));
+            }
+        }
+        Request request = builder.url(url).method("GET", null).build();
+        try (Response response = client.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                String res = response.body().string();
+                return res.contains(CloudNativeConstants.TRIVY_OPERATOR) ||
+                        res.contains(CloudNativeConstants.AQUASECURITY);
+            } else {
+                return false;
+            }
+        }
     }
 
 }

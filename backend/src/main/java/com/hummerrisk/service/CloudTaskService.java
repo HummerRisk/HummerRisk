@@ -7,9 +7,12 @@ import com.hummer.quartz.service.QuartzManageService;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCloudTaskMapper;
+import com.hummerrisk.base.mapper.ext.ExtQuartzTaskMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
+import com.hummerrisk.controller.request.cloudTask.CloudQuartzRequest;
+import com.hummerrisk.controller.request.cloudTask.ManualRequest;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +25,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.alibaba.fastjson.JSON.parseArray;
 
@@ -60,6 +64,8 @@ public class CloudTaskService {
     @Resource
     private CloudAccountQuartzTaskMapper quartzTaskMapper;
     @Resource
+    private ExtQuartzTaskMapper extQuartzTaskMapper;
+    @Resource
     private CloudAccountQuartzTaskRelationMapper quartzTaskRelationMapper;
     @Resource
     private RuleMapper ruleMapper;
@@ -83,13 +89,10 @@ public class CloudTaskService {
                 return prowlerService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId);
             } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.xray.name())) {
                 return xrayService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId);
-            }  else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.tsunami.name())) {
-                return null;
             } else {
                 return orderService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId);
             }
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             throw new HRException(e.getMessage());
         }
     }
@@ -104,7 +107,6 @@ public class CloudTaskService {
                 HRException.throwException("CloudTask not found");
             }
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             throw e;
         }
         return true;
@@ -201,14 +203,13 @@ public class CloudTaskService {
             Proxy proxy = new Proxy();
             if (account.getProxyId() != null) proxy = proxyMapper.selectByPrimaryKey(account.getProxyId());
             // 校验云账号是否有效
-            Optional.ofNullable(accountService.validate(account.getId())).filter(Boolean::booleanValue).orElseGet(() -> {
+            Optional.ofNullable(accountService.validate(account.getId()).isFlag()).filter(Boolean::booleanValue).orElseGet(() -> {
                 HRException.throwException(Translator.get("i18n_ex_plugin_validate"));
                 return null;
             });
             //  获得区域 -- nuclei的区域为all 因为当前方法是判断当前规则是否正确,所以任意取一个区域只要执行没有问题则证明规则没有问题
             JSONObject regionObj = quartzTaskDTO.getScanType().equals(ScanTypeConstants.nuclei.name())
                     || quartzTaskDTO.getScanType().equals(ScanTypeConstants.xray.name())
-                     || quartzTaskDTO.getScanType().equals(ScanTypeConstants.tsunami.name())
                     ? new JSONObject() {{
                 put("regionId", "ALL");
             }} : Optional.ofNullable(PlatformUtils._getRegions(account, proxy, true)).filter(s -> {
@@ -232,9 +233,6 @@ public class CloudTaskService {
             } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.xray.name())) {
                 fileName = groupName;
                 commandEnum = CommandEnum.xray.getCommand();
-            } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.tsunami.name())) {
-                fileName = "";
-                commandEnum = CommandEnum.tsunami.getCommand();
             } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.prowler.name())) {
                 JSONArray objects = JSONObject.parseArray(quartzTaskDTO.getParameter());
                 if (objects.isEmpty()) HRException.throwException(Translator.get("error_lang_invalid"));
@@ -242,7 +240,7 @@ public class CloudTaskService {
                 commandEnum = CommandEnum.prowler.getCommand();
             }
 
-            dirPath = commandEnum.equals(CommandEnum.prowler.getCommand())? CloudTaskConstants.PROWLER_RESULT_FILE_PATH: CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + uuid, fileName);
+            dirPath = commandEnum.equals(CommandEnum.prowler.getCommand()) ? CloudTaskConstants.PROWLER_RESULT_FILE_PATH : CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + uuid, fileName, false);
 
             String command = PlatformUtils.fixedCommand(commandEnum, CommandEnum.validate.getCommand(), dirPath, fileName, map);
 
@@ -275,10 +273,6 @@ public class CloudTaskService {
             if (resultStr.contains("ERR") || resultStr.contains("error")) {
                 HRException.throwException(Translator.get("i18n_has_resource_failed"));
             }
-        }  else if (type.equals(ScanTypeConstants.tsunami.name())) {
-            if (resultStr.contains("ERR") || resultStr.contains("error")) {
-                HRException.throwException(Translator.get("i18n_has_resource_failed"));
-            }
         } else if (type.equals(ScanTypeConstants.custodian.name())) {
             if (!resultStr.isEmpty() && !resultStr.contains("INFO")) {
                 LogUtil.error(Translator.get("i18n_has_resource_failed") + " {validate}:" + resultStr);
@@ -292,65 +286,30 @@ public class CloudTaskService {
         }
     }
 
-    public List<CloudTask> selectManualTasks(Map<String, Object> params) throws Exception {
-
+    public List<CloudTask> selectManualTasks(ManualRequest request) throws Exception {
         try {
-            CloudTaskExample example = new CloudTaskExample();
-            CloudTaskExample.Criteria criteria = example.createCriteria();
-            if (params.get("name") != null && StringUtils.isNotEmpty(params.get("name").toString())) {
-                criteria.andTaskNameLike("%" + params.get("name").toString() + "%");
-            }
-            if (params.get("type") != null && StringUtils.isNotEmpty(params.get("type").toString())) {
-                criteria.andTypeEqualTo(params.get("type").toString());
-            }
-            if (params.get("accountId") != null && StringUtils.isNotEmpty(params.get("accountId").toString())) {
-                criteria.andAccountIdEqualTo(params.get("accountId").toString());
-            }
-            if (params.get("cron") != null && StringUtils.isNotEmpty(params.get("cron").toString())) {
-                criteria.andCronLike(params.get("cron").toString());
-            }
-            if (params.get("status") != null && StringUtils.isNotEmpty(params.get("status").toString())) {
-                criteria.andStatusEqualTo(params.get("status").toString());
-            }
-            if (params.get("severity") != null && StringUtils.isNotEmpty(params.get("severity").toString())) {
-                criteria.andSeverityEqualTo(params.get("severity").toString());
-            }
-            if (params.get("pluginName") != null && StringUtils.isNotEmpty(params.get("pluginName").toString())) {
-                criteria.andPluginNameEqualTo(params.get("pluginName").toString());
-            }
-            if (params.get("ruleTag") != null && StringUtils.isNotEmpty(params.get("ruleTag").toString())) {
-                criteria.andRuleTagsLike("%" + params.get("ruleTag").toString() + "%");
-            }
-            if (params.get("resourceType") != null && StringUtils.isNotEmpty(params.get("resourceType").toString())) {
-                criteria.andResourceTypesLike("%" + params.get("resourceType").toString() + "%");
-            }
-            criteria.andPluginIdNotIn(PlatformUtils.getVulnPlugin());
-            example.setOrderByClause("FIELD(`status`, 'PROCESSING', 'APPROVED', 'FINISHED', 'WARNING', 'ERROR'), return_sum desc, create_time desc, FIELD(`severity`, 'HighRisk', 'MediumRisk', 'LowRisk')");
-            return cloudTaskMapper.selectByExample(example);
+            return extCloudTaskMapper.selectManualTasks(request);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
 
     }
 
-    public List<CloudAccountQuartzTask> selectQuartzTasks(Map<String, Object> params) {
+    public boolean checkRuleTaskStatus(String accountId, String ruleId, String[] status) {
+        CloudTaskExample cloudTaskExample = new CloudTaskExample();
+        cloudTaskExample.createCriteria().andAccountIdEqualTo(accountId).andRuleIdEqualTo(ruleId).andStatusIn(Arrays.stream(status).collect(Collectors.toList()));
+        long count = cloudTaskMapper.countByExample(cloudTaskExample);
+        return count > 0;
+    }
 
-        CloudAccountQuartzTaskExample example = new CloudAccountQuartzTaskExample();
-        CloudAccountQuartzTaskExample.Criteria criteria = example.createCriteria();
-        if (params.get("name") != null && StringUtils.isNotEmpty(params.get("name").toString())) {
-            criteria.andNameEqualTo("%" + params.get("name").toString() + "%");
-        }
-        if (params.get("cron") != null && StringUtils.isNotEmpty(params.get("cron").toString())) {
-            criteria.andCronLike(params.get("cron").toString());
-        }
-        example.setOrderByClause("create_time desc");
-        return quartzTaskMapper.selectByExample(example);
+    public List<CloudAccountQuartzTask> selectQuartzTasks(CloudQuartzRequest request) {
+        return extQuartzTaskMapper.selectQuartzTasks(request);
     }
 
     public boolean saveQuartzTask(CloudAccountQuartzTaskDTO dto) throws Exception {
         try {
             dto.setId(UUIDUtil.newUUID());
-            dto.setApplyUser(Objects.requireNonNull(SessionUtils.getUser()).getName());
+            dto.setApplyUser(SessionUtils.getUserId());
             dto.setCreateTime(System.currentTimeMillis());
             dto.setStatus(CloudTaskConstants.TASK_STATUS.RUNNING.name());
             dto.setCronDesc(DescCornUtils.descCorn(dto.getCron()));
@@ -411,7 +370,7 @@ public class CloudTaskService {
                     quartzTaskRelation.setTaskIds(jsonArray.toJSONString());
                     quartzTaskRelationMapper.updateByPrimaryKeySelective(quartzTaskRelation);
 
-                    CloudAccountQuartzTaskRelaLog quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLog();
+                    CloudAccountQuartzTaskRelaLogWithBLOBs quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLogWithBLOBs();
                     quartzTaskRelaLog.setCreateTime(System.currentTimeMillis());
                     quartzTaskRelaLog.setQuartzTaskId(dto.getId());
                     quartzTaskRelaLog.setQuartzTaskRelaId(quartzTaskRelation.getId());
@@ -419,7 +378,7 @@ public class CloudTaskService {
                     quartzTaskRelaLog.setSourceId(quartzTaskRelation.getSourceId());
                     quartzTaskRelaLog.setQzType(quartzTaskRelation.getQzType());
                     quartzTaskRelaLog.setOperator(SessionUtils.getUser().getName());
-                    quartzTaskRelaLog.setOperation("新建定时任务");
+                    quartzTaskRelaLog.setOperation("i18n_create_qrtz_cloud_task");
                     quartzTaskRelaLogMapper.insertSelective(quartzTaskRelaLog);
                 }
             } else {
@@ -465,7 +424,7 @@ public class CloudTaskService {
                     quartzTaskRelation.setTaskIds(jsonArray.toJSONString());
                     quartzTaskRelationMapper.updateByPrimaryKeySelective(quartzTaskRelation);
 
-                    CloudAccountQuartzTaskRelaLog quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLog();
+                    CloudAccountQuartzTaskRelaLogWithBLOBs quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLogWithBLOBs();
                     quartzTaskRelaLog.setCreateTime(System.currentTimeMillis());
                     quartzTaskRelaLog.setQuartzTaskId(dto.getId());
                     quartzTaskRelaLog.setQuartzTaskRelaId(quartzTaskRelation.getId());
@@ -473,13 +432,12 @@ public class CloudTaskService {
                     quartzTaskRelaLog.setSourceId(quartzTaskRelation.getSourceId());
                     quartzTaskRelaLog.setQzType(quartzTaskRelation.getQzType());
                     quartzTaskRelaLog.setOperator(SessionUtils.getUser().getName());
-                    quartzTaskRelaLog.setOperation("新建定时任务");
+                    quartzTaskRelaLog.setOperation("i18n_create_qrtz_cloud_task");
                     quartzTaskRelaLogMapper.insertSelective(quartzTaskRelaLog);
                 }
             }
             OperationLogService.log(SessionUtils.getUser(), dto.getId(), dto.getName(), ResourceTypeConstants.QUOTA.name(), ResourceOperation.CREATE, "i18n_create_qrtz_cloud_task");
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             throw e;
         }
         return true;
@@ -583,7 +541,7 @@ public class CloudTaskService {
             List<CloudAccountQuartzTaskRelation> list = quartzTaskRelationMapper.selectByExampleWithBLOBs(example);
 
             for (CloudAccountQuartzTaskRelation quartzTaskRelation : list) {
-                CloudAccountQuartzTaskRelaLog quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLog();
+                CloudAccountQuartzTaskRelaLogWithBLOBs quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLogWithBLOBs();
                 quartzTaskRelaLog.setCreateTime(System.currentTimeMillis());
                 quartzTaskRelaLog.setQuartzTaskId(quartzId);
                 quartzTaskRelaLog.setQuartzTaskRelaId(quartzTaskRelation.getId());
@@ -591,7 +549,7 @@ public class CloudTaskService {
                 quartzTaskRelaLog.setSourceId(quartzTaskRelation.getSourceId());
                 quartzTaskRelaLog.setQzType(quartzTaskRelation.getQzType());
                 quartzTaskRelaLog.setOperator("System");
-                quartzTaskRelaLog.setOperation(action.equals(QuartzTaskAction.PAUSE) ? "暂停定时任务" : "启动定时任务");
+                quartzTaskRelaLog.setOperation(action.equals(QuartzTaskAction.PAUSE) ? "i18n_pause_qrtz" : "i18n_start_qrtz");
                 quartzTaskRelaLogMapper.insertSelective(quartzTaskRelaLog);
             }
 
@@ -658,7 +616,6 @@ public class CloudTaskService {
             BeanUtils.copyBean(showAccountQuartzTaskDTO, quartzTask);
             return showAccountQuartzTaskDTO;
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
             throw new HRException(e.getMessage());
         }
     }

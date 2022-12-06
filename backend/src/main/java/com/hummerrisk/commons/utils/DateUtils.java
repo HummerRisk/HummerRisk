@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * 时间工具类
@@ -108,6 +109,41 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         }
         catch (ParseException e)
         {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 格林尼治时间转当地时间
+     * @param format
+     * @param ts
+     * @return
+     */
+    public static Date utcTimeStrToLocalDate(final String format,final String ts){
+        try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+            TimeZone utcZone = TimeZone.getTimeZone("UTC");
+            simpleDateFormat.setTimeZone(utcZone);
+            return simpleDateFormat.parse(ts);
+        }catch (ParseException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 当地时间转格林尼治时间
+     * @param format
+     * @param ts
+     * @return
+     */
+    public static String localDateStrToUtcDateStr(String format,String ts){
+        try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+            Date localDate = simpleDateFormat.parse(ts);
+            TimeZone utcZone = TimeZone.getTimeZone("UTC");
+            simpleDateFormat.setTimeZone(utcZone);
+            return simpleDateFormat.format(localDate);
+        } catch (ParseException e) {
             throw new RuntimeException(e);
         }
     }

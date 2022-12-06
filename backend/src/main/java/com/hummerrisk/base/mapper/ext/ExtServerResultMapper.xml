@@ -50,8 +50,14 @@
                 <property name="object" value="${condition}.name"/>
             </include>
         </if>
+        <if test='${condition}.ip != null'>
+            and s.ip
+            <include refid="condition">
+                <property name="object" value="${condition}.ip"/>
+            </include>
+        </if>
         <if test='${condition}.ruleName != null'>
-            and t.rule_name
+            and t3.name
             <include refid="condition">
                 <property name="object" value="${condition}.ruleName"/>
             </include>
@@ -82,10 +88,90 @@
         t1.tag_key as tagKey,
         t2.tag_name as tagName,
         u.name as user,
-        sg.name as groupName
+        sg.name as groupName,
+        t3.script as rule
         FROM server_result t
         left join rule_tag_mapping t1 on t1.rule_id = t.rule_id
         left join rule_tag t2 on t1.tag_key = t2.tag_key
+        left join server_rule t3 on t.rule_id = t3.id
+        left join user u on t.apply_user = u.id
+        left join server s on s.id = t.server_id
+        left join server_group sg on sg.id = s.server_group_id
+
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.serverName != null and request.serverName != ''">
+                and LOWER(t.server_name) like CONCAT('%',LOWER(#{request.serverName}),'%')
+            </if>
+            <if test="request.ip != null and request.ip != ''">
+                and LOWER(t.ip) like CONCAT('%',LOWER(#{request.ip}),'%')
+            </if>
+            <if test="request.ruleName != null and request.ruleName != ''">
+                and LOWER(t.rule_name) like CONCAT('%',LOWER(#{request.ruleName}),'%')
+            </if>
+        </where>
+        ORDER BY FIELD(t.result_status, 'APPROVED', 'FINISHED', 'ERROR'), t.is_severity, FIELD(t.severity, 'HighRisk', 'MediumRisk', 'LowRisk'), t.server_name, t.update_time desc
+    </select>
+
+    <select id="serverChart" resultType="java.util.Map">
+        SELECT
+            concat(t.server_name, ' (', count(t.id), ')') as 'name',
+            count(t.id) as 'value'
+        FROM server_result as t
+        WHERE t.is_severity = 0
+        GROUP BY t.server_name
+        Limit 10;
+    </select>
+
+    <select id="severityChart" resultType="java.util.Map">
+        SELECT
+            t.server_name as 'product',
+            (SELECT IFNULL(count(t1.id), 0) as High from server_result t1 where t1.server_name = t.server_name and LOWER(t1.severity) = 'highrisk' and t1.is_severity = false) as High,
+            (SELECT IFNULL(count(t1.id), 0) as Medium from server_result t1 where t1.server_name = t.server_name and LOWER(t1.severity) = 'mediumrisk' and t1.is_severity = false) as Medium,
+            (SELECT IFNULL(count(t1.id), 0) as Low from server_result t1 where t1.server_name = t.server_name and LOWER(t1.severity) = 'lowrisk' and t1.is_severity = false) as Low
+        FROM server_result as t
+        GROUP BY t.server_name
+        Limit 10;
+    </select>
+
+    <select id="serverChartX" parameterType="java.util.Map" resultType="java.lang.String">
+        SELECT
+        server_name as name
+        FROM server_result
+        GROUP BY server_name
+        LIMIT 10;
+    </select>
+
+    <select id="serverChartY" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select
+        count(t.id) as returnSum
+        FROM server_result t
+        WHERE t.is_severity = false
+        GROUP BY t.server_name
+        LIMIT 10;
+    </select>
+
+    <select id="history" parameterType="java.util.Map" resultType="com.hummerrisk.dto.HistoryServerResultDTO">
+        SELECT
+        t.*,
+        t1.tag_key as tagKey,
+        t2.tag_name as tagName,
+        u.name as user,
+        sg.name as groupName,
+        t3.script as rule
+        FROM history_server_result t
+        left join rule_tag_mapping t1 on t1.rule_id = t.rule_id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+        left join server_rule t3 on t.rule_id = t3.id
         left join user u on t.apply_user = u.id
         left join server s on s.id = t.server_id
         left join server_group sg on sg.id = s.server_group_id
@@ -94,16 +180,14 @@
             <if test="id != null">
                 AND t.id = #{id}
             </if>
-            <if test="name != null">
-                AND t.server_name like CONCAT('%',#{name},'%')
+            <if test="serverId != null">
+                AND t.server_id = #{serverId}
             </if>
-            <if test="combine != null">
-                <include refid="combine">
-                    <property name="condition" value="combine"/>
-                </include>
+            <if test="name != null">
+                AND LOWER(t.name) like CONCAT('%',#{name},'%')
             </if>
         </where>
-        ORDER BY t.update_time desc
+        ORDER BY t.is_severity, FIELD(t.severity, 'HighRisk', 'MediumRisk', 'LowRisk'), t.server_name, t.update_time desc
     </select>
 
 </mapper>

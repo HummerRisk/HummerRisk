@@ -13,7 +13,8 @@ public class ExcelExportRequest {
     private List<Column> columns = new ArrayList<>();
     private List<Row> data = new ArrayList<>();
     private List<String> accountIds;
-
+    private String groupId;
+    private String accountId;
     public Map<String, Object> getParams() {
         return params;
     }
@@ -44,6 +45,22 @@ public class ExcelExportRequest {
 
     public void setAccountIds(List<String> accountIds) {
         this.accountIds = accountIds;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
     }
 
     public static class Column {

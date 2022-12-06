@@ -9,6 +9,7 @@
         <result column="applyUser" jdbcType="VARCHAR" property="applyUser"/>
         <result column="ruleId" jdbcType="VARCHAR" property="ruleId"/>
         <result column="ruleName" jdbcType="VARCHAR" property="ruleName"/>
+        <result column="suggestion" jdbcType="VARCHAR" property="suggestion"/>
         <result column="accountName" jdbcType="VARCHAR" property="accountName"/>
         <association property="resourceWithBLOBs" column="resource_id" select="getResourceList">
         </association>
@@ -22,6 +23,47 @@
         <result column="scanScore" jdbcType="VARCHAR" property="scanScore"/>
         <result column="resultStatus" jdbcType="VARCHAR" property="resultStatus"/>
     </resultMap>
+
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
 
     <select id="source" parameterType="java.lang.String" resultMap="ResultMap">
         SELECT
@@ -43,6 +85,23 @@
         WHERE
         tt.account_id = t.id
         ), 0) as resourcesSum,
+        IFNULL((
+        SELECT
+        count( tc.id )
+        FROM
+        cloud_task tc
+        WHERE
+        tc.account_id = t.id
+        and tc.status in ('FINISHED', 'ERROR', 'WARNING')
+        ), 0) as overRules,
+        IFNULL((
+        SELECT
+        count( tt.id )
+        FROM
+        cloud_task tt
+        WHERE
+        tt.account_id = t.id
+        ), 0) as allRules,
         IFNULL((select t1.scan_score FROM history_scan t1 WHERE t.id = t1.account_id ORDER BY t1.create_time DESC limit 1), 100) AS scanScore,
         CASE
         WHEN 'APPROVED' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'APPROVED'
@@ -84,6 +143,23 @@
         WHERE
         tt.account_id = t.id
         ), 0) as resourcesSum,
+        IFNULL((
+        SELECT
+        count( tc.id )
+        FROM
+        cloud_task tc
+        WHERE
+        tc.account_id = t.id
+        and tc.status in ('FINISHED', 'ERROR', 'WARNING')
+        ), 0) as overRules,
+        IFNULL((
+        SELECT
+        count( tt.id )
+        FROM
+        cloud_task tt
+        WHERE
+        tt.account_id = t.id
+        ), 0) as allRules,
         IFNULL((select t1.scan_score FROM history_scan t1 WHERE t.id = t1.account_id ORDER BY t1.create_time DESC limit 1), 100) AS scanScore,
         CASE
         WHEN 'APPROVED' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'APPROVED'
@@ -117,6 +193,45 @@
         WHERE t.id = #{resource_id}
     </select>
 
+    <sql id="combine">
+        <if test='${condition}.regionId != null'>
+            and t.region_id
+            <include refid="condition">
+                <property name="object" value="${condition}.regionId"/>
+            </include>
+        </if>
+        <if test='${condition}.resourceType != null'>
+            and t.resource_type
+            <include refid="condition">
+                <property name="object" value="${condition}.resourceType"/>
+            </include>
+        </if>
+        <if test='${condition}.severity != null'>
+            and t.severity
+            <include refid="condition">
+                <property name="object" value="${condition}.severity"/>
+            </include>
+        </if>
+        <if test='${condition}.applyUser != null'>
+            and t4.applyUser
+            <include refid="condition">
+                <property name="object" value="${condition}.applyUser"/>
+            </include>
+        </if>
+        <if test='${condition}.createTime != null'>
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+        <if test='${condition}.updateTime != null'>
+            and t.update_time
+            <include refid="condition">
+                <property name="object" value="${condition}.updateTime"/>
+            </include>
+        </if>
+    </sql>
+
     <select id="getComplianceResult" parameterType="com.hummerrisk.controller.request.resource.ResourceRequest" resultMap="BaseResultMap">
         SELECT
         t4.task_name as taskName,
@@ -126,56 +241,69 @@
         t5.rule_id as ruleId,
         t6.name as ruleName,
         t7.name as accountName,
+        t6.suggestion,
         t.*
         FROM resource_item t
-        LEFT JOIN resource t1 ON t1.id = t.resource_id
-        LEFT JOIN cloud_task_item_resource t2 ON t1.id = t2.resource_id
-        LEFT JOIN cloud_task_item t3 ON t3.id = t2.task_item_id
-        LEFT JOIN cloud_task t4 ON t3.task_id = t4.id
-        LEFT JOIN resource_rule t5 ON t1.id = t5.resource_id
-        LEFT JOIN rule t6 ON t5.rule_id = t6.id
-        LEFT JOIN cloud_account t7 ON t.account_id = t7.id
+        JOIN resource t1 ON t1.id = t.resource_id
+        JOIN cloud_task_item_resource t2 ON t1.id = t2.resource_id
+        JOIN cloud_task_item t3 ON t3.id = t2.task_item_id
+        JOIN cloud_task t4 ON t3.task_id = t4.id
+        JOIN resource_rule t5 ON t1.id = t5.resource_id
+        JOIN rule t6 ON t5.rule_id = t6.id
+        JOIN cloud_account t7 ON t.account_id = t7.id
         <where>
-            <if test="taskId != null">
-                AND t4.id like CONCAT('%',#{taskId},'%')
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                </include>
             </if>
-            <if test="taskName != null">
-                AND t4.task_name like CONCAT('%',#{taskName},'%')
+            <if test="request.taskId != null">
+                AND t4.id = #{request.taskId}
             </if>
-            <if test="severity != null">
-                AND t.severity = #{severity}
+            <if test="request.accountId != null">
+                AND t.account_id = #{request.accountId}
             </if>
-            <if test="tagKey != null">
-                AND t5.rule_id in (select tt.rule_id from rule_tag_mapping tt where tt.tag_key = #{tagKey})
+            <if test="request.regionId != null">
+                AND t.region_id = #{request.regionId}
             </if>
-            <if test="pluginName != null">
-                AND t.plugin_name = #{pluginName}
+            <if test="request.taskName != null">
+                AND t4.task_name like CONCAT('%',#{request.taskName},'%')
             </if>
-            <if test="resourceName != null">
-                AND t.resource_name like CONCAT('%',#{resourceName},'%')
+            <if test="request.severity != null">
+                AND t.severity = #{request.severity}
             </if>
-            <if test="resourceStatus != null">
-                AND t.resource_status = #{resourceStatus}
+            <if test="request.tagKey != null">
+                AND t5.rule_id in (select tt.rule_id from rule_tag_mapping tt where tt.tag_key = #{request.tagKey})
             </if>
-            <if test="resourceType != null">
-                AND t.resource_type = #{resourceType}
+            <if test="request.pluginName != null">
+                AND t.plugin_name = #{request.pluginName}
             </if>
-            <if test="ruleId != null">
-                AND t5.rule_id = #{ruleId}
+            <if test="request.resourceName != null">
+                AND t.resource_name like CONCAT('%',#{request.resourceName},'%')
             </if>
-            <if test="ruleName != null">
-                AND t6.name like CONCAT('%',#{ruleName},'%')
+            <if test="request.resourceStatus != null">
+                AND t.resource_status = #{request.resourceStatus}
             </if>
-            <if test="ruleName != null">
-                AND t6.name like CONCAT('%',#{ruleName},'%')
+            <if test="request.resourceType != null">
+                AND t.resource_type like CONCAT('%',#{request.resourceType},'%')
             </if>
-            <if test="name != null">
-                AND t.hummer_id like CONCAT('%',#{name},'%')
+            <if test="request.regionName != null">
+                AND t.region_name like CONCAT('%',#{request.regionName},'%')
+            </if>
+            <if test="request.ruleId != null">
+                AND t5.rule_id = #{request.ruleId}
+            </if>
+            <if test="request.ruleName != null">
+                AND t6.name like CONCAT('%',#{request.ruleName},'%')
+            </if>
+            <if test="request.hummerId != null">
+                AND t.hummer_id like CONCAT('%',#{request.hummerId},'%')
+            </if>
+            <if test="request.groupId != null">
+                AND t6.id in (select rule_id from rule_group_mapping where group_id = #{request.groupId})
             </if>
         </where>
-        <if test="sort == null">
-            ORDER BY t.create_time DESC
-        </if>
+        ORDER BY t.create_time DESC
     </select>
 
     <select id="resultPercentByCloud" resultType="java.lang.String">
@@ -301,8 +429,15 @@
                 AND t.item_sort_second_level = #{itemSortSecondLevel}
             </if>
             <if test="name != null">
-                AND t.project like CONCAT('%',#{name},'%')
+                AND LOWER(t.project) like CONCAT('%',#{name},'%')
             </if>
+            AND (
+            SELECT count(t.id)
+            FROM rule_inspection_report_mapping t1
+            JOIN rule t2 ON t1.rule_id = t2.id
+            WHERE t1.report_id = t.id
+            AND t1.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = #{groupId})
+            ) > 0
         </where>
         ORDER BY FIELD(status, 'risky','risk_free'), t.id
     </select>
@@ -417,6 +552,31 @@
         ORDER BY t.resource_type, t1.resource_name, t.region_id, t.hummer_id
     </select>
 
+    <select id="searchGroupExportData" resultType="com.hummerrisk.dto.ExportDTO" parameterType="java.lang.String">
+        SELECT
+        DISTINCT t.hummer_id as hummerId,
+        t.region_id as regionId,
+        t.region_name as regionName,
+        t1.resource_name as resourceName,
+        t.resource_type as resourceType,
+        t.severity,
+        t3.name as ruleName,
+        t3.description as ruleDescription,
+        IFNULL(t5.project, '暂无') as project,
+        IFNULL(t5.item_sort_first_level, '暂无') as firstLevel,
+        IFNULL(t5.item_sort_second_level, '暂无') as secondLevel,
+        IFNULL(t5.improvement, '暂无') as improvement
+        FROM resource_item t
+        JOIN resource t1 on t.resource_id = t1.id
+        JOIN resource_rule t2 on t.resource_id = t2.resource_id
+        JOIN rule t3 on t2.rule_id = t3.id
+        JOIN rule_group_mapping g on t3.id = g.rule_id and g.group_id = #{groupId}
+        LEFT JOIN rule_inspection_report_mapping t4 on t3.id = t4.rule_id
+        LEFT JOIN rule_inspection_report t5 on t4.report_id = t5.id
+        WHERE t.account_id = #{accountId}
+        ORDER BY t.resource_type, t1.resource_name, t.region_id, t.hummer_id
+    </select>
+
     <select id="resource" resultType="com.hummerrisk.base.domain.ResourceWithBLOBs" parameterType="com.hummerrisk.base.domain.CloudTaskItem">
         SELECT t.*
         FROM resource t
@@ -442,4 +602,215 @@
         ORDER BY t.create_time desc
         limit 1
     </select>
+
+    <select id="regionData" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT t.region_id as id,
+               t.region_name as name,
+               sum(IFNULL(t.return_sum, 0)) as sum
+        FROM resource t
+        JOIN cloud_task_item_resource t1 on t.id = t1.resource_id
+        <where>
+            <if test="id != null and id != ''">
+                AND t.account_id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                AND LOWER(t.region_name) like CONCAT('%',LOWER(#{name}),'%')
+            </if>
+            <if test="taskId != null and taskId != ''">
+                AND t1.task_id = #{taskId}
+            </if>
+        </where>
+        GROUP BY t.region_id,t.region_name
+        ORDER BY sum desc
+    </select>
+
+    <select id="severityData" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT t.severity as id,
+               t.severity as name,
+               sum(IFNULL(t.return_sum, 0)) as sum
+        FROM resource t
+        JOIN cloud_task_item_resource t1 on t.id = t1.resource_id
+        <where>
+            <if test="id != null and id != ''">
+                AND t.account_id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                AND LOWER(t.severity) like CONCAT('%',LOWER(#{name}),'%')
+            </if>
+            <if test="taskId != null and taskId != ''">
+                AND t1.task_id = #{taskId}
+            </if>
+        </where>
+        GROUP BY t.severity
+        ORDER BY sum desc
+    </select>
+
+    <select id="resourceTypeData" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT t.resource_type as id,
+               t.resource_type as name,
+               sum(IFNULL(t.return_sum, 0)) as sum
+        FROM resource t
+        JOIN cloud_task_item_resource t1 on t.id = t1.resource_id
+        <where>
+            <if test="id != null and id != ''">
+                AND t.account_id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                AND LOWER(t.resource_type) like CONCAT('%',LOWER(#{name}),'%')
+            </if>
+            <if test="taskId != null and taskId != ''">
+                AND t1.task_id = #{taskId}
+            </if>
+        </where>
+        GROUP BY t.resource_type
+        ORDER BY sum desc
+    </select>
+
+    <select id="ruleData" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT t.task_id as id,
+               t2.task_name as name,
+               sum(IFNULL(t1.return_sum, 0)) as sum
+        FROM cloud_task_item_resource t
+        JOIN resource t1 ON t.resource_id = t1.id
+        JOIN cloud_task t2 ON t.task_id = t2.id
+        <where>
+            <if test="id != null and id != ''">
+                AND t2.account_id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                AND LOWER(t2.task_name) like CONCAT('%',LOWER(#{name}),'%')
+            </if>
+            <if test="taskId != null and taskId != ''">
+                AND t.task_id = #{taskId}
+            </if>
+        </where>
+        GROUP BY t.task_id
+        ORDER BY sum desc
+    </select>
+
+    <select id="regulation" resultType="com.hummerrisk.base.domain.RuleInspectionReport" parameterType="java.lang.String">
+        SELECT t.*
+        FROM rule_inspection_report t
+        JOIN rule_inspection_report_mapping t1 ON t.id = t1.report_id
+        WHERE t1.rule_id = #{ruleId}
+        ORDER BY id
+    </select>
+
+    <sql id="combine2">
+        <if test='${condition}.name != null'>
+            and t.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test='${condition}.description != null'>
+            and t.description
+            <include refid="condition">
+                <property name="object" value="${condition}.description"/>
+            </include>
+        </if>
+        <if test='${condition}.level != null'>
+            and t.level
+            <include refid="condition">
+                <property name="object" value="${condition}.level"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="ruleGroupList" resultType="com.hummerrisk.dto.RuleGroupDTO">
+        select
+        t.*,
+        (SELECT count(g.id) from rule_group_mapping g where g.group_id = t.id) as ruleSum,
+        (
+        SELECT count(g.id)
+        FROM rule_group_mapping g
+        WHERE g.group_id = t.id
+        AND g.rule_id in (select tt.rule_id from cloud_task tt where tt.resources_sum &gt; 0 and tt.account_id = #{request.accountId})
+        ) as riskRuleSum,
+        p.name as pluginName,
+        p.icon as pluginIcon,
+        CASE
+        WHEN
+        (
+        SELECT count(t5.id) FROM rule_group_mapping t1
+        JOIN rule t2 ON t1.rule_id = t2.id
+        JOIN resource_rule t3 ON t2.id = t3.rule_id
+        JOIN resource t4 ON t4.id = t3.resource_id
+        JOIN resource_item t5 ON t4.id = t5.resource_id
+        WHERE t1.group_id = t.id
+        AND t4.account_id = c.id
+        ) > 0 THEN 'risky'
+        ELSE 'risk_free'
+        END AS status,
+        (
+        SELECT c1.create_time FROM cloud_task c1
+        WHERE c1.account_id = c.id and c1.rule_id in (select r1.rule_id from rule_group_mapping r1 where r1.group_id = t.id)
+        order by create_time desc limit 1) as createTime,
+        '暂无合规报告' as state,
+        (
+        SELECT
+        IFNULL(count( DISTINCT g.id ), 0)
+        FROM
+        rule_inspection_report r
+        JOIN rule_inspection_report_mapping t1 ON t1.report_id = r.id
+        JOIN cloud_task_item t2 ON t2.rule_id = t1.rule_id
+        JOIN cloud_task t3 ON t3.id = t2.task_id
+        JOIN rule_group_mapping t4 ON t3.rule_id = t4.rule_id
+        JOIN rule_group g ON t4.group_id = g.id
+        WHERE t3.account_id = c.id and g.id = t.id
+        AND t3.return_sum > 0
+        )
+        AS riskyRegulation,
+        (
+        SELECT count( DISTINCT r.id ) FROM rule_inspection_report r
+        ) AS totalRegulation,
+        (
+        SELECT
+        IFNULL(sum( r.return_sum ), 0)
+        FROM
+        cloud_task r
+        WHERE
+        r.account_id = c.id
+        AND r.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = t.id)
+        )
+        AS returnSum,
+        (
+        SELECT
+        IFNULL(sum( r.resources_sum ), 0)
+        FROM
+        cloud_task r
+        WHERE
+        r.account_id = c.id
+        AND r.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = t.id)
+        )
+        AS resourcesSum
+        from rule_group as t
+        join plugin p on t.plugin_id = p.id
+        join cloud_account c on t.plugin_id = c.plugin_id
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine2">
+                    <property name="condition" value="request.combine"/>
+                </include>
+            </if>
+            <if test="request.accountId != null and request.accountId != ''">
+                and c.id = #{request.accountId}
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and LOWER(t.name) like concat('%', LOWER(#{request.name}), '%')
+            </if>
+            <if test="request.description != null and request.description != ''">
+                and LOWER(t.description) like concat('%', LOWER(#{request.description}), '%')
+            </if>
+            <if test="request.level != null and request.level != ''">
+                and LOWER(t.level) like concat('%', LOWER(#{request.level}), '%')
+            </if>
+            <if test="request.pluginId != null and request.pluginId != ''">
+                and t.plugin_id = #{request.pluginId}
+            </if>
+            and t.id in (select r.group_id from rule_group_mapping r join cloud_task ct on r.rule_id = ct.rule_id where ct.account_id = #{request.accountId})
+        </where>
+        order by `status`, createTime desc
+    </select>
+
 </mapper>

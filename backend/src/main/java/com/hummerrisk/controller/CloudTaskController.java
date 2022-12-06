@@ -6,6 +6,8 @@ import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
+import com.hummerrisk.controller.request.cloudTask.CloudQuartzRequest;
+import com.hummerrisk.controller.request.cloudTask.ManualRequest;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.service.CloudTaskService;
 import com.hummerrisk.service.OrderService;
@@ -52,7 +54,7 @@ public class CloudTaskController {
 
     @I18n
     @PostMapping("quartz/log/{taskItemId}/{goPage}/{pageSize}")
-    public Pager<List<CloudTaskItemLog>> getquartzLogDetails(@PathVariable int goPage, @PathVariable int pageSize, @PathVariable String taskItemId) {
+    public Pager<List<CloudTaskItemLogWithBLOBs>> getquartzLogDetails(@PathVariable int goPage, @PathVariable int pageSize, @PathVariable String taskItemId) {
         CloudTaskItemWithBLOBs taskItem = orderService.taskItemWithBLOBs(taskItemId);
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, orderService.getQuartzLogByTaskItemId(taskItem));
@@ -60,7 +62,7 @@ public class CloudTaskController {
 
     @I18n
     @PostMapping("quartz/rela/log/{qzTaskId}/{goPage}/{pageSize}")
-    public Pager<List<CloudAccountQuartzTaskRelaLog>> getQuartzLogs(@PathVariable int goPage, @PathVariable int pageSize, @PathVariable String qzTaskId) {
+    public Pager<List<CloudAccountQuartzTaskRelaLogWithBLOBs>> getQuartzLogs(@PathVariable int goPage, @PathVariable int pageSize, @PathVariable String qzTaskId) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, orderService.getQuartzLogsById(qzTaskId));
     }
@@ -82,17 +84,10 @@ public class CloudTaskController {
 
     @I18n
     @PostMapping("manual/list/{goPage}/{pageSize}")
-    public Pager<List<CloudTask>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> param) throws Exception {
+    public Pager<List<CloudTask>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ManualRequest request) throws Exception {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        param.put("type", "manual");
-        return PageUtils.setPageInfo(page, cloudTaskService.selectManualTasks(param));
-    }
-
-    @I18n
-    @PostMapping("manual/Alllist")
-    public List<CloudTask> getAllManualTasks(@RequestBody Map<String, Object> param) throws Exception {
-        param.put("type", "manual");
-        return cloudTaskService.selectManualTasks(param);
+        request.setType("manual");
+        return PageUtils.setPageInfo(page, cloudTaskService.selectManualTasks(request));
     }
 
     @GetMapping("manual/more/{taskId}")
@@ -120,15 +115,9 @@ public class CloudTaskController {
 
     @I18n
     @PostMapping("quartz/list/{goPage}/{pageSize}")
-    public Pager<List<CloudAccountQuartzTask>> getQuartzTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> param) {
+    public Pager<List<CloudAccountQuartzTask>> getQuartzTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudQuartzRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, cloudTaskService.selectQuartzTasks(param));
-    }
-
-    @I18n
-    @PostMapping("quartz/Alllist")
-    public List<CloudAccountQuartzTask> getQuartzTasks(@RequestBody Map<String, Object> param) {
-        return cloudTaskService.selectQuartzTasks(param);
+        return PageUtils.setPageInfo(page, cloudTaskService.selectQuartzTasks(request));
     }
 
     @PostMapping("quartz/create")

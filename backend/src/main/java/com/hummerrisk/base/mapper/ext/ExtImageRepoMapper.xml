@@ -3,7 +3,7 @@
 <mapper namespace="com.hummerrisk.base.mapper.ext.ExtImageRepoMapper">
 
     <resultMap id="ImageRepoResultMap" type="com.hummerrisk.base.domain.ImageRepo"
-               extends="com.hummerrisk.base.mapper.PackageMapper.BaseResultMap">
+               extends="com.hummerrisk.base.mapper.ImageRepoMapper.BaseResultMap">
         <result column="user" property="user"/>
     </resultMap>
 
@@ -55,10 +55,10 @@
                 <property name="object" value="${condition}.name"/>
             </include>
         </if>
-        <if test="${condition}.updateTime != null">
-            and t.update_time
+        <if test="${condition}.repo != null">
+            and t.repo
             <include refid="condition">
-                <property name="object" value="${condition}.updateTime"/>
+                <property name="object" value="${condition}.repo"/>
             </include>
         </if>
         <if test="${condition}.createTime != null">
@@ -97,7 +97,13 @@
                 and t.id = #{request.id}
             </if>
             <if test="request.name != null and request.name != ''">
-                and t.name like CONCAT('%', #{request.name},'%')
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.repo != null and request.repo != ''">
+                and LOWER(t.repo) like CONCAT('%', LOWER(#{request.repo}),'%')
+            </if>
+            <if test="request.userName != null and request.userName != ''">
+                and LOWER(t.user_name) like CONCAT('%', LOWER(#{request.userName}),'%')
             </if>
             <if test="request.status != null and request.status != ''">
                 and t.status = #{request.status}

@@ -1,9 +1,15 @@
 package com.hummerrisk.controller;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.UserKey;
 import com.hummerrisk.commons.constants.RoleConstants;
+import com.hummerrisk.commons.utils.PageUtils;
+import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.controller.handler.annotation.I18n;
+import com.hummerrisk.controller.request.member.UserRequest;
+import com.hummerrisk.controller.request.user.UserKeyRequest;
 import com.hummerrisk.security.ApiKeyHandler;
 import com.hummerrisk.service.UserKeyService;
 import io.swagger.annotations.Api;
@@ -11,10 +17,7 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.web.util.WebUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
@@ -33,10 +36,10 @@ public class UserKeysController {
 
     @I18n
     @ApiOperation(value = "API Keys信息")
-    @GetMapping("info")
-    public List<UserKey> getUserKeysInfo() {
-        String userId = Objects.requireNonNull(SessionUtils.getUser()).getId();
-        return userKeyService.getUserKeysInfo(userId);
+    @PostMapping("list/{goPage}/{pageSize}")
+    public Pager<List<UserKey>> getUserKeysInfo(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody UserKeyRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, userKeyService.getUserKeysInfo(request));
     }
 
     @I18n

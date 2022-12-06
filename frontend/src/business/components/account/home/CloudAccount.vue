@@ -5,28 +5,34 @@
           <table-header :condition.sync="condition" @search="search"
                            :title="$t('account.cloud_account_list')"
                            @create="create" :createTip="$t('account.create')"
-                           @scan="scan" :scanTip="$t('account.one_scan')"
-                           @validate="validate" :runTip="$t('account.one_validate')"
-                           :show-run="true" :show-scan="true" :show-create="true"/>
+                           @validate="validate" :validateTip="$t('account.one_validate')"
+                           :show-validate="true" :show-create="true"
+                           :items="items" :columnNames="columnNames"
+                           :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                           @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
 
         </template>
 
-        <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort"
-                  :row-class-name="tableRowClassName"
-                  @filter-change="filter" @select-all="select" @select="select">
-          <el-table-column type="selection" min-width="5%">
+        <hide-table
+          :table-data="tableData"
+          @sort-change="sort"
+          @filter-change="filter"
+          @select-all="select"
+          @select="select"
+        >
+          <el-table-column type="selection" id="selection"  prop="selection" min-width="50">
           </el-table-column>
-          <el-table-column type="index" min-width="5%"/>
-          <el-table-column prop="name" :label="$t('account.name')" min-width="12%" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" min-width="10%" show-overflow-tooltip>
+          <el-table-column type="index" prop="index" min-width="50"/>
+          <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('account.name')" min-width="150" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="pluginName" v-if="checkedColumnNames.includes('pluginName')" :label="$t('account.cloud_platform')" min-width="150" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ $t(scope.row.pluginName) }}
+                 &nbsp;&nbsp; {{ scope.row.pluginName }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="status" min-width="8%" :label="$t('account.status')"
+          <el-table-column prop="status" v-if="checkedColumnNames.includes('status')" min-width="100" :label="$t('account.status')"
                            column-key="status"
                            :filters="statusFilters"
                            :filter-method="filterStatus">
@@ -34,50 +40,49 @@
               <account-status @search="search" :row="row"/>
             </template>
           </el-table-column>
-          <el-table-column min-width="15%" :label="$t('account.create_time')" sortable
-                           prop="createTime">
-            <template v-slot:default="scope">
-              <span>{{ scope.row.createTime | timestampFormatDate }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column min-width="15%" :label="$t('account.update_time')" sortable
-                           prop="updateTime">
-            <template v-slot:default="scope">
-              <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
-          <el-table-column :label="$t('account.regions')" min-width="7%">
+          <el-table-column prop="regions" v-if="checkedColumnNames.includes('regions')" :label="$t('account.regions')" min-width="100">
             <template v-slot:default="scope">
               <regions :row="scope.row"/>
             </template>
           </el-table-column>
-          <el-table-column min-width="15%" :label="$t('commons.operating')" fixed="right">
+          <el-table-column min-width="200" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.create_time')" sortable prop="createTime">
+            <template v-slot:default="scope">
+              <span>{{ scope.row.createTime | timestampFormatDate }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column min-width="200" v-if="checkedColumnNames.includes('updateTime')" :label="$t('account.update_time')" sortable prop="updateTime">
+            <template v-slot:default="scope">
+              <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :label="$t('account.creator')" min-width="100" show-overflow-tooltip/>
+          <el-table-column min-width="170" id="fixed" :label="$t('commons.operating')" prop="operating" type="operating" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
           </el-table-column>
-        </el-table>
+        </hide-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
 
       <!--Create account-->
       <el-drawer class="rtl" :title="$t('account.create')" :visible.sync="createVisible" size="50%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <div v-for="(form, index) in addAccountForm" :key="index">
-          <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" :ref="'addAccountForm' + index">
+        <div v-loading="cloudResult.loading">
+          <div v-for="(form, index) in addAccountForm" :key="index">
+            <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" :ref="'addAccountForm' + index">
               <el-form-item :label="$t('account.name')" ref="name" prop="name">
                 <el-input v-model="form.name" autocomplete="off" :placeholder="$t('account.input_name')"/>
               </el-form-item>
               <el-form-item :label="$t('account.cloud_platform')" :rules="{required: true, message: $t('account.cloud_platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-                <el-select style="width: 100%;" v-model="form.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePluginForAdd(form)">
+                <el-select style="width: 100%;" filterable :clearable="true" v-model="form.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePluginForAdd(form)">
                   <el-option
                     v-for="item in plugins"
                     :key="item.id"
                     :label="item.name"
                     :value="item.id">
                     <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                    &nbsp;&nbsp; {{ $t(item.name) }}
+                    &nbsp;&nbsp; {{ item.name }}
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -90,7 +95,7 @@
                 </el-form-item>
               </div>
               <el-form-item v-if="form.isProxy && form.pluginId && iamStrategyNotSupport.indexOf(form.pluginId) === -1" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-                <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+                <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
                   <el-option
                     v-for="item in proxys"
                     :key="item.id"
@@ -121,154 +126,157 @@
               <el-form-item v-if="index > 0" :label="$t('account.delete_this_cloud_account')">
                 <el-button type="danger" icon="el-icon-delete" plain size="small" @click="deleteAccount(addAccountForm, form)">{{ $t('commons.delete') }}</el-button>
               </el-form-item>
-          </el-form>
-          <el-divider><i class="el-icon-cloudy"> {{ (index + 1) }}</i></el-divider>
-        </div>
-        <div>
-          <el-drawer
-            size="45%"
-            :title="$t('proxy.add_proxy')"
-            :append-to-body="true"
-            :before-close="innerDrawerProxyClose"
-            :visible.sync="innerDrawerProxy">
-            <el-form :model="proxyForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createProxyForm">
-              <el-form-item :label="$t('commons.proxy_type')" :rules="{required: true, message: $t('commons.proxy_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-                <el-select style="width: 100%;" v-model="proxyForm.proxyType" :placeholder="$t('commons.proxy_type')">
-                  <el-option
-                    v-for="item in proxyType"
-                    :key="item.id"
-                    :label="item.value"
-                    :value="item.id">
-                    &nbsp;&nbsp; {{ item.value }}
-                  </el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="Proxy IP" prop="proxyIp">
-                <el-input v-model="proxyForm.proxyIp" autocomplete="off" :placeholder="$t('proxy.proxy_ip')"/>
-              </el-form-item>
-              <el-form-item :label="$t('commons.proxy_port')" prop="proxyPort">
-                <el-input type="number" v-model="proxyForm.proxyPort" autocomplete="off" :placeholder="$t('proxy.proxy_port')"/>
-              </el-form-item>
-              <el-form-item :label="$t('commons.proxy_name')" prop="proxyName">
-                <el-input v-model="proxyForm.proxyName" autocomplete="off" :placeholder="$t('proxy.proxy_name')"/>
-              </el-form-item>
-              <el-form-item :label="$t('commons.proxy_password')" prop="proxyPassword" style="margin-bottom: 29px">
-                <el-input v-model="proxyForm.proxyPassword" autocomplete="new-password" show-password
-                          :placeholder="$t('proxy.proxy_password')"/>
-              </el-form-item>
             </el-form>
-            <dialog-footer
-              @cancel="innerDrawerProxy = false"
-              @confirm="createProxy('createProxyForm')"/>
-          </el-drawer>
+            <el-divider><i class="el-icon-cloudy"> {{ (index + 1) }}</i></el-divider>
+          </div>
+          <div>
+            <el-drawer
+              size="45%"
+              :title="$t('proxy.add_proxy')"
+              :append-to-body="true"
+              :before-close="innerDrawerProxyClose"
+              :visible.sync="innerDrawerProxy">
+              <el-form :model="proxyForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createProxyForm">
+                <el-form-item :label="$t('commons.proxy_type')" :rules="{required: true, message: $t('commons.proxy_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                  <el-select style="width: 100%;" filterable :clearable="true" v-model="proxyForm.proxyType" :placeholder="$t('commons.proxy_type')">
+                    <el-option
+                      v-for="item in proxyType"
+                      :key="item.id"
+                      :label="item.value"
+                      :value="item.id">
+                      &nbsp;&nbsp; {{ item.value }}
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="Proxy IP" prop="proxyIp">
+                  <el-input v-model="proxyForm.proxyIp" autocomplete="off" :placeholder="$t('proxy.proxy_ip')"/>
+                </el-form-item>
+                <el-form-item :label="$t('commons.proxy_port')" prop="proxyPort">
+                  <el-input type="number" v-model="proxyForm.proxyPort" autocomplete="off" :placeholder="$t('proxy.proxy_port')"/>
+                </el-form-item>
+                <el-form-item :label="$t('commons.proxy_name')" prop="proxyName">
+                  <el-input v-model="proxyForm.proxyName" autocomplete="off" :placeholder="$t('proxy.proxy_name')"/>
+                </el-form-item>
+                <el-form-item :label="$t('commons.proxy_password')" prop="proxyPassword" style="margin-bottom: 29px">
+                  <el-input v-model="proxyForm.proxyPassword" autocomplete="new-password" show-password
+                            :placeholder="$t('proxy.proxy_password')"/>
+                </el-form-item>
+              </el-form>
+              <dialog-footer
+                @cancel="innerDrawerProxy = false"
+                @confirm="createProxy('createProxyForm')"/>
+            </el-drawer>
+          </div>
+          <proxy-dialog-create-footer
+            @cancel="createVisible = false"
+            @add="innerDrawerProxy = true"
+            @addAccount="addAccount(addAccountForm)"
+            @confirm="saveAccount(addAccountForm, 'add')"/>
         </div>
-        <proxy-dialog-create-footer
-          @cancel="createVisible = false"
-          @add="innerDrawerProxy = true"
-          @addAccount="addAccount(addAccountForm)"
-          @confirm="saveAccount(addAccountForm, 'add')"/>
       </el-drawer>
       <!--Create account-->
 
       <!--Update account-->
       <el-drawer class="rtl" :title="$t('account.update')" :visible.sync="updateVisible" size="50%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="accountForm">
-          <el-form-item :label="$t('account.name')"  ref="name" prop="name">
-            <el-input v-model="form.name" autocomplete="off" :placeholder="$t('account.input_name')"/>
-          </el-form-item>
-          <el-form-item :label="$t('account.cloud_platform')" :rules="{required: true, message: $t('account.cloud_platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" disabled v-model="form.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePlugin(form.pluginId)">
-              <el-option
-                v-for="item in plugins"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-                <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                &nbsp;&nbsp; {{ $t(item.name) }}
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <div v-for="(tmp, index) in tmpList" :key="index">
-            <el-form-item v-if="tmp.inputType === 'password'" :label="tmp.label" style="margin-bottom: 29px">
-              <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="new-password" show-password :placeholder="tmp.description"/>
+        <div v-loading="cloudResult.loading">
+          <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="accountForm">
+            <el-form-item :label="$t('account.name')"  ref="name" prop="name">
+              <el-input v-model="form.name" autocomplete="off" :placeholder="$t('account.input_name')"/>
             </el-form-item>
-            <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean'" :label="tmp.label">
-              <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="off" :placeholder="tmp.description"/>
+            <el-form-item :label="$t('account.cloud_platform')" :rules="{required: true, message: $t('account.cloud_platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-select style="width: 100%;" disabled v-model="form.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePlugin(form.pluginId)">
+                <el-option
+                  v-for="item in plugins"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                  <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                  &nbsp;&nbsp; {{ item.name }}
+                </el-option>
+              </el-select>
             </el-form-item>
-          </div>
-          <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
-              <el-option
-                v-for="item in proxys"
-                :key="item.id"
-                :label="item.proxyIp"
-                :value="item.id">
-                &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item v-if="iamStrategyNotSupport.indexOf(form.pluginId) === -1" :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-switch v-model="form.isProxy"></el-switch>
-          </el-form-item>
-          <el-form-item v-if="script">
-            <el-link v-if="iamStrategyNotSupport.indexOf(form.pluginId) === -1" type="danger" @click="innerDrawer = true">{{ $t('account.iam_strategy') }}</el-link>
-            <div v-if="iamStrategyNotSupport.indexOf(form.pluginId) === -1">
-              <el-drawer
-                size="45%"
-                :title="$t('account.iam_strategy')"
-                :append-to-body="true"
-                :before-close="innerDrawerClose"
-                :visible.sync="innerDrawer">
-                <el-form-item>
-                  <codemirror ref="cmEditor" v-model="script" class="code-mirror" :options="cmOptions" />
-                </el-form-item>
-              </el-drawer>
+            <div v-for="(tmp, index) in tmpList" :key="index">
+              <el-form-item v-if="tmp.inputType === 'password'" :label="tmp.label" style="margin-bottom: 29px">
+                <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="new-password" show-password :placeholder="tmp.description"/>
+              </el-form-item>
+              <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean'" :label="tmp.label">
+                <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="off" :placeholder="tmp.description"/>
+              </el-form-item>
             </div>
-            <div>
-              <el-drawer
-                size="45%"
-                :title="$t('proxy.add_proxy')"
-                :append-to-body="true"
-                :before-close="innerDrawerProxyClose"
-                :visible.sync="innerDrawerProxy">
-                <el-form :model="proxyForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="updateProxyForm">
-                  <el-form-item :label="$t('commons.proxy_type')" :rules="{required: true, message: $t('commons.proxy_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-                    <el-select style="width: 100%;" v-model="proxyForm.proxyType" :placeholder="$t('commons.proxy_type')">
-                      <el-option
-                        v-for="item in proxyType"
-                        :key="item.id"
-                        :label="item.value"
-                        :value="item.id">
-                        &nbsp;&nbsp; {{ item.value }}
-                      </el-option>
-                    </el-select>
+            <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+                <el-option
+                  v-for="item in proxys"
+                  :key="item.id"
+                  :label="item.proxyIp"
+                  :value="item.id">
+                  &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item v-if="iamStrategyNotSupport.indexOf(form.pluginId) === -1" :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-switch v-model="form.isProxy"></el-switch>
+            </el-form-item>
+            <el-form-item v-if="script">
+              <el-link v-if="iamStrategyNotSupport.indexOf(form.pluginId) === -1" type="danger" @click="innerDrawer = true">{{ $t('account.iam_strategy') }}</el-link>
+              <div v-if="iamStrategyNotSupport.indexOf(form.pluginId) === -1">
+                <el-drawer
+                  size="45%"
+                  :title="$t('account.iam_strategy')"
+                  :append-to-body="true"
+                  :before-close="innerDrawerClose"
+                  :visible.sync="innerDrawer">
+                  <el-form-item>
+                    <codemirror ref="cmEditor" v-model="script" class="code-mirror" :options="cmOptions" />
                   </el-form-item>
-                  <el-form-item label="Proxy IP" prop="proxyIp">
-                    <el-input v-model="proxyForm.proxyIp" autocomplete="off" :placeholder="$t('proxy.proxy_ip')"/>
-                  </el-form-item>
-                  <el-form-item :label="$t('commons.proxy_port')" prop="proxyPort">
-                    <el-input type="number" v-model="proxyForm.proxyPort" autocomplete="off" :placeholder="$t('proxy.proxy_port')"/>
-                  </el-form-item>
-                  <el-form-item :label="$t('commons.proxy_name')" prop="proxyName">
-                    <el-input v-model="proxyForm.proxyName" autocomplete="off" :placeholder="$t('proxy.proxy_name')"/>
-                  </el-form-item>
-                  <el-form-item :label="$t('commons.proxy_password')" prop="proxyPassword" style="margin-bottom: 29px">
-                    <el-input v-model="proxyForm.proxyPassword" autocomplete="new-password" show-password
-                              :placeholder="$t('proxy.proxy_password')"/>
-                  </el-form-item>
-                </el-form>
-                <dialog-footer
-                  @cancel="innerDrawerProxy = false"
-                  @confirm="createProxy('updateProxyForm')"/>
-              </el-drawer>
-            </div>
-          </el-form-item>
-        </el-form>
-        <proxy-dialog-footer
+                </el-drawer>
+              </div>
+              <div>
+                <el-drawer
+                  size="45%"
+                  :title="$t('proxy.add_proxy')"
+                  :append-to-body="true"
+                  :before-close="innerDrawerProxyClose"
+                  :visible.sync="innerDrawerProxy">
+                  <el-form :model="proxyForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="updateProxyForm">
+                    <el-form-item :label="$t('commons.proxy_type')" :rules="{required: true, message: $t('commons.proxy_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                      <el-select style="width: 100%;" v-model="proxyForm.proxyType" :placeholder="$t('commons.proxy_type')">
+                        <el-option
+                          v-for="item in proxyType"
+                          :key="item.id"
+                          :label="item.value"
+                          :value="item.id">
+                          &nbsp;&nbsp; {{ item.value }}
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item label="Proxy IP" prop="proxyIp">
+                      <el-input v-model="proxyForm.proxyIp" autocomplete="off" :placeholder="$t('proxy.proxy_ip')"/>
+                    </el-form-item>
+                    <el-form-item :label="$t('commons.proxy_port')" prop="proxyPort">
+                      <el-input type="number" v-model="proxyForm.proxyPort" autocomplete="off" :placeholder="$t('proxy.proxy_port')"/>
+                    </el-form-item>
+                    <el-form-item :label="$t('commons.proxy_name')" prop="proxyName">
+                      <el-input v-model="proxyForm.proxyName" autocomplete="off" :placeholder="$t('proxy.proxy_name')"/>
+                    </el-form-item>
+                    <el-form-item :label="$t('commons.proxy_password')" prop="proxyPassword" style="margin-bottom: 29px">
+                      <el-input v-model="proxyForm.proxyPassword" autocomplete="new-password" show-password
+                                :placeholder="$t('proxy.proxy_password')"/>
+                    </el-form-item>
+                  </el-form>
+                  <dialog-footer
+                    @cancel="innerDrawerProxy = false"
+                    @confirm="createProxy('updateProxyForm')"/>
+                </el-drawer>
+              </div>
+            </el-form-item>
+          </el-form>
+          <proxy-dialog-footer
           @cancel="updateVisible = false"
           @add="innerDrawerProxy = true"
           @confirm="editAccount(form, 'update')"/>
+        </div>
       </el-drawer>
       <!--Update account-->
 
@@ -278,24 +286,25 @@
                  :title="$t('account.scan_group_quick')"
                  :visible.sync="scanVisible"
                  class="" width="70%">
-        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAll">{{ $t('account.i18n_sync_all') }}</el-checkbox>
-        <el-card class="box-card el-box-card" v-for="(accountGroup, index) in accountGroups" :key="index">
-          <div slot="header" class="clearfix">
-            <span>
-              <img :src="require(`@/assets/img/platform/${accountGroup.accountWithBLOBs.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-               &nbsp;&nbsp; {{ accountGroup.accountWithBLOBs.pluginName }} {{ $t('rule.rule_set') }} | {{accountGroup.accountWithBLOBs.name}}
-            </span>
-            <el-button style="float: right; padding: 3px 0" type="text"  @click="handleCheckAllByAccount(accountGroup, index)">{{ $t('account.i18n_sync_all') }}</el-button>
-          </div>
-          <el-checkbox-group v-model="checkedGroups" @change="handleCheckedGroupsChange(accountGroup)">
-            <el-checkbox v-for="(group,index) in accountGroup.groups" :label="accountGroup.accountWithBLOBs.id + '/' + group.id" :value="accountGroup.accountWithBLOBs.id + '/' + group.id" :key="index" border >
-                {{ group.name }}
-            </el-checkbox>
-          </el-checkbox-group>
-        </el-card>
-        <dialog-footer
-          @cancel="scanVisible = false"
-          @confirm="scanGroup()"/>
+        <div v-loading="groupResult.loading">
+          <el-card class="box-card el-box-card">
+            <div slot="header" class="clearfix">
+              <span>
+                <img :src="require(`@/assets/img/platform/${accountWithGroup.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+             &nbsp;&nbsp; {{ accountWithGroup.pluginName }} {{ $t('rule.rule_set') }} | {{ accountWithGroup.name }}
+              </span>
+              <el-button style="float: right; padding: 3px 0" type="text"  @click="handleCheckAllByAccount">{{ $t('account.i18n_sync_all') }}</el-button>
+            </div>
+            <el-checkbox-group v-model="checkedGroups">
+              <el-checkbox v-for="(group, index) in groups" :label="group.id" :value="group.id" :key="index" border >
+                  {{ group.name }}
+              </el-checkbox>
+            </el-checkbox-group>
+          </el-card>
+          <dialog-footer
+            @cancel="scanVisible = false"
+            @confirm="scanGroup()"/>
+        </div>
       </el-dialog>
       <!-- 一键检测选择检测组 -->
 
@@ -304,7 +313,7 @@
 
 <script>
 import TablePagination from "../../common/pagination/TablePagination";
-import TableHeader from "../head/TableHeader";
+import TableHeader from "@/business/components/common/components/TableHeader";
 import Container from "../../common/components/Container";
 import MainContainer from "../../common/components/MainContainer";
 import AccountStatus from "./AccountStatus";
@@ -312,10 +321,50 @@ import Regions from "./Regions";
 import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import {ACCOUNT_CONFIGS} from "../../common/components/search/search-components";
-import ProxyDialogFooter from "../head/ProxyDialogFooter";
-import ProxyDialogCreateFooter from "../head/ProxyDialogCreateFooter";
+import ProxyDialogFooter from "@/business/components/common/components/ProxyDialogFooter";
+import ProxyDialogCreateFooter from "@/business/components/common/components/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'account.name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'account.cloud_platform',
+    props: 'pluginName',
+    disabled: false
+  },
+  {
+    label: 'account.status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'account.regions',
+    props: 'regions',
+    disabled: false
+  },
+  {
+    label: 'account.create_time',
+    props: 'createTime',
+    disabled: false
+  },
+  {
+    label: 'account.update_time',
+    props: 'updateTime',
+    disabled: false
+  },
+  {
+    label: 'account.creator',
+    props: 'userName',
+    disabled: false
+  }
+];
 
 /* eslint-disable */
   export default {
@@ -329,7 +378,8 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
       TablePagination,
       DialogFooter,
       ProxyDialogFooter,
-      ProxyDialogCreateFooter
+      ProxyDialogCreateFooter,
+      HideTable,
     },
     provide() {
       return {
@@ -340,6 +390,8 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
       return {
         credential: {},
         result: {},
+        cloudResult: {},
+        groupResult: {},
         condition: {
           components: ACCOUNT_CONFIGS
         },
@@ -367,7 +419,7 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
         rule: {
           name: [
             {required: true, message: this.$t('commons.input_name'), trigger: 'blur'},
-            {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+            {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
             {
               required: true,
               message: this.$t("workspace.special_characters_are_not_supported"),
@@ -384,16 +436,20 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
           ],
           proxyName: [
             {required: false, message: this.$t('proxy.proxy_name'), trigger: 'blur'},
-            {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+            {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
           ],
           proxyPassword: [
             {required: false, message: this.$t('proxy.proxy_password'), trigger: 'blur'},
-            {min: 2, max: 50, message: this.$t('commons.input_limit', [2, 50]), trigger: 'blur'},
+            {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
           ],
         },
         buttons: [
           {
-            tip: this.$t('account.tuning'), icon: "el-icon-setting", type: "success",
+            tip: this.$t('account.one_scan'), icon: "el-icon-s-promotion", type: "success",
+            exec: this.openScanGroup
+          },
+          {
+            tip: this.$t('account.tuning'), icon: "el-icon-setting", type: "warning",
             exec: this.handleScan
           }, {
             tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
@@ -419,27 +475,46 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
           line: true,
           indentWithTabs: true,
         },
-        checkAll: false,
-        //选中的规则组的acccount/id集合
-        checkedGroups: [],
-        //云账号规则组list分组
-        accountGroups: [],
-        isIndeterminate: true,
-        //云账号规则组拼接可用类型： [acccount/id]
-        groupsSelect: [],
         proxyType: [
           {id: 'Http', value: "Http"},
           {id: 'Https', value: "Https"},
         ],
+        accountWithGroup: {pluginIcon: 'aliyun.png'},
+        checkedGroups: [],
+        groups: [],
         iamStrategyNotSupport: ['hummer-openstack-plugin', 'hummer-vsphere-plugin', 'hummer-nuclei-plugin', 'hummer-server-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin'],
+        checkedColumnNames: columnOptions.map((ele) => ele.props),
+        columnNames: columnOptions,
+        //名称搜索
+        items: [
+          {
+            name: 'account.name',
+            id: 'name'
+          },
+          {
+            name: 'account.creator',
+            id: 'userName'
+          }
+        ],
+        checkAll: true,
+        isIndeterminate: false,
       }
     },
-
     watch: {
       '$route': 'init'
     },
-
     methods: {
+      handleCheckedColumnNamesChange(value) {
+        const checkedCount = value.length;
+        this.checkAll = checkedCount === this.columnNames.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+        this.checkedColumnNames = value;
+      },
+      handleCheckAllChange(val) {
+        this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+        this.isIndeterminate = false;
+        this.checkAll = val;
+      },
       create() {
         this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
         this.createVisible = true;
@@ -470,10 +545,14 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
                   'Content-Type': undefined
                 }
               }, res => {
-                if (res.data) {
-                  this.$success(this.$t('account.success'));
+                if (res.data.length == 0) {
+                  this.$success(this.$t('commons.success'));
                 } else {
-                  this.$error(this.$t('account.error'));
+                  let name = '';
+                  for (let item of res.data) {
+                    name = name + ' ' + item.name + ';';
+                  }
+                  this.$error(this.$t('account.failed_cloud') + name);
                 }
                 this.search();
               });
@@ -636,12 +715,11 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
           if (item.isProxy) data["proxyId"] = item.proxyId;
 
           if (type === 'add') {
-            this.result = this.$post("/account/add", data,response => {
+            this.cloudResult = this.$post("/account/add", data,response => {
               if (response.success) {
                 this.$success(this.$t('account.i18n_hr_create_success'));
                 this.search();
                 this.handleClose();
-                location.reload();
               } else {
                 this.$error(response.message);
               }
@@ -671,19 +749,18 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
             if (item.isProxy) data["proxyId"] = item.proxyId;
 
             if (type === 'add') {
-              this.result = this.$post("/account/add", data,response => {
+              this.cloudResult = this.$post("/account/add", data,response => {
                 if (response.success) {
                   this.$success(this.$t('account.i18n_hr_create_success'));
                   this.search();
                   this.handleClose();
-                  location.reload();
                 } else {
                   this.$error(response.message);
                 }
               });
             } else {
               data["id"] = item.id;
-              this.result = this.$post("/account/update", data,response => {
+              this.cloudResult = this.$post("/account/update", data,response => {
                 if (response.success) {
                   this.$success(this.$t('account.i18n_hr_update_success'));
                   this.handleClose();
@@ -699,35 +776,16 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
           }
         });
       },
-      tableRowClassName({row, rowIndex}) {
-        if (rowIndex % 4 === 0) {
-          return 'success-row';
-        } else if (rowIndex % 2 === 0) {
-          return 'warning-row';
-        } else {
-          return '';
-        }
-      },
-      scan (){
-        if (this.selectIds.size === 0) {
-          this.$warning(this.$t('account.please_choose_account'));
+      openScanGroup(account) {
+        if (account.status === 'INVALID') {
+          this.$warning(account.name + ':' + this.$t('account.failed_status'));
           return;
         }
-        for (let accountId of this.selectIds) {
-          for (let item of this.tableData) {
-            if (accountId === item.id) {
-              if (item.status === "INVALID") {
-                this.$warning(this.$t('account.invalid_cloud_account'));
-                return;
-              }
-            }
-          }
-        }
-        this.openScanGroup();
-      },
-      openScanGroup() {
+        this.accountWithGroup = account;
+        localStorage.setItem(ACCOUNT_ID, account.id);
+        localStorage.setItem(ACCOUNT_NAME, account.name);
+        this.initGroups(account.pluginId);
         this.scanVisible = true;
-        this.initGroups();
       },
       scanGroup () {
         let account = this.$t('account.one_scan') + this.$t('account.cloud_account');
@@ -735,31 +793,15 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              let formData = new FormData();
               if (this.checkedGroups.length === 0) {
                 this.$warning(this.$t('account.please_choose_rule_group'));
                 return;
               }
-              formData.append('scanCheckedGroups', new Blob([JSON.stringify(Array.from(this.checkedGroups))], {
-                type: "application/json"
-              }));
-              this.result = this.$request({
-                method: 'POST',
-                url: "/rule/scan",
-                data: formData,
-                headers: {
-                  'Content-Type': undefined
-                }
-              }, () => {
-                for (let item of this.tableData) {
-                  for (let id of this.selectIds) {
-                    if (id===item.id) {
-                      localStorage.setItem(ACCOUNT_ID, item.id);
-                      localStorage.setItem(ACCOUNT_NAME, item.name);
-                      break;
-                    }
-                  }
-                }
+              let params = {
+                accountId: this.accountWithGroup.id,
+                groups: this.checkedGroups
+              }
+              this.groupResult = this.$post("/rule/scan", params, () => {
                 this.$success(this.$t('account.i18n_hr_create_success'));
                 this.scanVisible = false;
                 this.$router.push({
@@ -795,64 +837,10 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
           }
         })
       },
-      handleCheckAllByAccount(val, index) {
-        let arr = [];
-        if (val) {
-          for (let obj of val.groups) {
-            arr.push(val.accountWithBLOBs.id + "/" + obj.id);
-          }
-        }
-        let concatArr = this.checkedGroups.concat(arr);
-        this.checkedGroups = !this.isContain(this.checkedGroups, arr) ? Array.from(concatArr) : this.checkedGroups.filter(n => !arr.toString().includes(n));
-        this.checkAll = this.checkedGroups.length === this.groupsSelect.length;
-        this.isIndeterminate = this.checkedGroups.length > 0 && this.checkedGroups.length < this.groupsSelect.length;
-      },
-      handleCheckAll() {
-        this.checkedGroups = this.checkedGroups.length === 0 ? this.groupsSelect : [];
-        this.checkAll = this.checkedGroups.length === this.groupsSelect.length;
-        this.isIndeterminate = this.checkedGroups.length > 0 && this.checkedGroups.length < this.groupsSelect.length;
-      },
-      handleCheckedGroupsChange(value) {
-        let checkedCount = value.checkedGroups.length;
-        this.checkAll = checkedCount === this.groupsSelect.length;
-        this.isIndeterminate = checkedCount > 0 && checkedCount < this.groupsSelect.length;
-      },
-      initGroups() {
-        let formData = new FormData();
-        formData.append('selectIds', new Blob([JSON.stringify(Array.from(this.selectIds))], {
-          type: "application/json"
-        }));
-        this.result = this.$request({
-          method: 'POST',
-          url: "/rule/groups",
-          data: formData,
-          headers: {
-            'Content-Type': undefined
-          }
-        }, (res) => {
-          this.accountGroups = res.data;
-          for (let item of this.accountGroups) {
-            let accountGroup = {accountId: item.accountWithBLOBs.id, checkedGroups: []};
-            let checkedGroups = [];
-            for(let group of item.groups) {
-              checkedGroups.push(item.accountWithBLOBs.id + "/" + group.id);
-              this.checkedGroups.push(item.accountWithBLOBs.id + "/" + group.id);
-              this.groupsSelect.push(item.accountWithBLOBs.id + "/" + group.id);
-            }
-            accountGroup.checkedGroups = checkedGroups;
-            item.checkedGroups = checkedGroups;
-          }
+      initGroups(pluginId) {
+        this.result = this.$get("/rule/groupsByAccountId/" + pluginId,response => {
+          this.groups = response.data;
         });
-      },
-      isContain (arr1, arr2) {
-        for (var i = arr2.length - 1; i >= 0; i--) {
-          for (let obj of arr1) {
-            if(obj === arr2[i]){
-              return true;
-            }
-          }
-        }
-        return false;
       },
       addAccount (addAccountForm) {
         let newParam = { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] };
@@ -866,6 +854,24 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
           }
         }
       },
+      handleCheckAllByAccount() {
+        if (this.checkedGroups.length === this.groups.length) {
+          this.checkedGroups = [];
+        } else {
+          let arr = [];
+          this.checkedGroups = [];
+          for (let group of this.groups) {
+            arr.push(group.id);
+          }
+          let concatArr = this.checkedGroups.concat(arr);
+          this.checkedGroups = Array.from(concatArr);
+        }
+      },
+    },
+    computed: {
+      codemirror() {
+        return this.$refs.cmEditor.codemirror;
+      }
     },
     created() {
       this.init();
@@ -920,5 +926,8 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
   /deep/ :focus{outline:0;}
   .el-box-card {
     margin: 10px 0;
+  }
+  .el-box-card >>> .el-checkbox {
+    margin: 5px 0;
   }
 </style>

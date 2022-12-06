@@ -13,11 +13,12 @@ public class QiniuCredential {
 		this.bucket = bucket;
 	}
 
+
 	public String getAccessKey() {
 		return accessKey;
 	}
 
-	public void setAccessKeyId(String accessKey) {
+	public void setAccessKey(String accessKey) {
 		this.accessKey = accessKey;
 	}
 

@@ -48,7 +48,7 @@ public class UserController {
     @ApiOperation(value = "用户列表")
     @PostMapping("/special/list/{goPage}/{pageSize}")
     @RequiresRoles(RoleConstants.ADMIN)
-    public Pager<List<User>> getUserList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody com.hummerrisk.controller.request.UserRequest request) {
+    public Pager<List<User>> getUserList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody UserRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, userService.getUserListWithRequest(request));
     }

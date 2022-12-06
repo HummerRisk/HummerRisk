@@ -65,12 +65,12 @@
 import TableOperators from "../../common/components/TableOperators";
 import MainContainer from "../../common/components/MainContainer";
 import Container from "../../common/components/Container";
-import TableHeader from "../head/DetailTableHeader";
+import TableHeader from "@/business/components/common/components/DetailTableHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
-import DialogFooter from "../../common/components/RuleDialogFooter";
+import DialogFooter from "@/business/components/common/components/DialogFooter";
 import CenterChart from "../../common/components/CenterChart";
-import ResultReadOnly from "./ResultReadOnly";
+import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import {_filter, _sort} from "@/common/js/utils";
 /* eslint-disable */
   export default {
@@ -133,7 +133,7 @@ import {_filter, _sort} from "@/common/js/utils";
     },
     methods: {
       handleVuln() {
-        window.open('http://www.cnnvd.org.cn/web/vulnerability/queryLds.tag','_blank','');
+        window.open('http://www.cnnvd.org.cn/web/vulnerability/querylist.tag','_blank','');
       },
       sort(column) {
         _sort(column, this.condition);
@@ -189,7 +189,7 @@ import {_filter, _sort} from "@/common/js/utils";
           }).catch(error => error);
         } else if (path.indexOf("/resource") >= 0) {
           this.$router.push({
-            path: '/resource/vulnResult',
+            path: '/resource/VulnResult',
           }).catch(error => error);
         }
       },

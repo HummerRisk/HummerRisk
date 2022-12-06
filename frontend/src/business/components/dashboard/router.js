@@ -22,5 +22,10 @@ export default {
       name: "active",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/dashboard/home/Active"),
     },
+    {
+      path: "panel",
+      name: "panel",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/dashboard/home/Panel"),
+    },
   ]
 }

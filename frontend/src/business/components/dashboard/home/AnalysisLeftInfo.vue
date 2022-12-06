@@ -14,8 +14,11 @@
                   <div class="_group"><el-radio class="radio_group" border :label="'clouAccount'" name="clouAccount">{{ $t('dashboard.cloud_scan') }}</el-radio></div>
                   <div class="_group"><el-radio class="radio_group" border :label="'vulnAccount'" name="vulnAccount">{{ $t('dashboard.vuln_scan') }}</el-radio></div>
                   <div class="_group"><el-radio class="radio_group" border :label="'serverAccount'" name="serverAccount">{{ $t('dashboard.server_scan') }}</el-radio></div>
-                  <div class="_group"><el-radio class="radio_group" border :label="'packageAccount'" name="packageAccount">{{ $t('dashboard.package_scan') }}</el-radio></div>
                   <div class="_group"><el-radio class="radio_group" border :label="'imageAccount'" name="imageAccount">{{ $t('dashboard.image_scan') }}</el-radio></div>
+                  <div class="_group"><el-radio class="radio_group" border :label="'codeAccount'" name="codeAccount">{{ $t('dashboard.code_scan') }}</el-radio></div>
+                  <div class="_group"><el-radio class="radio_group" border :label="'fsAccount'" name="fsAccount">{{ $t('dashboard.fs_scan') }}</el-radio></div>
+                  <div class="_group"><el-radio class="radio_group" border :label="'k8sAccount'" name="k8sAccount">{{ $t('dashboard.k8s_scan') }}</el-radio></div>
+                  <div class="_group"><el-radio class="radio_group" border :label="'configAccount'" name="configAccount">{{ $t('dashboard.config_scan') }}</el-radio></div>
                 </el-radio-group>
               </el-collapse-item>
               <el-collapse-item :title="$t('dashboard.types_2')" name="2">
@@ -46,19 +49,20 @@
               </el-collapse-item>
               <el-collapse-item :title="$t('dashboard.types_4')" name="4">
                 <el-radio-group v-model="condition.severityType" size="medium" @change="changeSearch">
+                  <div class="_group"><el-radio class="radio_group" border :label="'CriticalRisk'" name="CriticalRisk">{{ $t('rule.CriticalRisk') }}</el-radio></div>
                   <div class="_group"><el-radio class="radio_group" border :label="'HighRisk'" name="HighRisk">{{ $t('rule.HighRisk') }}</el-radio></div>
                   <div class="_group"><el-radio class="radio_group" border :label="'MediumRisk'" name="MediumRisk">{{ $t('rule.MediumRisk') }}</el-radio></div>
                   <div class="_group"><el-radio class="radio_group" border :label="'LowRisk'" name="LowRisk">{{ $t('rule.LowRisk') }}</el-radio></div>
                 </el-radio-group>
               </el-collapse-item>
               <el-collapse-item :title="$t('dashboard.types_5')" name="5">
-                <el-select v-model="condition.users" :placeholder="$t('dashboard.scan_users')" @change="changeSearch">
+                <el-select v-model="condition.users" filterable :clearable="true" :placeholder="$t('dashboard.scan_users')" @change="changeSearch">
                   <el-option
                     v-for="item in users"
                     :key="item.id"
                     :label="item.name"
                     :value="item.id">
-                    &nbsp;&nbsp; {{ $t(item.name) }}
+                    &nbsp;&nbsp; {{ item.name }}
                   </el-option>
                 </el-select>
               </el-collapse-item>
@@ -92,25 +96,25 @@
                       :data="tableData"
                       @sort-change="sort"
                       @filter-change="filter">
-              <el-table-column type="index" min-width="2%"/>
-              <el-table-column v-slot:default="scope" :label="$t('dashboard.accounts')" min-width="10%" show-overflow-tooltip>
+              <el-table-column type="index" min-width="40"/>
+              <el-table-column v-slot:default="scope" :label="$t('dashboard.accounts')" min-width="100" show-overflow-tooltip>
                 {{ scope.row.accountName }}
               </el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('account.creator')" min-width="9%" show-overflow-tooltip>
+              <el-table-column v-slot:default="scope" :label="$t('account.creator')" min-width="80" show-overflow-tooltip>
                 {{ scope.row.userName }}
               </el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('dashboard.safe_score')" min-width="10%" show-overflow-tooltip>
+              <el-table-column v-slot:default="scope" :label="$t('dashboard.safe_score')" min-width="80" show-overflow-tooltip>
                 {{ scope.row.scanScore }}
               </el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="13%" prop="status" sortable show-overflow-tooltip>
+              <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="110" prop="status" show-overflow-tooltip>
                 <el-button plain size="mini" type="primary" v-if="scope.row.status === 'UNCHECKED'">
-                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                 </el-button>
                 <el-button plain size="mini" type="primary" v-else-if="scope.row.status === 'APPROVED'">
-                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                 </el-button>
                 <el-button plain size="mini" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
-                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}...
+                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                 </el-button>
                 <el-button plain size="mini" type="success" v-else-if="scope.row.status === 'FINISHED'">
                   <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
@@ -122,7 +126,7 @@
                   <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
                 </el-button>
               </el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" show-overflow-tooltip min-width="8%">
+              <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" show-overflow-tooltip min-width="80">
                 <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
                   <span v-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
                   <span v-if="(scope.row.returnSum != null) && (scope.row.returnSum == 0)">
@@ -133,12 +137,12 @@
                 </span>
                 </el-tooltip>
               </el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" show-overflow-tooltip min-width="10%">
+              <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" show-overflow-tooltip min-width="80">
                 <span v-if="scope.row.returnSum == 0" style="color: #46ad59;">{{ $t('resource.i18n_compliance_true') }}</span>
                 <span v-else-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)" style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
                 <span v-else-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
               </el-table-column>
-              <el-table-column prop="createTime" min-width="14%" :label="$t('account.update_time')" sortable show-overflow-tooltip>
+              <el-table-column prop="createTime" min-width="160" :label="$t('account.update_time')" sortable show-overflow-tooltip>
                 <template v-slot:default="scope">
                   <span>{{ scope.row.createTime | timestampFormatDate }}</span>
                 </template>
@@ -223,10 +227,16 @@ export default {
         label: this.$t('dashboard.server_scan'),
         children: []
       }, {
-        label: this.$t('dashboard.package_scan'),
+        label: this.$t('dashboard.image_scan'),
         children: []
       }, {
-        label: this.$t('dashboard.image_scan'),
+        label: this.$t('dashboard.code_scan'),
+        children: []
+      }, {
+        label: this.$t('dashboard.k8s_scan'),
+        children: []
+      }, {
+        label: this.$t('dashboard.config_scan'),
         children: []
       }],
       defaultProps: {
@@ -240,7 +250,10 @@ export default {
       vulnAccount: this.$t("task.task_vuln"),
       serverAccount: this.$t("task.task_server"),
       imageAccount: this.$t("task.task_image"),
-      packageAccount: this.$t("task.task_package"),
+      codeAccount: this.$t("task.task_code"),
+      fsAccount: this.$t("task.task_fs"),
+      k8sAccount: this.$t("task.task_k8s"),
+      configAccount: this.$t("task.task_config"),
       expandedNode: [],
     }
   },
@@ -265,7 +278,10 @@ export default {
               {name: this.vulnAccount, level: 1, type: 'vulnAccount', children: treeNodes.vulnAccount},
               {name: this.serverAccount, level: 1, type: 'serverAccount', children: treeNodes.serverAccount},
               {name: this.imageAccount, level: 1, type: 'imageAccount', children: treeNodes.imageAccount},
-              {name: this.packageAccount, level: 1, type: 'packageAccount', children: treeNodes.packageAccount},
+              {name: this.codeAccount, level: 1, type: 'codeAccount', children: treeNodes.codeAccount},
+              {name: this.fsAccount, level: 1, type: 'fsAccount', children: treeNodes.fsAccount},
+              {name: this.k8sAccount, level: 1, type: 'k8sAccount', children: treeNodes.k8sAccount},
+              {name: this.configAccount, level: 1, type: 'configAccount', children: treeNodes.configAccount},
             ],
           });
         }

@@ -14,10 +14,11 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <shiro.version>1.7.1</shiro.version>
-        <java.version>1.8</java.version>
+        <flyway.version>7.15.0</flyway.version>
+        <shiro.version>1.9.1</shiro.version>
+        <java.version>11</java.version>
         <graalvm.version>20.1.0</graalvm.version>
-        <knife4j.version>2.0.9</knife4j.version>
+        <knife4j.version>3.0.3</knife4j.version>
         <skipAntRunForJenkins>false</skipAntRunForJenkins>
     </properties>
 
@@ -53,6 +54,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
             <exclusions>
+                <exclusion>
+                    <artifactId>log4j-to-slf4j</artifactId>
+                    <groupId>org.apache.logging.log4j</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -115,6 +120,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
         <!-- spring-boot -->
 
         <!-- flyway -->
@@ -136,7 +145,7 @@
         <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper</artifactId>
-            <version>5.0.3</version>
+            <version>5.3.0</version>
         </dependency>
         <!-- pagehelper -->
 
@@ -152,33 +161,42 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.9</version>
-            <scope>compile</scope>
+            <version>3.12.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>4.1</version>
+            <version>4.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.8</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-lang3</artifactId>
-                    <groupId>org.apache.commons</groupId>
-                </exclusion>
-            </exclusions>
+            <version>1.10.0</version>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
+            <version>1.15</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-exec</artifactId>
             <version>1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>javax.activation</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
         </dependency>
         <!-- commons -->
 
@@ -213,7 +231,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.2.32</version>
+            <version>1.6.13</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-lang3</artifactId>
@@ -222,6 +240,10 @@
                 <exclusion>
                     <artifactId>classgraph</artifactId>
                     <groupId>io.github.classgraph</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>swagger-annotations</artifactId>
+                    <groupId>io.swagger.core.v3</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -252,7 +274,7 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-parser</artifactId>
-            <version>1.0.51</version>
+            <version>1.0.61</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -281,6 +303,22 @@
                     <artifactId>swagger-models</artifactId>
                     <groupId>io.swagger</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>swagger-annotations</artifactId>
+                    <groupId>io.swagger</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>swagger-annotations</artifactId>
+                    <groupId>io.swagger.core.v3</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>swagger-models</artifactId>
+                    <groupId>io.swagger.core.v3</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>swagger-core</artifactId>
+                    <groupId>io.swagger</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -289,10 +327,19 @@
             <version>1.6.6</version>
         </dependency>
         <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>1.6.6</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>20.0</version>
-            <scope>compile</scope>
+            <version>31.1-jre</version>
         </dependency>
         <!-- swagger 解析 -->
 
@@ -327,35 +374,61 @@
             <version>${graalvm.version}</version>
             <scope>runtime</scope>
         </dependency>
+        <!-- 执行 js 代码依赖 -->
 
+        <!-- tool -->
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.14.2</version>
+            <version>1.15.3</version>
         </dependency>
-
         <dependency>
             <groupId>com.atlassian.commonmark</groupId>
             <artifactId>commonmark</artifactId>
             <version>0.15.2</version>
         </dependency>
-
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.8.7</version>
+            <version>2.9.1</version>
         </dependency>
-
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>2.13.3</version>
+            <version>2.13.4</version>
         </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.30</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>1.7.20-RC</version>
+        </dependency>
+
+        <!-- okhttp3 -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.9.3</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>kotlin-stdlib</artifactId>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- okhttp3 -->
+
+        <!-- tool -->
 
         <!-- AWS -->
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-ec2</artifactId>
+            <version>1.12.319</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
@@ -370,6 +443,34 @@
                     <groupId>joda-time</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-auditmanager</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-cloudtrail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>1.12.336</version>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>2.18.16</version>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>cloudwatch</artifactId>
+            <version>2.18.16</version>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>ec2</artifactId>
+            <version>2.18.16</version>
         </dependency>
         <!-- AWS -->
 
@@ -390,10 +491,6 @@
                 <exclusion>
                     <groupId>net.minidev</groupId>
                     <artifactId>json-smart</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.squareup.okhttp3</groupId>
-                    <artifactId>okhttp</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>com.google.guava</groupId>
@@ -451,21 +548,45 @@
             <groupId>com.aliyun</groupId>
             <artifactId>actiontrail20171204</artifactId>
             <version>1.0.1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>org.jacoco.agent</artifactId>
+                    <groupId>org.jacoco</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>openapiutil</artifactId>
+                    <groupId>com.aliyun</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>tea</artifactId>
+                    <groupId>com.aliyun</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>tea-util</artifactId>
+                    <groupId>com.aliyun</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.aliyun</groupId>
-            <artifactId>aliyun-java-sdk-core</artifactId>
-            <version>4.6.0</version>
+            <artifactId>openapiutil</artifactId>
+            <version>0.0.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>tea</artifactId>
+            <version>1.2.0</version>
             <exclusions>
                 <exclusion>
-                    <artifactId>commons-codec</artifactId>
-                    <groupId>commons-codec</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-lang3</artifactId>
-                    <groupId>org.apache.commons</groupId>
+                    <artifactId>kotlin-stdlib</artifactId>
+                    <groupId>org.jetbrains.kotlin</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>tea-util</artifactId>
+            <version>0.2.9</version>
         </dependency>
         <dependency>
             <groupId>com.aliyun</groupId>
@@ -488,13 +609,43 @@
             <exclusions>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>com.aliyun.oss</groupId>
+            <artifactId>aliyun-sdk-oss</artifactId>
+            <version>3.15.2</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>org.jacoco.agent</artifactId>
+                    <groupId>org.jacoco</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <!-- aliyun -->
 
         <!-- huawei -->
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-core</artifactId>
-            <version>3.0.99</version>
+            <version>3.1.13</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-lang3</artifactId>
+                    <groupId>org.apache.commons</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>bcprov-jdk15on</artifactId>
+                    <groupId>org.bouncycastle</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.huaweicloud.sdk</groupId>
+            <artifactId>huaweicloud-sdk-vpc</artifactId>
+            <version>3.1.13</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -508,8 +659,8 @@
         </dependency>
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
-            <artifactId>huaweicloud-sdk-vpc</artifactId>
-            <version>3.0.99</version>
+            <artifactId>huaweicloud-sdk-cts</artifactId>
+            <version>3.1.13</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -524,7 +675,7 @@
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-iam</artifactId>
-            <version>3.0.99</version>
+            <version>3.1.13</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -539,7 +690,7 @@
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-ecs</artifactId>
-            <version>3.0.99</version>
+            <version>3.1.13</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -554,7 +705,7 @@
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-evs</artifactId>
-            <version>3.0.99</version>
+            <version>3.1.13</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -569,7 +720,7 @@
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-ims</artifactId>
-            <version>3.0.99</version>
+            <version>3.1.13</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -584,7 +735,7 @@
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-ces</artifactId>
-            <version>3.0.99</version>
+            <version>3.1.13</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -601,6 +752,11 @@
             <artifactId>commons-io</artifactId>
             <version>2.11.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.huaweicloud</groupId>
+            <artifactId>esdk-obs-java</artifactId>
+            <version>3.22.3.1</version>
+        </dependency>
         <!-- huawei -->
 
         <!-- tencent -->
@@ -616,33 +772,51 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.squareup.okio</groupId>
-            <artifactId>okio</artifactId>
-            <version>1.17.2</version>
+            <groupId>com.tencentcloudapi</groupId>
+            <artifactId>tencentcloud-sdk-java-cloudaudit</artifactId>
+            <version>3.1.558</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>okio</artifactId>
+                    <groupId>com.squareup.okio</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.qcloud</groupId>
+            <artifactId>cos_api</artifactId>
+            <version>5.6.115</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>tencentcloud-sdk-java-common</artifactId>
+                    <groupId>com.tencentcloudapi</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- tencent -->
 
         <!-- OpenStack -->
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
         <dependency>
             <groupId>org.pacesys</groupId>
             <artifactId>openstack4j-core</artifactId>
             <version>3.2.0</version>
             <exclusions>
                 <exclusion>
-                    <artifactId>commons-codec</artifactId>
-                    <groupId>commons-codec</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.google.code.findbugs</groupId>
                     <artifactId>jsr305</artifactId>
+                    <groupId>com.google.code.findbugs</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -652,16 +826,16 @@
             <version>3.2.0</version>
             <exclusions>
                 <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jsr305</artifactId>
+                    <groupId>com.google.code.findbugs</groupId>
+                </exclusion>
+                <exclusion>
                     <artifactId>commons-io</artifactId>
                     <groupId>commons-io</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>activation</artifactId>
-                    <groupId>javax.activation</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>openstack4j-core</artifactId>
-                    <groupId>org.pacesys</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -669,6 +843,16 @@
             <groupId>org.pacesys.openstack4j.connectors</groupId>
             <artifactId>openstack4j-httpclient</artifactId>
             <version>3.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jsr305</artifactId>
+                    <groupId>com.google.code.findbugs</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- OpenStack -->
 
@@ -677,12 +861,6 @@
             <groupId>com.toastcoders</groupId>
             <artifactId>yavijava</artifactId>
             <version>6.0.05</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>log4j</artifactId>
-                    <groupId>log4j</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.vmware</groupId>
@@ -691,11 +869,11 @@
         </dependency>
         <!-- VMware -->
 
-        <!-- Google Cloud -->
+        <!-- Google K8s -->
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-core</artifactId>
-            <version>2.8.1</version>
+            <version>2.8.21</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.guava</groupId>
@@ -725,12 +903,24 @@
                     <artifactId>google-auth-library-oauth2-http</artifactId>
                     <groupId>com.google.auth</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>opencensus-api</artifactId>
+                    <groupId>io.opencensus</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>proto-google-common-protos</artifactId>
+                    <groupId>com.google.api.grpc</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>google-auth-library-credentials</artifactId>
+                    <groupId>com.google.auth</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-storage</artifactId>
-            <version>2.10.0</version>
+            <version>2.15.1</version>
             <exclusions>
                 <exclusion>
                     <artifactId>protobuf-java-util</artifactId>
@@ -760,14 +950,40 @@
                     <artifactId>gax</artifactId>
                     <groupId>com.google.api</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>google-cloud-core</artifactId>
+                    <groupId>com.google.cloud</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>checker-qual</artifactId>
+                    <groupId>org.checkerframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>google-http-client</artifactId>
+                    <groupId>com.google.http-client</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>google-http-client-gson</artifactId>
+                    <groupId>com.google.http-client</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>auto-value-annotations</artifactId>
+                    <groupId>com.google.auto.value</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-cloudresourcemanager</artifactId>
             <version>v1-rev20210613-1.31.5</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>google-api-client</artifactId>
+                    <groupId>com.google.api-client</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
-        <!-- Google Cloud -->
+        <!-- Google K8s -->
 
         <!-- Kubernetes -->
         <dependency>
@@ -803,6 +1019,10 @@
                     <artifactId>commons-lang3</artifactId>
                     <groupId>org.apache.commons</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>joda-time</artifactId>
+                    <groupId>joda-time</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <!-- Kubernetes -->
@@ -811,7 +1031,7 @@
         <dependency>
             <groupId>com.volcengine</groupId>
             <artifactId>volc-sdk-java</artifactId>
-            <version>1.0.56</version>
+            <version>1.0.71</version>
             <exclusions>
                 <exclusion>
                     <groupId>junit</groupId>
@@ -853,55 +1073,27 @@
         <dependency>
             <groupId>com.baidubce</groupId>
             <artifactId>bce-java-sdk</artifactId>
-            <version>0.10.217</version>
+            <version>0.10.235</version>
             <exclusions>
                 <exclusion>
-                    <groupId>commons-io</groupId>
+                    <artifactId>bcprov-jdk15on</artifactId>
+                    <groupId>org.bouncycastle</groupId>
+                </exclusion>
+                <exclusion>
                     <artifactId>commons-io</artifactId>
+                    <groupId>commons-io</groupId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
+                    <artifactId>commons-lang3</artifactId>
+                    <groupId>org.apache.commons</groupId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>log4j</artifactId>
-                    <groupId>log4j</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>protobuf-java</artifactId>
-                    <groupId>com.google.protobuf</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
+                    <groupId>com.google.guava</groupId>
                 </exclusion>
                 <exclusion>
                     <artifactId>commons-compress</artifactId>
                     <groupId>org.apache.commons</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jsr305</artifactId>
-                    <groupId>com.google.code.findbugs</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-collections</artifactId>
-                    <groupId>commons-collections</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-configuration</artifactId>
-                    <groupId>commons-configuration</groupId>
                 </exclusion>
                 <exclusion>
                     <artifactId>jackson-core-asl</artifactId>
@@ -912,16 +1104,40 @@
                     <groupId>org.codehaus.jackson</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>logback-classic</artifactId>
-                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>commons-collections</artifactId>
+                    <groupId>commons-collections</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-configuration</artifactId>
+                    <groupId>commons-configuration</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-math3</artifactId>
+                    <groupId>org.apache.commons</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jsr305</artifactId>
+                    <groupId>com.google.code.findbugs</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>log4j</artifactId>
+                    <groupId>log4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>zookeeper</artifactId>
+                    <groupId>org.apache.zookeeper</groupId>
                 </exclusion>
                 <exclusion>
                     <artifactId>slf4j-reload4j</artifactId>
                     <groupId>org.slf4j</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>commons-lang3</artifactId>
-                    <groupId>org.apache.commons</groupId>
+                    <artifactId>joda-time</artifactId>
+                    <groupId>joda-time</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -931,7 +1147,7 @@
         <dependency>
             <groupId>com.qiniu</groupId>
             <artifactId>qiniu-java-sdk</artifactId>
-            <version>[7.11.0, 7.11.99]</version>
+            <version>7.11.0</version>
         </dependency>
         <!-- 七牛云 -->
 
@@ -945,7 +1161,17 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>kotlin-stdlib</artifactId>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.yunify</groupId>
+            <artifactId>qingstor.sdk.java</artifactId>
+            <version>2.5.1</version>
         </dependency>
         <!-- 青云 -->
 
@@ -961,6 +1187,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>cn.ucloud.ufile</groupId>
+            <artifactId>ufile-client-java</artifactId>
+            <version>2.6.6</version>
+        </dependency>
         <!-- UCloud -->
 
         <!-- OpenShift -->
@@ -968,6 +1199,12 @@
             <groupId>io.fabric8</groupId>
             <artifactId>openshift-client</artifactId>
             <version>6.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>okhttp</artifactId>
+                    <groupId>com.squareup.okhttp3</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- OpenShift -->
 
@@ -1004,6 +1241,16 @@
             <version>262</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.sshd</groupId>
+            <artifactId>sshd-core</artifactId>
+            <version>2.9.1</version>
+        </dependency>
+        <dependency>
+            <groupId>net.i2p.crypto</groupId>
+            <artifactId>eddsa</artifactId>
+            <version>0.3.0</version>
+        </dependency>
+        <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>5.8.1</version>
@@ -1014,11 +1261,15 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>3.17</version>
+            <version>5.2.3</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-collections4</artifactId>
                     <groupId>org.apache.commons</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>log4j-api</artifactId>
+                    <groupId>org.apache.logging.log4j</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1026,7 +1277,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>3.17</version>
+            <version>5.2.3</version>
             <exclusions>
                 <exclusion>
                     <artifactId>poi</artifactId>
@@ -1036,12 +1287,20 @@
                     <artifactId>xmlbeans</artifactId>
                     <groupId>org.apache.xmlbeans</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>commons-collections4</artifactId>
+                    <groupId>org.apache.commons</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>log4j-api</artifactId>
+                    <groupId>org.apache.logging.log4j</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlbeans</groupId>
             <artifactId>xmlbeans</artifactId>
-            <version>3.0.0</version>
+            <version>5.1.1</version>
         </dependency>
 
         <!-- 钉钉 -->
@@ -1065,6 +1324,16 @@
             </exclusions>
         </dependency>
         <!-- 钉钉 -->
+
+        <!-- 容器测试库 -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>1.17.5</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- 容器测试库 -->
+
     </dependencies>
 
     <build>

@@ -6,7 +6,6 @@ import Setting from "@/business/components/settings/router";
 import Account from "@/business/components/account/router";
 import Server from "@/business/components/server/router";
 import Image from "@/business/components/image/router";
-import Package from "@/business/components/package/router";
 import Vuln from "@/business/components/vuln/router";
 import Rule from "@/business/components/rule/router";
 import Resource from "@/business/components/resource/router";
@@ -16,18 +15,20 @@ import TaskReport from "@/business/components/taskReport/router";
 import Oss from "@/business/components/oss/router";
 import Report from "@/business/components/report/router";
 import K8s from "@/business/components/k8s/router";
-import Situation from "@/business/components/situation/router";
+import K8sSituation from "@/business/components/k8sSituation/router";
+import CloudSituation from "@/business/components/cloudSituation/router";
 import Code from "@/business/components/code/router";
 import Sbom from "@/business/components/sbom/router";
-import Log from "@/business/components/log/router";
-import k8sImage from "@/business/components/k8sImage/router";
-import config from "@/business/components/config/router";
+import Log from "@/business/components/event/router";
+import Config from "@/business/components/config/router";
+import Cost from "@/business/components/cost/router";
+import Fs from "@/business/components/fs/router";
 
 Vue.use(VueRouter);
 /* eslint-disable */
 const router = new VueRouter({
   routes: [
-    {path: "/", redirect: '/setting/personsetting'},
+    {path: "/", redirect: '/dashboard/panel'},
     {
       path: "/sidebar",
       components: {
@@ -38,7 +39,6 @@ const router = new VueRouter({
     Account,
     Server,
     Image,
-    Package,
     Vuln,
     Rule,
     Resource,
@@ -48,12 +48,14 @@ const router = new VueRouter({
     Dashboard,
     Report,
     K8s,
-    Situation,
+    K8sSituation,
+    CloudSituation,
     Code,
     Sbom,
     Log,
-    k8sImage,
-    config
+    Config,
+    Fs,
+    Cost
   ]
 });
 
@@ -69,4 +71,4 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-export default router
+export default router;
