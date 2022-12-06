@@ -1,2 +1,10 @@
 [
-  ]
+  {
+    "key": "私有",
+    "value": "private"
+  },
+  {
+    "key": "公开",
+    "value": "public"
+  }
+]

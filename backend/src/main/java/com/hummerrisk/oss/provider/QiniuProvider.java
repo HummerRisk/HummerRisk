@@ -24,10 +24,7 @@ import com.qingstor.sdk.service.Types;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.*;
-import com.qiniu.storage.model.BucketInfo;
-import com.qiniu.storage.model.FetchRet;
-import com.qiniu.storage.model.FileInfo;
-import com.qiniu.storage.model.FileListing;
+import com.qiniu.storage.model.*;
 import com.qiniu.util.Auth;
 import com.qiniu.util.StringUtils;
 import org.ini4j.Reg;
@@ -170,7 +167,13 @@ public class QiniuProvider implements OssProvider {
 
     @Override
     public boolean doesBucketExist(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
-        return false;
+        BucketManager bucketManager = getBucketManager(ossAccount);
+        try {
+            bucketManager.getBucketInfo(bucket.getBucketName());
+            return true;
+        }catch (Exception e){
+            return false;
+        }
     }
 
     @Override
@@ -178,10 +181,20 @@ public class QiniuProvider implements OssProvider {
         BucketManager bucketManager = getBucketManager(ossAccount);
         Response bucket1 = bucketManager.createBucket(bucket.getBucketName(), bucket.getLocation());
         if(bucket1.statusCode==200){
+            if("private".equals(bucket.getCannedAcl())){
+                bucketManager.putBucketAccessMode(bucket.getBucketName(), AclType.PRIVATE);
+            }
             OssBucket ossBucket = new OssBucket();
+            ossBucket.setCannedAcl(bucket.getCannedAcl());
             ossBucket.setOssId(ossAccount.getId());
             ossBucket.setBucketName(bucket.getBucketName());
             ossBucket.setLocation(bucket.getLocation());
+            ossBucket.setCreateTime(System.currentTimeMillis());
+            ossBucket.setExtranetEndpoint("");
+            ossBucket.setIntranetEndpoint("");
+            ossBucket.setStorageClass("N/A");
+            ossBucket.setSize("0");
+            ossBucket.setObjectNumber(0L);
             return ossBucket;
         }else if(bucket1.statusCode==614){
             throw new RuntimeException("Bucket already exists");
@@ -192,8 +205,7 @@ public class QiniuProvider implements OssProvider {
 
     @Override
     public void deleteBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
-        BucketManager bucketManager = getBucketManager(ossAccount);
-
+        throw new RuntimeException("delete not support now");
     }
 
     @Override
