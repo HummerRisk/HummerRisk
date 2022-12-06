@@ -2,11 +2,14 @@ package com.hummerrisk.oss.provider;
 
 
 import com.alibaba.fastjson.JSON;
+import com.baidubce.services.bos.BosClient;
+import com.baidubce.services.bos.model.BosObjectSummary;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hummerrisk.base.domain.OssBucket;
 import com.hummerrisk.base.domain.OssWithBLOBs;
 import com.hummerrisk.commons.utils.ReadFileUtils;
+import com.hummerrisk.oss.constants.ObjectTypeConstants;
 import com.hummerrisk.oss.dto.BucketObjectDTO;
 import com.hummerrisk.oss.dto.OssRegion;
 import com.hummerrisk.proxy.qingcloud.QingCloudCredential;
@@ -23,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FilterInputStream;
 import java.io.InputStream;
 import java.security.MessageDigest;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -85,24 +89,32 @@ public class QingcloudProvider implements OssProvider {
         }else{
             listObjectsInput.setPrefix("");
         }
-        Bucket.ListObjectsOutput listObjectsOutput = bucket1.listObjects(listObjectsInput);
-        return listObjectsOutput.getKeys().stream().map(item -> {
+        List<BucketObjectDTO> objects = new ArrayList<>();
+        if(StringUtils.isNotBlank(prefix)&&prefix.lastIndexOf("/")>0){
             BucketObjectDTO bucketObjectDTO = new BucketObjectDTO();
             bucketObjectDTO.setBucketId(bucket.getId());
-            bucketObjectDTO.setObjectName(item.getKey());
-            bucketObjectDTO.setId(item.getKey());
-            bucketObjectDTO.setDownloadUrl(item.getKey());
-            if(item.getKey().indexOf("/")>-1&&item.getSize()==0){
-                bucketObjectDTO.setObjectType("DIR");
-            }else{
-                bucketObjectDTO.setObjectType("FILE");
+            String[] prefixs = prefix.split("/");
+            StringBuilder name = new StringBuilder("");
+            if(prefixs.length>1){
+                for(int i=0;i<prefixs.length-1;i++){
+                    name.append(prefixs[i]).append("/");
+                }
             }
-            bucketObjectDTO.setObjectSize(SysListener.changeFlowFormat(item.getSize()));
-            bucketObjectDTO.setLastModified((long)item.getModified()*1000);
-            bucketObjectDTO.setStorageClass(item.getStorageClass());
-            return bucketObjectDTO;
-        }).collect(Collectors.toList());
-
+            if(name.length()==0){
+                bucketObjectDTO.setId("/");
+                bucketObjectDTO.setObjectName("/");
+            }else{
+                bucketObjectDTO.setId(name.toString());
+                bucketObjectDTO.setObjectName(name.toString());
+            }
+            bucketObjectDTO.setObjectType(ObjectTypeConstants.BACK.name());
+            objects.add(bucketObjectDTO);
+        }
+        Bucket.ListObjectsOutput listObjectsOutput = bucket1.listObjects(listObjectsInput);
+        objects.addAll(convertToBucketFolder(bucket,listObjectsOutput.getKeys(),prefix));
+        objects.addAll(convertToBucketObject(bucket,listObjectsOutput.getKeys(),prefix));
+        //List<BucketObjectDTO> bucketObjectDTOS = new ArrayList<>();
+        return objects;
     }
 
     @Override
@@ -210,4 +222,56 @@ public class QingcloudProvider implements OssProvider {
 
     }
 
+    private List<BucketObjectDTO> convertToBucketFolder(OssBucket bucket, List<Types.KeyModel> commonPrefixes, String prefix) {
+        List<BucketObjectDTO> objects = new ArrayList<>();
+        for (Types.KeyModel keyModel: commonPrefixes) {
+            if(!keyModel.getKey().contains("/")||!keyModel.getKey().endsWith("/")||keyModel.getKey().equals(prefix)){
+                continue;
+            }
+            BucketObjectDTO bucketObject = new BucketObjectDTO();
+            bucketObject.setBucketId(bucket.getId());
+            if (StringUtils.isNotEmpty(prefix)) {
+                bucketObject.setObjectName(keyModel.getKey().substring(prefix.length(), keyModel.getKey().length()));
+            } else {
+                bucketObject.setObjectName(keyModel.getKey());
+            }
+            if(bucketObject.getObjectName().indexOf("/")!=bucketObject.getObjectName().lastIndexOf("/")){
+                continue;
+            }
+            bucketObject.setId(keyModel.getKey());
+            bucketObject.setObjectType(ObjectTypeConstants.DIR.name());
+            objects.add(bucketObject);
+        }
+        return objects;
+    }
+
+    private List<BucketObjectDTO> convertToBucketObject(OssBucket bucket, List<Types.KeyModel> keyModels, String prefix) {
+        List<BucketObjectDTO> objects = new ArrayList<>();
+        for (Types.KeyModel keyModel : keyModels) {
+            if(keyModel.getKey().endsWith("/")){
+                continue;
+            }
+            BucketObjectDTO bucketObject = new BucketObjectDTO();
+            bucketObject.setBucketId(bucket.getId());
+            bucketObject.setId(keyModel.getKey());
+            if (StringUtils.isNotEmpty(prefix)) {
+                String objectName = keyModel.getKey().substring(prefix.length(), keyModel.getKey().length());
+                bucketObject.setObjectName(objectName);
+            } else {
+                bucketObject.setObjectName(keyModel.getKey());
+            }
+            if(bucketObject.getObjectName().contains("/")){
+                continue;
+            }
+            bucketObject.setObjectType(ObjectTypeConstants.FILE.name());
+            long getSize = keyModel != null ? keyModel.getSize() : 0;
+            double size = ((double) getSize) / 1024 / 1024;
+            DecimalFormat df = new DecimalFormat("#0.###");
+            bucketObject.setObjectSize(df.format(size));
+            bucketObject.setStorageClass(keyModel.getStorageClass());
+            bucketObject.setLastModified(keyModel.getModified()*1000L);
+            objects.add(bucketObject);
+        }
+        return objects;
+    }
 }
