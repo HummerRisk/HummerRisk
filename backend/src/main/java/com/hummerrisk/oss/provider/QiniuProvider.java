@@ -6,11 +6,14 @@ import com.baidubce.services.bos.BosClient;
 import com.baidubce.services.bos.model.BosObjectSummary;
 import com.baidubce.services.bos.model.BucketSummary;
 import com.baidubce.services.bos.model.ListObjectsResponse;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.hummerrisk.base.domain.Oss;
 import com.hummerrisk.base.domain.OssBucket;
 import com.hummerrisk.base.domain.OssWithBLOBs;
 import com.hummerrisk.commons.constants.RegionsConstants;
 import com.hummerrisk.commons.utils.PlatformUtils;
+import com.hummerrisk.commons.utils.ReadFileUtils;
 import com.hummerrisk.oss.constants.ObjectTypeConstants;
 import com.hummerrisk.oss.dto.BucketObjectDTO;
 import com.hummerrisk.oss.dto.OssRegion;
@@ -172,17 +175,32 @@ public class QiniuProvider implements OssProvider {
 
     @Override
     public OssBucket createBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
-        return null;
+        BucketManager bucketManager = getBucketManager(ossAccount);
+        Response bucket1 = bucketManager.createBucket(bucket.getBucketName(), bucket.getLocation());
+        if(bucket1.statusCode==200){
+            OssBucket ossBucket = new OssBucket();
+            ossBucket.setOssId(ossAccount.getId());
+            ossBucket.setBucketName(bucket.getBucketName());
+            ossBucket.setLocation(bucket.getLocation());
+            return ossBucket;
+        }else if(bucket1.statusCode==614){
+            throw new RuntimeException("Bucket already exists");
+        }else{
+            throw new RuntimeException("Bucket create error");
+        }
     }
 
     @Override
     public void deleteBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
+        BucketManager bucketManager = getBucketManager(ossAccount);
 
     }
 
     @Override
     public List<OssRegion> getOssRegions(OssWithBLOBs ossAccount) throws Exception {
-        return null;
+        String result = ReadFileUtils.readConfigFile(BASE_REGION_DIC, ossAccount.getPluginId(), JSON_EXTENSION);
+        return new Gson().fromJson(result, new TypeToken<ArrayList<OssRegion>>() {
+        }.getType());
     }
 
     @Override
