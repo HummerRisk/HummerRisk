@@ -495,13 +495,13 @@ public class OssService {
             bucketKeyValueItem.setCannedAclList(getParamList(ossId, BASE_CANNED_ACL_TYPE));
             bucketKeyValueItem.setStorageList(getParamList(ossId, BASE_STORAGE_CLASS_TYPE));
         } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.qingcloud)) {
-            bucketKeyValueItem.setShowCannedAcl(true);
-            bucketKeyValueItem.setShowStorageClass(true);
+            bucketKeyValueItem.setShowCannedAcl(false);
+            bucketKeyValueItem.setShowStorageClass(false);
             bucketKeyValueItem.setCannedAclList(getParamList(ossId, BASE_CANNED_ACL_TYPE));
             bucketKeyValueItem.setStorageList(getParamList(ossId, BASE_STORAGE_CLASS_TYPE));
         } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.qiniu)) {
             bucketKeyValueItem.setShowCannedAcl(true);
-            bucketKeyValueItem.setShowStorageClass(true);
+            bucketKeyValueItem.setShowStorageClass(false);
             bucketKeyValueItem.setCannedAclList(getParamList(ossId, BASE_CANNED_ACL_TYPE));
             bucketKeyValueItem.setStorageList(getParamList(ossId, BASE_STORAGE_CLASS_TYPE));
         } else if (StringUtils.equals(oss.getPluginId(), OSSConstants.huoshan)) {
