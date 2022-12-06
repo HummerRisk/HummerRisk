@@ -12,16 +12,10 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.auditmanager.AWSAuditManager;
-import com.amazonaws.services.auditmanager.AWSAuditManagerClient;
-import com.amazonaws.services.auditmanager.model.Evidence;
-import com.amazonaws.services.auditmanager.model.GetEvidenceRequest;
-import com.amazonaws.services.auditmanager.model.GetEvidenceResult;
 import com.amazonaws.services.cloudtrail.AWSCloudTrail;
 import com.amazonaws.services.cloudtrail.AWSCloudTrailClient;
 import com.amazonaws.services.cloudtrail.model.LookupAttributeKey;
 import com.amazonaws.services.cloudtrail.model.LookupEventsResult;
-import com.baidubce.services.bos.BosClient;
 import com.huaweicloud.sdk.core.auth.BasicCredentials;
 import com.huaweicloud.sdk.core.auth.ICredential;
 import com.huaweicloud.sdk.cts.v3.CtsClient;
@@ -329,6 +323,8 @@ public class CloudEventService {
         request.setStartTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", startTime).getTime());
         request.setEndTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss", endTime).getTime());
         request.setMaxResults(maxResult);
+        //LookupAttribute lookupAttribute = new LookupAttribute();
+        //request.setLookupConditions();
         if(accountMap.get("nextToken")!=null){
             request.setNextToken(accountMap.get("nextToken"));
         }

@@ -145,9 +145,17 @@ public class QingcloudProvider implements OssProvider {
             ossBucket.setOssId(ossAccount.getId());
             ossBucket.setBucketName(bucket.getBucketName());
             ossBucket.setLocation(bucket.getLocation());
+            ossBucket.setIntranetEndpoint("N/A");
+            ossBucket.setCannedAcl("private");
+            ossBucket.setStorageClass("N/A");
+            ossBucket.setSize("0B");
+            ossBucket.setCreateTime(System.currentTimeMillis());
+            ossBucket.setObjectNumber(0L);
+            ossBucket.setCannedAcl("private");
             return ossBucket;
+        }else{
+            throw new RuntimeException(put.getMessage());
         }
-        return null;
     }
 
     @Override
