@@ -504,7 +504,7 @@ export default {
       });
     },
     changeStatus (item) {
-      this.result = this.$post('/rule/changeStatus', {id: item.id, status: item.status?1:0}, response => {
+      this.result = this.$post('/server/changeStatus', {id: item.id, status: item.status?1:0}, response => {
         if (item.status == 1) {
           this.$success(this.$t('rule.change_status_on'));
         } else if (item.status == 0) {

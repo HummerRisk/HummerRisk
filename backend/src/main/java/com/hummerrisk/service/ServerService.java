@@ -126,7 +126,9 @@ public class ServerService {
         Integer scanId = historyService.insertScanHistory(server);
         if (StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.VALID.name())) {
             deleteServerResultById(id);
-            List<ServerRuleDTO> ruleList = ruleList(new ServerRuleRequest());
+            ServerRuleRequest serverRuleRequest = new ServerRuleRequest();
+            serverRuleRequest.setStatus(true);
+            List<ServerRuleDTO> ruleList = ruleList(serverRuleRequest);
             ServerResult result = new ServerResult();
             String serverGroupName = serverGroupMapper.selectByPrimaryKey(server.getServerGroupId()).getName();
             for (ServerRuleDTO dto : ruleList) {
