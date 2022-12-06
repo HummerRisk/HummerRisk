@@ -129,7 +129,8 @@ public class QingcloudProvider implements OssProvider {
     public boolean doesBucketExist(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
         QingStor qingStor = getStor(ossAccount);
         Bucket bucket1 = qingStor.getBucket(bucket.getBucketName(), bucket.getLocation());
-        return bucket1 != null;
+        Bucket.GetBucketPolicyOutput policy = bucket1.getPolicy();
+        return policy.getStatueCode()!=404;
     }
 
     @Override
