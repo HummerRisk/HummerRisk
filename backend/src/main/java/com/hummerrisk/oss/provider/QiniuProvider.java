@@ -11,11 +11,13 @@ import com.hummerrisk.base.domain.OssBucket;
 import com.hummerrisk.base.domain.OssWithBLOBs;
 import com.hummerrisk.commons.constants.RegionsConstants;
 import com.hummerrisk.commons.utils.PlatformUtils;
+import com.hummerrisk.oss.constants.ObjectTypeConstants;
 import com.hummerrisk.oss.dto.BucketObjectDTO;
 import com.hummerrisk.oss.dto.OssRegion;
 import com.hummerrisk.proxy.qiniu.QiniuCredential;
 import com.hummerrisk.service.SysListener;
 import com.qingstor.sdk.service.Bucket;
+import com.qingstor.sdk.service.Types;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.*;
@@ -33,10 +35,9 @@ import java.io.FilterInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.text.DecimalFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class QiniuProvider implements OssProvider {
 
@@ -114,6 +115,7 @@ public class QiniuProvider implements OssProvider {
         BucketManager bucketManager = getBucketManager(account);
         String marker = null;
         List<BucketObjectDTO> result = new ArrayList<>();
+        List<FileInfo> fileInfoList = new ArrayList<>();
         boolean isEnd = false;
         int maxPage = 10;
         int page = 1;
@@ -123,23 +125,31 @@ public class QiniuProvider implements OssProvider {
             if (StringUtils.isNullOrEmpty(marker) || page >= maxPage) {
                 isEnd = true;
             }
-            for (FileInfo item : fileListing.items) {
-                BucketObjectDTO bucketObjectDTO = new BucketObjectDTO();
-                bucketObjectDTO.setBucketId(bucket.getId());
-                if(item.key.contains("/")){
-                    bucketObjectDTO.setObjectType("DIR");
-                }else{
-                    bucketObjectDTO.setObjectType("FILE");
-                }
-                bucketObjectDTO.setId(item.key);
-                bucketObjectDTO.setObjectName(item.key);
-                bucketObjectDTO.setObjectSize(SysListener.changeFlowFormat(item.fsize));
-                bucketObjectDTO.setLastModified(item.putTime/10000);
-                result.add(bucketObjectDTO);
-            }
+            fileInfoList.addAll(Arrays.stream(fileListing.items).collect(Collectors.toList()));
             page++;
         }
-
+        if(org.apache.commons.lang3.StringUtils.isNotBlank(prefix)&&prefix.lastIndexOf("/")>0){
+            BucketObjectDTO bucketObjectDTO = new BucketObjectDTO();
+            bucketObjectDTO.setBucketId(bucket.getId());
+            String[] prefixs = prefix.split("/");
+            StringBuilder name = new StringBuilder("");
+            if(prefixs.length>1){
+                for(int i=0;i<prefixs.length-1;i++){
+                    name.append(prefixs[i]).append("/");
+                }
+            }
+            if(name.length()==0){
+                bucketObjectDTO.setId("/");
+                bucketObjectDTO.setObjectName("/");
+            }else{
+                bucketObjectDTO.setId(name.toString());
+                bucketObjectDTO.setObjectName(name.toString());
+            }
+            bucketObjectDTO.setObjectType(ObjectTypeConstants.BACK.name());
+            result.add(bucketObjectDTO);
+        }
+        result.addAll(convertToBucketFolder(bucket,fileInfoList,prefix));
+        result.addAll(convertToBucketObject(bucket,fileInfoList,prefix));
         return result;
     }
 
@@ -215,4 +225,56 @@ public class QiniuProvider implements OssProvider {
 
     }
 
+    private List<BucketObjectDTO> convertToBucketFolder(OssBucket bucket, List<FileInfo> commonPrefixes, String prefix) {
+        List<BucketObjectDTO> objects = new ArrayList<>();
+        for (FileInfo keyModel: commonPrefixes) {
+            if(!keyModel.key.contains("/")||!keyModel.key.endsWith("/")||keyModel.key.equals(prefix)){
+                continue;
+            }
+            BucketObjectDTO bucketObject = new BucketObjectDTO();
+            bucketObject.setBucketId(bucket.getId());
+            if (org.apache.commons.lang3.StringUtils.isNotEmpty(prefix)) {
+                bucketObject.setObjectName(keyModel.key.substring(prefix.length(), keyModel.key.length()));
+            } else {
+                bucketObject.setObjectName(keyModel.key);
+            }
+            if(bucketObject.getObjectName().indexOf("/")!=bucketObject.getObjectName().lastIndexOf("/")){
+                continue;
+            }
+            bucketObject.setId(keyModel.key);
+            bucketObject.setObjectType(ObjectTypeConstants.DIR.name());
+            objects.add(bucketObject);
+        }
+        return objects;
+    }
+
+    private List<BucketObjectDTO> convertToBucketObject(OssBucket bucket, List<FileInfo> keyModels, String prefix) {
+        List<BucketObjectDTO> objects = new ArrayList<>();
+        for (FileInfo keyModel : keyModels) {
+            if(keyModel.key.endsWith("/")){
+                continue;
+            }
+            BucketObjectDTO bucketObject = new BucketObjectDTO();
+            bucketObject.setBucketId(bucket.getId());
+            bucketObject.setId(keyModel.key);
+            if (org.apache.commons.lang3.StringUtils.isNotEmpty(prefix)) {
+                String objectName = keyModel.key.substring(prefix.length(), keyModel.key.length());
+                bucketObject.setObjectName(objectName);
+            } else {
+                bucketObject.setObjectName(keyModel.key);
+            }
+            if(bucketObject.getObjectName().contains("/")){
+                continue;
+            }
+            bucketObject.setObjectType(ObjectTypeConstants.FILE.name());
+            long getSize = keyModel != null ? keyModel.fsize : 0;
+            double size = ((double) getSize) / 1024 / 1024;
+            DecimalFormat df = new DecimalFormat("#0.###");
+            bucketObject.setObjectSize(df.format(size));
+            bucketObject.setStorageClass("N/A");
+            bucketObject.setLastModified(keyModel.putTime/10000);
+            objects.add(bucketObject);
+        }
+        return objects;
+    }
 }
