@@ -7,7 +7,7 @@ import JsPDF from 'jspdf'
 
 const htmlToPdf = {
   getPdf(title) {
-    html2Canvas(document.querySelector('#pdfDom'), {
+    html2Canvas(document.querySelector('.pdfDom'), {
       allowTaint: true,
     }).then(canvas=>{
       //内容的宽度

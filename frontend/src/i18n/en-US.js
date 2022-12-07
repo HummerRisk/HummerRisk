@@ -1779,5 +1779,7 @@ export default {
   pdf: {
     html_title: 'Page export PDF file name',
     export_pdf: 'Export PDF',
+    download_type: 'Download type',
+    export_excel: 'Export Excel',
   },
 };

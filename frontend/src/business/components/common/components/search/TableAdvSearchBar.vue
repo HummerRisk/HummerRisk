@@ -61,6 +61,19 @@
         </div>
       </template>
     </el-dialog>
+
+    <el-dialog :title="$t('pdf.download_type')" :visible.sync="pdfVisible" custom-class="adv-dialog" width="60%"
+               :append-to-body="true">
+      <div>
+        <el-button type="warning" @click="pdfDown"><i class="iconfont icon-pdf1"></i>{{ $t('pdf.export_pdf') }}</el-button>
+        <el-button type="success" @click="excelDown"><i class="iconfont icon-excel"></i>{{ $t('pdf.export_excel') }}</el-button>
+      </div>
+      <template v-slot:footer>
+        <div class="dialog-footer">
+          <el-button @click="pdfVisible = false">{{ $t('commons.cancel') }}</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </span>
 </template>
 
@@ -103,6 +116,7 @@
     data() {
       return {
         visible: false,
+        pdfVisible: false,
         checkItem: this.checkedColumnNames,
         checkAllChild: this.checkAll,
       }
@@ -121,7 +135,13 @@
         this.$emit('menu');
       },
       download() {
-        this.$emit('download');
+        this.pdfVisible = true;
+      },
+      pdfDown() {
+        this.$emit('pdfDown');
+      },
+      excelDown() {
+        this.$emit('excelDown');
       },
       reset() {
       },
@@ -174,6 +194,14 @@
 .check-all {
   float: right;
   margin: 0 10px 5px 10px;
+}
+.iconfont {
+  vertical-align: middle;
+  margin-right: 10px;
+  width: 24px;
+  height: 18px;
+  text-align: center;
+  font-size: 18px;
 }
 /deep/ .el-dialog__header{ padding:12px; border-bottom:1px solid #eee;}
 /deep/ .el-dialog__title{ font-size:16px;}

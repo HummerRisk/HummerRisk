@@ -20,7 +20,7 @@
         <slot name="button"></slot>
       </span>
       <span class="operate-button">
-        <table-adv-search-bar v-if="isCombine" :showOpen="showOpen" :showList="showList" @search="search" @download="download" @more="more" @menu="menu"
+        <table-adv-search-bar v-if="isCombine" :showOpen="showOpen" :showList="showList" @search="search" @pdfDown="pdfDown" @excelDown="excelDown" @more="more" @menu="menu"
                               :columnNames="columnNames" :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                               @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </span>
@@ -36,11 +36,21 @@ import TableAdvSearchBar from "@/business/components/common/components/search/Ta
 // 引入导出Excel表格依赖
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
+import htmlToPdf from "@/common/js/htmlToPdf";
 
 /* eslint-disable */
   export default {
     name: "TableHeader",
-    components: {TableAdvSearchBar, TableSearchBar, TableButton},
+    components: {
+      TableAdvSearchBar,
+      TableSearchBar,
+      TableButton
+    },
+    data(){
+      return {
+        htmlTitle: this.$t('pdf.html_title'),
+      }
+    },
     props: {
       title: {
         type: String,
@@ -138,7 +148,8 @@ import XLSX from "xlsx";
       validate() {
         this.$emit('validate');
       },
-      download() {
+      //下载excel
+      excelDown() {
         /* 从表生成工作簿对象 */
         // 判断要导出的节点中是否有fixed的表格，如果有，转换excel时先将该dom移除，然后append回去，
         let fix = document.querySelector("#out-table .el-table__fixed");
@@ -169,6 +180,10 @@ import XLSX from "xlsx";
           if (typeof console !== "undefined") console.log(e, wbout);
         }
         return wbout;
+      },
+      //下载pdf
+      pdfDown() {
+        htmlToPdf.getPdf(this.htmlTitle);
       },
       deleteSelect() {
         this.$emit('deleteSelect');

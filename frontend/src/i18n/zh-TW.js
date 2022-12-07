@@ -1779,5 +1779,7 @@ export default {
   pdf: {
     html_title: '頁面導出PDF文件名',
     export_pdf: '導出PDF',
+    download_type: '下載方式',
+    export_excel: '導出Excel',
   },
 };

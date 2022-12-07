@@ -3,7 +3,7 @@
     <el-table
       id="out-table"
       ref="table"
-      class="adjust-table table-content"
+      class="adjust-table table-content pdfDom"
       border
       @sort-change="sort"
       @filter-change="filter"
