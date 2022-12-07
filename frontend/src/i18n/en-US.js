@@ -1776,4 +1776,8 @@ export default {
     have_risk_resource: 'Number of risky resources',
     no_risk_resource: 'Number of risk-free resources',
   },
+  pdf: {
+    html_title: 'Page export PDF file name',
+    export_pdf: 'Export PDF',
+  },
 };

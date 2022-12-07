@@ -1776,4 +1776,8 @@ export default {
     have_risk_resource: '有风险资源数',
     no_risk_resource: '无风险资源数',
   },
+  pdf: {
+    html_title: '页面导出PDF文件名',
+    export_pdf: '导出PDF',
+  },
 };
