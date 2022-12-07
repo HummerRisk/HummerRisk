@@ -9,16 +9,16 @@ import com.dingtalk.api.request.OapiUserGetByMobileRequest;
 import com.dingtalk.api.response.OapiGettokenResponse;
 import com.dingtalk.api.response.OapiMessageCorpconversationAsyncsendV2Response;
 import com.dingtalk.api.response.OapiUserGetByMobileResponse;
-import com.hummerrisk.base.domain.SystemParameter;
-import com.hummerrisk.base.domain.SystemParameterExample;
+import com.hummerrisk.base.domain.*;
+import com.hummerrisk.base.mapper.MessageTaskMapper;
 import com.hummerrisk.base.mapper.SystemParameterMapper;
+import com.hummerrisk.base.mapper.WebhookMapper;
 import com.hummerrisk.commons.constants.ParamConstants;
+import com.hummerrisk.commons.constants.ResourceOperation;
+import com.hummerrisk.commons.constants.ResourceTypeConstants;
 import com.hummerrisk.commons.constants.TrivyConstants;
 import com.hummerrisk.commons.exception.HRException;
-import com.hummerrisk.commons.utils.CommandUtils;
-import com.hummerrisk.commons.utils.EncryptUtils;
-import com.hummerrisk.commons.utils.FileUploadUtils;
-import com.hummerrisk.commons.utils.LogUtil;
+import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.message.NotificationBasicResponse;
 import org.apache.commons.collections.CollectionUtils;
@@ -31,7 +31,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -58,6 +57,12 @@ public class SystemParameterService {
 
     @Resource
     private SysListener sysListener;
+
+    @Resource
+    private WebhookMapper webhookMapper;
+
+    @Resource
+    private MessageTaskMapper messageTaskMapper;
 
     public String getSystemLanguage() {
         String result = StringUtils.EMPTY;
@@ -439,6 +444,42 @@ public class SystemParameterService {
         } catch (Exception e) {
             throw new IOException(e.getMessage(), e);
         }
+    }
+
+    public List<Webhook> getWebhookList(Webhook webhook) {
+        WebhookExample example = new WebhookExample();
+        if(webhook.getName() != null) example.createCriteria().andNameEqualTo(webhook.getName());
+        return webhookMapper.selectByExample(example);
+    }
+
+    public int addWebhook(Webhook webhook) {
+        webhook.setId(UUIDUtil.newUUID());
+        webhook.setCreator(SessionUtils.getUserId());
+        webhook.setCreateTime(System.currentTimeMillis());
+        webhook.setUpdateTime(System.currentTimeMillis());
+        OperationLogService.log(SessionUtils.getUser(), webhook.getId(), webhook.getId(), ResourceTypeConstants.WEBHOOK.name(), ResourceOperation.CREATE, "i18n_create_webhook");
+
+        return webhookMapper.insertSelective(webhook);
+    }
+
+    public int editWebhook(Webhook webhook) {
+        webhook.setUpdateTime(System.currentTimeMillis());
+        OperationLogService.log(SessionUtils.getUser(), webhook.getId(), webhook.getId(), ResourceTypeConstants.WEBHOOK.name(), ResourceOperation.UPDATE, "i18n_update_webhook");
+        return webhookMapper.updateByPrimaryKeySelective(webhook);
+    }
+
+    public void deleteWebhook(String id) {
+
+        MessageTaskExample example = new MessageTaskExample();
+        example.createCriteria().andWebhookIdEqualTo(id);
+        List<MessageTask> list = messageTaskMapper.selectByExample(example);
+        if (list.size() > 0) {
+            HRException.throwException(Translator.get("i18n_ex_webhook_use"));
+        } else {
+            webhookMapper.deleteByPrimaryKey(id);
+        }
+        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.WEBHOOK.name(), ResourceOperation.DELETE, "i18n_delete_webhook");
+
     }
 
 }

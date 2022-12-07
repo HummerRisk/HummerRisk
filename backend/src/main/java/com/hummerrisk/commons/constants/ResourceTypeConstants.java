@@ -22,5 +22,6 @@ public enum ResourceTypeConstants {
     SBOM_VERSION,
     SYNC,
     FILE_SYSTEM,
-    OSS
+    OSS,
+    WEBHOOK
 }

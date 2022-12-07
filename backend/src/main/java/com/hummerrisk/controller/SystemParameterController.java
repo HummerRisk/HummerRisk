@@ -1,8 +1,13 @@
 package com.hummerrisk.controller;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.hummerrisk.base.domain.SystemParameter;
+import com.hummerrisk.base.domain.Webhook;
 import com.hummerrisk.commons.constants.ParamConstants;
 import com.hummerrisk.commons.constants.RoleConstants;
+import com.hummerrisk.commons.utils.PageUtils;
+import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.service.SystemParameterService;
 import io.swagger.annotations.Api;
@@ -149,6 +154,32 @@ public class SystemParameterController {
     @PostMapping(value = "updateVulnDbOffline", consumes = {"multipart/form-data"})
     public void updateVulnDbOffline(@RequestPart(value = "objectFile", required = false) MultipartFile objectFile) throws Exception {
         systemParameterService.updateVulnDbOffline(objectFile);
+    }
+
+    @I18n
+    @ApiOperation(value = "webhook列表")
+    @PostMapping("webhookList/{goPage}/{pageSize}")
+    public Pager<List<Webhook>> getWebhookList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Webhook webhook) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, systemParameterService.getWebhookList(webhook));
+    }
+
+    @ApiOperation(value = "添加webhook")
+    @PostMapping("add/webhook")
+    public int addWebhook(@RequestBody Webhook webhook) {
+        return systemParameterService.addWebhook(webhook);
+    }
+
+    @ApiOperation(value = "修改webhook")
+    @PostMapping("edit/webhook")
+    public int editWebhook(@RequestBody Webhook webhook) throws Exception {
+        return systemParameterService.editWebhook(webhook);
+    }
+
+    @ApiOperation(value = "删除webhook")
+    @GetMapping("delete/webhook/{id}")
+    public void deleteWebhook(@PathVariable String id) throws Exception {
+        systemParameterService.deleteWebhook(id);
     }
 
 }
