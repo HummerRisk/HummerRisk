@@ -6,6 +6,34 @@
   "description": "HummerRisk",
   "glyphs": [
     {
+      "icon_id": "10166317",
+      "name": "excel",
+      "font_class": "excel",
+      "unicode": "e62c",
+      "unicode_decimal": 58924
+    },
+    {
+      "icon_id": "622431",
+      "name": "pdf",
+      "font_class": "pdf1",
+      "unicode": "e741",
+      "unicode_decimal": 59201
+    },
+    {
+      "icon_id": "7617119",
+      "name": "github",
+      "font_class": "github",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "1061336",
+      "name": "version",
+      "font_class": "version",
+      "unicode": "e6b8",
+      "unicode_decimal": 59064
+    },
+    {
       "icon_id": "2076322",
       "name": "费用包含",
       "font_class": "feiyongbaohan",
