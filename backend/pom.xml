@@ -1257,6 +1257,28 @@
         </dependency>
         <!-- Java使用SSH连接Linux并获取cpu，内存，磁盘使用率 -->
 
+        <!-- Java使用winrm4j连接Windows -->
+        <dependency>
+            <groupId>io.cloudsoft.windows</groupId>
+            <artifactId>winrm4j</artifactId>
+            <version>0.12.3</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-io</artifactId>
+                    <groupId>commons-io</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>asm</artifactId>
+                    <groupId>org.ow2.asm</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>woodstox-core</artifactId>
+                    <groupId>com.fasterxml.woodstox</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Java使用winrm4j连接Windows -->
+
         <!-- apache poi-->
         <dependency>
             <groupId>org.apache.poi</groupId>
