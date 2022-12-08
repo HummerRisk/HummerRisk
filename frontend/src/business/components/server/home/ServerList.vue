@@ -411,25 +411,43 @@
                  :destroy-on-close="true">
         <div v-loading="rstResult.loading">
           <el-form :model="updateExcelForm" label-position="right" label-width="150px" size="small" :rules="rule" ref="updateExcelForm">
-            <el-form-item :label="$t('server.excel_file')" ref="file" prop="file">
-              <el-upload
-              ref="upload"
-              class="filter-item"
-              name="file"
-              action="string"
-              :before-upload="beforeAvatarUpload"
-              :limit="1"
-              accept=".xlsx,.xls"
-              :show-file-list="false"
-              :http-request="uploadFile"
-            >
-              <el-button
-                type="primary"
-                size="small"
-              ><i class="iconfont icon-excel"></i> {{ $t('server.upload_excel') }}
-              </el-button>
-            </el-upload>
+            <el-form-item :label="$t('server.server_group_name')" ref="serverGroupId" prop="serverGroupId">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="updateExcelForm.serverGroupId" :placeholder="$t('server.server_group_name')">
+                <el-option
+                  v-for="item in groups"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
             </el-form-item>
+            <el-form-item :label="$t('server.excel_file_ex')" ref="file" prop="file">
+              <el-button
+                type="success"
+                size="small"
+              ><i class="el-icon-download" style="margin: 1px 3px 0 0;"></i> {{ $t('server.excel_file_ex_down') }}
+            </el-button>
+            </el-form-item>
+            <el-form-item :label="$t('server.upload_excel')" ref="file" prop="file">
+              <el-upload
+                ref="upload"
+                class="filter-item"
+                name="file"
+                action="string"
+                :before-upload="beforeAvatarUpload"
+                :limit="1"
+                accept=".xlsx,.xls"
+                :show-file-list="false"
+                :http-request="uploadFile"
+              >
+                <el-button
+                  type="primary"
+                  size="small"
+                ><i class="iconfont icon-excel"></i> {{ $t('server.upload_excel_file') }}
+                </el-button>
+              </el-upload>
+            </el-form-item>
+            <div style="color: red;font-style:italic;margin: 5px 0 10px 50px;">{{ $t('server.upload_excel_file_note') }}</div>
           </el-form>
           <dialog-footer
             @cancel="updateExcel = false"
@@ -725,23 +743,19 @@ const columnOptions = [
           this.tableData = data.listObject;
         });
       },
-      handleEdit(tmp) {
+      initGroup() {
         let url = "/server/serverGroupList";
         this.result = this.$get(url, response => {
           if (response.data != undefined && response.data != null) {
             this.groups = response.data;
           }
         });
+      },
+      handleEdit(tmp) {
         this.form = tmp;
         this.updateVisible = true;
       },
       handleCopy (tmp) {
-        let url = "/server/serverGroupList";
-        this.result = this.$get(url, response => {
-          if (response.data != undefined && response.data != null) {
-            this.groups = response.data;
-          }
-        });
         this.form = tmp;
         this.copyVisible = true;
       },
@@ -770,6 +784,7 @@ const columnOptions = [
       init() {
         this.selectIds.clear();
         this.search();
+        this.initGroup();
       },
       sort(column) {
         _sort(column, this.condition);
