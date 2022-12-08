@@ -7,8 +7,8 @@
                         @create="create" :createTip="$t('server.server_create')"
                         @scan="scan" :scanTip="$t('server.one_scan')"
                         @validate="validate" :validateTip="$t('server.one_validate')"
-                        :show-validate="true" :show-scan="true" :show-create="true"
-                        :items="items" :columnNames="columnNames" :show-open="false"
+                        :show-validate="true" :show-scan="true" :show-create="true" :show-filter="false"
+                        :items="items" :columnNames="columnNames" :show-open="false" :show-upload="true" @upload="upload"
                         :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                         @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
         </template>
@@ -406,6 +406,38 @@
       </el-drawer>
       <!--Copy server-->
 
+      <!--Update excel-->
+      <el-drawer class="rtl" :title="$t('server.batch_update_excel')" :visible.sync="updateExcel" size="60%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true">
+        <div v-loading="rstResult.loading">
+          <el-form :model="updateExcelForm" label-position="right" label-width="150px" size="small" :rules="rule" ref="updateExcelForm">
+            <el-form-item :label="$t('server.excel_file')" ref="file" prop="file">
+              <el-upload
+              ref="upload"
+              class="filter-item"
+              name="file"
+              action="string"
+              :before-upload="beforeAvatarUpload"
+              :limit="1"
+              accept=".xlsx,.xls"
+              :show-file-list="false"
+              :http-request="uploadFile"
+            >
+              <el-button
+                type="primary"
+                size="small"
+              ><i class="iconfont icon-excel"></i> {{ $t('server.upload_excel') }}
+              </el-button>
+            </el-upload>
+            </el-form-item>
+          </el-form>
+          <dialog-footer
+            @cancel="updateExcel = false"
+            @confirm="updateServerExcel()"/>
+        </div>
+      </el-drawer>
+      <!--Update excel-->
+
     </main-container>
 </template>
 
@@ -421,6 +453,7 @@ import {SERVER_CONFIGS} from "../../common/components/search/search-components";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import * as XLSX from 'xlsx'
 
 //列表展示与隐藏
 const columnOptions = [
@@ -496,6 +529,7 @@ const columnOptions = [
         createVisible: false,
         updateVisible: false,
         copyVisible: false,
+        updateExcel: false,
         item: {},
         form: {isPublicKey: "no"},
         script: '',
@@ -569,6 +603,7 @@ const columnOptions = [
         ],
         checkAll: true,
         isIndeterminate: false,
+        updateExcelForm: {},
       }
     },
     props: {
@@ -611,8 +646,9 @@ const columnOptions = [
           this.certificates = response.data;
         });
       },
-      download() {},
-      upload() {},
+      upload() {
+        this.updateExcel = true;
+      },
       //校验虚拟机ssh连接
       validate() {
         if (this.selectIds.size === 0) {
@@ -713,6 +749,7 @@ const columnOptions = [
         this.createVisible =  false;
         this.updateVisible =  false;
         this.copyVisible = false;
+        this.updateExcel = false;
       },
       handleDelete(obj) {
         this.$alert(this.$t('server.delete_confirm') + obj.name + " ？", '', {
@@ -977,6 +1014,38 @@ const columnOptions = [
           this.$warning(this.$t('server.batch_error'));
         }
       },
+      async uploadFile(param) {
+        const File = param.file;
+        const formData1 = new FormData();
+        formData1.append('file', File);
+        const loadingInstance = this.$loading({ text: this.$t('server.uploading') });
+        try {
+          const res = await professorApi.ExcelInsertExperts(formData1);
+          loadingInstance.close();
+          param.onSuccess(res);
+          this.$message.success(res.msg);
+          await this.servers();
+        } catch (e) {
+          loadingInstance.close();
+          param.onError(e);
+        }
+      },
+      // 上传前对文件的大小的判断
+      beforeAvatarUpload(file) {
+        const extension = file.name.split('.')[1] === 'xls';
+        const extension2 = file.name.split('.')[1] === 'xlsx';
+        const isLt2M = file.size / 1024 / 1024 < 10;
+        if (!extension && !extension2) {
+          this.$message({
+            message: this.$t('server.upload_template_note'),
+            type: 'error'
+          });
+        }
+        return extension || extension2 || isLt2M;
+      },
+      updateServerExcel() {
+
+      },
     },
     activated () {
       this.init();
@@ -1037,9 +1106,19 @@ const columnOptions = [
     margin: 10px 0;
   }
   .table-card >>> .search {
-    width: 310px !important;
+    width: 290px !important;
   }
   .table-card >>> .search .el-input {
-    width: 100px !important;
+    width: 90px !important;
+  }
+  .table-card >>> .search .el-input-group__append {
+    padding: 0 15px;
+  }
+  .iconfont {
+    margin: 1px 3px 0 0;
+    width: 24px;
+    height: 18px;
+    text-align: center;
+    font-size: 12px;
   }
 </style>

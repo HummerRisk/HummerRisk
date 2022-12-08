@@ -16,7 +16,8 @@
                          type="warning" :content="validateTip" @click="validate"/>
         <table-button v-if="showDelete" icon="el-icon-remove-outline"
                       type="danger" :content="deleteTip" @click="deleteSelect"/>
-        <table-search-bar v-if="isCombine" :condition.sync="condition" @change="search" @search="search" class="search-bar" :tip="tip" :items="items"/>
+        <table-search-bar v-if="isCombine" :condition.sync="condition" @change="search" @search="search" class="search-bar" @upload="upload"
+                          :showFilter="showFilter" :showUpload="showUpload" :showUploadName="showUploadName" :tip="tip" :items="items"/>
         <slot name="button"></slot>
       </span>
       <span class="operate-button">
@@ -111,6 +112,10 @@ import htmlToPdf from "@/common/js/htmlToPdf";
         type: Boolean,
         default: true
       },
+      showFilter: {
+        type: Boolean,
+        default: true
+      },
       showList: {
         type: Boolean,
         default: false
@@ -118,6 +123,14 @@ import htmlToPdf from "@/common/js/htmlToPdf";
       showName: {
         type: Boolean,
         default: true
+      },
+      showUpload: {
+        type: Boolean,
+        default: false
+      },
+      showUploadName: {
+        type: Boolean,
+        default: false
       },
       items: {
         type: [Object,Array],
@@ -199,6 +212,9 @@ import htmlToPdf from "@/common/js/htmlToPdf";
       },
       menu() {
         this.$emit('menu');
+      },
+      upload() {
+        this.$emit('upload');
       },
     },
     computed: {

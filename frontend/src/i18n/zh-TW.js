@@ -990,6 +990,11 @@ export default {
     all_label: '所有主機',
     to_be_set: '待設置',
     failed_server: '存在驗證失敗的主機配置:',
+    batch_update_excel: '批量導入主機',
+    upload_excel: '上傳 Excel',
+    excel_file: 'Excel 文件',
+    uploading: '正在上傳',
+    upload_template_note: '上傳模板只能是 xls、xlsx格式!',
   },
   image: {
     image_repo: '鏡像倉庫',

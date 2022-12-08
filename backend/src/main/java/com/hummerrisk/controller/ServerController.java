@@ -257,10 +257,18 @@ public class ServerController {
         return PageUtils.setPageInfo(page, serverService.history(params));
     }
 
+    @I18n
     @ApiOperation(value = "删除主机检测历史记录")
     @GetMapping("deleteHistoryServerResult/{id}")
     public void deleteHistoryServerResult(@PathVariable String id) throws Exception {
         serverService.deleteHistoryServerResult(id);
+    }
+
+    @I18n
+    @ApiOperation("通过Excel导入专家数据")
+    @PostMapping("/ExcelInsertExperts")
+    public void insertExperts(@RequestParam("file") MultipartFile file) throws Exception {
+        serverService.insertExperts(file);
     }
 
 }

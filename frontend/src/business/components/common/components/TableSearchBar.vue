@@ -13,7 +13,12 @@
       </el-select>
       <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
     </el-input>
-    <el-button icon="iconfont icon-shaixuan" size="small" @click="open" v-if="showOpen && condition" style="margin: 10px;">{{ $t('el.table.confirmFilter') }}</el-button>
+    <el-button icon="iconfont icon-shaixuan" size="small" @click="open" v-if="showOpen && condition" style="margin: 10px 0 10px 10px;">
+      <span v-if="showFilter">{{ $t('el.table.confirmFilter') }}</span>
+    </el-button>
+    <el-button icon="el-icon-upload2" size="small" @click="upload" v-if="showOpen && showUpload">
+      <span v-if="showUploadName">{{ $t('server.upload') }}</span>
+    </el-button>
     <el-dialog :title="$t('commons.adv_search.combine')" :visible.sync="visible" custom-class="adv-dialog"
                :append-to-body="true">
       <div>
@@ -46,6 +51,18 @@ import {cloneDeep} from "lodash";
         showOpen: {
           type: Boolean,
           default: true
+        },
+        showFilter: {
+          type: Boolean,
+          default: true
+        },
+        showUpload: {
+          type: Boolean,
+          default: false
+        },
+        showUploadName: {
+          type: Boolean,
+          default: false
         },
         items: {
           type: [Object,Array],
@@ -142,6 +159,9 @@ import {cloneDeep} from "lodash";
         },
         open() {
           this.visible = true;
+        },
+        upload() {
+          this.$emit('upload');
         },
       }
     }

@@ -990,6 +990,11 @@ export default {
     all_label: '所有主机',
     to_be_set: '待设置',
     failed_server: '存在验证失败的主机配置:',
+    batch_update_excel: '批量导入主机',
+    upload_excel: '上传 Excel',
+    excel_file: 'Excel 文件',
+    uploading: '正在上传',
+    upload_template_note: '上传模板只能是 xls、xlsx格式!',
   },
   image: {
     image_repo: '镜像仓库',
