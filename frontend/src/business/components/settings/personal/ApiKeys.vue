@@ -4,7 +4,7 @@
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
                       :create-tip="$t('commons.create') + ' API Keys'" title="API Keys" :show-create="true"
-                      :items="items" :columnNames="columnNames" :show-open="false" @create="create"
+                      :items="items" :columnNames="columnNames" :show-open="false" @create="create" :show-filter="false"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
@@ -287,6 +287,12 @@ export default {
 }
 .rtl >>> .el-form-item__content {
   width: 60%;
+}
+.table-card >>> .search {
+  width: 430px !important;
+}
+.table-card >>> .search .el-input {
+  width: 120px !important;
 }
 /deep/ :focus{outline:0;}
 </style>
