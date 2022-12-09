@@ -25,6 +25,8 @@ public class RegionsConstants {
 
     public static Map<String, String> UcloudMap;
 
+    public static Map<String, String> JdcloudMap;
+
     static
     {
         AwsMap = new HashMap<>();
@@ -280,6 +282,11 @@ public class RegionsConstants {
         UcloudMap.put("us-ca", "洛杉矶");
         UcloudMap.put("us-ws", "华盛顿");
         UcloudMap.put("vn-sng", "胡志明市");
+        //jdCloud
+        JdcloudMap.put("cn-north-1","华北-北京");
+        JdcloudMap.put("cn-east-1","华东-宿迁");
+        JdcloudMap.put("cn-east-2","华东-上海");
+        JdcloudMap.put("cn-south-1","华南-广州");
     }
 
 }

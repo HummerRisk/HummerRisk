@@ -802,7 +802,12 @@
         <dependency>
             <groupId>com.jdcloud.sdk</groupId>
             <artifactId>vm</artifactId>
-            <version>1.2.0</version>
+            <version>1.5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jdcloud.sdk</groupId>
+            <artifactId>iam</artifactId>
+            <version>0.2.3</version>
         </dependency>
         <!-- jd -->
         <!-- OpenStack -->
