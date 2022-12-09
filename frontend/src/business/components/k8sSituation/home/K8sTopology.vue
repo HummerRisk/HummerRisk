@@ -3,7 +3,7 @@
     <el-card class="table-card" v-loading="result.loading">
       <el-tabs type="border-card">
         <el-tab-pane v-if="k8sImage" :label="$t('k8s.k8s_perspective')">
-          <el-row :gutter="24">
+          <el-row :gutter="24" id="pdfDom">
             <el-col :span="6">
               <el-card class="box-card">
                 <div slot="header" class="clearfix">
@@ -216,7 +216,12 @@
               </el-card>
               <el-card class="box-card-right2 hr-card-index-left2">
                 <div class="item-left" style="text-align: center;" @click="clearK8sRisk">
-                  {{ $t('commons.clear_select') }}
+                  <i class="el-icon-refresh-left"></i> {{ $t('commons.clear_select') }}
+                </div>
+              </el-card>
+              <el-card class="box-card-right3 hr-card-index-left3">
+                <div class="item-left" style="text-align: center;" @click="pdfDown">
+                  <i class="iconfont icon-pdf1"></i> {{ $t('pdf.export_pdf') }}
                 </div>
               </el-card>
             </el-col>
@@ -297,7 +302,8 @@ import MainContainer from "../../common/components/MainContainer";
 import SearchList from "@/business/components/k8sSituation/home/SearchList";
 import LogForm from "@/business/components/k8s/home/LogForm";
 import * as d3 from 'd3';
-import {humpToLine} from "@/common/js/utils";
+import htmlToPdf from "@/common/js/htmlToPdf";
+
 /* eslint-disable */
 export default {
   components: {
@@ -325,6 +331,7 @@ export default {
       activeName: 'image',
       vuln: {},
       vulnDetails: false,
+      htmlTitle: this.$t('pdf.html_title'),
     };
   },
   methods: {
@@ -789,6 +796,10 @@ export default {
       this.radio = '';
       this.riskTopology();
     },
+    //下载pdf
+    pdfDown() {
+      htmlToPdf.getPdfById(this.htmlTitle);
+    },
   },
 
   mounted() {
@@ -860,6 +871,13 @@ svg {
   border-radius: 3px;
   margin: 0 5% 0 5%;
 }
+.box-card-right3 {
+  width: 80%;
+  background-color: #FF8000;
+  color: #FFFFFF;
+  border-radius: 3px;
+  margin: 0 5% 0 5%;
+}
 .header-menu {
   background-color: #364f6c;
   color: #FFFFFF;
@@ -900,6 +918,11 @@ svg {
 
 .hr-card-index-left2 {
   border-left-color: #364f6c;
+  border-left-width: 5px;
+}
+
+.hr-card-index-left3 {
+  border-left-color: #FF8000;
   border-left-width: 5px;
 }
 
@@ -1106,5 +1129,10 @@ svg {
   background: #0f253d;
   padding: 5px;
   margin: 5px;
+}
+.iconfont {
+  margin: 0 0 0 3px;
+  text-align: center;
+  font-size: 12px;
 }
 </style>
