@@ -1000,6 +1000,7 @@ export default {
     excel_file_ex: 'Excel 示例文件',
     excel_file_ex_down: 'Excel 示例文件下载',
     upload_excel_file_note: '*注: 待上传的 Excel 主机文件必须符合示例格式才能成功上传!',
+    server_type: '主机类型',
   },
   image: {
     image_repo: '镜像仓库',

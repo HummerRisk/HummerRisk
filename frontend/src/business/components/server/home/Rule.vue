@@ -90,6 +90,17 @@
     <el-drawer class="rtl" :title="$t('rule.create')" :visible.sync="createVisible" size="70%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-form :model="createRuleForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createRuleForm">
+        <el-form-item :label="$t('task.task_rule_type')" ref="type" prop="type">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="createRuleForm.type" :placeholder="$t('task.task_rule_type')">
+            <el-option
+              v-for="item in types"
+              :key="item.value"
+              :label="item.id"
+              :value="item.value">
+              &nbsp;&nbsp; {{ item.id }}
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item :label="$t('rule.rule_name')" prop="name">
           <el-input v-model="createRuleForm.name" autocomplete="off" :placeholder="$t('rule.rule_name')"/>
         </el-form-item>
@@ -155,6 +166,17 @@
     <el-drawer class="rtl" :title="$t('rule.update')" :visible.sync="updateVisible" size="70%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-form :model="updateRuleForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="updateRuleForm">
+        <el-form-item :label="$t('task.task_rule_type')" ref="type" prop="type">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="updateRuleForm.type" :placeholder="$t('task.task_rule_type')">
+            <el-option
+              v-for="item in types"
+              :key="item.value"
+              :label="item.id"
+              :value="item.value">
+              &nbsp;&nbsp; {{ item.id }}
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item :label="$t('rule.rule_name')" prop="name">
           <el-input v-model="updateRuleForm.name" autocomplete="off" :placeholder="$t('rule.rule_name')"/>
         </el-form-item>
@@ -299,6 +321,9 @@ export default {
       severityOptions: [],
       direction: 'rtl',
       rule: {
+        type: [
+          {required: true, message: this.$t('task.task_rule_type'), trigger: 'change'},
+        ],
         name: [
           {required: true, message: this.$t('rule.input_name'), trigger: 'blur'},
           {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
@@ -355,6 +380,10 @@ export default {
       ],
       checkAll: true,
       isIndeterminate: false,
+      types: [
+        {id: 'Linux', value: 'linux'},
+        {id: 'Windows', value: 'windows'},
+      ],
     }
   },
 
@@ -377,7 +406,7 @@ export default {
     select(selection) {
     },
     create() {
-      this.createRuleForm = { parameter: [], script : "" };
+      this.createRuleForm = { parameter: [], script : "", type : 'linux' };
       this.createVisible = true;
     },
     handleEdit(item) {

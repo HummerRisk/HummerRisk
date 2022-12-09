@@ -99,9 +99,9 @@
                       <el-input v-model="scope.row.name"></el-input>
                     </template>
                   </el-table-column>
-                  <el-table-column :label="$t('commons.type')" min-width="12%" prop="type">
+                  <el-table-column :label="$t('server.server_type')" min-width="12%" prop="type">
                     <template slot-scope="scope">
-                      <el-select style="width: 100%;" filterable :clearable="true" v-model="scope.row.type" :placeholder="$t('commons.type')">
+                      <el-select style="width: 100%;" filterable :clearable="true" v-model="scope.row.type" :placeholder="$t('server.server_type')">
                         <el-option
                           v-for="item in types"
                           :key="item.value"
@@ -217,8 +217,8 @@
             :before-close="innerCertificateClose"
             :visible.sync="batchBindCertificate">
             <el-form :model="batchBindForm" label-position="right" label-width="150px" size="small" ref="addCertificateForm" :rules="rule" style="padding: 5px 5% 5px 5px;">
-              <el-form-item :label="$t('commons.type')" ref="type" prop="type" :rules="{required: true, message: $t('commons.type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-                <el-select style="width: 100%;" filterable :clearable="true" v-model="batchBindForm.type" :placeholder="$t('commons.type')">
+              <el-form-item :label="$t('server.server_type')" ref="type" prop="type" :rules="{required: true, message: $t('server.server_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                <el-select style="width: 100%;" filterable :clearable="true" v-model="batchBindForm.type" :placeholder="$t('server.server_type')">
                   <el-option
                     v-for="item in types"
                     :key="item.value"
@@ -299,8 +299,8 @@
             <el-form-item :label="$t('server.server_name')" ref="name" prop="name">
               <el-input v-model="form.name" autocomplete="off" :placeholder="$t('server.server_name')"/>
             </el-form-item>
-            <el-form-item :label="$t('commons.type')" ref="type" prop="type">
-              <el-select style="width: 100%;" filterable :clearable="true" v-model="form.type" :placeholder="$t('commons.type')">
+            <el-form-item :label="$t('server.server_type')" ref="type" prop="type">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="form.type" :placeholder="$t('server.server_type')">
                 <el-option
                   v-for="item in types"
                   :key="item.value"
@@ -533,7 +533,7 @@ const columnOptions = [
     disabled: false
   },
   {
-    label: 'commons.type',
+    label: 'server.server_type',
     props: 'type',
     disabled: false
   },
@@ -608,6 +608,36 @@ const columnOptions = [
               message: this.$t("workspace.special_characters_are_not_supported"),
               trigger: 'blur'
             }
+          ],
+          ip: [
+            {required: true, message: 'IP', trigger: 'blur'},
+            {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
+            {
+              required: true,
+              message: this.$t("workspace.special_characters_are_not_supported"),
+              trigger: 'blur'
+            }
+          ],
+          port: [
+            {required: true, message: this.$t('server.port'), trigger: 'blur'},
+            {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
+            {
+              required: true,
+              message: this.$t("workspace.special_characters_are_not_supported"),
+              trigger: 'blur'
+            }
+          ],
+          userName: [
+            {required: true, message: this.$t('server.server_user_name'), trigger: 'blur'},
+            {min: 2, max: 150, message: this.$t('commons.input_limit', [2, 150]), trigger: 'blur'},
+            {
+              required: true,
+              message: this.$t("workspace.special_characters_are_not_supported"),
+              trigger: 'blur'
+            }
+          ],
+          type: [
+            {required: true, message: this.$t('server.server_type'), trigger: 'change'},
           ],
         },
         buttons: [
