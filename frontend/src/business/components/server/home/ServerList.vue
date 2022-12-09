@@ -33,7 +33,6 @@
           <el-table-column prop="ip" :label="'IP:Port'" v-if="checkedColumnNames.includes('ip')" min-width="170" show-overflow-tooltip v-slot:default="scope">
             {{ scope.row.ip }} : {{ scope.row.port }}
           </el-table-column>
-          <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :label="$t('server.server_user_name')" min-width="100" show-overflow-tooltip></el-table-column>
           <el-table-column prop="status" v-if="checkedColumnNames.includes('status')" min-width="100" :label="$t('server.server_status')"
                            column-key="status"
                            :filters="statusFilters"
@@ -52,6 +51,14 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column prop="type" v-if="checkedColumnNames.includes('type')" :label="$t('commons.type')" min-width="70" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <span v-if="scope.row.type === 'linux'">Linux</span>
+              <span v-if="scope.row.type === 'windows'">Windows</span>
+              <span v-if="!scope.row.type">N/A</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :label="$t('server.server_user_name')" min-width="100" show-overflow-tooltip></el-table-column>
           <el-table-column min-width="160" v-if="checkedColumnNames.includes('updateTime')" :label="$t('account.update_time')" sortable
                            prop="updateTime">
             <template v-slot:default="scope">
@@ -70,7 +77,7 @@
       </el-card>
 
       <!--Create server-->
-      <el-drawer class="rtl" :title="$t('server.server_create')" :visible.sync="createVisible" size="70%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="rtl" :title="$t('server.server_create')" :visible.sync="createVisible" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <div v-loading="rstResult.loading">
           <div style="margin: 10px;">
@@ -87,12 +94,25 @@
             <el-row>
               <el-col :span="24">
                 <el-table :data="servers" class="tb-edit" border :cell-style="rowClass" :header-cell-style="headClass" :key="itemKey">
-                  <el-table-column :label="$t('server.server_name')" min-width="20%" prop="serverName">
+                  <el-table-column :label="$t('server.server_name')" min-width="18%" prop="serverName">
                     <template slot-scope="scope">
                       <el-input v-model="scope.row.name"></el-input>
                     </template>
                   </el-table-column>
-                  <el-table-column :label="'IP'" prop="ip" min-width="20%">
+                  <el-table-column :label="$t('commons.type')" min-width="12%" prop="type">
+                    <template slot-scope="scope">
+                      <el-select style="width: 100%;" filterable :clearable="true" v-model="scope.row.type" :placeholder="$t('commons.type')">
+                        <el-option
+                          v-for="item in types"
+                          :key="item.value"
+                          :label="item.id"
+                          :value="item.value">
+                          &nbsp;&nbsp; {{ item.id }}
+                        </el-option>
+                      </el-select>
+                    </template>
+                  </el-table-column>
+                  <el-table-column :label="'IP'" prop="ip" min-width="18%">
                     <template v-slot:default="{row}">
                       <el-input v-model="row.ip"></el-input>
                     </template>
@@ -102,7 +122,7 @@
                       <el-input v-model="scope.row.port"></el-input>
                     </template>
                   </el-table-column>
-                  <el-table-column :label="$t('server.server_user_name')" min-width="20%" prop="userName">
+                  <el-table-column :label="$t('server.server_user_name')" min-width="15%" prop="userName">
                     <template slot-scope="scope">
                       <el-input v-model="scope.row.userName"></el-input>
                     </template>
@@ -144,10 +164,10 @@
             :before-close="innerCertificateClose"
             :visible.sync="innerAddCertificate">
             <el-form :model="addCertificateForm" label-position="right" label-width="150px" size="small" ref="addCertificateForm" :rules="rule" style="padding: 5px 5% 5px 5px;">
-              <el-form-item :label="$t('server.port')" ref="type" prop="port" :rules="{required: true, message: $t('server.port') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-form-item :label="$t('server.port')" ref="port" prop="port" :rules="{required: true, message: $t('server.port') + $t('commons.cannot_be_empty'), trigger: 'change'}">
                 <el-input v-model="addCertificateForm.port"></el-input>
               </el-form-item>
-              <el-form-item :label="$t('server.server_user_name')" ref="type" prop="userName" :rules="{required: true, message: $t('server.server_user_name') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+              <el-form-item :label="$t('server.server_user_name')" ref="userName" prop="userName" :rules="{required: true, message: $t('server.server_user_name') + $t('commons.cannot_be_empty'), trigger: 'change'}">
                 <el-input v-model="addCertificateForm.userName"></el-input>
               </el-form-item>
               <el-form-item :label="$t('server.bind_certificate')" ref="type" prop="type" :rules="{required: true, message: $t('server.bind_certificate') + $t('commons.cannot_be_empty'), trigger: 'change'}">
@@ -197,6 +217,17 @@
             :before-close="innerCertificateClose"
             :visible.sync="batchBindCertificate">
             <el-form :model="batchBindForm" label-position="right" label-width="150px" size="small" ref="addCertificateForm" :rules="rule" style="padding: 5px 5% 5px 5px;">
+              <el-form-item :label="$t('commons.type')" ref="type" prop="type" :rules="{required: true, message: $t('commons.type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+                <el-select style="width: 100%;" filterable :clearable="true" v-model="batchBindForm.type" :placeholder="$t('commons.type')">
+                  <el-option
+                    v-for="item in types"
+                    :key="item.value"
+                    :label="item.id"
+                    :value="item.value">
+                    &nbsp;&nbsp; {{ item.id }}
+                  </el-option>
+                </el-select>
+              </el-form-item>
               <el-form-item :label="$t('server.port')" ref="type" prop="port" :rules="{required: true, message: $t('server.port') + $t('commons.cannot_be_empty'), trigger: 'change'}">
                 <el-input v-model="batchBindForm.port"></el-input>
               </el-form-item>
@@ -267,6 +298,17 @@
             </el-form-item>
             <el-form-item :label="$t('server.server_name')" ref="name" prop="name">
               <el-input v-model="form.name" autocomplete="off" :placeholder="$t('server.server_name')"/>
+            </el-form-item>
+            <el-form-item :label="$t('commons.type')" ref="type" prop="type">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="form.type" :placeholder="$t('commons.type')">
+                <el-option
+                  v-for="item in types"
+                  :key="item.value"
+                  :label="item.id"
+                  :value="item.value">
+                  &nbsp;&nbsp; {{ item.id }}
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item :label="'IP'" ref="ip" prop="ip">
               <el-input v-model="form.ip" autocomplete="off" :placeholder="'IP'"/>
@@ -486,13 +528,18 @@ const columnOptions = [
     disabled: false
   },
   {
-    label: 'server.server_user_name',
-    props: 'userName',
+    label: 'server.server_status',
+    props: 'status',
     disabled: false
   },
   {
-    label: 'server.server_status',
-    props: 'status',
+    label: 'commons.type',
+    props: 'type',
+    disabled: false
+  },
+  {
+    label: 'server.server_user_name',
+    props: 'userName',
     disabled: false
   },
   {
@@ -579,6 +626,10 @@ const columnOptions = [
           {text: this.$t('server.INVALID'), value: 'INVALID'},
           {text: this.$t('server.VALID'), value: 'VALID'},
           {text: this.$t('server.DELETE'), value: 'DELETE'}
+        ],
+        types: [
+          {id: 'Linux', value: 'linux'},
+          {id: 'Windows', value: 'windows'},
         ],
         groupId: 'd691se79-2e8c-1s54-bbe6-491sd29e91fe',
         groups: [],
@@ -856,6 +907,7 @@ const columnOptions = [
         server.ip = '';
         server.port = '22';
         server.userName = 'root';
+        server.type = 'linux';
         server.password = '';
         server.groupId = this.groupId;
         this.servers.push(server);
@@ -1020,6 +1072,7 @@ const columnOptions = [
             row.publicKey = item.publicKey?item.publicKey:'';
             row.publicKeyPath = item.publicKeyPath?item.publicKeyPath:'';
             row.port = item.port?item.port:'';
+            row.type = item.type?item.type:'';
             row.userName = item.userName?item.userName:'';
             row.keyFile = item.keyFile?item.keyFile:'';
           }
