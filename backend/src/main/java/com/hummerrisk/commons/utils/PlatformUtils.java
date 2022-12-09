@@ -55,6 +55,8 @@ import com.hummerrisk.proxy.gcp.GcpCredential;
 import com.hummerrisk.proxy.huawei.ClientUtil;
 import com.hummerrisk.proxy.huawei.HuaweiCloudCredential;
 import com.hummerrisk.proxy.huoshan.HuoshanCredential;
+import com.hummerrisk.proxy.jdcloud.JDCloudCredential;
+import com.hummerrisk.proxy.jdcloud.JDRequest;
 import com.hummerrisk.proxy.k8s.K8sCredential;
 import com.hummerrisk.proxy.k8s.K8sRequest;
 import com.hummerrisk.proxy.nuclei.NucleiCredential;
@@ -72,6 +74,9 @@ import com.hummerrisk.proxy.vsphere.VsphereClient;
 import com.hummerrisk.proxy.vsphere.VsphereCredential;
 import com.hummerrisk.proxy.vsphere.VsphereRegion;
 import com.hummerrisk.proxy.xray.XrayCredential;
+import com.jdcloud.sdk.service.iam.model.DescribeGroupsRequest;
+import com.jdcloud.sdk.service.iam.model.DescribeGroupsResponse;
+import com.jdcloud.sdk.service.vm.client.VmClient;
 import com.qingcloud.sdk.config.EnvContext;
 import com.qingcloud.sdk.service.InstanceService;
 import com.qiniu.util.Auth;
@@ -92,6 +97,7 @@ import io.kubernetes.client.openapi.models.V1NamespaceList;
 import io.kubernetes.client.openapi.models.V1NodeList;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.bouncycastle.cert.ocsp.Req;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.api.types.ServiceType;
 
@@ -121,6 +127,7 @@ public class PlatformUtils {
     public final static String qiniu = "hummer-qiniu-plugin";
     public final static String qingcloud = "hummer-qingcloud-plugin";
     public final static String ucloud = "hummer-ucloud-plugin";
+    public final static String jdcloud = "hummer-jdcloud-plugin";
     //漏洞检测插件
     public final static String nuclei = "hummer-nuclei-plugin";
     public final static String xray = "hummer-xray-plugin";
@@ -146,14 +153,14 @@ public class PlatformUtils {
      */
     public final static List<String> getPlugin() {
         return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud,
-                nuclei, xray, tsunami, k8s, openshift, rancher, kubesphere);
+                nuclei, xray, tsunami, k8s, openshift, rancher, kubesphere,jdcloud);
     }
 
     /**
      * 支持云平台插件
      */
     public final static List<String> getCloudPlugin() {
-        return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, k8s);
+        return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, k8s,jdcloud);
     }
 
     /**
@@ -161,7 +168,7 @@ public class PlatformUtils {
      */
     public static boolean isSupportCloudAccount(String source) {
         // 云平台插件
-        List<String> tempList = Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, k8s);
+        List<String> tempList = Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, k8s,jdcloud);
 
         // 利用list的包含方法,进行判断
         return tempList.contains(source);
@@ -379,6 +386,13 @@ public class PlatformUtils {
                         "UCLOUD_PRIVATEKEY=" + ucloudPrivateKey + " " +
                         "UCLOUD_DEFAULT_REGION=" + region + " ";
                 break;
+            case jdcloud:
+                String accessKey = params.get("AccessKey");
+                String secretAccessKey = params.get("SecretAccessKey");
+                pre = "JDCLOUD_ACCESSKEY=" + accessKey + " " +
+                        "JDCLOUD_SECRETKEY="+secretAccessKey+" "+
+                        "JDCLOUD_DEFAULT_REGION="+ region +" ";
+                break;
             case nuclei:
                 try {
                     String nucleiCredential = params.get("nucleiCredential");
@@ -561,6 +575,12 @@ public class PlatformUtils {
                 UCloudCredential uCloudCredential = new Gson().fromJson(account.getCredential(), UCloudCredential.class);
                 map.put("UcloudPublicKey", uCloudCredential.getUcloudPublicKey());
                 map.put("UcloudPrivateKey", uCloudCredential.getUcloudPrivateKey());
+                map.put("region", region);
+                break;
+            case jdcloud:
+                JDCloudCredential jdCloudCredential = new Gson().fromJson(account.getCredential(),JDCloudCredential.class);
+                map.put("AccessKey",jdCloudCredential.getAccessKey());
+                map.put("SecretAccessKey",jdCloudCredential.getSecretAccessKey());
                 map.put("region", region);
                 break;
             case k8s:
@@ -898,6 +918,14 @@ public class PlatformUtils {
                         if (!jsonArray.contains(jsonObject)) jsonArray.add(jsonObject);
                     }
                     break;
+                case jdcloud:
+                    for (Map.Entry<String, String> entry : RegionsConstants.JdcloudMap.entrySet()) {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("regionId", entry.getKey());
+                        jsonObject.put("regionName", entry.getValue());
+                        if (!jsonArray.contains(jsonObject)) jsonArray.add(jsonObject);
+                    }
+                    break;
                 case k8s:
                     K8sRequest k8sRequest = new K8sRequest();
                     k8sRequest.setCredential(account.getCredential());
@@ -1115,6 +1143,17 @@ public class PlatformUtils {
                 } catch (Exception e) {
                     throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
+            case jdcloud:
+                JDCloudCredential jdCloudCredential = new Gson().fromJson(account.getCredential(),JDCloudCredential.class);
+                JDRequest jdRequest = new JDRequest(jdCloudCredential);
+                try{
+                    DescribeGroupsResponse describeGroupsResponse = jdRequest.getIAMClient().describeGroups(new DescribeGroupsRequest());
+                    int statusCode = describeGroupsResponse.getJdcloudHttpResponse().getStatusCode();
+                    return statusCode == 200;
+                }catch (Exception e){
+                    throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
+                }
+
             case k8s:
                 /**创建默认 Api 客户端**/
                 // 定义连接集群的 Token
