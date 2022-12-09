@@ -9,13 +9,14 @@
     <el-button icon="el-icon-refresh" size="small" @click="refresh">
       <span v-if="showOpen">{{ $t('commons.refresh') }}</span>
     </el-button>
-    <el-button v-if="listStatus == 1" icon="el-icon-download" size="small" @click="download">
+    <el-button icon="el-icon-download" size="small" @click="download">
       <span v-if="showOpen">{{ $t('server.download') }}</span>
     </el-button>
-    <el-button v-if="listStatus == 1" icon="el-icon-setting" size="small" @click="list">
+    <el-button icon="el-icon-setting" size="small" @click="list">
       <span v-if="showOpen">{{ $t('commons.list') }}</span>
     </el-button>
 
+    <!-- 列表项过滤显示弹出框 -->
     <el-dialog :title="$t('commons.list_item')" :visible.sync="visible" custom-class="adv-dialog" width="60%"
                :append-to-body="true">
       <div class="columns">
@@ -61,6 +62,23 @@
         </div>
       </template>
     </el-dialog>
+    <!-- 列表项过滤显示弹出框 -->
+
+    <!-- 下载弹出框 -->
+    <el-dialog :title="$t('pdf.download_type')" :visible.sync="pdfVisible" custom-class="adv-dialog" width="30%"
+               :append-to-body="true">
+      <div>
+        <el-button type="warning" @click="pdfDown"><i class="iconfont icon-pdf1"></i>{{ $t('pdf.export_pdf') }}</el-button>
+        <el-button type="success" v-if="listStatus == 1" @click="excelDown"><i class="iconfont icon-excel"></i>{{ $t('pdf.export_excel') }}</el-button>
+      </div>
+      <template v-slot:footer>
+        <div class="dialog-footer">
+          <el-button @click="pdfVisible = false">{{ $t('commons.cancel') }}</el-button>
+        </div>
+      </template>
+    </el-dialog>
+    <!-- 下载弹出框 -->
+
   </span>
 </template>
 
@@ -107,6 +125,7 @@
     data() {
       return {
         visible: false,
+        pdfVisible: false,
         checkItem: this.checkedColumnNames,
         checkAllChild: this.checkAll,
       }
@@ -125,7 +144,7 @@
         this.$emit('menu');
       },
       download() {
-        this.$emit('download');
+        this.pdfVisible = true;
       },
       reset() {
       },
@@ -137,6 +156,12 @@
       },
       handleCheckAllChange(val) {
         this.$emit('handleCheckAllChange', val);
+      },
+      pdfDown() {
+        this.$emit('pdfDown');
+      },
+      excelDown() {
+        this.$emit('excelDown');
       },
     },
     created() {

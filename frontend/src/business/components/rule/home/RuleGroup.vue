@@ -11,7 +11,7 @@
                         @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
         </template>
 
-        <el-row :gutter="20" class="el-row-body" v-show="listStatus === 2">
+        <el-row :gutter="20" class="el-row-body pdfDom" v-show="listStatus === 2">
           <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in ftableData"
                   :key="index" class="el-col el-col-su">
             <el-card :body-style="{ padding: '15px' }">
@@ -25,8 +25,8 @@
                     </el-image>
                   </el-col>
                   <el-col :span="21">
-                    <el-row class="plugin">{{ data.pluginName }}</el-row>
-                    <el-row class="desc">{{ data.description }}</el-row>
+                    <el-row class="plugin" v-if="checkedColumnNames.includes('pluginName')">{{ data.pluginName }}</el-row>
+                    <el-row class="desc" v-if="checkedColumnNames.includes('description')">{{ data.description }}</el-row>
                   </el-col>
                 </el-row>
               </div>
@@ -34,9 +34,9 @@
               <div style="padding: 0 14px 14px 14px;">
                 <el-row>
                   <el-col :span="19">
-                    <span class="da-na">{{ data.name }}</span>
+                    <span class="da-na" v-if="checkedColumnNames.includes('name')">{{ data.name }}</span>
                   </el-col>
-                  <el-col :span="5">
+                  <el-col :span="5" v-if="checkedColumnNames.includes('flag')">
                     <el-button size="medium" type="danger" class="round" round v-if="data.flag === true">
                       {{ $t('rule.tag_flag_true') }}
                     </el-button>
@@ -88,7 +88,7 @@
           <el-table-column type="index" min-width="40"/>
           <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('rule.rule_set_name')" min-width="180" show-overflow-tooltip></el-table-column>
           <el-table-column prop="description" v-if="checkedColumnNames.includes('description')" :label="$t('commons.description')" min-width="600" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" min-width="180" show-overflow-tooltip>
+          <el-table-column :label="$t('account.cloud_platform')" v-if="checkedColumnNames.includes('pluginName')" min-width="180" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
