@@ -43,7 +43,7 @@
 
 <script>
 
-import {LIST_CHANGE, ResourceEvent} from "@/business/components/common/head/ListEvent";
+import {LIST_CHANGE, ResourceEvent} from "@/common/js/ListEvent";
 
 export default {
   name: "HeaderMenus",
