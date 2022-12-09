@@ -1,6 +1,6 @@
 <template>
   <main-container>
-    <el-card class="table-card" v-loading="result.loading">
+    <el-card class="table-card" id="pdfDom" v-loading="result.loading">
       <el-row :gutter="20">
         <el-col :span="6" style="max-height: 468px;">
           <el-card class="box-card" style="max-height: 468px;">
@@ -39,9 +39,12 @@
             <template v-slot:header>
               <div class="clearfix">
                 <el-col :span="24">
-                  <span style="color: #215d9a;">
+                  <span style="color: #215d9a;font-size: 18px;">
                      <i class="el-icon-s-grid"></i>  {{ sbomVersion?sbomVersion.sbomName:'N/A' }} ({{ sbomVersion?sbomVersion.sbomDesc:'N/A' }}) -
                     <span style="color: #0a7be0;">{{ sbomVersion?sbomVersion.name:'N/A' }}</span>
+                  </span>
+                  <span style="float: right;">
+                    <el-button type="warning" plain size="mini" @click="pdfDown"><i class="iconfont icon-pdf1"></i>{{ $t('pdf.export_pdf') }}</el-button>
                   </span>
                 </el-col>
               </div>
@@ -459,6 +462,7 @@ import MetricChart from "@/business/components/common/chart/MetricChart";
 import CodeLogForm from "@/business/components/code/home/LogForm";
 import ImageLogForm from "@/business/components/image/home/LogForm";
 import FsLogForm from "@/business/components/fs/home/LogForm";
+import htmlToPdf from "@/common/js/htmlToPdf";
 
 /* eslint-disable */
 export default {
@@ -513,6 +517,7 @@ export default {
         unknown: 0,
         total: 0,
       },
+      htmlTitle: this.$t('pdf.html_title'),
     }
   },
   methods: {
@@ -634,6 +639,10 @@ export default {
           this.content = response.data;
         });
       }
+    },
+    //下载pdf
+    pdfDown() {
+      htmlToPdf.getPdfById(this.htmlTitle);
     },
   },
   activated() {
@@ -769,6 +778,11 @@ export default {
   margin-bottom: 0;
   padding: 10px 2%;
   width: 46%;
+}
+.iconfont {
+  margin-right: 10px;
+  text-align: center;
+  font-size: 12px;
 }
 * { touch-action: pan-y; }
 /deep/ :focus{outline:0;}
