@@ -21,12 +21,16 @@
         <span style="padding-left: 7px;">{{ $t('commons.show_all') }}</span>
       </el-menu-item>
     </el-submenu>
+
+    <el-button class="el-btn-btm" type="warning" plain size="small" @click="pdfDown">{{ $t('pdf.export_pdf') }}<i class="iconfont icon-pdf1"></i></el-button>
+
   </el-menu>
 </template>
 
 <script>
 import SearchList from "@/business/components/oss/head/SearchList";
 import {ACCOUNT_NAME} from "../../../../common/js/constants";
+import htmlToPdf from "@/common/js/htmlToPdf";
 
 /* eslint-disable */
 export default {
@@ -37,6 +41,7 @@ export default {
   components: {SearchList},
   data() {
     return {
+      htmlTitle: this.$t('pdf.html_title'),
       currentAccount: this.accountName?this.accountName:localStorage.getItem(ACCOUNT_NAME)
     }
   },
@@ -50,6 +55,10 @@ export default {
     },
     selectAccount(accountId, accountName) {
       this.$emit('selectAccount', accountId, accountName);
+    },
+    //下载pdf
+    pdfDown() {
+      htmlToPdf.getPdfById(this.htmlTitle);
     },
   },
 }
@@ -71,5 +80,11 @@ export default {
 .el-btn-btm {
   vertical-align: middle;
   margin: 3px 0;
+}
+
+.iconfont {
+  margin: 0 0 0 3px;
+  text-align: center;
+  font-size: 12px;
 }
 </style>

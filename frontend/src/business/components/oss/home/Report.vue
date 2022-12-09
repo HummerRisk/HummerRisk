@@ -1,7 +1,7 @@
 <template>
   <main-container v-loading="result.loading">
 
-    <el-card class="el-row-card">
+    <el-card class="el-row-card" id="pdfDom">
 
       <template v-slot:header>
 
