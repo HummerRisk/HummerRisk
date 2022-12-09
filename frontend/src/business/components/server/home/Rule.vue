@@ -60,6 +60,13 @@
           </template>
         </el-table-column>
         <el-table-column prop="description" v-if="checkedColumnNames.includes('description')" :label="$t('package.description')" min-width="250" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="type" v-if="checkedColumnNames.includes('type')" :label="$t('commons.type')" min-width="70" show-overflow-tooltip>
+          <template v-slot:default="scope">
+            <span v-if="scope.row.type === 'linux'">Linux</span>
+            <span v-if="scope.row.type === 'windows'">Windows</span>
+            <span v-if="!scope.row.type">N/A</span>
+          </template>
+        </el-table-column>
         <el-table-column :label="$t('package.status')" v-if="checkedColumnNames.includes('status')" min-width="70" show-overflow-tooltip>
           <template v-slot:default="scope">
             <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
@@ -241,6 +248,11 @@ const columnOptions = [
   {
     label: 'package.description',
     props: 'description',
+    disabled: false
+  },
+  {
+    label: 'commons.type',
+    props: 'type',
     disabled: false
   },
   {

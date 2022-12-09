@@ -219,6 +219,7 @@ export default {
     show_menu: '组块',
     show_list: '显示',
     clear_select: '清除选中项',
+    type: '类型',
   },
   workspace: {
     create: '创建工作空间',
