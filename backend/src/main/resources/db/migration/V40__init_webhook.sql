@@ -22,8 +22,12 @@ ALTER TABLE `server_rule` ADD `type` varchar(64) DEFAULT 'linux' COMMENT 'type: 
 
 ALTER TABLE `server_result` ADD `type` varchar(64) DEFAULT 'linux' COMMENT 'type: linux/windows';
 
+ALTER TABLE `history_server_result` ADD `type` varchar(64) DEFAULT 'linux' COMMENT 'type: linux/windows';
+
 UPDATE `server` SET `type` = 'linux';
 
 UPDATE `server_rule` SET `type` = 'linux';
 
 UPDATE `server_result` SET `type` = 'linux';
+
+UPDATE `history_server_result` SET `type` = 'linux';
