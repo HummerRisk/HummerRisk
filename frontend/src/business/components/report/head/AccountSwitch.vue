@@ -21,13 +21,17 @@
         <span style="padding-left: 7px;">{{ $t('commons.show_all') }}</span>
       </el-menu-item>
     </el-submenu>
+
+    <el-button class="el-btn-btm" type="warning" plain size="small" @click="pdfDown">{{ $t('pdf.export_pdf') }}</el-button>
     <el-button class="el-btn-btm" type="success" plain size="small" @click="openDownload">{{ $t('report.download_account') }}</el-button>
+
   </el-menu>
 </template>
 
 <script>
 import SearchList from "@/business/components/common/head/SearchList";
 import {ACCOUNT_NAME} from "../../../../common/js/constants";
+import htmlToPdf from "@/common/js/htmlToPdf";
 
 /* eslint-disable */
 export default {
@@ -38,6 +42,7 @@ export default {
   components: {SearchList},
   data() {
     return {
+      htmlTitle: this.$t('pdf.html_title'),
       currentAccount: this.accountName?this.accountName:localStorage.getItem(ACCOUNT_NAME)
     }
   },
@@ -52,6 +57,10 @@ export default {
     selectAccount(accountId, accountName) {
       this.$emit('selectAccount', accountId, accountName);
     },
+    //下载pdf
+    pdfDown() {
+      htmlToPdf.getPdfById(this.htmlTitle);
+    },
   },
 }
 </script>
@@ -59,7 +68,7 @@ export default {
 <style scoped>
 .account-name {
   display: inline-block;
-  width: 250px;
+  width: 199px;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
