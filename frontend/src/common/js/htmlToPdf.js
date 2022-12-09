@@ -9,7 +9,9 @@ const htmlToPdf = {
   getPdf(title) {
     html2Canvas(document.querySelector('.pdfDom'), {
       allowTaint: true,
+      useCORS: true
     }).then(canvas=>{
+      document.body.appendChild(canvas);
       //内容的宽度
       let contentWidth = canvas.width;
       //内容高度
@@ -47,7 +49,9 @@ const htmlToPdf = {
   getPdfById(title) {
     html2Canvas(document.querySelector('#pdfDom'), {
       allowTaint: true,
+      useCORS: true,
     }).then(canvas=>{
+      document.body.appendChild(canvas);
       //内容的宽度
       let contentWidth = canvas.width;
       //内容高度

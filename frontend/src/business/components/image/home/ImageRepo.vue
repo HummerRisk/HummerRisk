@@ -653,7 +653,6 @@ export default {
       });
     },
     handleList(item) {
-      console.log(item)
       if (item) {
         this.handleItem = item;
       }

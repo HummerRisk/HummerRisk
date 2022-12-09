@@ -1373,14 +1373,14 @@
     <select id="getHistoryCodeReportDTOList" resultMap="HistoryCodeReportDTOMap" parameterType="java.lang.String">
         SELECT t.*
         FROM history_code_result t
-                 JOIN task_item_resource t1 on t1.resource_id = t.id
+        JOIN task_item_resource t1 on t1.resource_id = t.id
         WHERE t1.task_id = #{id}
     </select>
 
     <select id="getCodeResultItemList" resultType="com.hummerrisk.base.domain.CodeResultItemWithBLOBs" parameterType="java.lang.String">
         SELECT t.*
         FROM code_result_item t
-                 JOIN history_code_result t1 on t1.id = t.result_id
+        JOIN history_code_result t1 on t1.id = t.result_id
         WHERE t1.id = #{id}
     </select>
 
@@ -1392,14 +1392,14 @@
     <select id="getHistoryFsReportDTOList" resultMap="HistoryFsReportDTOMap" parameterType="java.lang.String">
         SELECT t.*
         FROM history_file_system_result t
-                 JOIN file_system_item_resource t1 on t1.resource_id = t.id
+        JOIN task_item_resource t1 on t1.resource_id = t.id
         WHERE t1.task_id = #{id}
     </select>
 
     <select id="getFsResultItemList" resultType="com.hummerrisk.base.domain.FileSystemResultItemWithBLOBs" parameterType="java.lang.String">
         SELECT t.*
         FROM file_system_result_item t
-                 JOIN history_file_system_result t1 on t1.id = t.result_id
+        JOIN history_file_system_result t1 on t1.id = t.result_id
         WHERE t1.id = #{id}
     </select>
 

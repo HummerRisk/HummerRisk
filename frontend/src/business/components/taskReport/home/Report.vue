@@ -1,11 +1,11 @@
 <template>
   <div v-loading="result.loading">
 
-    <el-card>
+    <el-card id="pdfDom">
 
       <div class="filter-wrapper">
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="11">
             <el-select v-model="selectedTask" filterable clearable :placeholder="$t('task.please_filter_report')" style="width: 50%;" @change="search">
               <el-option
                 v-for="item in tasks"
@@ -14,17 +14,17 @@
                 :value="item">
               </el-option>
             </el-select>
-            <el-button type="primary" plain icon="el-icon-download" @click="genReport"> {{ $t('task.download_report') }}</el-button>
+            <el-button type="warning" plain @click="genReport"> <i class="iconfont icon-pdf1"></i> {{ $t('task.download_report') }}</el-button>
           </el-col>
-          <el-col :span="12" v-if="selectedTask">
+          <el-col :span="13" v-if="selectedTask">
             <el-row :gutter="20">
               <el-col :span="8" style="padding: 12px 0;color: #00bb00;">
                 {{ $t('task.task_name') }} : {{ selectedTask.taskName }}
               </el-col>
-              <el-col :span="8" style="padding: 12px 0;color: #00bb00;">
+              <el-col :span="11" style="padding: 12px 0;color: #00bb00;">
                 {{ $t('commons.create_time') }} : <i class="el-icon-time"></i> {{ selectedTask.createTime | timestampFormatDate }}
               </el-col>
-              <el-col :span="8">
+              <el-col :span="5">
                 <el-button plain type="success" icon="el-icon-success">
                   {{ $t('resource.i18n_done') }}
                 </el-button>
@@ -475,6 +475,7 @@ import ImageLogForm from "@/business/components/image/home/LogForm";
 import FsLogForm from "@/business/components/fs/home/LogForm";
 import K8sLogForm from "@/business/components/k8s/home/LogForm";
 import ConfigLogForm from "@/business/components/config/home/LogForm";
+import htmlToPdf from "@/common/js/htmlToPdf";
 
 
 /* eslint-disable */
@@ -502,6 +503,7 @@ export default {
       tagSelect: [],
       resourceTypes: [],
       filterJson: this.filterJsonKeyAndValue,
+      htmlTitle: this.$t('pdf.html_title'),
     }
   },
   watch: {
@@ -547,7 +549,7 @@ export default {
         this.$warning(this.$t('task.no_selected_task'));
         return;
       }
-      // this.exportDom();
+      this.pdfDown();
     },
     renderContent (h, node) {
       const cls = ['diy-wrapper']
@@ -665,6 +667,10 @@ export default {
       }
       return jsonKeyAndValue;
     },
+    //下载pdf
+    pdfDown() {
+      htmlToPdf.getPdfById(this.htmlTitle);
+    },
   },
   activated() {
     this.init();
@@ -781,6 +787,11 @@ export default {
   border-radius: 30px;
   font-size: 14px;
   margin: -7px 0 0 15px;
+}
+
+.iconfont {
+  text-align: center;
+  font-size: 12px;
 }
 
 </style>
