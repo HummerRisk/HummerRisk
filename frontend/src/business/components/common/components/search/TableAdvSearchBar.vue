@@ -1,21 +1,36 @@
 <template>
   <span class="adv-search-bar">
+    <!-- 列表 -->
     <el-button v-if="showList" icon="el-icon-more" size="small" @click="more">
       <span v-if="showOpen">{{ $t('commons.show_more') }}</span>
     </el-button>
+    <!-- 列表 -->
+
+    <!-- 组块 -->
     <el-button v-if="showList" icon="el-icon-menu" size="small" @click="menu">
       <span v-if="showOpen">{{ $t('commons.show_menu') }}</span>
     </el-button>
+    <!-- 组块 -->
+
+    <!-- 刷新 -->
     <el-button icon="el-icon-refresh" size="small" @click="refresh">
       <span v-if="showOpen">{{ $t('commons.refresh') }}</span>
     </el-button>
+    <!-- 刷新 -->
+
+    <!-- 下载 -->
     <el-button icon="el-icon-download" size="small" @click="download">
       <span v-if="showOpen">{{ $t('server.download') }}</span>
     </el-button>
+    <!-- 下载 -->
+
+    <!-- 列表项过滤显示 -->
     <el-button icon="el-icon-setting" size="small" @click="list">
       <span v-if="showOpen">{{ $t('commons.list') }}</span>
     </el-button>
+    <!-- 列表项过滤显示 -->
 
+    <!-- 列表项过滤显示弹出框 -->
     <el-dialog :title="$t('commons.list_item')" :visible.sync="visible" custom-class="adv-dialog" width="60%"
                :append-to-body="true">
       <div class="columns">
@@ -61,8 +76,10 @@
         </div>
       </template>
     </el-dialog>
+    <!-- 列表项过滤显示弹出框 -->
 
-    <el-dialog :title="$t('pdf.download_type')" :visible.sync="pdfVisible" custom-class="adv-dialog" width="60%"
+    <!-- 下载弹出框 -->
+    <el-dialog :title="$t('pdf.download_type')" :visible.sync="pdfVisible" custom-class="adv-dialog" width="30%"
                :append-to-body="true">
       <div>
         <el-button type="warning" @click="pdfDown"><i class="iconfont icon-pdf1"></i>{{ $t('pdf.export_pdf') }}</el-button>
@@ -74,6 +91,8 @@
         </div>
       </template>
     </el-dialog>
+    <!-- 下载弹出框 -->
+
   </span>
 </template>
 

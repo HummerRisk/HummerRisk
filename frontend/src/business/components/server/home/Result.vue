@@ -34,6 +34,13 @@
             <rule-type :row="row"/>
           </template>
         </el-table-column>
+        <el-table-column prop="type" v-if="checkedColumnNames.includes('type')" :label="$t('commons.type')" min-width="70" show-overflow-tooltip>
+          <template v-slot:default="scope">
+            <span v-if="scope.row.type === 'linux'">Linux</span>
+            <span v-if="scope.row.type === 'windows'">Windows</span>
+            <span v-if="!scope.row.type">N/A</span>
+          </template>
+        </el-table-column>
         <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resultStatus')" :label="$t('server.result_status')" min-width="130" prop="resultStatus" sortable show-overflow-tooltip>
           <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
@@ -188,6 +195,11 @@ const columnOptions = [
   {
     label: 'server.severity',
     props: 'severity',
+    disabled: false
+  },
+  {
+    label: 'commons.type',
+    props: 'type',
     disabled: false
   },
   {

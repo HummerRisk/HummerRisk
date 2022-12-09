@@ -68,6 +68,12 @@
                 <property name="object" value="${condition}.severity"/>
             </include>
         </if>
+        <if test='${condition}.type != null'>
+            and t.type
+            <include refid="condition">
+                <property name="object" value="${condition}.type"/>
+            </include>
+        </if>
         <if test='${condition}.ruleTag != null and ${condition}.ruleTag.value != "all"'>
             and #{${condition}.ruleTag.value}
             <choose>

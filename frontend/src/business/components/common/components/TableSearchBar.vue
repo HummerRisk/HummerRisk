@@ -1,5 +1,6 @@
 <template>
   <span class="adv-search-bar">
+    <!-- 名称查询 -->
     <el-input size="small" :placeholder="$t('commons.search_by') + $t(selectName) + $t('commons.search')"
               v-model="filterText" class="input-with-select search" maxlength="60" @change="search" clearable>
       <el-select v-model="select" slot="prepend" :placeholder="$t('commons.please_select')" @change="changeName" style="width:100%">
@@ -16,9 +17,15 @@
     <el-button icon="iconfont icon-shaixuan" size="small" @click="open" v-if="showOpen && condition" style="margin: 10px 0 10px 10px;">
       <span v-if="showFilter">{{ $t('el.table.confirmFilter') }}</span>
     </el-button>
+    <!-- 名称查询 -->
+
+    <!-- 上传 -->
     <el-button icon="el-icon-upload2" size="small" @click="upload" v-if="showOpen && showUpload">
       <span v-if="showUploadName">{{ $t('server.upload') }}</span>
     </el-button>
+    <!-- 上传 -->
+
+    <!-- 筛选 -->
     <el-dialog :title="$t('commons.adv_search.combine')" :visible.sync="visible" custom-class="adv-dialog"
                :append-to-body="true">
       <div>
@@ -34,6 +41,8 @@
         </div>
       </template>
     </el-dialog>
+    <!-- 筛选 -->
+
   </span>
 </template>
 
