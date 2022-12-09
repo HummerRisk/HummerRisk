@@ -14,10 +14,17 @@ import com.hummerrisk.dto.*;
 import com.hummerrisk.service.ServerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
@@ -269,6 +276,41 @@ public class ServerController {
     @PostMapping("/ExcelInsertExperts")
     public void insertExperts(@RequestParam("file") MultipartFile file) throws Exception {
         serverService.insertExperts(file);
+    }
+
+    @I18n
+    @ApiOperation("下载Excel示例")
+    @GetMapping("/downloadExcel")
+    public void downloadExcel(HttpServletResponse response) {
+        FileInputStream fis = null;
+        ServletOutputStream sos = null;
+        try {
+            String fileName = "template.xlsx";
+            // resources下路径，比如文件位置在：resources/excel/template.xlsx
+            String path = "excel/" + fileName;
+            //设置响应头
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
+
+            ClassPathResource classPathResource = new ClassPathResource(path);
+            fis = new FileInputStream(classPathResource.getFile());
+            sos = response.getOutputStream();
+            IOUtils.copy(fis, sos);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("下载失败！");
+        } finally {
+            try {
+                if (fis != null) {
+                    fis.close();
+                }
+                if (sos != null) {
+                    sos.flush();
+                    sos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

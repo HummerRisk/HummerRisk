@@ -798,6 +798,7 @@
             </exclusions>
         </dependency>
         <!-- tencent -->
+
         <!-- jd -->
         <dependency>
             <groupId>com.jdcloud.sdk</groupId>
@@ -810,6 +811,7 @@
             <version>0.2.3</version>
         </dependency>
         <!-- jd -->
+
         <!-- OpenStack -->
         <dependency>
             <groupId>jakarta.ws.rs</groupId>

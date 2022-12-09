@@ -467,6 +467,7 @@
               <el-button
                 type="success"
                 size="small"
+                @click="downloadExcel"
               ><i class="el-icon-download" style="margin: 1px 3px 0 0;"></i> {{ $t('server.excel_file_ex_down') }}
             </el-button>
             </el-form-item>
@@ -514,6 +515,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import * as XLSX from 'xlsx'
+import {saveAs} from "@/common/js/FileSaver";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -1143,6 +1145,14 @@ const columnOptions = [
       },
       updateServerExcel() {
 
+      },
+      downloadExcel() {
+        this.$fileDownload("/server/downloadExcel", response => {
+          let blob = new Blob([response.data], {type: "'application/octet-stream'"});
+          saveAs(blob, "template.xlsx");
+        }, error => {
+          console.log("导出报错", error);
+        });
       },
     },
     activated () {
