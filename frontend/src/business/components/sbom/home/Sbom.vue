@@ -44,7 +44,7 @@
                     <span style="color: #0a7be0;">{{ sbomVersion?sbomVersion.name:'N/A' }}</span>
                   </span>
                   <span style="float: right;">
-                    <el-button type="warning" plain size="mini" @click="pdfDown"><i class="iconfont icon-pdf1"></i>{{ $t('pdf.export_pdf') }}</el-button>
+                    <el-button type="warning" plain size="mini" @click="pdfDown"><i class="iconfont icon-pdf1"></i> {{ $t('pdf.export_pdf') }}</el-button>
                   </span>
                 </el-col>
               </div>

@@ -222,6 +222,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter} from "@/common/js/utils";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {severityOptions} from "@/common/js/constants";
+import RuleType from "@/business/components/task/home/RuleType";
 
 /* eslint-disable */
   export default {
@@ -233,6 +234,7 @@ import {severityOptions} from "@/common/js/constants";
       TableOperator,
       DialogFooter,
       SeverityType,
+      RuleType,
     },
     data() {
       return {

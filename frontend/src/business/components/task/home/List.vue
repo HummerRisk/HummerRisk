@@ -78,7 +78,7 @@
     <!--Task detail-->
     <el-drawer class="rtl" :title="$t('task.task_detail')" :visible.sync="detailVisible" size="85%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
-      <el-table border :data="detailTable" class="adjust-table table-content" :row-class-name="tableRowClassName" @filter-change="filter">
+      <el-table border :data="detailTable" class="adjust-table table-content" @filter-change="filter">
         <el-table-column type="index" min-width="3%"/>
         <el-table-column :label="$t('task.task_account_name')" min-width="15%" show-overflow-tooltip>
           <template v-slot:default="scope">
@@ -302,7 +302,7 @@
                 </el-row>
               </template>
 
-              <el-table border :data="updateTableData" :key="itemKey" class="adjust-table table-content" :row-class-name="tableRowClassName" @filter-change="updateFilter">
+              <el-table border :data="updateTableData" :key="itemKey" class="adjust-table table-content" @filter-change="updateFilter">
                 <el-table-column type="index" min-width="3%"/>
                 <el-table-column :label="$t('task.task_account_name')" min-width="15%" show-overflow-tooltip>
                   <template v-slot:default="scope">
