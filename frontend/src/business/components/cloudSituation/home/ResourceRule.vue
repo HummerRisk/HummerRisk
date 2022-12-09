@@ -6,7 +6,7 @@
     <el-button v-if="type==='NO-RISK'" slot="reference" size="mini" type="success" plain>
       {{ $t('resource.n_risk') }}
     </el-button>
-    <el-button v-if="type==='HAVE-RISK'" slot="reference" size="mini" type="error" plain @click="showRegions">
+    <el-button v-if="type==='HAVE-RISK'" slot="reference" size="mini" type="danger" plain @click="showRegions">
       {{ $t('resource.have_risk') }}
     </el-button>
 
