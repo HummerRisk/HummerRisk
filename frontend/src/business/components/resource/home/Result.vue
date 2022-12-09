@@ -1,71 +1,73 @@
 <template>
   <main-container v-loading="result.loading">
 
-    <el-card class="table-card el-row-card">
+    <div id="pdfDom">
 
-      <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch" @selectAccount="selectAccount" @goReport="goReport"/>
+      <el-card class="table-card el-row-card">
 
-      <el-divider><i class="el-icon-tickets"></i></el-divider>
+        <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch" @selectAccount="selectAccount" @goReport="goReport"/>
 
-    </el-card>
+        <el-divider><i class="el-icon-tickets"></i></el-divider>
 
-    <el-card class="table-card el-row-card" v-if="source">
-      <h2 style="font-size: 18px;">{{ $t('account.cloud_account') }}</h2>
-      <el-row>
-        <el-col :span="8">
-          <div class="grid-content">
-            <el-row>
-              <el-col :span="8">
-                <span style="color: #909090;">{{ $t('account.scan_score_') }}</span>
-              </el-col>
-              <el-col :span="4">
+      </el-card>
+
+      <el-card class="table-card el-row-card" v-if="source">
+        <h2 style="font-size: 18px;">{{ $t('account.cloud_account') }}</h2>
+        <el-row>
+          <el-col :span="8">
+            <div class="grid-content">
+              <el-row>
+                <el-col :span="8">
+                  <span style="color: #909090;">{{ $t('account.scan_score_') }}</span>
+                </el-col>
+                <el-col :span="4">
                     <span v-if="source.resultStatus != 'APPROVED' && source.resultStatus != 'PROCESSING'">
                       <el-tooltip class="item" effect="dark" :content="$t('resource.scan_score')" placement="top">
                         <center-chart v-if="!!source.scanScore" :row="source.scanScore"></center-chart>
                       </el-tooltip>
                     </span>
-                    <span v-else>
+                  <span v-else>
                       <img style="width: 150px;height: 100px;" :src="require(`@/assets/img/gif/loading.gif`)" alt=""/>
                     </span>
+                </el-col>
+              </el-row>
+            </div>
+          </el-col>
+          <el-col :span="1">
+            <div class="split"></div>
+          </el-col>
+          <el-col :span="15" class="el-cloud-row">
+            <!-- 第一行 -->
+            <el-row>
+              <el-col :span="4">
+                <span style="color: #909090;font-size: 16px;">{{ $t('account.name') }}</span>
               </el-col>
-            </el-row>
-          </div>
-        </el-col>
-        <el-col :span="1">
-          <div class="split"></div>
-        </el-col>
-        <el-col :span="15" class="el-cloud-row">
-          <!-- 第一行 -->
-          <el-row>
-            <el-col :span="4">
-              <span style="color: #909090;font-size: 16px;">{{ $t('account.name') }}</span>
-            </el-col>
-            <el-col :span="8">
-              <span style="font-size: 16px;">{{ source.name }}</span>
-            </el-col>
-            <el-col :span="4">
-              <span style="color: #909090;font-size: 16px;">{{ $t('account.cloud_platform') }}</span>
-            </el-col>
-            <el-col :span="8">
+              <el-col :span="8">
+                <span style="font-size: 16px;">{{ source.name }}</span>
+              </el-col>
+              <el-col :span="4">
+                <span style="color: #909090;font-size: 16px;">{{ $t('account.cloud_platform') }}</span>
+              </el-col>
+              <el-col :span="8">
                 <span style="font-size: 16px;">
                   <img v-if="source.pluginIcon" :src="require(`@/assets/img/platform/${source.pluginIcon}`)"
                        style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                    &nbsp;&nbsp; {{ source.pluginName }}
                 </span>
-            </el-col>
-          </el-row>
-          <!-- 第二行 -->
-          <el-row>
-            <el-col :span="4">
-              <span style="color: #909090;font-size: 16px;">{{ $t('resource.i18n_not_compliance') }}</span>
-            </el-col>
-            <el-col :span="8">
-              <span style="font-size: 16px;">{{ source.returnSum }} / {{ source.resourcesSum }}</span>
-            </el-col>
-            <el-col :span="4">
-              <span style="color: #909090;font-size: 16px;">{{ $t('resource.status') }}</span>
-            </el-col>
-            <el-col :span="8">
+              </el-col>
+            </el-row>
+            <!-- 第二行 -->
+            <el-row>
+              <el-col :span="4">
+                <span style="color: #909090;font-size: 16px;">{{ $t('resource.i18n_not_compliance') }}</span>
+              </el-col>
+              <el-col :span="8">
+                <span style="font-size: 16px;">{{ source.returnSum }} / {{ source.resourcesSum }}</span>
+              </el-col>
+              <el-col :span="4">
+                <span style="color: #909090;font-size: 16px;">{{ $t('resource.status') }}</span>
+              </el-col>
+              <el-col :span="8">
                     <span style="font-size: 16px;">
                       <span style="color: #579df8;" v-if="source.resultStatus === 'APPROVED'">
                         <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
@@ -89,20 +91,20 @@
                         <i class="el-icon-warning"></i> {{ $t('resource.i18n_no_warn') }}
                       </span>
                     </span>
-            </el-col>
-          </el-row>
-          <!-- 第三行 -->
-          <el-row>
-            <el-col :span="4">
-              <span style="color: #909090;font-size: 16px;">{{ $t('account.create_time') }}</span>
-            </el-col>
-            <el-col :span="8">
-              <span style="font-size: 16px;">{{ source.createTime | timestampFormatDate }}</span>
-            </el-col>
-            <el-col :span="4">
-              <span style="color: #909090;font-size: 16px;">{{ $t('commons.operating') }}</span>
-            </el-col>
-            <el-col :span="8">
+              </el-col>
+            </el-row>
+            <!-- 第三行 -->
+            <el-row>
+              <el-col :span="4">
+                <span style="color: #909090;font-size: 16px;">{{ $t('account.create_time') }}</span>
+              </el-col>
+              <el-col :span="8">
+                <span style="font-size: 16px;">{{ source.createTime | timestampFormatDate }}</span>
+              </el-col>
+              <el-col :span="4">
+                <span style="color: #909090;font-size: 16px;">{{ $t('commons.operating') }}</span>
+              </el-col>
+              <el-col :span="8">
               <span style="font-size: 16px;">
                  <el-tooltip class="item" effect="dark" :content="$t('resource.scan')" placement="top">
                     <el-button type="primary" size="mini" @click="handleScans(source)" circle><i
@@ -113,39 +115,39 @@
                     class="el-icon-delete"></i></el-button>
                 </el-tooltip>
               </span>
-            </el-col>
-          </el-row>
-        </el-col>
-      </el-row>
-      <!-- 进度条 -->
-      <el-progress v-if="source.overRules!==source.allRules" :text-inside="true"
-                   :stroke-width="26" :percentage="progressResult"></el-progress>
-    </el-card>
+              </el-col>
+            </el-row>
+          </el-col>
+        </el-row>
+        <!-- 进度条 -->
+        <el-progress v-if="source.overRules!==source.allRules" :text-inside="true"
+                     :stroke-width="26" :percentage="progressResult"></el-progress>
+      </el-card>
 
-    <el-card class="table-card">
-      <template v-slot:header>
-        <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane :label="$t('resource.result_list')" name="first"></el-tab-pane>
-          <el-tab-pane :label="$t('resource.cloud_resource_detail_result')" name="second"></el-tab-pane>
-        </el-tabs>
-        <table-header :condition.sync="condition" @search="search"
-                      :show-name="false" v-if="activeName === 'first'"
-                      :items="items" :columnNames="columnNames"
-                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
-                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
-      </template>
+      <el-card class="table-card">
+        <template v-slot:header>
+          <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
+            <el-tab-pane :label="$t('resource.result_list')" name="first"></el-tab-pane>
+            <el-tab-pane :label="$t('resource.cloud_resource_detail_result')" name="second"></el-tab-pane>
+          </el-tabs>
+          <table-header :condition.sync="condition" @search="search"
+                        :show-name="false" v-if="activeName === 'first'"
+                        :items="items" :columnNames="columnNames"
+                        :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                        @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
+        </template>
 
-      <!-- result first -->
-      <hide-table
-        v-if="activeName === 'first'"
-        :table-data="tableData"
-        @sort-change="sort"
-        @filter-change="filter"
-        @select-all="select"
-        @select="select"
-      >
-        <el-table-column type="index" min-width="40"/>
-        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resourceTypes')" :label="$t('resource.i18n_task_type')" min-width="160" show-overflow-tooltip>
+        <!-- result first -->
+        <hide-table
+          v-if="activeName === 'first'"
+          :table-data="tableData"
+          @sort-change="sort"
+          @filter-change="filter"
+          @select-all="select"
+          @select="select"
+        >
+          <el-table-column type="index" min-width="40"/>
+          <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resourceTypes')" :label="$t('resource.i18n_task_type')" min-width="160" show-overflow-tooltip>
           <span>
             <template v-for="tag in tagSelect">
               <span :key="tag.value" v-if="scope.row.ruleTags">
@@ -156,263 +158,265 @@
             </template>
               {{ scope.row.resourceTypes }}
           </span>
-        </el-table-column>
-        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('taskName')" :label="$t('rule.rule_name')" min-width="200" show-overflow-tooltip>
-          <el-link type="primary" :underline="false" class="md-primary text-click" @click="showTaskDetail(scope.row)">
-            {{ scope.row.taskName }}
-          </el-link>
-        </el-table-column>
-        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('severity')" :label="$t('rule.severity')" min-width="110"
-                         :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true" show-overflow-tooltip>
-          <severity-type :row="scope.row"></severity-type>
-        </el-table-column>
-        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('resource.status')" min-width="130" prop="status" sortable show-overflow-tooltip>
-          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.status === 'UNCHECKED'">
-            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
-          </el-button>
-          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.status === 'APPROVED'">
-            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
-          </el-button>
-          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
-            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
-          </el-button>
-          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="success" v-else-if="scope.row.status === 'FINISHED'">
-            <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
-          </el-button>
-          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="danger" v-else-if="scope.row.status === 'ERROR'">
-            <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
-          </el-button>
-          <el-button @click="showTaskLog(scope.row)" plain size="medium" type="warning" v-else-if="scope.row.status === 'WARNING'">
-            <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
-          </el-button>
-        </el-table-column>
-        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('returnSum')" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="80">
-          <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
-            <span v-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
-            <span v-if="(scope.row.returnSum != null) && (scope.row.returnSum == 0)">
+          </el-table-column>
+          <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('taskName')" :label="$t('rule.rule_name')" min-width="200" show-overflow-tooltip>
+            <el-link type="primary" :underline="false" class="md-primary text-click" @click="showTaskDetail(scope.row)">
+              {{ scope.row.taskName }}
+            </el-link>
+          </el-table-column>
+          <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('severity')" :label="$t('rule.severity')" min-width="110"
+                           :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true" show-overflow-tooltip>
+            <severity-type :row="scope.row"></severity-type>
+          </el-table-column>
+          <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('resource.status')" min-width="130" prop="status" sortable show-overflow-tooltip>
+            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.status === 'UNCHECKED'">
+              <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+            </el-button>
+            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.status === 'APPROVED'">
+              <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+            </el-button>
+            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
+              <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+            </el-button>
+            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="success" v-else-if="scope.row.status === 'FINISHED'">
+              <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+            </el-button>
+            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="danger" v-else-if="scope.row.status === 'ERROR'">
+              <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+            </el-button>
+            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="warning" v-else-if="scope.row.status === 'WARNING'">
+              <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+            </el-button>
+          </el-table-column>
+          <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('returnSum')" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="80">
+            <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
+              <span v-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
+              <span v-if="(scope.row.returnSum != null) && (scope.row.returnSum == 0)">
               {{ scope.row.returnSum }}/{{ scope.row.resourcesSum }}
             </span>
-            <span v-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)">
+              <span v-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)">
               <el-link type="primary" class="text-click" @click="goResource(scope.row)">
                 {{scope.row.returnSum }}/{{ scope.row.resourcesSum }}
               </el-link>
             </span>
-          </el-tooltip>
-        </el-table-column>
-        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resourcesSum')" :label="$t('resource.status_on_off')" prop="resourcesSum" sortable show-overflow-tooltip min-width="110">
-          <span v-if="scope.row.returnSum == 0" style="color: #46ad59;">{{ $t('resource.i18n_compliance_true') }}</span>
-          <span v-else-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)"
-                style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
-          <span v-else-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
-        </el-table-column>
-        <el-table-column prop="createTime" min-width="160" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.update_time')" sortable show-overflow-tooltip>
-          <template v-slot:default="scope">
-            <span>{{ scope.row.createTime | timestampFormatDate }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="110" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
-          <template v-slot:default="scope">
-            <table-operators :buttons="rule_buttons" :row="scope.row"/>
-          </template>
-        </el-table-column>
-      </hide-table>
-
-      <table-pagination v-if="activeName === 'first'" :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
-      <!-- result first -->
-
-      <!-- result second -->
-      <el-row :gutter="20" class="el-row-body" v-if="activeName === 'second'">
-        <!--regions-->
-        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
-          <el-card :body-style="{ padding: '15px' }">
-            <div slot="header" class="clearfix">
-                <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('account.regions') }}</span>
-                <table-search-right :condition.sync="regionCondition" @change="regionFilter" style="float: right;width: 70%" class="search-bar"/>
-            </div>
-            <div style="height: 130px;">
-              <el-table :data="regionData" :show-header="false"
-                        :row-style="{height:'20px', cursor:'pointer'}"
-                        :cell-style="{padding:'0px'}"
-                        height="130" @row-click="handleRegionRow"
-                        :highlight-current-row="highRegionRow"
-                        style="font-size: 12px">
-                <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
-                  <span style="color: #215d9a">{{ scope.row.name }}</span>
-                </el-table-column>
-                <el-table-column prop="sum" min-width="20%" align="right" v-slot:default="scope">
-                  <el-button size="medium" type="success" class="round" round>
-                    {{ scope.row.sum }}
-                  </el-button>
-                </el-table-column>
-              </el-table>
-            </div>
-          </el-card>
-        </el-col>
-        <!--regions-->
-
-        <!--rule-->
-        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
-          <el-card :body-style="{ padding: '15px' }">
-            <div slot="header" class="clearfix">
-              <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.rule') }}</span>
-              <table-search-right :condition.sync="ruleCondition" @change="ruleFilter" style="float: right;width: 70%" class="search-bar"/>
-            </div>
-            <div style="height: 130px;">
-              <el-table :data="ruleData" :show-header="false"
-                        :row-style="{height:'20px', cursor:'pointer'}"
-                        :cell-style="{padding:'0px'}" :row-class-name="ruleTableRowClassName"
-                        height="130" @row-click="handleRuleRow"
-                        :highlight-current-row="highRuleRow"
-                        style="font-size: 14px">
-                <el-table-column prop="name" min-width="85%" align="left" v-slot:default="scope">
-                  <span style="color: #215d9a;font-size: 9px;">{{ scope.row.name }}</span>
-                </el-table-column>
-                <el-table-column prop="sum" min-width="15%" align="right" v-slot:default="scope">
-                  <el-button size="medium" type="warning" class="round" round>
-                    {{ scope.row.sum }}
-                  </el-button>
-                </el-table-column>
-              </el-table>
-            </div>
-          </el-card>
-        </el-col>
-        <!--rule-->
-
-        <!--resource type-->
-        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
-          <el-card :body-style="{ padding: '15px' }">
-            <div slot="header" class="clearfix">
-              <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.resource_type') }}</span>
-              <table-search-right :condition.sync="resourceTypeCondition" @change="resourceTypeFilter" style="float: right;width: 70%" class="search-bar"/>
-            </div>
-            <div style="height: 130px;">
-              <el-table :data="resourceTypeData" :show-header="false"
-                        :row-style="{height:'20px', cursor:'pointer'}"
-                        :cell-style="{padding:'0px'}"
-                        height="130" @row-click="handleResourceTypeRow"
-                        :highlight-current-row="highResourceTypeRow"
-                        style="font-size: 12px">
-                <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
-                  <span style="color: #215d9a">{{ scope.row.name }}</span>
-                </el-table-column>
-                <el-table-column prop="sum" min-width="20%" align="right" v-slot:default="scope">
-                  <el-button size="medium" type="primary" class="round" round>
-                    {{ scope.row.sum }}
-                  </el-button>
-                </el-table-column>
-              </el-table>
-            </div>
-          </el-card>
-        </el-col>
-        <!--resource type-->
-
-        <!--severity-->
-        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
-          <el-card :body-style="{ padding: '15px' }">
-            <div slot="header" class="clearfix">
-              <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.severity') }}</span>
-              <table-search-right :condition.sync="severityCondition" @change="severityFilter" style="float: right;width: 70%" class="search-bar"/>
-            </div>
-            <div style="height: 130px;">
-              <el-table :data="severityData" :show-header="false"
-                        :row-style="{height:'20px', cursor:'pointer'}"
-                        :cell-style="{padding:'0px'}"
-                        height="130" @row-click="handleSeverityRow"
-                        :highlight-current-row="highSeverityRow"
-                        style="font-size: 12px">
-                <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
-                  <span style="color: #215d9a">{{ scope.row.name }}</span>
-                </el-table-column>
-                <el-table-column prop="sum" min-width="20%" align="right" v-slot:default="scope">
-                  <el-button size="medium" type="danger" class="round" round>
-                    {{ scope.row.sum }}
-                  </el-button>
-                </el-table-column>
-              </el-table>
-            </div>
-          </el-card>
-        </el-col>
-        <!--severity-->
-
-      </el-row>
-
-      <el-card class="table-card" v-if="activeName === 'second'">
-
-        <template v-slot:header>
-          <table-header :condition.sync="resourceCondition" @search="resourceSearch"
-                        :show-name="false" v-if="activeName === 'second'"
-                        :items="items2" :columnNames="columnNames2"
-                        :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
-                        @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
-        </template>
-
-        <hide-table
-          v-if="activeName === 'second'"
-          :table-data="resourceTableData"
-          @sort-change="resourceSort"
-          @filter-change="resourceFilter"
-          @select-all="select"
-          @select="select"
-        >
-          <!-- 展开 start -->
-          <el-table-column type="expand" min-width="40">
-            <template v-slot:default="props">
-
-              <el-divider><i class="el-icon-folder-opened"></i></el-divider>
-              <el-form v-if="props.row.resource !== '[]'">
-                <result-read-only :row="typeof(props.row.resource) === 'string'?JSON.parse(props.row.resource):props.row.resource"></result-read-only>
-                <el-divider><i class="el-icon-document-checked"></i></el-divider>
-              </el-form>
-            </template>
+            </el-tooltip>
           </el-table-column>
-          <!-- 展开 end -->
-          <el-table-column type="index" min-width="40"/>
-          <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('hummerId')" :label="$t('resource.Hummer_ID')" min-width="150">
-            {{ scope.row.hummerId }}
+          <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resourcesSum')" :label="$t('resource.status_on_off')" prop="resourcesSum" sortable show-overflow-tooltip min-width="110">
+            <span v-if="scope.row.returnSum == 0" style="color: #46ad59;">{{ $t('resource.i18n_compliance_true') }}</span>
+            <span v-else-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)"
+                  style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
+            <span v-else-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
           </el-table-column>
-          <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('resourceType')" :label="$t('rule.resource_type')" min-width="100">
-            {{ scope.row.resourceType }}
-          </el-table-column>
-          <el-table-column prop="regionName" v-if="checkedColumnNames2.includes('regionName')" :label="$t('account.regions')" min-width="130">
-            <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                {{ scope.row.regionName }}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('severity')" :label="$t('rule.severity')" min-width="90"
-                           :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
-                           show-overflow-tooltip>
-            <severity-type :row="scope.row"></severity-type>
-          </el-table-column>
-          <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('ruleName')" :label="$t('rule.rule_name')" min-width="200" show-overflow-tooltip>
-              {{ scope.row.ruleName }}
-          </el-table-column>
-          <el-table-column prop="createTime" min-width="150" v-if="checkedColumnNames2.includes('createTime')" :label="$t('account.update_time')" sortable show-overflow-tooltip>
+          <el-table-column prop="createTime" min-width="160" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.update_time')" sortable show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>{{ scope.row.createTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column min-width="90" :label="$t('commons.operating')" show-overflow-tooltip>
+          <el-table-column min-width="110" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
             <template v-slot:default="scope">
-              <table-operators v-if="!!scope.row.suggestion" :buttons="resource_buttons2" :row="scope.row"/>
-              <table-operators v-if="!scope.row.suggestion" :buttons="resource_buttons" :row="scope.row"/>
+              <table-operators :buttons="rule_buttons" :row="scope.row"/>
             </template>
           </el-table-column>
         </hide-table>
-        <table-pagination :change="resourceSearch" :current-page.sync="resourcePage" :page-size.sync="resourceSize" :total="resourceTotal"/>
 
-        <!--file-->
-        <el-drawer class="rtl" :title="string2Key" :visible.sync="visible"  size="80%" :before-close="handleClose" :direction="direction" :destroy-on-close="true">
-          <codemirror ref="cmEditor" v-model="string2PrettyFormat" class="code-mirror" :options="cmOptions" />
-        </el-drawer>
-        <!--file-->
+        <table-pagination v-if="activeName === 'first'" :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
+        <!-- result first -->
+
+        <!-- result second -->
+        <el-row :gutter="20" class="el-row-body" v-if="activeName === 'second'">
+          <!--regions-->
+          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
+            <el-card :body-style="{ padding: '15px' }">
+              <div slot="header" class="clearfix">
+                <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('account.regions') }}</span>
+                <table-search-right :condition.sync="regionCondition" @change="regionFilter" style="float: right;width: 70%" class="search-bar"/>
+              </div>
+              <div style="height: 130px;">
+                <el-table :data="regionData" :show-header="false"
+                          :row-style="{height:'20px', cursor:'pointer'}"
+                          :cell-style="{padding:'0px'}"
+                          height="130" @row-click="handleRegionRow"
+                          :highlight-current-row="highRegionRow"
+                          style="font-size: 12px">
+                  <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
+                    <span style="color: #215d9a">{{ scope.row.name }}</span>
+                  </el-table-column>
+                  <el-table-column prop="sum" min-width="20%" align="right" v-slot:default="scope">
+                    <el-button size="medium" type="success" class="round" round>
+                      {{ scope.row.sum }}
+                    </el-button>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </el-card>
+          </el-col>
+          <!--regions-->
+
+          <!--rule-->
+          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
+            <el-card :body-style="{ padding: '15px' }">
+              <div slot="header" class="clearfix">
+                <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.rule') }}</span>
+                <table-search-right :condition.sync="ruleCondition" @change="ruleFilter" style="float: right;width: 70%" class="search-bar"/>
+              </div>
+              <div style="height: 130px;">
+                <el-table :data="ruleData" :show-header="false"
+                          :row-style="{height:'20px', cursor:'pointer'}"
+                          :cell-style="{padding:'0px'}" :row-class-name="ruleTableRowClassName"
+                          height="130" @row-click="handleRuleRow"
+                          :highlight-current-row="highRuleRow"
+                          style="font-size: 14px">
+                  <el-table-column prop="name" min-width="85%" align="left" v-slot:default="scope">
+                    <span style="color: #215d9a;font-size: 9px;">{{ scope.row.name }}</span>
+                  </el-table-column>
+                  <el-table-column prop="sum" min-width="15%" align="right" v-slot:default="scope">
+                    <el-button size="medium" type="warning" class="round" round>
+                      {{ scope.row.sum }}
+                    </el-button>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </el-card>
+          </el-col>
+          <!--rule-->
+
+          <!--resource type-->
+          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
+            <el-card :body-style="{ padding: '15px' }">
+              <div slot="header" class="clearfix">
+                <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.resource_type') }}</span>
+                <table-search-right :condition.sync="resourceTypeCondition" @change="resourceTypeFilter" style="float: right;width: 70%" class="search-bar"/>
+              </div>
+              <div style="height: 130px;">
+                <el-table :data="resourceTypeData" :show-header="false"
+                          :row-style="{height:'20px', cursor:'pointer'}"
+                          :cell-style="{padding:'0px'}"
+                          height="130" @row-click="handleResourceTypeRow"
+                          :highlight-current-row="highResourceTypeRow"
+                          style="font-size: 12px">
+                  <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
+                    <span style="color: #215d9a">{{ scope.row.name }}</span>
+                  </el-table-column>
+                  <el-table-column prop="sum" min-width="20%" align="right" v-slot:default="scope">
+                    <el-button size="medium" type="primary" class="round" round>
+                      {{ scope.row.sum }}
+                    </el-button>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </el-card>
+          </el-col>
+          <!--resource type-->
+
+          <!--severity-->
+          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
+            <el-card :body-style="{ padding: '15px' }">
+              <div slot="header" class="clearfix">
+                <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.severity') }}</span>
+                <table-search-right :condition.sync="severityCondition" @change="severityFilter" style="float: right;width: 70%" class="search-bar"/>
+              </div>
+              <div style="height: 130px;">
+                <el-table :data="severityData" :show-header="false"
+                          :row-style="{height:'20px', cursor:'pointer'}"
+                          :cell-style="{padding:'0px'}"
+                          height="130" @row-click="handleSeverityRow"
+                          :highlight-current-row="highSeverityRow"
+                          style="font-size: 12px">
+                  <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
+                    <span style="color: #215d9a">{{ scope.row.name }}</span>
+                  </el-table-column>
+                  <el-table-column prop="sum" min-width="20%" align="right" v-slot:default="scope">
+                    <el-button size="medium" type="danger" class="round" round>
+                      {{ scope.row.sum }}
+                    </el-button>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </el-card>
+          </el-col>
+          <!--severity-->
+
+        </el-row>
+
+        <el-card class="table-card" v-if="activeName === 'second'">
+
+          <template v-slot:header>
+            <table-header :condition.sync="resourceCondition" @search="resourceSearch"
+                          :show-name="false" v-if="activeName === 'second'"
+                          :items="items2" :columnNames="columnNames2"
+                          :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
+                          @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
+          </template>
+
+          <hide-table
+            v-if="activeName === 'second'"
+            :table-data="resourceTableData"
+            @sort-change="resourceSort"
+            @filter-change="resourceFilter"
+            @select-all="select"
+            @select="select"
+          >
+            <!-- 展开 start -->
+            <el-table-column type="expand" min-width="40">
+              <template v-slot:default="props">
+
+                <el-divider><i class="el-icon-folder-opened"></i></el-divider>
+                <el-form v-if="props.row.resource !== '[]'">
+                  <result-read-only :row="typeof(props.row.resource) === 'string'?JSON.parse(props.row.resource):props.row.resource"></result-read-only>
+                  <el-divider><i class="el-icon-document-checked"></i></el-divider>
+                </el-form>
+              </template>
+            </el-table-column>
+            <!-- 展开 end -->
+            <el-table-column type="index" min-width="40"/>
+            <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('hummerId')" :label="$t('resource.Hummer_ID')" min-width="150">
+              {{ scope.row.hummerId }}
+            </el-table-column>
+            <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('resourceType')" :label="$t('rule.resource_type')" min-width="100">
+              {{ scope.row.resourceType }}
+            </el-table-column>
+            <el-table-column prop="regionName" v-if="checkedColumnNames2.includes('regionName')" :label="$t('account.regions')" min-width="130">
+              <template v-slot:default="scope">
+              <span>
+                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                {{ scope.row.regionName }}
+              </span>
+              </template>
+            </el-table-column>
+            <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('severity')" :label="$t('rule.severity')" min-width="90"
+                             :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
+                             show-overflow-tooltip>
+              <severity-type :row="scope.row"></severity-type>
+            </el-table-column>
+            <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('ruleName')" :label="$t('rule.rule_name')" min-width="200" show-overflow-tooltip>
+              {{ scope.row.ruleName }}
+            </el-table-column>
+            <el-table-column prop="createTime" min-width="150" v-if="checkedColumnNames2.includes('createTime')" :label="$t('account.update_time')" sortable show-overflow-tooltip>
+              <template v-slot:default="scope">
+                <span>{{ scope.row.createTime | timestampFormatDate }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column min-width="90" :label="$t('commons.operating')" show-overflow-tooltip>
+              <template v-slot:default="scope">
+                <table-operators v-if="!!scope.row.suggestion" :buttons="resource_buttons2" :row="scope.row"/>
+                <table-operators v-if="!scope.row.suggestion" :buttons="resource_buttons" :row="scope.row"/>
+              </template>
+            </el-table-column>
+          </hide-table>
+          <table-pagination :change="resourceSearch" :current-page.sync="resourcePage" :page-size.sync="resourceSize" :total="resourceTotal"/>
+
+          <!--file-->
+          <el-drawer class="rtl" :title="string2Key" :visible.sync="visible"  size="80%" :before-close="handleClose" :direction="direction" :destroy-on-close="true">
+            <codemirror ref="cmEditor" v-model="string2PrettyFormat" class="code-mirror" :options="cmOptions" />
+          </el-drawer>
+          <!--file-->
+
+        </el-card>
+        <!-- result second -->
 
       </el-card>
-      <!-- result second -->
 
-    </el-card>
+    </div>
 
     <!--Task log-->
     <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="65%"
