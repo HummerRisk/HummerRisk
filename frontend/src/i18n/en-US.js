@@ -931,6 +931,7 @@ export default {
     VALID: 'Valid',
     DELETE: 'Delete',
     NEW: 'New',
+    UNLINK: 'Not connected',
     please_choose_server: 'Please choose a host',
     one_scan: 'One key execution',
     one_validate: 'One-key validation',

@@ -17,6 +17,7 @@ public class CloudAccountConstants {
     public static enum Status {
         VALID,
         INVALID,
+        UNLINK,
         DELETED;
 
         private Status() {

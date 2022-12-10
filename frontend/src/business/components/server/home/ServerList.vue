@@ -39,7 +39,10 @@
                            :filter-method="filterStatus">
             <template v-slot:default="{row}">
               <div @click="validateStatus(row)" style="cursor:pointer;">
-                <el-tag size="mini" type="warning" v-if="row.status === 'DELETE'">
+                <el-tag size="mini" type="info" v-if="row.status === 'UNLINK'">
+                  {{ $t('server.UNLINK') }}
+                </el-tag>
+                <el-tag size="mini" type="warning" v-else-if="row.status === 'DELETE'">
                   {{ $t('server.DELETE') }}
                 </el-tag>
                 <el-tag size="mini" type="success" v-else-if="row.status === 'VALID'">
@@ -1155,6 +1158,7 @@ const columnOptions = [
             this.$success(this.$t('commons.save_success'));
             this.uploadExcel = false;
             this.excelFile = null;
+            this.search();
           });
           loadingInstance.close();
         } catch (e) {

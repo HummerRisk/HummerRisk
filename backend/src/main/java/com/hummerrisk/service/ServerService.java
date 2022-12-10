@@ -90,13 +90,7 @@ public class ServerService {
                 if (server.getIsProxy() != null && server.getIsProxy()) {
                     proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
                 }
-                ServerValidateDTO validate = validateAccount(server, proxy);
-                if (validate.isFlag()) {
-                    server.setStatus(CloudAccountConstants.Status.VALID.name());
-                } else {
-                    server.setStatus(CloudAccountConstants.Status.INVALID.name());
-                    list.add(validate);
-                }
+                BeanUtils.copyBean(server, validateAccount(server, proxy).getServer());
                 serverMapper.updateByPrimaryKeySelective(server);
             } catch (Exception e) {
                 throw new HRException(Translator.get("failed_server") + e.getMessage());
@@ -106,15 +100,11 @@ public class ServerService {
     }
 
 
-    public ServerValidateDTO validate(String id) {
+    public ServerValidateDTO validate(String id) throws Exception {
         Server server = serverMapper.selectByPrimaryKey(id);
         //检验主机的有效性
         ServerValidateDTO valid = validateAccount(server);
-        if (valid.isFlag()) {
-            server.setStatus(CloudAccountConstants.Status.VALID.name());
-        } else {
-            server.setStatus(CloudAccountConstants.Status.INVALID.name());
-        }
+        BeanUtils.copyBean(server, valid.getServer());
         serverMapper.updateByPrimaryKeySelective(server);
         return valid;
     }
@@ -134,6 +124,11 @@ public class ServerService {
         ServerRequest request = new ServerRequest();
         request.setId(id);//serverId
         Server server = BeanUtils.copyBean(new Server(), getServerList(request).get(0));
+        if (StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.UNLINK.name())) {
+            //检验主机的有效性
+            BeanUtils.copyBean(server, validateAccount(server).getServer());
+            serverMapper.updateByPrimaryKeySelective(server);
+        }
         Integer scanId = historyService.insertScanHistory(server);
         if (StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.VALID.name())) {
             deleteServerResultById(id);
@@ -274,6 +269,7 @@ public class ServerService {
             LogUtil.error(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), e.getMessage()), e);
             serverValidateDTO.setFlag(false);
             serverValidateDTO.setMessage(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), e.getMessage()));
+            serverValidateDTO.setServer(server);
             return serverValidateDTO;
         }
     }
@@ -708,14 +704,7 @@ public class ServerService {
                 server.setIsProxy(false);
                 server.setPluginIcon("server.png");
                 server.setServerGroupId(request.getServerGroupId());
-                ServerValidateDTO serverValidateDTO = validateAccount(server, new Proxy());
-
-                if (serverValidateDTO.isFlag()) {
-                    server.setStatus(CloudAccountConstants.Status.VALID.name());
-                } else {
-                    server.setStatus(CloudAccountConstants.Status.INVALID.name());
-                }
-                BeanUtils.copyBean(server, serverValidateDTO.getServer());
+                server.setStatus(CloudAccountConstants.Status.UNLINK.name());
                 serverMapper.insertSelective(server);
             }
         }

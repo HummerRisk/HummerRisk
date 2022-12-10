@@ -71,7 +71,7 @@ public class ServerController {
 
     @ApiOperation(value = "校验主机配置连通性")
     @PostMapping("validate/{id}")
-    public ServerValidateDTO validate(@PathVariable String id) {
+    public ServerValidateDTO validate(@PathVariable String id) throws Exception {
         return serverService.validate(id);
     }
 

@@ -931,6 +931,7 @@ export default {
     VALID: '有效',
     DELETE: '刪除',
     NEW: '新建',
+    UNLINK: '未連接',
     please_choose_server: '請選擇主機',
     one_scan: '一鍵執行',
     one_validate: '一鍵校驗',
