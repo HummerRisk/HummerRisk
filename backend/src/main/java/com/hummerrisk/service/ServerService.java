@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -32,6 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -661,7 +664,7 @@ public class ServerService {
         historyServerResultMapper.deleteByPrimaryKey(id);
     }
 
-    public void insertExperts(MultipartFile excelFile) throws Exception {
+    public void insertExperts(MultipartFile excelFile, Server request) throws Exception {
         if (excelFile==null|| excelFile.getSize()==0){
             LogUtil.error("文件上传错误，重新上传");
         }
@@ -706,6 +709,7 @@ public class ServerService {
                 server.setIsPublicKey("no");
                 server.setIsProxy(false);
                 server.setPluginIcon("server.png");
+                server.setServerGroupId(request.getServerGroupId());
                 ServerValidateDTO serverValidateDTO = validateAccount(server, new Proxy());
 
                 if (serverValidateDTO.isFlag()) {
@@ -723,40 +727,20 @@ public class ServerService {
         List<Server> list =new ArrayList<>();
 
         InputStream inputStream = file.getInputStream();
-        HSSFWorkbook workbook = new HSSFWorkbook(inputStream);
+        POIFSFileSystem poifsFileSystem = new POIFSFileSystem(inputStream);
+        HSSFWorkbook workbook = new HSSFWorkbook(poifsFileSystem);
 
         //读取第一张sheet
         HSSFSheet sheet = workbook.getSheetAt(0);
         //遍历每一行Excel获取内容
-        for (int rowNum = 3; rowNum <= sheet.getLastRowNum(); rowNum++) {
+        for (int rowNum = 2; rowNum <= sheet.getLastRowNum(); rowNum++) {
             HSSFRow row = sheet.getRow(rowNum);
             if (row!=null){
                 Server expert = new Server();
-                // 名称
-                // Row.MissingCellPolicy.CREATE_NULL_AS_BLANK 获取的数据位null时 替换成""
-                if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setName(row.getCell(0).getStringCellValue());
-                }
-                // IP
-                if (!row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setIp(row.getCell(1).getStringCellValue());
-                }
-                // port
-                if(!row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")){
-                    expert.setPort(row.getCell(2).getStringCellValue());
-                }
-                // username
-                if (!row.getCell(3, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setUserName(row.getCell(3).getStringCellValue());
-                }
-                // password
-                if (!row.getCell(4, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setPassword(row.getCell(4).getStringCellValue());
-                }
                 // group id
-                if (!row.getCell(5, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
                     String groupId = "";
-                    String groupName = row.getCell(5).getStringCellValue();
+                    String groupName = row.getCell(0).getStringCellValue();
                     List<ServerGroup> serverGroups = serverGroupMapper.selectByExample(new ServerGroupExample());
                     for (ServerGroup serverGroup : serverGroups) {
                         if (!groupName.isEmpty() && StringUtils.equalsIgnoreCase(serverGroup.getName(), groupName)) {
@@ -764,6 +748,32 @@ public class ServerService {
                         }
                     }
                     expert.setServerGroupId(!groupId.isEmpty()?groupId:serverGroups.get(0).getId());
+                }
+                // 名称
+                // Row.MissingCellPolicy.CREATE_NULL_AS_BLANK 获取的数据位null时 替换成""
+                if (!row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setName(row.getCell(1).getStringCellValue());
+                }
+                // type
+                if (!row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setType(row.getCell(2).getStringCellValue());
+                }
+                // IP
+                if (!row.getCell(3, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setIp(row.getCell(3).getStringCellValue());
+                }
+                // port
+                if(row.getCell(4) != null){
+                    int i = (int) row.getCell(4).getNumericCellValue();
+                    expert.setPort(String.valueOf(i));
+                }
+                // username
+                if (!row.getCell(5, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setUserName(row.getCell(5).getStringCellValue());
+                }
+                // password
+                if (!row.getCell(6, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setPassword(row.getCell(6).getStringCellValue());
                 }
                 list.add(expert);
             }
@@ -776,38 +786,18 @@ public class ServerService {
         ArrayList<Server> list = new ArrayList<>();
 
         InputStream inputStream = file.getInputStream();
-        XSSFWorkbook Workbook = new XSSFWorkbook(inputStream);
+        XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
 
-        XSSFSheet sheet = Workbook.getSheetAt(0);
+        XSSFSheet sheet = workbook.getSheetAt(0);
         int lastRowNum = sheet.getLastRowNum();
-        for (int rowNum = 3; rowNum <= lastRowNum; rowNum++) {
+        for (int rowNum = 2; rowNum <= lastRowNum; rowNum++) {
             XSSFRow row = sheet.getRow(rowNum);
             if (row!=null){
                 Server expert = new Server();
-                // 名称
-                if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setName(row.getCell(0).getStringCellValue());
-                }
-                // IP
-                if (!row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setIp(row.getCell(1).getStringCellValue());
-                }
-                // port
-                if(!row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")){
-                    expert.setPort(row.getCell(2).getStringCellValue());
-                }
-                // username
-                if (!row.getCell(3, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setUserName(row.getCell(3).getStringCellValue());
-                }
-                // password
-                if (!row.getCell(4, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setPassword(row.getCell(4).getStringCellValue());
-                }
                 // group id
-                if (!row.getCell(5, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
                     String groupId = "";
-                    String groupName = row.getCell(5).getStringCellValue();
+                    String groupName = row.getCell(0).getStringCellValue();
                     List<ServerGroup> serverGroups = serverGroupMapper.selectByExample(new ServerGroupExample());
                     for (ServerGroup serverGroup : serverGroups) {
                         if (!groupName.isEmpty() && StringUtils.equalsIgnoreCase(serverGroup.getName(), groupName)) {
@@ -815,6 +805,31 @@ public class ServerService {
                         }
                     }
                     expert.setServerGroupId(!groupId.isEmpty()?groupId:serverGroups.get(0).getId());
+                }
+                // 名称
+                if (!row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setName(row.getCell(1).getStringCellValue());
+                }
+                // type
+                if (!row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setType(row.getCell(2).getStringCellValue());
+                }
+                // IP
+                if (!row.getCell(3, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setIp(row.getCell(3).getStringCellValue());
+                }
+                // port
+                if(row.getCell(4) != null){
+                    int i = (int) row.getCell(4).getNumericCellValue();
+                    expert.setPort(String.valueOf(i));
+                }
+                // username
+                if (!row.getCell(5, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setUserName(row.getCell(5).getStringCellValue());
+                }
+                // password
+                if (!row.getCell(6, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setPassword(row.getCell(6).getStringCellValue());
                 }
                 list.add(expert);
             }

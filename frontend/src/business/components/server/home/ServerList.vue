@@ -449,12 +449,12 @@
       <!--Copy server-->
 
       <!--Update excel-->
-      <el-drawer class="rtl" :title="$t('server.batch_update_excel')" :visible.sync="updateExcel" size="60%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="rtl" :title="$t('server.batch_update_excel')" :visible.sync="uploadExcel" size="60%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <div v-loading="rstResult.loading">
-          <el-form :model="updateExcelForm" label-position="right" label-width="150px" size="small" :rules="rule" ref="updateExcelForm">
+          <el-form :model="uploadExcelForm" label-position="right" label-width="150px" size="small" :rules="rule" ref="uploadExcelForm">
             <el-form-item :label="$t('server.server_group_name')" ref="serverGroupId" prop="serverGroupId">
-              <el-select style="width: 100%;" filterable :clearable="true" v-model="updateExcelForm.serverGroupId" :placeholder="$t('server.server_group_name')">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="uploadExcelForm.serverGroupId" :placeholder="$t('server.server_group_name')">
                 <el-option
                   v-for="item in groups"
                   :key="item.id"
@@ -477,11 +477,12 @@
                 class="filter-item"
                 name="file"
                 action="string"
-                :before-upload="beforeAvatarUpload"
-                :limit="1"
+                :on-change="beforeAvatarUpload"
                 accept=".xlsx,.xls"
-                :show-file-list="false"
-                :http-request="uploadFile"
+                :auto-upload="false"
+                :show-file-list="true"
+                :file-list="fileList"
+                :limit="1"
               >
                 <el-button
                   type="primary"
@@ -493,8 +494,8 @@
             <div style="color: red;font-style:italic;margin: 5px 0 10px 50px;">{{ $t('server.upload_excel_file_note') }}</div>
           </el-form>
           <dialog-footer
-            @cancel="updateExcel = false"
-            @confirm="updateServerExcel()"/>
+            @cancel="uploadExcel = false"
+            @confirm="uploadServerExcel()"/>
         </div>
       </el-drawer>
       <!--Update excel-->
@@ -596,7 +597,7 @@ const columnOptions = [
         createVisible: false,
         updateVisible: false,
         copyVisible: false,
-        updateExcel: false,
+        uploadExcel: false,
         item: {},
         form: {isPublicKey: "no"},
         script: '',
@@ -704,7 +705,9 @@ const columnOptions = [
         ],
         checkAll: true,
         isIndeterminate: false,
-        updateExcelForm: {},
+        uploadExcelForm: {},
+        fileList: [],
+        excelFile: null,
       }
     },
     props: {
@@ -748,7 +751,9 @@ const columnOptions = [
         });
       },
       upload() {
-        this.updateExcel = true;
+        this.uploadExcelForm.serverGroupId = this.groups.length > 0 ? this.groups[0].id : this.groupId;
+        this.uploadExcel = true;
+        this.excelFile = null;
       },
       //校验虚拟机ssh连接
       validate() {
@@ -846,7 +851,7 @@ const columnOptions = [
         this.createVisible =  false;
         this.updateVisible =  false;
         this.copyVisible = false;
-        this.updateExcel = false;
+        this.uploadExcel = false;
       },
       handleDelete(obj) {
         this.$alert(this.$t('server.delete_confirm') + obj.name + " ？", '', {
@@ -1114,24 +1119,10 @@ const columnOptions = [
           this.$warning(this.$t('server.batch_error'));
         }
       },
-      async uploadFile(param) {
-        const File = param.file;
-        const formData1 = new FormData();
-        formData1.append('file', File);
-        const loadingInstance = this.$loading({ text: this.$t('server.uploading') });
-        try {
-          const res = await professorApi.ExcelInsertExperts(formData1);
-          loadingInstance.close();
-          param.onSuccess(res);
-          this.$message.success(res.msg);
-          await this.servers();
-        } catch (e) {
-          loadingInstance.close();
-          param.onError(e);
-        }
-      },
       // 上传前对文件的大小的判断
-      beforeAvatarUpload(file) {
+      beforeAvatarUpload(file, fileList) {
+        this.fileList = fileList;
+        this.excelFile = file;
         const extension = file.name.split('.')[1] === 'xls';
         const extension2 = file.name.split('.')[1] === 'xlsx';
         const isLt2M = file.size / 1024 / 1024 < 10;
@@ -1143,8 +1134,34 @@ const columnOptions = [
         }
         return extension || extension2 || isLt2M;
       },
-      updateServerExcel() {
+      async uploadServerExcel() {
+        const File = this.excelFile.raw;
+        const formData = new FormData();
+        formData.append('file', File);
+        formData.append("request", new Blob([JSON.stringify(this.uploadExcelForm)], {type: "application/json"}));
 
+        const loadingInstance = this.$loading({ text: this.$t('server.uploading') });
+
+        let axiosRequestConfig = {
+          method: "POST",
+          url: "/server/ExcelInsertExperts",
+          data: formData,
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        };
+
+        try {
+          await this.$request(axiosRequestConfig, () => {
+            this.$success(this.$t('commons.save_success'));
+            this.uploadExcel = false;
+            this.excelFile = null;
+          });
+          loadingInstance.close();
+        } catch (e) {
+          loadingInstance.close();
+          this.$error(e, 10000);
+        }
       },
       downloadExcel() {
         this.$fileDownload("/server/downloadExcel", response => {

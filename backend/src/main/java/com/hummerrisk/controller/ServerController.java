@@ -273,9 +273,9 @@ public class ServerController {
 
     @I18n
     @ApiOperation("通过Excel导入专家数据")
-    @PostMapping("/ExcelInsertExperts")
-    public void insertExperts(@RequestParam("file") MultipartFile file) throws Exception {
-        serverService.insertExperts(file);
+    @PostMapping(value = "/ExcelInsertExperts", consumes = {"multipart/form-data"})
+    public void insertExperts(@RequestPart(value = "file", required = false) MultipartFile file, @RequestPart("request") Server server) throws Exception {
+        serverService.insertExperts(file, server);
     }
 
     @I18n
