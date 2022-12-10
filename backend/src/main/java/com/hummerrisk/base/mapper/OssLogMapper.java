@@ -3,8 +3,9 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.OssLog;
 import com.hummerrisk.base.domain.OssLogExample;
 import com.hummerrisk.base.domain.OssLogWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface OssLogMapper {
     /**

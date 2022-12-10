@@ -3,7 +3,6 @@ package com.hummerrisk.base.mapper.ext;
 import com.hummerrisk.controller.request.config.ConfigResultRequest;
 import com.hummerrisk.dto.CloudNativeConfigResultDTO;
 import com.hummerrisk.dto.HistoryCloudNativeConfigResultDTO;
-import com.hummerrisk.dto.HistoryCloudNativeResultDTO;
 import com.hummerrisk.dto.MetricChartDTO;
 import org.apache.ibatis.annotations.Param;
 

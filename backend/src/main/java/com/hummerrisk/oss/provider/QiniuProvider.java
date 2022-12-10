@@ -2,32 +2,27 @@ package com.hummerrisk.oss.provider;
 
 
 import com.alibaba.fastjson.JSON;
-import com.baidubce.services.bos.BosClient;
-import com.baidubce.services.bos.model.BosObjectSummary;
-import com.baidubce.services.bos.model.BucketSummary;
-import com.baidubce.services.bos.model.ListObjectsResponse;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.hummerrisk.base.domain.Oss;
 import com.hummerrisk.base.domain.OssBucket;
 import com.hummerrisk.base.domain.OssWithBLOBs;
-import com.hummerrisk.commons.constants.RegionsConstants;
-import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.commons.utils.ReadFileUtils;
 import com.hummerrisk.oss.constants.ObjectTypeConstants;
 import com.hummerrisk.oss.dto.BucketObjectDTO;
 import com.hummerrisk.oss.dto.OssRegion;
 import com.hummerrisk.proxy.qiniu.QiniuCredential;
-import com.hummerrisk.service.SysListener;
-import com.qingstor.sdk.service.Bucket;
-import com.qingstor.sdk.service.Types;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
-import com.qiniu.storage.*;
-import com.qiniu.storage.model.*;
+import com.qiniu.storage.BucketManager;
+import com.qiniu.storage.Configuration;
+import com.qiniu.storage.Region;
+import com.qiniu.storage.UploadManager;
+import com.qiniu.storage.model.AclType;
+import com.qiniu.storage.model.BucketInfo;
+import com.qiniu.storage.model.FileInfo;
+import com.qiniu.storage.model.FileListing;
 import com.qiniu.util.Auth;
 import com.qiniu.util.StringUtils;
-import org.ini4j.Reg;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -36,7 +31,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class QiniuProvider implements OssProvider {

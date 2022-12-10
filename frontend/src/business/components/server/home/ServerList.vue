@@ -515,7 +515,6 @@ import {SERVER_CONFIGS} from "../../common/components/search/search-components";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import * as XLSX from 'xlsx'
 import {saveAs} from "@/common/js/FileSaver";
 
 //列表展示与隐藏

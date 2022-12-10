@@ -9,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Map;
-
 public class RestTemplateUtils {
 
     private static RestTemplate restTemplate;

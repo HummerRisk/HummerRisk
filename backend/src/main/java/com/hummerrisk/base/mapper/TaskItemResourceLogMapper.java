@@ -3,8 +3,9 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.TaskItemResourceLog;
 import com.hummerrisk.base.domain.TaskItemResourceLogExample;
 import com.hummerrisk.base.domain.TaskItemResourceLogWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface TaskItemResourceLogMapper {
     /**

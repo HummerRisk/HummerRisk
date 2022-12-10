@@ -8,7 +8,6 @@ import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.commons.utils.SessionUtils;
 import com.hummerrisk.controller.handler.annotation.I18n;
-import com.hummerrisk.controller.request.member.UserRequest;
 import com.hummerrisk.controller.request.user.UserKeyRequest;
 import com.hummerrisk.security.ApiKeyHandler;
 import com.hummerrisk.service.UserKeyService;

@@ -3,8 +3,9 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.HistoryVulnTaskLog;
 import com.hummerrisk.base.domain.HistoryVulnTaskLogExample;
 import com.hummerrisk.base.domain.HistoryVulnTaskLogWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface HistoryVulnTaskLogMapper {
     /**

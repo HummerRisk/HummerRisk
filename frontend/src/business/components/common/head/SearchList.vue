@@ -27,12 +27,7 @@
 </template>
 
 <script>
-import {
-  getCurrentAccountID,
-  getCurrentAccountName,
-  getCurrentUser,
-  hasRoles
-} from "@/common/js/utils";
+import {getCurrentAccountID, getCurrentAccountName, getCurrentUser, hasRoles} from "@/common/js/utils";
 import {ACCOUNT, ACCOUNT_ID, ACCOUNT_NAME, ROLE_ADMIN} from "@/common/js/constants";
 
 /* eslint-disable */

@@ -215,7 +215,6 @@ import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
-import SeverityType from "@/business/components/common/components/SeverityType";
 import {CODE_RULE_CONFIGS} from "../../common/components/search/search-components";
 import {severityOptions} from "@/common/js/constants";
 

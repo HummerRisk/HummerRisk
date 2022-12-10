@@ -3,8 +3,9 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.HistoryCloudTaskLog;
 import com.hummerrisk.base.domain.HistoryCloudTaskLogExample;
 import com.hummerrisk.base.domain.HistoryCloudTaskLogWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface HistoryCloudTaskLogMapper {
     /**

@@ -5,6 +5,7 @@
 </template>
 <script>
 import htmlToPdf from "@/common/js/htmlToPdf";
+
 export default {
   name: "htmlToPdf",
   data(){

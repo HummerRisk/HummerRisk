@@ -1,7 +1,5 @@
 package com.hummerrisk.controller.request.k8s;
 
-import com.hummerrisk.controller.request.k8s.Resource;
-
 import java.util.List;
 
 /**

@@ -1,14 +1,8 @@
 package com.hummerrisk.base.mapper.ext;
 
 import com.hummerrisk.base.domain.MessageOrder;
-import com.hummerrisk.base.domain.WebMsg;
-import com.hummerrisk.controller.request.webMsg.WebMsgRequest;
-import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Update;
-
-import java.util.List;
 
 @Mapper
 public interface ExtNoticeMapper {

@@ -1,6 +1,5 @@
 package com.hummerrisk.base.mapper.ext;
 
-import com.hummerrisk.base.domain.CloudNativeSourceSyncLogWithBLOBs;
 import com.hummerrisk.controller.request.cloudNative.CloudNativeSyncLogRequest;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.k8s.K8sResultRequest;

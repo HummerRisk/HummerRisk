@@ -63,11 +63,11 @@
 </template>
 
 <script>
-  /* eslint-disable */
-  import {getCurrentAccountID} from "@/common/js/utils";
-  import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
+/* eslint-disable */
+import {getCurrentAccountID} from "@/common/js/utils";
+import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 
-  export default {
+export default {
     name: "ResourceType",
     props: {
       hummerId: String,

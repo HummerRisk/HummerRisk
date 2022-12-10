@@ -111,10 +111,7 @@ import DialogFooter from "../../common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {
-  FS_CONFIGS,
-  RULE_INSPECTION_REPORT_CONFIGS
-} from "@/business/components/common/components/search/search-components";
+import {RULE_INSPECTION_REPORT_CONFIGS} from "@/business/components/common/components/search/search-components";
 
 //列表展示与隐藏
 const columnOptions = [

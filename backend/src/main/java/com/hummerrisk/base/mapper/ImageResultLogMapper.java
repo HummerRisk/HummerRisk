@@ -3,8 +3,9 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.ImageResultLog;
 import com.hummerrisk.base.domain.ImageResultLogExample;
 import com.hummerrisk.base.domain.ImageResultLogWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface ImageResultLogMapper {
     /**

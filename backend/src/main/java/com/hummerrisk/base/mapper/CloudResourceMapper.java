@@ -3,8 +3,9 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.CloudResource;
 import com.hummerrisk.base.domain.CloudResourceExample;
 import com.hummerrisk.base.domain.CloudResourceWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface CloudResourceMapper {
     /**

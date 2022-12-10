@@ -3,8 +3,9 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.CloudNativeResultLog;
 import com.hummerrisk.base.domain.CloudNativeResultLogExample;
 import com.hummerrisk.base.domain.CloudNativeResultLogWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface CloudNativeResultLogMapper {
     /**

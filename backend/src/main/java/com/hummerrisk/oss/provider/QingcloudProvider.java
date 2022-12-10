@@ -2,18 +2,14 @@ package com.hummerrisk.oss.provider;
 
 
 import com.alibaba.fastjson.JSON;
-import com.baidubce.services.bos.BosClient;
-import com.baidubce.services.bos.model.BosObjectSummary;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hummerrisk.base.domain.OssBucket;
 import com.hummerrisk.base.domain.OssWithBLOBs;
-import com.hummerrisk.commons.utils.ReadFileUtils;
 import com.hummerrisk.oss.constants.ObjectTypeConstants;
 import com.hummerrisk.oss.dto.BucketObjectDTO;
 import com.hummerrisk.oss.dto.OssRegion;
 import com.hummerrisk.proxy.qingcloud.QingCloudCredential;
-import com.hummerrisk.service.SysListener;
 import com.qingstor.sdk.config.EnvContext;
 import com.qingstor.sdk.exception.QSException;
 import com.qingstor.sdk.service.Bucket;
@@ -25,10 +21,8 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.FilterInputStream;
 import java.io.InputStream;
-import java.security.MessageDigest;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 

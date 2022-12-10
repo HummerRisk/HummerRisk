@@ -2,7 +2,9 @@ package com.hummerrisk.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummerrisk.base.domain.*;
+import com.hummerrisk.base.domain.CloudEventRegionLog;
+import com.hummerrisk.base.domain.CloudEventSyncLog;
+import com.hummerrisk.base.domain.CloudEventWithBLOBs;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;

@@ -76,13 +76,12 @@
 
 <script>
 import DialogFooter from "../../common/components/DialogFooter";
-import {getCurrentUser} from "@/common/js/utils";
+import {_filter, _sort, getCurrentUser} from "@/common/js/utils";
 import TablePagination from "../../common/pagination/TablePagination";
 import TableOperatorButton from "../../common/components/TableOperatorButton";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {USER_KEY_CONFIGS} from "../../common/components/search/search-components";
 import TableHeader from "@/business/components/common/components/TableHeader";
-import {_filter, _sort} from "@/common/js/utils";
 
 //列表展示与隐藏
 const columnOptions = [

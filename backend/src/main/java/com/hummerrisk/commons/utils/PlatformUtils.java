@@ -76,7 +76,6 @@ import com.hummerrisk.proxy.vsphere.VsphereRegion;
 import com.hummerrisk.proxy.xray.XrayCredential;
 import com.jdcloud.sdk.service.iam.model.DescribeGroupsRequest;
 import com.jdcloud.sdk.service.iam.model.DescribeGroupsResponse;
-import com.jdcloud.sdk.service.vm.client.VmClient;
 import com.qingcloud.sdk.config.EnvContext;
 import com.qingcloud.sdk.service.InstanceService;
 import com.qiniu.util.Auth;
@@ -97,7 +96,6 @@ import io.kubernetes.client.openapi.models.V1NamespaceList;
 import io.kubernetes.client.openapi.models.V1NodeList;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.bouncycastle.cert.ocsp.Req;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.api.types.ServiceType;
 

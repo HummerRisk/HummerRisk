@@ -3,8 +3,9 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.FileSystemResultItem;
 import com.hummerrisk.base.domain.FileSystemResultItemExample;
 import com.hummerrisk.base.domain.FileSystemResultItemWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface FileSystemResultItemMapper {
     /**

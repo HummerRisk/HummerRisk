@@ -8,19 +8,15 @@ import cn.ucloud.ufile.bean.BucketDescribeResponse;
 import cn.ucloud.ufile.bean.BucketInfoBean;
 import cn.ucloud.ufile.exception.UfileClientException;
 import cn.ucloud.ufile.exception.UfileServerException;
-import cn.ucloud.ufile.http.HttpClient;
 import com.hummerrisk.base.domain.OssBucket;
 import com.hummerrisk.base.domain.OssWithBLOBs;
 import com.hummerrisk.oss.dto.BucketObjectDTO;
 import com.hummerrisk.oss.dto.OssRegion;
-import com.hummerrisk.service.SysListener;
-import org.apache.poi.ss.formula.functions.T;
 
 import java.io.FilterInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class UcloudProvider implements OssProvider {

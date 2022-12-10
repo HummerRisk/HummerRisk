@@ -3,8 +3,9 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.CodeResultLog;
 import com.hummerrisk.base.domain.CodeResultLogExample;
 import com.hummerrisk.base.domain.CodeResultLogWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface CodeResultLogMapper {
     /**

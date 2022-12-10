@@ -3,8 +3,9 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.CloudEvent;
 import com.hummerrisk.base.domain.CloudEventExample;
 import com.hummerrisk.base.domain.CloudEventWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface CloudEventMapper {
     /**

@@ -1,6 +1,5 @@
 package com.hummerrisk.base.mapper.ext;
 
-import com.hummerrisk.base.domain.CloudEvent;
 import com.hummerrisk.base.domain.CloudEventWithBLOBs;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
 import com.hummerrisk.dto.CloudEventGroupDTO;

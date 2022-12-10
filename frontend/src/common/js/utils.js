@@ -1,12 +1,12 @@
 import {
   ACCOUNT_ID,
+  ACCOUNT_NAME,
+  IsCollapse,
   K8S_ID,
   REFRESH_SESSION_USER_URL,
   ROLE_ADMIN,
   TokenKey,
-  VULN_ID,
-  IsCollapse,
-  ACCOUNT_NAME
+  VULN_ID
 } from "./constants";
 import axios from "axios";
 

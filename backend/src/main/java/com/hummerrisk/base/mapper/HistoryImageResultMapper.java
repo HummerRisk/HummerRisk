@@ -3,8 +3,9 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.HistoryImageResult;
 import com.hummerrisk.base.domain.HistoryImageResultExample;
 import com.hummerrisk.base.domain.HistoryImageResultWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface HistoryImageResultMapper {
     /**

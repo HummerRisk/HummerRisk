@@ -531,11 +531,7 @@ import {severityOptions} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver.js";
 import FTablePagination from "../../common/pagination/FTablePagination";
 import ReportTableHeader from "@/business/components/report/head/ReportTableHeader";
-import {
-  REPORT_CONFIGS,
-  RESOURCE_CONFIGS,
-  RULE_CONFIGS
-} from "../../common/components/search/search-components";
+import {REPORT_CONFIGS, RESOURCE_CONFIGS, RULE_CONFIGS} from "../../common/components/search/search-components";
 import HrChart from "@/business/components/common/chart/HrChart";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import ResultReadOnly from "@/business/components/report/head/ResultReadOnly";

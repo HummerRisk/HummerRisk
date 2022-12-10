@@ -11,7 +11,6 @@ import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.image.*;
 import com.hummerrisk.dto.*;
-import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.service.impl.ExecEngineFactoryImp;
 import com.hummerrisk.service.impl.IProvider;
 import org.apache.commons.lang3.StringUtils;
