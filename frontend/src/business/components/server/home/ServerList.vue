@@ -660,6 +660,7 @@ const columnOptions = [
         statusFilters: [
           {text: this.$t('server.INVALID'), value: 'INVALID'},
           {text: this.$t('server.VALID'), value: 'VALID'},
+          {text: this.$t('server.UNLINK'), value: 'UNLINK'},
           {text: this.$t('server.DELETE'), value: 'DELETE'}
         ],
         types: [

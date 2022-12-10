@@ -1,15 +1,21 @@
 <template>
-  <main-container>
-    <el-card class="table-card" v-loading="result.loading">
+  <main-container v-loading="result.loading">
+
+    <el-card class="table-card">
       <template v-slot:header>
+        <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+          <el-tab-pane :label="$t('server.rule_dimension')" name="first"></el-tab-pane>
+          <el-tab-pane :label="$t('server.server_dimension')" name="second"></el-tab-pane>
+        </el-tabs>
         <table-header :condition.sync="condition" @search="search"
-                      :title="$t('server.result_list')"
+                      :title="$t('server.result_list')" v-if="activeName === 'first'"
                       :items="items" :columnNames="columnNames"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
       <hide-table
+        v-if="activeName === 'first'"
         :table-data="tableData"
         @sort-change="sort"
         @filter-change="filter"
@@ -78,7 +84,10 @@
           </template>
         </el-table-column>
       </hide-table>
-      <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
+      <table-pagination v-if="activeName === 'first'" :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
+
+
+      <table-pagination v-if="activeName === 'second'" :change="search" :current-page.sync="serverPage" :page-size.sync="serverSize" :total="serverTotal"/>
     </el-card>
 
     <!--Result log-->
@@ -171,7 +180,7 @@ import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import RuleType from "./RuleType";
-import {SERVER_RESULT_CONFIGS} from "../../common/components/search/search-components";
+import {SERVER_RESULT_CONFIGS, SERVER_RESULT_CONFIGS2} from "../../common/components/search/search-components";
 import {severityOptions} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 
@@ -238,10 +247,17 @@ export default {
       condition: {
         components: SERVER_RESULT_CONFIGS
       },
+      serverCondition: {
+        components: SERVER_RESULT_CONFIGS2
+      },
       tableData: [],
+      serverData: [],
       currentPage: 1,
       pageSize: 10,
       total: 0,
+      serverPage: 1,
+      serverSize: 10,
+      serverTotal: 0,
       loading: false,
       severityOptions: [],
       direction: 'rtl',
@@ -290,6 +306,7 @@ export default {
       ],
       checkAll: true,
       isIndeterminate: false,
+      activeName: 'first',
     }
   },
 
@@ -314,6 +331,11 @@ export default {
         let data = response.data;
         this.total = data.itemCount;
         this.tableData = data.listObject;
+      });
+      this.result = this.$post("/server/resultServerList/" + this.currentPage + "/" + this.pageSize, this.serverCondition, response => {
+        let data = response.data;
+        this.serverTotal = data.itemCount;
+        this.serverData = data.listObject;
       });
     },
     getStatus () {
@@ -411,6 +433,13 @@ export default {
       }
       document.execCommand("copy");
       document.body.removeChild(input);
+    },
+    handleClick(tag) {
+      if (tag.name === 'first') {
+        this.activeName = 'second';
+      } else {
+        this.activeName = 'first';
+      }
     },
   },
   computed: {

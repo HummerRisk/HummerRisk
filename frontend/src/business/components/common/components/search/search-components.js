@@ -297,6 +297,7 @@ export const ACCOUNT_STATUS = {
     {label: 'account.INVALID', value: 'INVALID'},
     {label: 'account.VALID', value: 'VALID'},
     {label: 'account.DELETE', value: 'DELETE'},
+    {label: 'server.UNLINK', value: 'UNLINK'},
     {label: 'account.NEW', value: 'NEW'}
   ],
   props: { // 尾部控件的props，一般为element ui控件的props
@@ -1049,6 +1050,7 @@ export const SERVER_CONFIGS = [NAME, IP, SERVER_TYPE, UPDATE_TIME, CREATE_TIME, 
 export const SERVER_CERTIFICATE_CONFIGS = [NAME, DESCRIPTION, CREATOR, LAST_MODIFIED];
 export const SERVER_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY, SERVER_TYPE, LAST_MODIFIED];
 export const SERVER_RESULT_CONFIGS = [NAME, IP, SERVER_TYPE, SERVER_RULE_NAME, RULE_SEVERITY, RESULT_STATUS, CREATOR, UPDATE_TIME];
+export const SERVER_RESULT_CONFIGS2 = [NAME, IP];
 export const IMAGE_CONFIGS = [NAME, IMAGE_URL, ACCOUNT_STATUS, CREATOR, CREATE_TIME, UPDATE_TIME];
 export const IMAGE_REPO_CONFIGS = [NAME, REPO, ACCOUNT_STATUS, CREATOR, UPDATE_TIME];
 export const IMAGE_REPO_IMAGE_CONFIGS = [REPOSITORY, PATH, SIZE, TAG];

@@ -1002,6 +1002,8 @@ export default {
     excel_file_ex_down: 'Excel 示例文件下載',
     upload_excel_file_note: '*注: 待上傳的 Excel 主機文件必須符合示例格式才能成功上傳!',
     server_type: '主機類型',
+    rule_dimension: '檢測規則維度',
+    server_dimension: '檢測主機維度',
   },
   image: {
     image_repo: '鏡像倉庫',

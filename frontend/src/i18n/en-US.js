@@ -1002,6 +1002,8 @@ export default {
     excel_file_ex_down: 'Excel sample file download',
     upload_excel_file_note: '*Note: The Excel host file to be uploaded must conform to the sample format to be successfully uploaded!',
     server_type: 'Host type',
+    rule_dimension: 'Detection rule dimension',
+    server_dimension: 'Detect host dimension',
   },
   image: {
     image_repo: 'Mirror repository',

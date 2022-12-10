@@ -1,7 +1,9 @@
 package com.hummerrisk.base.mapper.ext;
 
+import com.hummerrisk.controller.request.server.ServerRequest;
 import com.hummerrisk.controller.request.server.ServerResultRequest;
 import com.hummerrisk.dto.HistoryServerResultDTO;
+import com.hummerrisk.dto.ServerListDTO;
 import com.hummerrisk.dto.ServerResultDTO;
 import org.apache.ibatis.annotations.Param;
 
@@ -11,6 +13,8 @@ import java.util.Map;
 public interface ExtServerResultMapper {
 
     List<ServerResultDTO> resultList(@Param("request")  ServerResultRequest request);
+
+    List<ServerListDTO> resultServerList(@Param("request") ServerRequest request);
 
     List<Map<String, Object>> serverChart();
 

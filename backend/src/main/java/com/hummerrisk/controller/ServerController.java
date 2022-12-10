@@ -160,11 +160,19 @@ public class ServerController {
     }
 
     @I18n
-    @ApiOperation(value = "主机检测结果列表")
+    @ApiOperation(value = "主机检测结果列表(规则视角)")
     @PostMapping(value = "resultList/{goPage}/{pageSize}")
     public Pager<List<ServerResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, serverService.resultList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "主机检测结果列表(主机视角)")
+    @PostMapping(value = "resultServerList/{goPage}/{pageSize}")
+    public Pager<List<ServerListDTO>> resultServerList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, serverService.resultServerList(request));
     }
 
     @I18n

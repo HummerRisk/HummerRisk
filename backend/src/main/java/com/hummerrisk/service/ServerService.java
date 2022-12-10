@@ -546,6 +546,9 @@ public class ServerService {
         return extServerResultMapper.resultList(request);
     }
 
+    public List<ServerListDTO> resultServerList(ServerRequest request) {
+        return extServerResultMapper.resultServerList(request);
+    }
     public ServerResultDTO getServerResult(String resultId) {
         ServerResultRequest request = new ServerResultRequest();
         request.setId(resultId);
