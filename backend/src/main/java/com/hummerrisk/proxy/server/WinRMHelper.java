@@ -1,9 +1,14 @@
 package com.hummerrisk.proxy.server;
 
+import com.hummerrisk.base.domain.Proxy;
+import com.hummerrisk.base.domain.Server;
+import com.hummerrisk.commons.utils.LogUtil;
 import io.cloudsoft.winrm4j.client.WinRmClientContext;
 import io.cloudsoft.winrm4j.winrm.WinRmTool;
 import io.cloudsoft.winrm4j.winrm.WinRmToolResponse;
 import org.apache.http.client.config.AuthSchemes;
+
+import java.io.IOException;
 
 public class WinRMHelper {
 
@@ -12,22 +17,37 @@ public class WinRMHelper {
     private String username;
 
     private String password;
-
     public static final int DEFAULT_PORT = 5985;
 
-    public WinRMHelper(final String ip,final String username,final String password) {
+    private static String tipStr = "=======================%s============================";
+
+    public WinRMHelper(final String ip, final String username, final String password) {
         this.ip = ip;
         this.username = username;
         this.password = password;
     }
 
-    public String execute(final String command) {
-        WinRmClientContext context = WinRmClientContext.newInstance();
-        WinRmTool tool = WinRmTool.Builder.builder(ip, username, password).setAuthenticationScheme(AuthSchemes.NTLM).port(DEFAULT_PORT).useHttps(false).context(context).build();
-        tool.setOperationTimeout(5000L);
-        WinRmToolResponse resp = tool.executeCommand(command);
-        context.shutdown();
-        return resp.getStdOut();
+    public static String execute(Server server, final String command) throws Exception {
+        try {
+            WinRmClientContext context = WinRmClientContext.newInstance();
+            WinRmTool tool = WinRmTool.Builder.builder(server.getIp(), server.getUserName(), server.getPassword()).setAuthenticationScheme(AuthSchemes.NTLM).port(DEFAULT_PORT).useHttps(false).context(context).build();
+            tool.setOperationTimeout(5000L);
+            WinRmToolResponse resp = tool.executeCommand(command);
+            context.shutdown();
+            return resp.getStdOut();
+        } catch (Exception e) {
+            LogUtil.error(String.format(tipStr, "执行失败") + e.getMessage());
+            throw new IOException("Failed to scan：" + e.getMessage());
+        }
+    }
+
+    public static void validateWindows(Server server, Proxy proxy) throws Exception {
+        try {
+            execute(server, "dir");
+        } catch (Exception e) {
+            LogUtil.error(String.format(tipStr, "登录失败") + e.getMessage());
+            throw new IOException("Failed to authenticate：" + e.getMessage());
+        }
     }
 
 }

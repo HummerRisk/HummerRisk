@@ -19,6 +19,7 @@ import com.hummerrisk.controller.request.server.ServerRuleRequest;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.proxy.server.SshUtil;
+import com.hummerrisk.proxy.server.WinRMHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -452,25 +453,41 @@ public class ServerService {
 
     public ServerValidateDTO validateAccount(Server server, Proxy proxy) throws Exception {
         ServerValidateDTO serverValidateDTO = new ServerValidateDTO();
-        try {
-            SshUtil.validateSsh2(server, proxy);
-            server.setStatus(CloudAccountConstants.Status.VALID.name());
-            server.setAuthType("ssh2");
-            serverValidateDTO.setFlag(true);
-            serverValidateDTO.setMessage("Verification succeeded!");
-        } catch (Exception e) {
-            try {
-                SshUtil.validateSshd(server, proxy);
-                server.setStatus(CloudAccountConstants.Status.VALID.name());
-                server.setAuthType("sshd");
-                serverValidateDTO.setFlag(true);
-                serverValidateDTO.setMessage("Verification succeeded!");
-            } catch (Exception ex) {
-                server.setStatus(CloudAccountConstants.Status.INVALID.name());
-                server.setAuthType("sshd");
-                serverValidateDTO.setFlag(false);
-                serverValidateDTO.setMessage(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), ex.getMessage()));
-            }
+        switch (server.getType()) {
+            case "linux":
+                try {
+                    SshUtil.validateSsh2(server, proxy);
+                    server.setStatus(CloudAccountConstants.Status.VALID.name());
+                    server.setAuthType("ssh2");
+                    serverValidateDTO.setFlag(true);
+                    serverValidateDTO.setMessage("Verification succeeded!");
+                } catch (Exception e) {
+                    try {
+                        SshUtil.validateSshd(server, proxy);
+                        server.setStatus(CloudAccountConstants.Status.VALID.name());
+                        server.setAuthType("sshd");
+                        serverValidateDTO.setFlag(true);
+                        serverValidateDTO.setMessage("Verification succeeded!");
+                    } catch (Exception ex) {
+                        server.setStatus(CloudAccountConstants.Status.INVALID.name());
+                        server.setAuthType("sshd");
+                        serverValidateDTO.setFlag(false);
+                        serverValidateDTO.setMessage(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), ex.getMessage()));
+                    }
+                }
+            case "windows":
+                try {
+                    WinRMHelper.validateWindows(server, proxy);
+                    server.setStatus(CloudAccountConstants.Status.VALID.name());
+                    server.setAuthType("winrm");
+                    serverValidateDTO.setFlag(true);
+                    serverValidateDTO.setMessage("Verification succeeded!");
+                } catch (Exception e) {
+                    server.setStatus(CloudAccountConstants.Status.INVALID.name());
+                    server.setAuthType("winrm");
+                    serverValidateDTO.setFlag(false);
+                    serverValidateDTO.setMessage(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), e.getMessage()));
+                }
         }
         serverValidateDTO.setServer(server);
         return serverValidateDTO;
@@ -478,10 +495,17 @@ public class ServerService {
 
     public String execute(Server server, String cmd, Proxy proxy) throws Exception {
         try {
-            if (StringUtils.equalsIgnoreCase(server.getAuthType(), "ssh2")) {
-                return SshUtil.executeSsh2(SshUtil.loginSsh2(server, proxy), cmd);
-            } else {
-                return SshUtil.executeSshd(SshUtil.loginSshd(server, proxy), cmd);
+            switch (server.getType()) {
+                case "linux":
+                    if (StringUtils.equalsIgnoreCase(server.getAuthType(), "ssh2")) {
+                        return SshUtil.executeSsh2(SshUtil.loginSsh2(server, proxy), cmd);
+                    } else {
+                        return SshUtil.executeSshd(SshUtil.loginSshd(server, proxy), cmd);
+                    }
+                case "windows":
+                    return WinRMHelper.execute(server, cmd);
+                default:
+                    return "Unexpected value: type";
             }
         } catch (Exception e) {
             return "";
