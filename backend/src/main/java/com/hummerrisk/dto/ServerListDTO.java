@@ -9,31 +9,13 @@ import java.util.List;
  */
 public class ServerListDTO extends Server {
 
-    private String tagKey;
-
-    private String tagName;
-
     private String user;
 
     private String groupName;
 
+    private Integer riskSum;
+
     private List<ServerResultDTO> serverResultDTOS;
-
-    public String getTagKey() {
-        return tagKey;
-    }
-
-    public void setTagKey(String tagKey) {
-        this.tagKey = tagKey;
-    }
-
-    public String getTagName() {
-        return tagName;
-    }
-
-    public void setTagName(String tagName) {
-        this.tagName = tagName;
-    }
 
     public String getUser() {
         return user;
@@ -49,6 +31,14 @@ public class ServerListDTO extends Server {
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
+    }
+
+    public Integer getRiskSum() {
+        return riskSum;
+    }
+
+    public void setRiskSum(Integer riskSum) {
+        this.riskSum = riskSum;
     }
 
     public List<ServerResultDTO> getServerResultDTOS() {

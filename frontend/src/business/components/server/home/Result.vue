@@ -12,6 +12,11 @@
                       :items="items" :columnNames="columnNames"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
+        <table-header :condition.sync="serverCondition" @search="search"
+                      :title="$t('server.result_list')" v-if="activeName === 'second'"
+                      :items="items2" :columnNames="columnNames2"
+                      :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
       </template>
 
       <hide-table
@@ -228,6 +233,49 @@ const columnOptions = [
   },
 ];
 
+const columnOptions2 = [
+  {
+    label: 'server.server_name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'IP:Port',
+    props: 'ip',
+    disabled: false
+  },
+  {
+    label: 'server.server_status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'server.server_type',
+    props: 'type',
+    disabled: false
+  },
+  {
+    label: 'server.server_user_name',
+    props: 'userName',
+    disabled: false
+  },
+  {
+    label: 'account.update_time',
+    props: 'updateTime',
+    disabled: false
+  },
+  {
+    label: 'server.server_group',
+    props: 'groupName',
+    disabled: false
+  },
+  {
+    label: 'account.creator',
+    props: 'user',
+    disabled: false
+  },
+];
+
 /* eslint-disable */
 export default {
   components: {
@@ -307,6 +355,29 @@ export default {
       checkAll: true,
       isIndeterminate: false,
       activeName: 'first',
+      checkedColumnNames2: columnOptions2.map((ele) => ele.props),
+      columnNames2: columnOptions2,
+      //名称搜索
+      items2: [
+        {
+          name: 'server.server_name',
+          id: 'name'
+        },
+        {
+          name: 'IP',
+          id: 'ip'
+        },
+        {
+          name: 'Port',
+          id: 'port',
+        },
+        {
+          name: 'server.server_user_name',
+          id: 'userName',
+        },
+      ],
+      checkAll2: true,
+      isIndeterminate2: false,
     }
   },
 
@@ -321,6 +392,17 @@ export default {
       this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
       this.isIndeterminate = false;
       this.checkAll = val;
+    },
+    handleCheckedColumnNamesChange2(value) {
+      const checkedCount = value.length;
+      this.checkAll2 = checkedCount === this.columnNames2.length;
+      this.isIndeterminate2 = checkedCount > 0 && checkedCount < this.columnNames2.length;
+      this.checkedColumnNames2 = value;
+    },
+    handleCheckAllChange2(val) {
+      this.checkedColumnNames2 = val ? this.columnNames2.map((ele) => ele.props) : [];
+      this.isIndeterminate2 = false;
+      this.checkAll2 = val;
     },
     select(selection) {
     },
@@ -435,11 +517,7 @@ export default {
       document.body.removeChild(input);
     },
     handleClick(tag) {
-      if (tag.name === 'first') {
-        this.activeName = 'second';
-      } else {
-        this.activeName = 'first';
-      }
+      this.activeName = tag.name;
     },
   },
   computed: {
