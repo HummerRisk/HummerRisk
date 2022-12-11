@@ -137,17 +137,65 @@
         </collection>
     </resultMap>
 
+    <sql id="combine2">
+        <if test='${condition}.name != null and (${name} == null or ${name} == "")'>
+            and t.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test="${condition}.updateTime != null">
+            and t.update_time
+            <include refid="condition">
+                <property name="object" value="${condition}.updateTime"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+        <if test="${condition}.status != null">
+            and t.status
+            <include refid="condition">
+                <property name="object" value="${condition}.status"/>
+            </include>
+        </if>
+        <if test="${condition}.type != null">
+            and t.type
+            <include refid="condition">
+                <property name="object" value="${condition}.type"/>
+            </include>
+        </if>
+        <if test="${condition}.creator != null">
+            and u.id
+            <include refid="condition">
+                <property name="object" value="${condition}.creator"/>
+            </include>
+        </if>
+        <if test='${condition}.ip != null'>
+            and t.ip
+            <include refid="condition">
+                <property name="object" value="${condition}.ip"/>
+            </include>
+        </if>
+    </sql>
+
     <select id="resultServerList" parameterType="com.hummerrisk.controller.request.server.ServerRequest" resultMap="ServerListBaseResultMap">
         SELECT
         t.*,
+        u.name as user,
         sg.name as groupName,
         (SELECT count(r.id) FROM server_result r where r.server_id = t.id and r.is_severity is false) as riskSum
         FROM server t
         left join server_group sg on sg.id = t.server_group_id
+        left join user u on u.id = t.creator
         <where>
             <if test="request.combine != null">
-                <include refid="combine">
+                <include refid="combine2">
                     <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
                 </include>
             </if>
 
@@ -155,7 +203,16 @@
                 and t.id = #{request.id}
             </if>
             <if test="request.name != null and request.name != ''">
-                and LOWER(t.name) like CONCAT('%',LOWER(#{request.name}),'%')
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.ip != null and request.ip != ''">
+                and LOWER(t.ip) like CONCAT('%', LOWER(#{request.ip}),'%')
+            </if>
+            <if test="request.port != null and request.port != ''">
+                and LOWER(t.port) like CONCAT('%', LOWER(#{request.port}),'%')
+            </if>
+            <if test="request.userName != null and request.userName != ''">
+                and LOWER(t.user_name) like CONCAT('%', LOWER(#{request.userName}),'%')
             </if>
         </where>
         ORDER BY t.update_time desc

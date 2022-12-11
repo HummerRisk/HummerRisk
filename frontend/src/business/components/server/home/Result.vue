@@ -40,7 +40,7 @@
         <el-table-column prop="serverName" v-if="checkedColumnNames.includes('serverName')" :label="$t('server.server_name')" min-width="140" show-overflow-tooltip></el-table-column>
         <el-table-column prop="ip" v-if="checkedColumnNames.includes('ip')" :label="'IP'" min-width="130" show-overflow-tooltip></el-table-column>
         <el-table-column prop="ruleName" v-if="checkedColumnNames.includes('ruleName')" :label="$t('server.rule_name')" min-width="180" show-overflow-tooltip></el-table-column>
-        <el-table-column min-width="100" :label="$t('server.severity')" column-key="severity">
+        <el-table-column min-width="100" v-if="checkedColumnNames.includes('severity')" :label="$t('server.severity')" column-key="severity">
           <template v-slot:default="{row}">
             <rule-type :row="row"/>
           </template>
@@ -95,26 +95,23 @@
         <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="8" v-for="(data, index) in serverData"
                 :key="index" class="el-col el-col-su">
           <el-card :body-style="{ padding: '15px' }">
-            <div style="height: 110px;">
+            <div>
               <el-row :gutter="20">
-                <el-col :span="3">
-                  <el-image style="border-radius: 50%;width: 16px; height: 16px; vertical-align:middle;" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
-                    <div slot="error" class="image-slot">
-                      <i class="el-icon-picture-outline"></i>
-                    </div>
-                  </el-image>
-                  <div class="plugin">{{ data.groupName }}</div>
-                </el-col>
-                <el-col :span="21">
+                <el-col :span="24">
                   <el-row>
-                    <el-col :span="12">
+                    <el-col :span="16">
                       <el-tooltip class="item" effect="dark" :content="data.name" placement="top">
-                          <span class="da-na">
-                            {{ data.name }}
+                          <span class="da-na" v-if="checkedColumnNames2.includes('name') && checkedColumnNames2.includes('groupName')">
+                            <el-image style="border-radius: 50%;width: 16px; height: 16px; vertical-align:middle;" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
+                              <div slot="error" class="image-slot">
+                                <i class="el-icon-picture-outline"></i>
+                              </div>
+                            </el-image>
+                            {{ $t('server.server_group') }} : {{ data.groupName }} | {{ $t('server.server_name') }} : {{ data.name }}
                           </span>
                       </el-tooltip>
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="8">
                       <el-tooltip class="item" effect="dark" :content="$t('history.resource_result') + ':' + data.riskSum" placement="top">
                           <span v-if="data.riskSum > 0" style="color: red;float: right">
                             <i class="el-icon-warning"></i> {{ $t('resource.discover_risk') }}
@@ -131,10 +128,10 @@
               </el-row>
             </div>
             <el-divider style="margin-top: 0;"></el-divider>
-            <div style="padding: 0 14px 14px 14px;">
+            <div style="padding: 0 14px 10px 14px;">
               <el-row>
-                <span style="color: #1e6427;">{{ data.ip + ' : ' + data.port }}</span>
-                <span>
+                <span style="color: #1e6427;" v-if="checkedColumnNames2.includes('ip')">{{ data.ip + ' : ' + data.port }}</span>
+                <span v-if="checkedColumnNames2.includes('status')">
                   <el-tag size="mini" type="info" class="round el-btn" v-if="data.status === 'UNLINK'">
                     {{ $t('server.UNLINK') }}
                   </el-tag>
@@ -147,15 +144,16 @@
                   <el-tag size="mini" type="danger" class="round el-btn" v-else-if="data.status === 'INVALID'">
                     {{ $t('server.INVALID') }}
                   </el-tag>
-                  <span class="round">{{ data.updateTime | timestampFormatDate }}</span>
                 </span>
+                <span class="round" v-if="checkedColumnNames2.includes('updateTime')">{{ data.updateTime | timestampFormatDate }}</span>
               </el-row>
               <span class="button time pa-na"></span>
             </div>
-            <div class="bottom clearfix">
+            <div class="bottom clearfix" style="padding: 0 14px 10px 14px;">
               <time class="time">
-                <span class="pa-time">{{ data.type }}&nbsp;</span>
-                <span class="pa-time2">{{ data.userName }}</span>
+                <span class="pa-time" v-if="checkedColumnNames2.includes('type')">{{ $t('server.server_type') }}&nbsp;({{ data.type }})&nbsp;| &nbsp;</span>
+                <span class="pa-time2" v-if="checkedColumnNames2.includes('userName')">{{ $t('server.server_user_name') }}&nbsp;({{ data.userName }})&nbsp;| &nbsp;</span>
+                <span class="pa-time2" v-if="checkedColumnNames2.includes('user')">{{ $t('account.creator') }}&nbsp;({{ data.user }})&nbsp;| &nbsp;</span>
               </time>
               <el-dropdown class="button button-drop" @command="(command)=>{handleCommand(command, data)}">
                 <span class="el-dropdown-link">
@@ -249,6 +247,66 @@
       </template>
     </el-drawer>
     <!--Result log-->
+
+    <!--Result details-->
+    <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="detailsVisible" size="85%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <el-table border :data="serverResultDetails" class="adjust-table table-content" @sort-change="sort" @filter-change="filter" @select-all="select" @select="select">
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column prop="serverName" :label="$t('server.server_name')" min-width="140" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="ip" :label="'IP'" min-width="130" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="ruleName" :label="$t('server.rule_name')" min-width="180" show-overflow-tooltip></el-table-column>
+        <el-table-column min-width="100" :label="$t('server.severity')" column-key="severity">
+          <template v-slot:default="{row}">
+            <rule-type :row="row"/>
+          </template>
+        </el-table-column>
+        <el-table-column prop="type" :label="$t('commons.type')" min-width="70" show-overflow-tooltip>
+          <template v-slot:default="scope">
+            <span v-if="scope.row.type === 'linux'">Linux</span>
+            <span v-if="scope.row.type === 'windows'">Windows</span>
+            <span v-if="!scope.row.type">N/A</span>
+          </template>
+        </el-table-column>
+        <el-table-column v-slot:default="scope" :label="$t('server.result_status')" min-width="130" prop="resultStatus" sortable show-overflow-tooltip>
+          <el-button plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+          </el-button>
+          <el-button plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+          </el-button>
+          <el-button plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+          </el-button>
+          <el-button plain size="mini" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
+            <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+          </el-button>
+          <el-button plain size="mini" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+            <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+          </el-button>
+          <el-button plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+            <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+          </el-button>
+        </el-table-column>
+        <el-table-column prop="isSeverity" :label="$t('server.is_severity')" min-width="110" show-overflow-tooltip v-slot:default="scope" sortable>
+          <el-tooltip class="item" effect="dark" :content="scope.row.returnLog" placement="top">
+            <span v-if="scope.row.isSeverity" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
+            <span v-if="!scope.row.isSeverity" style="color: #f84846">{{ $t('resource.risky') }}</span>
+          </el-tooltip>
+        </el-table-column>
+        <el-table-column prop="updateTime" min-width="160" :label="$t('server.last_modified')" sortable>
+          <template v-slot:default="scope">
+            <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <template v-slot:footer>
+        <dialog-footer
+          @cancel="detailsVisible = false"
+          @confirm="detailsVisible = false"/>
+      </template>
+    </el-drawer>
+    <!--Result details-->
 
   </main-container>
 </template>
@@ -388,7 +446,6 @@ export default {
       severityOptions: [],
       direction: 'rtl',
       logVisible: false,
-      detailVisible: false,
       logForm: {},
       logData: [],
       detailForm: {},
@@ -456,6 +513,8 @@ export default {
       ],
       checkAll2: true,
       isIndeterminate2: false,
+      serverResultDetails: [],
+      detailsVisible: false,
     }
   },
 
@@ -492,7 +551,7 @@ export default {
         this.total = data.itemCount;
         this.tableData = data.listObject;
       });
-      this.result = this.$post("/server/resultServerList/" + this.currentPage + "/" + this.pageSize, this.serverCondition, response => {
+      this.result = this.$post("/server/resultServerList/" + this.serverPage + "/" + this.serverSize, this.serverCondition, response => {
         let data = response.data;
         this.serverTotal = data.itemCount;
         this.serverData = data.listObject;
@@ -554,7 +613,8 @@ export default {
     },
     handleClose() {
       this.logVisible=false;
-      this.detailVisible=false;
+      this.detailsVisible=false;
+
     },
     handleScans (item) {
       this.$alert(this.$t('resource.handle_scans'), '', {
@@ -607,7 +667,8 @@ export default {
       }
     },
     handleList(data) {
-
+      this.serverResultDetails = data.serverResultDTOS;
+      this.detailsVisible = true;
     },
   },
   computed: {
@@ -716,10 +777,10 @@ export default {
 }
 .el-row-body {
   padding: 0 20px 0 20px;
-  margin: 0 0 20px 0;
+  margin: 5px 0;
 }
-.el-row-body >>> .el-card__body {
-  margin: 0;
+.el-row-body >>> .el-card {
+  margin: 5px 0;
 }
 .plugin {
   color: #215d9a;
@@ -761,7 +822,6 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  color: #1e6427;
   float: left;
 }
 .pa-time2 {
@@ -769,7 +829,6 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  color: red;
   float: left;
 }
 .button-drop {
@@ -779,6 +838,8 @@ export default {
   cursor: pointer;
   color: #409EFF;
 }
-
+.el-btn {
+  transform: scale(0.9);
+}
 /deep/ :focus{outline:0;}
 </style>
