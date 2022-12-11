@@ -1,22 +1,22 @@
 package com.hummerrisk.proxy.jdcloud;
 
 public class JDCloudCredential {
-    private String accessKey;
-    private String secretAccessKey;
+    private String AccessKey;
+    private String SecretAccessKey;
 
     public String getAccessKey() {
-        return accessKey;
+        return AccessKey;
     }
 
     public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
+        AccessKey = accessKey;
     }
 
     public String getSecretAccessKey() {
-        return secretAccessKey;
+        return SecretAccessKey;
     }
 
     public void setSecretAccessKey(String secretAccessKey) {
-        this.secretAccessKey = secretAccessKey;
+        SecretAccessKey = secretAccessKey;
     }
 }

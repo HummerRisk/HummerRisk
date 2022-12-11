@@ -1281,6 +1281,9 @@ public class PlatformUtils {
             case ucloud:
                 strCn = strEn;
                 break;
+            case jdcloud:
+                strCn = RegionsConstants.JdcloudMap.get(strEn);
+                break;
             case k8s:
                 strCn = strEn;
                 break;
@@ -1468,6 +1471,8 @@ public class PlatformUtils {
                 return CloudTaskConstants.UCLOUD_RESOURCE_TYPE;
             case k8s:
                 return null;
+            case jdcloud:
+                return CloudTaskConstants.JDCLOUD_RESOURCE_TYPE;
             default:
                 throw new IllegalStateException("Unexpected value: " + pluginId);
         }

@@ -72,6 +72,7 @@ public class CloudTaskConstants {
     public final static String[] QINGCLOUD_RESOURCE_TYPE = {"qingcloud.ecs","qingcloud.eip","qingcloud.mongodb","qingcloud.mysql"};
     public final static String[] UCLOUD_RESOURCE_TYPE = {"ucloud.eip","ucloud.securitygroup","ucloud.uhost","ucloud.ulb"};
     public final static String[] QINIU_RESOURCE_TYPE = {"", "", ""};
+    public final static String[] JDCLOUD_RESOURCE_TYPE = {""};
     public final static String[] VOLC_RESOURCE_TYPE = {"volc.cdn","volc.ecs","volc.eip","volc.mongodb","volc.securitygroup"};
     public final static String[] VSPHERE_RESOURCE_TYPE = {"vsphere.cluster","vsphere.datacenter","vsphere.datastore","vsphere.host","vsphere.network","vsphere.resourcepool","vsphere.vm"};
     public final static String[] OPENSTACK_RESOURCE_TYPE = {"openstack.flavor","openstack.image","openstack.network","openstack.project","openstack.router","openstack.security-group","openstack.security-groups","openstack.server","openstack.user","openstack.volume"};

@@ -33,7 +33,6 @@ public class JDRequest extends Request {
         String accessKeyId = this.getJdCloudCredential().getAccessKey();
         String secretAccessKey = this.getJdCloudCredential().getSecretAccessKey();
         CredentialsProvider credentialsProvider = new StaticCredentialsProvider(accessKeyId, secretAccessKey);
-
         //2. 创建Client
         return VmClient.builder()
                 .credentialsProvider(credentialsProvider)
@@ -42,8 +41,8 @@ public class JDRequest extends Request {
     }
 
     public IamClient getIAMClient(){
-        String accessKeyId = this.jdCloudCredential.getAccessKey();
-        String secretAccessKey = this.jdCloudCredential.getSecretAccessKey();
+        String accessKeyId = this.getJdCloudCredential().getAccessKey();
+        String secretAccessKey = this.getJdCloudCredential().getSecretAccessKey();
         CredentialsProvider credentialsProvider = new StaticCredentialsProvider(accessKeyId, secretAccessKey);
         return IamClient.builder().credentialsProvider(credentialsProvider)
                 .httpRequestConfig(new HttpRequestConfig.Builder().protocol(Protocol.HTTP).build()).build();
