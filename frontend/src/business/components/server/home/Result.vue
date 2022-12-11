@@ -91,7 +91,85 @@
       </hide-table>
       <table-pagination v-if="activeName === 'first'" :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
 
-
+      <el-row :gutter="20" class="el-row-body">
+        <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="8" v-for="(data, index) in serverData"
+                :key="index" class="el-col el-col-su">
+          <el-card :body-style="{ padding: '15px' }">
+            <div style="height: 110px;">
+              <el-row :gutter="20">
+                <el-col :span="3">
+                  <el-image style="border-radius: 50%;width: 16px; height: 16px; vertical-align:middle;" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
+                    <div slot="error" class="image-slot">
+                      <i class="el-icon-picture-outline"></i>
+                    </div>
+                  </el-image>
+                  <div class="plugin">{{ data.groupName }}</div>
+                </el-col>
+                <el-col :span="21">
+                  <el-row>
+                    <el-col :span="12">
+                      <el-tooltip class="item" effect="dark" :content="data.name" placement="top">
+                          <span class="da-na">
+                            {{ data.name }}
+                          </span>
+                      </el-tooltip>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-tooltip class="item" effect="dark" :content="$t('history.resource_result') + ':' + data.riskSum" placement="top">
+                          <span v-if="data.riskSum > 0" style="color: red;float: right">
+                            <i class="el-icon-warning"></i> {{ $t('resource.discover_risk') }}
+                            <I style="color: #e8a97e;">{{ '(' + data.riskSum + ')'}}</I>
+                          </span>
+                        <span v-if="data.riskSum == 0" style="color: green;float: right">
+                            <i class="el-icon-warning"></i> {{ $t('resource.no_risk') }}
+                            <I style="color: #e8a97e;">{{ '(' + data.riskSum + ')'}}</I>
+                          </span>
+                      </el-tooltip>
+                    </el-col>
+                  </el-row>
+                </el-col>
+              </el-row>
+            </div>
+            <el-divider style="margin-top: 0;"></el-divider>
+            <div style="padding: 0 14px 14px 14px;">
+              <el-row>
+                <span style="color: #1e6427;">{{ data.ip + ' : ' + data.port }}</span>
+                <span>
+                  <el-tag size="mini" type="info" class="round el-btn" v-if="data.status === 'UNLINK'">
+                    {{ $t('server.UNLINK') }}
+                  </el-tag>
+                  <el-tag size="mini" type="warning" class="round el-btn" v-else-if="data.status === 'DELETE'">
+                    {{ $t('server.DELETE') }}
+                  </el-tag>
+                  <el-tag size="mini" type="success" class="round el-btn" v-else-if="data.status === 'VALID'">
+                    {{ $t('server.VALID') }}
+                  </el-tag>
+                  <el-tag size="mini" type="danger" class="round el-btn" v-else-if="data.status === 'INVALID'">
+                    {{ $t('server.INVALID') }}
+                  </el-tag>
+                  <span class="round">{{ data.updateTime | timestampFormatDate }}</span>
+                </span>
+              </el-row>
+              <span class="button time pa-na"></span>
+            </div>
+            <div class="bottom clearfix">
+              <time class="time">
+                <span class="pa-time">{{ data.type }}&nbsp;</span>
+                <span class="pa-time2">{{ data.userName }}</span>
+              </time>
+              <el-dropdown class="button button-drop" @command="(command)=>{handleCommand(command, data)}">
+                <span class="el-dropdown-link">
+                  {{ $t('package.operate') }}
+                  <i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="handleList">{{ $t('commons.detail') }}</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
       <table-pagination v-if="activeName === 'second'" :change="search" :current-page.sync="serverPage" :page-size.sync="serverSize" :total="serverTotal"/>
     </el-card>
 
@@ -519,6 +597,18 @@ export default {
     handleClick(tag) {
       this.activeName = tag.name;
     },
+    handleCommand(command, data) {
+      switch (command) {
+        case "handleList":
+          this.handleList(data);
+          break;
+        default:
+          break;
+      }
+    },
+    handleList(data) {
+
+    },
   },
   computed: {
     codemirror() {
@@ -621,5 +711,74 @@ export default {
 .code-mirror {
   width: 100%;
 }
+.el-row-body >>> .el-card__body >>> .el-divider {
+  margin: 5px 0;
+}
+.el-row-body {
+  padding: 0 20px 0 20px;
+  margin: 0 0 20px 0;
+}
+.el-row-body >>> .el-card__body {
+  margin: 0;
+}
+.plugin {
+  color: #215d9a;
+  font-size: 13px;
+  margin-top: 25px;
+  width: 1px;
+  max-height: 110px;
+  /*文字竖排显示*/
+  writing-mode: vertical-lr;/*从左向右 从右向左是 writing-mode: vertical-rl;*/
+  writing-mode: tb-lr;/*IE浏览器的从左向右 从右向左是 writing-mode: tb-rl；*/
+}
+.da-na {
+  width: 100%;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  overflow:hidden;
+  float: left;
+  color: red;
+}
+.round {
+  font-size: 13px;
+  margin: 0 0 0 5px;
+  padding: 1px 3px 1px 3px;
+  float: right;
+}
+.time {
+  font-size: 13px;
+  color: #999;
+}
+.pa-na {
+  max-width: 60%;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  -o-text-overflow:ellipsis;
+  overflow:hidden;
+}
+.pa-time {
+  display:inline-block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  color: #1e6427;
+  float: left;
+}
+.pa-time2 {
+  display:inline-block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  color: red;
+  float: left;
+}
+.button-drop {
+  float: right;
+}
+.el-dropdown-link {
+  cursor: pointer;
+  color: #409EFF;
+}
+
 /deep/ :focus{outline:0;}
 </style>
