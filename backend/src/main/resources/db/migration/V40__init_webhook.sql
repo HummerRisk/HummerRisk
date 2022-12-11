@@ -31,3 +31,5 @@ UPDATE `server_rule` SET `type` = 'linux';
 UPDATE `server_result` SET `type` = 'linux';
 
 UPDATE `history_server_result` SET `type` = 'linux';
+
+INSERT INTO `plugin` (`id`, `name`, `icon`, `update_time`, `scan_type`, `order_`, `type`) VALUES ('hummer-jdcloud-plugin', '京东云', 'jdcloud.png', concat(unix_timestamp(now()), '003'), 'custodian', 21, 'cloud');
