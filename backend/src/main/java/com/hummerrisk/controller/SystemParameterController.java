@@ -182,4 +182,10 @@ public class SystemParameterController {
         systemParameterService.deleteWebhook(id);
     }
 
+    @ApiOperation(value = "启用webhook")
+    @PostMapping(value = "changeStatus")
+    public int changeStatus(@RequestBody Webhook webhook) {
+        return systemParameterService.changeStatus(webhook);
+    }
+
 }

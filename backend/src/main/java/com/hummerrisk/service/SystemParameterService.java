@@ -468,10 +468,12 @@ public class SystemParameterService {
     }
 
     public void deleteWebhook(String id) {
-
         webhookMapper.deleteByPrimaryKey(id);
         OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.WEBHOOK.name(), ResourceOperation.DELETE, "i18n_delete_webhook");
+    }
 
+    public int changeStatus(Webhook webhook) {
+        return webhookMapper.updateByPrimaryKeySelective(webhook);
     }
 
 }

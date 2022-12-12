@@ -4,6 +4,11 @@
       <el-table-column type="index" min-width="40"/>
       <el-table-column prop="name" :label="$t('system_parameter_setting.webhook.name')" min-width="130"></el-table-column>
       <el-table-column prop="webhook" :label="$t('system_parameter_setting.webhook.webhook')" min-width="250"></el-table-column>
+      <el-table-column :label="$t('rule.status')" width="80" show-overflow-tooltip>
+        <template v-slot:default="scope">
+          <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
+        </template>
+      </el-table-column>
       <el-table-column min-width="160" :label="$t('commons.create_time')" sortable
                        prop="createTime">
         <template v-slot:default="scope">
@@ -149,6 +154,7 @@ export default {
           exec: this.handleDelete
         }
       ],
+      proxys: [],
     }
   },
 
@@ -158,10 +164,18 @@ export default {
   methods: {
     init(){
       this.search();
+      this.activeProxy();
     },
     handleClose() {
       this.createVisible =  false;
       this.updateVisible =  false;
+    },
+    //查询代理
+    activeProxy() {
+      let url = "/proxy/list/all";
+      this.result = this.$get(url, response => {
+        this.proxys = response.data;
+      });
     },
     search () {
       let url = "/system/webhookList/" + this.currentPage + "/" + this.pageSize;
@@ -220,6 +234,16 @@ export default {
             });
           }
         }
+      });
+    },
+    changeStatus (item) {
+      this.result = this.$post('/system/changeStatus', {id: item.id, status: item.status?1:0}, response => {
+        if (item.status == 1) {
+          this.$success(this.$t('rule.change_status_on'));
+        } else if (item.status == 0) {
+          this.$success(this.$t('rule.change_status_off'));
+        }
+        this.search();
       });
     },
   }
