@@ -1,15 +1,21 @@
 <template>
   <div>
     <el-row>
-      <el-col :span="10">
-        <h3 style="margin: 5px;">{{ $t('system_parameter_setting.message.task_notification') }}</h3>
+      <el-col :span="24">
+        <h3 style="margin: 15px;">{{ $t('system_parameter_setting.message.task_notification') }}</h3>
         <el-button icon="el-icon-circle-plus-outline" plain size="mini" @click="handleAddTaskModel">
           {{ $t('system_parameter_setting.message.create_new_notification') }}
         </el-button>
         <el-popover placement="right-end" title="Example" width="600" trigger="click">
           <hr-code-edit :read-only="true" width="600px" height="400px" :data.sync="content" :modes="modes" :mode="'html'"/>
-          <el-button icon="el-icon-warning" plain size="mini" slot="reference">
-            {{ $t('system_parameter_setting.message.mail_template_example') }}
+          <el-button plain size="mini" slot="reference">
+            <i class="iconfont icon-guanyuyunguanjia"></i> {{ $t('system_parameter_setting.message.cloud_mail_template_example') }}
+          </el-button>
+        </el-popover>
+        <el-popover placement="right-end" title="Example" width="600" trigger="click">
+          <hr-code-edit :read-only="true" width="600px" height="400px" :data.sync="content2" :modes="modes" :mode="'html'"/>
+          <el-button plain size="mini" slot="reference">
+            <i class="iconfont icon-adsyunyuanshengshujuku"></i> {{ $t('system_parameter_setting.message.k8s_mail_template_example') }}
           </el-button>
         </el-popover>
       </el-col>
@@ -157,6 +163,82 @@ export default {
         '  </div>\n' +
         '</body>\n' +
         '</html>',
+      content2: '<!DOCTYPE html>\n' +
+        '<html lang="en">\n' +
+        '<head>\n' +
+        '    <meta charset="UTF-8">\n' +
+        '    <title>HummerRisk</title>\n' +
+        '    <style type="text/css">\n' +
+        '        .email-table table {\n' +
+        '          font-size: 12px;\n' +
+        '          table-layout: fixed;\n' +
+        '          empty-cells: show;\n' +
+        '          border-collapse: collapse;\n' +
+        '          margin: 0 0;\n' +
+        '          border: 1px solid #cad9ea;\n' +
+        '          color: #666;\n' +
+        '        }\n' +
+        '        .email-table td {\n' +
+        '          height: 30px;\n' +
+        '          word-wrap: break-word;\n' +
+        '        }\n' +
+        '        .email-table h1, h2, h3 {\n' +
+        '          font-size: 12px;\n' +
+        '          margin: 0;\n' +
+        '          padding: 0;\n' +
+        '        }\n' +
+        '        .email-table th {\n' +
+        '          background-repeat: repeat-x;\n' +
+        '          height: 30px;\n' +
+        '        }\n' +
+        '        .email-table td, .email-table th {\n' +
+        '          border: 1px solid #cad9ea;\n' +
+        '          padding: 0 1em 0;\n' +
+        '        }\n' +
+        '        .email-table tr.alter {\n' +
+        '          background-color: #f5fafe;\n' +
+        '        }\n' +
+        '    </style>\n' +
+        '</head>\n' +
+        '<body>\n' +
+        '  <div>\n' +
+        '    <div style="text-align: left">\n' +
+        '        <p>尊敬的用户, 您好, 您的安全风险检测结果如下:</p>\n' +
+        '    </div>\n' +
+        '    <div style="text-align: left;">\n' +
+        '        <p style="margin-left: 10px;">漏洞总数 : #{returnSum}</p>\n' +
+        '    </div>\n' +
+        '    <div class="email-table">\n' +
+        '        <table class="alter">\n' +
+        '            <thead style="background: #87CEFA;">\n' +
+        '                <tr class="alter">\n' +
+        '                   <th>Resource</th>\n' +
+        '                   <th>VulnerabilityID</th>\n' +
+        '                   <th>Severity</th>\n' +
+        '                   <th>InstalledVersion</th>\n' +
+        '                   <th>FixedVersion</th>\n' +
+        '                   <th>Description</th>\n' +
+        '                   <th>primaryLink</th>\n' +
+        '                </tr>\n' +
+        '            </thead>\n' +
+        '            <tbody>\n' +
+        '                <tr th:each="resource:${resources}">\n' +
+        '                   <td th:text="${resource.pkgName} ? ${resource.pkgName} : ${resource.resource}"/>\n' +
+        '                   <td th:text="${resource.vulnerabilityId} ? ${resource.vulnerabilityId} : ${resource.itemId}"/>\n' +
+        '                   <td th:text="${resource.severity}"/>\n' +
+        '                   <td th:text="${resource.installedVersion}"/>\n' +
+        '                   <td th:text="${resource.fixedVersion}"/>\n' +
+        '                   <td th:text="${resource.title}"/>\n' +
+        '                   <td th:text="${resource.primaryLink} ? ${resource.primaryLink} : ${resource.primaryUrl}"/>\n' +
+        '                </tr>\n' +
+        '            </tbody>\n' +
+        '        </table>\n' +
+        '    </div>\n' +
+        '    <h5 style="color: red;">注：更多详情请登录 HummerRisk 平台查看。</h5>\n' +
+        '  \n' +
+        '  </div>\n' +
+        '</body>\n' +
+        '</html>',
       textContent:  '尊敬的用户, 您好, 您的安全合规检测结果如下:\n' +
                     '\n' +
                     '不合规资源总数/资源总数 : #{returnSum}/#{resourcesSum}\n' +
@@ -264,5 +346,11 @@ export default {
 
 .el-button {
   margin-left: 10px;
+}
+
+.iconfont {
+  margin: 1px 5px 0 0;
+  text-align: center;
+  font-size: 12px;
 }
 </style>

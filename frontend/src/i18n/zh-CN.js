@@ -365,6 +365,8 @@ export default {
       task_notification: '安全检测结果通知',
       create_new_notification: '创建新通知',
       mail_template_example: '邮件模版',
+      cloud_mail_template_example: '混合云检测邮件模版',
+      k8s_mail_template_example: '云原生检测邮件模版',
       select_events: '选择事件',
       message: '事件，接收人，接收方式为必填项',
       message_webhook: '接收方式为钉钉和企业机器人时，webhook为必填项',
