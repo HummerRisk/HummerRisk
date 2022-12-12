@@ -9,8 +9,10 @@ import com.dingtalk.api.request.OapiUserGetByMobileRequest;
 import com.dingtalk.api.response.OapiGettokenResponse;
 import com.dingtalk.api.response.OapiMessageCorpconversationAsyncsendV2Response;
 import com.dingtalk.api.response.OapiUserGetByMobileResponse;
-import com.hummerrisk.base.domain.*;
-import com.hummerrisk.base.mapper.MessageTaskMapper;
+import com.hummerrisk.base.domain.SystemParameter;
+import com.hummerrisk.base.domain.SystemParameterExample;
+import com.hummerrisk.base.domain.Webhook;
+import com.hummerrisk.base.domain.WebhookExample;
 import com.hummerrisk.base.mapper.SystemParameterMapper;
 import com.hummerrisk.base.mapper.WebhookMapper;
 import com.hummerrisk.commons.constants.ParamConstants;
@@ -60,9 +62,6 @@ public class SystemParameterService {
 
     @Resource
     private WebhookMapper webhookMapper;
-
-    @Resource
-    private MessageTaskMapper messageTaskMapper;
 
     public String getSystemLanguage() {
         String result = StringUtils.EMPTY;
@@ -470,14 +469,7 @@ public class SystemParameterService {
 
     public void deleteWebhook(String id) {
 
-        MessageTaskExample example = new MessageTaskExample();
-        example.createCriteria().andWebhookIdEqualTo(id);
-        List<MessageTask> list = messageTaskMapper.selectByExample(example);
-        if (list.size() > 0) {
-            HRException.throwException(Translator.get("i18n_ex_webhook_use"));
-        } else {
-            webhookMapper.deleteByPrimaryKey(id);
-        }
+        webhookMapper.deleteByPrimaryKey(id);
         OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.WEBHOOK.name(), ResourceOperation.DELETE, "i18n_delete_webhook");
 
     }

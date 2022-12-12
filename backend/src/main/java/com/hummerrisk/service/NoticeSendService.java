@@ -17,6 +17,8 @@ public class NoticeSendService {
     @Resource
     private DingNoticeSender dingNoticeSender;
     @Resource
+    private WebhookNoticeSender webhookNoticeSender;
+    @Resource
     private NoticeService noticeService;
 
     private NoticeSender getNoticeSender(MessageDetail messageDetail) {
@@ -30,6 +32,9 @@ public class NoticeSendService {
                 break;
             case NoticeConstants.Type.NAIL_ROBOT:
                 noticeSender = dingNoticeSender;
+                break;
+            case NoticeConstants.Type.WEBHOOK:
+                noticeSender = webhookNoticeSender;
                 break;
             default:
                 break;

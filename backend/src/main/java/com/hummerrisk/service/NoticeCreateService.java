@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import static com.alibaba.fastjson.JSON.toJSONString;
 
@@ -61,6 +62,8 @@ public class NoticeCreateService {
     private ExtNoticeMapper extNoticeMapper;
     @Resource
     private FileSystemResultMapper fileSystemResultMapper;
+    @Resource
+    private WebhookMapper webhookMapper;
 
     @QuartzScheduled(cron = "${cron.expression.notice}")
     public void handleTasks() {
@@ -285,6 +288,12 @@ public class NoticeCreateService {
     private void sendTask(MessageOrder messageOrder) {
         SystemParameterService systemParameterService = CommonBeanFactory.getBean(SystemParameterService.class);
         NoticeSendService noticeSendService = CommonBeanFactory.getBean(NoticeSendService.class);
+
+        WebhookExample webhookExample = new WebhookExample();
+        webhookExample.createCriteria().andStatusEqualTo(true);
+        List<Webhook> webhooks = webhookMapper.selectByExample(webhookExample);
+        List<String> webhookUrls = webhooks.stream().map(Webhook::getWebhook).collect(Collectors.toList());
+
         assert systemParameterService != null;
         assert noticeSendService != null;
 
@@ -323,6 +332,7 @@ public class NoticeCreateService {
                     .event(event)
                     .subject(subject)
                     .paramMap(paramMap)
+                    .webhookUrls(webhookUrls)
                     .build();
             noticeSendService.send(noticeModel);
 
@@ -354,27 +364,88 @@ public class NoticeCreateService {
                     .event(event)
                     .subject(subject)
                     .paramMap(paramMap)
+                    .webhookUrls(webhookUrls)
                     .build();
             noticeSendService.send(noticeModel);
 
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), messageOrder.getScanType())) {
             subject = "i18n_server_messageorder";
             details = "i18n_resource_manage " + extNoticeMapper.serverSum(messageOrder);
+            NoticeModel noticeModel = NoticeModel.builder()
+                    .successContext(successContext)
+                    .successMailTemplate("SuccessfulNotification")
+                    .failedContext(failedContext)
+                    .failedMailTemplate("FailedNotification")
+                    .event(event)
+                    .subject(subject)
+                    .webhookUrls(webhookUrls)
+                    .build();
+            noticeSendService.send(noticeModel);
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), messageOrder.getScanType())) {
             subject = "i18n_image_messageorder";
             details = "i18n_resource_manage " + extNoticeMapper.imageSum(messageOrder);
+            NoticeModel noticeModel = NoticeModel.builder()
+                    .successContext(successContext)
+                    .successMailTemplate("SuccessfulNotification")
+                    .failedContext(failedContext)
+                    .failedMailTemplate("FailedNotification")
+                    .event(event)
+                    .subject(subject)
+                    .webhookUrls(webhookUrls)
+                    .build();
+            noticeSendService.send(noticeModel);
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CODE.name(), messageOrder.getScanType())) {
             subject = "i18n_code_messageorder";
             details = "i18n_resource_manage " + extNoticeMapper.codeSum(messageOrder);
+            NoticeModel noticeModel = NoticeModel.builder()
+                    .successContext(successContext)
+                    .successMailTemplate("SuccessfulNotification")
+                    .failedContext(failedContext)
+                    .failedMailTemplate("FailedNotification")
+                    .event(event)
+                    .subject(subject)
+                    .webhookUrls(webhookUrls)
+                    .build();
+            noticeSendService.send(noticeModel);
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CONFIG.name(), messageOrder.getScanType())) {
             subject = "i18n_config_messageorder";
             details = "i18n_resource_manage " + extNoticeMapper.configSum(messageOrder);
+            NoticeModel noticeModel = NoticeModel.builder()
+                    .successContext(successContext)
+                    .successMailTemplate("SuccessfulNotification")
+                    .failedContext(failedContext)
+                    .failedMailTemplate("FailedNotification")
+                    .event(event)
+                    .subject(subject)
+                    .webhookUrls(webhookUrls)
+                    .build();
+            noticeSendService.send(noticeModel);
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.K8S.name(), messageOrder.getScanType())) {
             subject = "i18n_k8s_messageorder";
             details = "i18n_resource_manage " + extNoticeMapper.k8sSum(messageOrder);
+            NoticeModel noticeModel = NoticeModel.builder()
+                    .successContext(successContext)
+                    .successMailTemplate("SuccessfulNotification")
+                    .failedContext(failedContext)
+                    .failedMailTemplate("FailedNotification")
+                    .event(event)
+                    .subject(subject)
+                    .webhookUrls(webhookUrls)
+                    .build();
+            noticeSendService.send(noticeModel);
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.FS.name(), messageOrder.getScanType())) {
             subject = "i18n_fs_messageorder";
             details = "i18n_resource_manage " + extNoticeMapper.fsSum(messageOrder);
+            NoticeModel noticeModel = NoticeModel.builder()
+                    .successContext(successContext)
+                    .successMailTemplate("SuccessfulNotification")
+                    .failedContext(failedContext)
+                    .failedMailTemplate("FailedNotification")
+                    .event(event)
+                    .subject(subject)
+                    .webhookUrls(webhookUrls)
+                    .build();
+            noticeSendService.send(noticeModel);
         }
 
 

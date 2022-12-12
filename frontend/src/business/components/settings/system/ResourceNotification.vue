@@ -254,13 +254,20 @@ export default {
         isReadOnly: false,
       }],
       eventOptions: [
-        {value: 'EXECUTE_SUCCESSFUL', label: this.$t('schedule.event_success')},
-        {value: 'EXECUTE_FAILED', label: this.$t('schedule.event_failed')}
+        {value: 'EXECUTE_CLOUD', label: this.$t('commons.cloud_scan')},
+        {value: 'EXECUTE_VULN', label: this.$t('dashboard.vuln_scan')},
+        {value: 'EXECUTE_SERVER', label: this.$t('dashboard.server_scan')},
+        {value: 'EXECUTE_K8S', label: this.$t('dashboard.k8s_scan')},
+        {value: 'EXECUTE_CONFIG', label: this.$t('dashboard.config_scan')},
+        {value: 'EXECUTE_IMAGE', label: this.$t('dashboard.image_scan')},
+        {value: 'EXECUTE_CODE', label: this.$t('dashboard.code_scan')},
+        {value: 'EXECUTE_FS', label: this.$t('dashboard.fs_scan')},
       ],
       receiveTypeOptions: [
         {value: 'EMAIL', label: this.$t('system_parameter_setting.message.mail')},
         {value: 'NAIL_ROBOT', label: this.$t('system_parameter_setting.message.nail_robot')},
-        {value: 'WECHAT_ROBOT', label: this.$t('system_parameter_setting.message.enterprise_wechat_robot')}
+        {value: 'WECHAT_ROBOT', label: this.$t('system_parameter_setting.message.enterprise_wechat_robot')},
+        {value: 'WEBHOOK', label: 'WebHook'}
       ],
     }
   },

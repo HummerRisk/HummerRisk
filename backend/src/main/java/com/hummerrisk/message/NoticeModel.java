@@ -46,6 +46,15 @@ public class NoticeModel {
      * 模版里的参数信息
      */
     private Map<String, Object> paramMap;
+    /**
+     * 接收人
+     */
+    private List<Receiver> receivers;
+    /**
+     * 抄送人
+     */
+    private List<Receiver> recipients;
+    private List<String> webhookUrls;
 
     public String getResourceId() {
         return resourceId;
@@ -141,5 +150,29 @@ public class NoticeModel {
 
     public void setParamMap(Map<String, Object> paramMap) {
         this.paramMap = paramMap;
+    }
+
+    public List<Receiver> getReceivers() {
+        return receivers;
+    }
+
+    public void setReceivers(List<Receiver> receivers) {
+        this.receivers = receivers;
+    }
+
+    public List<Receiver> getRecipients() {
+        return recipients;
+    }
+
+    public void setRecipients(List<Receiver> recipients) {
+        this.recipients = recipients;
+    }
+
+    public List<String> getWebhookUrls() {
+        return webhookUrls;
+    }
+
+    public void setWebhookUrls(List<String> webhookUrls) {
+        this.webhookUrls = webhookUrls;
     }
 }
