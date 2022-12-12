@@ -135,6 +135,7 @@ public class ServerService {
             deleteServerResultById(id);
             ServerRuleRequest serverRuleRequest = new ServerRuleRequest();
             serverRuleRequest.setStatus(true);
+            serverRuleRequest.setType(server.getType());
             List<ServerRuleDTO> ruleList = ruleList(serverRuleRequest);
             ServerResult result = new ServerResult();
             String serverGroupName = serverGroupMapper.selectByPrimaryKey(server.getServerGroupId()).getName();
@@ -153,6 +154,7 @@ public class ServerService {
                 result.setRuleDesc(dto.getDescription());
                 result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
                 result.setSeverity(dto.getSeverity());
+                result.setType(dto.getType());
                 serverResultMapper.insertSelective(result);
 
                 saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);

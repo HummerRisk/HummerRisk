@@ -110,6 +110,9 @@
             <if test="request.status != null and request.status != ''">
                 and t.status = #{request.status}
             </if>
+            <if test="request.type != null and request.type != ''">
+                and t.status = #{request.type}
+            </if>
             <if test="request.name != null and request.name != ''">
                 and LOWER(t.name) like CONCAT('%',LOWER(#{request.name}),'%')
             </if>
