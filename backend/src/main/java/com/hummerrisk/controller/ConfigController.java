@@ -20,6 +20,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -102,7 +103,7 @@ public class ConfigController {
     }
 
     @I18n
-    @ApiOperation(value = "云原生部署配置检测结果详情列表")
+    @ApiIgnore
     @PostMapping("resultItemList/{goPage}/{pageSize}")
     public Pager<List<CloudNativeConfigResultItem>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ConfigResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
@@ -110,7 +111,7 @@ public class ConfigController {
     }
 
     @I18n
-    @ApiOperation(value = "检测结果详情")
+    @ApiOperation(value = "云原生部署配置检测结果详情列表")
     @PostMapping("resultItemListBySearch/{goPage}/{pageSize}")
     public Pager<List<CloudNativeConfigResultItem>> resultItemListBySearch(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ConfigResultItemRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);

@@ -97,7 +97,6 @@
             <if test="request.combine != null">
                 <include refid="combine">
                     <property name="condition" value="request.combine"/>
-                    <property name="name" value="request.name"/>
                 </include>
             </if>
 

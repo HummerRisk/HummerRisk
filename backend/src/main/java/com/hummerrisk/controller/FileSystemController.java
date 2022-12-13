@@ -20,6 +20,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -171,6 +172,7 @@ public class FileSystemController {
     }
 
     @I18n
+    @ApiIgnore
     @PostMapping("resultItemList/{goPage}/{pageSize}")
     public Pager<List<FileSystemResultItemWithBLOBs>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody FileSystemResultItem request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);

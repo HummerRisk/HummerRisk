@@ -221,6 +221,7 @@ public class ImageController {
     }
 
     @I18n
+    @ApiIgnore
     @PostMapping("resultItemList/{goPage}/{pageSize}")
     public Pager<List<ImageResultItemWithBLOBs>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultItem request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
