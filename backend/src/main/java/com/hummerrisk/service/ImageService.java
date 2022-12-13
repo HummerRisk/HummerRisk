@@ -81,6 +81,8 @@ public class ImageService {
     private SbomMapper sbomMapper;
     @Resource
     private SbomVersionMapper sbomVersionMapper;
+    @Resource
+    private ExtImageResultItemMapper extImageResultItemMapper;
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
@@ -667,6 +669,10 @@ public class ImageService {
         }
         example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
         return imageResultItemMapper.selectByExampleWithBLOBs(example);
+    }
+
+    public List<ImageResultItemWithBLOBs> resultItemListBySearch(ImageResultItemRequest request) {
+        return extImageResultItemMapper.resultItemListBySearch(request);
     }
 
     public List<ImageRepoSyncLogWithBLOBs> repoSyncList(String id) {

@@ -221,11 +221,18 @@ public class ImageController {
     }
 
     @I18n
-    @ApiOperation(value = "检测结果详情")
     @PostMapping("resultItemList/{goPage}/{pageSize}")
     public Pager<List<ImageResultItemWithBLOBs>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultItem request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, imageService.resultItemList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "检测结果详情")
+    @PostMapping("resultItemListBySearch/{goPage}/{pageSize}")
+    public Pager<List<ImageResultItemWithBLOBs>> resultItemListBySearch(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultItemRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, imageService.resultItemListBySearch(request));
     }
 
     @I18n
