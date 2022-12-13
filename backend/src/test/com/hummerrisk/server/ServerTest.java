@@ -15,7 +15,7 @@ public class ServerTest {
     @org.junit.Test
     public void Test() throws Exception {
         try{
-            SshUtil.login(new Server(), new Proxy());//通过ssh连接到服务器
+            SshUtil.loginSsh2(new Server(), new Proxy());//通过ssh连接到服务器
             SysListener.property();
         } catch (Exception e) {
             System.out.println(e.getMessage());
