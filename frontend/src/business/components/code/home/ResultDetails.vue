@@ -40,9 +40,9 @@
             <span v-if="scope.row.severity === 'LOW'" style="color: #336D9F;">{{ scope.row.severity }}</span>
             <span v-if="scope.row.severity === 'UNKNOWN'" style="color: #67C23A;">{{ scope.row.severity }}</span>
           </el-table-column>
-          <el-table-column :label="'InstalledVersion'" v-if="checkedColumnNames.includes('installedVersion')" min-width="100" prop="installedVersion">
+          <el-table-column :label="'InstalledVersion'" v-if="checkedColumnNames.includes('installedVersion')" min-width="110" prop="installedVersion">
           </el-table-column>
-          <el-table-column min-width="100" v-if="checkedColumnNames.includes('fixedVersion')" :label="'FixedVersion'" prop="fixedVersion">
+          <el-table-column min-width="110" v-if="checkedColumnNames.includes('fixedVersion')" :label="'FixedVersion'" prop="fixedVersion">
           </el-table-column>
           <el-table-column min-width="250" v-if="checkedColumnNames.includes('primaryUrl')" :label="'PrimaryURL'" prop="primaryUrl" v-slot:default="scope">
             <span>{{ scope.row.title }}</span>

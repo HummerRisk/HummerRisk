@@ -7,6 +7,7 @@ import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.fs.FsRequest;
+import com.hummerrisk.controller.request.fs.FsResultItemRequest;
 import com.hummerrisk.controller.request.fs.FsResultRequest;
 import com.hummerrisk.controller.request.fs.FsRuleRequest;
 import com.hummerrisk.dto.FsDTO;
@@ -170,11 +171,18 @@ public class FileSystemController {
     }
 
     @I18n
-    @ApiOperation(value = "检测结果详情")
     @PostMapping("resultItemList/{goPage}/{pageSize}")
     public Pager<List<FileSystemResultItemWithBLOBs>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody FileSystemResultItem request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, fileSystemService.resultItemList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "检测结果详情")
+    @PostMapping("resultItemListBySearch/{goPage}/{pageSize}")
+    public Pager<List<FileSystemResultItemWithBLOBs>> resultItemListBySearch(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody FsResultItemRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, fileSystemService.resultItemListBySearch(request));
     }
 
     @I18n

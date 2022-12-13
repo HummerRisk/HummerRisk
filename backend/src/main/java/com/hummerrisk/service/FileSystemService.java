@@ -6,12 +6,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtFileSystemMapper;
+import com.hummerrisk.base.mapper.ext.ExtFileSystemResultItemMapper;
 import com.hummerrisk.base.mapper.ext.ExtFileSystemResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtFileSystemRuleMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
+import com.hummerrisk.controller.request.code.CodeResultItemRequest;
 import com.hummerrisk.controller.request.fs.FsRequest;
+import com.hummerrisk.controller.request.fs.FsResultItemRequest;
 import com.hummerrisk.controller.request.fs.FsResultRequest;
 import com.hummerrisk.controller.request.fs.FsRuleRequest;
 import com.hummerrisk.dto.*;
@@ -58,6 +61,8 @@ public class FileSystemService {
     private RuleTagMappingMapper ruleTagMappingMapper;
     @Resource
     private FileSystemResultItemMapper fileSystemResultItemMapper;
+    @Resource
+    private ExtFileSystemResultItemMapper extFileSystemResultItemMapper;
     @Resource
     private ProxyMapper proxyMapper;
     @Resource
@@ -277,6 +282,9 @@ public class FileSystemService {
         }
         example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
         return fileSystemResultItemMapper.selectByExampleWithBLOBs(example);
+    }
+    public List<FileSystemResultItemWithBLOBs> resultItemListBySearch(FsResultItemRequest request) {
+        return extFileSystemResultItemMapper.resultItemListBySearch(request);
     }
 
     public void scan(String id) throws Exception {
