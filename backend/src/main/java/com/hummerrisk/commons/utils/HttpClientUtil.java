@@ -2,10 +2,8 @@ package com.hummerrisk.commons.utils;
 
 import com.hummerrisk.commons.constants.CloudNativeConstants;
 import com.hummerrisk.service.impl.SSLSocketFactoryImp;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
+import okio.BufferedSink;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -19,6 +17,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.net.ssl.*;
 import java.io.IOException;
@@ -201,15 +201,16 @@ public class HttpClientUtil {
         }
     }
 
-    public static String HttpPost(String url, Map<String, String> param) throws Exception {
+    public static String HttpPost(String url, Map<String, String> param, String body) throws Exception {
         OkHttpClient client = getClient();
         Request.Builder builder = new Request.Builder();
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), body);
         if (param != null) {
             for (String key : param.keySet()) {
                 builder.addHeader(key, param.get(key));
             }
         }
-        Request request = builder.url(url).method("GET", null).build();
+        Request request = builder.url(url).method("POST", requestBody).build();
         try (Response response = client.newCall(request).execute()) {
             if (response.isSuccessful()) {
                 return response.body().string();
@@ -217,6 +218,7 @@ public class HttpClientUtil {
                 throw new IOException("Unexpected code " + response);
             }
         }
+
     }
 
     public static OkHttpClient getClient(Interceptor... interceptor) {
