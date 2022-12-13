@@ -6,10 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.exceptions.ClientException;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
-import com.hummerrisk.base.mapper.ext.ExtCloudNativeMapper;
-import com.hummerrisk.base.mapper.ext.ExtCloudNativeResultMapper;
-import com.hummerrisk.base.mapper.ext.ExtCloudNativeSourceMapper;
-import com.hummerrisk.base.mapper.ext.ExtK8sResultItemMapper;
+import com.hummerrisk.base.mapper.ext.*;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
@@ -77,6 +74,8 @@ public class K8sService {
     private CloudNativeSourceImageMapper cloudNativeSourceImageMapper;
     @Resource
     private ExtK8sResultItemMapper extK8sResultItemMapper;
+    @Resource
+    private ExtK8sResultConfigItemMapper extK8sResultConfigItemMapper;
 
 
     public List<CloudNativeDTO> getCloudNativeList(CloudNativeRequest request) {
@@ -726,7 +725,7 @@ public class K8sService {
     }
 
     public List<CloudNativeResultConfigItemWithBLOBs> resultConfigItemListBySearch(K8sConfigResultItemRequest request) {
-        return extK8sResultItemMapper.resultConfigItemListBySearch(request);
+        return extK8sResultConfigItemMapper.resultConfigItemListBySearch(request);
     }
 
     public CloudNativeResultDTO getCloudNativeResult(String resultId) {

@@ -13,33 +13,43 @@
                         @search="search"
                         :show-back="true"
                         @back="back" :backTip="$t('k8s.back_resource')"
-                        :title="$t('k8s.result_config_details_list')"/>
+                        :title="$t('k8s.result_config_details_list')"
+                        :items="items" :columnNames="columnNames"
+                        :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                        @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
         </template>
 
-        <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter">
-          <el-table-column type="index" min-width="2%"/>
-          <el-table-column min-width="10%" :label="'Title'" prop="title" v-slot:default="scope">
+        <hide-table
+          :table-data="tableData"
+          @sort-change="sort"
+          @filter-change="filter"
+          @select-all="select"
+          @select="select"
+          :tableRow="false"
+        >
+          <el-table-column type="index" min-width="40"/>
+          <el-table-column min-width="120" v-if="checkedColumnNames.includes('title')" :label="'Title'" prop="title" v-slot:default="scope">
             <span style="font-weight:bold;color: #000000;">{{ scope.row.title }}</span>
           </el-table-column>
-          <el-table-column min-width="7%" :label="'CheckID'" prop="checkId">
+          <el-table-column min-width="70" v-if="checkedColumnNames.includes('checkId')" :label="'CheckID'" prop="checkId">
           </el-table-column>
-          <el-table-column min-width="7%" :label="'Severity'" prop="severity" v-slot:default="scope">
+          <el-table-column min-width="70" v-if="checkedColumnNames.includes('severity')" :label="'Severity'" prop="severity" v-slot:default="scope">
             <span v-if="scope.row.severity === 'CRITICAL'" style="color: #8B0000;">{{ scope.row.severity }}</span>
             <span v-if="scope.row.severity === 'HIGH'" style="color: #FF4D4D;">{{ scope.row.severity }}</span>
             <span v-if="scope.row.severity === 'MEDIUM'" style="color: #FF8000;">{{ scope.row.severity }}</span>
             <span v-if="scope.row.severity === 'LOW'" style="color: #336D9F;">{{ scope.row.severity }}</span>
             <span v-if="scope.row.severity === 'UNKNOWN'" style="color: #67C23A;">{{ scope.row.severity }}</span>
           </el-table-column>
-          <el-table-column min-width="10%" :label="'Category'" prop="category" v-slot:default="scope">
+          <el-table-column min-width="120" v-if="checkedColumnNames.includes('category')" :label="'Category'" prop="category" v-slot:default="scope">
             {{ scope.row.category?scope.row.category:'N/A' }}
           </el-table-column>
-          <el-table-column min-width="25%" :label="'Description'" prop="description" v-slot:default="scope">
+          <el-table-column min-width="250" v-if="checkedColumnNames.includes('description')" :label="'Description'" prop="description" v-slot:default="scope">
             <span>{{ scope.row.description }}</span>
           </el-table-column>
-          <el-table-column min-width="5%" :label="'Success'" prop="success" v-slot:default="scope">
+          <el-table-column min-width="70" :label="'Success'" prop="success" v-slot:default="scope" fixed="right">
             {{ scope.row.success?scope.row.success:'N/A' }}
           </el-table-column>
-        </el-table>
+        </hide-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
     </main-container>
@@ -55,6 +65,37 @@ import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/RuleDialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import MetricChart from "@/business/components/common/chart/MetricChart";
+import { DETAIL_RESULT_CONFIGS } from "@/business/components/common/components/search/search-components";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'Title',
+    props: 'title',
+    disabled: false
+  },
+  {
+    label: 'CheckID',
+    props: 'checkId',
+    disabled: false
+  },
+  {
+    label: 'Severity',
+    props: 'severity',
+    disabled: false
+  },
+  {
+    label: 'Category',
+    props: 'category',
+    disabled: false
+  },
+  {
+    label: 'Description',
+    props: 'description',
+    disabled: false
+  },
+];
 
 /* eslint-disable */
   export default {
@@ -68,6 +109,7 @@ import MetricChart from "@/business/components/common/chart/MetricChart";
       TableOperator,
       DialogFooter,
       MetricChart,
+      HideTable,
     },
     data() {
       return {
@@ -78,6 +120,7 @@ import MetricChart from "@/business/components/common/chart/MetricChart";
         total: 0,
         loading: false,
         condition: {
+          components: DETAIL_RESULT_CONFIGS
         },
         tagSelect: [],
         resourceTypes: [],
@@ -102,10 +145,50 @@ import MetricChart from "@/business/components/common/chart/MetricChart";
           unknown: 0,
           total: 0,
         },
+        checkedColumnNames: columnOptions.map((ele) => ele.props),
+        columnNames: columnOptions,
+        //名称搜索
+        items: [
+          {
+            name: 'Title',
+            id: 'title',
+          },
+          {
+            name: 'CheckID',
+            id: 'checkId',
+          },
+          {
+            name: 'Severity',
+            id: 'severity',
+          },
+          {
+            name: 'Category',
+            id: 'category',
+          },
+          {
+            name: 'Description',
+            id: 'description',
+          },
+        ],
+        checkAll: true,
+        isIndeterminate: false,
       }
     },
     props: ["id"],
     methods: {
+      handleCheckedColumnNamesChange(value) {
+        const checkedCount = value.length;
+        this.checkAll = checkedCount === this.columnNames.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+        this.checkedColumnNames = value;
+      },
+      handleCheckAllChange(val) {
+        this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+        this.isIndeterminate = false;
+        this.checkAll = val;
+      },
+      select(selection) {
+      },
       sort(column) {
         _sort(column, this.condition);
         this.init();
@@ -115,7 +198,7 @@ import MetricChart from "@/business/components/common/chart/MetricChart";
         this.init();
       },
       search () {
-        let url = "/k8s/resultConfigItemList/" + this.currentPage + "/" + this.pageSize;
+        let url = "/k8s/resultConfigItemListBySearch/" + this.currentPage + "/" + this.pageSize;
         this.condition.resultId = this.resultId;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;

@@ -12,5 +12,4 @@ public interface ExtK8sResultItemMapper {
 
     List<CloudNativeResultItem> resultItemListBySearch(@Param("request") K8sResultItemRequest request);
 
-    List<CloudNativeResultConfigItemWithBLOBs> resultConfigItemListBySearch(@Param("request") K8sConfigResultItemRequest request);
 }
