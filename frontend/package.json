@@ -17,7 +17,6 @@
     "@fortawesome/vue-fontawesome": "^0.1.9",
     "axios": "^0.21.2",
     "core-js": "^3.4.3",
-    "default-passive-events": "^2.0.0",
     "diffable-html": "^4.0.0",
     "echarts": "^4.6.0",
     "element-ui": "^2.15.7",
