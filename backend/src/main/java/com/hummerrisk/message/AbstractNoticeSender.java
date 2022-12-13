@@ -36,8 +36,11 @@ public abstract class AbstractNoticeSender implements NoticeSender {
         String context = "";
         switch (messageDetail.getEvent()) {
             case NoticeConstants.Event.CREATE:
+                break;
             case NoticeConstants.Event.UPDATE:
+                break;
             case NoticeConstants.Event.DELETE:
+                break;
             case NoticeConstants.Event.COMMENT:
                 context = noticeModel.getContext();
                 break;
@@ -67,8 +70,11 @@ public abstract class AbstractNoticeSender implements NoticeSender {
         try {
             switch (messageDetail.getEvent()) {
                 case NoticeConstants.Event.CREATE:
+                    break;
                 case NoticeConstants.Event.UPDATE:
+                    break;
                 case NoticeConstants.Event.DELETE:
+                    break;
                 case NoticeConstants.Event.COMMENT:
                     URL resource = this.getClass().getResource("/mail/" + noticeModel.getMailTemplate() + ".html");
                     context = IOUtils.toString(resource, StandardCharsets.UTF_8);

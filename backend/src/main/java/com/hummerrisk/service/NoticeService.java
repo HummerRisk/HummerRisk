@@ -304,5 +304,11 @@ public class NoticeService {
         messageOrderItemMapper.insertSelective(messageOrderItem);
     }
 
+    public List<MessageTask> messageTaskList (String eventName) {
+        MessageTaskExample example = new MessageTaskExample();
+        example.createCriteria().andEventEqualTo(eventName);
+        return messageTaskMapper.selectByExample(example);
+    }
+
 
 }

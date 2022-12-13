@@ -22,32 +22,80 @@
     <select id="codeSum" resultType="java.lang.Integer">
         SELECT IFNULL(sum(IFNULL(t.return_sum, 0)), 0)
         FROM code_result t
-         JOIN message_order_item t1 ON t.id = t1.task_id
-         JOIN message_order t2 ON t1.message_order_id = t2.id
+        JOIN message_order_item t1 ON t.id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
         WHERE t2.id = #{request.id}
     </select>
 
     <select id="configSum" resultType="java.lang.Integer">
         SELECT IFNULL(sum(IFNULL(t.return_sum, 0)), 0)
         FROM cloud_native_config_result t
-                 JOIN message_order_item t1 ON t.id = t1.task_id
-                 JOIN message_order t2 ON t1.message_order_id = t2.id
+        JOIN message_order_item t1 ON t.id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
         WHERE t2.id = #{request.id}
     </select>
 
     <select id="k8sSum" resultType="java.lang.Integer">
         SELECT IFNULL(sum(IFNULL(t.return_sum, 0)), 0)
         FROM cloud_native_result t
-                 JOIN message_order_item t1 ON t.id = t1.task_id
-                 JOIN message_order t2 ON t1.message_order_id = t2.id
+        JOIN message_order_item t1 ON t.id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
         WHERE t2.id = #{request.id}
     </select>
 
     <select id="fsSum" resultType="java.lang.Integer">
         SELECT IFNULL(sum(IFNULL(t.return_sum, 0)), 0)
         FROM file_system_result t
-                 JOIN message_order_item t1 ON t.id = t1.task_id
-                 JOIN message_order t2 ON t1.message_order_id = t2.id
+        JOIN message_order_item t1 ON t.id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="getTopImageTasksForEmail" resultType="com.hummerrisk.base.domain.ImageResultItem" parameterType="com.hummerrisk.base.domain.MessageOrder">
+        SELECT t.*
+        FROM image_result_item t
+        JOIN message_order_item t1 ON t.result_id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="getTopCodeTasksForEmail" resultType="com.hummerrisk.base.domain.CodeResultItem" parameterType="com.hummerrisk.base.domain.MessageOrder">
+        SELECT t.*
+        FROM code_result_item t
+        JOIN message_order_item t1 ON t.result_id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="getTopConfigTasksForEmail" resultType="com.hummerrisk.base.domain.CloudNativeConfigResultItem" parameterType="com.hummerrisk.base.domain.MessageOrder">
+        SELECT t.*
+        FROM cloud_native_config_result_item t
+        JOIN message_order_item t1 ON t.result_id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="getTopK8sTasksForEmail" resultType="com.hummerrisk.base.domain.CloudNativeResultItem" parameterType="com.hummerrisk.base.domain.MessageOrder">
+        SELECT t.*
+        FROM cloud_native_result_item t
+        JOIN message_order_item t1 ON t.result_id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="getTopFsTasksForEmail" resultType="com.hummerrisk.base.domain.FileSystemResultItem" parameterType="com.hummerrisk.base.domain.MessageOrder">
+        SELECT t.*
+        FROM file_system_result_item t
+        JOIN message_order_item t1 ON t.result_id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="getTopServerTasksForEmail" resultType="com.hummerrisk.base.domain.ServerResult" parameterType="com.hummerrisk.base.domain.MessageOrder">
+        SELECT t.*
+        FROM server_result t
+        JOIN message_order_item t1 ON t.id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
         WHERE t2.id = #{request.id}
     </select>
 

@@ -51,13 +51,13 @@
           </el-table-column>
           <el-table-column :label="$t('commons.operating')" fixed="right" min-width="120" prop="result">
             <template v-slot:default="scope">
-              <el-button type="primary" size="mini" v-if="scope.row.isSet" @click="handleAddTask(scope.$index,scope.row)">
+              <el-button type="primary" size="mini" v-if="scope.row.isSet" @click="handleAddTask(scope.$index, scope.row)">
                 {{ $t('commons.add') }}
               </el-button>
-              <el-button size="mini" v-if="scope.row.isSet" @click.native.prevent="removeRowTask(scope.$index,resourceTask)">
+              <el-button size="mini" v-if="scope.row.isSet" @click.native.prevent="removeRowTask(scope.$index, resourceTask)">
                 {{ $t('commons.cancel') }}
               </el-button>
-              <el-button type="primary" size="mini" v-if="!scope.row.isSet" @click="handleEditTask(scope.$index,scope.row)">
+              <el-button type="primary" size="mini" v-if="!scope.row.isSet" @click="handleEditTask(scope.$index, scope.row)">
                 {{ $t('commons.edit') }}
               </el-button>
               <el-button type="danger" icon="el-icon-delete" size="mini" v-show="!scope.row.isSet"
@@ -244,6 +244,11 @@ export default {
                     '不合规资源总数/资源总数 : #{returnSum}/#{resourcesSum}\n' +
                     '\n' +
                     '注：更多详情请登录 HummerRisk 平台查看。\n',
+      textContent2:  '尊敬的用户, 您好, 您的安全风险检测结果如下:\n' +
+        '\n' +
+        '风险总数 : #{returnSum}\n' +
+        '\n' +
+        '注：更多详情请登录 HummerRisk 平台查看。\n',
       resourceTask: [{
         taskType: "RESOURCE_TASK",
         event: "",
@@ -301,9 +306,9 @@ export default {
     handleAddTask(index, data) {
       if (data.event && data.userIds.length > 0 && data.type) {
         if (data.type === 'NAIL_ROBOT' || data.type === 'WECHAT_ROBOT') {
-          this.addTask(data)
+          this.addTask(data);
         } else {
-          this.addTask(data)
+          this.addTask(data);
         }
       } else {
         this.$warning(this.$t('system_parameter_setting.message.message'));
@@ -318,6 +323,10 @@ export default {
       }
     },
     addTask(data) {
+      if (data.event !== 'EXECUTE_CLOUD' && data.event !== 'EXECUTE_VULN') {
+        data.textTemplate = this.textContent2;
+        data.template = this.content2;
+      }
       this.result = this.$post("/notice/save/message/task", data, () => {
         this.initForm();
         this.$success(this.$t('commons.save_success'));
