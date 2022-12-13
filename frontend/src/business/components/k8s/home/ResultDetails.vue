@@ -13,41 +13,51 @@
                         @search="search"
                         :show-back="true"
                         @back="back" :backTip="$t('k8s.back_resource')"
-                        :title="$t('k8s.result_details_list')"/>
+                        :title="$t('k8s.result_details_list')"
+                        :items="items" :columnNames="columnNames"
+                        :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                        @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
         </template>
 
-        <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" @filter-change="filter">
-          <el-table-column type="index" min-width="2%"/>
-          <el-table-column min-width="10%" :label="'Resource'" prop="resource" v-slot:default="scope">
+        <hide-table
+          :table-data="tableData"
+          @sort-change="sort"
+          @filter-change="filter"
+          @select-all="select"
+          @select="select"
+          :tableRow="false"
+        >
+          <el-table-column type="index" min-width="40"/>
+          <el-table-column min-width="110" v-if="checkedColumnNames.includes('resource')" :label="'Resource'" prop="resource" v-slot:default="scope">
             <span style="font-weight:bold;color: #000000;">{{ scope.row.resource }}</span>
           </el-table-column>
-          <el-table-column min-width="10%" :label="'VulnerabilityID'" prop="vulnerabilityId">
+          <el-table-column min-width="120" v-if="checkedColumnNames.includes('vulnerabilityId')" :label="'VulnerabilityID'" prop="vulnerabilityId">
           </el-table-column>
-          <el-table-column min-width="7%" :label="'Severity'" prop="severity" v-slot:default="scope">
+          <el-table-column min-width="80" v-if="checkedColumnNames.includes('severity')" :label="'Severity'" prop="severity" v-slot:default="scope">
             <span v-if="scope.row.severity === 'CRITICAL'" style="color: #8B0000;">{{ scope.row.severity }}</span>
             <span v-if="scope.row.severity === 'HIGH'" style="color: #FF4D4D;">{{ scope.row.severity }}</span>
             <span v-if="scope.row.severity === 'MEDIUM'" style="color: #FF8000;">{{ scope.row.severity }}</span>
             <span v-if="scope.row.severity === 'LOW'" style="color: #336D9F;">{{ scope.row.severity }}</span>
             <span v-if="scope.row.severity === 'UNKNOWN'" style="color: #67C23A;">{{ scope.row.severity }}</span>
           </el-table-column>
-          <el-table-column min-width="5%" :label="'Score'" prop="score" v-slot:default="scope">
+          <el-table-column min-width="60" v-if="checkedColumnNames.includes('score')" :label="'Score'" prop="score" v-slot:default="scope">
             {{ scope.row.score?scope.row.score:'N/A' }}
           </el-table-column>
-          <el-table-column :label="'InstalledVersion'" min-width="10%" prop="installedVersion">
+          <el-table-column :label="'InstalledVersion'" v-if="checkedColumnNames.includes('installedVersion')" min-width="120" prop="installedVersion">
           </el-table-column>
-          <el-table-column min-width="10%" :label="'FixedVersion'" prop="fixedVersion">
+          <el-table-column min-width="110" v-if="checkedColumnNames.includes('fixedVersion')" :label="'FixedVersion'" prop="fixedVersion">
           </el-table-column>
-          <el-table-column min-width="25%" :label="'PrimaryLink'" prop="primaryLink" v-slot:default="scope">
+          <el-table-column min-width="250" v-if="checkedColumnNames.includes('primaryLink')" :label="'PrimaryLink'" prop="primaryLink" v-slot:default="scope">
             <span>{{ scope.row.title }}</span>
             <br>
             <el-link type="primary" style="color: #0000e4;" :href="scope.row.primaryLink" target="_blank">{{ scope.row.primaryLink }}</el-link>
           </el-table-column>
-          <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right">
+          <el-table-column min-width="50" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
           </el-table-column>
-        </el-table>
+        </hide-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
       </el-card>
     </main-container>
@@ -64,6 +74,47 @@ import DialogFooter from "../../common/components/RuleDialogFooter";
 import CenterChart from "../../common/components/CenterChart";
 import {_filter, _sort} from "@/common/js/utils";
 import MetricChart from "@/business/components/common/chart/MetricChart";
+import { DETAIL_RESULT_CONFIGS } from "@/business/components/common/components/search/search-components";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'Resource',
+    props: 'resource',
+    disabled: false
+  },
+  {
+    label: 'VulnerabilityID',
+    props: 'vulnerabilityId',
+    disabled: false
+  },
+  {
+    label: 'Severity',
+    props: 'severity',
+    disabled: false
+  },
+  {
+    label: 'Score',
+    props: 'score',
+    disabled: false
+  },
+  {
+    label: 'InstalledVersion',
+    props: 'installedVersion',
+    disabled: false
+  },
+  {
+    label: 'FixedVersion',
+    props: 'fixedVersion',
+    disabled: false
+  },
+  {
+    label: 'PrimaryLink',
+    props: 'primaryLink',
+    disabled: false
+  },
+];
 
 /* eslint-disable */
   export default {
@@ -78,6 +129,7 @@ import MetricChart from "@/business/components/common/chart/MetricChart";
       DialogFooter,
       CenterChart,
       MetricChart,
+      HideTable,
     },
     data() {
       return {
@@ -88,6 +140,7 @@ import MetricChart from "@/business/components/common/chart/MetricChart";
         total: 0,
         loading: false,
         condition: {
+          components: DETAIL_RESULT_CONFIGS
         },
         tagSelect: [],
         resourceTypes: [],
@@ -118,10 +171,58 @@ import MetricChart from "@/business/components/common/chart/MetricChart";
           unknown: 0,
           total: 0,
         },
+        checkedColumnNames: columnOptions.map((ele) => ele.props),
+        columnNames: columnOptions,
+        //名称搜索
+        items: [
+          {
+            name: 'Resource',
+            id: 'resource',
+          },
+          {
+            name: 'VulnerabilityID',
+            id: 'vulnerabilityId',
+          },
+          {
+            name: 'Severity',
+            id: 'severity',
+          },
+          {
+            name: 'Score',
+            id: 'score',
+          },
+          {
+            name: 'InstalledVersion',
+            id: 'installedVersion',
+          },
+          {
+            name: 'FixedVersion',
+            id: 'fixedVersion',
+          },
+          {
+            name: 'PrimaryLink',
+            id: 'primaryLink',
+          },
+        ],
+        checkAll: true,
+        isIndeterminate: false,
       }
     },
     props: ["id"],
     methods: {
+      handleCheckedColumnNamesChange(value) {
+        const checkedCount = value.length;
+        this.checkAll = checkedCount === this.columnNames.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+        this.checkedColumnNames = value;
+      },
+      handleCheckAllChange(val) {
+        this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+        this.isIndeterminate = false;
+        this.checkAll = val;
+      },
+      select(selection) {
+      },
       handleVuln() {
         window.open('http://www.cnnvd.org.cn/web/vulnerability/querylist.tag','_blank','');
       },
@@ -134,7 +235,7 @@ import MetricChart from "@/business/components/common/chart/MetricChart";
         this.init();
       },
       search () {
-        let url = "/k8s/resultItemList/" + this.currentPage + "/" + this.pageSize;
+        let url = "/k8s/resultItemListBySearch/" + this.currentPage + "/" + this.pageSize;
         this.condition.resultId = this.resultId;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;

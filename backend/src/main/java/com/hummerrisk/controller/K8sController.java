@@ -8,6 +8,7 @@ import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.cloudNative.*;
 import com.hummerrisk.controller.request.image.ImageRequest;
+import com.hummerrisk.controller.request.image.ImageResultItemRequest;
 import com.hummerrisk.controller.request.k8s.*;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.service.K8sService;
@@ -143,11 +144,19 @@ public class K8sController {
     }
 
     @I18n
-    @ApiOperation(value = "云原生漏洞检测结果详情列表")
+    @ApiIgnore
     @PostMapping("resultItemList/{goPage}/{pageSize}")
     public Pager<List<CloudNativeResultItem>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, k8sService.resultItemList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "云原生漏洞检测结果详情列表")
+    @PostMapping("resultItemListBySearch/{goPage}/{pageSize}")
+    public Pager<List<CloudNativeResultItem>> resultItemListBySearch(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sResultItemRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, k8sService.resultItemListBySearch(request));
     }
 
     @I18n
@@ -156,6 +165,14 @@ public class K8sController {
     public Pager<List<CloudNativeResultConfigItemWithBLOBs>> resultConfigItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, k8sService.resultConfigItemList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "云原生漏洞检测结果详情列表")
+    @PostMapping("resultConfigItemListBySearch/{goPage}/{pageSize}")
+    public Pager<List<CloudNativeResultConfigItemWithBLOBs>> resultConfigItemListBySearch(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sConfigResultItemRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, k8sService.resultConfigItemListBySearch(request));
     }
 
     @I18n

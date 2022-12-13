@@ -9,6 +9,7 @@ import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeSourceMapper;
+import com.hummerrisk.base.mapper.ext.ExtK8sResultItemMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
@@ -74,6 +75,8 @@ public class K8sService {
     private CloudNativeResultConfigItemMapper cloudNativeResultConfigItemMapper;
     @Resource
     private CloudNativeSourceImageMapper cloudNativeSourceImageMapper;
+    @Resource
+    private ExtK8sResultItemMapper extK8sResultItemMapper;
 
 
     public List<CloudNativeDTO> getCloudNativeList(CloudNativeRequest request) {
@@ -707,6 +710,10 @@ public class K8sService {
         return cloudNativeResultItemMapper.selectByExample(example);
     }
 
+    public List<CloudNativeResultItem> resultItemListBySearch(K8sResultItemRequest request) {
+        return extK8sResultItemMapper.resultItemListBySearch(request);
+    }
+
     public List<CloudNativeResultConfigItemWithBLOBs> resultConfigItemList(K8sResultRequest resourceRequest) {
         CloudNativeResultConfigItemExample example = new CloudNativeResultConfigItemExample();
         if(resourceRequest.getName()!=null && !StringUtils.isBlank(resourceRequest.getName())) {
@@ -716,6 +723,10 @@ public class K8sService {
         }
         example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
         return cloudNativeResultConfigItemMapper.selectByExampleWithBLOBs(example);
+    }
+
+    public List<CloudNativeResultConfigItemWithBLOBs> resultConfigItemListBySearch(K8sConfigResultItemRequest request) {
+        return extK8sResultItemMapper.resultConfigItemListBySearch(request);
     }
 
     public CloudNativeResultDTO getCloudNativeResult(String resultId) {
