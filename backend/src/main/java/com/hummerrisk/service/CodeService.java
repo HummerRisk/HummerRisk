@@ -6,12 +6,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCodeMapper;
+import com.hummerrisk.base.mapper.ext.ExtCodeResultItemMapper;
 import com.hummerrisk.base.mapper.ext.ExtCodeResultMapper;
 import com.hummerrisk.base.mapper.ext.ExtCodeRuleMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.code.CodeRequest;
+import com.hummerrisk.controller.request.code.CodeResultItemRequest;
 import com.hummerrisk.controller.request.code.CodeResultRequest;
 import com.hummerrisk.controller.request.code.CodeRuleRequest;
 import com.hummerrisk.dto.*;
@@ -55,6 +57,8 @@ public class CodeService {
     private RuleTagMappingMapper ruleTagMappingMapper;
     @Resource
     private CodeResultItemMapper codeResultItemMapper;
+    @Resource
+    private ExtCodeResultItemMapper extCodeResultItemMapper;
     @Resource
     private ProxyMapper proxyMapper;
     @Resource
@@ -231,6 +235,10 @@ public class CodeService {
         }
         example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
         return codeResultItemMapper.selectByExampleWithBLOBs(example);
+    }
+
+    public List<CodeResultItemWithBLOBs> resultItemListBySearch(CodeResultItemRequest request) {
+        return extCodeResultItemMapper.resultItemListBySearch(request);
     }
 
     public void scan(String id) throws Exception {

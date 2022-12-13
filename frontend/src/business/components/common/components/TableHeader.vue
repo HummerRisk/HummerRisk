@@ -144,8 +144,14 @@ import htmlToPdf from "@/common/js/htmlToPdf";
       checkedColumnNames: {
         type: [Object,Array],
       },
-      checkAll: true,
-      isIndeterminate: false,
+      checkAll: {
+        type: Boolean,
+        default: true
+      },
+      isIndeterminate: {
+        type: Boolean,
+        default: false
+      },
     },
     methods: {
       search(value) {

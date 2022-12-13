@@ -50,6 +50,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    tableRow: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -132,12 +136,14 @@ export default {
       this.$emit('select', selection);
     },
     tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 4 === 0) {
-        return 'success-row';
-      } else if (rowIndex % 2 === 0) {
-        return 'warning-row';
-      } else {
-        return '';
+      if (this.tableRow) {
+        if (rowIndex % 4 === 0) {
+          return 'success-row';
+        } else if (rowIndex % 2 === 0) {
+          return 'warning-row';
+        } else {
+          return '';
+        }
       }
     },
   },

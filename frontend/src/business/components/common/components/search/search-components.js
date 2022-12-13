@@ -1028,6 +1028,55 @@ export const SERVER_TYPE = {
   }
 }
 
+export const RESOURCE = {
+  key: "resource", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "Resource", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
+export const PKGNAME = {
+  key: "pkgname", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "PkgName", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
+export const VULNERABILITYID = {
+  key: "vulnerabilityId", // 返回结果Map的key
+  name: "TableSearchInput", // Vue控件名称
+  label: "VulnerabilityID", // 显示名称
+  operator: { // 运算符设置
+    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
+    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  },
+}
+
+export const SEVERITY = {
+  key: "severity", // 返回结果Map的key
+  name: "TableSearchSelect", // Vue控件名称
+  label: "Severity", // 显示名称
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN]
+  },
+  options: [
+    {label: 'CRITICAL', value: 'CRITICAL'},
+    {label: 'HIGH', value: 'HIGH'},
+    {label: 'MEDIUM', value: 'MEDIUM'},
+    {label: 'LOW', value: 'LOW'},
+    {label: 'UNKNOWN', value: 'UNKNOWN'},
+  ],
+  props: { // 尾部控件的props，一般为element ui控件的props
+    multiple: true
+  }
+}
+
 export const USER_CONFIGS = [NAME, EMAIL, UPDATE_TIME, CREATE_TIME];
 export const PROXY_CONFIGS = [PROXY_TYPE, PROXY_IP, UPDATE_TIME, CREATE_TIME];
 export const MSG_CONFIGS = [READ_TIME, CREATE_TIME];
@@ -1074,3 +1123,4 @@ export const SBOM_CONFIGS = [NAME, UPDATE_TIME, CREATE_TIME, CREATOR];
 export const FS_CONFIGS = [NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const FS_RESULT_CONFIGS = [NAME, RULE_NAME, RULE_SEVERITY, K8S_RESULT_STATUS, CREATOR, UPDATE_TIME];
 export const RULE_INSPECTION_REPORT_CONFIGS = [ITEM_SORT_FIRST_LEVEL, ITEM_SORT_SECOND_LEVEL, PROJECT, IMPROVEMENT];
+export const DETAIL_RESULT_CONFIGS = [PKGNAME, RESOURCE, VULNERABILITYID, SEVERITY];

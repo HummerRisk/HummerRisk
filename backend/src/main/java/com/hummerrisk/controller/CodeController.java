@@ -7,6 +7,7 @@ import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.code.CodeRequest;
+import com.hummerrisk.controller.request.code.CodeResultItemRequest;
 import com.hummerrisk.controller.request.code.CodeResultRequest;
 import com.hummerrisk.controller.request.code.CodeRuleRequest;
 import com.hummerrisk.dto.CodeDTO;
@@ -176,11 +177,18 @@ public class CodeController {
     }
 
     @I18n
-    @ApiOperation(value = "检测结果详情")
     @PostMapping("resultItemList/{goPage}/{pageSize}")
     public Pager<List<CodeResultItemWithBLOBs>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CodeResultItem request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, codeService.resultItemList(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "检测结果详情")
+    @PostMapping("resultItemListBySearch/{goPage}/{pageSize}")
+    public Pager<List<CodeResultItemWithBLOBs>> resultItemListBySearch(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CodeResultItemRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, codeService.resultItemListBySearch(request));
     }
 
     @ApiOperation(value = "Git插件详情")
