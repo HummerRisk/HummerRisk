@@ -7,10 +7,12 @@ import com.hummerrisk.base.domain.*;
 import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeConfigMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudNativeConfigResultMapper;
+import com.hummerrisk.base.mapper.ext.ExtConfigResultItemMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.config.ConfigRequest;
+import com.hummerrisk.controller.request.config.ConfigResultItemRequest;
 import com.hummerrisk.controller.request.config.ConfigResultRequest;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
@@ -62,6 +64,8 @@ public class ConfigService {
     private HistoryCloudNativeConfigResultMapper historyCloudNativeConfigResultMapper;
     @Resource
     private SystemParameterService systemParameterService;
+    @Resource
+    private ExtConfigResultItemMapper extConfigResultItemMapper;
 
     public List<CloudNativeConfigDTO> getCloudNativeConfigList(ConfigRequest request) {
         return extCloudNativeConfigMapper.getCloudNativeConfigList(request);
@@ -388,6 +392,10 @@ public class ConfigService {
         }
         example.setOrderByClause("FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')");
         return cloudNativeConfigResultItemMapper.selectByExample(example);
+    }
+
+    public List<CloudNativeConfigResultItem> resultItemListBySearch(ConfigResultItemRequest request) {
+        return extConfigResultItemMapper.resultItemListBySearch(request);
     }
 
     public CloudNativeConfigResultDTO getCloudNativeConfigResult(String resultId) {
