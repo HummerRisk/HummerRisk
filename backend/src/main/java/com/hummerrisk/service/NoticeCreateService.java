@@ -300,7 +300,6 @@ public class NoticeCreateService {
         String successContext = "success";
         String failedContext = "failed";
         String subject = "i18n_cloud_messageorder";
-        String event = NoticeConstants.Event.EXECUTE_SUCCESSFUL;
         String details = "";
         int returnSum = 0;
         int resourcesSum = 0;
@@ -319,6 +318,7 @@ public class NoticeCreateService {
             returnSum = extCloudTaskMapper.getReturnSumForEmail(messageOrder);
             resourcesSum = extCloudTaskMapper.getResourcesSumForEmail(messageOrder);
             details = "i18n_cloud_messageorder_sum" + returnSum + "/" + resourcesSum;
+            String event = NoticeConstants.Event.EXECUTE_CLOUD;
 
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("resources", cloudTasks);
@@ -351,6 +351,7 @@ public class NoticeCreateService {
             returnSum = extCloudTaskMapper.getReturnSumForEmail(messageOrder);
             resourcesSum = extCloudTaskMapper.getResourcesSumForEmail(messageOrder);
             details = "i18n_cloud_messageorder_sum" + returnSum + "/" + resourcesSum;
+            String event = NoticeConstants.Event.EXECUTE_VULN;
 
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("resources", cloudTasks);
@@ -374,9 +375,12 @@ public class NoticeCreateService {
             subject = "i18n_server_messageorder";
             returnSum = extNoticeMapper.serverSum(messageOrder);
             details = "i18n_resource_manage " + returnSum;
+            String event = NoticeConstants.Event.EXECUTE_SERVER;
+
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("resources", serverResults);
             paramMap.put("returnSum", returnSum);
+
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
@@ -394,9 +398,12 @@ public class NoticeCreateService {
             subject = "i18n_image_messageorder";
             returnSum = extNoticeMapper.imageSum(messageOrder);
             details = "i18n_resource_manage " + returnSum;
+            String event = NoticeConstants.Event.EXECUTE_IMAGE;
+
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("resources", imageResultItems);
             paramMap.put("returnSum", returnSum);
+
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
@@ -414,9 +421,12 @@ public class NoticeCreateService {
             subject = "i18n_code_messageorder";
             returnSum = extNoticeMapper.codeSum(messageOrder);
             details = "i18n_resource_manage " + returnSum;
+            String event = NoticeConstants.Event.EXECUTE_CODE;
+
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("resources", codeResultItems);
             paramMap.put("returnSum", returnSum);
+
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
@@ -434,9 +444,12 @@ public class NoticeCreateService {
             subject = "i18n_config_messageorder";
             returnSum = extNoticeMapper.configSum(messageOrder);
             details = "i18n_resource_manage " + returnSum;
+            String event = NoticeConstants.Event.EXECUTE_CONFIG;
+
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("resources", configResultItems);
             paramMap.put("returnSum", returnSum);
+
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
@@ -454,9 +467,12 @@ public class NoticeCreateService {
             subject = "i18n_k8s_messageorder";
             returnSum = extNoticeMapper.k8sSum(messageOrder);
             details = "i18n_resource_manage " + returnSum;
+            String event = NoticeConstants.Event.EXECUTE_K8S;
+
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("resources", k8sResultItems);
             paramMap.put("returnSum", returnSum);
+
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
@@ -474,9 +490,12 @@ public class NoticeCreateService {
             subject = "i18n_fs_messageorder";
             returnSum = extNoticeMapper.fsSum(messageOrder);
             details = "i18n_resource_manage " + returnSum;
+            String event = NoticeConstants.Event.EXECUTE_FS;
+
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("resources", fsResultItems);
             paramMap.put("returnSum", returnSum);
+
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
