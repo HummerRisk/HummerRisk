@@ -67,7 +67,6 @@ import com.hummerrisk.proxy.openstack.OpenStackUtils;
 import com.hummerrisk.proxy.qingcloud.QingCloudCredential;
 import com.hummerrisk.proxy.qiniu.QiniuCredential;
 import com.hummerrisk.proxy.tencent.QCloudBaseRequest;
-import com.hummerrisk.proxy.tsunami.TsunamiCredential;
 import com.hummerrisk.proxy.ucloud.UCloudCredential;
 import com.hummerrisk.proxy.vsphere.VsphereBaseRequest;
 import com.hummerrisk.proxy.vsphere.VsphereClient;
@@ -129,7 +128,6 @@ public class PlatformUtils {
     //漏洞检测插件
     public final static String nuclei = "hummer-nuclei-plugin";
     public final static String xray = "hummer-xray-plugin";
-    public final static String tsunami = "hummer-tsunami-plugin";
     //主机插件
     public final static String server = "hummer-server-plugin";
     //云原生检测插件
@@ -146,12 +144,12 @@ public class PlatformUtils {
     /**
      * 支持的插件
      * 云平台插件: aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud
-     * 漏洞检测插件: xray, nuclei, tsunami
+     * 漏洞检测插件: xray, nuclei
      * 云原生检测插件: k8s, openshift, rancher, kubesphere
      */
     public final static List<String> getPlugin() {
         return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud,
-                nuclei, xray, tsunami, k8s, openshift, rancher, kubesphere,jdcloud);
+                nuclei, xray, k8s, openshift, rancher, kubesphere,jdcloud);
     }
 
     /**
@@ -176,7 +174,7 @@ public class PlatformUtils {
      * 支持漏洞检测插件
      */
     public final static List<String> getVulnPlugin() {
-        return Arrays.asList(nuclei, xray, tsunami);
+        return Arrays.asList(nuclei, xray);
     }
 
     /**
@@ -184,7 +182,7 @@ public class PlatformUtils {
      */
     public static boolean isSupportVuln(String source) {
         // 漏洞检测插件
-        List<String> tempList = Arrays.asList(xray, nuclei, tsunami);
+        List<String> tempList = Arrays.asList(xray, nuclei);
 
         // 利用list的包含方法,进行判断
         return tempList.contains(source);
@@ -253,16 +251,6 @@ public class PlatformUtils {
                             + "aws_secret_access_key=" + awsSecretKey + "\n";
                     CommandUtils.saveAsFile(defaultConfig, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "config", false);
                     CommandUtils.saveAsFile(defaultCredentials, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "credentials", false);
-//                    String config = ReadFileUtils.readToBuffer(CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/config");
-//                    String credentials = ReadFileUtils.readToBuffer(CloudTaskConstants.PROWLER_CONFIG_FILE_PATH + "/credentials");
-//                    if (config.indexOf(region) == -1) {
-//                        config = config + "\n" + defaultConfig;
-//                        CommandUtils.saveAsFile(config, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "config", false);
-//                    }
-//                    if (credentials.indexOf(awsAccessKey) == -1 && credentials.indexOf(awsSecretKey) == -1) {
-//                        credentials = credentials + "\n" + defaultCredentials;
-//                        CommandUtils.saveAsFile(credentials, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "credentials", false);
-//                    }
                     return proxy + "./prowler -c " + (StringUtils.isNotEmpty(fileName) ? fileName : "check11") + " -f " + region + " -s -M text > result.txt";
                 }
                 pre = "AWS_ACCESS_KEY_ID=" + awsAccessKey + " " +
@@ -426,8 +414,6 @@ public class PlatformUtils {
                     xray = "xray_windows_amd64";
                 }
                 return proxy + CloudTaskConstants.XRAY_RESULT_FILE_PATH + xray + " webscan --plugins " + (StringUtils.isNotEmpty(fileName) ? fileName : "xss") + " --url-file " + dirPath + "/urls.txt  --json-output " + dirPath + "/" + CloudTaskConstants.XRAY_RUN_RESULT_FILE;
-            case tsunami:
-                return "";
         }
         switch (behavior) {
             case "run":
@@ -532,11 +518,6 @@ public class PlatformUtils {
                 XrayCredential xrayCredential = new Gson().fromJson(account.getCredential(), XrayCredential.class);
                 map.put("xrayCredential", xrayCredential.getTargetAddress());
                 map.put("region", region);
-                break;
-            case tsunami:
-                map.put("type", tsunami);
-                TsunamiCredential tsunamiCredential = new Gson().fromJson(account.getCredential(), TsunamiCredential.class);
-                map.put("ip", tsunamiCredential.getIp());
                 break;
             case huoshan:
                 map.put("type", huoshan);
@@ -838,12 +819,6 @@ public class PlatformUtils {
                     xrayJsonObject.put("regionName", "Xray 漏洞检测");
                     if (!jsonArray.contains(xrayJsonObject)) jsonArray.add(xrayJsonObject);
                     break;
-                case tsunami:
-                    JSONObject tsunamiJsonObject = new JSONObject();
-                    tsunamiJsonObject.put("regionId", "ALL");
-                    tsunamiJsonObject.put("regionName", "Tsunami 网络安全检测");
-                    if (!jsonArray.contains(tsunamiJsonObject)) jsonArray.add(tsunamiJsonObject);
-                    break;
                 case huoshan:
                     try {
                         JSONObject jsonObject = new JSONObject();
@@ -1069,8 +1044,6 @@ public class PlatformUtils {
                 return true;
             case xray:
                 return true;
-            case tsunami:
-                return true;
             case huoshan:
                 IIamService iamService = IamServiceImpl.getInstance();
                 HuoshanCredential huoshanCredential = new Gson().fromJson(account.getCredential(), HuoshanCredential.class);
@@ -1263,9 +1236,6 @@ public class PlatformUtils {
             case xray:
                 strCn = strEn;
                 break;
-            case tsunami:
-                strCn = strEn;
-                break;
             case huoshan:
                 strCn = strEn;
                 break;
@@ -1410,8 +1380,6 @@ public class PlatformUtils {
             case nuclei:
                 break;
             case xray:
-                break;
-            case tsunami:
                 break;
             case huoshan:
                 break;

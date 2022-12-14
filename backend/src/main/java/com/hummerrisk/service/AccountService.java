@@ -172,7 +172,7 @@ public class AccountService {
                 accountMapper.insertSelective(account);
                 updateRegionsThrows(account);
                 OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "i18n_create_cloud_account");
-                if (validate.isFlag()) cloudSyncService.sync(account.getId());
+                if (!PlatformUtils.isSupportVuln(account.getPluginId()) && validate.isFlag()) cloudSyncService.sync(account.getId());
                 return getCloudAccountById(account.getId());
             }
         } catch (Exception e) {
@@ -231,7 +231,7 @@ public class AccountService {
 
                 //检验账号已更新状态
                 OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.UPDATE, "i18n_update_cloud_account");
-                if (validate.isFlag()) cloudSyncService.sync(account.getId());
+                if (!PlatformUtils.isSupportVuln(account.getPluginId()) && validate.isFlag()) cloudSyncService.sync(account.getId());
                 return getCloudAccountById(account.getId());
             }
 
