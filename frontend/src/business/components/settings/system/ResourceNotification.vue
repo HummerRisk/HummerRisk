@@ -321,13 +321,13 @@ export default {
         '\n' +
         '不合规资源总数/资源总数 : #{returnSum}/#{resourcesSum}\n' +
         '\n' +
-        '高危风险 : #{criticalRisk}\n' +
+        '高危风险 : #{critical}\n' +
         '\n' +
-        '高风险 : #{highRisk}\n' +
+        '高风险 : #{high}\n' +
         '\n' +
-        '中风险 : #{mediumRisk}\n' +
+        '中风险 : #{medium}\n' +
         '\n' +
-        '低风险 : #{lowRisk}\n' +
+        '低风险 : #{low}\n' +
         '\n' +
         '注：更多详情请登录 HummerRisk 平台查看。\n',
       textContentVuln:  '尊敬的用户, 您好, 您的漏洞安全检测结果如下:\n' +
@@ -336,13 +336,13 @@ export default {
         '\n' +
         '不合规资源总数/资源总数 : #{returnSum}/#{resourcesSum}\n' +
         '\n' +
-        '高危风险 : #{criticalRisk}\n' +
+        '高危风险 : #{critical}\n' +
         '\n' +
-        '高风险 : #{highRisk}\n' +
+        '高风险 : #{high}\n' +
         '\n' +
-        '中风险 : #{mediumRisk}\n' +
+        '中风险 : #{medium}\n' +
         '\n' +
-        '低风险 : #{lowRisk}\n' +
+        '低风险 : #{low}\n' +
         '\n' +
         '注：更多详情请登录 HummerRisk 平台查看。\n',
       textContentServer:  '尊敬的用户, 您好, 您的主机安全检测结果如下:\n' +
@@ -351,13 +351,13 @@ export default {
         '\n' +
         '风险总数 : #{returnSum}\n' +
         '\n' +
-        '高危风险 : #{criticalRisk}\n' +
+        '高危风险 : #{critical}\n' +
         '\n' +
-        '高风险 : #{highRisk}\n' +
+        '高风险 : #{high}\n' +
         '\n' +
-        '中风险 : #{mediumRisk}\n' +
+        '中风险 : #{medium}\n' +
         '\n' +
-        '低风险 : #{lowRisk}\n' +
+        '低风险 : #{low}\n' +
         '\n' +
         '注：更多详情请登录 HummerRisk 平台查看。\n',
       textContentK8s:  '尊敬的用户, 您好, 您的K8s安全检测结果如下:\n' +

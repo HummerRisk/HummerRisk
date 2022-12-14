@@ -64,6 +64,20 @@ public class NoticeCreateService {
     private FileSystemResultMapper fileSystemResultMapper;
     @Resource
     private WebhookMapper webhookMapper;
+    @Resource
+    private AccountMapper accountMapper;
+    @Resource
+    private ServerMapper serverMapper;
+    @Resource
+    private CloudNativeMapper cloudNativeMapper;
+    @Resource
+    private CloudNativeConfigMapper cloudNativeConfigMapper;
+    @Resource
+    private ImageMapper imageMapper;
+    @Resource
+    private CodeMapper codeMapper;
+    @Resource
+    private FileSystemMapper fileSystemMapper;
 
     @QuartzScheduled(cron = "${cron.expression.notice}")
     public void handleTasks() {
@@ -300,9 +314,8 @@ public class NoticeCreateService {
         String successContext = "success";
         String failedContext = "failed";
         String subject = "i18n_cloud_messageorder";
-        String details = "";
-        int returnSum = 0;
-        int resourcesSum = 0;
+        String details = "", name = "";
+        int returnSum = 0, resourcesSum = 0, critical = 0, high = 0, medium = 0, low = 0, unknown = 0;
 
         if (StringUtils.equals(ScanConstants.SCAN_TYPE.CLOUD.name(), messageOrder.getScanType())) {
             subject = "i18n_cloud_messageorder";
@@ -318,12 +331,19 @@ public class NoticeCreateService {
             returnSum = extCloudTaskMapper.getReturnSumForEmail(messageOrder);
             resourcesSum = extCloudTaskMapper.getResourcesSumForEmail(messageOrder);
             details = "i18n_cloud_messageorder_sum" + returnSum + "/" + resourcesSum;
+            name = accountMapper.selectByPrimaryKey(cloudTasks.get(0).getAccountId()).getName();
             String event = NoticeConstants.Event.EXECUTE_CLOUD;
 
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("resources", cloudTasks);
             paramMap.put("returnSum", returnSum);
             paramMap.put("resourcesSum", resourcesSum);
+            paramMap.put("name", name);
+            paramMap.put("critical", critical);
+            paramMap.put("high", high);
+            paramMap.put("medium", medium);
+            paramMap.put("low", low);
+            paramMap.put("unknown", unknown);
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
@@ -351,12 +371,19 @@ public class NoticeCreateService {
             returnSum = extCloudTaskMapper.getReturnSumForEmail(messageOrder);
             resourcesSum = extCloudTaskMapper.getResourcesSumForEmail(messageOrder);
             details = "i18n_cloud_messageorder_sum" + returnSum + "/" + resourcesSum;
+            name = accountMapper.selectByPrimaryKey(cloudTasks.get(0).getAccountId()).getName();
             String event = NoticeConstants.Event.EXECUTE_VULN;
 
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("resources", cloudTasks);
             paramMap.put("returnSum", returnSum);
             paramMap.put("resourcesSum", resourcesSum);
+            paramMap.put("name", name);
+            paramMap.put("critical", critical);
+            paramMap.put("high", high);
+            paramMap.put("medium", medium);
+            paramMap.put("low", low);
+            paramMap.put("unknown", unknown);
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
@@ -375,12 +402,19 @@ public class NoticeCreateService {
             subject = "i18n_server_messageorder";
             returnSum = extNoticeMapper.serverSum(messageOrder);
             details = "i18n_resource_manage " + returnSum;
+            Server server = serverMapper.selectByPrimaryKey(serverResults.get(0).getServerId());
+            name = server.getName() + "(" + server.getIp() + ":" + server.getPort() + ")";
             String event = NoticeConstants.Event.EXECUTE_SERVER;
 
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("resources", serverResults);
             paramMap.put("returnSum", returnSum);
-
+            paramMap.put("name", name);
+            paramMap.put("critical", critical);
+            paramMap.put("high", high);
+            paramMap.put("medium", medium);
+            paramMap.put("low", low);
+            paramMap.put("unknown", unknown);
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
@@ -394,16 +428,25 @@ public class NoticeCreateService {
             noticeSendService.send(noticeModel);
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), messageOrder.getScanType())) {
             List<ImageResultItem> imageResultItems = extNoticeMapper.getTopImageTasksForEmail(messageOrder);
+            ImageResultExample example = new ImageResultExample();
+            example.createCriteria().andIdEqualTo(imageResultItems.get(0).getResultId());
+            List<ImageResult> imageResults = imageResultMapper.selectByExample(example);
 
             subject = "i18n_image_messageorder";
             returnSum = extNoticeMapper.imageSum(messageOrder);
             details = "i18n_resource_manage " + returnSum;
+            name = imageMapper.selectByPrimaryKey(imageResults.get(0).getImageId()).getName();
             String event = NoticeConstants.Event.EXECUTE_IMAGE;
 
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("resources", imageResultItems);
             paramMap.put("returnSum", returnSum);
-
+            paramMap.put("name", name);
+            paramMap.put("critical", critical);
+            paramMap.put("high", high);
+            paramMap.put("medium", medium);
+            paramMap.put("low", low);
+            paramMap.put("unknown", unknown);
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
@@ -417,16 +460,25 @@ public class NoticeCreateService {
             noticeSendService.send(noticeModel);
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CODE.name(), messageOrder.getScanType())) {
             List<CodeResultItem> codeResultItems = extNoticeMapper.getTopCodeTasksForEmail(messageOrder);
+            CodeResultExample example = new CodeResultExample();
+            example.createCriteria().andIdEqualTo(codeResultItems.get(0).getResultId());
+            List<CodeResult> codeResults = codeResultMapper.selectByExample(example);
 
             subject = "i18n_code_messageorder";
             returnSum = extNoticeMapper.codeSum(messageOrder);
             details = "i18n_resource_manage " + returnSum;
+            name = codeMapper.selectByPrimaryKey(codeResults.get(0).getCodeId()).getName();
             String event = NoticeConstants.Event.EXECUTE_CODE;
 
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("resources", codeResultItems);
             paramMap.put("returnSum", returnSum);
-
+            paramMap.put("name", name);
+            paramMap.put("critical", critical);
+            paramMap.put("high", high);
+            paramMap.put("medium", medium);
+            paramMap.put("low", low);
+            paramMap.put("unknown", unknown);
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
@@ -440,16 +492,26 @@ public class NoticeCreateService {
             noticeSendService.send(noticeModel);
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CONFIG.name(), messageOrder.getScanType())) {
             List<CloudNativeConfigResultItem> configResultItems = extNoticeMapper.getTopConfigTasksForEmail(messageOrder);
+            CloudNativeConfigResultExample example = new CloudNativeConfigResultExample();
+            example.createCriteria().andIdEqualTo(configResultItems.get(0).getResultId());
+            List<CloudNativeConfigResult> cloudNativeConfigResults = cloudNativeConfigResultMapper.selectByExample(example);
+
 
             subject = "i18n_config_messageorder";
             returnSum = extNoticeMapper.configSum(messageOrder);
             details = "i18n_resource_manage " + returnSum;
+            name = cloudNativeConfigMapper.selectByPrimaryKey(cloudNativeConfigResults.get(0).getConfigId()).getName();
             String event = NoticeConstants.Event.EXECUTE_CONFIG;
 
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("resources", configResultItems);
             paramMap.put("returnSum", returnSum);
-
+            paramMap.put("name", name);
+            paramMap.put("critical", critical);
+            paramMap.put("high", high);
+            paramMap.put("medium", medium);
+            paramMap.put("low", low);
+            paramMap.put("unknown", unknown);
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
@@ -463,16 +525,25 @@ public class NoticeCreateService {
             noticeSendService.send(noticeModel);
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.K8S.name(), messageOrder.getScanType())) {
             List<CloudNativeResultItem> k8sResultItems = extNoticeMapper.getTopK8sTasksForEmail(messageOrder);
+            CloudNativeResultExample example = new CloudNativeResultExample();
+            example.createCriteria().andIdEqualTo(k8sResultItems.get(0).getResultId());
+            List<CloudNativeResult> cloudNativeResults = cloudNativeResultMapper.selectByExample(example);
 
             subject = "i18n_k8s_messageorder";
             returnSum = extNoticeMapper.k8sSum(messageOrder);
             details = "i18n_resource_manage " + returnSum;
+            name = cloudNativeMapper.selectByPrimaryKey(cloudNativeResults.get(0).getCloudNativeId()).getName();
             String event = NoticeConstants.Event.EXECUTE_K8S;
 
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("resources", k8sResultItems);
             paramMap.put("returnSum", returnSum);
-
+            paramMap.put("name", name);
+            paramMap.put("critical", critical);
+            paramMap.put("high", high);
+            paramMap.put("medium", medium);
+            paramMap.put("low", low);
+            paramMap.put("unknown", unknown);
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
@@ -486,16 +557,25 @@ public class NoticeCreateService {
             noticeSendService.send(noticeModel);
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.FS.name(), messageOrder.getScanType())) {
             List<FileSystemResultItem> fsResultItems = extNoticeMapper.getTopFsTasksForEmail(messageOrder);
+            FileSystemResultExample example = new FileSystemResultExample();
+            example.createCriteria().andIdEqualTo(fsResultItems.get(0).getResultId());
+            List<FileSystemResult> fileSystemResults = fileSystemResultMapper.selectByExample(example);
 
             subject = "i18n_fs_messageorder";
             returnSum = extNoticeMapper.fsSum(messageOrder);
             details = "i18n_resource_manage " + returnSum;
+            name = fileSystemMapper.selectByPrimaryKey(fileSystemResults.get(0).getFsId()).getName();
             String event = NoticeConstants.Event.EXECUTE_FS;
 
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("resources", fsResultItems);
             paramMap.put("returnSum", returnSum);
-
+            paramMap.put("name", name);
+            paramMap.put("critical", critical);
+            paramMap.put("high", high);
+            paramMap.put("medium", medium);
+            paramMap.put("low", low);
+            paramMap.put("unknown", unknown);
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
