@@ -239,14 +239,210 @@ export default {
         '  </div>\n' +
         '</body>\n' +
         '</html>',
-      textContent:  '尊敬的用户, 您好, 您的安全合规检测结果如下:\n' +
-                    '\n' +
-                    '不合规资源总数/资源总数 : #{returnSum}/#{resourcesSum}\n' +
-                    '\n' +
-                    '注：更多详情请登录 HummerRisk 平台查看。\n',
-      textContent2:  '尊敬的用户, 您好, 您的安全风险检测结果如下:\n' +
+      content3: '<!DOCTYPE html>\n' +
+        '<html lang="en">\n' +
+        '<head>\n' +
+        '    <meta charset="UTF-8">\n' +
+        '    <title>HummerRisk</title>\n' +
+        '    <style type="text/css">\n' +
+        '        .email-table table {\n' +
+        '          font-size: 12px;\n' +
+        '          table-layout: fixed;\n' +
+        '          empty-cells: show;\n' +
+        '          border-collapse: collapse;\n' +
+        '          margin: 0 0;\n' +
+        '          border: 1px solid #cad9ea;\n' +
+        '          color: #666;\n' +
+        '        }\n' +
+        '        .email-table td {\n' +
+        '          height: 30px;\n' +
+        '          word-wrap: break-word;\n' +
+        '        }\n' +
+        '        .email-table h1, h2, h3 {\n' +
+        '          font-size: 12px;\n' +
+        '          margin: 0;\n' +
+        '          padding: 0;\n' +
+        '        }\n' +
+        '        .email-table th {\n' +
+        '          background-repeat: repeat-x;\n' +
+        '          height: 30px;\n' +
+        '        }\n' +
+        '        .email-table td, .email-table th {\n' +
+        '          border: 1px solid #cad9ea;\n' +
+        '          padding: 0 1em 0;\n' +
+        '        }\n' +
+        '        .email-table tr.alter {\n' +
+        '          background-color: #f5fafe;\n' +
+        '        }\n' +
+        '    </style>\n' +
+        '</head>\n' +
+        '<body>\n' +
+        '  <div>\n' +
+        '    <div style="text-align: left">\n' +
+        '        <p>尊敬的用户, 您好, 您的主机安全风险检测结果如下:</p>\n' +
+        '    </div>\n' +
+        '    <div style="text-align: left;">\n' +
+        '        <p style="margin-left: 10px;">风险总数 : #{returnSum}</p>\n' +
+        '    </div>\n' +
+        '    <div class="email-table">\n' +
+        '        <table class="alter">\n' +
+        '            <thead style="background: #87CEFA;">\n' +
+        '                <tr class="alter">\n' +
+        '                   <th>主机分组</th>\n' +
+        '                   <th>主机名称</th>\n' +
+        '                   <th>IP:Port</th>\n' +
+        '                   <th>规则名称</th>\n' +
+        '                   <th>检测状态</th>\n' +
+        '                   <th>风险等级</th>\n' +
+        '                   <th>是否安全</th>\n' +
+        '                </tr>\n' +
+        '            </thead>\n' +
+        '            <tbody>\n' +
+        '                <tr th:each="resource:${resources}">\n' +
+        '                   <td th:text="${resource.groupName}"/>\n' +
+        '                   <td th:text="${resource.serverName}"/>\n' +
+        '                   <td th:text="${resource.ip}"/>\n' +
+        '                   <td th:text="${resource.ruleName}"/>\n' +
+        '                   <td th:text="${resource.status}"/>\n' +
+        '                   <td th:text="${resource.severity}"/>\n' +
+        '                   <td th:text="${resource.isSeverity}"/>\n' +
+        '                </tr>\n' +
+        '            </tbody>\n' +
+        '        </table>\n' +
+        '    </div>\n' +
+        '    <h5 style="color: red;">注：更多详情请登录 HummerRisk 平台查看。</h5>\n' +
+        '  \n' +
+        '  </div>\n' +
+        '</body>\n' +
+        '</html>',
+      textContentCloud:  '尊敬的用户, 您好, 您的多云安全合规检测结果如下:\n' +
+        '\n' +
+        '云账号名称 : #{name}\n' +
+        '\n' +
+        '不合规资源总数/资源总数 : #{returnSum}/#{resourcesSum}\n' +
+        '\n' +
+        '高危风险 : #{criticalRisk}\n' +
+        '\n' +
+        '高风险 : #{highRisk}\n' +
+        '\n' +
+        '中风险 : #{mediumRisk}\n' +
+        '\n' +
+        '低风险 : #{lowRisk}\n' +
+        '\n' +
+        '注：更多详情请登录 HummerRisk 平台查看。\n',
+      textContentVuln:  '尊敬的用户, 您好, 您的漏洞安全检测结果如下:\n' +
+        '\n' +
+        '漏洞配置名称 : #{name}\n' +
+        '\n' +
+        '不合规资源总数/资源总数 : #{returnSum}/#{resourcesSum}\n' +
+        '\n' +
+        '高危风险 : #{criticalRisk}\n' +
+        '\n' +
+        '高风险 : #{highRisk}\n' +
+        '\n' +
+        '中风险 : #{mediumRisk}\n' +
+        '\n' +
+        '低风险 : #{lowRisk}\n' +
+        '\n' +
+        '注：更多详情请登录 HummerRisk 平台查看。\n',
+      textContentServer:  '尊敬的用户, 您好, 您的主机安全检测结果如下:\n' +
+        '\n' +
+        '主机名称 : #{name}\n' +
         '\n' +
         '风险总数 : #{returnSum}\n' +
+        '\n' +
+        '高危风险 : #{criticalRisk}\n' +
+        '\n' +
+        '高风险 : #{highRisk}\n' +
+        '\n' +
+        '中风险 : #{mediumRisk}\n' +
+        '\n' +
+        '低风险 : #{lowRisk}\n' +
+        '\n' +
+        '注：更多详情请登录 HummerRisk 平台查看。\n',
+      textContentK8s:  '尊敬的用户, 您好, 您的K8s安全检测结果如下:\n' +
+        '\n' +
+        'K8s名称 : #{name}\n' +
+        '\n' +
+        '风险总数 : #{returnSum}\n' +
+        '\n' +
+        '高危风险(Critical)  : #{critical}\n' +
+        '\n' +
+        '高风险(High) : #{high}\n' +
+        '\n' +
+        '中等风险(Medium) : #{medium}\n' +
+        '\n' +
+        '低风险(Low) : #{low}\n' +
+        '\n' +
+        '无风险(Unknown) : #{unknown}\n' +
+        '\n' +
+        '注：更多详情请登录 HummerRisk 平台查看。\n',
+      textContentConfig:  '尊敬的用户, 您好, 您的部署安全检测结果如下:\n' +
+        '\n' +
+        '部署配置名称 : #{name}\n' +
+        '\n' +
+        '风险总数 : #{returnSum}\n' +
+        '\n' +
+        '高危风险(Critical)  : #{critical}\n' +
+        '\n' +
+        '高风险(High) : #{high}\n' +
+        '\n' +
+        '中等风险(Medium) : #{medium}\n' +
+        '\n' +
+        '低风险(Low) : #{low}\n' +
+        '\n' +
+        '无风险(Unknown) : #{unknown}\n' +
+        '\n' +
+        '注：更多详情请登录 HummerRisk 平台查看。\n',
+      textContentImage:  '尊敬的用户, 您好, 您的镜像安全检测结果如下:\n' +
+        '\n' +
+        '镜像名称 : #{name}\n' +
+        '\n' +
+        '风险总数 : #{returnSum}\n' +
+        '\n' +
+        '高危风险(Critical)  : #{critical}\n' +
+        '\n' +
+        '高风险(High) : #{high}\n' +
+        '\n' +
+        '中等风险(Medium) : #{medium}\n' +
+        '\n' +
+        '低风险(Low) : #{low}\n' +
+        '\n' +
+        '无风险(Unknown) : #{unknown}\n' +
+        '\n' +
+        '注：更多详情请登录 HummerRisk 平台查看。\n',
+      textContentCode:  '尊敬的用户, 您好, 您的源码安全检测结果如下:\n' +
+        '\n' +
+        '源码名称 : #{name}\n' +
+        '\n' +
+        '风险总数 : #{returnSum}\n' +
+        '\n' +
+        '高危风险(Critical)  : #{critical}\n' +
+        '\n' +
+        '高风险(High) : #{high}\n' +
+        '\n' +
+        '中等风险(Medium) : #{medium}\n' +
+        '\n' +
+        '低风险(Low) : #{low}\n' +
+        '\n' +
+        '无风险(Unknown) : #{unknown}\n' +
+        '\n' +
+        '注：更多详情请登录 HummerRisk 平台查看。\n',
+      textContentFs:  '尊敬的用户, 您好, 您的文件安全检测结果如下:\n' +
+        '\n' +
+        '文件名称 : #{name}\n' +
+        '\n' +
+        '风险总数 : #{returnSum}\n' +
+        '\n' +
+        '高危风险(Critical)  : #{critical}\n' +
+        '\n' +
+        '高风险(High) : #{high}\n' +
+        '\n' +
+        '中等风险(Medium) : #{medium}\n' +
+        '\n' +
+        '低风险(Low) : #{low}\n' +
+        '\n' +
+        '无风险(Unknown) : #{unknown}\n' +
         '\n' +
         '注：更多详情请登录 HummerRisk 平台查看。\n',
       resourceTask: [{
@@ -297,7 +493,7 @@ export default {
       Task.userIds = [];
       Task.type = '';
       Task.template = this.content;
-      Task.textTemplate = this.textContent;
+      Task.textTemplate = this.textContentCloud;
       Task.isSet = true;
       Task.identification = '';
       Task.taskType = "RESOURCE_TASK";
@@ -305,11 +501,7 @@ export default {
     },
     handleAddTask(index, data) {
       if (data.event && data.userIds.length > 0 && data.type) {
-        if (data.type === 'NAIL_ROBOT' || data.type === 'WECHAT_ROBOT') {
           this.addTask(data);
-        } else {
-          this.addTask(data);
-        }
       } else {
         this.$warning(this.$t('system_parameter_setting.message.message'));
       }
@@ -323,9 +515,37 @@ export default {
       }
     },
     addTask(data) {
-      if (data.event !== 'EXECUTE_CLOUD' && data.event !== 'EXECUTE_VULN') {
-        data.textTemplate = this.textContent2;
-        data.template = this.content2;
+      switch (data.event) {
+        case 'EXECUTE_CLOUD':
+          data.textTemplate = this.textContentCloud;
+          break;
+        case 'EXECUTE_VULN':
+          data.textTemplate = this.textContentVuln;
+          break;
+        case 'EXECUTE_SERVER':
+          data.textTemplate = this.textContentServer;
+          data.template = this.content3;
+          break;
+        case 'EXECUTE_K8S':
+          data.textTemplate = this.textContentK8s;
+          data.template = this.content2;
+          break;
+        case 'EXECUTE_CONFIG':
+          data.textTemplate = this.textContentConfig;
+          data.template = this.content2;
+          break;
+        case 'EXECUTE_IMAGE':
+          data.textTemplate = this.textContentImage;
+          data.template = this.content2;
+          break;
+        case 'EXECUTE_CODE':
+          data.textTemplate = this.textContentCode;
+          data.template = this.content2;
+          break;
+        case 'EXECUTE_FS':
+          data.textTemplate = this.textContentFs;
+          data.template = this.content2;
+          break;
       }
       this.result = this.$post("/notice/save/message/task", data, () => {
         this.initForm();
