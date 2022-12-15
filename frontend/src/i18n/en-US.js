@@ -220,6 +220,7 @@ export default {
     show_list: 'Display',
     clear_select: 'Clear selected items',
     type: 'Type',
+    validating: 'Validating',
   },
   workspace: {
     create:'Create a workspace',

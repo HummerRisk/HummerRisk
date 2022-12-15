@@ -1,5 +1,5 @@
 <template>
-  <div @click="validate(row)">
+  <div @click="validate(row)" style="cursor: pointer;">
     <el-tag size="mini" type="warning" v-if="row.status === 'DELETE'">
     {{ $t('account.DELETE') }}
     </el-tag>
@@ -26,6 +26,7 @@
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
+              const loadingInstance = this.$loading({ text: this.$t('commons.validing') });
               this.$post("/account/validate/" + row.id, {}, response => {
                 let data = response.data;
                 if (data) {
@@ -37,6 +38,7 @@
                 } else {
                   this.$error(this.$t('account.error'));
                 }
+                loadingInstance.close();
                 this.$emit('search');
               });
             }

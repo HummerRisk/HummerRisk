@@ -220,6 +220,7 @@ export default {
     show_list: '显示',
     clear_select: '清除选中项',
     type: '类型',
+    validing: '正在校验',
   },
   workspace: {
     create: '创建工作空间',
