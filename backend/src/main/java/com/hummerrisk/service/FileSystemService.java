@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -136,19 +137,18 @@ public class FileSystemService {
     public static final FileSystem upload(FileSystem fileSystem, MultipartFile file, String dir) throws IOException {
         try {
             String fileName = file.getOriginalFilename();
-            String extension = StringUtils.isNotBlank(fileName) ? fileName.split("\\.")[fileName.split("\\.").length - 1] : "";
             String second = FileUploadUtils.uploadForFs(dir, file);
             String path = second + fileName;
             //压缩包解压
-            if (fileName.contains("tar")) {
-                CommandUtils.commonExecCmdWithResult(FileSystemConstants.TAR + FileSystemConstants.DEFAULT_BASE_DIR + path, FileSystemConstants.DEFAULT_BASE_DIR);
-                path = path.replace("." + extension, "");
-            } else if (fileName.contains("gz")) {
-                CommandUtils.commonExecCmdWithResult(FileSystemConstants.GZ + FileSystemConstants.DEFAULT_BASE_DIR + path, FileSystemConstants.DEFAULT_BASE_DIR);
-                path = path.replace("." + extension, "");
-            } else if (fileName.contains("zip")) {
-                CommandUtils.commonExecCmdWithResult(FileSystemConstants.UNZIP + FileSystemConstants.DEFAULT_BASE_DIR + path, FileSystemConstants.DEFAULT_BASE_DIR);
-                path = path.replace("." + extension, "");
+            if (fileName.endsWith(".tar")) {
+                CommandUtils.extractTarGZ(new File(FileSystemConstants.DEFAULT_BASE_DIR + path), FileSystemConstants.DEFAULT_BASE_DIR + second);
+                path = second;
+            } else if (fileName.endsWith(".gz")) {
+                CommandUtils.extractTarGZ(new File(FileSystemConstants.DEFAULT_BASE_DIR + path), FileSystemConstants.DEFAULT_BASE_DIR + second);
+                path = second;
+            } else if (fileName.endsWith(".zip")) {
+                CommandUtils.extractZip(new File(FileSystemConstants.DEFAULT_BASE_DIR + path), FileSystemConstants.DEFAULT_BASE_DIR + second);
+                path = second;
             }
             fileSystem.setFileName(fileName);
             fileSystem.setPath(path);
