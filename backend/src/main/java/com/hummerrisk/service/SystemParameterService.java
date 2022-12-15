@@ -80,16 +80,6 @@ public class SystemParameterService {
     public void editMail(List<SystemParameter> parameters) {
         parameters.forEach(parameter -> {
             SystemParameterExample example = new SystemParameterExample();
-            if (parameter.getParamKey().equals(ParamConstants.MAIL.PASSWORD.getKey()) &&
-                    !StringUtils.isBlank(parameter.getParamValue())) {
-                String string = null;
-                try {
-                    string = EncryptUtils.aesEncrypt(parameter.getParamValue()).toString();
-                } catch (Exception e) {
-                    LogUtil.error(e.getMessage());
-                }
-                parameter.setParamValue(string);
-            }
             example.createCriteria().andParamKeyEqualTo(parameter.getParamKey());
             if (systemParameterMapper.countByExample(example) > 0) {
                 systemParameterMapper.updateByPrimaryKey(parameter);
@@ -103,16 +93,6 @@ public class SystemParameterService {
     public void editWechat(List<SystemParameter> parameters) {
         parameters.forEach(parameter -> {
             SystemParameterExample example = new SystemParameterExample();
-            if (parameter.getParamKey().equals(ParamConstants.WECHAT.SECRET.getKey()) &&
-                    !StringUtils.isBlank(parameter.getParamValue())) {
-                String string = null;
-                try {
-                    string = EncryptUtils.aesEncrypt(parameter.getParamValue()).toString();
-                } catch (Exception e) {
-                    LogUtil.error(e.getMessage());
-                }
-                parameter.setParamValue(string);
-            }
             example.createCriteria().andParamKeyEqualTo(parameter.getParamKey());
             if (systemParameterMapper.countByExample(example) > 0) {
                 systemParameterMapper.updateByPrimaryKey(parameter);
@@ -126,16 +106,6 @@ public class SystemParameterService {
     public void editDingding(List<SystemParameter> parameters) {
         parameters.forEach(parameter -> {
             SystemParameterExample example = new SystemParameterExample();
-            if (parameter.getParamKey().equals(ParamConstants.DINGDING.APPSECRET.getKey()) &&
-                    !StringUtils.isBlank(parameter.getParamValue())) {
-                String string = null;
-                try {
-                    string = EncryptUtils.aesEncrypt(parameter.getParamValue()).toString();
-                } catch (Exception e) {
-                    LogUtil.error(e.getMessage());
-                }
-                parameter.setParamValue(string);
-            }
             example.createCriteria().andParamKeyEqualTo(parameter.getParamKey());
             if (systemParameterMapper.countByExample(example) > 0) {
                 systemParameterMapper.updateByPrimaryKey(parameter);
@@ -292,14 +262,6 @@ public class SystemParameterService {
                 systemParameter.setSort(value.getValue());
                 paramList.add(systemParameter);
             }
-        } else {
-            paramList.stream().filter(param -> param.getParamKey().equals(ParamConstants.MAIL.PASSWORD.getKey())).forEach(param -> {
-                if (!StringUtils.isBlank(param.getParamValue())) {
-                    String string = EncryptUtils.aesDecrypt(param.getParamValue()).toString();
-                    param.setParamValue(string);
-                }
-
-            });
         }
         paramList.sort(Comparator.comparingInt(SystemParameter::getSort));
         return paramList;
@@ -322,14 +284,6 @@ public class SystemParameterService {
                 systemParameter.setSort(value.getValue());
                 paramList.add(systemParameter);
             }
-        } else {
-            paramList.stream().filter(param -> param.getParamKey().equals(ParamConstants.WECHAT.SECRET.getKey())).forEach(param -> {
-                if (!StringUtils.isBlank(param.getParamValue())) {
-                    String string = EncryptUtils.aesDecrypt(param.getParamValue()).toString();
-                    param.setParamValue(string);
-                }
-
-            });
         }
         paramList.sort(Comparator.comparingInt(SystemParameter::getSort));
         return paramList;
@@ -352,14 +306,6 @@ public class SystemParameterService {
                 systemParameter.setSort(value.getValue());
                 paramList.add(systemParameter);
             }
-        } else {
-            paramList.stream().filter(param -> param.getParamKey().equals(ParamConstants.DINGDING.APPSECRET.getKey())).forEach(param -> {
-                if (!StringUtils.isBlank(param.getParamValue())) {
-                    String string = EncryptUtils.aesDecrypt(param.getParamValue()).toString();
-                    param.setParamValue(string);
-                }
-
-            });
         }
         paramList.sort(Comparator.comparingInt(SystemParameter::getSort));
         return paramList;

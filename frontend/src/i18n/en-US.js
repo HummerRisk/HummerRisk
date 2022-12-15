@@ -369,6 +369,7 @@ export default {
       mail_template_example:'Mail template',
       cloud_mail_template_example: 'Hybrid cloud detection mail template',
       k8s_mail_template_example: 'Cloud native detection mail template',
+      server_mail_template_example: 'Host detection mail template',
       select_events:'Select events',
       message:'Event, recipient, receiving method are required',
       message_webhook:'When the receiving method is Dingding and corporate robots, webhook is required',

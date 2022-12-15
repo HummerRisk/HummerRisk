@@ -13,6 +13,9 @@ import com.hummerrisk.commons.utils.BeanUtils;
 import com.hummerrisk.commons.utils.CommonBeanFactory;
 import com.hummerrisk.commons.utils.CommonThreadPool;
 import com.hummerrisk.commons.utils.LogUtil;
+import com.hummerrisk.dto.MetricChartDTO;
+import com.hummerrisk.dto.ServerDTO;
+import com.hummerrisk.dto.ServerResultDTO;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.message.NoticeModel;
 import org.apache.commons.collections.CollectionUtils;
@@ -315,12 +318,12 @@ public class NoticeCreateService {
         String failedContext = "failed";
         String subject = "i18n_cloud_messageorder";
         String details = "", name = "";
-        int returnSum = 0, resourcesSum = 0, critical = 0, high = 0, medium = 0, low = 0, unknown = 0;
+        int returnSum = 0, resourcesSum = 0;
 
         if (StringUtils.equals(ScanConstants.SCAN_TYPE.CLOUD.name(), messageOrder.getScanType())) {
             subject = "i18n_cloud_messageorder";
             List<CloudTask> cloudTasks = extCloudTaskMapper.getTopTasksForEmail(messageOrder);
-
+            MetricChartDTO metricChartDTO = extNoticeMapper.metricChartCloud(messageOrder);
             for (CloudTask cloudTask : cloudTasks) {
                 if (cloudTask.getReturnSum() == null) {
                     sendTask(messageOrder);
@@ -339,11 +342,10 @@ public class NoticeCreateService {
             paramMap.put("returnSum", returnSum);
             paramMap.put("resourcesSum", resourcesSum);
             paramMap.put("name", name);
-            paramMap.put("critical", critical);
-            paramMap.put("high", high);
-            paramMap.put("medium", medium);
-            paramMap.put("low", low);
-            paramMap.put("unknown", unknown);
+            paramMap.put("critical", metricChartDTO.getCritical());
+            paramMap.put("high", metricChartDTO.getHigh());
+            paramMap.put("medium", metricChartDTO.getMedium());
+            paramMap.put("low", metricChartDTO.getLow());
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
@@ -360,6 +362,7 @@ public class NoticeCreateService {
             subject = "i18n_vuln_messageorder";
 
             List<CloudTask> cloudTasks = extCloudTaskMapper.getTopTasksForEmail(messageOrder);
+            MetricChartDTO metricChartDTO = extNoticeMapper.metricChartVuln(messageOrder);
 
             for (CloudTask cloudTask : cloudTasks) {
                 if (cloudTask.getReturnSum() == null) {
@@ -379,11 +382,10 @@ public class NoticeCreateService {
             paramMap.put("returnSum", returnSum);
             paramMap.put("resourcesSum", resourcesSum);
             paramMap.put("name", name);
-            paramMap.put("critical", critical);
-            paramMap.put("high", high);
-            paramMap.put("medium", medium);
-            paramMap.put("low", low);
-            paramMap.put("unknown", unknown);
+            paramMap.put("critical", metricChartDTO.getCritical());
+            paramMap.put("high", metricChartDTO.getHigh());
+            paramMap.put("medium", metricChartDTO.getMedium());
+            paramMap.put("low", metricChartDTO.getLow());
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
@@ -397,7 +399,8 @@ public class NoticeCreateService {
             noticeSendService.send(noticeModel);
 
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), messageOrder.getScanType())) {
-            List<ServerResult> serverResults = extNoticeMapper.getTopServerTasksForEmail(messageOrder);
+            List<ServerResultDTO> serverResults = extNoticeMapper.getTopServerTasksForEmail(messageOrder);
+            MetricChartDTO metricChartDTO = extNoticeMapper.metricChartServer(messageOrder);
 
             subject = "i18n_server_messageorder";
             returnSum = extNoticeMapper.serverSum(messageOrder);
@@ -410,11 +413,10 @@ public class NoticeCreateService {
             paramMap.put("resources", serverResults);
             paramMap.put("returnSum", returnSum);
             paramMap.put("name", name);
-            paramMap.put("critical", critical);
-            paramMap.put("high", high);
-            paramMap.put("medium", medium);
-            paramMap.put("low", low);
-            paramMap.put("unknown", unknown);
+            paramMap.put("critical", metricChartDTO.getCritical());
+            paramMap.put("high", metricChartDTO.getHigh());
+            paramMap.put("medium", metricChartDTO.getMedium());
+            paramMap.put("low", metricChartDTO.getLow());
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
@@ -428,6 +430,7 @@ public class NoticeCreateService {
             noticeSendService.send(noticeModel);
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), messageOrder.getScanType())) {
             List<ImageResultItem> imageResultItems = extNoticeMapper.getTopImageTasksForEmail(messageOrder);
+            MetricChartDTO metricChartDTO = extNoticeMapper.metricChartImage(messageOrder);
             ImageResultExample example = new ImageResultExample();
             example.createCriteria().andIdEqualTo(imageResultItems.get(0).getResultId());
             List<ImageResult> imageResults = imageResultMapper.selectByExample(example);
@@ -442,11 +445,11 @@ public class NoticeCreateService {
             paramMap.put("resources", imageResultItems);
             paramMap.put("returnSum", returnSum);
             paramMap.put("name", name);
-            paramMap.put("critical", critical);
-            paramMap.put("high", high);
-            paramMap.put("medium", medium);
-            paramMap.put("low", low);
-            paramMap.put("unknown", unknown);
+            paramMap.put("critical", metricChartDTO.getCritical());
+            paramMap.put("high", metricChartDTO.getHigh());
+            paramMap.put("medium", metricChartDTO.getMedium());
+            paramMap.put("low", metricChartDTO.getLow());
+            paramMap.put("unknown", metricChartDTO.getUnknown());
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
@@ -460,6 +463,7 @@ public class NoticeCreateService {
             noticeSendService.send(noticeModel);
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CODE.name(), messageOrder.getScanType())) {
             List<CodeResultItem> codeResultItems = extNoticeMapper.getTopCodeTasksForEmail(messageOrder);
+            MetricChartDTO metricChartDTO = extNoticeMapper.metricChartCode(messageOrder);
             CodeResultExample example = new CodeResultExample();
             example.createCriteria().andIdEqualTo(codeResultItems.get(0).getResultId());
             List<CodeResult> codeResults = codeResultMapper.selectByExample(example);
@@ -474,11 +478,11 @@ public class NoticeCreateService {
             paramMap.put("resources", codeResultItems);
             paramMap.put("returnSum", returnSum);
             paramMap.put("name", name);
-            paramMap.put("critical", critical);
-            paramMap.put("high", high);
-            paramMap.put("medium", medium);
-            paramMap.put("low", low);
-            paramMap.put("unknown", unknown);
+            paramMap.put("critical", metricChartDTO.getCritical());
+            paramMap.put("high", metricChartDTO.getHigh());
+            paramMap.put("medium", metricChartDTO.getMedium());
+            paramMap.put("low", metricChartDTO.getLow());
+            paramMap.put("unknown", metricChartDTO.getUnknown());
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
@@ -492,6 +496,7 @@ public class NoticeCreateService {
             noticeSendService.send(noticeModel);
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CONFIG.name(), messageOrder.getScanType())) {
             List<CloudNativeConfigResultItem> configResultItems = extNoticeMapper.getTopConfigTasksForEmail(messageOrder);
+            MetricChartDTO metricChartDTO = extNoticeMapper.metricChartConfig(messageOrder);
             CloudNativeConfigResultExample example = new CloudNativeConfigResultExample();
             example.createCriteria().andIdEqualTo(configResultItems.get(0).getResultId());
             List<CloudNativeConfigResult> cloudNativeConfigResults = cloudNativeConfigResultMapper.selectByExample(example);
@@ -507,11 +512,11 @@ public class NoticeCreateService {
             paramMap.put("resources", configResultItems);
             paramMap.put("returnSum", returnSum);
             paramMap.put("name", name);
-            paramMap.put("critical", critical);
-            paramMap.put("high", high);
-            paramMap.put("medium", medium);
-            paramMap.put("low", low);
-            paramMap.put("unknown", unknown);
+            paramMap.put("critical", metricChartDTO.getCritical());
+            paramMap.put("high", metricChartDTO.getHigh());
+            paramMap.put("medium", metricChartDTO.getMedium());
+            paramMap.put("low", metricChartDTO.getLow());
+            paramMap.put("unknown", metricChartDTO.getUnknown());
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
@@ -525,6 +530,7 @@ public class NoticeCreateService {
             noticeSendService.send(noticeModel);
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.K8S.name(), messageOrder.getScanType())) {
             List<CloudNativeResultItem> k8sResultItems = extNoticeMapper.getTopK8sTasksForEmail(messageOrder);
+            MetricChartDTO metricChartDTO = extNoticeMapper.metricChartK8s(messageOrder);
             CloudNativeResultExample example = new CloudNativeResultExample();
             example.createCriteria().andIdEqualTo(k8sResultItems.get(0).getResultId());
             List<CloudNativeResult> cloudNativeResults = cloudNativeResultMapper.selectByExample(example);
@@ -539,11 +545,11 @@ public class NoticeCreateService {
             paramMap.put("resources", k8sResultItems);
             paramMap.put("returnSum", returnSum);
             paramMap.put("name", name);
-            paramMap.put("critical", critical);
-            paramMap.put("high", high);
-            paramMap.put("medium", medium);
-            paramMap.put("low", low);
-            paramMap.put("unknown", unknown);
+            paramMap.put("critical", metricChartDTO.getCritical());
+            paramMap.put("high", metricChartDTO.getHigh());
+            paramMap.put("medium", metricChartDTO.getMedium());
+            paramMap.put("low", metricChartDTO.getLow());
+            paramMap.put("unknown", metricChartDTO.getUnknown());
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")
@@ -557,6 +563,7 @@ public class NoticeCreateService {
             noticeSendService.send(noticeModel);
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.FS.name(), messageOrder.getScanType())) {
             List<FileSystemResultItem> fsResultItems = extNoticeMapper.getTopFsTasksForEmail(messageOrder);
+            MetricChartDTO metricChartDTO = extNoticeMapper.metricChartFs(messageOrder);
             FileSystemResultExample example = new FileSystemResultExample();
             example.createCriteria().andIdEqualTo(fsResultItems.get(0).getResultId());
             List<FileSystemResult> fileSystemResults = fileSystemResultMapper.selectByExample(example);
@@ -571,11 +578,11 @@ public class NoticeCreateService {
             paramMap.put("resources", fsResultItems);
             paramMap.put("returnSum", returnSum);
             paramMap.put("name", name);
-            paramMap.put("critical", critical);
-            paramMap.put("high", high);
-            paramMap.put("medium", medium);
-            paramMap.put("low", low);
-            paramMap.put("unknown", unknown);
+            paramMap.put("critical", metricChartDTO.getCritical());
+            paramMap.put("high", metricChartDTO.getHigh());
+            paramMap.put("medium", metricChartDTO.getMedium());
+            paramMap.put("low", metricChartDTO.getLow());
+            paramMap.put("unknown", metricChartDTO.getUnknown());
             NoticeModel noticeModel = NoticeModel.builder()
                     .successContext(successContext)
                     .successMailTemplate("SuccessfulNotification")

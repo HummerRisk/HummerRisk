@@ -48,7 +48,7 @@ public class MailService {
                     javaMailSender.setUsername(p.getParamValue());
                     break;
                 case "smtp.password":
-                    javaMailSender.setPassword(EncryptUtils.aesDecrypt(p.getParamValue()).toString());
+                    javaMailSender.setPassword(p.getParamValue());
                     break;
                 case "smtp.ssl":
                     if (BooleanUtils.toBoolean(p.getParamValue())) {

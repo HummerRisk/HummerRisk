@@ -1,6 +1,9 @@
 package com.hummerrisk.base.mapper.ext;
 
 import com.hummerrisk.base.domain.*;
+import com.hummerrisk.dto.MetricChartDTO;
+import com.hummerrisk.dto.ServerDTO;
+import com.hummerrisk.dto.ServerResultDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -31,6 +34,22 @@ public interface ExtNoticeMapper {
 
     List<FileSystemResultItem> getTopFsTasksForEmail(@Param("request") MessageOrder request);
 
-    List<ServerResult> getTopServerTasksForEmail(@Param("request") MessageOrder request);
+    List<ServerResultDTO> getTopServerTasksForEmail(@Param("request") MessageOrder request);
+
+    MetricChartDTO metricChartCloud(@Param("request") MessageOrder request);
+
+    MetricChartDTO metricChartVuln(@Param("request") MessageOrder request);
+
+    MetricChartDTO metricChartServer(@Param("request") MessageOrder request);
+
+    MetricChartDTO metricChartK8s(@Param("request") MessageOrder request);
+
+    MetricChartDTO metricChartConfig(@Param("request") MessageOrder request);
+
+    MetricChartDTO metricChartImage(@Param("request") MessageOrder request);
+
+    MetricChartDTO metricChartCode(@Param("request") MessageOrder request);
+
+    MetricChartDTO metricChartFs(@Param("request") MessageOrder request);
 
 }

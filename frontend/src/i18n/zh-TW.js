@@ -369,6 +369,7 @@ export default {
       mail_template_example: '郵件模版',
       cloud_mail_template_example: '混合雲檢測郵件模板',
       k8s_mail_template_example: '雲原生檢測郵件模版',
+      server_mail_template_example: '主機檢測郵件模板',
       select_events: '選擇事件',
       message: '事件，接收人，接收方式為必填項',
       message_webhook: '接收方式為釘釘和企業機器人時，webhook為必填項',
