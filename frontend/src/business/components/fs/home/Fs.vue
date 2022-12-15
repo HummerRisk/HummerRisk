@@ -314,8 +314,18 @@ export default {
     },
     create() {
       this.addAccountForm = {};
+      if(this.sboms && this.sboms.length > 0) {
+        this.addAccountForm.sbomId = this.sboms[0].id;
+        this.initSbom({sbomId: this.addAccountForm.sbomId});
+      }
       this.createVisible = true;
       this.activeProxy();
+    },
+    async initSbom(params) {
+      await this.$post("/sbom/allSbomVersionList", params,response => {
+        this.versions = response.data;
+        if(this.versions && this.versions.length > 0) this.addAccountForm.sbomVersionId = this.versions[0].id;
+      });
     },
     initSboms() {
       this.result = this.$post("/sbom/allSbomList", {},response => {

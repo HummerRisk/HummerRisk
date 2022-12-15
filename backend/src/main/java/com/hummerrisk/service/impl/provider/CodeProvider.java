@@ -45,10 +45,10 @@ public class CodeProvider implements IProvider {
             }
             if (codeCredential != null && codeCredential.getBranch() != null) {
                 branch = TrivyConstants.BRANCH + codeCredential.getBranch();
-            } else if (codeCredential != null && codeCredential.getCommit() != null) {
-                branch = TrivyConstants.COMMIT + codeCredential.getCommit();
             } else if (codeCredential != null && codeCredential.getTag() != null) {
                 branch = TrivyConstants.TAG + codeCredential.getTag();
+            } else if (codeCredential != null && codeCredential.getCommit() != null) {
+                branch = TrivyConstants.COMMIT + codeCredential.getCommit();
             }
             ScanSetting scanSetting = (ScanSetting) obj[2];
             String str = "";

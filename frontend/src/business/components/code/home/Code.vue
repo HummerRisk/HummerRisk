@@ -131,8 +131,13 @@
           </el-form-item>
         </el-form>
         <el-divider><i class="el-icon-first-aid-kit"> {{ (index + 1) }}</i></el-divider>
-        <div style="margin: 10px;">
-            <span style="color: red;">{{ $t('code.code_note') }}</span>
+        <div style="margin: 10px 10px 10px 50px;">
+          <div style="color: red;">{{ $t('commons.note') }}</div>
+          <div style="color: red;">{{ $t('code.code_note') }}</div>
+          <div style="color: red;">{{ $t('code.code_note2') }}</div>
+          <div style="color: red;">{{ $t('code.code_note3') }}</div>
+          <div style="color: red;">{{ $t('code.code_note4') }}</div>
+          <div style="color: red;">{{ $t('code.code_note5') }}</div>
         </div>
       </div>
       <proxy-dialog-create-footer
@@ -195,8 +200,13 @@
         </div>
       </el-form>
       <div style="margin: 10px;">
-        <div style="margin: 10px;">
-          <span style="color: red;">{{ $t('code.code_note') }}</span>
+        <div style="margin: 10px 10px 10px 50px;">
+          <div style="color: red;">{{ $t('commons.note') }}</div>
+          <div style="color: red;">{{ $t('code.code_note') }}</div>
+          <div style="color: red;">{{ $t('code.code_note2') }}</div>
+          <div style="color: red;">{{ $t('code.code_note3') }}</div>
+          <div style="color: red;">{{ $t('code.code_note4') }}</div>
+          <div style="color: red;">{{ $t('code.code_note5') }}</div>
         </div>
       </div>
       <proxy-dialog-footer
@@ -383,8 +393,13 @@ export default {
       this.isIndeterminate = false;
       this.checkAll = val;
     },
-    create() {
-      this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
+    async create() {
+      if(this.sboms && this.sboms.length > 0) {
+        await this.$post("/sbom/allSbomVersionList", {sbomId: this.sboms[0].id},response => {
+          this.versions = response.data;
+          this.addAccountForm = [ { "sbomId": this.sboms[0].id, "sbomVersionId" : this.versions[0].id, "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
+        });
+      }
       this.createVisible = true;
       this.activeProxy();
     },
@@ -616,9 +631,14 @@ export default {
         }
       });
     },
-    addAccount (addAccountForm) {
-      let newParam = { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] };
-      addAccountForm.push(newParam);
+    async addAccount (addAccountForm) {
+      if(this.sboms && this.sboms.length > 0) {
+        await this.$post("/sbom/allSbomVersionList", {sbomId: this.sboms[0].id},response => {
+          this.versions = response.data;
+          let newParam = { "sbomId": this.sboms[0].id, "sbomVersionId" : this.versions[0].id, "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] };
+          addAccountForm.push(newParam);
+        });
+      }
     },
     deleteAccount (parameter, p) {
       for (let i in parameter) {
