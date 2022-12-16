@@ -27,6 +27,11 @@ export default {
       name: "EventGroup",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/event/home/Group"),
     },
+    {
+      path: "ip",
+      name: "EventIp",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/event/home/Ip"),
+    },
   ]
 }
 

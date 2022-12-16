@@ -1530,6 +1530,10 @@ export default {
     source_ip: "Source Ip",
     overview: 'Cloud event overview',
     group: 'Cloud event aggregation',
+    ip: 'Source IP analysis',
+    ip_detail: 'IP analysis details',
+    event_audit: 'Operation audit event',
+    event_insight: 'Insight event text',
   },
   second: {
     title:'seconds',

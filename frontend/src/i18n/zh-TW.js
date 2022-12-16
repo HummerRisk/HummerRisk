@@ -1530,6 +1530,10 @@ export default {
     source_ip: "源地址",
     overview: '雲事件概覽',
     group: '雲事件聚合',
+    ip: '源 IP 分析',
+    ip_detail: 'IP 分析詳情',
+    event_audit: '操作審計事件',
+    event_insight: 'Insight 事件原文',
   },
   second: {
     title: '秒',
