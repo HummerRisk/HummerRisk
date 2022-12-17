@@ -2,7 +2,12 @@ package com.hummerrisk.proxy.k8s;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.hummerrisk.base.domain.CloudNative;
 import com.hummerrisk.base.domain.CloudNativeSourceImage;
 import com.hummerrisk.base.domain.CloudNativeSourceWithBLOBs;
@@ -12,17 +17,25 @@ import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.commons.utils.UUIDUtil;
 import com.hummerrisk.commons.utils.YamlUtil;
 import com.hummerrisk.proxy.Request;
+import io.gsonfire.builders.JsonObjectBuilder;
+import io.kubernetes.client.ProtoClient;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.Configuration;
 import io.kubernetes.client.openapi.apis.*;
 import io.kubernetes.client.openapi.models.*;
+import io.kubernetes.client.proto.Meta;
+import io.kubernetes.client.proto.V1;
 import io.kubernetes.client.util.Config;
+import io.kubernetes.client.util.Yaml;
+import org.apache.poi.ss.formula.functions.T;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 public class K8sRequest extends Request {
 
@@ -80,6 +93,220 @@ public class K8sRequest extends Request {
         }
         return null;
     }
+
+    public boolean createChart() throws ApiException, JsonProcessingException {
+        try {
+            String name = "mongodb-java-6666";
+            String namespace = "test-hl2";
+            String chart = "bitnami/mongodb";
+            String version = "11.0.4";
+
+            JsonObjectBuilder build = new JsonObjectBuilder().set("rootUser", "admin").set("rootPassword", "admin123123");
+            JsonObjectBuilder type = new JsonObjectBuilder().set("type", "NodePort");
+
+            JsonObjectBuilder values = new JsonObjectBuilder().set("service", type).set("auth", build);
+
+            JsonObject jsonObjectBuilder = new JsonObjectBuilder()
+                    .set("apiVersion", "app.alauda.io/v1alpha1")
+                    .set("kind", "HelmRequest")
+                    .set("metadata", new JsonObjectBuilder().set("name", name).build())
+                    .set("spec", new JsonObjectBuilder()
+                            .set("chart", chart)
+                            .set("namespace", namespace)
+                            .set("releaseName", name)
+                            .set("values", values)
+                            .set("version", version)
+                    ).build();
+
+
+            JsonNode jsonNode = new ObjectMapper().readTree(String.valueOf(jsonObjectBuilder));
+            String s = new YAMLMapper().writeValueAsString(jsonNode);
+            System.out.println(s);
+
+            ApiClient apiClient = getK8sClient(new Proxy());
+            CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
+            Object result = customObjectsApi.createNamespacedCustomObject("app.alauda.io", "v1alpha1", namespace, "helmrequests", jsonObjectBuilder, "true", null, null);
+
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    public boolean deleteChart() throws ApiException {
+        try {
+            String namespace = "test-hl2";
+            String name = "mongodb-java-2";
+
+            CustomObjectsApi customObjectsApi = new CustomObjectsApi(getK8sClient(new Proxy()));
+            customObjectsApi.deleteNamespacedCustomObject(
+                    "app.alauda.io",
+                    "v1alpha1",
+                    namespace,
+                    "helmrequests",
+                    name,
+                    0,
+                    null,
+                    null,
+                    null,
+                    new V1DeleteOptions().gracePeriodSeconds(0L).propagationPolicy("Foreground"));
+
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 大致流程
+     * 1）创建一个命名空间
+     * 2）根据资源对象文件创建deployment，创建多个副本，并指定自定义调度器
+     * 3）通过API获取节点和pod
+     * 4）选择phase=pending和schedulerName=my-scheduler的pod
+     * 5）然后通过自定义的调度算法（这里只采用随机数的方法）计算出pod的合适目标节点。并使用Binding对象去绑定。
+     */
+    public class myScheduler {
+
+        public File deploymentFile = new File("test-scheduler.yaml");
+
+        /**
+         * 删除对应的deployment
+         * @param api
+         * @param namespaceStr
+         */
+        private void deleteDeploymentByYaml(AppsV1Api api, String namespaceStr) throws ApiException {
+            // 传入deployment的名字，命名空间，就可以删除deployment以及所有的pod了
+            V1Status v1Status = api.deleteNamespacedDeployment("pause",namespaceStr,null,null,null,null,null,null);
+            System.out.println(v1Status.getCode()+"删除完毕");
+        }
+
+        /**
+         * 获得可用节点和判断pod的状态完成绑定
+         * @param namespaceStr
+         * @param api
+         * @param client
+         * @throws ApiException
+         */
+        private void getNodeAndPod(String namespaceStr, CoreV1Api api, ApiClient client) throws ApiException {
+            Random random = new Random();
+            // 调用方法，计算出所有可用的节点
+            // 预选
+            V1NodeList nodeList = ready_node(api);
+            // 通过api获取指定命名空间(shiyan)中的pod
+            V1PodList list = api.listNamespacedPod(namespaceStr,null,null,null,null,null,null,null, null, null, null);
+            // 遍历list，循环判断pod的状态，并完成pod的调度
+            for(V1Pod item:list.getItems()){
+                // 优选
+                int n = random.nextInt(nodeList.getItems().size());
+                // 获取pod的状态
+                String podStatus = item.getStatus().getPhase();
+                String nodeName = item.getSpec().getNodeName();
+                // 根据pod的状态和所属节点的名称进行绑定
+                if (podStatus.equals("Pending") && nodeName == null){
+                    // 执行调度方法 pod的名字；可用node;命名空间；客户端；api
+                    schedluer(item.getMetadata().getName(),nodeList.getItems().get(n),namespaceStr,client,api);
+                }
+            }
+        }
+
+        /**
+         * binding 绑定的过程
+         * @param name
+         * @param v1Node
+         * @param namespaceStr
+         * @param client
+         * @param api
+         * @throws ApiException
+         */
+        private void schedluer(String name, V1Node v1Node, String namespaceStr, ApiClient client, CoreV1Api api) throws ApiException {
+            V1Binding body = new V1Binding();
+            V1ObjectReference target = new V1ObjectReference();
+            V1ObjectMeta meta = new V1ObjectMeta();
+            target.setKind("Node");
+            target.setApiVersion("v1");
+            target.setName(v1Node.getMetadata().getName());  // 节点的名称
+            meta.setName(name);
+            body.setTarget(target);
+            body.setMetadata(meta);
+            api.createNamespacedBinding(namespaceStr,body,null,null,null, null);
+        }
+
+
+        /**
+         * 获得可用的node，这个方法相当于预选阶段
+         * @param api
+         * @return
+         * @throws ApiException
+         */
+        private V1NodeList ready_node(CoreV1Api api) throws ApiException {
+            // 定义list装所有符合条件的节点
+            V1NodeList nodeSelectList = new V1NodeList();
+            // 通过api获取所有的节点
+            V1NodeList nodeList = api.listNode(null, null,null,null,null,null,null,null,null,null);;
+            // 遍历，找出能用的node，存进list中去
+            for (V1Node node:nodeList.getItems()){
+                List<V1NodeCondition> conditionsList = node.getStatus().getConditions();
+                // 取出最后一个
+                String status = conditionsList.get(conditionsList.size()-1).getStatus();
+                String type = conditionsList.get(conditionsList.size()-1).getType();
+                // 这里的预选策略相当于就是判断node节点的两个状态值
+                if (status.equals("True")&&type.equals("Ready")){
+                    nodeSelectList.addItemsItem(node);
+                }
+            }
+            // 返回所有符合条件的节点
+            return nodeSelectList;
+        }
+
+        /**
+         * 创建命名空间和通过deployment资源对象文件来创建deployment
+         * @param namespaceStr
+         * @param apiInstance
+         * @param protoClient
+         * @throws IOException
+         * @throws ApiException
+         */
+        private void createNameSpaceAndDepoyment(String namespaceStr, AppsV1Api apiInstance, ProtoClient protoClient) throws IOException, ApiException {
+            // 1、创建一个命名空间
+            ApiClient apiClient = getK8sClient(null);
+            CoreV1Api apiInstance2 = new CoreV1Api(apiClient);
+            V1Namespace v1Namespace = new V1Namespace();
+            v1Namespace.setApiVersion("v1");
+            v1Namespace.setKind("Namespace");
+            V1ObjectMeta v1ObjectMeta = new V1ObjectMeta();
+            v1ObjectMeta.setName(namespaceStr);
+            v1Namespace.setMetadata(v1ObjectMeta);
+            apiInstance2.createNamespace(v1Namespace,null, null,null, null);
+            //   删除指定的命名空间
+            //protoClient.delete(V1.Namespace.newBuilder(),"/api/v1/namespaces/"+namespaceStr);
+            // 2、根据资源对象文件创建deployment，创建多个副本，并指定自定义调度器
+            // File deploymentFile = new File("test-scheduler.yaml");
+            V1Deployment body = (V1Deployment) Yaml.load(deploymentFile);
+            try {
+                V1Deployment result = apiInstance.createNamespacedDeployment(namespaceStr, body,null,null,null,null);
+                System.out.println("success,工作负载创建成功");
+            } catch (ApiException e){
+                if (e.getCode() == 409) {
+                    System.out.println("error 工作负载创建已重复！");
+                } else if (e.getCode() == 200) {
+                    System.out.println("success 工作负载创建成功！");
+                } else if (e.getCode() == 201) {
+                    System.out.println("error 工作负载创建已重复！");
+                } else if (e.getCode() == 401) {
+                    System.out.println("error 无权限操作！");
+                } else {
+                    System.out.println("error 工作负载创建失败！");
+                }
+                System.out.println("Exception when calling AppsV1Api#createNamespacedDeployment");
+                System.out.println("Status code: {}"+ e.getCode());
+                System.out.println("Reason: {}"+ e.getResponseBody());
+                System.out.println("Response headers: {}"+ e.getResponseHeaders());
+            }
+        }
+    }
+
 
     public K8sSource getNameSpace(CloudNative cloudNative) throws IOException, ApiException {
         K8sSource k8sSource = new K8sSource();
