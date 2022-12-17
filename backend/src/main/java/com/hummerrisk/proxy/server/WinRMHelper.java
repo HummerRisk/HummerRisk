@@ -30,7 +30,11 @@ public class WinRMHelper {
     public static String execute(Server server, final String command) throws Exception {
         try {
             WinRmClientContext context = WinRmClientContext.newInstance();
-            WinRmTool tool = WinRmTool.Builder.builder(server.getIp(), server.getUserName(), server.getPassword()).setAuthenticationScheme(AuthSchemes.NTLM).port(DEFAULT_PORT).useHttps(false).context(context).build();
+            WinRmTool tool = WinRmTool.Builder.builder(server.getIp(), server.getUserName(), server.getPassword()).
+                    port(DEFAULT_PORT).
+                    useHttps(false).
+                    context(context).
+                    build();
             tool.setOperationTimeout(5000L);
             WinRmToolResponse resp = tool.executeCommand(command);
             context.shutdown();
