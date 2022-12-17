@@ -104,7 +104,7 @@
                   </el-table-column>
                   <el-table-column :label="$t('server.server_type')" min-width="12%" prop="type">
                     <template slot-scope="scope">
-                      <el-select style="width: 100%;" filterable :clearable="true" v-model="scope.row.type" :placeholder="$t('server.server_type')">
+                      <el-select style="width: 100%;" filterable :clearable="true" v-model="scope.row.type" :placeholder="$t('server.server_type')" @change="changeType(scope.row)">
                         <el-option
                           v-for="item in types"
                           :key="item.value"
@@ -303,7 +303,7 @@
               <el-input v-model="form.name" autocomplete="off" :placeholder="$t('server.server_name')"/>
             </el-form-item>
             <el-form-item :label="$t('server.server_type')" ref="type" prop="type">
-              <el-select style="width: 100%;" filterable :clearable="true" v-model="form.type" :placeholder="$t('server.server_type')">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="form.type" :placeholder="$t('server.server_type')" @change="changeType(form)">
                 <el-option
                   v-for="item in types"
                   :key="item.value"
@@ -390,6 +390,17 @@
             </el-form-item>
             <el-form-item :label="$t('server.server_name')" ref="name" prop="name">
               <el-input v-model="form.name" autocomplete="off" :placeholder="$t('server.server_name')"/>
+            </el-form-item>
+            <el-form-item :label="$t('server.server_type')" ref="type" prop="type">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="form.type" :placeholder="$t('server.server_type')" @change="changeType(form)">
+                <el-option
+                  v-for="item in types"
+                  :key="item.value"
+                  :label="item.id"
+                  :value="item.value">
+                  &nbsp;&nbsp; {{ item.id }}
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item :label="'IP'" ref="ip" prop="ip">
               <el-input v-model="form.ip" autocomplete="off" :placeholder="'IP'"/>
@@ -952,6 +963,15 @@ const columnOptions = [
         server.groupId = this.groupId;
         this.servers.push(server);
         this.proxyForm = {isProxy: false, proxyId: 0};
+      },
+      changeType(item) {
+        if(item.type === 'linux') {
+          item.port = '22';
+          item.userName = 'root';
+        }else if (item.type === 'windows'){
+          item.port = '5985';
+          item.userName = 'Administrator';
+        }
       },
       deleteRowServer(index, data) { //删除
         this.servers.splice(index, 1);

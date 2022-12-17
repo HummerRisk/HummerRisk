@@ -91,7 +91,7 @@
       </hide-table>
       <table-pagination v-if="activeName === 'first'" :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
 
-      <el-row :gutter="20" class="el-row-body">
+      <el-row :gutter="20" class="el-row-body" v-if="activeName === 'second'">
         <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="8" v-for="(data, index) in serverData"
                 :key="index" class="el-col el-col-su">
           <el-card :body-style="{ padding: '15px' }">

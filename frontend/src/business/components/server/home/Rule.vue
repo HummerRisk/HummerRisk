@@ -528,7 +528,6 @@ export default {
           }
           let param = Object.assign({}, mdObj);
           param.parameter = JSON.stringify(param.parameter);
-          param.type = type;
 
           if (url === '') {
             this.$error(this.$t('rule.ex_request_parameter_error'));
