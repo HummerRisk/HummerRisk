@@ -123,3 +123,16 @@ UPDATE `rule` SET `name` = 'Qiniu Kodo 公开读取访问权限检测',  `script
 DELETE FROM `rule_type` WHERE ID = 'c0cd80bf-259f-4a46-a1a8-9ce7edc5e592';
 
 INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('25a9ac83-a4c0-4524-b692-06b7d63b3516', '1268870b-188d-41a8-a86e-0c83299dc93c', 'qiniu.kodo');
+
+SELECT id INTO @groupId4 FROM rule_group WHERE name =  'Qingcloud 等保预检';
+
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('be1eddc5-9905-4280-8ae1-b841c68ce483', 'Qingcloud QingStor 公开读取访问权限检测', 1, 'HighRisk', 'Qingcloud 查看您的 存储桶是否不允许公开读取访问权限。如果某个存储桶策略允许公开读取访问权限，则该存储桶“不合规“', 'policies:\n    - name: qingcloud-qing-stor\n      resource: qingcloud.qingStor\n      filters:\n        - type: private', '[]', 'hummer-qingcloud-plugin', '青云', 'qingcloud.png',  concat(unix_timestamp(now()), '003'), 1, 'custodian', NULL);
+
+INSERT INTO `rule_group_mapping` ( `rule_id`, `group_id`) VALUES ( 'be1eddc5-9905-4280-8ae1-b841c68ce483',  @groupId4 );
+
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('be1eddc5-9905-4280-8ae1-b841c68ce483', 'safety');
+
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('2e26fe00-d8e7-48d4-978b-c5e684b29be3', 'be1eddc5-9905-4280-8ae1-b841c68ce483', 'qingcloud.qingStor');
+
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('be1eddc5-9905-4280-8ae1-b841c68ce483', '10');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('be1eddc5-9905-4280-8ae1-b841c68ce483', '13');
