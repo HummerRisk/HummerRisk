@@ -36,7 +36,10 @@ public class WinRMHelper {
                     context(context).
                     build();
             tool.setOperationTimeout(5000L);
-            WinRmToolResponse resp = tool.executeCommand(command);
+            //executeCommand(List<String>) execute a list of commands concatenated with &
+            //executePs(String) execute a PowerShell command with the native windows command
+            //executePs(List<String>) execute a list of PowerShell commands
+            WinRmToolResponse resp = tool.executePs(command);
             context.shutdown();
             return resp.getStdOut();
         } catch (Exception e) {
