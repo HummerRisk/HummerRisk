@@ -557,6 +557,7 @@ public class PlatformUtils {
                 map.put("region", region);
                 break;
             case jdcloud:
+                map.put("type", jdcloud);
                 JDCloudCredential jdCloudCredential = new Gson().fromJson(account.getCredential(),JDCloudCredential.class);
                 map.put("AccessKey",jdCloudCredential.getAccessKey());
                 map.put("SecretAccessKey",jdCloudCredential.getSecretAccessKey());
@@ -1391,6 +1392,8 @@ public class PlatformUtils {
             case qiniu:
                 break;
             case qingcloud:
+                break;
+            case jdcloud:
                 break;
             case ucloud:
                 if (StringUtils.contains(resource, "ucloud.uhost")) {
