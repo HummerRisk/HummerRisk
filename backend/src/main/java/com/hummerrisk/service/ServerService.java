@@ -188,7 +188,7 @@ public class ServerService {
             if (server.getIsProxy() != null && server.getIsProxy()) {
                 proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
             }
-            String returnLog = execute(server, script, proxy);
+            String returnLog = execute(server, script, proxy, jsonArray);
             if (returnLog.contains(ServerConstants.HUMMER_SUCCESS)) {
                 result.setIsSeverity(true);
             } else if (returnLog.contains(ServerConstants.HUMMER_ERROR)) {
@@ -495,7 +495,7 @@ public class ServerService {
         return serverValidateDTO;
     }
 
-    public String execute(Server server, String cmd, Proxy proxy) throws Exception {
+    public String execute(Server server, String cmd, Proxy proxy, JSONArray jsonArray) throws Exception {
         try {
             switch (server.getType()) {
                 case "linux":
@@ -505,7 +505,23 @@ public class ServerService {
                         return SshUtil.executeSshd(SshUtil.loginSshd(server, proxy), cmd);
                     }
                 case "windows":
-                    return WinRMHelper.execute(server, cmd);
+                    String result = WinRMHelper.execute(server, cmd);
+                    String hummerSuccess = "", hummerError = "";
+                    for (Object o : jsonArray) {
+                        JSONObject jsonObject = (JSONObject) o;
+                        String key = jsonObject.getString("key");
+                        if (StringUtils.equalsIgnoreCase(key, "HummerSuccess")) {
+                            hummerSuccess = jsonObject.getString("defaultValue");
+                        } else if (StringUtils.equalsIgnoreCase(key, "HummerError")) {
+                            hummerError = jsonObject.getString("defaultValue");
+                        }
+                    }
+                    if (result.contains(ServerConstants.HUMMER_SUCCESS)) {
+                        result = result.replace("HummerSuccess", hummerSuccess);
+                    } else if (result.contains(ServerConstants.HUMMER_ERROR)) {
+                        result = result.replace("HummerError", hummerError);
+                    }
+                    return result;
                 default:
                     return "Unexpected value: type";
             }

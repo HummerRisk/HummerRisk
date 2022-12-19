@@ -125,7 +125,7 @@
                 and LOWER(t.rule_name) like CONCAT('%',LOWER(#{request.ruleName}),'%')
             </if>
         </where>
-        ORDER BY FIELD(t.result_status, 'APPROVED', 'FINISHED', 'ERROR'), t.is_severity, FIELD(t.severity, 'HighRisk', 'MediumRisk', 'LowRisk'), t.server_name, t.update_time desc
+        ORDER BY FIELD(t.result_status, 'APPROVED', 'FINISHED', 'ERROR'), t.is_severity, FIELD(t.type, 'windows', 'linux'), FIELD(t.severity, 'HighRisk', 'MediumRisk', 'LowRisk'), t.server_name, t.update_time desc
     </select>
 
     <resultMap id="ServerListBaseResultMap" type="com.hummerrisk.dto.ServerListDTO"
