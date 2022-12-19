@@ -321,7 +321,7 @@ public class NoticeCreateService {
         int returnSum = 0, resourcesSum = 0;
 
         if (StringUtils.equals(ScanConstants.SCAN_TYPE.CLOUD.name(), messageOrder.getScanType())) {
-            subject = "i18n_cloud_messageorder";
+            subject = Translator.get("i18n_cloud_messageorder");
             List<CloudTask> cloudTasks = extCloudTaskMapper.getTopTasksForEmail(messageOrder);
             MetricChartDTO metricChartDTO = extNoticeMapper.metricChartCloud(messageOrder);
             for (CloudTask cloudTask : cloudTasks) {
@@ -359,7 +359,7 @@ public class NoticeCreateService {
             noticeSendService.send(noticeModel);
 
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.VULN.name(), messageOrder.getScanType())) {
-            subject = "i18n_vuln_messageorder";
+            subject = Translator.get("i18n_vuln_messageorder");
 
             List<CloudTask> cloudTasks = extCloudTaskMapper.getTopTasksForEmail(messageOrder);
             MetricChartDTO metricChartDTO = extNoticeMapper.metricChartVuln(messageOrder);
@@ -402,7 +402,7 @@ public class NoticeCreateService {
             List<ServerResultDTO> serverResults = extNoticeMapper.getTopServerTasksForEmail(messageOrder);
             MetricChartDTO metricChartDTO = extNoticeMapper.metricChartServer(messageOrder);
 
-            subject = "i18n_server_messageorder";
+            subject = Translator.get("i18n_server_messageorder");
             returnSum = extNoticeMapper.serverSum(messageOrder);
             details = "i18n_resource_manage " + returnSum;
             Server server = serverMapper.selectByPrimaryKey(serverResults.get(0).getServerId());
@@ -435,7 +435,7 @@ public class NoticeCreateService {
             example.createCriteria().andIdEqualTo(imageResultItems.get(0).getResultId());
             List<ImageResult> imageResults = imageResultMapper.selectByExample(example);
 
-            subject = "i18n_image_messageorder";
+            subject = Translator.get("i18n_image_messageorder");
             returnSum = extNoticeMapper.imageSum(messageOrder);
             details = "i18n_resource_manage " + returnSum;
             name = imageMapper.selectByPrimaryKey(imageResults.get(0).getImageId()).getName();
@@ -468,7 +468,7 @@ public class NoticeCreateService {
             example.createCriteria().andIdEqualTo(codeResultItems.get(0).getResultId());
             List<CodeResult> codeResults = codeResultMapper.selectByExample(example);
 
-            subject = "i18n_code_messageorder";
+            subject = Translator.get("i18n_code_messageorder");
             returnSum = extNoticeMapper.codeSum(messageOrder);
             details = "i18n_resource_manage " + returnSum;
             name = codeMapper.selectByPrimaryKey(codeResults.get(0).getCodeId()).getName();
@@ -502,7 +502,7 @@ public class NoticeCreateService {
             List<CloudNativeConfigResult> cloudNativeConfigResults = cloudNativeConfigResultMapper.selectByExample(example);
 
 
-            subject = "i18n_config_messageorder";
+            subject = Translator.get("i18n_config_messageorder");
             returnSum = extNoticeMapper.configSum(messageOrder);
             details = "i18n_resource_manage " + returnSum;
             name = cloudNativeConfigMapper.selectByPrimaryKey(cloudNativeConfigResults.get(0).getConfigId()).getName();
@@ -535,7 +535,7 @@ public class NoticeCreateService {
             example.createCriteria().andIdEqualTo(k8sResultItems.get(0).getResultId());
             List<CloudNativeResult> cloudNativeResults = cloudNativeResultMapper.selectByExample(example);
 
-            subject = "i18n_k8s_messageorder";
+            subject = Translator.get("i18n_k8s_messageorder");
             returnSum = extNoticeMapper.k8sSum(messageOrder);
             details = "i18n_resource_manage " + returnSum;
             name = cloudNativeMapper.selectByPrimaryKey(cloudNativeResults.get(0).getCloudNativeId()).getName();
@@ -568,7 +568,7 @@ public class NoticeCreateService {
             example.createCriteria().andIdEqualTo(fsResultItems.get(0).getResultId());
             List<FileSystemResult> fileSystemResults = fileSystemResultMapper.selectByExample(example);
 
-            subject = "i18n_fs_messageorder";
+            subject = Translator.get("i18n_fs_messageorder");
             returnSum = extNoticeMapper.fsSum(messageOrder);
             details = "i18n_resource_manage " + returnSum;
             name = fileSystemMapper.selectByPrimaryKey(fileSystemResults.get(0).getFsId()).getName();

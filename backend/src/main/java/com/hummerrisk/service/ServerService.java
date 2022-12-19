@@ -82,6 +82,8 @@ public class ServerService {
     @Resource
     private HistoryServerResultMapper historyServerResultMapper;
 
+    private String messageOrderId = "";
+
     public List<ServerValidateDTO> validate(List<String> ids) {
         List<ServerValidateDTO> list = new ArrayList<>();
         ids.forEach(id -> {
@@ -131,6 +133,7 @@ public class ServerService {
             serverMapper.updateByPrimaryKeySelective(server);
         }
         Integer scanId = historyService.insertScanHistory(server);
+        this.messageOrderId = noticeService.createServerMessageOrder(server);
         if (StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.VALID.name())) {
             deleteServerResultById(id);
             ServerRuleRequest serverRuleRequest = new ServerRuleRequest();
@@ -203,7 +206,7 @@ public class ServerService {
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
             serverResultMapper.updateByPrimaryKeySelective(result);
 
-            noticeService.createServerMessageOrder(result);
+            noticeService.createServerMessageOrderItem(result, this.messageOrderId);
 
             saveServerResultLog(result.getId(), "i18n_end_server_result", returnLog, result.getIsSeverity());
 
@@ -215,6 +218,7 @@ public class ServerService {
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             serverResultMapper.updateByPrimaryKeySelective(result);
             historyService.updateHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
+            noticeService.createServerMessageOrderItem(result, this.messageOrderId);
             saveServerResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
         }
     }

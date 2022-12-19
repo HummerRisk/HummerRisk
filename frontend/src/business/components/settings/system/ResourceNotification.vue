@@ -309,7 +309,7 @@ export default {
         '                   <td th:text="${resource.serverName}"/>\n' +
         '                   <td th:text="${resource.ip}"/>\n' +
         '                   <td th:text="${resource.ruleName}"/>\n' +
-        '                   <td th:text="${resource.status}"/>\n' +
+        '                   <td th:text="${resource.resultStatus}"/>\n' +
         '                   <td th:text="${resource.severity}"/>\n' +
         '                   <td th:text="${resource.isSeverity}"/>\n' +
         '                </tr>\n' +

@@ -184,21 +184,24 @@ public class NoticeService {
         messageOrderItemMapper.updateByPrimaryKeySelective(messageOrderItem);
     }
 
-    public void createServerMessageOrder(ServerResult result) {
+    public String createServerMessageOrder(Server server) {
         MessageOrder messageOrder = new MessageOrder();
         String uuid = UUIDUtil.newUUID();
         messageOrder.setId(uuid);
-        messageOrder.setAccountId(result.getServerId());
-        messageOrder.setAccountName(result.getServerName());
+        messageOrder.setAccountId(server.getId());
+        messageOrder.setAccountName(server.getName());
         messageOrder.setCreateTime(System.currentTimeMillis());
         messageOrder.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
         messageOrder.setScanType(ScanConstants.SCAN_TYPE.SERVER.name());
         messageOrderMapper.insertSelective(messageOrder);
+        return uuid;
+    }
 
+    public void createServerMessageOrderItem(ServerResult result, String messageOrderId) {
         MessageOrderItem messageOrderItem = new MessageOrderItem();
-        messageOrderItem.setMessageOrderId(uuid);
+        messageOrderItem.setMessageOrderId(messageOrderId);
         messageOrderItem.setTaskId(result.getId());
-        messageOrderItem.setTaskName(result.getServerName());
+        messageOrderItem.setTaskName(result.getRuleName());
         messageOrderItem.setCreateTime(System.currentTimeMillis());
         messageOrderItem.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
         messageOrderItemMapper.insertSelective(messageOrderItem);

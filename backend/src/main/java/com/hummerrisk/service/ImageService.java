@@ -84,6 +84,8 @@ public class ImageService {
     @Resource
     private ExtImageResultItemMapper extImageResultItemMapper;
 
+
+
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
     }

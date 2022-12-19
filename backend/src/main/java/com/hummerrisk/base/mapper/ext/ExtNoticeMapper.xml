@@ -92,7 +92,7 @@
     </select>
 
     <select id="getTopServerTasksForEmail" resultType="com.hummerrisk.dto.ServerResultDTO" parameterType="com.hummerrisk.base.domain.MessageOrder">
-        SELECT t.*, g.name
+        SELECT t.*, g.name as groupName
         FROM server_result t
         JOIN server_group g on t.server_group_id = g.id
         JOIN message_order_item t1 ON t.id = t1.task_id
