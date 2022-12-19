@@ -346,6 +346,7 @@ public class CodeService {
             String returnJson = "";
 
             String command = execute(code).getCommand();
+
             result.setCommand(command);
             returnJson = ReadFileUtils.readToBuffer(TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON);
             result.setUpdateTime(System.currentTimeMillis());
@@ -371,23 +372,31 @@ public class CodeService {
     }
 
     public ResultDTO execute(Code code) throws Exception {
-        Proxy proxy = new Proxy();
-        if (code.getProxyId()!=null) {
-            proxy = proxyMapper.selectByPrimaryKey(code.getProxyId());
+        try {
+            Proxy proxy = new Proxy();
+            if (code.getProxyId()!=null) {
+                proxy = proxyMapper.selectByPrimaryKey(code.getProxyId());
+            }
+            ScanSetting scanSetting = new ScanSetting();
+            String skipDbUpdate = systemParameterService.getValue(ParamConstants.SCAN.SkipDbUpdate.getKey());
+            String securityChecks = systemParameterService.getValue(ParamConstants.SCAN.SecurityChecks.getKey());
+            String ignoreUnfixed = systemParameterService.getValue(ParamConstants.SCAN.IgnoreUnfixed.getKey());
+            String offlineScan = systemParameterService.getValue(ParamConstants.SCAN.OfflineScan.getKey());
+            String severity = systemParameterService.getValue(ParamConstants.SCAN.Severity.getKey());
+            scanSetting.setSkipDbUpdate(skipDbUpdate);
+            scanSetting.setSecurityChecks(securityChecks);
+            scanSetting.setIgnoreUnfixed(ignoreUnfixed);
+            scanSetting.setOfflineScan(offlineScan);
+            scanSetting.setSeverity(severity);
+            IProvider cp = execEngineFactoryImp.getProvider("codeProvider");
+            ResultDTO resultDTO = (ResultDTO) execEngineFactoryImp.executeMethod(cp, "execute", code, proxy, scanSetting);
+            if (resultDTO.getResultStr().contains("ERROR") || resultDTO.getResultStr().contains("error")) {
+                throw new Exception(resultDTO.getResultStr());
+            }
+            return resultDTO;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
         }
-        ScanSetting scanSetting = new ScanSetting();
-        String skipDbUpdate = systemParameterService.getValue(ParamConstants.SCAN.SkipDbUpdate.getKey());
-        String securityChecks = systemParameterService.getValue(ParamConstants.SCAN.SecurityChecks.getKey());
-        String ignoreUnfixed = systemParameterService.getValue(ParamConstants.SCAN.IgnoreUnfixed.getKey());
-        String offlineScan = systemParameterService.getValue(ParamConstants.SCAN.OfflineScan.getKey());
-        String severity = systemParameterService.getValue(ParamConstants.SCAN.Severity.getKey());
-        scanSetting.setSkipDbUpdate(skipDbUpdate);
-        scanSetting.setSecurityChecks(securityChecks);
-        scanSetting.setIgnoreUnfixed(ignoreUnfixed);
-        scanSetting.setOfflineScan(offlineScan);
-        scanSetting.setSeverity(severity);
-        IProvider cp = execEngineFactoryImp.getProvider("codeProvider");
-        return (ResultDTO) execEngineFactoryImp.executeMethod(cp, "execute", code, proxy, scanSetting);
     }
 
     long saveResultItem(CodeResult result) throws Exception {

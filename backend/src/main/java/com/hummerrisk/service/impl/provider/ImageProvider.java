@@ -69,9 +69,6 @@ public class ImageProvider implements IProvider {
             String command = _proxy + dockerLogin + TrivyConstants.TRIVY_IMAGE + str + fileName + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
             LogUtil.info(image.getId() + " {Image}[command]: " + image.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
-            if (resultStr.contains("ERROR") || resultStr.contains("error")) {
-                throw new Exception(resultStr);
-            }
             ResultDTO dto = new ResultDTO();
             dto.setCommand(command);
             dto.setResultStr(resultStr);

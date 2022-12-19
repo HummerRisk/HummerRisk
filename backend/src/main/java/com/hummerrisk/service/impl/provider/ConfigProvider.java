@@ -50,9 +50,6 @@ public class ConfigProvider implements IProvider {
             String command = _proxy + TrivyConstants.TRIVY_CONFIG + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_YAML + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
             LogUtil.info(cloudNativeConfig.getId() + " {k8sConfig}[command]: " + cloudNativeConfig.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
-            if (resultStr.contains("ERROR") || resultStr.contains("error")) {
-                throw new Exception(resultStr);
-            }
 
             ResultDTO dto = new ResultDTO();
             dto.setCommand(command);

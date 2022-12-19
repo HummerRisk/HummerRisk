@@ -5,6 +5,7 @@ import com.hummerrisk.base.domain.Proxy;
 import com.hummerrisk.base.domain.ScanSetting;
 import com.hummerrisk.commons.constants.CodeConstants;
 import com.hummerrisk.commons.constants.TrivyConstants;
+import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.CommandUtils;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.commons.utils.ProxyUtil;
@@ -70,15 +71,12 @@ public class CodeProvider implements IProvider {
             String command = _proxy + token + TrivyConstants.TRIVY_REPO + str + branch + " " + codeCredential.getUrl() + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
             LogUtil.info(code.getId() + " {code scan}[command]: " + code.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
-            if (resultStr.contains("ERROR") || resultStr.contains("error")) {
-                throw new Exception(resultStr);
-            }
             ResultDTO dto = new ResultDTO();
             dto.setCommand(command);
             dto.setResultStr(resultStr);
             return dto;
         } catch (Exception e) {
-            throw e;
+            throw new Exception(e.getMessage());
         }
     }
 

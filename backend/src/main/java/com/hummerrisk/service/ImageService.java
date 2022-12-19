@@ -586,27 +586,36 @@ public class ImageService {
     }
 
     public ResultDTO execute(Image image) throws Exception {
-        Proxy proxy = new Proxy();
-        ImageRepo imageRepo = new ImageRepo();
-        if (image.getIsProxy() && image.getProxyId() != null) {
-            proxy = proxyMapper.selectByPrimaryKey(image.getProxyId());
+        try {
+            Proxy proxy = new Proxy();
+            ImageRepo imageRepo = new ImageRepo();
+            if (image.getIsProxy() && image.getProxyId() != null) {
+                proxy = proxyMapper.selectByPrimaryKey(image.getProxyId());
+            }
+            if (image.getRepoId() != null && !StringUtils.isEmpty(image.getRepoId())) {
+                imageRepo = imageRepoMapper.selectByPrimaryKey(image.getRepoId());
+            }
+            ScanSetting scanSetting = new ScanSetting();
+            String skipDbUpdate = systemParameterService.getValue(ParamConstants.SCAN.SkipDbUpdate.getKey());
+            String securityChecks = systemParameterService.getValue(ParamConstants.SCAN.SecurityChecks.getKey());
+            String ignoreUnfixed = systemParameterService.getValue(ParamConstants.SCAN.IgnoreUnfixed.getKey());
+            String offlineScan = systemParameterService.getValue(ParamConstants.SCAN.OfflineScan.getKey());
+            String severity = systemParameterService.getValue(ParamConstants.SCAN.Severity.getKey());
+            scanSetting.setSkipDbUpdate(skipDbUpdate);
+            scanSetting.setSecurityChecks(securityChecks);
+            scanSetting.setIgnoreUnfixed(ignoreUnfixed);
+            scanSetting.setOfflineScan(offlineScan);
+            scanSetting.setSeverity(severity);
+            IProvider cp = execEngineFactoryImp.getProvider("imageProvider");
+            ResultDTO resultDTO = (ResultDTO) execEngineFactoryImp.executeMethod(cp, "execute", image, proxy, imageRepo, scanSetting);
+            if (resultDTO.getResultStr().contains("ERROR") || resultDTO.getResultStr().contains("error")) {
+                throw new Exception(resultDTO.getResultStr());
+            }
+            return resultDTO;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
         }
-        if (image.getRepoId() != null && !StringUtils.isEmpty(image.getRepoId())) {
-            imageRepo = imageRepoMapper.selectByPrimaryKey(image.getRepoId());
-        }
-        ScanSetting scanSetting = new ScanSetting();
-        String skipDbUpdate = systemParameterService.getValue(ParamConstants.SCAN.SkipDbUpdate.getKey());
-        String securityChecks = systemParameterService.getValue(ParamConstants.SCAN.SecurityChecks.getKey());
-        String ignoreUnfixed = systemParameterService.getValue(ParamConstants.SCAN.IgnoreUnfixed.getKey());
-        String offlineScan = systemParameterService.getValue(ParamConstants.SCAN.OfflineScan.getKey());
-        String severity = systemParameterService.getValue(ParamConstants.SCAN.Severity.getKey());
-        scanSetting.setSkipDbUpdate(skipDbUpdate);
-        scanSetting.setSecurityChecks(securityChecks);
-        scanSetting.setIgnoreUnfixed(ignoreUnfixed);
-        scanSetting.setOfflineScan(offlineScan);
-        scanSetting.setSeverity(severity);
-        IProvider cp = execEngineFactoryImp.getProvider("imageProvider");
-        return (ResultDTO) execEngineFactoryImp.executeMethod(cp, "execute", image, proxy, imageRepo, scanSetting);
+
     }
 
     public List<ImageResultWithBLOBsDTO> resultListWithBLOBs(ImageResultRequest request) {

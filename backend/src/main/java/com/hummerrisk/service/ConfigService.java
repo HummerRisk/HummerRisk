@@ -319,23 +319,32 @@ public class ConfigService {
     }
 
     public ResultDTO execute(CloudNativeConfig cloudNativeConfig) throws Exception {
-        Proxy proxy = new Proxy();
-        if (cloudNativeConfig.getProxyId()!=null) {
-            proxy= proxyMapper.selectByPrimaryKey(cloudNativeConfig.getProxyId());
+        try {
+            Proxy proxy = new Proxy();
+            if (cloudNativeConfig.getProxyId()!=null) {
+                proxy= proxyMapper.selectByPrimaryKey(cloudNativeConfig.getProxyId());
+            }
+            ScanSetting scanSetting = new ScanSetting();
+            String skipDbUpdate = systemParameterService.getValue(ParamConstants.SCAN.SkipDbUpdate.getKey());
+            String securityChecks = systemParameterService.getValue(ParamConstants.SCAN.SecurityChecks.getKey());
+            String ignoreUnfixed = systemParameterService.getValue(ParamConstants.SCAN.IgnoreUnfixed.getKey());
+            String offlineScan = systemParameterService.getValue(ParamConstants.SCAN.OfflineScan.getKey());
+            String severity = systemParameterService.getValue(ParamConstants.SCAN.Severity.getKey());
+            scanSetting.setSkipDbUpdate(skipDbUpdate);
+            scanSetting.setSecurityChecks(securityChecks);
+            scanSetting.setIgnoreUnfixed(ignoreUnfixed);
+            scanSetting.setOfflineScan(offlineScan);
+            scanSetting.setSeverity(severity);
+            IProvider cp = execEngineFactoryImp.getProvider("configProvider");
+            ResultDTO resultDTO = (ResultDTO) execEngineFactoryImp.executeMethod(cp, "execute", cloudNativeConfig, proxy, scanSetting);
+            if (resultDTO.getResultStr().contains("ERROR") || resultDTO.getResultStr().contains("error")) {
+                throw new Exception(resultDTO.getResultStr());
+            }
+            return resultDTO;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
         }
-        ScanSetting scanSetting = new ScanSetting();
-        String skipDbUpdate = systemParameterService.getValue(ParamConstants.SCAN.SkipDbUpdate.getKey());
-        String securityChecks = systemParameterService.getValue(ParamConstants.SCAN.SecurityChecks.getKey());
-        String ignoreUnfixed = systemParameterService.getValue(ParamConstants.SCAN.IgnoreUnfixed.getKey());
-        String offlineScan = systemParameterService.getValue(ParamConstants.SCAN.OfflineScan.getKey());
-        String severity = systemParameterService.getValue(ParamConstants.SCAN.Severity.getKey());
-        scanSetting.setSkipDbUpdate(skipDbUpdate);
-        scanSetting.setSecurityChecks(securityChecks);
-        scanSetting.setIgnoreUnfixed(ignoreUnfixed);
-        scanSetting.setOfflineScan(offlineScan);
-        scanSetting.setSeverity(severity);
-        IProvider cp = execEngineFactoryImp.getProvider("configProvider");
-        return (ResultDTO) execEngineFactoryImp.executeMethod(cp, "execute", cloudNativeConfig, proxy, scanSetting);
+
     }
 
     long saveCloudNativeConfigResultItem(CloudNativeConfigResult result) throws Exception {

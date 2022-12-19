@@ -417,23 +417,31 @@ public class FileSystemService {
     }
 
     public ResultDTO execute(FileSystem fileSystem) throws Exception {
-        Proxy proxy = new Proxy();
-        if (fileSystem.getProxyId()!=null) {
-            proxy = proxyMapper.selectByPrimaryKey(fileSystem.getProxyId());
+        try{
+            Proxy proxy = new Proxy();
+            if (fileSystem.getProxyId()!=null) {
+                proxy = proxyMapper.selectByPrimaryKey(fileSystem.getProxyId());
+            }
+            ScanSetting scanSetting = new ScanSetting();
+            String skipDbUpdate = systemParameterService.getValue(ParamConstants.SCAN.SkipDbUpdate.getKey());
+            String securityChecks = systemParameterService.getValue(ParamConstants.SCAN.SecurityChecks.getKey());
+            String ignoreUnfixed = systemParameterService.getValue(ParamConstants.SCAN.IgnoreUnfixed.getKey());
+            String offlineScan = systemParameterService.getValue(ParamConstants.SCAN.OfflineScan.getKey());
+            String severity = systemParameterService.getValue(ParamConstants.SCAN.Severity.getKey());
+            scanSetting.setSkipDbUpdate(skipDbUpdate);
+            scanSetting.setSecurityChecks(securityChecks);
+            scanSetting.setIgnoreUnfixed(ignoreUnfixed);
+            scanSetting.setOfflineScan(offlineScan);
+            scanSetting.setSeverity(severity);
+            IProvider cp = execEngineFactoryImp.getProvider("fsProvider");
+            ResultDTO resultDTO = (ResultDTO) execEngineFactoryImp.executeMethod(cp, "execute", fileSystem, proxy, scanSetting);
+            if (resultDTO.getResultStr().contains("ERROR") || resultDTO.getResultStr().contains("error")) {
+                throw new Exception(resultDTO.getResultStr());
+            }
+            return resultDTO;
+        }catch (Exception e) {
+            throw new Exception(e.getMessage());
         }
-        ScanSetting scanSetting = new ScanSetting();
-        String skipDbUpdate = systemParameterService.getValue(ParamConstants.SCAN.SkipDbUpdate.getKey());
-        String securityChecks = systemParameterService.getValue(ParamConstants.SCAN.SecurityChecks.getKey());
-        String ignoreUnfixed = systemParameterService.getValue(ParamConstants.SCAN.IgnoreUnfixed.getKey());
-        String offlineScan = systemParameterService.getValue(ParamConstants.SCAN.OfflineScan.getKey());
-        String severity = systemParameterService.getValue(ParamConstants.SCAN.Severity.getKey());
-        scanSetting.setSkipDbUpdate(skipDbUpdate);
-        scanSetting.setSecurityChecks(securityChecks);
-        scanSetting.setIgnoreUnfixed(ignoreUnfixed);
-        scanSetting.setOfflineScan(offlineScan);
-        scanSetting.setSeverity(severity);
-        IProvider cp = execEngineFactoryImp.getProvider("fsProvider");
-        return (ResultDTO) execEngineFactoryImp.executeMethod(cp, "execute", fileSystem, proxy, scanSetting);
     }
 
     long saveResultItem(FileSystemResult result) throws Exception {

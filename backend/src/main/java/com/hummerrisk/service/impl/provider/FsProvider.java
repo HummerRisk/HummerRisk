@@ -50,9 +50,6 @@ public class FsProvider implements IProvider {
             String command = _proxy + TrivyConstants.TRIVY_FS + str + FileSystemConstants.DEFAULT_BASE_DIR + fileSystem.getPath() + TrivyConstants.TRIVY_TYPE + fileSystem.getDir() + TrivyConstants.TRIVY_JSON;
             LogUtil.info(fileSystem.getId() + " {fileSystem scan}[command]: " + fileSystem.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, fileSystem.getDir());
-            if (resultStr.contains("ERROR") || resultStr.contains("error")) {
-                throw new Exception(resultStr);
-            }
             ResultDTO dto = new ResultDTO();
             dto.setCommand(command);
             dto.setResultStr(resultStr);
