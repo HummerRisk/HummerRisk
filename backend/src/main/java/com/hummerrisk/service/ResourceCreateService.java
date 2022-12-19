@@ -165,7 +165,7 @@ public class ResourceCreateService {
         if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
             serverCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
         }
-        serverResultExample.setOrderByClause("create_time limit 10");
+        serverResultExample.setOrderByClause("create_time limit 1");
         List<ServerResult> serverResultList = serverResultMapper.selectByExample(serverResultExample);
         if (CollectionUtils.isNotEmpty(serverResultList)) {
             serverResultList.forEach(serverResult -> {
