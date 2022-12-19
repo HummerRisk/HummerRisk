@@ -76,7 +76,7 @@ public class ServerTest {
                 "}";
         String command8 = "$cpuinfo=wmic CPU get loadpercentage /value|findstr [1-9]\n" +
                 "$cpuUse=$cpuinfo.Split('=')|findstr [0-9]\n" +
-                "if($cpuUse.Trim() -lt 80){\n" +
+                "if($cpuUse -and $cpuUse.Trim() -lt 80){\n" +
                 "  echo \"HummerSuccess: CPU使用率正常!\"\n" +
                 "} else{\n" +
                 "  echo \"HummerError: 检测异常，CPU使用率过高，当前为 $cpuUse %!\"\n" +
@@ -99,17 +99,17 @@ public class ServerTest {
                 "}else{\n" +
                 "  echo \"HummerError: 检测异常，未检测到用户配置信息!\"\n" +
                 "}";
-        excute(command1);
-        excute(command2);
-        excute(command3);
-        excute(command4);
-        excute(command5);
-        excute(command6);
-        excute(command7);
+//        excute(command1);
+//        excute(command2);
+//        excute(command3);
+//        excute(command4);
+//        excute(command5);
+//        excute(command6);
+//        excute(command7);
         excute(command8);
-        excute(command9);
-        excute(command10);
-        excute(command11);
+//        excute(command9);
+//        excute(command10);
+//        excute(command11);
     }
 
 
