@@ -773,43 +773,31 @@ public class ServerService {
             HSSFRow row = sheet.getRow(rowNum);
             if (row!=null){
                 Server expert = new Server();
-                // group id
-                if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    String groupId = "";
-                    String groupName = row.getCell(0).getStringCellValue();
-                    List<ServerGroup> serverGroups = serverGroupMapper.selectByExample(new ServerGroupExample());
-                    for (ServerGroup serverGroup : serverGroups) {
-                        if (!groupName.isEmpty() && StringUtils.equalsIgnoreCase(serverGroup.getName(), groupName)) {
-                            groupId = serverGroup.getId();
-                        }
-                    }
-                    expert.setServerGroupId(!groupId.isEmpty()?groupId:serverGroups.get(0).getId());
-                }
                 // 名称
                 // Row.MissingCellPolicy.CREATE_NULL_AS_BLANK 获取的数据位null时 替换成""
-                if (!row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setName(row.getCell(1).getStringCellValue());
+                if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setName(row.getCell(0).getStringCellValue());
                 }
                 // type
-                if (!row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setType(row.getCell(2).getStringCellValue());
+                if (!row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setType(row.getCell(1).getStringCellValue());
                 }
                 // IP
-                if (!row.getCell(3, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setIp(row.getCell(3).getStringCellValue());
+                if (!row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setIp(row.getCell(2).getStringCellValue());
                 }
                 // port
-                if(row.getCell(4) != null){
-                    int i = (int) row.getCell(4).getNumericCellValue();
+                if(row.getCell(3) != null){
+                    int i = (int) row.getCell(3).getNumericCellValue();
                     expert.setPort(String.valueOf(i));
                 }
                 // username
-                if (!row.getCell(5, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setUserName(row.getCell(5).getStringCellValue());
+                if (!row.getCell(4, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setUserName(row.getCell(4).getStringCellValue());
                 }
                 // password
-                if (!row.getCell(6, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setPassword(row.getCell(6).getStringCellValue());
+                if (!row.getCell(5, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setPassword(row.getCell(5).getStringCellValue());
                 }
                 list.add(expert);
             }
@@ -830,42 +818,30 @@ public class ServerService {
             XSSFRow row = sheet.getRow(rowNum);
             if (row!=null){
                 Server expert = new Server();
-                // group id
-                if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    String groupId = "";
-                    String groupName = row.getCell(0).getStringCellValue();
-                    List<ServerGroup> serverGroups = serverGroupMapper.selectByExample(new ServerGroupExample());
-                    for (ServerGroup serverGroup : serverGroups) {
-                        if (!groupName.isEmpty() && StringUtils.equalsIgnoreCase(serverGroup.getName(), groupName)) {
-                            groupId = serverGroup.getId();
-                        }
-                    }
-                    expert.setServerGroupId(!groupId.isEmpty()?groupId:serverGroups.get(0).getId());
-                }
                 // 名称
-                if (!row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setName(row.getCell(1).getStringCellValue());
+                if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setName(row.getCell(0).getStringCellValue());
                 }
                 // type
-                if (!row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setType(row.getCell(2).getStringCellValue());
+                if (!row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setType(row.getCell(1).getStringCellValue());
                 }
                 // IP
-                if (!row.getCell(3, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setIp(row.getCell(3).getStringCellValue());
+                if (!row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setIp(row.getCell(2).getStringCellValue());
                 }
                 // port
-                if(row.getCell(4) != null){
-                    int i = (int) row.getCell(4).getNumericCellValue();
+                if(row.getCell(3) != null){
+                    int i = (int) row.getCell(3).getNumericCellValue();
                     expert.setPort(String.valueOf(i));
                 }
                 // username
-                if (!row.getCell(5, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setUserName(row.getCell(5).getStringCellValue());
+                if (!row.getCell(4, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setUserName(row.getCell(4).getStringCellValue());
                 }
                 // password
-                if (!row.getCell(6, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setPassword(row.getCell(6).getStringCellValue());
+                if (!row.getCell(5, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                    expert.setPassword(row.getCell(5).getStringCellValue());
                 }
                 list.add(expert);
             }
