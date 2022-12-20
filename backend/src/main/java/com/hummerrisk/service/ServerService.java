@@ -769,7 +769,7 @@ public class ServerService {
         //读取第一张sheet
         HSSFSheet sheet = workbook.getSheetAt(0);
         //遍历每一行Excel获取内容
-        for (int rowNum = 2; rowNum <= sheet.getLastRowNum(); rowNum++) {
+        for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
             HSSFRow row = sheet.getRow(rowNum);
             if (row!=null){
                 Server expert = new Server();
@@ -814,7 +814,7 @@ public class ServerService {
 
         XSSFSheet sheet = workbook.getSheetAt(0);
         int lastRowNum = sheet.getLastRowNum();
-        for (int rowNum = 2; rowNum <= lastRowNum; rowNum++) {
+        for (int rowNum = 1; rowNum <= lastRowNum; rowNum++) {
             XSSFRow row = sheet.getRow(rowNum);
             if (row!=null){
                 Server expert = new Server();
