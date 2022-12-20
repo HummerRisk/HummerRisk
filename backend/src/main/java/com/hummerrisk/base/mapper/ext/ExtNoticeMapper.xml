@@ -105,39 +105,39 @@
         (select IFNULL(sum(IFNULL(r.return_sum, 0)), 0) as critical
         FROM resource r
         WHERE r.severity = 'CriticalRisk' and r.id in
-        (select t4.resource_id from cloud_task t
-        JOIN message_order_item t1 ON t.id = t1.task_id
-        JOIN message_order t2 ON t1.message_order_id = t2.id
-        JOIN cloud_task_item t3 ON t1.task_id = t.id
-        JOIN cloud_task_item_resource t4 ON t4.task_item_id = t3.id
-        where t2.id = #{request.id})) as critical,
+        (select t.resource_id from cloud_task_item_resource t
+        join cloud_task_item t2 on t.task_item_id = t2.id
+        join cloud_task t3 on t2.task_id = t3.id
+        join message_order_item t4 on t3.id = t4.task_id
+        join message_order t5 on t4.message_order_id = t5.id
+        where t5.id = #{request.id})) as critical,
         (select IFNULL(sum(IFNULL(r.return_sum, 0)), 0) as high
         FROM resource r
         WHERE r.severity = 'HighRisk' and r.id in
-        (select t4.resource_id from cloud_task t
-        JOIN message_order_item t1 ON t.id = t1.task_id
-        JOIN message_order t2 ON t1.message_order_id = t2.id
-        JOIN cloud_task_item t3 ON t1.task_id = t.id
-        JOIN cloud_task_item_resource t4 ON t4.task_item_id = t3.id
-        where t2.id = #{request.id})) as high,
+        (select t.resource_id from cloud_task_item_resource t
+        join cloud_task_item t2 on t.task_item_id = t2.id
+        join cloud_task t3 on t2.task_id = t3.id
+        join message_order_item t4 on t3.id = t4.task_id
+        join message_order t5 on t4.message_order_id = t5.id
+        where t5.id = #{request.id})) as high,
         (select IFNULL(sum(IFNULL(r.return_sum, 0)), 0) as medium
         FROM resource r
         WHERE r.severity = 'MediumRisk' and r.id in
-        (select t4.resource_id from cloud_task t
-        JOIN message_order_item t1 ON t.id = t1.task_id
-        JOIN message_order t2 ON t1.message_order_id = t2.id
-        JOIN cloud_task_item t3 ON t1.task_id = t.id
-        JOIN cloud_task_item_resource t4 ON t4.task_item_id = t3.id
-        where t2.id = #{request.id})) as medium,
+        (select t.resource_id from cloud_task_item_resource t
+        join cloud_task_item t2 on t.task_item_id = t2.id
+        join cloud_task t3 on t2.task_id = t3.id
+        join message_order_item t4 on t3.id = t4.task_id
+        join message_order t5 on t4.message_order_id = t5.id
+        where t5.id = #{request.id})) as medium,
         (select IFNULL(sum(IFNULL(r.return_sum, 0)), 0) as low
         FROM resource r
         WHERE r.severity = 'LowRisk' and r.id in
-        (select t4.resource_id from cloud_task t
-        JOIN message_order_item t1 ON t.id = t1.task_id
-        JOIN message_order t2 ON t1.message_order_id = t2.id
-        JOIN cloud_task_item t3 ON t1.task_id = t.id
-        JOIN cloud_task_item_resource t4 ON t4.task_item_id = t3.id
-        where t2.id = #{request.id})) as low
+        (select t.resource_id from cloud_task_item_resource t
+        join cloud_task_item t2 on t.task_item_id = t2.id
+        join cloud_task t3 on t2.task_id = t3.id
+        join message_order_item t4 on t3.id = t4.task_id
+        join message_order t5 on t4.message_order_id = t5.id
+        where t5.id = #{request.id})) as low
     </select>
 
     <select id="metricChartVuln" resultType="com.hummerrisk.dto.MetricChartDTO">
@@ -145,39 +145,39 @@
         (select IFNULL(sum(IFNULL(r.return_sum, 0)), 0) as critical
         FROM resource r
         WHERE r.severity = 'CriticalRisk' and r.id in
-        (select t4.resource_id from cloud_task t
-        JOIN message_order_item t1 ON t.id = t1.task_id
-        JOIN message_order t2 ON t1.message_order_id = t2.id
-        JOIN cloud_task_item t3 ON t1.task_id = t.id
-        JOIN cloud_task_item_resource t4 ON t4.task_item_id = t3.id
-        where t2.id = #{request.id})) as critical,
+        (select t.resource_id from cloud_task_item_resource t
+        join cloud_task_item t2 on t.task_item_id = t2.id
+        join cloud_task t3 on t2.task_id = t3.id
+        join message_order_item t4 on t3.id = t4.task_id
+        join message_order t5 on t4.message_order_id = t5.id
+        where t5.id = #{request.id})) as critical,
         (select IFNULL(sum(IFNULL(r.return_sum, 0)), 0) as high
         FROM resource r
         WHERE r.severity = 'HighRisk' and r.id in
-        (select t4.resource_id from cloud_task t
-        JOIN message_order_item t1 ON t.id = t1.task_id
-        JOIN message_order t2 ON t1.message_order_id = t2.id
-        JOIN cloud_task_item t3 ON t1.task_id = t.id
-        JOIN cloud_task_item_resource t4 ON t4.task_item_id = t3.id
-        where t2.id = #{request.id})) as high,
+        (select t.resource_id from cloud_task_item_resource t
+        join cloud_task_item t2 on t.task_item_id = t2.id
+        join cloud_task t3 on t2.task_id = t3.id
+        join message_order_item t4 on t3.id = t4.task_id
+        join message_order t5 on t4.message_order_id = t5.id
+        where t5.id = #{request.id})) as high,
         (select IFNULL(sum(IFNULL(r.return_sum, 0)), 0) as medium
         FROM resource r
         WHERE r.severity = 'MediumRisk' and r.id in
-        (select t4.resource_id from cloud_task t
-        JOIN message_order_item t1 ON t.id = t1.task_id
-        JOIN message_order t2 ON t1.message_order_id = t2.id
-        JOIN cloud_task_item t3 ON t1.task_id = t.id
-        JOIN cloud_task_item_resource t4 ON t4.task_item_id = t3.id
-        where t2.id = #{request.id})) as medium,
+        (select t.resource_id from cloud_task_item_resource t
+        join cloud_task_item t2 on t.task_item_id = t2.id
+        join cloud_task t3 on t2.task_id = t3.id
+        join message_order_item t4 on t3.id = t4.task_id
+        join message_order t5 on t4.message_order_id = t5.id
+        where t5.id = #{request.id})) as medium,
         (select IFNULL(sum(IFNULL(r.return_sum, 0)), 0) as low
         FROM resource r
         WHERE r.severity = 'LowRisk' and r.id in
-        (select t4.resource_id from cloud_task t
-        JOIN message_order_item t1 ON t.id = t1.task_id
-        JOIN message_order t2 ON t1.message_order_id = t2.id
-        JOIN cloud_task_item t3 ON t1.task_id = t.id
-        JOIN cloud_task_item_resource t4 ON t4.task_item_id = t3.id
-        where t2.id = #{request.id})) as low
+        (select t.resource_id from cloud_task_item_resource t
+        join cloud_task_item t2 on t.task_item_id = t2.id
+        join cloud_task t3 on t2.task_id = t3.id
+        join message_order_item t4 on t3.id = t4.task_id
+        join message_order t5 on t4.message_order_id = t5.id
+        where t5.id = #{request.id})) as low
     </select>
 
     <select id="metricChartServer" resultType="com.hummerrisk.dto.MetricChartDTO">

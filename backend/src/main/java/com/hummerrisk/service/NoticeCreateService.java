@@ -316,7 +316,7 @@ public class NoticeCreateService {
 
         String successContext = "success";
         String failedContext = "failed";
-        String subject = "i18n_cloud_messageorder";
+        String subject = Translator.get("i18n_cloud_messageorder");
         String details = "", name = "";
         int returnSum = 0, resourcesSum = 0;
 
