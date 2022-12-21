@@ -20,9 +20,9 @@
             {{ $t("event.group") }}
           </el-menu-item>
 
-<!--          <el-menu-item :index="'/log/ip'">-->
-<!--            {{ $t("event.ip") }}-->
-<!--          </el-menu-item>-->
+          <el-menu-item :index="'/log/ip'">
+            {{ $t("event.ip") }}
+          </el-menu-item>
 
         </el-menu>
       </el-col>
