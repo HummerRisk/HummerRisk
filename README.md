@@ -41,7 +41,7 @@ HummerRisk is an opensource cloud-native security platform. It resolve the  clou
 
 >**优势是什么？**
 
-* 支持全面: 支持的几乎所有公有云，包括：阿里云、腾讯云、华为云、火山引擎、百度云、青云、UCloud、Amazon Web Services、Microsoft Azure、Google Cloud，支持的私有云包括：OpenStack、VMware vSphere，并还在不断的扩充支持的范围；
+* 支持全面: 支持的几乎所有公有云，包括：阿里云、腾讯云、华为云、火山引擎、百度云、青云、京东云、UCloud、Amazon Web Services、Microsoft Azure、Google Cloud，支持的私有云包括：OpenStack、VMware vSphere，并还在不断的扩充支持的范围；
 * 容易上手: 只需绑定云账号，就可以一键执行检测；
 * 灵活便捷: 多种维度查看检测结果，根据需求任务编排；
 * 开箱即用: 内置大量规则，并且不断迭代新增。用户可以按需自定义规则。
