@@ -3,6 +3,7 @@ package com.hummerrisk.base.mapper.ext;
 import com.hummerrisk.base.domain.CloudEventWithBLOBs;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
 import com.hummerrisk.dto.CloudEventGroupDTO;
+import com.hummerrisk.dto.CloudEventSourceIpInsightDto;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -28,4 +29,5 @@ public interface ExtCloudEventMapper {
     List<Map<String, Object>> regionChart();
 
     List<Map<String, Object>> severityChart();
+    List<CloudEventSourceIpInsightDto> selectSourceIpInsight(@Param("request") CloudEventRequest request);
 }
