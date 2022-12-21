@@ -250,4 +250,41 @@
     Limit 10;
   </select>
 
+  <select id="selectSourceIpInsight" resultType="com.hummerrisk.dto.CloudEventSourceIpInsightDto">
+    select source_ip_address,min(event_time) as earliest_event_time,max(event_time) last_event_time  ,
+           group_CONCAT(DISTINCT acs_region) AS acs_region,group_CONCAT( DISTINCT event_name) as event_name,count(event_id) as num from cloud_event t
+    left join cloud_account t1 on t.cloud_account_id = t1.id
+    <where>
+      <if test="request.combine != null">
+        <include refid="combine">
+          <property name="condition" value="request.combine"/>
+        </include>
+      </if>
+      and source_ip_address != ''
+      <if test="request.accountName != null and request.accountName != ''">
+        and t1.name like CONCAT('%', #{request.accountName},'%')
+      </if>
+      <if test="request.regionName != null and request.regionName != ''">
+        and t.region_name like CONCAT('%', #{request.regionName},'%')
+      </if>
+      <if test="request.userName != null and request.userName != ''">
+        and t.user_name like CONCAT('%', #{request.userName},'%')
+      </if>
+      <if test="request.sourceIpAddress != null and request.sourceIpAddress != ''">
+        and t.source_ip_address like CONCAT('%', #{request.sourceIpAddress},'%')
+      </if>
+      <if test="request.eventName != null and request.eventName != ''">
+        and t.event_name like CONCAT('%', #{request.eventName},'%')
+      </if>
+      <if test="request.resourceName != null and request.resourceName != ''">
+        and t.resource_name like CONCAT('%', #{request.resourceName},'%')
+      </if>
+      <if test="request.resourceName != null and request.resourceName != ''">
+        and t.resource_name like CONCAT('%', #{request.resourceName},'%')
+      </if>
+    </where>
+
+    group by source_ip_address
+
+  </select>
 </mapper>
