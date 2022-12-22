@@ -1534,6 +1534,8 @@ export default {
     ip_detail: 'IP analysis details',
     event_audit: 'Operation audit event',
     event_insight: 'Insight event text',
+    earliest_event_time: 'earliest time',
+    last_event_time: 'last time'
   },
   second: {
     title:'seconds',

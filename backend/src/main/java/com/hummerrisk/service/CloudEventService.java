@@ -34,6 +34,7 @@ import com.hummerrisk.base.mapper.ext.ExtCloudEventSyncLogMapper;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
 import com.hummerrisk.dto.CloudEventGroupDTO;
+import com.hummerrisk.dto.CloudEventSourceIpInsightDto;
 import com.hummerrisk.proxy.baidu.BaiduCredential;
 import com.hummerrisk.proxy.baidu.BaiduRequest;
 import com.tencentcloudapi.cloudaudit.v20190319.CloudauditClient;
@@ -137,6 +138,10 @@ public class CloudEventService {
 
     public List<CloudEventGroupDTO> getCloudEventGroup(CloudEventRequest cloudEventRequest){
         return extCloudEventMapper.selectEventGroup(cloudEventRequest);
+    }
+
+    public List<CloudEventSourceIpInsightDto> getSourceIpInsight(CloudEventRequest cloudEventRequest){
+        return extCloudEventMapper.selectSourceIpInsight(cloudEventRequest);
     }
 
     public void syncCloudEvents(String accountId, String[] regions, String startTime, String endTime) {
