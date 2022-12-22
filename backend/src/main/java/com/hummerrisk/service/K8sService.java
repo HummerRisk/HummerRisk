@@ -26,7 +26,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -614,6 +618,7 @@ public class K8sService {
             result.setReturnSum(count);
             long sum = saveResultConfigItem(result);
             result.setReturnConfigSum(sum);
+            result.setKubeBench(scanKubeBench(cloudNative));
             cloudNativeResultMapper.updateByPrimaryKeySelective(result);
 
             noticeService.createCloudNativeMessageOrder(result);
@@ -628,6 +633,32 @@ public class K8sService {
             historyService.updateHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
             saveCloudNativeResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
         }
+    }
+
+    public String scanKubeBench (CloudNative cloudNative) throws Exception {
+        K8sRequest k8sRequest = new K8sRequest();
+        k8sRequest.setCredential(cloudNative.getCredential());
+        String token = "Bearer " + k8sRequest.getToken();
+        String url = k8sRequest.getUrl();
+
+        CloudNativeSourceExample example = new CloudNativeSourceExample();
+        example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceNameLike("kube-bench-");
+        CloudNativeSource cloudNativeSource = cloudNativeSourceMapper.selectByExample(example).get(0);
+
+        if(cloudNativeSource == null) {
+            return "";
+        }
+
+        if (url.endsWith("/")) {
+            url = url + CloudNativeConstants.URL8 + cloudNativeSource.getSourceName() + "/log";
+        } else {
+            url = url + CloudNativeConstants.URL7 + cloudNativeSource.getSourceName() + "/log";
+        }
+        Map<String, String> param = new HashMap<>();
+        param.put("Accept", CloudNativeConstants.Accept);
+        param.put("Authorization", token);
+        String reponse = HttpClientUtil.HttpGet(url, param);
+        return reponse;
     }
 
     public void deleteResultByCloudNativeId(String id) throws Exception {
