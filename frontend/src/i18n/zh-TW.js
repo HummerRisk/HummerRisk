@@ -1333,6 +1333,7 @@ export default {
     by_k8s_platform: '按 K8s 賬號統計',
     status: '狀態',
     operator_status: 'Operator 狀態',
+    kubench_status: 'Kube-bench 狀態',
     add: '新增多個',
     delete_this_k8s: '刪除此 Kubernetes',
     please_choose_k8s: '請選擇 Kubernetes 賬號',

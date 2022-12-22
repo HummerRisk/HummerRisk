@@ -141,6 +141,18 @@ public class K8sService {
         return validateDTO;
     }
 
+    public ValidateDTO kubenchStatusValidate(String id) throws Exception {
+        CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
+        ValidateDTO validateDTO = validateKubenchStatus(cloudNative);
+        if (validateDTO.isFlag()) {
+            cloudNative.setKubenchStatus(CloudAccountConstants.Status.VALID.name());
+        } else {
+            cloudNative.setKubenchStatus(CloudAccountConstants.Status.INVALID.name());
+        }
+        cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
+        return validateDTO;
+    }
+
     private ValidateDTO validateOperatorStatus(CloudNative cloudNative) {
         ValidateDTO validateDTO = new ValidateDTO();
         try {
@@ -179,7 +191,7 @@ public class K8sService {
             String url = k8sRequest.getUrl();
 
             CloudNativeSourceExample example = new CloudNativeSourceExample();
-            example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceNameLike("kube-bench-");
+            example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceNameLike("%kube-bench-%");
             CloudNativeSource cloudNativeSource = cloudNativeSourceMapper.selectByExample(example).get(0);
 
             if(cloudNativeSource == null) {
@@ -202,8 +214,8 @@ public class K8sService {
             return validateDTO;
         } catch (Exception e) {
             validateDTO.setFlag(false);
-            validateDTO.setMessage(String.format("HRException in verifying cloud native, cloud native Operator Status: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()));
-            LogUtil.error(String.format("HRException in verifying cloud native, cloud native Operator Status: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()), e);
+            validateDTO.setMessage(String.format("HRException in verifying cloud native, cloud native Kube-bench Status: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()));
+            LogUtil.error(String.format("HRException in verifying cloud native, cloud native Kube-bench Status: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()), e);
             return validateDTO;
         }
     }
@@ -270,6 +282,13 @@ public class K8sService {
                 } else {
                     account.setOperatorStatus(CloudAccountConstants.Status.INVALID.name());
                 }
+                //检验kube-bench
+                ValidateDTO kubenchStatusValidate = validateKubenchStatus(account);
+                if (kubenchStatusValidate.isFlag()) {
+                    account.setKubenchStatus(CloudAccountConstants.Status.VALID.name());
+                } else {
+                    account.setKubenchStatus(CloudAccountConstants.Status.INVALID.name());
+                }
                 cloudNativeMapper.insertSelective(account);
                 OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_create_cloud_native");
                 return valid;
@@ -324,6 +343,13 @@ public class K8sService {
                     account.setOperatorStatus(CloudAccountConstants.Status.VALID.name());
                 } else {
                     account.setOperatorStatus(CloudAccountConstants.Status.INVALID.name());
+                }
+                //检验kube-bench
+                ValidateDTO kubenchStatusValidate = validateKubenchStatus(account);
+                if (kubenchStatusValidate.isFlag()) {
+                    account.setKubenchStatus(CloudAccountConstants.Status.VALID.name());
+                } else {
+                    account.setKubenchStatus(CloudAccountConstants.Status.INVALID.name());
                 }
                 cloudNativeMapper.updateByPrimaryKeySelective(account);
                 account = cloudNativeMapper.selectByPrimaryKey(account.getId());
@@ -642,7 +668,7 @@ public class K8sService {
         String url = k8sRequest.getUrl();
 
         CloudNativeSourceExample example = new CloudNativeSourceExample();
-        example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceNameLike("kube-bench-");
+        example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceNameLike("%kube-bench-%");
         CloudNativeSource cloudNativeSource = cloudNativeSourceMapper.selectByExample(example).get(0);
 
         if(cloudNativeSource == null) {

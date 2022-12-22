@@ -1333,6 +1333,7 @@ export default {
     by_k8s_platform: 'Statistics by K8s account',
     status: 'Status',
     operator_status: 'Operator Status',
+    kubench_status: 'Kube-bench status',
     add: 'Add multiple',
     delete_this_k8s: 'Delete this Kubernetes',
     please_choose_k8s: 'Please choose a Kubernetes account',

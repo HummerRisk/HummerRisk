@@ -1333,6 +1333,7 @@ export default {
     by_k8s_platform: '按 K8s 账号统计',
     status: '账号状态',
     operator_status: 'Operator 状态',
+    kubench_status: 'Kube-bench 状态',
     add: '新增多个',
     delete_this_k8s: '删除此 Kubernetes',
     please_choose_k8s: '请选择 Kubernetes 账号',

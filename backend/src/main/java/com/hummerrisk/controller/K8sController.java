@@ -71,6 +71,12 @@ public class K8sController {
         return k8sService.operatorStatusValidate(id);
     }
 
+    @ApiOperation(value = "校验云原生Kubench状态")
+    @PostMapping("kubenchStatusValidate/{id}")
+    public ValidateDTO kubenchStatusValidate(@PathVariable String id) throws Exception {
+        return k8sService.kubenchStatusValidate(id);
+    }
+
     @I18n
     @ApiOperation(value = "添加云原生账号")
     @PostMapping("add")

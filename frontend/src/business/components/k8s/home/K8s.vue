@@ -50,9 +50,9 @@
           </template>
         </el-table-column>
         <el-table-column prop="operatorStatus" v-if="checkedColumnNames.includes('operatorStatus')" min-width="130" :label="$t('k8s.operator_status')"
-                         column-key="status"
+                         column-key="operatorStatus"
                          :filters="statusFilters"
-                         :filter-method="filterStatus">
+                         :filter-method="filterOperatorStatus">
           <template v-slot:default="{row}">
             <div @click="validateOperator(row)" style="cursor:pointer;">
               <el-tag size="mini" type="warning" v-if="row.operatorStatus === 'DELETE'">
@@ -62,6 +62,24 @@
                 {{ $t('account.VALID') }}
               </el-tag>
               <el-tag size="mini" type="danger" v-else-if="row.operatorStatus === 'INVALID'">
+                {{ $t('account.INVALID') }}
+              </el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="kubenchStatus" v-if="checkedColumnNames.includes('kubenchStatus')" min-width="150" :label="$t('k8s.kubench_status')"
+                         column-key="kubenchStatus"
+                         :filters="statusFilters"
+                         :filter-method="filterKubenchStatus">
+          <template v-slot:default="{row}">
+            <div @click="validateKubench(row)" style="cursor:pointer;">
+              <el-tag size="mini" type="warning" v-if="row.kubenchStatus === 'DELETE'">
+                {{ $t('account.DELETE') }}
+              </el-tag>
+              <el-tag size="mini" type="success" v-else-if="row.kubenchStatus === 'VALID'">
+                {{ $t('account.VALID') }}
+              </el-tag>
+              <el-tag size="mini" type="danger" v-else-if="row.kubenchStatus === 'INVALID'">
                 {{ $t('account.INVALID') }}
               </el-tag>
             </div>
@@ -232,6 +250,11 @@ const columnOptions = [
   {
     label: 'k8s.operator_status',
     props: 'operatorStatus',
+    disabled: false
+  },
+  {
+    label: 'k8s.kubench_status',
+    props: 'kubenchStatus',
     disabled: false
   },
   {
@@ -487,6 +510,28 @@ export default {
         }
       });
     },
+    validateKubench(row) {
+      this.$alert(this.$t('account.validate') + this.$t('k8s.k8s_setting') + ' : ' + row.name +  " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.$post("/k8s/kubenchStatusValidate/" + row.id, {}, response => {
+              let data = response.data;
+              if (data) {
+                if (data.flag) {
+                  this.$success(this.$t('account.success'));
+                } else {
+                  this.$error(data.message, 10000);
+                }
+              } else {
+                this.$error(this.$t('account.error'));
+              }
+              this.search();
+            });
+          }
+        }
+      });
+    },
     select(selection) {
       this.selectIds.clear();
       selection.forEach(s => {
@@ -547,6 +592,12 @@ export default {
     },
     filterStatus(value, row) {
       return row.status === value;
+    },
+    filterOperatorStatus(value, row) {
+      return row.operatorStatus === value;
+    },
+    filterKubenchStatus(value, row) {
+      return row.kubenchStatus === value;
     },
     //新增云原生账号信息/选择插件查询云原生账号信息
     async changePluginForAdd (form){
