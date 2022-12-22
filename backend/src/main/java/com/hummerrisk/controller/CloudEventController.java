@@ -10,6 +10,7 @@ import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
 import com.hummerrisk.dto.CloudEventGroupDTO;
+import com.hummerrisk.dto.CloudEventSourceIpInsightDto;
 import com.hummerrisk.service.CloudEventService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -77,6 +78,13 @@ public class CloudEventController {
     public Pager<List<CloudEventGroupDTO>> listEventsGroup(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, cloudEventService.getCloudEventGroup(cloudEventRequest));
+    }
+
+    @ApiOperation(value = "源ip分析列表")
+    @PostMapping("insight/list/{goPage}/{pageSize}")
+    public Pager<List<CloudEventSourceIpInsightDto>> listSourceIpInsight(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, cloudEventService.getSourceIpInsight(cloudEventRequest));
     }
     @I18n
     @ApiOperation(value = "操作审计概览TOP统计")
