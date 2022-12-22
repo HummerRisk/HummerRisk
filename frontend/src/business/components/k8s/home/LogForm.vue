@@ -1,6 +1,6 @@
 <template>
   <div class="ch-mar" v-if="logForm.vulnerabilityReport || logForm.configAuditReport">
-    <el-tabs type="border-card">
+    <el-tabs type="border-card" @tab-click="showCodemirror">
       <el-tab-pane label="VulnerabilityReport" v-if="logForm.vulnerabilityReport">
         <div class="ch-mar-top">
           <h2>Summary:&nbsp;</h2>
@@ -162,6 +162,9 @@
           </div>
         </div>
       </el-tab-pane>
+      <el-tab-pane label="KubeBench" v-if="logForm.kubeBench">
+        <codemirror ref="cmEditor" v-model="logForm.kubeBench" class="code-mirror" :options="cmOptions" />
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -177,11 +180,33 @@ export default {
   },
   data() {
     return {
+      cmOptions: {
+        tabSize: 4,
+        mode: {
+          name: 'shell',
+          json: true
+        },
+        theme: 'bespin',
+        lineNumbers: true,
+        line: true,
+        indentWithTabs: true,
+        location: "",
+      },
     }
   },
   methods: {
     init() {
     },
+    showCodemirror() {
+      setTimeout(() => {
+        this.$refs.cmEditor.codemirror.refresh();
+      }, 50);
+    },
+  },
+  computed: {
+    codemirror() {
+      return this.$refs.cmEditor.codemirror;
+    }
   },
   activated() {
     this.init();
@@ -267,6 +292,13 @@ export default {
 }
 .ch-mar-top {
   margin: 10px 0 0 0;
+}
+.code-mirror {
+  height: 600px !important;
+}
+.code-mirror >>> .CodeMirror {
+  /* Set height, width, borders, and global font properties here */
+  height: 600px !important;
 }
 </style>
 
