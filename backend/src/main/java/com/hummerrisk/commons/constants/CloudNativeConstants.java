@@ -32,6 +32,8 @@ public class CloudNativeConstants {
     public final static String URL4 = "apis/aquasecurity.github.io/v1alpha1/vulnerabilityreports?limit=500";
     public final static String URL5 = "/apis/aquasecurity.github.io/v1alpha1/namespaces/default/configauditreports?limit=500";
     public final static String URL6 = "apis/aquasecurity.github.io/v1alpha1/namespaces/default/configauditreports?limit=500";
+    public final static String URL7 = "/api/v1/namespaces/default/pods/";
+    public final static String URL8 = "/api/v1/namespaces/default/pods/";
     public final static String Accept = "application/json";
     public final static String TRIVY_OPERATOR = "trivy-operator";
     public final static String AQUASECURITY = "aquasecurity";

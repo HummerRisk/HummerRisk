@@ -165,6 +165,45 @@ public class K8sService {
         }
     }
 
+    private ValidateDTO validateKubenchStatus(CloudNative cloudNative) {
+        ValidateDTO validateDTO = new ValidateDTO();
+        try {
+            //检验
+            K8sRequest k8sRequest = new K8sRequest();
+            k8sRequest.setCredential(cloudNative.getCredential());
+            String token = "Bearer " + k8sRequest.getToken();
+            String url = k8sRequest.getUrl();
+
+            CloudNativeSourceExample example = new CloudNativeSourceExample();
+            example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceNameLike("kube-bench-");
+            CloudNativeSource cloudNativeSource = cloudNativeSourceMapper.selectByExample(example).get(0);
+
+            if(cloudNativeSource == null) {
+                validateDTO.setFlag(false);
+                validateDTO.setMessage("Verification failed!");
+                return validateDTO;
+            }
+
+            if (url.endsWith("/")) {
+                url = url + CloudNativeConstants.URL8 + cloudNativeSource.getSourceName();
+            } else {
+                url = url + CloudNativeConstants.URL7 + cloudNativeSource.getSourceName();
+            }
+            Map<String, String> param = new HashMap<>();
+            param.put("Accept", CloudNativeConstants.Accept);
+            param.put("Authorization", token);
+            boolean valid = HttpClientUtil.kubenchStatus(url, param);
+            validateDTO.setFlag(valid);
+            validateDTO.setMessage("Verification succeeded!");
+            return validateDTO;
+        } catch (Exception e) {
+            validateDTO.setFlag(false);
+            validateDTO.setMessage(String.format("HRException in verifying cloud native, cloud native Operator Status: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()));
+            LogUtil.error(String.format("HRException in verifying cloud native, cloud native Operator Status: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()), e);
+            return validateDTO;
+        }
+    }
+
     private ValidateDTO validateAccount(CloudNative cloudNative) {
         ValidateDTO validateDTO = new ValidateDTO();
         validateDTO.setName(cloudNative.getName());

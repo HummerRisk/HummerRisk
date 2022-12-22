@@ -268,4 +268,24 @@ public class HttpClientUtil {
         }
     }
 
+    //检测kube-bench
+    public static boolean kubenchStatus(String url, Map<String, String> param) throws Exception {
+        OkHttpClient client = getClient();
+        Request.Builder builder = new Request.Builder();
+        if (param != null) {
+            for (String key : param.keySet()) {
+                builder.addHeader(key, param.get(key));
+            }
+        }
+        Request request = builder.url(url).method("GET", null).build();
+        try (Response response = client.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                response.body().string();
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
 }
