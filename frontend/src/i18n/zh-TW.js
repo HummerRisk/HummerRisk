@@ -1534,6 +1534,8 @@ export default {
     ip_detail: 'IP 分析詳情',
     event_audit: '操作審計事件',
     event_insight: 'Insight 事件原文',
+    earliest_event_time: '最早時間',
+    last_event_time: '最後時間'
   },
   second: {
     title: '秒',

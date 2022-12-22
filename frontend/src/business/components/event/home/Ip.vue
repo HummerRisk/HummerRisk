@@ -16,21 +16,26 @@
         @select="select"
       >
         <el-table-column type="index" min-width="40"/>
-        <el-table-column min-width="140" v-if="checkedColumnNames.includes('ip')" :label="'IP'">
+        <el-table-column min-width="100" show-overflow-tooltip v-if="checkedColumnNames.includes('ip')" :label="'IP'">
           <template v-slot:default="scope">
             <el-link type="primary" :underline="false" class="md-primary text-click" @click="showDetail(scope.row)">
-              {{ '10.10.10.1' }}
+              {{ scope.row.sourceIpAddress }}
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column prop="regionName" v-if="checkedColumnNames.includes('regionName')" :label="$t('event.region')" min-width="170"></el-table-column>
-        <el-table-column prop="eventDate" v-if="checkedColumnNames.includes('eventDate')" :label="$t('event.event_date')" min-width="120"></el-table-column>
-        <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :show-overflow-tooltip="true" :label="$t('event.user_name')" min-width="140"></el-table-column>
-        <el-table-column prop="sourceIpAddress" v-if="checkedColumnNames.includes('sourceIpAddress')" :show-overflow-tooltip="true" :label="$t('event.source_ip')" min-width="150"></el-table-column>
+        <el-table-column prop="region" v-if="checkedColumnNames.includes('regionName')" :label="$t('event.region')" min-width="170"  show-overflow-tooltip ></el-table-column>
+        <el-table-column prop="earliestEventTime" v-if="checkedColumnNames.includes('earliestEventTime')" :label="$t('event.earliest_event_time')" min-width="120">
+          <template v-slot:default="scope">
+            <span>{{ scope.row.earliestEventTime | timestampFormatDate }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="lastEventTime" v-if="checkedColumnNames.includes('lastEventTime')" :show-overflow-tooltip="true" :label="$t('event.last_event_time')" min-width="140">
+          <template v-slot:default="scope">
+            <span>{{ scope.row.lastEventTime | timestampFormatDate }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="eventName" v-if="checkedColumnNames.includes('eventName')" :label="$t('event.event_name')" min-width="130"></el-table-column>
         <el-table-column prop="eventSum" v-if="checkedColumnNames.includes('eventSum')" :label="$t('event.event_sum')" min-width="100" sortable></el-table-column>
-        <el-table-column prop="resourceName" v-if="checkedColumnNames.includes('resourceName')" :show-overflow-tooltip="true" :label="$t('event.resource_name')" min-width="120" :formatter="resourceNameFormat"></el-table-column>
-        <el-table-column prop="serviceName" v-if="checkedColumnNames.includes('serviceName')" :label="$t('event.service_name')" min-width="120" :formatter="serviceNameFormat"/>
       </hide-table>
 
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
@@ -222,6 +227,16 @@ const columnOptions = [
     props: 'resourceName',
     disabled: false
   },
+  {
+    label: 'event.earliest_event_time',
+    props: 'earliestEventTime',
+    disabled: false
+  },
+  {
+    label: 'event.last_event_time',
+    props: 'lastEventTime',
+    disabled: false
+  },
 ];
 
 /* eslint-disable */
@@ -363,7 +378,7 @@ export default {
       }
     },
     search() {
-      let url = "/cloud/event/group/list/" + this.currentPage + "/" + this.pageSize;
+      let url = "/cloud/event/insight/list/" + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
