@@ -24,17 +24,17 @@
           </template>
         </el-table-column>
         <el-table-column prop="region" v-if="checkedColumnNames.includes('regionName')" :label="$t('event.region')" min-width="170"  show-overflow-tooltip ></el-table-column>
-        <el-table-column prop="earliestEventTime" v-if="checkedColumnNames.includes('earliestEventTime')" :label="$t('event.earliest_event_time')" min-width="120">
+        <el-table-column prop="earliestEventTime" v-if="checkedColumnNames.includes('earliestEventTime')" :label="$t('event.earliest_event_time')" min-width="100">
           <template v-slot:default="scope">
             <span>{{ scope.row.earliestEventTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="lastEventTime" v-if="checkedColumnNames.includes('lastEventTime')" :show-overflow-tooltip="true" :label="$t('event.last_event_time')" min-width="140">
+        <el-table-column prop="lastEventTime" v-if="checkedColumnNames.includes('lastEventTime')" :show-overflow-tooltip="true" :label="$t('event.last_event_time')" min-width="100">
           <template v-slot:default="scope">
             <span>{{ scope.row.lastEventTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="eventName" v-if="checkedColumnNames.includes('eventName')" :label="$t('event.event_name')" min-width="130"></el-table-column>
+        <el-table-column prop="eventName" v-if="checkedColumnNames.includes('eventName')" :label="$t('event.event_name')" min-width="150" show-overflow-tooltip></el-table-column>
         <el-table-column prop="eventSum" v-if="checkedColumnNames.includes('eventSum')" :label="$t('event.event_sum')" min-width="100" sortable></el-table-column>
       </hide-table>
 
