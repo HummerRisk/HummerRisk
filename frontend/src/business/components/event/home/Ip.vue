@@ -46,117 +46,65 @@
                :destroy-on-close="true">
       <el-tabs v-model="activeName" @tab-click="showCodemirror" style="margin: 20px;">
         <el-tab-pane :label="$t('event.event_audit')" name="first">
-          <el-descriptions class="margin-top" title="事件名称" :column="2" border>
+          <el-descriptions class="margin-top" v-for="detail in details" :key = "detail.eventId" :title="detail.eventName" :column="2" border>
             <el-descriptions-item>
               <template slot="label">
                 <i class="el-icon-user"></i>
-                用户名
+                云账号
               </template>
-              kooriookami
+              {{getAccountName(detail.cloudAccountId)}}
+            </el-descriptions-item>
+            <el-descriptions-item>
+              <template slot="label">
+                <i class="el-icon-user"></i>
+                区域
+              </template>
+              {{detail.regionName}}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
                 <i class="el-icon-mobile-phone"></i>
-                手机号
+                事件名称
               </template>
-              18100000000
+              {{detail.eventName}}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
                 <i class="el-icon-location-outline"></i>
-                居住地
+                事件时间
               </template>
-              苏州市
+              {{ detail.eventTime | timestampFormatDate }}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
                 <i class="el-icon-tickets"></i>
-                备注
+                事件ID
               </template>
-              <el-tag size="small">学校</el-tag>
+              {{detail.eventId}}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
                 <i class="el-icon-office-building"></i>
-                联系地址
+                事件源
               </template>
-              江苏省苏州市吴中区吴中大道 1188 号
+              {{detail.eventSource}}
             </el-descriptions-item>
-          </el-descriptions>
-          <el-descriptions class="margin-top" title="事件名称" :column="2" border>
             <el-descriptions-item>
               <template slot="label">
-                <i class="el-icon-user"></i>
+                <i class="el-icon-tickets"></i>
+                源地址
+              </template>
+              {{detail.sourceIpAddress}}
+            </el-descriptions-item>
+            <el-descriptions-item>
+              <template slot="label">
+                <i class="el-icon-office-building"></i>
                 用户名
               </template>
-              kooriookami
-            </el-descriptions-item>
-            <el-descriptions-item>
-              <template slot="label">
-                <i class="el-icon-mobile-phone"></i>
-                手机号
-              </template>
-              18100000000
-            </el-descriptions-item>
-            <el-descriptions-item>
-              <template slot="label">
-                <i class="el-icon-location-outline"></i>
-                居住地
-              </template>
-              苏州市
-            </el-descriptions-item>
-            <el-descriptions-item>
-              <template slot="label">
-                <i class="el-icon-tickets"></i>
-                备注
-              </template>
-              <el-tag size="small">学校</el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item>
-              <template slot="label">
-                <i class="el-icon-office-building"></i>
-                联系地址
-              </template>
-              江苏省苏州市吴中区吴中大道 1188 号
+              {{detail.userName}}
             </el-descriptions-item>
           </el-descriptions>
-          <el-descriptions class="margin-top" title="事件名称" :column="2" border>
-            <el-descriptions-item>
-              <template slot="label">
-                <i class="el-icon-user"></i>
-                用户名
-              </template>
-              kooriookami
-            </el-descriptions-item>
-            <el-descriptions-item>
-              <template slot="label">
-                <i class="el-icon-mobile-phone"></i>
-                手机号
-              </template>
-              18100000000
-            </el-descriptions-item>
-            <el-descriptions-item>
-              <template slot="label">
-                <i class="el-icon-location-outline"></i>
-                居住地
-              </template>
-              苏州市
-            </el-descriptions-item>
-            <el-descriptions-item>
-              <template slot="label">
-                <i class="el-icon-tickets"></i>
-                备注
-              </template>
-              <el-tag size="small">学校</el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item>
-              <template slot="label">
-                <i class="el-icon-office-building"></i>
-                联系地址
-              </template>
-              江苏省苏州市吴中区吴中大道 1188 号
-            </el-descriptions-item>
-          </el-descriptions>
+
         </el-tab-pane>
         <el-tab-pane :label="$t('event.event_insight')" name="second">
           <codemirror ref="cmEditor" v-model="script" class="code-mirror" :options="cmOptions" />
@@ -253,6 +201,7 @@ export default {
   },
   data() {
     return {
+      details:[],
       result: {},
       dateTime: [],
       currentAccount: '',
@@ -276,8 +225,8 @@ export default {
       //名称搜索
       items: [
         {
-          name: 'IP',
-          id: 'ip'
+          name: 'event.source_ip',
+          id: 'sourceIpAddress',
         },
         {
           name: 'event.region',
@@ -286,10 +235,6 @@ export default {
         {
           name: 'event.user_name',
           id: 'userName',
-        },
-        {
-          name: 'event.source_ip',
-          id: 'sourceIpAddress',
         },
         {
           name: 'event.event_name',
@@ -441,7 +386,18 @@ export default {
     },
     //显示详情
     showDetail(item) {
+      this.currentIp = item["sourceIpAddress"]
+      this.searchDetail()
       this.detailVisible = true;
+    },
+    searchDetail(){
+      let url = "/cloud/event/list/" + 1 + "/" +10;
+      let condition = this.condition
+      condition["sourceIpAddress"]=this.currentIp
+      this.result = this.$post(url, condition, response => {
+        let data = response.data;
+        this.details = data.listObject
+      });
     },
     handleClose() {
       this.detailVisible = false;
