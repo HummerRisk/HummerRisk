@@ -1536,7 +1536,9 @@ export default {
     event_audit: 'Operation audit event',
     event_insight: 'Insight event text',
     earliest_event_time: 'earliest time',
-    last_event_time: 'last time'
+    last_event_time: 'last time',
+    event_id: 'Event ID',
+    event_source: 'event source'
   },
   second: {
     title:'seconds',

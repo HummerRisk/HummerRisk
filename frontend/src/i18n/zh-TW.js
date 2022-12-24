@@ -1536,7 +1536,9 @@ export default {
     event_audit: '操作審計事件',
     event_insight: 'Insight 事件原文',
     earliest_event_time: '最早時間',
-    last_event_time: '最後時間'
+    last_event_time: '最後時間',
+    event_id: '事件ID',
+    event_source: '事件源'
   },
   second: {
     title: '秒',
