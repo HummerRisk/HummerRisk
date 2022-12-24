@@ -50,56 +50,56 @@
             <el-descriptions-item>
               <template slot="label">
                 <i class="el-icon-user"></i>
-                云账号
+                {{$t('event.cloud_account_name')}}
               </template>
               {{getAccountName(detail.cloudAccountId)}}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
                 <i class="el-icon-user"></i>
-                区域
+                {{$t('event.region')}}
               </template>
               {{detail.regionName}}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
                 <i class="el-icon-mobile-phone"></i>
-                事件名称
+                {{$t('event.event_name')}}
               </template>
               {{detail.eventName}}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
                 <i class="el-icon-location-outline"></i>
-                事件时间
+                {{$t('event.event_time')}}
               </template>
               {{ detail.eventTime | timestampFormatDate }}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
                 <i class="el-icon-tickets"></i>
-                事件ID
+                {{$t('event.event_id')}}
               </template>
               {{detail.eventId}}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
                 <i class="el-icon-office-building"></i>
-                事件源
+                {{$t('event.event_source')}}
               </template>
               {{detail.eventSource}}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
                 <i class="el-icon-tickets"></i>
-                源地址
+                {{$t('event.source_ip')}}
               </template>
               {{detail.sourceIpAddress}}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
                 <i class="el-icon-office-building"></i>
-                用户名
+                {{$t('event.user_name')}}
               </template>
               {{detail.userName}}
             </el-descriptions-item>
