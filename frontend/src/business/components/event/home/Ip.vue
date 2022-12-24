@@ -46,31 +46,31 @@
                :destroy-on-close="true">
       <el-tabs v-model="activeName" @tab-click="showCodemirror" style="margin: 20px;">
         <el-tab-pane :label="$t('event.event_audit')" name="first">
-          <el-descriptions class="margin-top" v-for="detail in details" :key = "detail.eventId" :title="detail.eventName" :column="2" border>
+          <el-descriptions class="margin-top" v-for="detail in details" :key = "detail.id" :title="detail.eventName"  style="margin-top: 20px;" :column="2" border>
             <el-descriptions-item>
               <template slot="label">
-                <i class="el-icon-user"></i>
-                {{$t('event.cloud_account_name')}}
+                <i class="el-icon-tickets"></i>
+                {{$t('event.cloud_account')}}
               </template>
               {{getAccountName(detail.cloudAccountId)}}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
-                <i class="el-icon-user"></i>
+                <i class="el-icon-location-outline"></i>
                 {{$t('event.region')}}
               </template>
               {{detail.regionName}}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
-                <i class="el-icon-mobile-phone"></i>
+                <i class="el-icon-tickets"></i>
                 {{$t('event.event_name')}}
               </template>
               {{detail.eventName}}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
-                <i class="el-icon-location-outline"></i>
+                <i class="el-icon-tickets"></i>
                 {{$t('event.event_time')}}
               </template>
               {{ detail.eventTime | timestampFormatDate }}
@@ -84,7 +84,7 @@
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
-                <i class="el-icon-office-building"></i>
+                <i class="el-icon-tickets"></i>
                 {{$t('event.event_source')}}
               </template>
               {{detail.eventSource}}
@@ -96,15 +96,15 @@
               </template>
               {{detail.sourceIpAddress}}
             </el-descriptions-item>
-            <el-descriptions-item>
+            <el-descriptions-item >
               <template slot="label">
-                <i class="el-icon-office-building"></i>
+                <i class="el-icon-user"></i>
                 {{$t('event.user_name')}}
               </template>
               {{detail.userName}}
             </el-descriptions-item>
           </el-descriptions>
-
+          <table-pagination :change="searchDetail" :current-page.sync="detailCurrentPage" :page-size.sync="detailPageSize" :total="detailTotal"/>
         </el-tab-pane>
         <el-tab-pane :label="$t('event.event_insight')" name="second">
           <codemirror ref="cmEditor" v-model="script" class="code-mirror" :options="cmOptions" />
@@ -202,6 +202,9 @@ export default {
   data() {
     return {
       details:[],
+      detailCurrentPage: 1,
+      detailPageSize: 10,
+      detailTotal: 0,
       result: {},
       dateTime: [],
       currentAccount: '',
@@ -263,7 +266,7 @@ export default {
         line: true,
         indentWithTabs: true,
       },
-      script: '{ xx: xx }',
+      script: '',
       activeName: 'first',
     }
   },
@@ -387,16 +390,19 @@ export default {
     //显示详情
     showDetail(item) {
       this.currentIp = item["sourceIpAddress"]
+      this.detailCurrentPage = 1
       this.searchDetail()
       this.detailVisible = true;
     },
     searchDetail(){
-      let url = "/cloud/event/list/" + 1 + "/" +10;
+      let url = "/cloud/event/list/" + this.detailCurrentPage + "/" +this.detailPageSize;
       let condition = this.condition
       condition["sourceIpAddress"]=this.currentIp
       this.result = this.$post(url, condition, response => {
         let data = response.data;
+        this.detailTotal = data.itemCount;
         this.details = data.listObject
+        this.script = JSON.stringify(data.listObject, null, "\t")
       });
     },
     handleClose() {
