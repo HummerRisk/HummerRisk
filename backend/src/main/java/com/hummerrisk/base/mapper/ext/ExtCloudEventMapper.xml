@@ -111,25 +111,25 @@
         </include>
       </if>
       <if test="request.accountName != null and request.accountName != ''">
-        and t1.name like CONCAT('%', #{request.accountName},'%')
+        and LOWER(t1.name) like CONCAT('%', LOWER(#{request.accountName}),'%')
       </if>
       <if test="request.regionName != null and request.regionName != ''">
-        and t.region_name like CONCAT('%', #{request.regionName},'%')
+        and LOWER(t.region_name) like CONCAT('%', LOWER(#{request.regionName}),'%')
       </if>
       <if test="request.userName != null and request.userName != ''">
-        and t.user_name like CONCAT('%', #{request.userName},'%')
+        and LOWER(t.user_name) like CONCAT('%', LOWER(#{request.userName}),'%')
       </if>
       <if test="request.sourceIpAddress != null and request.sourceIpAddress != ''">
         and t.source_ip_address like CONCAT('%', #{request.sourceIpAddress},'%')
       </if>
       <if test="request.eventName != null and request.eventName != ''">
-        and t.event_name like CONCAT('%', #{request.eventName},'%')
+        and LOWER(t.event_name) like CONCAT('%', LOWER(#{request.eventName}),'%')
       </if>
       <if test="request.resourceType != null and request.resourceType != ''">
         and t.resource_type like CONCAT('%', #{request.resourceType},'%')
       </if>
       <if test="request.resourceName != null and request.resourceName != ''">
-        and t.resource_name like CONCAT('%', #{request.resourceName},'%')
+        and LOWER(t.resource_name) like CONCAT('%', LOWER(#{request.resourceName}),'%')
       </if>
     </where>
     order by event_time desc
@@ -262,25 +262,25 @@
       </if>
       and source_ip_address != ''
       <if test="request.accountName != null and request.accountName != ''">
-        and t1.name like CONCAT('%', #{request.accountName},'%')
+        and LOWER(t1.name) like CONCAT('%', LOWER(#{request.accountName}),'%')
       </if>
       <if test="request.regionName != null and request.regionName != ''">
-        and t.region_name like CONCAT('%', #{request.regionName},'%')
+        and LOWER(t.region_name) like CONCAT('%', LOWER(#{request.regionName}),'%')
       </if>
       <if test="request.userName != null and request.userName != ''">
-        and t.user_name like CONCAT('%', #{request.userName},'%')
+        and LOWER(t.user_name) like CONCAT('%', LOWER(#{request.userName}),'%')
       </if>
       <if test="request.sourceIpAddress != null and request.sourceIpAddress != ''">
         and t.source_ip_address like CONCAT('%', #{request.sourceIpAddress},'%')
       </if>
       <if test="request.eventName != null and request.eventName != ''">
-        and t.event_name like CONCAT('%', #{request.eventName},'%')
+        and LOWER(t.event_name) like CONCAT('%', LOWER(#{request.eventName}),'%')
       </if>
       <if test="request.resourceName != null and request.resourceName != ''">
-        and t.resource_name like CONCAT('%', #{request.resourceName},'%')
+        and LOWER(t.resource_name) like CONCAT('%', LOWER(#{request.resourceName}),'%')
       </if>
       <if test="request.resourceName != null and request.resourceName != ''">
-        and t.resource_name like CONCAT('%', #{request.resourceName},'%')
+        and LOWER(t.resource_name) like CONCAT('%', LOWER(#{request.resourceName}),'%')
       </if>
     </where>
 
