@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS `cloud_native_result_kubench`
     `id`                         varchar(50)         NOT NULL,
     `result_id`                  varchar(50)         DEFAULT NULL COMMENT '云原生检测结果ID',
     `title`                      longtext            DEFAULT NULL COMMENT 'title',
+    `number`                     varchar(50)         DEFAULT NULL COMMENT 'number',
     `severity`                   varchar(128)        DEFAULT NULL COMMENT 'severity',
     `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
     `description`                longtext            DEFAULT NULL COMMENT 'description',
