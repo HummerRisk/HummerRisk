@@ -698,6 +698,7 @@ public class K8sService {
                 if (result.contains("== Remediations master ==")) {
                     String[] strs = result.split("== Remediations master ==");
                     for (String str : strs) {
+                        if(StringUtils.isEmpty(str)) continue;
                         if (str.contains("[PASS]") || str.contains("[INFO]") || str.contains("[WARN]") || str.contains("[FAIL]")) {
                             InputStreamReader read = new InputStreamReader(new ByteArrayInputStream(str.getBytes()));
                             BufferedReader bufferedReader = new BufferedReader(read);
@@ -731,7 +732,7 @@ public class K8sService {
                             for (String desc : descriptions) {
                                 String number = desc.split("\\s+")[0];
                                 CloudNativeResultKubenchExample example = new CloudNativeResultKubenchExample();
-                                example.createCriteria().andResultIdEqualTo(result).andNumberEqualTo("number");
+                                example.createCriteria().andResultIdEqualTo(result).andNumberEqualTo(number);
                                 CloudNativeResultKubenchWithBLOBs record = cloudNativeResultKubenchMapper.selectByExampleWithBLOBs(example).get(0);
                                 record.setDescription(desc);
                                 cloudNativeResultKubenchMapper.updateByPrimaryKeySelective(record);
