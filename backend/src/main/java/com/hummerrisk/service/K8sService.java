@@ -664,30 +664,44 @@ public class K8sService {
     }
 
     public String scanKubeBench (CloudNative cloudNative, String resultId) throws Exception {
-        K8sRequest k8sRequest = new K8sRequest();
-        k8sRequest.setCredential(cloudNative.getCredential());
-        String token = "Bearer " + k8sRequest.getToken();
-        String url = k8sRequest.getUrl();
+        try {
+            K8sRequest k8sRequest = new K8sRequest();
+            k8sRequest.setCredential(cloudNative.getCredential());
+            String token = "Bearer " + k8sRequest.getToken();
+            String url = k8sRequest.getUrl();
 
-        CloudNativeSourceExample example = new CloudNativeSourceExample();
-        example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceNameLike("%kube-bench-%");
-        CloudNativeSource cloudNativeSource = cloudNativeSourceMapper.selectByExample(example).get(0);
+            K8sSource pod = k8sRequest.getKubenchPod(cloudNative);
+            CloudNativeSourceExample example = new CloudNativeSourceExample();
+            example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("%kube-bench-%");
+            cloudNativeSourceMapper.deleteByExample(example);
+            for(CloudNativeSourceWithBLOBs k8sSource : pod.getK8sSource()) {
+                cloudNativeSourceMapper.insertSelective(k8sSource);
+            }
+            for(CloudNativeSourceImage cloudNativeSourceImage : pod.getK8sSourceImage()) {
+                cloudNativeSourceImageMapper.insertSelective(cloudNativeSourceImage);
+            }
 
-        if(cloudNativeSource == null) {
-            return "";
+            CloudNativeSource cloudNativeSource = cloudNativeSourceMapper.selectByExample(example).get(0);
+
+            if(cloudNativeSource == null) {
+                return "";
+            }
+
+            if (url.endsWith("/")) {
+                url = url + CloudNativeConstants.URL8 + cloudNativeSource.getSourceName() + "/log";
+            } else {
+                url = url + CloudNativeConstants.URL7 + cloudNativeSource.getSourceName() + "/log";
+            }
+            Map<String, String> param = new HashMap<>();
+            param.put("Accept", CloudNativeConstants.Accept);
+            param.put("Authorization", token);
+            String reponse = HttpClientUtil.HttpGet(url, param);
+            saveKubenchResultItem(reponse, resultId);
+            return reponse;
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
         }
-
-        if (url.endsWith("/")) {
-            url = url + CloudNativeConstants.URL8 + cloudNativeSource.getSourceName() + "/log";
-        } else {
-            url = url + CloudNativeConstants.URL7 + cloudNativeSource.getSourceName() + "/log";
-        }
-        Map<String, String> param = new HashMap<>();
-        param.put("Accept", CloudNativeConstants.Accept);
-        param.put("Authorization", token);
-        String reponse = HttpClientUtil.HttpGet(url, param);
-        saveKubenchResultItem(reponse, resultId);
-        return reponse;
+        return "";
     }
 
     void saveKubenchResultItem(String reponse, String resultId) throws Exception {
@@ -714,7 +728,7 @@ public class K8sService {
                         BufferedReader bufferedReader = new BufferedReader(read);
                         String lineTxt;
                         while ((lineTxt = bufferedReader.readLine()) != null) {
-                            if(!StringUtils.isEmpty(lineTxt)){
+                            if(!StringUtils.isEmpty(lineTxt) && (lineTxt.contains("[PASS]") || lineTxt.contains("[INFO]") || lineTxt.contains("[WARN]") || lineTxt.contains("[FAIL]"))){
                                 CloudNativeResultKubenchWithBLOBs kubenchWithBLOBs = new CloudNativeResultKubenchWithBLOBs();
                                 kubenchWithBLOBs.setResultId(resultId);
                                 kubenchWithBLOBs.setCreateTime(System.currentTimeMillis());
@@ -732,6 +746,7 @@ public class K8sService {
                                     kubenchWithBLOBs.setSeverity("FAIL");
                                 }
                                 kubenchWithBLOBs.setNumber(lineTxt.split("\\s+")[1]);
+                                kubenchWithBLOBs.setId(UUIDUtil.newUUID());
                                 cloudNativeResultKubenchMapper.insertSelective(kubenchWithBLOBs);
                             }
                         }
@@ -744,7 +759,7 @@ public class K8sService {
                             if (desc.startsWith("\n")) desc = desc.replaceFirst("\n", "");
                             String number = desc.split("\\s+")[0];
                             CloudNativeResultKubenchExample example = new CloudNativeResultKubenchExample();
-                            example.createCriteria().andResultIdEqualTo(result).andNumberEqualTo(number);
+                            example.createCriteria().andResultIdEqualTo(resultId).andNumberEqualTo(number);
                             CloudNativeResultKubenchWithBLOBs record = cloudNativeResultKubenchMapper.selectByExampleWithBLOBs(example).get(0);
                             record.setDescription(desc);
                             cloudNativeResultKubenchMapper.updateByPrimaryKeySelective(record);
