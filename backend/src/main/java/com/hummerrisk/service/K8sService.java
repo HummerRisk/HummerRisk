@@ -695,58 +695,61 @@ public class K8sService {
             String[] results = reponse.split("\n\n\n");
             for (String result : results) {
                 if (StringUtils.isEmpty(result)) continue;
+                String[] strs = null;
                 if (result.contains("== Remediations master ==")) {
-                    String[] strs = result.split("== Remediations master ==");
-                    for (String str : strs) {
-                        if(StringUtils.isEmpty(str)) continue;
-                        if (str.contains("[PASS]") || str.contains("[INFO]") || str.contains("[WARN]") || str.contains("[FAIL]")) {
-                            InputStreamReader read = new InputStreamReader(new ByteArrayInputStream(str.getBytes()));
-                            BufferedReader bufferedReader = new BufferedReader(read);
-                            String lineTxt;
-                            while ((lineTxt = bufferedReader.readLine()) != null) {
-                                if(!StringUtils.isEmpty(lineTxt)){
-                                    CloudNativeResultKubenchWithBLOBs kubenchWithBLOBs = new CloudNativeResultKubenchWithBLOBs();
-                                    kubenchWithBLOBs.setResultId(resultId);
-                                    kubenchWithBLOBs.setCreateTime(System.currentTimeMillis());
-                                    kubenchWithBLOBs.setTitle(lineTxt);
-                                    if (lineTxt.contains("[PASS]")) {
-                                        kubenchWithBLOBs.setSeverity("PASS");
-                                    }
-                                    if (lineTxt.contains("[INFO]")) {
-                                        kubenchWithBLOBs.setSeverity("INFO");
-                                    }
-                                    if (lineTxt.contains("[WARN]")) {
-                                        kubenchWithBLOBs.setSeverity("WARN");
-                                    }
-                                    if (lineTxt.contains("[FAIL]")) {
-                                        kubenchWithBLOBs.setSeverity("FAIL");
-                                    }
-                                    kubenchWithBLOBs.setNumber(lineTxt.split("\\s+")[1]);
-                                    cloudNativeResultKubenchMapper.insertSelective(kubenchWithBLOBs);
+                    strs = result.split("== Remediations master ==");
+                } else if (result.contains("== Remediations etcd ==")) {
+                    strs = result.split("== Remediations etcd ==");
+                } else if (result.contains("== Remediations controlplane ==")) {
+                    strs = result.split("== Remediations controlplane ==");
+                } else if (result.contains("== Remediations node ==")) {
+                    strs = result.split("== Remediations node ==");
+                } else if (result.contains("== Remediations policies ==")) {
+                    strs = result.split("== Remediations policies ==");
+                }
+                for (String str : strs) {
+                    if(StringUtils.isEmpty(str)) continue;
+                    if (str.contains("[PASS]") || str.contains("[INFO]") || str.contains("[WARN]") || str.contains("[FAIL]")) {
+                        InputStreamReader read = new InputStreamReader(new ByteArrayInputStream(str.getBytes()));
+                        BufferedReader bufferedReader = new BufferedReader(read);
+                        String lineTxt;
+                        while ((lineTxt = bufferedReader.readLine()) != null) {
+                            if(!StringUtils.isEmpty(lineTxt)){
+                                CloudNativeResultKubenchWithBLOBs kubenchWithBLOBs = new CloudNativeResultKubenchWithBLOBs();
+                                kubenchWithBLOBs.setResultId(resultId);
+                                kubenchWithBLOBs.setCreateTime(System.currentTimeMillis());
+                                kubenchWithBLOBs.setTitle(lineTxt);
+                                if (lineTxt.contains("[PASS]")) {
+                                    kubenchWithBLOBs.setSeverity("PASS");
                                 }
-                            }
-                            bufferedReader.close();
-                            read.close();
-                        } else {
-                            String[] descriptions = str.split("\n");
-                            for (String desc : descriptions) {
-                                String number = desc.split("\\s+")[0];
-                                CloudNativeResultKubenchExample example = new CloudNativeResultKubenchExample();
-                                example.createCriteria().andResultIdEqualTo(result).andNumberEqualTo(number);
-                                CloudNativeResultKubenchWithBLOBs record = cloudNativeResultKubenchMapper.selectByExampleWithBLOBs(example).get(0);
-                                record.setDescription(desc);
-                                cloudNativeResultKubenchMapper.updateByPrimaryKeySelective(record);
+                                if (lineTxt.contains("[INFO]")) {
+                                    kubenchWithBLOBs.setSeverity("INFO");
+                                }
+                                if (lineTxt.contains("[WARN]")) {
+                                    kubenchWithBLOBs.setSeverity("WARN");
+                                }
+                                if (lineTxt.contains("[FAIL]")) {
+                                    kubenchWithBLOBs.setSeverity("FAIL");
+                                }
+                                kubenchWithBLOBs.setNumber(lineTxt.split("\\s+")[1]);
+                                cloudNativeResultKubenchMapper.insertSelective(kubenchWithBLOBs);
                             }
                         }
+                        bufferedReader.close();
+                        read.close();
+                    } else {
+                        String[] descriptions = str.split("\n\n");
+                        for (String desc : descriptions) {
+                            if (desc == null) continue;
+                            if (desc.startsWith("\n")) desc = desc.replaceFirst("\n", "");
+                            String number = desc.split("\\s+")[0];
+                            CloudNativeResultKubenchExample example = new CloudNativeResultKubenchExample();
+                            example.createCriteria().andResultIdEqualTo(result).andNumberEqualTo(number);
+                            CloudNativeResultKubenchWithBLOBs record = cloudNativeResultKubenchMapper.selectByExampleWithBLOBs(example).get(0);
+                            record.setDescription(desc);
+                            cloudNativeResultKubenchMapper.updateByPrimaryKeySelective(record);
+                        }
                     }
-                } else if (result.contains("== Remediations etcd ==")) {
-
-                } else if (result.contains("== Remediations controlplane ==")) {
-
-                } else if (result.contains("== Remediations node ==")) {
-
-                } else if (result.contains("== Remediations policies ==")) {
-
                 }
 
             }
