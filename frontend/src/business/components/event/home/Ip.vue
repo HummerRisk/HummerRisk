@@ -52,6 +52,7 @@
                 <i class="el-icon-tickets"></i>
                 {{$t('event.cloud_account')}}
               </template>
+              <img :src="require(`@/assets/img/platform/${ getAccountIcon(detail.cloudAccountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
               {{getAccountName(detail.cloudAccountId)}}
             </el-descriptions-item>
             <el-descriptions-item>
@@ -141,21 +142,6 @@ const columnOptions = [
     disabled: false
   },
   {
-    label: 'event.event_date',
-    props: 'eventDate',
-    disabled: false
-  },
-  {
-    label: 'event.user_name',
-    props: 'userName',
-    disabled: false
-  },
-  {
-    label: 'event.source_ip',
-    props: 'sourceIpAddress',
-    disabled: false
-  },
-  {
     label: 'event.event_name',
     props: 'eventName',
     disabled: false
@@ -163,16 +149,6 @@ const columnOptions = [
   {
     label: 'event.event_sum',
     props: 'eventSum',
-    disabled: false
-  },
-  {
-    label: 'event.service_name',
-    props: 'serviceName',
-    disabled: false
-  },
-  {
-    label: 'event.resource_name',
-    props: 'resourceName',
     disabled: false
   },
   {
@@ -236,21 +212,10 @@ export default {
           id: 'regionName'
         },
         {
-          name: 'event.user_name',
-          id: 'userName',
-        },
-        {
           name: 'event.event_name',
           id: 'eventName',
         },
-        {
-          name: 'event.service_name',
-          id: 'serviceName',
-        },
-        {
-          name: 'event.resource_name',
-          id: 'resourceName',
-        },
+
       ],
       checkAll: true,
       isIndeterminate: false,
