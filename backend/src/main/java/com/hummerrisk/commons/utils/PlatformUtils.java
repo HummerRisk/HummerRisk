@@ -1,5 +1,7 @@
 package com.hummerrisk.commons.utils;
 
+import client.iam.getuser.v20151101.GetUserRequest;
+import client.iam.getuser.v20151101.GetUserResponse;
 import cn.ucloud.common.client.DefaultUcloudClient;
 import cn.ucloud.common.client.UcloudClient;
 import cn.ucloud.common.pojo.Account;
@@ -59,6 +61,8 @@ import com.hummerrisk.proxy.jdcloud.JDCloudCredential;
 import com.hummerrisk.proxy.jdcloud.JDRequest;
 import com.hummerrisk.proxy.k8s.K8sCredential;
 import com.hummerrisk.proxy.k8s.K8sRequest;
+import com.hummerrisk.proxy.ksyun.KsyunCredential;
+import com.hummerrisk.proxy.ksyun.KsyunRequest;
 import com.hummerrisk.proxy.nuclei.NucleiCredential;
 import com.hummerrisk.proxy.openshift.OpenShiftRequest;
 import com.hummerrisk.proxy.openstack.OpenStackCredential;
@@ -125,6 +129,7 @@ public class PlatformUtils {
     public final static String qingcloud = "hummer-qingcloud-plugin";
     public final static String ucloud = "hummer-ucloud-plugin";
     public final static String jdcloud = "hummer-jdcloud-plugin";
+    public final static String ksyun = "hummer-ksyun-plugin";
     //漏洞检测插件
     public final static String nuclei = "hummer-nuclei-plugin";
     public final static String xray = "hummer-xray-plugin";
@@ -149,14 +154,14 @@ public class PlatformUtils {
      */
     public final static List<String> getPlugin() {
         return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud,
-                nuclei, xray, k8s, openshift, rancher, kubesphere,jdcloud);
+                nuclei, xray, k8s, openshift, rancher, kubesphere,jdcloud,ksyun);
     }
 
     /**
      * 支持云平台插件
      */
     public final static List<String> getCloudPlugin() {
-        return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, k8s,jdcloud);
+        return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, k8s,jdcloud,ksyun);
     }
 
     /**
@@ -164,7 +169,7 @@ public class PlatformUtils {
      */
     public static boolean isSupportCloudAccount(String source) {
         // 云平台插件
-        List<String> tempList = Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, k8s,jdcloud);
+        List<String> tempList = Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, k8s,jdcloud,ksyun);
 
         // 利用list的包含方法,进行判断
         return tempList.contains(source);
@@ -379,6 +384,13 @@ public class PlatformUtils {
                         "JDCLOUD_SECRETKEY="+secretAccessKey+" "+
                         "JDCLOUD_DEFAULT_REGION="+ region +" ";
                 break;
+            case ksyun:
+                String ksyunAccessKey = params.get("AccessKey");
+                String ksyunSecretAccessKey = params.get("SecretAccessKey");
+                pre = "KSYUN_ACCESSKEY=" + ksyunAccessKey + " " +
+                        "KSYUN_SECRETKEY="+ksyunSecretAccessKey+" "+
+                        "KSYUN_DEFAULT_REGION="+ region +" ";
+                break;
             case nuclei:
                 try {
                     String nucleiCredential = params.get("nucleiCredential");
@@ -561,6 +573,13 @@ public class PlatformUtils {
                 JDCloudCredential jdCloudCredential = new Gson().fromJson(account.getCredential(),JDCloudCredential.class);
                 map.put("AccessKey",jdCloudCredential.getAccessKey());
                 map.put("SecretAccessKey",jdCloudCredential.getSecretAccessKey());
+                map.put("region", region);
+                break;
+            case ksyun:
+                map.put("type", ksyun);
+                KsyunCredential ksyunCredential = new Gson().fromJson(account.getCredential(),KsyunCredential.class);
+                map.put("AccessKey",ksyunCredential.getAccessKey());
+                map.put("SecretAccessKey",ksyunCredential.getSecretAccessKey());
                 map.put("region", region);
                 break;
             case k8s:
@@ -900,6 +919,14 @@ public class PlatformUtils {
                         if (!jsonArray.contains(jsonObject)) jsonArray.add(jsonObject);
                     }
                     break;
+                case ksyun:
+                    for (Map.Entry<String, String> entry : RegionsConstants.KsyunMap.entrySet()) {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("regionId", entry.getKey());
+                        jsonObject.put("regionName", entry.getValue());
+                        if (!jsonArray.contains(jsonObject)) jsonArray.add(jsonObject);
+                    }
+                    break;
                 case k8s:
                     K8sRequest k8sRequest = new K8sRequest();
                     k8sRequest.setCredential(account.getCredential());
@@ -1125,7 +1152,15 @@ public class PlatformUtils {
                 }catch (Exception e){
                     throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
-
+            case ksyun:
+                KsyunCredential ksyunCredential = new Gson().fromJson(account.getCredential(),KsyunCredential.class);
+                KsyunRequest ksyunRequest = new KsyunRequest(ksyunCredential);
+                try{
+                    client.iam.listusers.v20151101.ListUsersResponse listUsersResponse = ksyunRequest.getListUserClient().doGet("iam.api.ksyun.com", new client.iam.listusers.v20151101.ListUsersRequest());
+                    return listUsersResponse.getError()==null;
+                }catch (Exception e){
+                    throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
+                }
             case k8s:
                 /**创建默认 Api 客户端**/
                 // 定义连接集群的 Token
@@ -1254,6 +1289,9 @@ public class PlatformUtils {
                 break;
             case jdcloud:
                 strCn = RegionsConstants.JdcloudMap.get(strEn);
+                break;
+            case ksyun:
+                strCn = RegionsConstants.KsyunMap.get(strEn);
                 break;
             case k8s:
                 strCn = strEn;
@@ -1395,6 +1433,8 @@ public class PlatformUtils {
                 break;
             case jdcloud:
                 break;
+            case ksyun:
+                break;
             case ucloud:
                 if (StringUtils.contains(resource, "ucloud.uhost")) {
                     stringArray = new String[]{"cn-qz"};
@@ -1444,6 +1484,8 @@ public class PlatformUtils {
                 return null;
             case jdcloud:
                 return CloudTaskConstants.JDCLOUD_RESOURCE_TYPE;
+            case ksyun:
+                return CloudTaskConstants.KSYUN_RESOURCE_TYPE;
             default:
                 throw new IllegalStateException("Unexpected value: " + pluginId);
         }

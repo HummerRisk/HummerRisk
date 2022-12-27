@@ -771,6 +771,14 @@
         </dependency>
         <!-- jd -->
 
+        <!-- ksyun -->
+        <dependency>
+            <groupId>com.ksyun</groupId>
+            <artifactId>ksyun-java-sdk</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+        <!-- ksyun -->
+
         <!-- OpenStack -->
         <dependency>
             <groupId>jakarta.ws.rs</groupId>

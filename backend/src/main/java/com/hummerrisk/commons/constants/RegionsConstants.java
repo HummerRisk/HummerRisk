@@ -27,6 +27,8 @@ public class RegionsConstants {
 
     public static Map<String, String> JdcloudMap;
 
+    public static Map<String, String> KsyunMap;
+
     static
     {
         AwsMap = new HashMap<>();
@@ -288,6 +290,19 @@ public class RegionsConstants {
         JdcloudMap.put("cn-east-1","华东-宿迁");
         JdcloudMap.put("cn-east-2","华东-上海");
         JdcloudMap.put("cn-south-1","华南-广州");
+        //ksyun
+        KsyunMap = new HashMap<>();
+        KsyunMap.put("cn-beijing-6","华北1（北京）");
+        KsyunMap.put("cn-shanghai-2","华东1（上海）");
+        KsyunMap.put("cn-hongkong-2","中国香港");
+        KsyunMap.put("cn-guangzhou-1","华南1（广州）");
+        KsyunMap.put("ap-singapore-1","新加坡");
+        KsyunMap.put("eu-east-1","俄罗斯（莫斯科）");
+        KsyunMap.put("cn-beijing-fin","华北金融1（北京）");
+        KsyunMap.put("cn-shanghai-fin","华东金融1（上海）");
+        KsyunMap.put("cn-southwest-1","西南1(重庆)");
+        KsyunMap.put("cn-central-1","华中1(武汉)");
+        KsyunMap.put("cn-northwest-1","西北1区（庆阳）");
     }
 
 }
