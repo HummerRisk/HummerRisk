@@ -25,6 +25,14 @@ public class CloudNativeResultDTO extends CloudNativeResult {
 
     private String configUnknown;
 
+    private String fail;
+
+    private String warn;
+
+    private String info;
+
+    private String pass;
+
     public String getCritical() {
         return critical;
     }
@@ -103,5 +111,37 @@ public class CloudNativeResultDTO extends CloudNativeResult {
 
     public void setConfigUnknown(String configUnknown) {
         this.configUnknown = configUnknown;
+    }
+
+    public String getFail() {
+        return fail;
+    }
+
+    public void setFail(String fail) {
+        this.fail = fail;
+    }
+
+    public String getWarn() {
+        return warn;
+    }
+
+    public void setWarn(String warn) {
+        this.warn = warn;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public String getPass() {
+        return pass;
+    }
+
+    public void setPass(String pass) {
+        this.pass = pass;
     }
 }

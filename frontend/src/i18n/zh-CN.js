@@ -1363,6 +1363,8 @@ export default {
     k8s_resource_type: 'K8s 资源类型',
     vuln_compliance: '漏洞检测统计',
     config_compliance: '配置审计统计',
+    kubench_compliance: 'CIS Benchmark 统计',
+    kubench_result: 'CIS Benchmark 结果',
     resource_perspective: '资源视角',
     node_perspective: '节点视角',
     namespace_perspective: '命名空间视角',

@@ -1363,6 +1363,8 @@ export default {
     k8s_resource_type: 'K8s resource type',
     vuln_compliance: 'Vulnerability detection statistics',
     config_compliance: 'Configure audit statistics',
+    kubench_compliance: 'CIS Benchmark Statistics',
+    kubench_result: 'CIS Benchmark result',
     resource_perspective: 'Resource Perspective',
     node_perspective: 'Node Perspective',
     namespace_perspective: 'Namespace perspective',

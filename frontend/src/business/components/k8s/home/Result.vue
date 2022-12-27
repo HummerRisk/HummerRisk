@@ -47,6 +47,16 @@
             </div>
           </el-tooltip>
         </el-table-column>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('kubenchResult')" :label="$t('k8s.kubench_compliance')" prop="kubenchResult" sortable show-overflow-tooltip min-width="200">
+          <el-tooltip effect="dark" :content="$t('k8s.kubench_result') + ' FAIL:' + scope.row.fail + ' WARN:' +  scope.row.warn + ' INFO:' + scope.row.info + ' PASS:' + scope.row.pass" placement="top">
+            <div class="txt-click" @click="goKubenchResource(scope.row)">
+              <span style="background-color: #8B0000;color: white;padding: 3px;">{{ 'F:' + scope.row.fail }}</span>
+              <span style="background-color: #FF4D4D;color: white;padding: 3px;">{{ 'W:' +  scope.row.warn }}</span>
+              <span style="background-color: #FF8000;color: white;padding: 3px;">{{ 'I:' + scope.row.info }}</span>
+              <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'P:' + scope.row.pass }}</span>
+            </div>
+          </el-tooltip>
+        </el-table-column>
         <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('image.result_status')" min-width="130" prop="resultStatus" sortable show-overflow-tooltip>
           <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
@@ -171,6 +181,11 @@ const columnOptions = [
   {
     label: 'k8s.config_compliance',
     props: 'configResult',
+    disabled: false
+  },
+  {
+    label: 'k8s.kubench_compliance',
+    props: 'kubenchResult',
     disabled: false
   },
   {
@@ -386,6 +401,24 @@ export default {
         }).catch(error => error);
       } else if (path.indexOf("/resource") >= 0) {
         let p = '/resource/K8sResultConfigdetails/' + params.id;
+        this.$router.push({
+          path: p
+        }).catch(error => error);
+      }
+    },
+    goKubenchResource (params) {
+      if (params.returnConfigSum == 0) {
+        this.$warning(this.$t('resource.no_resources_allowed'));
+        return;
+      }
+      let path = this.$route.path;
+      if (path.indexOf("/k8s") >= 0) {
+        let p = '/k8s/resultkubenchdetails/' + params.id;
+        this.$router.push({
+          path: p
+        }).catch(error => error);
+      } else if (path.indexOf("/resource") >= 0) {
+        let p = '/resource/K8sResultKubenchdetails/' + params.id;
         this.$router.push({
           path: p
         }).catch(error => error);
