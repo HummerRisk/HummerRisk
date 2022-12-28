@@ -1350,6 +1350,7 @@ export default {
     back_resource: '返回 K8s 检测结果列表',
     result_details_list: 'K8s 漏洞检测结果详情列表',
     result_config_details_list: 'K8s 配置审计结果详情列表',
+    result_kubench_details_list: 'K8s CIS Benchmark 结果详情列表',
     k8s_note: '注: 使用 K8s 安全检测前，需在 K8s 集群上安装 tirvy-operator!',
     sync_log_create: '创建资源同步任务',
     sync_log_list: 'K8s 资源同步日志列表',

@@ -1350,6 +1350,7 @@ export default {
     back_resource: 'Return the list of K8s detection results',
     result_details_list: 'K8s vulnerability detection result details list',
     result_config_details_list: 'K8s configuration audit result details list',
+    result_kubench_details_list: 'K8s CIS Benchmark result details list',
     k8s_note: 'Note: Before using K8s security detection, you need to install tirvy-operator on the K8s cluster!',
     sync_log_create: 'Create resource synchronization task',
     sync_log_list: 'K8s resource synchronization log list',

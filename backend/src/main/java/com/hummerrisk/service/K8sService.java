@@ -722,13 +722,13 @@ public class K8sService {
                     strs = result.split("== Remediations policies ==");
                 }
                 for (String str : strs) {
-                    if(StringUtils.isEmpty(str)) continue;
+                    if(StringUtils.isEmpty(str) || str == null) continue;
                     if (str.contains("[PASS]") || str.contains("[INFO]") || str.contains("[WARN]") || str.contains("[FAIL]")) {
                         InputStreamReader read = new InputStreamReader(new ByteArrayInputStream(str.getBytes()));
                         BufferedReader bufferedReader = new BufferedReader(read);
                         String lineTxt;
                         while ((lineTxt = bufferedReader.readLine()) != null) {
-                            if(!StringUtils.isEmpty(lineTxt) && (lineTxt.contains("[PASS]") || lineTxt.contains("[INFO]") || lineTxt.contains("[WARN]") || lineTxt.contains("[FAIL]"))){
+                            if(lineTxt != null && !StringUtils.isEmpty(lineTxt) && (lineTxt.contains("[PASS]") || lineTxt.contains("[INFO]") || lineTxt.contains("[WARN]") || lineTxt.contains("[FAIL]"))){
                                 CloudNativeResultKubenchWithBLOBs kubenchWithBLOBs = new CloudNativeResultKubenchWithBLOBs();
                                 kubenchWithBLOBs.setResultId(resultId);
                                 kubenchWithBLOBs.setCreateTime(System.currentTimeMillis());
@@ -755,12 +755,14 @@ public class K8sService {
                     } else {
                         String[] descriptions = str.split("\n\n");
                         for (String desc : descriptions) {
-                            if (desc == null) continue;
+                            if (StringUtils.isEmpty(desc) || desc == null) continue;
                             if (desc.startsWith("\n")) desc = desc.replaceFirst("\n", "");
                             String number = desc.split("\\s+")[0];
                             CloudNativeResultKubenchExample example = new CloudNativeResultKubenchExample();
                             example.createCriteria().andResultIdEqualTo(resultId).andNumberEqualTo(number);
-                            CloudNativeResultKubenchWithBLOBs record = cloudNativeResultKubenchMapper.selectByExampleWithBLOBs(example).get(0);
+                            List<CloudNativeResultKubenchWithBLOBs> list = cloudNativeResultKubenchMapper.selectByExampleWithBLOBs(example);
+                            if (list.size() < 1) continue;
+                            CloudNativeResultKubenchWithBLOBs record = list.get(0);
                             record.setDescription(desc);
                             cloudNativeResultKubenchMapper.updateByPrimaryKeySelective(record);
                         }
