@@ -17,9 +17,11 @@ public interface ExtCloudNativeResultMapper {
 
     List<CloudNativeSourceSyncLogWithBLOBsDTO> syncList(@Param("request") CloudNativeSyncLogRequest request);
 
-    MetricChartDTO metricChart (String resultId);
+    MetricChartDTO metricChart(String resultId);
 
-    MetricChartDTO metricConfigChart (String resultId);
+    MetricChartDTO metricConfigChart(String resultId);
+
+    KubenchChartDTO kubenchChart(String resultId);
 
     List<HistoryCloudNativeResultDTO> history(Map<String, Object> params);
 

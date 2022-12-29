@@ -984,6 +984,10 @@ public class K8sService {
         return extCloudNativeResultMapper.metricConfigChart(resultId);
     }
 
+    public KubenchChartDTO kubenchChart (String resultId) {
+        return extCloudNativeResultMapper.kubenchChart(resultId);
+    }
+
     public String download(Map<String, Object> map) {
         HistoryCloudNativeResultWithBLOBs historyCloudNativeResultWithBLOBs = historyCloudNativeResultMapper.selectByPrimaryKey(map.get("id").toString());
         JSONObject str = JSON.parseObject(historyCloudNativeResultWithBLOBs.getVulnerabilityReport()!=null?historyCloudNativeResultWithBLOBs.getVulnerabilityReport():"{}");

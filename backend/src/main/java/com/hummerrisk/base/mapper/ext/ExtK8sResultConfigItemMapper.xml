@@ -62,12 +62,6 @@
                 <property name="object" value="${condition}.severity"/>
             </include>
         </if>
-        <if test='${condition}.severity != null'>
-            and t.severity
-            <include refid="condition">
-                <property name="object" value="${condition}.severity"/>
-            </include>
-        </if>
         <if test="${condition}.category != null">
             and t.category
             <include refid="condition">
@@ -116,6 +110,62 @@
         ORDER BY FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')
     </select>
 
+    <sql id="combine2">
+        <if test='${condition}.title != null'>
+            and t.title
+            <include refid="condition">
+                <property name="object" value="${condition}.title"/>
+            </include>
+        </if>
+        <if test='${condition}.number != null'>
+            and t.number
+            <include refid="condition">
+                <property name="object" value="${condition}.number"/>
+            </include>
+        </if>
+        <if test='${condition}.severity != null'>
+            and t.severity
+            <include refid="condition">
+                <property name="object" value="${condition}.severity"/>
+            </include>
+        </if>
+        <if test="${condition}.description != null">
+            and t.description
+            <include refid="condition">
+                <property name="object" value="${condition}.description"/>
+            </include>
+        </if>
+    </sql>
 
+    <select id="resultKubenchItemListBySearch" resultType="com.hummerrisk.base.domain.CloudNativeResultKubenchWithBLOBs" parameterType="com.hummerrisk.controller.request.k8s.K8sKubenchResultItemRequest">
+        SELECT
+        t.*
+        FROM cloud_native_result_kubench t
+
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine2">
+                    <property name="condition" value="request.combine"/>
+                </include>
+            </if>
+
+            <if test="request.resultId != null and request.resultId != ''">
+                and t.result_id = #{request.resultId}
+            </if>
+            <if test="request.title != null and request.title != ''">
+                and LOWER(t.title) like CONCAT('%', LOWER(#{request.title}),'%')
+            </if>
+            <if test="request.number != null and request.number != ''">
+                and LOWER(t.number) like CONCAT('%', LOWER(#{request.number}),'%')
+            </if>
+            <if test="request.severity != null and request.severity != ''">
+                and LOWER(t.severity) like CONCAT('%', LOWER(#{request.severity}),'%')
+            </if>
+            <if test="request.description != null and request.description != ''">
+                and LOWER(t.description) like CONCAT('%', LOWER(#{request.description}),'%')
+            </if>
+        </where>
+        ORDER BY FIELD(t.`severity`, 'FAIL', 'WARN', 'INFO', 'PASS'), t.number
+    </select>
 
 </mapper>

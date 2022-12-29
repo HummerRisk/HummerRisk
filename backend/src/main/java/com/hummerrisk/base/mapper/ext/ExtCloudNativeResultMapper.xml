@@ -261,6 +261,17 @@
          )
     </select>
 
+    <select id="kubenchChart" resultType="com.hummerrisk.dto.KubenchChartDTO" parameterType="java.lang.String">
+        SELECT *
+        from (
+             (SELECT count(*) as fail FROM cloud_native_result_kubench t WHERE LOWER(t.severity) = 'fail' AND t.result_id = #{resultId}) as fail,
+             (SELECT count(*) as warn FROM cloud_native_result_kubench t WHERE LOWER(t.severity) = 'warn' AND t.result_id = #{resultId}) as warn,
+             (SELECT count(*) as info FROM cloud_native_result_kubench t WHERE LOWER(t.severity) = 'info' AND t.result_id = #{resultId}) as info,
+             (SELECT count(*) as pass FROM cloud_native_result_kubench t WHERE LOWER(t.severity) = 'pass' AND t.result_id = #{resultId}) as pass,
+             (SELECT count(*) as total FROM cloud_native_result_kubench t WHERE t.result_id = #{resultId}) as total
+         )
+    </select>
+
     <select id="history" parameterType="java.util.Map" resultType="com.hummerrisk.dto.HistoryCloudNativeResultDTO">
         SELECT
         t.*,

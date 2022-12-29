@@ -266,6 +266,13 @@ public class K8sController {
         return k8sService.metricConfigChart(resultId);
     }
 
+    @I18n
+    @ApiOperation(value = "Kubench 风险数据信息")
+    @GetMapping("kubenchChart/{resultId}")
+    public KubenchChartDTO kubenchChart(@PathVariable String resultId) {
+        return k8sService.kubenchChart(resultId);
+    }
+
     @ApiOperation(value = "下载检测报告")
     @PostMapping("download")
     public String download(@RequestBody Map<String, Object> map) throws Exception {

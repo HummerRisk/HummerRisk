@@ -4,7 +4,7 @@
 
         <section class="report-container">
           <main>
-            <metric-chart :content="content"/>
+            <bench-chart :content="content"/>
           </main>
         </section>
 
@@ -28,22 +28,19 @@
           :tableRow="false"
         >
           <el-table-column type="index" min-width="40"/>
-          <el-table-column min-width="100" v-if="checkedColumnNames.includes('number')" :label="'Number'" prop="number" v-slot:default="scope">
+          <el-table-column min-width="50" v-if="checkedColumnNames.includes('number')" :label="'Number'" prop="number" v-slot:default="scope">
             <span style="font-weight:bold;color: #000000;">{{ scope.row.number }}</span>
           </el-table-column>
-          <el-table-column min-width="250" v-if="checkedColumnNames.includes('title')" :label="'Title'" prop="title">
+          <el-table-column min-width="200" v-if="checkedColumnNames.includes('title')" :label="'Title'" prop="title">
           </el-table-column>
-          <el-table-column min-width="70" v-if="checkedColumnNames.includes('severity')" :label="'Severity'" prop="severity" v-slot:default="scope">
+          <el-table-column min-width="50" v-if="checkedColumnNames.includes('severity')" :label="'Severity'" prop="severity" v-slot:default="scope">
             <span v-if="scope.row.severity === 'FAIL'" style="color: #8B0000;">{{ scope.row.severity }}</span>
             <span v-if="scope.row.severity === 'WARN'" style="color: #FF4D4D;">{{ scope.row.severity }}</span>
             <span v-if="scope.row.severity === 'INFO'" style="color: #FF8000;">{{ scope.row.severity }}</span>
             <span v-if="scope.row.severity === 'PASS'" style="color: #336D9F;">{{ scope.row.severity }}</span>
           </el-table-column>
-          <el-table-column min-width="250" v-if="checkedColumnNames.includes('description')" :label="'Description'" prop="description" v-slot:default="scope">
-            <span>{{ scope.row.description }}</span>
-          </el-table-column>
-          <el-table-column min-width="70" :label="'Success'" prop="success" v-slot:default="scope" fixed="right">
-            {{ scope.row.success?scope.row.success:'N/A' }}
+          <el-table-column min-width="350" v-if="checkedColumnNames.includes('description')" :label="'Description'" prop="description" v-slot:default="scope" fixed="right">
+            <span v-html="scope.row.description?scope.row.description.replace(/\n/g, '<br/>'):'N/A'"></span>
           </el-table-column>
         </hide-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
@@ -60,8 +57,8 @@ import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/RuleDialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
-import MetricChart from "@/business/components/common/chart/MetricChart";
-import { DETAIL_RESULT_CONFIGS } from "@/business/components/common/components/search/search-components";
+import BenchChart from "../head/BenchChart";
+import { K8S_KUBENCH_RESULT_CONFIGS } from "@/business/components/common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 
 //列表展示与隐藏
@@ -99,7 +96,7 @@ const columnOptions = [
       TablePagination,
       TableOperator,
       DialogFooter,
-      MetricChart,
+      BenchChart,
       HideTable,
     },
     data() {
@@ -111,7 +108,7 @@ const columnOptions = [
         total: 0,
         loading: false,
         condition: {
-          components: DETAIL_RESULT_CONFIGS
+          components: K8S_KUBENCH_RESULT_CONFIGS
         },
         tagSelect: [],
         resourceTypes: [],
@@ -129,11 +126,10 @@ const columnOptions = [
         },
         resultId: "",
         content: {
-          critical: 0,
-          high: 0,
-          medium: 0,
-          low: 0,
-          unknown: 0,
+          fail: 0,
+          warn: 0,
+          info: 0,
+          pass: 0,
           total: 0,
         },
         checkedColumnNames: columnOptions.map((ele) => ele.props),
@@ -192,7 +188,7 @@ const columnOptions = [
           this.total = data.itemCount;
           this.tableData = data.listObject;
         });
-        this.result = this.$get("/k8s/metricConfigChart/"+ this.resultId, response => {
+        this.result = this.$get("/k8s/kubenchChart/"+ this.resultId, response => {
           this.content = response.data;
         });
       },
