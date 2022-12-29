@@ -174,11 +174,19 @@ public class K8sController {
     }
 
     @I18n
-    @ApiOperation(value = "云原生漏洞检测结果详情列表")
+    @ApiOperation(value = "云原生配置审计结果详情列表")
     @PostMapping("resultConfigItemListBySearch/{goPage}/{pageSize}")
     public Pager<List<CloudNativeResultConfigItemWithBLOBs>> resultConfigItemListBySearch(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sConfigResultItemRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, k8sService.resultConfigItemListBySearch(request));
+    }
+
+    @I18n
+    @ApiOperation(value = "云原生Cis结果详情列表")
+    @PostMapping("resultKubenchItemListBySearch/{goPage}/{pageSize}")
+    public Pager<List<CloudNativeResultKubenchWithBLOBs>> resultKubenchItemListBySearch(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sKubenchResultItemRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, k8sService.resultKubenchItemListBySearch(request));
     }
 
     @I18n

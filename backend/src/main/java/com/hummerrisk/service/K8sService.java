@@ -912,6 +912,10 @@ public class K8sService {
         return extK8sResultConfigItemMapper.resultConfigItemListBySearch(request);
     }
 
+    public List<CloudNativeResultKubenchWithBLOBs> resultKubenchItemListBySearch(K8sKubenchResultItemRequest request) {
+        return extK8sResultConfigItemMapper.resultKubenchItemListBySearch(request);
+    }
+
     public CloudNativeResultDTO getCloudNativeResult(String resultId) {
         CloudNativeResultDTO cloudNativeResult = extCloudNativeResultMapper.getCloudNativeResult(resultId);
         return cloudNativeResult;

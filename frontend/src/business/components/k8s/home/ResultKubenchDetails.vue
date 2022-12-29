@@ -28,20 +28,16 @@
           :tableRow="false"
         >
           <el-table-column type="index" min-width="40"/>
-          <el-table-column min-width="120" v-if="checkedColumnNames.includes('number')" :label="'Number'" prop="number" v-slot:default="scope">
+          <el-table-column min-width="100" v-if="checkedColumnNames.includes('number')" :label="'Number'" prop="number" v-slot:default="scope">
             <span style="font-weight:bold;color: #000000;">{{ scope.row.number }}</span>
           </el-table-column>
-          <el-table-column min-width="70" v-if="checkedColumnNames.includes('checkId')" :label="'CheckID'" prop="checkId">
+          <el-table-column min-width="250" v-if="checkedColumnNames.includes('title')" :label="'Title'" prop="title">
           </el-table-column>
           <el-table-column min-width="70" v-if="checkedColumnNames.includes('severity')" :label="'Severity'" prop="severity" v-slot:default="scope">
-            <span v-if="scope.row.severity === 'CRITICAL'" style="color: #8B0000;">{{ scope.row.severity }}</span>
-            <span v-if="scope.row.severity === 'HIGH'" style="color: #FF4D4D;">{{ scope.row.severity }}</span>
-            <span v-if="scope.row.severity === 'MEDIUM'" style="color: #FF8000;">{{ scope.row.severity }}</span>
-            <span v-if="scope.row.severity === 'LOW'" style="color: #336D9F;">{{ scope.row.severity }}</span>
-            <span v-if="scope.row.severity === 'UNKNOWN'" style="color: #67C23A;">{{ scope.row.severity }}</span>
-          </el-table-column>
-          <el-table-column min-width="120" v-if="checkedColumnNames.includes('category')" :label="'Category'" prop="category" v-slot:default="scope">
-            {{ scope.row.category?scope.row.category:'N/A' }}
+            <span v-if="scope.row.severity === 'FAIL'" style="color: #8B0000;">{{ scope.row.severity }}</span>
+            <span v-if="scope.row.severity === 'WARN'" style="color: #FF4D4D;">{{ scope.row.severity }}</span>
+            <span v-if="scope.row.severity === 'INFO'" style="color: #FF8000;">{{ scope.row.severity }}</span>
+            <span v-if="scope.row.severity === 'PASS'" style="color: #336D9F;">{{ scope.row.severity }}</span>
           </el-table-column>
           <el-table-column min-width="250" v-if="checkedColumnNames.includes('description')" :label="'Description'" prop="description" v-slot:default="scope">
             <span>{{ scope.row.description }}</span>
@@ -76,18 +72,13 @@ const columnOptions = [
     disabled: false
   },
   {
-    label: 'CheckID',
-    props: 'checkId',
+    label: 'Title',
+    props: 'title',
     disabled: false
   },
   {
     label: 'Severity',
     props: 'severity',
-    disabled: false
-  },
-  {
-    label: 'Category',
-    props: 'category',
     disabled: false
   },
   {
@@ -154,16 +145,12 @@ const columnOptions = [
             id: 'number',
           },
           {
-            name: 'CheckID',
-            id: 'checkId',
+            name: 'Title',
+            id: 'title',
           },
           {
             name: 'Severity',
             id: 'severity',
-          },
-          {
-            name: 'Category',
-            id: 'category',
           },
           {
             name: 'Description',
@@ -198,7 +185,7 @@ const columnOptions = [
         this.init();
       },
       search () {
-        let url = "/k8s/resultConfigItemListBySearch/" + this.currentPage + "/" + this.pageSize;
+        let url = "/k8s/resultKubenchItemListBySearch/" + this.currentPage + "/" + this.pageSize;
         this.condition.resultId = this.resultId;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;

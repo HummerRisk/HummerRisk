@@ -48,6 +48,11 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/ResultConfigDetails"),
     },
     {
+      path: "K8sResultKubenchdetails/:id",
+      name: "K8sResourceResultkubenchDetails",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/ResultKubenchDetails"),
+    },
+    {
       path: "ConfigResult",
       name: "ConfigResourceResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/config/home/Result'),
