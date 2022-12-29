@@ -34,6 +34,16 @@
               </div>
             </el-tooltip>
           </el-table-column>
+          <el-table-column v-slot:default="scope" :label="$t('k8s.kubench_compliance')" prop="kubenchResult" sortable show-overflow-tooltip min-width="190">
+            <el-tooltip effect="dark" :content="$t('k8s.kubench_result') + ' FAIL:' + scope.row.fail + ' WARN:' +  scope.row.warn + ' INFO:' + scope.row.info + ' PASS:' + scope.row.pass" placement="top">
+              <div class="txt-click" @click="goKubenchResource(scope.row)">
+                <span style="background-color: #8B0000;color: white;padding: 3px;">{{ 'F:' + scope.row.fail }}</span>
+                <span style="background-color: #FF4D4D;color: white;padding: 3px;">{{ 'W:' +  scope.row.warn }}</span>
+                <span style="background-color: #FF8000;color: white;padding: 3px;">{{ 'I:' + scope.row.info }}</span>
+                <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'P:' + scope.row.pass }}</span>
+              </div>
+            </el-tooltip>
+          </el-table-column>
           <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="120" prop="resultStatus" sortable show-overflow-tooltip>
             <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
@@ -73,7 +83,7 @@
       <el-drawer class="rtl" :title="$t('k8s.vuln_compliance')" :visible.sync="statisticsList" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <div>
-          <el-table border :data="statisticsData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
+          <el-table border :data="statisticsData" class="adjust-table table-content" @sort-change="sort">
             <el-table-column type="index" min-width="2%"/>
             <el-table-column min-width="10%" :label="'Resource'" prop="resource" v-slot:default="scope">
               <span style="font-weight:bold;color: #000000;">{{ scope.row.resource }}</span>
@@ -108,7 +118,7 @@
       <el-drawer class="rtl" :title="$t('k8s.config_compliance')" :visible.sync="configReportList" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <div>
-          <el-table border :data="configReportData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
+          <el-table border :data="configReportData" class="adjust-table table-content" @sort-change="sort">
             <el-table-column type="index" min-width="2%"/>
             <el-table-column min-width="10%" :label="'Title'" prop="title" v-slot:default="scope">
               <span style="font-weight:bold;color: #000000;">{{ scope.row.title }}</span>
@@ -135,6 +145,31 @@
         </div>
       </el-drawer>
       <!--History config report-->
+
+      <!--History kubench-->
+      <el-drawer class="rtl" :title="$t('k8s.kubench_compliance')" :visible.sync="kubenchList" size="85%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true">
+        <div>
+          <el-table border :data="kubenchData" class="adjust-table table-content" @sort-change="sort">
+            <el-table-column type="index" min-width="40"/>
+            <el-table-column min-width="50" :label="'Number'" prop="number" v-slot:default="scope">
+              <span style="font-weight:bold;color: #000000;">{{ scope.row.number }}</span>
+            </el-table-column>
+            <el-table-column min-width="200" :label="'Title'" prop="title">
+            </el-table-column>
+            <el-table-column min-width="50" :label="'Severity'" prop="severity" v-slot:default="scope">
+              <span v-if="scope.row.severity === 'FAIL'" style="color: #8B0000;">{{ scope.row.severity }}</span>
+              <span v-if="scope.row.severity === 'WARN'" style="color: #FF4D4D;">{{ scope.row.severity }}</span>
+              <span v-if="scope.row.severity === 'INFO'" style="color: #FF8000;">{{ scope.row.severity }}</span>
+              <span v-if="scope.row.severity === 'PASS'" style="color: #336D9F;">{{ scope.row.severity }}</span>
+            </el-table-column>
+            <el-table-column min-width="350" :label="'Description'" prop="description" v-slot:default="scope" fixed="right">
+              <span v-html="scope.row.description?scope.row.description.replace(/\n/g, '<br/>'):'N/A'"></span>
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-drawer>
+      <!--History kubench-->
 
       <!--History status-->
       <el-drawer class="rtl" :title="$t('resource.i18n_resource_scanning_log')" :visible.sync="logVisible" size="85%" :before-close="handleClose" :direction="direction"
@@ -327,9 +362,11 @@ import CodeDiff from 'vue-code-diff';
         outputListSearchData: {},
         statisticsList: false,
         configReportList: false,
+        kubenchList: false,
         logVisible: false,
         statisticsData: [],
         configReportData: [],
+        kubenchData: [],
         logForm: {},
         logData: [],
       }
@@ -405,6 +442,7 @@ import CodeDiff from 'vue-code-diff';
         this.visibleList = false;
         this.statisticsList = false;
         this.configReportList = false;
+        this.kubenchList = false;
         this.logVisible = false;
       },
       innerDrawerClose() {
@@ -439,6 +477,18 @@ import CodeDiff from 'vue-code-diff';
           let data = response.data;
           this.configReportData = data;
           this.configReportList = true;
+        });
+      },
+      goKubenchResource(params){
+        if (params.returnConfigSum == 0) {
+          this.$warning(this.$t('resource.no_resources_allowed'));
+          return;
+        }
+        let url = "/k8s/historyResultKubenchList";
+        this.result = this.$post(url, {resultId: params.id}, response => {
+          let data = response.data;
+          this.kubenchData = data;
+          this.kubenchList = true;
         });
       },
       showResultLog (result) {

@@ -1033,6 +1033,13 @@ public class K8sService {
         return cloudNativeResultConfigItemMapper.selectByExampleWithBLOBs(example);
     }
 
+    public List<CloudNativeResultKubenchWithBLOBs> historyResultKubenchList(CloudNativeResultKubenchWithBLOBs item) {
+        CloudNativeResultKubenchExample example = new CloudNativeResultKubenchExample();
+        example.createCriteria().andResultIdEqualTo(item.getResultId());
+        example.setOrderByClause("FIELD(`severity`, 'FAIL', 'WARN', 'INFO', 'PASS')");
+        return cloudNativeResultKubenchMapper.selectByExampleWithBLOBs(example);
+    }
+
     public void deleteHistoryK8sResult(String id) throws Exception {
         historyCloudNativeResultMapper.deleteByPrimaryKey(id);
     }

@@ -329,6 +329,13 @@ public class K8sController {
         return k8sService.historyResultConfigItemList(request);
     }
 
+    @I18n
+    @ApiOperation(value = "Kubench 结果历史详情")
+    @PostMapping("historyResultKubenchList")
+    public List<CloudNativeResultKubenchWithBLOBs> historyResultKubenchList(@RequestBody CloudNativeResultKubenchWithBLOBs request) {
+        return k8sService.historyResultKubenchList(request);
+    }
+
     @ApiOperation(value = "删除检测历史记录")
     @GetMapping("deleteHistoryK8sResult/{id}")
     public void deleteHistoryK8sResult(@PathVariable String id) throws Exception {
