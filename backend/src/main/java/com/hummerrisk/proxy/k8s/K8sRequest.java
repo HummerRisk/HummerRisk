@@ -159,12 +159,26 @@ public class K8sRequest extends Request {
         return true;
     }
 
+    public void deleteJob() throws ApiException, IOException {
+        try {
+            ApiClient apiClient = getK8sClient(null);
+            BatchV1Api apiInstance = new BatchV1Api(apiClient);
+            V1Status result = apiInstance.deleteNamespacedJob("kube-bench-job","default", null,null,null,null,null, null);
+            LogUtil.info(result.getStatus());
+            LogUtil.info("Success, Job 删除成功");
+        } catch (ApiException e){
+            LogUtil.error("Status code: {}"+ e.getCode());
+            LogUtil.error("Reason: {}"+ e.getResponseBody());
+            LogUtil.error("Response headers: {}"+ e.getResponseHeaders());
+        }
+    }
+
     /**
      * 创建命名空间和通过Job资源对象文件来创建Job
      * @throws IOException
      * @throws ApiException
      */
-    private void createJob() throws ApiException, IOException {
+    public void createJob() throws ApiException, IOException {
         File jobFile = new File("/opt/hummerrisk/file/kube-bench-job.yaml");
         V1Job body = (V1Job) Yaml.load(jobFile);
         try {

@@ -670,6 +670,8 @@ public class K8sService {
             String token = "Bearer " + k8sRequest.getToken();
             String url = k8sRequest.getUrl();
 
+            createKubench(k8sRequest);
+
             K8sSource pod = k8sRequest.getKubenchPod(cloudNative);
             CloudNativeSourceExample example = new CloudNativeSourceExample();
             example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("%kube-bench-%");
@@ -702,6 +704,11 @@ public class K8sService {
             LogUtil.error(e.getMessage());
         }
         return "";
+    }
+
+    void createKubench(K8sRequest k8sRequest) throws IOException, ApiException {
+        k8sRequest.deleteJob();
+        k8sRequest.createJob();
     }
 
     void saveKubenchResultItem(String reponse, String resultId) throws Exception {
