@@ -284,7 +284,11 @@
         (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'high') as configHigh,
         (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'medium') as configMedium,
         (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'low') as configLow,
-        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'unknown') as configUnknown
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'unknown') as configUnknown,
+        (select count(*) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'fail') as fail,
+        (select count(*) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'warn') as warn,
+        (select count(*) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'info') as info,
+        (select count(*) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'pass') as pass
         FROM history_cloud_native_result t
 
         <where>

@@ -4,6 +4,8 @@ ALTER TABLE `cloud_native` ADD `kubench_status` varchar(10) DEFAULT null COMMENT
 
 ALTER TABLE `cloud_native_result` ADD `kube_bench` longtext DEFAULT null COMMENT 'kube bench';
 
+ALTER TABLE `history_cloud_native_result` ADD `kube_bench` longtext DEFAULT null COMMENT 'kube bench';
+
 CREATE TABLE IF NOT EXISTS `cloud_native_result_kubench`
 (
     `id`                         varchar(50)         NOT NULL,
