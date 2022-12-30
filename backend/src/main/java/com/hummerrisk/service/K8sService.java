@@ -670,18 +670,10 @@ public class K8sService {
             String token = "Bearer " + k8sRequest.getToken();
             String url = k8sRequest.getUrl();
 
-            createKubench(k8sRequest);
-
-            K8sSource pod = k8sRequest.getKubenchPod(cloudNative);
             CloudNativeSourceExample example = new CloudNativeSourceExample();
             example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("%kube-bench-%");
-            cloudNativeSourceMapper.deleteByExample(example);
-            for(CloudNativeSourceWithBLOBs k8sSource : pod.getK8sSource()) {
-                cloudNativeSourceMapper.insertSelective(k8sSource);
-            }
-            for(CloudNativeSourceImage cloudNativeSourceImage : pod.getK8sSourceImage()) {
-                cloudNativeSourceImageMapper.insertSelective(cloudNativeSourceImage);
-            }
+
+            createKubench(k8sRequest, example, cloudNative);
 
             CloudNativeSource cloudNativeSource = cloudNativeSourceMapper.selectByExample(example).get(0);
 
@@ -706,9 +698,21 @@ public class K8sService {
         return "";
     }
 
-    void createKubench(K8sRequest k8sRequest) throws IOException, ApiException {
+    void createKubench(K8sRequest k8sRequest, CloudNativeSourceExample example, CloudNative cloudNative) throws IOException, ApiException {
         k8sRequest.deleteJob();
+        List<CloudNativeSource> list = cloudNativeSourceMapper.selectByExample(example);
+        cloudNativeSourceMapper.deleteByExample(example);
+        for (CloudNativeSource cloudNativeSource : list) {
+            k8sRequest.deletePod(cloudNativeSource.getSourceName());
+        }
         k8sRequest.createJob();
+        K8sSource pod = k8sRequest.getKubenchPod(cloudNative);
+        for(CloudNativeSourceWithBLOBs k8sSource : pod.getK8sSource()) {
+            cloudNativeSourceMapper.insertSelective(k8sSource);
+        }
+        for(CloudNativeSourceImage cloudNativeSourceImage : pod.getK8sSourceImage()) {
+            cloudNativeSourceImageMapper.insertSelective(cloudNativeSourceImage);
+        }
     }
 
     void saveKubenchResultItem(String reponse, String resultId) throws Exception {
@@ -728,6 +732,7 @@ public class K8sService {
                 } else if (result.contains("== Remediations policies ==")) {
                     strs = result.split("== Remediations policies ==");
                 }
+                if(strs == null) continue;
                 for (String str : strs) {
                     if(StringUtils.isEmpty(str) || str == null) continue;
                     if (str.contains("[PASS]") || str.contains("[INFO]") || str.contains("[WARN]") || str.contains("[FAIL]")) {
@@ -761,6 +766,7 @@ public class K8sService {
                         read.close();
                     } else {
                         String[] descriptions = str.split("\n\n");
+                        if (descriptions == null) continue;
                         for (String desc : descriptions) {
                             if (StringUtils.isEmpty(desc) || desc == null) continue;
                             if (desc.startsWith("\n")) desc = desc.replaceFirst("\n", "");

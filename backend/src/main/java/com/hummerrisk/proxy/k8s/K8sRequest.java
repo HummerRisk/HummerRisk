@@ -163,13 +163,31 @@ public class K8sRequest extends Request {
         try {
             ApiClient apiClient = getK8sClient(null);
             BatchV1Api apiInstance = new BatchV1Api(apiClient);
-            V1Status result = apiInstance.deleteNamespacedJob("kube-bench-job","default", null,null,null,null,null, null);
-            LogUtil.info(result.getStatus());
-            LogUtil.info("Success, Job 删除成功");
+            V1Status result = apiInstance.deleteNamespacedJob("kube-bench","default", null,null,null,null,null, null);
+            LogUtil.debug(result.getStatus());
+            LogUtil.debug("Success, Job 删除成功");
         } catch (ApiException e){
             LogUtil.error("Status code: {}"+ e.getCode());
             LogUtil.error("Reason: {}"+ e.getResponseBody());
             LogUtil.error("Response headers: {}"+ e.getResponseHeaders());
+        } catch (Exception ex){
+            LogUtil.error(ex.getMessage());
+        }
+    }
+
+    public void deletePod(String name) throws ApiException, IOException {
+        try {
+            ApiClient apiClient = getK8sClient(null);
+            CoreV1Api apiInstance = new CoreV1Api(apiClient);
+            V1Pod result = apiInstance.deleteNamespacedPod(name,"default", null,null,null,null,null, null);
+            LogUtil.debug(result.getStatus());
+            LogUtil.debug("Success, Pod 删除成功");
+        } catch (ApiException e){
+            LogUtil.error("Status code: {}"+ e.getCode());
+            LogUtil.error("Reason: {}"+ e.getResponseBody());
+            LogUtil.error("Response headers: {}"+ e.getResponseHeaders());
+        } catch (Exception ex){
+            LogUtil.error(ex.getMessage());
         }
     }
 
@@ -185,7 +203,7 @@ public class K8sRequest extends Request {
             ApiClient apiClient = getK8sClient(null);
             BatchV1Api apiInstance = new BatchV1Api(apiClient);
             V1Job result = apiInstance.createNamespacedJob("default", body,null,null,null,null);
-            LogUtil.info("Success, Job 创建成功");
+            LogUtil.debug("Success, Job 创建成功");
         } catch (ApiException e){
             if (e.getCode() == 409) {
                 LogUtil.error("error Job 创建已重复！");
@@ -201,6 +219,8 @@ public class K8sRequest extends Request {
             LogUtil.error("Status code: {}"+ e.getCode());
             LogUtil.error("Reason: {}"+ e.getResponseBody());
             LogUtil.error("Response headers: {}"+ e.getResponseHeaders());
+        } catch (Exception ex){
+            LogUtil.error(ex.getMessage());
         }
     }
 

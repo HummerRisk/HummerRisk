@@ -317,6 +317,10 @@ export default {
               data.medium = result.medium;
               data.low = result.low;
               data.unknown = result.unknown;
+              data.fail = result.fail;
+              data.warn = result.warn;
+              data.info = result.info;
+              data.pass = result.pass;
             }
           });
         }
