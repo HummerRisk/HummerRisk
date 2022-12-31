@@ -49,41 +49,16 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="operatorStatus" v-if="checkedColumnNames.includes('operatorStatus')" min-width="130" :label="$t('k8s.operator_status')"
-                         column-key="operatorStatus"
-                         :filters="statusFilters"
-                         :filter-method="filterOperatorStatus">
-          <template v-slot:default="{row}">
-            <div @click="validateOperator(row)" style="cursor:pointer;">
-              <el-tag size="mini" type="warning" v-if="row.operatorStatus === 'DELETE'">
-                {{ $t('account.DELETE') }}
-              </el-tag>
-              <el-tag size="mini" type="success" v-else-if="row.operatorStatus === 'VALID'">
-                {{ $t('account.VALID') }}
-              </el-tag>
-              <el-tag size="mini" type="danger" v-else-if="row.operatorStatus === 'INVALID'">
-                {{ $t('account.INVALID') }}
-              </el-tag>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="kubenchStatus" v-if="checkedColumnNames.includes('kubenchStatus')" min-width="150" :label="$t('k8s.kubench_status')"
-                         column-key="kubenchStatus"
-                         :filters="statusFilters"
-                         :filter-method="filterKubenchStatus">
-          <template v-slot:default="{row}">
-            <div @click="validateKubench(row)" style="cursor:pointer;">
-              <el-tag size="mini" type="warning" v-if="row.kubenchStatus === 'DELETE'">
-                {{ $t('account.DELETE') }}
-              </el-tag>
-              <el-tag size="mini" type="success" v-else-if="row.kubenchStatus === 'VALID'">
-                {{ $t('account.VALID') }}
-              </el-tag>
-              <el-tag size="mini" type="danger" v-else-if="row.kubenchStatus === 'INVALID'">
-                {{ $t('account.INVALID') }}
-              </el-tag>
-            </div>
-          </template>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('log')" :label="$t('k8s.install_log')" min-width="130" prop="log" show-overflow-tooltip>
+          <el-button @click="showLog(scope.row)" plain size="mini" type="success" v-if="scope.row.resultStatus === 'FINISHED'">
+            <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+          </el-button>
+          <el-button @click="showLog(scope.row)" plain size="mini" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+            <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+          </el-button>
+          <el-button @click="showLog(scope.row)" plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+            <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+          </el-button>
         </el-table-column>
         <el-table-column min-width="160" v-if="checkedColumnNames.includes('updateTime')" :label="$t('account.update_time')" sortable
                          prop="updateTime">
@@ -212,6 +187,103 @@
     </el-drawer>
     <!--Update k8s-->
 
+    <!--Install log-->
+    <el-drawer class="rtl" :title="$t('k8s.install_log')" :visible.sync="logVisible" size="85%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <el-row class="el-form-item-dev">
+        <div>
+          <el-row>
+            <el-col :span="24">
+              <div class="grid-content bg-purple-light">
+                <span class="grid-content-log-span"> {{ logForm.name }}</span>
+                <span class="grid-content-log-span">
+                  <img :src="require(`@/assets/img/platform/${logForm.pluginIcon?logForm.pluginIcon:'k8s.png'}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                </span>
+                <span class="grid-content-status-span" v-if="logForm.resultStatus === 'WARNING'" style="color: #f88f57">
+                  <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+                </span>
+                <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'FINISHED'" style="color: #7ebf50">
+                  <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+                </span>
+                <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'ERROR'" style="color: red;">
+                  <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+                </span>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+        <el-table style="width: 100%">
+          <el-table-column prop="status" width="180">{{ $t('k8s.operator_status') }}</el-table-column>
+          <el-table-column prop="operatorStatus" min-width="130"
+                           column-key="operatorStatus"
+                           :filters="statusFilters"
+                           :filter-method="filterOperatorStatus">
+            <div @click="validateOperator(logForm)" style="cursor:pointer;">
+              <el-tag size="mini" type="warning" v-if="logForm.operatorStatus === 'DELETE'">
+                {{ $t('account.DELETE') }}
+              </el-tag>
+              <el-tag size="mini" type="success" v-else-if="logForm.operatorStatus === 'VALID'">
+                {{ $t('account.VALID') }}
+              </el-tag>
+              <el-tag size="mini" type="danger" v-else-if="logForm.operatorStatus === 'INVALID'">
+                {{ $t('account.INVALID') }}
+              </el-tag>
+            </div>
+          </el-table-column>
+          <el-table-column prop="operator" min-width="120" fixed="right">
+            <el-button type="primary" size="mini" @click="reinstallOperator(logForm)">
+              {{ $t('k8s.reinstall_operator') }}
+            </el-button>
+          </el-table-column>
+        </el-table>
+        <el-table style="width: 100%">
+          <el-table-column prop="status" width="180">{{ $t('k8s.kubench_status') }}</el-table-column>
+          <el-table-column prop="kubenchStatus" min-width="150"
+                           column-key="kubenchStatus"
+                           :filters="statusFilters"
+                           :filter-method="filterKubenchStatus">
+            <div @click="validateKubench(logForm)" style="cursor:pointer;">
+              <el-tag size="mini" type="warning" v-if="logForm.kubenchStatus === 'DELETE'">
+                {{ $t('account.DELETE') }}
+              </el-tag>
+              <el-tag size="mini" type="success" v-else-if="logForm.kubenchStatus === 'VALID'">
+                {{ $t('account.VALID') }}
+              </el-tag>
+              <el-tag size="mini" type="danger" v-else-if="logForm.kubenchStatus === 'INVALID'">
+                {{ $t('account.INVALID') }}
+              </el-tag>
+            </div>
+          </el-table-column>
+          <el-table-column prop="operator" min-width="120" fixed="right">
+            <el-button type="primary" size="mini" @click="reinstallKubench(logForm)">
+              {{ $t('k8s.reinstall_kubench') }}
+            </el-button>
+          </el-table-column>
+        </el-table>
+        <el-table :show-header="false" :data="logData" class="adjust-table table-content">
+          <el-table-column>
+            <template v-slot:default="scope">
+              <div class="bg-purple-div">
+                <span
+                  v-bind:class="{true: 'color-red', false: ''}[scope.row.result == false]">
+                      {{ scope.row.createTime | timestampFormatDate }}
+                      {{ scope.row.operator }}
+                      {{ scope.row.operation }}
+                      {{ scope.row.output }}<br>
+                </span>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-row>
+      <template v-slot:footer>
+        <dialog-footer
+          @cancel="logVisible = false"
+          @confirm="logVisible = false"/>
+      </template>
+    </el-drawer>
+    <!--Install log-->
+
   </main-container>
 </template>
 
@@ -248,13 +320,8 @@ const columnOptions = [
     disabled: false
   },
   {
-    label: 'k8s.operator_status',
-    props: 'operatorStatus',
-    disabled: false
-  },
-  {
-    label: 'k8s.kubench_status',
-    props: 'kubenchStatus',
+    label: 'k8s.install_log',
+    props: 'log',
     disabled: false
   },
   {
@@ -365,7 +432,10 @@ export default {
         {id: 'Https', value: "Https"},
       ],
       modes: ['text', 'html'],
-      content: '# 1.添加 chart 仓库\n' +
+      content: '注：HummerRisk已实现自动添加，如需手动添加可执行以下命令\n' +
+        '\n' +
+        '手动添加：\n' +
+        '# 1.添加 chart 仓库\n' +
         'helm repo add hummer https://registry.hummercloud.com/repository/charts\n' +
         '\n' +
         '# 2.更新仓库源\n' +
@@ -395,6 +465,9 @@ export default {
       ],
       checkAll: true,
       isIndeterminate: false,
+      logVisible: false,
+      logForm: {},
+      logData: [],
     }
   },
   watch: {
@@ -559,8 +632,9 @@ export default {
       this.changePlugin(tmp.pluginId, 'edit');
     },
     handleClose() {
-      this.createVisible =  false;
-      this.updateVisible =  false;
+      this.createVisible = false;
+      this.updateVisible = false;
+      this.logVisible = false;
     },
     handleDelete(obj) {
       this.$alert(this.$t('commons.delete_confirm') + obj.name + " ？", '', {
@@ -752,6 +826,20 @@ export default {
         }
       });
     },
+    showLog(item){
+      this.result = this.$get("/k8s/log/" + item.id, response => {
+        this.logData = response.data;
+      });
+      this.logForm = item;
+      this.logVisible = true;
+    },
+    reinstallOperator(item){
+
+    },
+    reinstallKubench(item){
+
+    },
+
   },
   activated() {
     this.init();
@@ -806,5 +894,38 @@ export default {
 .el-box-card {
   margin: 10px 0;
 }
+.grid-content-log-span {
+  width: 39%;
+  float: left;
+  vertical-align: middle;
+  display:table-cell;
+  margin: 6px 0 6px 2px;
+  color: #606266;
+}
+
+.grid-content-status-span {
+  width: 20%;
+  float: left;
+  vertical-align: middle;
+  display:table-cell;
+  margin: 6px 0;
+}
+
+.el-form-item-dev >>> .bg-purple-light {
+  background: #f2f2f2;
+}
+
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
+.box-card >>> .clearfix-dev {
+  background-color: aliceblue;
+  padding: 18px 20px;
+  border-bottom: 1px solid #ebeef5;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
 </style>
 

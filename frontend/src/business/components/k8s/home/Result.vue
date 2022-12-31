@@ -442,7 +442,7 @@ export default {
       this.logVisible = true;
     },
     handleClose() {
-      this.logVisible=false;
+      this.logVisible = false;
     },
     handleDownload(item) {
       this.$post("/k8s/download", {

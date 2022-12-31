@@ -17,6 +17,8 @@ public class CloudNativeDTO extends CloudNative {
 
     private String proxyPassword;
 
+    private String resultStatus;
+
     public String getUserName() {
         return userName;
     }
@@ -63,5 +65,21 @@ public class CloudNativeDTO extends CloudNative {
 
     public void setProxyPassword(String proxyPassword) {
         this.proxyPassword = proxyPassword;
+    }
+
+    public boolean isProxy() {
+        return isProxy;
+    }
+
+    public void setProxy(boolean proxy) {
+        isProxy = proxy;
+    }
+
+    public String getResultStatus() {
+        return resultStatus;
+    }
+
+    public void setResultStatus(String resultStatus) {
+        this.resultStatus = resultStatus;
     }
 }
