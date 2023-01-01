@@ -1101,4 +1101,24 @@ public class K8sService {
         return sourceImages;
     }
 
+    public void reinstallOperator(String id) throws IOException, ApiException {
+        CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
+        K8sRequest k8sRequest = new K8sRequest();
+        k8sRequest.setCredential(cloudNative.getCredential());
+
+        k8sRequest.deleteChart();
+        k8sRequest.createChart();
+    }
+
+    public void reinstallKubench(String id) throws IOException, ApiException {
+        CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
+        K8sRequest k8sRequest = new K8sRequest();
+        k8sRequest.setCredential(cloudNative.getCredential());
+
+        CloudNativeSourceExample example = new CloudNativeSourceExample();
+        example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("%kube-bench-%");
+
+        createKubench(k8sRequest, example, cloudNative);
+    }
+
 }

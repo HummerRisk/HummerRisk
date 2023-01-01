@@ -212,50 +212,52 @@
             </el-col>
           </el-row>
         </div>
-        <el-table style="width: 100%">
-          <el-table-column prop="status" width="180">{{ $t('k8s.operator_status') }}</el-table-column>
-          <el-table-column prop="operatorStatus" min-width="130"
+        <el-table style="width: 100%" :data="installData" :show-header="false">
+          <el-table-column prop="status" width="300">{{ $t('k8s.operator_status') }}</el-table-column>
+          <el-table-column prop="operatorStatus" min-width="300"
                            column-key="operatorStatus"
                            :filters="statusFilters"
+                           v-slot:default="scope"
                            :filter-method="filterOperatorStatus">
-            <div @click="validateOperator(logForm)" style="cursor:pointer;">
-              <el-tag size="mini" type="warning" v-if="logForm.operatorStatus === 'DELETE'">
+            <div @click="validateOperator(scope.row)" style="cursor:pointer;">
+              <el-button size="mini" type="warning" v-if="scope.row.operatorStatus === 'DELETE'">
                 {{ $t('account.DELETE') }}
-              </el-tag>
-              <el-tag size="mini" type="success" v-else-if="logForm.operatorStatus === 'VALID'">
+              </el-button>
+              <el-button size="mini" type="success" v-else-if="scope.row.operatorStatus === 'VALID'">
                 {{ $t('account.VALID') }}
-              </el-tag>
-              <el-tag size="mini" type="danger" v-else-if="logForm.operatorStatus === 'INVALID'">
+              </el-button>
+              <el-button size="mini" type="danger" v-else-if="scope.row.operatorStatus === 'INVALID'">
                 {{ $t('account.INVALID') }}
-              </el-tag>
+              </el-button>
             </div>
           </el-table-column>
-          <el-table-column prop="operator" min-width="120" fixed="right">
-            <el-button type="primary" size="mini" @click="reinstallOperator(logForm)">
+          <el-table-column prop="operator" min-width="300" fixed="right" v-slot:default="scope">
+            <el-button type="primary" size="mini" @click="reinstallOperator(scope.row)">
               {{ $t('k8s.reinstall_operator') }}
             </el-button>
           </el-table-column>
         </el-table>
-        <el-table style="width: 100%">
-          <el-table-column prop="status" width="180">{{ $t('k8s.kubench_status') }}</el-table-column>
-          <el-table-column prop="kubenchStatus" min-width="150"
+        <el-table style="width: 100%" :data="installData" :show-header="false">
+          <el-table-column prop="status" width="300">{{ $t('k8s.kubench_status') }}</el-table-column>
+          <el-table-column prop="kubenchStatus" min-width="300"
                            column-key="kubenchStatus"
                            :filters="statusFilters"
+                           v-slot:default="scope"
                            :filter-method="filterKubenchStatus">
-            <div @click="validateKubench(logForm)" style="cursor:pointer;">
-              <el-tag size="mini" type="warning" v-if="logForm.kubenchStatus === 'DELETE'">
+            <div @click="validateKubench(scope.row)" style="cursor:pointer;">
+              <el-button size="mini" type="warning" v-if="scope.row.kubenchStatus === 'DELETE'">
                 {{ $t('account.DELETE') }}
-              </el-tag>
-              <el-tag size="mini" type="success" v-else-if="logForm.kubenchStatus === 'VALID'">
+              </el-button>
+              <el-button size="mini" type="success" v-else-if="scope.row.kubenchStatus === 'VALID'">
                 {{ $t('account.VALID') }}
-              </el-tag>
-              <el-tag size="mini" type="danger" v-else-if="logForm.kubenchStatus === 'INVALID'">
+              </el-button>
+              <el-button size="mini" type="danger" v-else-if="scope.row.kubenchStatus === 'INVALID'">
                 {{ $t('account.INVALID') }}
-              </el-tag>
+              </el-button>
             </div>
           </el-table-column>
-          <el-table-column prop="operator" min-width="120" fixed="right">
-            <el-button type="primary" size="mini" @click="reinstallKubench(logForm)">
+          <el-table-column prop="operator" min-width="300" fixed="right" v-slot:default="scope">
+            <el-button type="primary" size="mini" @click="reinstallKubench(scope.row)">
               {{ $t('k8s.reinstall_kubench') }}
             </el-button>
           </el-table-column>
@@ -468,6 +470,7 @@ export default {
       logVisible: false,
       logForm: {},
       logData: [],
+      installData: [],
     }
   },
   watch: {
@@ -831,13 +834,45 @@ export default {
         this.logData = response.data;
       });
       this.logForm = item;
+      this.installData = [];
+      this.installData.push(item);
       this.logVisible = true;
     },
     reinstallOperator(item){
-
+      this.$alert(this.$t('k8s.reinstall_operator') + this.$t('k8s.k8s_setting') + ' : ' + item.name +  " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.$post("/k8s/reinstallOperator/" + item.id, {}, response => {
+              let data = response.data;
+              if (data) {
+                  this.$success(this.$t('account.success'));
+              } else {
+                this.$error(this.$t('account.error'));
+              }
+              this.showLog(item);
+            });
+          }
+        }
+      });
     },
     reinstallKubench(item){
-
+      this.$alert(this.$t('k8s.reinstall_operator') + this.$t('k8s.k8s_setting') + ' : ' + item.name +  " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.$post("/k8s/reinstallKubench/" + item.id, {}, response => {
+              let data = response.data;
+              if (data) {
+                this.$success(this.$t('account.success'));
+              } else {
+                this.$error(this.$t('account.error'));
+              }
+              this.showLog(item);
+            });
+          }
+        }
+      });
     },
 
   },

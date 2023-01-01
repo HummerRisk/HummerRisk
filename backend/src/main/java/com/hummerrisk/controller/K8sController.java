@@ -384,4 +384,16 @@ public class K8sController {
         return k8sService.getImage(request);
     }
 
+    @ApiOperation(value = "重新安装 Operator")
+    @PostMapping("reinstallOperator/{id}")
+    public void reinstallOperator(@PathVariable String id) throws IOException, ApiException {
+        k8sService.reinstallOperator(id);
+    }
+
+    @ApiOperation(value = "重新安装 CIS Benchmark")
+    @PostMapping("reinstallKubench/{id}")
+    public void reinstallKubench(@PathVariable String id) throws IOException, ApiException {
+        k8sService.reinstallKubench(id);
+    }
+
 }
