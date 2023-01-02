@@ -2,6 +2,8 @@ package com.hummerrisk.proxy.k8s;
 public class K8sCredential {
 	private String url;
 	private String token;
+	private String ip;
+	private String port;
 
 	public K8sCredential() {
 	}
@@ -25,5 +27,21 @@ public class K8sCredential {
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public String getPort() {
+		return port;
+	}
+
+	public void setPort(String port) {
+		this.port = port;
 	}
 }

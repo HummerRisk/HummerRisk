@@ -438,20 +438,31 @@ export default {
         '\n' +
         '手动添加：\n' +
         '# 1.添加 chart 仓库\n' +
+        '# 如果可以访问 github，可以使用 trivy 官方仓库\n' +
+        'helm repo add hummer https://aquasecurity.github.io/helm-charts/\n' +
+        '# 或\n' +
+        '# 如果访问 github 异常，使用国内仓库，使用是一样的\n' +
         'helm repo add hummer https://registry.hummercloud.com/repository/charts\n' +
         '\n' +
         '# 2.更新仓库源\n' +
         'helm repo update\n' +
         '\n' +
-        '# 3.开始安装, 可以自定义应用名称和NameSpace\n' +
+        '# 3.开始安装, 可以自定义应用名称和NameSpace, 注意 trivy.serverURL 的 IP 地址需要替换为 Trivy 实际的 IP 地址\n' +
+        '如果 hummerrisk 以主机方式运行，则<hummerrisk-trivy-server-ip>为主机 IP。\n' +
+        '如果hummerrisk 在 k8s 上运行，则<hummerrisk-trivy-server-ip>和端口为节点IP和 NodePort 端口，若配置的有 ingress 则可配置域名\n' +
+        '\n' +
         'helm install trivy-operator hummer/trivy-operator \\\n' +
-        ' --namespace trivy-system \\\n' +
-        ' --set="image.repository=registry.cn-beijing.aliyuncs.com/hummerrisk/trivy-operator" \\\n' +
-        ' --create-namespace --set="trivy.ignoreUnfixed=true"\n' +
+        '--namespace trivy-system \\\n' +
+        '--set trivy.mode="ClientServer" \\\n' +
+        '--set trivy.serverURL="http://<hummerrisk-trivy-server-ip>:4975" \\\n' +
+        '--set image.repository="registry.cn-beijing.aliyuncs.com/hummerrisk/trivy-operator" \\\n' +
+        '--set trivy.ignoreUnfixed=true \\\n' +
+        '--set trivy.repository="registry.cn-beijing.aliyuncs.com/hummerrisk/trivy" \\\n' +
+        '--create-namespace\n' +
         '\n' +
         '# 4.检测operator是否启动成功\n' +
         'kubectl get pod -A|grep trivy-operator\n' +
-        'trivy-system   trivy-operator-69f99f79c4-lvzvs           1/1     Running            0          118s',
+        'trivy-system   trivy-operator-69f99f79c4-lvzvs           1/1     Running            0          118s\n',
       checkedColumnNames: columnOptions.map((ele) => ele.props),
       columnNames: columnOptions,
       //名称搜索

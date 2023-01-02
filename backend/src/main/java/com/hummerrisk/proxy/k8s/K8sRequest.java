@@ -97,12 +97,12 @@ public class K8sRequest extends Request {
 
     public boolean createOperatorChart() throws ApiException, JsonProcessingException {
         try {
-            String name = "mongodb-java-6666";
-            String namespace = "test-hl2";
-            String chart = "bitnami/mongodb";
-            String version = "11.0.4";
+            String name = "trivy-operator";
+            String namespace = "trivy-system";
+            String chart = "hummer/trivy-operator";
+            String version = "0.9.1";
 
-            JsonObjectBuilder build = new JsonObjectBuilder().set("rootUser", "admin").set("rootPassword", "admin123123");
+            JsonObjectBuilder build = new JsonObjectBuilder().set("rootUser", "admin");
             JsonObjectBuilder type = new JsonObjectBuilder().set("type", "NodePort");
 
             JsonObjectBuilder values = new JsonObjectBuilder().set("service", type).set("auth", build);
@@ -110,6 +110,11 @@ public class K8sRequest extends Request {
             JsonObject jsonObjectBuilder = new JsonObjectBuilder()
                     .set("apiVersion", "app.alauda.io/v1alpha1")
                     .set("kind", "HelmRequest")
+                    .set("trivy.mode", "ClientServer")
+                    .set("trivy.serverURL", k8sCredential.getIp() + ":" + k8sCredential.getPort())
+                    .set("image.repository", "registry.cn-beijing.aliyuncs.com/hummerrisk/trivy-operator")
+                    .set("trivy.ignoreUnfixed", true)
+                    .set("trivy.repository", "registry.cn-beijing.aliyuncs.com/hummerrisk/trivy")
                     .set("metadata", new JsonObjectBuilder().set("name", name).build())
                     .set("spec", new JsonObjectBuilder()
                             .set("chart", chart)
@@ -119,12 +124,7 @@ public class K8sRequest extends Request {
                             .set("version", version)
                     ).build();
 
-
-            JsonNode jsonNode = new ObjectMapper().readTree(String.valueOf(jsonObjectBuilder));
-            String s = new YAMLMapper().writeValueAsString(jsonNode);
-            System.out.println(s);
-
-            ApiClient apiClient = getK8sClient(new Proxy());
+            ApiClient apiClient = getK8sClient(null);
             CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
             Object result = customObjectsApi.createNamespacedCustomObject("app.alauda.io", "v1alpha1", namespace, "helmrequests", jsonObjectBuilder, "true", null, null);
 
@@ -135,12 +135,12 @@ public class K8sRequest extends Request {
         return true;
     }
 
-    public boolean deleteOperatorChart() throws ApiException {
+    public boolean deleteOperatorChart() throws Exception {
         try {
-            String namespace = "test-hl2";
-            String name = "mongodb-java-2";
+            String namespace = "trivy-system";
+            String name = "trivy-operator";
 
-            CustomObjectsApi customObjectsApi = new CustomObjectsApi(getK8sClient(new Proxy()));
+            CustomObjectsApi customObjectsApi = new CustomObjectsApi(getK8sClient(null));
             customObjectsApi.deleteNamespacedCustomObject(
                     "app.alauda.io",
                     "v1alpha1",
