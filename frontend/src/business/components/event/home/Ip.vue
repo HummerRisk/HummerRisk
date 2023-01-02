@@ -24,18 +24,18 @@
           </template>
         </el-table-column>
         <el-table-column prop="region" v-if="checkedColumnNames.includes('regionName')" :label="$t('event.region')" min-width="170"  show-overflow-tooltip ></el-table-column>
-        <el-table-column prop="earliestEventTime" v-if="checkedColumnNames.includes('earliestEventTime')" :label="$t('event.earliest_event_time')" min-width="100">
+        <el-table-column prop="earliestEventTime" v-if="checkedColumnNames.includes('earliestEventTime')" :label="$t('event.earliest_event_time')" min-width="120">
           <template v-slot:default="scope">
             <span>{{ scope.row.earliestEventTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="lastEventTime" v-if="checkedColumnNames.includes('lastEventTime')" :show-overflow-tooltip="true" :label="$t('event.last_event_time')" min-width="100">
+        <el-table-column prop="lastEventTime" v-if="checkedColumnNames.includes('lastEventTime')" :show-overflow-tooltip="true" :label="$t('event.last_event_time')" min-width="120">
           <template v-slot:default="scope">
             <span>{{ scope.row.lastEventTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="eventName" v-if="checkedColumnNames.includes('eventName')" :label="$t('event.event_name')" min-width="150" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="eventSum" v-if="checkedColumnNames.includes('eventSum')" :label="$t('event.event_sum')" min-width="100" sortable></el-table-column>
+        <el-table-column prop="eventSum" v-if="checkedColumnNames.includes('eventSum')" :label="$t('event.event_sum')" min-width="80" sortable fixed="right"></el-table-column>
       </hide-table>
 
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
@@ -49,7 +49,7 @@
           <el-descriptions class="margin-top" v-for="detail in details" :key = "detail.id" :title="detail.eventName"  style="margin-top: 20px;" :column="2" border>
             <el-descriptions-item>
               <template slot="label">
-                <i class="el-icon-tickets"></i>
+                <i class="el-icon-s-grid"></i>
                 {{$t('event.cloud_account')}}
               </template>
               <img :src="require(`@/assets/img/platform/${ getAccountIcon(detail.cloudAccountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -71,28 +71,28 @@
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
-                <i class="el-icon-tickets"></i>
+                <i class="el-icon-time"></i>
                 {{$t('event.event_time')}}
               </template>
               {{ detail.eventTime | timestampFormatDate }}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
-                <i class="el-icon-tickets"></i>
+                <i class="el-icon-s-flag"></i>
                 {{$t('event.event_id')}}
               </template>
               {{detail.eventId}}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
-                <i class="el-icon-tickets"></i>
+                <i class="el-icon-link"></i>
                 {{$t('event.event_source')}}
               </template>
               {{detail.eventSource}}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
-                <i class="el-icon-tickets"></i>
+                <i class="el-icon-position"></i>
                 {{$t('event.source_ip')}}
               </template>
               {{detail.sourceIpAddress}}
