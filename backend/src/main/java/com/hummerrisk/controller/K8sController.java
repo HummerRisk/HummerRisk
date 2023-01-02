@@ -386,13 +386,13 @@ public class K8sController {
 
     @ApiOperation(value = "重新安装 Operator")
     @PostMapping("reinstallOperator/{id}")
-    public void reinstallOperator(@PathVariable String id) throws IOException, ApiException {
+    public void reinstallOperator(@PathVariable String id) throws Exception {
         k8sService.reinstallOperator(id);
     }
 
     @ApiOperation(value = "重新安装 CIS Benchmark")
     @PostMapping("reinstallKubench/{id}")
-    public void reinstallKubench(@PathVariable String id) throws IOException, ApiException {
+    public void reinstallKubench(@PathVariable String id) throws Exception {
         k8sService.reinstallKubench(id);
     }
 

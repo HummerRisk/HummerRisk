@@ -29,6 +29,7 @@ import io.kubernetes.client.proto.V1;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.Yaml;
 import org.apache.poi.ss.formula.functions.T;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.IOException;
@@ -94,7 +95,7 @@ public class K8sRequest extends Request {
         return null;
     }
 
-    public boolean createChart() throws ApiException, JsonProcessingException {
+    public boolean createOperatorChart() throws ApiException, JsonProcessingException {
         try {
             String name = "mongodb-java-6666";
             String namespace = "test-hl2";
@@ -134,7 +135,7 @@ public class K8sRequest extends Request {
         return true;
     }
 
-    public boolean deleteChart() throws ApiException {
+    public boolean deleteOperatorChart() throws ApiException {
         try {
             String namespace = "test-hl2";
             String name = "mongodb-java-2";
@@ -159,7 +160,7 @@ public class K8sRequest extends Request {
         return true;
     }
 
-    public void deleteJob() throws ApiException, IOException {
+    public void deleteKubenchJob() throws ApiException, IOException {
         try {
             ApiClient apiClient = getK8sClient(null);
             BatchV1Api apiInstance = new BatchV1Api(apiClient);
@@ -175,7 +176,7 @@ public class K8sRequest extends Request {
         }
     }
 
-    public void deletePod(String name) throws ApiException, IOException {
+    public void deleteKubenchPod(String name) throws ApiException, IOException {
         try {
             ApiClient apiClient = getK8sClient(null);
             CoreV1Api apiInstance = new CoreV1Api(apiClient);
@@ -196,8 +197,9 @@ public class K8sRequest extends Request {
      * @throws IOException
      * @throws ApiException
      */
-    public void createJob() throws ApiException, IOException {
-        File jobFile = new File("/opt/hummerrisk/file/kube-bench-job.yaml");
+    public void createKubenchJob() throws ApiException, IOException {
+        ClassPathResource classPathResource = new ClassPathResource("file/kube-bench-job.yaml");
+        File jobFile = classPathResource.getFile();
         V1Job body = (V1Job) Yaml.load(jobFile);
         try {
             ApiClient apiClient = getK8sClient(null);

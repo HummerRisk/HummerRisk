@@ -196,7 +196,7 @@ public class K8sService {
             example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceNameLike("%kube-bench-%");
             CloudNativeSource cloudNativeSource = cloudNativeSourceMapper.selectByExample(example).get(0);
 
-            if(cloudNativeSource == null) {
+            if (cloudNativeSource == null) {
                 validateDTO.setFlag(false);
                 validateDTO.setMessage("Verification failed!");
                 return validateDTO;
@@ -240,7 +240,7 @@ public class K8sService {
     }
 
     public ValidateDTO addCloudNative(CreateCloudNativeRequest request) {
-        try{
+        try {
             //参数校验
             if (StringUtils.isEmpty(request.getCredential())
                     || StringUtils.isEmpty(request.getName()) || StringUtils.isEmpty(request.getPluginId())) {
@@ -517,12 +517,12 @@ public class K8sService {
     public void scan(String id) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
         Integer scanId = historyService.insertScanHistory(cloudNative);
-        if(StringUtils.equalsIgnoreCase(cloudNative.getStatus(), CloudAccountConstants.Status.VALID.name())) {
+        if (StringUtils.equalsIgnoreCase(cloudNative.getStatus(), CloudAccountConstants.Status.VALID.name())) {
             List<CloudNativeRule> ruleList = cloudNativeRuleMapper.selectByExample(null);
             CloudNativeResultWithBLOBs result = new CloudNativeResultWithBLOBs();
 
             deleteResultByCloudNativeId(id);
-            for(CloudNativeRule rule : ruleList) {
+            for (CloudNativeRule rule : ruleList) {
                 BeanUtils.copyBean(result, cloudNative);
                 result.setId(UUIDUtil.newUUID());
                 result.setCloudNativeId(id);
@@ -564,7 +564,7 @@ public class K8sService {
         return result.getId();
     }
 
-    public void createScan (CloudNativeResultWithBLOBs result) throws Exception {
+    public void createScan(CloudNativeResultWithBLOBs result) throws Exception {
         try {
             CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(result.getCloudNativeId());
             if (StringUtils.equalsIgnoreCase(PlatformUtils.k8s, cloudNative.getPluginId())) {
@@ -590,7 +590,7 @@ public class K8sService {
                 }
                 String reponse2 = HttpClientUtil.HttpGet(url2, param);
                 result.setVulnerabilityReport(reponse2);
-            } else if(StringUtils.equalsIgnoreCase(PlatformUtils.rancher, cloudNative.getPluginId())) {
+            } else if (StringUtils.equalsIgnoreCase(PlatformUtils.rancher, cloudNative.getPluginId())) {
                 RancherRequest rancherRequest = new RancherRequest();
                 rancherRequest.setCredential(cloudNative.getCredential());
                 String token = "Bearer " + rancherRequest.getToken();
@@ -613,9 +613,9 @@ public class K8sService {
                 }
                 String reponse2 = HttpClientUtil.HttpGet(url2, param);
                 result.setVulnerabilityReport(reponse2);
-            } else if(StringUtils.equalsIgnoreCase(PlatformUtils.openshift, cloudNative.getPluginId())) {
+            } else if (StringUtils.equalsIgnoreCase(PlatformUtils.openshift, cloudNative.getPluginId())) {
 
-            } else if(StringUtils.equalsIgnoreCase(PlatformUtils.kubesphere, cloudNative.getPluginId())) {
+            } else if (StringUtils.equalsIgnoreCase(PlatformUtils.kubesphere, cloudNative.getPluginId())) {
                 KubeSphereRequest kubeSphereRequest = new KubeSphereRequest();
                 kubeSphereRequest.setCredential(cloudNative.getCredential());
                 String token = "Bearer " + kubeSphereRequest.getToken();
@@ -663,7 +663,7 @@ public class K8sService {
         }
     }
 
-    public String scanKubeBench (CloudNative cloudNative, String resultId) throws Exception {
+    public String scanKubeBench(CloudNative cloudNative, String resultId) throws Exception {
         try {
             K8sRequest k8sRequest = new K8sRequest();
             k8sRequest.setCredential(cloudNative.getCredential());
@@ -677,7 +677,7 @@ public class K8sService {
 
             CloudNativeSource cloudNativeSource = cloudNativeSourceMapper.selectByExample(example).get(0);
 
-            if(cloudNativeSource == null) {
+            if (cloudNativeSource == null) {
                 return "";
             }
 
@@ -699,18 +699,18 @@ public class K8sService {
     }
 
     void createKubench(K8sRequest k8sRequest, CloudNativeSourceExample example, CloudNative cloudNative) throws IOException, ApiException {
-        k8sRequest.deleteJob();
+        k8sRequest.deleteKubenchJob();
         List<CloudNativeSource> list = cloudNativeSourceMapper.selectByExample(example);
         cloudNativeSourceMapper.deleteByExample(example);
         for (CloudNativeSource cloudNativeSource : list) {
-            k8sRequest.deletePod(cloudNativeSource.getSourceName());
+            k8sRequest.deleteKubenchPod(cloudNativeSource.getSourceName());
         }
-        k8sRequest.createJob();
+        k8sRequest.createKubenchJob();
         K8sSource pod = k8sRequest.getKubenchPod(cloudNative);
-        for(CloudNativeSourceWithBLOBs k8sSource : pod.getK8sSource()) {
+        for (CloudNativeSourceWithBLOBs k8sSource : pod.getK8sSource()) {
             cloudNativeSourceMapper.insertSelective(k8sSource);
         }
-        for(CloudNativeSourceImage cloudNativeSourceImage : pod.getK8sSourceImage()) {
+        for (CloudNativeSourceImage cloudNativeSourceImage : pod.getK8sSourceImage()) {
             cloudNativeSourceImageMapper.insertSelective(cloudNativeSourceImage);
         }
     }
@@ -732,15 +732,15 @@ public class K8sService {
                 } else if (result.contains("== Remediations policies ==")) {
                     strs = result.split("== Remediations policies ==");
                 }
-                if(strs == null) continue;
+                if (strs == null) continue;
                 for (String str : strs) {
-                    if(StringUtils.isEmpty(str) || str == null) continue;
+                    if (StringUtils.isEmpty(str) || str == null) continue;
                     if (str.contains("[PASS]") || str.contains("[INFO]") || str.contains("[WARN]") || str.contains("[FAIL]")) {
                         InputStreamReader read = new InputStreamReader(new ByteArrayInputStream(str.getBytes()));
                         BufferedReader bufferedReader = new BufferedReader(read);
                         String lineTxt;
                         while ((lineTxt = bufferedReader.readLine()) != null) {
-                            if(lineTxt != null && !StringUtils.isEmpty(lineTxt) && (lineTxt.contains("[PASS]") || lineTxt.contains("[INFO]") || lineTxt.contains("[WARN]") || lineTxt.contains("[FAIL]"))){
+                            if (lineTxt != null && !StringUtils.isEmpty(lineTxt) && (lineTxt.contains("[PASS]") || lineTxt.contains("[INFO]") || lineTxt.contains("[WARN]") || lineTxt.contains("[FAIL]"))) {
                                 CloudNativeResultKubenchWithBLOBs kubenchWithBLOBs = new CloudNativeResultKubenchWithBLOBs();
                                 kubenchWithBLOBs.setResultId(resultId);
                                 kubenchWithBLOBs.setCreateTime(System.currentTimeMillis());
@@ -820,15 +820,15 @@ public class K8sService {
         JSONObject jsonObject1 = JSON.parseObject(json);
         JSONArray jsonArray1 = jsonObject1.getJSONArray("items");
         int i = 0;
-        if(jsonArray1 != null) {
-            for(Object object : jsonArray1) {
+        if (jsonArray1 != null) {
+            for (Object object : jsonArray1) {
                 JSONObject obj1 = (JSONObject) object;
                 JSONObject report = obj1.getJSONObject("report");
                 JSONArray jsonArray = report.getJSONArray("vulnerabilities");
                 JSONObject artifact = report.getJSONObject("artifact");
                 JSONObject registry = report.getJSONObject("registry");
                 String image = registry.get("server") + "/" + artifact.get("repository") + ":" + artifact.get("tag");
-                for(Object object2 : jsonArray) {
+                for (Object object2 : jsonArray) {
                     JSONObject obj2 = (JSONObject) object2;
                     CloudNativeResultItem cloudNativeResultItem = new CloudNativeResultItem();
                     cloudNativeResultItem.setId(UUIDUtil.newUUID());
@@ -860,15 +860,15 @@ public class K8sService {
         JSONObject jsonObject1 = JSON.parseObject(json);
         JSONArray jsonArray1 = jsonObject1.getJSONArray("items");
         int i = 0;
-        if(jsonArray1 != null) {
-            for(Object object : jsonArray1) {
+        if (jsonArray1 != null) {
+            for (Object object : jsonArray1) {
                 JSONObject obj1 = (JSONObject) object;
                 JSONObject jsonObject2 = obj1.getJSONObject("report");
                 JSONArray jsonArray = jsonObject2.getJSONArray("checks");
-                for(Object object2 : jsonArray) {
+                for (Object object2 : jsonArray) {
                     JSONObject obj2 = (JSONObject) object2;
                     String success = obj2.getString("success");
-                    if (success !=null && StringUtils.equalsIgnoreCase(success, "false")) {
+                    if (success != null && StringUtils.equalsIgnoreCase(success, "false")) {
                         CloudNativeResultConfigItemWithBLOBs item = new CloudNativeResultConfigItemWithBLOBs();
                         item.setId(UUIDUtil.newUUID());
                         item.setResultId(result.getId());
@@ -897,7 +897,7 @@ public class K8sService {
 
     public List<CloudNativeResultItem> resultItemList(K8sResultRequest resourceRequest) {
         CloudNativeResultItemExample example = new CloudNativeResultItemExample();
-        if(resourceRequest.getName()!=null && !StringUtils.isBlank(resourceRequest.getName())) {
+        if (resourceRequest.getName() != null && !StringUtils.isBlank(resourceRequest.getName())) {
             example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId()).andTitleLike("%" + resourceRequest.getName() + "%");
         } else {
             example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
@@ -912,7 +912,7 @@ public class K8sService {
 
     public List<CloudNativeResultConfigItemWithBLOBs> resultConfigItemList(K8sResultRequest resourceRequest) {
         CloudNativeResultConfigItemExample example = new CloudNativeResultConfigItemExample();
-        if(resourceRequest.getName()!=null && !StringUtils.isBlank(resourceRequest.getName())) {
+        if (resourceRequest.getName() != null && !StringUtils.isBlank(resourceRequest.getName())) {
             example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId()).andTitleLike("%" + resourceRequest.getName() + "%");
         } else {
             example.createCriteria().andResultIdEqualTo(resourceRequest.getResultId());
@@ -989,22 +989,22 @@ public class K8sService {
         cloudNativeSourceSyncLogMapper.deleteByPrimaryKey(id);
     }
 
-    public MetricChartDTO metricChart (String resultId) {
+    public MetricChartDTO metricChart(String resultId) {
         return extCloudNativeResultMapper.metricChart(resultId);
     }
 
-    public MetricChartDTO metricConfigChart (String resultId) {
+    public MetricChartDTO metricConfigChart(String resultId) {
         return extCloudNativeResultMapper.metricConfigChart(resultId);
     }
 
-    public KubenchChartDTO kubenchChart (String resultId) {
+    public KubenchChartDTO kubenchChart(String resultId) {
         return extCloudNativeResultMapper.kubenchChart(resultId);
     }
 
     public String download(Map<String, Object> map) {
         HistoryCloudNativeResultWithBLOBs historyCloudNativeResultWithBLOBs = historyCloudNativeResultMapper.selectByPrimaryKey(map.get("id").toString());
-        JSONObject str = JSON.parseObject(historyCloudNativeResultWithBLOBs.getVulnerabilityReport()!=null?historyCloudNativeResultWithBLOBs.getVulnerabilityReport():"{}");
-        JSONObject str2 = JSON.parseObject(historyCloudNativeResultWithBLOBs.getConfigAuditReport()!=null?historyCloudNativeResultWithBLOBs.getConfigAuditReport():"{}");
+        JSONObject str = JSON.parseObject(historyCloudNativeResultWithBLOBs.getVulnerabilityReport() != null ? historyCloudNativeResultWithBLOBs.getVulnerabilityReport() : "{}");
+        JSONObject str2 = JSON.parseObject(historyCloudNativeResultWithBLOBs.getConfigAuditReport() != null ? historyCloudNativeResultWithBLOBs.getConfigAuditReport() : "{}");
         JSONArray jsonArray = new JSONArray();
         jsonArray.add(str);
         jsonArray.add(str2);
@@ -1068,6 +1068,7 @@ public class K8sService {
     public K8sImage getImage(RiskRequest request) {
         return extCloudNativeSourceMapper.getImage(request);
     }
+
     public NodeTopology nodeTopology() {
         return extCloudNativeSourceMapper.nodeTopology();
     }
@@ -1090,7 +1091,7 @@ public class K8sService {
             CloudNativeResult cloudNativeResult = cloudNativeResultMapper.selectByExample(cloudNativeResultExample).get(0);
             CloudNativeResultItemExample cloudNativeResultItemExample = new CloudNativeResultItemExample();
             cloudNativeResultItemExample.createCriteria().andResultIdEqualTo(cloudNativeResult.getId()).andImageEqualTo(imageName);
-            List<CloudNativeResultItem> list =  cloudNativeResultItemMapper.selectByExample(cloudNativeResultItemExample);
+            List<CloudNativeResultItem> list = cloudNativeResultItemMapper.selectByExample(cloudNativeResultItemExample);
             if (list.size() > 0) {
                 dto.setRisk("yes");
             } else {
@@ -1101,24 +1102,57 @@ public class K8sService {
         return sourceImages;
     }
 
-    public void reinstallOperator(String id) throws IOException, ApiException {
-        CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
-        K8sRequest k8sRequest = new K8sRequest();
-        k8sRequest.setCredential(cloudNative.getCredential());
+    public void reinstallOperator(String id) throws Exception {
+        try {
+            saveCloudNativeResultLog(id, "i18n_start_k8s_operator", "", true);
+            CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
+            K8sRequest k8sRequest = new K8sRequest();
+            k8sRequest.setCredential(cloudNative.getCredential());
 
-        k8sRequest.deleteChart();
-        k8sRequest.createChart();
+            k8sRequest.deleteOperatorChart();
+            k8sRequest.createOperatorChart();
+
+            //检验operator
+            ValidateDTO operatorStatusValidate = validateOperatorStatus(cloudNative);
+            if (operatorStatusValidate.isFlag()) {
+                cloudNative.setOperatorStatus(CloudAccountConstants.Status.VALID.name());
+            } else {
+                cloudNative.setOperatorStatus(CloudAccountConstants.Status.INVALID.name());
+            }
+            cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
+
+            saveCloudNativeResultLog(id, "i18n_end_k8s_operator", "", true);
+        } catch (Exception e) {
+            saveCloudNativeResultLog(id, "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
+        }
     }
 
-    public void reinstallKubench(String id) throws IOException, ApiException {
-        CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
-        K8sRequest k8sRequest = new K8sRequest();
-        k8sRequest.setCredential(cloudNative.getCredential());
+    public void reinstallKubench(String id) throws Exception {
+        try {
+            saveCloudNativeResultLog(id, "i18n_start_k8s_kubench", "", true);
+            CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
+            K8sRequest k8sRequest = new K8sRequest();
+            k8sRequest.setCredential(cloudNative.getCredential());
 
-        CloudNativeSourceExample example = new CloudNativeSourceExample();
-        example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("%kube-bench-%");
+            CloudNativeSourceExample example = new CloudNativeSourceExample();
+            example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("%kube-bench-%");
 
-        createKubench(k8sRequest, example, cloudNative);
+            createKubench(k8sRequest, example, cloudNative);
+
+            //检验kube-bench
+            ValidateDTO kubenchStatusValidate = validateKubenchStatus(cloudNative);
+            if (kubenchStatusValidate.isFlag()) {
+                cloudNative.setKubenchStatus(CloudAccountConstants.Status.VALID.name());
+            } else {
+                cloudNative.setKubenchStatus(CloudAccountConstants.Status.INVALID.name());
+            }
+            cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
+
+            saveCloudNativeResultLog(id, "i18n_end_k8s_kubench", "", true);
+        } catch (Exception e) {
+            saveCloudNativeResultLog(id, "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
+        }
+
     }
 
 }
