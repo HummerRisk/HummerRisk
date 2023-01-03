@@ -28,13 +28,13 @@
         @select="select"
       >
         <!-- 展开 start -->
-        <el-table-column type="expand" min-width="40">
-          <template slot-scope="props">
-            <el-form>
-              <codemirror ref="cmEditor" v-model="props.row.returnLog" class="code-mirror" :options="cmOptions" />
-            </el-form>
-          </template>
-        </el-table-column >
+<!--        <el-table-column type="expand" min-width="40">-->
+<!--          <template slot-scope="props">-->
+<!--            <el-form>-->
+<!--              <codemirror ref="cmEditor" v-model="props.row.returnLog" class="code-mirror" :options="cmOptions" />-->
+<!--            </el-form>-->
+<!--          </template>-->
+<!--        </el-table-column >-->
         <!-- 展开 end -->
         <el-table-column type="index" min-width="40"/>
         <el-table-column prop="serverName" v-if="checkedColumnNames.includes('serverName')" :label="$t('server.server_name')" min-width="140" show-overflow-tooltip></el-table-column>
@@ -45,7 +45,7 @@
             <rule-type :row="row"/>
           </template>
         </el-table-column>
-        <el-table-column prop="type" v-if="checkedColumnNames.includes('type')" :label="$t('commons.type')" min-width="70" show-overflow-tooltip>
+        <el-table-column prop="type" v-if="checkedColumnNames.includes('type')" :label="$t('commons.type')" min-width="90" show-overflow-tooltip>
           <template v-slot:default="scope">
             <span v-if="scope.row.type === 'linux'">Linux</span>
             <span v-if="scope.row.type === 'windows'">Windows</span>
@@ -83,7 +83,7 @@
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="100" :label="$t('commons.operating')">
+        <el-table-column min-width="100" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
@@ -172,7 +172,7 @@
     </el-card>
 
     <!--Result log-->
-    <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="65%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="75%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-row class="el-form-item-dev" v-if="logData.length == 0">
         <span>{{ $t('resource.i18n_no_data') }}<br></span>
@@ -232,10 +232,12 @@
           </el-table-column>
         </el-table>
         <el-form style="margin: 15px 0 0 0">
-          <el-form-item :label="$t('server.server_rule')">
+          <h5 style="margin: 10px;">{{ $t('server.server_rule') }}</h5>
+          <el-form-item>
             <codemirror ref="cmEditor" v-model="logForm.rule" class="code-mirror" :options="cmOptions" />
           </el-form-item>
-          <el-form-item :label="$t('server.server_result')">
+          <h5 style="margin: 10px;">{{ $t('server.server_result') }}</h5>
+          <el-form-item>
             <codemirror ref="cmEditor" v-model="logForm.returnLog" class="code-mirror" :options="cmOptions" />
           </el-form-item>
         </el-form>

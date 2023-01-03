@@ -90,7 +90,7 @@
       <!--History statistics-->
 
       <!--Result log-->
-      <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="65%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="75%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-row class="el-form-item-dev" v-if="logData.length == 0">
           <span>{{ $t('resource.i18n_no_data') }}<br></span>
@@ -147,10 +147,12 @@
             </el-table-column>
           </el-table>
           <el-form style="margin: 15px 0 0 0">
-            <el-form-item :label="$t('server.server_rule')">
+            <h5 style="margin: 10px;">{{ $t('server.server_rule') }}</h5>
+            <el-form-item>
               <codemirror ref="cmEditor" v-model="logForm.rule" class="code-mirror" :options="cmOptions" />
             </el-form-item>
-            <el-form-item :label="$t('server.server_result')">
+            <h5 style="margin: 10px;">{{ $t('server.server_result') }}</h5>
+            <el-form-item>
               <codemirror ref="cmEditor" v-model="logForm.returnLog" class="code-mirror" :options="cmOptions" />
             </el-form-item>
           </el-form>
