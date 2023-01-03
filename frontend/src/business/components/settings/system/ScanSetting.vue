@@ -96,7 +96,7 @@
 
 <script>
 /* eslint-disable */
-import Upload from "@/business/components/oss/head/Upload";
+import Upload from "@/business/components/settings/head/Upload";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 
 export default {
