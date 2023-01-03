@@ -481,6 +481,7 @@ public class ServerService {
                         serverValidateDTO.setMessage(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), ex.getMessage()));
                     }
                 }
+                break;
             case "windows":
                 try {
                     WinRMHelper.validateWindows(server, proxy);
@@ -494,6 +495,7 @@ public class ServerService {
                     serverValidateDTO.setFlag(false);
                     serverValidateDTO.setMessage(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), e.getMessage()));
                 }
+                break;
         }
         serverValidateDTO.setServer(server);
         return serverValidateDTO;
@@ -530,7 +532,7 @@ public class ServerService {
                     return "Unexpected value: type";
             }
         } catch (Exception e) {
-            return "";
+            return e.getMessage();
         }
     }
 
