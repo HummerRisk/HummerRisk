@@ -47,7 +47,9 @@ public class TranslatorKeys {
                     "i18n_start_k8s_kubench",
                     "i18n_end_k8s_kubench",
                     "i18n_start_k8s_operator",
-                    "i18n_end_k8s_operator"
+                    "i18n_end_k8s_operator",
+                    "i18n_already_k8s_kubench",
+                    "i18n_already_k8s_operator"
             ));
 
 }

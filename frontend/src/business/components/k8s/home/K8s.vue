@@ -592,6 +592,7 @@ export default {
                 this.$error(this.$t('account.error'));
               }
               this.search();
+              this.showLog(row);
             });
           }
         }
@@ -614,6 +615,7 @@ export default {
                 this.$error(this.$t('account.error'));
               }
               this.search();
+              this.showLog(row);
             });
           }
         }
@@ -855,12 +857,7 @@ export default {
         callback: (action) => {
           if (action === 'confirm') {
             this.$post("/k8s/reinstallOperator/" + item.id, {}, response => {
-              let data = response.data;
-              if (data) {
-                  this.$success(this.$t('account.success'));
-              } else {
-                this.$error(this.$t('account.error'));
-              }
+              this.$success(this.$t('commons.success'));
               this.showLog(item);
             });
           }
@@ -873,12 +870,7 @@ export default {
         callback: (action) => {
           if (action === 'confirm') {
             this.$post("/k8s/reinstallKubench/" + item.id, {}, response => {
-              let data = response.data;
-              if (data) {
-                this.$success(this.$t('account.success'));
-              } else {
-                this.$error(this.$t('account.error'));
-              }
+              this.$success(this.$t('commons.success'));
               this.showLog(item);
             });
           }

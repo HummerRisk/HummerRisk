@@ -292,6 +292,8 @@ public class K8sService {
                     account.setKubenchStatus(CloudAccountConstants.Status.INVALID.name());
                 }
                 cloudNativeMapper.insertSelective(account);
+                reinstallOperator(account.getId());
+                reinstallKubench(account.getId());
                 OperationLogService.log(SessionUtils.getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_create_cloud_native");
                 return valid;
             }
@@ -1103,9 +1105,16 @@ public class K8sService {
     }
 
     public void reinstallOperator(String id) throws Exception {
+        CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
         try {
             saveCloudNativeResultLog(id, "i18n_start_k8s_operator", "", true);
-            CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
+
+            ValidateDTO operatorIsInstall = validateOperatorStatus(cloudNative);
+            if (operatorIsInstall.isFlag()) {
+                saveCloudNativeResultLog(id, "i18n_already_k8s_operator", "", true);
+                return;
+            }
+
             K8sRequest k8sRequest = new K8sRequest();
             k8sRequest.setCredential(cloudNative.getCredential());
 
@@ -1123,14 +1132,23 @@ public class K8sService {
 
             saveCloudNativeResultLog(id, "i18n_end_k8s_operator", "", true);
         } catch (Exception e) {
+            cloudNative.setOperatorStatus(CloudAccountConstants.Status.INVALID.name());
+            cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
             saveCloudNativeResultLog(id, "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
         }
     }
 
     public void reinstallKubench(String id) throws Exception {
+        CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
         try {
             saveCloudNativeResultLog(id, "i18n_start_k8s_kubench", "", true);
-            CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
+
+            ValidateDTO kubenchIsInstall = validateKubenchStatus(cloudNative);
+            if (kubenchIsInstall.isFlag()) {
+                saveCloudNativeResultLog(id, "i18n_already_k8s_kubench", "", true);
+                return;
+            }
+
             K8sRequest k8sRequest = new K8sRequest();
             k8sRequest.setCredential(cloudNative.getCredential());
 
@@ -1150,6 +1168,8 @@ public class K8sService {
 
             saveCloudNativeResultLog(id, "i18n_end_k8s_kubench", "", true);
         } catch (Exception e) {
+            cloudNative.setKubenchStatus(CloudAccountConstants.Status.INVALID.name());
+            cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
             saveCloudNativeResultLog(id, "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
         }
 

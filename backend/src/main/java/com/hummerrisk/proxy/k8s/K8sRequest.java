@@ -95,7 +95,69 @@ public class K8sRequest extends Request {
         return null;
     }
 
-    public boolean createOperatorChart() throws ApiException, JsonProcessingException {
+    public void createOperatorChart() throws Exception {
+        try {
+            String name = "trivy-operator";
+            String namespace = "trivy-system";
+            String chart = "hummer/trivy-operator";
+            String version = "0.9.1";
+
+            ClassPathResource classPathResource = new ClassPathResource("file/values.yaml");
+            File file = classPathResource.getFile();
+
+            String values = (String) Yaml.load(file);
+
+            JsonObject jsonObjectBuilder = new JsonObjectBuilder()
+                    .set("apiVersion", "app.alauda.io/v1alpha1")
+                    .set("kind", "HelmRequest")
+                    .set("trivy.mode", "ClientServer")
+                    .set("trivy.serverURL", k8sCredential.getIp() + ":" + k8sCredential.getPort())
+                    .set("image.repository", "registry.cn-beijing.aliyuncs.com/hummerrisk/trivy-operator")
+                    .set("trivy.ignoreUnfixed", true)
+                    .set("trivy.repository", "registry.cn-beijing.aliyuncs.com/hummerrisk/trivy")
+                    .set("metadata", new JsonObjectBuilder().set("name", name).build())
+                    .set("spec", new JsonObjectBuilder()
+                            .set("chart", chart)
+                            .set("namespace", namespace)
+                            .set("releaseName", name)
+                            .set("values", values)
+                            .set("version", version)
+                    ).build();
+
+            ApiClient apiClient = getK8sClient(null);
+            CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
+            Object result = customObjectsApi.createNamespacedCustomObject("aquasecurity.github.io", "v1alpha1", namespace, "helmrequests", jsonObjectBuilder, "true", null, null);
+
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
+            throw e;
+        }
+    }
+
+    public void deleteOperatorChart() throws Exception {
+        try {
+            String namespace = "trivy-system";
+
+            CustomObjectsApi customObjectsApi = new CustomObjectsApi(getK8sClient(null));
+            customObjectsApi.deleteNamespacedCustomObject(
+                    "aquasecurity.github.io",
+                    "v1alpha1",
+                    namespace,
+                    "helmrequests",
+                    "true",
+                    0,
+                    null,
+                    null,
+                    null,
+                    new V1DeleteOptions().gracePeriodSeconds(0L).propagationPolicy("Foreground"));
+
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
+            throw e;
+        }
+    }
+
+    public boolean listNamespacedCustomObject() throws ApiException, JsonProcessingException {
         try {
             String name = "trivy-operator";
             String namespace = "trivy-system";
@@ -127,31 +189,6 @@ public class K8sRequest extends Request {
             ApiClient apiClient = getK8sClient(null);
             CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
             Object result = customObjectsApi.createNamespacedCustomObject("app.alauda.io", "v1alpha1", namespace, "helmrequests", jsonObjectBuilder, "true", null, null);
-
-        } catch (Exception e) {
-            LogUtil.error(e.getMessage());
-            return false;
-        }
-        return true;
-    }
-
-    public boolean deleteOperatorChart() throws Exception {
-        try {
-            String namespace = "trivy-system";
-            String name = "trivy-operator";
-
-            CustomObjectsApi customObjectsApi = new CustomObjectsApi(getK8sClient(null));
-            customObjectsApi.deleteNamespacedCustomObject(
-                    "app.alauda.io",
-                    "v1alpha1",
-                    namespace,
-                    "helmrequests",
-                    name,
-                    0,
-                    null,
-                    null,
-                    null,
-                    new V1DeleteOptions().gracePeriodSeconds(0L).propagationPolicy("Foreground"));
 
         } catch (Exception e) {
             LogUtil.error(e.getMessage());

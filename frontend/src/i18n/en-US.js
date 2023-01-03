@@ -1373,6 +1373,9 @@ export default {
     image_risk: 'Resources at risk',
     failed_k8s: 'There is a K8s configuration that failed verification:',
     failed_status: 'K8s account invalid status cannot perform detection',
+    install_log: 'Installation log',
+    reinstall_operator: 'Install Operator',
+    reinstall_kubench: 'Install CIS Benchmark',
   },
   config: {
     config_settings: 'Deployment configuration',

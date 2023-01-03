@@ -1374,8 +1374,8 @@ export default {
     failed_k8s: '存在驗證失敗的 K8s 配置:',
     failed_status: 'K8s 賬號無效狀態不可執行檢測',
     install_log: '安裝日誌',
-    reinstall_operator: '重新安裝 Operator',
-    reinstall_kubench: '重新安裝 CIS Benchmark',
+    reinstall_operator: '安裝 Operator',
+    reinstall_kubench: '安裝 CIS Benchmark',
   },
   config: {
     config_settings: '部署配置',
