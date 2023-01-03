@@ -251,7 +251,7 @@
     <!--Result log-->
 
     <!--Result details-->
-    <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="detailsVisible" size="85%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('server.result')" :visible.sync="detailsVisible" size="85%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-table border :data="serverResultDetails" class="adjust-table table-content" @sort-change="sort" @filter-change="filter" @select-all="select" @select="select">
         <el-table-column type="index" min-width="40"/>
@@ -271,22 +271,22 @@
           </template>
         </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('server.result_status')" min-width="130" prop="resultStatus" sortable show-overflow-tooltip>
-          <el-button plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
+          <el-button @click="showDetailLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
+          <el-button @click="showDetailLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
+          <el-button @click="showDetailLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button plain size="mini" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
+          <el-button @click="showDetailLog(scope.row)" plain size="mini" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
             <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
           </el-button>
-          <el-button plain size="mini" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+          <el-button @click="showDetailLog(scope.row)" plain size="mini" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
             <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
           </el-button>
-          <el-button plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+          <el-button @click="showDetailLog(scope.row)" plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
@@ -302,6 +302,90 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <!--result log-->
+      <el-drawer
+        size="70%"
+        :title="$t('resource.i18n_log_detail')"
+        :append-to-body="true"
+        :before-close="innerClose"
+        :visible.sync="innerVisible">
+        <div class="inner-log">
+          <el-row class="el-form-item-dev" v-if="logData.length == 0">
+            <span>{{ $t('resource.i18n_no_data') }}<br></span>
+          </el-row>
+          <el-row class="el-form-item-dev" v-if="logData.length > 0">
+            <div>
+              <el-row>
+                <el-col :span="24">
+                  <div class="grid-content bg-purple-light">
+                <span class="grid-content-log-span">
+                  {{ logForm.ruleName }}
+                  <i class="el-icon-document-copy" @click="copy(logForm)" style="display: none;"></i>
+                </span>
+                    <span class="grid-content-log-span">
+                      <img :src="require(`@/assets/img/platform/${logForm.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                       &nbsp;&nbsp; {{ logForm.serverGroupName }} : {{ logForm.serverName }}
+                      </span>
+                    <span class="grid-content-status-span" v-if="logForm.resultStatus === 'APPROVED'" style="color: #579df8">
+                        <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                      </span>
+                    <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'FINISHED'" style="color: #7ebf50">
+                        <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+                      </span>
+                    <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'ERROR'" style="color: red;">
+                        <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+                      </span>
+                  </div>
+                </el-col>
+                <el-col :span="24">
+                  <div class="grid-content bg-purple-light">
+                    <span class="grid-content-log-span"> {{ logForm.ruleDesc }}</span>
+                    <span class="grid-content-log-span">
+                  {{ logForm.ip }}
+                  <span v-if="logForm.isSeverity" style="color: #46ad59">({{ $t('resource.risk_free') }})</span>
+                  <span v-if="!logForm.isSeverity" style="color: #f84846">({{ $t('resource.risky') }})</span>
+                </span>
+                    <span class="grid-content-status-span">
+                  <rule-type :row="logForm"/>
+                </span>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+            <el-table :show-header="false" :data="logData" class="adjust-table table-content">
+              <el-table-column>
+                <template v-slot:default="scope">
+                  <div class="bg-purple-div">
+                <span
+                  v-bind:class="{true: 'color-red', false: ''}[scope.row.result == false]">
+                      {{ scope.row.createTime | timestampFormatDate }}
+                      {{ scope.row.operator }}
+                      {{ scope.row.operation }}
+                      {{ scope.row.output }}<br>
+                </span>
+                  </div>
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-form style="margin: 15px 0 0 0">
+              <h5 style="margin: 10px;">{{ $t('server.server_rule') }}</h5>
+              <el-form-item>
+                <codemirror ref="cmEditor" v-model="logForm.rule" class="code-mirror" :options="cmOptions" />
+              </el-form-item>
+              <h5 style="margin: 10px;">{{ $t('server.server_result') }}</h5>
+              <el-form-item>
+                <codemirror ref="cmEditor" v-model="logForm.returnLog" class="code-mirror" :options="cmOptions" />
+              </el-form-item>
+            </el-form>
+          </el-row>
+        </div>
+        <dialog-footer
+          @cancel="innerVisible = false"
+          @confirm="innerVisible = false"/>
+      </el-drawer>
+      <!--result log-->
+
       <template v-slot:footer>
         <dialog-footer
           @cancel="detailsVisible = false"
@@ -517,6 +601,7 @@ export default {
       isIndeterminate2: false,
       serverResultDetails: [],
       detailsVisible: false,
+      innerVisible: false,
     }
   },
 
@@ -613,10 +698,23 @@ export default {
         this.logForm = response.data;
       });
     },
+    showDetailLog (result) {
+      let url = "/server/log/";
+      this.logForm = result;
+      this.$get(url + result.id, response => {
+        this.logData = response.data;
+        this.innerVisible = true;
+      });
+      this.$get("/server/getServerResult/" + result.id, response => {
+        this.logForm = response.data;
+      });
+    },
     handleClose() {
-      this.logVisible=false;
-      this.detailsVisible=false;
-
+      this.logVisible = false;
+      this.detailsVisible = false;
+    },
+    innerClose() {
+      this.innerVisible = false;
     },
     handleScans (item) {
       this.$alert(this.$t('resource.handle_scans'), '', {
@@ -842,6 +940,9 @@ export default {
 }
 .el-btn {
   transform: scale(0.9);
+}
+.inner-log {
+  margin: 10px;
 }
 /deep/ :focus{outline:0;}
 </style>
