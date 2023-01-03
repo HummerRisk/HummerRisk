@@ -45,7 +45,7 @@
 >**Advantage**
 
 * Comprehensive support:   
-Almost all public clouds supported, including: Alibaba Cloud, Tencent Cloud, Huawei Cloud, Volcano Engine, Baidu Cloud, QingCloud, JDCloud, UCloud, Amazon Web Services, Microsoft Azure, Google Cloud, and supported private clouds include: OpenStack, VMware vSphere, and is still expanding the scope of support;
+Almost all public clouds supported, including: Alibaba Cloud, Tencent Cloud, Huawei Cloud, Volcano Engine, Baidu Cloud, QingCloud, JDCloud, KSCloud, UCloud, Amazon Web Services, Microsoft Azure, Google Cloud, and supported private clouds include: OpenStack, VMware vSphere, and is still expanding the scope of support;
 * Easy to use:   
 Only need to add account of csp, you can perform the detection with one click;
 * Flexible and convenient:   
