@@ -29,3 +29,5 @@ INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('1fc49851-3f00-49e
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('78fe32cb-2307-496f-8946-a81d0359a452', 'server');
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('f9d4db6e-210c-4984-be55-6c2aa0622c8f', 'server');
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('40dc9a85-7063-4192-8ba3-bce63f49f0f4', 'server');
+
+INSERT INTO `plugin` (`id`, `name`, `icon`, `update_time`, `scan_type`, `order_`, `type`) VALUES ('hummer-ksyun-plugin', '金山云', 'ksyun.png', concat(unix_timestamp(now()), '003'), 'custodian', 22, 'cloud');
