@@ -835,7 +835,6 @@ const columnOptions = [
         if(this.selectNodeIds.length!=0) {
           this.condition.serverGroupId = this.selectNodeIds[0];
           this.serverGroupId = this.selectNodeIds[0];
-          console.log(this.serverGroupId)
         } else {
           this.condition.serverGroupId = "";
         }
