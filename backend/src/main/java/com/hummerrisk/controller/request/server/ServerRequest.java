@@ -11,8 +11,6 @@ public class ServerRequest extends Server {
 
     private Map<String, Object> combine;
 
-    private String groupId;
-
     public Map<String, Object> getCombine() {
         return combine;
     }
@@ -21,11 +19,4 @@ public class ServerRequest extends Server {
         this.combine = combine;
     }
 
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
 }

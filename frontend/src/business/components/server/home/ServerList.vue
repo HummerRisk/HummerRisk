@@ -289,7 +289,7 @@
                  :destroy-on-close="true">
         <div v-loading="rstResult.loading">
           <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="createServerForm">
-            <el-form-item :label="$t('server.server_group_name')" ref="groupId" prop="groupId">
+            <el-form-item :label="$t('server.server_group_name')" ref="serverGroupId" prop="serverGroupId">
               <el-select style="width: 100%;" filterable :clearable="true" v-model="form.serverGroupId" :placeholder="$t('server.server_group_name')">
                 <el-option
                   v-for="item in groups"
@@ -678,7 +678,7 @@ const columnOptions = [
           {id: 'Linux', value: 'linux'},
           {id: 'Windows', value: 'windows'},
         ],
-        groupId: 'd691se79-2e8c-1s54-bbe6-491sd29e91fe',
+        serverGroupId: 'd691se79-2e8c-1s54-bbe6-491sd29e91fe',
         groups: [],
         proxyForm: {isProxy: false, proxyId: 0},
         proxys: [],
@@ -765,7 +765,7 @@ const columnOptions = [
         });
       },
       upload() {
-        this.uploadExcelForm.serverGroupId = this.groups.length > 0 ? this.groups[0].id : this.groupId;
+        this.uploadExcelForm.serverGroupId = this.groups.length > 0 ? this.groups[0].id : this.serverGroupId;
         this.uploadExcel = true;
         this.excelFile = null;
       },
@@ -833,10 +833,11 @@ const columnOptions = [
       //查询列表
       search() {
         if(this.selectNodeIds.length!=0) {
-          this.condition.groupId = this.selectNodeIds[0];
-          this.groupId = this.selectNodeIds[0];
+          this.condition.serverGroupId = this.selectNodeIds[0];
+          this.serverGroupId = this.selectNodeIds[0];
+          console.log(this.serverGroupId)
         } else {
-          this.condition.groupId = "";
+          this.condition.serverGroupId = "";
         }
         let url = "/server/serverList/" + this.currentPage + "/" + this.pageSize;
         this.result = this.$post(url, this.condition, response => {
@@ -960,7 +961,7 @@ const columnOptions = [
         server.userName = 'root';
         server.type = 'linux';
         server.password = '';
-        server.groupId = this.groupId;
+        server.serverGroupId = this.serverGroupId;
         this.servers.push(server);
         this.proxyForm = {isProxy: false, proxyId: 0};
       },
@@ -983,7 +984,7 @@ const columnOptions = [
       },
       saveServer(servers) {
         for (let server of servers) {
-          if(!server.name || !server.ip || !server.userName || !server.groupId) {
+          if(!server.name || !server.ip || !server.userName || !server.serverGroupId) {
             this.$warning('Value will not be null');
             return;
           } else {

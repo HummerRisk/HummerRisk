@@ -128,8 +128,8 @@
             <if test="request.status != null and request.status != ''">
                 and t.status = #{request.status}
             </if>
-            <if test="request.groupId != null and request.groupId != ''">
-                and t.server_group_id = #{request.groupId}
+            <if test="request.serverGroupId != null and request.serverGroupId != ''">
+                and t.server_group_id = #{request.serverGroupId}
             </if>
         </where>
         order by t.update_time desc
