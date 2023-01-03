@@ -576,7 +576,7 @@ export default {
       });
     },
     validateOperator(row) {
-      this.$alert(this.$t('account.validate') + this.$t('k8s.k8s_setting') + ' : ' + row.name +  " ？", '', {
+      this.$alert(this.$t('account.validate') + this.$t('k8s.operator_status') + ' : ' + row.name +  " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
@@ -599,7 +599,7 @@ export default {
       });
     },
     validateKubench(row) {
-      this.$alert(this.$t('account.validate') + this.$t('k8s.k8s_setting') + ' : ' + row.name +  " ？", '', {
+      this.$alert(this.$t('account.validate') + this.$t('k8s.kubench_status') + ' : ' + row.name +  " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
@@ -852,7 +852,7 @@ export default {
       this.logVisible = true;
     },
     reinstallOperator(item){
-      this.$alert(this.$t('k8s.reinstall_operator') + this.$t('k8s.k8s_setting') + ' : ' + item.name +  " ？", '', {
+      this.$alert(this.$t('k8s.k8s_setting') + this.$t('k8s.reinstall_operator') + ' : ' + item.name +  " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
@@ -865,7 +865,7 @@ export default {
       });
     },
     reinstallKubench(item){
-      this.$alert(this.$t('k8s.reinstall_operator') + this.$t('k8s.k8s_setting') + ' : ' + item.name +  " ？", '', {
+      this.$alert(this.$t('k8s.k8s_setting') + this.$t('k8s.reinstall_operator') + ' : ' + item.name +  " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
