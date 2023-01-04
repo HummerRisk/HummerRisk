@@ -585,8 +585,10 @@ export default {
               if (data) {
                 if (data.flag) {
                   this.$success(this.$t('account.success'));
+                  row.operatorStatus = "VALID";
                 } else {
                   this.$error(data.message, 10000);
+                  row.operatorStatus = "INVALID";
                 }
               } else {
                 this.$error(this.$t('account.error'));
@@ -608,8 +610,10 @@ export default {
               if (data) {
                 if (data.flag) {
                   this.$success(this.$t('account.success'));
+                  row.kubenchStatus = "VALID";
                 } else {
                   this.$error(data.message, 10000);
+                  row.kubenchStatus = "INVALID";
                 }
               } else {
                 this.$error(this.$t('account.error'));
