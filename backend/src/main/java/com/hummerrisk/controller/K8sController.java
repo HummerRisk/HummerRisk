@@ -8,7 +8,6 @@ import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.cloudNative.*;
 import com.hummerrisk.controller.request.image.ImageRequest;
-import com.hummerrisk.controller.request.image.ImageResultItemRequest;
 import com.hummerrisk.controller.request.k8s.*;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.service.K8sService;

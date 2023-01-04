@@ -3,9 +3,6 @@ package com.hummerrisk.proxy.k8s;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.hummerrisk.base.domain.CloudNative;
@@ -18,24 +15,20 @@ import com.hummerrisk.commons.utils.UUIDUtil;
 import com.hummerrisk.commons.utils.YamlUtil;
 import com.hummerrisk.proxy.Request;
 import io.gsonfire.builders.JsonObjectBuilder;
-import io.kubernetes.client.ProtoClient;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.Configuration;
 import io.kubernetes.client.openapi.apis.*;
 import io.kubernetes.client.openapi.models.*;
-import io.kubernetes.client.proto.Meta;
-import io.kubernetes.client.proto.V1;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.Yaml;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 public class K8sRequest extends Request {
 
@@ -235,22 +228,8 @@ public class K8sRequest extends Request {
      */
     public void createKubenchJob() throws ApiException, IOException {
         ClassPathResource classPathResource = new ClassPathResource("file/kube-bench-job.yaml");
-        InputStream in = classPathResource.getInputStream();
-        InputStreamReader isReader= new InputStreamReader(in);
-        BufferedReader br = new BufferedReader(isReader);
-        String readLine = null;
-        StringBuilder sb = new StringBuilder();
-        while ((readLine = br.readLine()) != null) {
-            if (readLine.charAt(0) == '-') {
-                continue;
-            } else {
-                sb.append(readLine);
-                sb.append('\r');
-            }
-        }
-        br.close();
-        String ret = sb.toString();
-        V1Job body = (V1Job) Yaml.load(ret);
+        File jobFile = classPathResource.getFile();
+        V1Job body = (V1Job) Yaml.load(jobFile);
         try {
             ApiClient apiClient = getK8sClient(null);
             BatchV1Api apiInstance = new BatchV1Api(apiClient);

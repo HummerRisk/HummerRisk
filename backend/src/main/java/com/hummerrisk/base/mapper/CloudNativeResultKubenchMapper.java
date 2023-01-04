@@ -3,8 +3,9 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.CloudNativeResultKubench;
 import com.hummerrisk.base.domain.CloudNativeResultKubenchExample;
 import com.hummerrisk.base.domain.CloudNativeResultKubenchWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface CloudNativeResultKubenchMapper {
     /**

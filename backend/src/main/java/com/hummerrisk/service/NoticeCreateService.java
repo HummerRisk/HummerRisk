@@ -14,7 +14,6 @@ import com.hummerrisk.commons.utils.CommonBeanFactory;
 import com.hummerrisk.commons.utils.CommonThreadPool;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.dto.MetricChartDTO;
-import com.hummerrisk.dto.ServerDTO;
 import com.hummerrisk.dto.ServerResultDTO;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.message.NoticeModel;

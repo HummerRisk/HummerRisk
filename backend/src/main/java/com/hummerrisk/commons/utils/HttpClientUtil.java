@@ -3,7 +3,6 @@ package com.hummerrisk.commons.utils;
 import com.hummerrisk.commons.constants.CloudNativeConstants;
 import com.hummerrisk.service.impl.SSLSocketFactoryImp;
 import okhttp3.*;
-import okio.BufferedSink;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -17,8 +16,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.net.ssl.*;
 import java.io.IOException;

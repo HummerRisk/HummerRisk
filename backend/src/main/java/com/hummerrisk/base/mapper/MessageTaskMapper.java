@@ -3,8 +3,9 @@ package com.hummerrisk.base.mapper;
 import com.hummerrisk.base.domain.MessageTask;
 import com.hummerrisk.base.domain.MessageTaskExample;
 import com.hummerrisk.base.domain.MessageTaskWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface MessageTaskMapper {
     /**
