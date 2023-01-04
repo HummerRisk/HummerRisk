@@ -425,7 +425,7 @@ public class PlatformUtils {
                 } else if (StringUtils.equalsIgnoreCase(osInfo, EPlatform.Windows.toString())) {
                     xray = "xray_windows_amd64";
                 }
-                return proxy + CloudTaskConstants.XRAY_RESULT_FILE_PATH + xray + " webscan --plugins " + (StringUtils.isNotEmpty(fileName) ? fileName : "xss") + " --url-file " + dirPath + "/urls.txt  --json-output " + dirPath + "/" + CloudTaskConstants.XRAY_RUN_RESULT_FILE;
+                return proxy + "./" + xray + " webscan --plugins " + (StringUtils.isNotEmpty(fileName) ? fileName : "xss") + " --url-file " + dirPath + "/urls.txt  --json-output " + dirPath + "/" + CloudTaskConstants.XRAY_RUN_RESULT_FILE;
         }
         switch (behavior) {
             case "run":

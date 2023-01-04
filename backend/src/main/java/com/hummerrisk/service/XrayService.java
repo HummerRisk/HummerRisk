@@ -248,7 +248,7 @@ public class XrayService {
             LogUtil.debug(cloudTask.getId() + " {xray}[command]: " + command);
             taskItem.setCommand(command);
             cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItem);
-            resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
+            resultStr = CommandUtils.commonExecCmdWithResult(command, CloudTaskConstants.XRAY_RESULT_FILE_PATH);
             if (LogUtil.getLogger().isDebugEnabled()) {
                 LogUtil.getLogger().debug("resource created: {}", resultStr);
             }
