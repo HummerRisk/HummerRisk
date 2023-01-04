@@ -699,7 +699,7 @@ public class K8sService {
         return "";
     }
 
-    void createKubench(K8sRequest k8sRequest, CloudNativeSourceExample example, CloudNative cloudNative) throws IOException, ApiException {
+    void createKubench(K8sRequest k8sRequest, CloudNativeSourceExample example, CloudNative cloudNative) throws Exception {
         k8sRequest.deleteKubenchJob();
         List<CloudNativeSource> list = cloudNativeSourceMapper.selectByExample(example);
         cloudNativeSourceMapper.deleteByExample(example);

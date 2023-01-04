@@ -11,6 +11,7 @@ import com.hummerrisk.base.domain.CloudNativeSourceWithBLOBs;
 import com.hummerrisk.base.domain.Proxy;
 import com.hummerrisk.commons.constants.CloudNativeConstants;
 import com.hummerrisk.commons.utils.LogUtil;
+import com.hummerrisk.commons.utils.ReadFileUtils;
 import com.hummerrisk.commons.utils.UUIDUtil;
 import com.hummerrisk.commons.utils.YamlUtil;
 import com.hummerrisk.proxy.Request;
@@ -22,10 +23,12 @@ import io.kubernetes.client.openapi.apis.*;
 import io.kubernetes.client.openapi.models.*;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.Yaml;
+import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -228,7 +231,10 @@ public class K8sRequest extends Request {
      */
     public void createKubenchJob() throws ApiException, IOException {
         ClassPathResource classPathResource = new ClassPathResource("file/kube-bench-job.yaml");
-        File jobFile = classPathResource.getFile();
+        InputStream inputStream = classPathResource.getInputStream();
+        File jobFile = new File("file/new.yaml");
+        // commons-io
+        FileUtils.copyInputStreamToFile(inputStream, jobFile);
         V1Job body = (V1Job) Yaml.load(jobFile);
         try {
             ApiClient apiClient = getK8sClient(null);
