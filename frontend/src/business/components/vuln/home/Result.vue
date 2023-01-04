@@ -120,7 +120,7 @@
           </el-col>
         </el-row>
         <el-progress v-if="source.overRules!==source.allRules" :text-inside="true"
-                     :stroke-width="26" :percentage="(source.overRules/source.allRules) * 100"></el-progress>
+                     :stroke-width="26" :percentage="((source.overRules/source.allRules) * 100).toFixed(2)"></el-progress>
       </el-card>
 
       <el-card class="table-card">

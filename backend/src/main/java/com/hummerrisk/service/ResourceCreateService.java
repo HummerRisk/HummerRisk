@@ -432,7 +432,7 @@ public class ResourceCreateService {
                         historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                         historyScanTask.setResourcesSum(0L);
                         historyScanTask.setReturnSum(0L);
-                        historyScanTask.setScanScore(0);
+                        historyScanTask.setScanScore(100);
                     }
                     historyScanTask.setOutput(jsonArray.toJSONString());
                     historyService.updateScanTaskHistory(historyScanTask);
@@ -447,7 +447,7 @@ public class ResourceCreateService {
                         historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                         historyScanTask.setResourcesSum(0L);
                         historyScanTask.setReturnSum(0L);
-                        historyScanTask.setScanScore(0);
+                        historyScanTask.setScanScore(100);
                     }
                     historyScanTask.setOutput(jsonArray.toJSONString());
                     historyService.updateScanTaskHistory(historyScanTask);
@@ -462,7 +462,7 @@ public class ResourceCreateService {
                         historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                         historyScanTask.setResourcesSum(0L);
                         historyScanTask.setReturnSum(0L);
-                        historyScanTask.setScanScore(0);
+                        historyScanTask.setScanScore(100);
                     }
                     historyScanTask.setOutput(jsonArray.toJSONString());
                     historyService.updateScanTaskHistory(historyScanTask);
@@ -477,7 +477,7 @@ public class ResourceCreateService {
                         historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                         historyScanTask.setResourcesSum(0L);
                         historyScanTask.setReturnSum(0L);
-                        historyScanTask.setScanScore(0);
+                        historyScanTask.setScanScore(100);
                     }
                     historyScanTask.setOutput(jsonArray.toJSONString());
                     historyService.updateScanTaskHistory(historyScanTask);
@@ -492,7 +492,7 @@ public class ResourceCreateService {
                         historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                         historyScanTask.setResourcesSum(0L);
                         historyScanTask.setReturnSum(0L);
-                        historyScanTask.setScanScore(0);
+                        historyScanTask.setScanScore(100);
                     }
                     historyScanTask.setOutput(jsonArray.toJSONString());
                     historyService.updateScanTaskHistory(historyScanTask);
@@ -507,7 +507,7 @@ public class ResourceCreateService {
                         historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                         historyScanTask.setResourcesSum(0L);
                         historyScanTask.setReturnSum(0L);
-                        historyScanTask.setScanScore(0);
+                        historyScanTask.setScanScore(100);
                     }
                     historyScanTask.setOutput(jsonArray.toJSONString());
                     historyService.updateScanTaskHistory(historyScanTask);
@@ -522,7 +522,7 @@ public class ResourceCreateService {
                         historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                         historyScanTask.setResourcesSum(0L);
                         historyScanTask.setReturnSum(0L);
-                        historyScanTask.setScanScore(0);
+                        historyScanTask.setScanScore(100);
                     }
                     historyScanTask.setOutput(jsonArray.toJSONString());
                     historyService.updateScanTaskHistory(historyScanTask);
@@ -537,7 +537,7 @@ public class ResourceCreateService {
                         historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                         historyScanTask.setResourcesSum(0L);
                         historyScanTask.setReturnSum(0L);
-                        historyScanTask.setScanScore(0);
+                        historyScanTask.setScanScore(100);
                     }
                     historyScanTask.setOutput(jsonArray.toJSONString());
                     historyService.updateScanTaskHistory(historyScanTask);
