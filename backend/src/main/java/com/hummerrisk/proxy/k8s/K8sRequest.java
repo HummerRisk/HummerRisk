@@ -31,8 +31,7 @@ import io.kubernetes.client.util.Yaml;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -236,8 +235,22 @@ public class K8sRequest extends Request {
      */
     public void createKubenchJob() throws ApiException, IOException {
         ClassPathResource classPathResource = new ClassPathResource("file/kube-bench-job.yaml");
-        File jobFile = classPathResource.getFile();
-        V1Job body = (V1Job) Yaml.load(jobFile);
+        InputStream in = classPathResource.getInputStream();
+        InputStreamReader isReader= new InputStreamReader(in);
+        BufferedReader br = new BufferedReader(isReader);
+        String readLine = null;
+        StringBuilder sb = new StringBuilder();
+        while ((readLine = br.readLine()) != null) {
+            if (readLine.charAt(0) == '-') {
+                continue;
+            } else {
+                sb.append(readLine);
+                sb.append('\r');
+            }
+        }
+        br.close();
+        String ret = sb.toString();
+        V1Job body = (V1Job) Yaml.load(ret);
         try {
             ApiClient apiClient = getK8sClient(null);
             BatchV1Api apiInstance = new BatchV1Api(apiClient);
