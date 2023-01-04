@@ -492,10 +492,6 @@
                     <artifactId>guava</artifactId>
                     <groupId>com.google.guava</groupId>
                 </exclusion>
-                <exclusion>
-                    <artifactId>azure-client-runtime</artifactId>
-                    <groupId>com.microsoft.azure</groupId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -503,12 +499,6 @@
             <artifactId>oauth2-oidc-sdk</artifactId>
             <version>10.3</version>
             <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>asm</artifactId>
-                    <groupId>org.ow2.asm</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!-- azure -->
 
@@ -773,23 +763,11 @@
             <groupId>com.jdcloud.sdk</groupId>
             <artifactId>vm</artifactId>
             <version>1.5.2</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>core</artifactId>
-                    <groupId>com.jdcloud.sdk</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.jdcloud.sdk</groupId>
             <artifactId>iam</artifactId>
             <version>0.2.3</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>core</artifactId>
-                    <groupId>com.jdcloud.sdk</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!-- jd -->
 
@@ -798,12 +776,6 @@
             <groupId>com.ksyun</groupId>
             <artifactId>ksyun-java-sdk</artifactId>
             <version>1.0.4</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>fastjson</artifactId>
-                    <groupId>com.alibaba</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!-- ksyun -->
 
@@ -1073,10 +1045,6 @@
                     <artifactId>commons-lang3</artifactId>
                     <groupId>org.apache.commons</groupId>
                 </exclusion>
-                <exclusion>
-                    <artifactId>httpmime</artifactId>
-                    <groupId>org.apache.httpcomponents</groupId>
-                </exclusion>
             </exclusions>
         </dependency>
         <!-- 字节云火山引擎 -->
@@ -1155,10 +1123,6 @@
                     <artifactId>jakarta.ws.rs-api</artifactId>
                     <groupId>jakarta.ws.rs</groupId>
                 </exclusion>
-                <exclusion>
-                    <artifactId>protobuf-java</artifactId>
-                    <groupId>com.google.protobuf</groupId>
-                </exclusion>
             </exclusions>
         </dependency>
         <!-- 百度云 -->
@@ -1204,10 +1168,6 @@
                 <exclusion>
                     <artifactId>commons-lang3</artifactId>
                     <groupId>org.apache.commons</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>httpmime</artifactId>
-                    <groupId>org.apache.httpcomponents</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
