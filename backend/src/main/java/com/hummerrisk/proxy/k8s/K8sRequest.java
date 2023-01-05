@@ -11,7 +11,6 @@ import com.hummerrisk.base.domain.CloudNativeSourceWithBLOBs;
 import com.hummerrisk.base.domain.Proxy;
 import com.hummerrisk.commons.constants.CloudNativeConstants;
 import com.hummerrisk.commons.utils.LogUtil;
-import com.hummerrisk.commons.utils.ReadFileUtils;
 import com.hummerrisk.commons.utils.UUIDUtil;
 import com.hummerrisk.commons.utils.YamlUtil;
 import com.hummerrisk.proxy.Request;
@@ -200,11 +199,11 @@ public class K8sRequest extends Request {
             LogUtil.debug(result.getStatus());
             LogUtil.debug("Success, Job 删除成功");
         } catch (ApiException e){
-            LogUtil.error("Status code: {}"+ e.getCode());
-            LogUtil.error("Reason: {}"+ e.getResponseBody());
-            LogUtil.error("Response headers: {}"+ e.getResponseHeaders());
+            LogUtil.debug("Status code: {}"+ e.getCode());
+            LogUtil.debug("Reason: {}"+ e.getResponseBody());
+            LogUtil.debug("Response headers: {}"+ e.getResponseHeaders());
         } catch (Exception ex){
-            LogUtil.error(ex.getMessage());
+            LogUtil.debug(ex.getMessage());
         }
     }
 
@@ -229,13 +228,13 @@ public class K8sRequest extends Request {
      * @throws IOException
      * @throws ApiException
      */
-    public void createKubenchJob() throws ApiException, IOException {
+    public void createKubenchJob() throws Exception {
         ClassPathResource classPathResource = new ClassPathResource("file/kube-bench-job.yaml");
         InputStream inputStream = classPathResource.getInputStream();
         File jobFile = new File("file/new.yaml");
         // commons-io
         FileUtils.copyInputStreamToFile(inputStream, jobFile);
-        V1Job body = (V1Job) Yaml.load(jobFile);
+        V1Job body = Yaml.loadAs(jobFile, V1Job.class);
         try {
             ApiClient apiClient = getK8sClient(null);
             BatchV1Api apiInstance = new BatchV1Api(apiClient);

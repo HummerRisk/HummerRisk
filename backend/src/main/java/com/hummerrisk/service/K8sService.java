@@ -700,19 +700,23 @@ public class K8sService {
     }
 
     void createKubench(K8sRequest k8sRequest, CloudNativeSourceExample example, CloudNative cloudNative) throws Exception {
-        k8sRequest.deleteKubenchJob();
-        List<CloudNativeSource> list = cloudNativeSourceMapper.selectByExample(example);
-        cloudNativeSourceMapper.deleteByExample(example);
-        for (CloudNativeSource cloudNativeSource : list) {
-            k8sRequest.deleteKubenchPod(cloudNativeSource.getSourceName());
-        }
-        k8sRequest.createKubenchJob();
-        K8sSource pod = k8sRequest.getKubenchPod(cloudNative);
-        for (CloudNativeSourceWithBLOBs k8sSource : pod.getK8sSource()) {
-            cloudNativeSourceMapper.insertSelective(k8sSource);
-        }
-        for (CloudNativeSourceImage cloudNativeSourceImage : pod.getK8sSourceImage()) {
-            cloudNativeSourceImageMapper.insertSelective(cloudNativeSourceImage);
+        try{
+            k8sRequest.deleteKubenchJob();
+            List<CloudNativeSource> list = cloudNativeSourceMapper.selectByExample(example);
+            cloudNativeSourceMapper.deleteByExample(example);
+            for (CloudNativeSource cloudNativeSource : list) {
+                k8sRequest.deleteKubenchPod(cloudNativeSource.getSourceName());
+            }
+            k8sRequest.createKubenchJob();
+            K8sSource pod = k8sRequest.getKubenchPod(cloudNative);
+            for (CloudNativeSourceWithBLOBs k8sSource : pod.getK8sSource()) {
+                cloudNativeSourceMapper.insertSelective(k8sSource);
+            }
+            for (CloudNativeSourceImage cloudNativeSourceImage : pod.getK8sSourceImage()) {
+                cloudNativeSourceImageMapper.insertSelective(cloudNativeSourceImage);
+            }
+        } catch (Exception e){
+            LogUtil.error(e.getMessage());
         }
     }
 
