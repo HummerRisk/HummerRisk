@@ -158,7 +158,7 @@ public class CloudSyncService {
                         CommandUtils.saveAsFile(finalScript, dirPath, "policy.yml", false);
                         Map<String, String> map = PlatformUtils.getAccount(account, region, proxyMapper.selectByPrimaryKey(account.getProxyId()));
                         String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, fileName, map);
-                        LogUtil.debug(account.getId() + " {}[command]: " + command);
+                        LogUtil.warn(account.getId() + " {}[command]: " + command);
                         resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
                         if (LogUtil.getLogger().isDebugEnabled()) {
                             LogUtil.getLogger().debug("resource created: {}", resultStr);

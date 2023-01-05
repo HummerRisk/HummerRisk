@@ -196,14 +196,14 @@ public class K8sRequest extends Request {
             ApiClient apiClient = getK8sClient(null);
             BatchV1Api apiInstance = new BatchV1Api(apiClient);
             V1Status result = apiInstance.deleteNamespacedJob("kube-bench","default", null,null,null,null,null, null);
-            LogUtil.debug(result.getStatus());
-            LogUtil.debug("Success, Job 删除成功");
+            LogUtil.warn(result.getStatus());
+            LogUtil.warn("Success, Job 删除成功");
         } catch (ApiException e){
-            LogUtil.debug("Status code: {}"+ e.getCode());
-            LogUtil.debug("Reason: {}"+ e.getResponseBody());
-            LogUtil.debug("Response headers: {}"+ e.getResponseHeaders());
+            LogUtil.warn("Status code: {}"+ e.getCode());
+            LogUtil.warn("Reason: {}"+ e.getResponseBody());
+            LogUtil.warn("Response headers: {}"+ e.getResponseHeaders());
         } catch (Exception ex){
-            LogUtil.debug(ex.getMessage());
+            LogUtil.warn(ex.getMessage());
         }
     }
 
@@ -212,8 +212,8 @@ public class K8sRequest extends Request {
             ApiClient apiClient = getK8sClient(null);
             CoreV1Api apiInstance = new CoreV1Api(apiClient);
             V1Pod result = apiInstance.deleteNamespacedPod(name,"default", null,null,null,null,null, null);
-            LogUtil.debug(result.getStatus());
-            LogUtil.debug("Success, Pod 删除成功");
+            LogUtil.warn(result.getStatus());
+            LogUtil.warn("Success, Pod 删除成功");
         } catch (ApiException e){
             LogUtil.error("Status code: {}"+ e.getCode());
             LogUtil.error("Reason: {}"+ e.getResponseBody());
@@ -239,7 +239,7 @@ public class K8sRequest extends Request {
             ApiClient apiClient = getK8sClient(null);
             BatchV1Api apiInstance = new BatchV1Api(apiClient);
             V1Job result = apiInstance.createNamespacedJob("default", body,null,null,null,null);
-            LogUtil.debug("Success, Job 创建成功");
+            LogUtil.warn("Success, Job 创建成功");
         } catch (ApiException e){
             if (e.getCode() == 409) {
                 LogUtil.error("error Job 创建已重复！");

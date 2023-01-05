@@ -37,7 +37,7 @@ public class WebhookNoticeSender extends AbstractNoticeSender {
                 response = httpclient.execute(httppost);
                 if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                     String result = EntityUtils.toString(response.getEntity(), "utf-8");
-                    LogUtil.debug(result);
+                    LogUtil.warn(result);
                 }
             }
         } catch (Exception e) {
