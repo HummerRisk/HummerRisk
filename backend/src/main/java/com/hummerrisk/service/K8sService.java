@@ -172,7 +172,7 @@ public class K8sService {
             param.put("Authorization", token);
             boolean valid = HttpClientUtil.operatorStatus(url, param);
             validateDTO.setFlag(valid);
-            validateDTO.setMessage("Verification succeeded!");
+            validateDTO.setMessage("Verification : " + valid);
             return validateDTO;
         } catch (Exception e) {
             validateDTO.setFlag(false);
@@ -192,7 +192,7 @@ public class K8sService {
             String url = k8sRequest.getUrl();
 
             CloudNativeSourceExample example = new CloudNativeSourceExample();
-            example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceNameLike("%kube-bench-%");
+            example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("%kube-bench-%");
             CloudNativeSource cloudNativeSource = cloudNativeSourceMapper.selectByExample(example).get(0);
 
             if (cloudNativeSource == null) {
@@ -211,7 +211,7 @@ public class K8sService {
             param.put("Authorization", token);
             boolean valid = HttpClientUtil.kubenchStatus(url, param);
             validateDTO.setFlag(valid);
-            validateDTO.setMessage("Verification succeeded!");
+            validateDTO.setMessage("Verification : " + valid);
             return validateDTO;
         } catch (Exception e) {
             validateDTO.setFlag(false);
@@ -1139,6 +1139,9 @@ public class K8sService {
             cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
             saveCloudNativeResultLog(id, "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
         }
+
+        //检验operator
+        operatorStatusValidate(cloudNative.getId());
     }
 
     public void reinstallKubench(String id) throws Exception {
@@ -1160,15 +1163,6 @@ public class K8sService {
 
             createKubench(k8sRequest, example, cloudNative);
 
-            //检验kube-bench
-            ValidateDTO kubenchStatusValidate = validateKubenchStatus(cloudNative);
-            if (kubenchStatusValidate.isFlag()) {
-                cloudNative.setKubenchStatus(CloudAccountConstants.Status.VALID.name());
-            } else {
-                cloudNative.setKubenchStatus(CloudAccountConstants.Status.INVALID.name());
-            }
-            cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
-
             saveCloudNativeResultLog(id, "i18n_end_k8s_kubench", "", true);
         } catch (Exception e) {
             cloudNative.setKubenchStatus(CloudAccountConstants.Status.INVALID.name());
@@ -1176,6 +1170,8 @@ public class K8sService {
             saveCloudNativeResultLog(id, "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
         }
 
+        //检验kube-bench
+        kubenchStatusValidate(cloudNative.getId());
     }
 
 }

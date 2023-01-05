@@ -276,8 +276,8 @@ public class NucleiService {
             if (LogUtil.getLogger().isDebugEnabled()) {
                 LogUtil.getLogger().debug("resource created: {}", resultStr);
             }
-            if (resultStr.contains("ERR"))
-                throw new Exception(Translator.get("i18n_create_resource_failed") + ": " + resultStr);
+//            if (resultStr.contains("ERR"))
+//                throw new Exception(Translator.get("i18n_create_resource_failed") + ": " + resultStr);
 
 
             for (CloudTaskItemResourceWithBLOBs taskItemResource : list) {
