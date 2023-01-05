@@ -674,7 +674,10 @@ public class K8sService {
             CloudNativeSourceExample example = new CloudNativeSourceExample();
             example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("%kube-bench-%");
 
-            createKubench(k8sRequest, example, cloudNative);
+            ValidateDTO kubenchIsInstall = validateKubenchStatus(cloudNative);
+            if (!kubenchIsInstall.isFlag()) {
+                createKubench(k8sRequest, example, cloudNative);
+            }
 
             CloudNativeSource cloudNativeSource = cloudNativeSourceMapper.selectByExample(example).get(0);
 
