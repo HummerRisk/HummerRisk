@@ -304,13 +304,8 @@ public class ServerController {
 
             ClassPathResource classPathResource = new ClassPathResource(path);
             InputStream inputStream = classPathResource.getInputStream();
-            File file = new File("file/template.xlsx");
-            // commons-io
-            FileUtils.copyInputStreamToFile(inputStream, file);
-
-            fis = new FileInputStream(file);
             sos = response.getOutputStream();
-            IOUtils.copy(fis, sos);
+            IOUtils.copy(inputStream, sos);
         } catch (Exception e) {
             throw new RuntimeException("下载失败！" + e.getMessage());
         } finally {
