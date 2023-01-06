@@ -2,7 +2,6 @@ package com.hummerrisk.base.mapper.ext;
 
 import com.hummerrisk.base.domain.*;
 import com.hummerrisk.dto.MetricChartDTO;
-import com.hummerrisk.dto.ServerDTO;
 import com.hummerrisk.dto.ServerResultDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

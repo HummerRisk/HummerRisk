@@ -14,7 +14,6 @@ import com.hummerrisk.commons.utils.CommonBeanFactory;
 import com.hummerrisk.commons.utils.CommonThreadPool;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.dto.MetricChartDTO;
-import com.hummerrisk.dto.ServerDTO;
 import com.hummerrisk.dto.ServerResultDTO;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.message.NoticeModel;
@@ -152,9 +151,9 @@ public class NoticeCreateService {
             messageOrder.setSendTime(System.currentTimeMillis());
             messageOrderMapper.updateByPrimaryKeySelective(messageOrder);
 
-            LogUtil.debug(Translator.get("i18n_start_messageorder") + messageOrder.getAccountName());
+            LogUtil.warn(Translator.get("i18n_start_messageorder") + messageOrder.getAccountName());
             sendTask(messageOrder);
-            LogUtil.debug(Translator.get("i18n_end_messageorder") + messageOrder.getAccountName());
+            LogUtil.warn(Translator.get("i18n_end_messageorder") + messageOrder.getAccountName());
 
         } catch (Exception e) {
             messageOrder.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
@@ -597,7 +596,7 @@ public class NoticeCreateService {
         }
 
 
-        LogUtil.debug(Translator.get("i18n_start_msg") + messageOrder.getAccountName());
+        LogUtil.warn(Translator.get("i18n_start_msg") + messageOrder.getAccountName());
         WebMsg msg = new WebMsg();
         MessageOrderItemExample example = new MessageOrderItemExample();
         example.createCriteria().andMessageOrderIdEqualTo(messageOrder.getId());
@@ -615,6 +614,6 @@ public class NoticeCreateService {
         msg.setContent(subject + "【" + messageOrder.getAccountName() + "】" + messageOrder.getStatus() + details);
         msg.setScanType(messageOrder.getScanType());
         webMsgMapper.insertSelective(msg);
-        LogUtil.debug(Translator.get("i18n_end_msg") + messageOrder.getAccountName());
+        LogUtil.warn(Translator.get("i18n_end_msg") + messageOrder.getAccountName());
     }
 }

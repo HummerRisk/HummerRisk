@@ -12,7 +12,6 @@ import com.hummerrisk.base.mapper.ext.ExtFileSystemRuleMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
-import com.hummerrisk.controller.request.code.CodeResultItemRequest;
 import com.hummerrisk.controller.request.fs.FsRequest;
 import com.hummerrisk.controller.request.fs.FsResultItemRequest;
 import com.hummerrisk.controller.request.fs.FsResultRequest;

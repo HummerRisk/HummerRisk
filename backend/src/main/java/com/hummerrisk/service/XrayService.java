@@ -245,7 +245,7 @@ public class XrayService {
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
             String command = PlatformUtils.fixedCommand(CommandEnum.xray.getCommand(), CommandEnum.run.getCommand(), dirPath, fileName, map);
-            LogUtil.debug(cloudTask.getId() + " {xray}[command]: " + command);
+            LogUtil.warn(cloudTask.getId() + " {xray}[command]: " + command);
             taskItem.setCommand(command);
             cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItem);
             resultStr = CommandUtils.commonExecCmdWithResult(command, CloudTaskConstants.XRAY_RESULT_FILE_PATH);

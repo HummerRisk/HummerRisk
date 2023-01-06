@@ -1,7 +1,5 @@
 package com.hummerrisk.commons.utils;
 
-import client.iam.getuser.v20151101.GetUserRequest;
-import client.iam.getuser.v20151101.GetUserResponse;
 import cn.ucloud.common.client.DefaultUcloudClient;
 import cn.ucloud.common.client.UcloudClient;
 import cn.ucloud.common.pojo.Account;

@@ -3,9 +3,6 @@ package com.hummerrisk.proxy.k8s;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.hummerrisk.base.domain.CloudNative;
@@ -18,25 +15,22 @@ import com.hummerrisk.commons.utils.UUIDUtil;
 import com.hummerrisk.commons.utils.YamlUtil;
 import com.hummerrisk.proxy.Request;
 import io.gsonfire.builders.JsonObjectBuilder;
-import io.kubernetes.client.ProtoClient;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.Configuration;
 import io.kubernetes.client.openapi.apis.*;
 import io.kubernetes.client.openapi.models.*;
-import io.kubernetes.client.proto.Meta;
-import io.kubernetes.client.proto.V1;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.Yaml;
-import org.apache.poi.ss.formula.functions.T;
+import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 public class K8sRequest extends Request {
 
@@ -202,14 +196,14 @@ public class K8sRequest extends Request {
             ApiClient apiClient = getK8sClient(null);
             BatchV1Api apiInstance = new BatchV1Api(apiClient);
             V1Status result = apiInstance.deleteNamespacedJob("kube-bench","default", null,null,null,null,null, null);
-            LogUtil.debug(result.getStatus());
-            LogUtil.debug("Success, Job 删除成功");
+            LogUtil.warn(result.getStatus());
+            LogUtil.warn("Success, Job 删除成功");
         } catch (ApiException e){
-            LogUtil.error("Status code: {}"+ e.getCode());
-            LogUtil.error("Reason: {}"+ e.getResponseBody());
-            LogUtil.error("Response headers: {}"+ e.getResponseHeaders());
+            LogUtil.warn("Status code: {}"+ e.getCode());
+            LogUtil.warn("Reason: {}"+ e.getResponseBody());
+            LogUtil.warn("Response headers: {}"+ e.getResponseHeaders());
         } catch (Exception ex){
-            LogUtil.error(ex.getMessage());
+            LogUtil.warn(ex.getMessage());
         }
     }
 
@@ -218,8 +212,8 @@ public class K8sRequest extends Request {
             ApiClient apiClient = getK8sClient(null);
             CoreV1Api apiInstance = new CoreV1Api(apiClient);
             V1Pod result = apiInstance.deleteNamespacedPod(name,"default", null,null,null,null,null, null);
-            LogUtil.debug(result.getStatus());
-            LogUtil.debug("Success, Pod 删除成功");
+            LogUtil.warn(result.getStatus());
+            LogUtil.warn("Success, Pod 删除成功");
         } catch (ApiException e){
             LogUtil.error("Status code: {}"+ e.getCode());
             LogUtil.error("Reason: {}"+ e.getResponseBody());
@@ -234,15 +228,18 @@ public class K8sRequest extends Request {
      * @throws IOException
      * @throws ApiException
      */
-    public void createKubenchJob() throws ApiException, IOException {
+    public void createKubenchJob() throws Exception {
         ClassPathResource classPathResource = new ClassPathResource("file/kube-bench-job.yaml");
-        File jobFile = classPathResource.getFile();
-        V1Job body = (V1Job) Yaml.load(jobFile);
+        InputStream inputStream = classPathResource.getInputStream();
+        File jobFile = new File("file/new.yaml");
+        // commons-io
+        FileUtils.copyInputStreamToFile(inputStream, jobFile);
+        V1Job body = Yaml.loadAs(jobFile, V1Job.class);
         try {
             ApiClient apiClient = getK8sClient(null);
             BatchV1Api apiInstance = new BatchV1Api(apiClient);
             V1Job result = apiInstance.createNamespacedJob("default", body,null,null,null,null);
-            LogUtil.debug("Success, Job 创建成功");
+            LogUtil.warn("Success, Job 创建成功");
         } catch (ApiException e){
             if (e.getCode() == 409) {
                 LogUtil.error("error Job 创建已重复！");

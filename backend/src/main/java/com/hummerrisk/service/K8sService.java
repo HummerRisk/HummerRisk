@@ -30,7 +30,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -173,7 +172,7 @@ public class K8sService {
             param.put("Authorization", token);
             boolean valid = HttpClientUtil.operatorStatus(url, param);
             validateDTO.setFlag(valid);
-            validateDTO.setMessage("Verification succeeded!");
+            validateDTO.setMessage("Verification : " + valid);
             return validateDTO;
         } catch (Exception e) {
             validateDTO.setFlag(false);
@@ -193,7 +192,7 @@ public class K8sService {
             String url = k8sRequest.getUrl();
 
             CloudNativeSourceExample example = new CloudNativeSourceExample();
-            example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceNameLike("%kube-bench-%");
+            example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("%kube-bench-%");
             CloudNativeSource cloudNativeSource = cloudNativeSourceMapper.selectByExample(example).get(0);
 
             if (cloudNativeSource == null) {
@@ -212,7 +211,7 @@ public class K8sService {
             param.put("Authorization", token);
             boolean valid = HttpClientUtil.kubenchStatus(url, param);
             validateDTO.setFlag(valid);
-            validateDTO.setMessage("Verification succeeded!");
+            validateDTO.setMessage("Verification : " + valid);
             return validateDTO;
         } catch (Exception e) {
             validateDTO.setFlag(false);
@@ -675,7 +674,10 @@ public class K8sService {
             CloudNativeSourceExample example = new CloudNativeSourceExample();
             example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("%kube-bench-%");
 
-            createKubench(k8sRequest, example, cloudNative);
+            ValidateDTO kubenchIsInstall = validateKubenchStatus(cloudNative);
+            if (!kubenchIsInstall.isFlag()) {
+                createKubench(k8sRequest, example, cloudNative);
+            }
 
             CloudNativeSource cloudNativeSource = cloudNativeSourceMapper.selectByExample(example).get(0);
 
@@ -700,20 +702,24 @@ public class K8sService {
         return "";
     }
 
-    void createKubench(K8sRequest k8sRequest, CloudNativeSourceExample example, CloudNative cloudNative) throws IOException, ApiException {
-        k8sRequest.deleteKubenchJob();
-        List<CloudNativeSource> list = cloudNativeSourceMapper.selectByExample(example);
-        cloudNativeSourceMapper.deleteByExample(example);
-        for (CloudNativeSource cloudNativeSource : list) {
-            k8sRequest.deleteKubenchPod(cloudNativeSource.getSourceName());
-        }
-        k8sRequest.createKubenchJob();
-        K8sSource pod = k8sRequest.getKubenchPod(cloudNative);
-        for (CloudNativeSourceWithBLOBs k8sSource : pod.getK8sSource()) {
-            cloudNativeSourceMapper.insertSelective(k8sSource);
-        }
-        for (CloudNativeSourceImage cloudNativeSourceImage : pod.getK8sSourceImage()) {
-            cloudNativeSourceImageMapper.insertSelective(cloudNativeSourceImage);
+    void createKubench(K8sRequest k8sRequest, CloudNativeSourceExample example, CloudNative cloudNative) throws Exception {
+        try{
+            k8sRequest.deleteKubenchJob();
+            List<CloudNativeSource> list = cloudNativeSourceMapper.selectByExample(example);
+            cloudNativeSourceMapper.deleteByExample(example);
+            for (CloudNativeSource cloudNativeSource : list) {
+                k8sRequest.deleteKubenchPod(cloudNativeSource.getSourceName());
+            }
+            k8sRequest.createKubenchJob();
+            K8sSource pod = k8sRequest.getKubenchPod(cloudNative);
+            for (CloudNativeSourceWithBLOBs k8sSource : pod.getK8sSource()) {
+                cloudNativeSourceMapper.insertSelective(k8sSource);
+            }
+            for (CloudNativeSourceImage cloudNativeSourceImage : pod.getK8sSourceImage()) {
+                cloudNativeSourceImageMapper.insertSelective(cloudNativeSourceImage);
+            }
+        } catch (Exception e){
+            LogUtil.error(e.getMessage());
         }
     }
 
@@ -1136,6 +1142,9 @@ public class K8sService {
             cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
             saveCloudNativeResultLog(id, "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
         }
+
+        //检验operator
+        operatorStatusValidate(cloudNative.getId());
     }
 
     public void reinstallKubench(String id) throws Exception {
@@ -1157,15 +1166,6 @@ public class K8sService {
 
             createKubench(k8sRequest, example, cloudNative);
 
-            //检验kube-bench
-            ValidateDTO kubenchStatusValidate = validateKubenchStatus(cloudNative);
-            if (kubenchStatusValidate.isFlag()) {
-                cloudNative.setKubenchStatus(CloudAccountConstants.Status.VALID.name());
-            } else {
-                cloudNative.setKubenchStatus(CloudAccountConstants.Status.INVALID.name());
-            }
-            cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
-
             saveCloudNativeResultLog(id, "i18n_end_k8s_kubench", "", true);
         } catch (Exception e) {
             cloudNative.setKubenchStatus(CloudAccountConstants.Status.INVALID.name());
@@ -1173,6 +1173,8 @@ public class K8sService {
             saveCloudNativeResultLog(id, "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
         }
 
+        //检验kube-bench
+        kubenchStatusValidate(cloudNative.getId());
     }
 
 }

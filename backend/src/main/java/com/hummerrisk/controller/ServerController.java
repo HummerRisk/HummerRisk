@@ -14,6 +14,7 @@ import com.hummerrisk.dto.*;
 import com.hummerrisk.service.ServerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +23,10 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
@@ -300,7 +303,12 @@ public class ServerController {
             response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
 
             ClassPathResource classPathResource = new ClassPathResource(path);
-            fis = new FileInputStream(classPathResource.getFile());
+            InputStream inputStream = classPathResource.getInputStream();
+            File file = new File("file/template.xlsx");
+            // commons-io
+            FileUtils.copyInputStreamToFile(inputStream, file);
+
+            fis = new FileInputStream(file);
             sos = response.getOutputStream();
             IOUtils.copy(fis, sos);
         } catch (Exception e) {

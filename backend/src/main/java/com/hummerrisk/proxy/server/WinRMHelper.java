@@ -6,7 +6,6 @@ import com.hummerrisk.commons.utils.LogUtil;
 import io.cloudsoft.winrm4j.client.WinRmClientContext;
 import io.cloudsoft.winrm4j.winrm.WinRmTool;
 import io.cloudsoft.winrm4j.winrm.WinRmToolResponse;
-import org.apache.http.client.config.AuthSchemes;
 
 import java.io.IOException;
 

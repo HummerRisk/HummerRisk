@@ -5,7 +5,6 @@ import com.hummerrisk.base.domain.Proxy;
 import com.hummerrisk.base.domain.ScanSetting;
 import com.hummerrisk.commons.constants.CodeConstants;
 import com.hummerrisk.commons.constants.TrivyConstants;
-import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.CommandUtils;
 import com.hummerrisk.commons.utils.LogUtil;
 import com.hummerrisk.commons.utils.ProxyUtil;
