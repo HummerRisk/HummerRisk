@@ -312,8 +312,7 @@ public class ServerController {
             sos = response.getOutputStream();
             IOUtils.copy(fis, sos);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("下载失败！");
+            throw new RuntimeException("下载失败！" + e.getMessage());
         } finally {
             try {
                 if (fis != null) {
