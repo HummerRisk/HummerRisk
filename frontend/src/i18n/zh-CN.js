@@ -1241,6 +1241,7 @@ export default {
     oss_chart_vuln: '存储桶统计',
     oss_bucket_chart: '对象存储桶文件统计',
     oss_bucket_chart_vuln: '存储桶文件统计',
+    cloud_note: '目前支持的云类型为: 阿里云、腾讯云、华为云、火山引擎、青云、七牛云、Amazon Web Services、UCloud。',
   },
   task: {
     task_setting: '任务编排',

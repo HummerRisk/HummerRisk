@@ -165,6 +165,7 @@
             </div>
           </el-form-item>
         </el-form>
+        <div style="color: red;font-style:italic;margin: 5px 0 10px 50px;">{{ $t('oss.cloud_note') }}</div>
         <dialog-footer
           @cancel="visible = false"
           @add="innerDrawerProxy = false"
