@@ -1544,7 +1544,8 @@ export default {
     earliest_event_time: '最早時間',
     last_event_time: '最後時間',
     event_id: '事件ID',
-    event_source: '事件源'
+    event_source: '事件源',
+    cloud_note: '目前支持的雲類型為: 阿里雲、騰訊雲、華為雲、火山引擎、Amazon Web Services。 ',
   },
   second: {
     title: '秒',

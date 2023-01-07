@@ -1547,7 +1547,8 @@ export default {
     earliest_event_time: 'earliest time',
     last_event_time: 'last time',
     event_id: 'Event ID',
-    event_source: 'event source'
+    event_source: 'event source',
+    cloud_note: 'Currently，the supported cloud types are: Aliyun Cloud, Tencent Cloud, Huawei Cloud, VolcEngine, Amazon Web Services. ',
   },
   second: {
     title:'seconds',

@@ -116,6 +116,7 @@
             align="right">
           </el-date-picker>
         </el-form-item>
+        <div style="color: red;font-style:italic;margin: 5px 0 10px 50px;">{{ $t('event.cloud_note') }}</div>
         <dialog-footer
           @cancel="cancel"
           @confirm="confirm"/>

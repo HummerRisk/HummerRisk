@@ -1544,7 +1544,8 @@ export default {
     earliest_event_time: '最早时间',
     last_event_time: '最后时间',
     event_id: '事件ID',
-    event_source: '事件源'
+    event_source: '事件源',
+    cloud_note: '目前支持的云类型为: 阿里云、腾讯云、华为云、火山引擎、Amazon Web Services。',
   },
   second: {
     title: '秒',
