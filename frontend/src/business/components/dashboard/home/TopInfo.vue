@@ -1,59 +1,64 @@
 <template>
-  <container class="container" v-loading="result.loading">
-    <el-col :span="4">
-      <el-card shadow="always" class="hr-card-index-1">
-        <span class="hr-card-data">
-          <span class="hr-card-data-digital">{{ topInfo.users }}</span>
-          <span class="hr-card-data-unit"> {{ 'Users' }}</span>
-        </span>
-        <span class="hr-card-desc">{{ $t('dashboard.users') }}</span>
-      </el-card>
-    </el-col>
-    <el-col :span="4">
-      <el-card shadow="always" class="hr-card-index-2">
-        <span class="hr-card-data">
-          <span class="hr-card-data-digital">{{ topInfo.accounts }}</span>
-          <span class="hr-card-data-unit"> {{ 'Accounts' }}</span>
-        </span>
-        <span class="hr-card-desc">{{ $t('dashboard.accounts') }}</span>
-      </el-card>
-    </el-col>
-    <el-col :span="4">
-      <el-card shadow="always" class="hr-card-index-3">
-        <span class="hr-card-data">
-          <span class="hr-card-data-digital">{{ topInfo.rules }}</span>
-          <span class="hr-card-data-unit"> {{ 'Rules' }}</span>
-        </span>
-        <span class="hr-card-desc">{{ $t('dashboard.rules') }}</span>
-      </el-card>
-    </el-col>
-    <el-col :span="4">
-      <el-card shadow="always" class="hr-card-index-4">
-        <span class="hr-card-data">
-          <span class="hr-card-data-digital">{{ topInfo.results }}</span>
-          <span class="hr-card-data-unit"> {{ 'Results' }}</span>
-        </span>
-        <span class="hr-card-desc">{{ $t('dashboard.results') }}</span>
-      </el-card>
-    </el-col>
-    <el-col :span="4">
-      <el-card shadow="always" class="hr-card-index-5">
-        <span class="hr-card-data">
-          <span class="hr-card-data-digital">{{ topInfo.tasks }}</span>
-          <span class="hr-card-data-unit"> {{ 'Tasks' }}</span>
-        </span>
-        <span class="hr-card-desc">{{ $t('dashboard.tasks') }}</span>
-      </el-card>
-    </el-col>
-    <el-col :span="4">
-      <el-card shadow="always" class="hr-card-index-6">
-        <span class="hr-card-data">
-          <current-user/>
-        </span>
-        <span class="hr-card-desc">{{ currentUser.email }}</span>
-      </el-card>
-    </el-col>
-  </container>
+  <div v-loading="result.loading">
+    <container class="container">
+      <el-col :span="4">
+        <el-card shadow="always" class="hr-card-index-1">
+          <span class="hr-card-data">
+            <span class="hr-card-data-digital">{{ topInfo.users }}</span>
+            <span class="hr-card-data-unit"> {{ 'Users' }}</span>
+          </span>
+          <span class="hr-card-desc">{{ $t('dashboard.users') }}</span>
+        </el-card>
+      </el-col>
+      <el-col :span="4">
+        <el-card shadow="always" class="hr-card-index-2">
+          <span class="hr-card-data">
+            <span class="hr-card-data-digital">{{ topInfo.accounts }}</span>
+            <span class="hr-card-data-unit"> {{ 'Accounts' }}</span>
+          </span>
+          <span class="hr-card-desc">{{ $t('dashboard.accounts') }}</span>
+        </el-card>
+      </el-col>
+      <el-col :span="4">
+        <el-card shadow="always" class="hr-card-index-3">
+          <span class="hr-card-data">
+            <span class="hr-card-data-digital">{{ topInfo.rules }}</span>
+            <span class="hr-card-data-unit"> {{ 'Rules' }}</span>
+          </span>
+          <span class="hr-card-desc">{{ $t('dashboard.rules') }}</span>
+        </el-card>
+      </el-col>
+      <el-col :span="4">
+        <el-card shadow="always" class="hr-card-index-4">
+          <span class="hr-card-data">
+            <span class="hr-card-data-digital">{{ topInfo.results }}</span>
+            <span class="hr-card-data-unit"> {{ 'Results' }}</span>
+          </span>
+          <span class="hr-card-desc">{{ $t('dashboard.results') }}</span>
+        </el-card>
+      </el-col>
+      <el-col :span="4">
+        <el-card shadow="always" class="hr-card-index-5">
+          <span class="hr-card-data">
+            <span class="hr-card-data-digital">{{ topInfo.tasks }}</span>
+            <span class="hr-card-data-unit"> {{ 'Tasks' }}</span>
+          </span>
+          <span class="hr-card-desc">{{ $t('dashboard.tasks') }}</span>
+        </el-card>
+      </el-col>
+      <el-col :span="4">
+          <el-card shadow="always" class="hr-card-index-6">
+            <span class="hr-card-data">
+              <current-user/>
+            </span>
+            <span class="hr-card-desc">{{ currentUser.email }}</span>
+          </el-card>
+        </el-col>
+    </container>
+    <container class="container">
+
+    </container>
+  </div>
 </template>
 
 <script>
