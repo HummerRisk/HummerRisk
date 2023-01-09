@@ -147,7 +147,10 @@
     </resultMap>
 
     <select id="selectServerByExample" parameterType="com.hummerrisk.base.domain.ServerExample" resultMap="ServerBaseResultMap">
-        select t.*, (f.id is null) as favour, 'serverAccount' as type
+        select t.id, t.name, t.server_group_id, t.plugin_icon, t.status,
+               t.create_time, t.update_time, t.creator, t.ip, t.port,
+               t.user_name, t.password, t.is_proxy, t.proxy_id,
+               (f.id is null) as favour, 'serverAccount' as type
         from server t
         left join favorite f on t.id = f.source_id
         <if test="_parameter != null">
@@ -358,7 +361,7 @@
         'serverAccount' as accountType
         from server_rule t
         <where>
-            <if test="ruleName != null">
+            <if test="ruleName != null and ruleName != ''">
                 AND t.name like CONCAT('%', #{ruleName},'%')
             </if>
         </where>
