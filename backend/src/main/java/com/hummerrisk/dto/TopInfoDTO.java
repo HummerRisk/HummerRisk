@@ -22,6 +22,8 @@ public class TopInfoDTO {
 
     private String configAccounts;
 
+    private String fsAccounts;
+
     private String rules;
 
     private String cloudRules;
@@ -38,6 +40,8 @@ public class TopInfoDTO {
 
     private String codeRules;
 
+    private String fsRules;
+
     private String results;
 
     private String cloudResults;
@@ -53,6 +57,8 @@ public class TopInfoDTO {
     private String imageResults;
 
     private String codeResults;
+
+    private String fsResults;
 
     public String getUsers() {
         return users;
@@ -260,5 +266,29 @@ public class TopInfoDTO {
 
     public void setConfigResults(String configResults) {
         this.configResults = configResults;
+    }
+
+    public String getFsAccounts() {
+        return fsAccounts;
+    }
+
+    public void setFsAccounts(String fsAccounts) {
+        this.fsAccounts = fsAccounts;
+    }
+
+    public String getFsRules() {
+        return fsRules;
+    }
+
+    public void setFsRules(String fsRules) {
+        this.fsRules = fsRules;
+    }
+
+    public String getFsResults() {
+        return fsResults;
+    }
+
+    public void setFsResults(String fsResults) {
+        this.fsResults = fsResults;
     }
 }
