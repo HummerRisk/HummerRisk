@@ -58,22 +58,7 @@
     <container class="container">
       <el-col :span="24">
         <el-card shadow="always">
-          <el-col :span="4" class="co-el-img">
-            <el-col :span="21" class="co-el-img co-el-img-div">
-              <el-image
-                        :src="require(`@/assets/img/panel/img.png`)"
-                        :fit="'fill'">
-                <div slot="error" class="image-slot">
-                  <i class="el-icon-picture-outline"></i>
-                </div>
-              </el-image>
-              <div class="el-total">{{ $t('resource.i18n_not_compliance') }}</div>
-            </el-col>
-            <el-col :span="1">
-              <div class="split"></div>
-            </el-col>
-          </el-col>
-          <el-col :span="20">
+          <el-col :span="24">
             <el-table
               :data="tableData"
               style="width: 100%">
@@ -91,21 +76,37 @@
                   <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
                 </el-button>
               </el-table-column>
-              <el-table-column prop="cloud" :label="$t('commons.cloud_scan')" min-width="100">
+              <el-table-column prop="cloud" :label="$t('commons.cloud_scan')" min-width="100" v-slot:default="scope">
+                <span v-if="scope.row.status === 'APPROVED'" class="scan-span">{{ scope.row.cloud }}</span>
+                <span v-else class="scan-span-ing">{{ scope.row.cloud }}</span>
               </el-table-column>
-              <el-table-column prop="vuln" :label="$t('dashboard.vuln_scan')" min-width="100">
+              <el-table-column prop="vuln" :label="$t('dashboard.vuln_scan')" min-width="100" v-slot:default="scope">
+                <span v-if="scope.row.status === 'APPROVED'" class="scan-span">{{ scope.row.vuln }}</span>
+                <span v-else class="scan-span-ing">{{ scope.row.vuln }}</span>
               </el-table-column>
-              <el-table-column prop="server" :label="$t('dashboard.server_scan')" min-width="100">
+              <el-table-column prop="server" :label="$t('dashboard.server_scan')" min-width="100" v-slot:default="scope">
+                <span v-if="scope.row.status === 'APPROVED'" class="scan-span">{{ scope.row.server }}</span>
+                <span v-else class="scan-span-ing">{{ scope.row.server }}</span>
               </el-table-column>
-              <el-table-column prop="k8s" :label="$t('commons.k8s_scan')" min-width="100">
+              <el-table-column prop="k8s" :label="$t('commons.k8s_scan')" min-width="100" v-slot:default="scope">
+                <span v-if="scope.row.status === 'APPROVED'" class="scan-span">{{ scope.row.k8s }}</span>
+                <span v-else class="scan-span-ing">{{ scope.row.k8s }}</span>
               </el-table-column>
-              <el-table-column prop="config" :label="$t('dashboard.config_scan')" min-width="100">
+              <el-table-column prop="config" :label="$t('dashboard.config_scan')" min-width="100" v-slot:default="scope">
+                <span v-if="scope.row.status === 'APPROVED'" class="scan-span">{{ scope.row.config }}</span>
+                <span v-else class="scan-span-ing">{{ scope.row.config }}</span>
               </el-table-column>
-              <el-table-column prop="image" :label="$t('dashboard.image_scan')" min-width="100">
+              <el-table-column prop="image" :label="$t('dashboard.image_scan')" min-width="100" v-slot:default="scope">
+                <span v-if="scope.row.status === 'APPROVED'" class="scan-span">{{ scope.row.image }}</span>
+                <span v-else class="scan-span-ing">{{ scope.row.image }}</span>
               </el-table-column>
-              <el-table-column prop="code" :label="$t('dashboard.code_scan')" min-width="100">
+              <el-table-column prop="code" :label="$t('dashboard.code_scan')" min-width="100" v-slot:default="scope">
+                <span v-if="scope.row.status === 'APPROVED'" class="scan-span">{{ scope.row.code }}</span>
+                <span v-else class="scan-span-ing">{{ scope.row.code }}</span>
               </el-table-column>
-              <el-table-column prop="fs" :label="$t('dashboard.fs_scan')" min-width="100">
+              <el-table-column prop="fs" :label="$t('dashboard.fs_scan')" min-width="100" v-slot:default="scope">
+                <span v-if="scope.row.status === 'APPROVED'" class="scan-span">{{ scope.row.fs }}</span>
+                <span v-else class="scan-span-ing">{{ scope.row.fs }}</span>
               </el-table-column>
             </el-table>
           </el-col>
@@ -139,6 +140,10 @@ export default {
       this.result = this.$post("/dashboard/topInfo", {}, response => {
         let data = response.data;
         this.topInfo = data;
+      });
+      this.result = this.$get("/dashboard/topScanInfo", response => {
+        let data = response.data;
+        this.tableData = data;
       });
     },
   },
@@ -260,13 +265,26 @@ export default {
 }
 
 .el-btn {
-  width: 160px;
+  min-width: 100px;
 }
 
 .el-total {
   font-size: 12px;
   margin: 10px;
   text-align: center;
+}
+
+.el-card__body {
+  padding: 10px;
+}
+
+.scan-span {
+  font-style:italic;
+  color: #72abf9;
+}
+
+.scan-span-ing {
+  font-style:italic;
 }
 </style>
 
