@@ -56,7 +56,61 @@
         </el-col>
     </container>
     <container class="container">
-
+      <el-col :span="24">
+        <el-card shadow="always">
+          <el-col :span="4" class="co-el-img">
+            <el-col :span="21" class="co-el-img co-el-img-div">
+              <el-image
+                        :src="require(`@/assets/img/panel/img.png`)"
+                        :fit="'fill'">
+                <div slot="error" class="image-slot">
+                  <i class="el-icon-picture-outline"></i>
+                </div>
+              </el-image>
+              <div class="el-total">{{ $t('resource.i18n_not_compliance') }}</div>
+            </el-col>
+            <el-col :span="1">
+              <div class="split"></div>
+            </el-col>
+          </el-col>
+          <el-col :span="20">
+            <el-table
+              :data="tableData"
+              style="width: 100%">
+              <el-table-column prop="status" :label="$t('resource.status')" min-width="100" v-slot:default="scope">
+                <el-button plain size="mini" type="primary" class="el-btn" v-if="scope.row.status === 'APPROVED'">
+                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                </el-button>
+                <el-button plain size="mini" type="success" class="el-btn" v-if="scope.row.status === 'FINISHED'">
+                  <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+                </el-button>
+                <el-button plain size="mini" type="danger" class="el-btn" v-if="scope.row.status === 'ERROR'">
+                  <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+                </el-button>
+                <el-button plain size="mini" type="warning" class="el-btn" v-if="scope.row.status === 'WARNING'">
+                  <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+                </el-button>
+              </el-table-column>
+              <el-table-column prop="cloud" :label="$t('commons.cloud_scan')" min-width="100">
+              </el-table-column>
+              <el-table-column prop="vuln" :label="$t('dashboard.vuln_scan')" min-width="100">
+              </el-table-column>
+              <el-table-column prop="server" :label="$t('dashboard.server_scan')" min-width="100">
+              </el-table-column>
+              <el-table-column prop="k8s" :label="$t('commons.k8s_scan')" min-width="100">
+              </el-table-column>
+              <el-table-column prop="config" :label="$t('dashboard.config_scan')" min-width="100">
+              </el-table-column>
+              <el-table-column prop="image" :label="$t('dashboard.image_scan')" min-width="100">
+              </el-table-column>
+              <el-table-column prop="code" :label="$t('dashboard.code_scan')" min-width="100">
+              </el-table-column>
+              <el-table-column prop="fs" :label="$t('dashboard.fs_scan')" min-width="100">
+              </el-table-column>
+            </el-table>
+          </el-col>
+        </el-card>
+      </el-col>
     </container>
   </div>
 </template>
@@ -77,6 +131,7 @@ export default {
       result: {},
       currentUser: {},
       topInfo: {},
+      tableData: [],
     }
   },
   methods: {
@@ -175,6 +230,43 @@ export default {
 
 .container {
   padding: 3px 15px;
+}
+
+.split {
+  height: 80px;
+  border-left: 1px solid #D8DBE1;
+}
+
+.co-el-img {
+  padding: 0 !important;
+}
+
+.co-el-img-div {
+  margin-top: 3%;
+}
+
+.co-el-img >>> .el-image {
+  display: table-cell;
+  padding: 0;
+}
+
+.cp-el-i {
+  margin: 1%;
+}
+
+.co-el-i{
+  width: 70px;
+  height: 70px;
+}
+
+.el-btn {
+  width: 160px;
+}
+
+.el-total {
+  font-size: 12px;
+  margin: 10px;
+  text-align: center;
 }
 </style>
 
