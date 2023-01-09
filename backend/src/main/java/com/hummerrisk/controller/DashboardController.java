@@ -13,6 +13,7 @@ import com.hummerrisk.controller.request.dashboard.TaskCalendarVo;
 import com.hummerrisk.dto.ChartDTO;
 import com.hummerrisk.dto.HistoryScanDTO;
 import com.hummerrisk.dto.TopInfoDTO;
+import com.hummerrisk.dto.TopScanDTO;
 import com.hummerrisk.service.DashboardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -87,6 +88,13 @@ public class DashboardController {
     @PostMapping("topInfo")
     public TopInfoDTO topInfo(@RequestBody Map<String, Object> params) {
         return dashboardService.topInfo(params);
+    }
+
+    @I18n
+    @ApiOperation(value = "首页TOP检测统计")
+    @GetMapping("topScanInfo")
+    public List<TopScanDTO> topScanInfo() {
+        return dashboardService.topScanInfo();
     }
 
     @I18n

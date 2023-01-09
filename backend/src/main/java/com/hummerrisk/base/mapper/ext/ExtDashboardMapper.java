@@ -5,6 +5,8 @@ import com.hummerrisk.controller.request.dashboard.AnslysisVo;
 import com.hummerrisk.controller.request.dashboard.HistoryScanVo;
 import com.hummerrisk.controller.request.dashboard.TaskCalendarVo;
 import com.hummerrisk.dto.TopInfoDTO;
+import com.hummerrisk.dto.TopScanDTO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -15,6 +17,8 @@ import java.util.Map;
 public interface ExtDashboardMapper {
 
     TopInfoDTO topInfo(Map<String, Object> params);
+
+    TopScanDTO topScanInfo(@Param("status") String status);
 
     List<String> imageChartX(Map<String, Object> params);
 

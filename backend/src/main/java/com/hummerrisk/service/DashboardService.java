@@ -19,6 +19,7 @@ import com.hummerrisk.controller.request.dashboard.TaskCalendarVo;
 import com.hummerrisk.dto.ChartDTO;
 import com.hummerrisk.dto.HistoryScanDTO;
 import com.hummerrisk.dto.TopInfoDTO;
+import com.hummerrisk.dto.TopScanDTO;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -126,6 +127,15 @@ public class DashboardService {
 
     public TopInfoDTO topInfo(Map<String, Object> params) {
         return extDashboardMapper.topInfo(params);
+    }
+
+    public List<TopScanDTO> topScanInfo() {
+        List<TopScanDTO> list = new ArrayList<>();
+        list.add(extDashboardMapper.topScanInfo("APPROVED"));
+        list.add(extDashboardMapper.topScanInfo("FINISHED"));
+        list.add(extDashboardMapper.topScanInfo("ERROR"));
+        list.add(extDashboardMapper.topScanInfo("WARNING"));
+        return list;
     }
 
     public ChartDTO imageChart(Map<String, Object> params) {

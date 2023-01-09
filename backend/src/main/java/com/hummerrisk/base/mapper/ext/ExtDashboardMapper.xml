@@ -61,6 +61,151 @@
          )
     </select>
 
+    <select id="topScanInfo" parameterType="java.lang.String" resultType="com.hummerrisk.dto.TopScanDTO">
+        SELECT *
+        FROM (
+            (
+                SELECT #{status} as status
+            ) as status,
+            (
+            SELECT IFNULL(count(t.id), 0) as cloud from cloud_task t LEFT JOIN plugin p on t.plugin_id = p.id and p.type = 'cloud'
+                <where>
+                    <if test="status == 'APPROVED'">
+                        and t.status in ('APPROVED', 'PROCESSING')
+                    </if>
+                    <if test="status == 'FINISHED'">
+                        and t.status in ('FINISHED')
+                    </if>
+                    <if test="status == 'ERROR'">
+                        and t.status in ('ERROR')
+                    </if>
+                    <if test="status == 'WARNING'">
+                        and t.status in ('WARNING')
+                    </if>
+                </where>
+            ) as cloud,
+            (
+                SELECT IFNULL(count(t.id), 0) as vuln from cloud_task t LEFT JOIN plugin p on t.plugin_id = p.id and p.type = 'vuln'
+                <where>
+                    <if test="status == 'APPROVED'">
+                        and t.status in ('APPROVED', 'PROCESSING')
+                    </if>
+                    <if test="status == 'FINISHED'">
+                        and t.status in ('FINISHED')
+                    </if>
+                    <if test="status == 'ERROR'">
+                        and t.status in ('ERROR')
+                    </if>
+                    <if test="status == 'WARNING'">
+                        and t.status in ('WARNING')
+                    </if>
+                </where>
+            ) as vuln,
+            (
+                SELECT IFNULL(count(t.id), 0) as image from image_result t
+                <where>
+                    <if test="status == 'APPROVED'">
+                        and t.result_status in ('APPROVED', 'PROCESSING')
+                    </if>
+                    <if test="status == 'FINISHED'">
+                        and t.result_status in ('FINISHED')
+                    </if>
+                    <if test="status == 'ERROR'">
+                        and t.result_status in ('ERROR')
+                    </if>
+                    <if test="status == 'WARNING'">
+                        and t.result_status in ('WARNING')
+                    </if>
+                </where>
+            ) as image,
+            (
+                SELECT IFNULL(count(t.id), 0) as k8s from cloud_native_result t
+                <where>
+                    <if test="status == 'APPROVED'">
+                        and t.result_status in ('APPROVED', 'PROCESSING')
+                    </if>
+                    <if test="status == 'FINISHED'">
+                        and t.result_status in ('FINISHED')
+                    </if>
+                    <if test="status == 'ERROR'">
+                        and t.result_status in ('ERROR')
+                    </if>
+                    <if test="status == 'WARNING'">
+                        and t.result_status in ('WARNING')
+                    </if>
+                </where>
+            ) as k8s,
+            (
+                SELECT IFNULL(count(t.id), 0) as config from cloud_native_config_result t
+                <where>
+                    <if test="status == 'APPROVED'">
+                        and t.result_status in ('APPROVED', 'PROCESSING')
+                    </if>
+                    <if test="status == 'FINISHED'">
+                        and t.result_status in ('FINISHED')
+                    </if>
+                    <if test="status == 'ERROR'">
+                        and t.result_status in ('ERROR')
+                    </if>
+                    <if test="status == 'WARNING'">
+                        and t.result_status in ('WARNING')
+                    </if>
+                </where>
+            ) as config,
+            (
+                SELECT IFNULL(count(t.id), 0) as code from code_result t
+                <where>
+                    <if test="status == 'APPROVED'">
+                        and t.result_status in ('APPROVED', 'PROCESSING')
+                    </if>
+                    <if test="status == 'FINISHED'">
+                        and t.result_status in ('FINISHED')
+                    </if>
+                    <if test="status == 'ERROR'">
+                        and t.result_status in ('ERROR')
+                    </if>
+                    <if test="status == 'WARNING'">
+                        and t.result_status in ('WARNING')
+                    </if>
+                </where>
+            ) as code,
+            (
+                SELECT IFNULL(count(t.id), 0) as fs from file_system_result t
+                <where>
+                    <if test="status == 'APPROVED'">
+                        and t.result_status in ('APPROVED', 'PROCESSING')
+                    </if>
+                    <if test="status == 'FINISHED'">
+                        and t.result_status in ('FINISHED')
+                    </if>
+                    <if test="status == 'ERROR'">
+                        and t.result_status in ('ERROR')
+                    </if>
+                    <if test="status == 'WARNING'">
+                        and t.result_status in ('WARNING')
+                    </if>
+                </where>
+            ) as fs,
+            (
+                SELECT IFNULL(count(t.id), 0) as server from server_result t
+                <where>
+                    <if test="status == 'APPROVED'">
+                        and t.result_status in ('APPROVED', 'PROCESSING')
+                    </if>
+                    <if test="status == 'FINISHED'">
+                        and t.result_status in ('FINISHED')
+                    </if>
+                    <if test="status == 'ERROR'">
+                        and t.result_status in ('ERROR')
+                    </if>
+                    <if test="status == 'WARNING'">
+                        and t.result_status in ('WARNING')
+                    </if>
+                </where>
+            ) as server
+        )
+    </select>
+
     <select id="imageChartX" parameterType="java.util.Map" resultType="java.lang.String">
         select name
         from image_result
