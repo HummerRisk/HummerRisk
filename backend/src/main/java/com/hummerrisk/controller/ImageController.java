@@ -318,5 +318,11 @@ public class ImageController {
         imageService.deleteHistoryImageResult(id);
     }
 
+    @I18n
+    @ApiOperation(value = "镜像仓库列表")
+    @PostMapping("repo/setting")
+    public void imageRepoSetting(@RequestBody ImageRepoSetting imageRepoSetting) throws Exception {
+        imageService.imageRepoSetting(imageRepoSetting);
+    }
 
 }

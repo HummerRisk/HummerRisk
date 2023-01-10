@@ -83,7 +83,8 @@ public class ImageService {
     private SbomVersionMapper sbomVersionMapper;
     @Resource
     private ExtImageResultItemMapper extImageResultItemMapper;
-
+    @Resource
+    private ImageRepoSettingMapper imageRepoSettingMapper;
 
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
@@ -754,6 +755,7 @@ public class ImageService {
             }
         });
     }
+
     public void scanImageRepo(ScanImageRepoRequest request) throws Exception {
         try {
             Image image = BeanUtils.copyBean(new Image(), request);
@@ -937,6 +939,33 @@ public class ImageService {
 
     public void deleteHistoryImageResult(String id) throws Exception {
         historyImageResultMapper.deleteByPrimaryKey(id);
+    }
+
+    public void imageRepoSetting(ImageRepoSetting imageRepoSetting) throws Exception {
+        ImageRepoSettingExample example = new ImageRepoSettingExample();
+        example.createCriteria().andRepoIdEqualTo(imageRepoSetting.getRepoId());
+        List<ImageRepoSetting> settings = imageRepoSettingMapper.selectByExample(example);
+        if (settings.size() > 0) {
+            ImageRepoSetting setting = settings.get(0);
+            setting.setUpdateTime(System.currentTimeMillis());
+            setting.setRepoOld(setting.getRepo());
+            setting.setRepo(imageRepoSetting.getRepo());
+            imageRepoSettingMapper.updateByPrimaryKeySelective(setting);
+        } else {
+            imageRepoSetting.setId(UUIDUtil.newUUID());
+            imageRepoSetting.setCreateTime(System.currentTimeMillis());
+            imageRepoSetting.setUpdateTime(System.currentTimeMillis());
+            imageRepoSettingMapper.insertSelective(imageRepoSetting);
+        }
+
+        ImageRepoItemExample imageRepoItemExample = new ImageRepoItemExample();
+        imageRepoItemExample.createCriteria().andRepoIdEqualTo(imageRepoSetting.getRepoId());
+        List<ImageRepoItem> list = imageRepoItemMapper.selectByExample(imageRepoItemExample);
+        for (ImageRepoItem imageRepoItem : list) {
+            imageRepoItem.setPath(imageRepoItem.getPath().replace(imageRepoSetting.getRepoOld(), imageRepoSetting.getRepo()));
+            imageRepoItemMapper.updateByPrimaryKeySelective(imageRepoItem);
+        }
+
     }
 
 
