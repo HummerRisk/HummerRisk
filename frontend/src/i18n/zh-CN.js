@@ -1089,6 +1089,8 @@ export default {
     all_label: '所有镜像',
     by_image_repo: '按镜像仓库统计同步的镜像',
     by_image: '按镜像检测统计',
+    batch_settings_repo: '批量设置镜像仓库名称',
+    image_repo_name_old: '旧镜像仓库名称',
   },
   package: {
     package_setting: '软件包管理',

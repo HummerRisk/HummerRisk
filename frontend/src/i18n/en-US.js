@@ -1089,6 +1089,8 @@ export default {
     all_label: 'All images',
     by_image_repo: 'Statistically synchronized images by mirror repository',
     by_image: 'Statistics by image detection',
+    batch_settings_repo: 'Batch setting mirror warehouse name',
+    image_repo_name_old: 'Old mirror warehouse name',
   },
   package: {
     package_setting: 'Package Management',

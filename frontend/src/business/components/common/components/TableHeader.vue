@@ -14,6 +14,8 @@
                               type="success" :content="scanTip" @click="scan"/>
         <table-button v-if="showValidate" icon="el-icon-video-play"
                          type="warning" :content="validateTip" @click="validate"/>
+        <table-button v-if="showSetting" icon="el-icon-s-tools"
+                      type="warning" :content="settingTip" @click="setting"/>
         <table-button v-if="showDelete" icon="el-icon-remove-outline"
                       type="danger" :content="deleteTip" @click="deleteSelect"/>
         <table-search-bar v-if="isCombine" :condition.sync="condition" @change="search" @search="search" class="search-bar" @upload="upload"
@@ -71,6 +73,10 @@ import htmlToPdf from "@/common/js/htmlToPdf";
         type: Boolean,
         default: false
       },
+      showSetting: {
+        type: Boolean,
+        default: false
+      },
       showDelete: {
         type: Boolean,
         default: false
@@ -94,6 +100,12 @@ import htmlToPdf from "@/common/js/htmlToPdf";
         type: String,
         default() {
           return this.$t('account.validate');
+        }
+      },
+      settingTip: {
+        type: String,
+        default() {
+          return this.$t('commons.batch_settings');
         }
       },
       tip: {
@@ -166,6 +178,9 @@ import htmlToPdf from "@/common/js/htmlToPdf";
       },
       validate() {
         this.$emit('validate');
+      },
+      setting() {
+        this.$emit('setting');
       },
       //下载excel
       excelDown() {

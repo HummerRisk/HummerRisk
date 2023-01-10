@@ -130,12 +130,13 @@
     <!--Update imageRepo-->
 
     <!--Image list-->
-    <el-drawer class="rtl" :title="$t('image.image_list')" :visible.sync="imageVisible" size="90%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl image-list" :title="$t('image.image_list')" :visible.sync="imageVisible" size="90%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
       <table-header :condition.sync="condition" @search="handleList"
                     @scan="scan" :scanTip="$t('server.one_scan')"
-                    :show-name="false" :show-scan="true"
+                    @setting="setting" :settingTip="$t('image.batch_settings_repo')"
+                    :show-name="false" :show-scan="true" :show-setting="true"
                     :items="items2" :columnNames="columnNames2"
                     :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
                     @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
@@ -260,6 +261,27 @@
           <dialog-footer
             @cancel="innerAdd = false"
             @confirm="saveAdd()"/>
+        </el-drawer>
+      </div>
+      <div>
+        <el-drawer
+          class="rtl"
+          size="60%"
+          :title="$t('image.batch_settings_repo')"
+          :append-to-body="true"
+          :before-close="innerClose"
+          :visible.sync="settingVisible">
+          <el-form :model="settingForm" label-position="right" label-width="150px" size="small" ref="settingForm">
+            <el-form-item :label="$t('image.image_repo_name')" ref="name" prop="name">
+              <el-input v-model="settingForm.repo" autocomplete="off" :placeholder="$t('image.image_repo_name')"/>
+            </el-form-item>
+            <el-form-item :label="$t('image.image_repo_name_old')" ref="name" prop="name">
+              <el-input disabled v-model="settingForm.repoOld" autocomplete="off" :placeholder="$t('image.image_repo_name_old')"/>
+            </el-form-item>
+          </el-form>
+          <dialog-footer
+            @cancel="settingVisible = false"
+            @confirm="saveSetting()"/>
         </el-drawer>
       </div>
       <div style="margin: 10px;">
@@ -546,6 +568,8 @@ export default {
       ],
       checkAll2: true,
       isIndeterminate2: false,
+      settingForm: {},
+      settingVisible: false,
     }
   },
   methods: {
@@ -574,6 +598,12 @@ export default {
     create() {
       this.form = {};
       this.createVisible = true;
+    },
+    setting() {
+      let repoOld = this.imageData[0].path.split('/')[0];
+      this.settingForm.repoId = this.handleItem.id;
+      this.settingForm.repoOld = repoOld;
+      this.settingVisible = true;
     },
     sort(column) {
       _sort(column, this.condition);
@@ -682,6 +712,7 @@ export default {
     innerClose() {
       this.innerAdd = false;
       this.innerK8s = false;
+      this.settingVisible = false;
     },
     initSboms() {
       this.result = this.$post("/sbom/allSbomList", {},response => {
@@ -717,6 +748,21 @@ export default {
       await this.$post("/sbom/allSbomVersionList", params,response => {
         this.versions = response.data;
         if(this.versions && this.versions.length > 0) this.addForm.sbomVersionId = this.versions[0].id;
+      });
+    },
+    saveSetting() {
+      this.$refs['settingForm'].validate(valid => {
+        if (valid) {
+          this.result = this.$post('/image/repo/setting', this.settingForm, response => {
+            if (response.success) {
+              this.$success(this.$t('schedule.event_start'));
+              this.settingVisible = false;
+              this.handleList();
+            } else {
+              this.$error(this.$t('schedule.event_failed'));
+            }
+          });
+        }
       });
     },
     saveAdd() {
@@ -836,6 +882,9 @@ export default {
 }
 .table-card >>> .search .el-input {
   width: 140px !important;
+}
+.image-list >>> .el-drawer__header {
+  margin: 0;
 }
 /deep/ :focus{outline:0;}
 </style>
