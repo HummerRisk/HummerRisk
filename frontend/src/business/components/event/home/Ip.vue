@@ -42,8 +42,11 @@
     </el-card>
 
     <!--ip detail-->
-    <el-drawer class="rtl" :title="$t('event.ip_detail')" :visible.sync="detailVisible" size="65%" :before-close="handleClose" direction="rtl"
+    <el-drawer class="rtl ip-list" :title="$t('event.ip_detail')" :visible.sync="detailVisible" size="75%" :before-close="handleClose" direction="rtl"
                :destroy-on-close="true">
+      <div>
+        <ip-chart/>
+      </div>
       <el-tabs v-model="activeName" @tab-click="showCodemirror" style="margin: 20px;">
         <el-tab-pane :label="$t('event.event_audit')" name="first">
           <el-descriptions class="margin-top" v-for="detail in details" :key = "detail.id" :title="detail.eventName"  style="margin-top: 20px;" :column="2" border>
@@ -128,6 +131,7 @@ import TableOperators from "../../common/components/TableOperators";
 import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import {_filter, _sort} from "@/common/js/utils";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import IpChart from "@/business/components/event/head/IpChart";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -174,6 +178,7 @@ export default {
     MainContainer,
     TableOperators,
     HideTable,
+    IpChart,
   },
   data() {
     return {
@@ -418,6 +423,9 @@ export default {
 .code-mirror >>> .CodeMirror {
   /* Set height, width, borders, and global font properties here */
   height: 600px !important;
+}
+.ip-list >>> .el-drawer__header {
+  margin: 0;
 }
 </style>
 
