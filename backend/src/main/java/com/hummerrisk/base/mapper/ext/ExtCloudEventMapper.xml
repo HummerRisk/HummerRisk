@@ -251,12 +251,13 @@
   </select>
 
   <select id="selectSourceIpInsight" resultType="com.hummerrisk.dto.CloudEventSourceIpInsightDto">
+    select * from (
     select source_ip_address as sourceIpAddress,
-           min(event_time) as earliest_eventTime,
-           max(event_time) last_eventTime,
-           group_CONCAT(DISTINCT region_name) AS region,
-           group_CONCAT( DISTINCT event_name) as eventName,
-           count(event_id) as eventSum
+    min(event_time) as earliest_eventTime,
+    max(event_time) last_eventTime,
+    group_CONCAT(DISTINCT region_name) AS region,
+    group_CONCAT( DISTINCT event_name) as eventName,
+    count(event_id) as eventSum
     from cloud_event t
     join cloud_account t1 on t.cloud_account_id = t1.id
     <where>
@@ -290,6 +291,16 @@
     </where>
 
     group by source_ip_address
-
+    ) a order by eventSum desc
   </select>
+  
+  <select id="selectIpAccessTimesGroupByDate" resultType="Map" >
+    select access_date as 'accessDate',count(*) as 'times' from (
+        SELECT FROM_UNIXTIME(event_time/1000 ,'%Y-%m-%d') as access_date FROM cloud_event
+        where
+          source_ip_address = #{ip}
+          and event_time between UNIX_TIMESTAMP(str_to_date(#{startDate},'%Y-%m-%d') )*1000 and UNIX_TIMESTAMP(str_to_date(#{endDate},'%Y-%m-%d') )*1000+24*60*1000
+        ) a group by access_date
+  </select>
+  
 </mapper>
