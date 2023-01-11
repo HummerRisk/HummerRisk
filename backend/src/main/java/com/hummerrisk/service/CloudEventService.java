@@ -33,6 +33,7 @@ import com.hummerrisk.base.mapper.ext.ExtCloudEventMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudEventSyncLogMapper;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
+import com.hummerrisk.dto.ChartDTO;
 import com.hummerrisk.dto.CloudEventGroupDTO;
 import com.hummerrisk.dto.CloudEventSourceIpInsightDto;
 import com.hummerrisk.proxy.baidu.BaiduCredential;
@@ -640,4 +641,29 @@ public class CloudEventService {
         }
         return false;
     }
+
+    public ChartDTO ipAccessChart(String ip,String startDate,String endDate){
+        List<Map<String, Object>> ipAccessList = extCloudEventMapper.selectIpAccessTimesGroupByDate(ip, startDate, endDate);
+        Map<String,Integer> ipAccessMap = ipAccessList.stream().collect(Collectors.toMap(item->{
+            return (String)item.get("accessDate");
+        },item->{
+            Long times = (Long) item.get("times");
+            return times.intValue();
+        }, (key1, key2) -> key2));
+        List<String> dateList = DateUtils.getBetweenDate(startDate,endDate,"yyyy-MM-dd");
+        ChartDTO chartDTO = new ChartDTO();
+        chartDTO.setxAxis(dateList);
+        List<Integer> yAxis = new ArrayList<>();
+        dateList.forEach(item->{
+            if(ipAccessMap.get(item) != null) {
+                yAxis.add(ipAccessMap.get(item));
+            }else {
+                yAxis.add(0);
+            }
+        });
+        chartDTO.setyAxis(yAxis);
+        return chartDTO;
+    }
+
+
 }

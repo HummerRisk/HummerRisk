@@ -9,6 +9,7 @@ import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
+import com.hummerrisk.dto.ChartDTO;
 import com.hummerrisk.dto.CloudEventGroupDTO;
 import com.hummerrisk.dto.CloudEventSourceIpInsightDto;
 import com.hummerrisk.service.CloudEventService;
@@ -113,4 +114,12 @@ public class CloudEventController {
     public List<Map<String, Object>> severityChart() {
         return cloudEventService.severityChart();
     }
+
+    @I18n
+    @ApiOperation(value = "IP 访问统计")
+    @GetMapping("ipAccessChart/{ip}/{startDate}/{endDate}")
+    public ChartDTO ipAccessChart(@PathVariable String ip,@PathVariable String startDate,@PathVariable String endDate){
+        return cloudEventService.ipAccessChart(ip,startDate,endDate);
+    }
+
 }
