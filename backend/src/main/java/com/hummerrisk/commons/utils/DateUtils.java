@@ -6,9 +6,7 @@ import java.lang.management.ManagementFactory;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * 时间工具类
@@ -458,5 +456,23 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         }
         return date;
     }
+    public static List<String> getBetweenDate(String startDate, String endDate,String dateFormat){
+        SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+        List<String> list = new ArrayList<String>();
+        try {
+            Date startTime = sdf.parse(startDate);
+            Date endTime = sdf.parse(endDate);
 
+            Calendar calendar = Calendar.getInstance();
+            while (startTime.getTime()<=endTime.getTime()){
+                list.add(sdf.format(startTime));
+                calendar.setTime(startTime);
+                calendar.add(Calendar.DATE, 1);
+                startTime=calendar.getTime();
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }
