@@ -45,7 +45,7 @@
     <el-drawer class="rtl ip-list" :title="$t('event.ip_detail')" :visible.sync="detailVisible" size="75%" :before-close="handleClose" direction="rtl"
                :destroy-on-close="true">
       <div>
-        <ip-chart/>
+        <ip-chart :ip = "currentChartIp" :days="chartDays"/>
       </div>
       <el-tabs v-model="activeName" @tab-click="showCodemirror" style="margin: 20px;">
         <el-tab-pane :label="$t('event.event_audit')" name="first">
@@ -195,6 +195,8 @@ export default {
       pageSize: 10,
       total: 0,
       loading: false,
+      currentChartIp: "",
+      chartDays: 7,
       condition: {
         components: CLOUD_EVENT_CONFIGS
       },
@@ -360,6 +362,7 @@ export default {
     //显示详情
     showDetail(item) {
       this.currentIp = item["sourceIpAddress"]
+      this.currentChartIp = this.currentIp
       this.detailCurrentPage = 1
       this.searchDetail()
       this.detailVisible = true;

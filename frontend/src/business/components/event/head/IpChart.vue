@@ -15,7 +15,8 @@ export default {
     echarts
   },
   props: {
-    data: {},
+    ip: String,
+    days: Number
   },
   data() {
     return {
@@ -23,20 +24,31 @@ export default {
     }
   },
   methods: {
+    formatDate: function (value) {
+      let dt = new Date(value)
+      let year = dt.getFullYear();
+      let month = (dt.getMonth() + 1).toString().padStart(2, '0');
+      let date = dt.getDate().toString().padStart(2, '0');
+      return `${year}-${month}-${date}`;
+    },
+
     init() {
-      this.$get("/cloud/event/severityChart", response => {
+      let now =  new Date().getTime()
+      let startDate = this.formatDate(now-this.days*24*60*60*1000)
+      let endDate = this.formatDate(now)
+      this.$get("/cloud/event/ipAccessChart/"+this.ip+"/"+startDate+"/"+endDate, response => {
         let data = response.data;
         this.options = {
           xAxis: {
             type: 'category',
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            data: data.xAxis
           },
           yAxis: {
             type: 'value'
           },
           series: [
             {
-              data: [150, 230, 224, 218, 135, 147, 260],
+              data: data.yAxis,
               type: 'line'
             }
           ],
@@ -48,6 +60,7 @@ export default {
   created() {
     this.init();
   },
+
 }
 
 </script>
