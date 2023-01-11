@@ -15,7 +15,7 @@ public class NucleiTest {
     @org.junit.Test
     public void Test() throws Exception {
         try{
-            String command = "nuclei -l /tmp/urls.txt -t /tmp/nuclei.yml -o /tmp/result.txt";
+            String command = "nuclei -l /tmp/urls.txt -t /tmp/nuclei.yaml -o /tmp/result.txt";
             // 命令行
             CommandLine commandLine = CommandLine.parse(command);
 
