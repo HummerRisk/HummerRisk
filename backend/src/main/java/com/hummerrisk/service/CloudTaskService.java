@@ -228,7 +228,7 @@ public class CloudTaskService {
                 fileName = "policy.yml";
                 commandEnum = CommandEnum.custodian.getCommand();
             } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.nuclei.name())) {
-                fileName = "nuclei.yml";
+                fileName = "nuclei.yaml";
                 commandEnum = CommandEnum.nuclei.getCommand();
             } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.xray.name())) {
                 fileName = groupName;
