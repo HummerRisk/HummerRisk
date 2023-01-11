@@ -111,14 +111,14 @@ public class NucleiService {
                     String sc = "";
                     String dirPath = "";
                     try {
-                        dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + regionId, "nuclei.yml", false);
+                        dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + regionId, "nuclei.yaml", false);
                     } catch (Exception e) {
-                        LogUtil.error("[{}] Generate nuclei.yml file，and nuclei run failed:{}", taskId + "/" + regionId, e.getMessage());
+                        LogUtil.error("[{}] Generate nuclei.yaml file，and nuclei run failed:{}", taskId + "/" + regionId, e.getMessage());
                     }
                     Yaml yaml = new Yaml();
                     Map map = null;
                     try {
-                        map = (Map) yaml.load(new FileInputStream(dirPath + "/nuclei.yml"));
+                        map = (Map) yaml.load(new FileInputStream(dirPath + "/nuclei.yaml"));
                     } catch (FileNotFoundException e) {
                         LogUtil.error(e.getMessage());
                     }
@@ -254,7 +254,7 @@ public class NucleiService {
     public void createNucleiResource(CloudTaskItemWithBLOBs taskItem, CloudTask cloudTask) throws Exception {
         LogUtil.info("createResource for taskItem: {}", toJSONString(taskItem));
         String operation = "i18n_create_resource";
-        String resultStr = "", fileName = "nuclei.yml";
+        String resultStr = "", fileName = "nuclei.yaml";
         try {
             CloudTaskItemResourceExample example = new CloudTaskItemResourceExample();
             example.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andTaskItemIdEqualTo(taskItem.getId());
@@ -264,7 +264,9 @@ public class NucleiService {
             String dirPath = CloudTaskConstants.RESULT_FILE_PATH_PREFIX + cloudTask.getId() + "/" + taskItem.getRegionId();
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
-            String command = PlatformUtils.fixedCommand(CommandEnum.nuclei.getCommand(), CommandEnum.run.getCommand(), dirPath, fileName, map);
+            String command1 = PlatformUtils.fixedCommand(CommandEnum.nuclei.getCommand(), CommandEnum.run.getCommand(), dirPath, fileName, map);
+            CommandUtils.commonExecCmdWithResultNew(command1.split("split")[0], dirPath);
+            String command = command1.split("split")[1];
             if(taskItem.getDetails().contains("workflows:")) {
                 command = command.replace("-t", "-w");
             }
@@ -404,7 +406,7 @@ public class NucleiService {
             }
 
         } catch (Exception e) {
-            LogUtil.error("[{}] Generate updateResourceSum nuclei.yml file，and nuclei run failed:{}", resourceWithBLOBs.getId(), e.getMessage());
+            LogUtil.error("[{}] Generate updateResourceSum nuclei.yaml file，and nuclei run failed:{}", resourceWithBLOBs.getId(), e.getMessage());
             throw e;
         }
         return resourceWithBLOBs;

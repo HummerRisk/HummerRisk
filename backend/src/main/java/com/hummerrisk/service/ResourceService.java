@@ -437,12 +437,12 @@ public class ResourceService {
             String dirPath = CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskItem.getTaskId() + "/" + taskItem.getRegionId();
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
-            String command = PlatformUtils.fixedCommand(CommandEnum.nuclei.getCommand(), CommandEnum.run.getCommand(), dirPath, "nuclei.yml", map);
+            String command = PlatformUtils.fixedCommand(CommandEnum.nuclei.getCommand(), CommandEnum.run.getCommand(), dirPath, "nuclei.yaml", map);
             if(taskItem.getDetails().contains("workflows:")) {
                 command = command.replace("-t", "-w");
             }
             LogUtil.info(taskItem.getTaskId() + " {}[command]: " + command);
-            CommandUtils.saveAsFile(taskItem.getDetails(), dirPath, "nuclei.yml", false);//重启服务后容器内文件在/tmp目录下会丢失
+            CommandUtils.saveAsFile(taskItem.getDetails(), dirPath, "nuclei.yaml", false);//重启服务后容器内文件在/tmp目录下会丢失
             String resultStr = CommandUtils.commonExecCmdWithResultByNuclei(command, dirPath);
 
             String nucleiRun = resultStr;

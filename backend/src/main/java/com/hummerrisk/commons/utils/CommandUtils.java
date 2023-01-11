@@ -169,7 +169,8 @@ public class CommandUtils {
             executor.execute(commandLine, resultHandler);
 
             resultHandler.waitFor();
-
+            int exitCode = resultHandler.getExitValue();
+            LogUtil.warn("nuclei command exitCode:" + exitCode);
             return ReadFileUtils.readToBuffer(workDir + "/exec.log");
         } catch (Exception e) {
             throw e;

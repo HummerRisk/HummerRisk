@@ -197,10 +197,10 @@ public class ReadFileUtils {
             reader.close();
             is.close();
         } catch (FileNotFoundException e) {
-            LogUtil.error("File not found!" + e.getMessage());
+            LogUtil.warn("File not found!" + e.getMessage());
             return "";
         } catch (IOException e) {
-            LogUtil.error(e.getMessage());
+            LogUtil.warn(e.getMessage());
             return "";
         }
         return sb.toString();

@@ -397,9 +397,9 @@ public class PlatformUtils {
                     e.printStackTrace();
                 }
                 if (behavior.equals("validate")) {
-                    return proxy + "nuclei -t " + dirPath + "/" + fileName + " -validate";
+                    return proxy + "split nuclei -t " + dirPath + "/" + fileName + " -validate";
                 }
-                return proxy + "nuclei -l " + dirPath + "/urls.txt -t " + dirPath + "/" + fileName + " -o " + dirPath + "/result.txt";
+                return proxy + "split nuclei -l " + dirPath + "/urls.txt -t " + dirPath + "/" + fileName + " -o " + dirPath + "/result.txt";
             case xray:
                 try {
                     String xrayCredential = params.get("xrayCredential");
