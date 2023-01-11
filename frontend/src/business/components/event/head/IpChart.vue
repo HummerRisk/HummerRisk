@@ -39,6 +39,10 @@ export default {
       this.$get("/cloud/event/ipAccessChart/"+this.ip+"/"+startDate+"/"+endDate, response => {
         let data = response.data;
         this.options = {
+          title: {
+            left: 'center',
+            text: this.$t('event.seven_day_data')
+          },
           xAxis: {
             type: 'category',
             data: data.xAxis
