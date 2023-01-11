@@ -117,7 +117,7 @@ public class CloudEventController {
 
     @I18n
     @ApiOperation(value = "IP 访问统计")
-    @GetMapping("severityChart/{ip}/{startDate}/{endDate}")
+    @GetMapping("ipAccessChart/{ip}/{startDate}/{endDate}")
     public ChartDTO ipAccessChart(@PathVariable String ip,@PathVariable String startDate,@PathVariable String endDate){
         return cloudEventService.ipAccessChart(ip,startDate,endDate);
     }
