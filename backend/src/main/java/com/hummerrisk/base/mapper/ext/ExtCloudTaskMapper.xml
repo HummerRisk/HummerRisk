@@ -26,23 +26,23 @@
     <select id="searchTask" parameterType="com.hummerrisk.controller.request.cloudTask.CloudTaskSearchRequest" resultMap="ExtResultMap">
         SELECT *
         FROM cloud_task
-        <if test="applyUser != null">
+        <if test="applyUser != null and applyUser != ''">
             LEFT JOIN user ON cloud_task.apply_user = user.id
         </if>
         <where>
-            <if test="id != null">
+            <if test="id != null and id != ''">
                 AND cloud_task.id like #{id}
             </if>
-            <if test="status != null">
+            <if test="status != null and status != ''">
                 AND cloud_task.status = #{status}
             </if>
-            <if test="applyUser != null">
+            <if test="applyUser != null and applyUser != ''">
                 AND user.name LIKE #{applyUser}
             </if>
-            <if test="processId != null">
+            <if test="processId != null and processId != ''">
                 AND cloud_task.process_id = #{processId}
             </if>
-            <if test="type != null">
+            <if test="type != null and type != ''">
                 AND cloud_task.type = #{type}
             </if>
         </where>

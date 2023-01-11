@@ -115,7 +115,7 @@
         LEFT JOIN user u on t.creator = u.id
         LEFT JOIN plugin p on t.plugin_id = p.id
         <where>
-            <if test="accountId != null">
+            <if test="accountId != null and accountId != ''">
                 AND t.id = #{accountId}
             </if>
             and p.type = 'cloud'
@@ -173,7 +173,7 @@
         LEFT JOIN user u on t.creator = u.id
         LEFT JOIN plugin p on t.plugin_id = p.id
         <where>
-            <if test="accountId != null">
+            <if test="accountId != null and accountId != ''">
                 AND t.id = #{accountId}
             </if>
             and p.type = 'vuln'
@@ -311,13 +311,13 @@
         from cloud_task t
         join cloud_account t1 on t.account_id = t1.id
         <where>
-            <if test="severity != null">
+            <if test="severity != null and severity != ''">
                 AND t.severity = #{severity}
             </if>
-            <if test="accountId != null">
+            <if test="accountId != null and accountId != ''">
                 AND t.account_id = #{accountId}
             </if>
-            <if test="taskId != null">
+            <if test="taskId != null and taskId != ''">
                 AND t.id = #{taskId}
             </if>
         </where>
@@ -328,13 +328,13 @@
         from cloud_task t
         join cloud_account t1 on t.account_id = t1.id
         <where>
-            <if test="severity != null">
+            <if test="severity != null and severity != ''">
                 AND t.severity = #{severity}
             </if>
-            <if test="accountId != null">
+            <if test="accountId != null and accountId != ''">
                 AND t.account_id = #{accountId}
             </if>
-            <if test="taskId != null">
+            <if test="taskId != null and taskId != ''">
                 AND t.id = #{taskId}
             </if>
         </where>
@@ -344,7 +344,7 @@
         select IFNULL(sum( t.return_sum ), 0)
         from history_scan_task t
         <where>
-            <if test="id != null">
+            <if test="id != null and id != ''">
                 AND t.scan_id = #{id}
             </if>
         </where>
@@ -354,7 +354,7 @@
         select IFNULL(sum( t.resources_sum ), 0)
         from history_scan_task t
         <where>
-            <if test="id != null">
+            <if test="id != null and id != ''">
                 AND t.scan_id = #{id}
             </if>
         </where>
@@ -364,7 +364,7 @@
         select IFNULL(ROUND(AVG( t.scan_score ), 0), 0)
         from history_scan_task t
         <where>
-            <if test="id != null">
+            <if test="id != null and id != ''">
                 AND t.scan_id = #{id}
             </if>
         </where>
@@ -419,16 +419,16 @@
             END AS status
         FROM rule_inspection_report t
         <where>
-            <if test="project != null">
+            <if test="project != null and project != ''">
                 AND t.project like CONCAT('%',#{project},'%')
             </if>
-            <if test="itemSortFirstLevel != null">
+            <if test="itemSortFirstLevel != null and itemSortFirstLevel != ''">
                 AND t.item_sort_first_level = #{itemSortFirstLevel}
             </if>
-            <if test="itemSortSecondLevel != null">
+            <if test="itemSortSecondLevel != null and itemSortSecondLevel != ''">
                 AND t.item_sort_second_level = #{itemSortSecondLevel}
             </if>
-            <if test="name != null">
+            <if test="name != null and name != ''">
                 AND LOWER(t.project) like CONCAT('%',#{name},'%')
             </if>
             AND (
@@ -583,19 +583,19 @@
         left join cloud_task_item_resource t1 on t.id = t1.resource_id
         left join cloud_task_item t2 on t1.task_item_id = t2.id
         <where>
-            <if test="taskId != null">
+            <if test="taskId != null and taskId != ''">
                 AND t1.task_id = #{taskId}
             </if>
-            <if test="id != null">
+            <if test="id != null and id != ''">
                 AND t1.task_item_id = #{id}
             </if>
-            <if test="accountId != null">
+            <if test="accountId != null and accountId != ''">
                 AND t.account_id = #{accountId}
             </if>
-            <if test="regionId != null">
+            <if test="regionId != null and regionId != ''">
                 AND t.region_id = #{regionId}
             </if>
-            <if test="ruleId != null">
+            <if test="ruleId != null and ruleId != ''">
                 AND t2.rule_id = #{ruleId}
             </if>
         </where>
