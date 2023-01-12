@@ -147,6 +147,19 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
     }
 
     /**
+     * 当地时间转格林尼治时间
+     * @param format
+     * @param date
+     * @return
+     */
+    public static String localDateToUtcDateStr(String format,Date date){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        TimeZone utcZone = TimeZone.getTimeZone("UTC");
+        simpleDateFormat.setTimeZone(utcZone);
+        return simpleDateFormat.format(date);
+    }
+
+    /**
      * 日期路径 即年/月/日 如2018/08/08
      */
     public static final String datePath()
