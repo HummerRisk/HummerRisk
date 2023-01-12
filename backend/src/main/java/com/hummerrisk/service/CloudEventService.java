@@ -356,7 +356,15 @@ public class CloudEventService {
         JSONArray events = responseObject.getJSONArray("Events");
         if(events.size() > 0){
             return events.toJavaList(JSONObject.class).stream().map(item->{
+                String eventName = item.getString("EventName");
+                eventName = eventName == null?"":eventName.toUpperCase();
                 CloudEventWithBLOBs cloudEventWithBLOBs = new CloudEventWithBLOBs();
+                if(eventName.contains("DELETE")||eventName.contains("TERMINATE")){
+                    cloudEventWithBLOBs.setEventRating(2);
+                }
+                if(eventName.contains("MODIFY")){
+                    cloudEventWithBLOBs.setEventRating(1);
+                }
                 cloudEventWithBLOBs.setEventId(item.getString("EventId"));
                 cloudEventWithBLOBs.setEventType(item.getString("EventType"));
                 cloudEventWithBLOBs.setRequestId(item.getString("RequestId"));
@@ -365,7 +373,8 @@ public class CloudEventService {
                 cloudEventWithBLOBs.setSyncRegion(accountMap.get("region"));
                 cloudEventWithBLOBs.setAcsRegion(item.getString("Region"));
                 cloudEventWithBLOBs.setRegionName(item.getString("RegionCn"));
-                cloudEventWithBLOBs.setRequestParameters(item.getString("RequestParameters"));
+                String requestParameters =  item.getString("RequestParameters");
+                cloudEventWithBLOBs.setRequestParameters(requestParameters!=null && requestParameters.length()>500?requestParameters.substring(0,500):requestParameters);
                 cloudEventWithBLOBs.setEventSource(item.getString("EventSource"));
                 cloudEventWithBLOBs.setEventRw(item.getString("EventRw"));
                 cloudEventWithBLOBs.setServiceName(item.getString("ServiceName"));
