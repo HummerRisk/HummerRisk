@@ -34,7 +34,7 @@ export default {
 
     init() {
       let now =  new Date().getTime()
-      let startDate = this.formatDate(now-this.days*24*60*60*1000)
+      let startDate = this.formatDate(now-(this.days-1)*24*60*60*1000)
       let endDate = this.formatDate(now)
       this.$get("/cloud/event/ipAccessChart/"+this.ip+"/"+startDate+"/"+endDate, response => {
         let data = response.data;
