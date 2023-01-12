@@ -418,6 +418,10 @@ public class K8sService {
                 list.addAll(service.getK8sSource());
                 k8sSourceImage.addAll(service.getK8sSourceImage());
 
+                K8sSource serviceAccount = k8sRequest.getServiceAccount(cloudNative);
+                list.addAll(serviceAccount.getK8sSource());
+                k8sSourceImage.addAll(serviceAccount.getK8sSourceImage());
+
                 K8sSource deployment = k8sRequest.getDeployment(cloudNative);
                 list.addAll(deployment.getK8sSource());
                 k8sSourceImage.addAll(deployment.getK8sSourceImage());
@@ -433,6 +437,18 @@ public class K8sService {
                 K8sSource role = k8sRequest.getRole(cloudNative);
                 list.addAll(role.getK8sSource());
                 k8sSourceImage.addAll(role.getK8sSourceImage());
+
+                K8sSource roleBinding = k8sRequest.getRoleBinding(cloudNative);
+                list.addAll(roleBinding.getK8sSource());
+                k8sSourceImage.addAll(roleBinding.getK8sSourceImage());
+
+                K8sSource clusterRole = k8sRequest.getRoleBinding(cloudNative);
+                list.addAll(clusterRole.getK8sSource());
+                k8sSourceImage.addAll(clusterRole.getK8sSourceImage());
+
+                K8sSource clusterRoleBinding = k8sRequest.getClusterRoleBinding(cloudNative);
+                list.addAll(clusterRoleBinding.getK8sSource());
+                k8sSourceImage.addAll(clusterRoleBinding.getK8sSourceImage());
 
                 K8sSource secret = k8sRequest.getSecret(cloudNative);
                 list.addAll(secret.getK8sSource());

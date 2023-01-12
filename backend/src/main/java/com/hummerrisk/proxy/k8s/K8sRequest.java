@@ -260,6 +260,38 @@ public class K8sRequest extends Request {
         }
     }
 
+    public K8sSource getServiceAccount(CloudNative cloudNative) throws IOException, ApiException {
+        K8sSource k8sSource = new K8sSource();
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
+        List<CloudNativeSourceImage> k8sSourceImage = new ArrayList<>();
+        try {
+            ApiClient apiClient = getK8sClient(null);
+            CoreV1Api apiInstance = new CoreV1Api(apiClient);
+            V1ServiceAccountList result = apiInstance.listServiceAccountForAllNamespaces(null, null, null, null,
+                    null, null, null, null, null, null);
+            for (V1ServiceAccount v1ServiceAccount : result.getItems()) {
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
+                cloudNativeSource.setSourceNamespace(Objects.requireNonNull(v1ServiceAccount.getMetadata()).getNamespace() != null ? v1ServiceAccount.getMetadata().getNamespace() : "");
+                JSONObject jsonObject;
+                try {
+                    jsonObject = (JSONObject) JSON.toJSON(v1ServiceAccount);
+                } catch (Exception e) {
+                    jsonObject = (JSONObject) JSON.toJSON(v1ServiceAccount.getMetadata());
+                }
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
+                cloudNativeSource.setSourceName(v1ServiceAccount.getMetadata().getName());
+                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.ServiceAccount.name());
+                list.add(cloudNativeSource);
+            }
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
+        }
+        k8sSource.setK8sSource(list);
+        k8sSource.setK8sSourceImage(k8sSourceImage);
+        return k8sSource;
+    }
+
     public K8sSource getKubenchPod(CloudNative cloudNative) throws IOException, ApiException {
         K8sSource k8sSource = new K8sSource();
         List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
@@ -584,6 +616,101 @@ public class K8sRequest extends Request {
                 cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1Role.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Role.name());
+                list.add(cloudNativeSource);
+            }
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
+        }
+        k8sSource.setK8sSource(list);
+        k8sSource.setK8sSourceImage(k8sSourceImage);
+        return k8sSource;
+    }
+
+    public K8sSource getRoleBinding(CloudNative cloudNative) throws IOException, ApiException {
+        K8sSource k8sSource = new K8sSource();
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
+        List<CloudNativeSourceImage> k8sSourceImage = new ArrayList<>();
+        try {
+            ApiClient apiClient = getK8sClient(null);
+            RbacAuthorizationV1Api apiInstance = new RbacAuthorizationV1Api(apiClient);
+            V1RoleBindingList result = apiInstance.listRoleBindingForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
+            for (V1RoleBinding v1RoleBinding : result.getItems()) {
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
+                cloudNativeSource.setSourceNamespace(Objects.requireNonNull(v1RoleBinding.getMetadata()).getNamespace() != null ? v1RoleBinding.getMetadata().getNamespace() : "");
+                JSONObject jsonObject;
+                try {
+                    jsonObject = (JSONObject) JSON.toJSON(v1RoleBinding);
+                } catch (Exception e) {
+                    jsonObject = (JSONObject) JSON.toJSON(v1RoleBinding.getMetadata());
+                }
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
+                cloudNativeSource.setSourceName(v1RoleBinding.getMetadata().getName());
+                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.RoleBinding.name());
+                list.add(cloudNativeSource);
+            }
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
+        }
+        k8sSource.setK8sSource(list);
+        k8sSource.setK8sSourceImage(k8sSourceImage);
+        return k8sSource;
+    }
+
+    public K8sSource getClusterRole(CloudNative cloudNative) throws IOException, ApiException {
+        K8sSource k8sSource = new K8sSource();
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
+        List<CloudNativeSourceImage> k8sSourceImage = new ArrayList<>();
+        try {
+            ApiClient apiClient = getK8sClient(null);
+            RbacAuthorizationV1Api apiInstance = new RbacAuthorizationV1Api(apiClient);
+            String pretty = "true";
+            V1ClusterRoleList result = apiInstance.listClusterRole(pretty, true, null, null, null, null, null, null, null, null);
+            for (V1ClusterRole v1ClusterRole : result.getItems()) {
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
+                cloudNativeSource.setSourceNamespace(Objects.requireNonNull(v1ClusterRole.getMetadata()).getNamespace() != null ? v1ClusterRole.getMetadata().getNamespace() : "");
+                JSONObject jsonObject;
+                try {
+                    jsonObject = (JSONObject) JSON.toJSON(v1ClusterRole);
+                } catch (Exception e) {
+                    jsonObject = (JSONObject) JSON.toJSON(v1ClusterRole.getMetadata());
+                }
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
+                cloudNativeSource.setSourceName(v1ClusterRole.getMetadata().getName());
+                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Role.name());
+                list.add(cloudNativeSource);
+            }
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
+        }
+        k8sSource.setK8sSource(list);
+        k8sSource.setK8sSourceImage(k8sSourceImage);
+        return k8sSource;
+    }
+
+    public K8sSource getClusterRoleBinding(CloudNative cloudNative) throws IOException, ApiException {
+        K8sSource k8sSource = new K8sSource();
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
+        List<CloudNativeSourceImage> k8sSourceImage = new ArrayList<>();
+        try {
+            ApiClient apiClient = getK8sClient(null);
+            RbacAuthorizationV1Api apiInstance = new RbacAuthorizationV1Api(apiClient);
+            String pretty = "true";
+            V1ClusterRoleBindingList result = apiInstance.listClusterRoleBinding(pretty, true, null, null, null, null, null, null, null, null);
+            for (V1ClusterRoleBinding v1ClusterRoleBinding : result.getItems()) {
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
+                cloudNativeSource.setSourceNamespace(Objects.requireNonNull(v1ClusterRoleBinding.getMetadata()).getNamespace() != null ? v1ClusterRoleBinding.getMetadata().getNamespace() : "");
+                JSONObject jsonObject;
+                try {
+                    jsonObject = (JSONObject) JSON.toJSON(v1ClusterRoleBinding);
+                } catch (Exception e) {
+                    jsonObject = (JSONObject) JSON.toJSON(v1ClusterRoleBinding.getMetadata());
+                }
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
+                cloudNativeSource.setSourceName(v1ClusterRoleBinding.getMetadata().getName());
+                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.ClusterRoleBinding.name());
                 list.add(cloudNativeSource);
             }
         } catch (Exception e) {
