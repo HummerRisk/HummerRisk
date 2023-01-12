@@ -1362,6 +1362,7 @@ export default {
     k8s_chart_vuln: 'K8s Vulnerability Statistics',
     search_by_name: 'Search by K8s name',
     cloud_topology: 'K8s resource topology',
+    rbac_topology: 'K8s RBAC topology',
     resource_situation: 'K8s resource situation',
     sync_log: 'K8s resource synchronization log',
     k8s_resource_type: 'K8s resource type',

@@ -1362,6 +1362,7 @@ export default {
     k8s_chart_vuln: 'K8s 漏洞统计',
     search_by_name: '根据 K8s 名称搜索',
     cloud_topology: 'K8s 资源拓扑图',
+    rbac_topology: 'K8s RBAC 拓扑图',
     resource_situation: 'K8s 资源态势',
     sync_log: 'K8s 资源同步日志',
     k8s_resource_type: 'K8s 资源类型',

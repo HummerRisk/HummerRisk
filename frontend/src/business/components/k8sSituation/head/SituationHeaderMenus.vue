@@ -12,6 +12,10 @@
             {{ $t("k8s.cloud_topology") }}
           </el-menu-item>
 
+          <el-menu-item :index="'/k8sSituation/rbacTopology'">
+            {{ $t("k8s.rbac_topology") }}
+          </el-menu-item>
+
           <el-menu-item :index="'/k8sSituation/k8sSyncLog'">
             {{ $t("k8s.sync_log") }}
           </el-menu-item>

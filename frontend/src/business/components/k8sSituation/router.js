@@ -18,6 +18,11 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8sSituation/home/K8sTopology"),
     },
     {
+      path: "rbacTopology",
+      name: "RbacTopology",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8sSituation/home/RbacTopology"),
+    },
+    {
       path: "k8sSyncLog",
       name: "K8sSyncLog",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8sSituation/home/K8sSyncLog"),
