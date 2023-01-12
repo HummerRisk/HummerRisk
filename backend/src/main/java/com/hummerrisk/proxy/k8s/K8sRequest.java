@@ -678,7 +678,7 @@ public class K8sRequest extends Request {
                 cloudNativeSource.setSourceJson(jsonObject.toJSONString());
                 cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
                 cloudNativeSource.setSourceName(v1ClusterRole.getMetadata().getName());
-                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Role.name());
+                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.ClusterRole.name());
                 list.add(cloudNativeSource);
             }
         } catch (Exception e) {

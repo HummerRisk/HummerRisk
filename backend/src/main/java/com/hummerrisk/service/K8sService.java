@@ -442,7 +442,7 @@ public class K8sService {
                 list.addAll(roleBinding.getK8sSource());
                 k8sSourceImage.addAll(roleBinding.getK8sSourceImage());
 
-                K8sSource clusterRole = k8sRequest.getRoleBinding(cloudNative);
+                K8sSource clusterRole = k8sRequest.getClusterRole(cloudNative);
                 list.addAll(clusterRole.getK8sSource());
                 k8sSourceImage.addAll(clusterRole.getK8sSourceImage());
 

@@ -178,6 +178,14 @@
                 </if>
                 ) as daemonsets,
                 (
+                SELECT IFNULL(count(t.id), 0) as serviceAccounts
+                from cloud_native_source t
+                where t.source_type = 'ServiceAccount'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as serviceAccounts,
+                (
                 SELECT IFNULL(count(t.id), 0) as services
                 from cloud_native_source t
                 where t.source_type = 'Service'
@@ -201,6 +209,30 @@
                     and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
                 </if>
                 ) as roles,
+                (
+                SELECT IFNULL(count(t.id), 0) as roleBindings
+                from cloud_native_source t
+                where t.source_type = 'RoleBinding'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as roleBindings,
+                (
+                SELECT IFNULL(count(t.id), 0) as clusterRoles
+                from cloud_native_source t
+                where t.source_type = 'ClusterRole'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as clusterRoles,
+                (
+                SELECT IFNULL(count(t.id), 0) as clusterRoleBindings
+                from cloud_native_source t
+                where t.source_type = 'ClusterRoleBinding'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as clusterRoleBindings,
                 (
                 SELECT IFNULL(count(t.id), 0) as secrets
                 from cloud_native_source t

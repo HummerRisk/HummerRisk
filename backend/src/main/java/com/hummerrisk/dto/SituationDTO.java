@@ -12,11 +12,19 @@ public class SituationDTO {
 
     private String daemonsets;
 
+    private String serviceAccounts;
+
     private String services;
 
     private String ingress;
 
     private String roles;
+
+    private String roleBindings;
+
+    private String clusterRoles;
+
+    private String clusterRoleBindings;
 
     private String secrets;
 
@@ -200,5 +208,37 @@ public class SituationDTO {
 
     public void setNetworkPolicies(String networkPolicies) {
         this.networkPolicies = networkPolicies;
+    }
+
+    public String getServiceAccounts() {
+        return serviceAccounts;
+    }
+
+    public void setServiceAccounts(String serviceAccounts) {
+        this.serviceAccounts = serviceAccounts;
+    }
+
+    public String getRoleBindings() {
+        return roleBindings;
+    }
+
+    public void setRoleBindings(String roleBindings) {
+        this.roleBindings = roleBindings;
+    }
+
+    public String getClusterRoles() {
+        return clusterRoles;
+    }
+
+    public void setClusterRoles(String clusterRoles) {
+        this.clusterRoles = clusterRoles;
+    }
+
+    public String getClusterRoleBindings() {
+        return clusterRoleBindings;
+    }
+
+    public void setClusterRoleBindings(String clusterRoleBindings) {
+        this.clusterRoleBindings = clusterRoleBindings;
     }
 }
