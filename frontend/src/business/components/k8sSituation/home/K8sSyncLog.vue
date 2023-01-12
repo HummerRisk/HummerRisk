@@ -32,7 +32,7 @@
         <el-table-column prop="status" v-if="checkedColumnNames.includes('status')" min-width="100" :label="$t('code.status')">
           <template v-slot:default="scope">
             <el-tooltip class="item" effect="dark" :content="scope.row.output" placement="top">
-              <el-tag size="mini" type="success" v-if="scope.row.result">
+              <el-tag size="mini" type="success" v-if="scope.row.result !== null">
                 {{ $t('commons.success') }}
               </el-tag>
               <el-tag size="mini" type="primary" v-else-if="scope.row.result === null">
@@ -232,6 +232,7 @@ export default {
         let data = response.data;
         this.total = data.itemCount;
         this.tableData = data.listObject;
+        console.log(this.tableData)
       });
     },
     handleClose() {

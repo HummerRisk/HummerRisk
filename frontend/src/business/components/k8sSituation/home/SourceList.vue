@@ -2,7 +2,7 @@
   <el-row :gutter="24" v-loading="result.loading">
     <el-col :span="24">
       <el-card class="content" shadow="always">
-        <el-descriptions :title="$t('k8s.source_sum')" :column="8" border direction="vertical">
+        <el-descriptions :title="$t('k8s.source_sum')" :column="10" border direction="vertical">
           <el-descriptions-item label="DaemonSet" label-class-name="my-label" content-class-name="my-content">
             <el-link class="my-content" @click="searchBySource('DaemonSet')">
               {{ situationInfo.daemonsets }}
@@ -13,9 +13,29 @@
               {{ situationInfo.ingress }}
             </el-link>
           </el-descriptions-item>
+          <el-descriptions-item label="ServiceAccount" label-class-name="my-label" content-class-name="my-content">
+            <el-link class="my-content" @click="searchBySource('ServiceAccount')">
+              {{ situationInfo.serviceAccounts }}
+            </el-link>
+          </el-descriptions-item>
           <el-descriptions-item label="Role" label-class-name="my-label" content-class-name="my-content">
             <el-link class="my-content" @click="searchBySource('Role')">
               {{ situationInfo.roles }}
+            </el-link>
+          </el-descriptions-item>
+          <el-descriptions-item label="RoleBinding" label-class-name="my-label" content-class-name="my-content">
+            <el-link class="my-content" @click="searchBySource('RoleBinding')">
+              {{ situationInfo.roleBindings }}
+            </el-link>
+          </el-descriptions-item>
+          <el-descriptions-item label="ClusterRole" label-class-name="my-label" content-class-name="my-content">
+            <el-link class="my-content" @click="searchBySource('ClusterRole')">
+              {{ situationInfo.clusterRoles }}
+            </el-link>
+          </el-descriptions-item>
+          <el-descriptions-item label="ClusterRoleBinding" label-class-name="my-label" content-class-name="my-content">
+            <el-link class="my-content" @click="searchBySource('ClusterRoleBinding')">
+              {{ situationInfo.clusterRoleBindings }}
             </el-link>
           </el-descriptions-item>
           <el-descriptions-item label="Secret" label-class-name="my-label" content-class-name="my-content">
