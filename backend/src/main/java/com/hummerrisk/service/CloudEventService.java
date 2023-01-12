@@ -49,6 +49,8 @@ import com.tencentcloudapi.common.profile.ClientProfile;
 import com.tencentcloudapi.common.profile.HttpProfile;
 import com.volcengine.service.cloudtrail.ICloudTrailService;
 import com.volcengine.service.cloudtrail.impl.CloudTrailServiceImpl;
+import common.utils.HttpClientUtils;
+import common.utils.SignUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -314,10 +316,81 @@ public class CloudEventService {
             case PlatformUtils.huoshan:
                 result = getVolcEvents(accountMap,startTime,endTime,pageNum,maxResult);
                 break;
+            case PlatformUtils.ksyun:
+                result = getKsyunEvents(accountMap,startTime,endTime,pageNum,maxResult);
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + account.getPluginId());
         }
         return result;
+    }
+
+
+    private List<CloudEventWithBLOBs> getKsyunEvents(Map<String, String> accountMap, String startTime, String endTime, int pageNum, int maxResult) throws Exception {
+        String nextToken = accountMap.get("nextToken");
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("Accesskey",accountMap.get("AccessKey"));
+        requestParams.put("Service","actiontrail");
+        requestParams.put("Action","ListOperateLogs");
+        requestParams.put("Version","2019-04-01");
+        requestParams.put("Timestamp",DateUtils.localDateToUtcDateStr("yyyy-MM-dd'T'HH:mm:ss'Z'",new Date()));
+        requestParams.put("SignatureVersion","1.0");
+        requestParams.put("SignatureMethod","HMAC-SHA256");
+        requestParams.put("Region",accountMap.get("region"));
+        requestParams.put("EventBeginDate",startTime.substring(0,10));
+        requestParams.put("EventEndDate",endTime.substring(0,10));
+        requestParams.put("PageSize",maxResult);
+        if(nextToken!=null){
+            requestParams.put("SearchAfter",nextToken);
+        }
+        String signature = SignUtils.signature(requestParams, accountMap.get("SecretAccessKey"));
+        requestParams.put("Signature",signature);
+        String responseStr = HttpClientUtils.httpGet("actiontrail.api.ksyun.com", requestParams, null);
+        JSONObject responseObject = JSONObject.parseObject(responseStr);
+        String searchAfter = responseObject.getString("SearchAfter");
+        if(searchAfter.equals(nextToken)){
+            accountMap.put("isEnd","true");
+        }else{
+            accountMap.put("nextToken",searchAfter);
+        }
+        JSONArray events = responseObject.getJSONArray("Events");
+        if(events.size() > 0){
+            return events.toJavaList(JSONObject.class).stream().map(item->{
+                String eventName = item.getString("EventName");
+                eventName = eventName == null?"":eventName.toUpperCase();
+                CloudEventWithBLOBs cloudEventWithBLOBs = new CloudEventWithBLOBs();
+                if(eventName.contains("DELETE")||eventName.contains("TERMINATE")){
+                    cloudEventWithBLOBs.setEventRating(2);
+                }
+                if(eventName.contains("MODIFY")){
+                    cloudEventWithBLOBs.setEventRating(1);
+                }
+                cloudEventWithBLOBs.setEventId(item.getString("EventId"));
+                cloudEventWithBLOBs.setEventType(item.getString("EventType"));
+                cloudEventWithBLOBs.setRequestId(item.getString("RequestId"));
+                cloudEventWithBLOBs.setUserAgent(item.getString("UserAgent"));
+                cloudEventWithBLOBs.setSourceIpAddress(item.getString("SourceIpAddress"));
+                cloudEventWithBLOBs.setSyncRegion(accountMap.get("region"));
+                cloudEventWithBLOBs.setAcsRegion(item.getString("Region"));
+                cloudEventWithBLOBs.setRegionName(item.getString("RegionCn"));
+                String requestParameters =  item.getString("RequestParameters");
+                cloudEventWithBLOBs.setRequestParameters(requestParameters!=null && requestParameters.length()>500?requestParameters.substring(0,500):requestParameters);
+                cloudEventWithBLOBs.setEventSource(item.getString("EventSource"));
+                cloudEventWithBLOBs.setEventRw(item.getString("EventRw"));
+                cloudEventWithBLOBs.setServiceName(item.getString("ServiceName"));
+                cloudEventWithBLOBs.setEventTime(DateUtils.dateTime("yyyy-MM-dd HH:mm:ss",item.getString("EventTime")).getTime());
+                cloudEventWithBLOBs.setEventName(item.getString("EventName"));
+                cloudEventWithBLOBs.setUserIdentity(item.getString("UserIdentity"));
+                cloudEventWithBLOBs.setCloudAuditEvent(item.toJSONString());
+                JSONObject userIdentity = item.getJSONObject("UserIdentity");
+                if(userIdentity != null){
+                    cloudEventWithBLOBs.setUserName(userIdentity.getString("UserName"));
+                }
+                return cloudEventWithBLOBs;
+            }).collect(Collectors.toList());
+        }else{
+            return new ArrayList<CloudEventWithBLOBs>();
+        }
     }
 
     private List<CloudEventWithBLOBs> getVolcEvents(Map<String, String> accountMap, String startTime, String endTime, int pageNum, int maxResult) throws Exception {
