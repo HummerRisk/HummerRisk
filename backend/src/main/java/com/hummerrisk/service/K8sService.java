@@ -13,6 +13,8 @@ import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.cloudNative.*;
 import com.hummerrisk.controller.request.image.ImageRequest;
 import com.hummerrisk.controller.request.k8s.*;
+import com.hummerrisk.controller.request.k8s.rbac.Links;
+import com.hummerrisk.controller.request.k8s.rbac.Nodes;
 import com.hummerrisk.dto.*;
 import com.hummerrisk.i18n.Translator;
 import com.hummerrisk.proxy.k8s.K8sRequest;
@@ -719,7 +721,7 @@ public class K8sService {
     }
 
     void createKubench(K8sRequest k8sRequest, CloudNativeSourceExample example, CloudNative cloudNative) throws Exception {
-        try{
+        try {
             k8sRequest.deleteKubenchJob();
             List<CloudNativeSource> list = cloudNativeSourceMapper.selectByExample(example);
             cloudNativeSourceMapper.deleteByExample(example);
@@ -734,7 +736,7 @@ public class K8sService {
             for (CloudNativeSourceImage cloudNativeSourceImage : pod.getK8sSourceImage()) {
                 cloudNativeSourceImageMapper.insertSelective(cloudNativeSourceImage);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
     }
@@ -1191,6 +1193,19 @@ public class K8sService {
 
         //检验kube-bench
         kubenchStatusValidate(cloudNative.getId());
+    }
+
+    public RbacDTO rbacChart() throws Exception {
+        try {
+            RbacDTO rbacDTO = new RbacDTO();
+            List<Nodes> nodes = new ArrayList<>();
+            List<Links> links = new ArrayList<>();
+            rbacDTO.setNodes(nodes);
+            rbacDTO.setLinks(links);
+            return rbacDTO;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
 }

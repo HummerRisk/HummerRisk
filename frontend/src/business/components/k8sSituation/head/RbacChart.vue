@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     init() {
-      this.$get("/fs/severityChart", response => {
+      this.$get("/k8s/rbacChart", response => {
         let data = {
           "type": "force",
           "nodes": [
@@ -33,78 +33,100 @@ export default {
               "name": "AnalyserNode",
               "value": 1,
               "symbolSize": 60,
-              "category": "HTMLElement"
+              "category": "Resource"
             },
             {
               "id": "1",
               "name": "AudioNode",
               "value": 1,
               "symbolSize": 80,
-              "category": "HTMLElement"
+              "category": "ClusterRole"
             },
             {
               "id": "2",
               "name": "Uint8Array",
               "value": 1,
               "symbolSize": 100,
-              "category": "HTMLElement"
+              "category": "ServiceAccount"
             },
             {
               "id": "3",
               "name": "Float32Array",
               "value": 1,
               "symbolSize": 60,
-              "category": 4
+              "category": "Resource"
             },
             {
               "id": "4",
               "name": "ArrayBuffer",
               "value": 1,
               "symbolSize": 80,
-              "category": 4
+              "category": "ClusterRole"
             },
             {
               "id": "5",
               "name": "ArrayBufferView",
               "value": 1,
               "symbolSize": 100,
-              "category": "WebGL"
+              "category": "ServiceAccount"
             },
             {
               "id": "6",
               "name": "Attr",
               "value": 1,
               "symbolSize": 60,
-              "category": "CSS"
+              "category": "ResourceDetails"
             },
             {
               "id": "7",
               "name": "Node",
               "value": 1,
               "symbolSize": 80,
-              "category": "CSS"
+              "category": "Role"
             },
             {
               "id": "8",
               "name": "Element",
               "value": 1,
               "symbolSize": 100,
-              "category": "SVG"
+              "category": "ServiceAccount"
             },
             {
               "id": "9",
               "name": "AudioBuffer",
               "value": 1,
               "symbolSize": 60,
-              "category": "SVG"
+              "category": "ResourceDetails"
+            },
+            {
+              "id": "10",
+              "name": "AnalyserNode",
+              "value": 1,
+              "symbolSize": 60,
+              "category": "Resource"
+            },
+            {
+              "id": "11",
+              "name": "AnalyserNode",
+              "value": 1,
+              "symbolSize": 60,
+              "category": "Resource"
             },
           ],
           "links": [
             {
               "source": "0",
               "target": "1",
-              relation: {
-                name: "兄弟",
+              "relation": {
+                name: "get",
+                id: "1",
+              },
+            },
+            {
+              "source": "0",
+              "target": "1",
+              "relation": {
+                name: "post",
                 id: "1",
               },
             },
@@ -128,7 +150,7 @@ export default {
               "source": "0",
               "target": "4",
               relation: {
-                name: "兄弟",
+                name: "get",
                 id: "1",
               },
             },
@@ -136,7 +158,7 @@ export default {
               "source": "0",
               "target": "5",
               relation: {
-                name: "兄弟",
+                name: "api",
                 id: "1",
               },
             },
@@ -144,7 +166,7 @@ export default {
               "source": "0",
               "target": "6",
               relation: {
-                name: "兄弟",
+                name: "post",
                 id: "1",
               },
             },
@@ -152,7 +174,7 @@ export default {
               "source": "0",
               "target": "7",
               relation: {
-                name: "兄弟",
+                name: "delete",
                 id: "1",
               },
             },
@@ -160,7 +182,7 @@ export default {
               "source": "0",
               "target": "8",
               relation: {
-                name: "兄弟",
+                name: "role",
                 id: "1",
               },
             },
@@ -168,35 +190,44 @@ export default {
               "source": "0",
               "target": "9",
               relation: {
-                name: "兄弟",
+                name: "get/post",
+                id: "1",
+              },
+            },
+            {
+              "source": "10",
+              "target": "11",
+              relation: {
+                name: "get/post",
                 id: "1",
               },
             }
           ],
           "categories": [
             {
-              "name": "HTMLElement",
+              "name": "ServiceAccount",
               "keyword": {},
-              "base": "HTMLElement"
+              "base": "ServiceAccount"
             },
             {
-              "name": "WebGL",
+              "name": "ResourceDetails",
               "keyword": {},
-              "base": "WebGLRenderingContext"
+              "base": "ResourceDetails"
             },
             {
-              "name": "SVG",
+              "name": "Role",
               "keyword": {},
-              "base": "SVGElement"
+              "base": "Role"
             },
             {
-              "name": "CSS",
+              "name": "ClusterRole",
               "keyword": {},
-              "base": "CSSRule"
+              "base": "ClusterRole"
             },
             {
-              "name": "Other",
-              "keyword": {}
+              "name": "Resource",
+              "keyword": {},
+              "base": "Resource"
             }
           ]
         };
@@ -204,7 +235,7 @@ export default {
           legend: {
             top: 10,
             bottom: 0,
-            data: ['HTMLElement', 'WebGL', 'SVG', 'CSS', 'Other']
+            data: ['ServiceAccount', 'Resource', 'Role', 'ClusterRole', 'ResourceDetails']
           },
           series: [
             {
@@ -237,7 +268,7 @@ export default {
               categories: data.categories,
               force: {
                 edgeLength: 250,
-                repulsion: 1000,
+                repulsion: 100,
                 gravity: 0.01
               },
               edges: data.links

@@ -395,4 +395,11 @@ public class K8sController {
         k8sService.reinstallKubench(id);
     }
 
+    @I18n
+    @ApiOperation(value = "RBAC 资源态势")
+    @GetMapping("rbacChart")
+    public RbacDTO rbacChart() throws Exception {
+        return k8sService.rbacChart();
+    }
+
 }
