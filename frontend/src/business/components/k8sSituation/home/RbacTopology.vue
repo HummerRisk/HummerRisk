@@ -1,11 +1,7 @@
 <template>
   <main-container class="card">
     <el-card class="table-card" v-loading="result.loading">
-      <el-tabs type="border-card">
-        <el-tab-pane :label="$t('k8s.resource_perspective')">
-          <svg id="k8s-topo"></svg>
-        </el-tab-pane>
-      </el-tabs>
+        <rbac-chart/>
     </el-card>
 
     <!--Result log-->
@@ -70,7 +66,7 @@ import SearchList from "@/business/components/k8sSituation/home/SearchList";
 import LogForm from "@/business/components/k8s/home/LogForm";
 import * as d3 from 'd3';
 import htmlToPdf from "@/common/js/htmlToPdf";
-import Topo from "@/common/js/Topo";
+import RbacChart from "@/business/components/k8sSituation/head/RbacChart";
 
 /* eslint-disable */
 export default {
@@ -79,6 +75,7 @@ export default {
     SearchList,
     LogForm,
     d3,
+    RbacChart,
   },
   data() {
     return {
@@ -88,34 +85,11 @@ export default {
       logForm: {},
       logData: [],
       htmlTitle: this.$t('pdf.html_title'),
-      options: {
-        data: [
-          {
-            type: 'app',             //节点类型
-            name: 'app',             //节点名称
-            active: 3,               //已完成数
-            total: 10,               //总数
-            health: 10,              //监控健康程度
-            underText: 'underText',  //节点之间连线下方的文字
-            upwardText: 'upwardText',//节点之间连线上方的文字
-            isConfig: 'true',        //节点配置状态
-            x: 100,
-            y: 100,
-          },
-        ],
-        edges: [
-          {
-            source: 0,//连线起点（数值对应data数组中的元素）
-            target: 3,//连线终点（数值对应data数组中的元素）
-          }
-        ],
-      },
+      option: {},
     };
   },
   methods: {
     init() {
-      let t = new Topo('#k8s-topo', this.options);
-      t.render();
     },
 
     handleClose() {
@@ -137,71 +111,10 @@ export default {
 </script>
 
 <style scoped>
-svg {
-  margin: 25px;
-}
 .table-card >>> .el-card__body {
   padding: 0;
 }
 .table-card >>> .el-tabs__content{
   padding: 0;
 }
-
-#k8s-topo {
-   border: 1px solid #ccc;
-   user-select: none;
- }
-
-#k8s-topo text {
-  font-size: 10px;
-  /*和js里保持一致*/
-  fill: #1a2c3f;
-  text-anchor: middle;
-}
-
-#k8s-topo .node-other {
-  text-anchor: start;
-}
-
-#k8s-topo .health1 {
-  stroke: #92e1a2;
-}
-
-#k8s-topo .health2 {
-  stroke: orange;
-}
-
-#k8s-topo .health3 {
-  stroke: red;
-}
-
-#k8s-topo #cloud,
-#k8s-topo #database {
-  fill: #ccc;
-}
-
-#k8s-topo .link {
-  stroke: black;
-}
-
-#k8s-topo .node-title {
-  font-size: 14px;
-}
-
-#k8s-topo .node-code circle {
-  fill: green;
-}
-
-#k8s-topo .node-code text {
-  fill: #fff;
-}
-
-#k8s-topo .node-bg {
-  fill: #fff;
-}
-
-#k8s-topo .arrow {
-  fill: black;
-}
-
 </style>
