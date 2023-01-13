@@ -80,7 +80,7 @@ import {_filter, _sort} from "@/common/js/utils";
     },
     methods: {
       handleVuln() {
-        window.open('http://www.cnnvd.org.cn/web/vulnerability/querylist.tag','_blank','');
+        window.open('https://www.cnnvd.org.cn/','_blank','');
       },
       sort(column) {
         _sort(column, this.condition);

@@ -273,7 +273,7 @@ export default {
     select(selection) {
     },
     handleVuln() {
-      window.open('http://www.cnnvd.org.cn/web/vulnerability/querylist.tag','_blank','');
+      window.open('http://www.cnnvd.org.cn/','_blank','');
     },
     //查询列表
     search() {
