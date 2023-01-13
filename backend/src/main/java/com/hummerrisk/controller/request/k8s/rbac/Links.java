@@ -1,39 +1,37 @@
 package com.hummerrisk.controller.request.k8s.rbac;
 
-import java.util.List;
-
 /**
  * harris
  */
 public class Links {
 
-    private String id;
+    private String source;
 
-    private String name;
+    private String target;
 
-    private List<Relation> relation;
+    private Relation relation;
 
-    public String getId() {
-        return id;
+    public String getSource() {
+        return source;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setSource(String source) {
+        this.source = source;
     }
 
-    public String getName() {
-        return name;
+    public String getTarget() {
+        return target;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTarget(String target) {
+        this.target = target;
     }
 
-    public List<Relation> getRelation() {
+    public Relation getRelation() {
         return relation;
     }
 
-    public void setRelation(List<Relation> relation) {
+    public void setRelation(Relation relation) {
         this.relation = relation;
     }
 }

@@ -13,9 +13,9 @@ public class Nodes {
 
     private String name;
 
-    private String value;
+    private Integer value;
 
-    private String symbolSize;
+    private Integer symbolSize;
 
     private String category;
 
@@ -35,19 +35,19 @@ public class Nodes {
         this.name = name;
     }
 
-    public String getValue() {
+    public Integer getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(Integer value) {
         this.value = value;
     }
 
-    public String getSymbolSize() {
+    public Integer getSymbolSize() {
         return symbolSize;
     }
 
-    public void setSymbolSize(String symbolSize) {
+    public void setSymbolSize(Integer symbolSize) {
         this.symbolSize = symbolSize;
     }
 

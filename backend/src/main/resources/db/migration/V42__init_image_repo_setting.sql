@@ -52,3 +52,32 @@ INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('7
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('459391ef-3f77-4f13-bade-ecb263f12623', '48');
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('6f3a9f9b-6d84-482d-a91a-3fb94f888a34', '48');
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('8909fff6-52a4-433c-9504-476149acf15c', '48');
+
+CREATE TABLE IF NOT EXISTS `cloud_native_source_rbac_node` (
+    `id`                         varchar(50)        NOT NULL COMMENT 'ID',
+    `source_id`                  varchar(50)        DEFAULT NULL COMMENT 'sourceID',
+    `name`                       varchar(512)       DEFAULT NULL COMMENT 'name',
+    `value`                      int(11)            DEFAULT NULL COMMENT 'value',
+    `symbolSize`                 int(11)            DEFAULT NULL COMMENT 'symbolSize',
+    `category`                   varchar(128)       DEFAULT NULL COMMENT 'category',
+    `create_time`                bigint(13)         DEFAULT NULL COMMENT '创建时间',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
+
+CREATE TABLE IF NOT EXISTS `cloud_native_source_rbac_link` (
+    `id`                         varchar(50)        NOT NULL COMMENT 'ID',
+    `source_id`                  varchar(50)        DEFAULT NULL COMMENT 'sourceID',
+    `source`                     varchar(50)        DEFAULT NULL COMMENT 'source',
+    `target`                     varchar(128)       DEFAULT NULL COMMENT 'target',
+    `create_time`                bigint(13)         DEFAULT NULL COMMENT '创建时间',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
+
+CREATE TABLE IF NOT EXISTS `cloud_native_source_rbac_relation` (
+    `id`                         varchar(50)        NOT NULL COMMENT 'ID',
+    `source_id`                  varchar(50)        DEFAULT NULL COMMENT 'sourceId',
+    `link_id`                    varchar(50)        DEFAULT NULL COMMENT 'linkId',
+    `name`                       varchar(512)       DEFAULT NULL COMMENT 'name',
+    `create_time`                bigint(13)         DEFAULT NULL COMMENT '创建时间',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
