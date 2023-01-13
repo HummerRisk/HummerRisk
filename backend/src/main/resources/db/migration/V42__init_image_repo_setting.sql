@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS `cloud_native_source_rbac_node` (
     `id`                         varchar(50)        NOT NULL COMMENT 'ID',
     `source_id`                  varchar(50)        DEFAULT NULL COMMENT 'sourceID',
     `name`                       varchar(512)       DEFAULT NULL COMMENT 'name',
+    `namespace`                  varchar(512)       DEFAULT NULL COMMENT 'namespace',
     `value`                      int(11)            DEFAULT NULL COMMENT 'value',
     `symbolSize`                 int(11)            DEFAULT NULL COMMENT 'symbolSize',
     `category`                   varchar(128)       DEFAULT NULL COMMENT 'category',

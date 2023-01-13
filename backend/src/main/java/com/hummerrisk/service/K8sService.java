@@ -83,6 +83,12 @@ public class K8sService {
     private ExtK8sResultConfigItemMapper extK8sResultConfigItemMapper;
     @Resource
     private CloudNativeResultKubenchMapper cloudNativeResultKubenchMapper;
+    @Resource
+    private CloudNativeSourceRbacNodeMapper cloudNativeSourceRbacNodeMapper;
+    @Resource
+    private CloudNativeSourceRbacLinkMapper cloudNativeSourceRbacLinkMapper;
+    @Resource
+    private CloudNativeSourceRbacRelationMapper cloudNativeSourceRbacRelationMapper;
 
 
     public List<CloudNativeDTO> getCloudNativeList(CloudNativeRequest request) {
@@ -1203,6 +1209,279 @@ public class K8sService {
             rbacDTO.setNodes(nodes);
             rbacDTO.setLinks(links);
             return rbacDTO;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    public void saveServiceAccount(CloudNativeSourceWithBLOBs cloudNativeSource) throws Exception {
+        try {
+            String json = cloudNativeSource.getSourceJson();
+            if(!StringUtils.isEmpty(json)) {
+                JSONObject sourceJson = JSONObject.parseObject(json);
+                String secrets = sourceJson.getString("secrets");
+                JSONArray jsonArray = JSONArray.parseArray(secrets);
+                for(Object object : jsonArray) {
+                    JSONObject secretJson = (JSONObject) object;
+                    String name = secretJson.getString("name");
+
+                    CloudNativeSourceExample cloudNativeSourceExample = new CloudNativeSourceExample();
+                    cloudNativeSourceExample.createCriteria().andCloudNativeIdEqualTo(cloudNativeSource.getCloudNativeId()).andSourceNameEqualTo(name).andSourceTypeEqualTo(CloudNativeConstants.K8S_TYPE.Secret.name());
+                    List<CloudNativeSource> secretSources = cloudNativeSourceMapper.selectByExample(cloudNativeSourceExample);
+                    CloudNativeSource secretSource = new CloudNativeSource();
+                    if(secretSources.size() > 0) {
+                        secretSource = secretSources.get(0);
+                    }
+
+                    CloudNativeSourceRbacNode secret = new CloudNativeSourceRbacNode();
+                    String resourceDetailId = UUIDUtil.newUUID();
+                    secret.setId(resourceDetailId);
+                    secret.setName(secretSource.getSourceName());
+                    secret.setNamespace(secretSource.getSourceNamespace());
+                    secret.setSourceId(secretSource.getId());
+                    secret.setValue(1);
+                    secret.setSymbolsize(40);
+                    secret.setCategory(CloudNativeConstants.K8S_TYPE.ResourceDetail.name());
+                    secret.setCreateTime(System.currentTimeMillis());
+                    cloudNativeSourceRbacNodeMapper.insertSelective(secret);
+
+                    CloudNativeSourceRbacNodeExample cloudNativeSourceRbacNodeExample = new CloudNativeSourceRbacNodeExample();
+                    cloudNativeSourceRbacNodeExample.createCriteria().andNameEqualTo(cloudNativeSource.getSourceName()).andNamespaceEqualTo(cloudNativeSource.getSourceNamespace()).andSourceIdEqualTo(cloudNativeSource.getId()).andCategoryEqualTo(CloudNativeConstants.K8S_TYPE.ServiceAccount.name());
+                    List<CloudNativeSourceRbacNode> nodes = cloudNativeSourceRbacNodeMapper.selectByExample(cloudNativeSourceRbacNodeExample);
+
+                    CloudNativeSourceRbacNode saSource = new CloudNativeSourceRbacNode();
+                    if(nodes.size() == 0) {
+                        String metadata = secretJson.getString("metadata");
+                        JSONObject metadataObj = JSONObject.parseObject(metadata);
+                        String saName = metadataObj.getString("name");
+                        String saNamespace = metadataObj.getString("namespace");
+
+                        String saId = UUIDUtil.newUUID();
+                        saSource.setId(saId);
+                        saSource.setName(saName);
+                        saSource.setNamespace(saNamespace);
+                        saSource.setSourceId(saSource.getId());
+                        saSource.setValue(1);
+                        saSource.setSymbolsize(80);
+                        saSource.setCategory(CloudNativeConstants.K8S_TYPE.ServiceAccount.name());
+                        saSource.setCreateTime(System.currentTimeMillis());
+                        cloudNativeSourceRbacNodeMapper.insertSelective(saSource);
+                    } else {
+                        saSource = nodes.get(0);
+                    }
+
+                    CloudNativeSourceRbacLink link = new CloudNativeSourceRbacLink();
+                    String linkId = UUIDUtil.newUUID();
+                    link.setId(linkId);
+                    link.setSourceId(cloudNativeSource.getId());
+                    link.setSource(saSource.getId());
+                    link.setTarget(resourceDetailId);
+                    link.setCreateTime(System.currentTimeMillis());
+                    cloudNativeSourceRbacLinkMapper.insertSelective(link);
+
+                    CloudNativeSourceRbacRelation relation = new CloudNativeSourceRbacRelation();
+                    relation.setId(UUIDUtil.newUUID());
+                    relation.setSourceId(saSource.getId());
+                    relation.setLinkId(linkId);
+                    relation.setName("Belong");
+                    relation.setCreateTime(System.currentTimeMillis());
+                    cloudNativeSourceRbacRelationMapper.insertSelective(relation);
+
+
+                }
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    public void saveRole(CloudNativeSourceWithBLOBs cloudNativeSource) throws Exception {
+        try {
+            String json = cloudNativeSource.getSourceJson();
+            if(!StringUtils.isEmpty(json)) {
+
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    public void saveRoleBinding(CloudNativeSourceWithBLOBs cloudNativeSource) throws Exception {
+        try {
+            String json = cloudNativeSource.getSourceJson();
+            if(!StringUtils.isEmpty(json)) {
+                JSONObject sourceJson = JSONObject.parseObject(json);
+                String roleRef = sourceJson.getString("roleRef");
+
+                JSONObject roleJson = JSONObject.parseObject(roleRef);
+                String roleKind = roleJson.getString("kind");
+                String roleName = roleJson.getString("name");
+
+                CloudNativeSourceExample cloudNativeSourceExample = new CloudNativeSourceExample();
+                cloudNativeSourceExample.createCriteria().andCloudNativeIdEqualTo(cloudNativeSource.getCloudNativeId()).andSourceNameEqualTo(roleName).andSourceTypeEqualTo(roleKind);
+                List<CloudNativeSource> roleSources = cloudNativeSourceMapper.selectByExample(cloudNativeSourceExample);
+                CloudNativeSource roleSource = new CloudNativeSource();
+                if(roleSources.size() > 0) {
+                    roleSource = roleSources.get(0);
+                }
+
+                CloudNativeSourceRbacNode role = new CloudNativeSourceRbacNode();
+                String roleId = UUIDUtil.newUUID();
+                role.setId(roleId);
+                role.setName(roleSource.getSourceName());
+                role.setNamespace(roleSource.getSourceNamespace());
+                role.setSourceId(roleSource.getId());
+                role.setValue(1);
+                role.setSymbolsize(60);
+                role.setCategory(CloudNativeConstants.K8S_TYPE.Role.name());
+                role.setCreateTime(System.currentTimeMillis());
+                cloudNativeSourceRbacNodeMapper.insertSelective(role);
+
+                String subjects = sourceJson.getString("subjects");
+                if(!StringUtils.isEmpty(subjects)) {
+                    JSONArray jsonArray = JSONArray.parseArray(subjects);
+                    for(Object object : jsonArray) {
+                        JSONObject subjectJson = (JSONObject) object;
+                        String kind = subjectJson.getString("kind");
+                        String name = subjectJson.getString("name");
+                        String namespace = subjectJson.getString("namespace");
+                        if(StringUtils.equalsIgnoreCase(kind, "ServiceAccount")) {
+                            CloudNativeSourceExample example = new CloudNativeSourceExample();
+                            example.createCriteria().andCloudNativeIdEqualTo(cloudNativeSource.getCloudNativeId()).andSourceNameEqualTo(name).andSourceNamespaceEqualTo(namespace);
+                            List<CloudNativeSource> saSources = cloudNativeSourceMapper.selectByExample(example);
+                            if(saSources.size() > 0) {
+                                CloudNativeSource saSource = roleSources.get(0);
+                                CloudNativeSourceRbacNode serviceAccount = new CloudNativeSourceRbacNode();
+                                String saId = UUIDUtil.newUUID();
+                                serviceAccount.setId(saId);
+                                serviceAccount.setName(saSource.getSourceName());
+                                serviceAccount.setNamespace(saSource.getSourceNamespace());
+                                serviceAccount.setSourceId(saSource.getId());
+                                serviceAccount.setValue(1);
+                                serviceAccount.setSymbolsize(80);
+                                serviceAccount.setCategory(CloudNativeConstants.K8S_TYPE.ServiceAccount.name());
+                                serviceAccount.setCreateTime(System.currentTimeMillis());
+                                cloudNativeSourceRbacNodeMapper.insertSelective(serviceAccount);
+
+                                CloudNativeSourceRbacLink link = new CloudNativeSourceRbacLink();
+                                String linkId = UUIDUtil.newUUID();
+                                link.setId(linkId);
+                                link.setSourceId(saSource.getId());
+                                link.setSource(saId);
+                                link.setTarget(roleId);
+                                link.setCreateTime(System.currentTimeMillis());
+                                cloudNativeSourceRbacLinkMapper.insertSelective(link);
+
+                                CloudNativeSourceRbacRelation relation = new CloudNativeSourceRbacRelation();
+                                relation.setId(UUIDUtil.newUUID());
+                                relation.setSourceId(saSource.getId());
+                                relation.setLinkId(linkId);
+                                relation.setName("Associate");
+                                relation.setCreateTime(System.currentTimeMillis());
+                                cloudNativeSourceRbacRelationMapper.insertSelective(relation);
+                            }
+                        }
+                    }
+                }
+
+            }
+
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    public void saveClusterRole(CloudNativeSourceWithBLOBs cloudNativeSource) throws Exception {
+        try {
+            String json = cloudNativeSource.getSourceJson();
+            if(!StringUtils.isEmpty(json)) {
+
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    public void saveClusterRoleBinding(CloudNativeSourceWithBLOBs cloudNativeSource) throws Exception {
+        try {
+            String json = cloudNativeSource.getSourceJson();
+            if(!StringUtils.isEmpty(json)) {
+                JSONObject sourceJson = JSONObject.parseObject(json);
+                String roleRef = sourceJson.getString("roleRef");
+
+                JSONObject roleJson = JSONObject.parseObject(roleRef);
+                String roleKind = roleJson.getString("kind");
+                String roleName = roleJson.getString("name");
+
+                CloudNativeSourceExample cloudNativeSourceExample = new CloudNativeSourceExample();
+                cloudNativeSourceExample.createCriteria().andCloudNativeIdEqualTo(cloudNativeSource.getCloudNativeId()).andSourceNameEqualTo(roleName).andSourceTypeEqualTo(roleKind);
+                List<CloudNativeSource> roleSources = cloudNativeSourceMapper.selectByExample(cloudNativeSourceExample);
+                CloudNativeSource roleSource = new CloudNativeSource();
+                if(roleSources.size() > 0) {
+                    roleSource = roleSources.get(0);
+                }
+
+                CloudNativeSourceRbacNode role = new CloudNativeSourceRbacNode();
+                String roleId = UUIDUtil.newUUID();
+                role.setId(roleId);
+                role.setName(roleSource.getSourceName());
+                role.setNamespace(roleSource.getSourceNamespace());
+                role.setSourceId(roleSource.getId());
+                role.setValue(1);
+                role.setSymbolsize(60);
+                role.setCategory(CloudNativeConstants.K8S_TYPE.ClusterRole.name());
+                role.setCreateTime(System.currentTimeMillis());
+                cloudNativeSourceRbacNodeMapper.insertSelective(role);
+
+                String subjects = sourceJson.getString("subjects");
+                if(!StringUtils.isEmpty(subjects)) {
+                    JSONArray jsonArray = JSONArray.parseArray(subjects);
+                    for(Object object : jsonArray) {
+                        JSONObject subjectJson = (JSONObject) object;
+                        String kind = subjectJson.getString("kind");
+                        String name = subjectJson.getString("name");
+                        String namespace = subjectJson.getString("namespace");
+                        if(StringUtils.equalsIgnoreCase(kind, "ServiceAccount")) {
+                            CloudNativeSourceExample example = new CloudNativeSourceExample();
+                            example.createCriteria().andCloudNativeIdEqualTo(cloudNativeSource.getCloudNativeId()).andSourceNameEqualTo(name).andSourceNamespaceEqualTo(namespace);
+                            List<CloudNativeSource> saSources = cloudNativeSourceMapper.selectByExample(example);
+                            if(saSources.size() > 0) {
+                                CloudNativeSource saSource = roleSources.get(0);
+                                CloudNativeSourceRbacNode serviceAccount = new CloudNativeSourceRbacNode();
+                                String saId = UUIDUtil.newUUID();
+                                serviceAccount.setId(saId);
+                                serviceAccount.setName(saSource.getSourceName());
+                                serviceAccount.setNamespace(saSource.getSourceNamespace());
+                                serviceAccount.setSourceId(saSource.getId());
+                                serviceAccount.setValue(1);
+                                serviceAccount.setSymbolsize(80);
+                                serviceAccount.setCategory(CloudNativeConstants.K8S_TYPE.ServiceAccount.name());
+                                serviceAccount.setCreateTime(System.currentTimeMillis());
+                                cloudNativeSourceRbacNodeMapper.insertSelective(serviceAccount);
+
+                                CloudNativeSourceRbacLink link = new CloudNativeSourceRbacLink();
+                                String linkId = UUIDUtil.newUUID();
+                                link.setId(linkId);
+                                link.setSourceId(saSource.getId());
+                                link.setSource(saId);
+                                link.setTarget(roleId);
+                                link.setCreateTime(System.currentTimeMillis());
+                                cloudNativeSourceRbacLinkMapper.insertSelective(link);
+
+                                CloudNativeSourceRbacRelation relation = new CloudNativeSourceRbacRelation();
+                                relation.setId(UUIDUtil.newUUID());
+                                relation.setSourceId(saSource.getId());
+                                relation.setLinkId(linkId);
+                                relation.setName("Associate");
+                                relation.setCreateTime(System.currentTimeMillis());
+                                cloudNativeSourceRbacRelationMapper.insertSelective(relation);
+                            }
+                        }
+                    }
+                }
+
+            }
+
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
