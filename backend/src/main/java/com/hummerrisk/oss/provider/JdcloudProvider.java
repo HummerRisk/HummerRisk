@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hummerrisk.base.domain.OssBucket;
 import com.hummerrisk.base.domain.OssWithBLOBs;
+import com.hummerrisk.commons.constants.RegionsConstants;
 import com.hummerrisk.commons.utils.ReadFileUtils;
 import com.hummerrisk.oss.constants.ObjectTypeConstants;
 import com.hummerrisk.oss.dto.BucketMetric;
@@ -34,6 +35,7 @@ import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class JdcloudProvider implements OssProvider{
@@ -58,27 +60,30 @@ public class JdcloudProvider implements OssProvider{
     @Override
     public List<OssBucket> getOssBucketList(OssWithBLOBs ossAccount) throws URISyntaxException {
         List<OssBucket> resultList = new ArrayList<>();
-        S3Client s3 = null;
-        try{
-            s3 = getS3Client(ossAccount.getCredential(), "cn-north-1");
-            ListBucketsResponse listBucketsResponse = s3.listBuckets();
-            resultList = getOssBucket(ossAccount, listBucketsResponse, s3);
-            return resultList;
-        }catch (Exception e1){
-            e1.printStackTrace();
-        }finally {
-            if(s3 != null){
-                s3.close();
+        Set<String> regions = RegionsConstants.JdcloudMap.keySet();
+        for(String region : regions){
+            S3Client s3 = null;
+            try{
+                s3 = getS3Client(ossAccount.getCredential(), region);
+                ListBucketsResponse listBucketsResponse = s3.listBuckets();
+                resultList.addAll(getOssBucket(ossAccount, listBucketsResponse, s3,region));
+            }catch (Exception e1){
+                e1.printStackTrace();
+            }finally {
+                if(s3 != null){
+                    s3.close();
+                }
             }
         }
+
         return resultList;
     }
 
-    private List<OssBucket> getOssBucket(OssWithBLOBs ossAccount, ListBucketsResponse listBucketsResponse, S3Client s3) throws URISyntaxException {
+    private List<OssBucket> getOssBucket(OssWithBLOBs ossAccount, ListBucketsResponse listBucketsResponse, S3Client s3,String region) throws URISyntaxException {
         List<OssBucket> resultList = new ArrayList<>();
         if (listBucketsResponse != null && !CollectionUtils.isEmpty(listBucketsResponse.buckets())) {
             for (Bucket bucket : listBucketsResponse.buckets()) {
-                OssBucket tmpBucket = setBucket(s3, bucket ,ossAccount);
+                OssBucket tmpBucket = setBucket(s3, bucket ,ossAccount,region);
              //   BucketMetric bucketMetric = getBucketMetric(tmpBucket, ossAccount);
               //  tmpBucket.setObjectNumber(bucketMetric.getObjectNumber());
               //  tmpBucket.setSize(SysListener.changeFlowFormat(bucketMetric.getSize()));
@@ -89,16 +94,12 @@ public class JdcloudProvider implements OssProvider{
         return resultList;
     }
 
-    private OssBucket setBucket(S3Client s3, software.amazon.awssdk.services.s3.model.Bucket bucket, OssWithBLOBs account) throws URISyntaxException {
-        GetBucketLocationResponse getBucketLocationResponse  = s3.getBucketLocation(GetBucketLocationRequest.builder().bucket(bucket.name()).build());
+    private OssBucket setBucket(S3Client s3, software.amazon.awssdk.services.s3.model.Bucket bucket, OssWithBLOBs account,String region) throws URISyntaxException {
+        //GetBucketLocationResponse getBucketLocationResponse  = s3.getBucketLocation(GetBucketLocationRequest.builder().bucket(bucket.name()).build());
         OssBucket bucketDTO = new OssBucket();
         bucketDTO.setBucketName(bucket.name());
         bucketDTO.setOssId(account.getId());
-        String location = getBucketLocationResponse.locationConstraintAsString();
-        if(location.equals("huabei")){
-            location = "cn-north-1";
-        }
-        bucketDTO.setLocation(location);
+        bucketDTO.setLocation(region);
         setAcl(bucketDTO, account);
         bucketDTO.setSize("0");
         bucketDTO.setObjectNumber(0L);
