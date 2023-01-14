@@ -1249,11 +1249,11 @@ public class K8sService {
         kubenchStatusValidate(cloudNative.getId());
     }
 
-    public RbacDTO rbacChart() throws Exception {
+    public RbacDTO rbacChart(String k8sId) throws Exception {
         try {
             RbacDTO rbacDTO = new RbacDTO();
-            List<Nodes> nodes = extCloudNativeSourceRbacMapper.nodes();
-            List<Links> links = extCloudNativeSourceRbacMapper.links();
+            List<Nodes> nodes = extCloudNativeSourceRbacMapper.nodes(k8sId);
+            List<Links> links = extCloudNativeSourceRbacMapper.links(k8sId);
             rbacDTO.setNodes(nodes);
             rbacDTO.setLinks(links);
             return rbacDTO;

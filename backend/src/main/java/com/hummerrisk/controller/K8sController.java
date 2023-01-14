@@ -397,9 +397,9 @@ public class K8sController {
 
     @I18n
     @ApiOperation(value = "RBAC 资源态势")
-    @GetMapping("rbacChart")
-    public RbacDTO rbacChart() throws Exception {
-        return k8sService.rbacChart();
+    @GetMapping("rbacChart/{k8sId}")
+    public RbacDTO rbacChart(@PathVariable String k8sId) throws Exception {
+        return k8sService.rbacChart(k8sId);
     }
 
 }

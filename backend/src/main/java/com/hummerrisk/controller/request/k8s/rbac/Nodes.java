@@ -19,10 +19,6 @@ public class Nodes {
 
     private String category;
 
-    private String nameSpace;
-
-    private Long createTime;
-
     public String getId() {
         return id;
     }
@@ -63,19 +59,4 @@ public class Nodes {
         this.category = category;
     }
 
-    public String getNameSpace() {
-        return nameSpace;
-    }
-
-    public void setNameSpace(String nameSpace) {
-        this.nameSpace = nameSpace;
-    }
-
-    public Long getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Long createTime) {
-        this.createTime = createTime;
-    }
 }
