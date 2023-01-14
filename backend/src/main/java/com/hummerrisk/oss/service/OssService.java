@@ -155,6 +155,7 @@ public class OssService {
         values.add(OSSConstants.qingcloud);
         values.add(OSSConstants.qiniu);
         values.add(OSSConstants.ucloud);
+        values.add(OSSConstants.jdloud);
         example.createCriteria().andStatusEqualTo(CloudAccountConstants.Status.VALID.name()).andPluginIdIn(values);
         return accountMapper.selectByExampleWithBLOBs(example);
     }
