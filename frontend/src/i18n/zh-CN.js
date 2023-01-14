@@ -1243,7 +1243,7 @@ export default {
     oss_chart_vuln: '存储桶统计',
     oss_bucket_chart: '对象存储桶文件统计',
     oss_bucket_chart_vuln: '存储桶文件统计',
-    cloud_note: '目前支持的云类型为: 阿里云、腾讯云、华为云、火山引擎、青云、七牛云、Amazon Web Services、UCloud。',
+    cloud_note: '目前支持的云类型为: 阿里云、腾讯云、华为云、火山引擎、青云、京东云、Amazon Web Services、UCloud。',
   },
   task: {
     task_setting: '任务编排',
@@ -1549,7 +1549,7 @@ export default {
     last_event_time: '最后时间',
     event_id: '事件ID',
     event_source: '事件源',
-    cloud_note: '目前支持的云类型为: 阿里云、腾讯云、华为云、火山引擎、Amazon Web Services。',
+    cloud_note: '目前支持的云类型为: 阿里云、腾讯云、华为云、火山引擎、金山云、Amazon Web Services。',
     seven_day_data: '七日内 IP 调用量',
   },
   second: {

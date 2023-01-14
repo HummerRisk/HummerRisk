@@ -1243,7 +1243,7 @@ export default {
     oss_chart_vuln: 'Bucket Statistics',
     oss_bucket_chart: 'Object storage bucket file statistics',
     oss_bucket_chart_vuln: 'Storage bucket file statistics',
-    cloud_note: 'Currently supported cloud types are: Aliyun Cloud, Tencent Cloud, Huawei Cloud, VolcEngine, QingCloud, Qiniu Cloud, Amazon Web Services, UCloud. ',
+    cloud_note: 'Currently supported cloud types are: Aliyun Cloud, Tencent Cloud, Huawei Cloud, VolcEngine, QingCloud, Qiniu Cloud, JDCloud, Amazon Web Services, UCloud. ',
   },
   task: {
     task_setting: 'Task arrangement',
@@ -1552,7 +1552,7 @@ export default {
     last_event_time: 'last time',
     event_id: 'Event ID',
     event_source: 'event source',
-    cloud_note: 'Currently，the supported cloud types are: Aliyun Cloud, Tencent Cloud, Huawei Cloud, VolcEngine, Amazon Web Services. ',
+    cloud_note: 'Currently，the supported cloud types are: Aliyun Cloud, Tencent Cloud, Huawei Cloud, VolcEngine, Ksyun, Amazon Web Services. ',
     seven_day_data: 'IP call volume within seven days',
   },
   second: {
