@@ -55,11 +55,12 @@ INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('8
 
 CREATE TABLE IF NOT EXISTS `cloud_native_source_rbac_node` (
     `id`                         varchar(50)        NOT NULL COMMENT 'ID',
-    `source_id`                  varchar(50)        DEFAULT NULL COMMENT 'sourceID',
+    `k8s_id`                     varchar(50)        DEFAULT NULL COMMENT 'sourceID',
     `name`                       varchar(512)       DEFAULT NULL COMMENT 'name',
     `namespace`                  varchar(512)       DEFAULT NULL COMMENT 'namespace',
     `value`                      int(11)            DEFAULT NULL COMMENT 'value',
     `symbolSize`                 int(11)            DEFAULT NULL COMMENT 'symbolSize',
+    `order`                      int(11)            DEFAULT NULL COMMENT 'order',
     `category`                   varchar(128)       DEFAULT NULL COMMENT 'category',
     `create_time`                bigint(13)         DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`id`)
@@ -67,16 +68,16 @@ CREATE TABLE IF NOT EXISTS `cloud_native_source_rbac_node` (
 
 CREATE TABLE IF NOT EXISTS `cloud_native_source_rbac_link` (
     `id`                         varchar(50)        NOT NULL COMMENT 'ID',
-    `source_id`                  varchar(50)        DEFAULT NULL COMMENT 'sourceID',
+    `k8s_id`                     varchar(50)        DEFAULT NULL COMMENT 'sourceID',
     `source`                     varchar(50)        DEFAULT NULL COMMENT 'source',
-    `target`                     varchar(128)       DEFAULT NULL COMMENT 'target',
+    `target`                     varchar(50)        DEFAULT NULL COMMENT 'target',
     `create_time`                bigint(13)         DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS `cloud_native_source_rbac_relation` (
     `id`                         varchar(50)        NOT NULL COMMENT 'ID',
-    `source_id`                  varchar(50)        DEFAULT NULL COMMENT 'sourceId',
+    `k8s_id`                     varchar(50)        DEFAULT NULL COMMENT 'sourceId',
     `link_id`                    varchar(50)        DEFAULT NULL COMMENT 'linkId',
     `name`                       varchar(512)       DEFAULT NULL COMMENT 'name',
     `create_time`                bigint(13)         DEFAULT NULL COMMENT '创建时间',
