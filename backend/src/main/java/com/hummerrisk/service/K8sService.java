@@ -89,6 +89,8 @@ public class K8sService {
     private CloudNativeSourceRbacLinkMapper cloudNativeSourceRbacLinkMapper;
     @Resource
     private CloudNativeSourceRbacRelationMapper cloudNativeSourceRbacRelationMapper;
+    @Resource
+    private ExtCloudNativeSourceRbacMapper extCloudNativeSourceRbacMapper;
 
 
     public List<CloudNativeDTO> getCloudNativeList(CloudNativeRequest request) {
@@ -1249,8 +1251,8 @@ public class K8sService {
     public RbacDTO rbacChart() throws Exception {
         try {
             RbacDTO rbacDTO = new RbacDTO();
-            List<Nodes> nodes = new ArrayList<>();
-            List<Links> links = new ArrayList<>();
+            List<Nodes> nodes = extCloudNativeSourceRbacMapper.nodes();
+            List<Links> links = extCloudNativeSourceRbacMapper.links();
             rbacDTO.setNodes(nodes);
             rbacDTO.setLinks(links);
             return rbacDTO;
