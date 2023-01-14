@@ -1243,7 +1243,7 @@ export default {
     oss_chart_vuln: '存儲桶統計',
     oss_bucket_chart: '對象存儲桶文件統計',
     oss_bucket_chart_vuln: '存儲桶文件統計',
-    cloud_note: '目前支持的雲類型為: 阿里雲、騰訊雲、華為雲、火山引擎、青雲、七牛雲、Amazon Web Services、UCloud。 ',
+    cloud_note: '目前支持的雲類型為: 阿里雲、騰訊雲、華為雲、火山引擎、青雲、七牛雲、京東雲、Amazon Web Services、UCloud。 ',
   },
   task: {
     task_setting: '任務編排',
@@ -1549,7 +1549,7 @@ export default {
     last_event_time: '最後時間',
     event_id: '事件ID',
     event_source: '事件源',
-    cloud_note: '目前支持的雲類型為: 阿里雲、騰訊雲、華為雲、火山引擎、Amazon Web Services。 ',
+    cloud_note: '目前支持的雲類型為: 阿里雲、騰訊雲、華為雲、火山引擎、金山雲、Amazon Web Services。 ',
     seven_day_data: '七日內 IP 調用量',
   },
   second: {
