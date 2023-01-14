@@ -535,7 +535,7 @@ import {REPORT_CONFIGS, RESOURCE_CONFIGS, RULE_CONFIGS} from "../../common/compo
 import HrChart from "@/business/components/common/chart/HrChart";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import ResultReadOnly from "@/business/components/report/head/ResultReadOnly";
-import echarts from 'echarts';
+import * as echarts from 'echarts';
 import HideTable from "@/business/components/common/hideTable/HideTable";
 
 //列表展示与隐藏

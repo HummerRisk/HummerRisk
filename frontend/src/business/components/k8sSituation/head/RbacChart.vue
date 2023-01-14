@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import echarts from 'echarts';
+import * as echarts from 'echarts';
 import HrChart from "@/business/components/common/chart/HrChart";
 /* eslint-disable */
 export default {
@@ -27,182 +27,8 @@ export default {
       this.$get("/k8s/rbacChart", response => {
         let data = {
           "type": "force",
-          "nodes": [
-            {
-              "id": "0",
-              "name": "AnalyserNode",
-              "value": 1,
-              "symbolSize": 60,
-              "category": "Resource"
-            },
-            {
-              "id": "1",
-              "name": "AudioNode",
-              "value": 1,
-              "symbolSize": 80,
-              "category": "ClusterRole"
-            },
-            {
-              "id": "2",
-              "name": "Uint8Array",
-              "value": 1,
-              "symbolSize": 100,
-              "category": "ServiceAccount"
-            },
-            {
-              "id": "3",
-              "name": "Float32Array",
-              "value": 1,
-              "symbolSize": 60,
-              "category": "Resource"
-            },
-            {
-              "id": "4",
-              "name": "ArrayBuffer",
-              "value": 1,
-              "symbolSize": 80,
-              "category": "ClusterRole"
-            },
-            {
-              "id": "5",
-              "name": "ArrayBufferView",
-              "value": 1,
-              "symbolSize": 100,
-              "category": "ServiceAccount"
-            },
-            {
-              "id": "6",
-              "name": "Attr",
-              "value": 1,
-              "symbolSize": 60,
-              "category": "ResourceDetails"
-            },
-            {
-              "id": "7",
-              "name": "Node",
-              "value": 1,
-              "symbolSize": 80,
-              "category": "Role"
-            },
-            {
-              "id": "8",
-              "name": "Element",
-              "value": 1,
-              "symbolSize": 100,
-              "category": "ServiceAccount"
-            },
-            {
-              "id": "9",
-              "name": "AudioBuffer",
-              "value": 1,
-              "symbolSize": 60,
-              "category": "ResourceDetails"
-            },
-            {
-              "id": "10",
-              "name": "AnalyserNode",
-              "value": 1,
-              "symbolSize": 60,
-              "category": "Resource"
-            },
-            {
-              "id": "11",
-              "name": "AnalyserNode",
-              "value": 1,
-              "symbolSize": 60,
-              "category": "Resource"
-            },
-          ],
-          "links": [
-            {
-              "source": "0",
-              "target": "1",
-              "relation": {
-                name: "get",
-                id: "1",
-              },
-            },
-            {
-              "source": "0",
-              "target": "1",
-              "relation": {
-                name: "post",
-                id: "1",
-              },
-            },
-            {
-              "source": "0",
-              "target": "2",
-              relation: {
-                name: "兄弟",
-                id: "1",
-              },
-            },
-            {
-              "source": "0",
-              "target": "3",
-              relation: {
-                name: "兄弟",
-                id: "1",
-              },
-            },
-            {
-              "source": "0",
-              "target": "4",
-              relation: {
-                name: "get",
-                id: "1",
-              },
-            },
-            {
-              "source": "0",
-              "target": "5",
-              relation: {
-                name: "api",
-                id: "1",
-              },
-            },
-            {
-              "source": "0",
-              "target": "6",
-              relation: {
-                name: "post",
-                id: "1",
-              },
-            },
-            {
-              "source": "0",
-              "target": "7",
-              relation: {
-                name: "delete",
-                id: "1",
-              },
-            },
-            {
-              "source": "0",
-              "target": "8",
-              relation: {
-                name: "role",
-                id: "1",
-              },
-            },
-            {
-              "source": "0",
-              "target": "9",
-              relation: {
-                name: "get/post",
-                id: "1",
-              },
-            },
-            {
-              "source": "10",
-              "target": "11",
-              relation: {
-                name: "get/post",
-                id: "1",
-              },
-            }
-          ],
+          "nodes": response.data.nodes,
+          "links": response.data.links,
           "categories": [
             {
               "name": "ServiceAccount",
@@ -235,7 +61,7 @@ export default {
           legend: {
             top: 10,
             bottom: 0,
-            data: ['ServiceAccount', 'Resource', 'Role', 'ClusterRole', 'ResourceDetails']
+            data: ['ServiceAccount', 'Role', 'ClusterRole', 'Resource', 'ResourceDetails']
           },
           series: [
             {
