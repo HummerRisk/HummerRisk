@@ -325,4 +325,11 @@ public class ImageController {
         imageService.imageRepoSetting(imageRepoSetting);
     }
 
+    @I18n
+    @ApiOperation(value = "镜像仓库列表")
+    @GetMapping("repo/setting/{repoId}")
+    public ImageRepoSetting getImageRepoSetting(@PathVariable String repoId) throws Exception {
+        return imageService.getImageRepoSetting(repoId);
+    }
+
 }

@@ -945,13 +945,17 @@ public class ImageService {
         ImageRepoSettingExample example = new ImageRepoSettingExample();
         example.createCriteria().andRepoIdEqualTo(imageRepoSetting.getRepoId());
         List<ImageRepoSetting> settings = imageRepoSettingMapper.selectByExample(example);
+
+        String old = "";
         if (settings.size() > 0) {
             ImageRepoSetting setting = settings.get(0);
+            old = setting.getRepo();
             setting.setUpdateTime(System.currentTimeMillis());
             setting.setRepoOld(setting.getRepo());
             setting.setRepo(imageRepoSetting.getRepo());
             imageRepoSettingMapper.updateByPrimaryKeySelective(setting);
         } else {
+            old = imageRepoSetting.getRepoOld();
             imageRepoSetting.setId(UUIDUtil.newUUID());
             imageRepoSetting.setCreateTime(System.currentTimeMillis());
             imageRepoSetting.setUpdateTime(System.currentTimeMillis());
@@ -962,10 +966,20 @@ public class ImageService {
         imageRepoItemExample.createCriteria().andRepoIdEqualTo(imageRepoSetting.getRepoId());
         List<ImageRepoItem> list = imageRepoItemMapper.selectByExample(imageRepoItemExample);
         for (ImageRepoItem imageRepoItem : list) {
-            imageRepoItem.setPath(imageRepoItem.getPath().replace(imageRepoSetting.getRepoOld(), imageRepoSetting.getRepo()));
+            imageRepoItem.setPath(imageRepoItem.getPath().replace(old, imageRepoSetting.getRepo()));
             imageRepoItemMapper.updateByPrimaryKeySelective(imageRepoItem);
         }
+    }
 
+    public ImageRepoSetting getImageRepoSetting(String repoId) throws Exception {
+        ImageRepoSettingExample example = new ImageRepoSettingExample();
+        example.createCriteria().andRepoIdEqualTo(repoId);
+        List<ImageRepoSetting> list = imageRepoSettingMapper.selectByExample(example);
+        if(list.size() > 0) {
+            return list.get(0);
+        } else {
+            return null;
+        }
     }
 
 
