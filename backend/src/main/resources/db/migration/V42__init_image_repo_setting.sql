@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `cloud_native_source_rbac_node` (
     `namespace`                  varchar(512)       DEFAULT NULL COMMENT 'namespace',
     `value`                      int(11)            DEFAULT NULL COMMENT 'value',
     `symbolSize`                 int(11)            DEFAULT NULL COMMENT 'symbolSize',
-    `order`                      int(11)            DEFAULT NULL COMMENT 'order',
+    `order`                      bigint(13)         DEFAULT NULL COMMENT 'order',
     `category`                   varchar(128)       DEFAULT NULL COMMENT 'category',
     `create_time`                bigint(13)         DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`id`)
