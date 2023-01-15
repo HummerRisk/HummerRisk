@@ -41,19 +41,14 @@ export default {
               "base": "ServiceAccount"
             },
             {
-              "name": "ResourceDetails",
+              "name": "ResourceType",
               "keyword": {},
-              "base": "ResourceDetails"
+              "base": "ResourceType"
             },
             {
               "name": "Role",
               "keyword": {},
               "base": "Role"
-            },
-            {
-              "name": "ClusterRole",
-              "keyword": {},
-              "base": "ClusterRole"
             },
             {
               "name": "Resource",
@@ -66,7 +61,7 @@ export default {
           legend: {
             top: 10,
             bottom: 0,
-            data: ['ServiceAccount', 'Role', 'ClusterRole', 'Resource', 'ResourceDetails']
+            data: ['ServiceAccount', 'Role', 'ResourceType', 'Resource']
           },
           series: [
             {
@@ -77,7 +72,7 @@ export default {
                 show: true,
                 position: "bottom",
                 distance: 5,
-                fontSize: 14,
+                fontSize: 12,
                 align: "center",
                 color: "black",
               },
@@ -90,7 +85,7 @@ export default {
                   return params.data.relation.name;
                 },
               },
-              edgeSymbol: ["circle", "arrow"], //边两边的类型
+              edgeSymbol: ["circle", "arrow"], //箭头两端形状
               draggable: true,
               data: data.nodes.map(function (node, idx) {
                 node.id = idx;
@@ -98,11 +93,11 @@ export default {
               }),
               categories: data.categories,
               force: {
-                edgeLength: 250,
-                repulsion: 100,
-                gravity: 0.05
+                edgeLength: 250,//两个节点之间的距离
+                repulsion: 100,//连线距离
+                gravity: 0.03//节点受到的向中心的引力因子。该值越大节点越往中心点靠拢。
               },
-              edges: data.links
+              edges: data.links,
             }
           ],
           color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#0051a4', '#8B0000', '#FF4D4D', '#FF8000', '#336D9F']

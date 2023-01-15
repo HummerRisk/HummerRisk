@@ -5,7 +5,7 @@
     <select id="nodes" resultType="com.hummerrisk.controller.request.k8s.rbac.Nodes" parameterType="java.lang.String">
         select
             t.id,
-            IF(IFNULL(t.nameSpace, true), t.name, CONCAT(t.name, '(', t.nameSpace, ')')) as name,
+            IF(t.nameSpace = null or t.nameSpace = '', t.name, CONCAT(t.nameSpace, '/', t.name)) as name,
             t.value,
             t.symbolSize,
             t.category
