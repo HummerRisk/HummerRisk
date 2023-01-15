@@ -345,8 +345,13 @@ public class JdcloudProvider implements OssProvider{
         String[] split = dir.split("/");
         String data = "";
         for (String d : split) {
+            if("".equals(d)){
+                continue;
+            }
             data += d + "/";
-            s3.putObject(PutObjectRequest.builder().bucket(bucket.getBucketName()).key(data).build(), RequestBody.empty());
+            if(!"/".equals(data)){
+                PutObjectResponse putObjectResponse = s3.putObject(PutObjectRequest.builder().bucket(bucket.getBucketName()).key(data).build(), RequestBody.fromBytes("".getBytes()));
+            }
         }
     }
 
