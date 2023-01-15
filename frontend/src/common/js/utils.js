@@ -2,7 +2,7 @@ import {
   ACCOUNT_ID,
   ACCOUNT_NAME,
   IsCollapse,
-  K8S_ID,
+  K8S_ID, K8S_NAME,
   REFRESH_SESSION_USER_URL,
   ROLE_ADMIN,
   TokenKey,
@@ -68,6 +68,10 @@ export function getVulnID() {
 
 export function getK8sID() {
   return localStorage.getItem(K8S_ID);
+}
+
+export function getK8sName() {
+  return localStorage.getItem(K8S_NAME);
 }
 
 export function getIsCollapse() {

@@ -3,10 +3,15 @@
 <mapper namespace="com.hummerrisk.base.mapper.ext.ExtCloudNativeSourceRbacMapper">
 
     <select id="nodes" resultType="com.hummerrisk.controller.request.k8s.rbac.Nodes" parameterType="java.lang.String">
-        select t.id, t.name, t.value, t.symbolSize, t.category
+        select
+            t.id,
+            IF(IFNULL(t.nameSpace, true), t.name, CONCAT(t.name, '(', t.nameSpace, ')')) as name,
+            t.value,
+            t.symbolSize,
+            t.category
         from cloud_native_source_rbac_node t
         where t.k8s_id = #{k8sId}
-        order by t.order desc
+        order by t.order
     </select>
 
     <resultMap id="LinkMap" type="com.hummerrisk.controller.request.k8s.rbac.Links">

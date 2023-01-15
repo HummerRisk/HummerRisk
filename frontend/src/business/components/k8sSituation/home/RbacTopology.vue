@@ -1,7 +1,12 @@
 <template>
   <main-container class="card">
+
+    <el-card class="table-card el-row-card">
+      <k8s-switch @k8sSwitch="k8sSwitch" @selectAccount="selectAccount"/>
+    </el-card>
+
     <el-card class="table-card" v-loading="result.loading">
-        <rbac-chart/>
+      <rbac-chart :accountId="accountId"/>
     </el-card>
 
     <!--Result log-->
@@ -62,6 +67,7 @@
 </template>
 <script>
 import MainContainer from "../../common/components/MainContainer";
+import K8sSwitch from "@/business/components/common/head/K8sSwitch";
 import SearchList from "@/business/components/k8sSituation/home/SearchList";
 import LogForm from "@/business/components/k8s/home/LogForm";
 import * as d3 from 'd3';
@@ -76,6 +82,7 @@ export default {
     LogForm,
     d3,
     RbacChart,
+    K8sSwitch,
   },
   data() {
     return {
@@ -86,6 +93,8 @@ export default {
       logData: [],
       htmlTitle: this.$t('pdf.html_title'),
       option: {},
+      accountId: '',
+      currentAccount: '',
     };
   },
   methods: {
@@ -100,6 +109,14 @@ export default {
     //下载pdf
     pdfDown() {
       htmlToPdf.getPdfById(this.htmlTitle);
+    },
+    k8sSwitch(accountId) {
+      this.accountId = accountId;
+      this.init();
+    },
+    selectAccount(accountId, accountName) {
+      this.accountId = accountId;
+      this.currentAccount = accountName;
     },
   },
 

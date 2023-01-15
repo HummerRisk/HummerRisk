@@ -15,7 +15,12 @@ export default {
     echarts,
   },
   props: {
-    data: {},
+    accountId: '',
+  },
+  watch: {
+    accountId() {
+      this.init();
+    },
   },
   data() {
     return {
@@ -24,7 +29,7 @@ export default {
   },
   methods: {
     init() {
-      this.$get("/k8s/rbacChart", response => {
+      this.$get("/k8s/rbacChart/" + this.accountId, response => {
         let data = {
           "type": "force",
           "nodes": response.data.nodes,
@@ -95,7 +100,7 @@ export default {
               force: {
                 edgeLength: 250,
                 repulsion: 100,
-                gravity: 0.01
+                gravity: 0.05
               },
               edges: data.links
             }
