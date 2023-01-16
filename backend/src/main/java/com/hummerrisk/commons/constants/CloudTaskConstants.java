@@ -72,7 +72,7 @@ public class CloudTaskConstants {
     public final static String[] QINGCLOUD_RESOURCE_TYPE = {"qingcloud.ecs","qingcloud.eip","qingcloud.mongodb","qingcloud.mysql"};
     public final static String[] UCLOUD_RESOURCE_TYPE = {"ucloud.eip","ucloud.securitygroup","ucloud.uhost","ucloud.ulb"};
     public final static String[] QINIU_RESOURCE_TYPE = {"qiniu.kodo"};
-    public final static String[] JDCLOUD_RESOURCE_TYPE = {"jdcloud.vm", "jdcloud.eip", "jdcloud.cdn","jdcloud.disk","jdcloud.lb","jdcloud.securitygroup"};
+    public final static String[] JDCLOUD_RESOURCE_TYPE = {"jdcloud.vm", "jdcloud.eip", "jdcloud.cdn","jdcloud.disk","jdcloud.lb","jdcloud.securitygroup","jdcloud.oss"};
     public final static String[] KSYUN_RESOURCE_TYPE = {"ksyun.kec","ksyun.slb","ksyun.eip"};
     public final static String[] VOLC_RESOURCE_TYPE = {"volc.cdn","volc.ecs","volc.eip","volc.mongodb","volc.securitygroup"};
     public final static String[] VSPHERE_RESOURCE_TYPE = {"vsphere.cluster","vsphere.datacenter","vsphere.datastore","vsphere.host","vsphere.network","vsphere.resourcepool","vsphere.vm"};
