@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS `cloud_native_source_rbac_node` (
     `name`                       varchar(512)       DEFAULT NULL COMMENT 'name',
     `namespace`                  varchar(512)       DEFAULT NULL COMMENT 'namespace',
     `value`                      int(11)            DEFAULT NULL COMMENT 'value',
+    `symbol`                     varchar(512)       DEFAULT NULL COMMENT 'symbol(本地图片引用地址)',
     `symbolSize`                 int(11)            DEFAULT NULL COMMENT 'symbolSize',
     `order`                      bigint(13)         DEFAULT NULL COMMENT 'order',
     `category`                   varchar(128)       DEFAULT NULL COMMENT 'category',
