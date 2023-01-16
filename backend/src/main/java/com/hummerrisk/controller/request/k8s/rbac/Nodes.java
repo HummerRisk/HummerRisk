@@ -15,6 +15,8 @@ public class Nodes {
 
     private Integer value;
 
+    private String symbol;
+
     private Integer symbolSize;
 
     private String category;
@@ -59,4 +61,11 @@ public class Nodes {
         this.category = category;
     }
 
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
 }

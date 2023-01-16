@@ -29,12 +29,25 @@ export default {
   },
   methods: {
     init() {
+      if(!this.accountId) return;
       this.$get("/k8s/rbacChart/" + this.accountId, response => {
+        let nodes = response.data.nodes;
+        for (let obj of nodes) {
+          if(!!obj.symbol) {
+            obj.symbol = 'image://'+ require('../../../../assets/img/platform/k8s.png');
+            break;
+          }
+        }
         let data = {
           "type": "force",
-          "nodes": response.data.nodes,
+          "nodes": nodes,
           "links": response.data.links,
           "categories": [
+            {
+              "name": "K8S",
+              "keyword": {},
+              "base": "K8S"
+            },
             {
               "name": "ServiceAccount",
               "keyword": {},
@@ -61,7 +74,7 @@ export default {
           legend: {
             top: 10,
             bottom: 0,
-            data: ['ServiceAccount', 'Role', 'ResourceType', 'Resource']
+            data: ['K8S', 'ServiceAccount', 'Role', 'ResourceType', 'Resource']
           },
           series: [
             {
@@ -93,9 +106,9 @@ export default {
               }),
               categories: data.categories,
               force: {
-                edgeLength: 250,//两个节点之间的距离
-                repulsion: 100,//连线距离
-                gravity: 0.03//节点受到的向中心的引力因子。该值越大节点越往中心点靠拢。
+                edgeLength: 200,//两个节点之间的距离
+                repulsion: 80,//连线距离
+                gravity: 0.02//节点受到的向中心的引力因子。该值越大节点越往中心点靠拢。
               },
               edges: data.links,
             }

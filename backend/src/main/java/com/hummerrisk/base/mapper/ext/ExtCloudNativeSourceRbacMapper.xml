@@ -8,6 +8,7 @@
             IF(t.nameSpace = null or t.nameSpace = '', t.name, CONCAT(t.nameSpace, '/', t.name)) as name,
             t.value,
             t.symbolSize,
+            t.symbol,
             t.category
         from cloud_native_source_rbac_node t
         where t.k8s_id = #{k8sId}

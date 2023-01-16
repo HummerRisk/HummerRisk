@@ -24,7 +24,7 @@ public class CloudNativeConstants {
     public enum K8S_TYPE {
         Namespace, Pod, Node, Deployment, DaemonSet, Service, Ingress, Role, Secret, ConfigMap, ServiceAccount, RoleBinding,
         StatefulSet, CronJob, Job, PV, PVC, Lease, EndpointSlice, Event, NetworkPolicy, Version, ClusterRole, ClusterRoleBinding,
-        Resource, ResourceType
+        Resource, ResourceType, K8S
     }
 
     public final static String URL1 = "/apis/aquasecurity.github.io/v1alpha1/configauditreports?limit=500";
