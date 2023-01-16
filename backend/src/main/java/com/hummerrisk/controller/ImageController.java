@@ -106,7 +106,7 @@ public class ImageController {
     @PostMapping(value = "addImage", consumes = {"multipart/form-data"})
     public Image addImage(@RequestPart(value = "iconFile", required = false) MultipartFile iconFile,
                           @RequestPart(value = "tarFile", required = false) MultipartFile tarFile,
-                          @RequestPart("request") Image request) throws Exception {
+                          @RequestPart("request") ImageRequest request) throws Exception {
         return imageService.addImage(iconFile, tarFile, request);
     }
 
@@ -115,7 +115,7 @@ public class ImageController {
     @PostMapping(value = "updateImage", consumes = {"multipart/form-data"})
     public Image updateImage(@RequestPart(value = "iconFile", required = false) MultipartFile iconFile,
                           @RequestPart(value = "tarFile", required = false) MultipartFile tarFile,
-                          @RequestPart("request") Image request) throws Exception {
+                          @RequestPart("request") ImageRequest request) throws Exception {
         return imageService.updateImage(iconFile, tarFile, request);
     }
 

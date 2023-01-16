@@ -283,7 +283,7 @@ public class ImageService {
         return imageMapper.selectByExample(null);
     }
 
-    public Image addImage(MultipartFile iconFile, MultipartFile tarFile, Image request) throws Exception {
+    public Image addImage(MultipartFile iconFile, MultipartFile tarFile, ImageRequest request) throws Exception {
 
         try {
             String id = UUIDUtil.newUUID();
@@ -297,7 +297,7 @@ public class ImageService {
                 request.setPluginIcon("images/" + iconFilePath);
             }
             if (StringUtils.equalsIgnoreCase(request.getType(), "repo")) {
-                ImageRepoItem imageRepoItem = imageRepoItemMapper.selectByPrimaryKey(request.getImageUrl());
+                ImageRepoItem imageRepoItem = imageRepoItemMapper.selectByPrimaryKey(request.getRepoItemId());
                 request.setImageUrl(imageRepoItem.getPath().split(":")[0]);
                 request.setImageTag(imageRepoItem.getTag());
                 request.setSize(imageRepoItem.getSize());
@@ -318,7 +318,7 @@ public class ImageService {
         return request;
     }
 
-    public Image updateImage(MultipartFile iconFile, MultipartFile tarFile, Image request) throws Exception {
+    public Image updateImage(MultipartFile iconFile, MultipartFile tarFile, ImageRequest request) throws Exception {
 
         try {
             request.setStatus("VALID");
@@ -329,7 +329,7 @@ public class ImageService {
                 request.setPluginIcon("images/" + iconFilePath);
             }
             if (StringUtils.equalsIgnoreCase(request.getType(), "repo")) {
-                ImageRepoItem imageRepoItem = imageRepoItemMapper.selectByPrimaryKey(request.getImageUrl());
+                ImageRepoItem imageRepoItem = imageRepoItemMapper.selectByPrimaryKey(request.getRepoItemId());
                 request.setImageUrl(imageRepoItem.getPath().split(":")[0]);
                 request.setImageTag(imageRepoItem.getTag());
                 request.setSize(imageRepoItem.getSize());
