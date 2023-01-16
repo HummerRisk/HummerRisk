@@ -2,7 +2,7 @@ FROM registry.cn-beijing.aliyuncs.com/hummerrisk/alpine:3.16
 
 WORKDIR /db
 
-ARG triy_db_version=2022111508
+ARG triy_db_version=2023010101
 
 ENV triy_db=trivy-offline-v2-${triy_db_version}.db.tar.gz
 
