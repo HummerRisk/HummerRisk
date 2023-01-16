@@ -13,6 +13,8 @@ public class ImageRequest extends Image {
 
     private String repo;
 
+    private String repoItemId;
+
     public String getImageRepoName() {
         return imageRepoName;
     }
@@ -27,6 +29,14 @@ public class ImageRequest extends Image {
 
     public void setRepo(String repo) {
         this.repo = repo;
+    }
+
+    public String getRepoItemId() {
+        return repoItemId;
+    }
+
+    public void setRepoItemId(String repoItemId) {
+        this.repoItemId = repoItemId;
     }
 
     private Map<String, Object> combine;

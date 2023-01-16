@@ -9,6 +9,8 @@ public class Relation {
 
     private String name;
 
+    private Long createTime;
+
     public String getId() {
         return id;
     }
@@ -25,4 +27,11 @@ public class Relation {
         this.name = name;
     }
 
+    public Long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Long createTime) {
+        this.createTime = createTime;
+    }
 }

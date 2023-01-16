@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import echarts from 'echarts';
+import * as echarts from 'echarts';
 import HrChart from "@/business/components/common/chart/HrChart";
 /* eslint-disable */
 export default {

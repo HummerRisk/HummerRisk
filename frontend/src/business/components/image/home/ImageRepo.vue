@@ -273,7 +273,7 @@
           :visible.sync="settingVisible">
           <el-form :model="settingForm" label-position="right" label-width="150px" size="small" ref="settingForm">
             <el-form-item :label="$t('image.image_repo_name')" ref="name" prop="name">
-              <el-input v-model="settingForm.repo" autocomplete="off" :placeholder="$t('image.image_repo_name')"/>
+              <el-input v-model="settingForm.repo" @input="change($event)" autocomplete="off" :placeholder="$t('image.image_repo_name')"/>
             </el-form-item>
             <el-form-item :label="$t('image.image_repo_name_old')" ref="name" prop="name">
               <el-input disabled v-model="settingForm.repoOld" autocomplete="off" :placeholder="$t('image.image_repo_name_old')"/>
@@ -599,11 +599,18 @@ export default {
       this.form = {};
       this.createVisible = true;
     },
+    change(e) {
+      this.$forceUpdate();
+    },
     setting() {
-      let repoOld = this.imageData[0].path.split('/')[0];
-      this.settingForm.repoId = this.handleItem.id;
-      this.settingForm.repoOld = repoOld;
-      this.settingVisible = true;
+      this.$get('/image/repo/setting/' + this.handleItem.id, response => {
+        let repoOld = response.data?response.data.repoOld:this.imageData[0].path.split('/')[0];
+        let repo = response.data?response.data.repo:'';
+        this.settingForm.repoId = this.handleItem.id;
+        this.settingForm.repoOld = repoOld;
+        this.settingForm.repo = repo;
+        this.settingVisible = true;
+      });
     },
     sort(column) {
       _sort(column, this.condition);
@@ -755,11 +762,11 @@ export default {
         if (valid) {
           this.result = this.$post('/image/repo/setting', this.settingForm, response => {
             if (response.success) {
-              this.$success(this.$t('schedule.event_start'));
+              this.$success(this.$t('commons.success'));
               this.settingVisible = false;
               this.handleList();
             } else {
-              this.$error(this.$t('schedule.event_failed'));
+              this.$error(this.$t('commons.error'));
             }
           });
         }

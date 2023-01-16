@@ -283,7 +283,7 @@ public class ImageService {
         return imageMapper.selectByExample(null);
     }
 
-    public Image addImage(MultipartFile iconFile, MultipartFile tarFile, Image request) throws Exception {
+    public Image addImage(MultipartFile iconFile, MultipartFile tarFile, ImageRequest request) throws Exception {
 
         try {
             String id = UUIDUtil.newUUID();
@@ -297,7 +297,7 @@ public class ImageService {
                 request.setPluginIcon("images/" + iconFilePath);
             }
             if (StringUtils.equalsIgnoreCase(request.getType(), "repo")) {
-                ImageRepoItem imageRepoItem = imageRepoItemMapper.selectByPrimaryKey(request.getImageUrl());
+                ImageRepoItem imageRepoItem = imageRepoItemMapper.selectByPrimaryKey(request.getRepoItemId());
                 request.setImageUrl(imageRepoItem.getPath().split(":")[0]);
                 request.setImageTag(imageRepoItem.getTag());
                 request.setSize(imageRepoItem.getSize());
@@ -318,7 +318,7 @@ public class ImageService {
         return request;
     }
 
-    public Image updateImage(MultipartFile iconFile, MultipartFile tarFile, Image request) throws Exception {
+    public Image updateImage(MultipartFile iconFile, MultipartFile tarFile, ImageRequest request) throws Exception {
 
         try {
             request.setStatus("VALID");
@@ -329,7 +329,7 @@ public class ImageService {
                 request.setPluginIcon("images/" + iconFilePath);
             }
             if (StringUtils.equalsIgnoreCase(request.getType(), "repo")) {
-                ImageRepoItem imageRepoItem = imageRepoItemMapper.selectByPrimaryKey(request.getImageUrl());
+                ImageRepoItem imageRepoItem = imageRepoItemMapper.selectByPrimaryKey(request.getRepoItemId());
                 request.setImageUrl(imageRepoItem.getPath().split(":")[0]);
                 request.setImageTag(imageRepoItem.getTag());
                 request.setSize(imageRepoItem.getSize());
@@ -945,13 +945,17 @@ public class ImageService {
         ImageRepoSettingExample example = new ImageRepoSettingExample();
         example.createCriteria().andRepoIdEqualTo(imageRepoSetting.getRepoId());
         List<ImageRepoSetting> settings = imageRepoSettingMapper.selectByExample(example);
+
+        String old = "";
         if (settings.size() > 0) {
             ImageRepoSetting setting = settings.get(0);
+            old = setting.getRepo();
             setting.setUpdateTime(System.currentTimeMillis());
             setting.setRepoOld(setting.getRepo());
             setting.setRepo(imageRepoSetting.getRepo());
             imageRepoSettingMapper.updateByPrimaryKeySelective(setting);
         } else {
+            old = imageRepoSetting.getRepoOld();
             imageRepoSetting.setId(UUIDUtil.newUUID());
             imageRepoSetting.setCreateTime(System.currentTimeMillis());
             imageRepoSetting.setUpdateTime(System.currentTimeMillis());
@@ -962,10 +966,20 @@ public class ImageService {
         imageRepoItemExample.createCriteria().andRepoIdEqualTo(imageRepoSetting.getRepoId());
         List<ImageRepoItem> list = imageRepoItemMapper.selectByExample(imageRepoItemExample);
         for (ImageRepoItem imageRepoItem : list) {
-            imageRepoItem.setPath(imageRepoItem.getPath().replace(imageRepoSetting.getRepoOld(), imageRepoSetting.getRepo()));
+            imageRepoItem.setPath(imageRepoItem.getPath().replace(old, imageRepoSetting.getRepo()));
             imageRepoItemMapper.updateByPrimaryKeySelective(imageRepoItem);
         }
+    }
 
+    public ImageRepoSetting getImageRepoSetting(String repoId) throws Exception {
+        ImageRepoSettingExample example = new ImageRepoSettingExample();
+        example.createCriteria().andRepoIdEqualTo(repoId);
+        List<ImageRepoSetting> list = imageRepoSettingMapper.selectByExample(example);
+        if(list.size() > 0) {
+            return list.get(0);
+        } else {
+            return null;
+        }
     }
 
 

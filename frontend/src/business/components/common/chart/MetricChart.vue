@@ -43,7 +43,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
-import echarts from 'echarts';
+import * as echarts from 'echarts';
 /* eslint-disable */
 export default {
   name: "MetricChart",

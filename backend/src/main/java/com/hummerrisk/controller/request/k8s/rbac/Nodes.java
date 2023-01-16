@@ -58,4 +58,5 @@ public class Nodes {
     public void setCategory(String category) {
         this.category = category;
     }
+
 }
