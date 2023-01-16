@@ -1243,7 +1243,7 @@ export default {
     oss_chart_vuln: 'Bucket Statistics',
     oss_bucket_chart: 'Object storage bucket file statistics',
     oss_bucket_chart_vuln: 'Storage bucket file statistics',
-    cloud_note: 'Currently supported cloud types are: Aliyun Cloud, Tencent Cloud, Huawei Cloud, VolcEngine, QingCloud, Qiniu Cloud, JDCloud, Amazon Web Services, UCloud. ',
+    cloud_note: 'Currently supported cloud types are: Aliyun Cloud, Tencent Cloud, Huawei Cloud, QingCloud, Qiniu Cloud, JDCloud, Amazon Web Services. ',
   },
   task: {
     task_setting: 'Task arrangement',
