@@ -38,11 +38,12 @@
         items: [
           {img: require(`@/assets/img/about/docs.png`), url: 'https://docs.hummerrisk.com'},
           {img: require(`@/assets/img/about/github.png`), url: 'https://github.com/HummerRisk/HummerRisk'},
-          {img: require(`@/assets/img/about/custodian.png`), url: 'https://docs.hummerrisk.com/question/rule'},
-          {img: require(`@/assets/img/about/prowler.png`), url: 'https://docs.hummerrisk.com/question/prowler'},
-          {img: require(`@/assets/img/about/nuclei.png`), url: 'https://docs.hummerrisk.com/question/nuclei'},
-          {img: require(`@/assets/img/about/xray.png`), url: 'https://docs.hummerrisk.com/question/xray'},
-          {img: require(`@/assets/img/about/trivy.png`), url: 'https://docs.hummerrisk.com/question/trivy'},
+          {img: require(`@/assets/img/about/custodian.png`), url: 'https://docs.hummerrisk.com/related/opensource-tool/custodian/'},
+          {img: require(`@/assets/img/about/prowler.png`), url: 'https://docs.hummerrisk.com/related/opensource-tool/prowler/'},
+          {img: require(`@/assets/img/about/nuclei.png`), url: 'https://docs.hummerrisk.com/related/opensource-tool/nuclei/'},
+          {img: require(`@/assets/img/about/xray.png`), url: 'https://docs.hummerrisk.com/related/opensource-tool/xray/'},
+          {img: require(`@/assets/img/about/trivy.png`), url: 'https://docs.hummerrisk.com/related/opensource-tool/trivy/'},
+          {img: require(`@/assets/img/about/kubench.png`), url: 'https://docs.hummerrisk.com/related/opensource-tool/kube-bench/'},
         ],
       }
     },
