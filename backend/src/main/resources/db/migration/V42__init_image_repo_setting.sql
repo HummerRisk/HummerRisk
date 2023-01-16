@@ -113,3 +113,32 @@ INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('e0ba707c-4a08-490
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('a9c11f7e-ba44-416e-bbfa-cd4d96f8165f', 'server');
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('29bac3a8-6cde-49a8-968e-45745d917a08', 'server');
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('c0f065e4-f205-4b1d-9d1d-a037f9e31e9d', 'server');
+
+-- -----------------
+-- JDCloud rule
+-- -----------------
+INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('JDCloud OSS 合规基线', 'OSS 合规检查为您提供全方位的对象存储资源检查功能。', '对象存储', 'hummer-jdcloud-plugin', 1);
+SELECT @groupIdJdOss := LAST_INSERT_ID();
+
+INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('QingCloud OSS 合规基线', 'OSS 合规检查为您提供全方位的对象存储资源检查功能。', '对象存储', 'hummer-qingcloud-plugin', 1);
+SELECT @groupIdQingOss := LAST_INSERT_ID();
+
+INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('qiniu OSS 合规基线', 'OSS 合规检查为您提供全方位的对象存储资源检查功能。', '对象存储', 'hummer-qiniu-plugin', 1);
+SELECT @groupIdQiniuOss := LAST_INSERT_ID();
+
+SELECT id INTO @groupIdJd FROM rule_group WHERE name = 'JDCloud 等保预检';
+
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('be1eddc5-9905-4280-8ae1-b841c68ce483', @groupIdQingOss);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('1268870b-188d-41a8-a86e-0c83299dc93c', @groupIdQiniuOss);
+
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('290cb102-7ce8-471e-8540-8c4e55da259b', 'JDCloud OSS 公开读取访问权限检测', 1, 'HighRisk', 'JDCloud 查看您的 存储桶是否不允许公开访问权限。如果某个存储桶策略允许公开访问权限，则该存储桶“不合规“', 'policies:\n    - name: jdcloud-oss-private\n      resource: jdcloud.oss\n      filters:\n        - type: private', '[]', 'hummer-jdcloud-plugin', '京东云', 'jdcloud.png', concat(unix_timestamp(now()), '002'), 1, 'custodian', NULL);
+
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('290cb102-7ce8-471e-8540-8c4e55da259b', @groupIdJd);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('290cb102-7ce8-471e-8540-8c4e55da259b', @groupIdJdOss);
+
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('290cb102-7ce8-471e-8540-8c4e55da259b', 'safety');
+
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('b553c99b-eac5-413f-8e1c-f058590c58cc', '290cb102-7ce8-471e-8540-8c4e55da259b', 'jdcloud.oss');
+
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('290cb102-7ce8-471e-8540-8c4e55da259b', '10');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('290cb102-7ce8-471e-8540-8c4e55da259b', '13');
