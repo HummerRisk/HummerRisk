@@ -60,11 +60,13 @@ export default {
         await this.$get("/k8s/allCloudNativeList", response => {
           this.items = response.data;
           this.searchArray = response.data;
-          let account = this.searchArray.filter(p => p.id === this.k8sId);
-          this.k8sName = account[0].name;
-          if(!account) this.k8sId = this.items[0].id;
+          if(!this.k8sId) {
+            this.k8sId = this.items[0].id;
+            this.k8sName = this.items[0].name;
+          }
+          localStorage.setItem(K8S_ID, this.k8sId);
           localStorage.setItem(K8S_NAME, this.k8sName);
-          localStorage.setItem(K8S, JSON.stringify(account[0]));
+          localStorage.setItem(K8S, JSON.stringify(this.items[0]));
           this.changecurrentAccount(this.k8sId);
         });
       }
