@@ -142,8 +142,8 @@ public class DashboardService {
         ChartDTO imageChartDTO = new ChartDTO();
         List<String> xAxis = extDashboardMapper.imageChartX(params);
         List<Integer> yAxis = extDashboardMapper.imageChartY(params);
-        imageChartDTO.setxAxis(xAxis);
-        imageChartDTO.setyAxis(yAxis);
+        imageChartDTO.setXAxis(xAxis);
+        imageChartDTO.setYAxis(yAxis);
         return imageChartDTO;
     }
 
@@ -151,8 +151,8 @@ public class DashboardService {
         ChartDTO codeChartDTO = new ChartDTO();
         List<String> xAxis = extDashboardMapper.codeChartX(params);
         List<Integer> yAxis = extDashboardMapper.codeChartY(params);
-        codeChartDTO.setxAxis(xAxis);
-        codeChartDTO.setyAxis(yAxis);
+        codeChartDTO.setXAxis(xAxis);
+        codeChartDTO.setYAxis(yAxis);
         return codeChartDTO;
     }
 
@@ -160,8 +160,8 @@ public class DashboardService {
         ChartDTO cloudNativeChartDTO = new ChartDTO();
         List<String> xAxis = extDashboardMapper.cloudNativeChartX(params);
         List<Integer> yAxis = extDashboardMapper.cloudNativeChartY(params);
-        cloudNativeChartDTO.setxAxis(xAxis);
-        cloudNativeChartDTO.setyAxis(yAxis);
+        cloudNativeChartDTO.setXAxis(xAxis);
+        cloudNativeChartDTO.setYAxis(yAxis);
         return cloudNativeChartDTO;
     }
 
@@ -169,8 +169,8 @@ public class DashboardService {
         ChartDTO cloudNativeChartDTO = new ChartDTO();
         List<String> xAxis = extDashboardMapper.configChartX(params);
         List<Integer> yAxis = extDashboardMapper.configChartY(params);
-        cloudNativeChartDTO.setxAxis(xAxis);
-        cloudNativeChartDTO.setyAxis(yAxis);
+        cloudNativeChartDTO.setXAxis(xAxis);
+        cloudNativeChartDTO.setYAxis(yAxis);
         return cloudNativeChartDTO;
     }
 
@@ -178,8 +178,8 @@ public class DashboardService {
         ChartDTO fsChartDTO = new ChartDTO();
         List<String> xAxis = extDashboardMapper.fsChartX(params);
         List<Integer> yAxis = extDashboardMapper.fsChartY(params);
-        fsChartDTO.setxAxis(xAxis);
-        fsChartDTO.setyAxis(yAxis);
+        fsChartDTO.setXAxis(xAxis);
+        fsChartDTO.setYAxis(yAxis);
         return fsChartDTO;
     }
 
@@ -323,8 +323,8 @@ public class DashboardService {
         ChartDTO analysisChartDTO = new ChartDTO();
         List<String> xAxis = extDashboardMapper.analysisChartX(anslysisVo);
         List<Integer> yAxis = extDashboardMapper.analysisChartY(anslysisVo);
-        analysisChartDTO.setxAxis(xAxis);
-        analysisChartDTO.setyAxis(yAxis);
+        analysisChartDTO.setXAxis(xAxis);
+        analysisChartDTO.setYAxis(yAxis);
         return analysisChartDTO;
     }
 

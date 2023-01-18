@@ -91,19 +91,19 @@ public class ExcelExportRequest {
         private BigDecimal yAxis = BigDecimal.ZERO;
         private String groupName;
 
-        public String getxAxis() {
+        public String getXAxis() {
             return xAxis;
         }
 
-        public void setxAxis(String xAxis) {
+        public void setXAxis(String xAxis) {
             this.xAxis = xAxis;
         }
 
-        public BigDecimal getyAxis() {
+        public BigDecimal getYAxis() {
             return yAxis;
         }
 
-        public void setyAxis(BigDecimal yAxis) {
+        public void setYAxis(BigDecimal yAxis) {
             this.yAxis = yAxis;
         }
 

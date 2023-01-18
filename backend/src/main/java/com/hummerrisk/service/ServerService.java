@@ -695,8 +695,8 @@ public class ServerService {
         ChartDTO codeChartDTO = new ChartDTO();
         List<String> xAxis = extServerResultMapper.serverChartX(params);
         List<Integer> yAxis = extServerResultMapper.serverChartY(params);
-        codeChartDTO.setxAxis(xAxis);
-        codeChartDTO.setyAxis(yAxis);
+        codeChartDTO.setXAxis(xAxis);
+        codeChartDTO.setYAxis(yAxis);
         return codeChartDTO;
     }
 

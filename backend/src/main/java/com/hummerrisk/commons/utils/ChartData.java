@@ -30,30 +30,6 @@ public class ChartData {
     @ApiModelProperty("自定义数据")
     private String customId;
 
-    public String getxAxis() {
-        return xAxis;
-    }
-
-    public void setxAxis(String xAxis) {
-        this.xAxis = xAxis;
-    }
-
-    public BigDecimal getyAxis() {
-        return yAxis;
-    }
-
-    public void setyAxis(BigDecimal yAxis) {
-        this.yAxis = yAxis;
-    }
-
-    public BigDecimal getyAxis2() {
-        return yAxis2;
-    }
-
-    public void setyAxis2(BigDecimal yAxis2) {
-        this.yAxis2 = yAxis2;
-    }
-
     public String getGroupName() {
         return groupName;
     }
@@ -86,4 +62,27 @@ public class ChartData {
         this.customId = customId;
     }
 
+    public String getXAxis() {
+        return xAxis;
+    }
+
+    public void setXAxis(String xAxis) {
+        this.xAxis = xAxis;
+    }
+
+    public BigDecimal getYAxis() {
+        return yAxis;
+    }
+
+    public void setYAxis(BigDecimal yAxis) {
+        this.yAxis = yAxis;
+    }
+
+    public BigDecimal getYAxis2() {
+        return yAxis2;
+    }
+
+    public void setYAxis2(BigDecimal yAxis2) {
+        this.yAxis2 = yAxis2;
+    }
 }

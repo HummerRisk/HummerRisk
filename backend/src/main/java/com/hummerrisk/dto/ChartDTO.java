@@ -9,19 +9,19 @@ public class ChartDTO {
 
     private List<Integer> yAxis;
 
-    public List<String> getxAxis() {
+    public List<String> getXAxis() {
         return xAxis;
     }
 
-    public void setxAxis(List<String> xAxis) {
+    public void setXAxis(List<String> xAxis) {
         this.xAxis = xAxis;
     }
 
-    public List<Integer> getyAxis() {
+    public List<Integer> getYAxis() {
         return yAxis;
     }
 
-    public void setyAxis(List<Integer> yAxis) {
+    public void setYAxis(List<Integer> yAxis) {
         this.yAxis = yAxis;
     }
 }

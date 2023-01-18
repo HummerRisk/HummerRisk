@@ -725,7 +725,7 @@ public class CloudEventService {
         }, (key1, key2) -> key2));
         List<String> dateList = DateUtils.getBetweenDate(startDate,endDate,"yyyy-MM-dd");
         ChartDTO chartDTO = new ChartDTO();
-        chartDTO.setxAxis(dateList);
+        chartDTO.setXAxis(dateList);
         List<Integer> yAxis = new ArrayList<>();
         dateList.forEach(item->{
             if(ipAccessMap.get(item) != null) {
@@ -734,7 +734,7 @@ public class CloudEventService {
                 yAxis.add(0);
             }
         });
-        chartDTO.setyAxis(yAxis);
+        chartDTO.setYAxis(yAxis);
         return chartDTO;
     }
 
