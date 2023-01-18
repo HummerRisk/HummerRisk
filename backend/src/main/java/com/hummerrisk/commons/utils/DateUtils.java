@@ -135,15 +135,20 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
      * @return
      */
     public static String localDateStrToUtcDateStr(String format,String ts){
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        Date date = null;
         try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
-            Date localDate = simpleDateFormat.parse(ts);
-            TimeZone utcZone = TimeZone.getTimeZone("UTC");
-            simpleDateFormat.setTimeZone(utcZone);
-            return simpleDateFormat.format(localDate);
+            date = simpleDateFormat.parse(ts);
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date time = calendar.getTime();
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return simpleDateFormat.format(time);
     }
 
     /**
@@ -153,10 +158,18 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
      * @return
      */
     public static String localDateToUtcDateStr(String format,Date date){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+       /* SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
         TimeZone utcZone = TimeZone.getTimeZone("UTC");
         simpleDateFormat.setTimeZone(utcZone);
         return simpleDateFormat.format(date);
+*/
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date time = calendar.getTime();
+        SimpleDateFormat outputFmt = new SimpleDateFormat(format);
+        outputFmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return outputFmt.format(time);
     }
 
     /**
