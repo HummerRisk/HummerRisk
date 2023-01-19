@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import * as echarts from 'echarts';
 import HrChart from "@/business/components/common/chart/HrChart";
 
 let opt = {
@@ -17,7 +16,6 @@ export default {
   name: "RuleListPieChart",
   components: {
     HrChart,
-    echarts
   },
   data() {
     return {

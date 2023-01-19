@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import * as echarts from 'echarts';
 import HrChart from "@/business/components/common/chart/HrChart";
 
 let objData = [];
@@ -13,7 +12,6 @@ let objData = [];
 export default {
   name: "DashboardPieChart",
   components: {
-    echarts,
     HrChart
   },
   data() {

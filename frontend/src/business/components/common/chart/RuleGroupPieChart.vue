@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import * as echarts from 'echarts';
 import HrChart from "@/business/components/common/chart/HrChart";
 
 let ruleGroup = [];
@@ -16,7 +15,6 @@ export default {
   name: "RuleGroupPieChart",
   components: {
     HrChart,
-    echarts
   },
   data() {
     return {

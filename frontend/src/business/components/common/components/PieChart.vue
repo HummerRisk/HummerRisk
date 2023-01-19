@@ -10,11 +10,12 @@
 <script>
 
 import HrChart from "@/business/components/common/chart/HrChart";
-import * as echarts from 'echarts';
 /* eslint-disable */
 export default {
   name: "PieChart",
-  components: {HrChart,echarts},
+  components: {
+    HrChart
+  },
   mounted() {
     this.getDataNamesByData();
   },

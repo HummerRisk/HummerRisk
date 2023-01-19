@@ -4,7 +4,7 @@
     :style="{'height': chartHeight, 'width': chartWidth}"
     class="hr-chart"
     :init-options="defaultInitOptions"
-    :options="options"
+    :option="options"
     :theme="theme"
     :group="group"
     @click="onClick"
