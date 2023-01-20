@@ -1,6 +1,7 @@
 package com.hummerrisk.commons.utils;
 
 import io.swagger.annotations.ApiModelProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 
@@ -62,6 +63,7 @@ public class ChartData {
         this.customId = customId;
     }
 
+    @JsonProperty("xAxis")
     public String getXAxis() {
         return xAxis;
     }
@@ -70,6 +72,7 @@ public class ChartData {
         this.xAxis = xAxis;
     }
 
+    @JsonProperty("yAxis")
     public BigDecimal getYAxis() {
         return yAxis;
     }
@@ -78,6 +81,7 @@ public class ChartData {
         this.yAxis = yAxis;
     }
 
+    @JsonProperty("yAxis2")
     public BigDecimal getYAxis2() {
         return yAxis2;
     }

@@ -1,5 +1,7 @@
 package com.hummerrisk.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 
@@ -9,6 +11,7 @@ public class ChartDTO {
 
     private List<Integer> yAxis;
 
+    @JsonProperty("xAxis")
     public List<String> getXAxis() {
         return xAxis;
     }
@@ -17,6 +20,7 @@ public class ChartDTO {
         this.xAxis = xAxis;
     }
 
+    @JsonProperty("yAxis")
     public List<Integer> getYAxis() {
         return yAxis;
     }

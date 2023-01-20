@@ -1,5 +1,6 @@
 package com.hummerrisk.controller.request.excel;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.math.BigDecimal;
@@ -91,6 +92,7 @@ public class ExcelExportRequest {
         private BigDecimal yAxis = BigDecimal.ZERO;
         private String groupName;
 
+        @JsonProperty("xAxis")
         public String getXAxis() {
             return xAxis;
         }
@@ -99,6 +101,7 @@ public class ExcelExportRequest {
             this.xAxis = xAxis;
         }
 
+        @JsonProperty("yAxis")
         public BigDecimal getYAxis() {
             return yAxis;
         }
