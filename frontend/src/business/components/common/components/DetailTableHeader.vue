@@ -120,10 +120,12 @@ export default {
       excelDown() {
         /* 从表生成工作簿对象 */
         // 判断要导出的节点中是否有fixed的表格，如果有，转换excel时先将该dom移除，然后append回去，
-        let fix = document.querySelector("#out-table .el-table__fixed");
+        let fix = document.querySelector("#out-table .el-table__fixed-right");//如果是只有右边有fixed样式
         let wb;
         if (fix) {
-          wb = XLSX.utils.table_to_book(document.querySelector("#out-table").removeChild(fix));
+          document.querySelector("#out-table").removeChild(fix, {raw:true});
+          //raw - true 导出的内容只做解析，不进行格式转换
+          wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
           document.querySelector("#out-table").appendChild(fix);
         } else {
           wb = XLSX.utils.table_to_book(document.querySelector("#out-table"),{raw:true});
