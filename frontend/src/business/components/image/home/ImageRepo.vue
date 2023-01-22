@@ -134,7 +134,7 @@
                :destroy-on-close="true">
       <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
       <table-header :condition.sync="condition" @search="handleList"
-                    @scan="scan" :scanTip="$t('server.one_scan')"
+                    @scan="saveAddAll" :scanTip="$t('image.one_scan')"
                     @setting="setting" :settingTip="$t('image.batch_settings_repo')"
                     :show-name="false" :show-scan="true" :show-setting="true"
                     :items="items2" :columnNames="columnNames2"
@@ -830,36 +830,6 @@ export default {
     showK8s(item) {
       this.k8sData = item.imageRepoItemK8sDTOList;
       this.innerK8s = true;
-    },
-    scan (){
-      if (this.selectIds.size === 0) {
-        this.$warning(this.$t('server.please_choose_server'));
-        return;
-      }
-      this.$alert(this.$t('server.one_scan') + this.$t('server.server_rule') + " ？", '', {
-        confirmButtonText: this.$t('commons.confirm'),
-        callback: (action) => {
-          if (action === 'confirm') {
-            this.result = this.$request({
-              method: 'POST',
-              url: "/server/scan",
-              data: Array.from(this.selectIds),
-              headers: {
-                'Content-Type': undefined
-              }
-            }, res => {
-              if (res.data) {
-                this.$success(this.$t('schedule.event_start'));
-              } else {
-                this.$error(this.$t('schedule.event_failed'));
-              }
-              this.$router.push({
-                path: '/server/result',
-              }).catch(error => error);
-            });
-          }
-        }
-      });
     },
   },
   created() {
