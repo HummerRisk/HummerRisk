@@ -1,0 +1,93 @@
+.container {
+  padding: 15px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.main-content {
+  margin: 0 auto;
+  width: 100%;
+}
+
+body {
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", Arial, sans-serif;
+  font-size: 14px;
+  margin: 0;
+}
+
+.main-content span.title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-wrap: break-word;
+  white-space: nowrap;
+}
+
+.clearfix::before,
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.ck-rounded-corners .ck.ck-balloon-panel,
+.ck.ck-balloon-panel.ck-rounded-corners {
+  z-index: 10055 !important;
+}
+
+.table-card > .el-card__body {
+  padding-top: 0;
+}
+
+/* Safari 表格不错位 */
+.el-table__body {
+  width: 100%;
+  table-layout: fixed !important;
+}
+
+.adjust-table td {
+  border-right-color: white;
+}
+
+.adjust-table th {
+  border-right-color: white;
+}
+
+.adjust-table {
+  border-color: white;
+}
+
+.adjust-table::after {
+  background-color: white;
+}
+
+.adjust-table th:hover::after {
+  content: '';
+  position: absolute;
+  top: 25%;
+  right: 0;
+  height: 50%;
+  width: 3px;
+  background-color: #ebeef5;
+}
+
+.table-edit-input .el-textarea__inner {
+  border-style: hidden;
+}
+
+.table-edit-input.is-disabled .el-textarea__inner {
+  background-color: white;
+  color: #606266;
+}
+
+.el-table .current-row .table-edit-input {
+  border: 1px solid #dcdfe6;
+  border-radius: 5px;
+}
+
+.table-edit-input .el-textarea__inner:focus {
+  border: 1px solid #409eff;
+}
