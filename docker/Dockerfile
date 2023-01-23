@@ -1,6 +1,6 @@
 FROM registry.cn-beijing.aliyuncs.com/hummerrisk/hummerrisk-base:v0.9.0
 
-COPY backend/target/backend-1.0.jar /opt/apps
+COPY ../backend/target/backend-1.0.jar /opt/apps
 
 ARG HR_VERSION=v0.9.0
 
