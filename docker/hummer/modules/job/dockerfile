@@ -1,0 +1,15 @@
+# 基础镜像
+FROM  openjdk:8-jre
+# author
+MAINTAINER hummer
+
+# 挂载目录
+VOLUME /home/hummer
+# 创建目录
+RUN mkdir -p /home/hummer
+# 指定路径
+WORKDIR /home/hummer
+# 复制jar文件到路径
+COPY ./jar/hummer-modules-job.jar /home/hummer/hummer-modules-job.jar
+# 启动定时任务服务
+ENTRYPOINT ["java","-jar","hummer-modules-job.jar"]

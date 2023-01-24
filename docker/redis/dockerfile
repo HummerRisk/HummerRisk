@@ -1,0 +1,13 @@
+# 基础镜像
+FROM redis
+# author
+MAINTAINER hummer
+
+# 挂载目录
+VOLUME /home/hummer/redis
+# 创建目录
+RUN mkdir -p /home/hummer/redis
+# 指定路径
+WORKDIR /home/hummer/redis
+# 复制conf文件到路径
+COPY ./conf/redis.conf /home/hummer/redis/redis.conf

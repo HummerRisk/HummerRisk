@@ -1,0 +1,140 @@
+version : '3.8'
+services:
+  hummer-nacos:
+    container_name: hummer-nacos
+    image: nacos/nacos-server
+    build:
+      context: ./nacos
+    environment:
+      - MODE=standalone
+    volumes:
+      - ./nacos/logs/:/home/nacos/logs
+      - ./nacos/conf/application.properties:/home/nacos/conf/application.properties
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+      - "9849:9849"
+    depends_on:
+      - hummer-mysql
+  hummer-mysql:
+    container_name: hummer-mysql
+    image: mysql:5.7
+    build:
+      context: ./mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/conf:/etc/mysql/conf.d
+      - ./mysql/logs:/logs
+      - ./mysql/data:/var/lib/mysql
+    command: [
+          'mysqld',
+          '--innodb-buffer-pool-size=80M',
+          '--character-set-server=utf8mb4',
+          '--collation-server=utf8mb4_unicode_ci',
+          '--default-time-zone=+8:00',
+          '--lower-case-table-names=1'
+        ]
+    environment:
+      MYSQL_DATABASE: 'ry-cloud'
+      MYSQL_ROOT_PASSWORD: password
+  hummer-redis:
+    container_name: hummer-redis
+    image: redis
+    build:
+      context: ./redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/conf/redis.conf:/home/hummer/redis/redis.conf
+      - ./redis/data:/data
+    command: redis-server /home/hummer/redis/redis.conf
+  hummer-nginx:
+    container_name: hummer-nginx
+    image: nginx
+    build:
+      context: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/html/dist:/home/hummer/projects/hummer-ui
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/logs:/var/log/nginx
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - hummer-gateway
+    links:
+      - hummer-gateway
+  hummer-gateway:
+    container_name: hummer-gateway
+    build:
+      context: ./hummer/gateway
+      dockerfile: dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - hummer-redis
+    links:
+      - hummer-redis
+  hummer-auth:
+    container_name: hummer-auth
+    build:
+      context: ./hummer/auth
+      dockerfile: dockerfile
+    ports:
+      - "9200:9200"
+    depends_on:
+      - hummer-redis
+    links:
+      - hummer-redis
+  hummer-modules-system:
+    container_name: hummer-modules-system
+    build:
+      context: ./hummer/modules/system
+      dockerfile: dockerfile
+    ports:
+      - "9201:9201"
+    depends_on:
+      - hummer-redis
+      - hummer-mysql
+    links:
+      - hummer-redis
+      - hummer-mysql
+  hummer-modules-gen:
+    container_name: hummer-modules-gen
+    build:
+      context: ./hummer/modules/gen
+      dockerfile: dockerfile
+    ports:
+      - "9202:9202"
+    depends_on:
+      - hummer-mysql
+    links:
+      - hummer-mysql
+  hummer-modules-job:
+    container_name: hummer-modules-job
+    build:
+      context: ./hummer/modules/job
+      dockerfile: dockerfile
+    ports:
+      - "9203:9203"
+    depends_on:
+      - hummer-mysql
+    links:
+      - hummer-mysql
+  hummer-modules-file:
+    container_name: hummer-modules-file
+    build:
+      context: ./hummer/modules/file
+      dockerfile: dockerfile
+    ports:
+      - "9300:9300"
+    volumes:
+    - ./hummer/uploadPath:/home/hummer/uploadPath
+  hummer-visual-monitor:
+    container_name: hummer-visual-monitor
+    build:
+      context: ./hummer/visual/monitor
+      dockerfile: dockerfile
+    ports:
+      - "9100:9100"
