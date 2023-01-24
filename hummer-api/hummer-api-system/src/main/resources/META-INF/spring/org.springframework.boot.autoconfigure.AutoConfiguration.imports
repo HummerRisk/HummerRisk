@@ -1,0 +1,3 @@
+com.hummer.system.api.factory.RemoteUserFallbackFactory
+com.hummer.system.api.factory.RemoteLogFallbackFactory
+com.hummer.system.api.factory.RemoteFileFallbackFactory
