@@ -179,31 +179,3 @@ CREATE TABLE `tenant_info`
     UNIQUE KEY `uk_tenant_info_kptenantid` (`kp`,`tenant_id`),
     KEY             `idx_tenant_id` (`tenant_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='tenant_info';
-
-CREATE TABLE `users`
-(
-    `username` varchar(50)  NOT NULL PRIMARY KEY,
-    `password` varchar(500) NOT NULL,
-    `enabled`  boolean      NOT NULL
-);
-
-CREATE TABLE `roles`
-(
-    `username` varchar(50) NOT NULL,
-    `role`     varchar(50) NOT NULL,
-    UNIQUE INDEX `idx_user_role` (`username` ASC, `role` ASC) USING BTREE
-);
-
-CREATE TABLE `permissions`
-(
-    `role`     varchar(50)  NOT NULL,
-    `resource` varchar(255) NOT NULL,
-    `action`   varchar(8)   NOT NULL,
-    UNIQUE INDEX `uk_role_permission` (`role`,`resource`,`action`) USING BTREE
-);
-
-INSERT INTO users (username, password, enabled)
-VALUES ('nacos', '$2a$10$EuWPZHzz32dJN7jexM34MOeYirDdFAZm2kuWj7VEOJhhZkDrxfvUu', TRUE);
-
-INSERT INTO roles (username, role)
-VALUES ('nacos', 'ROLE_ADMIN');
