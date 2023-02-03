@@ -1,0 +1,53 @@
+{
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ecs:Get*",
+        "ecs:*Describe*",
+        "ecs:*List*",
+        "ecs_internal:Get*",
+        "ecs_internal:Describe*",
+        "ecs_internal:List*",
+        "clb:Get*",
+        "tag:Query*",
+        "tag:Get*",
+        "iam:Get*",
+        "iam:List*",
+        "vpc:Get*",
+        "vpc:Check*",
+        "vpc:*Describe*",
+        "vpc_internal:Get*",
+        "vpc_internal:Check*",
+        "vpn:Get*",
+        "Volc_ECS:Get*",
+        "Volc_ECS:List*",
+        "Volc_ECS:Describe*",
+        "Volc_CLB:Get*",
+        "Volc_CLB:List*",
+        "Volc_CLB:Describe*",
+        "Volc_CEN:Get*",
+        "Volc_CEN:List*",
+        "Volc_CEN:Describe*",
+        "Volc_CLB_L7:Get*",
+        "Volc_CLB_L7:List*",
+        "Volc_CLB_L7:Describe*",
+        "Volc_CLB:Get*",
+        "Volc_CLB:List*",
+        "Volc_CLB:Describe*",
+        "Volc_NAT:Get*",
+        "Volc_NAT:List*",
+        "Volc_NAT:Describe*",
+        "Volc_VPC:Get*",
+        "Volc_VPC:List*",
+        "Volc_VPC:Describe*",
+        "storage_ebs:Get*",
+        "storage_ebs:*Describe*",
+        "storage_ebs:*List*"
+      ],
+      "Resource": [
+        "*"
+      ]
+    }
+  ]
+}

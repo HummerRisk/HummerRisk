@@ -1,0 +1,83 @@
+[
+  {
+    "regionId": "ap-beijing",
+    "regionName": "北京",
+    "extranetEndpoint": "<BucketName-APPID>.cos.ap-beijing.myqcloud.com"
+  },
+  {
+    "regionId": "ap-shanghai",
+    "regionName": "上海（华东）",
+    "extranetEndpoint": "<BucketName-APPID>.cos.ap-shanghai.myqcloud.com"
+  },
+  {
+    "regionId": "ap-guangzhou",
+    "regionName": "广州（华南)",
+    "extranetEndpoint": "<BucketName-APPID>.cos.ap-guangzhou.myqcloud.com"
+  },
+  {
+    "regionId": "ap-chengdu",
+    "regionName": "成都（西南）",
+    "extranetEndpoint": "<BucketName-APPID>.cos.ap-chengdu.myqcloud.com"
+  },
+  {
+    "regionId": "ap-chongqing",
+    "regionName": "重庆",
+    "extranetEndpoint": "<BucketName-APPID>.cos.ap-chongqing.myqcloud.com"
+  },
+  {
+    "regionId": "ap-singapore",
+    "regionName": "新加坡",
+    "extranetEndpoint": "<BucketName-APPID>.cos.ap-singapore.myqcloud.com"
+  },
+  {
+    "regionId": "ap-hongkong",
+    "regionName": "香港",
+    "extranetEndpoint": "<BucketName-APPID>.cos.ap-hongkong.myqcloud.com"
+  },
+  {
+    "regionId": "na-toronto",
+    "regionName": "多伦多",
+    "extranetEndpoint": "<BucketName-APPID>.cos.na-toronto.myqcloud.com"
+  },
+  {
+    "regionId": "eu-frankfurt",
+    "regionName": "法兰克福",
+    "extranetEndpoint": "<BucketName-APPID>.cos.eu-frankfurt.myqcloud.com"
+  },
+  {
+    "regionId": "ap-mumbai",
+    "regionName": "孟买",
+    "extranetEndpoint": "<BucketName-APPID>.cos.ap-mumbai.myqcloud.com"
+  },
+  {
+    "regionId": "ap-seoul",
+    "regionName": "首尔",
+    "extranetEndpoint": "<BucketName-APPID>.cos.ap-seoul.myqcloud.com"
+  },
+  {
+    "regionId": "na-siliconvalley",
+    "regionName": "硅谷",
+    "extranetEndpoint": "<BucketName-APPID>.cos.na-siliconvalley.myqcloud.com"
+  },
+  {
+    "regionId": "na-ashburn",
+    "regionName": "弗吉尼亚",
+    "extranetEndpoint": "<BucketName-APPID>.cos.na-ashburn.myqcloud.com"
+  },
+  {
+    "regionId": "ap-bangkok",
+    "regionName": "曼谷",
+    "extranetEndpoint": "<BucketName-APPID>.cos.ap-bangkok.myqcloud.com"
+  },
+  {
+    "regionId": "eu-moscow",
+    "regionName": "莫斯科",
+    "extranetEndpoint": "<BucketName-APPID>.cos.eu-moscow.myqcloud.com"
+  },
+  {
+    "regionId": "ap-tokyo",
+    "regionName": "东京",
+    "extranetEndpoint": "<BucketName-APPID>.cos.ap-tokyo.myqcloud.com"
+  }
+]
+

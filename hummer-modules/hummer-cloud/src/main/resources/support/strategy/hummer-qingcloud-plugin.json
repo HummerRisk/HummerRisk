@@ -1,0 +1,16 @@
+[
+  {
+    "action": [
+      "ecm:Describe*",
+      "ecm:CreateBrokers",
+      "ecm:DeleteBrokers",
+      "vpc:Describe*",
+      "vpc:Get*",
+      "elb:Describe*",
+      "rcm:Describe*",
+      "rcm:Get*"
+    ],
+    "effect": "allow",
+    "resource": "*"
+  }
+]
