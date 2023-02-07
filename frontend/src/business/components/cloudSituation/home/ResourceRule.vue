@@ -125,7 +125,7 @@ export default {
         }
       },
       showTaskDetail(item) {
-        localStorage.setItem(ACCOUNT_ID, this.accountId);
+        localStorage.setItem(ACCOUNT_ID, item.accountId);
         localStorage.setItem(ACCOUNT_NAME, this.accountName);
         this.$router.push({
           path: '/account/result',
