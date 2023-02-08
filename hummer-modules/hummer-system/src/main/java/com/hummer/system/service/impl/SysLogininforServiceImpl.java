@@ -1,6 +1,7 @@
 package com.hummer.system.service.impl;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.hummer.system.api.domain.SysLogininfor;
@@ -13,8 +14,7 @@ import com.hummer.system.service.ISysLogininforService;
  * @author harris1943
  */
 @Service
-public class SysLogininforServiceImpl implements ISysLogininforService
-{
+public class SysLogininforServiceImpl implements ISysLogininforService {
 
     @Autowired
     private SysLogininforMapper logininforMapper;
@@ -25,8 +25,7 @@ public class SysLogininforServiceImpl implements ISysLogininforService
      * @param logininfor 访问日志对象
      */
     @Override
-    public int insertLogininfor(SysLogininfor logininfor)
-    {
+    public int insertLogininfor(SysLogininfor logininfor) {
         return logininforMapper.insertLogininfor(logininfor);
     }
 
@@ -37,8 +36,7 @@ public class SysLogininforServiceImpl implements ISysLogininforService
      * @return 登录记录集合
      */
     @Override
-    public List<SysLogininfor> selectLogininforList(SysLogininfor logininfor)
-    {
+    public List<SysLogininfor> selectLogininforList(SysLogininfor logininfor) {
         return logininforMapper.selectLogininforList(logininfor);
     }
 
@@ -49,8 +47,7 @@ public class SysLogininforServiceImpl implements ISysLogininforService
      * @return 结果
      */
     @Override
-    public int deleteLogininforByIds(Long[] infoIds)
-    {
+    public int deleteLogininforByIds(Long[] infoIds) {
         return logininforMapper.deleteLogininforByIds(infoIds);
     }
 
@@ -58,8 +55,7 @@ public class SysLogininforServiceImpl implements ISysLogininforService
      * 清空系统登录日志
      */
     @Override
-    public void cleanLogininfor()
-    {
+    public void cleanLogininfor() {
         logininforMapper.cleanLogininfor();
     }
 }

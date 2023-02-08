@@ -100,24 +100,13 @@ services:
     links:
       - hummer-redis
       - hummer-mysql
-  hummer-modules-gen:
-    container_name: hummer-modules-gen
-    build:
-      context: ./hummer/modules/gen
-      dockerfile: dockerfile
-    ports:
-      - "9202:9202"
-    depends_on:
-      - hummer-mysql
-    links:
-      - hummer-mysql
   hummer-modules-job:
     container_name: hummer-modules-job
     build:
       context: ./hummer/modules/job
       dockerfile: dockerfile
     ports:
-      - "9203:9203"
+      - "9202:9202"
     depends_on:
       - hummer-mysql
     links:

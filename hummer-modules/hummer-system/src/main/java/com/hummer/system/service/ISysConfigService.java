@@ -1,6 +1,7 @@
 package com.hummer.system.service;
 
 import java.util.List;
+
 import com.hummer.system.domain.SysConfig;
 
 /**
@@ -8,8 +9,7 @@ import com.hummer.system.domain.SysConfig;
  *
  * @author harris1943
  */
-public interface ISysConfigService
-{
+public interface ISysConfigService {
     /**
      * 查询参数配置信息
      *

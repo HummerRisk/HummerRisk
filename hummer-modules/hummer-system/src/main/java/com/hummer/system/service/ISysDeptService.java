@@ -1,6 +1,7 @@
 package com.hummer.system.service;
 
 import java.util.List;
+
 import com.hummer.system.api.domain.SysDept;
 import com.hummer.system.domain.vo.TreeSelect;
 
@@ -9,8 +10,7 @@ import com.hummer.system.domain.vo.TreeSelect;
  *
  * @author harris1943
  */
-public interface ISysDeptService
-{
+public interface ISysDeptService {
     /**
      * 查询部门管理数据
      *

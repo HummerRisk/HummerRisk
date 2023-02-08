@@ -1,6 +1,7 @@
 package com.hummer.system.mapper;
 
 import java.util.List;
+
 import com.hummer.system.api.domain.SysOperLog;
 
 /**
@@ -8,8 +9,7 @@ import com.hummer.system.api.domain.SysOperLog;
  *
  * @author harris1943
  */
-public interface SysOperLogMapper
-{
+public interface SysOperLogMapper {
     /**
      * 新增操作日志
      *

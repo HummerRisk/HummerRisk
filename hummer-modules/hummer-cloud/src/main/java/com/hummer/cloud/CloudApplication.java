@@ -15,10 +15,8 @@ import com.hummer.common.swagger.annotation.EnableCustomSwagger2;
 @EnableCustomSwagger2
 @EnableRyFeignClients
 @SpringBootApplication
-public class CloudApplication
-{
-    public static void main(String[] args)
-    {
+public class CloudApplication {
+    public static void main(String[] args) {
         SpringApplication.run(CloudApplication.class, args);
         System.out.println("(♥◠‿◠)ﾉﾞ  混合云模块启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
                 "  ██╗  ██╗██╗   ██╗███╗   ███╗███╗   ███╗███████╗██████╗ ██████╗ ██╗███████╗██╗  ██╗\n" +

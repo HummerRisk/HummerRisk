@@ -1,6 +1,7 @@
 package com.hummer.system.mapper;
 
 import java.util.List;
+
 import com.hummer.system.domain.SysUserPost;
 
 /**
@@ -8,8 +9,7 @@ import com.hummer.system.domain.SysUserPost;
  *
  * @author harris1943
  */
-public interface SysUserPostMapper
-{
+public interface SysUserPostMapper {
     /**
      * 通过用户ID删除用户和岗位关联
      *

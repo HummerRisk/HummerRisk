@@ -9,22 +9,19 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 
 /**
  * 监控权限配置
- * 
+ *
  * @author harris1943
  */
 @EnableWebSecurity
-public class WebSecurityConfigurer
-{
+public class WebSecurityConfigurer {
     private final String adminContextPath;
 
-    public WebSecurityConfigurer(AdminServerProperties adminServerProperties)
-    {
+    public WebSecurityConfigurer(AdminServerProperties adminServerProperties) {
         this.adminContextPath = adminServerProperties.getContextPath();
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception
-    {
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
         successHandler.setTargetUrlParameter("redirectTo");
         successHandler.setDefaultTargetUrl(adminContextPath + "/");

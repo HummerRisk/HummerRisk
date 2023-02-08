@@ -1,6 +1,7 @@
 package com.hummer.job.service;
 
 import java.util.List;
+
 import org.quartz.SchedulerException;
 import com.hummer.common.core.exception.job.TaskException;
 import com.hummer.job.domain.SysJob;
@@ -10,8 +11,7 @@ import com.hummer.job.domain.SysJob;
  *
  * @author harris1943
  */
-public interface ISysJobService
-{
+public interface ISysJobService {
     /**
      * 获取quartz调度器的计划任务
      *

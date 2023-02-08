@@ -18,8 +18,7 @@ com.hummer
 │       └── hummer-common-swagger                      // 系统接口
 ├── hummer-modules                                     // 业务模块
 │       └── hummer-system                              // 系统模块 [9201]
-│       └── hummer-gen                                 // 代码生成 [9202]
-│       └── hummer-job                                 // 定时任务 [9203]
+│       └── hummer-job                                 // 定时任务 [9202]
 │       └── hummer-file                                // 文件服务 [9300]
 │       └── hummer-cloud                               // 混合云服务 [9400]
 │       └── hummer-k8s                                 // 云原生服务 [9500]

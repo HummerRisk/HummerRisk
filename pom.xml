@@ -21,20 +21,21 @@
         <spring-cloud.version>2022.0.0</spring-cloud.version>
         <spring-cloud-alibaba.version>2.2.10-RC1</spring-cloud-alibaba.version>
         <swagger.fox.version>3.0.0</swagger.fox.version>
-        <swagger.core.version>1.6.2</swagger.core.version>
         <tobato.version>1.27.2</tobato.version>
-        <kaptcha.version>2.3.3</kaptcha.version>
-        <pagehelper.boot.version>1.4.6</pagehelper.boot.version>
+        <pagehelper.version>5.3.0</pagehelper.version>
         <druid.version>1.2.15</druid.version>
         <dynamic-ds.version>3.5.2</dynamic-ds.version>
         <commons.io.version>2.11.0</commons.io.version>
         <commons.fileupload.version>1.4</commons.fileupload.version>
-        <velocity.version>2.3</velocity.version>
         <fastjson.version>2.0.22</fastjson.version>
         <jjwt.version>0.9.1</jjwt.version>
         <minio.version>8.2.2</minio.version>
-        <poi.version>4.1.2</poi.version>
+        <poi.version>5.2.3</poi.version>
         <transmittable-thread-local.version>2.14.2</transmittable-thread-local.version>
+        <swagger.parser>1.0.61</swagger.parser>
+        <knife4j.version>3.0.3</knife4j.version>
+        <swagger.models>1.6.6</swagger.models>
+        <swagger.annotations>2.2.2</swagger.annotations>
     </properties>
 
     <!-- 依赖声明 -->
@@ -49,6 +50,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- SpringCloud 微服务 -->
 
             <!-- SpringCloud Alibaba 微服务 -->
             <dependency>
@@ -58,6 +60,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- SpringCloud Alibaba 微服务 -->
 
             <!-- SpringBoot 依赖配置 -->
             <dependency>
@@ -67,6 +70,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- SpringBoot 依赖配置 -->
 
             <!-- FastDFS 分布式文件系统 -->
             <dependency>
@@ -74,32 +78,48 @@
                 <artifactId>fastdfs-client</artifactId>
                 <version>${tobato.version}</version>
             </dependency>
+            <!-- FastDFS 分布式文件系统 -->
 
             <!-- Swagger 依赖配置 -->
             <dependency>
                 <groupId>io.swagger</groupId>
+                <artifactId>swagger-parser</artifactId>
+                <version>${swagger.parser}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-spring-boot-starter</artifactId>
+                <version>${knife4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger</groupId>
                 <artifactId>swagger-models</artifactId>
-                <version>${swagger.core.version}</version>
+                <version>${swagger.models}</version>
             </dependency>
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-annotations</artifactId>
-                <version>${swagger.core.version}</version>
+                <version>${swagger.models}</version>
             </dependency>
-
-            <!-- 验证码 -->
             <dependency>
-                <groupId>pro.fessional</groupId>
-                <artifactId>kaptcha</artifactId>
-                <version>${kaptcha.version}</version>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger.annotations}</version>
             </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>31.1-jre</version>
+            </dependency>
+            <!-- swagger 依赖配置 -->
 
             <!-- pagehelper 分页插件 -->
             <dependency>
                 <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper-spring-boot-starter</artifactId>
-                <version>${pagehelper.boot.version}</version>
+                <artifactId>pagehelper</artifactId>
+                <version>${pagehelper.version}</version>
             </dependency>
+            <!-- pagehelper 分页插件 -->
 
             <!-- io常用工具类 -->
             <dependency>
@@ -107,6 +127,7 @@
                 <artifactId>commons-io</artifactId>
                 <version>${commons.io.version}</version>
             </dependency>
+            <!-- io常用工具类 -->
 
             <!-- excel工具 -->
             <dependency>
@@ -121,13 +142,7 @@
                 <artifactId>commons-fileupload</artifactId>
                 <version>${commons.fileupload.version}</version>
             </dependency>
-
-            <!-- 代码生成使用模板 -->
-            <dependency>
-                <groupId>org.apache.velocity</groupId>
-                <artifactId>velocity-engine-core</artifactId>
-                <version>${velocity.version}</version>
-            </dependency>
+            <!-- 文件上传工具类 -->
 
             <!-- JSON 解析器和生成器 -->
             <dependency>
@@ -135,6 +150,7 @@
                 <artifactId>fastjson2</artifactId>
                 <version>${fastjson.version}</version>
             </dependency>
+            <!-- JSON 解析器和生成器 -->
 
             <!-- JWT -->
             <dependency>
@@ -142,6 +158,7 @@
                 <artifactId>jjwt</artifactId>
                 <version>${jjwt.version}</version>
             </dependency>
+            <!-- JWT -->
 
             <!-- 线程传递值 -->
             <dependency>
@@ -149,6 +166,7 @@
                 <artifactId>transmittable-thread-local</artifactId>
                 <version>${transmittable-thread-local.version}</version>
             </dependency>
+            <!-- 线程传递值 -->
 
             <!-- 核心模块 -->
             <dependency>
@@ -156,6 +174,7 @@
                 <artifactId>hummerrisk-common-core</artifactId>
                 <version>${hummer.version}</version>
             </dependency>
+            <!-- 核心模块 -->
 
             <!-- 接口模块 -->
             <dependency>
@@ -163,6 +182,7 @@
                 <artifactId>hummerrisk-common-swagger</artifactId>
                 <version>${hummer.version}</version>
             </dependency>
+            <!-- 接口模块 -->
 
             <!-- 安全模块 -->
             <dependency>
@@ -170,6 +190,7 @@
                 <artifactId>hummerrisk-common-security</artifactId>
                 <version>${hummer.version}</version>
             </dependency>
+            <!-- 安全模块 -->
 
             <!-- 权限范围 -->
             <dependency>
@@ -177,6 +198,7 @@
                 <artifactId>hummerrisk-common-datascope</artifactId>
                 <version>${hummer.version}</version>
             </dependency>
+            <!-- 权限范围 -->
 
             <!-- 多数据源 -->
             <dependency>
@@ -184,6 +206,7 @@
                 <artifactId>hummerrisk-common-datasource</artifactId>
                 <version>${hummer.version}</version>
             </dependency>
+            <!-- 多数据源 -->
 
             <!-- 分布式事务 -->
             <dependency>
@@ -191,6 +214,7 @@
                 <artifactId>hummerrisk-common-seata</artifactId>
                 <version>${hummer.version}</version>
             </dependency>
+            <!-- 分布式事务 -->
 
             <!-- 日志记录 -->
             <dependency>
@@ -198,6 +222,7 @@
                 <artifactId>hummerrisk-common-log</artifactId>
                 <version>${hummer.version}</version>
             </dependency>
+            <!-- 日志记录 -->
 
             <!-- 缓存服务 -->
             <dependency>
@@ -205,6 +230,7 @@
                 <artifactId>hummerrisk-common-redis</artifactId>
                 <version>${hummer.version}</version>
             </dependency>
+            <!-- 缓存服务 -->
 
             <!-- 系统接口 -->
             <dependency>
@@ -212,6 +238,51 @@
                 <artifactId>hummerrisk-api-system</artifactId>
                 <version>${hummer.version}</version>
             </dependency>
+            <!-- 系统接口 -->
+
+            <!-- junit -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.12</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-test</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>5.3.9</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- junit -->
+
+            <!-- google gson -->
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>2.9.1</version>
+            </dependency>
+            <!-- google gson -->
+
+            <!-- flyway -->
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>7.15.0</version>
+            </dependency>
+            <!-- flyway -->
+
+            <!-- mysql -->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <scope>runtime</scope>
+            </dependency>
+            <!-- mysql -->
 
         </dependencies>
     </dependencyManagement>
@@ -220,5 +291,32 @@
         <module>hummer-ui</module>
         <module>backend</module>
     </modules>
+
+    <repositories>
+        <repository>
+            <id>hummer</id>
+            <name>Hummer</name>
+            <url>https://registry.hummercloud.com/repository/maven-public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/libs-milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>jcenter-snapshots</id>
+            <name>jcenter</name>
+            <url>https://jcenter.bintray.com/</url>
+        </repository>
+    </repositories>
 
 </project>

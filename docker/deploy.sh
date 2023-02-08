@@ -19,7 +19,6 @@ port(){
 	firewall-cmd --add-port=9200/tcp --permanent
 	firewall-cmd --add-port=9201/tcp --permanent
 	firewall-cmd --add-port=9202/tcp --permanent
-	firewall-cmd --add-port=9203/tcp --permanent
 	firewall-cmd --add-port=9300/tcp --permanent
 	service firewalld restart
 }

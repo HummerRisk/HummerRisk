@@ -6,14 +6,13 @@ import com.hummer.system.api.domain.SysUser;
 
 /**
  * 权限信息 服务层
- * 
+ *
  * @author harris1943
  */
-public interface ISysPermissionService
-{
+public interface ISysPermissionService {
     /**
      * 获取角色数据权限
-     * 
+     *
      * @param userId 用户Id
      * @return 角色权限信息
      */
@@ -21,7 +20,7 @@ public interface ISysPermissionService
 
     /**
      * 获取菜单数据权限
-     * 
+     *
      * @param userId 用户Id
      * @return 菜单权限信息
      */

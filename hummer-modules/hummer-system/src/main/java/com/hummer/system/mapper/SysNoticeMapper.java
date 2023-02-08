@@ -1,6 +1,7 @@
 package com.hummer.system.mapper;
 
 import java.util.List;
+
 import com.hummer.system.domain.SysNotice;
 
 /**
@@ -8,8 +9,7 @@ import com.hummer.system.domain.SysNotice;
  *
  * @author harris1943
  */
-public interface SysNoticeMapper
-{
+public interface SysNoticeMapper {
     /**
      * 查询公告信息
      *

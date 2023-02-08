@@ -1,6 +1,7 @@
 package com.hummer.system.service;
 
 import java.util.List;
+
 import com.hummer.system.api.domain.SysDictData;
 import com.hummer.system.api.domain.SysDictType;
 
@@ -9,8 +10,7 @@ import com.hummer.system.api.domain.SysDictType;
  *
  * @author harris1943
  */
-public interface ISysDictTypeService
-{
+public interface ISysDictTypeService {
     /**
      * 根据条件分页查询字典类型
      *

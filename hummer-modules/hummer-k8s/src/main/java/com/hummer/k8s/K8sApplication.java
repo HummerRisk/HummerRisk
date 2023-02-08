@@ -15,10 +15,8 @@ import com.hummer.common.swagger.annotation.EnableCustomSwagger2;
 @EnableCustomSwagger2
 @EnableRyFeignClients
 @SpringBootApplication
-public class K8sApplication
-{
-    public static void main(String[] args)
-    {
+public class K8sApplication {
+    public static void main(String[] args) {
         SpringApplication.run(K8sApplication.class, args);
         System.out.println("(♥◠‿◠)ﾉﾞ  云原生模块启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
                 "  ██╗  ██╗██╗   ██╗███╗   ███╗███╗   ███╗███████╗██████╗ ██████╗ ██╗███████╗██╗  ██╗\n" +

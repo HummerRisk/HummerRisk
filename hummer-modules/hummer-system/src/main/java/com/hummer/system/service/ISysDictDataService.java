@@ -1,6 +1,7 @@
 package com.hummer.system.service;
 
 import java.util.List;
+
 import com.hummer.system.api.domain.SysDictData;
 
 /**
@@ -8,8 +9,7 @@ import com.hummer.system.api.domain.SysDictData;
  *
  * @author harris1943
  */
-public interface ISysDictDataService
-{
+public interface ISysDictDataService {
     /**
      * 根据条件分页查询字典数据
      *
@@ -21,7 +21,7 @@ public interface ISysDictDataService
     /**
      * 根据字典类型和字典键值查询字典数据信息
      *
-     * @param dictType 字典类型
+     * @param dictType  字典类型
      * @param dictValue 字典键值
      * @return 字典标签
      */
