@@ -1,22 +1,22 @@
-package com.hummer.file;
+package com.hummer.auth;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import com.hummer.common.swagger.annotation.EnableCustomSwagger2;
+import com.hummer.common.security.annotation.EnableRyFeignClients;
 
 /**
- * 文件服务
+ * 认证授权中心
  *
- * @author harris1943
+ * @author harris
  */
-@EnableCustomSwagger2
+@EnableRyFeignClients
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
-public class FileApplication {
+public class AuthApplication {
     public static void main(String[] args) {
-        SpringApplication.run(FileApplication.class, args);
-        System.out.println("{HTTP/1.1, (http/1.1)}{0.0.0.0:9300}");
-        System.out.println("(♥◠‿◠)ﾉﾞ  文件服务模块启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
+        SpringApplication.run(RuoYiAuthApplication.class, args);
+        System.out.println("{HTTP/1.1, (http/1.1)}{0.0.0.0:9200}");
+        System.out.println("(♥◠‿◠)ﾉﾞ  认证授权中心启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
                 "  ██╗  ██╗██╗   ██╗███╗   ███╗███╗   ███╗███████╗██████╗ ██████╗ ██╗███████╗██╗  ██╗\n" +
                 "  ██║  ██║██║   ██║████╗ ████║████╗ ████║██╔════╝██╔══██╗██╔══██╗██║██╔════╝██║ ██╔╝\n" +
                 "  ███████║██║   ██║██╔████╔██║██╔████╔██║█████╗  ██████╔╝██████╔╝██║███████╗█████╔╝\n" +
