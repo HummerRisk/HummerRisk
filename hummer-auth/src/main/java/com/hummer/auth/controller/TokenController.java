@@ -1,12 +1,5 @@
 package com.hummer.auth.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 import com.hummer.auth.form.LoginBody;
 import com.hummer.auth.form.RegisterBody;
 import com.hummer.auth.service.SysLoginService;
@@ -17,6 +10,13 @@ import com.hummer.common.security.auth.AuthUtil;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.common.security.utils.SecurityUtils;
 import com.hummer.system.api.model.LoginUser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * token 控制
