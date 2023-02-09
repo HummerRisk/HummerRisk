@@ -36,6 +36,7 @@
         <knife4j.version>3.0.3</knife4j.version>
         <swagger.models>1.6.6</swagger.models>
         <swagger.annotations>2.2.2</swagger.annotations>
+        <guava.version>31.1-jre</guava.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -109,7 +110,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>31.1-jre</version>
+                <version>${guava.version}</version>
             </dependency>
             <!-- swagger 依赖配置 -->
 
@@ -170,7 +171,7 @@
 
             <!-- 核心模块 -->
             <dependency>
-                <groupId>com.hummer</groupId>
+                <groupId>com.hummerrisk</groupId>
                 <artifactId>hummerrisk-common-core</artifactId>
                 <version>${hummer.version}</version>
             </dependency>
@@ -178,7 +179,7 @@
 
             <!-- 接口模块 -->
             <dependency>
-                <groupId>com.hummer</groupId>
+                <groupId>com.hummerrisk</groupId>
                 <artifactId>hummerrisk-common-swagger</artifactId>
                 <version>${hummer.version}</version>
             </dependency>
@@ -186,7 +187,7 @@
 
             <!-- 安全模块 -->
             <dependency>
-                <groupId>com.hummer</groupId>
+                <groupId>com.hummerrisk</groupId>
                 <artifactId>hummerrisk-common-security</artifactId>
                 <version>${hummer.version}</version>
             </dependency>
@@ -194,7 +195,7 @@
 
             <!-- 权限范围 -->
             <dependency>
-                <groupId>com.hummer</groupId>
+                <groupId>com.hummerrisk</groupId>
                 <artifactId>hummerrisk-common-datascope</artifactId>
                 <version>${hummer.version}</version>
             </dependency>
@@ -202,7 +203,7 @@
 
             <!-- 多数据源 -->
             <dependency>
-                <groupId>com.hummer</groupId>
+                <groupId>com.hummerrisk</groupId>
                 <artifactId>hummerrisk-common-datasource</artifactId>
                 <version>${hummer.version}</version>
             </dependency>
@@ -210,7 +211,7 @@
 
             <!-- 分布式事务 -->
             <dependency>
-                <groupId>com.hummer</groupId>
+                <groupId>com.hummerrisk</groupId>
                 <artifactId>hummerrisk-common-seata</artifactId>
                 <version>${hummer.version}</version>
             </dependency>
@@ -218,7 +219,7 @@
 
             <!-- 日志记录 -->
             <dependency>
-                <groupId>com.hummer</groupId>
+                <groupId>com.hummerrisk</groupId>
                 <artifactId>hummerrisk-common-log</artifactId>
                 <version>${hummer.version}</version>
             </dependency>
@@ -226,7 +227,7 @@
 
             <!-- 缓存服务 -->
             <dependency>
-                <groupId>com.hummer</groupId>
+                <groupId>com.hummerrisk</groupId>
                 <artifactId>hummerrisk-common-redis</artifactId>
                 <version>${hummer.version}</version>
             </dependency>
@@ -234,7 +235,7 @@
 
             <!-- 系统接口 -->
             <dependency>
-                <groupId>com.hummer</groupId>
+                <groupId>com.hummerrisk</groupId>
                 <artifactId>hummerrisk-api-system</artifactId>
                 <version>${hummer.version}</version>
             </dependency>
@@ -289,7 +290,12 @@
 
     <modules>
         <module>hummer-ui</module>
-        <module>backend</module>
+        <module>hummer-auth</module>
+        <module>hummer-gateway</module>
+        <module>hummer-visual</module>
+        <module>hummer-modules</module>
+        <module>hummer-api</module>
+        <module>hummer-common</module>
     </modules>
 
     <repositories>

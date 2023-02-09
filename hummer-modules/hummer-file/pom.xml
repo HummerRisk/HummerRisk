@@ -3,7 +3,7 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>com.hummer</groupId>
+        <groupId>com.hummerrisk</groupId>
         <artifactId>hummer-modules</artifactId>
         <version>1.0.0</version>
     </parent>
@@ -56,13 +56,13 @@
 
         <!-- hummer Api System -->
         <dependency>
-            <groupId>com.hummer</groupId>
+            <groupId>com.hummerrisk</groupId>
             <artifactId>hummer-api-system</artifactId>
         </dependency>
 
         <!-- hummer Common Swagger -->
         <dependency>
-            <groupId>com.hummer</groupId>
+            <groupId>com.hummerrisk</groupId>
             <artifactId>hummer-common-swagger</artifactId>
         </dependency>
 

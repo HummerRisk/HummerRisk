@@ -3,9 +3,17 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+  <parent>
+    <groupId>com.hummerrisk</groupId>
+    <artifactId>hummerrisk</artifactId>
+    <version>1.0.0</version>
+  </parent>
+
+  <packaging>pom</packaging>
+
   <name>hummer-ui</name>
   <url>https://hummerrisk.com</url>
-  <description>云原生安全平台前端UI</description>
+  <description>hummerrisk云原生安全平台前端UI</description>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.hummerrisk</groupId>
   <artifactId>hummer-ui</artifactId>

@@ -3,7 +3,7 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>com.hummer</groupId>
+        <groupId>com.hummerrisk</groupId>
         <artifactId>hummer-common</artifactId>
         <version>1.0.0</version>
     </parent>
@@ -50,7 +50,7 @@
         <!-- Pagehelper -->
         <dependency>
             <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <artifactId>pagehelper</artifactId>
         </dependency>
 
         <!-- Hibernate Validator -->
@@ -77,12 +77,6 @@
             <artifactId>jjwt</artifactId>
         </dependency>
 
-        <!-- Jaxb -->
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-        </dependency>
-
         <!-- Apache Lang3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -107,15 +101,25 @@
             <artifactId>poi-ooxml</artifactId>
         </dependency>
 
-        <!-- Java Servlet -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-        </dependency>
-
         <!-- Swagger -->
         <dependency>
             <groupId>io.swagger</groupId>
+            <artifactId>swagger-parser</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-models</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
         </dependency>
 
