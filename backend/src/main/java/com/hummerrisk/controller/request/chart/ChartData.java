@@ -1,4 +1,4 @@
-package com.hummerrisk.commons.utils;
+package com.hummerrisk.controller.request.chart;
 
 import io.swagger.annotations.ApiModelProperty;
 import com.fasterxml.jackson.annotation.JsonProperty;

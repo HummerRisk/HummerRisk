@@ -5,7 +5,7 @@ import com.hummerrisk.base.domain.RuleTag;
 import com.hummerrisk.base.mapper.ext.ExtRuleMapper;
 import com.hummerrisk.commons.utils.BeanUtils;
 import com.hummerrisk.commons.utils.CommonBeanFactory;
-import com.hummerrisk.commons.utils.SelectTag;
+import com.hummerrisk.base.domain.SelectTag;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

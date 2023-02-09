@@ -2,7 +2,7 @@ package com.hummerrisk.dto;
 
 
 import com.hummerrisk.base.domain.Rule;
-import com.hummerrisk.commons.utils.SelectTag;
+import com.hummerrisk.base.domain.SelectTag;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

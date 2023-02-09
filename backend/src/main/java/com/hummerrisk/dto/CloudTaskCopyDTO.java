@@ -3,7 +3,7 @@ package com.hummerrisk.dto;
 
 import com.hummerrisk.base.domain.CloudTaskItem;
 import com.hummerrisk.base.domain.Rule;
-import com.hummerrisk.commons.utils.SelectTag;
+import com.hummerrisk.base.domain.SelectTag;
 
 import java.util.LinkedList;
 import java.util.List;

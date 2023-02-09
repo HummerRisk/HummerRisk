@@ -1,7 +1,7 @@
 package com.hummerrisk.base.mapper.ext;
 
 
-import com.hummerrisk.commons.utils.ChartData;
+import com.hummerrisk.controller.request.chart.ChartData;
 import com.hummerrisk.commons.utils.DashboardTarget;
 import com.hummerrisk.dto.HistoryScanDTO;
 

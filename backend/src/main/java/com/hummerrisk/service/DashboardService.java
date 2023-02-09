@@ -10,7 +10,7 @@ import com.hummerrisk.base.mapper.ext.ExtVulnMapper;
 import com.hummerrisk.commons.constants.ParamConstants;
 import com.hummerrisk.commons.constants.TaskConstants;
 import com.hummerrisk.commons.constants.TaskEnum;
-import com.hummerrisk.commons.utils.ChartData;
+import com.hummerrisk.controller.request.chart.ChartData;
 import com.hummerrisk.commons.utils.DashboardTarget;
 import com.hummerrisk.commons.utils.PlatformUtils;
 import com.hummerrisk.controller.request.dashboard.AnslysisVo;

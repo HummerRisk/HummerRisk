@@ -147,7 +147,7 @@
         GROUP BY t.severity
     </select>
 
-    <select id="overall" resultType="com.hummerrisk.commons.utils.ChartData">
+    <select id="overall" resultType="com.hummerrisk.controller.request.chart.ChartData">
         SELECT
             IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,
             IFNULL( sum( t4.resources_sum ), 0 ) AS yAxis2,
@@ -183,7 +183,7 @@
         AND p.type = 'cloud'
     </select>
 
-    <select id="ruleGroup" resultType="com.hummerrisk.commons.utils.ChartData">
+    <select id="ruleGroup" resultType="com.hummerrisk.controller.request.chart.ChartData">
         SELECT
             IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,
             IFNULL( sum( t4.resources_sum ), 0 ) AS yAxis2,
@@ -206,7 +206,7 @@
         </if>
     </select>
 
-    <select id="report" resultType="com.hummerrisk.commons.utils.ChartData">
+    <select id="report" resultType="com.hummerrisk.controller.request.chart.ChartData">
         SELECT
             IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,
             IFNULL( sum( t4.resources_sum ), 0 ) AS yAxis2,
@@ -228,7 +228,7 @@
             yAxis desc
     </select>
 
-    <select id="ruleList" resultType="com.hummerrisk.commons.utils.ChartData">
+    <select id="ruleList" resultType="com.hummerrisk.controller.request.chart.ChartData">
         SELECT
             IFNULL( sum( t2.return_sum ), 0 ) AS yAxis,
             IFNULL( sum( t2.resources_sum ), 0 ) AS yAxis2,
@@ -249,7 +249,7 @@
         </if>
     </select>
 
-    <select id="accountList" resultType="com.hummerrisk.commons.utils.ChartData">
+    <select id="accountList" resultType="com.hummerrisk.controller.request.chart.ChartData">
         SELECT
             IFNULL( sum( t1.return_sum ), 0 ) AS yAxis,
             IFNULL( sum( t1.resources_sum ), 0 ) AS yAxis2,
@@ -271,7 +271,7 @@
         </if>
     </select>
 
-    <select id="vulnList" resultType="com.hummerrisk.commons.utils.ChartData">
+    <select id="vulnList" resultType="com.hummerrisk.controller.request.chart.ChartData">
         SELECT
         IFNULL( sum( t1.return_sum ), 0 ) AS yAxis,
         IFNULL( sum( t1.resources_sum ), 0 ) AS yAxis2,
@@ -293,7 +293,7 @@
         </if>
     </select>
 
-    <select id="vulnRuleList" resultType="com.hummerrisk.commons.utils.ChartData">
+    <select id="vulnRuleList" resultType="com.hummerrisk.controller.request.chart.ChartData">
         SELECT
         IFNULL( sum( t2.return_sum ), 0 ) AS yAxis,
         IFNULL( sum( t2.resources_sum ), 0 ) AS yAxis2,
@@ -314,7 +314,7 @@
         </if>
     </select>
 
-    <select id="vulnOverall" resultType="com.hummerrisk.commons.utils.ChartData">
+    <select id="vulnOverall" resultType="com.hummerrisk.controller.request.chart.ChartData">
         SELECT
             IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,
             IFNULL( sum( t4.resources_sum ), 0 ) AS yAxis2,
@@ -350,7 +350,7 @@
             AND p.type = 'vuln'
     </select>
 
-    <select id="vulnRuleGroup" resultType="com.hummerrisk.commons.utils.ChartData">
+    <select id="vulnRuleGroup" resultType="com.hummerrisk.controller.request.chart.ChartData">
         SELECT
         IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,
         IFNULL( sum( t4.resources_sum ), 0 ) AS yAxis2,
@@ -373,7 +373,7 @@
         </if>
     </select>
 
-    <select id="regionsList" resultType="com.hummerrisk.commons.utils.ChartData">
+    <select id="regionsList" resultType="com.hummerrisk.controller.request.chart.ChartData">
         SELECT
             IFNULL( sum(t2.return_sum), 0 ) AS yAxis,
             IFNULL( sum(t2.resources_sum), 0 ) AS yAxis2,
@@ -485,7 +485,7 @@
           AND p.type = 'vuln'
     </select>
 
-    <select id="countList" resultType="com.hummerrisk.commons.utils.ChartData">
+    <select id="countList" resultType="com.hummerrisk.controller.request.chart.ChartData">
         SELECT
         IFNULL( t.return_sum, 0 ) AS yAxis,
         IFNULL( t.resources_sum, 0 ) AS yAxis2,

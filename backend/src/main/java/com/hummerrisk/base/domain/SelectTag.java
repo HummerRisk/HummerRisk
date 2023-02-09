@@ -1,4 +1,4 @@
-package com.hummerrisk.commons.utils;
+package com.hummerrisk.base.domain;
 
 import java.util.LinkedList;
 import java.util.List;
