@@ -1,4 +1,4 @@
-package com.hummerrisk.commons.utils;
+package com.hummer.common.core.utils;
 
 import org.hyperic.sigar.Sigar;
 import org.slf4j.Logger;

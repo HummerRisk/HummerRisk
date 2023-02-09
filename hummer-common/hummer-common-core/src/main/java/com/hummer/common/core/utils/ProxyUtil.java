@@ -1,4 +1,4 @@
-package com.hummerrisk.commons.utils;
+package com.hummer.common.core.utils;
 
 import com.hummerrisk.base.domain.Proxy;
 import com.hummerrisk.commons.constants.CloudAccountConstants;

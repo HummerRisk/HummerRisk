@@ -1,4 +1,4 @@
-package com.hummerrisk.commons.utils;
+package com.hummer.common.core.utils;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,4 +1,4 @@
-package com.hummerrisk.commons.utils;
+package com.hummer.common.core.utils;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;

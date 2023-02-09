@@ -1,4 +1,4 @@
-package com.hummerrisk.commons.utils;
+package com.hummer.common.core.utils;
 
 import com.hummerrisk.commons.user.SessionUser;
 import org.apache.commons.lang3.StringUtils;

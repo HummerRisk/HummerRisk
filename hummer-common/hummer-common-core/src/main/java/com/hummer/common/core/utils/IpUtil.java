@@ -1,4 +1,4 @@
-package com.hummerrisk.commons.utils;
+package com.hummer.common.core.utils;
 
 import com.hummerrisk.dto.IpDTO;
 import com.hummerrisk.i18n.Translator;

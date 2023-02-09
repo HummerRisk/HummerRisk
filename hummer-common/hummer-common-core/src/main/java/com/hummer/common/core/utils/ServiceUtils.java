@@ -1,6 +1,7 @@
-package com.hummerrisk.commons.utils;
+package com.hummer.common.core.utils;
 
-import com.hummerrisk.controller.request.OrderRequest;
+
+import com.hummer.common.core.domain.OrderRequest;
 
 import java.util.ArrayList;
 import java.util.List;

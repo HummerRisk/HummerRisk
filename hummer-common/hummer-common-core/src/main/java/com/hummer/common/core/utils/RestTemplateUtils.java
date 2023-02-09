@@ -1,4 +1,4 @@
-package com.hummerrisk.commons.utils;
+package com.hummer.common.core.utils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hummerrisk.commons.exception.HRException;

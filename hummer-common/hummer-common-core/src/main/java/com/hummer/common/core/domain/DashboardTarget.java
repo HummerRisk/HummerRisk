@@ -1,6 +1,4 @@
-package com.hummerrisk.commons.utils;
-
-import com.hummerrisk.base.domain.Rule;
+package com.hummer.common.core.domain;
 
 /**
  * @ClassName DashboardTarget

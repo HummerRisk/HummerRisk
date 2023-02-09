@@ -1,4 +1,4 @@
-package com.hummerrisk.commons.exception;
+package com.hummer.common.core.exception;
 
 public class HRException extends RuntimeException {
 

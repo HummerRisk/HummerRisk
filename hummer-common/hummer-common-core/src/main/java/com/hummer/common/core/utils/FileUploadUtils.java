@@ -1,8 +1,8 @@
-package com.hummerrisk.commons.utils;
+package com.hummer.common.core.utils;
 
+import com.hummer.common.core.exception.file.FileNameLengthLimitExceededException;
+import com.hummer.common.core.exception.file.FileSizeLimitExceededException;
 import com.hummerrisk.commons.constants.PackageConstants;
-import com.hummerrisk.commons.exception.FileNameLengthLimitExceededException;
-import com.hummerrisk.commons.exception.FileSizeLimitExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;

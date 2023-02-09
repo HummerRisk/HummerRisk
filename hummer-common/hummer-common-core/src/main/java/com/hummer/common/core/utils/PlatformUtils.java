@@ -1,4 +1,4 @@
-package com.hummerrisk.commons.utils;
+package com.hummer.common.core.utils;
 
 import cn.ucloud.common.client.DefaultUcloudClient;
 import cn.ucloud.common.client.UcloudClient;

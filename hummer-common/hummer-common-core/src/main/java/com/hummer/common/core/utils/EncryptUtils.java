@@ -1,9 +1,9 @@
-package com.hummerrisk.commons.utils;
+package com.hummer.common.core.utils;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EncryptUtils extends CodingUtil {
+public class EncryptUtils extends com.hummer.common.core.utils.CodingUtil {
 
     private static final String secretKey = "www.hummer.co";
     private static final String iv = "1234567890123456";
@@ -28,8 +28,8 @@ public class EncryptUtils extends CodingUtil {
             return null;
         }
         return o.stream()
-                .filter(element -> BeanUtils.getFieldValueByName(attrName, element) != null)
-                .peek(element -> BeanUtils.setFieldValueByName(element, attrName, aesDecrypt(BeanUtils.getFieldValueByName(attrName, element).toString(), secretKey, iv), String.class))
+                .filter(element -> com.hummer.common.core.utils.BeanUtils.getFieldValueByName(attrName, element) != null)
+                .peek(element -> com.hummer.common.core.utils.BeanUtils.setFieldValueByName(element, attrName, aesDecrypt(com.hummer.common.core.utils.BeanUtils.getFieldValueByName(attrName, element).toString(), secretKey, iv), String.class))
                 .collect(Collectors.toList());
     }
 

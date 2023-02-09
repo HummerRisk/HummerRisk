@@ -1,4 +1,4 @@
-package com.hummerrisk.commons.exception;
+package com.hummer.common.core.exception;
 
 /**
  * 文件名大小限制异常类

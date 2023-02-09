@@ -1,4 +1,4 @@
-package com.hummerrisk.commons.exception;
+package com.hummer.common.core.exception;
 
 /**
  * 文件名称超长限制异常类
