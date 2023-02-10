@@ -1,7 +1,5 @@
 package com.hummer.auth.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import com.hummer.common.core.constant.Constants;
 import com.hummer.common.core.constant.SecurityConstants;
 import com.hummer.common.core.utils.ServletUtils;
@@ -9,6 +7,9 @@ import com.hummer.common.core.utils.StringUtils;
 import com.hummer.common.core.utils.ip.IpUtils;
 import com.hummer.system.api.RemoteLogService;
 import com.hummer.system.api.domain.SysLogininfor;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 /**
  * 记录日志方法
@@ -17,7 +18,7 @@ import com.hummer.system.api.domain.SysLogininfor;
  */
 @Component
 public class SysRecordLogService {
-    @Autowired
+    @Resource
     private RemoteLogService remoteLogService;
 
     /**

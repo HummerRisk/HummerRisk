@@ -46,6 +46,12 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <!-- Hummer Common Core-->
+        <dependency>
+            <groupId>com.hummerrisk</groupId>
+            <artifactId>hummer-common-core</artifactId>
+        </dependency>
+
         <!--Common Security-->
         <dependency>
             <groupId>com.hummerrisk</groupId>
@@ -57,6 +63,7 @@
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
         </dependency>
+        <!-- flyway -->
 
         <!-- Mysql Connector -->
         <dependency>

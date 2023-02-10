@@ -1,11 +1,11 @@
 package com.hummer.auth.controller;
 
-import com.hummerrisk.commons.constants.SsoMode;
-import com.hummerrisk.commons.constants.UserSource;
-import com.hummerrisk.commons.user.SessionUser;
+import com.hummer.auth.service.UserService;
+import com.hummer.common.core.constant.SsoMode;
+import com.hummer.common.core.constant.UserSource;
+import com.hummer.common.core.user.SessionUser;
 import com.hummer.common.core.utils.SessionUtils;
-import com.hummerrisk.controller.request.LoginRequest;
-import com.hummerrisk.service.UserService;
+import com.hummer.common.core.domain.request.LoginRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.context.i18n.LocaleContextHolder;

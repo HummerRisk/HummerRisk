@@ -1,6 +1,5 @@
-package com.hummerrisk.listener;
+package com.hummer.auth.listener;
 
-import com.hummerrisk.service.impl.ExecEngineFactoryImp;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -8,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class AppStartListener extends ExecEngineFactoryImp implements ApplicationListener<ApplicationReadyEvent> {
+public class AppStartListener implements ApplicationListener<ApplicationReadyEvent> {
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
