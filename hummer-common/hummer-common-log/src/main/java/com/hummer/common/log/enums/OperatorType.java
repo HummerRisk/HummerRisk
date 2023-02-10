@@ -2,11 +2,10 @@ package com.hummer.common.log.enums;
 
 /**
  * 操作人类别
- * 
+ *
  * @author harris1943
  */
-public enum OperatorType
-{
+public enum OperatorType {
     /**
      * 其它
      */
