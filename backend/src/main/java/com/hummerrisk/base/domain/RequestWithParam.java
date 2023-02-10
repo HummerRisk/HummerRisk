@@ -1,4 +1,4 @@
-package com.hummerrisk.commons.utils;
+package com.hummerrisk.base.domain;
 
 import com.hummerrisk.proxy.Request;
 

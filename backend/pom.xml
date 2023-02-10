@@ -447,10 +447,12 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-auditmanager</artifactId>
+            <version>1.12.267</version>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-cloudtrail</artifactId>
+            <version>1.12.267</version>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
@@ -849,7 +851,7 @@
         </dependency>
         <!-- VMware -->
 
-        <!-- Google K8s -->
+        <!-- Google cloud -->
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-core</artifactId>
@@ -963,7 +965,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- Google K8s -->
+        <!-- Google cloud -->
 
         <!-- Kubernetes -->
         <dependency>
