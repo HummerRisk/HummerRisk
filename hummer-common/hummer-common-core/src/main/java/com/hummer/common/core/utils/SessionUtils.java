@@ -11,7 +11,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
-import static com.hummerrisk.commons.constants.SessionConstants.ATTR_USER;
+import static com.hummer.common.core.constant.SessionConstants.ATTR_USER;
 
 public class SessionUtils {
 

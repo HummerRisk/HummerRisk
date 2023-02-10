@@ -1,4 +1,4 @@
-package com.hummerrisk.commons.constants;
+package com.hummer.common.core.constant;
 
 public class UserStatus {
     public static final String NORMAL = "1";

@@ -36,7 +36,7 @@ import com.huaweicloud.sdk.iam.v3.model.ShowCredential;
 import com.hummerrisk.base.domain.AccountWithBLOBs;
 import com.hummerrisk.base.domain.CloudNative;
 import com.hummerrisk.base.domain.Proxy;
-import com.hummerrisk.commons.constants.*;
+import com.hummer.common.core.constant.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.exception.PluginException;
 import com.hummerrisk.i18n.Translator;

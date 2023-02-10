@@ -4,7 +4,7 @@ import client.iam.getuser.v20151101.GetUserClient;
 import client.iam.listusers.v20151101.ListUsersClient;
 import client.trade.describeinstances.v20200114.DescribeInstancesClient;
 import com.google.gson.Gson;
-import com.hummerrisk.proxy.Request;
+import com.hummer.common.core.proxy.Request;
 import common.Credential;
 
 public class KsyunRequest extends Request {

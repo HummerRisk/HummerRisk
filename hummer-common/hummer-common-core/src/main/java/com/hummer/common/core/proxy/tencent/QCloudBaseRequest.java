@@ -1,9 +1,9 @@
 package com.hummer.common.core.proxy.tencent;
 
 import com.google.gson.Gson;
-import com.hummerrisk.base.domain.Proxy;
-import com.hummerrisk.commons.exception.HRException;
-import com.hummerrisk.proxy.Request;
+import com.hummer.common.core.domain.Proxy;
+import com.hummer.common.core.exception.HRException;
+import com.hummer.common.core.proxy.Request;
 import com.tencentcloudapi.common.Credential;
 import com.tencentcloudapi.common.profile.ClientProfile;
 import com.tencentcloudapi.common.profile.HttpProfile;

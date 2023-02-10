@@ -1,9 +1,9 @@
 package com.hummer.common.core.proxy.azure;
 
 import com.google.gson.Gson;
-import com.hummerrisk.base.domain.Proxy;
-import com.hummerrisk.commons.exception.PluginException;
-import com.hummerrisk.proxy.Request;
+import com.hummer.common.core.domain.Proxy;
+import com.hummer.common.core.exception.PluginException;
+import com.hummer.common.core.proxy.Request;
 
 public class AzureBaseRequest extends Request {
 	private AzureCredential azureCredential;

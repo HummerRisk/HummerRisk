@@ -1,7 +1,7 @@
 package com.hummer.common.core.proxy.k8s;
 
-import com.hummerrisk.base.domain.CloudNativeSourceImage;
-import com.hummerrisk.base.domain.CloudNativeSourceWithBLOBs;
+import com.hummer.common.core.domain.CloudNativeSourceImage;
+import com.hummer.common.core.domain.CloudNativeSourceWithBLOBs;
 
 import java.util.ArrayList;
 import java.util.List;

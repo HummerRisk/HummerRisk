@@ -1,6 +1,6 @@
 package com.hummer.common.core.proxy.openstack;
 
-import com.hummerrisk.proxy.Request;
+import com.hummer.common.core.proxy.Request;
 import org.apache.commons.collections.CollectionUtils;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.api.types.ServiceType;

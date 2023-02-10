@@ -1,7 +1,8 @@
 package com.hummer.common.core.proxy.server;
 
-import com.hummerrisk.base.domain.Proxy;
-import com.hummerrisk.commons.utils.LogUtil;
+import com.hummer.common.core.domain.Proxy;
+import com.hummer.common.core.domain.Server;
+import com.hummer.common.core.utils.LogUtil;
 import io.cloudsoft.winrm4j.client.WinRmClientContext;
 import io.cloudsoft.winrm4j.winrm.WinRmTool;
 import io.cloudsoft.winrm4j.winrm.WinRmToolResponse;

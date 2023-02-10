@@ -1,8 +1,8 @@
 package com.hummer.common.core.proxy.openstack;
 
 import com.google.gson.Gson;
-import com.hummerrisk.commons.exception.PluginException;
-import com.hummerrisk.proxy.Request;
+import com.hummer.common.core.exception.PluginException;
+import com.hummer.common.core.proxy.Request;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.http.HttpRequestInterceptor;
 import org.openstack4j.api.OSClient.OSClientV3;

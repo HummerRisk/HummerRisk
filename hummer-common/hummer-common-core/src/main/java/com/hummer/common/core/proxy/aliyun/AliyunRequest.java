@@ -8,8 +8,8 @@ import com.aliyuncs.http.HttpClientType;
 import com.aliyuncs.http.clients.ApacheHttpClient;
 import com.aliyuncs.profile.DefaultProfile;
 import com.google.gson.Gson;
-import com.hummerrisk.base.domain.Proxy;
-import com.hummerrisk.proxy.Request;
+import com.hummer.common.core.domain.Proxy;
+import com.hummer.common.core.proxy.Request;
 
 import java.io.IOException;
 

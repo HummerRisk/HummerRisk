@@ -1,7 +1,7 @@
 package com.hummer.common.core.proxy.tencent;
 
 
-import com.hummerrisk.base.domain.Proxy;
+import com.hummer.common.core.domain.Proxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,8 +1,8 @@
 package com.hummer.common.core.proxy.openshift;
 
 import com.google.gson.Gson;
-import com.hummerrisk.base.domain.Proxy;
-import com.hummerrisk.proxy.Request;
+import com.hummer.common.core.domain.Proxy;
+import com.hummer.common.core.proxy.Request;
 import io.fabric8.openshift.client.DefaultOpenShiftClient;
 import io.fabric8.openshift.client.OpenShiftClient;
 import io.fabric8.openshift.client.OpenShiftConfig;

@@ -1,7 +1,7 @@
 package com.hummer.common.core.proxy.gcp;
 
 import com.google.gson.Gson;
-import com.hummerrisk.proxy.Request;
+import com.hummer.common.core.proxy.Request;
 
 public class GcpBaseRequest extends Request {
 

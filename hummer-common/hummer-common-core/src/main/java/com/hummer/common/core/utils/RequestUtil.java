@@ -1,8 +1,8 @@
 package com.hummer.common.core.utils;
 
 import com.google.gson.Gson;
-import com.hummerrisk.proxy.Request;
-import com.hummerrisk.proxy.huawei.HuaweiCloudCredential;
+import com.hummer.common.core.proxy.Request;
+import com.hummer.common.core.proxy.huawei.HuaweiCloudCredential;
 
 /**
  * @author harris

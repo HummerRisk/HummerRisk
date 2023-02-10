@@ -1,8 +1,8 @@
 package com.hummer.common.core.proxy.aliyun;
 
 
-import com.hummerrisk.base.domain.Proxy;
-import com.hummerrisk.commons.constants.CloudAccountConstants;
+import com.hummer.common.core.domain.Proxy;
+import com.hummer.common.core.constant.CloudAccountConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

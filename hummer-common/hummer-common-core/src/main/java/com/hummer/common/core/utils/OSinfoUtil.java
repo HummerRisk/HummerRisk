@@ -1,6 +1,6 @@
 package com.hummer.common.core.utils;
 
-import com.hummerrisk.commons.constants.EPlatform;
+import com.hummer.common.core.constant.EPlatform;
 
 /**
  * @ClassName OSinfoUtil

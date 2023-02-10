@@ -1,4 +1,4 @@
-package com.hummerrisk.commons.constants;
+package com.hummer.common.core.constant;
 
 public enum ResourceTypeConstants {
     USER,

@@ -1,7 +1,7 @@
 package com.hummer.common.core.proxy.jdcloud;
 
 import com.google.gson.Gson;
-import com.hummerrisk.proxy.Request;
+import com.hummer.common.core.proxy.Request;
 import com.jdcloud.sdk.auth.CredentialsProvider;
 import com.jdcloud.sdk.auth.StaticCredentialsProvider;
 import com.jdcloud.sdk.http.HttpRequestConfig;

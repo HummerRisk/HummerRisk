@@ -2,8 +2,8 @@ package com.hummer.common.core.proxy.baidu;
 
 
 import com.baidubce.services.bcc.BccClientConfiguration;
-import com.hummerrisk.base.domain.Proxy;
-import com.hummerrisk.commons.constants.CloudAccountConstants;
+import com.hummer.common.core.constant.CloudAccountConstants;
+import com.hummer.common.core.domain.Proxy;
 import org.apache.commons.lang3.StringUtils;
 
 

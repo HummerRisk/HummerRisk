@@ -1,6 +1,6 @@
 package com.hummer.common.core.proxy.server;
 
-import com.hummerrisk.commons.utils.LogUtil;
+import com.hummer.common.core.utils.LogUtil;
 import org.hyperic.sigar.*;
 
 import java.io.BufferedReader;
@@ -11,7 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
-public class Server {
+public class ServerOs {
 
     private static final String osName = System.getProperty("os.name");
 

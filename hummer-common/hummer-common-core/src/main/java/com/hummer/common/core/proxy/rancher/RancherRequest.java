@@ -1,8 +1,8 @@
 package com.hummer.common.core.proxy.rancher;
 
 import com.google.gson.Gson;
-import com.hummerrisk.base.domain.Proxy;
-import com.hummerrisk.proxy.Request;
+import com.hummer.common.core.domain.Proxy;
+import com.hummer.common.core.proxy.Request;
 import io.kubernetes.client.openapi.ApiClient;
 
 import java.io.IOException;

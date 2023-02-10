@@ -1,7 +1,7 @@
 package com.hummer.common.core.proxy.code;
 
 import com.google.gson.Gson;
-import com.hummerrisk.proxy.Request;
+import com.hummer.common.core.proxy.Request;
 
 import java.io.IOException;
 

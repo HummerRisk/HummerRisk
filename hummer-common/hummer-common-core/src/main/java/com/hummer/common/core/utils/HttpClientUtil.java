@@ -1,7 +1,7 @@
 package com.hummer.common.core.utils;
 
 import com.hummer.common.core.utils.imp.SSLSocketFactoryImp;
-import com.hummerrisk.commons.constants.CloudNativeConstants;
+import com.hummer.common.core.constant.CloudNativeConstants;
 import okhttp3.*;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;

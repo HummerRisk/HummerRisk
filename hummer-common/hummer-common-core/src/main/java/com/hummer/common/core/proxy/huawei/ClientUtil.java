@@ -12,11 +12,11 @@ import com.huaweicloud.sdk.iam.v3.IamClient;
 import com.huaweicloud.sdk.iam.v3.model.*;
 import com.huaweicloud.sdk.ims.v2.ImsClient;
 import com.huaweicloud.sdk.vpc.v2.VpcClient;
-import com.hummerrisk.base.domain.Proxy;
-import com.hummerrisk.commons.exception.HRException;
-import com.hummerrisk.commons.exception.PluginException;
-import com.hummerrisk.commons.utils.*;
-import com.hummerrisk.proxy.Request;
+import com.hummer.common.core.domain.Proxy;
+import com.hummer.common.core.exception.HRException;
+import com.hummer.common.core.exception.PluginException;
+import com.hummer.common.core.proxy.Request;
+import com.hummer.common.core.utils.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 

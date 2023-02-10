@@ -1,6 +1,6 @@
 package com.hummer.common.core.proxy.vsphere;
 
-import com.hummerrisk.commons.exception.PluginException;
+import com.hummer.common.core.exception.PluginException;
 import com.vmware.vim25.InvalidProperty;
 import com.vmware.vim25.mo.Datacenter;
 import com.vmware.vim25.mo.InventoryNavigator;
