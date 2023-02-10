@@ -234,72 +234,72 @@
             <!-- 核心模块 -->
             <dependency>
                 <groupId>com.hummerrisk</groupId>
-                <artifactId>hummerrisk-common-core</artifactId>
-                <version>${hummer.version}</version>
+                <artifactId>hummer-common-core</artifactId>
+                <version>${hummerrisk.version}</version>
             </dependency>
             <!-- 核心模块 -->
 
             <!-- 接口模块 -->
             <dependency>
                 <groupId>com.hummerrisk</groupId>
-                <artifactId>hummerrisk-common-swagger</artifactId>
-                <version>${hummer.version}</version>
+                <artifactId>hummer-common-swagger</artifactId>
+                <version>${hummerrisk.version}</version>
             </dependency>
             <!-- 接口模块 -->
 
             <!-- 安全模块 -->
             <dependency>
                 <groupId>com.hummerrisk</groupId>
-                <artifactId>hummerrisk-common-security</artifactId>
-                <version>${hummer.version}</version>
+                <artifactId>hummer-common-security</artifactId>
+                <version>${hummerrisk.version}</version>
             </dependency>
             <!-- 安全模块 -->
 
             <!-- 权限范围 -->
             <dependency>
                 <groupId>com.hummerrisk</groupId>
-                <artifactId>hummerrisk-common-datascope</artifactId>
-                <version>${hummer.version}</version>
+                <artifactId>hummer-common-datascope</artifactId>
+                <version>${hummerrisk.version}</version>
             </dependency>
             <!-- 权限范围 -->
 
             <!-- 多数据源 -->
             <dependency>
                 <groupId>com.hummerrisk</groupId>
-                <artifactId>hummerrisk-common-datasource</artifactId>
-                <version>${hummer.version}</version>
+                <artifactId>hummer-common-datasource</artifactId>
+                <version>${hummerrisk.version}</version>
             </dependency>
             <!-- 多数据源 -->
 
             <!-- 分布式事务 -->
             <dependency>
                 <groupId>com.hummerrisk</groupId>
-                <artifactId>hummerrisk-common-seata</artifactId>
-                <version>${hummer.version}</version>
+                <artifactId>hummer-common-seata</artifactId>
+                <version>${hummerrisk.version}</version>
             </dependency>
             <!-- 分布式事务 -->
 
             <!-- 日志记录 -->
             <dependency>
                 <groupId>com.hummerrisk</groupId>
-                <artifactId>hummerrisk-common-log</artifactId>
-                <version>${hummer.version}</version>
+                <artifactId>hummer-common-log</artifactId>
+                <version>${hummerrisk.version}</version>
             </dependency>
             <!-- 日志记录 -->
 
             <!-- 缓存服务 -->
             <dependency>
                 <groupId>com.hummerrisk</groupId>
-                <artifactId>hummerrisk-common-redis</artifactId>
-                <version>${hummer.version}</version>
+                <artifactId>hummer-common-redis</artifactId>
+                <version>${hummerrisk.version}</version>
             </dependency>
             <!-- 缓存服务 -->
 
             <!-- 系统接口 -->
             <dependency>
                 <groupId>com.hummerrisk</groupId>
-                <artifactId>hummerrisk-api-system</artifactId>
-                <version>${hummer.version}</version>
+                <artifactId>hummer-api-system</artifactId>
+                <version>${hummerrisk.version}</version>
             </dependency>
             <!-- 系统接口 -->
 
@@ -859,26 +859,26 @@
         <module>hummer-modules</module>
         <module>hummer-api</module>
         <module>hummer-common</module>
-    </modules><build>
-    <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-                <source>1.8</source>
-                <target>1.8</target>
-            </configuration>
-        </plugin>
-    </plugins>
-</build>
+    </modules>
 
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <repositories>
         <repository>
             <id>hummer</id>
             <name>Hummer</name>
-            <url>https://registry.hummercloud.com/repository/maven-public/</url>
+            <url>http://81.70.253.80:8081/repository/maven-public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -887,18 +887,50 @@
             </snapshots>
         </repository>
         <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/libs-milestone</url>
+            <id>sonatype-nexus-staging</id>
+            <name>Sonatype Nexus Staging</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
             <snapshots>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
             </snapshots>
         </repository>
         <repository>
-            <id>jcenter-snapshots</id>
-            <name>jcenter</name>
-            <url>https://jcenter.bintray.com/</url>
+            <id>com.springsource.repository.bundles.release</id>
+            <name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
+            <url>http://repository.springsource.com/maven/bundles/release</url>
+        </repository>
+        <repository>
+            <id>com.springsource.repository.bundles.external</id>
+            <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+            <url>http://repository.springsource.com/maven/bundles/external</url>
+        </repository>
+        <repository>
+            <id>com.springsource.repository.bundles.milestone</id>
+            <name>SpringSource Enterprise Bundle Repository - External Bundle Milestones</name>
+            <url>http://repository.springsource.com/maven/bundles/milestone</url>
         </repository>
     </repositories>
-
+    <pluginRepositories>
+        <pluginRepository>
+            <id>hummer</id>
+            <name>hummer</name>
+            <url>http://81.70.253.80:8081/repository/hummer-public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+    <distributionManagement>
+        <repository>
+            <id>hummer</id>
+            <name>hummer</name>
+            <url>http://81.70.253.80:8081/repository/hummer-public/</url>
+        </repository>
+    </distributionManagement>
 </project>
