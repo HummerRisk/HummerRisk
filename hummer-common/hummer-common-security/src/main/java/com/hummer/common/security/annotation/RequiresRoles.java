@@ -7,13 +7,12 @@ import java.lang.annotation.Target;
 
 /**
  * 角色认证：必须具有指定角色标识才能进入该方法
- * 
+ *
  * @author harris1943
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.TYPE })
-public @interface RequiresRoles
-{
+@Target({ElementType.METHOD, ElementType.TYPE})
+public @interface RequiresRoles {
     /**
      * 需要校验的角色标识
      */
