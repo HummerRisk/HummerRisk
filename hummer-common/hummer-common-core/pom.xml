@@ -228,10 +228,26 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-ec2</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>aws-java-sdk-core</artifactId>
+                    <groupId>com.amazonaws</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-auditmanager</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>joda-time</artifactId>
+                    <groupId>joda-time</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
@@ -403,20 +419,44 @@
         </dependency>
         <!-- VMware -->
 
-        <!-- Google K8s -->
+        <!-- Google gcp -->
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>google-auth-library-credentials</artifactId>
+                    <groupId>com.google.auth</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>google-auth-library-oauth2-http</artifactId>
+                    <groupId>com.google.auth</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jsr305</artifactId>
+                    <groupId>com.google.code.findbugs</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-storage</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>google-auth-library-credentials</artifactId>
+                    <groupId>com.google.auth</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>google-auth-library-oauth2-http</artifactId>
+                    <groupId>com.google.auth</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-cloudresourcemanager</artifactId>
         </dependency>
-        <!-- Google K8s -->
+        <!-- Google gcp -->
 
         <!-- Kubernetes -->
         <dependency>
@@ -473,6 +513,16 @@
         <dependency>
             <groupId>io.fabric8</groupId>
             <artifactId>openshift-client</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>openshift-client-api</artifactId>
+                    <groupId>io.fabric8</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>openshift-client-api</artifactId>
         </dependency>
         <!-- OpenShift -->
 
@@ -535,6 +585,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- thymeleaf -->
 
@@ -549,6 +605,24 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jetty</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jakarta.servlet-api</artifactId>
+                    <groupId>jakarta.servlet</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jetty-jakarta-servlet-api</artifactId>
+                    <groupId>org.eclipse.jetty.toolchain</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.websocket</groupId>
+            <artifactId>jakarta.websocket-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
         <!-- jetty -->
 
