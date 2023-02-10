@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummer.common.core.mapper.ext.ExtCloudResourceSyncMapper">
+    <resultMap id="BaseResultMap" type="com.hummer.common.core.domain.CloudResourceSync">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="resource_types" jdbcType="VARCHAR" property="resourceTypes" />
+        <result column="resources_sum" jdbcType="BIGINT" property="resourcesSum" />
+    </resultMap>
+
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.pluginId != null'>
+            and t.plugin_id
+            <include refid="condition">
+                <property name="object" value="${condition}.pluginId"/>
+            </include>
+        </if>
+        <if test='${condition}.accountId != null'>
+            and t.account_id
+            <include refid="condition">
+                <property name="object" value="${condition}.accountId"/>
+            </include>
+        </if>
+        <if test='${condition}.pluginName != null'>
+            and t.plugin_name
+            <include refid="condition">
+                <property name="object" value="${condition}.pluginName"/>
+            </include>
+        </if>
+        <if test='${condition}.resourceTypes != null'>
+            and t.resource_types
+            <include refid="condition">
+                <property name="object" value="${condition}.resourceTypes"/>
+            </include>
+        </if>
+        <if test='${condition}.createTime != null'>
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="selectByRequest" resultMap="BaseResultMap">
+        select t.*
+        from cloud_resource_sync t
+        join cloud_account t1 on t.account_id = t1.id
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                </include>
+            </if>
+            <if test="request.accountName != null and request.accountName != ''">
+                and t1.name like CONCAT('%', #{request.accountName},'%')
+            </if>
+            <if test="request.resourceTypes != null and request.resourceTypes != ''">
+                and t.resource_types like CONCAT('%', #{request.resourceTypes},'%')
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+
+    <resultMap id="D3BaseResultMap" type="com.hummer.common.core.domain.request.sync.CloudTopology">
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <collection property="children" ofType="com.hummer.common.core.domain.request.sync.Cloud" javaType="list" select="selectCloudAccount" column="name">
+        </collection>
+    </resultMap>
+
+    <resultMap id="CloudBaseResultMap" type="com.hummer.common.core.domain.request.sync.Cloud">
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="accountId" jdbcType="VARCHAR" property="accountId" />
+        <collection property="children" ofType="com.hummer.common.core.domain.request.sync.Region" javaType="list"
+                    select="selectRegion" column="accountId">
+        </collection>
+    </resultMap>
+
+    <resultMap id="RegionBaseResultMap" type="com.hummer.common.core.domain.request.sync.Region">
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="regionId" jdbcType="VARCHAR" property="regionId" />
+        <result column="accountId" jdbcType="VARCHAR" property="accountId" />
+        <collection property="children" ofType="com.hummer.common.core.domain.request.sync.ResourceType" javaType="list"
+                    select="selectResourceType" column="{regionId=regionId, accountId=accountId}">
+        </collection>
+    </resultMap>
+
+    <resultMap id="ResourceBaseResultMap" type="com.hummer.common.core.domain.request.sync.ResourceType">
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="regionId" jdbcType="VARCHAR" property="regionId" />
+        <result column="accountId" jdbcType="VARCHAR" property="accountId" />
+        <result column="resourceType" jdbcType="VARCHAR" property="resourceType" />
+        <result column="value" jdbcType="INTEGER" property="value" />
+        <collection property="children" ofType="com.hummer.common.core.domain.request.sync.Resource" javaType="list"
+                    select="selectResource" column="{regionId=regionId, accountId=accountId, resourceType=resourceType}">
+            <result column="name" jdbcType="VARCHAR" property="name" />
+            <result column="value" jdbcType="INTEGER" property="value" />
+        </collection>
+    </resultMap>
+
+    <select id="cloudTopology" resultMap="D3BaseResultMap">
+        select 'Cloud' as name
+    </select>
+
+    <select id="selectCloudAccount" resultMap="CloudBaseResultMap">
+        select
+        CONCAT('云账号: ', t1.name, '(共',
+         (
+           select count(t1.id) from cloud_resource_item t1
+           where t1.account_id = t.account_id
+         ), ' 个资源)'
+        ) as name,
+        t1.id as accountId
+        from cloud_resource_item t
+        join cloud_account t1 on t.account_id = t1.id
+        group by t.account_id
+    </select>
+
+    <select id="selectRegion" resultMap="RegionBaseResultMap">
+        select
+        CONCAT('区域: ', t.region_name, '(共',
+         (
+           select count(t1.id) from cloud_resource_item t1
+           where t1.account_id = t.account_id and t1.region_id = t.region_id
+         ), ' 个资源)'
+        ) as name,
+        t.account_id as accountId,
+        t.region_id as regionId
+        from cloud_resource_item t
+        where t.account_id = #{accountId}
+        group by t.region_id, t.region_name, t.account_id
+    </select>
+
+    <select id="selectResourceType" resultMap="ResourceBaseResultMap">
+        select
+        CONCAT('资源类型: ', t.resource_type, '(共',
+           (
+               select count(t1.id) from cloud_resource_item t1
+               where t1.account_id = t.account_id and t1.region_id = t.region_id and t1.resource_type = t.resource_type
+           ), ' 个资源)'
+        ) as name,
+        t.account_id as accountId,
+        t.region_id as regionId,
+        t.resource_type as resourceType
+        from cloud_resource_item t
+        where t.region_id = #{regionId} and t.account_id = #{accountId}
+        group by t.resource_type, t.region_id, t.account_id
+    </select>
+
+    <select id="selectResource" resultType="com.hummer.common.core.domain.request.sync.Resource">
+        select
+        CASE
+            WHEN t.hummer_id IN (SELECT t1.hummer_id FROM resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type)
+            THEN CONCAT('(有安全合规风险)资源标识:', t.hummer_id)
+            ELSE CONCAT('资源标识:', t.hummer_id)
+        END AS name,
+        CASE
+            WHEN t.hummer_id IN (SELECT t1.hummer_id FROM resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type)
+            THEN (SELECT count(t1.hummer_id) FROM resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type) * 2
+            ELSE 1
+        END AS value
+        from cloud_resource_item t
+        where t.resource_type = #{resourceType} and t.region_id = #{regionId} and t.account_id = #{accountId}
+    </select>
+</mapper>

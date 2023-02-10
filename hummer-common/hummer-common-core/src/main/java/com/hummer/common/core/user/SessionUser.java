@@ -1,6 +1,5 @@
-package com.hummerrisk.commons.user;
+package com.hummer.common.core.user;
 
-import com.hummerrisk.dto.UserDTO;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;

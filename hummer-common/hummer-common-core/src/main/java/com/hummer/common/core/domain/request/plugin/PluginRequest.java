@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.plugin;
 
-import com.hummerrisk.base.domain.Plugin;
+import com.hummer.common.core.domain.Plugin;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Map;

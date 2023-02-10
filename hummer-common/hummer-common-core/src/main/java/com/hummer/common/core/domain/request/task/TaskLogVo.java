@@ -1,7 +1,7 @@
 package com.hummer.common.core.domain.request.task;
 
-import com.hummerrisk.base.domain.TaskItemResource;
-import com.hummerrisk.base.domain.TaskItemResourceLog;
+import com.hummer.common.core.domain.TaskItemResource;
+import com.hummer.common.core.domain.TaskItemResourceLog;
 
 import java.util.List;
 

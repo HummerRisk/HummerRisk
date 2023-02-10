@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.fs;
 
-import com.hummerrisk.base.domain.FileSystem;
+import com.hummer.common.core.domain.FileSystem;
 
 import java.util.Map;
 

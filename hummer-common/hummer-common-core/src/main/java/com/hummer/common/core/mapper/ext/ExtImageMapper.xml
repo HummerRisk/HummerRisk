@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummer.common.core.mapper.ext.ExtImageMapper">
+
+    <resultMap id="ImageMap" type="com.hummer.common.core.dto.ImageDTO"
+               extends="com.hummer.common.core.mapper.ImageMapper.BaseResultMap">
+        <result column="user" property="user"/>
+        <result column="imageRepoName" property="imageRepoName"/>
+    </resultMap>
+
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.name != null and (${name} == null or ${name} == "")'>
+            and t.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test="${condition}.imageUrl != null">
+            and t.image_rul
+            <include refid="condition">
+                <property name="object" value="${condition}.imageUrl"/>
+            </include>
+        </if>
+        <if test="${condition}.updateTime != null">
+            and t.update_time
+            <include refid="condition">
+                <property name="object" value="${condition}.updateTime"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+        <if test="${condition}.status != null">
+            and t.status
+            <include refid="condition">
+                <property name="object" value="${condition}.status"/>
+            </include>
+        </if>
+        <if test="${condition}.creator != null">
+            and user.id
+            <include refid="condition">
+                <property name="object" value="${condition}.creator"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="imageList" resultMap="ImageMap">
+        select
+        t.*,
+        r.name as imageRepoName,
+        user.name as userName
+        from image as t
+        left join image_repo r on t.repo_id = r.id
+        left join user on t.creator = user.id
+        join sbom_version t1 on t.sbom_version_id = t1.id
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.repo != null and request.repo != ''">
+                and LOWER(t.image_url) like CONCAT('%', LOWER(#{request.repo}),'%') or LOWER(t.image_tag) like CONCAT('%', LOWER(#{request.repo}),'%') or LOWER(t.path) like CONCAT('%', LOWER(#{request.repo}),'%')
+            </if>
+            <if test="request.imageRepoName != null and request.imageRepoName != ''">
+                and LOWER(r.name) like CONCAT('%', LOWER(#{request.imageRepoName}),'%')
+            </if>
+            <if test="request.status != null and request.status != ''">
+                and t.status = #{request.status}
+            </if>
+        </where>
+        order by t.update_time desc
+    </select>
+
+    <select id="topInfo" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT *
+        from (
+              (SELECT IFNULL(count(*), 0) as images from image) as images,
+              (SELECT IFNULL(count(t.id), 0) as critical from image_result_item t join image_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'critical') as critical,
+              (SELECT IFNULL(count(t.id), 0) as high from image_result_item t join image_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'high') as high,
+              (SELECT IFNULL(count(t.id), 0) as medium from image_result_item t join image_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'medium') as medium,
+              (SELECT IFNULL(count(t.id), 0) as low from image_result_item t join image_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'low') as low,
+              (SELECT IFNULL(count(t.id), 0) as unknown from image_result_item t join image_result t1 on t.result_id = t1.id where LOWER(t.severity) = 'unknown') as unknown
+                 )
+    </select>
+
+    <select id="imageRepoChart" resultType="java.util.Map">
+        SELECT
+            concat(t.name, ' (', (SELECT IFNULL(count(t1.id), 0) from image_repo_item t1 where t1.repo_id = t.id), ')') as 'name',
+            (SELECT IFNULL(count(t1.id), 0) as 'value' from image_repo_item t1 where t1.repo_id = t.id) as 'value'
+        FROM image_repo as t
+        ORDER BY t.update_time DESC
+        Limit 10;
+    </select>
+
+    <select id="severityChart" resultType="java.util.Map">
+        SELECT
+            t.name as 'product',
+            (SELECT IFNULL(count(t1.id), 0) as Critical from image_result_item t1 where t1.result_id = t.id and LOWER(t1.severity) = 'critical') as Critical,
+            (SELECT IFNULL(count(t1.id), 0) as High from image_result_item t1 where t1.result_id = t.id and LOWER(t1.severity) = 'high') as High,
+            (SELECT IFNULL(count(t1.id), 0) as Medium from image_result_item t1 where t1.result_id = t.id and LOWER(t1.severity) = 'medium') as Medium,
+            (SELECT IFNULL(count(t1.id), 0) as Low from image_result_item t1 where t1.result_id = t.id and LOWER(t1.severity) = 'low') as Low,
+            (SELECT IFNULL(count(t1.id), 0) as Unknown from image_result_item t1 where t1.result_id = t.id and LOWER(t1.severity) = 'unknown') as Unknown
+        FROM image_result as t
+        ORDER BY t.update_time DESC
+            Limit 10;
+    </select>
+
+</mapper>

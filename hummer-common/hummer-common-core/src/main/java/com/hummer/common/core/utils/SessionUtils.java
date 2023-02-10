@@ -1,6 +1,6 @@
 package com.hummer.common.core.utils;
 
-import com.hummerrisk.commons.user.SessionUser;
+import com.hummer.common.core.user.SessionUser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;

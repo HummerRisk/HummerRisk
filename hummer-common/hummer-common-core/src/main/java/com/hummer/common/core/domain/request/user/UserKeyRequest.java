@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.user;
 
-import com.hummerrisk.base.domain.UserKey;
+import com.hummer.common.core.domain.UserKey;
 
 import java.util.Map;
 

@@ -1,7 +1,7 @@
 package com.hummer.common.core.domain.request.k8s;
 
 
-import com.hummerrisk.base.domain.CloudNativeResult;
+import com.hummer.common.core.domain.CloudNativeResult;
 
 import java.util.Map;
 

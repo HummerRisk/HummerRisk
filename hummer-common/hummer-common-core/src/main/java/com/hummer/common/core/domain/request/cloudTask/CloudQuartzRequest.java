@@ -1,7 +1,7 @@
 package com.hummer.common.core.domain.request.cloudTask;
 
 
-import com.hummerrisk.base.domain.CloudAccountQuartzTask;
+import com.hummer.common.core.domain.CloudAccountQuartzTask;
 
 import java.util.Map;
 

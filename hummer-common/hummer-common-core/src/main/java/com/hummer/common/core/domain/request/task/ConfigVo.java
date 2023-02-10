@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.task;
 
-import com.hummerrisk.base.domain.CloudNativeConfig;
+import com.hummer.common.core.domain.CloudNativeConfig;
 
 
 public class ConfigVo extends CloudNativeConfig {

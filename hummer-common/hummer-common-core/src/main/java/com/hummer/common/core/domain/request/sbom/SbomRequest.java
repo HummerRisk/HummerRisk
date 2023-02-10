@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.sbom;
 
-import com.hummerrisk.base.domain.Sbom;
+import com.hummer.common.core.domain.Sbom;
 
 import java.util.Map;
 

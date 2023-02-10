@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.task;
 
-import com.hummerrisk.base.domain.Account;
+import com.hummer.common.core.domain.Account;
 
 
 public class AccountVo extends Account {

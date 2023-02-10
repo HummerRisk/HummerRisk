@@ -1,7 +1,7 @@
 package com.hummer.common.core.utils;
 
-import com.hummerrisk.dto.IpDTO;
-import com.hummerrisk.i18n.Translator;
+import com.hummer.common.core.dto.IpDTO;
+import com.hummer.common.core.i18n.Translator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.util.SubnetUtils;

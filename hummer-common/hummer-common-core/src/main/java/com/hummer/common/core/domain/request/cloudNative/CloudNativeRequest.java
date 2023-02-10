@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.cloudNative;
 
-import com.hummerrisk.commons.utils.FuzzyQuery;
+import com.hummer.common.core.utils.FuzzyQuery;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Map;

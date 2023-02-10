@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.cloudNative;
 
-import com.hummerrisk.base.domain.CloudNativeSourceSyncLogWithBLOBs;
+import com.hummer.common.core.domain.CloudNativeSourceSyncLogWithBLOBs;
 
 import java.util.Map;
 

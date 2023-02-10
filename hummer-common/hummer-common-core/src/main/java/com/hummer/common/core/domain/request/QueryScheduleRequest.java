@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request;
 
-import com.hummerrisk.base.domain.Schedule;
+import com.hummer.common.core.domain.Schedule;
 import lombok.Getter;
 import lombok.Setter;
 

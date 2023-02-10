@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.task;
 
-import com.hummerrisk.base.domain.Image;
+import com.hummer.common.core.domain.Image;
 
 
 public class ImageVo extends Image {

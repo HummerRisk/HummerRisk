@@ -1,7 +1,7 @@
 package com.hummer.common.core.domain.request.rule;
 
 
-import com.hummerrisk.base.domain.RuleGroup;
+import com.hummer.common.core.domain.RuleGroup;
 
 import java.util.Map;
 

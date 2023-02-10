@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.resource;
 
-import com.hummerrisk.base.domain.Resource;
+import com.hummer.common.core.domain.Resource;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;

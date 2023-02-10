@@ -1,4 +1,4 @@
-package com.hummerrisk.commons.swagger.annotation;
+package com.hummer.common.core.swagger.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

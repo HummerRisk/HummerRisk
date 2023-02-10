@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummer.common.core.mapper.ext.ExtServerResultMapper">
+
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.name != null'>
+            and t.server_name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test='${condition}.ip != null'>
+            and s.ip
+            <include refid="condition">
+                <property name="object" value="${condition}.ip"/>
+            </include>
+        </if>
+        <if test='${condition}.ruleName != null'>
+            and t3.name
+            <include refid="condition">
+                <property name="object" value="${condition}.ruleName"/>
+            </include>
+        </if>
+        <if test='${condition}.severity != null'>
+            and t.severity
+            <include refid="condition">
+                <property name="object" value="${condition}.severity"/>
+            </include>
+        </if>
+        <if test='${condition}.type != null'>
+            and t.type
+            <include refid="condition">
+                <property name="object" value="${condition}.type"/>
+            </include>
+        </if>
+        <if test='${condition}.ruleTag != null and ${condition}.ruleTag.value != "all"'>
+            and #{${condition}.ruleTag.value}
+            <choose>
+                <when test='${condition}.ruleTag.operator == "in"'>
+                    in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
+                </when>
+                <when test='${condition}.ruleTag.operator == "not in"'>
+                    not in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
+                </when>
+            </choose>
+        </if>
+    </sql>
+
+    <select id="resultList" parameterType="com.hummer.common.core.domain.request.server.ServerResultRequest"
+            resultType="com.hummer.common.core.dto.ServerResultDTO">
+        SELECT
+        t.*,
+        t1.tag_key as tagKey,
+        t2.tag_name as tagName,
+        u.name as user,
+        sg.name as groupName,
+        t3.script as rule
+        FROM server_result t
+        left join rule_tag_mapping t1 on t1.rule_id = t.rule_id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+        left join server_rule t3 on t.rule_id = t3.id
+        left join user u on t.apply_user = u.id
+        left join server s on s.id = t.server_id
+        left join server_group sg on sg.id = s.server_group_id
+
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.serverName != null and request.serverName != ''">
+                and LOWER(t.server_name) like CONCAT('%',LOWER(#{request.serverName}),'%')
+            </if>
+            <if test="request.ip != null and request.ip != ''">
+                and LOWER(t.ip) like CONCAT('%',LOWER(#{request.ip}),'%')
+            </if>
+            <if test="request.ruleName != null and request.ruleName != ''">
+                and LOWER(t.rule_name) like CONCAT('%',LOWER(#{request.ruleName}),'%')
+            </if>
+        </where>
+        ORDER BY FIELD(t.result_status, 'APPROVED', 'FINISHED', 'ERROR'), t.is_severity, FIELD(t.type, 'windows', 'linux'), t.ip, FIELD(t.severity, 'HighRisk', 'MediumRisk', 'LowRisk'), t.server_name, t.update_time desc
+    </select>
+
+    <resultMap id="ServerListBaseResultMap" type="com.hummer.common.core.dto.ServerListDTO"
+               extends="com.hummer.common.core.mapper.ServerMapper.BaseResultMap">
+        <result column="user" jdbcType="VARCHAR" property="user" />
+        <result column="groupName" jdbcType="VARCHAR" property="groupName" />
+        <result column="riskSum" jdbcType="INTEGER" property="riskSum" />
+        <collection property="serverResultDTOS" ofType="com.hummer.common.core.dto.ServerResultDTO" javaType="list" select="selectServerResultDTO" column="id">
+        </collection>
+    </resultMap>
+
+    <sql id="combine2">
+        <if test='${condition}.name != null and (${name} == null or ${name} == "")'>
+            and t.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test="${condition}.updateTime != null">
+            and t.update_time
+            <include refid="condition">
+                <property name="object" value="${condition}.updateTime"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+        <if test="${condition}.status != null">
+            and t.status
+            <include refid="condition">
+                <property name="object" value="${condition}.status"/>
+            </include>
+        </if>
+        <if test="${condition}.type != null">
+            and t.type
+            <include refid="condition">
+                <property name="object" value="${condition}.type"/>
+            </include>
+        </if>
+        <if test="${condition}.creator != null">
+            and u.id
+            <include refid="condition">
+                <property name="object" value="${condition}.creator"/>
+            </include>
+        </if>
+        <if test='${condition}.ip != null'>
+            and t.ip
+            <include refid="condition">
+                <property name="object" value="${condition}.ip"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="resultServerList" parameterType="com.hummer.common.core.domain.request.server.ServerRequest" resultMap="ServerListBaseResultMap">
+        SELECT
+        t.*,
+        u.name as user,
+        sg.name as groupName,
+        (SELECT count(r.id) FROM server_result r where r.server_id = t.id and r.is_severity is false) as riskSum
+        FROM server t
+        left join server_group sg on sg.id = t.server_group_id
+        left join user u on u.id = t.creator
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine2">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.ip != null and request.ip != ''">
+                and LOWER(t.ip) like CONCAT('%', LOWER(#{request.ip}),'%')
+            </if>
+            <if test="request.port != null and request.port != ''">
+                and LOWER(t.port) like CONCAT('%', LOWER(#{request.port}),'%')
+            </if>
+            <if test="request.userName != null and request.userName != ''">
+                and LOWER(t.user_name) like CONCAT('%', LOWER(#{request.userName}),'%')
+            </if>
+        </where>
+        ORDER BY t.update_time desc
+    </select>
+
+    <select id="selectServerResultDTO" resultType="com.hummer.common.core.dto.ServerResultDTO">
+        SELECT
+        t.*,
+        t1.tag_key as tagKey,
+        t2.tag_name as tagName,
+        u.name as user,
+        sg.name as groupName,
+        t3.script as rule
+        FROM server_result t
+        left join rule_tag_mapping t1 on t1.rule_id = t.rule_id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+        left join server_rule t3 on t.rule_id = t3.id
+        left join user u on t.apply_user = u.id
+        left join server s on s.id = t.server_id
+        left join server_group sg on sg.id = s.server_group_id
+        <where>
+            t.server_id = #{id}
+        </where>
+        ORDER BY FIELD(t.result_status, 'APPROVED', 'FINISHED', 'ERROR'), t.is_severity, t.ip, FIELD(t.severity, 'HighRisk', 'MediumRisk', 'LowRisk'), t.server_name, t.update_time desc
+    </select>
+
+    <select id="serverChart" resultType="java.util.Map">
+        SELECT
+            concat(t.server_name, ' (', count(t.id), ')') as 'name',
+            count(t.id) as 'value'
+        FROM server_result as t
+        WHERE t.is_severity = 0
+        GROUP BY t.server_name
+        Limit 10;
+    </select>
+
+    <select id="severityChart" resultType="java.util.Map">
+        SELECT
+            t.server_name as 'product',
+            (SELECT IFNULL(count(t1.id), 0) as High from server_result t1 where t1.server_name = t.server_name and LOWER(t1.severity) = 'highrisk' and t1.is_severity = false) as High,
+            (SELECT IFNULL(count(t1.id), 0) as Medium from server_result t1 where t1.server_name = t.server_name and LOWER(t1.severity) = 'mediumrisk' and t1.is_severity = false) as Medium,
+            (SELECT IFNULL(count(t1.id), 0) as Low from server_result t1 where t1.server_name = t.server_name and LOWER(t1.severity) = 'lowrisk' and t1.is_severity = false) as Low
+        FROM server_result as t
+        GROUP BY t.server_name
+        Limit 10;
+    </select>
+
+    <select id="serverChartX" parameterType="java.util.Map" resultType="java.lang.String">
+        SELECT
+        server_name as name
+        FROM server_result
+        GROUP BY server_name
+        LIMIT 10;
+    </select>
+
+    <select id="serverChartY" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select
+        count(t.id) as returnSum
+        FROM server_result t
+        WHERE t.is_severity = false
+        GROUP BY t.server_name
+        LIMIT 10;
+    </select>
+
+    <select id="history" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryServerResultDTO">
+        SELECT
+        t.*,
+        t1.tag_key as tagKey,
+        t2.tag_name as tagName,
+        u.name as user,
+        sg.name as groupName,
+        t3.script as rule
+        FROM history_server_result t
+        left join rule_tag_mapping t1 on t1.rule_id = t.rule_id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+        left join server_rule t3 on t.rule_id = t3.id
+        left join user u on t.apply_user = u.id
+        left join server s on s.id = t.server_id
+        left join server_group sg on sg.id = s.server_group_id
+
+        <where>
+            <if test="id != null">
+                AND t.id = #{id}
+            </if>
+            <if test="serverId != null">
+                AND t.server_id = #{serverId}
+            </if>
+            <if test="name != null">
+                AND LOWER(t.name) like CONCAT('%',#{name},'%')
+            </if>
+        </where>
+        ORDER BY t.is_severity, t.ip, FIELD(t.severity, 'HighRisk', 'MediumRisk', 'LowRisk'), t.server_name, t.update_time desc
+    </select>
+
+</mapper>

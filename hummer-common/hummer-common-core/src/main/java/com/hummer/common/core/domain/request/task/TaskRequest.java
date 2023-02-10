@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.task;
 
-import com.hummerrisk.base.domain.Task;
+import com.hummer.common.core.domain.Task;
 
 import java.util.Map;
 

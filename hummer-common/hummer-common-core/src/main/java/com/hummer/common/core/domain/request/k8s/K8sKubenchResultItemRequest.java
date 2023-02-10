@@ -1,7 +1,7 @@
 package com.hummer.common.core.domain.request.k8s;
 
 
-import com.hummerrisk.base.domain.CloudNativeResultKubenchWithBLOBs;
+import com.hummer.common.core.domain.CloudNativeResultKubenchWithBLOBs;
 
 import java.util.Map;
 

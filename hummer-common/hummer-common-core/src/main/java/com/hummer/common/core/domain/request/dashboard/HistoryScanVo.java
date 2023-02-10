@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.dashboard;
 
-import com.hummerrisk.base.domain.HistoryScan;
+import com.hummer.common.core.domain.HistoryScan;
 
 import java.util.Map;
 

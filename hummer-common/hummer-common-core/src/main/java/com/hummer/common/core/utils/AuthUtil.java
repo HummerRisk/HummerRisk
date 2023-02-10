@@ -3,7 +3,7 @@ package com.hummer.common.core.utils;
 import com.huaweicloud.sdk.iam.v3.IamClient;
 import com.huaweicloud.sdk.iam.v3.model.ShowCredential;
 import com.huaweicloud.sdk.iam.v3.model.ShowPermanentAccessKeyRequest;
-import com.hummerrisk.commons.exception.HRException;
+import com.hummer.common.core.exception.HRException;
 
 /**
  * @author harris

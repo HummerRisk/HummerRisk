@@ -1,6 +1,6 @@
 package com.hummer.common.core.utils;
 
-import com.hummerrisk.base.domain.Proxy;
+import com.hummer.common.core.domain.Proxy;
 import com.hummer.common.core.constant.CloudAccountConstants;
 import org.apache.commons.lang3.StringUtils;
 

@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.log;
 
-import com.hummerrisk.base.domain.OperationLog;
+import com.hummer.common.core.domain.OperationLog;
 
 import java.util.Map;
 

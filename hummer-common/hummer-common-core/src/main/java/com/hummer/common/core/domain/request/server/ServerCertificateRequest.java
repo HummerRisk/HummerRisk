@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.server;
 
-import com.hummerrisk.base.domain.ServerCertificate;
+import com.hummer.common.core.domain.ServerCertificate;
 
 import java.util.Map;
 

@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.proxy;
 
-import com.hummerrisk.base.domain.Proxy;
+import com.hummer.common.core.domain.Proxy;
 
 import java.util.Map;
 

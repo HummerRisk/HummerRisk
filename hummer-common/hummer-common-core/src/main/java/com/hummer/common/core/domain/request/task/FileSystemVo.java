@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.task;
 
-import com.hummerrisk.base.domain.FileSystem;
+import com.hummer.common.core.domain.FileSystem;
 
 
 public class FileSystemVo extends FileSystem {

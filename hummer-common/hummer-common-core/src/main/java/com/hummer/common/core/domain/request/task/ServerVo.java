@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.task;
 
-import com.hummerrisk.base.domain.Server;
+import com.hummer.common.core.domain.Server;
 
 
 public class ServerVo extends Server {

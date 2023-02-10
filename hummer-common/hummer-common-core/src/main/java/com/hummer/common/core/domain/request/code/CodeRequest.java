@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.code;
 
-import com.hummerrisk.base.domain.Code;
+import com.hummer.common.core.domain.Code;
 
 import java.util.Map;
 

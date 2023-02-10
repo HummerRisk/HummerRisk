@@ -1,7 +1,7 @@
 package com.hummer.common.core.domain.request.fs;
 
 
-import com.hummerrisk.base.domain.FileSystemRule;
+import com.hummer.common.core.domain.FileSystemRule;
 
 import java.util.List;
 import java.util.Map;

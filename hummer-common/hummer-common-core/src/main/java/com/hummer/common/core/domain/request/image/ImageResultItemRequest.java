@@ -1,7 +1,7 @@
 package com.hummer.common.core.domain.request.image;
 
 
-import com.hummerrisk.base.domain.ImageResultItem;
+import com.hummer.common.core.domain.ImageResultItem;
 
 import java.util.Map;
 

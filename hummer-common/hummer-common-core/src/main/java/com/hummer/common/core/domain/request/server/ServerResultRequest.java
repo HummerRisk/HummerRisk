@@ -1,7 +1,7 @@
 package com.hummer.common.core.domain.request.server;
 
 
-import com.hummerrisk.base.domain.ServerResult;
+import com.hummer.common.core.domain.ServerResult;
 
 import java.util.Map;
 

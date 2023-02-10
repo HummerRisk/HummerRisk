@@ -1,6 +1,6 @@
-package com.hummer.common.core.utils;
+package com.hummer.common.core.domain;
 
-import com.hummerrisk.proxy.Request;
+import com.hummer.common.core.proxy.Request;
 
 public class RequestWithParam extends Request {
     private String param;

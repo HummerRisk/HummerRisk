@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.member;
 
-import com.hummerrisk.base.domain.User;
+import com.hummer.common.core.domain.User;
 
 import java.util.ArrayList;
 import java.util.List;

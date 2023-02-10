@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.dashboard;
 
-import com.hummerrisk.base.domain.Rule;
+import com.hummer.common.core.domain.Rule;
 
 /**
  * @ClassName DashboardTarget

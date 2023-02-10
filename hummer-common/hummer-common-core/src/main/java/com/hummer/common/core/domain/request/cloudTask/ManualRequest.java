@@ -1,7 +1,7 @@
 package com.hummer.common.core.domain.request.cloudTask;
 
 
-import com.hummerrisk.base.domain.CloudTask;
+import com.hummer.common.core.domain.CloudTask;
 
 import java.util.Map;
 

@@ -1,7 +1,7 @@
 package com.hummer.common.core.domain.request.image;
 
 
-import com.hummerrisk.base.domain.ImageRule;
+import com.hummer.common.core.domain.ImageRule;
 
 import java.util.List;
 import java.util.Map;

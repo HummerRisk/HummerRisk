@@ -1,7 +1,7 @@
 package com.hummer.common.core.domain.request.config;
 
 
-import com.hummerrisk.base.domain.CloudNativeConfigResultItem;
+import com.hummer.common.core.domain.CloudNativeConfigResultItem;
 
 import java.util.Map;
 

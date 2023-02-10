@@ -33,12 +33,24 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-beans</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Spring Web -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-beans</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Transmittable ThreadLocal -->
@@ -117,6 +129,12 @@
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-spring-boot-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-beans</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.swagger</groupId>
@@ -155,10 +173,6 @@
         <!-- 执行 js 代码依赖 -->
 
         <!-- commons -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
@@ -443,12 +457,12 @@
             <artifactId>google-cloud-storage</artifactId>
             <exclusions>
                 <exclusion>
-                    <artifactId>google-auth-library-credentials</artifactId>
-                    <groupId>com.google.auth</groupId>
+                    <artifactId>api-common</artifactId>
+                    <groupId>com.google.api</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>google-auth-library-oauth2-http</artifactId>
-                    <groupId>com.google.auth</groupId>
+                    <artifactId>auto-value-annotations</artifactId>
+                    <groupId>com.google.auto.value</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -578,6 +592,12 @@
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-beans</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- mybatis -->
 
@@ -617,6 +637,22 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
             <groupId>jakarta.websocket</groupId>
             <artifactId>jakarta.websocket-api</artifactId>
         </dependency>
@@ -625,7 +661,6 @@
             <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
         <!-- jetty -->
-
 
     </dependencies>
 

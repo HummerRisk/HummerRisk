@@ -1,7 +1,7 @@
 package com.hummer.common.core.utils;
 
 import com.alibaba.fastjson.JSONObject;
-import com.hummerrisk.commons.exception.HRException;
+import com.hummer.common.core.exception.HRException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;

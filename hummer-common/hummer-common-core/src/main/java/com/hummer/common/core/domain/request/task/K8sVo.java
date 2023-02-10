@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.task;
 
-import com.hummerrisk.base.domain.CloudNative;
+import com.hummer.common.core.domain.CloudNative;
 
 public class K8sVo extends CloudNative {
 

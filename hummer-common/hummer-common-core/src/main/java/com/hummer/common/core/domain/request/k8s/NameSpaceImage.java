@@ -1,8 +1,8 @@
 package com.hummer.common.core.domain.request.k8s;
 
-import com.hummerrisk.base.domain.CloudNativeResultItem;
-import com.hummerrisk.base.domain.CloudNativeSource;
-import com.hummerrisk.base.domain.CloudNativeSourceImage;
+import com.hummer.common.core.domain.CloudNativeResultItem;
+import com.hummer.common.core.domain.CloudNativeSource;
+import com.hummer.common.core.domain.CloudNativeSourceImage;
 
 import java.util.List;
 

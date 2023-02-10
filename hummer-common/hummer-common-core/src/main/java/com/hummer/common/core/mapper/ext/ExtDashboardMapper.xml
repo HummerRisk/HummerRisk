@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummer.common.core.mapper.ext.ExtDashboardMapper">
+
+    <select id="topInfo" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.TopInfoDTO">
+        SELECT *
+        from (
+              (SELECT IFNULL(count(user.id), 0) as users from user) as users,
+              (SELECT IFNULL(count(task.id), 0) as tasks from task) as tasks,
+              (SELECT
+                  (SELECT IFNULL(count(t.id), 0) from cloud_account t) +
+                  (SELECT IFNULL(count(t.id), 0) from server t) +
+                  (SELECT IFNULL(count(t.id), 0) from image t) +
+                  (SELECT IFNULL(count(t.id), 0) from code t) +
+                  (SELECT IFNULL(count(t.id), 0) from cloud_native t) +
+                  (SELECT IFNULL(count(t.id), 0) from cloud_native_config t) +
+                  (SELECT IFNULL(count(t.id), 0) from file_system t)
+                  as accounts) as accounts,
+              (SELECT IFNULL(count(t.id), 0) as cloudAccounts from cloud_account t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'cloud') as cloudAccounts,
+              (SELECT IFNULL(count(t.id), 0) as vulnAccounts from cloud_account t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'vuln') as vulnAccounts,
+              (SELECT IFNULL(count(t.id), 0) as serverAccounts from server t) as serverAccounts,
+              (SELECT IFNULL(count(t.id), 0) as imageAccounts from image t) as imageAccounts,
+              (SELECT IFNULL(count(t.id), 0) as codeAccounts from code t) as codeAccounts,
+              (SELECT IFNULL(count(t.id), 0) as k8sAccounts from cloud_native t) as k8sAccounts,
+              (SELECT IFNULL(count(t.id), 0) as configAccounts from cloud_native_config t) as configAccounts,
+              (SELECT IFNULL(count(t.id), 0) as fsAccounts from file_system t) as fsAccounts,
+              (SELECT
+                  (SELECT IFNULL(count(t.id), 0) from rule t) +
+                  (SELECT IFNULL(count(t.id), 0) from image_rule t) +
+                  (SELECT IFNULL(count(t.id), 0) from server_rule t) +
+                  (SELECT IFNULL(count(t.id), 0) from code_rule t) +
+                  (SELECT IFNULL(count(t.id), 0) from cloud_native_rule t) +
+                  (SELECT IFNULL(count(t.id), 0) from cloud_native_config_rule t) +
+                  (SELECT IFNULL(count(t.id), 0) from file_system_rule t)
+                  as rules) as rules,
+              (SELECT IFNULL(count(t.id), 0) as cloudRules from rule t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'cloud') as cloudRules,
+              (SELECT IFNULL(count(t.id), 0) as vulnRules from rule t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'vuln') as vulnRules,
+              (SELECT IFNULL(count(t.id), 0) as imageRules from image_rule t) as imageRules,
+              (SELECT IFNULL(count(t.id), 0) as serverRules from server_rule t) as serverRules,
+              (SELECT IFNULL(count(t.id), 0) as codeRules from code_rule t) as codeRules,
+              (SELECT IFNULL(count(t.id), 0) as k8sRules from cloud_native_rule t) as k8sRules,
+              (SELECT IFNULL(count(t.id), 0) as configRules from cloud_native_config_rule t) as configRules,
+              (SELECT IFNULL(count(t.id), 0) as fsRules from file_system_rule t) as fsRules,
+              (SELECT
+                  (SELECT IFNULL(count(t.id), 0) from resource_item t) +
+                  (SELECT IFNULL(count(t.id), 0) from image_result t) +
+                  (SELECT IFNULL(count(t.id), 0) from server_result t) +
+                  (SELECT IFNULL(count(t.id), 0) from code_result t) +
+                  (SELECT IFNULL(count(t.id), 0) from cloud_native_result t) +
+                  (SELECT IFNULL(count(t.id), 0) from cloud_native_config_result t) +
+                  (SELECT IFNULL(count(t.id), 0) from file_system_result t)
+                  as results) as results,
+              (SELECT IFNULL(count(t.id), 0) as cloudResult from resource_item t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'cloud') as cloudResult,
+              (SELECT IFNULL(count(t.id), 0) as vulnResult from resource_item t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'vuln') as vulnResult,
+              (SELECT IFNULL(count(t.id), 0) as imageResult from image_result t) as imageResult,
+              (SELECT IFNULL(count(t.id), 0) as k8sResult from cloud_native_result t) as k8sResult,
+              (SELECT IFNULL(count(t.id), 0) as configResult from cloud_native_config_result t) as configResult,
+              (SELECT IFNULL(count(t.id), 0) as codeResult from code_result t) as codeResult,
+              (SELECT IFNULL(count(t.id), 0) as fsResult from file_system_result t) as fsResult,
+              (SELECT IFNULL(count(t.id), 0) as serverResult from server_result t) as serverResult
+         )
+    </select>
+
+    <select id="topScanInfo" parameterType="java.lang.String" resultType="com.hummer.common.core.dto.TopScanDTO">
+        SELECT *
+        FROM (
+            (
+                SELECT #{status} as status
+            ) as status,
+            (
+            SELECT IFNULL(count(t.id), 0) as cloud from cloud_task t LEFT JOIN plugin p on t.plugin_id = p.id and p.type = 'cloud'
+                <where>
+                    <if test="status == 'APPROVED'">
+                        and t.status in ('APPROVED', 'PROCESSING')
+                    </if>
+                    <if test="status == 'FINISHED'">
+                        and t.status in ('FINISHED')
+                    </if>
+                    <if test="status == 'ERROR'">
+                        and t.status in ('ERROR')
+                    </if>
+                    <if test="status == 'WARNING'">
+                        and t.status in ('WARNING')
+                    </if>
+                </where>
+            ) as cloud,
+            (
+                SELECT IFNULL(count(t.id), 0) as vuln from cloud_task t LEFT JOIN plugin p on t.plugin_id = p.id and p.type = 'vuln'
+                <where>
+                    <if test="status == 'APPROVED'">
+                        and t.status in ('APPROVED', 'PROCESSING')
+                    </if>
+                    <if test="status == 'FINISHED'">
+                        and t.status in ('FINISHED')
+                    </if>
+                    <if test="status == 'ERROR'">
+                        and t.status in ('ERROR')
+                    </if>
+                    <if test="status == 'WARNING'">
+                        and t.status in ('WARNING')
+                    </if>
+                </where>
+            ) as vuln,
+            (
+                SELECT IFNULL(count(t.id), 0) as image from image_result t
+                <where>
+                    <if test="status == 'APPROVED'">
+                        and t.result_status in ('APPROVED', 'PROCESSING')
+                    </if>
+                    <if test="status == 'FINISHED'">
+                        and t.result_status in ('FINISHED')
+                    </if>
+                    <if test="status == 'ERROR'">
+                        and t.result_status in ('ERROR')
+                    </if>
+                    <if test="status == 'WARNING'">
+                        and t.result_status in ('WARNING')
+                    </if>
+                </where>
+            ) as image,
+            (
+                SELECT IFNULL(count(t.id), 0) as k8s from cloud_native_result t
+                <where>
+                    <if test="status == 'APPROVED'">
+                        and t.result_status in ('APPROVED', 'PROCESSING')
+                    </if>
+                    <if test="status == 'FINISHED'">
+                        and t.result_status in ('FINISHED')
+                    </if>
+                    <if test="status == 'ERROR'">
+                        and t.result_status in ('ERROR')
+                    </if>
+                    <if test="status == 'WARNING'">
+                        and t.result_status in ('WARNING')
+                    </if>
+                </where>
+            ) as k8s,
+            (
+                SELECT IFNULL(count(t.id), 0) as config from cloud_native_config_result t
+                <where>
+                    <if test="status == 'APPROVED'">
+                        and t.result_status in ('APPROVED', 'PROCESSING')
+                    </if>
+                    <if test="status == 'FINISHED'">
+                        and t.result_status in ('FINISHED')
+                    </if>
+                    <if test="status == 'ERROR'">
+                        and t.result_status in ('ERROR')
+                    </if>
+                    <if test="status == 'WARNING'">
+                        and t.result_status in ('WARNING')
+                    </if>
+                </where>
+            ) as config,
+            (
+                SELECT IFNULL(count(t.id), 0) as code from code_result t
+                <where>
+                    <if test="status == 'APPROVED'">
+                        and t.result_status in ('APPROVED', 'PROCESSING')
+                    </if>
+                    <if test="status == 'FINISHED'">
+                        and t.result_status in ('FINISHED')
+                    </if>
+                    <if test="status == 'ERROR'">
+                        and t.result_status in ('ERROR')
+                    </if>
+                    <if test="status == 'WARNING'">
+                        and t.result_status in ('WARNING')
+                    </if>
+                </where>
+            ) as code,
+            (
+                SELECT IFNULL(count(t.id), 0) as fs from file_system_result t
+                <where>
+                    <if test="status == 'APPROVED'">
+                        and t.result_status in ('APPROVED', 'PROCESSING')
+                    </if>
+                    <if test="status == 'FINISHED'">
+                        and t.result_status in ('FINISHED')
+                    </if>
+                    <if test="status == 'ERROR'">
+                        and t.result_status in ('ERROR')
+                    </if>
+                    <if test="status == 'WARNING'">
+                        and t.result_status in ('WARNING')
+                    </if>
+                </where>
+            ) as fs,
+            (
+                SELECT IFNULL(count(t.id), 0) as server from server_result t
+                <where>
+                    <if test="status == 'APPROVED'">
+                        and t.result_status in ('APPROVED', 'PROCESSING')
+                    </if>
+                    <if test="status == 'FINISHED'">
+                        and t.result_status in ('FINISHED')
+                    </if>
+                    <if test="status == 'ERROR'">
+                        and t.result_status in ('ERROR')
+                    </if>
+                    <if test="status == 'WARNING'">
+                        and t.result_status in ('WARNING')
+                    </if>
+                </where>
+            ) as server
+        )
+    </select>
+
+    <select id="imageChartX" parameterType="java.util.Map" resultType="java.lang.String">
+        select name
+        from image_result
+        order by update_time desc
+        limit 10;
+    </select>
+
+    <select id="imageChartY" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select IFNULL(return_sum, 0) as returnSum
+        from image_result
+        order by update_time desc
+        limit 10;
+    </select>
+
+    <select id="codeChartX" parameterType="java.util.Map" resultType="java.lang.String">
+        select name
+        from code_result
+        order by update_time desc
+            limit 10;
+    </select>
+
+    <select id="codeChartY" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select IFNULL(return_sum, 0) as returnSum
+        from code_result
+        order by update_time desc
+            limit 10;
+    </select>
+
+    <select id="cloudNativeChartX" parameterType="java.util.Map" resultType="java.lang.String">
+        select name
+        from cloud_native_result
+        order by update_time desc
+            limit 10;
+    </select>
+
+    <select id="cloudNativeChartY" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select IFNULL(return_sum, 0) as returnSum
+        from cloud_native_result
+        order by update_time desc
+            limit 10;
+    </select>
+
+    <select id="configChartX" parameterType="java.util.Map" resultType="java.lang.String">
+        select name
+        from cloud_native_config_result
+        order by update_time desc
+            limit 10;
+    </select>
+
+    <select id="configChartY" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select IFNULL(return_sum, 0) as returnSum
+        from cloud_native_config_result
+        order by update_time desc
+            limit 10;
+    </select>
+
+    <select id="fsChartX" parameterType="java.util.Map" resultType="java.lang.String">
+        select name
+        from file_system_result
+        order by update_time desc
+        limit 10;
+    </select>
+
+    <select id="fsChartY" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select IFNULL(return_sum, 0) as returnSum
+        from file_system_result
+        order by update_time desc
+        limit 10;
+    </select>
+
+    <select id="taskCalendar" resultType="com.hummer.common.core.domain.request.dashboard.TaskCalendarVo">
+        select
+            'current-month' as 'type',
+            true as 'isSelected',
+            from_unixtime(t.last_fire_time/1000, '%Y-%m-%d') as 'day'
+        from task t
+        GROUP BY
+            from_unixtime(t.last_fire_time/1000, '%Y-%m-%d')
+        ORDER BY
+            from_unixtime(t.last_fire_time/1000, '%Y-%m-%d')
+    </select>
+
+    <select id="analysisChartX" parameterType="com.hummer.common.core.domain.request.dashboard.AnslysisVo" resultType="java.lang.String">
+        select
+        from_unixtime(t.create_time/1000, '%Y-%m-%d') as name
+        from history_scan t
+        left join cloud_account t1 on t.account_id = t1.id
+        left join server_result t2 on t.account_id = t2.id
+        left join image_result t3 on t.account_id = t3.id
+        left join code_result t5 on t.account_id = t5.id
+        left join cloud_native_result t6 on t.account_id = t6.id
+        left join cloud_native_config_result t7 on t.account_id = t7.id
+        left join file_system_result t8 on t.account_id = t8.id
+        JOIN (
+        SELECT FROM_UNIXTIME( create_time/1000, '%Y-%m-%d') as date,
+        MAX( create_time ) max_time
+        FROM history_scan
+        GROUP BY date
+        ) b ON b.max_time = t.create_time
+        <where>
+            <if test="cycle != null">
+                AND DATE_SUB(CURDATE(), INTERVAL #{cycle} DAY) &lt;= from_unixtime(t.create_time/1000, '%Y-%m-%d')
+            </if>
+            <if test="types != null">
+                AND t.account_type in
+                <foreach collection="types" item="item" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="users != null">
+                AND t.operator in
+                <foreach collection="users" item="item" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            AND (t1.name is not null OR t2.server_name is not null OR t3.name is not null OR t5.name is not null OR t6.name is not null OR t7.name is not null OR t8.name is not null)
+        </where>
+        ORDER BY t.create_time
+        limit #{cycle};
+    </select>
+
+    <select id="analysisChartY" parameterType="com.hummer.common.core.domain.request.dashboard.AnslysisVo" resultType="java.lang.Integer">
+        select
+        IFNULL(t.scan_score, 100) as score
+        from history_scan t
+        left join cloud_account t1 on t.account_id = t1.id
+        left join server_result t2 on t.account_id = t2.id
+        left join image_result t3 on t.account_id = t3.id
+        left join code_result t5 on t.account_id = t5.id
+        left join cloud_native_result t6 on t.account_id = t6.id
+        left join cloud_native_config_result t7 on t.account_id = t7.id
+        left join file_system_result t8 on t.account_id = t8.id
+        JOIN (
+        SELECT FROM_UNIXTIME( create_time/1000, '%Y-%m-%d') as date,
+            MAX( create_time ) max_time
+            FROM history_scan
+        GROUP BY date
+        ) b ON b.max_time = t.create_time
+        <where>
+            <if test="cycle != null">
+                AND DATE_SUB(CURDATE(), INTERVAL #{cycle} DAY) &lt;= from_unixtime(t.create_time/1000, '%Y-%m-%d')
+            </if>
+            <if test="types != null">
+                AND t.account_type in
+                <foreach collection="types" item="item" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="users != null">
+                AND t.operator in
+                <foreach collection="users" item="item" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            AND (t1.name is not null OR t2.server_name is not null OR t3.name is not null OR t5.name is not null OR t6.name is not null OR t7.name is not null OR t8.name is not null)
+        </where>
+        ORDER BY t.create_time
+        limit #{cycle};
+    </select>
+
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.scanType != null and (${scanType} == null or ${scanType} == "")'>
+            and t.account_type
+            <include refid="condition">
+                <property name="object" value="${condition}.scanType"/>
+            </include>
+        </if>
+        <if test="${condition}.status != null">
+            and t.status
+            <include refid="condition">
+                <property name="object" value="${condition}.status"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="historyScanVo" parameterType="com.hummer.common.core.domain.request.dashboard.HistoryScanVo" resultType="com.hummer.common.core.domain.request.dashboard.HistoryScanVo">
+        select * from (
+        select
+        t.*,
+        IFNULL(t9.name, IFNULL(t7.name, IFNULL(t6.name, IFNULL(t5.name, IFNULL(t3.name, IFNULL(t2.server_name,t1.task_name)))))) as accountName,
+        IFNULL(t9.severity, IFNULL(t7.severity, IFNULL(t6.severity, IFNULL(t5.severity, IFNULL(t3.severity,IFNULL(t2.severity, t1.severity)))))) as severityType,
+        t8.name as userName
+        from history_scan t
+        left join cloud_task t1 on t.account_id = t1.id
+        left join server_result t2 on t.account_id = t2.id
+        left join image_result t3 on t.account_id = t3.id
+        left join code_result t5 on t.account_id = t5.id
+        left join cloud_native_result t6 on t.account_id = t6.id
+        left join cloud_native_config_result t7 on t.account_id = t7.id
+        left join file_system_result t9 on t.account_id = t9.id
+        left join user t8 on t.operator = t8.id
+        ) as tt
+        <where>
+            <if test="combine != null">
+                <include refid="combine">
+                    <property name="condition" value="combine"/>
+                </include>
+            </if>
+            <if test="scanType != null and scanType != ''">
+                AND tt.account_type = #{scanType}
+            </if>
+            <if test="accountId != null and accountId != ''">
+                AND tt.account_id = #{accountId}
+            </if>
+            <if test="users != null and users != ''">
+                AND tt.operator = #{users}
+            </if>
+            <if test="severityType != null and severityType != ''">
+                AND tt.severityType = #{severityType}
+            </if>
+            <if test="startTime != null and endTime != null">
+                AND tt.create_time between #{startTime} and #{endTime}
+            </if>
+            AND tt.accountName is not null
+        </where>
+        order by tt.create_time desc
+    </select>
+</mapper>

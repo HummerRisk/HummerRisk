@@ -1,7 +1,7 @@
 package com.hummer.common.core.domain.request.fs;
 
 
-import com.hummerrisk.base.domain.FileSystemResultItem;
+import com.hummer.common.core.domain.FileSystemResultItem;
 
 import java.util.Map;
 

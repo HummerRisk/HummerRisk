@@ -25,10 +25,10 @@ public class ServiceNameConstants
     /**
      * 混合云服务的serviceid
      */
-    public static final String FILE_SERVICE = "hummer-cloud";
+    public static final String CLOUD_SERVICE = "hummer-cloud";
 
     /**
      * 云原生服务的serviceid
      */
-    public static final String FILE_SERVICE = "hummer-k8s";
+    public static final String K8S_SERVICE = "hummer-k8s";
 }

@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.rule;
 
-import com.hummerrisk.base.domain.RuleInspectionReport;
+import com.hummer.common.core.domain.RuleInspectionReport;
 
 import java.util.Map;
 

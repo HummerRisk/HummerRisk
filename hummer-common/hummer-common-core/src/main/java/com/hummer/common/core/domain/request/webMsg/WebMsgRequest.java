@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.webMsg;
 
-import com.hummerrisk.base.domain.WebMsg;
+import com.hummer.common.core.domain.WebMsg;
 
 import java.util.Map;
 
