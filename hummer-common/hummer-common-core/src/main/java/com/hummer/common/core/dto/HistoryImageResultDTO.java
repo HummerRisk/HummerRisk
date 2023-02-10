@@ -1,7 +1,7 @@
 package com.hummer.common.core.dto;
 
 
-import com.hummerrisk.base.domain.HistoryImageResultWithBLOBs;
+import com.hummer.common.core.domain.HistoryImageResultWithBLOBs;
 
 /**
  * @author harris

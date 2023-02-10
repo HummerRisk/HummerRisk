@@ -1,6 +1,7 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.ImageResult;
+
+import com.hummer.common.core.domain.ImageResult;
 
 /**
  * @author harris

@@ -1,8 +1,9 @@
 package com.hummer.common.core.dto;
 
 
-import com.hummerrisk.base.domain.Rule;
-import com.hummerrisk.base.domain.SelectTag;
+
+import com.hummer.common.core.domain.Rule;
+import com.hummer.common.core.domain.SelectTag;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

@@ -1,6 +1,7 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.AccountWithBLOBs;
+
+import com.hummer.common.core.domain.AccountWithBLOBs;
 
 import java.util.List;
 

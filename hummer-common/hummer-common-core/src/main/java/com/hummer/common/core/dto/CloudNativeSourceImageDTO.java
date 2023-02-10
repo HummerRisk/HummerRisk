@@ -1,7 +1,7 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.CloudNativeSourceImage;
 
+import com.hummer.common.core.domain.CloudNativeSourceImage;
 
 public class CloudNativeSourceImageDTO extends CloudNativeSourceImage {
 

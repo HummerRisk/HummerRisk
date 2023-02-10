@@ -1,7 +1,7 @@
 package com.hummer.common.core.dto;
 
 
-import com.hummerrisk.base.domain.Proxy;
+import com.hummer.common.core.domain.Proxy;
 
 public class SshServerDTO {
 

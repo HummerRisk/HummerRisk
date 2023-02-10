@@ -1,6 +1,6 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.CodeRule;
+import com.hummer.common.core.domain.CodeRule;
 
 import java.util.ArrayList;
 import java.util.List;

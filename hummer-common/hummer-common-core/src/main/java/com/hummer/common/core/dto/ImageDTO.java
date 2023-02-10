@@ -1,7 +1,7 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.Image;
 
+import com.hummer.common.core.domain.Image;
 
 public class ImageDTO extends Image {
 

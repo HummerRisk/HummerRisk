@@ -1,8 +1,9 @@
 package com.hummer.common.core.dto;
 
 
-import com.hummerrisk.base.domain.FileSystemResultItem;
-import com.hummerrisk.base.domain.HistoryFileSystemResult;
+
+import com.hummer.common.core.domain.FileSystemResultItem;
+import com.hummer.common.core.domain.HistoryFileSystemResult;
 
 import java.util.List;
 

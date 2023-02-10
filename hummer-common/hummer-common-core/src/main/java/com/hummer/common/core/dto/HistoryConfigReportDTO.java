@@ -1,8 +1,9 @@
 package com.hummer.common.core.dto;
 
 
-import com.hummerrisk.base.domain.CloudNativeConfigResultItem;
-import com.hummerrisk.base.domain.HistoryCloudNativeConfigResult;
+
+import com.hummer.common.core.domain.CloudNativeConfigResultItem;
+import com.hummer.common.core.domain.HistoryCloudNativeConfigResult;
 
 import java.util.List;
 

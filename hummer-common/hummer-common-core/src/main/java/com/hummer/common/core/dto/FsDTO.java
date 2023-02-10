@@ -1,7 +1,7 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.FileSystem;
 
+import com.hummer.common.core.domain.FileSystem;
 
 public class FsDTO extends FileSystem {
 

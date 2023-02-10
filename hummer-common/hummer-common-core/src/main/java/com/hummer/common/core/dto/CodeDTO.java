@@ -1,7 +1,7 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.Code;
 
+import com.hummer.common.core.domain.Code;
 
 public class CodeDTO extends Code {
 

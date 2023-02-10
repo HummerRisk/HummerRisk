@@ -1,7 +1,8 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.Account;
-import com.hummerrisk.base.domain.CloudTask;
+
+import com.hummer.common.core.domain.Account;
+import com.hummer.common.core.domain.CloudTask;
 
 import java.util.List;
 import java.util.Map;

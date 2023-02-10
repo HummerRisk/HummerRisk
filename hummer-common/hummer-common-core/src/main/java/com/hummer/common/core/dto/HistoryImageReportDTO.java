@@ -1,8 +1,9 @@
 package com.hummer.common.core.dto;
 
 
-import com.hummerrisk.base.domain.HistoryImageResult;
-import com.hummerrisk.base.domain.ImageResultItemWithBLOBs;
+
+import com.hummer.common.core.domain.HistoryImageResult;
+import com.hummer.common.core.domain.ImageResultItemWithBLOBs;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.Server;
 
+import com.hummer.common.core.domain.Server;
 
 public class ServerDTO extends Server {
 

@@ -1,7 +1,8 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.HistoryServerResult;
-import com.hummerrisk.base.domain.Task;
+
+import com.hummer.common.core.domain.HistoryServerResult;
+import com.hummer.common.core.domain.Task;
 
 import java.util.List;
 

@@ -1,6 +1,7 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.ImageRepoItem;
+
+import com.hummer.common.core.domain.ImageRepoItem;
 
 import java.util.List;
 

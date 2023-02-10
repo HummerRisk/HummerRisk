@@ -1,6 +1,7 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.ImageRule;
+
+import com.hummer.common.core.domain.ImageRule;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.CloudNativeConfig;
 
+import com.hummer.common.core.domain.CloudNativeConfig;
 
 public class CloudNativeConfigDTO extends CloudNativeConfig {
 

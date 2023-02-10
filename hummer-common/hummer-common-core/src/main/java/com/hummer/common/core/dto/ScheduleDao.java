@@ -1,6 +1,7 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.Schedule;
+
+import com.hummer.common.core.domain.Schedule;
 
 public class ScheduleDao extends Schedule {
 

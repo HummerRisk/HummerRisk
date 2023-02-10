@@ -1,11 +1,11 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.Rule;
-import com.hummerrisk.base.domain.RuleTag;
-import com.hummerrisk.base.domain.SelectTag;
-import com.hummerrisk.base.mapper.ext.ExtRuleMapper;
-import com.hummerrisk.commons.utils.BeanUtils;
-import com.hummerrisk.commons.utils.CommonBeanFactory;
+import com.hummer.common.core.domain.Rule;
+import com.hummer.common.core.domain.RuleTag;
+import com.hummer.common.core.domain.SelectTag;
+import com.hummer.common.core.mapper.ext.ExtRuleMapper;
+import com.hummer.common.core.utils.BeanUtils;
+import com.hummer.common.core.utils.CommonBeanFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

@@ -1,7 +1,8 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.CloudTask;
-import com.hummerrisk.base.domain.RuleInspectionReport;
+
+import com.hummer.common.core.domain.CloudTask;
+import com.hummer.common.core.domain.RuleInspectionReport;
 
 import java.util.List;
 

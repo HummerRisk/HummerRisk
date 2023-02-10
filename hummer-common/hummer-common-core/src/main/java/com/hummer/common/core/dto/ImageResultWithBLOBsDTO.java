@@ -1,6 +1,6 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.ImageResultWithBLOBs;
+import com.hummer.common.core.domain.ImageResultWithBLOBs;
 
 /**
  * @author harris

@@ -1,8 +1,9 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.AccountWithBLOBs;
-import com.hummerrisk.controller.request.k8s.rbac.Links;
-import com.hummerrisk.controller.request.k8s.rbac.Nodes;
+
+import com.hummer.common.core.domain.AccountWithBLOBs;
+import com.hummer.common.core.domain.request.k8s.rbac.Links;
+import com.hummer.common.core.domain.request.k8s.rbac.Nodes;
 
 import java.util.List;
 

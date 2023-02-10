@@ -1,9 +1,9 @@
 package com.hummer.common.core.dto;
 
 
-import com.hummerrisk.base.domain.CloudTaskItem;
-import com.hummerrisk.base.domain.CloudTaskItemLogWithBLOBs;
-import com.hummerrisk.base.domain.Rule;
+import com.hummer.common.core.domain.CloudTaskItem;
+import com.hummer.common.core.domain.CloudTaskItemLogWithBLOBs;
+import com.hummer.common.core.domain.Rule;
 
 import java.util.List;
 

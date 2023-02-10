@@ -1,6 +1,7 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.HistoryCodeResult;
+
+import com.hummer.common.core.domain.HistoryCodeResult;
 
 /**
  * @author harris

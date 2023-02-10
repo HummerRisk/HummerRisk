@@ -1,7 +1,7 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.Task;
-import com.hummerrisk.base.domain.TaskItem;
+import com.hummer.common.core.domain.Task;
+import com.hummer.common.core.domain.TaskItem;
 
 import java.util.List;
 

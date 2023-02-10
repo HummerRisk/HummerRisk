@@ -1,7 +1,7 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.Role;
-import com.hummerrisk.base.domain.UserRole;
+import com.hummer.common.core.domain.Role;
+import com.hummer.common.core.domain.UserRole;
 
 import java.util.List;
 

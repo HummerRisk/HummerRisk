@@ -1,6 +1,7 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.ServerRule;
+
+import com.hummer.common.core.domain.ServerRule;
 
 import java.util.ArrayList;
 import java.util.List;

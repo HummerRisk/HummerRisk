@@ -1,8 +1,9 @@
 package com.hummer.common.core.dto;
 
 
-import com.hummerrisk.base.domain.CodeResultItem;
-import com.hummerrisk.base.domain.HistoryCodeResult;
+
+import com.hummer.common.core.domain.CodeResultItem;
+import com.hummer.common.core.domain.HistoryCodeResult;
 
 import java.util.List;
 

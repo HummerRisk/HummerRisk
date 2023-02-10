@@ -1,7 +1,7 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.SbomVersion;
 
+import com.hummer.common.core.domain.SbomVersion;
 
 public class SbomVersionDTO extends SbomVersion {
 

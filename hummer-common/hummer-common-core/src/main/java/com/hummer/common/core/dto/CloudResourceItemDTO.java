@@ -1,6 +1,7 @@
 package com.hummer.common.core.dto;
 
-import com.hummerrisk.base.domain.CloudResourceItem;
+
+import com.hummer.common.core.domain.CloudResourceItem;
 
 public class CloudResourceItemDTO extends CloudResourceItem {
     private Integer riskCount;
