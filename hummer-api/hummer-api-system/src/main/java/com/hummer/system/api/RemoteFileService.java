@@ -12,12 +12,11 @@ import com.hummer.system.api.factory.RemoteFileFallbackFactory;
 
 /**
  * 文件服务
- * 
+ *
  * @author harris1943
  */
 @FeignClient(contextId = "remoteFileService", value = ServiceNameConstants.FILE_SERVICE, fallbackFactory = RemoteFileFallbackFactory.class)
-public interface RemoteFileService
-{
+public interface RemoteFileService {
     /**
      * 上传文件
      *

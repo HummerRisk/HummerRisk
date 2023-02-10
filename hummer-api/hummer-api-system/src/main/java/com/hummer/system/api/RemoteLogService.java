@@ -13,17 +13,16 @@ import com.hummer.system.api.factory.RemoteLogFallbackFactory;
 
 /**
  * 日志服务
- * 
+ *
  * @author harris1943
  */
 @FeignClient(contextId = "remoteLogService", value = ServiceNameConstants.SYSTEM_SERVICE, fallbackFactory = RemoteLogFallbackFactory.class)
-public interface RemoteLogService
-{
+public interface RemoteLogService {
     /**
      * 保存系统日志
      *
      * @param sysOperLog 日志实体
-     * @param source 请求来源
+     * @param source     请求来源
      * @return 结果
      */
     @PostMapping("/operlog")
@@ -33,7 +32,7 @@ public interface RemoteLogService
      * 保存访问记录
      *
      * @param sysLogininfor 访问实体
-     * @param source 请求来源
+     * @param source        请求来源
      * @return 结果
      */
     @PostMapping("/logininfor")

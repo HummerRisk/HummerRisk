@@ -5,11 +5,10 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * 文件信息
- * 
+ *
  * @author harris1943
  */
-public class SysFile
-{
+public class SysFile {
     /**
      * 文件名称
      */
@@ -20,31 +19,27 @@ public class SysFile
      */
     private String url;
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public void setUrl(String url)
-    {
+    public void setUrl(String url) {
         this.url = url;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("name", getName())
-            .append("url", getUrl())
-            .toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("name", getName())
+                .append("url", getUrl())
+                .toString();
     }
 }
