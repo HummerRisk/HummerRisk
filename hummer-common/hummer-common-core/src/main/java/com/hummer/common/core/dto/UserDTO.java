@@ -1,5 +1,6 @@
 package com.hummer.common.core.dto;
 
+
 import com.hummer.common.core.domain.Role;
 import com.hummer.common.core.domain.User;
 import com.hummer.common.core.domain.UserRole;
