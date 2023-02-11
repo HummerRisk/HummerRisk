@@ -27,7 +27,7 @@ public class TrivyConstants {
 
     public final static String TRIVY_CONFIG = "trivy config ";
 
-    public final static String TRIVY_REPO = "trivy repo ";
+    public final static String TRIVY_REPO = "trivy repo --insecure ";
 
     public final static String TRIVY_SBOM = "trivy sbom ";
 
