@@ -1,7 +1,7 @@
 package com.hummer.common.core.message;
 
-import com.hummerrisk.commons.utils.LogUtil;
-import com.hummerrisk.service.DingtalkService;
+import com.hummer.common.core.service.DingtalkService;
+import com.hummer.common.core.utils.LogUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 

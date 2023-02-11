@@ -64,12 +64,6 @@
             <artifactId>spring-cloud-loadbalancer</artifactId>
         </dependency>
 
-        <!--验证码 -->
-        <dependency>
-            <groupId>pro.fessional</groupId>
-            <artifactId>kaptcha</artifactId>
-        </dependency>
-
         <!-- hummer Common Redis-->
         <dependency>
             <groupId>com.hummerrisk</groupId>

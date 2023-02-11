@@ -343,7 +343,7 @@
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
-                <scope>runtime</scope>
+                <version>8.0.30</version>
             </dependency>
             <!-- mysql -->
 
@@ -853,6 +853,31 @@
             </dependency>
             <!-- jetty -->
 
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${swagger.fox.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${swagger.fox.version}</version>
+            </dependency>
+
+            <!-- Druid -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+
+            <!-- Dynamic DataSource -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+                <version>${dynamic-ds.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -872,8 +897,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -883,7 +908,7 @@
         <repository>
             <id>hummer</id>
             <name>Hummer</name>
-            <url>http://81.70.253.80:8081/repository/maven-public/</url>
+            <url>https://registry.hummercloud.com/repository/maven-public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -922,7 +947,7 @@
         <pluginRepository>
             <id>hummer</id>
             <name>hummer</name>
-            <url>http://81.70.253.80:8081/repository/hummer-public/</url>
+            <url>https://registry.hummercloud.com/repository/hummer-public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -935,7 +960,7 @@
         <repository>
             <id>hummer</id>
             <name>hummer</name>
-            <url>http://81.70.253.80:8081/repository/hummer-public/</url>
+            <url>https://registry.hummercloud.com/repository/hummer-public/</url>
         </repository>
     </distributionManagement>
 </project>
