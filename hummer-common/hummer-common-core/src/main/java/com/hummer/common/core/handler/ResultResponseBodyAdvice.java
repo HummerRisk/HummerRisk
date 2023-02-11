@@ -1,10 +1,10 @@
-package com.hummer.system.controller.handler;
+package com.hummer.common.core.handler;
 
 import com.google.gson.Gson;
+import com.hummer.common.core.handler.annotation.I18n;
+import com.hummer.common.core.handler.annotation.NoResultHolder;
 import com.hummer.common.core.i18n.Translator;
-import com.hummer.system.controller.ResultHolder;
-import com.hummer.system.controller.handler.annotation.I18n;
-import com.hummer.system.controller.handler.annotation.NoResultHolder;
+import com.hummer.common.core.service.ResultHolder;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;

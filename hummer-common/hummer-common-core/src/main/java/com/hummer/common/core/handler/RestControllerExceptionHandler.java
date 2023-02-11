@@ -1,8 +1,8 @@
-package com.hummer.system.controller.handler;
+package com.hummer.common.core.handler;
 
 
 import com.hummer.common.core.exception.HRException;
-import com.hummer.system.controller.ResultHolder;
+import com.hummer.common.core.service.ResultHolder;
 import org.apache.shiro.ShiroException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;

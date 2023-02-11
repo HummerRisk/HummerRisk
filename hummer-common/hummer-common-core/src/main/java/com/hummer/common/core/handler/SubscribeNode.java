@@ -1,4 +1,4 @@
-package com.hummer.system.controller.handler;
+package com.hummer.common.core.handler;
 
 
 import java.io.Serializable;

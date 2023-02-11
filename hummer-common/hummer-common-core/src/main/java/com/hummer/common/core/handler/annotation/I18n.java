@@ -1,4 +1,4 @@
-package com.hummer.system.controller.handler.annotation;
+package com.hummer.common.core.handler.annotation;
 
 
 import com.hummer.common.core.constant.I18nConstants;

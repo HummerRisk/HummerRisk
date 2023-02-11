@@ -678,6 +678,12 @@
             <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
         </dependency>
 
+        <!-- Spring Web -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>
