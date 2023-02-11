@@ -142,7 +142,7 @@ public class BaiduRequest extends Request {
             config.setEndpoint(getEndpoint(getRegionId()));
             config.setCredentials(new DefaultBceCredentials(baiduCredential.getAccessKeyId(), baiduCredential.getSecretAccessKey()));
             try {
-                new BceHttpClient(config,new BceV1Signer());
+                return new BceHttpClient(config,new BceV1Signer());
             } catch (Exception e) {
                 LogUtil.error(e.getMessage(), e);
                 throw new PluginException(e);
@@ -238,8 +238,8 @@ public class BaiduRequest extends Request {
         private String filters;
         private String startTime;
         private String endTime;
-        private String pageNo;
-        private String pageSize;
+        private int pageNo;
+        private int pageSize;
 
         public QueryEventRequest() {
         }
@@ -268,19 +268,19 @@ public class BaiduRequest extends Request {
             this.endTime = endTime;
         }
 
-        public String getPageNo() {
+        public int getPageNo() {
             return pageNo;
         }
 
-        public void setPageNo(String pageNo) {
+        public void setPageNo(int pageNo) {
             this.pageNo = pageNo;
         }
 
-        public String getPageSize() {
+        public int getPageSize() {
             return pageSize;
         }
 
-        public void setPageSize(String pageSize) {
+        public void setPageSize(int pageSize) {
             this.pageSize = pageSize;
         }
 

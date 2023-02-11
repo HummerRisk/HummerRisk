@@ -456,11 +456,18 @@ public class CloudEventService {
         Map<String,String> params = new HashMap<>();
         Map<String,String> headers = new HashMap<>();
         BaiduRequest.QueryEventRequest queryEventRequest = req.createQueryEventRequest();
+        queryEventRequest.setStartTime("2022-11-20T00:00:00Z");
+        queryEventRequest.setEndTime("2022-12-11T00:00:00Z");
+        queryEventRequest.setPageNo(pageNum);
+        queryEventRequest.setPageSize(maxResult);
         InternalRequest internalRequest = req.createRequest(HttpMethodName.POST,"/v1/events/query"
                 ,params,headers,queryEventRequest,"http://iam.bj.baidubce.com","Iam");
-        req.execute(internalRequest, QueryEventResponse.class,"Iam");
+        QueryEventResponse response = req.execute(internalRequest, QueryEventResponse.class, "Iam");
+        return response.getData().stream().map(item -> {
+            CloudEventWithBLOBs cloudEvent = new CloudEventWithBLOBs();
 
-        return null;
+            return new CloudEventWithBLOBs();
+        }).collect(Collectors.toList());
     }
 
     private List<CloudEventWithBLOBs> getHuaweiCloudEvents(Map<String, String> accountMap, String startTime
