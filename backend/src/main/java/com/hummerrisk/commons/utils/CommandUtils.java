@@ -226,6 +226,10 @@ public class CommandUtils {
                 } else {
                     int count;
                     byte [] data = new byte[BUFFER_SIZE];
+                    File f = new File(destDir + "/" + entry.getName());
+                    if(!f.getParentFile().exists()){
+                        boolean created = f.getParentFile().mkdirs();
+                    }
                     FileOutputStream fos = new FileOutputStream(destDir + "/" + entry.getName(), false);
                     try (BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER_SIZE)) {
                         while ((count = tarIn.read(data, 0, BUFFER_SIZE)) != -1) {
