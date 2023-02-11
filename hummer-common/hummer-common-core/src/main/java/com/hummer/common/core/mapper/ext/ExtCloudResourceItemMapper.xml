@@ -157,6 +157,13 @@
         where a.account_id=#{accountId} and a.region_id = #{regionId} and c.resource_type = #{resourceType}
     </select>
 
+    <select id="selectResourceRiskCount" resultType="int">
+        select count(1) as risk_count FROM resource_item a
+        join cloud_task_item_resource b on a.resource_id = b.resource_id
+        join cloud_task_item c on b.task_item_id = c.id
+        where a.hummer_id = #{hummerId}
+    </select>
+
     <select id="selectResourceRisk" parameterType="String">
         select d.* FROM resource_item A
         join cloud_task_item_resource b on a.resource_id = b.resource_id
