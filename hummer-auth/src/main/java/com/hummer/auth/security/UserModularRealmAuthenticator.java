@@ -1,6 +1,6 @@
 package com.hummer.auth.security;
 
-import com.hummerrisk.commons.exception.HRException;
+import com.hummer.common.core.exception.HRException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
