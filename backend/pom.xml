@@ -952,6 +952,10 @@
                     <artifactId>auto-value-annotations</artifactId>
                     <groupId>com.google.auto.value</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>google-auth-library-oauth2-http</artifactId>
+                    <groupId>com.google.auth</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
