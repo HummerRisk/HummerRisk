@@ -371,7 +371,7 @@ public class SystemParameterService {
     public void updateVulnDbOffline(MultipartFile objectFile) throws Exception {
         // 容器里的目录地址： /root/.cache/trivy/db/
         String fileName = uploadVulnDb(objectFile, "/root/.cache/trivy/db/");
-        CommandUtils.extractTarGZ(new File("/tmp/cache/trivy/db/" + fileName), "/root/.cache/trivy/db/");
+        CommandUtils.extractTarGZ(new File("/root/.cache/trivy/db/" + fileName), "/tmp/cache/trivy/db/");
     }
 
     /**
