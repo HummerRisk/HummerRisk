@@ -1,10 +1,10 @@
 package com.hummerrisk.proxy.baidu;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baidubce.common.BaseBceResponse;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
-import java.util.Map;
 
 @JsonIgnoreProperties(
         ignoreUnknown = true
@@ -13,7 +13,7 @@ public class QueryEventResponse  extends BaseBceResponse{
     private int page;
     private int pageSize;
     private int total;
-    private List<Map<String,String>> data;
+    private List<JSONObject> data;
 
     public int getPage() {
         return page;
@@ -39,11 +39,11 @@ public class QueryEventResponse  extends BaseBceResponse{
         this.total = total;
     }
 
-    public List<Map<String, String>> getData() {
+    public List<JSONObject> getData() {
         return data;
     }
 
-    public void setData(List<Map<String, String>> data) {
+    public void setData(List<JSONObject> data) {
         this.data = data;
     }
 
