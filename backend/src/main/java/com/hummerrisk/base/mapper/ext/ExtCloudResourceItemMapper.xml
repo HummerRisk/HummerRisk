@@ -112,16 +112,17 @@
         group by a.resource_type
     </select>
 
-    <select id="selectByRequest" resultMap="BaseResultMap" >
-        select t.*,t2.risk_count
-        from cloud_resource_item t
-        join cloud_account account on account.id = t.account_id
-        left join
-            (select a.hummer_id,count(*) as risk_count FROM resource_item a
+    <select id="selectResourceRiskCount" resultType="int">
+        select count(1) as risk_count FROM resource_item a
             join cloud_task_item_resource b on a.resource_id = b.resource_id
             join cloud_task_item c on b.task_item_id = c.id
-            group by a.hummer_id
-            order by hummer_id) t2 on t.hummer_id = t2.hummer_id
+            where a.hummer_id = #{hummerId}
+    </select>
+
+    <select id="selectByRequest" resultMap="BaseResultMap" >
+        select t.*
+        from cloud_resource_item t
+        join cloud_account account on account.id = t.account_id
         <where>
             <if test="request.combine != null">
                 <include refid="combine">
