@@ -2,7 +2,7 @@ package com.hummer.system.controller;
 
 import com.hummer.common.core.constant.RoleConstants;
 import com.hummer.common.core.domain.Role;
-import com.hummer.system.controller.handler.annotation.I18n;
+import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.system.service.UserRoleService;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
