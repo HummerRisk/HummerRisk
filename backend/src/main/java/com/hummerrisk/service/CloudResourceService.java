@@ -24,7 +24,11 @@ public class CloudResourceService {
     }
 
     public List<CloudResourceItemDTO> getResources(CloudResourceItemRequest cloudResourceItemRequest){
-        return extCloudResourceItemMapper.selectByRequest(cloudResourceItemRequest);
+        List<CloudResourceItemDTO> cloudResourceItems = extCloudResourceItemMapper.selectByRequest(cloudResourceItemRequest);
+        cloudResourceItems.forEach(item -> {
+            item.setRiskCount(extCloudResourceItemMapper.selectResourceRiskCount(item.getHummerId()));
+        });
+        return cloudResourceItems;
     }
 
     public List<ResourceRuleDTO> getResourceRule(String hummerId){
