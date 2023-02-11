@@ -16,6 +16,13 @@ import com.amazonaws.services.cloudtrail.AWSCloudTrail;
 import com.amazonaws.services.cloudtrail.AWSCloudTrailClient;
 import com.amazonaws.services.cloudtrail.model.LookupAttributeKey;
 import com.amazonaws.services.cloudtrail.model.LookupEventsResult;
+import com.baidubce.BceClientConfiguration;
+import com.baidubce.auth.BceCredentials;
+import com.baidubce.http.BceHttpClient;
+import com.baidubce.http.HttpMethodName;
+import com.baidubce.http.handler.BceJsonResponseHandler;
+import com.baidubce.internal.InternalRequest;
+import com.baidubce.services.iam.IamClient;
 import com.huaweicloud.sdk.core.auth.BasicCredentials;
 import com.huaweicloud.sdk.core.auth.ICredential;
 import com.huaweicloud.sdk.cts.v3.CtsClient;
@@ -38,6 +45,7 @@ import com.hummerrisk.dto.CloudEventGroupDTO;
 import com.hummerrisk.dto.CloudEventSourceIpInsightDto;
 import com.hummerrisk.proxy.baidu.BaiduCredential;
 import com.hummerrisk.proxy.baidu.BaiduRequest;
+import com.hummerrisk.proxy.baidu.QueryEventResponse;
 import com.tencentcloudapi.cloudaudit.v20190319.CloudauditClient;
 import com.tencentcloudapi.cloudaudit.v20190319.models.DescribeEventsRequest;
 import com.tencentcloudapi.cloudaudit.v20190319.models.DescribeEventsResponse;
@@ -61,6 +69,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
+import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -444,8 +453,13 @@ public class CloudEventService {
         baiduCredential.setSecretAccessKey(accountMap.get("sk"));
         BaiduRequest req = new BaiduRequest();
         req.setBaiduCredential(baiduCredential);
-       // BosClient bosClient =  req.getClient();
-      //  bosClient.
+        Map<String,String> params = new HashMap<>();
+        Map<String,String> headers = new HashMap<>();
+        BaiduRequest.QueryEventRequest queryEventRequest = req.createQueryEventRequest();
+        InternalRequest internalRequest = req.createRequest(HttpMethodName.POST,"/v1/events/query"
+                ,params,headers,queryEventRequest,"http://iam.bj.baidubce.com","Iam");
+        req.execute(internalRequest, QueryEventResponse.class,"Iam");
+
         return null;
     }
 
