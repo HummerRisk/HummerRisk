@@ -1,9 +1,7 @@
 package com.hummer.common.core.utils;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummer.common.core.utils.sql.SqlUtil;
-import com.hummer.common.core.web.page.PageDomain;
-import com.hummer.common.core.web.page.TableSupport;
 
 /**
  * 分页工具类
@@ -12,24 +10,15 @@ import com.hummer.common.core.web.page.TableSupport;
  */
 public class PageUtils extends PageHelper
 {
-    /**
-     * 设置请求分页数据
-     */
-    public static void startPage()
-    {
-        PageDomain pageDomain = TableSupport.buildPageRequest();
-        Integer pageNum = pageDomain.getPageNum();
-        Integer pageSize = pageDomain.getPageSize();
-        String orderBy = SqlUtil.escapeOrderBySql(pageDomain.getOrderBy());
-        Boolean reasonable = pageDomain.getReasonable();
-        PageHelper.startPage(pageNum, pageSize, orderBy).setReasonable(reasonable);
-    }
-
-    /**
-     * 清理分页的线程变量
-     */
-    public static void clearPage()
-    {
-        PageHelper.clearPage();
+    public static <T> Pager<T> setPageInfo(Page page, T obj) {
+        try {
+            Pager<T> pager = new Pager<>();
+            pager.setListObject(obj);
+            pager.setPageCount(page.getPages());
+            pager.setItemCount(page.getTotal());
+            return pager;
+        } catch (Exception e) {
+            throw new RuntimeException("Error saving current page number data！");
+        }
     }
 }
