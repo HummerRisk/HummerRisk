@@ -1552,7 +1552,7 @@ export default {
     last_event_time: 'last time',
     event_id: 'Event ID',
     event_source: 'event source',
-    cloud_note: 'Currently，the supported cloud types are: Aliyun Cloud, Tencent Cloud, Huawei Cloud, VolcEngine, Ksyun, Amazon Web Services. ',
+    cloud_note: 'Currently，the supported cloud types are: Aliyun Cloud, Tencent Cloud, Huawei Cloud, VolcEngine, Baidu Cloud, Ksyun, Amazon Web Services. ',
     seven_day_data: 'IP call volume within seven days',
   },
   second: {
