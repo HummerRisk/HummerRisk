@@ -289,7 +289,7 @@ public class OrderService {
         return extCloudTaskMapper.getTaskExtendInfo(taskId);
     }
 
-    void saveTaskItemLog(String taskItemId, String resourcePrimaryKey, String operation, String output, boolean success, String historyType) throws Exception {
+    public void saveTaskItemLog(String taskItemId, String resourcePrimaryKey, String operation, String output, boolean success, String historyType) throws Exception {
         CloudTaskItemLogWithBLOBs cloudTaskItemLog = new CloudTaskItemLogWithBLOBs();
         String operator = "system";
         try {
@@ -316,7 +316,7 @@ public class OrderService {
 
     }
 
-    int updateTaskStatus(String taskId, String oldStatus, String newStatus) {
+    public int updateTaskStatus(String taskId, String oldStatus, String newStatus) {
         CloudTaskExample example = new CloudTaskExample();
         CloudTaskExample.Criteria criteria = example.createCriteria();
         criteria.andIdEqualTo(taskId);
@@ -328,7 +328,7 @@ public class OrderService {
         return cloudTaskMapper.updateByExampleSelective(cloudTask, example);
     }
 
-    void updateTaskItemStatus(String taskItemId, CloudTaskConstants.TASK_STATUS status) {
+    public void updateTaskItemStatus(String taskItemId, CloudTaskConstants.TASK_STATUS status) {
         CloudTaskItemWithBLOBs taskItem = new CloudTaskItemWithBLOBs();
         taskItem.setId(taskItemId);
         taskItem.setStatus(status.name());
