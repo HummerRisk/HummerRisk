@@ -1549,7 +1549,7 @@ export default {
     last_event_time: '最后时间',
     event_id: '事件ID',
     event_source: '事件源',
-    cloud_note: '目前支持的云类型为: 阿里云、腾讯云、华为云、火山引擎、金山云、Amazon Web Services。',
+    cloud_note: '目前支持的云类型为: 阿里云、腾讯云、华为云、火山引擎、百度云、金山云、Amazon Web Services。',
     seven_day_data: '七日内 IP 调用量',
   },
   second: {
