@@ -78,6 +78,33 @@
             <artifactId>hummer-common-swagger</artifactId>
         </dependency>
 
+        <!-- hummer Common core -->
+        <dependency>
+            <groupId>com.hummerrisk</groupId>
+            <artifactId>hummer-common-core</artifactId>
+        </dependency>
+
+        <!-- hummer cloud -->
+        <dependency>
+            <groupId>com.hummerrisk</groupId>
+            <artifactId>hummer-modules-cloud</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- hummer k8s -->
+        <dependency>
+            <groupId>com.hummerrisk</groupId>
+            <artifactId>hummer-modules-k8s</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- hummer system -->
+        <dependency>
+            <groupId>com.hummerrisk</groupId>
+            <artifactId>hummer-modules-system</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>

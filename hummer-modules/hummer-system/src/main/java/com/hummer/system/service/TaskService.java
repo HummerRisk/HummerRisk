@@ -1183,7 +1183,7 @@ public class TaskService {
         saveTaskItemResourceLog(record.getTaskItemId(), String.valueOf(key), resourceId, "i18n_start_task", "", true);
     }
 
-    void saveTaskItemResourceLog(String taskItemId, String taskItemResourceId, String resourceId, String operation, String output, boolean result) {
+    public void saveTaskItemResourceLog(String taskItemId, String taskItemResourceId, String resourceId, String operation, String output, boolean result) {
         TaskItemResourceLogWithBLOBs taskItemResourceLog = new TaskItemResourceLogWithBLOBs();
         String operator = "system";
         try {
