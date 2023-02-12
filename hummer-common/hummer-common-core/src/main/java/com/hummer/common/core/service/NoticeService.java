@@ -1,4 +1,4 @@
-package com.hummer.system.service;
+package com.hummer.common.core.service;
 
 import com.hummer.common.core.constant.NoticeConstants;
 import com.hummer.common.core.constant.ScanConstants;

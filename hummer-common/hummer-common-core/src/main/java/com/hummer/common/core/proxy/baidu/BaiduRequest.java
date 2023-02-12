@@ -1,11 +1,14 @@
 package com.hummer.common.core.proxy.baidu;
 
+import com.baidubce.BceClientConfiguration;
 import com.baidubce.BceClientException;
+import com.baidubce.auth.BceV1Signer;
 import com.baidubce.auth.DefaultBceCredentials;
 import com.baidubce.auth.SignOptions;
 import com.baidubce.common.BaseBceRequest;
 import com.baidubce.common.HttpRequestHandler;
 import com.baidubce.common.ServiceConfigFactory;
+import com.baidubce.http.BceHttpClient;
 import com.baidubce.http.HttpMethodName;
 import com.baidubce.internal.InternalRequest;
 import com.baidubce.internal.RestartableInputStream;
@@ -115,6 +118,30 @@ public class BaiduRequest extends Request {
                 }else {
                     return null;
                 }
+            } catch (Exception e) {
+                LogUtil.error(e.getMessage(), e);
+                throw new PluginException(e);
+            }
+        }
+        return null;
+    }
+
+    public BceHttpClient getHttpClient() throws Exception {
+        if (getAccessKey() != null && getSecretKey() != null) {
+
+            BceClientConfiguration config = new BceClientConfiguration();
+
+            // 设置HTTP最大连接数为10
+            config.setMaxConnections(100);
+            // 设置TCP连接超时为5000毫秒
+            config.setConnectionTimeoutInMillis(50000);
+            // 设置Socket传输数据超时的时间为2000毫秒
+            config.setSocketTimeoutInMillis(20000);
+
+            config.setEndpoint(getEndpoint(getRegionId()));
+            config.setCredentials(new DefaultBceCredentials(baiduCredential.getAccessKeyId(), baiduCredential.getSecretAccessKey()));
+            try {
+                return new BceHttpClient(config,new BceV1Signer());
             } catch (Exception e) {
                 LogUtil.error(e.getMessage(), e);
                 throw new PluginException(e);
