@@ -353,7 +353,7 @@ public class FileSystemService {
         fileSystemResultMapper.deleteByExample(example);
     }
 
-    void saveFsResultLog(String resultId, String operation, String output, boolean result) throws Exception {
+    public void saveFsResultLog(String resultId, String operation, String output, boolean result) throws Exception {
         FileSystemResultLog log = new FileSystemResultLog();
         String operator = "system";
         try {

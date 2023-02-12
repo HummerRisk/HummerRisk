@@ -706,7 +706,7 @@ public class ImageService {
         return imageResultLogMapper.selectByExampleWithBLOBs(example);
     }
 
-    void saveImageResultLog(String resultId, String operation, String output, boolean result) throws Exception {
+    public void saveImageResultLog(String resultId, String operation, String output, boolean result) throws Exception {
         ImageResultLogWithBLOBs imageResultLog = new ImageResultLogWithBLOBs();
         String operator = "system";
         try {

@@ -864,7 +864,7 @@ public class K8sService {
         cloudNativeResultMapper.deleteByExample(example);
     }
 
-    void saveCloudNativeResultLog(String resultId, String operation, String output, boolean result) throws Exception {
+    public void saveCloudNativeResultLog(String resultId, String operation, String output, boolean result) throws Exception {
         CloudNativeResultLogWithBLOBs cloudNativeResultLog = new CloudNativeResultLogWithBLOBs();
         String operator = "system";
         try {

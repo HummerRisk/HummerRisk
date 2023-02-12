@@ -310,7 +310,7 @@ public class CodeService {
         codeResultMapper.deleteByExample(example);
     }
 
-    void saveCodeResultLog(String resultId, String operation, String output, boolean result) throws Exception {
+    public void saveCodeResultLog(String resultId, String operation, String output, boolean result) throws Exception {
         CodeResultLogWithBLOBs codeResultLog = new CodeResultLogWithBLOBs();
         String operator = "system";
         try {

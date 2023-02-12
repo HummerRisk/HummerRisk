@@ -261,7 +261,7 @@ public class ConfigService {
         cloudNativeConfigResultMapper.deleteByExample(example);
     }
 
-    void saveCloudNativeConfigResultLog(String resultId, String operation, String output, boolean result) throws Exception {
+    public void saveCloudNativeConfigResultLog(String resultId, String operation, String output, boolean result) throws Exception {
         CloudNativeConfigResultLogWithBLOBs cloudNativeConfigResultLog = new CloudNativeConfigResultLogWithBLOBs();
         String operator = "system";
         try {
