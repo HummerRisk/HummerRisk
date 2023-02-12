@@ -2,7 +2,7 @@ package com.hummer.system.controller;
 
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.message.MessageDetail;
-import com.hummer.system.service.NoticeService;
+import com.hummer.common.core.service.NoticeService;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 

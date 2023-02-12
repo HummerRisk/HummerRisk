@@ -878,10 +878,18 @@
                 <version>${dynamic-ds.version}</version>
             </dependency>
 
+            <!-- maven compiler plugin -->
             <dependency>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
+            </dependency>
+
+            <!-- quartz -->
+            <dependency>
+                <groupId>com.hummer</groupId>
+                <artifactId>quartz-spring-boot-starter</artifactId>
+                <version>1.1.0</version>
             </dependency>
 
         </dependencies>
