@@ -1,7 +1,7 @@
 package com.hummer.common.core.utils;
 
 
-import com.hummer.common.core.domain.OrderRequest;
+import com.hummer.common.core.domain.request.OrderRequest;
 
 import java.util.ArrayList;
 import java.util.List;
