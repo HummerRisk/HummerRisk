@@ -59,8 +59,7 @@ public class PluginController {
     @I18n
     @ApiOperation(value = "插件列表")
     @PostMapping("list/{goPage}/{pageSize}")
-    public Pager<List<Plugin>> getPluginList(
-            @PathVariable int goPage, @PathVariable int pageSize, @RequestBody PluginRequest request) {
+    public Pager<List<Plugin>> getPluginList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody PluginRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, pluginService.getPluginList(request));
     }

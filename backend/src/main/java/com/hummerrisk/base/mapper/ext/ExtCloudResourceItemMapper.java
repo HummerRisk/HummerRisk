@@ -15,6 +15,7 @@ public interface ExtCloudResourceItemMapper {
     List<CloudResourceItemDTO> selectByRequest(@Param("request")CloudResourceItemRequest request);
 
     List<ResourceRuleDTO> selectResourceRule(String hummerId);
+
     int selectResourceRiskCount(String hummerId);
 
     int countResourceTask(@Param("accountId")String accountId,@Param("regionId") String regionId,@Param("resourceType") String resourceType);
