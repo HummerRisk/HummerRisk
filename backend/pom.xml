@@ -6,7 +6,7 @@
     <parent>
         <artifactId>hummerrisk</artifactId>
         <groupId>com.hummerrisk</groupId>
-        <version>1.0</version>
+        <version>0.9</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -96,10 +96,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
+            <version>2.7.4</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.16.16</version>
         </dependency>
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
@@ -880,10 +882,6 @@
                 <exclusion>
                     <artifactId>api-common</artifactId>
                     <groupId>com.google.api</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>google-auth-library-oauth2-http</artifactId>
-                    <groupId>com.google.auth</groupId>
                 </exclusion>
                 <exclusion>
                     <artifactId>opencensus-api</artifactId>
