@@ -1,13 +1,13 @@
 package com.hummer.auth.security.realm;
 
 
-import com.hummer.auth.service.UserService;
 import com.hummer.common.core.constant.UserSource;
 import com.hummer.common.core.domain.Role;
 import com.hummer.common.core.dto.UserDTO;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.user.SessionUser;
 import com.hummer.common.core.utils.SessionUtils;
+import com.hummer.common.mapper.service.UserService;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;

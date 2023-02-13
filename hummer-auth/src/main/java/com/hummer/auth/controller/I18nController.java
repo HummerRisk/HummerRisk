@@ -1,12 +1,12 @@
 package com.hummer.auth.controller;
 
 
-import com.hummer.auth.service.UserService;
 import com.hummer.common.core.constant.I18nConstants;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Lang;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.LogUtil;
+import com.hummer.common.mapper.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

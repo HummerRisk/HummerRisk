@@ -1,7 +1,7 @@
 package com.hummer.auth.security;
 
 import com.alibaba.fastjson.JSONObject;
-import com.hummer.common.core.service.ResultHolder;
+import com.hummer.common.mapper.service.ResultHolder;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 
 import javax.servlet.ServletRequest;

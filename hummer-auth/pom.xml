@@ -46,10 +46,10 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <!-- Hummer Common Core-->
+        <!-- Hummer Common mapper-->
         <dependency>
             <groupId>com.hummerrisk</groupId>
-            <artifactId>hummer-common-core</artifactId>
+            <artifactId>hummer-common-mapper</artifactId>
         </dependency>
 
         <!--Common Security-->
