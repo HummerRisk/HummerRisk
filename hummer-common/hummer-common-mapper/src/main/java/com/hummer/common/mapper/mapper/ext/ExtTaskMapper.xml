@@ -1,0 +1,1409 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummer.common.mapper.mapper.ext.ExtTaskMapper">
+
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.taskName != null'>
+            and t.task_name
+            <include refid="condition">
+                <property name="object" value="${condition}.taskName"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+    </sql>
+
+    <resultMap id="AccountBaseResultMap" type="com.hummer.common.core.domain.request.task.AccountVo">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
+        <result column="favour" jdbcType="BOOLEAN" property="favour" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+    </resultMap>
+
+    <select id="selectAccountByExample" parameterType="com.hummer.common.core.domain.AccountExample" resultMap="AccountBaseResultMap">
+        select t.*, (f.id is null) as favour, 'cloudAccount' as type
+        from cloud_account t
+        left join favorite f on t.id = f.source_id
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="selectVulnByExample" parameterType="com.hummer.common.core.domain.AccountExample" resultMap="AccountBaseResultMap">
+        select t.*, (f.id is null) as favour, 'vulnAccount' as type
+        from cloud_account t
+        left join favorite f on t.id = f.source_id
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <resultMap id="ServerBaseResultMap" type="com.hummer.common.core.domain.request.task.ServerVo">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="server_group_id" jdbcType="VARCHAR" property="serverGroupId" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="ip" jdbcType="VARCHAR" property="ip" />
+        <result column="port" jdbcType="VARCHAR" property="port" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="is_proxy" jdbcType="BIT" property="isProxy" />
+        <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
+        <result column="favour" jdbcType="BOOLEAN" property="favour" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+    </resultMap>
+
+    <select id="selectServerByExample" parameterType="com.hummer.common.core.domain.ServerExample" resultMap="ServerBaseResultMap">
+        select t.id, t.name, t.server_group_id, t.plugin_icon, t.status,
+               t.create_time, t.update_time, t.creator, t.ip, t.port,
+               t.user_name, t.password, t.is_proxy, t.proxy_id,
+               (f.id is null) as favour, 'serverAccount' as type
+        from server t
+        left join favorite f on t.id = f.source_id
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <resultMap id="ImageBaseResultMap" type="com.hummer.common.core.domain.request.task.ImageVo">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="image_url" jdbcType="VARCHAR" property="imageUrl" />
+        <result column="image_tag" jdbcType="VARCHAR" property="imageTag" />
+        <result column="path" jdbcType="VARCHAR" property="path" />
+        <result column="favour" jdbcType="BOOLEAN" property="favour" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+    </resultMap>
+
+    <select id="selectImageByExample" parameterType="com.hummer.common.core.domain.ImageExample" resultMap="ImageBaseResultMap">
+        select t.id, t.name, t.plugin_icon, t.status, t.image_url, t.image_tag, t.path, t.create_time, (f.id is null) as favour, 'imageAccount' as type
+        from image t
+        left join favorite f on t.id = f.source_id
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <resultMap id="CodeBaseResultMap" type="com.hummer.common.core.domain.request.task.CodeVo">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
+        <result column="sbom_id" jdbcType="VARCHAR" property="sbomId" />
+        <result column="sbom_version_id" jdbcType="VARCHAR" property="sbomVersionId" />
+        <result column="favour" jdbcType="BOOLEAN" property="favour" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+    </resultMap>
+
+    <select id="selectCodeByExample" parameterType="com.hummer.common.core.domain.CodeExample" resultMap="CodeBaseResultMap">
+        select t.*, (f.id is null) as favour, 'codeAccount' as type
+        from code t
+        left join favorite f on t.id = f.source_id
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <resultMap id="FsBaseResultMap" type="com.hummer.common.core.domain.request.task.FileSystemVo">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="size" jdbcType="VARCHAR" property="size" />
+        <result column="path" jdbcType="VARCHAR" property="path" />
+        <result column="dir" jdbcType="VARCHAR" property="dir" />
+        <result column="sbom_id" jdbcType="VARCHAR" property="sbomId" />
+        <result column="sbom_version_id" jdbcType="VARCHAR" property="sbomVersionId" />
+        <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
+        <result column="favour" jdbcType="BOOLEAN" property="favour" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+    </resultMap>
+
+    <select id="selectFsByExample" parameterType="com.hummer.common.core.domain.FileSystemExample" resultMap="FsBaseResultMap">
+        select t.*, (f.id is null) as favour, 'fsAccount' as type
+        from file_system t
+        left join favorite f on t.id = f.source_id
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <resultMap id="K8sBaseResultMap" type="com.hummer.common.core.domain.request.task.K8sVo">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
+        <result column="operator_status" jdbcType="VARCHAR" property="operatorStatus" />
+        <result column="favour" jdbcType="BOOLEAN" property="favour" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+    </resultMap>
+
+    <select id="selectK8sByExample" parameterType="com.hummer.common.core.domain.CloudNativeExample" resultMap="K8sBaseResultMap">
+        select t.*, (f.id is null) as favour, 'k8sAccount' as type
+        from cloud_native t
+        left join favorite f on t.id = f.source_id
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <resultMap id="ConfigBaseResultMap" type="com.hummer.common.core.domain.request.task.ConfigVo">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
+        <result column="favour" jdbcType="BOOLEAN" property="favour" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+    </resultMap>
+
+    <select id="selectConfigByExample" parameterType="com.hummer.common.core.domain.CloudNativeConfigExample" resultMap="ConfigBaseResultMap">
+        select t.*, (f.id is null) as favour, 'configAccount' as type
+        from cloud_native_config t
+        left join favorite f on t.id = f.source_id
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="cloudRuleList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+        select
+            t.id as sourceId,
+            'rule' as ruleType,
+            t.name as ruleName,
+            t.description as ruleDesc,
+            t.plugin_icon as icon,
+            t.severity,
+            t1.id as accountId,
+            t1.name as accountName,
+            'cloudAccount' as accountType
+        from rule t
+        left join cloud_account t1 on t.plugin_id = t1.plugin_id
+        LEFT JOIN plugin p on t.plugin_id = p.id
+        <where>
+            <if test="accountId != null">
+                AND t1.id = #{accountId}
+            </if>
+            <if test="ruleName != null">
+                AND t.name like CONCAT('%', #{ruleName},'%')
+            </if>
+            and p.type = 'cloud'
+        </where>
+        order by t.last_modified desc
+    </select>
+
+    <select id="vulnRuleList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+        select
+        t.id as sourceId,
+        'rule' as ruleType,
+        t.name as ruleName,
+        t.description as ruleDesc,
+        t.plugin_icon as icon,
+        t.severity,
+        t1.id as accountId,
+        t1.name as accountName,
+        'vulnAccount' as accountType
+        from rule t
+        left join cloud_account t1 on t.plugin_id = t1.plugin_id
+        LEFT JOIN plugin p on t.plugin_id = p.id
+        <where>
+            <if test="accountId != null">
+                AND t1.id = #{accountId}
+            </if>
+            <if test="ruleName != null">
+                AND t.name like CONCAT('%', #{ruleName},'%')
+            </if>
+            and p.type = 'vuln'
+        </where>
+        order by t.last_modified desc
+    </select>
+
+    <select id="serverRuleList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+        select
+        t.id as sourceId,
+        'rule' as ruleType,
+        t.name as ruleName,
+        t.description as ruleDesc,
+        'server.png' as icon,
+        t.severity,
+        (select id from server where id = #{accountId}) as accountId,
+        (select name from server where id = #{accountId}) as accountName,
+        'serverAccount' as accountType
+        from server_rule t
+        <where>
+            <if test="ruleName != null and ruleName != ''">
+                AND t.name like CONCAT('%', #{ruleName},'%')
+            </if>
+        </where>
+        order by t.last_modified desc
+    </select>
+
+    <select id="k8sRuleList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+        select
+        t.id as sourceId,
+        'rule' as ruleType,
+        t.name as ruleName,
+        t.description as ruleDesc,
+        'k8s.png' as icon,
+        t.severity,
+        (select id from cloud_native where id = #{accountId}) as accountId,
+        (select name from cloud_native where id = #{accountId}) as accountName,
+        'k8sAccount' as accountType
+        from cloud_native_rule t
+        <where>
+            <if test="ruleName != null">
+                AND t.name like CONCAT('%', #{ruleName},'%')
+            </if>
+        </where>
+        order by t.last_modified desc
+    </select>
+
+    <select id="configRuleList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+        select
+        t.id as sourceId,
+        'rule' as ruleType,
+        t.name as ruleName,
+        t.description as ruleDesc,
+        'yaml.png' as icon,
+        t.severity,
+        (select id from cloud_native_config where id = #{accountId}) as accountId,
+        (select name from cloud_native_config where id = #{accountId}) as accountName,
+        'configAccount' as accountType
+        from cloud_native_config_rule t
+        <where>
+            <if test="ruleName != null">
+                AND t.name like CONCAT('%', #{ruleName},'%')
+            </if>
+        </where>
+        order by t.last_modified desc
+    </select>
+
+    <select id="imageRuleList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+        select
+        t.id as sourceId,
+        'rule' as ruleType,
+        t.name as ruleName,
+        t.description as ruleDesc,
+        'docker.png' as icon,
+        t.severity,
+        (select id from image where id = #{accountId}) as accountId,
+        (select name from image where id = #{accountId}) as accountName,
+        'imageAccount' as accountType
+        from image_rule t
+        <where>
+            <if test="ruleName != null">
+                AND t.name like CONCAT('%', #{ruleName},'%')
+            </if>
+        </where>
+        order by t.last_modified desc
+    </select>
+
+    <select id="codeRuleList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+        select
+        t.id as sourceId,
+        'rule' as ruleType,
+        t.name as ruleName,
+        t.description as ruleDesc,
+        'code.png' as icon,
+        t.severity,
+        (select id from code where id = #{accountId}) as accountId,
+        (select name from code where id = #{accountId}) as accountName,
+        'codeAccount' as accountType
+        from code_rule t
+        <where>
+            <if test="ruleName != null">
+                AND t.name like CONCAT('%', #{ruleName},'%')
+            </if>
+        </where>
+        order by t.last_modified desc
+    </select>
+
+    <select id="fsRuleList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+        select
+        t.id as sourceId,
+        'rule' as ruleType,
+        t.name as ruleName,
+        t.description as ruleDesc,
+        'fs.png' as icon,
+        t.severity,
+        (select id from file_system where id = #{accountId}) as accountId,
+        (select name from file_system where id = #{accountId}) as accountName,
+        'fsAccount' as accountType
+        from file_system_rule t
+        <where>
+            <if test="ruleName != null">
+                AND t.name like CONCAT('%', #{ruleName},'%')
+            </if>
+        </where>
+        order by t.last_modified desc
+    </select>
+
+    <select id="ruleTagList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+        select
+        t.tag_key as sourceId,
+        'tag' as ruleType,
+        t.tag_name as ruleName,
+        t.tag_name as ruleDesc,
+        <if test="accountType != null">
+            (
+            <if test="accountType != null and accountType == 'cloudAccount'">
+                select id from cloud_account where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'vulnAccount'">
+                select id from cloud_account where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'serverAccount'">
+                select id from server where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'k8sAccount'">
+                select id from cloud_native where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'configAccount'">
+                select id from cloud_native_config where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'imageAccount'">
+                select id from image where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'codeAccount'">
+                select id from code where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'fsAccount'">
+                select id from file_system where id = #{accountId}
+            </if>
+            ) as accountId,
+        </if>
+        <if test="accountType != null">
+            (
+            <if test="accountType != null and accountType == 'cloudAccount'">
+                select name from cloud_account where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'vulnAccount'">
+                select name from cloud_account where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'serverAccount'">
+                select name from server where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'k8sAccount'">
+                select name from cloud_native where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'configAccount'">
+                select name from cloud_native_config where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'imageAccount'">
+                select name from image where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'codeAccount'">
+                select name from code where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'fsAccount'">
+                select name from file_system where id = #{accountId}
+            </if>
+            ) as accountName,
+        </if>
+        <if test="accountType != null">
+            (
+            <if test="accountType != null and accountType == 'cloudAccount'">
+                'cloudAccount'
+            </if>
+            <if test="accountType != null and accountType == 'vulnAccount'">
+                'vulnAccount'
+            </if>
+            <if test="accountType != null and accountType == 'serverAccount'">
+                'serverAccount'
+            </if>
+            <if test="accountType != null and accountType == 'k8sAccount'">
+                'k8sAccount'
+            </if>
+            <if test="accountType != null and accountType == 'configAccount'">
+                'configAccount'
+            </if>
+            <if test="accountType != null and accountType == 'imageAccount'">
+                'imageAccount'
+            </if>
+            <if test="accountType != null and accountType == 'codeAccount'">
+                'codeAccount'
+            </if>
+            <if test="accountType != null and accountType == 'fsAccount'">
+                'fsAccount'
+            </if>
+        ) as accountType,
+        </if>
+        'tag.png' as icon,
+        'HighRisk' as severity
+        from rule_tag t
+        <where>
+            <if test="ruleName != null">
+                AND t.tag_name like CONCAT('%', #{ruleName},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="ruleGroupList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+        select
+        t.id as sourceId,
+        'group' as ruleType,
+        t.name as ruleName,
+        t.description as ruleDesc,
+        <if test="accountType != null">
+            (
+            <if test="accountType != null and accountType == 'cloudAccount'">
+                select id from cloud_account where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'vulnAccount'">
+                select id from cloud_account where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'serverAccount'">
+                select id from server where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'k8sAccount'">
+                select id from cloud_native where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'configAccount'">
+                select id from cloud_native_config where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'imageAccount'">
+                select id from image where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'codeAccount'">
+                select id from code where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'fsAccount'">
+                select id from file_system where id = #{accountId}
+            </if>
+            ) as accountId,
+        </if>
+        <if test="accountType != null">
+            (
+            <if test="accountType != null and accountType == 'cloudAccount'">
+                select name from cloud_account where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'vulnAccount'">
+                select name from cloud_account where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'serverAccount'">
+                select name from server where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'k8sAccount'">
+                select name from cloud_native where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'configAccount'">
+                select name from cloud_native_config where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'imageAccount'">
+                select name from image where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'codeAccount'">
+                select name from code where id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType == 'fsAccount'">
+                select name from file_system where id = #{accountId}
+            </if>
+            ) as accountName,
+        </if>
+        <if test="accountType != null">
+            (
+            <if test="accountType != null and accountType == 'cloudAccount'">
+                'cloudAccount'
+            </if>
+            <if test="accountType != null and accountType == 'vulnAccount'">
+                'vulnAccount'
+            </if>
+            <if test="accountType != null and accountType == 'serverAccount'">
+                'serverAccount'
+            </if>
+            <if test="accountType != null and accountType == 'k8sAccount'">
+                'k8sAccount'
+            </if>
+            <if test="accountType != null and accountType == 'configAccount'">
+                'configAccount'
+            </if>
+            <if test="accountType != null and accountType == 'imageAccount'">
+                'imageAccount'
+            </if>
+            <if test="accountType != null and accountType == 'codeAccount'">
+                'codeAccount'
+            </if>
+            <if test="accountType != null and accountType == 'fsAccount'">
+                'fsAccount'
+            </if>
+            ) as accountType,
+        </if>
+        'group.png' as icon,
+        'HighRisk' as severity
+        from rule_group t
+        left join cloud_account t1 on t.plugin_id = t1.plugin_id
+        <where>
+            <if test="ruleName != null">
+                AND t.name like CONCAT('%', #{ruleName},'%')
+            </if>
+            <if test="accountId != null">
+                AND t1.id = #{accountId}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="CloudDetailRule" type="com.hummer.common.core.dto.RuleDTO"
+               extends="com.hummer.common.mapper.mapper.RuleMapper.BaseResultMap">
+        <result column="isSaveParam" property="isSaveParam" jdbcType="BOOLEAN"/>
+        <result column="tagKey" property="tagKey" jdbcType="VARCHAR"/>
+        <result column="tagName" property="tagName" jdbcType="VARCHAR"/>
+        <collection property="tags" javaType="list" ofType="string" select="getTags" column="id">
+            <result column="tagKey" jdbcType="VARCHAR" property="tagKey"/>
+        </collection>
+    </resultMap>
+
+    <select id="getTags" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT t.tag_key as tagKey
+        FROM rule_tag t
+        WHERE tag_key IN
+              (SELECT tag_key FROM rule_tag_mapping WHERE rule_id = #{id})
+    </select>
+
+    <select id="cloudDetailRule" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultMap="CloudDetailRule">
+        SELECT
+        t.*,
+        (select tag_key from rule_tag_mapping where rule_id = t.id limit 1) as tagKey,
+        (select tag_name from rule_tag_mapping m left join rule_tag g on m.tag_key = g.tag_key where rule_id = t.id limit 1) as tagName
+        FROM rule t
+        LEFT JOIN plugin p on t.plugin_id = p.id
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+            and p.type = 'cloud'
+        </where>
+        ORDER BY t.last_modified desc
+    </select>
+
+    <select id="vulnDetailRule" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultMap="CloudDetailRule">
+        SELECT
+        t.*,
+        (select tag_key from rule_tag_mapping where rule_id = t.id limit 1) as tagKey,
+        (select tag_name from rule_tag_mapping m left join rule_tag g on m.tag_key = g.tag_key where rule_id = t.id limit 1) as tagName
+        FROM rule t
+        LEFT JOIN plugin p on t.plugin_id = p.id
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+            and p.type = 'vuln'
+        </where>
+        ORDER BY t.last_modified desc
+    </select>
+
+    <select id="serverDetailRule" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.dto.ServerRuleDTO">
+        SELECT
+        t.*,
+        'server.png' as pluginIcon,
+        t1.tag_key as tagKey,
+        t2.tag_name as tagName
+        FROM server_rule t
+        left join rule_tag_mapping t1 on t1.rule_id = t.id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+        ORDER BY t.last_modified desc
+    </select>
+
+    <select id="k8sDetailRule" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.dto.K8sRuleDTO">
+        SELECT
+        t.*,
+        'k8s.png' as pluginIcon,
+        t1.tag_key as tagKey,
+        t2.tag_name as tagName
+        FROM cloud_native_rule t
+        left join rule_tag_mapping t1 on t1.rule_id = t.id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+        ORDER BY t.last_modified desc
+    </select>
+
+    <select id="configDetailRule" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.dto.ConfigRuleDTO">
+        SELECT
+        t.*,
+        'yaml.png' as pluginIcon,
+        t1.tag_key as tagKey,
+        t2.tag_name as tagName
+        FROM cloud_native_config_rule t
+        left join rule_tag_mapping t1 on t1.rule_id = t.id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+        ORDER BY t.last_modified desc
+    </select>
+
+    <select id="imageDetailRule" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.dto.ImageRuleDTO">
+        SELECT
+        t.*,
+        'docker.png' as pluginIcon,
+        t1.tag_key as tagKey,
+        t2.tag_name as tagName
+        FROM image_rule t
+        left join rule_tag_mapping t1 on t1.rule_id = t.id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+        ORDER BY t.last_modified desc
+    </select>
+
+    <select id="codeDetailRule" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.dto.CodeRuleDTO">
+        SELECT
+        t.*,
+        'code.png' as pluginIcon,
+        t1.tag_key as tagKey,
+        t2.tag_name as tagName
+        FROM code_rule t
+        left join rule_tag_mapping t1 on t1.rule_id = t.id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+        ORDER BY t.last_modified desc
+    </select>
+
+    <select id="fsDetailRule" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.dto.FsRuleDTO">
+        SELECT
+        t.*,
+        'fs.png' as pluginIcon,
+        t1.tag_key as tagKey,
+        t2.tag_name as tagName
+        FROM file_system_rule t
+        left join rule_tag_mapping t1 on t1.rule_id = t.id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+        ORDER BY t.last_modified desc
+    </select>
+
+    <select id="detailTag" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.dto.TaskTagGroupDTO">
+        SELECT
+            DISTINCT
+            t2.id,
+            t2.name,
+            t2.status,
+            t2.severity,
+            t2.description,
+            t2.parameter,
+            t2.last_modified as lastModified,
+            t2.flag,
+            t2.script
+        FROM rule_tag t
+        left join rule_tag_mapping t1 on t.tag_key = t1.tag_key
+        join rule t2 on t1.rule_id = t2.id
+        join cloud_account t3 on t2.plugin_id = t3.plugin_id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.tag_key = #{sourceId}
+            </if>
+            <if test="accountId != null">
+                AND t3.id = #{accountId}
+            </if>
+        </where>
+
+        UNION ALL
+
+        SELECT
+            DISTINCT
+            t2.id,
+            t2.name,
+            t2.status,
+            t2.severity,
+            t2.description,
+            t2.parameter,
+            t2.last_modified as lastModified,
+            t2.flag,
+            t2.script
+        FROM rule_tag t
+        left join rule_tag_mapping t1 on t.tag_key = t1.tag_key
+        join server_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.tag_key = #{sourceId}
+            </if>
+            <if test="accountType != null and accountType != 'serverAccount'">
+                AND t.tag_key = 'serverAccount'
+            </if>
+        </where>
+
+        UNION ALL
+
+        SELECT
+        DISTINCT
+        t2.id,
+        t2.name,
+        t2.status,
+        t2.severity,
+        t2.description,
+        t2.parameter,
+        t2.last_modified as lastModified,
+        t2.flag,
+        t2.script
+        FROM rule_tag t
+        left join rule_tag_mapping t1 on t.tag_key = t1.tag_key
+        join cloud_native_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.tag_key = #{sourceId}
+            </if>
+            <if test="accountType != null and accountType != 'k8sAccount'">
+                AND t.tag_key = 'k8sAccount'
+            </if>
+        </where>
+
+        UNION ALL
+
+        SELECT
+        DISTINCT
+        t2.id,
+        t2.name,
+        t2.status,
+        t2.severity,
+        t2.description,
+        t2.parameter,
+        t2.last_modified as lastModified,
+        t2.flag,
+        t2.script
+        FROM rule_tag t
+        left join rule_tag_mapping t1 on t.tag_key = t1.tag_key
+        join cloud_native_config_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.tag_key = #{sourceId}
+            </if>
+            <if test="accountType != null and accountType != 'configAccount'">
+                AND t.tag_key = 'configAccount'
+            </if>
+        </where>
+
+        UNION ALL
+
+        SELECT
+            DISTINCT
+            t2.id,
+            t2.name,
+            t2.status,
+            t2.severity,
+            t2.description,
+            t2.parameter,
+            t2.last_modified as lastModified,
+            t2.flag,
+            t2.script
+        FROM rule_tag t
+        left join rule_tag_mapping t1 on t.tag_key = t1.tag_key
+        join image_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.tag_key = #{sourceId}
+            </if>
+            <if test="accountType != null and accountType != 'imageAccount'">
+                AND t.tag_key = 'imageAccount'
+            </if>
+        </where>
+
+        UNION ALL
+
+        SELECT
+        DISTINCT
+        t2.id,
+        t2.name,
+        t2.status,
+        t2.severity,
+        t2.description,
+        t2.parameter,
+        t2.last_modified as lastModified,
+        t2.flag,
+        t2.script
+        FROM rule_tag t
+        left join rule_tag_mapping t1 on t.tag_key = t1.tag_key
+        join code_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.tag_key = #{sourceId}
+            </if>
+            <if test="accountType != null and accountType != 'codeAccount'">
+                AND t.tag_key = 'codeAccount'
+            </if>
+        </where>
+
+        UNION ALL
+
+        SELECT
+        DISTINCT
+        t2.id,
+        t2.name,
+        t2.status,
+        t2.severity,
+        t2.description,
+        t2.parameter,
+        t2.last_modified as lastModified,
+        t2.flag,
+        t2.script
+        FROM rule_tag t
+        left join rule_tag_mapping t1 on t.tag_key = t1.tag_key
+        join file_system_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.tag_key = #{sourceId}
+            </if>
+            <if test="accountType != null and accountType != 'fsAccount'">
+                AND t.tag_key = 'fsAccount'
+            </if>
+        </where>
+
+    </select>
+
+    <select id="detailGroup" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.dto.TaskTagGroupDTO">
+        SELECT
+            DISTINCT
+            t2.id,
+            t2.name,
+            t2.status,
+            t2.severity,
+            t2.description,
+            t2.parameter,
+            t2.last_modified as lastModified,
+            t2.flag,
+            t2.script
+        FROM rule_group t
+        left join rule_group_mapping t1 on t.id = t1.group_id
+        join rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+
+        UNION ALL
+
+        SELECT
+            DISTINCT
+            t2.id,
+            t2.name,
+            t2.status,
+            t2.severity,
+            t2.description,
+            t2.parameter,
+            t2.last_modified as lastModified,
+            t2.flag,
+            t2.script
+        FROM rule_group t
+        left join rule_group_mapping t1 on t.id = t1.group_id
+        join server_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+
+        UNION ALL
+
+        SELECT
+            DISTINCT
+            t2.id,
+            t2.name,
+            t2.status,
+            t2.severity,
+            t2.description,
+            t2.parameter,
+            t2.last_modified as lastModified,
+            t2.flag,
+            t2.script
+        FROM rule_group t
+        left join rule_group_mapping t1 on t.id = t1.group_id
+        join image_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+
+        UNION ALL
+
+        SELECT
+        DISTINCT
+        t2.id,
+        t2.name,
+        t2.status,
+        t2.severity,
+        t2.description,
+        t2.parameter,
+        t2.last_modified as lastModified,
+        t2.flag,
+        t2.script
+        FROM rule_group t
+        left join rule_group_mapping t1 on t.id = t1.group_id
+        join code_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+
+        SELECT
+        DISTINCT
+        t2.id,
+        t2.name,
+        t2.status,
+        t2.severity,
+        t2.description,
+        t2.parameter,
+        t2.last_modified as lastModified,
+        t2.flag,
+        t2.script
+        FROM rule_group t
+        left join rule_group_mapping t1 on t.id = t1.group_id
+        join file_system_rule t2 on t1.rule_id = t2.id
+
+        <where>
+            <if test="sourceId != null">
+                AND t.id = #{sourceId}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="taskList" resultType="com.hummer.common.core.domain.request.task.TaskVo">
+        SELECT
+        t.*,
+        t1.name as userName
+        FROM task t
+        left join user t1 on t1.id = t.apply_user
+
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="taskName" value="request.taskName"/>
+                </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.taskName != null and request.taskName != ''">
+                and LOWER(t.task_name) like CONCAT('%',LOWER(#{request.taskName}),'%')
+            </if>
+            <if test="request.description != null and request.description != ''">
+                and LOWER(t.description) like CONCAT('%',LOWER(#{request.description}),'%')
+            </if>
+            <if test="request.userName != null and request.userName != ''">
+                and LOWER(t1.name) like CONCAT('%',LOWER(#{request.userName}),'%')
+            </if>
+        </where>
+        ORDER BY t.create_time desc
+    </select>
+
+    <resultMap id="TaskItemLogResultMap" type="com.hummer.common.core.domain.request.task.TaskLogVo"
+               extends="com.hummer.common.mapper.mapper.TaskItemResourceMapper.BaseResultMap">
+        <association property="taskResourceVo" column="resource_id" select="getTaskResourceVo">
+            <result column="id" jdbcType="VARCHAR" property="id"/>
+            <result column="name" jdbcType="VARCHAR" property="name"/>
+            <result column="desc" jdbcType="VARCHAR" property="desc"/>
+            <result column="status" jdbcType="VARCHAR" property="status"/>
+            <result column="severity" jdbcType="VARCHAR" property="severity"/>
+            <result column="icon" jdbcType="VARCHAR" property="icon"/>
+        </association>
+        <collection property="taskItemResourceLogList" ofType="com.hummer.common.core.domain.TaskItemResourceLog" javaType="list" select="getTaskItemResourceLogList" column="id">
+            <id column="id" jdbcType="INTEGER" property="id" />
+            <result column="task_item_id" jdbcType="VARCHAR" property="taskItemId" />
+            <result column="task_item_resource_id" jdbcType="VARCHAR" property="taskItemResourceId" />
+            <result column="resource_id" jdbcType="VARCHAR" property="resourceId" />
+            <result column="create_time" jdbcType="BIGINT" property="createTime" />
+            <result column="operator" jdbcType="VARCHAR" property="operator" />
+            <result column="operation" jdbcType="VARCHAR" property="operation" />
+            <result column="result" jdbcType="BIT" property="result" />
+        </collection>
+    </resultMap>
+
+    <select id="getTaskResourceVo" resultType="com.hummer.common.core.domain.request.task.TaskResourceVo" parameterType="java.lang.String">
+        SELECT t.id,
+               concat(t.task_name, ' ', t.resource_types, ' | ', t.rule_tags)  as name,
+               t.description as 'desc',
+               t.status,
+               t.severity,
+               t.plugin_icon as icon
+        FROM history_cloud_task t
+        WHERE t.id = #{resource_id}
+
+        UNION ALL
+
+        SELECT t.id,
+               concat(t.task_name, ' ', t.resource_types) as name,
+               t.description as 'desc',
+               t.status,
+               t.severity,
+               t.plugin_icon as icon
+        FROM history_vuln_task t
+        WHERE t.id = #{resource_id}
+
+        UNION ALL
+
+        SELECT t.id,
+               concat(t.server_name, ' ', t.ip, ':', t.port) as name,
+               t.rule_desc as 'desc',
+               t.result_status as status,
+               t.severity,
+               t.plugin_icon as icon
+        FROM history_server_result t
+        WHERE t.id = #{resource_id}
+
+        UNION ALL
+
+        SELECT t.id,
+               concat(t.rule_name, ' | ' , t.name) as name,
+               t.rule_desc as 'desc',
+               t.result_status as status,
+               t.severity,
+               'docker.png' as icon
+        FROM history_image_result t
+        WHERE t.id = #{resource_id}
+
+        UNION ALL
+
+        SELECT t.id,
+               t.name as name,
+               t.rule_desc as 'desc',
+               t.result_status as status,
+               t.severity,
+               'code.png' as icon
+        FROM history_code_result t
+        WHERE t.id = #{resource_id}
+
+        UNION ALL
+
+        SELECT t.id,
+               t.name as name,
+               t.rule_desc as 'desc',
+                t.result_status as status,
+               t.severity,
+               'fs.png' as icon
+        FROM history_file_system_result t
+        WHERE t.id = #{resource_id}
+    </select>
+
+    <select id="getTaskItemResourceLogList" resultType="com.hummer.common.core.domain.TaskItemResourceLog" parameterType="java.lang.String">
+        SELECT t.*
+        FROM task_item_resource_log t
+        WHERE t.task_item_resource_id = #{id}
+    </select>
+
+    <select id="taskLogList" resultMap="TaskItemLogResultMap" parameterType="java.lang.String">
+        SELECT t.*
+        FROM task_item_resource t
+        WHERE t.task_id = #{id}
+        order by t.id desc
+    </select>
+
+    <resultMap id="TaskReportMap" type="com.hummer.common.core.dto.TaskReportDTO" extends="com.hummer.common.mapper.mapper.TaskMapper.BaseResultMap">
+        <collection property="historyCloudTaskDTOList" ofType="com.hummer.common.core.dto.HistoryCloudTaskDTO" javaType="list" select="getHistoryCloudTaskDTOList" column="id">
+        </collection>
+        <collection property="historyCloudResourceReportDTOList" ofType="com.hummer.common.core.dto.HistoryResourceReportDTO" javaType="list" select="getHistoryCloudResourceReportDTOList" column="id">
+        </collection>
+        <collection property="historyVulnTaskDTOList" ofType="com.hummer.common.core.dto.HistoryVulnTaskDTO" javaType="list" select="getHistoryVulnTaskDTOList" column="id">
+        </collection>
+        <collection property="historyVulnResourceReportDTOList" ofType="com.hummer.common.core.domain.HistoryResourceReportDTO" javaType="list" select="getHistoryVulnResourceReportDTOList" column="id">
+        </collection>
+        <collection property="historyServerResultList" ofType="com.hummer.common.core.domain.HistoryServerResult" javaType="list" select="getHistoryServerResultList" column="id">
+        </collection>
+        <collection property="historyImageReportDTOList" ofType="com.hummer.common.core.dto.HistoryImageReportDTO" javaType="list" select="getHistoryImageReportDTOList" column="id">
+        </collection>
+        <collection property="historyCodeReportDTOList" ofType="com.hummer.common.core.dto.HistoryCodeReportDTO" javaType="list" select="getHistoryCodeReportDTOList" column="id">
+        </collection>
+        <collection property="historyFsReportDTOList" ofType="com.hummer.common.core.dto.HistoryCodeReportDTO" javaType="list" select="getHistoryFsReportDTOList" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="report" resultMap="TaskReportMap" parameterType="java.lang.String">
+        SELECT t.*
+        FROM task t
+        WHERE t.id = #{id}
+    </select>
+
+    <select id="getHistoryCloudTaskDTOList" resultType="com.hummer.common.core.dto.HistoryCloudTaskDTO" parameterType="java.lang.String">
+        SELECT t1.*, t3.name as accountName
+        FROM history_cloud_task t1
+        JOIN task_item_resource t2 on t2.resource_id = t1.id
+        JOIN cloud_account t3 on t3.id = t1.account_id
+        WHERE t2.task_id = #{id}
+    </select>
+
+    <resultMap id="HistoryCloudResourceReportDTOMap" type="com.hummer.common.core.dto.HistoryResourceReportDTO" extends="com.hummer.common.mapper.mapper.ResourceMapper.BaseResultMap">
+        <collection property="resourceItemList" ofType="com.hummer.common.core.domain.ResourceItem" javaType="list" select="getCloudResourceItemList" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="getHistoryCloudResourceReportDTOList" resultMap="HistoryCloudResourceReportDTOMap" parameterType="java.lang.String">
+        SELECT t.*
+        FROM resource t
+        JOIN cloud_task_item_resource t1 on t.id = t1.resource_id
+        JOIN history_cloud_task t2 on t1.task_id = t2.id
+        JOIN task_item_resource t3 on t3.resource_id = t2.id
+        WHERE t3.task_id = #{id}
+    </select>
+
+    <select id="getCloudResourceItemList" resultType="com.hummer.common.core.domain.ResourceItem" parameterType="java.lang.String">
+        SELECT t.*
+        FROM resource_item t
+        JOIN cloud_task_item_resource t1 on t.resource_id = t1.resource_id
+        JOIN history_cloud_task t2 on t1.task_id = t2.id
+        JOIN task_item_resource t3 on t3.resource_id = t2.id
+        WHERE t3.task_id = #{id}
+    </select>
+
+    <select id="getHistoryVulnTaskDTOList" resultType="com.hummer.common.core.dto.HistoryVulnTaskDTO" parameterType="java.lang.String">
+        SELECT t1.*, t3.name as accountName
+        FROM history_vuln_task t1
+        JOIN task_item_resource t2 on t2.resource_id = t1.id
+        JOIN cloud_account t3 on t3.id = t1.account_id
+        WHERE t2.task_id = #{id}
+    </select>
+
+    <resultMap id="HistoryVulnResourceReportDTOMap" type="com.hummer.common.core.dto.HistoryResourceReportDTO" extends="com.hummer.common.mapper.mapper.ResourceMapper.BaseResultMap">
+        <collection property="resourceItemList" ofType="com.hummer.common.core.domain.ResourceItem" javaType="list" select="getVulnResourceItemList" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="getHistoryVulnResourceReportDTOList" resultMap="HistoryCloudResourceReportDTOMap" parameterType="java.lang.String">
+        SELECT t.*
+        FROM resource t
+        JOIN cloud_task_item_resource t1 on t.id = t1.resource_id
+        JOIN history_vuln_task t2 on t1.task_id = t2.id
+        JOIN task_item_resource t3 on t3.resource_id = t2.id
+        WHERE t3.task_id = #{id}
+    </select>
+
+    <select id="getVulnResourceItemList" resultType="com.hummer.common.core.domain.ResourceItem" parameterType="java.lang.String">
+        SELECT t.*
+        FROM resource_item t
+        JOIN cloud_task_item_resource t1 on t.resource_id = t1.resource_id
+        JOIN history_vuln_task t2 on t1.task_id = t2.id
+        JOIN task_item_resource t3 on t3.resource_id = t2.id
+        WHERE t3.task_id = #{id}
+    </select>
+
+    <select id="getHistoryServerResultList" resultType="com.hummer.common.core.domain.HistoryServerResult" parameterType="java.lang.String">
+        SELECT t.*
+        FROM history_server_result t
+        JOIN task_item_resource t1 on t1.resource_id = t.id
+        WHERE t1.task_id = #{id}
+    </select>
+
+    <resultMap id="HistoryImageReportDTOMap" type="com.hummer.common.core.dto.HistoryImageReportDTO" extends="com.hummer.common.mapper.mapper.HistoryImageResultMapper.BaseResultMap">
+        <collection property="imageResultItemWithBLOBsList" ofType="com.hummer.common.core.domain.ImageResultItemWithBLOBs" javaType="list" select="getimageResultItemWithBLOBsList" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="getHistoryImageReportDTOList" resultMap="HistoryImageReportDTOMap" parameterType="java.lang.String">
+        SELECT t.*
+        FROM history_image_result t
+        JOIN task_item_resource t1 on t1.resource_id = t.id
+        WHERE t1.task_id = #{id}
+    </select>
+
+    <select id="getimageResultItemWithBLOBsList" resultType="com.hummer.common.core.domain.ImageResultItemWithBLOBs" parameterType="java.lang.String">
+        SELECT t.*
+        FROM image_result_item t
+        WHERE t.result_id = #{id}
+    </select>
+
+    <resultMap id="HistoryCodeReportDTOMap" type="com.hummer.common.core.dto.HistoryCodeReportDTO" extends="com.hummer.common.mapper.mapper.HistoryCodeResultMapper.BaseResultMap">
+        <collection property="codeResultItemList" ofType="com.hummer.common.core.domain.CodeResultItemWithBLOBs" javaType="list" select="getCodeResultItemList" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="getHistoryCodeReportDTOList" resultMap="HistoryCodeReportDTOMap" parameterType="java.lang.String">
+        SELECT t.*
+        FROM history_code_result t
+        JOIN task_item_resource t1 on t1.resource_id = t.id
+        WHERE t1.task_id = #{id}
+    </select>
+
+    <select id="getCodeResultItemList" resultType="com.hummer.common.core.domain.CodeResultItemWithBLOBs" parameterType="java.lang.String">
+        SELECT t.*
+        FROM code_result_item t
+        JOIN history_code_result t1 on t1.id = t.result_id
+        WHERE t1.id = #{id}
+    </select>
+
+    <resultMap id="HistoryFsReportDTOMap" type="com.hummer.common.core.dto.HistoryFsReportDTO" extends="com.hummer.common.mapper.mapper.HistoryFileSystemResultMapper.BaseResultMap">
+        <collection property="fsResultItemList" ofType="com.hummer.common.core.domain.FileSystemResultItemWithBLOBs" javaType="list" select="getFsResultItemList" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="getHistoryFsReportDTOList" resultMap="HistoryFsReportDTOMap" parameterType="java.lang.String">
+        SELECT t.*
+        FROM history_file_system_result t
+        JOIN task_item_resource t1 on t1.resource_id = t.id
+        WHERE t1.task_id = #{id}
+    </select>
+
+    <select id="getFsResultItemList" resultType="com.hummer.common.core.domain.FileSystemResultItemWithBLOBs" parameterType="java.lang.String">
+        SELECT t.*
+        FROM file_system_result_item t
+        JOIN history_file_system_result t1 on t1.id = t.result_id
+        WHERE t1.id = #{id}
+    </select>
+
+</mapper>

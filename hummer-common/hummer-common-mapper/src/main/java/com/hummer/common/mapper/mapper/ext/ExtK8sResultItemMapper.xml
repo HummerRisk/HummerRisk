@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummer.common.mapper.mapper.ext.ExtK8sResultItemMapper">
+
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.resource != null'>
+            and t.resource
+            <include refid="condition">
+                <property name="object" value="${condition}.resource"/>
+            </include>
+        </if>
+        <if test='${condition}.vulnerabilityId != null'>
+            and t.vulnerability_id
+            <include refid="condition">
+                <property name="object" value="${condition}.vulnerabilityId"/>
+            </include>
+        </if>
+        <if test='${condition}.severity != null'>
+            and t.severity
+            <include refid="condition">
+                <property name="object" value="${condition}.severity"/>
+            </include>
+        </if>
+        <if test='${condition}.severity != null'>
+            and t.severity
+            <include refid="condition">
+                <property name="object" value="${condition}.severity"/>
+            </include>
+        </if>
+        <if test="${condition}.score != null">
+            and t.score
+            <include refid="condition">
+                <property name="object" value="${condition}.score"/>
+            </include>
+        </if>
+        <if test="${condition}.installedVersion != null">
+            and t.installed_version
+            <include refid="condition">
+                <property name="object" value="${condition}.installedVersion"/>
+            </include>
+        </if>
+        <if test="${condition}.fixedVersion != null">
+            and t.fixed_version
+            <include refid="condition">
+                <property name="object" value="${condition}.fixedVersion"/>
+            </include>
+        </if>
+        <if test="${condition}.primaryLink != null">
+            and t.primary_link
+            <include refid="condition">
+                <property name="object" value="${condition}.primaryLink"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="resultItemListBySearch" resultType="com.hummer.common.core.domain.CloudNativeResultItem" parameterType="com.hummer.common.core.domain.request.k8s.K8sResultItemRequest">
+        SELECT
+        t.*
+        FROM cloud_native_result_item t
+
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
+            </if>
+
+            <if test="request.resultId != null and request.resultId != ''">
+                and t.result_id = #{request.resultId}
+            </if>
+            <if test="request.resource != null and request.resource != ''">
+                and LOWER(t.resource) like CONCAT('%', LOWER(#{request.resource}),'%')
+            </if>
+            <if test="request.vulnerabilityId != null and request.vulnerabilityId != ''">
+                and LOWER(t.vulnerability_id) like CONCAT('%', LOWER(#{request.vulnerabilityId}),'%')
+            </if>
+            <if test="request.severity != null and request.severity != ''">
+                and LOWER(t.severity) like CONCAT('%', LOWER(#{request.severity}),'%')
+            </if>
+            <if test="request.score != null and request.score != ''">
+                and LOWER(t.score) like CONCAT('%', LOWER(#{request.score}),'%')
+            </if>
+            <if test="request.installedVersion != null and request.installedVersion != ''">
+                and LOWER(t.installed_version) like CONCAT('%', LOWER(#{request.installedVersion}),'%')
+            </if>
+            <if test="request.fixedVersion != null and request.fixedVersion != ''">
+                and LOWER(t.fixed_version) like CONCAT('%', LOWER(#{request.fixedVersion}),'%')
+            </if>
+            <if test="request.primaryLink != null and request.primaryLink != ''">
+                and LOWER(t.primary_link) like CONCAT('%', LOWER(#{request.primaryLink}),'%')
+            </if>
+        </where>
+        ORDER BY FIELD(`severity`, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')
+    </select>
+
+
+</mapper>

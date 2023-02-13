@@ -239,6 +239,14 @@
             </dependency>
             <!-- 核心模块 -->
 
+            <!-- 映射模块 -->
+            <dependency>
+                <groupId>com.hummerrisk</groupId>
+                <artifactId>hummer-common-mapper</artifactId>
+                <version>${hummerrisk.version}</version>
+            </dependency>
+            <!-- 映射模块 -->
+
             <!-- 接口模块 -->
             <dependency>
                 <groupId>com.hummerrisk</groupId>

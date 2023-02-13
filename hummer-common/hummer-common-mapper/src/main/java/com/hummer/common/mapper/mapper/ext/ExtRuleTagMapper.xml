@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummer.common.mapper.mapper.ext.ExtRuleTagMapper">
+    <resultMap id="BaseResultMap" type="com.hummer.common.core.domain.RuleTag">
+    </resultMap>
+
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.tagKey != null'>
+            and t.tag_key
+            <include refid="condition">
+                <property name="object" value="${condition}.tagKey"/>
+            </include>
+        </if>
+        <if test='${condition}.tagName != null'>
+            and t.tag_name
+            <include refid="condition">
+                <property name="object" value="${condition}.tagName"/>
+            </include>
+        </if>
+        <if test='${condition}.index != null'>
+            and t._index
+            <include refid="condition">
+                <property name="object" value="${condition}.index"/>
+            </include>
+        </if>
+        <if test='${condition}.flag != null'>
+            and t.flag
+            <include refid="condition">
+                <property name="object" value="${condition}.flag"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="list" resultMap="BaseResultMap" parameterType="com.hummer.common.core.domain.request.rule.RuleTagRequest">
+        select
+        t.*
+        from rule_tag as t
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                </include>
+            </if>
+
+            <if test="request.tagKey != null and request.tagKey != ''">
+                and LOWER(t.tag_key) like concat('%', LOWER(#{request.tagKey}), '%')
+            </if>
+            <if test="request.tagName != null and request.tagName != ''">
+                and LOWER(t.tag_name) like concat('%', LOWER(#{request.tagName}), '%')
+            </if>
+        </where>
+        order by t._index
+    </select>
+
+</mapper>
