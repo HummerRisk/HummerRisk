@@ -6,10 +6,6 @@ import javax.validation.constraints.*;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import com.hummer.common.core.annotation.Excel;
-import com.hummer.common.core.annotation.Excel.ColumnType;
-import com.hummer.common.core.annotation.Excel.Type;
-import com.hummer.common.core.annotation.Excels;
 import com.hummer.common.core.web.domain.BaseEntity;
 import com.hummer.common.core.xss.Xss;
 
@@ -24,43 +20,36 @@ public class SysUser extends BaseEntity {
     /**
      * 用户ID
      */
-    @Excel(name = "用户序号", cellType = ColumnType.NUMERIC, prompt = "用户编号")
     private Long userId;
 
     /**
      * 部门ID
      */
-    @Excel(name = "部门编号", type = Type.IMPORT)
     private Long deptId;
 
     /**
      * 用户账号
      */
-    @Excel(name = "登录名称")
     private String userName;
 
     /**
      * 用户昵称
      */
-    @Excel(name = "用户名称")
     private String nickName;
 
     /**
      * 用户邮箱
      */
-    @Excel(name = "用户邮箱")
     private String email;
 
     /**
      * 手机号码
      */
-    @Excel(name = "手机号码")
     private String phonenumber;
 
     /**
      * 用户性别
      */
-    @Excel(name = "用户性别", readConverterExp = "0=男,1=女,2=未知")
     private String sex;
 
     /**
@@ -76,7 +65,6 @@ public class SysUser extends BaseEntity {
     /**
      * 帐号状态（0正常 1停用）
      */
-    @Excel(name = "帐号状态", readConverterExp = "0=正常,1=停用")
     private String status;
 
     /**
@@ -87,22 +75,16 @@ public class SysUser extends BaseEntity {
     /**
      * 最后登录IP
      */
-    @Excel(name = "最后登录IP", type = Type.EXPORT)
     private String loginIp;
 
     /**
      * 最后登录时间
      */
-    @Excel(name = "最后登录时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss", type = Type.EXPORT)
     private Date loginDate;
 
     /**
      * 部门对象
      */
-    @Excels({
-            @Excel(name = "部门名称", targetAttr = "deptName", type = Type.EXPORT),
-            @Excel(name = "部门负责人", targetAttr = "leader", type = Type.EXPORT)
-    })
     private SysDept dept;
 
     /**
