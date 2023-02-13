@@ -1,16 +1,11 @@
 package com.hummer.common.core.dto;
 
 import com.hummer.common.core.domain.Rule;
-import com.hummer.common.core.domain.RuleTag;
 import com.hummer.common.core.domain.SelectTag;
-import com.hummer.common.core.mapper.ext.ExtRuleMapper;
-import com.hummer.common.core.utils.BeanUtils;
-import com.hummer.common.core.utils.CommonBeanFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author harris
@@ -117,13 +112,4 @@ public class RuleDTO extends Rule {
         isSaveParam = saveParam;
     }
 
-    public RuleDTO fromRules(Rule rule) throws Exception {
-        RuleDTO ruleDTO = new RuleDTO();
-        BeanUtils.copyBean(ruleDTO, rule);
-        List<RuleTag> sfRulesTagList = Objects.requireNonNull(CommonBeanFactory.getBean(ExtRuleMapper.class)).getTagsOfRule(rule.getId());
-        for (RuleTag sfRulesTag : sfRulesTagList) {
-            ruleDTO.getTags().add(sfRulesTag.getTagKey());
-        }
-        return ruleDTO;
-    }
 }
