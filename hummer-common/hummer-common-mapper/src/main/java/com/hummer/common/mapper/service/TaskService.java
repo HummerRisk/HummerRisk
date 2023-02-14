@@ -1,24 +1,19 @@
-package com.hummer.system.service;
+package com.hummer.common.mapper.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hummer.cloud.service.CloudTaskService;
-import com.hummer.cloud.service.RuleService;
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.task.*;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.mapper.*;
-import com.hummer.common.core.mapper.ext.ExtTaskMapper;
-import com.hummer.common.core.service.HistoryService;
-import com.hummer.common.core.service.OperationLogService;
 import com.hummer.common.core.utils.BeanUtils;
 import com.hummer.common.core.utils.PlatformUtils;
 import com.hummer.common.core.utils.SessionUtils;
 import com.hummer.common.core.utils.UUIDUtil;
-import com.hummer.k8s.service.*;
+import com.hummer.common.mapper.mapper.*;
+import com.hummer.common.mapper.mapper.ext.ExtTaskMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

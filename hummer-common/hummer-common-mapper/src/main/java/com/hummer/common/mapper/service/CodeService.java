@@ -1,4 +1,4 @@
-package com.hummer.k8s.service;
+package com.hummer.common.mapper.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -12,17 +12,13 @@ import com.hummer.common.core.domain.request.code.CodeRuleRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.mapper.*;
-import com.hummer.common.core.mapper.ext.ExtCodeMapper;
-import com.hummer.common.core.mapper.ext.ExtCodeResultItemMapper;
-import com.hummer.common.core.mapper.ext.ExtCodeResultMapper;
-import com.hummer.common.core.mapper.ext.ExtCodeRuleMapper;
+import com.hummer.common.mapper.mapper.*;
+import com.hummer.common.mapper.mapper.ext.ExtCodeMapper;
+import com.hummer.common.mapper.mapper.ext.ExtCodeResultItemMapper;
+import com.hummer.common.mapper.mapper.ext.ExtCodeResultMapper;
+import com.hummer.common.mapper.mapper.ext.ExtCodeRuleMapper;
 import com.hummer.common.core.proxy.code.CodeCredential;
 import com.hummer.common.core.proxy.code.CodeCredentialRequest;
-import com.hummer.common.core.service.HistoryService;
-import com.hummer.common.core.service.NoticeService;
-import com.hummer.common.core.service.OperationLogService;
-import com.hummer.common.core.service.SystemParameterService;
 import com.hummer.common.core.utils.*;
 import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;

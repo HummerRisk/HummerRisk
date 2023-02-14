@@ -1,4 +1,4 @@
-package com.hummer.k8s.service;
+package com.hummer.common.mapper.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -12,17 +12,14 @@ import com.hummer.common.core.domain.request.server.ServerRuleRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.mapper.*;
-import com.hummer.common.core.mapper.ext.ExtServerCertificateMapper;
-import com.hummer.common.core.mapper.ext.ExtServerMapper;
-import com.hummer.common.core.mapper.ext.ExtServerResultMapper;
-import com.hummer.common.core.mapper.ext.ExtServerRuleMapper;
 import com.hummer.common.core.proxy.server.SshUtil;
 import com.hummer.common.core.proxy.server.WinRMHelper;
-import com.hummer.common.core.service.HistoryService;
-import com.hummer.common.core.service.NoticeService;
-import com.hummer.common.core.service.OperationLogService;
 import com.hummer.common.core.utils.*;
+import com.hummer.common.mapper.mapper.*;
+import com.hummer.common.mapper.mapper.ext.ExtServerCertificateMapper;
+import com.hummer.common.mapper.mapper.ext.ExtServerMapper;
+import com.hummer.common.mapper.mapper.ext.ExtServerResultMapper;
+import com.hummer.common.mapper.mapper.ext.ExtServerRuleMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;

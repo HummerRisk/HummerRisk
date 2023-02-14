@@ -1,4 +1,4 @@
-package com.hummer.system.service;
+package com.hummer.common.mapper.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -16,10 +16,9 @@ import com.hummer.common.core.dto.ChartDTO;
 import com.hummer.common.core.dto.HistoryScanDTO;
 import com.hummer.common.core.dto.TopInfoDTO;
 import com.hummer.common.core.dto.TopScanDTO;
-import com.hummer.common.core.mapper.*;
-import com.hummer.common.core.mapper.ext.ExtDashboardMapper;
-import com.hummer.common.core.mapper.ext.ExtVulnMapper;
-import com.hummer.common.core.service.HistoryService;
+import com.hummer.common.mapper.mapper.*;
+import com.hummer.common.mapper.mapper.ext.ExtDashboardMapper;
+import com.hummer.common.mapper.mapper.ext.ExtVulnMapper;
 import com.hummer.common.core.utils.PlatformUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;

@@ -1,4 +1,4 @@
-package com.hummer.k8s.service;
+package com.hummer.common.mapper.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -14,15 +14,12 @@ import com.hummer.common.core.domain.request.k8s.rbac.Nodes;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.mapper.*;
-import com.hummer.common.core.mapper.ext.*;
+import com.hummer.common.mapper.mapper.*;
+import com.hummer.common.mapper.mapper.ext.*;
 import com.hummer.common.core.proxy.k8s.K8sRequest;
 import com.hummer.common.core.proxy.k8s.K8sSource;
 import com.hummer.common.core.proxy.kubesphere.KubeSphereRequest;
 import com.hummer.common.core.proxy.rancher.RancherRequest;
-import com.hummer.common.core.service.HistoryService;
-import com.hummer.common.core.service.NoticeService;
-import com.hummer.common.core.service.OperationLogService;
 import com.hummer.common.core.utils.*;
 import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;

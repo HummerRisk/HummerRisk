@@ -1,4 +1,4 @@
-package com.hummer.k8s.service;
+package com.hummer.common.mapper.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -11,14 +11,10 @@ import com.hummer.common.core.domain.request.config.ConfigResultRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.mapper.*;
-import com.hummer.common.core.mapper.ext.ExtCloudNativeConfigMapper;
-import com.hummer.common.core.mapper.ext.ExtCloudNativeConfigResultMapper;
-import com.hummer.common.core.mapper.ext.ExtConfigResultItemMapper;
-import com.hummer.common.core.service.HistoryService;
-import com.hummer.common.core.service.NoticeService;
-import com.hummer.common.core.service.OperationLogService;
-import com.hummer.common.core.service.SystemParameterService;
+import com.hummer.common.mapper.mapper.*;
+import com.hummer.common.mapper.mapper.ext.ExtCloudNativeConfigMapper;
+import com.hummer.common.mapper.mapper.ext.ExtCloudNativeConfigResultMapper;
+import com.hummer.common.mapper.mapper.ext.ExtConfigResultItemMapper;
 import com.hummer.common.core.utils.*;
 import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;

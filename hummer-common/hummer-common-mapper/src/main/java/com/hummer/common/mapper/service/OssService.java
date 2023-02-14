@@ -1,4 +1,4 @@
-package com.hummer.cloud.service;
+package com.hummer.common.mapper.service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -17,18 +17,16 @@ import com.hummer.common.core.dto.RuleGroupDTO;
 import com.hummer.common.core.dto.ValidateDTO;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.mapper.*;
-import com.hummer.common.core.mapper.ext.ExtCloudTaskMapper;
-import com.hummer.common.core.mapper.ext.ExtOssMapper;
 import com.hummer.common.core.oss.config.OssManager;
 import com.hummer.common.core.oss.constants.OSSConstants;
 import com.hummer.common.core.oss.controller.request.OssBucketRequest;
 import com.hummer.common.core.oss.controller.request.OssRequest;
 import com.hummer.common.core.oss.dto.*;
 import com.hummer.common.core.oss.provider.OssProvider;
-import com.hummer.common.core.service.OperationLogService;
-import com.hummer.common.core.service.ResultHolder;
 import com.hummer.common.core.utils.*;
+import com.hummer.common.mapper.mapper.*;
+import com.hummer.common.mapper.mapper.ext.ExtCloudTaskMapper;
+import com.hummer.common.mapper.mapper.ext.ExtOssMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;

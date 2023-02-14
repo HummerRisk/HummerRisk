@@ -1,8 +1,7 @@
-package com.hummer.job.service;
+package com.hummer.common.mapper.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.google.gson.Gson;
-import com.hummer.cloud.service.*;
 import com.hummer.common.core.constant.CloudTaskConstants;
 import com.hummer.common.core.constant.CommandEnum;
 import com.hummer.common.core.constant.TaskConstants;
@@ -11,13 +10,10 @@ import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.resource.ResourceRequest;
 import com.hummer.common.core.dto.ResourceDTO;
 import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.mapper.*;
+import com.hummer.common.mapper.mapper.*;
 import com.hummer.common.core.oss.constants.OSSConstants;
-import com.hummer.common.core.service.HistoryService;
 import com.hummer.common.core.utils.*;
-import com.hummer.k8s.service.*;
 import com.hummer.quartz.anno.QuartzScheduled;
-import com.hummer.system.service.TaskService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;

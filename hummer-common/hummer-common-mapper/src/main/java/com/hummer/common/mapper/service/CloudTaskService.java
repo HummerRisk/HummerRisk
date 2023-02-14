@@ -1,4 +1,4 @@
-package com.hummer.cloud.service;
+package com.hummer.common.mapper.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -10,10 +10,9 @@ import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.mapper.*;
-import com.hummer.common.core.mapper.ext.ExtCloudTaskMapper;
-import com.hummer.common.core.mapper.ext.ExtQuartzTaskMapper;
-import com.hummer.common.core.service.OperationLogService;
+import com.hummer.common.mapper.mapper.*;
+import com.hummer.common.mapper.mapper.ext.ExtCloudTaskMapper;
+import com.hummer.common.mapper.mapper.ext.ExtQuartzTaskMapper;
 import com.hummer.common.core.utils.*;
 import com.hummer.quartz.service.QuartzManageService;
 import org.apache.commons.lang3.StringUtils;

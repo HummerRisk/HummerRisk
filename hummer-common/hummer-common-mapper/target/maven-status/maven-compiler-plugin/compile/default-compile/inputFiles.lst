@@ -1,7 +1,9 @@
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/HistoryCloudTaskItemMapper.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/K8sService.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/CloudNativeSourceMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/utils/SpringUtils.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/CloudResourceSyncMapper.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/ResourceService.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtQuartzTaskMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/HistoryVulnTaskItemMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/message/WeComNoticeSender.java
@@ -13,6 +15,7 @@
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/HistoryImageResultMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ServerCertificateMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/CloudNativeConfigResultLogMapper.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/CloudTaskService.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtCloudEventSyncLogMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/TaskItemResourceMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtTaskMapper.java
@@ -24,6 +27,7 @@
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtVulnMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtUserRoleMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/handler/ResultResponseBodyAdvice.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/OssService.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/CloudResourceSyncItemMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/MessageOrderMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/CloudResourceSyncItemLogMapper.java
@@ -40,8 +44,12 @@
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtK8sResultConfigItemMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/handler/RestControllerExceptionHandler.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtAccountMapper.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/AccountService.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtCodeResultMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/UserKeyService.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/DashboardService.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/ServerService.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/CloudSyncService.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/message/MailNoticeSender.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/CloudResourceAmountHistoryMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/CodeResultItemMapper.java
@@ -67,12 +75,15 @@
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtCloudResourceItemMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/CloudTaskItemLogMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtRuleTagMapper.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/CodeService.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/CloudEventSyncLogMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/HistoryCodeResultMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/RuleTypeMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtOssMapper.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/ImageService.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/SbomMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/RuleInspectionReportMapper.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/ResourceCreateService.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtCloudNativeSourceMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtPluginMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ImageRuleMapper.java
@@ -83,6 +94,7 @@
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtCloudNativeConfigMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtRuleGroupMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/FileSystemRuleMapper.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/XrayService.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/HistoryCloudTaskResourceMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/OssLogMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/CloudEventMapper.java
@@ -91,10 +103,13 @@
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtCloudNativeMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/FileSystemMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtK8sResultItemMapper.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/NucleiService.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/handler/annotation/I18n.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/FileSystemService.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtCloudTaskMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/message/Receiver.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtImageRepoItemMapper.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/TaskService.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/UserKeyMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/FileSystemResultItemMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/SbomVersionMapper.java
@@ -102,6 +117,7 @@
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ServerResultMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/WebMsgMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ImageResultLogMapper.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/ConfigService.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ImageResultMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/HistoryVulnTaskMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/handler/SubscribeNode.java
@@ -156,7 +172,9 @@
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtFileSystemMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/SysListener.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtCloudNativeResultMapper.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/ProwlerService.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/message/TextMessage.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/RuleService.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/HistoryCloudTaskLogMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtServerCertificateMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ext/ExtRuleMapper.java
@@ -202,3 +220,4 @@
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ResourceItemMapper.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/SSOService.java
 /Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/mapper/ServerRuleMapper.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-common/hummer-common-mapper/src/main/java/com/hummer/common/mapper/service/OrderService.java

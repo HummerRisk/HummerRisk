@@ -1,4 +1,4 @@
-package com.hummer.k8s.service;
+package com.hummer.common.mapper.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -12,15 +12,11 @@ import com.hummer.common.core.domain.request.fs.FsRuleRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.mapper.*;
-import com.hummer.common.core.mapper.ext.ExtFileSystemMapper;
-import com.hummer.common.core.mapper.ext.ExtFileSystemResultItemMapper;
-import com.hummer.common.core.mapper.ext.ExtFileSystemResultMapper;
-import com.hummer.common.core.mapper.ext.ExtFileSystemRuleMapper;
-import com.hummer.common.core.service.HistoryService;
-import com.hummer.common.core.service.NoticeService;
-import com.hummer.common.core.service.OperationLogService;
-import com.hummer.common.core.service.SystemParameterService;
+import com.hummer.common.mapper.mapper.*;
+import com.hummer.common.mapper.mapper.ext.ExtFileSystemMapper;
+import com.hummer.common.mapper.mapper.ext.ExtFileSystemResultItemMapper;
+import com.hummer.common.mapper.mapper.ext.ExtFileSystemResultMapper;
+import com.hummer.common.mapper.mapper.ext.ExtFileSystemRuleMapper;
 import com.hummer.common.core.utils.*;
 import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +30,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static com.hummer.k8s.service.ImageService.changeFlowFormat;
+import static com.hummer.common.mapper.service.ImageService.changeFlowFormat;
 
 /**
  * @author harris
