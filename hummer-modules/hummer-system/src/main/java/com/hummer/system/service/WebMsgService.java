@@ -3,8 +3,8 @@ package com.hummer.system.service;
 import com.hummer.common.core.domain.WebMsg;
 import com.hummer.common.core.domain.WebMsgExample;
 import com.hummer.common.core.domain.request.webMsg.WebMsgRequest;
-import com.hummer.common.core.mapper.WebMsgMapper;
-import com.hummer.common.core.mapper.ext.ExtWebMsgMapper;
+import com.hummer.common.mapper.mapper.WebMsgMapper;
+import com.hummer.common.mapper.mapper.ext.ExtWebMsgMapper;
 import com.hummer.common.core.utils.SessionUtils;
 import org.springframework.stereotype.Service;
 

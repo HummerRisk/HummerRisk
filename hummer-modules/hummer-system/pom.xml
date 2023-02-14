@@ -78,29 +78,15 @@
             <artifactId>hummer-common-swagger</artifactId>
         </dependency>
 
-        <!-- hummer Common core -->
+        <!-- hummer Common mapper -->
         <dependency>
             <groupId>com.hummerrisk</groupId>
-            <artifactId>hummer-common-core</artifactId>
+            <artifactId>hummer-common-mapper</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
-        </dependency>
-
-        <!-- hummer cloud -->
-        <dependency>
-            <groupId>com.hummerrisk</groupId>
-            <artifactId>hummer-modules-cloud</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
-        <!-- hummer k8s -->
-        <dependency>
-            <groupId>com.hummerrisk</groupId>
-            <artifactId>hummer-modules-k8s</artifactId>
-            <version>1.0.0</version>
         </dependency>
 
     </dependencies>

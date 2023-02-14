@@ -1,7 +1,7 @@
 package com.hummer.system.controller;
 
 import com.hummer.common.core.domain.Role;
-import com.hummer.common.core.handler.annotation.I18n;
+import com.hummer.common.mapper.handler.annotation.I18n;
 import com.hummer.system.service.RoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -7,10 +7,10 @@ import com.hummer.common.core.domain.ProxyExample;
 import com.hummer.common.core.domain.request.proxy.ProxyRequest;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.mapper.ProxyMapper;
-import com.hummer.common.core.mapper.ext.ExtProxyMapper;
-import com.hummer.common.core.service.OperationLogService;
+import com.hummer.common.mapper.mapper.ProxyMapper;
+import com.hummer.common.mapper.mapper.ext.ExtProxyMapper;
 import com.hummer.common.core.utils.SessionUtils;
+import com.hummer.common.mapper.service.OperationLogService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
