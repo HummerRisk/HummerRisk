@@ -73,6 +73,10 @@ public class BaiduRequest extends Request {
     }
 
     public <T> BosClient getClient() throws Exception {
+       return getClient(getRegionId());
+    }
+
+    public <T> BosClient getClient(String region) throws Exception {
         BosClient client = null;
         if (getAccessKey() != null && getSecretKey() != null) {
 
@@ -85,7 +89,7 @@ public class BaiduRequest extends Request {
             // 设置Socket传输数据超时的时间为2000毫秒
             config.setSocketTimeoutInMillis(20000);
 
-            config.setEndpoint(getEndpoint(getRegionId()));
+            config.setEndpoint(getEndpoint(region));
             config.setCredentials(new DefaultBceCredentials(baiduCredential.getAccessKeyId(), baiduCredential.getSecretAccessKey()));
             try {
                 client = new BosClient(config);
@@ -96,7 +100,6 @@ public class BaiduRequest extends Request {
         }
         return client;
     }
-
     public <T> T getClient(Class<T> client) throws Exception {
         if (getAccessKey() != null && getSecretKey() != null) {
 
@@ -157,7 +160,7 @@ public class BaiduRequest extends Request {
         // 目前支持“华北-北京”、“华南-广州”和“华东-苏州”三个区域。北京区域：http://bj.bcebos.com，广州区域：http://gz.bcebos.com，苏州区域：http://su.bcebos.com
         List<OssRegion> regionList = this.getOssRegions();
         for(OssRegion ossRegion : regionList){
-            if(StringUtils.equalsIgnoreCase(ossRegion.getRegionId(), getRegionId())){
+            if(StringUtils.equalsIgnoreCase(ossRegion.getRegionId(), region)){
                 endpoint = ossRegion.getExtranetEndpoint();
                 break;
             }
