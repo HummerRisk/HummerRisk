@@ -78,6 +78,12 @@
             <artifactId>hummer-common-swagger</artifactId>
         </dependency>
 
+        <!-- hummer Common mapper -->
+        <dependency>
+            <groupId>com.hummerrisk</groupId>
+            <artifactId>hummer-common-mapper</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
