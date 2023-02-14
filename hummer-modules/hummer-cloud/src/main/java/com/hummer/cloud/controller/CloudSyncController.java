@@ -2,12 +2,12 @@ package com.hummer.cloud.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummer.cloud.service.CloudSyncService;
+import com.hummer.common.mapper.handler.annotation.I18n;
+import com.hummer.common.mapper.service.CloudSyncService;
 import com.hummer.common.core.domain.CloudResourceSync;
 import com.hummer.common.core.domain.request.cloudResource.CloudResourceSyncRequest;
 import com.hummer.common.core.domain.request.sync.CloudTopology;
 import com.hummer.common.core.dto.CloudResourceSyncItemDto;
-import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import io.swagger.annotations.Api;

@@ -78,10 +78,10 @@
             <artifactId>hummer-common-swagger</artifactId>
         </dependency>
 
-        <!-- quartz -->
+        <!-- hummer Common mapper -->
         <dependency>
-            <groupId>com.hummer</groupId>
-            <artifactId>quartz-spring-boot-starter</artifactId>
+            <groupId>com.hummerrisk</groupId>
+            <artifactId>hummer-common-mapper</artifactId>
         </dependency>
 
     </dependencies>

@@ -2,7 +2,8 @@ package com.hummer.cloud.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummer.cloud.service.ResourceService;
+import com.hummer.common.mapper.handler.annotation.I18n;
+import com.hummer.common.mapper.service.ResourceService;
 import com.hummer.common.core.domain.CloudTaskItem;
 import com.hummer.common.core.domain.ResourceWithBLOBs;
 import com.hummer.common.core.domain.RuleInspectionReport;
@@ -11,7 +12,6 @@ import com.hummer.common.core.domain.request.resource.JsonRequest;
 import com.hummer.common.core.domain.request.resource.ResourceRequest;
 import com.hummer.common.core.domain.request.rule.RuleGroupRequest;
 import com.hummer.common.core.dto.*;
-import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import io.swagger.annotations.Api;

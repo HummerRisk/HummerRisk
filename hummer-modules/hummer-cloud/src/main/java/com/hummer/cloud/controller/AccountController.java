@@ -2,7 +2,8 @@ package com.hummer.cloud.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummer.cloud.service.AccountService;
+import com.hummer.common.mapper.handler.annotation.I18n;
+import com.hummer.common.mapper.service.AccountService;
 import com.hummer.common.core.constant.CloudAccountConstants;
 import com.hummer.common.core.domain.Account;
 import com.hummer.common.core.domain.AccountWithBLOBs;
@@ -14,7 +15,6 @@ import com.hummer.common.core.dto.AccountDTO;
 import com.hummer.common.core.dto.QuartzTaskDTO;
 import com.hummer.common.core.dto.RuleDTO;
 import com.hummer.common.core.dto.ValidateDTO;
-import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import io.swagger.annotations.Api;

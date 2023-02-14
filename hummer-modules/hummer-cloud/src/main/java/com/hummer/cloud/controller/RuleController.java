@@ -2,14 +2,14 @@ package com.hummer.cloud.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummer.cloud.service.RuleService;
+import com.hummer.common.mapper.handler.annotation.I18n;
+import com.hummer.common.mapper.service.RuleService;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.rule.*;
 import com.hummer.common.core.dto.GroupDTO;
 import com.hummer.common.core.dto.RuleDTO;
 import com.hummer.common.core.dto.RuleGroupDTO;
 import com.hummer.common.core.dto.RuleTagDTO;
-import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import io.swagger.annotations.Api;

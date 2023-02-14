@@ -10,10 +10,10 @@ import com.hummer.common.core.domain.request.dashboard.DashboardTarget;
 import com.hummer.common.core.domain.request.rule.CreateRuleRequest;
 import com.hummer.common.core.dto.AccountDTO;
 import com.hummer.common.core.dto.RuleDTO;
-import com.hummer.common.core.mapper.ext.ExtAccountMapper;
-import com.hummer.common.core.mapper.ext.ExtCloudTaskMapper;
-import com.hummer.common.core.mapper.ext.ExtRuleMapper;
-import com.hummer.common.core.mapper.ext.ExtVulnMapper;
+import com.hummer.common.mapper.mapper.ext.ExtAccountMapper;
+import com.hummer.common.mapper.mapper.ext.ExtCloudTaskMapper;
+import com.hummer.common.mapper.mapper.ext.ExtRuleMapper;
+import com.hummer.common.mapper.mapper.ext.ExtVulnMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

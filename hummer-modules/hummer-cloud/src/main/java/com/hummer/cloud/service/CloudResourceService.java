@@ -5,8 +5,8 @@ import com.hummer.common.core.domain.CloudTask;
 import com.hummer.common.core.domain.request.cloudResource.CloudResourceItemRequest;
 import com.hummer.common.core.dto.CloudResourceItemDTO;
 import com.hummer.common.core.dto.ResourceRuleDTO;
-import com.hummer.common.core.mapper.ext.ExtCloudResourceItemMapper;
-import com.hummer.common.core.mapper.ext.ExtCloudTaskMapper;
+import com.hummer.common.mapper.mapper.ext.ExtCloudResourceItemMapper;
+import com.hummer.common.mapper.mapper.ext.ExtCloudTaskMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
