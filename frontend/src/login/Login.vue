@@ -43,7 +43,7 @@
                 </el-form-item>
                 <el-form-item prop="password">
                   <el-input v-model="form.password" :placeholder="$t('commons.password')" show-password autocomplete="off"
-                            maxlength="20" show-word-limit/>
+                            maxlength="30" show-word-limit/>
                 </el-form-item>
               </div>
               <div class="btn">
