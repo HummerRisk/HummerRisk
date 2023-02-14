@@ -1,11 +1,7 @@
 package com.hummer.job.sechedule;
 
-import com.hummer.cloud.service.AccountService;
-import com.hummer.cloud.service.CloudSyncService;
-import com.hummer.cloud.service.CloudTaskService;
-import com.hummer.common.core.service.HistoryService;
-import com.hummer.common.core.service.SystemParameterService;
 import com.hummer.common.core.utils.LogUtil;
+import com.hummer.common.mapper.service.*;
 import com.hummer.quartz.anno.QuartzScheduled;
 import org.quartz.*;
 
