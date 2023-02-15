@@ -399,6 +399,9 @@ export default {
       })
       if(account.length > 0){
         this.regionList = JSON.parse(account[0].regions)
+        this.regionList = this.regionList.filter(item =>{
+          return item.regionId !== 'default'
+        })
       }
     },
     changeDateTime(value){

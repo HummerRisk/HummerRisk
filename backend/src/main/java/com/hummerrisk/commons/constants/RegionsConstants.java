@@ -230,7 +230,7 @@ public class RegionsConstants {
 
         BaiduMap = new HashMap<>();
         // Baidu start
-        BaiduMap.put("default", "默认");
+        //BaiduMap.put("default", "默认");
         BaiduMap.put("bj", "华北-北京");
         BaiduMap.put("bd", "华北-保定");
         BaiduMap.put("hbfsg", "华北-度小满金融专区");
