@@ -100,8 +100,8 @@
     </if>
   </sql>
 
-  <select id="getCloudEventList" resultType="com.hummerrisk.base.domain.CloudEventWithBLOBs">
-    select t.*
+  <select id="getCloudEventList" resultType="com.hummerrisk.controller.request.event.CloudEventWithBLOBsVo">
+    select t.*, t1.name as accountName, t1.plugin_icon as accountIcon
     from cloud_event t
     join cloud_account t1 on t.cloud_account_id = t1.id
     <where>
@@ -184,7 +184,7 @@
     SELECT
         FROM_UNIXTIME(event_time/1000,'%Y-%m-%d') as event_date, cloud_account_id,region_name
       ,event_name,user_name,service_name,source_ip_address,resource_name,
-      count(*) as event_sum
+      count(*) as event_sum, t1.name as accountName, t1.plugin_icon as accountIcon
       FROM cloud_event t
       left join cloud_account t1 on t.cloud_account_id = t1.id
     <where>
@@ -293,7 +293,7 @@
     group by source_ip_address
     ) a order by eventSum desc
   </select>
-  
+
   <select id="selectIpAccessTimesGroupByDate" resultType="Map" >
     select access_date as 'accessDate',count(*) as 'times' from (
         SELECT FROM_UNIXTIME(event_time/1000 ,'%Y-%m-%d') as access_date FROM cloud_event
@@ -302,5 +302,5 @@
           and event_time between UNIX_TIMESTAMP(str_to_date(#{startDate},'%Y-%m-%d') )*1000 and UNIX_TIMESTAMP(str_to_date(#{endDate},'%Y-%m-%d') )*1000+24*60*1000
         ) a group by access_date
   </select>
-  
+
 </mapper>

@@ -1,6 +1,6 @@
 <template>
   <main-container>
-    <el-card class="table-card" >
+    <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('event.event_sync')" :show-create="true"
@@ -17,12 +17,12 @@
         @select="select"
       >
           <el-table-column type="index" min-width="50"/>
-          <el-table-column min-width="150" v-if="checkedColumnNames.includes('accountName')" :label="$t('event.cloud_account_name')">
+          <el-table-column prop="accountName" v-if="checkedColumnNames.includes('accountName')" :label="$t('event.cloud_account_name')" min-width="150" show-overflow-tooltip>
             <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.accountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ getAccountName(scope.row.accountId) }}
-              </span>
+                <span v-if="scope.row.accountName">
+                  <img :src="require(`@/assets/img/platform/${scope.row.accountIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                   &nbsp;&nbsp; {{ scope.row.accountName }}
+                </span>
             </template>
           </el-table-column>
           <el-table-column prop="regionName" v-if="checkedColumnNames.includes('regionName')" :label="$t('event.region')" min-width="110">
@@ -130,16 +130,16 @@
 
 <script>
 import TablePagination from "../../common/pagination/TablePagination";
-import TableHeader from "@/business/components/common/components/TableHeader";
+import TableHeader from "../../common/components/TableHeader";
 import Container from "../../common/components/Container";
 import MainContainer from "../../common/components/MainContainer";
 import {CLOUD_EVENT_SYNC_CONFIGS} from "../../common/components/search/search-components";
 import TableOperators from "../../common/components/TableOperators";
-import RegionLog from "@/business/components/event/home/RegionLog";
-import DialogFooter from "@/business/components/common/components/DialogFooter";
-import Regions from "@/business/components/event/home/Regions";
+import RegionLog from "../../event/home/RegionLog";
+import DialogFooter from "../../common/components/DialogFooter";
+import Regions from "./Regions";
 import {_filter, _sort} from "@/common/js/utils";
-import HideTable from "@/business/components/common/hideTable/HideTable";
+import HideTable from "../../common/hideTable/HideTable";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -191,6 +191,7 @@ export default {
   },
   data() {
     return {
+      result: {},
       pickerMinDate:"",
       eventFrom:{
         accountId: "",
@@ -408,7 +409,7 @@ export default {
       this.$get("/account/allList", response => {
         let accountList = response.data
         this.accountList = accountList.filter(item=>{
-          return this.supportCloud.includes(item.pluginId )
+          return this.supportCloud.includes(item.pluginId)
         })
         //that.dateTime = [this.formatDate(new Date().getTime()-1000*60*60*24),this.formatDate(new Date().getTime())]
         this.search()
@@ -437,24 +438,6 @@ export default {
       let minute = dt.getMinutes().toString().padStart(2,'0');
       let second = dt.getSeconds().toString().padStart(2,'0');
       return `${year}-${month}-${date} ${hour}:${minute}:${second}`;
-    },
-    getAccountName(accountId){
-      let result =  this.accountList.filter(item =>{
-        return item.id === accountId
-      })
-      return result.length >0?result[0].name:""
-    },
-    getPluginName(accountId){
-      let result =  this.accountList.filter(item =>{
-        return item.id === accountId
-      })
-      return result.length >0?result[0].pluginName:""
-    },
-    getAccountIcon(accountId){
-      let result =  this.accountList.filter(item =>{
-        return item.id === accountId
-      })
-      return result.length >0?result[0].pluginIcon:""
     },
     selectOnChangeAll (checkAll, item) {
       if (!!item) {

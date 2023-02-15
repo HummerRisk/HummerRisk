@@ -9,6 +9,8 @@ import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
+import com.hummerrisk.controller.request.event.CloudEventSyncLogVo;
+import com.hummerrisk.controller.request.event.CloudEventWithBLOBsVo;
 import com.hummerrisk.dto.ChartDTO;
 import com.hummerrisk.dto.CloudEventGroupDTO;
 import com.hummerrisk.dto.CloudEventSourceIpInsightDto;
@@ -30,7 +32,7 @@ public class CloudEventController {
 
     @ApiOperation(value = "同步任务列表")
     @PostMapping("sync/log/list/{goPage}/{pageSize}")
-    public Pager<List<CloudEventSyncLog>> listSyncLogs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest) {
+    public Pager<List<CloudEventSyncLogVo>> listSyncLogs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, cloudEventService.getCloudEventSyncLog(cloudEventRequest));
     }
@@ -69,7 +71,7 @@ public class CloudEventController {
 
     @ApiOperation(value = "云事件分析列表")
     @PostMapping("list/{goPage}/{pageSize}")
-    public Pager<List<CloudEventWithBLOBs>> listEvents(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest) {
+    public Pager<List<CloudEventWithBLOBsVo>> listEvents(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, cloudEventService.getCloudEvents(cloudEventRequest));
     }

@@ -2,6 +2,7 @@ package com.hummerrisk.base.mapper.ext;
 
 import com.hummerrisk.base.domain.CloudEventWithBLOBs;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
+import com.hummerrisk.controller.request.event.CloudEventWithBLOBsVo;
 import com.hummerrisk.dto.CloudEventGroupDTO;
 import com.hummerrisk.dto.CloudEventSourceIpInsightDto;
 import org.apache.ibatis.annotations.Param;
@@ -11,7 +12,7 @@ import java.util.Map;
 
 public interface ExtCloudEventMapper {
 
-    List<CloudEventWithBLOBs> getCloudEventList(@Param("request") CloudEventRequest request);
+    List<CloudEventWithBLOBsVo> getCloudEventList(@Param("request") CloudEventRequest request);
 
     List<CloudEventGroupDTO> selectEventGroup(@Param("request") CloudEventRequest request);
     /**

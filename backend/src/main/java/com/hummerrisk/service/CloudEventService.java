@@ -40,6 +40,8 @@ import com.hummerrisk.base.mapper.ext.ExtCloudEventMapper;
 import com.hummerrisk.base.mapper.ext.ExtCloudEventSyncLogMapper;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.cloudEvent.CloudEventRequest;
+import com.hummerrisk.controller.request.event.CloudEventSyncLogVo;
+import com.hummerrisk.controller.request.event.CloudEventWithBLOBsVo;
 import com.hummerrisk.dto.ChartDTO;
 import com.hummerrisk.dto.CloudEventGroupDTO;
 import com.hummerrisk.dto.CloudEventSourceIpInsightDto;
@@ -123,7 +125,7 @@ public class CloudEventService {
         return cloudEventSyncLogMapper.selectByExample(cloudEventSyncLogExample);
     }
 
-    public List<CloudEventSyncLog> getCloudEventSyncLog(CloudEventRequest cloudEventRequest) {
+    public List<CloudEventSyncLogVo> getCloudEventSyncLog(CloudEventRequest cloudEventRequest) {
         return extCloudEventSyncLogMapper.getCloudEventSyncLog(cloudEventRequest);
     }
 
@@ -144,7 +146,7 @@ public class CloudEventService {
         cloudEventMapper.deleteByExample(cloudEventExample);
     }
 
-    public List<CloudEventWithBLOBs> getCloudEvents(CloudEventRequest cloudEventRequest) {
+    public List<CloudEventWithBLOBsVo> getCloudEvents(CloudEventRequest cloudEventRequest) {
         return extCloudEventMapper.getCloudEventList(cloudEventRequest);
     }
 

@@ -28,9 +28,10 @@
         <el-table-column type="index" min-width="40"/>
         <el-table-column min-width="140" v-if="checkedColumnNames.includes('accountName')" :label="$t('event.cloud_account_name')">
           <template v-slot:default="scope">
-              <span><img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.cloudAccountId)}`)"
-                         style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                {{ getAccountName(scope.row.cloudAccountId) }}</span>
+              <span v-if="scope.row.accountName">
+                <img :src="require(`@/assets/img/platform/${scope.row.accountIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ scope.row.accountName }}
+              </span>
           </template>
         </el-table-column>
         <el-table-column prop="regionName" v-if="checkedColumnNames.includes('regionName')" :label="$t('event.region')" min-width="170"></el-table-column>
@@ -269,24 +270,6 @@ export default {
       let minute = dt.getMinutes().toString().padStart(2, '0');
       let second = dt.getSeconds().toString().padStart(2, '0');
       return `${year}-${month}-${date} ${hour}:${minute}:${second}`;
-    },
-    getAccountName(accountId) {
-      let result = this.accountList.filter(item => {
-        return item.id === accountId
-      })
-      return result.length > 0 ? result[0].name : ""
-    },
-    getPluginName(accountId) {
-      let result = this.accountList.filter(item => {
-        return item.id === accountId
-      })
-      return result.length > 0 ? result[0].pluginName : ""
-    },
-    getAccountIcon(accountId) {
-      let result = this.accountList.filter(item => {
-        return item.id === accountId
-      })
-      return result.length > 0 ? result[0].pluginIcon : ""
     },
     sort(column) {
       _sort(column, this.condition);
