@@ -1,6 +1,8 @@
 package com.hummerrisk.commons.utils;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateParser;
+import org.apache.commons.lang3.time.DatePrinter;
 
 import java.lang.management.ManagementFactory;
 import java.sql.Timestamp;
@@ -264,6 +266,15 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         day = day*24*60*60*1000; // 要加上的天数转换成毫秒数
         time+=day; // 相加得到新的毫秒数
         return new Date(time); // 将毫秒数转换成日期
+    }
+
+    public static String addDateStr(String format,String dateStr,long day) throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+        Date date = dateFormat.parse(dateStr);
+        long time = date.getTime(); // 得到指定日期的毫秒数
+        day = day*24*60*60*1000; // 要加上的天数转换成毫秒数
+        time+=day; // 相加得到新的毫秒数
+        return dateFormat.format(new Date(time)); // 将毫秒数转换成日期
     }
 
     /**
