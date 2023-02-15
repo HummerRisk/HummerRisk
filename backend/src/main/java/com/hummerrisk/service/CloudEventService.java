@@ -349,7 +349,7 @@ public class CloudEventService {
         requestParams.put("SignatureMethod","HMAC-SHA256");
         requestParams.put("Region",accountMap.get("region"));
         requestParams.put("EventBeginDate",startTime.substring(0,10));
-        requestParams.put("EventEndDate",endTime.substring(0,10));
+        requestParams.put("EventEndDate",DateUtils.addDateStr("yyyy-MM-dd",endTime.substring(0,10),1));
         requestParams.put("PageSize",maxResult);
         if(nextToken!=null){
             requestParams.put("SearchAfter",nextToken);
@@ -376,14 +376,20 @@ public class CloudEventService {
                 if(eventName.contains("MODIFY")){
                     cloudEventWithBLOBs.setEventRating(1);
                 }
+                String region = item.getString("Region");
+                String regionName = item.getString("RegionCn");
+                if(StringUtils.isBlank(region)){
+                    region = "cn-beijing-6";
+                    regionName = "华北1（北京）";
+                }
                 cloudEventWithBLOBs.setEventId(item.getString("EventId"));
                 cloudEventWithBLOBs.setEventType(item.getString("EventType"));
                 cloudEventWithBLOBs.setRequestId(item.getString("RequestId"));
                 cloudEventWithBLOBs.setUserAgent(item.getString("UserAgent"));
                 cloudEventWithBLOBs.setSourceIpAddress(item.getString("SourceIpAddress"));
                 cloudEventWithBLOBs.setSyncRegion(accountMap.get("region"));
-                cloudEventWithBLOBs.setAcsRegion(item.getString("Region"));
-                cloudEventWithBLOBs.setRegionName(item.getString("RegionCn"));
+                cloudEventWithBLOBs.setAcsRegion(region);
+                cloudEventWithBLOBs.setRegionName(regionName);
                 String requestParameters =  item.getString("RequestParameters");
                 cloudEventWithBLOBs.setRequestParameters(requestParameters!=null && requestParameters.length()>500?requestParameters.substring(0,500):requestParameters);
                 cloudEventWithBLOBs.setEventSource(item.getString("EventSource"));
