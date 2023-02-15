@@ -12,7 +12,7 @@ jobs:
           dst: 'gitee/HummerCloud'
           dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
           dst_token:  ${{ secrets.GITEE_TOKEN }}
-          account_type: user
+          account_type: org
           clone_style: "https"
           static_list: "HummerRisk"
           force_update: true
