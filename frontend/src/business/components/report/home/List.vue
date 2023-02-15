@@ -905,7 +905,7 @@ const columnOptions3 = [
                   radius: ['40%', '70%'],
                   avoidLabelOverlap: false,
                   itemStyle: {
-                    borderRadius: 10,
+                    borderRadius: 5,
                     borderColor: '#fff',
                     borderWidth: 2
                   },
@@ -925,7 +925,7 @@ const columnOptions3 = [
                   },
                   data: [
                     { value: tableData.returnSum, name: this.$t('report.have_risk_resource') },
-                    { value: tableData.resourcesSum, name: this.$t('report.no_risk_resource') }
+                    { value: tableData.resourcesSum - tableData.returnSum, name: this.$t('report.no_risk_resource') }
                   ]
                 }
               ],
