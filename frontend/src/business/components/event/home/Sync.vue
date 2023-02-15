@@ -344,7 +344,7 @@ export default {
     showEvents(row){
       this.$router.push(
         {
-          path:"/log/event",
+          path:"/event/event",
           query:{
             accountId:row.accountId,
             region:row.region,
