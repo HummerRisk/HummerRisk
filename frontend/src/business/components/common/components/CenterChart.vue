@@ -18,15 +18,21 @@ import HrChart from "@/business/components/common/chart/HrChart";
         options: {},
       }
     },
+    watch: {
+      row() {
+        this.init();
+      },
+    },
     methods: {
       init() {
-        let data = this.initData(0);
+        let data = this.initData();
         this.options = {
           backgroundColor: '#fff',
           //第一个图表
-          series: [{
+          series: [
+            {
             type: 'pie',
-            hoverAnimation: false, //鼠标经过的特效
+            hoverAnimation: true, //鼠标经过的特效
             left: 0,
             right: 0,
             bottom: 0,
@@ -44,7 +50,8 @@ import HrChart from "@/business/components/common/chart/HrChart";
                 position: 'center'
               }
             },
-            data: [{
+            data: [
+              {
               value: 100,
               itemStyle: {
                 normal: {
@@ -87,8 +94,14 @@ import HrChart from "@/business/components/common/chart/HrChart";
               },
               label: {
                 normal: {
-                  position: 'center'
+                  position: 'center',
+                  show: false
                 }
+              },
+              detail: {
+                valueAnimation: true,
+                fontSize: 14,
+                offsetCenter: [0, '70%']
               },
               data: [
                 {
@@ -104,14 +117,22 @@ import HrChart from "@/business/components/common/chart/HrChart";
                       position: 'center',
                       show: true,
                       textStyle: {
-                        fontSize: '15',
+                        fontSize: '14',
                         fontWeight: 'normal',
-                        color: '#34374E'
+                        color: '#34374E',
                       }
                     }
                   },
-                }, {
-                  value: 35,
+                  emphasis: {
+                    show: false,
+                    textStyle: {
+                      fontSize: '14',
+                      fontWeight: 'bold'
+                    }
+                  }
+                },
+                {
+                  value: 32,
                   itemStyle: {
                     normal: {
                       label: {
@@ -125,7 +146,7 @@ import HrChart from "@/business/components/common/chart/HrChart";
                     },
                     emphasis: {
                       color: "rgba(0,0,0,0)",
-                      borderWidth: 0
+                      borderWidth: 0,
                     }
                   },
                 },
@@ -135,11 +156,9 @@ import HrChart from "@/business/components/common/chart/HrChart";
           ]
         };
       },
-      initData (count) {
+      initData () {
         if (!this.row) {
-          count++;
-          if (count === 10) return 100;
-          this.initData(count);
+          return 100;
         } else {
           return parseInt(this.row);
         }
