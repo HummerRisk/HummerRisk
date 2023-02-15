@@ -427,10 +427,10 @@
       <el-drawer class="rtl" :title="$t('resource.merge_resource')" :visible.sync="infoVisible" size="80%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-table border :data="accountData" class="adjust-table table-content" @sort-change="sort"
-                  :row-class-name="tableRowClassName" @select-all="select" @select="select" style="margin: 1%;">
-          <el-table-column type="selection" min-width="5%">
+                  :row-class-name="tableRowClassName" @select-all="select" @select="select">
+          <el-table-column type="selection" min-width="3%">
           </el-table-column>
-          <el-table-column type="index" min-width="5%"/>
+          <el-table-column type="index" min-width="4%"/>
           <el-table-column prop="name" :label="$t('account.name')" min-width="12%" show-overflow-tooltip></el-table-column>
           <el-table-column :label="$t('account.cloud_platform')" min-width="10%" show-overflow-tooltip>
             <template v-slot:default="scope">
@@ -454,11 +454,11 @@
           </el-table-column>
           <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
         </el-table>
-        <table-pagination :change="search" :current-page.sync="accountPage" :page-size.sync="accountSize" :total="accountTotal"/>
-        <el-row style="margin: 3%;">
+        <table-pagination :change="accountList" :current-page.sync="accountPage" :page-size.sync="accountSize" :total="accountTotal"/>
+        <el-row style="margin: 3% 0 3% 3%;">
           <span style="color: red;font-style: italic; font-weight: bold;">{{ $t('resource.desc') }}</span>
         </el-row>
-        <el-button type="primary" style="margin-left: 45%;" @click="downloadReports">{{ $t('resource.download_report') }}</el-button>
+        <el-button type="primary" style="margin-left: 45%;" @click="download">{{ $t('resource.download_report') }}</el-button>
       </el-drawer>
       <!-- 合并下载报告 -->
 
@@ -500,7 +500,7 @@
           <el-table-column prop="description" :label="$t('rule.description')" v-if="checkedColumnNames3.includes('description')" min-width="180" show-overflow-tooltip></el-table-column>
           <el-table-column :label="$t('rule.status')" min-width="60" show-overflow-tooltip>
             <template v-slot:default="scope">
-              <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
+              <el-switch v-model="scope.row.status"/>
             </template>
           </el-table-column>
           <el-table-column prop="lastModified" min-width="150" v-if="checkedColumnNames3.includes('lastModified')" :label="$t('rule.last_modified')" sortable>
