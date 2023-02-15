@@ -6,10 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.aliyuncs.exceptions.ClientException;
 import com.hummerrisk.base.domain.*;
-import com.hummerrisk.base.mapper.AccountMapper;
-import com.hummerrisk.base.mapper.PluginMapper;
-import com.hummerrisk.base.mapper.ProxyMapper;
-import com.hummerrisk.base.mapper.RuleAccountParameterMapper;
+import com.hummerrisk.base.mapper.*;
 import com.hummerrisk.base.mapper.ext.ExtAccountMapper;
 import com.hummerrisk.commons.constants.CloudAccountConstants;
 import com.hummerrisk.commons.constants.ResourceOperation;
@@ -59,6 +56,12 @@ public class AccountService {
 
     @Resource
     private CloudSyncService cloudSyncService;
+
+    @Resource
+    private CloudEventSyncLogMapper cloudEventSyncLogMapper;
+
+    @Resource
+    private CloudEventMapper cloudEventMapper;
 
     public List<AccountDTO> getCloudAccountList(CloudAccountRequest request) {
         return extAccountMapper.getCloudAccountList(request);
@@ -244,6 +247,12 @@ public class AccountService {
     public void delete(String accountId) {
         AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(accountId);
         accountMapper.deleteByPrimaryKey(accountId);
+        CloudEventExample cloudEventExample = new CloudEventExample();
+        cloudEventExample.createCriteria().andCloudAccountIdEqualTo(accountId);
+        cloudEventMapper.deleteByExample(cloudEventExample);
+        CloudEventSyncLogExample cloudEventSyncLogExample = new CloudEventSyncLogExample();
+        cloudEventSyncLogExample.createCriteria().andAccountIdEqualTo(accountId);
+        cloudEventSyncLogMapper.deleteByExample(cloudEventSyncLogExample);
         OperationLogService.log(SessionUtils.getUser(), accountId, accountWithBLOBs.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.DELETE, "i18n_delete_cloud_account");
     }
 
