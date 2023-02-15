@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://docs.hummerrisk.com">
-        <img src="./frontend/src/assets/img/logo/logo-dark.png" alt="HummerRisk" width="300"/>
+        <img src="./hummer-ui/src/assets/img/logo/logo-dark.png" alt="HummerRisk" width="300"/>
     </a>
 </p>
 <h3 align="center">
@@ -22,7 +22,7 @@
 > HummerRisk is an opensource cloud-native security platform. It resolve the  cloud-native security and governance issues in agentless way. Core capabilities include hybrid-cloud security and K8S container cloud detection.
 
 
-![架构](./frontend/src/assets/img/readme/architecturev-en.png)
+![架构](./hummer-ui/src/assets/img/readme/architecturev-en.png)
 
 ## Features
 
@@ -40,7 +40,7 @@
   Unified monitoring of account activities for Hybrid-cloud environment, and auditing the operation logs of the cloud.
   
 
-  ![混合云安全合规](./frontend/src/assets/img/readme/multicloud-en.png)
+  ![混合云安全合规](./hummer-ui/src/assets/img/readme/multicloud-en.png)
 
 >**Advantage**
 
@@ -73,7 +73,7 @@ Large number of built-in rules, and continuously extend. Users can customize the
 * SBOM management:  
    Visual management and analysis of SBOM, manage SBOM drift, quickly discover and locate risks and vulnerabilities in the software supply chain, and give suggest remediation.
 
-  ![K8S容器云安全](./frontend/src/assets/img/readme/k8s-en.png)
+  ![K8S容器云安全](./hummer-ui/src/assets/img/readme/k8s-en.png)
 
 
 >**Advantage**
@@ -85,7 +85,7 @@ Large number of built-in rules, and continuously extend. Users can customize the
 
 ## UI
 
-![UI 展示](./frontend/src/assets/img/gif/hummerrisk.gif)
+![UI 展示](./hummer-ui/src/assets/img/gif/hummerrisk.gif)
 
 > 更多优质功能持续迭代中...
 
@@ -123,7 +123,7 @@ If you find any security problems during use, please contact us directly through
 
 ## Technology Stack
 
-- [Vue](https://vuejs.org/)：Use Vue.js as frontend
+- [Vue](https://vuejs.org/)：Use Vue.js as hummer-ui
 - [Spring Boot](https://www.tutorialspoint.com/spring_boot/spring_boot_introduction.htm) Spring Boot as backend
 - [MySQL](https://www.mysql.com/)：Database
 - [Cloud Custodian](https://cloudcustodian.io/)：Cloud platform detection engine

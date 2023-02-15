@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://docs.hummerrisk.com">
-        <img src="./frontend/src/assets/img/logo/logo-dark.png" alt="HummerRisk" width="300"/>
+        <img src="./hummer-ui/src/assets/img/logo/logo-dark.png" alt="HummerRisk" width="300"/>
     </a>
 </p>
 <h3 align="center">
@@ -24,7 +24,7 @@
 HummerRisk is an opensource cloud-native security platform. It resolve the  cloud-native security and governance issues in agentless way. Core capabilities include hybrid-cloud security and K8S container cloud detection.
 
 
-![架构](./frontend/src/assets/img/readme/architecturev.png)
+![架构](./hummer-ui/src/assets/img/readme/architecturev.png)
 
 ## HummerRisk 能做什么
 
@@ -37,7 +37,7 @@ HummerRisk is an opensource cloud-native security platform. It resolve the  clou
 * 操作审计: 统一监控多云环境上的账号活动，对云上产品和服务的访问和使用行为的操作日志进行审计；
 * 对象存储: 同步云上对象存储桶资源，查看、上传、下载存储对象。根据对象存储安全与合规要求，快速检测并生成报告。
 
-  ![混合云安全合规](./frontend/src/assets/img/readme/multicloud.png)
+  ![混合云安全合规](./hummer-ui/src/assets/img/readme/multicloud.png)
 
 >**优势是什么？**
 
@@ -58,7 +58,7 @@ HummerRisk is an opensource cloud-native security platform. It resolve the  clou
 * 文件检测: 检测源码项目中特定的语言文件或文件夹，发现应用程序依赖的漏洞风险；
 * SBOM 管理: SBOM 的可视化管理和分析，检测 SBOM 的变更，快速发现和定位软件供应链中的风险和漏洞，给出合理地处理建议。
 
-  ![K8S容器云安全](./frontend/src/assets/img/readme/k8s.png)
+  ![K8S容器云安全](./hummer-ui/src/assets/img/readme/k8s.png)
 
 
 >**优势是什么？**
@@ -70,7 +70,7 @@ HummerRisk is an opensource cloud-native security platform. It resolve the  clou
 
 ## UI 展示
 
-![UI 展示](./frontend/src/assets/img/gif/hummerrisk.gif)
+![UI 展示](./hummer-ui/src/assets/img/gif/hummerrisk.gif)
 
 > 更多优质功能持续迭代中...
 
