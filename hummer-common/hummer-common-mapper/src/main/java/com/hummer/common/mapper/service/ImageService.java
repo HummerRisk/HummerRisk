@@ -631,7 +631,6 @@ public class ImageService {
                 if (repo.endsWith("/")) {
                     repo = repo.substring(0, repo.length() - 1);
                 }
-//                dockerLogin = "docker login " + repo + " " + "-u " + imageRepo.getUserName() + " -p " + imageRepo.getPassword() + "\n";
                 dockerLogin =
                         "export TRIVY_USERNAME=" + imageRepo.getUserName() + ";\n" +
                                 "export TRIVY_PASSWORD=" + imageRepo.getPassword() + ";";
@@ -645,7 +644,7 @@ public class ImageService {
             ScanSetting scanSetting = (ScanSetting) obj[3];
             String str = "";
             if(scanSetting.getSkipDbUpdate() != null && StringUtils.equalsIgnoreCase(scanSetting.getSkipDbUpdate(), "true")) {
-                str = str + TrivyConstants.SKIP_DB_UPDATE;
+                str = str + TrivyConstants.SKIP_DB_UPDATE + TrivyConstants.SKIP_JAVA_DB_UPDATE;
             }
             if(scanSetting.getIgnoreUnfixed() != null && StringUtils.equalsIgnoreCase(scanSetting.getIgnoreUnfixed(), "true")) {
                 str = str + TrivyConstants.UNFIXED;
@@ -659,7 +658,7 @@ public class ImageService {
                 str = str + TrivyConstants.OFFLINE_SCAN;
             }
             CommandUtils.commonExecCmdWithResult(TrivyConstants.TRIVY_RM + TrivyConstants.TRIVY_JSON, TrivyConstants.DEFAULT_BASE_DIR);
-            String command = _proxy + dockerLogin + TrivyConstants.TRIVY_IMAGE + str + fileName + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
+            String command = _proxy + dockerLogin + TrivyConstants.TRIVY_IMAGE + str + fileName + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON + TrivyConstants.TRIVY_SERVER;
             LogUtil.info(image.getId() + " {Image}[command]: " + image.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
             ResultDTO dto = new ResultDTO();

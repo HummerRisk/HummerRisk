@@ -425,7 +425,7 @@ public class CodeService {
             ScanSetting scanSetting = (ScanSetting) obj[2];
             String str = "";
             if(scanSetting.getSkipDbUpdate() != null && StringUtils.equalsIgnoreCase(scanSetting.getSkipDbUpdate(), "true")) {
-                str = str + TrivyConstants.SKIP_DB_UPDATE;
+                str = str + TrivyConstants.SKIP_DB_UPDATE + TrivyConstants.SKIP_JAVA_DB_UPDATE;
             }
             if(scanSetting.getIgnoreUnfixed() != null && StringUtils.equalsIgnoreCase(scanSetting.getIgnoreUnfixed(), "true")) {
                 str = str + TrivyConstants.UNFIXED;
@@ -439,7 +439,7 @@ public class CodeService {
                 str = str + TrivyConstants.OFFLINE_SCAN;
             }
             CommandUtils.commonExecCmdWithResult(TrivyConstants.TRIVY_RM + TrivyConstants.TRIVY_JSON, TrivyConstants.DEFAULT_BASE_DIR);
-            String command = _proxy + token + TrivyConstants.TRIVY_REPO + str + branch + " " + codeCredential.getUrl() + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
+            String command = _proxy + token + TrivyConstants.TRIVY_REPO + str + branch + " " + codeCredential.getUrl() + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON + TrivyConstants.TRIVY_SERVER;
             LogUtil.info(code.getId() + " {code scan}[command]: " + code.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
             ResultDTO dto = new ResultDTO();

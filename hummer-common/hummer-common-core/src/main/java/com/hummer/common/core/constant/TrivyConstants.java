@@ -27,7 +27,7 @@ public class TrivyConstants {
 
     public final static String TRIVY_CONFIG = "trivy config ";
 
-    public final static String TRIVY_REPO = "trivy repo ";
+    public final static String TRIVY_REPO = "trivy repo --insecure ";
 
     public final static String TRIVY_SBOM = "trivy sbom ";
 
@@ -50,6 +50,10 @@ public class TrivyConstants {
 
     public final static String SKIP_DB_UPDATE = " --skip-db-update ";
 
+    public final static String SKIP_JAVA_DB_UPDATE = " --skip-java-db-update ";
+
+    public final static String SKIP_POLICY_UPDATE = " --skip-policy-update ";
+
     public final static String BRANCH = " --branch ";
 
     public final static String COMMIT = " --commit ";
@@ -63,5 +67,8 @@ public class TrivyConstants {
 
     //按风险等级 CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN
     public final static String severity = " --severity ";
+
+    public final static String TRIVY_SERVER = " --server http://trivy_server:4975 ";
+
 
 }
