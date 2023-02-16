@@ -1,5 +1,8 @@
 <template>
   <div>
+    <el-tag size="mini" type="danger" v-if="row.severity === 'CriticalRisk'">
+      {{ $t('rule.CriticalRisk') }}
+    </el-tag>
     <el-tag size="mini" type="danger" v-if="row.severity === 'HighRisk'">
     {{ $t('rule.HighRisk') }}
     </el-tag>
