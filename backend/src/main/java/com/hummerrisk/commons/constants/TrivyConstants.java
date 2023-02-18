@@ -76,6 +76,6 @@ public class TrivyConstants {
 
     public final static String TMP_CACHE_TRIVY = "/tmp/cache/trivy/";
 
-    public final static String TRIVY_SERVER = " --server http://trivy_server:4975 ";
+    public final static String TRIVY_SERVER = " --server http://trivy-server:4975 ";
 
 }
