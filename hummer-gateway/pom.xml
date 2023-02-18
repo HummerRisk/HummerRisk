@@ -68,6 +68,7 @@
         <dependency>
             <groupId>com.hummerrisk</groupId>
             <artifactId>hummer-common-redis</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <!-- Swagger -->
