@@ -44,9 +44,9 @@ public class TrivyConstants {
     public final static String OFFLINE_SCAN = " --offline-scan ";
 
     //vuln
-    public final static String SECURITY_CHECKS = " --security-checks ";
+    public final static String SECURITY_CHECKS = " --scanners ";
 
-    public final static String SECURITY_CHECKS_DEFAULT = " --security-checks vuln ";
+    public final static String SECURITY_CHECKS_DEFAULT = " --scanners vuln ";
 
     public final static String SKIP_DB_UPDATE = " --skip-db-update ";
 
