@@ -363,15 +363,23 @@ public class SystemParameterService {
     }
 
     public void updateVulnDb() throws Exception {
-        String command = "trivy image --download-db-only";
+        //更新漏洞库
+        String command = TrivyConstants.DOWN_DB;
         LogUtil.info(" {updateVulnDbOnline}[command]: " + command);
         CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
+
+        //更新java漏洞库
+        String command2 = TrivyConstants.DOWN_JAVA_DB;
+        LogUtil.info(" {updateVulnJavaDbOnline}[command2]: " + command2);
+        CommandUtils.commonExecCmdWithResult(command2, TrivyConstants.DEFAULT_BASE_DIR);
     }
 
     public void updateVulnDbOffline(MultipartFile objectFile) throws Exception {
-        // 容器里的目录地址： /root/.cache/trivy/db/
-        String fileName = uploadVulnDb(objectFile, "/root/.cache/trivy/db/");
-        CommandUtils.extractTarGZ(new File("/root/.cache/trivy/db/" + fileName), "/tmp/cache/trivy/db/");
+        // 容器里的目录地址：
+        // /root/.cache/trivy/db/
+        // /root/.cache/trivy/java-db/
+        String fileName = uploadVulnDb(objectFile, TrivyConstants.CACHE_TRIVY);
+        CommandUtils.extractTarGZ(new File(TrivyConstants.CACHE_TRIVY + fileName), TrivyConstants.TMP_CACHE_TRIVY);
     }
 
     /**
