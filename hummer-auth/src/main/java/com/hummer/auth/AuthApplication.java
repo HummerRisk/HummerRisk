@@ -3,14 +3,14 @@ package com.hummer.auth;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import com.hummer.common.security.annotation.EnableRyFeignClients;
+import com.hummer.common.security.annotation.EnableHummerFeignClients;
 
 /**
  * 认证授权中心
  *
  * @author harris
  */
-@EnableRyFeignClients
+@EnableHummerFeignClients
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 public class AuthApplication {
     public static void main(String[] args) {
