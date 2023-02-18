@@ -1,14 +1,12 @@
 package com.hummer.common.security.utils;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import com.hummer.common.core.constant.SecurityConstants;
 import com.hummer.common.core.constant.TokenConstants;
 import com.hummer.common.core.context.SecurityContextHolder;
 import com.hummer.common.core.utils.ServletUtils;
 import com.hummer.common.core.utils.StringUtils;
-import com.hummer.system.api.model.LoginUser;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 权限获取工具类
@@ -35,13 +33,6 @@ public class SecurityUtils {
      */
     public static String getUserKey() {
         return SecurityContextHolder.getUserKey();
-    }
-
-    /**
-     * 获取登录用户信息
-     */
-    public static LoginUser getLoginUser() {
-        return SecurityContextHolder.get(SecurityConstants.LOGIN_USER, LoginUser.class);
     }
 
     /**

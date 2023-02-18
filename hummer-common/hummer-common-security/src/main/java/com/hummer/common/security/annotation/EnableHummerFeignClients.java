@@ -1,7 +1,5 @@
 package com.hummer.common.security.annotation;
 
-import org.springframework.cloud.openfeign.EnableFeignClients;
-
 import java.lang.annotation.*;
 
 /**
@@ -13,8 +11,8 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@EnableFeignClients
-public @interface EnableRyFeignClients {
+@EnableHummerFeignClients
+public @interface EnableHummerFeignClients {
     String[] value() default {};
 
     String[] basePackages() default {"com.hummer"};

@@ -22,10 +22,10 @@
             <artifactId>spring-webmvc</artifactId>
         </dependency>
 
-        <!-- hummer Api System -->
+        <!-- hummer common core -->
         <dependency>
             <groupId>com.hummerrisk</groupId>
-            <artifactId>hummer-api-system</artifactId>
+            <artifactId>hummer-common-core</artifactId>
         </dependency>
 
         <!-- hummer Common Redis-->
