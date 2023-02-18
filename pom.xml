@@ -16,7 +16,7 @@
         <hummerrisk.version>1.0.0</hummerrisk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <spring-boot.version>2.7.4</spring-boot.version>
         <spring-cloud.version>2022.0.0</spring-cloud.version>
         <spring-cloud-alibaba.version>2.2.10-RC1</spring-cloud-alibaba.version>
@@ -932,7 +932,7 @@
         <repository>
             <id>hummer</id>
             <name>Hummer</name>
-            <url>https://registry.hummercloud.com/repository/maven-public/</url>
+            <url>http://registry.hummercloud.com/repository/maven-public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -971,7 +971,7 @@
         <pluginRepository>
             <id>hummer</id>
             <name>hummer</name>
-            <url>https://registry.hummercloud.com/repository/hummer-public/</url>
+            <url>http://registry.hummercloud.com/repository/hummer-public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -984,7 +984,7 @@
         <repository>
             <id>hummer</id>
             <name>hummer</name>
-            <url>https://registry.hummercloud.com/repository/hummer-public/</url>
+            <url>http://registry.hummercloud.com/repository/hummer-public/</url>
         </repository>
     </distributionManagement>
 </project>
