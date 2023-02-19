@@ -18,7 +18,6 @@ import com.hummer.common.security.utils.SecurityUtils;
  * @author harris1943
  */
 public class HeaderInterceptor implements AsyncHandlerInterceptor {
-    @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (!(handler instanceof HandlerMethod)) {
             return true;
@@ -31,7 +30,6 @@ public class HeaderInterceptor implements AsyncHandlerInterceptor {
         return true;
     }
 
-    @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
         SecurityContextHolder.remove();

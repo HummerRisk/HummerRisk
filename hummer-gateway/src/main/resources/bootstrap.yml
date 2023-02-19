@@ -38,3 +38,16 @@ spring:
             groupId: DEFAULT_GROUP
             data-type: json
             rule-type: gw-flow
+    # flyway enable
+    flyway:
+      enabled: true
+      baseline-on-migrate: true
+      locations: classpath:db/migration
+      baseline-version: 0
+      encoding: UTF-8
+      validate-on-migrate: false
+      placeholder-replacement: false
+      table: hummer_version
+      url: jdbc:mysql://127.0.0.1:3306/hummer_config?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+      user: root
+      password: root

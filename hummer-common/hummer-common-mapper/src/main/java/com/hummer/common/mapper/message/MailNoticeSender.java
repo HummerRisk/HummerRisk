@@ -2,13 +2,13 @@ package com.hummer.common.mapper.message;
 
 import com.hummer.common.mapper.service.MailService;
 import com.hummer.common.core.utils.LogUtil;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,7 +17,7 @@ public class MailNoticeSender extends AbstractNoticeSender {
     @Resource
     private MailService mailService;
 
-    private void sendMail(MessageDetail messageDetail, String context, NoticeModel noticeModel) throws MessagingException {
+    private void sendMail(MessageDetail messageDetail, String context, NoticeModel noticeModel) throws MessagingException, jakarta.mail.MessagingException {
         LogUtil.info("发送邮件开始 ");
         JavaMailSenderImpl javaMailSender = mailService.getMailSender();
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();

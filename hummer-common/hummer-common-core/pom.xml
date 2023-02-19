@@ -876,6 +876,11 @@
             <version>4.4.4</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

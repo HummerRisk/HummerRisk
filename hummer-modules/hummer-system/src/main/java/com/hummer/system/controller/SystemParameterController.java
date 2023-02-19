@@ -9,7 +9,7 @@ import com.hummer.common.core.domain.Webhook;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.mapper.handler.annotation.I18n;
-import com.hummer.system.service.SystemParameterService;
+import com.hummer.common.mapper.service.SystemParameterService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresRoles;

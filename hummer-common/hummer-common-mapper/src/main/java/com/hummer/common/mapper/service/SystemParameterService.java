@@ -153,7 +153,7 @@ public class SystemParameterService {
         javaMailSender.setJavaMailProperties(props);
         try {
             javaMailSender.testConnection();
-        } catch (MessagingException e) {
+        } catch (jakarta.mail.MessagingException e) {
             HRException.throwException(Translator.get("connection_failed"));
         }
     }

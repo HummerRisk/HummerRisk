@@ -5,6 +5,7 @@ import com.hummer.common.core.domain.MailAttachmentInfo;
 import com.hummer.common.core.domain.SystemParameter;
 import com.hummer.common.mapper.mapper.SystemParameterMapper;
 import com.hummer.common.core.utils.LogUtil;
+import jakarta.mail.internet.MimeMessage;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.util.*;
 
 @Service
@@ -94,7 +94,7 @@ public class MailService {
     @Async
     public void sendHtmlEmail(String subject, String content, String... to) {
         JavaMailSenderImpl javaMailSender = getMailSender();
-        MimeMessage message = javaMailSender.createMimeMessage();//创建一个MINE消息
+        jakarta.mail.internet.MimeMessage message = javaMailSender.createMimeMessage();//创建一个MINE消息
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setFrom(getNotNullValue(ParamConstants.MAIL.ACCOUNT.getKey()));
@@ -103,7 +103,7 @@ public class MailService {
             helper.setSubject(subject);
             helper.setText(content, true);
             javaMailSender.send(message);
-        } catch (MessagingException e) {
+        } catch (jakarta.mail.MessagingException e) {
             LogUtil.error(e.getMessage());
         }
     }
@@ -132,7 +132,7 @@ public class MailService {
                 }
             }
             javaMailSender.send(message);
-        } catch (MessagingException e) {
+        } catch (jakarta.mail.MessagingException e) {
             LogUtil.error(e.getMessage());
         }
     }
