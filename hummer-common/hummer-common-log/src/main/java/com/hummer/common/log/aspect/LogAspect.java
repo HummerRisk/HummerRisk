@@ -12,19 +12,14 @@ import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 import com.alibaba.fastjson2.JSON;
-import com.hummer.common.core.utils.ServletUtils;
 import com.hummer.common.core.utils.StringUtils;
-import com.hummer.common.core.utils.ip.IpUtils;
 import com.hummer.common.log.annotation.Log;
-import com.hummer.common.log.enums.BusinessStatus;
 import com.hummer.common.log.filter.PropertyPreExcludeFilter;
 import com.hummer.common.log.service.AsyncLogService;
-import com.hummer.common.security.utils.SecurityUtils;
 
 /**
  * 操作日志记录处理

@@ -558,6 +558,10 @@
                     <artifactId>auto-value-annotations</artifactId>
                     <groupId>com.google.auto.value</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>grpc-netty-shaded</artifactId>
+                    <groupId>io.grpc</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -807,40 +811,10 @@
         </dependency>
         <!-- shiro -->
 
-        <!-- jetty -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jetty</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jakarta.servlet-api</artifactId>
-                    <groupId>jakarta.servlet</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jetty-jakarta-servlet-api</artifactId>
-                    <groupId>org.eclipse.jetty.toolchain</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!-- spring-boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
         </dependency>
         <dependency>
             <groupId>jakarta.websocket</groupId>
@@ -850,7 +824,7 @@
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
-        <!-- jetty -->
+        <!-- spring-boot -->
 
         <!-- Druid -->
         <dependency>
@@ -879,6 +853,11 @@
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>jakarta.mail</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
 
     </dependencies>

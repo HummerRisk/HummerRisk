@@ -1,5 +1,6 @@
 package com.hummer.gateway.filter;
 
+import com.hummer.common.core.utils.ServletUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import com.hummer.common.core.constant.HttpStatus;
 import com.hummer.common.core.constant.SecurityConstants;
 import com.hummer.common.core.constant.TokenConstants;
 import com.hummer.common.core.utils.JwtUtils;
-import com.hummer.common.core.utils.ServletUtils;
 import com.hummer.common.core.utils.StringUtils;
 import com.hummer.common.redis.service.RedisService;
 import com.hummer.gateway.config.properties.IgnoreWhiteProperties;
@@ -23,7 +23,7 @@ import reactor.core.publisher.Mono;
 
 /**
  * 网关鉴权
- * 
+ *
  * @author harris1943
  */
 @Component

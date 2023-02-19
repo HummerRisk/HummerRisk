@@ -2,7 +2,6 @@ package com.hummer.common.security.utils;
 
 import com.hummer.common.core.constant.TokenConstants;
 import com.hummer.common.core.context.SecurityContextHolder;
-import com.hummer.common.core.utils.ServletUtils;
 import com.hummer.common.core.utils.StringUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -33,13 +32,6 @@ public class SecurityUtils {
      */
     public static String getUserKey() {
         return SecurityContextHolder.getUserKey();
-    }
-
-    /**
-     * 获取请求token
-     */
-    public static String getToken() {
-        return getToken(ServletUtils.getRequest());
     }
 
     /**

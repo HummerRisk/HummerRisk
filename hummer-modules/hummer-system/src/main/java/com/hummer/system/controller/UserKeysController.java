@@ -13,6 +13,7 @@ import com.hummer.common.mapper.service.UserKeyService;
 import com.hummer.system.service.ApiKeyHandler;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import javax.servlet.ServletRequest;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.web.util.WebUtils;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletRequest;
 import java.util.List;
 import java.util.Objects;
 

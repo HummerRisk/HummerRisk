@@ -4,9 +4,9 @@ import com.hummer.common.core.domain.UserKey;
 import com.hummer.common.core.utils.CodingUtil;
 import com.hummer.common.core.utils.CommonBeanFactory;
 import com.hummer.common.mapper.service.UserKeyService;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 public class ApiKeyHandler {

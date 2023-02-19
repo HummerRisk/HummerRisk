@@ -1,6 +1,7 @@
 package com.hummer.common.core.utils;
 
 import com.hummer.common.core.user.SessionUser;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
@@ -8,7 +9,6 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 import static com.hummer.common.core.constant.SessionConstants.ATTR_USER;

@@ -1,5 +1,6 @@
 package com.hummer.gateway.handler;
 
+import com.hummer.common.core.utils.ServletUtils;
 import org.springframework.cloud.gateway.support.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +10,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
-import com.hummer.common.core.utils.ServletUtils;
 import reactor.core.publisher.Mono;
 
 /**
