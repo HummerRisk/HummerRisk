@@ -1,10 +1,9 @@
 # 基础镜像
 FROM nginx
 # author
-MAINTAINER hummer
+MAINTAINER Hummer
 
-# 挂载目录
-VOLUME /home/hummer/projects/hummer-ui
+/projects/hummer-ui
 # 创建目录
 RUN mkdir -p /home/hummer/projects/hummer-ui
 # 指定路径
