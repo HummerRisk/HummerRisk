@@ -2,7 +2,7 @@
 FROM  registry.cn-beijing.aliyuncs.com/hummerrisk/alpine:jdk17
 # author
 MAINTAINER Hummer
-ARG HR_VERSION=v0.9.1
+ARG HR_VERSION=dev
 
 COPY ./jar/hummer-auth.jar /opt/apps/hummer-auth.jar
 
