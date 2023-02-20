@@ -6,7 +6,7 @@ import com.hummer.common.core.utils.CommonBeanFactory;
 import com.hummer.common.mapper.service.UserKeyService;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 public class ApiKeyHandler {

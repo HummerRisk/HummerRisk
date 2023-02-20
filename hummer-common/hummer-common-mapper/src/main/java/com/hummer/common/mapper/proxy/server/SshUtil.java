@@ -4,9 +4,9 @@ import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.HTTPProxyData;
 import ch.ethz.ssh2.Session;
 import ch.ethz.ssh2.StreamGobbler;
+import com.hummer.common.core.utils.LogUtil;
 import com.hummer.common.mapper.domain.Proxy;
 import com.hummer.common.mapper.domain.Server;
-import com.hummer.common.core.utils.LogUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.channel.ChannelExec;
@@ -17,7 +17,6 @@ import org.apache.sshd.common.util.GenericUtils;
 import org.apache.sshd.common.util.io.resource.URLResource;
 import org.apache.sshd.common.util.security.SecurityUtils;
 
-import javax.websocket.DeploymentException;
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.Calendar;
@@ -100,11 +99,11 @@ public class SshUtil {
             AuthFuture auth = session.auth();
             if (!auth.await(5000)) {
                 LogUtil.error(String.format(tipStr, "sshd 认证失败"));
-                throw new DeploymentException("Not authenticated within timeout", null);
+                throw new Exception("Not authenticated within timeout", null);
             }
             if (!auth.isSuccess()) {
                 LogUtil.error(String.format(tipStr, "sshd 认证失败"));
-                throw new DeploymentException("Failed to authenticate", auth.getException());
+                throw new Exception("Failed to authenticate", auth.getException());
             }
         } catch (IOException e) {
             LogUtil.error(String.format(tipStr, "sshd登录失败") + e.getMessage());
@@ -186,11 +185,11 @@ public class SshUtil {
             AuthFuture auth = session.auth();
             if (!auth.await(5000)) {
                 LogUtil.error(String.format(tipStr, "sshd 认证失败"));
-                throw new DeploymentException("Not authenticated within timeout", null);
+                throw new Exception("Not authenticated within timeout", null);
             }
             if (!auth.isSuccess()) {
                 LogUtil.error(String.format(tipStr, "sshd 认证失败"));
-                throw new DeploymentException("Failed to authenticate", auth.getException());
+                throw new Exception("Failed to authenticate", auth.getException());
             }
         } catch (Exception e) {
             LogUtil.error(String.format(tipStr, "sshd登录失败") + e.getMessage());

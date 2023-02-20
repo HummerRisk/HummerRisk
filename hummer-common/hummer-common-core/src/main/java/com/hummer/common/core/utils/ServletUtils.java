@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSON;
 import com.hummer.common.core.constant.Constants;
 import com.hummer.common.core.domain.R;
 import com.hummer.common.core.text.Convert;
-import com.hummer.common.core.utils.StringUtils;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

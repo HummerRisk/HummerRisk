@@ -41,10 +41,11 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <!-- FastDFS -->
+        <!-- FastDFS 分布式文件系统 -->
         <dependency>
             <groupId>com.github.tobato</groupId>
             <artifactId>fastdfs-client</artifactId>
+            <version>${tobato.version}</version>
         </dependency>
 
         <!-- Minio -->

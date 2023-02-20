@@ -3,20 +3,20 @@ package com.hummer.system.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummer.common.core.constant.RoleConstants;
-import com.hummer.common.mapper.domain.UserKey;
-import com.hummer.common.mapper.domain.request.user.UserKeyRequest;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.core.utils.SessionUtils;
+import com.hummer.common.mapper.domain.UserKey;
+import com.hummer.common.mapper.domain.request.user.UserKeyRequest;
 import com.hummer.common.mapper.handler.annotation.I18n;
 import com.hummer.common.mapper.service.UserKeyService;
 import com.hummer.system.service.ApiKeyHandler;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import javax.servlet.ServletRequest;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
-import org.apache.shiro.web.util.WebUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -45,7 +45,7 @@ public class UserKeysController {
     @ApiOperation(value = "校验API Keys")
     @GetMapping("validate")
     public String validate(ServletRequest request) throws Exception {
-        return ApiKeyHandler.getUser(WebUtils.toHttp(request));
+        return ApiKeyHandler.getUser((HttpServletRequest)request);
     }
 
     @ApiOperation(value = "生成API Keys")

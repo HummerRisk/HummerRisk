@@ -40,6 +40,18 @@
         <xmlbeans.version>5.1.1</xmlbeans.version>
         <graalvm.version>20.1.0</graalvm.version>
         <shiro.version>1.11.0</shiro.version>
+        <jakarta.mail.version>1.6.7</jakarta.mail.version>
+        <commons.lang3.version>3.12.0</commons.lang3.version>
+        <commons.collections4.version>4.4</commons.collections4.version>
+        <commons.text.version>1.10.0</commons.text.version>
+        <jakarta.websocket.api.version>2.1.0</jakarta.websocket.api.version>
+        <jakarta.servlet.api.version>6.0.0</jakarta.servlet.api.version>
+        <commons.codec.version>1.15</commons.codec.version>
+        <commons.exec.version>1.3</commons.exec.version>
+        <javax.activation.version>1.1.1</javax.activation.version>
+        <sun.activation.version>1.2.0</sun.activation.version>
+        <javax.annotation.api.version>1.3.2</javax.annotation.api.version>
+        <mybatis.spring.boot.starter.version>2.2.2</mybatis.spring.boot.starter.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -84,19 +96,6 @@
                 <artifactId>spring-boot-starter-mail</artifactId>
                 <version>${spring-boot.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.sun.mail</groupId>
-                <artifactId>jakarta.mail</artifactId>
-                <version>1.6.7</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-core</artifactId>
-                <version>10.1.5</version>
-            </dependency>
-            <!-- SpringBoot 依赖配置 -->
-
             <!-- thymeleaf -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -104,132 +103,7 @@
                 <version>${spring-boot.version}</version>
             </dependency>
             <!-- thymeleaf -->
-
-            <!-- FastDFS 分布式文件系统 -->
-            <dependency>
-                <groupId>com.github.tobato</groupId>
-                <artifactId>fastdfs-client</artifactId>
-                <version>${tobato.version}</version>
-            </dependency>
-            <!-- FastDFS 分布式文件系统 -->
-
-            <!-- Swagger 依赖配置 -->
-            <dependency>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-parser</artifactId>
-                <version>${swagger.parser}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.xiaoymin</groupId>
-                <artifactId>knife4j-spring-boot-starter</artifactId>
-                <version>${knife4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-models</artifactId>
-                <version>${swagger.models}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-annotations</artifactId>
-                <version>${swagger.models}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-annotations</artifactId>
-                <version>${swagger.annotations}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
-            <!-- swagger 依赖配置 -->
-
-            <!-- pagehelper 分页插件 -->
-            <dependency>
-                <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper</artifactId>
-                <version>${pagehelper.version}</version>
-            </dependency>
-            <!-- pagehelper 分页插件 -->
-
-            <!-- commons -->
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>3.12.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-collections4</artifactId>
-                <version>4.4</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-text</artifactId>
-                <version>1.10.0</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>1.15</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-exec</artifactId>
-                <version>1.3</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.activation</groupId>
-                <artifactId>activation</artifactId>
-                <version>1.1.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.activation</groupId>
-                <artifactId>javax.activation</artifactId>
-                <version>1.2.0</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.annotation</groupId>
-                <artifactId>javax.annotation-api</artifactId>
-                <version>1.3.2</version>
-            </dependency>
-            <!-- commons -->
-
-            <!-- io常用工具类 -->
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>${commons.io.version}</version>
-            </dependency>
-            <!-- io常用工具类 -->
-
-            <!-- excel工具 -->
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi-ooxml</artifactId>
-                <version>${poi.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi</artifactId>
-                <version>${poi.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.xmlbeans</groupId>
-                <artifactId>xmlbeans</artifactId>
-                <version>${xmlbeans.version}</version>
-            </dependency>
-            <!-- excel工具 -->
-
-            <!-- 文件上传工具类 -->
-            <dependency>
-                <groupId>commons-fileupload</groupId>
-                <artifactId>commons-fileupload</artifactId>
-                <version>${commons.fileupload.version}</version>
-            </dependency>
-            <!-- 文件上传工具类 -->
+            <!-- SpringBoot 依赖配置 -->
 
             <!-- JSON 解析器和生成器 -->
             <dependency>
@@ -246,14 +120,6 @@
                 <version>${jjwt.version}</version>
             </dependency>
             <!-- JWT -->
-
-            <!-- 线程传递值 -->
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>transmittable-thread-local</artifactId>
-                <version>${transmittable-thread-local.version}</version>
-            </dependency>
-            <!-- 线程传递值 -->
 
             <!-- 核心模块 -->
             <dependency>
@@ -355,14 +221,6 @@
             </dependency>
             <!-- junit -->
 
-            <!-- google gson -->
-            <dependency>
-                <groupId>com.google.code.gson</groupId>
-                <artifactId>gson</artifactId>
-                <version>2.9.1</version>
-            </dependency>
-            <!-- google gson -->
-
             <!-- flyway -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
@@ -412,432 +270,6 @@
             </dependency>
             <!-- 执行 js 代码依赖 -->
 
-            <!-- tool -->
-            <dependency>
-                <groupId>org.jsoup</groupId>
-                <artifactId>jsoup</artifactId>
-                <version>1.15.3</version>
-            </dependency>
-            <dependency>
-                <groupId>com.atlassian.commonmark</groupId>
-                <artifactId>commonmark</artifactId>
-                <version>0.15.2</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-                <artifactId>jackson-dataformat-yaml</artifactId>
-                <version>2.13.4</version>
-            </dependency>
-            <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>1.30</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-stdlib</artifactId>
-                <version>1.7.20-RC</version>
-            </dependency>
-
-            <!-- okhttp3 -->
-            <dependency>
-                <groupId>com.squareup.okhttp3</groupId>
-                <artifactId>okhttp</artifactId>
-                <version>4.9.3</version>
-            </dependency>
-            <!-- okhttp3 -->
-
-            <!-- tool -->
-
-            <!-- AWS -->
-            <dependency>
-                <groupId>com.amazonaws</groupId>
-                <artifactId>aws-java-sdk-ec2</artifactId>
-                <version>1.12.319</version>
-            </dependency>
-            <dependency>
-                <groupId>com.amazonaws</groupId>
-                <artifactId>aws-java-sdk-auditmanager</artifactId>
-                <version>1.12.267</version>
-            </dependency>
-            <dependency>
-                <groupId>com.amazonaws</groupId>
-                <artifactId>aws-java-sdk-cloudtrail</artifactId>
-                <version>1.12.267</version>
-            </dependency>
-            <dependency>
-                <groupId>com.amazonaws</groupId>
-                <artifactId>aws-java-sdk-s3</artifactId>
-                <version>1.12.267</version>
-            </dependency>
-            <dependency>
-                <groupId>software.amazon.awssdk</groupId>
-                <artifactId>s3</artifactId>
-                <version>2.18.16</version>
-            </dependency>
-            <dependency>
-                <groupId>software.amazon.awssdk</groupId>
-                <artifactId>cloudwatch</artifactId>
-                <version>2.18.16</version>
-            </dependency>
-            <dependency>
-                <groupId>software.amazon.awssdk</groupId>
-                <artifactId>ec2</artifactId>
-                <version>2.18.16</version>
-            </dependency>
-            <!-- AWS -->
-
-            <!-- azure -->
-            <dependency>
-                <groupId>com.microsoft.azure</groupId>
-                <artifactId>azure</artifactId>
-                <version>1.41.4</version>
-            </dependency>
-            <dependency>
-                <groupId>com.nimbusds</groupId>
-                <artifactId>oauth2-oidc-sdk</artifactId>
-                <version>10.3</version>
-                <scope>runtime</scope>
-            </dependency>
-            <!-- azure -->
-
-            <!-- aliyun -->
-            <dependency>
-                <groupId>com.aliyun</groupId>
-                <artifactId>actiontrail20171204</artifactId>
-                <version>1.0.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.aliyun</groupId>
-                <artifactId>openapiutil</artifactId>
-                <version>0.0.8</version>
-            </dependency>
-            <dependency>
-                <groupId>com.aliyun</groupId>
-                <artifactId>tea</artifactId>
-                <version>1.2.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.aliyun</groupId>
-                <artifactId>tea-util</artifactId>
-                <version>0.2.9</version>
-            </dependency>
-            <dependency>
-                <groupId>com.aliyun</groupId>
-                <artifactId>aliyun-java-sdk-cms</artifactId>
-                <version>7.0.46</version>
-            </dependency>
-            <dependency>
-                <groupId>com.aliyun</groupId>
-                <artifactId>aliyun-java-sdk-slb</artifactId>
-                <version>3.3.16</version>
-            </dependency>
-            <dependency>
-                <groupId>com.aliyun</groupId>
-                <artifactId>aliyun-java-sdk-ecs</artifactId>
-                <version>4.24.22</version>
-            </dependency>
-            <dependency>
-                <groupId>com.aliyun.oss</groupId>
-                <artifactId>aliyun-sdk-oss</artifactId>
-                <version>3.15.2</version>
-            </dependency>
-            <!-- aliyun -->
-
-            <!-- huawei -->
-            <dependency>
-                <groupId>com.huaweicloud.sdk</groupId>
-                <artifactId>huaweicloud-sdk-core</artifactId>
-                <version>3.1.13</version>
-            </dependency>
-            <dependency>
-                <groupId>com.huaweicloud.sdk</groupId>
-                <artifactId>huaweicloud-sdk-vpc</artifactId>
-                <version>3.1.13</version>
-            </dependency>
-            <dependency>
-                <groupId>com.huaweicloud.sdk</groupId>
-                <artifactId>huaweicloud-sdk-cts</artifactId>
-                <version>3.1.13</version>
-            </dependency>
-            <dependency>
-                <groupId>com.huaweicloud.sdk</groupId>
-                <artifactId>huaweicloud-sdk-iam</artifactId>
-                <version>3.1.13</version>
-            </dependency>
-            <dependency>
-                <groupId>com.huaweicloud.sdk</groupId>
-                <artifactId>huaweicloud-sdk-ecs</artifactId>
-                <version>3.1.13</version>
-            </dependency>
-            <dependency>
-                <groupId>com.huaweicloud.sdk</groupId>
-                <artifactId>huaweicloud-sdk-evs</artifactId>
-                <version>3.1.13</version>
-            </dependency>
-            <dependency>
-                <groupId>com.huaweicloud.sdk</groupId>
-                <artifactId>huaweicloud-sdk-ims</artifactId>
-                <version>3.1.13</version>
-            </dependency>
-            <dependency>
-                <groupId>com.huaweicloud.sdk</groupId>
-                <artifactId>huaweicloud-sdk-ces</artifactId>
-                <version>3.1.13</version>
-            </dependency>
-            <dependency>
-                <groupId>com.huaweicloud</groupId>
-                <artifactId>esdk-obs-java</artifactId>
-                <version>3.22.3.1</version>
-            </dependency>
-            <!-- huawei -->
-
-            <!-- tencent -->
-            <dependency>
-                <groupId>com.tencentcloudapi</groupId>
-                <artifactId>tencentcloud-sdk-java</artifactId>
-                <version>3.1.558</version>
-            </dependency>
-            <dependency>
-                <groupId>com.tencentcloudapi</groupId>
-                <artifactId>tencentcloud-sdk-java-cloudaudit</artifactId>
-                <version>3.1.558</version>
-            </dependency>
-            <dependency>
-                <groupId>com.qcloud</groupId>
-                <artifactId>cos_api</artifactId>
-                <version>5.6.115</version>
-            </dependency>
-            <!-- tencent -->
-
-            <!-- jd -->
-            <dependency>
-                <groupId>com.jdcloud.sdk</groupId>
-                <artifactId>vm</artifactId>
-                <version>1.5.2</version>
-            </dependency>
-            <dependency>
-                <groupId>com.jdcloud.sdk</groupId>
-                <artifactId>iam</artifactId>
-                <version>0.2.3</version>
-            </dependency>
-            <!-- jd -->
-
-            <!-- ksyun -->
-            <dependency>
-                <groupId>com.ksyun</groupId>
-                <artifactId>ksyun-java-sdk</artifactId>
-                <version>1.0.4</version>
-            </dependency>
-            <!-- ksyun -->
-
-            <!-- OpenStack -->
-            <dependency>
-                <groupId>jakarta.ws.rs</groupId>
-                <artifactId>jakarta.ws.rs-api</artifactId>
-                <version>3.1.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.pacesys</groupId>
-                <artifactId>openstack4j-core</artifactId>
-                <version>3.2.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.pacesys</groupId>
-                <artifactId>openstack4j</artifactId>
-                <version>3.2.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.pacesys.openstack4j.connectors</groupId>
-                <artifactId>openstack4j-httpclient</artifactId>
-                <version>3.2.0</version>
-            </dependency>
-            <!-- OpenStack -->
-
-            <!-- VMware -->
-            <dependency>
-                <groupId>com.toastcoders</groupId>
-                <artifactId>yavijava</artifactId>
-                <version>6.0.05</version>
-            </dependency>
-            <dependency>
-                <groupId>com.vmware</groupId>
-                <artifactId>vijava</artifactId>
-                <version>5.1</version>
-            </dependency>
-            <!-- VMware -->
-
-            <!-- Google cloud -->
-            <dependency>
-                <groupId>com.google.cloud</groupId>
-                <artifactId>google-cloud-core</artifactId>
-                <version>2.11.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.cloud</groupId>
-                <artifactId>google-cloud-storage</artifactId>
-                <version>2.18.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.apis</groupId>
-                <artifactId>google-api-services-cloudresourcemanager</artifactId>
-                <version>v1-rev20210613-1.31.5</version>
-            </dependency>
-            <!-- Google cloud -->
-
-            <!-- Kubernetes -->
-            <dependency>
-                <groupId>io.kubernetes</groupId>
-                <artifactId>client-java</artifactId>
-                <version>16.0.0</version>
-            </dependency>
-            <!-- Kubernetes -->
-
-            <!-- 字节云火山引擎 -->
-            <dependency>
-                <groupId>com.volcengine</groupId>
-                <artifactId>volc-sdk-java</artifactId>
-                <version>1.0.71</version>
-            </dependency>
-            <!-- 字节云火山引擎 -->
-
-            <!-- 百度云 -->
-            <dependency>
-                <groupId>com.baidubce</groupId>
-                <artifactId>bce-java-sdk</artifactId>
-                <version>0.10.235</version>
-            </dependency>
-            <!-- 百度云 -->
-
-            <!-- 七牛云 -->
-            <dependency>
-                <groupId>com.qiniu</groupId>
-                <artifactId>qiniu-java-sdk</artifactId>
-                <version>7.11.0</version>
-            </dependency>
-            <!-- 七牛云 -->
-
-            <!-- 青云 -->
-            <dependency>
-                <groupId>com.qingcloud</groupId>
-                <artifactId>qingcloud-sdk-java</artifactId>
-                <version>1.2.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.yunify</groupId>
-                <artifactId>qingstor.sdk.java</artifactId>
-                <version>2.5.1</version>
-            </dependency>
-            <!-- 青云 -->
-
-            <!-- UCloud -->
-            <dependency>
-                <groupId>cn.ucloud</groupId>
-                <artifactId>ucloud-sdk-java-common</artifactId>
-                <version>0.8.4.4-release</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ucloud.ufile</groupId>
-                <artifactId>ufile-client-java</artifactId>
-                <version>2.6.6</version>
-            </dependency>
-            <!-- UCloud -->
-
-            <!-- OpenShift -->
-            <dependency>
-                <groupId>io.fabric8</groupId>
-                <artifactId>openshift-client</artifactId>
-                <version>6.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>io.fabric8</groupId>
-                <artifactId>openshift-client-api</artifactId>
-                <version>6.0.0</version>
-            </dependency>
-            <!-- OpenShift -->
-
-            <!-- Java使用SSH连接Linux并获取cpu，内存，磁盘使用率 -->
-            <dependency>
-                <groupId>io.klib.tools</groupId>
-                <artifactId>org.hyperic.sigar.aio</artifactId>
-                <version>1.6.4</version>
-            </dependency>
-            <dependency>
-                <groupId>org.fusesource</groupId>
-                <artifactId>sigar</artifactId>
-                <version>1.6.4</version>
-            </dependency>
-            <dependency>
-                <groupId>ch.ethz.ganymed</groupId>
-                <artifactId>ganymed-ssh2</artifactId>
-                <version>262</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.sshd</groupId>
-                <artifactId>sshd-core</artifactId>
-                <version>2.9.1</version>
-            </dependency>
-            <dependency>
-                <groupId>net.i2p.crypto</groupId>
-                <artifactId>eddsa</artifactId>
-                <version>0.3.0</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.hutool</groupId>
-                <artifactId>hutool-all</artifactId>
-                <version>5.8.1</version>
-            </dependency>
-            <!-- Java使用SSH连接Linux并获取cpu，内存，磁盘使用率 -->
-
-            <!-- Java使用winrm4j连接Windows -->
-            <dependency>
-                <groupId>io.cloudsoft.windows</groupId>
-                <artifactId>winrm4j</artifactId>
-                <version>0.12.3</version>
-            </dependency>
-            <!-- Java使用winrm4j连接Windows -->
-
-            <!-- 钉钉 -->
-            <dependency>
-                <groupId>com.aliyun</groupId>
-                <artifactId>alibaba-dingtalk-service-sdk</artifactId>
-                <version>1.0.1</version>
-            </dependency>
-            <!-- 钉钉 -->
-
-            <!-- 容器测试库 -->
-            <dependency>
-                <groupId>org.testcontainers</groupId>
-                <artifactId>testcontainers</artifactId>
-                <version>1.17.5</version>
-                <scope>test</scope>
-            </dependency>
-            <!-- 容器测试库 -->
-
-            <!-- mybatis -->
-            <dependency>
-                <groupId>org.mybatis.spring.boot</groupId>
-                <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>2.2.2</version>
-            </dependency>
-            <!-- mybatis -->
-
-            <!-- thymeleaf -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-thymeleaf</artifactId>
-            </dependency>
-            <!-- thymeleaf -->
-
-            <!-- shiro -->
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-spring-boot-starter</artifactId>
-                <version>${shiro.version}</version>
-            </dependency>
-            <!-- shiro -->
-
             <dependency>
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger-ui</artifactId>
@@ -847,20 +279,6 @@
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger2</artifactId>
                 <version>${swagger.fox.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>jakarta.servlet</groupId>
-                <artifactId>jakarta.servlet-api</artifactId>
-                <version>4.0.4</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>jakarta.websocket</groupId>
-                <artifactId>jakarta.websocket-api</artifactId>
-                <version>1.1.2</version>
-                <scope>compile</scope>
             </dependency>
 
             <!-- Druid -->
@@ -903,13 +321,13 @@
                 <version>6.0.5</version>
             </dependency>
 
-            <dependency>
-                <groupId>jdk.tools</groupId>
-                <artifactId>jdk.tools</artifactId>
-                <version>17</version>
-                <scope>system</scope>
-                <systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>jdk.tools</groupId>-->
+<!--                <artifactId>jdk.tools</artifactId>-->
+<!--                <version>17</version>-->
+<!--                <scope>system</scope>-->
+<!--                <systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>-->
+<!--            </dependency>-->
 
         </dependencies>
     </dependencyManagement>

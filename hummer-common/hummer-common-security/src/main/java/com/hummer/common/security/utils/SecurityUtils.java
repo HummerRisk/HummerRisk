@@ -5,7 +5,7 @@ import com.hummer.common.core.context.SecurityContextHolder;
 import com.hummer.common.core.utils.StringUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * 权限获取工具类
