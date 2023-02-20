@@ -1,12 +1,12 @@
 package com.hummer.common.mapper.mapper.ext;
 
 
-import com.hummer.common.core.domain.CloudTaskItem;
-import com.hummer.common.core.domain.ResourceWithBLOBs;
-import com.hummer.common.core.domain.RuleInspectionReport;
-import com.hummer.common.core.domain.request.resource.ResourceRequest;
-import com.hummer.common.core.domain.request.rule.RuleGroupRequest;
-import com.hummer.common.core.dto.*;
+import com.hummer.common.mapper.domain.CloudTaskItem;
+import com.hummer.common.mapper.domain.ResourceWithBLOBs;
+import com.hummer.common.mapper.domain.RuleInspectionReport;
+import com.hummer.common.mapper.domain.request.resource.ResourceRequest;
+import com.hummer.common.mapper.domain.request.rule.RuleGroupRequest;
+import com.hummer.common.mapper.dto.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

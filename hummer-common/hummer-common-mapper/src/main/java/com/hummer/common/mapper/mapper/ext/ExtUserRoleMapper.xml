@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtUserRoleMapper">
 
-    <resultMap id="BaseOrganizationMemberDTOMap" type="com.hummer.common.core.dto.OrganizationMemberDTO">
+    <resultMap id="BaseOrganizationMemberDTOMap" type="com.hummer.common.mapper.dto.OrganizationMemberDTO">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="email" jdbcType="VARCHAR" property="email" />
@@ -18,7 +18,7 @@
     </resultMap>
 
     <select id="getUserRoleHelpList" parameterType="java.lang.String"
-            resultType="com.hummer.common.core.dto.UserRoleHelpDTO">
+            resultType="com.hummer.common.mapper.dto.UserRoleHelpDTO">
         SELECT
             user_role.role_id AS roleId,
             role.`name` AS roleName,

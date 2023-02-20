@@ -88,7 +88,7 @@
         </if>
     </sql>
 
-    <resultMap id="AccountBaseResultMap" type="com.hummer.common.core.domain.request.task.AccountVo">
+    <resultMap id="AccountBaseResultMap" type="com.hummer.common.mapper.domain.request.task.AccountVo">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
@@ -103,7 +103,7 @@
         <result column="type" jdbcType="VARCHAR" property="type" />
     </resultMap>
 
-    <select id="selectAccountByExample" parameterType="com.hummer.common.core.domain.AccountExample" resultMap="AccountBaseResultMap">
+    <select id="selectAccountByExample" parameterType="com.hummer.common.mapper.domain.AccountExample" resultMap="AccountBaseResultMap">
         select t.*, (f.id is null) as favour, 'cloudAccount' as type
         from cloud_account t
         left join favorite f on t.id = f.source_id
@@ -115,7 +115,7 @@
         </if>
     </select>
 
-    <select id="selectVulnByExample" parameterType="com.hummer.common.core.domain.AccountExample" resultMap="AccountBaseResultMap">
+    <select id="selectVulnByExample" parameterType="com.hummer.common.mapper.domain.AccountExample" resultMap="AccountBaseResultMap">
         select t.*, (f.id is null) as favour, 'vulnAccount' as type
         from cloud_account t
         left join favorite f on t.id = f.source_id
@@ -127,7 +127,7 @@
         </if>
     </select>
 
-    <resultMap id="ServerBaseResultMap" type="com.hummer.common.core.domain.request.task.ServerVo">
+    <resultMap id="ServerBaseResultMap" type="com.hummer.common.mapper.domain.request.task.ServerVo">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="server_group_id" jdbcType="VARCHAR" property="serverGroupId" />
@@ -146,7 +146,7 @@
         <result column="type" jdbcType="VARCHAR" property="type" />
     </resultMap>
 
-    <select id="selectServerByExample" parameterType="com.hummer.common.core.domain.ServerExample" resultMap="ServerBaseResultMap">
+    <select id="selectServerByExample" parameterType="com.hummer.common.mapper.domain.ServerExample" resultMap="ServerBaseResultMap">
         select t.id, t.name, t.server_group_id, t.plugin_icon, t.status,
                t.create_time, t.update_time, t.creator, t.ip, t.port,
                t.user_name, t.password, t.is_proxy, t.proxy_id,
@@ -161,7 +161,7 @@
         </if>
     </select>
 
-    <resultMap id="ImageBaseResultMap" type="com.hummer.common.core.domain.request.task.ImageVo">
+    <resultMap id="ImageBaseResultMap" type="com.hummer.common.mapper.domain.request.task.ImageVo">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
@@ -174,7 +174,7 @@
         <result column="type" jdbcType="VARCHAR" property="type" />
     </resultMap>
 
-    <select id="selectImageByExample" parameterType="com.hummer.common.core.domain.ImageExample" resultMap="ImageBaseResultMap">
+    <select id="selectImageByExample" parameterType="com.hummer.common.mapper.domain.ImageExample" resultMap="ImageBaseResultMap">
         select t.id, t.name, t.plugin_icon, t.status, t.image_url, t.image_tag, t.path, t.create_time, (f.id is null) as favour, 'imageAccount' as type
         from image t
         left join favorite f on t.id = f.source_id
@@ -186,7 +186,7 @@
         </if>
     </select>
 
-    <resultMap id="CodeBaseResultMap" type="com.hummer.common.core.domain.request.task.CodeVo">
+    <resultMap id="CodeBaseResultMap" type="com.hummer.common.mapper.domain.request.task.CodeVo">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
@@ -201,7 +201,7 @@
         <result column="type" jdbcType="VARCHAR" property="type" />
     </resultMap>
 
-    <select id="selectCodeByExample" parameterType="com.hummer.common.core.domain.CodeExample" resultMap="CodeBaseResultMap">
+    <select id="selectCodeByExample" parameterType="com.hummer.common.mapper.domain.CodeExample" resultMap="CodeBaseResultMap">
         select t.*, (f.id is null) as favour, 'codeAccount' as type
         from code t
         left join favorite f on t.id = f.source_id
@@ -213,7 +213,7 @@
         </if>
     </select>
 
-    <resultMap id="FsBaseResultMap" type="com.hummer.common.core.domain.request.task.FileSystemVo">
+    <resultMap id="FsBaseResultMap" type="com.hummer.common.mapper.domain.request.task.FileSystemVo">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="file_name" jdbcType="VARCHAR" property="fileName" />
@@ -232,7 +232,7 @@
         <result column="type" jdbcType="VARCHAR" property="type" />
     </resultMap>
 
-    <select id="selectFsByExample" parameterType="com.hummer.common.core.domain.FileSystemExample" resultMap="FsBaseResultMap">
+    <select id="selectFsByExample" parameterType="com.hummer.common.mapper.domain.FileSystemExample" resultMap="FsBaseResultMap">
         select t.*, (f.id is null) as favour, 'fsAccount' as type
         from file_system t
         left join favorite f on t.id = f.source_id
@@ -244,7 +244,7 @@
         </if>
     </select>
 
-    <resultMap id="K8sBaseResultMap" type="com.hummer.common.core.domain.request.task.K8sVo">
+    <resultMap id="K8sBaseResultMap" type="com.hummer.common.mapper.domain.request.task.K8sVo">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
@@ -260,7 +260,7 @@
         <result column="type" jdbcType="VARCHAR" property="type" />
     </resultMap>
 
-    <select id="selectK8sByExample" parameterType="com.hummer.common.core.domain.CloudNativeExample" resultMap="K8sBaseResultMap">
+    <select id="selectK8sByExample" parameterType="com.hummer.common.mapper.domain.CloudNativeExample" resultMap="K8sBaseResultMap">
         select t.*, (f.id is null) as favour, 'k8sAccount' as type
         from cloud_native t
         left join favorite f on t.id = f.source_id
@@ -272,7 +272,7 @@
         </if>
     </select>
 
-    <resultMap id="ConfigBaseResultMap" type="com.hummer.common.core.domain.request.task.ConfigVo">
+    <resultMap id="ConfigBaseResultMap" type="com.hummer.common.mapper.domain.request.task.ConfigVo">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="status" jdbcType="VARCHAR" property="status" />
@@ -284,7 +284,7 @@
         <result column="type" jdbcType="VARCHAR" property="type" />
     </resultMap>
 
-    <select id="selectConfigByExample" parameterType="com.hummer.common.core.domain.CloudNativeConfigExample" resultMap="ConfigBaseResultMap">
+    <select id="selectConfigByExample" parameterType="com.hummer.common.mapper.domain.CloudNativeConfigExample" resultMap="ConfigBaseResultMap">
         select t.*, (f.id is null) as favour, 'configAccount' as type
         from cloud_native_config t
         left join favorite f on t.id = f.source_id
@@ -296,7 +296,7 @@
         </if>
     </select>
 
-    <select id="cloudRuleList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+    <select id="cloudRuleList" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultType="com.hummer.common.mapper.domain.request.task.RuleVo">
         select
             t.id as sourceId,
             'rule' as ruleType,
@@ -322,7 +322,7 @@
         order by t.last_modified desc
     </select>
 
-    <select id="vulnRuleList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+    <select id="vulnRuleList" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultType="com.hummer.common.mapper.domain.request.task.RuleVo">
         select
         t.id as sourceId,
         'rule' as ruleType,
@@ -348,7 +348,7 @@
         order by t.last_modified desc
     </select>
 
-    <select id="serverRuleList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+    <select id="serverRuleList" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultType="com.hummer.common.mapper.domain.request.task.RuleVo">
         select
         t.id as sourceId,
         'rule' as ruleType,
@@ -368,7 +368,7 @@
         order by t.last_modified desc
     </select>
 
-    <select id="k8sRuleList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+    <select id="k8sRuleList" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultType="com.hummer.common.mapper.domain.request.task.RuleVo">
         select
         t.id as sourceId,
         'rule' as ruleType,
@@ -388,7 +388,7 @@
         order by t.last_modified desc
     </select>
 
-    <select id="configRuleList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+    <select id="configRuleList" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultType="com.hummer.common.mapper.domain.request.task.RuleVo">
         select
         t.id as sourceId,
         'rule' as ruleType,
@@ -408,7 +408,7 @@
         order by t.last_modified desc
     </select>
 
-    <select id="imageRuleList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+    <select id="imageRuleList" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultType="com.hummer.common.mapper.domain.request.task.RuleVo">
         select
         t.id as sourceId,
         'rule' as ruleType,
@@ -428,7 +428,7 @@
         order by t.last_modified desc
     </select>
 
-    <select id="codeRuleList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+    <select id="codeRuleList" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultType="com.hummer.common.mapper.domain.request.task.RuleVo">
         select
         t.id as sourceId,
         'rule' as ruleType,
@@ -448,7 +448,7 @@
         order by t.last_modified desc
     </select>
 
-    <select id="fsRuleList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+    <select id="fsRuleList" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultType="com.hummer.common.mapper.domain.request.task.RuleVo">
         select
         t.id as sourceId,
         'rule' as ruleType,
@@ -468,7 +468,7 @@
         order by t.last_modified desc
     </select>
 
-    <select id="ruleTagList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+    <select id="ruleTagList" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultType="com.hummer.common.mapper.domain.request.task.RuleVo">
         select
         t.tag_key as sourceId,
         'tag' as ruleType,
@@ -568,7 +568,7 @@
         </where>
     </select>
 
-    <select id="ruleGroupList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
+    <select id="ruleGroupList" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultType="com.hummer.common.mapper.domain.request.task.RuleVo">
         select
         t.id as sourceId,
         'group' as ruleType,
@@ -672,7 +672,7 @@
         </where>
     </select>
 
-    <resultMap id="CloudDetailRule" type="com.hummer.common.core.dto.RuleDTO"
+    <resultMap id="CloudDetailRule" type="com.hummer.common.mapper.dto.RuleDTO"
                extends="com.hummer.common.mapper.mapper.RuleMapper.BaseResultMap">
         <result column="isSaveParam" property="isSaveParam" jdbcType="BOOLEAN"/>
         <result column="tagKey" property="tagKey" jdbcType="VARCHAR"/>
@@ -689,7 +689,7 @@
               (SELECT tag_key FROM rule_tag_mapping WHERE rule_id = #{id})
     </select>
 
-    <select id="cloudDetailRule" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultMap="CloudDetailRule">
+    <select id="cloudDetailRule" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultMap="CloudDetailRule">
         SELECT
         t.*,
         (select tag_key from rule_tag_mapping where rule_id = t.id limit 1) as tagKey,
@@ -705,7 +705,7 @@
         ORDER BY t.last_modified desc
     </select>
 
-    <select id="vulnDetailRule" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultMap="CloudDetailRule">
+    <select id="vulnDetailRule" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultMap="CloudDetailRule">
         SELECT
         t.*,
         (select tag_key from rule_tag_mapping where rule_id = t.id limit 1) as tagKey,
@@ -721,7 +721,7 @@
         ORDER BY t.last_modified desc
     </select>
 
-    <select id="serverDetailRule" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.dto.ServerRuleDTO">
+    <select id="serverDetailRule" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultType="com.hummer.common.mapper.dto.ServerRuleDTO">
         SELECT
         t.*,
         'server.png' as pluginIcon,
@@ -738,7 +738,7 @@
         ORDER BY t.last_modified desc
     </select>
 
-    <select id="k8sDetailRule" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.dto.K8sRuleDTO">
+    <select id="k8sDetailRule" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultType="com.hummer.common.mapper.dto.K8sRuleDTO">
         SELECT
         t.*,
         'k8s.png' as pluginIcon,
@@ -755,7 +755,7 @@
         ORDER BY t.last_modified desc
     </select>
 
-    <select id="configDetailRule" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.dto.ConfigRuleDTO">
+    <select id="configDetailRule" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultType="com.hummer.common.mapper.dto.ConfigRuleDTO">
         SELECT
         t.*,
         'yaml.png' as pluginIcon,
@@ -772,7 +772,7 @@
         ORDER BY t.last_modified desc
     </select>
 
-    <select id="imageDetailRule" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.dto.ImageRuleDTO">
+    <select id="imageDetailRule" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultType="com.hummer.common.mapper.dto.ImageRuleDTO">
         SELECT
         t.*,
         'docker.png' as pluginIcon,
@@ -790,7 +790,7 @@
         ORDER BY t.last_modified desc
     </select>
 
-    <select id="codeDetailRule" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.dto.CodeRuleDTO">
+    <select id="codeDetailRule" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultType="com.hummer.common.mapper.dto.CodeRuleDTO">
         SELECT
         t.*,
         'code.png' as pluginIcon,
@@ -808,7 +808,7 @@
         ORDER BY t.last_modified desc
     </select>
 
-    <select id="fsDetailRule" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.dto.FsRuleDTO">
+    <select id="fsDetailRule" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultType="com.hummer.common.mapper.dto.FsRuleDTO">
         SELECT
         t.*,
         'fs.png' as pluginIcon,
@@ -826,7 +826,7 @@
         ORDER BY t.last_modified desc
     </select>
 
-    <select id="detailTag" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.dto.TaskTagGroupDTO">
+    <select id="detailTag" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultType="com.hummer.common.mapper.dto.TaskTagGroupDTO">
         SELECT
             DISTINCT
             t2.id,
@@ -1010,7 +1010,7 @@
 
     </select>
 
-    <select id="detailGroup" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.dto.TaskTagGroupDTO">
+    <select id="detailGroup" parameterType="com.hummer.common.mapper.domain.request.task.RuleVo" resultType="com.hummer.common.mapper.dto.TaskTagGroupDTO">
         SELECT
             DISTINCT
             t2.id,
@@ -1124,7 +1124,7 @@
 
     </select>
 
-    <select id="taskList" resultType="com.hummer.common.core.domain.request.task.TaskVo">
+    <select id="taskList" resultType="com.hummer.common.mapper.domain.request.task.TaskVo">
         SELECT
         t.*,
         t1.name as userName
@@ -1155,7 +1155,7 @@
         ORDER BY t.create_time desc
     </select>
 
-    <resultMap id="TaskItemLogResultMap" type="com.hummer.common.core.domain.request.task.TaskLogVo"
+    <resultMap id="TaskItemLogResultMap" type="com.hummer.common.mapper.domain.request.task.TaskLogVo"
                extends="com.hummer.common.mapper.mapper.TaskItemResourceMapper.BaseResultMap">
         <association property="taskResourceVo" column="resource_id" select="getTaskResourceVo">
             <result column="id" jdbcType="VARCHAR" property="id"/>
@@ -1165,7 +1165,7 @@
             <result column="severity" jdbcType="VARCHAR" property="severity"/>
             <result column="icon" jdbcType="VARCHAR" property="icon"/>
         </association>
-        <collection property="taskItemResourceLogList" ofType="com.hummer.common.core.domain.TaskItemResourceLog" javaType="list" select="getTaskItemResourceLogList" column="id">
+        <collection property="taskItemResourceLogList" ofType="com.hummer.common.mapper.domain.TaskItemResourceLog" javaType="list" select="getTaskItemResourceLogList" column="id">
             <id column="id" jdbcType="INTEGER" property="id" />
             <result column="task_item_id" jdbcType="VARCHAR" property="taskItemId" />
             <result column="task_item_resource_id" jdbcType="VARCHAR" property="taskItemResourceId" />
@@ -1177,7 +1177,7 @@
         </collection>
     </resultMap>
 
-    <select id="getTaskResourceVo" resultType="com.hummer.common.core.domain.request.task.TaskResourceVo" parameterType="java.lang.String">
+    <select id="getTaskResourceVo" resultType="com.hummer.common.mapper.domain.request.task.TaskResourceVo" parameterType="java.lang.String">
         SELECT t.id,
                concat(t.task_name, ' ', t.resource_types, ' | ', t.rule_tags)  as name,
                t.description as 'desc',
@@ -1243,7 +1243,7 @@
         WHERE t.id = #{resource_id}
     </select>
 
-    <select id="getTaskItemResourceLogList" resultType="com.hummer.common.core.domain.TaskItemResourceLog" parameterType="java.lang.String">
+    <select id="getTaskItemResourceLogList" resultType="com.hummer.common.mapper.domain.TaskItemResourceLog" parameterType="java.lang.String">
         SELECT t.*
         FROM task_item_resource_log t
         WHERE t.task_item_resource_id = #{id}
@@ -1256,22 +1256,22 @@
         order by t.id desc
     </select>
 
-    <resultMap id="TaskReportMap" type="com.hummer.common.core.dto.TaskReportDTO" extends="com.hummer.common.mapper.mapper.TaskMapper.BaseResultMap">
-        <collection property="historyCloudTaskDTOList" ofType="com.hummer.common.core.dto.HistoryCloudTaskDTO" javaType="list" select="getHistoryCloudTaskDTOList" column="id">
+    <resultMap id="TaskReportMap" type="com.hummer.common.mapper.dto.TaskReportDTO" extends="com.hummer.common.mapper.mapper.TaskMapper.BaseResultMap">
+        <collection property="historyCloudTaskDTOList" ofType="com.hummer.common.mapper.dto.HistoryCloudTaskDTO" javaType="list" select="getHistoryCloudTaskDTOList" column="id">
         </collection>
-        <collection property="historyCloudResourceReportDTOList" ofType="com.hummer.common.core.dto.HistoryResourceReportDTO" javaType="list" select="getHistoryCloudResourceReportDTOList" column="id">
+        <collection property="historyCloudResourceReportDTOList" ofType="com.hummer.common.mapper.dto.HistoryResourceReportDTO" javaType="list" select="getHistoryCloudResourceReportDTOList" column="id">
         </collection>
-        <collection property="historyVulnTaskDTOList" ofType="com.hummer.common.core.dto.HistoryVulnTaskDTO" javaType="list" select="getHistoryVulnTaskDTOList" column="id">
+        <collection property="historyVulnTaskDTOList" ofType="com.hummer.common.mapper.dto.HistoryVulnTaskDTO" javaType="list" select="getHistoryVulnTaskDTOList" column="id">
         </collection>
         <collection property="historyVulnResourceReportDTOList" ofType="com.hummer.common.core.domain.HistoryResourceReportDTO" javaType="list" select="getHistoryVulnResourceReportDTOList" column="id">
         </collection>
-        <collection property="historyServerResultList" ofType="com.hummer.common.core.domain.HistoryServerResult" javaType="list" select="getHistoryServerResultList" column="id">
+        <collection property="historyServerResultList" ofType="com.hummer.common.mapper.domain.HistoryServerResult" javaType="list" select="getHistoryServerResultList" column="id">
         </collection>
-        <collection property="historyImageReportDTOList" ofType="com.hummer.common.core.dto.HistoryImageReportDTO" javaType="list" select="getHistoryImageReportDTOList" column="id">
+        <collection property="historyImageReportDTOList" ofType="com.hummer.common.mapper.dto.HistoryImageReportDTO" javaType="list" select="getHistoryImageReportDTOList" column="id">
         </collection>
-        <collection property="historyCodeReportDTOList" ofType="com.hummer.common.core.dto.HistoryCodeReportDTO" javaType="list" select="getHistoryCodeReportDTOList" column="id">
+        <collection property="historyCodeReportDTOList" ofType="com.hummer.common.mapper.dto.HistoryCodeReportDTO" javaType="list" select="getHistoryCodeReportDTOList" column="id">
         </collection>
-        <collection property="historyFsReportDTOList" ofType="com.hummer.common.core.dto.HistoryCodeReportDTO" javaType="list" select="getHistoryFsReportDTOList" column="id">
+        <collection property="historyFsReportDTOList" ofType="com.hummer.common.mapper.dto.HistoryCodeReportDTO" javaType="list" select="getHistoryFsReportDTOList" column="id">
         </collection>
     </resultMap>
 
@@ -1281,7 +1281,7 @@
         WHERE t.id = #{id}
     </select>
 
-    <select id="getHistoryCloudTaskDTOList" resultType="com.hummer.common.core.dto.HistoryCloudTaskDTO" parameterType="java.lang.String">
+    <select id="getHistoryCloudTaskDTOList" resultType="com.hummer.common.mapper.dto.HistoryCloudTaskDTO" parameterType="java.lang.String">
         SELECT t1.*, t3.name as accountName
         FROM history_cloud_task t1
         JOIN task_item_resource t2 on t2.resource_id = t1.id
@@ -1289,8 +1289,8 @@
         WHERE t2.task_id = #{id}
     </select>
 
-    <resultMap id="HistoryCloudResourceReportDTOMap" type="com.hummer.common.core.dto.HistoryResourceReportDTO" extends="com.hummer.common.mapper.mapper.ResourceMapper.BaseResultMap">
-        <collection property="resourceItemList" ofType="com.hummer.common.core.domain.ResourceItem" javaType="list" select="getCloudResourceItemList" column="id">
+    <resultMap id="HistoryCloudResourceReportDTOMap" type="com.hummer.common.mapper.dto.HistoryResourceReportDTO" extends="com.hummer.common.mapper.mapper.ResourceMapper.BaseResultMap">
+        <collection property="resourceItemList" ofType="com.hummer.common.mapper.domain.ResourceItem" javaType="list" select="getCloudResourceItemList" column="id">
         </collection>
     </resultMap>
 
@@ -1303,7 +1303,7 @@
         WHERE t3.task_id = #{id}
     </select>
 
-    <select id="getCloudResourceItemList" resultType="com.hummer.common.core.domain.ResourceItem" parameterType="java.lang.String">
+    <select id="getCloudResourceItemList" resultType="com.hummer.common.mapper.domain.ResourceItem" parameterType="java.lang.String">
         SELECT t.*
         FROM resource_item t
         JOIN cloud_task_item_resource t1 on t.resource_id = t1.resource_id
@@ -1312,7 +1312,7 @@
         WHERE t3.task_id = #{id}
     </select>
 
-    <select id="getHistoryVulnTaskDTOList" resultType="com.hummer.common.core.dto.HistoryVulnTaskDTO" parameterType="java.lang.String">
+    <select id="getHistoryVulnTaskDTOList" resultType="com.hummer.common.mapper.dto.HistoryVulnTaskDTO" parameterType="java.lang.String">
         SELECT t1.*, t3.name as accountName
         FROM history_vuln_task t1
         JOIN task_item_resource t2 on t2.resource_id = t1.id
@@ -1320,8 +1320,8 @@
         WHERE t2.task_id = #{id}
     </select>
 
-    <resultMap id="HistoryVulnResourceReportDTOMap" type="com.hummer.common.core.dto.HistoryResourceReportDTO" extends="com.hummer.common.mapper.mapper.ResourceMapper.BaseResultMap">
-        <collection property="resourceItemList" ofType="com.hummer.common.core.domain.ResourceItem" javaType="list" select="getVulnResourceItemList" column="id">
+    <resultMap id="HistoryVulnResourceReportDTOMap" type="com.hummer.common.mapper.dto.HistoryResourceReportDTO" extends="com.hummer.common.mapper.mapper.ResourceMapper.BaseResultMap">
+        <collection property="resourceItemList" ofType="com.hummer.common.mapper.domain.ResourceItem" javaType="list" select="getVulnResourceItemList" column="id">
         </collection>
     </resultMap>
 
@@ -1334,7 +1334,7 @@
         WHERE t3.task_id = #{id}
     </select>
 
-    <select id="getVulnResourceItemList" resultType="com.hummer.common.core.domain.ResourceItem" parameterType="java.lang.String">
+    <select id="getVulnResourceItemList" resultType="com.hummer.common.mapper.domain.ResourceItem" parameterType="java.lang.String">
         SELECT t.*
         FROM resource_item t
         JOIN cloud_task_item_resource t1 on t.resource_id = t1.resource_id
@@ -1343,15 +1343,15 @@
         WHERE t3.task_id = #{id}
     </select>
 
-    <select id="getHistoryServerResultList" resultType="com.hummer.common.core.domain.HistoryServerResult" parameterType="java.lang.String">
+    <select id="getHistoryServerResultList" resultType="com.hummer.common.mapper.domain.HistoryServerResult" parameterType="java.lang.String">
         SELECT t.*
         FROM history_server_result t
         JOIN task_item_resource t1 on t1.resource_id = t.id
         WHERE t1.task_id = #{id}
     </select>
 
-    <resultMap id="HistoryImageReportDTOMap" type="com.hummer.common.core.dto.HistoryImageReportDTO" extends="com.hummer.common.mapper.mapper.HistoryImageResultMapper.BaseResultMap">
-        <collection property="imageResultItemWithBLOBsList" ofType="com.hummer.common.core.domain.ImageResultItemWithBLOBs" javaType="list" select="getimageResultItemWithBLOBsList" column="id">
+    <resultMap id="HistoryImageReportDTOMap" type="com.hummer.common.mapper.dto.HistoryImageReportDTO" extends="com.hummer.common.mapper.mapper.HistoryImageResultMapper.BaseResultMap">
+        <collection property="imageResultItemWithBLOBsList" ofType="com.hummer.common.mapper.domain.ImageResultItemWithBLOBs" javaType="list" select="getimageResultItemWithBLOBsList" column="id">
         </collection>
     </resultMap>
 
@@ -1362,14 +1362,14 @@
         WHERE t1.task_id = #{id}
     </select>
 
-    <select id="getimageResultItemWithBLOBsList" resultType="com.hummer.common.core.domain.ImageResultItemWithBLOBs" parameterType="java.lang.String">
+    <select id="getimageResultItemWithBLOBsList" resultType="com.hummer.common.mapper.domain.ImageResultItemWithBLOBs" parameterType="java.lang.String">
         SELECT t.*
         FROM image_result_item t
         WHERE t.result_id = #{id}
     </select>
 
-    <resultMap id="HistoryCodeReportDTOMap" type="com.hummer.common.core.dto.HistoryCodeReportDTO" extends="com.hummer.common.mapper.mapper.HistoryCodeResultMapper.BaseResultMap">
-        <collection property="codeResultItemList" ofType="com.hummer.common.core.domain.CodeResultItemWithBLOBs" javaType="list" select="getCodeResultItemList" column="id">
+    <resultMap id="HistoryCodeReportDTOMap" type="com.hummer.common.mapper.dto.HistoryCodeReportDTO" extends="com.hummer.common.mapper.mapper.HistoryCodeResultMapper.BaseResultMap">
+        <collection property="codeResultItemList" ofType="com.hummer.common.mapper.domain.CodeResultItemWithBLOBs" javaType="list" select="getCodeResultItemList" column="id">
         </collection>
     </resultMap>
 
@@ -1380,15 +1380,15 @@
         WHERE t1.task_id = #{id}
     </select>
 
-    <select id="getCodeResultItemList" resultType="com.hummer.common.core.domain.CodeResultItemWithBLOBs" parameterType="java.lang.String">
+    <select id="getCodeResultItemList" resultType="com.hummer.common.mapper.domain.CodeResultItemWithBLOBs" parameterType="java.lang.String">
         SELECT t.*
         FROM code_result_item t
         JOIN history_code_result t1 on t1.id = t.result_id
         WHERE t1.id = #{id}
     </select>
 
-    <resultMap id="HistoryFsReportDTOMap" type="com.hummer.common.core.dto.HistoryFsReportDTO" extends="com.hummer.common.mapper.mapper.HistoryFileSystemResultMapper.BaseResultMap">
-        <collection property="fsResultItemList" ofType="com.hummer.common.core.domain.FileSystemResultItemWithBLOBs" javaType="list" select="getFsResultItemList" column="id">
+    <resultMap id="HistoryFsReportDTOMap" type="com.hummer.common.mapper.dto.HistoryFsReportDTO" extends="com.hummer.common.mapper.mapper.HistoryFileSystemResultMapper.BaseResultMap">
+        <collection property="fsResultItemList" ofType="com.hummer.common.mapper.domain.FileSystemResultItemWithBLOBs" javaType="list" select="getFsResultItemList" column="id">
         </collection>
     </resultMap>
 
@@ -1399,7 +1399,7 @@
         WHERE t1.task_id = #{id}
     </select>
 
-    <select id="getFsResultItemList" resultType="com.hummer.common.core.domain.FileSystemResultItemWithBLOBs" parameterType="java.lang.String">
+    <select id="getFsResultItemList" resultType="com.hummer.common.mapper.domain.FileSystemResultItemWithBLOBs" parameterType="java.lang.String">
         SELECT t.*
         FROM file_system_result_item t
         JOIN history_file_system_result t1 on t1.id = t.result_id

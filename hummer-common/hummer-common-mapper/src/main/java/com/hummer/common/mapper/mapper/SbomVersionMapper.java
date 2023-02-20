@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.SbomVersion;
-import com.hummer.common.core.domain.SbomVersionExample;
+import com.hummer.common.mapper.domain.SbomVersion;
+import com.hummer.common.mapper.domain.SbomVersionExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

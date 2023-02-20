@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.request.code.CodeRuleRequest;
-import com.hummer.common.core.dto.CodeRuleDTO;
+import com.hummer.common.mapper.dto.CodeRuleDTO;
+import com.hummer.common.mapper.domain.request.code.CodeRuleRequest;
 
 import java.util.List;
 

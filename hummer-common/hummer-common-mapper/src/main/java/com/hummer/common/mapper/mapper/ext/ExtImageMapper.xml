@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtImageMapper">
 
-    <resultMap id="ImageMap" type="com.hummer.common.core.dto.ImageDTO"
+    <resultMap id="ImageMap" type="com.hummer.common.mapper.dto.ImageDTO"
                extends="com.hummer.common.mapper.mapper.ImageMapper.BaseResultMap">
         <result column="user" property="user"/>
         <result column="imageRepoName" property="imageRepoName"/>

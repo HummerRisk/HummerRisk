@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.message;
 
 
-import com.hummer.common.core.domain.MessageTaskWithBLOBs;
+import com.hummer.common.mapper.domain.MessageTaskWithBLOBs;
 
 import java.util.ArrayList;
 import java.util.List;

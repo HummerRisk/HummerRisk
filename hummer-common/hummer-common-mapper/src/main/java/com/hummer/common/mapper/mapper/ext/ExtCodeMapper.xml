@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtCodeMapper">
 
-    <resultMap id="CodeMap" type="com.hummer.common.core.dto.CodeDTO"
+    <resultMap id="CodeMap" type="com.hummer.common.mapper.dto.CodeDTO"
                extends="com.hummer.common.mapper.mapper.CodeMapper.BaseResultMap">
         <result column="user" property="user"/>
     </resultMap>

@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.CloudResourceSyncItem;
-import com.hummer.common.core.domain.CloudResourceSyncItemExample;
+import com.hummer.common.mapper.domain.CloudResourceSyncItem;
+import com.hummer.common.mapper.domain.CloudResourceSyncItemExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

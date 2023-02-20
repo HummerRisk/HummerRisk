@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.CloudNativeSourceSyncLog;
-import com.hummer.common.core.domain.CloudNativeSourceSyncLogExample;
-import com.hummer.common.core.domain.CloudNativeSourceSyncLogWithBLOBs;
+import com.hummer.common.mapper.domain.CloudNativeSourceSyncLog;
+import com.hummer.common.mapper.domain.CloudNativeSourceSyncLogExample;
+import com.hummer.common.mapper.domain.CloudNativeSourceSyncLogWithBLOBs;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

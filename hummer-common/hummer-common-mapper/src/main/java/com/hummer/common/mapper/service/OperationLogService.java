@@ -1,13 +1,13 @@
 package com.hummer.common.mapper.service;
 
-import com.hummer.common.core.domain.OperationLog;
-import com.hummer.common.core.domain.OperationLogExample;
 import com.hummer.common.core.domain.User;
-import com.hummer.common.core.domain.request.log.OperatorLogRequest;
-import com.hummer.common.mapper.mapper.OperationLogMapper;
-import com.hummer.common.mapper.mapper.ext.ExtOperationLogMapper;
 import com.hummer.common.core.utils.SessionUtils;
 import com.hummer.common.core.utils.UUIDUtil;
+import com.hummer.common.mapper.domain.OperationLog;
+import com.hummer.common.mapper.domain.OperationLogExample;
+import com.hummer.common.mapper.domain.request.log.OperatorLogRequest;
+import com.hummer.common.mapper.mapper.OperationLogMapper;
+import com.hummer.common.mapper.mapper.ext.ExtOperationLogMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

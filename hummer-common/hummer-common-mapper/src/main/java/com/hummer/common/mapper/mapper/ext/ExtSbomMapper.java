@@ -1,12 +1,12 @@
 package com.hummer.common.mapper.mapper.ext;
 
 
-import com.hummer.common.core.domain.SbomVersion;
-import com.hummer.common.core.domain.request.sbom.SbomRequest;
-import com.hummer.common.core.domain.request.sbom.SbomVersionRequest;
-import com.hummer.common.core.dto.ApplicationDTO;
-import com.hummer.common.core.dto.MetricChartDTO;
-import com.hummer.common.core.dto.SbomDTO;
+import com.hummer.common.mapper.dto.ApplicationDTO;
+import com.hummer.common.mapper.dto.MetricChartDTO;
+import com.hummer.common.mapper.dto.SbomDTO;
+import com.hummer.common.mapper.domain.SbomVersion;
+import com.hummer.common.mapper.domain.request.sbom.SbomRequest;
+import com.hummer.common.mapper.domain.request.sbom.SbomVersionRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

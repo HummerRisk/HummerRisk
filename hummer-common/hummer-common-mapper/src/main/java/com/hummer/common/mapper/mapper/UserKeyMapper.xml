@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.UserKeyMapper">
-  <resultMap id="BaseResultMap" type="com.hummer.common.core.domain.UserKey">
+  <resultMap id="BaseResultMap" type="com.hummer.common.mapper.domain.UserKey">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="user_id" jdbcType="VARCHAR" property="userId" />
     <result column="access_key" jdbcType="VARCHAR" property="accessKey" />
@@ -70,7 +70,7 @@
   <sql id="Base_Column_List">
     id, user_id, access_key, secret_key, create_time, status
   </sql>
-  <select id="selectByExample" parameterType="com.hummer.common.core.domain.UserKeyExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.hummer.common.mapper.domain.UserKeyExample" resultMap="BaseResultMap">
     SELECT
     <if test="distinct">
       DISTINCT
@@ -94,13 +94,13 @@
     DELETE FROM user_key
     WHERE id = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.hummer.common.core.domain.UserKeyExample">
+  <delete id="deleteByExample" parameterType="com.hummer.common.mapper.domain.UserKeyExample">
     DELETE FROM user_key
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.hummer.common.core.domain.UserKey">
+  <insert id="insert" parameterType="com.hummer.common.mapper.domain.UserKey">
     INSERT INTO user_key (id, user_id, access_key,
       secret_key, create_time, status
       )
@@ -108,7 +108,7 @@
       #{secretKey,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, #{status,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.hummer.common.core.domain.UserKey">
+  <insert id="insertSelective" parameterType="com.hummer.common.mapper.domain.UserKey">
     INSERT INTO user_key
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -151,7 +151,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.hummer.common.core.domain.UserKeyExample" resultType="java.lang.Long">
+  <select id="countByExample" parameterType="com.hummer.common.mapper.domain.UserKeyExample" resultType="java.lang.Long">
     SELECT count(*) FROM user_key
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
@@ -195,7 +195,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.hummer.common.core.domain.UserKey">
+  <update id="updateByPrimaryKeySelective" parameterType="com.hummer.common.mapper.domain.UserKey">
     UPDATE user_key
     <set>
       <if test="userId != null">
@@ -216,7 +216,7 @@
     </set>
     WHERE id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.hummer.common.core.domain.UserKey">
+  <update id="updateByPrimaryKey" parameterType="com.hummer.common.mapper.domain.UserKey">
     UPDATE user_key
     SET user_id = #{userId,jdbcType=VARCHAR},
       access_key = #{accessKey,jdbcType=VARCHAR},

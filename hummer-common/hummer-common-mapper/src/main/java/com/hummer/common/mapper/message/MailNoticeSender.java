@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.message;
 
-import com.hummer.common.mapper.service.MailService;
 import com.hummer.common.core.utils.LogUtil;
+import com.hummer.common.mapper.service.MailService;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;

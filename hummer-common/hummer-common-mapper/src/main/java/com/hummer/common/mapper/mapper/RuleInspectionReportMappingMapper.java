@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.RuleInspectionReportMapping;
-import com.hummer.common.core.domain.RuleInspectionReportMappingExample;
+import com.hummer.common.mapper.domain.RuleInspectionReportMapping;
+import com.hummer.common.mapper.domain.RuleInspectionReportMappingExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

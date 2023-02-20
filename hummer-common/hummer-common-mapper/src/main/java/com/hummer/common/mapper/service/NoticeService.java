@@ -2,15 +2,15 @@ package com.hummer.common.mapper.service;
 
 import com.hummer.common.core.constant.NoticeConstants;
 import com.hummer.common.core.constant.ScanConstants;
-import com.hummer.common.core.domain.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
+import com.hummer.common.core.utils.UUIDUtil;
+import com.hummer.common.mapper.domain.*;
 import com.hummer.common.mapper.mapper.MessageOrderItemMapper;
 import com.hummer.common.mapper.mapper.MessageOrderMapper;
 import com.hummer.common.mapper.mapper.MessageTaskMapper;
 import com.hummer.common.mapper.message.MessageDetail;
-import com.hummer.common.core.utils.PlatformUtils;
-import com.hummer.common.core.utils.UUIDUtil;
+import com.hummer.common.mapper.utils.PlatformUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;

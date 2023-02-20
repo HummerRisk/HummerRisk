@@ -93,7 +93,7 @@
         </if>
     </sql>
 
-    <select id="resultListWithBLOBs" resultType="com.hummer.common.core.dto.CodeResultDTO">
+    <select id="resultListWithBLOBs" resultType="com.hummer.common.mapper.dto.CodeResultDTO">
         SELECT
         t.*,
         t1.tag_key as tagKey,
@@ -131,7 +131,7 @@
         ORDER BY t.update_time desc
     </select>
 
-    <select id="resultList" resultType="com.hummer.common.core.dto.CodeResultDTO">
+    <select id="resultList" resultType="com.hummer.common.mapper.dto.CodeResultDTO">
         SELECT
         t.*,
         (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
@@ -168,7 +168,7 @@
         ORDER BY t.update_time desc
     </select>
 
-    <select id="getCodeResult" parameterType="java.lang.String" resultType="com.hummer.common.core.dto.CodeResultDTO">
+    <select id="getCodeResult" parameterType="java.lang.String" resultType="com.hummer.common.mapper.dto.CodeResultDTO">
         SELECT
         t.*,
         (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
@@ -185,7 +185,7 @@
         </where>
     </select>
 
-    <select id="history" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryCodeResultDTO">
+    <select id="history" parameterType="java.util.Map" resultType="com.hummer.common.mapper.dto.HistoryCodeResultDTO">
         SELECT
         t.*,
         (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,

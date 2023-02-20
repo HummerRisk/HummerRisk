@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.CloudNativeConfigResult;
-import com.hummer.common.core.domain.CloudNativeConfigResultExample;
+import com.hummer.common.mapper.domain.CloudNativeConfigResult;
+import com.hummer.common.mapper.domain.CloudNativeConfigResultExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

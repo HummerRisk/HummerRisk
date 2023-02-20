@@ -2,7 +2,7 @@ package com.hummer.common.mapper.service;
 
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.LogUtil;
-import com.hummer.common.core.utils.SigarUtil;
+import com.hummer.common.mapper.utils.SigarUtil;
 import org.hyperic.sigar.*;
 import org.springframework.stereotype.Service;
 

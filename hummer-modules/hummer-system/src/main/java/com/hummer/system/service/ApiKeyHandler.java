@@ -1,6 +1,6 @@
 package com.hummer.system.service;
 
-import com.hummer.common.core.domain.UserKey;
+import com.hummer.common.mapper.domain.UserKey;
 import com.hummer.common.core.utils.CodingUtil;
 import com.hummer.common.core.utils.CommonBeanFactory;
 import com.hummer.common.mapper.service.UserKeyService;

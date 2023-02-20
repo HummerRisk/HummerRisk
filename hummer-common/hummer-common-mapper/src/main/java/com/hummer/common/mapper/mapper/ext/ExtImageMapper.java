@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper.ext;
 
 
-import com.hummer.common.core.domain.request.image.ImageRequest;
-import com.hummer.common.core.dto.ImageDTO;
+import com.hummer.common.mapper.dto.ImageDTO;
+import com.hummer.common.mapper.domain.request.image.ImageRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

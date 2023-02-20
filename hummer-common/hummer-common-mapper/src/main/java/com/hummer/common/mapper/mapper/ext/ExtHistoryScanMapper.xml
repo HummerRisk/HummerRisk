@@ -14,7 +14,7 @@
       limit 1
     </select>
 
-    <update id="updateByExampleSelective" parameterType="com.hummer.common.core.domain.HistoryScan">
+    <update id="updateByExampleSelective" parameterType="com.hummer.common.mapper.domain.HistoryScan">
         UPDATE history_scan
         <set>
             <if test="operator != null">

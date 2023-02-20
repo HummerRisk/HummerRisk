@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtRuleTagMapper">
-    <resultMap id="BaseResultMap" type="com.hummer.common.core.domain.RuleTag">
+    <resultMap id="BaseResultMap" type="com.hummer.common.mapper.domain.RuleTag">
     </resultMap>
 
     <sql id="condition">
@@ -72,7 +72,7 @@
         </if>
     </sql>
 
-    <select id="list" resultMap="BaseResultMap" parameterType="com.hummer.common.core.domain.request.rule.RuleTagRequest">
+    <select id="list" resultMap="BaseResultMap" parameterType="com.hummer.common.mapper.domain.request.rule.RuleTagRequest">
         select
         t.*
         from rule_tag as t

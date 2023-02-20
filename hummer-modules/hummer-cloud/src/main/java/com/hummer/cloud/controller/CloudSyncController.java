@@ -4,10 +4,10 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummer.common.mapper.handler.annotation.I18n;
 import com.hummer.common.mapper.service.CloudSyncService;
-import com.hummer.common.core.domain.CloudResourceSync;
-import com.hummer.common.core.domain.request.cloudResource.CloudResourceSyncRequest;
-import com.hummer.common.core.domain.request.sync.CloudTopology;
-import com.hummer.common.core.dto.CloudResourceSyncItemDto;
+import com.hummer.common.mapper.domain.CloudResourceSync;
+import com.hummer.common.mapper.domain.request.cloudResource.CloudResourceSyncRequest;
+import com.hummer.common.mapper.domain.request.sync.CloudTopology;
+import com.hummer.common.mapper.dto.CloudResourceSyncItemDTO;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import io.swagger.annotations.Api;
@@ -56,7 +56,7 @@ public class CloudSyncController {
     @I18n
     @ApiOperation(value = "云账号同步日志详情")
     @GetMapping(value = "log/item/list/{syncId}")
-    public List<CloudResourceSyncItemDto> listResourceSyncItem(@PathVariable String syncId) {
+    public List<CloudResourceSyncItemDTO> listResourceSyncItem(@PathVariable String syncId) {
         return cloudSyncService.getCloudResourceSyncItem(syncId);
     }
 

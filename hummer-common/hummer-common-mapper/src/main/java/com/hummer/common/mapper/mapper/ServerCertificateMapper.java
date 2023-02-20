@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.ServerCertificate;
-import com.hummer.common.core.domain.ServerCertificateExample;
+import com.hummer.common.mapper.domain.ServerCertificate;
+import com.hummer.common.mapper.domain.ServerCertificateExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

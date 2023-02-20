@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper.ext;
 
 
-import com.hummer.common.core.domain.request.fs.FsRequest;
-import com.hummer.common.core.dto.FsDTO;
+import com.hummer.common.mapper.dto.FsDTO;
+import com.hummer.common.mapper.domain.request.fs.FsRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

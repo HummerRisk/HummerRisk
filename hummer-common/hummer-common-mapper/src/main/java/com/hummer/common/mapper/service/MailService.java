@@ -1,10 +1,10 @@
 package com.hummer.common.mapper.service;
 
 import com.hummer.common.core.constant.ParamConstants;
-import com.hummer.common.core.domain.MailAttachmentInfo;
-import com.hummer.common.core.domain.SystemParameter;
-import com.hummer.common.mapper.mapper.SystemParameterMapper;
 import com.hummer.common.core.utils.LogUtil;
+import com.hummer.common.mapper.domain.MailAttachmentInfo;
+import com.hummer.common.mapper.domain.SystemParameter;
+import com.hummer.common.mapper.mapper.SystemParameterMapper;
 import jakarta.mail.internet.MimeMessage;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -16,7 +16,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.mail.MessagingException;
 import java.util.*;
 
 @Service

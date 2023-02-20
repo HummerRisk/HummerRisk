@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.Account;
-import com.hummer.common.core.domain.AccountExample;
-import com.hummer.common.core.domain.AccountWithBLOBs;
+import com.hummer.common.mapper.domain.Account;
+import com.hummer.common.mapper.domain.AccountExample;
+import com.hummer.common.mapper.domain.AccountWithBLOBs;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.HistoryVulnTaskItem;
-import com.hummer.common.core.domain.HistoryVulnTaskItemExample;
-import com.hummer.common.core.domain.HistoryVulnTaskItemWithBLOBs;
+import com.hummer.common.mapper.domain.HistoryVulnTaskItem;
+import com.hummer.common.mapper.domain.HistoryVulnTaskItemExample;
+import com.hummer.common.mapper.domain.HistoryVulnTaskItemWithBLOBs;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

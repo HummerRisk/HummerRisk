@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtQuartzTaskMapper">
-    <resultMap id="BaseResultMap" type="com.hummer.common.core.domain.CloudAccountQuartzTask"
+    <resultMap id="BaseResultMap" type="com.hummer.common.mapper.domain.CloudAccountQuartzTask"
                extends="com.hummer.common.mapper.mapper.CloudAccountQuartzTaskMapper.BaseResultMap">
     </resultMap>
 

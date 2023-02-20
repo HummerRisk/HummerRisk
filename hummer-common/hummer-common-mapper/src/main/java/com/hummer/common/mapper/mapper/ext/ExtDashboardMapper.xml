@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtDashboardMapper">
 
-    <select id="topInfo" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.TopInfoDTO">
+    <select id="topInfo" parameterType="java.util.Map" resultType="com.hummer.common.mapper.dto.TopInfoDTO">
         SELECT *
         from (
               (SELECT IFNULL(count(user.id), 0) as users from user) as users,
@@ -61,7 +61,7 @@
          )
     </select>
 
-    <select id="topScanInfo" parameterType="java.lang.String" resultType="com.hummer.common.core.dto.TopScanDTO">
+    <select id="topScanInfo" parameterType="java.lang.String" resultType="com.hummer.common.mapper.dto.TopScanDTO">
         SELECT *
         FROM (
             (
@@ -276,7 +276,7 @@
         limit 10;
     </select>
 
-    <select id="taskCalendar" resultType="com.hummer.common.core.domain.request.dashboard.TaskCalendarVo">
+    <select id="taskCalendar" resultType="com.hummer.common.mapper.domain.request.dashboard.TaskCalendarVo">
         select
             'current-month' as 'type',
             true as 'isSelected',
@@ -288,7 +288,7 @@
             from_unixtime(t.last_fire_time/1000, '%Y-%m-%d')
     </select>
 
-    <select id="analysisChartX" parameterType="com.hummer.common.core.domain.request.dashboard.AnslysisVo" resultType="java.lang.String">
+    <select id="analysisChartX" parameterType="com.hummer.common.mapper.domain.request.dashboard.AnslysisVo" resultType="java.lang.String">
         select
         from_unixtime(t.create_time/1000, '%Y-%m-%d') as name
         from history_scan t
@@ -327,7 +327,7 @@
         limit #{cycle};
     </select>
 
-    <select id="analysisChartY" parameterType="com.hummer.common.core.domain.request.dashboard.AnslysisVo" resultType="java.lang.Integer">
+    <select id="analysisChartY" parameterType="com.hummer.common.mapper.domain.request.dashboard.AnslysisVo" resultType="java.lang.Integer">
         select
         IFNULL(t.scan_score, 100) as score
         from history_scan t
@@ -422,7 +422,7 @@
         </if>
     </sql>
 
-    <select id="historyScanVo" parameterType="com.hummer.common.core.domain.request.dashboard.HistoryScanVo" resultType="com.hummer.common.core.domain.request.dashboard.HistoryScanVo">
+    <select id="historyScanVo" parameterType="com.hummer.common.mapper.domain.request.dashboard.HistoryScanVo" resultType="com.hummer.common.mapper.domain.request.dashboard.HistoryScanVo">
         select * from (
         select
         t.*,

@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.ImageRepoSyncLog;
-import com.hummer.common.core.domain.ImageRepoSyncLogExample;
-import com.hummer.common.core.domain.ImageRepoSyncLogWithBLOBs;
+import com.hummer.common.mapper.domain.ImageRepoSyncLog;
+import com.hummer.common.mapper.domain.ImageRepoSyncLogExample;
+import com.hummer.common.mapper.domain.ImageRepoSyncLogWithBLOBs;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

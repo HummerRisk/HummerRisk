@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.Schedule;
-import com.hummer.common.core.domain.ScheduleExample;
+import com.hummer.common.mapper.domain.Schedule;
+import com.hummer.common.mapper.domain.ScheduleExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

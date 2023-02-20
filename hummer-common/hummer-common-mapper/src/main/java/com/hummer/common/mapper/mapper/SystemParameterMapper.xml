@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.SystemParameterMapper">
-  <resultMap id="BaseResultMap" type="com.hummer.common.core.domain.SystemParameter">
+  <resultMap id="BaseResultMap" type="com.hummer.common.mapper.domain.SystemParameter">
     <id column="param_key" jdbcType="VARCHAR" property="paramKey" />
     <result column="param_value" jdbcType="VARCHAR" property="paramValue" />
     <result column="type" jdbcType="VARCHAR" property="type" />
@@ -68,7 +68,7 @@
   <sql id="Base_Column_List">
     param_key, param_value, type, sort
   </sql>
-  <select id="selectByExample" parameterType="com.hummer.common.core.domain.SystemParameterExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.hummer.common.mapper.domain.SystemParameterExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -92,19 +92,19 @@
     delete from system_parameter
     where param_key = #{paramKey,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.hummer.common.core.domain.SystemParameterExample">
+  <delete id="deleteByExample" parameterType="com.hummer.common.mapper.domain.SystemParameterExample">
     delete from system_parameter
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.hummer.common.core.domain.SystemParameter">
+  <insert id="insert" parameterType="com.hummer.common.mapper.domain.SystemParameter">
     insert into system_parameter (param_key, param_value, type,
       sort)
     values (#{paramKey,jdbcType=VARCHAR}, #{paramValue,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
       #{sort,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.hummer.common.core.domain.SystemParameter">
+  <insert id="insertSelective" parameterType="com.hummer.common.mapper.domain.SystemParameter">
     insert into system_parameter
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="paramKey != null">
@@ -135,7 +135,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.hummer.common.core.domain.SystemParameterExample" resultType="java.lang.Long">
+  <select id="countByExample" parameterType="com.hummer.common.mapper.domain.SystemParameterExample" resultType="java.lang.Long">
     select count(*) from system_parameter
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
@@ -171,7 +171,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.hummer.common.core.domain.SystemParameter">
+  <update id="updateByPrimaryKeySelective" parameterType="com.hummer.common.mapper.domain.SystemParameter">
     update system_parameter
     <set>
       <if test="paramValue != null">
@@ -186,7 +186,7 @@
     </set>
     where param_key = #{paramKey,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.hummer.common.core.domain.SystemParameter">
+  <update id="updateByPrimaryKey" parameterType="com.hummer.common.mapper.domain.SystemParameter">
     update system_parameter
     set param_value = #{paramValue,jdbcType=VARCHAR},
       type = #{type,jdbcType=VARCHAR},

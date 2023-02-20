@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.CloudResource;
-import com.hummer.common.core.domain.CloudResourceExample;
-import com.hummer.common.core.domain.CloudResourceWithBLOBs;
+import com.hummer.common.mapper.domain.CloudResource;
+import com.hummer.common.mapper.domain.CloudResourceExample;
+import com.hummer.common.mapper.domain.CloudResourceWithBLOBs;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

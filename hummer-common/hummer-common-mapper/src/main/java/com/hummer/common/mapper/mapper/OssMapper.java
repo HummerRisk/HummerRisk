@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.Oss;
-import com.hummer.common.core.domain.OssExample;
-import com.hummer.common.core.domain.OssWithBLOBs;
+import com.hummer.common.mapper.domain.Oss;
+import com.hummer.common.mapper.domain.OssExample;
+import com.hummer.common.mapper.domain.OssWithBLOBs;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -1,10 +1,10 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.request.server.ServerRequest;
-import com.hummer.common.core.domain.request.server.ServerResultRequest;
-import com.hummer.common.core.dto.HistoryServerResultDTO;
-import com.hummer.common.core.dto.ServerListDTO;
-import com.hummer.common.core.dto.ServerResultDTO;
+import com.hummer.common.mapper.dto.HistoryServerResultDTO;
+import com.hummer.common.mapper.dto.ServerListDTO;
+import com.hummer.common.mapper.dto.ServerResultDTO;
+import com.hummer.common.mapper.domain.request.server.ServerRequest;
+import com.hummer.common.mapper.domain.request.server.ServerResultRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

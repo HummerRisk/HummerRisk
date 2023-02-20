@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.RuleAccountParameter;
-import com.hummer.common.core.domain.RuleAccountParameterExample;
+import com.hummer.common.mapper.domain.RuleAccountParameter;
+import com.hummer.common.mapper.domain.RuleAccountParameterExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

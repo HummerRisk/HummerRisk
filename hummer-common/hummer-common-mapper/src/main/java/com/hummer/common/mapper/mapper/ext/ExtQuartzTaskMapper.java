@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.CloudAccountQuartzTask;
-import com.hummer.common.core.domain.request.cloudTask.CloudQuartzRequest;
+import com.hummer.common.mapper.domain.CloudAccountQuartzTask;
+import com.hummer.common.mapper.domain.request.cloudTask.CloudQuartzRequest;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

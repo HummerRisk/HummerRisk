@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.MessageTask;
-import com.hummer.common.core.domain.MessageTaskExample;
-import com.hummer.common.core.domain.MessageTaskWithBLOBs;
+import com.hummer.common.mapper.domain.MessageTask;
+import com.hummer.common.mapper.domain.MessageTaskExample;
+import com.hummer.common.mapper.domain.MessageTaskWithBLOBs;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.CloudEvent;
-import com.hummer.common.core.domain.CloudEventExample;
-import com.hummer.common.core.domain.CloudEventWithBLOBs;
+import com.hummer.common.mapper.domain.CloudEvent;
+import com.hummer.common.mapper.domain.CloudEventExample;
+import com.hummer.common.mapper.domain.CloudEventWithBLOBs;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

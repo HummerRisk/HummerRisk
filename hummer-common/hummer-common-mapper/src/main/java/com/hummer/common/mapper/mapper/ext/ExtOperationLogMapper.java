@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.OperationLog;
-import com.hummer.common.core.domain.request.log.OperatorLogRequest;
+import com.hummer.common.mapper.domain.OperationLog;
+import com.hummer.common.mapper.domain.request.log.OperatorLogRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -88,7 +88,7 @@
         </if>
     </sql>
 
-    <select id="resultItemListBySearch" resultType="com.hummer.common.core.domain.FileSystemResultItemWithBLOBs">
+    <select id="resultItemListBySearch" resultType="com.hummer.common.mapper.domain.FileSystemResultItemWithBLOBs">
         SELECT
         t.*
         FROM file_system_result_item t

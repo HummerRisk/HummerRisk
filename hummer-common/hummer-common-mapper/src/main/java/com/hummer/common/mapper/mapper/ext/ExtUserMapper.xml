@@ -120,7 +120,7 @@
         select id, name, email, last_account_id from `user` where id like CONCAT('%', #{condition},'%') or email like CONCAT('%', #{condition},'%') limit 100;
     </select>
 
-    <select id="queryTypeByIds" parameterType="java.lang.String" resultType="com.hummer.common.core.domain.UserDetail">
+    <select id="queryTypeByIds" parameterType="java.lang.String" resultType="com.hummer.common.mapper.domain.UserDetail">
         SELECT
         email,phone,wechat_account as wechatAccount
         from user

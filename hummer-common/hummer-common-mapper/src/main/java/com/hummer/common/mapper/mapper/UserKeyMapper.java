@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.UserKey;
-import com.hummer.common.core.domain.UserKeyExample;
+import com.hummer.common.mapper.domain.UserKey;
+import com.hummer.common.mapper.domain.UserKeyExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

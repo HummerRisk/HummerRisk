@@ -1,6 +1,6 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.HistoryScan;
+import com.hummer.common.mapper.domain.HistoryScan;
 
 public interface ExtHistoryScanMapper {
 

@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.HistoryCloudNativeConfigResult;
-import com.hummer.common.core.domain.HistoryCloudNativeConfigResultExample;
+import com.hummer.common.mapper.domain.HistoryCloudNativeConfigResult;
+import com.hummer.common.mapper.domain.HistoryCloudNativeConfigResultExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.FileSystemRule;
-import com.hummer.common.core.domain.FileSystemRuleExample;
+import com.hummer.common.mapper.domain.FileSystemRule;
+import com.hummer.common.mapper.domain.FileSystemRuleExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

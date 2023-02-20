@@ -1,9 +1,9 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.request.cloudNative.CloudNativeSyncLogRequest;
-import com.hummer.common.core.domain.request.image.ImageRequest;
-import com.hummer.common.core.domain.request.k8s.K8sResultRequest;
-import com.hummer.common.core.dto.*;
+import com.hummer.common.mapper.domain.request.cloudNative.CloudNativeSyncLogRequest;
+import com.hummer.common.mapper.domain.request.image.ImageRequest;
+import com.hummer.common.mapper.domain.request.k8s.K8sResultRequest;
+import com.hummer.common.mapper.dto.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

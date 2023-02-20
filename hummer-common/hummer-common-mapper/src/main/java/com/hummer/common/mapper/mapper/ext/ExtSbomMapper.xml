@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtSbomMapper">
 
-    <resultMap id="SbomMap" type="com.hummer.common.core.dto.SbomDTO"
+    <resultMap id="SbomMap" type="com.hummer.common.mapper.dto.SbomDTO"
                extends="com.hummer.common.mapper.mapper.SbomMapper.BaseResultMap">
         <result column="user" property="user"/>
     </resultMap>
@@ -105,7 +105,7 @@
         order by t.update_time desc
     </select>
 
-    <select id="sbomVersionList" resultType="com.hummer.common.core.domain.SbomVersion">
+    <select id="sbomVersionList" resultType="com.hummer.common.mapper.domain.SbomVersion">
         select
         t.*
         from sbom_version as t
@@ -127,9 +127,9 @@
         order by t.update_time desc
     </select>
 
-    <resultMap id="ApplicationsMap" type="com.hummer.common.core.dto.ApplicationDTO"
+    <resultMap id="ApplicationsMap" type="com.hummer.common.mapper.dto.ApplicationDTO"
                extends="com.hummer.common.mapper.mapper.SbomMapper.BaseResultMap">
-        <collection property="sbomVersionList" ofType="com.hummer.common.core.dto.SbomVersionDTO" javaType="list" select="getSbomVersionList" column="id">
+        <collection property="sbomVersionList" ofType="com.hummer.common.mapper.dto.SbomVersionDTO" javaType="list" select="getSbomVersionList" column="id">
         </collection>
     </resultMap>
 
@@ -145,7 +145,7 @@
         order by t.update_time desc
     </select>
 
-    <select id="getSbomVersionList" resultType="com.hummer.common.core.dto.SbomVersionDTO" parameterType="java.lang.String">
+    <select id="getSbomVersionList" resultType="com.hummer.common.mapper.dto.SbomVersionDTO" parameterType="java.lang.String">
         SELECT t.*,
                t1.name as sbomName,
                t1.description as sbomDesc
@@ -155,7 +155,7 @@
         order by t.update_time desc
     </select>
 
-    <select id="codeMetricChart" resultType="com.hummer.common.core.dto.MetricChartDTO" parameterType="java.lang.String">
+    <select id="codeMetricChart" resultType="com.hummer.common.mapper.dto.MetricChartDTO" parameterType="java.lang.String">
         SELECT *
         from (
             (SELECT count(*) as critical FROM code_result_item t WHERE LOWER(t.severity) = 'critical' AND t.result_id = #{resultId}) as critical,
@@ -167,7 +167,7 @@
              )
     </select>
 
-    <select id="imageMetricChart" resultType="com.hummer.common.core.dto.MetricChartDTO" parameterType="java.lang.String">
+    <select id="imageMetricChart" resultType="com.hummer.common.mapper.dto.MetricChartDTO" parameterType="java.lang.String">
         SELECT *
         from (
              (SELECT count(*) as critical FROM image_result_item t WHERE LOWER(t.severity) = 'critical' AND t.result_id = #{resultId}) as critical,
@@ -179,7 +179,7 @@
              )
     </select>
 
-    <select id="fsMetricChart" resultType="com.hummer.common.core.dto.MetricChartDTO" parameterType="java.lang.String">
+    <select id="fsMetricChart" resultType="com.hummer.common.mapper.dto.MetricChartDTO" parameterType="java.lang.String">
         SELECT *
         from (
              (SELECT count(*) as critical FROM file_system_result_item t WHERE LOWER(t.severity) = 'critical' AND t.result_id = #{resultId}) as critical,

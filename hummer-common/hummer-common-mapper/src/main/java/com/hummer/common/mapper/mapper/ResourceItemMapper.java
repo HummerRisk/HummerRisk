@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.ResourceItem;
-import com.hummer.common.core.domain.ResourceItemExample;
+import com.hummer.common.mapper.domain.ResourceItem;
+import com.hummer.common.mapper.domain.ResourceItemExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

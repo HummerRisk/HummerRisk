@@ -64,7 +64,7 @@
         </if>
     </sql>
 
-    <select id="resultList" resultType="com.hummer.common.core.dto.CloudNativeConfigResultDTO">
+    <select id="resultList" resultType="com.hummer.common.mapper.dto.CloudNativeConfigResultDTO">
         SELECT
         t.*,
         (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
@@ -92,7 +92,7 @@
         ORDER BY t.update_time desc
     </select>
 
-    <select id="getCloudNativeConfigResult" parameterType="java.lang.String" resultType="com.hummer.common.core.dto.CloudNativeConfigResultDTO">
+    <select id="getCloudNativeConfigResult" parameterType="java.lang.String" resultType="com.hummer.common.mapper.dto.CloudNativeConfigResultDTO">
         SELECT
         t.*,
         (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
@@ -109,7 +109,7 @@
         </where>
     </select>
 
-    <select id="metricChart" resultType="com.hummer.common.core.dto.MetricChartDTO" parameterType="java.lang.String">
+    <select id="metricChart" resultType="com.hummer.common.mapper.dto.MetricChartDTO" parameterType="java.lang.String">
         SELECT *
         from (
                  (SELECT count(*) as critical FROM cloud_native_config_result_item t WHERE LOWER(t.severity) = 'critical' AND t.result_id = #{resultId}) as critical,
@@ -121,7 +121,7 @@
              )
     </select>
 
-    <select id="history" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryCloudNativeResultDTO">
+    <select id="history" parameterType="java.util.Map" resultType="com.hummer.common.mapper.dto.HistoryCloudNativeResultDTO">
         SELECT
         t.*,
         (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,

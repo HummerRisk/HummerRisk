@@ -1,9 +1,9 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.CloudNativeResultConfigItemWithBLOBs;
-import com.hummer.common.core.domain.CloudNativeResultKubenchWithBLOBs;
-import com.hummer.common.core.domain.request.k8s.K8sConfigResultItemRequest;
-import com.hummer.common.core.domain.request.k8s.K8sKubenchResultItemRequest;
+import com.hummer.common.mapper.domain.CloudNativeResultConfigItemWithBLOBs;
+import com.hummer.common.mapper.domain.CloudNativeResultKubenchWithBLOBs;
+import com.hummer.common.mapper.domain.request.k8s.K8sConfigResultItemRequest;
+import com.hummer.common.mapper.domain.request.k8s.K8sKubenchResultItemRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -88,7 +88,7 @@
         </if>
     </sql>
 
-    <select id="resultItemListBySearch" resultType="com.hummer.common.core.domain.CloudNativeConfigResultItem">
+    <select id="resultItemListBySearch" resultType="com.hummer.common.mapper.domain.CloudNativeConfigResultItem">
         SELECT
         t.*
         FROM cloud_native_config_result_item t

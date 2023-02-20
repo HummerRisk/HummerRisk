@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.HistoryScanTask;
-import com.hummer.common.core.domain.HistoryScanTaskExample;
+import com.hummer.common.mapper.domain.HistoryScanTask;
+import com.hummer.common.mapper.domain.HistoryScanTaskExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

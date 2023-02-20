@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtAccountMapper">
-    <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.AccountDTO"
+    <resultMap id="BaseResultMap" type="com.hummer.common.mapper.dto.AccountDTO"
                extends="com.hummer.common.mapper.mapper.AccountMapper.BaseResultMap">
         <result column="userName" property="userName"/>
         <result column="isProxy" property="isProxy"/>
@@ -11,7 +11,7 @@
         <result column="proxy_password" jdbcType="VARCHAR" property="proxyPassword" />
     </resultMap>
 
-    <resultMap id="ServerResultMap" type="com.hummer.common.core.dto.ServerDTO"
+    <resultMap id="ServerResultMap" type="com.hummer.common.mapper.dto.ServerDTO"
                extends="com.hummer.common.mapper.mapper.AccountMapper.BaseResultMap">
         <result column="ip" property="ip"/>
         <result column="userName" property="userName"/>
@@ -174,7 +174,7 @@
         order by t.update_time desc
     </select>
 
-    <select id="ruleList" parameterType="com.hummer.common.core.dto.QuartzTaskDTO"
+    <select id="ruleList" parameterType="com.hummer.common.mapper.dto.QuartzTaskDTO"
             resultMap="com.hummer.common.mapper.mapper.ext.ExtRuleMapper.BaseResultMap2">
         SELECT
             t.id,

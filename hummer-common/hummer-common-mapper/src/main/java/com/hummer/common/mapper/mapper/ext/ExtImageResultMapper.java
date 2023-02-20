@@ -1,10 +1,10 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.request.image.ImageResultRequest;
-import com.hummer.common.core.dto.HistoryImageReportDTO;
-import com.hummer.common.core.dto.HistoryImageResultDTO;
-import com.hummer.common.core.dto.ImageResultDTO;
-import com.hummer.common.core.dto.ImageResultWithBLOBsDTO;
+import com.hummer.common.mapper.dto.HistoryImageReportDTO;
+import com.hummer.common.mapper.dto.HistoryImageResultDTO;
+import com.hummer.common.mapper.dto.ImageResultDTO;
+import com.hummer.common.mapper.dto.ImageResultWithBLOBsDTO;
+import com.hummer.common.mapper.domain.request.image.ImageResultRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

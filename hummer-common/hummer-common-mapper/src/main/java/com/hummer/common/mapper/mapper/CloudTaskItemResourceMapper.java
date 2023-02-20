@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.CloudTaskItemResource;
-import com.hummer.common.core.domain.CloudTaskItemResourceExample;
-import com.hummer.common.core.domain.CloudTaskItemResourceWithBLOBs;
+import com.hummer.common.mapper.domain.CloudTaskItemResource;
+import com.hummer.common.mapper.domain.CloudTaskItemResourceExample;
+import com.hummer.common.mapper.domain.CloudTaskItemResourceWithBLOBs;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

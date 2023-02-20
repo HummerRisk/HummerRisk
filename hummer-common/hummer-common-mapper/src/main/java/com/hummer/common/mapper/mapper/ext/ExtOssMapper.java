@@ -1,14 +1,14 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.request.resource.ResourceRequest;
-import com.hummer.common.core.domain.request.rule.RuleGroupRequest;
-import com.hummer.common.core.dto.ExportDTO;
-import com.hummer.common.core.dto.ResourceDTO;
-import com.hummer.common.core.dto.RuleGroupDTO;
-import com.hummer.common.core.oss.controller.request.OssBucketRequest;
-import com.hummer.common.core.oss.controller.request.OssRequest;
-import com.hummer.common.core.oss.dto.OssBucketDTO;
-import com.hummer.common.core.oss.dto.OssDTO;
+import com.hummer.common.mapper.dto.ExportDTO;
+import com.hummer.common.mapper.dto.ResourceDTO;
+import com.hummer.common.mapper.dto.RuleGroupDTO;
+import com.hummer.common.mapper.oss.controller.request.OssBucketRequest;
+import com.hummer.common.mapper.oss.controller.request.OssRequest;
+import com.hummer.common.mapper.oss.dto.OssBucketDTO;
+import com.hummer.common.mapper.oss.dto.OssDTO;
+import com.hummer.common.mapper.domain.request.resource.ResourceRequest;
+import com.hummer.common.mapper.domain.request.rule.RuleGroupRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtRuleInspectionReportMapper">
-    <resultMap id="BaseResultMap" type="com.hummer.common.core.domain.RuleInspectionReport"
+    <resultMap id="BaseResultMap" type="com.hummer.common.mapper.domain.RuleInspectionReport"
                extends="com.hummer.common.mapper.mapper.RuleInspectionReportMapper.BaseResultMap">
     </resultMap>
 

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtRuleMapper">
 
-    <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.RuleDTO"
+    <resultMap id="BaseResultMap" type="com.hummer.common.mapper.dto.RuleDTO"
                extends="com.hummer.common.mapper.mapper.RuleMapper.BaseResultMap">
         <result column="plugin_icon" property="pluginIcon" jdbcType="VARCHAR"/>
         <collection property="tags" javaType="list" ofType="string">
@@ -17,7 +17,7 @@
         (SELECT tag_key FROM rule_tag_mapping WHERE rule_id = #{ruleId})
     </select>
 
-    <resultMap id="BaseResultMap2" type="com.hummer.common.core.dto.RuleDTO"
+    <resultMap id="BaseResultMap2" type="com.hummer.common.mapper.dto.RuleDTO"
                extends="com.hummer.common.mapper.mapper.RuleMapper.BaseResultMap">
         <result column="isSaveParam" property="isSaveParam" jdbcType="BOOLEAN"/>
         <result column="tagKey" property="tagKey" jdbcType="VARCHAR"/>
@@ -152,7 +152,7 @@
         </if>
     </sql>
 
-    <select id="cloudList" parameterType="com.hummer.common.core.domain.request.rule.CreateRuleRequest"
+    <select id="cloudList" parameterType="com.hummer.common.mapper.domain.request.rule.CreateRuleRequest"
             resultMap="BaseResultMap2">
         SELECT
         t.*,
@@ -185,7 +185,7 @@
         ORDER BY t.plugin_id, t.last_modified desc
     </select>
 
-    <select id="vulnList" parameterType="com.hummer.common.core.domain.request.rule.CreateRuleRequest"
+    <select id="vulnList" parameterType="com.hummer.common.mapper.domain.request.rule.CreateRuleRequest"
             resultMap="BaseResultMap2">
         SELECT
         t.*,

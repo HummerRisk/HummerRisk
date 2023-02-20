@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.Proxy;
-import com.hummer.common.core.domain.ProxyExample;
+import com.hummer.common.mapper.domain.Proxy;
+import com.hummer.common.mapper.domain.ProxyExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.CodeResultLog;
-import com.hummer.common.core.domain.CodeResultLogExample;
-import com.hummer.common.core.domain.CodeResultLogWithBLOBs;
+import com.hummer.common.mapper.domain.CodeResultLog;
+import com.hummer.common.mapper.domain.CodeResultLogExample;
+import com.hummer.common.mapper.domain.CodeResultLogWithBLOBs;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

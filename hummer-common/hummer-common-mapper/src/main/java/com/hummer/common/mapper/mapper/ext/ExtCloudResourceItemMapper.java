@@ -1,9 +1,9 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.CloudResourceSummary;
-import com.hummer.common.core.domain.request.cloudResource.CloudResourceItemRequest;
-import com.hummer.common.core.dto.CloudResourceItemDTO;
-import com.hummer.common.core.dto.ResourceRuleDTO;
+import com.hummer.common.mapper.dto.CloudResourceItemDTO;
+import com.hummer.common.mapper.dto.ResourceRuleDTO;
+import com.hummer.common.mapper.domain.CloudResourceSummary;
+import com.hummer.common.mapper.domain.request.cloudResource.CloudResourceItemRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

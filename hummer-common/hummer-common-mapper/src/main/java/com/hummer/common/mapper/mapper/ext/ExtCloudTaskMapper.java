@@ -1,11 +1,11 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.CloudTask;
-import com.hummer.common.core.domain.CloudTaskExample;
-import com.hummer.common.core.domain.MessageOrder;
-import com.hummer.common.core.domain.request.cloudTask.CloudTaskSearchRequest;
-import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
-import com.hummer.common.core.dto.CloudTaskDTO;
+import com.hummer.common.mapper.dto.CloudTaskDTO;
+import com.hummer.common.mapper.domain.CloudTask;
+import com.hummer.common.mapper.domain.CloudTaskExample;
+import com.hummer.common.mapper.domain.MessageOrder;
+import com.hummer.common.mapper.domain.request.cloudTask.CloudTaskSearchRequest;
+import com.hummer.common.mapper.domain.request.cloudTask.ManualRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

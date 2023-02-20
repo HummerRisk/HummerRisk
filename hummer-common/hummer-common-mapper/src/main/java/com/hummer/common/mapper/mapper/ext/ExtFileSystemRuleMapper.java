@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.request.fs.FsRuleRequest;
-import com.hummer.common.core.dto.FsRuleDTO;
+import com.hummer.common.mapper.dto.FsRuleDTO;
+import com.hummer.common.mapper.domain.request.fs.FsRuleRequest;
 
 import java.util.List;
 

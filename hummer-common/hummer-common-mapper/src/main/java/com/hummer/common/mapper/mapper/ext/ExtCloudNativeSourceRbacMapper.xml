@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtCloudNativeSourceRbacMapper">
 
-    <select id="nodes" resultType="com.hummer.common.core.domain.request.k8s.rbac.Nodes" parameterType="java.lang.String">
+    <select id="nodes" resultType="com.hummer.common.mapper.domain.request.k8s.rbac.Nodes" parameterType="java.lang.String">
         select
             t.id,
             IF(t.nameSpace = null or t.nameSpace = '', t.name, CONCAT(t.nameSpace, '/', t.name)) as name,
@@ -15,7 +15,7 @@
         order by t.order
     </select>
 
-    <resultMap id="LinkMap" type="com.hummer.common.core.domain.request.k8s.rbac.Links">
+    <resultMap id="LinkMap" type="com.hummer.common.mapper.domain.request.k8s.rbac.Links">
         <result column="relaId" jdbcType="VARCHAR" property="relaId" />
         <result column="source" jdbcType="VARCHAR" property="source" />
         <result column="target" jdbcType="VARCHAR" property="target" />
@@ -23,7 +23,7 @@
         </association>
     </resultMap>
 
-    <resultMap id="RelaMap" type="com.hummer.common.core.domain.request.k8s.rbac.Relation">
+    <resultMap id="RelaMap" type="com.hummer.common.mapper.domain.request.k8s.rbac.Relation">
         <result column="id" jdbcType="VARCHAR" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
     </resultMap>

@@ -87,8 +87,8 @@
         </if>
     </sql>
 
-    <select id="resultList" parameterType="com.hummer.common.core.domain.request.server.ServerResultRequest"
-            resultType="com.hummer.common.core.dto.ServerResultDTO">
+    <select id="resultList" parameterType="com.hummer.common.mapper.domain.request.server.ServerResultRequest"
+            resultType="com.hummer.common.mapper.dto.ServerResultDTO">
         SELECT
         t.*,
         t1.tag_key as tagKey,
@@ -128,12 +128,12 @@
         ORDER BY FIELD(t.result_status, 'APPROVED', 'FINISHED', 'ERROR'), t.is_severity, FIELD(t.type, 'windows', 'linux'), t.ip, FIELD(t.severity, 'HighRisk', 'MediumRisk', 'LowRisk'), t.server_name, t.update_time desc
     </select>
 
-    <resultMap id="ServerListBaseResultMap" type="com.hummer.common.core.dto.ServerListDTO"
+    <resultMap id="ServerListBaseResultMap" type="com.hummer.common.mapper.dto.ServerListDTO"
                extends="com.hummer.common.mapper.mapper.ServerMapper.BaseResultMap">
         <result column="user" jdbcType="VARCHAR" property="user" />
         <result column="groupName" jdbcType="VARCHAR" property="groupName" />
         <result column="riskSum" jdbcType="INTEGER" property="riskSum" />
-        <collection property="serverResultDTOS" ofType="com.hummer.common.core.dto.ServerResultDTO" javaType="list" select="selectServerResultDTO" column="id">
+        <collection property="serverResultDTOS" ofType="com.hummer.common.mapper.dto.ServerResultDTO" javaType="list" select="selectServerResultDTO" column="id">
         </collection>
     </resultMap>
 
@@ -182,7 +182,7 @@
         </if>
     </sql>
 
-    <select id="resultServerList" parameterType="com.hummer.common.core.domain.request.server.ServerRequest" resultMap="ServerListBaseResultMap">
+    <select id="resultServerList" parameterType="com.hummer.common.mapper.domain.request.server.ServerRequest" resultMap="ServerListBaseResultMap">
         SELECT
         t.*,
         u.name as user,
@@ -218,7 +218,7 @@
         ORDER BY t.update_time desc
     </select>
 
-    <select id="selectServerResultDTO" resultType="com.hummer.common.core.dto.ServerResultDTO">
+    <select id="selectServerResultDTO" resultType="com.hummer.common.mapper.dto.ServerResultDTO">
         SELECT
         t.*,
         t1.tag_key as tagKey,
@@ -277,7 +277,7 @@
         LIMIT 10;
     </select>
 
-    <select id="history" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryServerResultDTO">
+    <select id="history" parameterType="java.util.Map" resultType="com.hummer.common.mapper.dto.HistoryServerResultDTO">
         SELECT
         t.*,
         t1.tag_key as tagKey,

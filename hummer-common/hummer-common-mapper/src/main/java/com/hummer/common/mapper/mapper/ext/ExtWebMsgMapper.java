@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.WebMsg;
-import com.hummer.common.core.domain.request.webMsg.WebMsgRequest;
+import com.hummer.common.mapper.domain.WebMsg;
+import com.hummer.common.mapper.domain.request.webMsg.WebMsgRequest;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

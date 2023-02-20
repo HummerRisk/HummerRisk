@@ -8,15 +8,16 @@ import com.hummer.common.core.constant.CloudTaskConstants;
 import com.hummer.common.core.constant.CommandEnum;
 import com.hummer.common.core.constant.ResourceOperation;
 import com.hummer.common.core.constant.ResourceTypeConstants;
-import com.hummer.common.core.domain.*;
-import com.hummer.common.core.domain.request.cloudResource.CloudResourceSyncRequest;
-import com.hummer.common.core.domain.request.sync.CloudTopology;
-import com.hummer.common.core.dto.CloudResourceSyncItemDto;
+import com.hummer.common.mapper.dto.CloudResourceSyncItemDTO;
 import com.hummer.common.core.i18n.Translator;
+import com.hummer.common.core.utils.*;
+import com.hummer.common.mapper.domain.*;
+import com.hummer.common.mapper.domain.request.cloudResource.CloudResourceSyncRequest;
+import com.hummer.common.mapper.domain.request.sync.CloudTopology;
 import com.hummer.common.mapper.mapper.*;
 import com.hummer.common.mapper.mapper.ext.ExtCloudResourceSyncItemMapper;
 import com.hummer.common.mapper.mapper.ext.ExtCloudResourceSyncMapper;
-import com.hummer.common.core.utils.*;
+import com.hummer.common.mapper.utils.PlatformUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,12 +70,12 @@ public class CloudSyncService {
         return extCloudResourceSyncItemMapper.selectResourceTypeBySyncId(syncId);
     }
 
-    public List<CloudResourceSyncItemDto> getCloudResourceSyncItem(String syncId) {
-        List<CloudResourceSyncItemDto> cloudResourceSyncItemDtos = extCloudResourceSyncItemMapper.selectBySyncId(syncId);
+    public List<CloudResourceSyncItemDTO> getCloudResourceSyncItem(String syncId) {
+        List<CloudResourceSyncItemDTO> cloudResourceSyncItemDtos = extCloudResourceSyncItemMapper.selectBySyncId(syncId);
         List<CloudResourceSyncItemLog> cloudResourceSyncItemLogs = extCloudResourceSyncItemMapper.selectSyncItemLogBySyncId(syncId);
-        Map<String, CloudResourceSyncItemDto> cloudResourceSyncItemDtoMap = cloudResourceSyncItemDtos.stream().collect(Collectors.toMap(CloudResourceSyncItemDto::getId, Function.identity()));
+        Map<String, CloudResourceSyncItemDTO> cloudResourceSyncItemDtoMap = cloudResourceSyncItemDtos.stream().collect(Collectors.toMap(CloudResourceSyncItemDTO::getId, Function.identity()));
         for (CloudResourceSyncItemLog cloudResourceSyncItemLog : cloudResourceSyncItemLogs) {
-            CloudResourceSyncItemDto cloudResourceSyncItemDto = cloudResourceSyncItemDtoMap.get(cloudResourceSyncItemLog.getSyncItemId());
+            CloudResourceSyncItemDTO cloudResourceSyncItemDto = cloudResourceSyncItemDtoMap.get(cloudResourceSyncItemLog.getSyncItemId());
             if (cloudResourceSyncItemDto != null) {
                 List<CloudResourceSyncItemLog> cloudResourceSyncItemLogs1 = cloudResourceSyncItemDto.getCloudResourceSyncItemLogs();
                 if (cloudResourceSyncItemLogs1 == null) {

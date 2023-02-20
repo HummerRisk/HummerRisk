@@ -4,7 +4,7 @@ import com.hummer.common.core.constant.SsoMode;
 import com.hummer.common.core.constant.UserSource;
 import com.hummer.common.core.user.SessionUser;
 import com.hummer.common.core.utils.SessionUtils;
-import com.hummer.common.core.domain.request.LoginRequest;
+import com.hummer.common.mapper.domain.request.LoginRequest;
 import com.hummer.common.mapper.service.ResultHolder;
 import com.hummer.common.mapper.service.UserService;
 import org.apache.commons.lang3.StringUtils;

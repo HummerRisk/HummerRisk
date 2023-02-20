@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtImageRepoMapper">
 
-    <resultMap id="ImageRepoResultMap" type="com.hummer.common.core.domain.ImageRepo"
+    <resultMap id="ImageRepoResultMap" type="com.hummer.common.mapper.domain.ImageRepo"
                extends="com.hummer.common.mapper.mapper.ImageRepoMapper.BaseResultMap">
         <result column="user" property="user"/>
     </resultMap>
@@ -81,7 +81,7 @@
         </if>
     </sql>
 
-    <select id="imageRepoList" resultType="com.hummer.common.core.domain.ImageRepo">
+    <select id="imageRepoList" resultType="com.hummer.common.mapper.domain.ImageRepo">
         select
         t.*
         from image_repo as t

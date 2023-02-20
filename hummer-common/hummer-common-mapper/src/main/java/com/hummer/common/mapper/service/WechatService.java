@@ -2,11 +2,11 @@ package com.hummer.common.mapper.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hummer.common.core.constant.ParamConstants;
-import com.hummer.common.core.domain.SystemParameter;
 import com.hummer.common.core.exception.HRException;
+import com.hummer.common.core.utils.EncryptUtils;
+import com.hummer.common.mapper.domain.SystemParameter;
 import com.hummer.common.mapper.mapper.SystemParameterMapper;
 import com.hummer.common.mapper.message.NotificationBasicResponse;
-import com.hummer.common.core.utils.EncryptUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

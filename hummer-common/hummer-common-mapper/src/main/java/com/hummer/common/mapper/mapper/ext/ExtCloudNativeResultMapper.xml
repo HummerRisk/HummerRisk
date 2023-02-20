@@ -82,7 +82,7 @@
         </if>
     </sql>
 
-    <select id="resultList" parameterType="com.hummer.common.core.domain.request.k8s.K8sResultRequest" resultType="com.hummer.common.core.dto.CloudNativeResultDTO">
+    <select id="resultList" parameterType="com.hummer.common.mapper.domain.request.k8s.K8sResultRequest" resultType="com.hummer.common.mapper.dto.CloudNativeResultDTO">
         SELECT
         t.*,
         (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'critical') as critical,
@@ -136,7 +136,7 @@
         </if>
     </sql>
 
-    <select id="syncList" resultType="com.hummer.common.core.dto.CloudNativeSourceSyncLogWithBLOBsDTO">
+    <select id="syncList" resultType="com.hummer.common.mapper.dto.CloudNativeSourceSyncLogWithBLOBsDTO">
         SELECT
         t.*,
         t1.name as k8sName,
@@ -163,7 +163,7 @@
         ORDER BY t.create_time desc
     </select>
 
-    <resultMap id="ImageMap" type="com.hummer.common.core.dto.ImageDTO"
+    <resultMap id="ImageMap" type="com.hummer.common.mapper.dto.ImageDTO"
                extends="com.hummer.common.mapper.mapper.ImageMapper.BaseResultMap">
         <result column="user" property="user"/>
         <result column="imageRepoName" property="imageRepoName"/>
@@ -237,7 +237,7 @@
         order by t.update_time desc
     </select>
 
-    <select id="metricChart" resultType="com.hummer.common.core.dto.MetricChartDTO" parameterType="java.lang.String">
+    <select id="metricChart" resultType="com.hummer.common.mapper.dto.MetricChartDTO" parameterType="java.lang.String">
         SELECT *
         from (
              (SELECT count(*) as critical FROM cloud_native_result_item t WHERE LOWER(t.severity) = 'critical' AND t.result_id = #{resultId}) as critical,
@@ -249,7 +249,7 @@
          )
     </select>
 
-    <select id="metricConfigChart" resultType="com.hummer.common.core.dto.MetricChartDTO" parameterType="java.lang.String">
+    <select id="metricConfigChart" resultType="com.hummer.common.mapper.dto.MetricChartDTO" parameterType="java.lang.String">
         SELECT *
         from (
              (SELECT count(*) as critical FROM cloud_native_result_config_item t WHERE LOWER(t.severity) = 'critical' AND t.result_id = #{resultId}) as critical,
@@ -261,7 +261,7 @@
          )
     </select>
 
-    <select id="kubenchChart" resultType="com.hummer.common.core.dto.KubenchChartDTO" parameterType="java.lang.String">
+    <select id="kubenchChart" resultType="com.hummer.common.mapper.dto.KubenchChartDTO" parameterType="java.lang.String">
         SELECT *
         from (
              (SELECT count(*) as fail FROM cloud_native_result_kubench t WHERE LOWER(t.severity) = 'fail' AND t.result_id = #{resultId}) as fail,
@@ -272,7 +272,7 @@
          )
     </select>
 
-    <select id="history" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryCloudNativeResultDTO">
+    <select id="history" parameterType="java.util.Map" resultType="com.hummer.common.mapper.dto.HistoryCloudNativeResultDTO">
         SELECT
         t.*,
         (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'critical') as critical,
@@ -305,7 +305,7 @@
         ORDER BY t.update_time desc
     </select>
 
-    <select id="getCloudNativeResult" parameterType="java.lang.String" resultType="com.hummer.common.core.dto.CloudNativeResultDTO">
+    <select id="getCloudNativeResult" parameterType="java.lang.String" resultType="com.hummer.common.mapper.dto.CloudNativeResultDTO">
         SELECT
         t.*,
         (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'critical') as critical,

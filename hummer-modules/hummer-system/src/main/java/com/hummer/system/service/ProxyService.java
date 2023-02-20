@@ -2,9 +2,9 @@ package com.hummer.system.service;
 
 import com.hummer.common.core.constant.ResourceOperation;
 import com.hummer.common.core.constant.ResourceTypeConstants;
-import com.hummer.common.core.domain.Proxy;
-import com.hummer.common.core.domain.ProxyExample;
-import com.hummer.common.core.domain.request.proxy.ProxyRequest;
+import com.hummer.common.mapper.domain.Proxy;
+import com.hummer.common.mapper.domain.ProxyExample;
+import com.hummer.common.mapper.domain.request.proxy.ProxyRequest;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.mapper.mapper.ProxyMapper;

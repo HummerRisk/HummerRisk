@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.request.code.CodeResultRequest;
-import com.hummer.common.core.dto.CodeResultDTO;
-import com.hummer.common.core.dto.HistoryCodeResultDTO;
+import com.hummer.common.mapper.dto.CodeResultDTO;
+import com.hummer.common.mapper.dto.HistoryCodeResultDTO;
+import com.hummer.common.mapper.domain.request.code.CodeResultRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

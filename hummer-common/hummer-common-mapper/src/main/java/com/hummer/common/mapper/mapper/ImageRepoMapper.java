@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.ImageRepo;
-import com.hummer.common.core.domain.ImageRepoExample;
+import com.hummer.common.mapper.domain.ImageRepo;
+import com.hummer.common.mapper.domain.ImageRepoExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

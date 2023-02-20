@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtUserKeyMapper">
-    <resultMap id="BaseResultMap" type="com.hummer.common.core.domain.UserKey"
+    <resultMap id="BaseResultMap" type="com.hummer.common.mapper.domain.UserKey"
                extends="com.hummer.common.mapper.mapper.UserKeyMapper.BaseResultMap">
     </resultMap>
 

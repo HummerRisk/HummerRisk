@@ -1,9 +1,9 @@
 package com.hummer.common.mapper.handler;
 
 import com.google.gson.Gson;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.mapper.handler.annotation.I18n;
 import com.hummer.common.mapper.handler.annotation.NoResultHolder;
-import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.mapper.service.ResultHolder;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;

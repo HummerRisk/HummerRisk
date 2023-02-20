@@ -2,8 +2,8 @@ package com.hummer.system.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummer.common.core.domain.WebMsg;
-import com.hummer.common.core.domain.request.webMsg.WebMsgRequest;
+import com.hummer.common.mapper.domain.WebMsg;
+import com.hummer.common.mapper.domain.request.webMsg.WebMsgRequest;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.mapper.handler.annotation.I18n;

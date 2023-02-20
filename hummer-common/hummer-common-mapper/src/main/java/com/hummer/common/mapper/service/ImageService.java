@@ -4,13 +4,15 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hummer.common.core.constant.*;
-import com.hummer.common.core.domain.*;
-import com.hummer.common.core.domain.request.image.*;
-import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.utils.*;
+import com.hummer.common.mapper.domain.*;
+import com.hummer.common.mapper.domain.request.image.*;
+import com.hummer.common.mapper.dto.*;
 import com.hummer.common.mapper.mapper.*;
 import com.hummer.common.mapper.mapper.ext.*;
+import com.hummer.common.mapper.utils.ProxyUtil;
+import com.hummer.common.mapper.utils.RestTemplateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -19,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
+
+import org.mybatis.spring.annotation.MapperScan;
 
 import javax.annotation.Resource;
 import java.io.IOException;

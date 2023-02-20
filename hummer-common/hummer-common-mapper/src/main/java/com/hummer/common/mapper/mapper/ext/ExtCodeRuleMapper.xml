@@ -75,8 +75,8 @@
     </if>
   </sql>
 
-  <select id="ruleList" parameterType="com.hummer.common.core.domain.request.code.CodeRuleRequest"
-          resultType="com.hummer.common.core.dto.CodeRuleDTO">
+  <select id="ruleList" parameterType="com.hummer.common.mapper.domain.request.code.CodeRuleRequest"
+          resultType="com.hummer.common.mapper.dto.CodeRuleDTO">
     SELECT
     t.*,
     t1.tag_key as tagKey,

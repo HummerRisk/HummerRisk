@@ -1,9 +1,9 @@
 package com.hummer.common.mapper.mapper.ext;
 
 
-import com.hummer.common.core.domain.RuleTag;
-import com.hummer.common.core.domain.request.rule.CreateRuleRequest;
-import com.hummer.common.core.dto.RuleDTO;
+import com.hummer.common.mapper.dto.RuleDTO;
+import com.hummer.common.mapper.domain.RuleTag;
+import com.hummer.common.mapper.domain.request.rule.CreateRuleRequest;
 import feign.Param;
 
 import java.util.List;

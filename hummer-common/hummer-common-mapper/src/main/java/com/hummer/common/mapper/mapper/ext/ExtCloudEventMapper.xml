@@ -100,7 +100,7 @@
     </if>
   </sql>
 
-  <select id="getCloudEventList" resultType="com.hummer.common.core.domain.CloudEventWithBLOBs">
+  <select id="getCloudEventList" resultType="com.hummer.common.mapper.domain.CloudEventWithBLOBs">
     select t.*
     from cloud_event t
     join cloud_account t1 on t.cloud_account_id = t1.id
@@ -178,7 +178,7 @@
          )
   </select>
 
-  <select id="selectEventGroup" resultType="com.hummer.common.core.dto.CloudEventGroupDTO">
+  <select id="selectEventGroup" resultType="com.hummer.common.mapper.dto.CloudEventGroupDTO">
     select event_group.*
     from (
     SELECT
@@ -250,7 +250,7 @@
     Limit 10;
   </select>
 
-  <select id="selectSourceIpInsight" resultType="com.hummer.common.core.dto.CloudEventSourceIpInsightDto">
+  <select id="selectSourceIpInsight" resultType="com.hummer.common.mapper.dto.CloudEventSourceIpInsightDto">
     select * from (
     select source_ip_address as sourceIpAddress,
     min(event_time) as earliest_eventTime,

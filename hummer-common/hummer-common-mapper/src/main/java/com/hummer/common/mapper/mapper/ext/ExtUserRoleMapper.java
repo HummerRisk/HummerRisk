@@ -2,10 +2,10 @@ package com.hummer.common.mapper.mapper.ext;
 
 import com.hummer.common.core.domain.Role;
 import com.hummer.common.core.domain.User;
-import com.hummer.common.core.domain.request.member.QueryMemberRequest;
-import com.hummer.common.core.domain.request.organization.QueryOrgMemberRequest;
-import com.hummer.common.core.dto.OrganizationMemberDTO;
-import com.hummer.common.core.dto.UserRoleHelpDTO;
+import com.hummer.common.mapper.dto.OrganizationMemberDTO;
+import com.hummer.common.mapper.dto.UserRoleHelpDTO;
+import com.hummer.common.mapper.domain.request.member.QueryMemberRequest;
+import com.hummer.common.mapper.domain.request.organization.QueryOrgMemberRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

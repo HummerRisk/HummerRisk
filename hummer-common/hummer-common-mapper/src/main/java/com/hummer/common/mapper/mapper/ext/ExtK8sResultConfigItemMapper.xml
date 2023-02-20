@@ -76,7 +76,7 @@
         </if>
     </sql>
 
-    <select id="resultConfigItemListBySearch" resultType="com.hummer.common.core.domain.CloudNativeResultConfigItemWithBLOBs" parameterType="com.hummer.common.core.domain.request.k8s.K8sConfigResultItemRequest">
+    <select id="resultConfigItemListBySearch" resultType="com.hummer.common.mapper.domain.CloudNativeResultConfigItemWithBLOBs" parameterType="com.hummer.common.mapper.domain.request.k8s.K8sConfigResultItemRequest">
         SELECT
         t.*
         FROM cloud_native_result_config_item t
@@ -137,7 +137,7 @@
         </if>
     </sql>
 
-    <select id="resultKubenchItemListBySearch" resultType="com.hummer.common.core.domain.CloudNativeResultKubenchWithBLOBs" parameterType="com.hummer.common.core.domain.request.k8s.K8sKubenchResultItemRequest">
+    <select id="resultKubenchItemListBySearch" resultType="com.hummer.common.mapper.domain.CloudNativeResultKubenchWithBLOBs" parameterType="com.hummer.common.mapper.domain.request.k8s.K8sKubenchResultItemRequest">
         SELECT
         t.*
         FROM cloud_native_result_kubench t

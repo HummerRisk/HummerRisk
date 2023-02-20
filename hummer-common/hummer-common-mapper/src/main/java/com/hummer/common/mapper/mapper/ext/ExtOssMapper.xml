@@ -203,7 +203,7 @@
         </if>
     </sql>
 
-    <select id="ruleGroupList" resultType="com.hummer.common.core.dto.RuleGroupDTO">
+    <select id="ruleGroupList" resultType="com.hummer.common.mapper.dto.RuleGroupDTO">
         select
         t.*,
         (SELECT count(g.id) from rule_group_mapping g where g.group_id = t.id) as ruleSum,
@@ -297,7 +297,7 @@
         order by `status`, createTime desc
     </select>
 
-    <select id="searchGroupExportData" resultType="com.hummer.common.core.dto.ExportDTO" parameterType="java.lang.String">
+    <select id="searchGroupExportData" resultType="com.hummer.common.mapper.dto.ExportDTO" parameterType="java.lang.String">
         SELECT
             DISTINCT t.hummer_id as hummerId,
                      t.region_id as regionId,
@@ -350,7 +350,7 @@
         </if>
     </sql>
 
-    <select id="resourceList" parameterType="com.hummer.common.core.domain.request.resource.ResourceRequest" resultType="com.hummer.common.core.dto.ResourceDTO">
+    <select id="resourceList" parameterType="com.hummer.common.mapper.domain.request.resource.ResourceRequest" resultType="com.hummer.common.mapper.dto.ResourceDTO">
         SELECT
         t4.task_name as taskName,
         t4.type,

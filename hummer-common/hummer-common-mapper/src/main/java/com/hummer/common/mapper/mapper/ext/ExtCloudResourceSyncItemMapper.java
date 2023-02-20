@@ -1,14 +1,14 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.CloudResourceSyncItemLog;
-import com.hummer.common.core.dto.CloudResourceSyncItemDto;
+import com.hummer.common.mapper.dto.CloudResourceSyncItemDTO;
+import com.hummer.common.mapper.domain.CloudResourceSyncItemLog;
 
 import java.util.List;
 import java.util.Map;
 
 public interface ExtCloudResourceSyncItemMapper {
 
-    List<CloudResourceSyncItemDto> selectBySyncId(String syncId);
+    List<CloudResourceSyncItemDTO> selectBySyncId(String syncId);
 
     List<CloudResourceSyncItemLog> selectSyncItemLogBySyncId(String syncId);
 

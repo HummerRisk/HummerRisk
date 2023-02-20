@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.request.QueryScheduleRequest;
-import com.hummer.common.core.dto.ScheduleDao;
+import com.hummer.common.mapper.dto.ScheduleDao;
+import com.hummer.common.mapper.domain.request.QueryScheduleRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

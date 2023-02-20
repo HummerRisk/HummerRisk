@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.CloudEventRegionLog;
-import com.hummer.common.core.domain.CloudEventRegionLogExample;
+import com.hummer.common.mapper.domain.CloudEventRegionLog;
+import com.hummer.common.mapper.domain.CloudEventRegionLogExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

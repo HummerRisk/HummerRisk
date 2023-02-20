@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.MessageOrderItem;
-import com.hummer.common.core.domain.MessageOrderItemExample;
+import com.hummer.common.mapper.domain.MessageOrderItem;
+import com.hummer.common.mapper.domain.MessageOrderItemExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

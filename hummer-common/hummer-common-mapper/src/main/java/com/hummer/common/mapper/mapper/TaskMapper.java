@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.Task;
-import com.hummer.common.core.domain.TaskExample;
+import com.hummer.common.mapper.domain.Task;
+import com.hummer.common.mapper.domain.TaskExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

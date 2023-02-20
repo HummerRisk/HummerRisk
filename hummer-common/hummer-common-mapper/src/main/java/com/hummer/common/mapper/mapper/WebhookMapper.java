@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.Webhook;
-import com.hummer.common.core.domain.WebhookExample;
+import com.hummer.common.mapper.domain.Webhook;
+import com.hummer.common.mapper.domain.WebhookExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -1,9 +1,9 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.CloudEventWithBLOBs;
-import com.hummer.common.core.domain.request.cloudEvent.CloudEventRequest;
-import com.hummer.common.core.dto.CloudEventGroupDTO;
-import com.hummer.common.core.dto.CloudEventSourceIpInsightDto;
+import com.hummer.common.mapper.dto.CloudEventGroupDTO;
+import com.hummer.common.mapper.dto.CloudEventSourceIpInsightDto;
+import com.hummer.common.mapper.domain.CloudEventWithBLOBs;
+import com.hummer.common.mapper.domain.request.cloudEvent.CloudEventRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

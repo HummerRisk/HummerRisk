@@ -1,9 +1,9 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.request.config.ConfigResultRequest;
-import com.hummer.common.core.dto.CloudNativeConfigResultDTO;
-import com.hummer.common.core.dto.HistoryCloudNativeConfigResultDTO;
-import com.hummer.common.core.dto.MetricChartDTO;
+import com.hummer.common.mapper.dto.CloudNativeConfigResultDTO;
+import com.hummer.common.mapper.dto.HistoryCloudNativeConfigResultDTO;
+import com.hummer.common.mapper.dto.MetricChartDTO;
+import com.hummer.common.mapper.domain.request.config.ConfigResultRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

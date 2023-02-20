@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.RuleTagMapping;
-import com.hummer.common.core.domain.RuleTagMappingExample;
+import com.hummer.common.mapper.domain.RuleTagMapping;
+import com.hummer.common.mapper.domain.RuleTagMappingExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

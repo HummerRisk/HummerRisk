@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.ResourceRule;
-import com.hummer.common.core.domain.ResourceRuleExample;
+import com.hummer.common.mapper.domain.ResourceRule;
+import com.hummer.common.mapper.domain.ResourceRuleExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtScheduleMapper">
-    <select id="list" resultType="com.hummer.common.core.dto.ScheduleDao">
+    <select id="list" resultType="com.hummer.common.mapper.dto.ScheduleDao">
         select schedule.* from schedule
         <where>
             <if test="request.group != null">

@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtImageRepoItemMapper">
 
-    <resultMap id="ImageRepoResultMap" type="com.hummer.common.core.dto.ImageRepoItemDTO"
+    <resultMap id="ImageRepoResultMap" type="com.hummer.common.mapper.dto.ImageRepoItemDTO"
                extends="com.hummer.common.mapper.mapper.ImageRepoItemMapper.BaseResultMap">
-        <collection property="imageRepoItemK8sDTOList" ofType="com.hummer.common.core.dto.ImageRepoItemK8sDTO" javaType="list" select="getImageRepoItemK8sDTO" column="path">
+        <collection property="imageRepoItemK8sDTOList" ofType="com.hummer.common.mapper.dto.ImageRepoItemK8sDTO" javaType="list" select="getImageRepoItemK8sDTO" column="path">
         </collection>
     </resultMap>
 
@@ -116,7 +116,7 @@
         order by t.path
     </select>
 
-    <select id="getImageRepoItemK8sDTO" resultType="com.hummer.common.core.dto.ImageRepoItemK8sDTO">
+    <select id="getImageRepoItemK8sDTO" resultType="com.hummer.common.mapper.dto.ImageRepoItemK8sDTO">
         select
         t.source_name as sourceName,
         t.source_namespace as namespace,

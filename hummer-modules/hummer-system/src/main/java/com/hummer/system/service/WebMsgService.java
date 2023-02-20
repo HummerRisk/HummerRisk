@@ -1,8 +1,8 @@
 package com.hummer.system.service;
 
-import com.hummer.common.core.domain.WebMsg;
-import com.hummer.common.core.domain.WebMsgExample;
-import com.hummer.common.core.domain.request.webMsg.WebMsgRequest;
+import com.hummer.common.mapper.domain.WebMsg;
+import com.hummer.common.mapper.domain.WebMsgExample;
+import com.hummer.common.mapper.domain.request.webMsg.WebMsgRequest;
 import com.hummer.common.mapper.mapper.WebMsgMapper;
 import com.hummer.common.mapper.mapper.ext.ExtWebMsgMapper;
 import com.hummer.common.core.utils.SessionUtils;

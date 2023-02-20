@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtCloudResourceItemMapper">
-    <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.CloudResourceItemDTO">
+    <resultMap id="BaseResultMap" type="com.hummer.common.mapper.dto.CloudResourceItemDTO">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="resource_id" jdbcType="VARCHAR" property="resourceId" />
         <result column="hummer_id" jdbcType="VARCHAR" property="hummerId" />
@@ -18,7 +18,7 @@
         <result column="risk_count" jdbcType="VARCHAR" property="riskCount" />
     </resultMap>
 
-    <resultMap id="SummaryResultMap" type="com.hummer.common.core.domain.CloudResourceSummary">
+    <resultMap id="SummaryResultMap" type="com.hummer.common.mapper.domain.CloudResourceSummary">
         <result column="resource_type" jdbcType="VARCHAR" property="resourceType" />
         <result column="count" jdbcType="INTEGER" property="count" />
     </resultMap>
@@ -142,7 +142,7 @@
         order by account.name,t.region_id,t.resource_type,t.create_time desc
     </select>
 
-    <select id="selectResourceRule" resultType="com.hummer.common.core.dto.ResourceRuleDTO" parameterType="String">
+    <select id="selectResourceRule" resultType="com.hummer.common.mapper.dto.ResourceRuleDTO" parameterType="String">
         select a.hummer_id,a.resource_type, c.severity,b.rule_id,c.name as rule_name
         from resource_item a
         inner join resource_rule b on a.resource_id = b.resource_id

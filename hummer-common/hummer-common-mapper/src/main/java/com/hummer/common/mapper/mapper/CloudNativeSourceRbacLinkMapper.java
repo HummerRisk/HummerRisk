@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.CloudNativeSourceRbacLink;
-import com.hummer.common.core.domain.CloudNativeSourceRbacLinkExample;
+import com.hummer.common.mapper.domain.CloudNativeSourceRbacLink;
+import com.hummer.common.mapper.domain.CloudNativeSourceRbacLinkExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

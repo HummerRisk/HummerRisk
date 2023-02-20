@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.Code;
-import com.hummer.common.core.domain.CodeExample;
+import com.hummer.common.mapper.domain.Code;
+import com.hummer.common.mapper.domain.CodeExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

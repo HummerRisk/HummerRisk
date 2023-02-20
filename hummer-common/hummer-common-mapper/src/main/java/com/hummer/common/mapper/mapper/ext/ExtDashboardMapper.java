@@ -1,11 +1,11 @@
 package com.hummer.common.mapper.mapper.ext;
 
 
-import com.hummer.common.core.domain.request.dashboard.AnslysisVo;
-import com.hummer.common.core.domain.request.dashboard.HistoryScanVo;
-import com.hummer.common.core.domain.request.dashboard.TaskCalendarVo;
-import com.hummer.common.core.dto.TopInfoDTO;
-import com.hummer.common.core.dto.TopScanDTO;
+import com.hummer.common.mapper.dto.TopInfoDTO;
+import com.hummer.common.mapper.dto.TopScanDTO;
+import com.hummer.common.mapper.domain.request.dashboard.AnslysisVo;
+import com.hummer.common.mapper.domain.request.dashboard.HistoryScanVo;
+import com.hummer.common.mapper.domain.request.dashboard.TaskCalendarVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

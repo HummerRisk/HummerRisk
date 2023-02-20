@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtResourceMapper">
-    <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.ResourceDTO"
+    <resultMap id="BaseResultMap" type="com.hummer.common.mapper.dto.ResourceDTO"
                extends="com.hummer.common.mapper.mapper.ResourceItemMapper.ResultMapWithBLOBs">
         <result column="taskId" jdbcType="VARCHAR" property="taskId"/>
         <result column="taskName" jdbcType="VARCHAR" property="taskName"/>
@@ -15,7 +15,7 @@
         </association>
     </resultMap>
 
-    <resultMap id="ResultMap" type="com.hummer.common.core.dto.SourceDTO"
+    <resultMap id="ResultMap" type="com.hummer.common.mapper.dto.SourceDTO"
                extends="com.hummer.common.mapper.mapper.AccountMapper.BaseResultMap">
         <result column="userName" jdbcType="VARCHAR" property="userName"/>
         <result column="returnSum" jdbcType="VARCHAR" property="returnSum"/>
@@ -181,13 +181,13 @@
         ORDER BY t.create_time DESC
     </select>
 
-    <select id="getTaskList" resultType="com.hummer.common.core.domain.CloudTask" parameterType="java.lang.String">
+    <select id="getTaskList" resultType="com.hummer.common.mapper.domain.CloudTask" parameterType="java.lang.String">
         SELECT t.*
         FROM cloud_task t
         WHERE t.account_id = #{id}
     </select>
 
-    <select id="getResourceList" resultType="com.hummer.common.core.domain.ResourceWithBLOBs" parameterType="java.lang.String">
+    <select id="getResourceList" resultType="com.hummer.common.mapper.domain.ResourceWithBLOBs" parameterType="java.lang.String">
         SELECT t.*
         FROM resource t
         WHERE t.id = #{resource_id}
@@ -232,7 +232,7 @@
         </if>
     </sql>
 
-    <select id="getComplianceResult" parameterType="com.hummer.common.core.domain.request.resource.ResourceRequest" resultMap="BaseResultMap">
+    <select id="getComplianceResult" parameterType="com.hummer.common.mapper.domain.request.resource.ResourceRequest" resultMap="BaseResultMap">
         SELECT
         t4.task_name as taskName,
         t4.type,
@@ -370,10 +370,10 @@
         </where>
     </select>
 
-    <resultMap id="ReportListResultMap" type="com.hummer.common.core.dto.ReportDTO"
+    <resultMap id="ReportListResultMap" type="com.hummer.common.mapper.dto.ReportDTO"
                extends="com.hummer.common.mapper.mapper.RuleInspectionReportMapper.BaseResultMap">
         <result column="status" jdbcType="VARCHAR" property="status"/>
-        <collection property="cloudTaskList" ofType="com.hummer.common.core.domain.CloudTask" javaType="list" select="getReportTaskList" column="id">
+        <collection property="cloudTaskList" ofType="com.hummer.common.mapper.domain.CloudTask" javaType="list" select="getReportTaskList" column="id">
             <id column="id" jdbcType="VARCHAR" property="id" />
             <result column="status" jdbcType="VARCHAR" property="status" />
             <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
@@ -399,7 +399,7 @@
         </collection>
     </resultMap>
 
-    <select id="reportList" parameterType="com.hummer.common.core.domain.request.resource.ResourceRequest" resultMap="ReportListResultMap">
+    <select id="reportList" parameterType="com.hummer.common.mapper.domain.request.resource.ResourceRequest" resultMap="ReportListResultMap">
         SELECT
             t.*,
             CASE
@@ -442,7 +442,7 @@
         ORDER BY FIELD(status, 'risky','risk_free'), t.id
     </select>
 
-    <select id="getReportTaskList" resultType="com.hummer.common.core.domain.CloudTask" parameterType="java.lang.String">
+    <select id="getReportTaskList" resultType="com.hummer.common.mapper.domain.CloudTask" parameterType="java.lang.String">
         SELECT DISTINCT t.*
         FROM cloud_task t
         JOIN cloud_task_item t1 on t.id = t1.task_id
@@ -525,7 +525,7 @@
         AND t.id IN (SELECT group_id FROM rule_group_mapping)
     </select>
 
-    <select id="searchExportData" resultType="com.hummer.common.core.dto.ExportDTO" parameterType="java.lang.String">
+    <select id="searchExportData" resultType="com.hummer.common.mapper.dto.ExportDTO" parameterType="java.lang.String">
         SELECT
             DISTINCT t.hummer_id as hummerId,
             t.region_id as regionId,
@@ -552,7 +552,7 @@
         ORDER BY t.resource_type, t1.resource_name, t.region_id, t.hummer_id
     </select>
 
-    <select id="searchGroupExportData" resultType="com.hummer.common.core.dto.ExportDTO" parameterType="java.lang.String">
+    <select id="searchGroupExportData" resultType="com.hummer.common.mapper.dto.ExportDTO" parameterType="java.lang.String">
         SELECT
         DISTINCT t.hummer_id as hummerId,
         t.region_id as regionId,
@@ -577,7 +577,7 @@
         ORDER BY t.resource_type, t1.resource_name, t.region_id, t.hummer_id
     </select>
 
-    <select id="resource" resultType="com.hummer.common.core.domain.ResourceWithBLOBs" parameterType="com.hummer.common.core.domain.CloudTaskItem">
+    <select id="resource" resultType="com.hummer.common.mapper.domain.ResourceWithBLOBs" parameterType="com.hummer.common.mapper.domain.CloudTaskItem">
         SELECT t.*
         FROM resource t
         left join cloud_task_item_resource t1 on t.id = t1.resource_id
@@ -688,7 +688,7 @@
         ORDER BY sum desc
     </select>
 
-    <select id="regulation" resultType="com.hummer.common.core.domain.RuleInspectionReport" parameterType="java.lang.String">
+    <select id="regulation" resultType="com.hummer.common.mapper.domain.RuleInspectionReport" parameterType="java.lang.String">
         SELECT t.*
         FROM rule_inspection_report t
         JOIN rule_inspection_report_mapping t1 ON t.id = t1.report_id
@@ -717,7 +717,7 @@
         </if>
     </sql>
 
-    <select id="ruleGroupList" resultType="com.hummer.common.core.dto.RuleGroupDTO">
+    <select id="ruleGroupList" resultType="com.hummer.common.mapper.dto.RuleGroupDTO">
         select
         t.*,
         (SELECT count(g.id) from rule_group_mapping g where g.group_id = t.id) as ruleSum,

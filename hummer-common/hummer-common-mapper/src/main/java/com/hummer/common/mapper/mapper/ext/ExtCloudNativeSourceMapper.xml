@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtCloudNativeSourceMapper">
 
-    <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.CloudNativeSourceDTO"
+    <resultMap id="BaseResultMap" type="com.hummer.common.mapper.dto.CloudNativeSourceDTO"
                extends="com.hummer.common.mapper.mapper.CloudNativeSourceMapper.BaseResultMap">
         <result column="userName" property="userName"/>
         <result column="cloudNativeName" jdbcType="VARCHAR" property="cloudNativeName" />
@@ -134,7 +134,7 @@
         order by t.update_time desc
     </select>
 
-    <select id="situationInfo" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.SituationDTO">
+    <select id="situationInfo" parameterType="java.util.Map" resultType="com.hummer.common.mapper.dto.SituationDTO">
         SELECT *
         from (
                 (
@@ -332,25 +332,25 @@
              )
     </select>
 
-    <resultMap id="D3BaseResultMap" type="com.hummer.common.core.domain.request.k8s.K8sTopology">
+    <resultMap id="D3BaseResultMap" type="com.hummer.common.mapper.domain.request.k8s.K8sTopology">
         <result column="name" jdbcType="VARCHAR" property="name" />
-        <collection property="children" ofType="com.hummer.common.core.domain.request.k8s.K8s" javaType="list" select="selectK8s" column="name">
+        <collection property="children" ofType="com.hummer.common.mapper.domain.request.k8s.K8s" javaType="list" select="selectK8s" column="name">
         </collection>
     </resultMap>
 
-    <resultMap id="K8sBaseResultMap" type="com.hummer.common.core.domain.request.k8s.K8s">
+    <resultMap id="K8sBaseResultMap" type="com.hummer.common.mapper.domain.request.k8s.K8s">
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="k8sId" jdbcType="VARCHAR" property="k8sId" />
-        <collection property="children" ofType="com.hummer.common.core.domain.request.k8s.ResourceType" javaType="list"
+        <collection property="children" ofType="com.hummer.common.mapper.domain.request.k8s.ResourceType" javaType="list"
                     select="selectResourceType" column="k8sId">
         </collection>
     </resultMap>
 
-    <resultMap id="ResourceTypeBaseResultMap" type="com.hummer.common.core.domain.request.k8s.ResourceType">
+    <resultMap id="ResourceTypeBaseResultMap" type="com.hummer.common.mapper.domain.request.k8s.ResourceType">
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="k8sId" jdbcType="VARCHAR" property="k8sId" />
         <result column="resourceType" jdbcType="VARCHAR" property="resourceType" />
-        <collection property="children" ofType="com.hummer.common.core.domain.request.k8s.Resource" javaType="list"
+        <collection property="children" ofType="com.hummer.common.mapper.domain.request.k8s.Resource" javaType="list"
                     select="selectResource" column="{k8sId=k8sId, resourceType=resourceType}">
             <result column="name" jdbcType="VARCHAR" property="name" />
             <result column="value" jdbcType="INTEGER" property="value" />
@@ -389,7 +389,7 @@
         group by t.source_type, t.cloud_native_id
     </select>
 
-    <select id="selectResource" resultType="com.hummer.common.core.domain.request.sync.Resource">
+    <select id="selectResource" resultType="com.hummer.common.mapper.domain.request.sync.Resource">
         select
             CASE
                 WHEN t.source_namespace IS NULL
@@ -407,25 +407,25 @@
     </select>
 
 
-    <resultMap id="NodeBaseResultMap" type="com.hummer.common.core.domain.request.k8s.NodeTopology">
+    <resultMap id="NodeBaseResultMap" type="com.hummer.common.mapper.domain.request.k8s.NodeTopology">
         <result column="name" jdbcType="VARCHAR" property="name" />
-        <collection property="children" ofType="com.hummer.common.core.domain.request.k8s.K8sResource" javaType="list" select="selectK8sResource" column="name">
+        <collection property="children" ofType="com.hummer.common.mapper.domain.request.k8s.K8sResource" javaType="list" select="selectK8sResource" column="name">
         </collection>
     </resultMap>
 
-    <resultMap id="K8sResourceBaseResultMap" type="com.hummer.common.core.domain.request.k8s.K8sResource">
+    <resultMap id="K8sResourceBaseResultMap" type="com.hummer.common.mapper.domain.request.k8s.K8sResource">
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="k8sId" jdbcType="VARCHAR" property="k8sId" />
-        <collection property="children" ofType="com.hummer.common.core.domain.request.k8s.Node" javaType="list"
+        <collection property="children" ofType="com.hummer.common.mapper.domain.request.k8s.Node" javaType="list"
                     select="selectNode" column="k8sId">
         </collection>
     </resultMap>
 
-    <resultMap id="K8sNodeBaseResultMap" type="com.hummer.common.core.domain.request.k8s.Node">
+    <resultMap id="K8sNodeBaseResultMap" type="com.hummer.common.mapper.domain.request.k8s.Node">
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="k8sId" jdbcType="VARCHAR" property="k8sId" />
         <result column="nodeId" jdbcType="VARCHAR" property="nodeId" />
-        <collection property="children" ofType="com.hummer.common.core.domain.request.k8s.Pod" javaType="list"
+        <collection property="children" ofType="com.hummer.common.mapper.domain.request.k8s.Pod" javaType="list"
                     select="selectPod" column="{k8sId=k8sId, nodeId=nodeId}">
             <result column="name" jdbcType="VARCHAR" property="name" />
             <result column="value" jdbcType="INTEGER" property="value" />
@@ -464,7 +464,7 @@
     </select>
 
 
-    <select id="selectPod" resultType="com.hummer.common.core.domain.request.k8s.Pod">
+    <select id="selectPod" resultType="com.hummer.common.mapper.domain.request.k8s.Pod">
         select
             CASE
                 WHEN t.source_namespace IS NULL
@@ -481,25 +481,25 @@
         where t.cloud_native_id = #{k8sId} and t.source_node = #{nodeId} and t.source_type = 'Pod'
     </select>
 
-    <resultMap id="NameSpaceBaseResultMap" type="com.hummer.common.core.domain.request.k8s.NameSpaceTopology">
+    <resultMap id="NameSpaceBaseResultMap" type="com.hummer.common.mapper.domain.request.k8s.NameSpaceTopology">
         <result column="name" jdbcType="VARCHAR" property="name" />
-        <collection property="children" ofType="com.hummer.common.core.domain.request.k8s.K8sNameSpace" javaType="list" select="selectK8sNameSpace" column="name">
+        <collection property="children" ofType="com.hummer.common.mapper.domain.request.k8s.K8sNameSpace" javaType="list" select="selectK8sNameSpace" column="name">
         </collection>
     </resultMap>
 
-    <resultMap id="K8sNameSpaceBaseResultMap" type="com.hummer.common.core.domain.request.k8s.K8sNameSpace">
+    <resultMap id="K8sNameSpaceBaseResultMap" type="com.hummer.common.mapper.domain.request.k8s.K8sNameSpace">
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="k8sId" jdbcType="VARCHAR" property="k8sId" />
-        <collection property="children" ofType="com.hummer.common.core.domain.request.k8s.NameSpace" javaType="list"
+        <collection property="children" ofType="com.hummer.common.mapper.domain.request.k8s.NameSpace" javaType="list"
                     select="selectNameSpace" column="k8sId">
         </collection>
     </resultMap>
 
-    <resultMap id="NameSpaceResultMap" type="com.hummer.common.core.domain.request.k8s.NameSpace">
+    <resultMap id="NameSpaceResultMap" type="com.hummer.common.mapper.domain.request.k8s.NameSpace">
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="k8sId" jdbcType="VARCHAR" property="k8sId" />
         <result column="namespaceId" jdbcType="VARCHAR" property="namespaceId" />
-        <collection property="children" ofType="com.hummer.common.core.domain.request.k8s.Resource" javaType="list"
+        <collection property="children" ofType="com.hummer.common.mapper.domain.request.k8s.Resource" javaType="list"
                     select="selectNSResource" column="{k8sId=k8sId, namespaceId=namespaceId}">
             <result column="name" jdbcType="VARCHAR" property="name" />
             <result column="value" jdbcType="INTEGER" property="value" />
@@ -538,7 +538,7 @@
         where t.cloud_native_id = #{k8sId} and t.source_type = 'Namespace'
     </select>
 
-    <select id="selectNSResource" resultType="com.hummer.common.core.domain.request.k8s.Resource">
+    <select id="selectNSResource" resultType="com.hummer.common.mapper.domain.request.k8s.Resource">
         select
             CONCAT(t.source_name, '(', t.source_type, ')') AS name,
             1 AS value
@@ -546,21 +546,21 @@
         where t.cloud_native_id = #{k8sId} and t.source_namespace = #{namespaceId} and t.source_type in ('Namespace', 'Pod', 'Node', 'Deployment', 'Service')
     </select>
 
-    <resultMap id="D3BaseRiskResultMap" type="com.hummer.common.core.domain.request.k8s.RiskTopology">
+    <resultMap id="D3BaseRiskResultMap" type="com.hummer.common.mapper.domain.request.k8s.RiskTopology">
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="k8sId" jdbcType="VARCHAR" property="k8sId" />
         <result column="riskType" jdbcType="VARCHAR" property="riskType" />
-        <collection property="children" ofType="com.hummer.common.core.domain.request.k8s.NameSpace" javaType="list" select="selectRiskNameSpace"
+        <collection property="children" ofType="com.hummer.common.mapper.domain.request.k8s.NameSpace" javaType="list" select="selectRiskNameSpace"
                     column="{k8sId=k8sId, riskType=riskType}">
         </collection>
     </resultMap>
 
-    <resultMap id="NameSpaceBaseRiskResultMap" type="com.hummer.common.core.domain.request.k8s.NameSpace">
+    <resultMap id="NameSpaceBaseRiskResultMap" type="com.hummer.common.mapper.domain.request.k8s.NameSpace">
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="k8sId" jdbcType="VARCHAR" property="k8sId" />
         <result column="namespaceId" jdbcType="VARCHAR" property="namespaceId" />
         <result column="riskType" jdbcType="VARCHAR" property="riskType" />
-        <collection property="children" ofType="com.hummer.common.core.domain.request.k8s.Resource" javaType="list"
+        <collection property="children" ofType="com.hummer.common.mapper.domain.request.k8s.Resource" javaType="list"
                     select="selectRiskResource" column="{k8sId=k8sId, namespaceId=namespaceId, riskType=riskType}">
             <result column="name" jdbcType="VARCHAR" property="name" />
             <result column="value" jdbcType="INTEGER" property="value" />
@@ -607,7 +607,7 @@
             ) &gt; 0
     </select>
 
-    <select id="selectRiskResource" resultType="com.hummer.common.core.domain.request.k8s.Resource">
+    <select id="selectRiskResource" resultType="com.hummer.common.mapper.domain.request.k8s.Resource">
         select
             CONCAT(t.source_name, '(', t.source_type, ')') AS name,
             (select count(i.id) from cloud_native_source_image i where t.id = i.source_id) AS value,
@@ -669,7 +669,7 @@
         and t.source_type in ('DaemonSet', 'Deployment', 'StatefulSet', 'Pod', 'Job', 'CronJob')
     </select>
 
-    <resultMap id="ImageRiskResultMap" type="com.hummer.common.core.domain.request.k8s.K8sImage">
+    <resultMap id="ImageRiskResultMap" type="com.hummer.common.mapper.domain.request.k8s.K8sImage">
         <result column="nameSpaces" jdbcType="INTEGER" property="nameSpaces" />
         <result column="images" jdbcType="INTEGER" property="images" />
         <result column="riskController" jdbcType="INTEGER" property="riskController" />
@@ -680,18 +680,18 @@
         <result column="low" jdbcType="INTEGER" property="low" />
         <result column="unknown" jdbcType="INTEGER" property="unknown" />
         <result column="k8sId" jdbcType="INTEGER" property="k8sId" />
-        <collection property="nameSpaceImages" ofType="com.hummer.common.core.domain.request.k8s.NameSpaceImage" javaType="list" select="selectRiskNameSpaceImage" column="k8sId">
+        <collection property="nameSpaceImages" ofType="com.hummer.common.mapper.domain.request.k8s.NameSpaceImage" javaType="list" select="selectRiskNameSpaceImage" column="k8sId">
         </collection>
     </resultMap>
 
-    <resultMap id="NameSpaceImageResultMap" type="com.hummer.common.core.domain.request.k8s.NameSpaceImage">
+    <resultMap id="NameSpaceImageResultMap" type="com.hummer.common.mapper.domain.request.k8s.NameSpaceImage">
         <id column="id" jdbcType="INTEGER" property="id" />
         <result column="source_id" jdbcType="VARCHAR" property="sourceId" />
         <result column="create_time" jdbcType="BIGINT" property="createTime" />
         <result column="image" jdbcType="VARCHAR" property="image" />
         <association property="cloudNativeSource" column="source_id" select="fromCloudNativeSource">
         </association>
-        <collection property="cloudNativeResultItemList" ofType="com.hummer.common.core.domain.CloudNativeResultItem" javaType="list" select="fromCloudNativeResultItem" column="source_id">
+        <collection property="cloudNativeResultItemList" ofType="com.hummer.common.mapper.domain.CloudNativeResultItem" javaType="list" select="fromCloudNativeResultItem" column="source_id">
         </collection>
     </resultMap>
 
@@ -809,13 +809,13 @@
         where t1.cloud_native_id = #{k8sId}
     </select>
 
-    <select id="fromCloudNativeSource" resultType="com.hummer.common.core.domain.CloudNativeSource">
+    <select id="fromCloudNativeSource" resultType="com.hummer.common.mapper.domain.CloudNativeSource">
         select t.*
         from cloud_native_source t
         where t.id = #{source_id}
     </select>
 
-    <select id="fromCloudNativeResultItem" resultType="com.hummer.common.core.domain.CloudNativeResultItem">
+    <select id="fromCloudNativeResultItem" resultType="com.hummer.common.mapper.domain.CloudNativeResultItem">
         select t.*
         from cloud_native_result_item t
         join cloud_native_result t1 on t.result_id = t1.id

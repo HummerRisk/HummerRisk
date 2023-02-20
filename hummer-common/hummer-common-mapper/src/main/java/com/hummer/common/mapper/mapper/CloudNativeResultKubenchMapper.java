@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.CloudNativeResultKubench;
-import com.hummer.common.core.domain.CloudNativeResultKubenchExample;
-import com.hummer.common.core.domain.CloudNativeResultKubenchWithBLOBs;
+import com.hummer.common.mapper.domain.CloudNativeResultKubench;
+import com.hummer.common.mapper.domain.CloudNativeResultKubenchExample;
+import com.hummer.common.mapper.domain.CloudNativeResultKubenchWithBLOBs;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

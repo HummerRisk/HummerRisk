@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.FileSystemResultLog;
-import com.hummer.common.core.domain.FileSystemResultLogExample;
+import com.hummer.common.mapper.domain.FileSystemResultLog;
+import com.hummer.common.mapper.domain.FileSystemResultLogExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

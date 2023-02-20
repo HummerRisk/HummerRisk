@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.TaskItemResourceLog;
-import com.hummer.common.core.domain.TaskItemResourceLogExample;
-import com.hummer.common.core.domain.TaskItemResourceLogWithBLOBs;
+import com.hummer.common.mapper.domain.TaskItemResourceLog;
+import com.hummer.common.mapper.domain.TaskItemResourceLogExample;
+import com.hummer.common.mapper.domain.TaskItemResourceLogWithBLOBs;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

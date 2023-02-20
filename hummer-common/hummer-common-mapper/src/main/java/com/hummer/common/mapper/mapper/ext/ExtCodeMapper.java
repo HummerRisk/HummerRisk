@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper.ext;
 
 
-import com.hummer.common.core.domain.request.code.CodeRequest;
-import com.hummer.common.core.dto.CodeDTO;
+import com.hummer.common.mapper.dto.CodeDTO;
+import com.hummer.common.mapper.domain.request.code.CodeRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

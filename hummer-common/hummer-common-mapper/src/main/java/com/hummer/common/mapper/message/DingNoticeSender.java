@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.message;
 
-import com.hummer.common.mapper.service.DingtalkService;
 import com.hummer.common.core.utils.LogUtil;
+import com.hummer.common.mapper.service.DingtalkService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 

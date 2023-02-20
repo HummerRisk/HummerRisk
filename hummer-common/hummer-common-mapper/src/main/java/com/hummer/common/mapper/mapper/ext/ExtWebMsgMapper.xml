@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtWebMsgMapper">
 
-    <resultMap id="BaseResultMap" type="com.hummer.common.core.domain.WebMsg"
+    <resultMap id="BaseResultMap" type="com.hummer.common.mapper.domain.WebMsg"
                extends="com.hummer.common.mapper.mapper.WebMsgMapper.BaseResultMap">
     </resultMap>
 

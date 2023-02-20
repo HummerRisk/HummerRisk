@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.HistoryImageResult;
-import com.hummer.common.core.domain.HistoryImageResultExample;
-import com.hummer.common.core.domain.HistoryImageResultWithBLOBs;
+import com.hummer.common.mapper.domain.HistoryImageResult;
+import com.hummer.common.mapper.domain.HistoryImageResultExample;
+import com.hummer.common.mapper.domain.HistoryImageResultWithBLOBs;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

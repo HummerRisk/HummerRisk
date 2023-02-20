@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper.ext;
 
 import com.hummer.common.core.domain.User;
-import com.hummer.common.core.domain.UserDetail;
-import com.hummer.common.core.domain.request.member.UserRequest;
+import com.hummer.common.mapper.domain.UserDetail;
+import com.hummer.common.mapper.domain.request.member.UserRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.Plugin;
-import com.hummer.common.core.domain.request.plugin.PluginRequest;
+import com.hummer.common.mapper.domain.Plugin;
+import com.hummer.common.mapper.domain.request.plugin.PluginRequest;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

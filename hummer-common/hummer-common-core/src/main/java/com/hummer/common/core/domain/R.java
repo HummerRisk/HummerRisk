@@ -1,7 +1,8 @@
 package com.hummer.common.core.domain;
 
-import java.io.Serializable;
 import com.hummer.common.core.constant.Constants;
+
+import java.io.Serializable;
 
 /**
  * 响应信息主体

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.common.mapper.mapper.ext.ExtCloudResourceSyncMapper">
-    <resultMap id="BaseResultMap" type="com.hummer.common.core.domain.CloudResourceSync">
+    <resultMap id="BaseResultMap" type="com.hummer.common.mapper.domain.CloudResourceSync">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="status" jdbcType="VARCHAR" property="status" />
         <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
@@ -109,36 +109,36 @@
     </select>
 
 
-    <resultMap id="D3BaseResultMap" type="com.hummer.common.core.domain.request.sync.CloudTopology">
+    <resultMap id="D3BaseResultMap" type="com.hummer.common.mapper.domain.request.sync.CloudTopology">
         <result column="name" jdbcType="VARCHAR" property="name" />
-        <collection property="children" ofType="com.hummer.common.core.domain.request.sync.Cloud" javaType="list" select="selectCloudAccount" column="name">
+        <collection property="children" ofType="com.hummer.common.mapper.domain.request.sync.Cloud" javaType="list" select="selectCloudAccount" column="name">
         </collection>
     </resultMap>
 
-    <resultMap id="CloudBaseResultMap" type="com.hummer.common.core.domain.request.sync.Cloud">
+    <resultMap id="CloudBaseResultMap" type="com.hummer.common.mapper.domain.request.sync.Cloud">
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="accountId" jdbcType="VARCHAR" property="accountId" />
-        <collection property="children" ofType="com.hummer.common.core.domain.request.sync.Region" javaType="list"
+        <collection property="children" ofType="com.hummer.common.mapper.domain.request.sync.Region" javaType="list"
                     select="selectRegion" column="accountId">
         </collection>
     </resultMap>
 
-    <resultMap id="RegionBaseResultMap" type="com.hummer.common.core.domain.request.sync.Region">
+    <resultMap id="RegionBaseResultMap" type="com.hummer.common.mapper.domain.request.sync.Region">
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="regionId" jdbcType="VARCHAR" property="regionId" />
         <result column="accountId" jdbcType="VARCHAR" property="accountId" />
-        <collection property="children" ofType="com.hummer.common.core.domain.request.sync.ResourceType" javaType="list"
+        <collection property="children" ofType="com.hummer.common.mapper.domain.request.sync.ResourceType" javaType="list"
                     select="selectResourceType" column="{regionId=regionId, accountId=accountId}">
         </collection>
     </resultMap>
 
-    <resultMap id="ResourceBaseResultMap" type="com.hummer.common.core.domain.request.sync.ResourceType">
+    <resultMap id="ResourceBaseResultMap" type="com.hummer.common.mapper.domain.request.sync.ResourceType">
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="regionId" jdbcType="VARCHAR" property="regionId" />
         <result column="accountId" jdbcType="VARCHAR" property="accountId" />
         <result column="resourceType" jdbcType="VARCHAR" property="resourceType" />
         <result column="value" jdbcType="INTEGER" property="value" />
-        <collection property="children" ofType="com.hummer.common.core.domain.request.sync.Resource" javaType="list"
+        <collection property="children" ofType="com.hummer.common.mapper.domain.request.sync.Resource" javaType="list"
                     select="selectResource" column="{regionId=regionId, accountId=accountId, resourceType=resourceType}">
             <result column="name" jdbcType="VARCHAR" property="name" />
             <result column="value" jdbcType="INTEGER" property="value" />
@@ -194,7 +194,7 @@
         group by t.resource_type, t.region_id, t.account_id
     </select>
 
-    <select id="selectResource" resultType="com.hummer.common.core.domain.request.sync.Resource">
+    <select id="selectResource" resultType="com.hummer.common.mapper.domain.request.sync.Resource">
         select
         CASE
             WHEN t.hummer_id IN (SELECT t1.hummer_id FROM resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type)

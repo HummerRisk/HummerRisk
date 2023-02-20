@@ -93,7 +93,7 @@
         </if>
     </sql>
 
-    <select id="resultList" resultType="com.hummer.common.core.dto.FsResultDTO">
+    <select id="resultList" resultType="com.hummer.common.mapper.dto.FsResultDTO">
         SELECT
         t.*,
         t1.file_name as fileName,
@@ -130,7 +130,7 @@
         ORDER BY t.update_time desc
     </select>
 
-    <select id="getFsResult" parameterType="java.lang.String" resultType="com.hummer.common.core.dto.FsResultDTO">
+    <select id="getFsResult" parameterType="java.lang.String" resultType="com.hummer.common.mapper.dto.FsResultDTO">
         SELECT
         t.*,
         t1.file_name as fileName,
@@ -150,7 +150,7 @@
         </where>
     </select>
 
-    <select id="history" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryFsResultDTO">
+    <select id="history" parameterType="java.util.Map" resultType="com.hummer.common.mapper.dto.HistoryFsResultDTO">
         SELECT
         t.*,
         t1.file_name as fileName,

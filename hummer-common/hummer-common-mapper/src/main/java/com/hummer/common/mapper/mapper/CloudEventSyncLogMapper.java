@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.CloudEventSyncLog;
-import com.hummer.common.core.domain.CloudEventSyncLogExample;
+import com.hummer.common.mapper.domain.CloudEventSyncLog;
+import com.hummer.common.mapper.domain.CloudEventSyncLogExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

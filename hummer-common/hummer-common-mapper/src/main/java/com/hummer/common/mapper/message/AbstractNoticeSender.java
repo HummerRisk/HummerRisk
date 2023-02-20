@@ -1,9 +1,9 @@
 package com.hummer.common.mapper.message;
 
 import com.hummer.common.core.constant.NoticeConstants;
-import com.hummer.common.core.domain.UserDetail;
-import com.hummer.common.mapper.service.UserService;
 import com.hummer.common.core.utils.LogUtil;
+import com.hummer.common.mapper.domain.UserDetail;
+import com.hummer.common.mapper.service.UserService;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RegExUtils;

@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.HistoryCloudTask;
-import com.hummer.common.core.domain.HistoryCloudTaskExample;
+import com.hummer.common.mapper.domain.HistoryCloudTask;
+import com.hummer.common.mapper.domain.HistoryCloudTaskExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.ImageResultItem;
-import com.hummer.common.core.domain.ImageResultItemExample;
-import com.hummer.common.core.domain.ImageResultItemWithBLOBs;
+import com.hummer.common.mapper.domain.ImageResultItem;
+import com.hummer.common.mapper.domain.ImageResultItemExample;
+import com.hummer.common.mapper.domain.ImageResultItemWithBLOBs;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

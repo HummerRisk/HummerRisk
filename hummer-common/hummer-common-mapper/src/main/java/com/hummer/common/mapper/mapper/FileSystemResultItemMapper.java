@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.FileSystemResultItem;
-import com.hummer.common.core.domain.FileSystemResultItemExample;
-import com.hummer.common.core.domain.FileSystemResultItemWithBLOBs;
+import com.hummer.common.mapper.domain.FileSystemResultItem;
+import com.hummer.common.mapper.domain.FileSystemResultItemExample;
+import com.hummer.common.mapper.domain.FileSystemResultItemWithBLOBs;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

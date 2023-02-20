@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper.ext;
 
-import com.hummer.common.core.domain.request.config.ConfigRequest;
-import com.hummer.common.core.dto.CloudNativeConfigDTO;
+import com.hummer.common.mapper.dto.CloudNativeConfigDTO;
+import com.hummer.common.mapper.domain.request.config.ConfigRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

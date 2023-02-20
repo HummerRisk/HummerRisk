@@ -51,7 +51,7 @@
         WHERE t2.id = #{request.id}
     </select>
 
-    <select id="getTopImageTasksForEmail" resultType="com.hummer.common.core.domain.ImageResultItem" parameterType="com.hummer.common.core.domain.MessageOrder">
+    <select id="getTopImageTasksForEmail" resultType="com.hummer.common.mapper.domain.ImageResultItem" parameterType="com.hummer.common.mapper.domain.MessageOrder">
         SELECT t.*
         FROM image_result_item t
         JOIN message_order_item t1 ON t.result_id = t1.task_id
@@ -59,7 +59,7 @@
         WHERE t2.id = #{request.id}
     </select>
 
-    <select id="getTopCodeTasksForEmail" resultType="com.hummer.common.core.domain.CodeResultItem" parameterType="com.hummer.common.core.domain.MessageOrder">
+    <select id="getTopCodeTasksForEmail" resultType="com.hummer.common.mapper.domain.CodeResultItem" parameterType="com.hummer.common.mapper.domain.MessageOrder">
         SELECT t.*
         FROM code_result_item t
         JOIN message_order_item t1 ON t.result_id = t1.task_id
@@ -67,7 +67,7 @@
         WHERE t2.id = #{request.id}
     </select>
 
-    <select id="getTopConfigTasksForEmail" resultType="com.hummer.common.core.domain.CloudNativeConfigResultItem" parameterType="com.hummer.common.core.domain.MessageOrder">
+    <select id="getTopConfigTasksForEmail" resultType="com.hummer.common.mapper.domain.CloudNativeConfigResultItem" parameterType="com.hummer.common.mapper.domain.MessageOrder">
         SELECT t.*
         FROM cloud_native_config_result_item t
         JOIN message_order_item t1 ON t.result_id = t1.task_id
@@ -75,7 +75,7 @@
         WHERE t2.id = #{request.id}
     </select>
 
-    <select id="getTopK8sTasksForEmail" resultType="com.hummer.common.core.domain.CloudNativeResultItem" parameterType="com.hummer.common.core.domain.MessageOrder">
+    <select id="getTopK8sTasksForEmail" resultType="com.hummer.common.mapper.domain.CloudNativeResultItem" parameterType="com.hummer.common.mapper.domain.MessageOrder">
         SELECT t.*
         FROM cloud_native_result_item t
         JOIN message_order_item t1 ON t.result_id = t1.task_id
@@ -83,7 +83,7 @@
         WHERE t2.id = #{request.id}
     </select>
 
-    <select id="getTopFsTasksForEmail" resultType="com.hummer.common.core.domain.FileSystemResultItem" parameterType="com.hummer.common.core.domain.MessageOrder">
+    <select id="getTopFsTasksForEmail" resultType="com.hummer.common.mapper.domain.FileSystemResultItem" parameterType="com.hummer.common.mapper.domain.MessageOrder">
         SELECT t.*
         FROM file_system_result_item t
         JOIN message_order_item t1 ON t.result_id = t1.task_id
@@ -91,7 +91,7 @@
         WHERE t2.id = #{request.id}
     </select>
 
-    <select id="getTopServerTasksForEmail" resultType="com.hummer.common.core.dto.ServerResultDTO" parameterType="com.hummer.common.core.domain.MessageOrder">
+    <select id="getTopServerTasksForEmail" resultType="com.hummer.common.mapper.dto.ServerResultDTO" parameterType="com.hummer.common.mapper.domain.MessageOrder">
         SELECT t.*, g.name as groupName
         FROM server_result t
         JOIN server_group g on t.server_group_id = g.id
@@ -100,7 +100,7 @@
         WHERE t2.id = #{request.id}
     </select>
 
-    <select id="metricChartCloud" resultType="com.hummer.common.core.dto.MetricChartDTO">
+    <select id="metricChartCloud" resultType="com.hummer.common.mapper.dto.MetricChartDTO">
         SELECT * from
         (select IFNULL(sum(IFNULL(r.return_sum, 0)), 0) as critical
         FROM resource r
@@ -140,7 +140,7 @@
         where t5.id = #{request.id})) as low
     </select>
 
-    <select id="metricChartVuln" resultType="com.hummer.common.core.dto.MetricChartDTO">
+    <select id="metricChartVuln" resultType="com.hummer.common.mapper.dto.MetricChartDTO">
         SELECT * from
         (select IFNULL(sum(IFNULL(r.return_sum, 0)), 0) as critical
         FROM resource r
@@ -180,7 +180,7 @@
         where t5.id = #{request.id})) as low
     </select>
 
-    <select id="metricChartServer" resultType="com.hummer.common.core.dto.MetricChartDTO">
+    <select id="metricChartServer" resultType="com.hummer.common.mapper.dto.MetricChartDTO">
         SELECT * from
         (select IFNULL(count(t.id), 0) as critical
         FROM server_result t
@@ -208,7 +208,7 @@
         WHERE t2.id = #{request.id})) as low
     </select>
 
-    <select id="metricChartK8s" resultType="com.hummer.common.core.dto.MetricChartDTO">
+    <select id="metricChartK8s" resultType="com.hummer.common.mapper.dto.MetricChartDTO">
         SELECT * from
         (select IFNULL(count(t.id), 0) as critical
         FROM cloud_native_result_item t
@@ -242,7 +242,7 @@
         WHERE t2.id = #{request.id})) as unknown
     </select>
 
-    <select id="metricChartConfig" resultType="com.hummer.common.core.dto.MetricChartDTO">
+    <select id="metricChartConfig" resultType="com.hummer.common.mapper.dto.MetricChartDTO">
         SELECT * from
         (select IFNULL(count(t.id), 0) as critical
         FROM cloud_native_config_result_item t
@@ -276,7 +276,7 @@
         WHERE t2.id = #{request.id})) as unknown
     </select>
 
-    <select id="metricChartImage" resultType="com.hummer.common.core.dto.MetricChartDTO">
+    <select id="metricChartImage" resultType="com.hummer.common.mapper.dto.MetricChartDTO">
         SELECT * from
         (select IFNULL(count(t.id), 0) as critical
         FROM image_result_item t
@@ -310,7 +310,7 @@
         WHERE t2.id = #{request.id})) as unknown
     </select>
 
-    <select id="metricChartCode" resultType="com.hummer.common.core.dto.MetricChartDTO">
+    <select id="metricChartCode" resultType="com.hummer.common.mapper.dto.MetricChartDTO">
         SELECT * from
         (select IFNULL(count(t.id), 0) as critical
         FROM code_result_item t
@@ -344,7 +344,7 @@
         WHERE t2.id = #{request.id})) as unknown
     </select>
 
-    <select id="metricChartFs" resultType="com.hummer.common.core.dto.MetricChartDTO">
+    <select id="metricChartFs" resultType="com.hummer.common.mapper.dto.MetricChartDTO">
         SELECT * from
         (select IFNULL(count(t.id), 0) as critical
         FROM file_system_result_item t

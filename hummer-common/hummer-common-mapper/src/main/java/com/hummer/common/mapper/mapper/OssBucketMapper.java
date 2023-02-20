@@ -1,7 +1,7 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.OssBucket;
-import com.hummer.common.core.domain.OssBucketExample;
+import com.hummer.common.mapper.domain.OssBucket;
+import com.hummer.common.mapper.domain.OssBucketExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

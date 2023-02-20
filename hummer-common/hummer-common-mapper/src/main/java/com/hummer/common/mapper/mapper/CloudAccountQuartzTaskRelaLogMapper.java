@@ -1,8 +1,8 @@
 package com.hummer.common.mapper.mapper;
 
-import com.hummer.common.core.domain.CloudAccountQuartzTaskRelaLog;
-import com.hummer.common.core.domain.CloudAccountQuartzTaskRelaLogExample;
-import com.hummer.common.core.domain.CloudAccountQuartzTaskRelaLogWithBLOBs;
+import com.hummer.common.mapper.domain.CloudAccountQuartzTaskRelaLog;
+import com.hummer.common.mapper.domain.CloudAccountQuartzTaskRelaLogExample;
+import com.hummer.common.mapper.domain.CloudAccountQuartzTaskRelaLogWithBLOBs;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
