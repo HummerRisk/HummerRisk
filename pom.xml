@@ -894,22 +894,16 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webflux</artifactId>
-                <version>5.3.25</version>
+                <version>6.0.5</version>
             </dependency>
 
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
-                <version>5.3.25</version>
+                <version>6.0.5</version>
             </dependency>
 
-            <dependency>
-                <groupId>jdk.tools</groupId>
-                <artifactId>jdk.tools</artifactId>
-                <version>17</version>
-                <scope>system</scope>
-                <systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>
-            </dependency>
+
 
         </dependencies>
     </dependencyManagement>
