@@ -3,7 +3,6 @@ package com.hummer.common.security.feign;
 import java.util.Map;
 
 import com.hummer.common.core.utils.ServletUtils;
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Component;
 import com.hummer.common.core.constant.SecurityConstants;
@@ -11,6 +10,9 @@ import com.hummer.common.core.utils.StringUtils;
 import com.hummer.common.core.utils.ip.IpUtils;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 
 /**
  * feign 请求拦截器

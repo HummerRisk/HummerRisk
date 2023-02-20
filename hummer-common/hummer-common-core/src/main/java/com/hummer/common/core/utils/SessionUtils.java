@@ -1,7 +1,8 @@
 package com.hummer.common.core.utils;
 
 import com.hummer.common.core.user.SessionUser;
-import javax.servlet.http.HttpServletRequest;
+
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;

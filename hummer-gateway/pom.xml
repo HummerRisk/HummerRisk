@@ -20,7 +20,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
-            <version>${spring-boot.version}</version>
         </dependency>
 
         <!-- SpringCloud Alibaba Nacos -->
