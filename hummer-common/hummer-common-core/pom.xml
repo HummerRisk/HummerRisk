@@ -224,7 +224,7 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.30</version>
+            <version>1.33</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -278,11 +278,6 @@
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
             <version>${swagger.models}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger.annotations}</version>
         </dependency>
 
         <dependency>
