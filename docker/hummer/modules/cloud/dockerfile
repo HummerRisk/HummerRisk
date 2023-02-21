@@ -1,5 +1,5 @@
 # 基础镜像
-FROM  registry.cn-beijing.aliyuncs.com/hummerrisk/alpine:jdk17
+FROM  registry.cn-beijing.aliyuncs.com/hummerrisk/alpine:jre17
 # author
 MAINTAINER Hummer
 ARG HR_VERSION=dev
@@ -14,3 +14,5 @@ ENV JAVA_APP_JAR=/opt/apps/hummer-modules-cloud.jar \
 HEALTHCHECK --interval=15s --timeout=5s --retries=20 --start-period=30s CMD curl -f 127.0.0.1:9200
 
 CMD ["/deployments/run-java.sh"]
+
+EXPOSE 9400
