@@ -1,8 +1,8 @@
 # 基础镜像
-FROM  registry.cn-beijing.aliyuncs.com/hummerrisk/alpine:jdk17
+FROM  registry.cn-beijing.aliyuncs.com/hummerrisk/alpine:jre17
 # author
 MAINTAINER Hummer
-ARG HR_VERSION=v0.9.1
+ARG HR_VERSION=dev
 
 COPY ./jar/hummer-auth.jar /opt/apps/hummer-auth.jar
 
@@ -15,3 +15,4 @@ HEALTHCHECK --interval=15s --timeout=5s --retries=20 --start-period=30s CMD curl
 
 CMD ["/deployments/run-java.sh"]
 
+EXPOSE 9200

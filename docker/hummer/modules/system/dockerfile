@@ -1,14 +1,18 @@
 # 基础镜像
-FROM  registry.cn-beijing.aliyuncs.com/hummerrisk/alpine:jdk17
+FROM  registry.cn-beijing.aliyuncs.com/hummerrisk/alpine:jre17
 # author
 MAINTAINER Hummer
+ARG HR_VERSION=dev
 
+COPY ./jar/hummer-modules-system.jar /opt/apps/hummer-modules-system.jar
 
-# 创建目录
-RUN mkdir -p /home/hummer
-# 指定路径
-WORKDIR /home/hummer
-# 复制jar文件到路径
-COPY ./jar/hummer-modules-system.jar /home/hummer/hummer-modules-system.jar
-# 启动系统服务
-ENTRYPOINT ["java","-jar","hummer-modules-system.jar"]
+ENV JAVA_APP_JAR=/opt/apps/hummer-modules-system.jar \
+    AB_OFF=true \
+    HR_VERSION=${HR_VERSION} \
+    JAVA_OPTIONS="-Dfile.encoding=utf-8 -Djava.awt.headless=true -Xss5m -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:+ExitOnOutOfMemoryError"
+
+HEALTHCHECK --interval=15s --timeout=5s --retries=20 --start-period=30s CMD curl -f 127.0.0.1:9200
+
+CMD ["/deployments/run-java.sh"]
+
+EXPOSE 9201
