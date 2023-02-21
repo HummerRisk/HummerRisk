@@ -3,18 +3,15 @@ package com.hummer.gateway;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
-
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 /**
  * 网关启动程序
  *
  * @author harris1943
  */
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class })
-public class GatewayApplication
-{
-    public static void main(String[] args)
-    {
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+public class GatewayApplication extends SpringBootServletInitializer {
+    public static void main(String[] args) {
         SpringApplication.run(GatewayApplication.class, args);
         System.out.println("{HTTP/1.1, (http/1.1)}{0.0.0.0:8080}");
         System.out.println("(♥◠‿◠)ﾉﾞ  Gateway网关启动成功   ლ(´ڡ`ლ)ﾞ  \n" +

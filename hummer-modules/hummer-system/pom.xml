@@ -52,36 +52,42 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.connector.java.version}</version>
         </dependency>
 
         <!-- hummer Common DataSource -->
         <dependency>
             <groupId>com.hummerrisk</groupId>
             <artifactId>hummer-common-datasource</artifactId>
+            <version>${hummerrisk.version}</version>
         </dependency>
 
         <!-- hummer Common DataScope -->
         <dependency>
             <groupId>com.hummerrisk</groupId>
             <artifactId>hummer-common-datascope</artifactId>
+            <version>${hummerrisk.version}</version>
         </dependency>
 
         <!-- hummer Common Log -->
         <dependency>
             <groupId>com.hummerrisk</groupId>
             <artifactId>hummer-common-log</artifactId>
+            <version>${hummerrisk.version}</version>
         </dependency>
 
         <!-- hummer Common Swagger -->
         <dependency>
             <groupId>com.hummerrisk</groupId>
             <artifactId>hummer-common-swagger</artifactId>
+            <version>${hummerrisk.version}</version>
         </dependency>
 
         <!-- hummer Common mapper -->
         <dependency>
             <groupId>com.hummerrisk</groupId>
             <artifactId>hummer-common-mapper</artifactId>
+            <version>${hummerrisk.version}</version>
         </dependency>
 
         <dependency>

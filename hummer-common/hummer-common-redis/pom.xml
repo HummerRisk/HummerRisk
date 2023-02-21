@@ -27,6 +27,7 @@
         <dependency>
             <groupId>com.hummerrisk</groupId>
             <artifactId>hummer-common-core</artifactId>
+            <version>${hummerrisk.version}</version>
         </dependency>
 
     </dependencies>

@@ -62,7 +62,7 @@
         <dependency>
             <groupId>com.hummerrisk</groupId>
             <artifactId>hummer-common-redis</artifactId>
-            <version>1.0.0</version>
+            <version>${hummerrisk.version}</version>
         </dependency>
 
         <!-- Swagger -->
@@ -81,14 +81,14 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-            <version>7.15.0</version>
+            <version>${flyway.core.version}</version>
         </dependency>
 
         <!-- Mysql Connector -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
+            <version>${mysql.connector.java.version}</version>
         </dependency>
 
         <dependency>

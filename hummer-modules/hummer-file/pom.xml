@@ -59,12 +59,14 @@
         <dependency>
             <groupId>com.hummerrisk</groupId>
             <artifactId>hummer-api-system</artifactId>
+            <version>${hummerrisk.version}</version>
         </dependency>
 
         <!-- hummer Common Swagger -->
         <dependency>
             <groupId>com.hummerrisk</groupId>
             <artifactId>hummer-common-swagger</artifactId>
+            <version>${hummerrisk.version}</version>
         </dependency>
 
     </dependencies>

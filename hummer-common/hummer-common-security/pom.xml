@@ -26,12 +26,14 @@
         <dependency>
             <groupId>com.hummerrisk</groupId>
             <artifactId>hummer-common-core</artifactId>
+            <version>${hummerrisk.version}</version>
         </dependency>
 
         <!-- hummer Common Redis-->
         <dependency>
             <groupId>com.hummerrisk</groupId>
             <artifactId>hummer-common-redis</artifactId>
+            <version>${hummerrisk.version}</version>
         </dependency>
 
         <dependency>

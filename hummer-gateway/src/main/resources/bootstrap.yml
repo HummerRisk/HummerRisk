@@ -4,6 +4,8 @@ server:
 
 # Spring
 spring:
+  main:
+    web-application-type: reactive
   application:
     # 应用名称
     name: hummer-gateway

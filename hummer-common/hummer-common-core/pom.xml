@@ -85,16 +85,19 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
-        <!-- Alibaba Fastjson -->
+        <!-- JSON 解析器和生成器 -->
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
+            <version>${fastjson.version}</version>
         </dependency>
+        <!-- JSON 解析器和生成器 -->
 
         <!-- Jwt -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
+            <version>${jjwt.version}</version>
         </dependency>
 
         <!-- commons Apache Lang3 -->
@@ -154,11 +157,6 @@
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <version>${jakarta.servlet.api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-servlet-api</artifactId>
-            <version>9.0.70</version>
         </dependency>
 
         <!-- spring-boot -->

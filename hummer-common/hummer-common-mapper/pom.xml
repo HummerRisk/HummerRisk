@@ -21,34 +21,46 @@
         <dependency>
             <groupId>com.hummerrisk</groupId>
             <artifactId>hummer-common-core</artifactId>
+            <version>${hummerrisk.version}</version>
         </dependency>
 
         <!-- quartz -->
         <dependency>
             <groupId>com.hummer</groupId>
             <artifactId>quartz-spring-boot-starter</artifactId>
+            <version>${quartz.spring.boot.starter.version}</version>
         </dependency>
 
         <!-- 执行 js 代码依赖 -->
         <dependency>
             <groupId>org.graalvm.sdk</groupId>
             <artifactId>graal-sdk</artifactId>
+            <version>${graalvm.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.graalvm.js</groupId>
             <artifactId>js</artifactId>
+            <version>${graalvm.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.graalvm.js</groupId>
             <artifactId>js-scriptengine</artifactId>
+            <version>${graalvm.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.graalvm.tools</groupId>
             <artifactId>profiler</artifactId>
+            <version>${graalvm.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.graalvm.tools</groupId>
             <artifactId>chromeinspector</artifactId>
+            <version>${graalvm.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <!-- 执行 js 代码依赖 -->
 
@@ -430,12 +442,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-tomcat</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>${spring-boot.version}</version>
         </dependency>
         <!-- thymeleaf -->
 
@@ -443,12 +450,14 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${druid.version}</version>
         </dependency>
 
         <!-- Dynamic DataSource -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+            <version>${dynamic-ds.version}</version>
         </dependency>
 
         <dependency>

@@ -50,18 +50,21 @@
         <dependency>
             <groupId>com.hummerrisk</groupId>
             <artifactId>hummer-common-mapper</artifactId>
+            <version>${hummerrisk.version}</version>
         </dependency>
 
         <!--Common Security-->
         <dependency>
             <groupId>com.hummerrisk</groupId>
             <artifactId>hummer-common-security</artifactId>
+            <version>${hummerrisk.version}</version>
         </dependency>
 
         <!-- flyway -->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
+            <version>${flyway.core.version}</version>
         </dependency>
         <!-- flyway -->
 
@@ -69,6 +72,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.connector.java.version}</version>
         </dependency>
 
         <dependency>
