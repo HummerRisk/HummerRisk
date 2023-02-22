@@ -30,9 +30,6 @@ cp ../hummer-visual/hummer-monitor/target/hummer-visual-monitor.jar  ./hummer/vi
 echo "begin copy hummer-modules-system "
 cp ../hummer-modules/hummer-system/target/hummer-modules-system.jar ./hummer/modules/system/jar
 
-echo "begin copy hummer-modules-file "
-cp ../hummer-modules/hummer-file/target/hummer-modules-file.jar ./hummer/modules/file/jar
-
 echo "begin copy hummer-modules-job "
 cp ../hummer-modules/hummer-job/target/hummer-modules-job.jar ./hummer/modules/job/jar
 

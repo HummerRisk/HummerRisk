@@ -18,11 +18,6 @@ public class ServiceNameConstants
     public static final String SYSTEM_SERVICE = "hummer-system";
 
     /**
-     * 文件服务的serviceid
-     */
-    public static final String FILE_SERVICE = "hummer-file";
-
-    /**
      * 混合云服务的serviceid
      */
     public static final String CLOUD_SERVICE = "hummer-cloud";
