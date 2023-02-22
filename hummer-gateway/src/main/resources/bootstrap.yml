@@ -51,5 +51,11 @@ spring:
       placeholder-replacement: false
       table: hummer_version
       url: jdbc:mysql://127.0.0.1:3306/hummer_config?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=UTC
-      user: root
+      username: root
       password: root
+    datasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/hummer_config?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=UTC
+      username: root
+      password: root
+
