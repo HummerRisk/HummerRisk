@@ -3,6 +3,7 @@
 ~~~
 com.hummer     
 ├── hummer-ui                                          // 前端框架 [80]
+├── hummer-flyway                                      // 数据迁移 [9000]
 ├── hummer-gateway                                     // 网关模块 [8080]
 ├── hummer-auth                                        // 认证中心 [9200]
 ├── hummer-api                                         // 接口模块
@@ -19,9 +20,8 @@ com.hummer
 ├── hummer-modules                                     // 业务模块
 │       └── hummer-system                              // 系统模块 [9201]
 │       └── hummer-job                                 // 定时任务 [9202]
-│       └── hummer-file                                // 文件服务 [9300]
-│       └── hummer-cloud                               // 混合云服务 [9400]
-│       └── hummer-k8s                                 // 云原生服务 [9500]
+│       └── hummer-cloud                               // 混合云服务 [9203]
+│       └── hummer-k8s                                 // 云原生服务 [9204]
 ├── hummer-visual                                      // 图形化管理模块
 │       └── hummer-visual-monitor                      // 监控中心 [9100]
 ├──pom.xml                                             // 公共依赖

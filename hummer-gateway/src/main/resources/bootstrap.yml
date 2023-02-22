@@ -4,8 +4,6 @@ server:
 
 # Spring
 spring:
-  main:
-    web-application-type: reactive
   application:
     # 应用名称
     name: hummer-gateway
@@ -17,6 +15,8 @@ spring:
       discovery:
         # 服务注册地址
         server-addr: 127.0.0.1:8848
+        username: nacos
+        password: nacos
       config:
         # 配置中心地址
         server-addr: 127.0.0.1:8848
@@ -25,6 +25,10 @@ spring:
         # 共享配置
         shared-configs:
           - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+    gateway:
+      discovery:
+        locator:
+          enabled: true
     sentinel:
       # 取消控制台懒加载
       eager: true
@@ -40,22 +44,22 @@ spring:
             groupId: DEFAULT_GROUP
             data-type: json
             rule-type: gw-flow
-    # flyway enable
-    flyway:
-      enabled: true
-      baseline-on-migrate: true
-      locations: classpath:db/migration
-      baseline-version: 0
-      encoding: UTF-8
-      validate-on-migrate: false
-      placeholder-replacement: false
-      table: hummer_version
-      url: jdbc:mysql://127.0.0.1:3306/hummer_config?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=UTC
-      username: root
-      password: root
-    datasource:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/hummer_config?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=UTC
-      username: root
-      password: root
-
+  # flyway enable
+  flyway:
+    # 启用或禁用 flyway
+    enabled: true
+    # 当迁移时发现目标schema非空，而且带有没有元数据的表时，是否自动执行基准迁移，默认false.
+    baseline-on-migrate: true
+    # 默认脚本加载路径：/db/migration
+    locations: ["classpath:/db/migration"]
+    baseline-version: 0
+    # 字符编码
+    encoding: UTF-8
+    # 迁移时是否校验，默认为 true
+    validate-on-migrate: false
+    # 是否要被替换，默认 true
+    placeholder-replacement: false
+    table: hummer_version
+    url: jdbc:mysql://127.0.0.1:3306/hummer_config?autoReconnect=false&useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    user: root
+    password: root

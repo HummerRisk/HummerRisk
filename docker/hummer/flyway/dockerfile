@@ -4,9 +4,9 @@ FROM  registry.cn-beijing.aliyuncs.com/hummerrisk/alpine:jre17
 MAINTAINER Hummer
 ARG HR_VERSION=dev
 
-COPY ./jar/hummer-modules-file.jar /opt/apps/hummer-modules-file.jar
+COPY ./jar/hummer-flyway.jar /opt/apps/hummer-flyway.jar
 
-ENV JAVA_APP_JAR=/opt/apps/hummer-modules-file.jar \
+ENV JAVA_APP_JAR=/opt/apps/hummer-flyway.jar \
     AB_OFF=true \
     HR_VERSION=${HR_VERSION} \
     JAVA_OPTIONS="-Dfile.encoding=utf-8 -Djava.awt.headless=true -Xss5m -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:+ExitOnOutOfMemoryError"
@@ -15,4 +15,4 @@ HEALTHCHECK --interval=15s --timeout=5s --retries=20 --start-period=30s CMD curl
 
 CMD ["/deployments/run-java.sh"]
 
-EXPOSE 9300
+EXPOSE 9000

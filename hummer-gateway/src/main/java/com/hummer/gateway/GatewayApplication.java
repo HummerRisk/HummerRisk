@@ -3,14 +3,13 @@ package com.hummer.gateway;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 /**
  * 网关启动程序
  *
  * @author harris1943
  */
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
-public class GatewayApplication extends SpringBootServletInitializer {
+public class GatewayApplication {
     public static void main(String[] args) {
         // 关闭nacos日志
         System.setProperty("nacos.logging.default.config.enabled", "false");
