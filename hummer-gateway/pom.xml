@@ -89,19 +89,6 @@
             <version>${swagger.fox.version}</version>
         </dependency>
 
-        <!-- flyway -->
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-        </dependency>
-
-        <!-- Mysql Connector -->
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <version>${mysql.connector.java.version}</version>
-        </dependency>
-
     </dependencies>
 
     <build>

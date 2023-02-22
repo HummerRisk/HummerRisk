@@ -14,10 +14,10 @@ spring:
     nacos:
       discovery:
         # 服务注册地址
-        server-addr: 127.0.0.1:8848
+        server-addr: nacos:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
       config:
         # 配置中心地址
-        server-addr: nacos:8848
+        server-addr: nacos:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
         # 配置文件格式
         file-extension: yml
         # 共享配置
@@ -28,32 +28,14 @@ spring:
       eager: true
       transport:
         # 控制台地址
-        dashboard: nacos:8718
+        dashboard: nacos:8718  # 本地启动使用 dashboard: 127.0.0.1:8718
       # nacos配置持久化
       datasource:
         ds1:
           nacos:
-            server-addr: nacos:8848
+            server-addr: nacos:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
             dataId: sentinel-hummer-gateway
             groupId: DEFAULT_GROUP
             data-type: json
             rule-type: gw-flow
-    # flyway enable
-    flyway:
-      enabled: true
-      baseline-on-migrate: true
-      locations: classpath:db/migration
-      baseline-version: 0
-      encoding: UTF-8
-      validate-on-migrate: false
-      placeholder-replacement: false
-      table: hummer_version
-      url: jdbc:mysql://127.0.0.1:3306/hummer_config?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=UTC
-      username: root
-      password: root
-    datasource:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/hummer_config?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=UTC
-      username: root
-      password: root
 
