@@ -13,7 +13,6 @@
         <module>hummer-k8s</module>
         <module>hummer-system</module>
         <module>hummer-job</module>
-        <module>hummer-file</module>
     </modules>
 
     <artifactId>hummer-modules</artifactId>
