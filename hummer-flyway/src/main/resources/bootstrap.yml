@@ -1,0 +1,31 @@
+# Tomcat
+server:
+  port: 9000
+
+# Spring
+spring:
+  application:
+    # 应用名称
+    name: hummer-flyway
+  # flyway enable
+  flyway:
+    # 启用或禁用 flyway
+    enabled: true
+    # 当迁移时发现目标schema非空，而且带有没有元数据的表时，是否自动执行基准迁移，默认false.
+    baseline-on-migrate: true
+    # 默认脚本加载路径：/db/migration
+    locations: classpath:db/migration
+    # 指定 baseline 的版本号,默认值为 1, 低于该版本号的 SQL 文件, migrate 时会被忽略
+    baseline-version: 0
+    # 字符编码
+    encoding: UTF-8
+    # 迁移时是否校验，默认为 true
+    validate-on-migrate: false
+    # 是否要被替换，默认 true
+    placeholder-replacement: false
+    # metadata 版本控制信息表 默认 flyway_schema_history
+    table: hummer_version
+    # 数据库配置
+    url: jdbc:mysql://localhost:33060/hummer_config?autoReconnect=false&useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    user: root
+    password: 123456
