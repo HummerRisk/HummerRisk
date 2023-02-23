@@ -14,7 +14,7 @@ public class FlywayApplication {
     public static void main(String[] args) {
 
         SpringApplication.run(FlywayApplication.class, args);
-        System.out.println("    {HTTP/1.1, (http/1.1)}{0.0.0.0:9600}");
+        System.out.println("    {HTTP/1.1, (http/1.1)}{0.0.0.0:9000}");
         System.out.println("    (♥◠‿◠)ﾉﾞ  Flyway数据迁移启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
                 "\n" +
                 "  ██╗  ██╗██╗   ██╗███╗   ███╗███╗   ███╗███████╗██████╗     ███████╗██╗  ██╗   ██╗██╗    ██╗ █████╗ ██╗   ██╗\n" +
