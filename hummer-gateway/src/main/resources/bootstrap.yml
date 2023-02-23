@@ -7,9 +7,6 @@ spring:
   application:
     # 应用名称
     name: hummer-gateway
-  profiles:
-    # 环境配置
-    active: dev
   cloud:
     nacos:
       discovery:
@@ -22,7 +19,7 @@ spring:
         file-extension: yml
         # 共享配置
         shared-configs:
-          - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+          - application.${spring.cloud.nacos.config.file-extension}
     sentinel:
       # 取消控制台懒加载
       eager: true
