@@ -8,6 +8,8 @@ spring:
     # 应用名称
     name: hummer-gateway
   cloud:
+    bootstrap:
+      enabled: true
     nacos:
       discovery:
         # 服务注册地址

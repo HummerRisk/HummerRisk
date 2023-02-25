@@ -11,11 +11,7 @@ com.hummer
 ├── hummer-common                                      // 通用模块
 │       └── hummer-common-core                         // 核心模块
 │       └── hummer-common-datascope                    // 权限范围
-│       └── hummer-common-datasource                   // 多数据源
-│       └── hummer-common-log                          // 日志记录
 │       └── hummer-common-redis                        // 缓存服务
-│       └── hummer-common-seata                        // 分布式事务
-│       └── hummer-common-security                     // 安全模块
 │       └── hummer-common-swagger                      // 系统接口
 ├── hummer-modules                                     // 业务模块
 │       └── hummer-system                              // 系统模块 [9201]
