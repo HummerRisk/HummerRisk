@@ -9,15 +9,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <modules>
-        <module>hummer-common-log</module>
         <module>hummer-common-core</module>
         <module>hummer-common-mapper</module>
         <module>hummer-common-redis</module>
-        <module>hummer-common-seata</module>
         <module>hummer-common-swagger</module>
-        <module>hummer-common-security</module>
         <module>hummer-common-datascope</module>
-        <module>hummer-common-datasource</module>
     </modules>
 
     <artifactId>hummer-common</artifactId>
