@@ -2,13 +2,6 @@ package com.hummerrisk.proxy.k8s;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.hummerrisk.base.domain.CloudNative;
@@ -31,10 +24,12 @@ import io.kubernetes.client.util.Yaml;
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.*;
-import java.util.*;
-
-import static cn.hutool.poi.excel.sax.ElementName.v;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class K8sRequest extends Request {
 
