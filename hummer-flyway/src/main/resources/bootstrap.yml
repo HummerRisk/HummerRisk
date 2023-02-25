@@ -7,6 +7,9 @@ spring:
   application:
     # 应用名称
     name: hummer-flyway
+  cloud:
+    bootstrap:
+      enabled: true
   # flyway enable
   flyway:
     # 启用或禁用 flyway
