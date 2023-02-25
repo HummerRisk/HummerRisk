@@ -147,7 +147,6 @@ public class K8sRequest extends Request {
 
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
-            throw e;
         }
     }
 
