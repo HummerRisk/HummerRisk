@@ -719,7 +719,7 @@ public class K8sService {
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             cloudNativeResultMapper.updateByPrimaryKeySelective(result);
             historyService.updateHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
-            saveCloudNativeResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
+            saveCloudNativeResultLog(result.getId(), "i18n_operation_ex", e.getMessage(), false);
         }
     }
 
@@ -1199,7 +1199,7 @@ public class K8sService {
         } catch (Exception e) {
             cloudNative.setOperatorStatus(CloudAccountConstants.Status.INVALID.name());
             cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
-            saveCloudNativeResultLog(id, "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
+            saveCloudNativeResultLog(id, "i18n_operation_ex", e.getMessage(), false);
         }
 
         //检验operator
