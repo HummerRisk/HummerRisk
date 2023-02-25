@@ -2,8 +2,6 @@ package com.hummer.job;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import com.hummer.common.security.annotation.EnableCustomConfig;
-import com.hummer.common.security.annotation.EnableHummerFeignClients;
 import com.hummer.common.swagger.annotation.EnableCustomSwagger2;
 
 /**
@@ -11,9 +9,7 @@ import com.hummer.common.swagger.annotation.EnableCustomSwagger2;
  *
  * @author harris1943
  */
-@EnableCustomConfig
 @EnableCustomSwagger2
-@EnableHummerFeignClients
 @SpringBootApplication
 public class JobApplication {
     public static void main(String[] args) {

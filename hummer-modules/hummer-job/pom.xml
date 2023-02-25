@@ -74,13 +74,6 @@
             <version>${hummerrisk.version}</version>
         </dependency>
 
-        <!-- hummer Common Log -->
-        <dependency>
-            <groupId>com.hummerrisk</groupId>
-            <artifactId>hummer-common-log</artifactId>
-            <version>${hummerrisk.version}</version>
-        </dependency>
-
         <!-- hummer Common Swagger -->
         <dependency>
             <groupId>com.hummerrisk</groupId>
