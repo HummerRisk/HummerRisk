@@ -10,6 +10,10 @@ spring:
   cloud:
     bootstrap:
       enabled: true
+  mvc:
+    view:
+      suffix: .html
+      prefix: /
   # flyway enable
   flyway:
     # 启用或禁用 flyway
