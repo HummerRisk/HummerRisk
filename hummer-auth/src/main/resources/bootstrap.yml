@@ -7,6 +7,15 @@ spring:
   application:
     # 应用名称
     name: hummer-auth
+  freemarker.content-type: text/html
+  thymeleaf:
+    cache: false
+    mode: HTML
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      static-locations=classpath: /templates/
   cloud:
     bootstrap:
       enabled: true
