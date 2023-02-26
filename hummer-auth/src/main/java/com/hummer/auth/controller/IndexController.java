@@ -12,7 +12,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping
 public class IndexController {
 
-    @GetMapping(value = "/healthz")
+    @GetMapping(value = "/")
     public String index() {
         return "index.html";
     }

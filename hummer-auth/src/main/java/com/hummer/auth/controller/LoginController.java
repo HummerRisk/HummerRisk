@@ -26,6 +26,11 @@ public class LoginController {
     @Resource
     private Environment env;
 
+    @GetMapping(value = "healthz")
+    public String healthz() {
+        return "SUCCESS";
+    }
+
     @GetMapping(value = "/isLogin")
     public ResultHolder isLogin() {
         if (SecurityUtils.getSubject().isAuthenticated()) {
