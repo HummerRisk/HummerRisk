@@ -1,14 +1,15 @@
 package com.hummer.gateway.config.properties;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 放行白名单配置
- * 
+ *
  * @author harris1943
  */
 @Configuration

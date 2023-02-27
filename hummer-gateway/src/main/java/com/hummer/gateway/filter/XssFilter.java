@@ -1,16 +1,15 @@
 package com.hummer.gateway.filter;
 
-import java.nio.charset.StandardCharsets;
+import com.hummer.common.core.utils.StringUtils;
+import com.hummer.common.core.utils.html.EscapeUtil;
+import com.hummer.gateway.config.properties.XssProperties;
+import io.netty.buffer.ByteBufAllocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DataBufferFactory;
-import org.springframework.core.io.buffer.DataBufferUtils;
-import org.springframework.core.io.buffer.DefaultDataBufferFactory;
-import org.springframework.core.io.buffer.NettyDataBufferFactory;
+import org.springframework.core.io.buffer.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -18,12 +17,10 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
-import com.hummer.common.core.utils.StringUtils;
-import com.hummer.common.core.utils.html.EscapeUtil;
-import com.hummer.gateway.config.properties.XssProperties;
-import io.netty.buffer.ByteBufAllocator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * 跨站脚本过滤器
@@ -112,7 +109,7 @@ public class XssFilter implements GlobalFilter, Ordered
 
     /**
      * 是否是Json请求
-     * 
+     *
      * @param exchange HTTP请求
      */
     public boolean isJsonRequest(ServerWebExchange exchange)

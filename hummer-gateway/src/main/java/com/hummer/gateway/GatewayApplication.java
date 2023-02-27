@@ -1,6 +1,5 @@
 package com.hummer.gateway;
 
-import com.hummer.common.security.annotation.EnableHrFeignClients;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -9,13 +8,9 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
  *
  * @author harris1943
  */
-@EnableHrFeignClients
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class })
 public class GatewayApplication {
     public static void main(String[] args) {
-        // 关闭nacos日志
-        System.setProperty("nacos.logging.default.config.enabled", "false");
-
         SpringApplication.run(GatewayApplication.class, args);
         System.out.println("    {HTTP/1.1, (http/1.1)}{0.0.0.0:8088}");
         System.out.println("    (♥◠‿◠)ﾉﾞ  Gateway网关启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
