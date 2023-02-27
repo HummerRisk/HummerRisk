@@ -2,15 +2,14 @@ package com.hummer.job;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import com.hummer.common.swagger.annotation.EnableCustomSwagger2;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 /**
  * 定时任务
  *
  * @author harris1943
  */
-@EnableCustomSwagger2
-@SpringBootApplication
+@SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
 public class JobApplication {
     public static void main(String[] args) {
         SpringApplication.run(JobApplication.class, args);

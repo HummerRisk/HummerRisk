@@ -40,12 +40,9 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-
-        <!-- Swagger UI -->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${swagger.fox.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <!-- Quartz -->
@@ -71,13 +68,6 @@
         <dependency>
             <groupId>com.hummerrisk</groupId>
             <artifactId>hummer-common-mapper</artifactId>
-            <version>${hummerrisk.version}</version>
-        </dependency>
-
-        <!-- hummer Common Swagger -->
-        <dependency>
-            <groupId>com.hummerrisk</groupId>
-            <artifactId>hummer-common-swagger</artifactId>
             <version>${hummerrisk.version}</version>
         </dependency>
 
