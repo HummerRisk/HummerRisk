@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS `image_repo_setting` (
     `repo_id`                    varchar(50)        DEFAULT NULL COMMENT '镜像仓库ID',
     `repo`                       varchar(512)       DEFAULT NULL COMMENT 'repository 仓库地址',
     `repo_old`                   varchar(512)       DEFAULT NULL COMMENT 'repository 旧仓库地址',
-    `create_time`                bigint(13)         DEFAULT NULL COMMENT '创建时间',
-    `update_time`                bigint(13)         DEFAULT NULL COMMENT '修改时间',
+    `create_time`                bigint             DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint             DEFAULT NULL COMMENT '修改时间',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
@@ -70,12 +70,12 @@ CREATE TABLE IF NOT EXISTS `cloud_native_source_rbac_node` (
     `k8s_id`                     varchar(50)        DEFAULT NULL COMMENT 'sourceID',
     `name`                       varchar(512)       DEFAULT NULL COMMENT 'name',
     `namespace`                  varchar(512)       DEFAULT NULL COMMENT 'namespace',
-    `value`                      int(11)            DEFAULT NULL COMMENT 'value',
+    `value`                      int             DEFAULT NULL COMMENT 'value',
     `symbol`                     varchar(512)       DEFAULT NULL COMMENT 'symbol(本地图片引用地址)',
-    `symbolSize`                 int(11)            DEFAULT NULL COMMENT 'symbolSize',
-    `order`                      bigint(13)         DEFAULT NULL COMMENT 'order',
+    `symbolSize`                 int             DEFAULT NULL COMMENT 'symbolSize',
+    `order`                      bigint             DEFAULT NULL COMMENT 'order',
     `category`                   varchar(128)       DEFAULT NULL COMMENT 'category',
-    `create_time`                bigint(13)         DEFAULT NULL COMMENT '创建时间',
+    `create_time`                bigint             DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `cloud_native_source_rbac_link` (
     `k8s_id`                     varchar(50)        DEFAULT NULL COMMENT 'sourceID',
     `source`                     varchar(50)        DEFAULT NULL COMMENT 'source',
     `target`                     varchar(50)        DEFAULT NULL COMMENT 'target',
-    `create_time`                bigint(13)         DEFAULT NULL COMMENT '创建时间',
+    `create_time`                bigint             DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS `cloud_native_source_rbac_relation` (
     `k8s_id`                     varchar(50)        DEFAULT NULL COMMENT 'sourceId',
     `link_id`                    varchar(50)        DEFAULT NULL COMMENT 'linkId',
     `name`                       varchar(512)       DEFAULT NULL COMMENT 'name',
-    `create_time`                bigint(13)         DEFAULT NULL COMMENT '创建时间',
+    `create_time`                bigint             DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 

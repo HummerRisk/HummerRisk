@@ -1,5 +1,5 @@
 
-ALTER TABLE plugin ADD order_ bigint(13) DEFAULT 0 COMMENT '排序';
+ALTER TABLE plugin ADD order_ bigint     DEFAULT 0 COMMENT '排序';
 
 UPDATE plugin SET order_ = 1 WHERE id = 'hummer-aliyun-plugin';
 UPDATE plugin SET order_ = 2 WHERE id = 'hummer-huawei-plugin';

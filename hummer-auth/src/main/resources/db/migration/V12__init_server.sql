@@ -2,8 +2,8 @@
 CREATE TABLE IF NOT EXISTS server_group (
     `id`                         varchar(50)         NOT NULL COMMENT 'ID',
     `name`                       varchar(128)        DEFAULT NULL UNIQUE COMMENT '虚拟机分组名称',
-    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
-    `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
+    `create_time`                bigint              DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint              DEFAULT NULL COMMENT '更新时间',
     `creator`                    varchar(128)        DEFAULT NULL COMMENT '创建人',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
@@ -16,28 +16,28 @@ CREATE TABLE IF NOT EXISTS server (
     `server_group_id`            varchar(128)        DEFAULT 'd691se79-2e8c-1s54-bbe6-491sd29e91fe' COMMENT 'Server Group ID',
     `plugin_icon`                varchar(256)        DEFAULT 'server.png' COMMENT '图标',
     `status`                     varchar(10)         DEFAULT NULL COMMENT '虚拟机状态',
-    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
-    `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
+    `create_time`                bigint              DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint              DEFAULT NULL COMMENT '更新时间',
     `creator`                    varchar(128)        DEFAULT NULL COMMENT '创建人',
     `ip`                         varchar(128)        DEFAULT NULL COMMENT 'IP',
     `port`                       varchar(128)        DEFAULT '22' COMMENT 'Port',
     `user_name`                  varchar(128)        DEFAULT 'root' COMMENT 'UserName',
     `password`                   varchar(256)        COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'Password',
-    `is_proxy`                   tinyint(1)          DEFAULT 0 COMMENT '是否启用代理',
-    `proxy_id`                   int(11)             DEFAULT NULL COMMENT '代理ID',
+    `is_proxy`                   tinyint             DEFAULT 0 COMMENT '是否启用代理',
+    `proxy_id`                   int              DEFAULT NULL COMMENT '代理ID',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS `server_rule` (
     `id`                         varchar(50)         NOT NULL COMMENT 'ID',
     `name`                       varchar(50)         DEFAULT NULL UNIQUE COMMENT '规则名称',
-    `status`                     tinyint(1)          DEFAULT 1 COMMENT '规则状态(启用1，停用0)',
+    `status`                     tinyint             DEFAULT 1 COMMENT '规则状态(启用1，停用0)',
     `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
     `description`                varchar(1024)       DEFAULT NULL COMMENT '`描述',
     `script`                     mediumtext          DEFAULT NULL COMMENT '脚本',
     `parameter`                  varchar(1024)       DEFAULT NULL COMMENT '参数',
-    `last_modified`              bigint(14)          DEFAULT NULL COMMENT '上次更新时间',
-    `flag`                       tinyint(1)          NOT NULL DEFAULT 0 COMMENT '是否内置',
+    `last_modified`              bigint              DEFAULT NULL COMMENT '上次更新时间',
+    `flag`                       tinyint             NOT NULL DEFAULT 0 COMMENT '是否内置',
     PRIMARY KEY (`id`),
     KEY `IDX_NAME` (`name`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
@@ -74,8 +74,8 @@ CREATE TABLE IF NOT EXISTS `server_result`
     `rule_desc`                  varchar(256)        DEFAULT NULL COMMENT '虚拟机规则描述',
     `result_status`              varchar(45)         DEFAULT NULL COMMENT '检测状态',
     `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
-    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
-    `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
+    `create_time`                bigint              DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint              DEFAULT NULL COMMENT '更新时间',
     `apply_user`                 varchar(50)         DEFAULT NULL COMMENT '申请人',
     `server_group_id`            varchar(128)        DEFAULT 'd691se79-2e8c-1s54-bbe6-491sd29e91fe' COMMENT 'Server Group ID',
     `server_group_name`          varchar(128)        DEFAULT NULL COMMENT '虚拟机分组名称',
@@ -89,12 +89,12 @@ CREATE TABLE IF NOT EXISTS `server_result`
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `server_result_log` (
-    `id`                           int(11)             NOT NULL AUTO_INCREMENT,
+    `id`                           int              NOT NULL AUTO_INCREMENT,
     `result_id`                    varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
-    `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `create_time`                  bigint              DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
     `operation`                    mediumtext          DEFAULT NULL COMMENT '操作内容',
     `output`                       mediumtext          DEFAULT NULL COMMENT '输出',
-    `result`                       tinyint(1)          DEFAULT NULL COMMENT '结果',
+    `result`                       tinyint             DEFAULT NULL COMMENT '结果',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;

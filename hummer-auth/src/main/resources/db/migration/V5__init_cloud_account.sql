@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS plugin (
     `id`                      varchar(50)              NOT NULL COMMENT '插件ID',
     `name`                    varchar(100)             DEFAULT NULL UNIQUE COMMENT '名称',
     `icon`                    varchar(256)             DEFAULT NULL COMMENT '插件图标',
-    `update_time`             bigint(13)               DEFAULT NULL COMMENT '更新时间',
+    `update_time`             bigint                   DEFAULT NULL COMMENT '更新时间',
     `scan_type`               varchar(32)              DEFAULT 'custodian' COMMENT '支持的检测引擎类型',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 ROW_FORMAT = DYNAMIC;
@@ -25,11 +25,11 @@ CREATE TABLE IF NOT EXISTS cloud_account (
     `plugin_name`                varchar(100)        DEFAULT NULL COMMENT '插件名称',
     `plugin_icon`                varchar(256)        DEFAULT NULL COMMENT '插件图标',
     `status`                     varchar(10)         DEFAULT NULL COMMENT '云账号状态',
-    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
-    `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
+    `create_time`                bigint              DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint              DEFAULT NULL COMMENT '更新时间',
     `creator`                    varchar(128)        DEFAULT NULL COMMENT '创建人',
     `regions`                    longtext            DEFAULT NULL COMMENT '区域',
-    `proxy_id`                   int(11)             DEFAULT NULL COMMENT '代理ID',
+    `proxy_id`                   int              DEFAULT NULL COMMENT '代理ID',
     PRIMARY KEY (`id`),
     KEY `IDX_PLUGIN` (`plugin_name`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;

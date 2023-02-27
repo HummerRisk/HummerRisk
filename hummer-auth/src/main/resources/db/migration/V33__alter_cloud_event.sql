@@ -3,19 +3,19 @@
 -- Table cloud_event
 -- ----------------------------
 
-ALTER TABLE `cloud_event_sync_log` MODIFY column `create_time` bigint(13) DEFAULT NULL COMMENT '创建时间';
+ALTER TABLE `cloud_event_sync_log` MODIFY column `create_time` bigint     DEFAULT NULL COMMENT '创建时间';
 
-ALTER TABLE `cloud_event_sync_log` ADD `proxy_id` int(11) DEFAULT NULL COMMENT '代理ID';
+ALTER TABLE `cloud_event_sync_log` ADD `proxy_id` int  DEFAULT NULL COMMENT '代理ID';
 
 ALTER TABLE `cloud_event_sync_log` ADD `region_name` varchar(1024) DEFAULT NULL COMMENT '区域名称';
 
 ALTER TABLE `cloud_event_region_log` ADD `region_name` varchar(64) DEFAULT NULL COMMENT '区域名称';
 
-ALTER TABLE `cloud_event` MODIFY column `event_time` bigint(13) DEFAULT NULL COMMENT '事件时间';
+ALTER TABLE `cloud_event` MODIFY column `event_time` bigint     DEFAULT NULL COMMENT '事件时间';
 
 ALTER TABLE `cloud_event` MODIFY column `source_ip_address` varchar(64) DEFAULT NULL COMMENT '访问源地址';
 
-ALTER TABLE `cloud_event` ADD `event_rating` int(2) DEFAULT NULL COMMENT '事件级别 0 正常 1 警告 2 事故';
+ALTER TABLE `cloud_event` ADD `event_rating` int    DEFAULT NULL COMMENT '事件级别 0 正常 1 警告 2 事故';
 
 ALTER TABLE `cloud_event` ADD `resource_id` varchar(64) DEFAULT NULL COMMENT '资源id';
 
@@ -49,15 +49,15 @@ ALTER TABLE `cloud_task` ADD `suggestion` varchar(255) DEFAULT NULL COMMENT '优
 -- Table image
 -- ----------------------------
 
-ALTER TABLE `image` ADD `unfixed` tinyint(1) DEFAULT true COMMENT 'unfixed: true/false';
+ALTER TABLE `image` ADD `unfixed` tinyint    DEFAULT true COMMENT 'unfixed: true/false';
 
 ALTER TABLE `image` ADD `serverty` varchar(255) DEFAULT '["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"]' COMMENT 'serverty: CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN';
 
-ALTER TABLE `image_result` ADD `unfixed` tinyint(1) DEFAULT true COMMENT 'unfixed: true/false';
+ALTER TABLE `image_result` ADD `unfixed` tinyint    DEFAULT true COMMENT 'unfixed: true/false';
 
 ALTER TABLE `image_result` ADD `serverty` varchar(255) DEFAULT '["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"]' COMMENT 'serverty: CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN';
 
-ALTER TABLE `history_image_task` ADD `unfixed` tinyint(1) DEFAULT true COMMENT 'unfixed: true/false';
+ALTER TABLE `history_image_task` ADD `unfixed` tinyint    DEFAULT true COMMENT 'unfixed: true/false';
 
 ALTER TABLE `history_image_task` ADD `serverty` varchar(255) DEFAULT '["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"]' COMMENT 'serverty: CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN';
 
@@ -74,14 +74,14 @@ CREATE TABLE IF NOT EXISTS `server_certificate` (
     `public_key`                 mediumtext          DEFAULT NULL COMMENT '密钥',
     `public_key_path`            varchar(128)        DEFAULT NULL COMMENT '密钥路径',
     `creator`                    varchar(128)        DEFAULT NULL COMMENT '创建人',
-    `last_modified`              bigint(14)          DEFAULT NULL COMMENT '上次更新时间',
-    `proxy_id`                   int(11)             DEFAULT NULL COMMENT '代理ID',
+    `last_modified`              bigint              DEFAULT NULL COMMENT '上次更新时间',
+    `proxy_id`                   int              DEFAULT NULL COMMENT '代理ID',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
 ALTER TABLE `server` ADD `certificate_id` varchar(50) DEFAULT NULL COMMENT 'certificate id';
 
-ALTER TABLE `server` ADD `is_certificate` tinyint(1) DEFAULT 0 COMMENT '是否绑定凭证';
+ALTER TABLE `server` ADD `is_certificate` tinyint    DEFAULT 0 COMMENT '是否绑定凭证';
 
 -- ----------------------------
 -- Table code

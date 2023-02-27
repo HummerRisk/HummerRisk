@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS `rule` (
     `id`                         varchar(50)         NOT NULL,
     `name`                       varchar(50)         DEFAULT NULL UNIQUE COMMENT '规则名称',
-    `status`                     tinyint(1)          DEFAULT 1 COMMENT '规则状态(启用1，停用0)',
+    `status`                     tinyint             DEFAULT 1 COMMENT '规则状态(启用1，停用0)',
     `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
     `description`                varchar(1024)       DEFAULT NULL COMMENT '`描述',
     `script`                     mediumtext          DEFAULT NULL COMMENT '脚本',
@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS `rule` (
     `plugin_id`                  varchar(64)         DEFAULT NULL COMMENT '插件ID',
     `plugin_name`                varchar(64)         DEFAULT NULL COMMENT '云平台名称',
     `plugin_icon`                varchar(128)        DEFAULT NULL COMMENT '云平台图标',
-    `last_modified`              bigint(14)          DEFAULT NULL COMMENT '上次更新时间',
-    `flag`                       tinyint(1)          NOT NULL DEFAULT 0 COMMENT '是否内置',
+    `last_modified`              bigint              DEFAULT NULL COMMENT '上次更新时间',
+    `flag`                       tinyint             NOT NULL DEFAULT 0 COMMENT '是否内置',
     `scan_type`                  varchar(32)         DEFAULT NULL COMMENT '检测类型',
     PRIMARY KEY (`id`),
     KEY `IDX_NAME` (`name`)
@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS `rule` (
 CREATE TABLE IF NOT EXISTS `rule_tag` (
     `tag_key`                    varchar(50)         NOT NULL UNIQUE COMMENT '标签标识',
     `tag_name`                   varchar(100)        NOT NULL UNIQUE COMMENT '标签名',
-    `_index`                     int(11)             NOT NULL AUTO_INCREMENT COMMENT '索引',
-    `flag`                       tinyint(1)          NOT NULL DEFAULT 0 COMMENT '是否内置',
+    `_index`                     int              NOT NULL AUTO_INCREMENT COMMENT '索引',
+    `flag`                       tinyint             NOT NULL DEFAULT 0 COMMENT '是否内置',
     PRIMARY KEY (`tag_key`),
     KEY `IDX_KEY_NAME` (`tag_name`),
     KEY `IDX_INDEX` (`_index`)
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `rule_tag` (
 
 
 CREATE TABLE IF NOT EXISTS `rule_tag_mapping` (
-    `id`                         int(10)             NOT NULL AUTO_INCREMENT,
+    `id`                         int                 NOT NULL AUTO_INCREMENT,
     `rule_id`                    varchar(50)         NOT NULL COMMENT '规则ID',
     `tag_key`                    varchar(50)         NOT NULL COMMENT '标签标识',
     PRIMARY KEY (`id`),
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `rule_type` (
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS `rule_account_parameter` (
-    `id`                         int(11)             NOT NULL AUTO_INCREMENT,
+    `id`                         int              NOT NULL AUTO_INCREMENT,
     `account_id`                 varchar(50)         DEFAULT NULL COMMENT '云账号ID',
     `rule_id`                    varchar(50)         DEFAULT NULL COMMENT '规则ID',
     `parameter`                  varchar(1024)       DEFAULT NULL COMMENT '参数',
@@ -54,17 +54,17 @@ CREATE TABLE IF NOT EXISTS `rule_account_parameter` (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `rule_group` (
-    `id`                         int(10)             NOT NULL AUTO_INCREMENT,
+    `id`                         int                 NOT NULL AUTO_INCREMENT,
     `name`                       varchar(50)         DEFAULT NULL COMMENT '规则组名称',
     `description`                varchar(1024)       DEFAULT NULL COMMENT '规则组描述',
     `level`                      varchar(64)         DEFAULT NULL COMMENT '风险级别',
     `plugin_id`                  varchar(64)         DEFAULT NULL COMMENT '插件ID',
-    `flag`                       tinyint(1)          NOT NULL DEFAULT 0 COMMENT '是否内置',
+    `flag`                       tinyint             NOT NULL DEFAULT 0 COMMENT '是否内置',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `rule_group_mapping` (
-    `id`                         int(10)             NOT NULL AUTO_INCREMENT,
+    `id`                         int                 NOT NULL AUTO_INCREMENT,
     `rule_id`                    varchar(50)         DEFAULT NULL COMMENT '规则ID',
     `group_id`                   varchar(50)         DEFAULT NULL COMMENT '规则组ID',
     PRIMARY KEY (`id`),
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `rule_group_mapping` (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `rule_inspection_report` (
-    `id`                         int(10)             NOT NULL AUTO_INCREMENT,
+    `id`                         int                 NOT NULL AUTO_INCREMENT,
     `project`                    varchar(256)        DEFAULT NULL COMMENT '检查项目',
     `item_sort_first_level`      varchar(50)         DEFAULT NULL COMMENT '检查项一级分类',
     `item_sort_second_level`     varchar(50)         DEFAULT NULL COMMENT '检查项二级分类',
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `rule_inspection_report` (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `rule_inspection_report_mapping` (
-    `id`                         int(10)             NOT NULL AUTO_INCREMENT,
+    `id`                         int                 NOT NULL AUTO_INCREMENT,
     `rule_id`                    varchar(50)         DEFAULT NULL COMMENT '规则ID',
     `report_id`                  varchar(50)         DEFAULT NULL COMMENT '等保合规检查报告ID',
     PRIMARY KEY (`id`),

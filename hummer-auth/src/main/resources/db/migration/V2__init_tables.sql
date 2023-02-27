@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS user_key (
     `user_id`     varchar(50)           NOT NULL COMMENT '用户ID',
     `access_key`  varchar(50)           NOT NULL COMMENT 'access_key',
     `secret_key`  varchar(50)           NOT NULL COMMENT 'secret key',
-    `create_time` bigint(13)            NOT NULL COMMENT '创建时间',
+    `create_time` bigint                NOT NULL COMMENT '创建时间',
     `status`      varchar(10)           DEFAULT NULL COMMENT '状态',
     PRIMARY KEY (`id`),
     UNIQUE KEY `IDX_AK` (`access_key`),
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS operation_log (
     `resource_id`         varchar(64)         DEFAULT NULL COMMENT '资源ID',
     `resource_name`       varchar(256)        DEFAULT NULL COMMENT '资源名称',
     `operation`           varchar(256)        DEFAULT NULL COMMENT '操作',
-    `time`                bigint(13)          DEFAULT NULL COMMENT '操作时间',
+    `time`                bigint              DEFAULT NULL COMMENT '操作时间',
     `message`             mediumtext          DEFAULT NULL COMMENT '操作信息',
     `source_ip`           varchar(50)         DEFAULT NULL COMMENT '操作方IP',
     PRIMARY KEY (`id`),
@@ -74,16 +74,16 @@ CREATE TABLE IF NOT EXISTS operation_log (
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS message_task (
-    `id`                  int(10)           NOT NULL AUTO_INCREMENT,
+    `id`                  int               NOT NULL AUTO_INCREMENT,
     `type`                varchar(50)       DEFAULT NULL COMMENT '消息类型',
     `event`               varchar(255)      DEFAULT NULL COMMENT '通知事件类型',
     `user_id`             varchar(512)      DEFAULT NULL COMMENT '接收人ID',
     `task_type`           varchar(64)       DEFAULT NULL COMMENT '任务类型',
     `identification`      varchar(255)      DEFAULT NULL COMMENT '凭证',
     `template`            TEXT              DEFAULT NULL COMMENT '模板',
-    `is_set`              tinyint(1)        DEFAULT NULL COMMENT '是否设置',
+    `is_set`              tinyint           DEFAULT NULL COMMENT '是否设置',
     `text_template`       text              DEFAULT NULL COMMENT '是否设置',
-    `create_time`         bigint(13)        DEFAULT NULL COMMENT '创建时间',
+    `create_time`         bigint            DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
@@ -92,20 +92,20 @@ CREATE TABLE IF NOT EXISTS message_order (
     `account_id`                varchar(64)         DEFAULT NULL COMMENT '云账号ID',
     `account_name`              varchar(64)         DEFAULT NULL COMMENT '云账号名称',
     `status`                    varchar(64)         DEFAULT NULL COMMENT '消息通知状态',
-    `create_time`               bigint(13)          DEFAULT NULL COMMENT '创建时间',
-    `send_time`                 bigint(13)          DEFAULT NULL COMMENT '发送消息通知时间',
+    `create_time`               bigint              DEFAULT NULL COMMENT '创建时间',
+    `send_time`                 bigint              DEFAULT NULL COMMENT '发送消息通知时间',
     `scan_type`                 varchar(32)         DEFAULT 'CLOUD' COMMENT '检测类型',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS message_order_item (
-    `id`                        int(10)             NOT NULL AUTO_INCREMENT,
+    `id`                        int                 NOT NULL AUTO_INCREMENT,
     `message_order_id`          varchar(64)         DEFAULT NULL COMMENT '消息订单ID',
     `task_id`                   varchar(64)         DEFAULT NULL COMMENT '检测任务ID',
     `task_name`                 varchar(64)         DEFAULT NULL COMMENT '检测任务名称',
     `status`                    varchar(64)         DEFAULT NULL COMMENT '消息通知状态',
-    `create_time`               bigint(13)          DEFAULT NULL COMMENT '创建时间',
-    `send_time`                 bigint(13)          DEFAULT NULL COMMENT '发送消息通知时间',
+    `create_time`               bigint              DEFAULT NULL COMMENT '创建时间',
+    `send_time`                 bigint              DEFAULT NULL COMMENT '发送消息通知时间',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 

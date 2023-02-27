@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `cloud_native_result_kubench`
     `title`                      longtext            DEFAULT NULL COMMENT 'title',
     `number`                     varchar(50)         DEFAULT NULL COMMENT 'number',
     `severity`                   varchar(128)        DEFAULT NULL COMMENT 'severity',
-    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `create_time`                bigint              DEFAULT NULL COMMENT '创建时间',
     `description`                longtext            DEFAULT NULL COMMENT 'description',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;

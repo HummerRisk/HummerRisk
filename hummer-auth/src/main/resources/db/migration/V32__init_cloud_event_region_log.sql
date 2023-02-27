@@ -1,9 +1,9 @@
 CREATE TABLE `cloud_event_region_log` (
-      `id` int(8) NOT NULL AUTO_INCREMENT COMMENT 'id',
-      `log_id` int(8) DEFAULT NULL COMMENT '同步日志ID',
+      `id` int    NOT NULL AUTO_INCREMENT COMMENT 'id',
+      `log_id` int    DEFAULT NULL COMMENT '同步日志ID',
       `region` varchar(512) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '区域',
-      `data_count` int(6) DEFAULT NULL COMMENT '同步数据量',
-      `status` int(1) DEFAULT NULL COMMENT '状态：0 同步中，1成功，2失败',
+      `data_count` int    DEFAULT NULL COMMENT '同步数据量',
+      `status` int    DEFAULT NULL COMMENT '状态：0 同步中，1成功，2失败',
       `start_time` datetime DEFAULT NULL COMMENT '日志实际开始时间',
       `end_time` datetime DEFAULT NULL COMMENT '日志实际结束时间',
       `create_time` datetime DEFAULT NULL COMMENT '创建时间',
@@ -13,11 +13,11 @@ CREATE TABLE `cloud_event_region_log` (
 
 ALTER TABLE `cloud_event_sync_log` MODIFY column `region` varchar(512) DEFAULT NULL COMMENT '区域';
 
-ALTER TABLE `cloud_event_sync_log` MODIFY column `create_time` bigint(13) DEFAULT NULL COMMENT '创建时间';
+ALTER TABLE `cloud_event_sync_log` MODIFY column `create_time` bigint     DEFAULT NULL COMMENT '创建时间';
 
-ALTER TABLE `cloud_event` MODIFY column `event_time` bigint(13) DEFAULT NULL COMMENT '事件时间';
+ALTER TABLE `cloud_event` MODIFY column `event_time` bigint     DEFAULT NULL COMMENT '事件时间';
 
-ALTER TABLE `cloud_event_sync_log` MODIFY column `status` int(1) DEFAULT NULL COMMENT '状态：0 同步中，1成功，2失败，3告警';
+ALTER TABLE `cloud_event_sync_log` MODIFY column `status` int    DEFAULT NULL COMMENT '状态：0 同步中，1成功，2失败，3告警';
 
 ALTER TABLE `server` MODIFY column `is_public_key` varchar(32) DEFAULT NULL COMMENT '密钥类型';
 

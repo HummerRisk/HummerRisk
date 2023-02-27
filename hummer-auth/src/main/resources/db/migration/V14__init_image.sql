@@ -3,8 +3,8 @@ CREATE TABLE IF NOT EXISTS `image_repo` (
     `id`                         varchar(50)         NOT NULL COMMENT 'ID',
     `name`                       varchar(128)        DEFAULT NULL COMMENT '镜像仓库名称',
     `status`                     varchar(10)         DEFAULT 'VALID' COMMENT '镜像仓库连接状态',
-    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
-    `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
+    `create_time`                bigint              DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint              DEFAULT NULL COMMENT '更新时间',
     `creator`                    varchar(128)        DEFAULT NULL COMMENT '创建人',
     `repo`                       varchar(128)        DEFAULT NULL COMMENT '仓库地址',
     `user_name`                  varchar(128)        DEFAULT NULL COMMENT '仓库用户名',
@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS `image` (
     `name`                       varchar(128)        DEFAULT NULL COMMENT '镜像名称',
     `plugin_icon`                varchar(256)        DEFAULT 'docker.png' COMMENT '图标地址/opt/hummerrisk/image/',
     `status`                     varchar(10)         DEFAULT 'VALID' COMMENT '镜像状态',
-    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
-    `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
+    `create_time`                bigint              DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint              DEFAULT NULL COMMENT '更新时间',
     `creator`                    varchar(128)        DEFAULT NULL COMMENT '创建人',
     `repo_id`                    varchar(50)         DEFAULT NULL COMMENT '镜像仓库ID',
     `size`                       varchar(128)        DEFAULT NULL COMMENT '镜像大小',
@@ -26,23 +26,23 @@ CREATE TABLE IF NOT EXISTS `image` (
     `image_url`                  varchar(128)        DEFAULT NULL COMMENT '镜像名称',
     `image_tag`                  varchar(128)        DEFAULT NULL COMMENT '镜像标签',
     `path`                       varchar(128)        DEFAULT NULL COMMENT '镜像包持久化存储路径/opt/hummerrisk/image/',
-    `is_image_repo`              tinyint(1)          DEFAULT 0 COMMENT '是否绑定镜像仓库',
-    `is_image_icon`              tinyint(1)          DEFAULT 0 COMMENT '是否上传镜像图片',
-    `is_proxy`                   tinyint(1)          DEFAULT 0 COMMENT '是否启用代理',
-    `proxy_id`                   int(11)             DEFAULT NULL COMMENT '代理ID',
+    `is_image_repo`              tinyint             DEFAULT 0 COMMENT '是否绑定镜像仓库',
+    `is_image_icon`              tinyint             DEFAULT 0 COMMENT '是否上传镜像图片',
+    `is_proxy`                   tinyint             DEFAULT 0 COMMENT '是否启用代理',
+    `proxy_id`                   int              DEFAULT NULL COMMENT '代理ID',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS `image_rule` (
     `id`                         varchar(50)         NOT NULL COMMENT 'ID',
     `name`                       varchar(50)         DEFAULT NULL UNIQUE COMMENT '规则名称',
-    `status`                     tinyint(1)          DEFAULT 1 COMMENT '规则状态(启用1，停用0)',
+    `status`                     tinyint             DEFAULT 1 COMMENT '规则状态(启用1，停用0)',
     `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
     `description`                varchar(1024)       DEFAULT NULL COMMENT '`描述',
     `script`                     mediumtext          DEFAULT NULL COMMENT '脚本',
     `parameter`                  varchar(1024)       DEFAULT NULL COMMENT '参数',
-    `last_modified`              bigint(14)          DEFAULT NULL COMMENT '上次更新时间',
-    `flag`                       tinyint(1)          NOT NULL DEFAULT 0 COMMENT '是否内置',
+    `last_modified`              bigint              DEFAULT NULL COMMENT '上次更新时间',
+    `flag`                       tinyint             NOT NULL DEFAULT 0 COMMENT '是否内置',
     PRIMARY KEY (`id`),
     KEY `IDX_NAME` (`name`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
@@ -62,8 +62,8 @@ CREATE TABLE IF NOT EXISTS `image_result`
     `rule_desc`                  varchar(256)        DEFAULT NULL COMMENT '镜像检测规则描述',
     `result_status`              varchar(45)         DEFAULT NULL COMMENT '检测状态',
     `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
-    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
-    `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
+    `create_time`                bigint              DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint              DEFAULT NULL COMMENT '更新时间',
     `apply_user`                 varchar(50)         DEFAULT NULL COMMENT '创建人ID',
     `user_name`                  varchar(128)        DEFAULT NULL COMMENT '创建人名称',
     `return_log`                 longtext            DEFAULT NULL COMMENT 'return log',
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `image_result`
     `grype_json`                 longtext            DEFAULT NULL COMMENT 'grype json',
     `syft_table`                 longtext            DEFAULT NULL COMMENT 'syft table',
     `syft_json`                  longtext            DEFAULT NULL COMMENT 'syft json',
-    `return_sum`                 bigint(13)          DEFAULT 0 COMMENT '输出检测结果漏洞数',
+    `return_sum`                 bigint              DEFAULT 0 COMMENT '输出检测结果漏洞数',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
@@ -80,19 +80,19 @@ CREATE TABLE IF NOT EXISTS `image_result_item` (
     `result_id`                  varchar(50)         DEFAULT NULL COMMENT 'result主键ID',
     `name`                       varchar(128)        DEFAULT NULL COMMENT '镜像检测名称(别名)',
     `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
-    `create_time`                bigint(13)          DEFAULT NULL COMMENT '创建时间',
-    `update_time`                bigint(13)          DEFAULT NULL COMMENT '更新时间',
+    `create_time`                bigint              DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint              DEFAULT NULL COMMENT '更新时间',
     `resource`                   longtext            DEFAULT NULL COMMENT '资源JSON',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `image_result_log` (
-    `id`                           int(11)             NOT NULL AUTO_INCREMENT,
+    `id`                           int              NOT NULL AUTO_INCREMENT,
     `result_id`                    varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
-    `create_time`                  bigint(13)          DEFAULT NULL COMMENT '创建时间',
+    `create_time`                  bigint              DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
     `operation`                    mediumtext          DEFAULT NULL COMMENT '操作内容',
     `output`                       mediumtext          DEFAULT NULL COMMENT '输出',
-    `result`                       tinyint(1)          DEFAULT NULL COMMENT '结果',
+    `result`                       tinyint             DEFAULT NULL COMMENT '结果',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
