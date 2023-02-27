@@ -7,6 +7,9 @@ spring:
   application:
     # 应用名称
     name: hummer-flyway
+  profiles:
+    # 环境配置
+    active: prod
   cloud:
     bootstrap:
       enabled: true
