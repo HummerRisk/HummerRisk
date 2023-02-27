@@ -64,8 +64,9 @@
 </template>
 
 <script>
-import {saveLocalStorage} from '@/common/js/utils';
-import {DEFAULT_LANGUAGE} from "@/common/js/constants";
+import { saveLocalStorage } from '@/common/js/utils';
+import { DEFAULT_LANGUAGE } from "@/common/js/constants";
+import { signinUrl, isLoginUrl, ssoSigninUrl, languageUrl, ssoLoginUrl } from "@/api/auth/auth";
 
 /* eslint-disable */
   export default {
@@ -89,14 +90,14 @@ import {DEFAULT_LANGUAGE} from "@/common/js/constants";
         },
         msg: '',
         ready: false,
-        loginUrl: 'signin',
+        loginUrl: signinUrl,
       }
     },
     beforeCreate() {
-      this.$get("/isLogin").then(response => {
+      this.$get(isLoginUrl).then(response => {
         if (!response.data.success) {
           if (response.data.message === 'sso') {
-            window.location.href = "/sso/login"
+            window.location.href = ssoLoginUrl;
           } else {
             this.ready = true;
           }
@@ -131,11 +132,11 @@ import {DEFAULT_LANGUAGE} from "@/common/js/constants";
           if (valid) {
             switch (this.form.authenticate) {
               case "LOCAL":
-                this.loginUrl = "/signin";
+                this.loginUrl = signinUrl;
                 this.doLogin();
                 break;
               default:
-                this.loginUrl = "/sso/signin";
+                this.loginUrl = ssoSigninUrl;
                 this.doLogin();
             }
           } else {
@@ -152,7 +153,7 @@ import {DEFAULT_LANGUAGE} from "@/common/js/constants";
       },
       getLanguage(language) {
         if (!language) {
-          this.$get("language", response => {
+          this.$get(languageUrl, response => {
             language = response.data;
             localStorage.setItem(DEFAULT_LANGUAGE, language);
             window.location.href = "/"
