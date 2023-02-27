@@ -1,8 +1,8 @@
 package com.hummer.common.core.swagger;
 
-import com.google.common.base.Predicate;
 import com.hummer.common.core.swagger.annotation.ApiHasModules;
 import com.hummer.common.core.swagger.annotation.ApiLackModules;
+import org.apache.commons.collections4.Predicate;
 import springfox.documentation.RequestHandler;
 
 import java.util.Arrays;
