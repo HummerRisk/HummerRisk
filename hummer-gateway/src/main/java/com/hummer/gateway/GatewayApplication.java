@@ -15,7 +15,7 @@ public class GatewayApplication {
         System.setProperty("nacos.logging.default.config.enabled", "false");
 
         SpringApplication.run(GatewayApplication.class, args);
-        System.out.println("    {HTTP/1.1, (http/1.1)}{0.0.0.0:8080}");
+        System.out.println("    {HTTP/1.1, (http/1.1)}{0.0.0.0:8088}");
         System.out.println("    (♥◠‿◠)ﾉﾞ  Gateway网关启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
                 "\n" +
                 "  ██╗  ██╗██╗   ██╗███╗   ███╗███╗   ███╗███████╗██████╗      ██████╗  █████╗ ████████╗███████╗██╗    ██╗ █████╗ ██╗   ██╗\n" +

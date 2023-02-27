@@ -71,7 +71,7 @@ services:
       context: ./hummer/gateway
       dockerfile: dockerfile
     ports:
-      - "8080:8080"
+      - "8088:8088"
     depends_on:
       - hummer-redis
     links:

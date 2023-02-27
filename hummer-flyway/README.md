@@ -4,7 +4,7 @@
 com.hummer     
 ├── hummer-ui                                          // 前端框架 [80]
 ├── hummer-flyway                                      // 数据迁移 [9000]
-├── hummer-gateway                                     // 网关模块 [8080]
+├── hummer-gateway                                     // 网关模块 [8088]
 ├── hummer-auth                                        // 认证中心 [9200]
 ├── hummer-api                                         // 接口模块
 │       └── hummer-api-system                          // 系统接口
