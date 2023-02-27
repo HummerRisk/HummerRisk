@@ -2,15 +2,14 @@ package com.hummer.system;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import com.hummer.common.swagger.annotation.EnableCustomSwagger2;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 /**
  * 系统模块
  *
  * @author harris1943
  */
-@EnableCustomSwagger2
-@SpringBootApplication
+@SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
 public class SystemApplication {
     public static void main(String[] args) {
         SpringApplication.run(SystemApplication.class, args);
