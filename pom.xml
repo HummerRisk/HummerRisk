@@ -19,7 +19,7 @@
         <java.version>17</java.version>
         <spring-boot.version>3.0.0</spring-boot.version>
         <spring-cloud.version>2022.0.1</spring-cloud.version>
-        <spring-cloud-alibaba.version>2.2.10-RC1</spring-cloud-alibaba.version>
+        <spring-cloud-alibaba.version>2022.0.0.0-RC1</spring-cloud-alibaba.version>
         <swagger.fox.version>3.0.0</swagger.fox.version>
         <tobato.version>1.27.2</tobato.version>
         <pagehelper.version>5.3.0</pagehelper.version>
