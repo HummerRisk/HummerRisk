@@ -1,16 +1,15 @@
-package com.hummer.system;
+package com.hummer.k8s;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import com.hummer.common.swagger.annotation.EnableCustomSwagger2;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 /**
  * 云原生模块
  *
  * @author harris1943
  */
-@EnableCustomSwagger2
-@SpringBootApplication
+@SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
 public class K8sApplication {
     public static void main(String[] args) {
         SpringApplication.run(K8sApplication.class, args);
