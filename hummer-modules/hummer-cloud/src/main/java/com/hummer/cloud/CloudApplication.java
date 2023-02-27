@@ -2,15 +2,14 @@ package com.hummer.cloud;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import com.hummer.common.swagger.annotation.EnableCustomSwagger2;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 /**
  * 混合云模块
  *
  * @author harris1943
  */
-@EnableCustomSwagger2
-@SpringBootApplication
+@SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
 public class CloudApplication {
     public static void main(String[] args) {
         SpringApplication.run(CloudApplication.class, args);
