@@ -74,6 +74,13 @@
             <version>${hummerrisk.version}</version>
         </dependency>
 
+        <!-- Hummer Common security-->
+        <dependency>
+            <groupId>com.hummerrisk</groupId>
+            <artifactId>hummer-common-security</artifactId>
+            <version>${hummerrisk.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -1,5 +1,6 @@
 package com.hummer.k8s;
 
+import com.hummer.common.security.annotation.EnableHrFeignClients;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -9,6 +10,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
  *
  * @author harris1943
  */
+@EnableHrFeignClients
 @SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
 public class K8sApplication {
     public static void main(String[] args) {

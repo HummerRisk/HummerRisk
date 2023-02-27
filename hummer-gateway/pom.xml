@@ -77,6 +77,13 @@
             </exclusions>
         </dependency>
 
+        <!-- Hummer Common security-->
+        <dependency>
+            <groupId>com.hummerrisk</groupId>
+            <artifactId>hummer-common-security</artifactId>
+            <version>${hummerrisk.version}</version>
+        </dependency>
+
         <!-- Swagger -->
         <dependency>
             <groupId>io.springfox</groupId>
