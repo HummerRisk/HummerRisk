@@ -59,13 +59,6 @@
             <version>${mybatis.spring.boot.starter.version}</version>
         </dependency>
 
-        <!-- Hummer Common mapper-->
-        <dependency>
-            <groupId>com.hummerrisk</groupId>
-            <artifactId>hummer-common-mapper</artifactId>
-            <version>${hummerrisk.version}</version>
-        </dependency>
-
         <!-- flyway -->
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -89,6 +82,13 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
+        </dependency>
+
+        <!-- Hummer api system-->
+        <dependency>
+            <groupId>com.hummerrisk</groupId>
+            <artifactId>hummer-api-system</artifactId>
+            <version>${hummerrisk.version}</version>
         </dependency>
 
         <!-- Hummer Common security-->

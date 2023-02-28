@@ -1,73 +1,73 @@
 package com.hummer.auth.controller;
 
-import com.hummer.common.core.constant.SsoMode;
-import com.hummer.common.core.constant.UserSource;
-import com.hummer.common.core.user.SessionUser;
-import com.hummer.common.core.utils.SessionUtils;
-import com.hummer.common.mapper.domain.request.LoginRequest;
-import com.hummer.common.mapper.service.ResultHolder;
-import com.hummer.common.mapper.service.UserService;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.SecurityUtils;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.core.env.Environment;
+import com.hummer.auth.form.LoginBody;
+import com.hummer.auth.form.RegisterBody;
+import com.hummer.auth.service.SysLoginService;
+import com.hummer.common.core.domain.R;
+import com.hummer.common.core.utils.JwtUtils;
+import com.hummer.common.security.auth.AuthUtil;
+import com.hummer.common.security.service.TokenService;
+import com.hummer.common.security.utils.SecurityUtils;
+import com.hummer.system.api.model.LoginUser;
+import jakarta.servlet.http.HttpServletRequest;
+import com.hummer.common.core.utils.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
-
-import javax.annotation.Resource;
 
 @ApiIgnore
 @RestController
 @RequestMapping
 public class LoginController {
 
-    @Resource
-    UserService userService;
-    @Resource
-    Environment env;
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private SysLoginService sysLoginService;
 
     @GetMapping(value = "healthz")
     public String healthz() {
         return "SUCCESS";
     }
 
-    @GetMapping(value = "/isLogin")
-    public ResultHolder isLogin() {
-        if (SecurityUtils.getSubject().isAuthenticated()) {
-            SessionUser user = SessionUtils.getUser();
-            if ((user!= null) && StringUtils.isBlank(user.getLanguage()))
-                    user.setLanguage(LocaleContextHolder.getLocale().toString());
-            return ResultHolder.success(user);
+    @PostMapping("login")
+    public R<?> login(@RequestBody LoginBody form) {
+        // 用户登录
+        LoginUser userInfo = sysLoginService.login(form.getUsername(), form.getPassword());
+        // 获取登录token
+        return R.ok(tokenService.createToken(userInfo));
+    }
+
+    @DeleteMapping("logout")
+    public R<?> logout(HttpServletRequest request) {
+        String token = SecurityUtils.getToken(request);
+        if (StringUtils.isNotEmpty(token)) {
+            String username = JwtUtils.getUserName(token);
+            // 删除用户缓存记录
+            AuthUtil.logoutByToken(token);
+            // 记录用户退出日志
+            sysLoginService.logout(username);
         }
-        String ssoMode = env.getProperty("sso.mode");
-        if (ssoMode != null && StringUtils.equalsIgnoreCase(SsoMode.CAS.name(), ssoMode)) {
-            return ResultHolder.error("sso");
+        return R.ok();
+    }
+
+    @PostMapping("refresh")
+    public R<?> refresh(HttpServletRequest request) {
+        LoginUser loginUser = tokenService.getLoginUser(request);
+        if (StringUtils.isNotNull(loginUser)) {
+            // 刷新令牌有效期
+            tokenService.refreshToken(loginUser);
+            return R.ok();
         }
-        return ResultHolder.error("");
+        return R.ok();
     }
 
-    @PostMapping(value = "/signin")
-    public ResultHolder login(@RequestBody LoginRequest request) {
-        SecurityUtils.getSubject().getSession().setAttribute("authenticate", UserSource.LOCAL.name());
-        return userService.login(request);
-    }
-
-    @GetMapping(value = "/currentUser")
-    public ResultHolder currentUser() {
-        return ResultHolder.success(SecurityUtils.getSubject().getSession().getAttribute("user"));
-    }
-
-    @GetMapping(value = "/signout")
-    public ResultHolder logout() throws Exception {
-        userService.logout();
-        SecurityUtils.getSubject().logout();
-        return ResultHolder.success("");
-    }
-
-    /*Get default language*/
-    @GetMapping(value = "/language")
-    public String getDefaultLanguage() {
-        return userService.getDefaultLanguage();
+    @PostMapping("register")
+    public R<?> register(@RequestBody RegisterBody registerBody) {
+        // 用户注册
+        sysLoginService.register(registerBody.getUsername(), registerBody.getPassword());
+        return R.ok();
     }
 
 }
