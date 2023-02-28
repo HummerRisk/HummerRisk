@@ -5,8 +5,7 @@ package com.hummer.common.core.constant;
  *
  * @author harris1943
  */
-public class TokenConstants
-{
+public class TokenConstants {
     /**
      * 令牌自定义标识
      */

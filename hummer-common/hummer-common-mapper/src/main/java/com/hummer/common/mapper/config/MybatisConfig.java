@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Properties;
 
 @Configuration
-@MapperScan(basePackages = {"com.hummerrisk.base.mapper", "com.hummerrisk.xpack.mapper"}, sqlSessionFactoryRef = "sqlSessionFactory")
+@MapperScan(basePackages = {"com.hummer.common.mapper.mapper"}, sqlSessionFactoryRef = "sqlSessionFactory")
 @EnableTransactionManagement
 public class MybatisConfig {
 

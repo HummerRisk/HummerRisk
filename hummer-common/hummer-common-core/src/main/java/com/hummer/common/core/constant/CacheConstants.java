@@ -2,11 +2,10 @@ package com.hummer.common.core.constant;
 
 /**
  * 缓存常量信息
- * 
+ *
  * @author harris1943
  */
-public class CacheConstants
-{
+public class CacheConstants {
     /**
      * 缓存有效期，默认720（分钟）
      */
@@ -51,4 +50,9 @@ public class CacheConstants
      * 登录账户密码错误次数 redis key
      */
     public static final String PWD_ERR_CNT_KEY = "pwd_err_cnt:";
+
+    /**
+     * 登录IP黑名单 cache key
+     */
+    public static final String SYS_LOGIN_BLACKIPLIST = SYS_CONFIG_KEY + "sys.login.blackIPList";
 }
