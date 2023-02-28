@@ -22,9 +22,9 @@ import javax.annotation.Resource;
 public class LoginController {
 
     @Resource
-    private UserService userService;
+    UserService userService;
     @Resource
-    private Environment env;
+    Environment env;
 
     @GetMapping(value = "healthz")
     public String healthz() {

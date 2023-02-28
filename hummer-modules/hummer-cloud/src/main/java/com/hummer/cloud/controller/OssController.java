@@ -21,7 +21,7 @@ import com.hummer.common.core.utils.Pager;
 import com.hummer.common.mapper.service.ResultHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

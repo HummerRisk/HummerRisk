@@ -3,7 +3,7 @@ package com.hummer.common.core.utils.ip;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import com.hummer.common.core.utils.StringUtils;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 获取IP方法
