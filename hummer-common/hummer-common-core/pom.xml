@@ -164,6 +164,11 @@
             <artifactId>jakarta.servlet-api</artifactId>
             <version>${jakarta.servlet.api.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-servlet-api</artifactId>
+            <version>9.0.72</version>
+        </dependency>
 
         <!-- spring-boot -->
 

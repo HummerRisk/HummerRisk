@@ -7,7 +7,12 @@ spring:
   application:
     # 应用名称
     name: hummer-monitor
+  profiles:
+    # 环境配置
+    active: prod
   cloud:
+    bootstrap:
+      enabled: true
     nacos:
       discovery:
         # 服务注册地址
@@ -19,4 +24,4 @@ spring:
         file-extension: yml
         # 共享配置
         shared-configs:
-          - application.${spring.cloud.nacos.config.file-extension}
+          - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
