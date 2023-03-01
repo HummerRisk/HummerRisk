@@ -1,4 +1,4 @@
-package com.hummer.common.mapper.service;
+package com.hummer.common.core.text;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
