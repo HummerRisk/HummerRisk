@@ -110,6 +110,7 @@
         <module>hummer-modules</module>
         <module>hummer-api</module>
         <module>hummer-common</module>
+        <module>hummer-dubbo-api</module>
     </modules>
 
     <build>
