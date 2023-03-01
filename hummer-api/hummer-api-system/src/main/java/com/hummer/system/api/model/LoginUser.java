@@ -21,12 +21,12 @@ public class LoginUser implements Serializable {
     /**
      * 用户名id
      */
-    private String userid;
+    private String userId;
 
     /**
      * 用户名
      */
-    private String username;
+    private String userName;
 
     /**
      * 登录时间
@@ -41,7 +41,7 @@ public class LoginUser implements Serializable {
     /**
      * 登录IP地址
      */
-    private String ipaddr;
+    private String ipAddr;
 
     /**
      * 权限列表
@@ -66,22 +66,6 @@ public class LoginUser implements Serializable {
         this.token = token;
     }
 
-    public String getUserid() {
-        return userid;
-    }
-
-    public void setUserid(String userid) {
-        this.userid = userid;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public Long getLoginTime() {
         return loginTime;
     }
@@ -96,14 +80,6 @@ public class LoginUser implements Serializable {
 
     public void setExpireTime(Long expireTime) {
         this.expireTime = expireTime;
-    }
-
-    public String getIpaddr() {
-        return ipaddr;
-    }
-
-    public void setIpaddr(String ipaddr) {
-        this.ipaddr = ipaddr;
     }
 
     public User getUser() {
@@ -128,5 +104,29 @@ public class LoginUser implements Serializable {
 
     public void setRoles(Set<String> roles) {
         this.roles = roles;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getIpAddr() {
+        return ipAddr;
+    }
+
+    public void setIpAddr(String ipAddr) {
+        this.ipAddr = ipAddr;
     }
 }
