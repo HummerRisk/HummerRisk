@@ -1,9 +1,9 @@
 package com.hummer.cloud.controller;
 
-import com.hummer.common.mapper.handler.annotation.I18n;
-import com.hummer.common.mapper.service.RuleService;
-import com.hummer.common.mapper.domain.RuleTag;
-import com.hummer.common.mapper.dto.RuleTagDTO;
+import com.hummer.cloud.service.RuleService;
+import com.hummer.common.core.domain.RuleTag;
+import com.hummer.common.core.dto.RuleTagDTO;
+import com.hummer.common.core.handler.annotation.I18n;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;

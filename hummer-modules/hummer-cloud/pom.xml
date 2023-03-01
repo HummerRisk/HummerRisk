@@ -63,10 +63,10 @@
             <version>${hummerrisk.version}</version>
         </dependency>
 
-        <!-- hummer Common mapper -->
+        <!-- hummer Common core -->
         <dependency>
             <groupId>com.hummerrisk</groupId>
-            <artifactId>hummer-common-mapper</artifactId>
+            <artifactId>hummer-common-core</artifactId>
             <version>${hummerrisk.version}</version>
         </dependency>
 

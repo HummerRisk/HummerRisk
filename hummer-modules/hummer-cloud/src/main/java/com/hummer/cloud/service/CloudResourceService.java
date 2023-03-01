@@ -1,12 +1,12 @@
 package com.hummer.cloud.service;
 
-import com.hummer.common.mapper.domain.CloudResourceSummary;
-import com.hummer.common.mapper.domain.CloudTask;
-import com.hummer.common.mapper.domain.request.cloudResource.CloudResourceItemRequest;
-import com.hummer.common.mapper.dto.CloudResourceItemDTO;
-import com.hummer.common.mapper.dto.ResourceRuleDTO;
-import com.hummer.common.mapper.mapper.ext.ExtCloudResourceItemMapper;
-import com.hummer.common.mapper.mapper.ext.ExtCloudTaskMapper;
+import com.hummer.cloud.mapper.ext.ExtCloudResourceItemMapper;
+import com.hummer.cloud.mapper.ext.ExtCloudTaskMapper;
+import com.hummer.common.core.domain.CloudResourceSummary;
+import com.hummer.common.core.domain.CloudTask;
+import com.hummer.common.core.domain.request.cloudResource.CloudResourceItemRequest;
+import com.hummer.common.core.dto.CloudResourceItemDTO;
+import com.hummer.common.core.dto.ResourceRuleDTO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

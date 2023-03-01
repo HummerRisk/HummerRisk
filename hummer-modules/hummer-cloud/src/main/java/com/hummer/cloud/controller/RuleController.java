@@ -2,16 +2,16 @@ package com.hummer.cloud.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.hummer.cloud.service.RuleService;
+import com.hummer.common.core.domain.*;
+import com.hummer.common.core.domain.request.rule.*;
+import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
-import com.hummer.common.mapper.domain.*;
-import com.hummer.common.mapper.domain.request.rule.*;
-import com.hummer.common.mapper.dto.GroupDTO;
-import com.hummer.common.mapper.dto.RuleDTO;
-import com.hummer.common.mapper.dto.RuleGroupDTO;
-import com.hummer.common.mapper.dto.RuleTagDTO;
-import com.hummer.common.mapper.handler.annotation.I18n;
-import com.hummer.common.mapper.service.RuleService;
+import com.hummer.common.core.dto.GroupDTO;
+import com.hummer.common.core.dto.RuleDTO;
+import com.hummer.common.core.dto.RuleGroupDTO;
+import com.hummer.common.core.dto.RuleTagDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -209,17 +209,17 @@ public class RuleController {
         ruleService.reScans(accountId);
     }
 
-    @ApiIgnore
-    @GetMapping("reScan/{taskId}/{accountId}")
-    public void reScan(@PathVariable String taskId, @PathVariable String accountId) throws Exception {
-        ruleService.reScan(taskId, accountId);
-    }
+//    @ApiIgnore
+//    @GetMapping("reScan/{taskId}/{accountId}")
+//    public void reScan(@PathVariable String taskId, @PathVariable String accountId) throws Exception {
+//        ruleService.reScan(taskId, accountId);
+//    }
 
-    @ApiOperation(value = "执行检测")
-    @PostMapping("scan")
-    public void scan(@RequestBody ScanGroupRequest request) throws Exception {
-        ruleService.scan(request);
-    }
+//    @ApiOperation(value = "执行检测")
+//    @PostMapping("scan")
+//    public void scan(@RequestBody ScanGroupRequest request) throws Exception {
+//        ruleService.scan(request);
+//    }
 
     @I18n
     @ApiOperation(value = "新增规则组")
@@ -276,10 +276,10 @@ public class RuleController {
         ruleService.bindRule(request);
     }
 
-    @I18n
-    @ApiOperation(value = "规则组检测云账号")
-    @GetMapping("scanByGroup/{groupId}/{accountId}")
-    public void scanByGroup(@PathVariable String groupId, @PathVariable String accountId) {
-        ruleService.scanByGroup(groupId, accountId);
-    }
+//    @I18n
+//    @ApiOperation(value = "规则组检测云账号")
+//    @GetMapping("scanByGroup/{groupId}/{accountId}")
+//    public void scanByGroup(@PathVariable String groupId, @PathVariable String accountId) {
+//        ruleService.scanByGroup(groupId, accountId);
+//    }
 }

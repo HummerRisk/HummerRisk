@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummer.cloud.mapper.ext.ExtRuleGroupMapper">
+    <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.RuleGroupDTO"
+               extends="com.hummer.cloud.mapper.RuleGroupMapper.BaseResultMap">
+        <result column="pluginName" property="pluginName"/>
+        <result column="pluginIcon" property="pluginIcon"/>
+    </resultMap>
+
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.name != null'>
+            and t.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test='${condition}.description != null'>
+            and t.description
+            <include refid="condition">
+                <property name="object" value="${condition}.description"/>
+            </include>
+        </if>
+        <if test='${condition}.pluginId != null'>
+            and t.plugin_id
+            <include refid="condition">
+                <property name="object" value="${condition}.pluginId"/>
+            </include>
+        </if>
+        <if test='${condition}.flag != null'>
+            and t.flag
+            <include refid="condition">
+                <property name="object" value="${condition}.flag"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="list" resultMap="BaseResultMap">
+        select
+        t.*,
+        (select count(g.id) from rule_group_mapping g where g.group_id = t.id) as ruleSum,
+        t1.name as pluginName,
+        t1.icon as pluginIcon
+        from rule_group as t
+        left join plugin t1 on t.plugin_id = t1.id
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                </include>
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and LOWER(t.name) like concat('%', LOWER(#{request.name}), '%')
+            </if>
+            <if test="request.description != null and request.description != ''">
+                and LOWER(t.description) like concat('%', LOWER(#{request.description}), '%')
+            </if>
+            <if test="request.level != null and request.level != ''">
+                and LOWER(t.level) like concat('%', LOWER(#{request.level}), '%')
+            </if>
+            <if test="request.pluginId != null and request.pluginId != ''">
+                and t.plugin_id = #{request.pluginId}
+            </if>
+        </where>
+        order by t.name
+    </select>
+
+    <select id="allCloudRuleGroups" resultMap="BaseResultMap">
+        select
+        t.*,
+        t1.name as pluginName,
+        t1.icon as pluginIcon
+        from rule_group as t
+        left join plugin t1 on t.plugin_id = t1.id
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                </include>
+            </if>
+
+            <if test="request.name != null and request.name != ''">
+                and t.name like concat('%', #{request.name}, '%')
+            </if>
+            <if test="request.pluginId != null and request.pluginId != ''">
+                and t.plugin_id = #{request.pluginId}
+            </if>
+            and t1.type = 'cloud'
+        </where>
+        order by t.name
+    </select>
+
+    <select id="allVulnRuleGroups" resultMap="BaseResultMap">
+        select
+        t.*,
+        t1.name as pluginName,
+        t1.icon as pluginIcon
+        from rule_group as t
+        left join plugin t1 on t.plugin_id = t1.id
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                </include>
+            </if>
+
+            <if test="request.name != null and request.name != ''">
+                and t.name like concat('%', #{request.name}, '%')
+            </if>
+            <if test="request.pluginId != null and request.pluginId != ''">
+                and t.plugin_id = #{request.pluginId}
+            </if>
+            and t1.type = 'vuln'
+        </where>
+        order by t.name
+    </select>
+
+    <select id="getRules" resultMap="com.hummer.cloud.mapper.ext.ExtRuleMapper.BaseResultMap2">
+        SELECT
+        t.id,
+        t.name,
+        t.status,
+        t.severity,
+        t.description,
+        t.script,
+        IFNULL (t1.`parameter`, t.`parameter`) as parameter,
+        CASE WHEN t1.`parameter` IS NOT NULL
+        THEN true
+        ELSE false
+        END AS isSaveParam,
+        t.plugin_id as plugin_id,
+        t.plugin_name as plugin_name,
+        t.plugin_icon as plugin_icon,
+        t.last_modified as last_modified,
+        t.scan_type as scan_type,
+        t1.regions
+        FROM rule t
+        LEFT JOIN rule_account_parameter t1 ON t.id = t1.rule_id AND t1.account_id = #{accountId}
+        LEFT JOIN rule_group_mapping t2 ON t.id = t2.rule_id
+        LEFT JOIN rule_group t3 ON t2.group_id = t3.id
+        WHERE t3.id = #{groupId}
+        ORDER BY t.id desc
+    </select>
+
+    <select id="getPluginId">
+        SELECT t.plugin_id
+        FROM rule t
+            LEFT JOIN rule_group_mapping t2 ON t.id = t2.rule_id
+            LEFT JOIN rule_group t3 ON t2.group_id = t3.id
+        WHERE t3.id in #{groupId}
+    </select>
+
+    <select id="getRuleGroup" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT DISTINCT t.id
+        FROM rule_group t
+        LEFT JOIN rule_group_mapping t1 ON t.id = t1.group_id
+        LEFT JOIN rule t2 ON t1.rule_id = t2.id
+        LEFT JOIN cloud_account t3 ON t2.plugin_id = t3.plugin_id
+        WHERE t3.id = #{accountId}
+    </select>
+
+</mapper>

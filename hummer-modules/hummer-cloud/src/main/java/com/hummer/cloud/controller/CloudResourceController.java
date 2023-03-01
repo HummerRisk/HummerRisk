@@ -3,13 +3,13 @@ package com.hummer.cloud.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummer.cloud.service.CloudResourceService;
-import com.hummer.common.mapper.domain.CloudResourceSummary;
-import com.hummer.common.mapper.domain.CloudTask;
-import com.hummer.common.mapper.domain.request.cloudResource.CloudResourceItemRequest;
-import com.hummer.common.mapper.dto.CloudResourceItemDTO;
+import com.hummer.common.core.domain.CloudResourceSummary;
+import com.hummer.common.core.domain.CloudTask;
+import com.hummer.common.core.domain.request.cloudResource.CloudResourceItemRequest;
+import com.hummer.common.core.dto.CloudResourceItemDTO;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
-import com.hummer.common.mapper.handler.annotation.I18n;
+import com.hummer.common.core.handler.annotation.I18n;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
