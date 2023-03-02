@@ -109,4 +109,24 @@ public class CloudProviderService implements ICloudProviderService {
         return extCloudTaskMapper.selectManualVulnTasks(request);
     }
 
+    @Override
+    public void insertRuleTagMappings(RuleTagMapping record) {
+        ruleTagMappingMapper.insertSelective(record);
+    }
+
+    @Override
+    public void deleteRuleTag(String tagKey) {
+        ruleTagMapper.deleteByPrimaryKey(tagKey);
+    }
+
+    @Override
+    public void deleteRuleTagMappingByExample(RuleTagMappingExample example) {
+        ruleTagMappingMapper.deleteByExample(example);
+    }
+
+
+
+
+
+
 }
