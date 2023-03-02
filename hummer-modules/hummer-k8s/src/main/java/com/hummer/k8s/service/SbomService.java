@@ -1,28 +1,29 @@
 package com.hummer.k8s.service;
 
+import com.hummer.cloud.api.ICloudProviderService;
 import com.hummer.common.core.constant.ResourceOperation;
 import com.hummer.common.core.constant.ResourceTypeConstants;
+import com.hummer.common.core.domain.*;
+import com.hummer.common.core.dto.*;
 import com.hummer.common.core.utils.BeanUtils;
-import com.hummer.common.core.utils.SessionUtils;
 import com.hummer.common.core.utils.UUIDUtil;
-import com.hummer.common.mapper.domain.*;
-import com.hummer.common.mapper.domain.request.code.CodeResultRequest;
-import com.hummer.common.mapper.domain.request.fs.FsResultRequest;
-import com.hummer.common.mapper.domain.request.image.ImageResultRequest;
-import com.hummer.common.mapper.domain.request.sbom.DownloadRequest;
-import com.hummer.common.mapper.domain.request.sbom.SbomRequest;
-import com.hummer.common.mapper.domain.request.sbom.SbomVersionRequest;
-import com.hummer.common.mapper.domain.request.sbom.SettingVersionRequest;
-import com.hummer.common.mapper.dto.*;
-import com.hummer.common.mapper.mapper.*;
-import com.hummer.common.mapper.mapper.ext.ExtCodeResultMapper;
-import com.hummer.common.mapper.mapper.ext.ExtFileSystemResultMapper;
-import com.hummer.common.mapper.mapper.ext.ExtImageResultMapper;
-import com.hummer.common.mapper.mapper.ext.ExtSbomMapper;
-import com.hummer.common.mapper.service.CodeService;
-import com.hummer.common.mapper.service.ImageService;
-import com.hummer.common.mapper.service.OperationLogService;
+import com.hummer.common.core.domain.request.code.CodeResultRequest;
+import com.hummer.common.core.domain.request.fs.FsResultRequest;
+import com.hummer.common.core.domain.request.image.ImageResultRequest;
+import com.hummer.common.core.domain.request.sbom.DownloadRequest;
+import com.hummer.common.core.domain.request.sbom.SbomRequest;
+import com.hummer.common.core.domain.request.sbom.SbomVersionRequest;
+import com.hummer.common.core.domain.request.sbom.SettingVersionRequest;
+import com.hummer.common.security.service.TokenService;
+import com.hummer.k8s.mapper.*;
+import com.hummer.k8s.mapper.ext.ExtCodeResultMapper;
+import com.hummer.k8s.mapper.ext.ExtFileSystemResultMapper;
+import com.hummer.k8s.mapper.ext.ExtImageResultMapper;
+import com.hummer.k8s.mapper.ext.ExtSbomMapper;
+import com.hummer.system.api.IOperationLogService;
+import com.hummer.system.api.ISystemProviderService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,21 +55,27 @@ public class SbomService {
     @Resource
     private ImageService imageService;
     @Resource
-    private HistoryCodeResultMapper historyCodeResultMapper;
-    @Resource
-    private HistoryImageResultMapper historyImageResultMapper;
-    @Resource
     private ImageResultLogMapper imageResultLogMapper;
     @Resource
     private ExtFileSystemResultMapper extFileSystemResultMapper;
-    @Resource
-    private HistoryFileSystemResultMapper historyFileSystemResultMapper;
     @Resource
     private CodeResultLogMapper codeResultLogMapper;
     @Resource
     private ExtCodeResultMapper extCodeResultMapper;
     @Resource
     private ExtImageResultMapper extImageResultMapper;
+    @Resource
+    private ProxyMapper proxyMapper;
+    @Resource
+    private PluginMapper pluginMapper;
+    @Resource
+    private TokenService tokenService;
+    @DubboReference
+    private ISystemProviderService systemProviderService;
+    @DubboReference
+    private IOperationLogService operationLogService;
+    @DubboReference
+    private ICloudProviderService cloudProviderService;
 
 
     public List<SbomDTO> sbomList(SbomRequest request) {
@@ -78,11 +85,11 @@ public class SbomService {
     public Sbom addSbom(Sbom sbom) throws Exception {
         String id = UUIDUtil.newUUID();
         sbom.setId(id);
-        sbom.setCreator(SessionUtils.getUserId());
+        sbom.setCreator(tokenService.getLoginUser().getUserId());
         sbom.setCreateTime(System.currentTimeMillis());
         sbom.setUpdateTime(System.currentTimeMillis());
 
-        OperationLogService.log(SessionUtils.getUser(), sbom.getId(), sbom.getName(), ResourceTypeConstants.SBOM.name(), ResourceOperation.CREATE, "i18n_create_sbom");
+        operationLogService.log(tokenService.getLoginUser().getUser(), sbom.getId(), sbom.getName(), ResourceTypeConstants.SBOM.name(), ResourceOperation.CREATE, "i18n_create_sbom");
         sbomMapper.insertSelective(sbom);
         return sbom;
     }
@@ -90,14 +97,14 @@ public class SbomService {
     public Sbom updateSbom(Sbom sbom) throws Exception {
         sbom.setUpdateTime(System.currentTimeMillis());
 
-        OperationLogService.log(SessionUtils.getUser(), sbom.getId(), sbom.getName(), ResourceTypeConstants.SBOM.name(), ResourceOperation.UPDATE, "i18n_update_sbom");
+        operationLogService.log(tokenService.getLoginUser().getUser(), sbom.getId(), sbom.getName(), ResourceTypeConstants.SBOM.name(), ResourceOperation.UPDATE, "i18n_update_sbom");
         sbomMapper.updateByPrimaryKeySelective(sbom);
         return sbom;
     }
 
     public void deleteSbom(String id) throws Exception {
         sbomMapper.deleteByPrimaryKey(id);
-        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.SBOM.name(), ResourceOperation.DELETE, "i18n_delete_sbom");
+        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.SBOM.name(), ResourceOperation.DELETE, "i18n_delete_sbom");
     }
 
     public List<SbomVersion> sbomVersionList(SbomVersionRequest request) {
@@ -113,7 +120,7 @@ public class SbomService {
         sbomVersion.setCreateTime(System.currentTimeMillis());
         sbomVersion.setUpdateTime(System.currentTimeMillis());
 
-        OperationLogService.log(SessionUtils.getUser(), sbomVersion.getId(), sbomVersion.getName(), ResourceTypeConstants.SBOM_VERSION.name(), ResourceOperation.CREATE, "i18n_create_sbom_version");
+        operationLogService.log(tokenService.getLoginUser().getUser(), sbomVersion.getId(), sbomVersion.getName(), ResourceTypeConstants.SBOM_VERSION.name(), ResourceOperation.CREATE, "i18n_create_sbom_version");
         sbomVersionMapper.insertSelective(sbomVersion);
         return sbomVersion;
     }
@@ -121,14 +128,14 @@ public class SbomService {
     public SbomVersion updateSbomVersion(SbomVersion sbomVersion) throws Exception {
         sbomVersion.setUpdateTime(System.currentTimeMillis());
 
-        OperationLogService.log(SessionUtils.getUser(), sbomVersion.getId(), sbomVersion.getName(), ResourceTypeConstants.SBOM_VERSION.name(), ResourceOperation.UPDATE, "i18n_update_sbom_version");
+        operationLogService.log(tokenService.getLoginUser().getUser(), sbomVersion.getId(), sbomVersion.getName(), ResourceTypeConstants.SBOM_VERSION.name(), ResourceOperation.UPDATE, "i18n_update_sbom_version");
         sbomVersionMapper.updateByPrimaryKeySelective(sbomVersion);
         return sbomVersion;
     }
 
     public void deleteSbomVersion(String id) throws Exception {
         sbomVersionMapper.deleteByPrimaryKey(id);
-        OperationLogService.log(SessionUtils.getUser(), id, id, ResourceTypeConstants.SBOM_VERSION.name(), ResourceOperation.DELETE, "i18n_delete_sbom_version");
+        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.SBOM_VERSION.name(), ResourceOperation.DELETE, "i18n_delete_sbom_version");
     }
 
     public void scan(String id) throws Exception {
@@ -218,14 +225,14 @@ public class SbomService {
         HistoryCodeResultExample example = new HistoryCodeResultExample();
         example.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
         example.setOrderByClause("create_time desc");
-        return historyCodeResultMapper.selectByExample(example);
+        return systemProviderService.historyCodeResultByExample(example);
     }
 
     public List<HistoryImageResultDTO> historyImageResult(String sbomVersionId) throws Exception {
         HistoryImageResultExample example = new HistoryImageResultExample();
         example.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
         example.setOrderByClause("create_time desc");
-        List<HistoryImageResult> historyImageResults = historyImageResultMapper.selectByExample(example);
+        List<HistoryImageResult> historyImageResults = systemProviderService.historyImageResultByExample(example);
         List<HistoryImageResultDTO> dtos = new LinkedList<>();
         for (HistoryImageResult task : historyImageResults) {
             HistoryImageResultDTO dto = new HistoryImageResultDTO();
@@ -252,7 +259,7 @@ public class SbomService {
     }
 
     public HistoryCodeResult getCodeResult(String resultId) {
-        HistoryCodeResult codeResult = historyCodeResultMapper.selectByPrimaryKey(resultId);
+        HistoryCodeResult codeResult = systemProviderService.codeResult(resultId);
         return codeResult;
     }
 
@@ -277,13 +284,13 @@ public class SbomService {
     public String download(DownloadRequest request) throws Exception {
         String str = "";
         if (StringUtils.equalsIgnoreCase(request.getType(), "code")) {
-            HistoryCodeResult codeResult = historyCodeResultMapper.selectByPrimaryKey(request.getSourceId());
+            HistoryCodeResult codeResult = systemProviderService.codeResult(request.getSourceId());
             str = codeResult.getReturnJson() != null ? codeResult.getReturnJson() : "{}";
         } else if (StringUtils.equalsIgnoreCase(request.getType(), "image")) {
-            HistoryImageResultWithBLOBs imageTask = historyImageResultMapper.selectByPrimaryKey(request.getSourceId());
+            HistoryImageResultWithBLOBs imageTask = systemProviderService.imageResult(request.getSourceId());
             str = imageTask.getResultJson() != null ? imageTask.getResultJson() : "{}";
         } else if (StringUtils.equalsIgnoreCase(request.getType(), "fs")) {
-            HistoryFileSystemResult fsTask = historyFileSystemResultMapper.selectByPrimaryKey(request.getSourceId());
+            HistoryFileSystemResult fsTask = systemProviderService.fsResult(request.getSourceId());
             str = fsTask.getReturnJson() != null ? fsTask.getReturnJson() : "{}";
         }
         return str;
