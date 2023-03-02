@@ -9,10 +9,22 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hummer-api-demo</artifactId>
+    <artifactId>hummer-api-cloud</artifactId>
 
     <description>
-        hummer-api-demo 系统接口模块
+        hummer-api-cloud 混合云接口模块
     </description>
+
+    <dependencies>
+
+        <!-- Hummer Common Core-->
+        <dependency>
+            <groupId>com.hummerrisk</groupId>
+            <artifactId>hummer-common-core</artifactId>
+            <version>${hummerrisk.version}</version>
+        </dependency>
+
+    </dependencies>
+
 
 </project>
