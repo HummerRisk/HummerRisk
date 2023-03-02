@@ -171,9 +171,6 @@ public class CodeService {
     public void deleteRuleTag(String tagkey, String ruleId) {
         if (StringUtils.isNotBlank(tagkey)) {
             ruleTagMapper.deleteByPrimaryKey(tagkey);
-            RuleTagExample ruleTagExample = new RuleTagExample();
-            ruleTagExample.createCriteria().andTagKeyEqualTo(tagkey);
-            ruleTagMapper.deleteByExample(ruleTagExample);
         }
         if (StringUtils.isNotBlank(ruleId)) {
             RuleTagMappingExample ruleTagMappingExample = new RuleTagMappingExample();

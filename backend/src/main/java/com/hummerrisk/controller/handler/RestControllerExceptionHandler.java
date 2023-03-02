@@ -23,7 +23,7 @@ public class RestControllerExceptionHandler {
 
 
     @ExceptionHandler(HRException.class)
-    public ResultHolder msExceptionHandler(HttpServletRequest request, HttpServletResponse response, HRException e) {
+    public ResultHolder exceptionHandler(HttpServletRequest request, HttpServletResponse response, HRException e) {
         response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         return ResultHolder.error(e.getMessage());
     }
