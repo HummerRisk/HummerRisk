@@ -4,13 +4,9 @@ package com.hummer.system.service;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.dashboard.DashboardTarget;
 import com.hummer.system.api.ISystemProviderService;
-import com.hummer.system.mapper.HistoryCloudTaskMapper;
-import com.hummer.system.mapper.HistoryScanMapper;
-import com.hummer.system.mapper.HistoryScanTaskMapper;
-import com.hummer.system.mapper.HistoryVulnTaskMapper;
+import com.hummer.system.mapper.*;
 import com.hummer.system.mapper.ext.ExtVulnMapper;
 import org.apache.dubbo.config.annotation.DubboService;
-import org.springframework.context.annotation.Lazy;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -36,6 +32,12 @@ public class SystemProviderService implements ISystemProviderService {
     private HistoryScanMapper historyScanMapper;
     @Resource
     private HistoryScanTaskMapper historyScanTaskMapper;
+    @Resource
+    private ProxyMapper proxyMapper;
+    @Resource
+    private HistoryCodeResultMapper historyCodeResultMapper;
+    @Resource
+    private SystemParameterService systemParameterService;
 
     @Override
     public Integer insertScanHistory(AccountWithBLOBs account) throws Exception {

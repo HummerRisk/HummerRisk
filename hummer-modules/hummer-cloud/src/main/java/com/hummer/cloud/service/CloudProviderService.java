@@ -46,6 +46,8 @@ public class CloudProviderService implements ICloudProviderService {
     private ExtRuleMapper extRuleMapper;
     @Resource
     private ExtCloudTaskMapper extCloudTaskMapper;
+    @Resource
+    private RuleTagMapper ruleTagMapper;
 
     @Override
     public List<CloudTask> selectCloudTaskList(CloudTaskExample example) {

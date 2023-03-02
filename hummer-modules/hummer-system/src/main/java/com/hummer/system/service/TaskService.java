@@ -51,6 +51,8 @@ public class TaskService {
     private HistoryService historyService;
     @Resource
     private TokenService tokenService;
+    @Resource
+    private OperationLogService operationLogService;
     @DubboReference
     private ICloudProviderService cloudProviderService;
     @DubboReference
@@ -862,7 +864,7 @@ public class TaskService {
                 k8sProviderService.insertServerResult(result);
 
                 k8sProviderService.saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
-                OperationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_start_server_result");
+                operationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_start_server_result");
                 historyService.insertScanTaskHistory(result, scanId, result.getServerId(), TaskEnum.serverAccount.getType());
 
                 historyService.insertHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
@@ -898,7 +900,7 @@ public class TaskService {
                 k8sProviderService.insertk8sResult(result);
 
                 k8sProviderService.saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_result", "", true);
-                OperationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_start_k8s_result");
+                operationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_start_k8s_result");
                 historyService.insertScanTaskHistory(result, scanId, result.getCloudNativeId(), TaskEnum.k8sAccount.getType());
 
                 historyService.insertHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
@@ -934,7 +936,7 @@ public class TaskService {
                 k8sProviderService.insertConfigResult(result);
 
                 k8sProviderService.saveCloudNativeConfigResultLog(result.getId(), "i18n_start_config_result", "", true);
-                OperationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.CREATE, "i18n_start_config_result");
+                operationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.CREATE, "i18n_start_config_result");
                 historyService.insertScanTaskHistory(result, scanId, result.getConfigId(), TaskEnum.configAccount.getType());
 
                 historyService.insertHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
@@ -970,7 +972,7 @@ public class TaskService {
                 k8sProviderService.insertCodeResult(result);
 
                 k8sProviderService.saveCodeResultLog(result.getId(), "i18n_start_code_result", "", true);
-                OperationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.CREATE, "i18n_start_code_result");
+                operationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.CREATE, "i18n_start_code_result");
                 historyService.insertScanTaskHistory(result, scanId, result.getCodeId(), TaskEnum.codeAccount.getType());
                 historyService.insertHistoryCodeResult(BeanUtils.copyBean(new HistoryCodeResult(), result));
                 return result.getId();
@@ -1005,7 +1007,7 @@ public class TaskService {
                 k8sProviderService.insertFileSystemResult(result);
 
                 k8sProviderService.saveFsResultLog(result.getId(), "i18n_start_fs_result", "", true);
-                OperationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.CREATE, "i18n_start_fs_result");
+                operationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.CREATE, "i18n_start_fs_result");
                 historyService.insertScanTaskHistory(result, scanId, result.getFsId(), TaskEnum.fsAccount.getType());
                 historyService.insertHistoryFileSystemResult(BeanUtils.copyBean(new HistoryFileSystemResult(), result));
                 return result.getId();
@@ -1040,7 +1042,7 @@ public class TaskService {
                 k8sProviderService.insertImageResult(result);
 
                 k8sProviderService.saveImageResultLog(result.getId(), "i18n_start_image_result", "", true);
-                OperationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_start_image_result");
+                operationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_start_image_result");
                 historyService.insertScanTaskHistory(result, scanId, result.getImageId(), TaskEnum.imageAccount.getType());
                 historyService.insertHistoryImageResult(BeanUtils.copyBean(new HistoryImageResultWithBLOBs(), result));
                 return result.getId();

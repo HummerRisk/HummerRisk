@@ -48,6 +48,8 @@ public class UserService {
     private ExtUserMapper extUserMapper;
     @Resource
     private TokenService tokenService;
+    @Resource
+    private OperationLogService operationLogService;
 
     public UserDTO insert(UserRequest user) throws Exception {
         checkUserParam(user);
@@ -136,7 +138,7 @@ public class UserService {
         user.setPassword(CodingUtil.md5(user.getPassword()));
         checkEmailIsExist(user.getEmail());
         userMapper.insertSelective(user);
-        OperationLogService.log(tokenService.getLoginUser().getUser(), userRequest.getId(), userRequest.getName(), ResourceTypeConstants.USER.name(), ResourceOperation.CREATE, "创建用户");
+        operationLogService.log(tokenService.getLoginUser().getUser(), userRequest.getId(), userRequest.getName(), ResourceTypeConstants.USER.name(), ResourceOperation.CREATE, "创建用户");
     }
 
     private void checkEmailIsExist(String email) {
@@ -240,7 +242,7 @@ public class UserService {
         userRoleMapper.deleteByExample(example);
 
         userMapper.deleteByPrimaryKey(userId);
-        OperationLogService.log(tokenService.getLoginUser().getUser(), tokenService.getLoginUser().getUser().getId(), tokenService.getLoginUser().getUser().getName(), ResourceTypeConstants.USER.name(), ResourceOperation.DELETE, "删除用户");
+        operationLogService.log(tokenService.getLoginUser().getUser(), tokenService.getLoginUser().getUser().getId(), tokenService.getLoginUser().getUser().getName(), ResourceTypeConstants.USER.name(), ResourceOperation.DELETE, "删除用户");
     }
 
     public void updateUserRole(UserRequest user) {
@@ -403,7 +405,7 @@ public class UserService {
         String newped = request.getNewpassword();
         user.setPassword(CodingUtil.md5(newped));
         user.setUpdateTime(System.currentTimeMillis());
-        OperationLogService.log(tokenService.getLoginUser().getUser(), Objects.requireNonNull(tokenService.getLoginUser().getUser()).getId(), tokenService.getLoginUser().getUser().getName(), ResourceTypeConstants.USER.name(), ResourceOperation.UPDATE, "修改密码");
+        operationLogService.log(tokenService.getLoginUser().getUser(), Objects.requireNonNull(tokenService.getLoginUser().getUser()).getId(), tokenService.getLoginUser().getUser().getName(), ResourceTypeConstants.USER.name(), ResourceOperation.UPDATE, "修改密码");
         return user;
     }
 
