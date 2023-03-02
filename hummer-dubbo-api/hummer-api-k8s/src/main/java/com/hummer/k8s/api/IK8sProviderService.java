@@ -1,4 +1,4 @@
-package com.hummer.dubbo.provider.api;
+package com.hummer.k8s.api;
 
 import com.hummer.common.core.domain.*;
 

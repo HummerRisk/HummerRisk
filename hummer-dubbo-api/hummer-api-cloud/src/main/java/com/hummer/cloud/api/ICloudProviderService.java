@@ -1,7 +1,12 @@
-package com.hummer.dubbo.provider.api;
+package com.hummer.cloud.api;
 
 import com.hummer.common.core.domain.*;
+import com.hummer.common.core.domain.request.account.CloudAccountRequest;
+import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
+import com.hummer.common.core.domain.request.rule.CreateRuleRequest;
+import com.hummer.common.core.dto.AccountDTO;
 import com.hummer.common.core.dto.QuartzTaskDTO;
+import com.hummer.common.core.dto.RuleDTO;
 
 import java.util.List;
 
@@ -24,5 +29,12 @@ public interface ICloudProviderService {
     List<RuleTagMapping> ruleTagMappings(RuleTagMappingExample example);
 
     List<RuleGroupMapping> ruleGroupMappings(RuleGroupMappingExample example);
+
+    List<AccountDTO> getVulnList(CloudAccountRequest request);
+
+    List<RuleDTO> vulnList(CreateRuleRequest request);
+
+    List<CloudTask> selectManualTasks(ManualRequest request) throws Exception;
+
 
 }

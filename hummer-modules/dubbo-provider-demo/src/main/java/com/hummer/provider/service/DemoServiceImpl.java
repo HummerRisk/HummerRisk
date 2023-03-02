@@ -1,4 +1,4 @@
-package com.hummer.dubbo.provider.service;
+package com.hummer.provider.service;
 
 import com.hummer.dubbo.provider.api.IDemoService;
 import org.apache.dubbo.config.annotation.DubboService;
