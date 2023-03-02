@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface ISystemProviderService {
 
-    Integer insertScanHistory(AccountWithBLOBs account) throws Exception;
+    Integer insertScanHistory(Object obj) throws Exception;
 
     void insertHistoryVulnTaskItem(HistoryVulnTaskItemWithBLOBs historyVulnTaskItem) throws Exception;
 
@@ -66,5 +66,73 @@ public interface ISystemProviderService {
     void insertHistoryVulnTaskLog(HistoryVulnTaskLogWithBLOBs historyVulnTaskLog) throws Exception;
 
     void deleteHistoryScanTask(HistoryScanTaskExample historyScanTaskExample);
+
+    void insertHistoryCodeResult(HistoryCodeResult historyCodeResult);
+
+    void updateHistoryCodeResult(HistoryCodeResult historyCodeResult);
+
+    void createCodeMessageOrder(CodeResult result);
+
+    void createImageMessageOrder(ImageResultWithBLOBs result);
+
+    String createServerMessageOrder(Server result);
+
+    void createFsMessageOrder(FileSystemResult result);
+
+    void createCloudNativeConfigMessageOrder(CloudNativeConfigResult result);
+
+    void createCloudNativeMessageOrder(CloudNativeResult result);
+
+    String getSystemParameterValue(String key);
+
+    HistoryCodeResult codeResult(String id);
+
+    HistoryServerResult serverResult(String id);
+
+    HistoryFileSystemResult fsResult(String id);
+
+    HistoryImageResultWithBLOBs imageResult(String id);
+
+    HistoryCloudNativeResultWithBLOBs k8sResult(String id);
+
+    HistoryCloudNativeConfigResult configResult(String id);
+
+    void insertHistoryFileSystemResult(HistoryFileSystemResult result);
+
+    void updateHistoryFileSystemResult(HistoryFileSystemResult result);
+
+    void insertHistoryServerResult(HistoryServerResult result);
+
+    void updateHistoryServerResult(HistoryServerResult result);
+
+    void insertHistoryImageResult(HistoryImageResultWithBLOBs result);
+
+    void updateHistoryImageResult(HistoryImageResultWithBLOBs result);
+
+    void insertHistoryCloudNativeConfigResult(HistoryCloudNativeConfigResult result);
+
+    void updateHistoryCloudNativeConfigResult(HistoryCloudNativeConfigResult result);
+
+    void insertHistoryCloudNativeResult(HistoryCloudNativeResultWithBLOBs result);
+
+    void updateHistoryCloudNativeResult(HistoryCloudNativeResultWithBLOBs result);
+
+    List<HistoryCodeResult> historyCodeResultByExample(HistoryCodeResultExample example);
+
+    List<HistoryImageResult> historyImageResultByExample(HistoryImageResultExample example);
+
+    void createServerMessageOrderItem(ServerResult result, String messageOrderId);
+
+    void deleteHistoryCodeResult(String id) throws Exception;
+
+    void deleteHistoryCloudNativeConfigResult(String id) throws Exception;
+
+    void deleteHistoryFsResult(String id) throws Exception;
+
+    void deleteHistoryImageResult(String id) throws Exception;
+
+    void deleteHistoryK8sResult(String id) throws Exception;
+
+    void deleteHistoryServerResult(String id) throws Exception;
 
 }

@@ -36,5 +36,12 @@ public interface ICloudProviderService {
 
     List<CloudTask> selectManualTasks(ManualRequest request) throws Exception;
 
+    void insertRuleTagMappings(RuleTagMapping record);
+
+    void deleteRuleTag(String tagKey);
+
+    void deleteRuleTagMappingByExample(RuleTagMappingExample example);
+
+
 
 }
