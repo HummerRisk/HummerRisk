@@ -1,0 +1,10 @@
+/Users/maguohao/hummercloud/HummerRisk/hummer-dubbo-api/hummer-api-system/src/main/java/com/hummer/system/api/model/LoginUser.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-dubbo-api/hummer-api-system/src/main/java/com/hummer/system/api/domain/Role.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-dubbo-api/hummer-api-system/src/main/java/com/hummer/system/api/domain/UserRoleExample.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-dubbo-api/hummer-api-system/src/main/java/com/hummer/system/api/domain/RoleExample.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-dubbo-api/hummer-api-system/src/main/java/com/hummer/system/api/factory/RemoteUserFallbackFactory.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-dubbo-api/hummer-api-system/src/main/java/com/hummer/system/api/domain/UserRole.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-dubbo-api/hummer-api-system/src/main/java/com/hummer/system/api/domain/User.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-dubbo-api/hummer-api-system/src/main/java/com/hummer/system/api/RemoteUserService.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-dubbo-api/hummer-api-system/src/main/java/com/hummer/system/api/domain/UserExample.java
+/Users/maguohao/hummercloud/HummerRisk/hummer-dubbo-api/hummer-api-system/src/main/java/com/hummer/system/api/ISystemProviderService.java

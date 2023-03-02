@@ -10,13 +10,12 @@ import com.hummer.common.core.dto.*;
 import com.hummer.common.core.utils.PlatformUtils;
 import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.common.security.service.TokenService;
-import com.hummer.dubbo.provider.api.ICloudProviderService;
-import com.hummer.dubbo.provider.api.IK8sProviderService;
+import com.hummer.cloud.api.ICloudProviderService;
+import com.hummer.k8s.api.IK8sProviderService;
 import com.hummer.system.mapper.*;
 import com.hummer.system.mapper.ext.ExtResourceMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
