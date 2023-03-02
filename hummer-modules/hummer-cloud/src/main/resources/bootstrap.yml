@@ -34,3 +34,19 @@ spring:
         # 共享配置
         shared-configs:
           - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+
+dubbo:
+  protocol:
+    name: cloud
+    # 这个dubbo的协议端口在一台服务器上的时候，每个项目的必须配置成不一样的（否则将启动失败），或者配置为-1，使用随机端口
+    port: 8000
+    host: ${HR_NACOS_SERVER_ADDR}
+  registry:
+    # 由于使用的是spring-cloud，因此这里使用spring-cloud的
+    address: nacos://${HR_NACOS_SERVER_ADDR}:8848
+  scan:
+    # 配置需要扫描的注解包
+    base-packages: com.hummer.cloud
+  application:
+    name: ${spring.application.name}
+    qos-port: 22223

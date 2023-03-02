@@ -19,8 +19,10 @@ import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.quartz.service.QuartzManageService;
+import com.hummer.system.api.ISystemProviderService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 import org.springframework.context.annotation.Lazy;
@@ -74,14 +76,10 @@ public class OrderService {
     private CloudAccountQuartzTaskRelationMapper quartzTaskRelationMapper;
     @Resource @Lazy
     private CloudAccountQuartzTaskRelaLogMapper quartzTaskRelaLogMapper;
-    @Resource @Lazy
-    private HistoryCloudTaskMapper historyCloudTaskMapper;
     @Resource
     private TokenService tokenService;
-//    @Resource @Lazy
-//    private NoticeService noticeService;
-//    @Resource @Lazy
-//    private HistoryService historyService;
+    @DubboReference
+    private ISystemProviderService systemProviderService;
 
     public CloudTask createTask(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId) throws Exception {
         CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, messageOrderId);
@@ -119,7 +117,7 @@ public class OrderService {
                 taskItemWithBLOBs.setTags(cloudTask.getRuleTags());
                 cloudTaskItemMapper.insertSelective(taskItemWithBLOBs);
 
-//                historyService.insertHistoryCloudTaskItem(BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
+                systemProviderService.insertHistoryCloudTaskItem(BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
 
                 final String finalScript = script;
                 commonThreadPool.addTask(() -> {
@@ -168,7 +166,7 @@ public class OrderService {
                             try {
                                 HistoryCloudTaskResourceWithBLOBs historyCloudTaskResourceWithBLOBs = new HistoryCloudTaskResourceWithBLOBs();
                                 BeanUtils.copyBean(historyCloudTaskResourceWithBLOBs, taskItemResource);
-//                                historyService.insertHistoryCloudTaskResource(historyCloudTaskResourceWithBLOBs);
+                                systemProviderService.insertHistoryCloudTaskResource(historyCloudTaskResourceWithBLOBs);
                             } catch (Exception e) {
                                 throw new RuntimeException(e);
                             }
@@ -181,11 +179,11 @@ public class OrderService {
                         taskItemWithBLOBs.setDetails(sc);
                         cloudTaskItemMapper.updateByPrimaryKeySelective(taskItemWithBLOBs);
 
-//                        try {
-//                            historyService.updateHistoryCloudTaskItem(BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
-//                        } catch (Exception e) {
-//                            throw new RuntimeException(e);
-//                        }
+                        try {
+                            systemProviderService.updateHistoryCloudTaskItem(BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                         CloudResourceItemExample cloudResourceItemExample = new CloudResourceItemExample();
                         cloudResourceItemExample.createCriteria().andAccountIdEqualTo(quartzTaskDTO.getAccountId()).andResourceTypeIn(resourceTypes);
                         long resourceSum = cloudResourceItemMapper.countByExample(cloudResourceItemExample);
@@ -194,7 +192,7 @@ public class OrderService {
                         cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
 
                         try {
-//                            historyService.updateHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+                            systemProviderService.updateHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
@@ -258,12 +256,12 @@ public class OrderService {
             cloudTask.setCreateTime(System.currentTimeMillis());
             cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
 
-            HistoryCloudTask historyCloudTask = historyCloudTaskMapper.selectByPrimaryKey(queryCloudTasks.get(0).getId());
-//            if (historyCloudTask != null) {
-//                historyService.updateHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
-//            } else {
-//                historyService.insertHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
-//            }
+            HistoryCloudTask historyCloudTask = systemProviderService.historyCloudTask(queryCloudTasks.get(0).getId());
+            if (historyCloudTask != null) {
+                systemProviderService.updateHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+            } else {
+                systemProviderService.insertHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+            }
 
         } else {
             String taskId = IDGenerator.newBusinessId(CloudTaskConstants.TASK_ID_PREFIX, tokenService.getLoginUser().getUser().getId());
@@ -271,11 +269,11 @@ public class OrderService {
             cloudTask.setCreateTime(System.currentTimeMillis());
             cloudTaskMapper.insertSelective(cloudTask);
 
-//            historyService.insertHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+            systemProviderService.insertHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
         }
 
         if (StringUtils.isNotEmpty(messageOrderId)) {
-//            noticeService.createMessageOrderItem(messageOrderId, cloudTask);
+            systemProviderService.createMessageOrderItem(messageOrderId, cloudTask);
         }
 
         return cloudTask;
@@ -308,11 +306,11 @@ public class OrderService {
         cloudTaskItemLog.setResult(success);
         cloudTaskItemLogMapper.insertSelective(cloudTaskItemLog);
 
-//        if (StringUtils.equalsIgnoreCase(historyType, CloudTaskConstants.HISTORY_TYPE.Cloud.name())) {
-//            historyService.insertHistoryCloudTaskLog(BeanUtils.copyBean(new HistoryCloudTaskLogWithBLOBs(), cloudTaskItemLog));
-//        } else if (StringUtils.equalsIgnoreCase(historyType, CloudTaskConstants.HISTORY_TYPE.Vuln.name())) {
-//            historyService.insertHistoryVulnTaskLog(BeanUtils.copyBean(new HistoryVulnTaskLogWithBLOBs(), cloudTaskItemLog));
-//        }
+        if (StringUtils.equalsIgnoreCase(historyType, CloudTaskConstants.HISTORY_TYPE.Cloud.name())) {
+            systemProviderService.insertHistoryCloudTaskLog(BeanUtils.copyBean(new HistoryCloudTaskLogWithBLOBs(), cloudTaskItemLog));
+        } else if (StringUtils.equalsIgnoreCase(historyType, CloudTaskConstants.HISTORY_TYPE.Vuln.name())) {
+            systemProviderService.insertHistoryVulnTaskLog(BeanUtils.copyBean(new HistoryVulnTaskLogWithBLOBs(), cloudTaskItemLog));
+        }
 
     }
 
@@ -510,67 +508,6 @@ public class OrderService {
                         item.setStatus(CloudTaskConstants.TASK_STATUS.UNCHECKED.name());
                     }
                 }
-                //查询规则，如果规则有变动，按最新变动的规则执行
-                /*    Rule rule = ruleMapper.selectByPrimaryKey(item.getRuleId());
-                    String script = rule.getScript();
-                    JSONArray jsonArray = JSON.parseArray(rule.getParameter());
-                    for (Object o : jsonArray) {
-                        JSONObject jsonObject = (JSONObject) o;
-                        String key = "${{" + jsonObject.getString("key") + "}}";
-                        if (script.contains(key)) {
-                            script = script.replace(key, jsonObject.getString("defaultValue"));
-                        }
-                    }
-                    if (!StringUtils.equals(script, item.getCustomData())) {
-                        List<String> resourceTypes = new ArrayList();
-                        final String finalScript = script;
-                        commonThreadPool.addTask(() -> {
-                            String sc = "";
-                            String dirPath = "";
-                            try {
-                                dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + item.getRegion(), "policy.yml", false);
-                            } catch (Exception e) {
-                                LogUtil.error("[{}] Generate policy.yml file，and custodian run failed:{}", taskId + "/" + item.getRegion(), e.getMessage());
-                            }
-                            Yaml yaml = new Yaml();
-                            Map map = null;
-                            try {
-                                map = (Map) yaml.load(new FileInputStream(dirPath + "/policy.yml"));
-                            } catch (FileNotFoundException e) {
-                                LogUtil.error(e.getMessage());
-                            }
-                            if (map != null) {
-                                List<Map> list = (List) map.get("policies");
-                                for (Map m : list) {
-                                    String dirName = m.get("name").toString();
-                                    String resourceType = m.get("resource").toString();
-                                    CloudTaskItemResourceWithBLOBs taskItemResource = new CloudTaskItemResourceWithBLOBs();
-                                    taskItemResource.setTaskId(taskId);
-                                    taskItemResource.setTaskItemId(item.getId());
-                                    taskItemResource.setDirName(dirName);
-                                    taskItemResource.setResourceType(resourceType);
-                                    taskItemResource.setResourceName(dirName);
-
-                                    //包含actions
-                                    Map<String, Object> paramMap = new HashMap<>();
-                                    paramMap.put("policies", Arrays.asList(m));
-                                    taskItemResource.setResourceCommandAction(yaml.dump(paramMap));
-
-                                    //不包含actions
-                                    m.remove("actions");
-                                    paramMap.put("policies", Arrays.asList(m));
-                                    taskItemResource.setResourceCommand(yaml.dump(paramMap));
-                                    cloudTaskItemResourceMapper.updateByPrimaryKeySelective(taskItemResource);
-
-                                    resourceTypes.add(resourceType);
-                                }
-                                map.put("policies", list);
-                                sc = yaml.dump(map);
-                                item.setCustomData(sc);
-
-                            }
-                        });
-                    }*/
 
                 cloudTaskItemMapper.updateByPrimaryKey(item);
             }

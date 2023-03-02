@@ -13,8 +13,10 @@ import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.core.proxy.xray.XrayCredential;
 import com.hummer.common.security.service.TokenService;
+import com.hummer.system.api.ISystemProviderService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -63,14 +65,10 @@ public class XrayService {
     private ResourceItemMapper resourceItemMapper;
     @Resource @Lazy
     private ExtCloudTaskMapper extCloudTaskMapper;
-    @Resource @Lazy
-    private HistoryVulnTaskMapper historyVulnTaskMapper;
     @Resource
     private TokenService tokenService;
-//    @Resource @Lazy
-//    private NoticeService noticeService;
-//    @Resource @Lazy
-//    private HistoryService historyService;
+    @DubboReference
+    private ISystemProviderService systemProviderService;
 
     public CloudTask createTask(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId) throws Exception {
         CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, messageOrderId);
@@ -107,7 +105,7 @@ public class XrayService {
                 taskItemWithBLOBs.setTags(cloudTask.getRuleTags());
                 cloudTaskItemMapper.insertSelective(taskItemWithBLOBs);
 
-//                historyService.insertHistoryVulnTaskItem(BeanUtils.copyBean(new HistoryVulnTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
+                systemProviderService.insertHistoryVulnTaskItem(BeanUtils.copyBean(new HistoryVulnTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
 
                 final String finalScript = script;
                 final String finalDirName = groupName;
@@ -131,7 +129,7 @@ public class XrayService {
                     try {
                         HistoryVulnTaskResourceWithBLOBs historyVulnTaskResourceWithBLOBs = new HistoryVulnTaskResourceWithBLOBs();
                         BeanUtils.copyBean(historyVulnTaskResourceWithBLOBs, taskItemResource);
-//                        historyService.insertHistoryVulnTaskResource(historyVulnTaskResourceWithBLOBs);
+                        systemProviderService.insertHistoryVulnTaskResource(historyVulnTaskResourceWithBLOBs);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -139,20 +137,20 @@ public class XrayService {
                     taskItemWithBLOBs.setDetails(finalScript);
                     cloudTaskItemMapper.updateByPrimaryKeySelective(taskItemWithBLOBs);
 
-//                    try {
-//                        historyService.updateHistoryVulnTaskItem(BeanUtils.copyBean(new HistoryVulnTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
-//                    } catch (Exception e) {
-//                        throw new RuntimeException(e);
-//                    }
+                    try {
+                        systemProviderService.updateHistoryVulnTaskItem(BeanUtils.copyBean(new HistoryVulnTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
 
                     cloudTask.setResourceTypes(resourceTypes.stream().collect(Collectors.toSet()).toString());
                     cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
 
-//                    try {
-//                        historyService.updateHistoryVulnTask(BeanUtils.copyBean(new HistoryVulnTask(), cloudTask));//插入历史数据
-//                    } catch (Exception e) {
-//                        throw new RuntimeException(e);
-//                    }
+                    try {
+                        systemProviderService.updateHistoryVulnTask(BeanUtils.copyBean(new HistoryVulnTask(), cloudTask));//插入历史数据
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 });
             }
         }
@@ -190,12 +188,12 @@ public class XrayService {
             cloudTask.setCreateTime(System.currentTimeMillis());
             cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
 
-            HistoryVulnTask historyVulnTask = historyVulnTaskMapper.selectByPrimaryKey(queryCloudTasks.get(0).getId());
-//            if (historyVulnTask != null) {
-//                historyService.updateHistoryVulnTask(BeanUtils.copyBean(new HistoryVulnTask(), cloudTask));//插入历史数据
-//            } else {
-//                historyService.insertHistoryVulnTask(BeanUtils.copyBean(new HistoryVulnTask(), cloudTask));//插入历史数据
-//            }
+            HistoryVulnTask historyVulnTask = systemProviderService.historyVulnTask(queryCloudTasks.get(0).getId());
+            if (historyVulnTask != null) {
+                systemProviderService.updateHistoryVulnTask(BeanUtils.copyBean(new HistoryVulnTask(), cloudTask));//插入历史数据
+            } else {
+                systemProviderService.insertHistoryVulnTask(BeanUtils.copyBean(new HistoryVulnTask(), cloudTask));//插入历史数据
+            }
 
         } else {
             String taskId = IDGenerator.newBusinessId(CloudTaskConstants.TASK_ID_PREFIX, tokenService.getLoginUser().getUser().getId());
@@ -204,9 +202,9 @@ public class XrayService {
             cloudTaskMapper.insertSelective(cloudTask);
         }
 
-//        if (StringUtils.isNotEmpty(messageOrderId)) {
-//            noticeService.createMessageOrderItem(messageOrderId, cloudTask);
-//        }
+        if (StringUtils.isNotEmpty(messageOrderId)) {
+            systemProviderService.createMessageOrderItem(messageOrderId, cloudTask);
+        }
 
         return cloudTask;
     }
@@ -429,11 +427,11 @@ public class XrayService {
         if (taskItemResource.getId() != null) {
             cloudTaskItemResourceMapper.updateByPrimaryKeySelective(taskItemResource);
 
-//            historyService.updateHistoryVulnTaskResource(BeanUtils.copyBean(new HistoryVulnTaskResourceWithBLOBs(), taskItemResource));
+            systemProviderService.updateHistoryVulnTaskResource(BeanUtils.copyBean(new HistoryVulnTaskResourceWithBLOBs(), taskItemResource));
         } else {
             cloudTaskItemResourceMapper.insertSelective(taskItemResource);
 
-//            historyService.insertHistoryVulnTaskResource(BeanUtils.copyBean(new HistoryVulnTaskResourceWithBLOBs(), taskItemResource));
+            systemProviderService.insertHistoryVulnTaskResource(BeanUtils.copyBean(new HistoryVulnTaskResourceWithBLOBs(), taskItemResource));
         }
     }
 

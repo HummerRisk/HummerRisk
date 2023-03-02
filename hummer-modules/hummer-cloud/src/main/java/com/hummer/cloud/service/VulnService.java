@@ -6,7 +6,6 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.hummer.cloud.mapper.ext.ExtAccountMapper;
 import com.hummer.cloud.mapper.ext.ExtCloudTaskMapper;
 import com.hummer.cloud.mapper.ext.ExtRuleMapper;
-import com.hummer.cloud.mapper.ext.ExtVulnMapper;
 import com.hummer.common.core.domain.CloudTask;
 import com.hummer.common.core.domain.request.account.CloudAccountRequest;
 import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
@@ -14,6 +13,8 @@ import com.hummer.common.core.domain.request.dashboard.DashboardTarget;
 import com.hummer.common.core.domain.request.rule.CreateRuleRequest;
 import com.hummer.common.core.dto.AccountDTO;
 import com.hummer.common.core.dto.RuleDTO;
+import com.hummer.system.api.ISystemProviderService;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,8 +37,9 @@ public class VulnService {
     private ExtRuleMapper extRuleMapper;
     @Resource
     private ExtCloudTaskMapper extCloudTaskMapper;
-    @Resource
-    private ExtVulnMapper extVulnMapper;
+    @DubboReference
+    private ISystemProviderService systemProviderService;
+
 
     public List<AccountDTO> getVulnList(CloudAccountRequest request) {
         return extAccountMapper.getVulnList(request);
@@ -58,27 +60,27 @@ public class VulnService {
     }
 
     public List<DashboardTarget> target(Map<String, Object> params) {
-        return extVulnMapper.vulnTarget(params);
+        return systemProviderService.vulnTarget(params);
     }
 
     public List<Map<String, Object>> groupList(Map<String, Object> params) {
-        return extVulnMapper.groupList(params);
+        return systemProviderService.groupList(params);
     }
 
     public List<Map<String, Object>> reportList(Map<String, Object> params) {
-        return extVulnMapper.reportList(params);
+        return systemProviderService.reportList(params);
     }
 
     public List<Map<String, Object>> tagList(Map<String, Object> params) {
-        return extVulnMapper.tagList(params);
+        return systemProviderService.tagList(params);
     }
 
     public List<Map<String, Object>> resourceList(Map<String, Object> params) {
-        return extVulnMapper.resourceList(params);
+        return systemProviderService.resourceList(params);
     }
 
     public List<Map<String, Object>> historyList(Map<String, Object> params) {
-        List<Map<String, Object>> list = extVulnMapper.historyList(params);
+        List<Map<String, Object>> list = systemProviderService.historyList(params);
         for (Map<String, Object> map : list) {
             if (map.get("rsources") != null) {
                 map.put("rsources", toJSONString2(map.get("rsources").toString()));
@@ -88,7 +90,7 @@ public class VulnService {
     }
 
     public List<Map<String, Object>> historyDiffList(Map<String, Object> params) {
-        List<Map<String, Object>> list = extVulnMapper.historyDiffList(params);
+        List<Map<String, Object>> list = systemProviderService.historyDiffList(params);
         for (Map<String, Object> map : list) {
             if (map.get("rsources") != null) {
                 map.put("rsources", toJSONString2(map.get("rsources").toString()));

@@ -56,6 +56,23 @@
             <version>${mysql.connector.java.version}</version>
         </dependency>
 
+        <!-- dubbo -->
+        <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo-spring-boot-starter</artifactId>
+            <version>3.2.0-beta.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-framework</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-recipes</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+
         <!-- hummer Common DataScope -->
         <dependency>
             <groupId>com.hummerrisk</groupId>
@@ -74,6 +91,13 @@
         <dependency>
             <groupId>com.hummerrisk</groupId>
             <artifactId>hummer-common-security</artifactId>
+            <version>${hummerrisk.version}</version>
+        </dependency>
+
+        <!-- Hummer api cloud -->
+        <dependency>
+            <groupId>com.hummerrisk</groupId>
+            <artifactId>hummer-api-cloud</artifactId>
             <version>${hummerrisk.version}</version>
         </dependency>
 

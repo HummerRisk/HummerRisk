@@ -19,10 +19,12 @@ import com.hummer.common.core.domain.request.resource.ResourceRequest;
 import com.hummer.common.core.domain.request.rule.RuleGroupRequest;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.quartz.service.QuartzManageService;
+import com.hummer.system.api.ISystemProviderService;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 import org.springframework.context.annotation.Lazy;
@@ -77,11 +79,7 @@ public class ResourceService {
     @Resource @Lazy
     private ResourceItemMapper resourceItemMapper;
     @Resource @Lazy
-    private HistoryScanMapper historyScanMapper;
-    @Resource @Lazy
     private ExtHistoryScanMapper extHistoryScanMapper;
-    @Resource @Lazy
-    private HistoryScanTaskMapper historyScanTaskMapper;
     @Resource @Lazy
     private ProxyMapper proxyMapper;
     @Resource @Lazy
@@ -94,8 +92,8 @@ public class ResourceService {
     private QuartzManageService quartzManageService;
     @Resource
     private TokenService tokenService;
-//    @Resource
-//    private HistoryService historyService;
+    @DubboReference
+    private ISystemProviderService systemProviderService;
 
 
     public SourceDTO source (String accountId) {
@@ -736,14 +734,13 @@ public class ResourceService {
             cloudTaskService.deleteManualTask(task.getId());
             HistoryScanTaskExample historyScanTaskExample = new HistoryScanTaskExample();
             historyScanTaskExample.createCriteria().andTaskIdEqualTo(task.getId());
-            historyScanTaskMapper.deleteByExample(historyScanTaskExample);
+            systemProviderService.deleteHistoryScanTask(historyScanTaskExample);
         });
         long current = System.currentTimeMillis();
         long zero = current/(1000*3600*24)*(1000*3600*24) - TimeZone.getDefault().getRawOffset();//当天00点
 
         HistoryScanExample historyScanExample = new HistoryScanExample();
         historyScanExample.createCriteria().andAccountIdEqualTo(accountId).andCreateTimeEqualTo(zero);
-        List<HistoryScan> list = historyScanMapper.selectByExample(historyScanExample);
 
         CloudAccountQuartzTaskRelationExample quartzTaskRelationExample = new CloudAccountQuartzTaskRelationExample();
         quartzTaskRelationExample.createCriteria().andSourceIdEqualTo(accountId);

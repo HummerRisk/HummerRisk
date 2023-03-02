@@ -13,8 +13,10 @@ import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
+import com.hummer.system.api.ISystemProviderService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -60,14 +62,10 @@ public class ProwlerService {
     private ResourceItemMapper resourceItemMapper;
     @Resource @Lazy
     private ExtCloudTaskMapper extCloudTaskMapper;
-    @Resource @Lazy
-    private HistoryCloudTaskMapper historyCloudTaskMapper;
     @Resource
     private TokenService tokenService;
-//    @Resource @Lazy
-//    private NoticeService noticeService;
-//    @Resource @Lazy
-//    private HistoryService historyService;
+    @DubboReference
+    private ISystemProviderService systemProviderService;
 
     public CloudTask createTask(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId) throws Exception {
         CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, messageOrderId);
@@ -104,7 +102,7 @@ public class ProwlerService {
                 taskItemWithBLOBs.setTags(cloudTask.getRuleTags());
                 cloudTaskItemMapper.insertSelective(taskItemWithBLOBs);
 
-//                historyService.insertHistoryCloudTaskItem(BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
+                systemProviderService.insertHistoryCloudTaskItem(BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
 
                 final String finalScript = script;
                 final String finalDirName = groupName;
@@ -128,7 +126,7 @@ public class ProwlerService {
                     try {
                         HistoryCloudTaskResourceWithBLOBs historyCloudTaskResourceWithBLOBs = new HistoryCloudTaskResourceWithBLOBs();
                         BeanUtils.copyBean(historyCloudTaskResourceWithBLOBs, taskItemResource);
-//                        historyService.insertHistoryCloudTaskResource(historyCloudTaskResourceWithBLOBs);
+                        systemProviderService.insertHistoryCloudTaskResource(historyCloudTaskResourceWithBLOBs);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -136,20 +134,20 @@ public class ProwlerService {
                     taskItemWithBLOBs.setDetails(finalScript);
                     cloudTaskItemMapper.updateByPrimaryKeySelective(taskItemWithBLOBs);
 
-//                    try {
-//                        historyService.updateHistoryCloudTaskItem(BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
-//                    } catch (Exception e) {
-//                        throw new RuntimeException(e);
-//                    }
+                    try {
+                        systemProviderService.updateHistoryCloudTaskItem(BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
 
                     cloudTask.setResourceTypes(new HashSet<>(resourceTypes).toString());
                     cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
 
-//                    try {
-//                        historyService.updateHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
-//                    } catch (Exception e) {
-//                        throw new RuntimeException(e);
-//                    }
+                    try {
+                        systemProviderService.updateHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 });
             }
         }
@@ -187,12 +185,12 @@ public class ProwlerService {
             cloudTask.setCreateTime(System.currentTimeMillis());
             cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
 
-            HistoryCloudTask historyCloudTask = historyCloudTaskMapper.selectByPrimaryKey(queryCloudTasks.get(0).getId());
-//            if (historyCloudTask != null) {
-//                historyService.updateHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
-//            } else {
-//                historyService.insertHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
-//            }
+            HistoryCloudTask historyCloudTask = systemProviderService.historyCloudTask(queryCloudTasks.get(0).getId());
+            if (historyCloudTask != null) {
+                systemProviderService.updateHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+            } else {
+                systemProviderService.insertHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+            }
 
         } else {
             String taskId = IDGenerator.newBusinessId(CloudTaskConstants.TASK_ID_PREFIX, tokenService.getLoginUser().getUser().getId());
@@ -200,12 +198,12 @@ public class ProwlerService {
             cloudTask.setCreateTime(System.currentTimeMillis());
             cloudTaskMapper.insertSelective(cloudTask);
 
-//            historyService.insertHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+            systemProviderService.insertHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
         }
 
-//        if (StringUtils.isNotEmpty(messageOrderId)) {
-//            noticeService.createMessageOrderItem(messageOrderId, cloudTask);
-//        }
+        if (StringUtils.isNotEmpty(messageOrderId)) {
+            systemProviderService.createMessageOrderItem(messageOrderId, cloudTask);
+        }
 
         return cloudTask;
     }
@@ -433,11 +431,11 @@ public class ProwlerService {
         if (taskItemResource.getId() != null) {
             cloudTaskItemResourceMapper.updateByPrimaryKeySelective(taskItemResource);
 
-//            historyService.updateHistoryCloudTaskResource(BeanUtils.copyBean(new HistoryCloudTaskResourceWithBLOBs(), taskItemResource));
+            systemProviderService.updateHistoryCloudTaskResource(BeanUtils.copyBean(new HistoryCloudTaskResourceWithBLOBs(), taskItemResource));
         } else {
             cloudTaskItemResourceMapper.insertSelective(taskItemResource);
 
-//            historyService.insertHistoryCloudTaskResource(BeanUtils.copyBean(new HistoryCloudTaskResourceWithBLOBs(), taskItemResource));
+            systemProviderService.insertHistoryCloudTaskResource(BeanUtils.copyBean(new HistoryCloudTaskResourceWithBLOBs(), taskItemResource));
         }
     }
 
