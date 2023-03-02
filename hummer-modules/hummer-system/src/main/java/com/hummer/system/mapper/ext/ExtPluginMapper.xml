@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummer.system.mapper.ext.ExtPluginMapper">
+    <resultMap id="BaseResultMap" type="com.hummer.common.core.domain.Plugin"
+               extends="com.hummer.system.mapper.PluginMapper.BaseResultMap">
+    </resultMap>
+
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.name != null'>
+            and t.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test='${condition}.pluginId != null'>
+            and t.id
+            <include refid="condition">
+                <property name="object" value="${condition}.pluginId"/>
+            </include>
+        </if>
+        <if test="${condition}.scanType != null">
+            and t.scan_type
+            <include refid="condition">
+                <property name="object" value="${condition}.scanType"/>
+            </include>
+        </if>
+        <if test="${condition}.type != null">
+            and t.type
+            <include refid="condition">
+                <property name="object" value="${condition}.type"/>
+            </include>
+        </if>
+        <if test="${condition}.updateTime != null">
+            and t.update_time
+            <include refid="condition">
+                <property name="object" value="${condition}.updateTime"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="getPluginList" resultMap="BaseResultMap">
+        select
+        t.*
+        from plugin as t
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id like CONCAT('%', #{request.id},'%')
+            </if>
+            <if test="request.pluginId != null and request.pluginId != ''">
+                and t.id like CONCAT('%', #{request.pluginId},'%')
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and t.name like CONCAT('%', #{request.name},'%')
+            </if>
+            <if test="request.scanType != null and request.scanType != ''">
+                and t.scan_type like CONCAT('%', #{request.scanType},'%')
+            </if>
+            <if test="request.type != null and request.type != ''">
+                and t.type like CONCAT('%', #{request.type},'%')
+            </if>
+        </where>
+        order by t.order_
+    </select>
+
+
+</mapper>

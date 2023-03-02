@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummer.system.mapper.ext.ExtHistoryScanMapper">
+
+    <select id="getScanId">
+      select t.id
+      from history_scan t
+      <where>
+        <if test="accountId != null">
+          and t.account_id = #{accountId}
+        </if>
+      </where>
+      order by t.id desc
+      limit 1
+    </select>
+
+    <update id="updateByExampleSelective" parameterType="com.hummer.common.core.domain.HistoryScan">
+        UPDATE history_scan
+        <set>
+            <if test="operator != null">
+                `operator` = #{operator},
+            </if>
+            <if test="resourcesSum != null">
+                resources_sum = #{resourcesSum},
+            </if>
+            <if test="returnSum != null">
+                return_sum = #{returnSum},
+            </if>
+            <if test="scanScore != null">
+                scan_score = #{scanScore},
+            </if>
+        </set>
+        WHERE account_id = #{accountId}
+        ORDER BY create_time desc
+        LIMIT 1
+    </update>
+</mapper>

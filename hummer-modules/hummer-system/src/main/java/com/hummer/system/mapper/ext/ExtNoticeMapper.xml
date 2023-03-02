@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hummer.system.mapper.ext.ExtNoticeMapper">
+
+
+    <select id="serverSum" resultType="java.lang.Integer">
+        SELECT count(IFNULL(IF(t.is_severity = 1, 0, 1), 0))
+        FROM server_result t
+        JOIN message_order_item t1 ON t.id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="imageSum" resultType="java.lang.Integer">
+        SELECT IFNULL(sum(IFNULL(t.return_sum, 0)), 0)
+        FROM image_result t
+        JOIN message_order_item t1 ON t.id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="codeSum" resultType="java.lang.Integer">
+        SELECT IFNULL(sum(IFNULL(t.return_sum, 0)), 0)
+        FROM code_result t
+        JOIN message_order_item t1 ON t.id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="configSum" resultType="java.lang.Integer">
+        SELECT IFNULL(sum(IFNULL(t.return_sum, 0)), 0)
+        FROM cloud_native_config_result t
+        JOIN message_order_item t1 ON t.id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="k8sSum" resultType="java.lang.Integer">
+        SELECT IFNULL(sum(IFNULL(t.return_sum, 0)), 0)
+        FROM cloud_native_result t
+        JOIN message_order_item t1 ON t.id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="fsSum" resultType="java.lang.Integer">
+        SELECT IFNULL(sum(IFNULL(t.return_sum, 0)), 0)
+        FROM file_system_result t
+        JOIN message_order_item t1 ON t.id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="getTopImageTasksForEmail" resultType="com.hummer.common.core.domain.ImageResultItem" parameterType="com.hummer.common.core.domain.MessageOrder">
+        SELECT t.*
+        FROM image_result_item t
+        JOIN message_order_item t1 ON t.result_id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="getTopCodeTasksForEmail" resultType="com.hummer.common.core.domain.CodeResultItem" parameterType="com.hummer.common.core.domain.MessageOrder">
+        SELECT t.*
+        FROM code_result_item t
+        JOIN message_order_item t1 ON t.result_id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="getTopConfigTasksForEmail" resultType="com.hummer.common.core.domain.CloudNativeConfigResultItem" parameterType="com.hummer.common.core.domain.MessageOrder">
+        SELECT t.*
+        FROM cloud_native_config_result_item t
+        JOIN message_order_item t1 ON t.result_id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="getTopK8sTasksForEmail" resultType="com.hummer.common.core.domain.CloudNativeResultItem" parameterType="com.hummer.common.core.domain.MessageOrder">
+        SELECT t.*
+        FROM cloud_native_result_item t
+        JOIN message_order_item t1 ON t.result_id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="getTopFsTasksForEmail" resultType="com.hummer.common.core.domain.FileSystemResultItem" parameterType="com.hummer.common.core.domain.MessageOrder">
+        SELECT t.*
+        FROM file_system_result_item t
+        JOIN message_order_item t1 ON t.result_id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="getTopServerTasksForEmail" resultType="com.hummer.common.core.dto.ServerResultDTO" parameterType="com.hummer.common.core.domain.MessageOrder">
+        SELECT t.*, g.name as groupName
+        FROM server_result t
+        JOIN server_group g on t.server_group_id = g.id
+        JOIN message_order_item t1 ON t.id = t1.task_id
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id}
+    </select>
+
+    <select id="metricChartCloud" resultType="com.hummer.common.core.dto.MetricChartDTO">
+        SELECT * from
+        (select IFNULL(sum(IFNULL(r.return_sum, 0)), 0) as critical
+        FROM resource r
+        WHERE r.severity = 'CriticalRisk' and r.id in
+        (select t.resource_id from cloud_task_item_resource t
+        join cloud_task_item t2 on t.task_item_id = t2.id
+        join cloud_task t3 on t2.task_id = t3.id
+        join message_order_item t4 on t3.id = t4.task_id
+        join message_order t5 on t4.message_order_id = t5.id
+        where t5.id = #{request.id})) as critical,
+        (select IFNULL(sum(IFNULL(r.return_sum, 0)), 0) as high
+        FROM resource r
+        WHERE r.severity = 'HighRisk' and r.id in
+        (select t.resource_id from cloud_task_item_resource t
+        join cloud_task_item t2 on t.task_item_id = t2.id
+        join cloud_task t3 on t2.task_id = t3.id
+        join message_order_item t4 on t3.id = t4.task_id
+        join message_order t5 on t4.message_order_id = t5.id
+        where t5.id = #{request.id})) as high,
+        (select IFNULL(sum(IFNULL(r.return_sum, 0)), 0) as medium
+        FROM resource r
+        WHERE r.severity = 'MediumRisk' and r.id in
+        (select t.resource_id from cloud_task_item_resource t
+        join cloud_task_item t2 on t.task_item_id = t2.id
+        join cloud_task t3 on t2.task_id = t3.id
+        join message_order_item t4 on t3.id = t4.task_id
+        join message_order t5 on t4.message_order_id = t5.id
+        where t5.id = #{request.id})) as medium,
+        (select IFNULL(sum(IFNULL(r.return_sum, 0)), 0) as low
+        FROM resource r
+        WHERE r.severity = 'LowRisk' and r.id in
+        (select t.resource_id from cloud_task_item_resource t
+        join cloud_task_item t2 on t.task_item_id = t2.id
+        join cloud_task t3 on t2.task_id = t3.id
+        join message_order_item t4 on t3.id = t4.task_id
+        join message_order t5 on t4.message_order_id = t5.id
+        where t5.id = #{request.id})) as low
+    </select>
+
+    <select id="metricChartVuln" resultType="com.hummer.common.core.dto.MetricChartDTO">
+        SELECT * from
+        (select IFNULL(sum(IFNULL(r.return_sum, 0)), 0) as critical
+        FROM resource r
+        WHERE r.severity = 'CriticalRisk' and r.id in
+        (select t.resource_id from cloud_task_item_resource t
+        join cloud_task_item t2 on t.task_item_id = t2.id
+        join cloud_task t3 on t2.task_id = t3.id
+        join message_order_item t4 on t3.id = t4.task_id
+        join message_order t5 on t4.message_order_id = t5.id
+        where t5.id = #{request.id})) as critical,
+        (select IFNULL(sum(IFNULL(r.return_sum, 0)), 0) as high
+        FROM resource r
+        WHERE r.severity = 'HighRisk' and r.id in
+        (select t.resource_id from cloud_task_item_resource t
+        join cloud_task_item t2 on t.task_item_id = t2.id
+        join cloud_task t3 on t2.task_id = t3.id
+        join message_order_item t4 on t3.id = t4.task_id
+        join message_order t5 on t4.message_order_id = t5.id
+        where t5.id = #{request.id})) as high,
+        (select IFNULL(sum(IFNULL(r.return_sum, 0)), 0) as medium
+        FROM resource r
+        WHERE r.severity = 'MediumRisk' and r.id in
+        (select t.resource_id from cloud_task_item_resource t
+        join cloud_task_item t2 on t.task_item_id = t2.id
+        join cloud_task t3 on t2.task_id = t3.id
+        join message_order_item t4 on t3.id = t4.task_id
+        join message_order t5 on t4.message_order_id = t5.id
+        where t5.id = #{request.id})) as medium,
+        (select IFNULL(sum(IFNULL(r.return_sum, 0)), 0) as low
+        FROM resource r
+        WHERE r.severity = 'LowRisk' and r.id in
+        (select t.resource_id from cloud_task_item_resource t
+        join cloud_task_item t2 on t.task_item_id = t2.id
+        join cloud_task t3 on t2.task_id = t3.id
+        join message_order_item t4 on t3.id = t4.task_id
+        join message_order t5 on t4.message_order_id = t5.id
+        where t5.id = #{request.id})) as low
+    </select>
+
+    <select id="metricChartServer" resultType="com.hummer.common.core.dto.MetricChartDTO">
+        SELECT * from
+        (select IFNULL(count(t.id), 0) as critical
+        FROM server_result t
+        where t.severity = 'CriticalRisk' and t.is_severity is false and t.id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as critical,
+        (select IFNULL(count(t.id), 0) as high
+        FROM server_result t
+        where t.severity = 'HighRisk' and t.is_severity is false and t.id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as high,
+        (select IFNULL(count(t.id), 0) as medium
+        FROM server_result t
+        where t.severity = 'MediumRisk' and t.is_severity is false and t.id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as medium,
+        (select IFNULL(count(t.id), 0) as low
+        FROM server_result t
+        where t.severity = 'LowRisk' and t.is_severity is false and t.id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as low
+    </select>
+
+    <select id="metricChartK8s" resultType="com.hummer.common.core.dto.MetricChartDTO">
+        SELECT * from
+        (select IFNULL(count(t.id), 0) as critical
+        FROM cloud_native_result_item t
+        where t.severity = 'CRITICAL' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as critical,
+        (select IFNULL(count(t.id), 0) as high
+        FROM cloud_native_result_item t
+        where t.severity = 'HIGH' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as high,
+        (select IFNULL(count(t.id), 0) as medium
+        FROM cloud_native_result_item t
+        where t.severity = 'MEDIUM' and t.id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as medium,
+        (select IFNULL(count(t.id), 0) as low
+        FROM cloud_native_result_item t
+        where t.severity = 'LOW' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as low,
+        (select IFNULL(count(t.id), 0) as unknown
+        FROM cloud_native_result_item t
+        where t.severity = 'UNKNOWN' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as unknown
+    </select>
+
+    <select id="metricChartConfig" resultType="com.hummer.common.core.dto.MetricChartDTO">
+        SELECT * from
+        (select IFNULL(count(t.id), 0) as critical
+        FROM cloud_native_config_result_item t
+        where t.severity = 'CRITICAL' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as critical,
+        (select IFNULL(count(t.id), 0) as high
+        FROM cloud_native_config_result_item t
+        where t.severity = 'HIGH' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as high,
+        (select IFNULL(count(t.id), 0) as medium
+        FROM cloud_native_config_result_item t
+        where t.severity = 'MEDIUM' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as medium,
+        (select IFNULL(count(t.id), 0) as low
+        FROM cloud_native_config_result_item t
+        where t.severity = 'LOW' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as low,
+        (select IFNULL(count(t.id), 0) as unknown
+        FROM cloud_native_config_result_item t
+        where t.severity = 'UNKNOWN' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as unknown
+    </select>
+
+    <select id="metricChartImage" resultType="com.hummer.common.core.dto.MetricChartDTO">
+        SELECT * from
+        (select IFNULL(count(t.id), 0) as critical
+        FROM image_result_item t
+        where t.severity = 'CRITICAL' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as critical,
+        (select IFNULL(count(t.id), 0) as high
+        FROM image_result_item t
+        where t.severity = 'HIGH' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as high,
+        (select IFNULL(count(t.id), 0) as medium
+        FROM image_result_item t
+        where t.severity = 'MEDIUM' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as medium,
+        (select IFNULL(count(t.id), 0) as low
+        FROM image_result_item t
+        where t.severity = 'LOW' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as low,
+        (select IFNULL(count(t.id), 0) as unknown
+        FROM image_result_item t
+        where t.severity = 'UNKNOWN' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as unknown
+    </select>
+
+    <select id="metricChartCode" resultType="com.hummer.common.core.dto.MetricChartDTO">
+        SELECT * from
+        (select IFNULL(count(t.id), 0) as critical
+        FROM code_result_item t
+        where t.severity = 'CRITICAL' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as critical,
+        (select IFNULL(count(t.id), 0) as high
+        FROM code_result_item t
+        where t.severity = 'HIGH' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as high,
+        (select IFNULL(count(t.id), 0) as medium
+        FROM code_result_item t
+        where t.severity = 'MEDIUM' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as medium,
+        (select IFNULL(count(t.id), 0) as low
+        FROM code_result_item t
+        where t.severity = 'LOW' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as low,
+        (select IFNULL(count(t.id), 0) as unknown
+        FROM code_result_item t
+        where t.severity = 'UNKNOWN' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as unknown
+    </select>
+
+    <select id="metricChartFs" resultType="com.hummer.common.core.dto.MetricChartDTO">
+        SELECT * from
+        (select IFNULL(count(t.id), 0) as critical
+        FROM file_system_result_item t
+        where t.severity = 'CRITICAL' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as critical,
+        (select IFNULL(count(t.id), 0) as high
+        FROM file_system_result_item t
+        where t.severity = 'HIGH' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as high,
+        (select IFNULL(count(t.id), 0) as medium
+        FROM file_system_result_item t
+        where t.severity = 'MEDIUM' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as medium,
+        (select IFNULL(count(t.id), 0) as low
+        FROM file_system_result_item t
+        where t.severity = 'LOW' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as low,
+        (select IFNULL(count(t.id), 0) as unknown
+        FROM file_system_result_item t
+        where t.severity = 'UNKNOWN' and t.result_id in
+        (select t1.task_id from message_order_item t1
+        JOIN message_order t2 ON t1.message_order_id = t2.id
+        WHERE t2.id = #{request.id})) as unknown
+    </select>
+
+
+</mapper>

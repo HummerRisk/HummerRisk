@@ -12,7 +12,6 @@
         <module>hummer-cloud</module>
         <module>hummer-k8s</module>
         <module>hummer-system</module>
-        <module>hummer-job</module>
         <module>dubbo-provider-demo</module>
         <module>dubbo-customer-demo</module>
     </modules>

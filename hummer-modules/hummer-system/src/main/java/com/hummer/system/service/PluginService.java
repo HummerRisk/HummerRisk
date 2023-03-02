@@ -1,16 +1,16 @@
 package com.hummer.system.service;
 
 import com.hummer.common.core.constant.ScanTypeConstants;
-import com.hummer.common.mapper.domain.Plugin;
-import com.hummer.common.mapper.domain.PluginExample;
-import com.hummer.common.mapper.domain.request.plugin.PluginRequest;
+import com.hummer.common.core.domain.Plugin;
+import com.hummer.common.core.domain.PluginExample;
+import com.hummer.common.core.domain.request.plugin.PluginRequest;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.mapper.mapper.PluginMapper;
-import com.hummer.common.mapper.mapper.ext.ExtPluginMapper;
 import com.hummer.common.core.utils.LogUtil;
-import com.hummer.common.mapper.utils.PlatformUtils;
+import com.hummer.common.core.utils.PlatformUtils;
 import com.hummer.common.core.utils.ReadFileUtils;
+import com.hummer.system.mapper.PluginMapper;
+import com.hummer.system.mapper.ext.ExtPluginMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 

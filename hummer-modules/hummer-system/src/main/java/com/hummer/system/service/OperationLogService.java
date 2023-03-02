@@ -1,13 +1,13 @@
 package com.hummer.system.service;
 
-import com.hummer.common.core.domain.User;
-import com.hummer.common.core.utils.SessionUtils;
 import com.hummer.common.core.utils.UUIDUtil;
-import com.hummer.common.mapper.domain.OperationLog;
-import com.hummer.common.mapper.domain.OperationLogExample;
-import com.hummer.common.mapper.domain.request.log.OperatorLogRequest;
-import com.hummer.common.mapper.mapper.OperationLogMapper;
-import com.hummer.common.mapper.mapper.ext.ExtOperationLogMapper;
+import com.hummer.common.core.domain.OperationLog;
+import com.hummer.common.core.domain.OperationLogExample;
+import com.hummer.common.core.domain.request.log.OperatorLogRequest;
+import com.hummer.common.security.service.TokenService;
+import com.hummer.system.api.domain.User;
+import com.hummer.system.mapper.OperationLogMapper;
+import com.hummer.system.mapper.ext.ExtOperationLogMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,15 +24,18 @@ public class OperationLogService {
     @Resource
     private ExtOperationLogMapper extOperationLogMapper;
 
+    @Resource
+    private static TokenService tokenService;
+
     public static void log(String resourceId, String resourceName, String resourceType, String operation, String message) {
-        User user = SessionUtils.getUser();
-        String ip = SessionUtils.getRemoteAddress();
+        User user = tokenService.getLoginUser().getUser();
+        String ip = tokenService.getLoginUser().getIpAddr();
         OperationLog operationLog = createOperationLog(user, resourceId, resourceName, resourceType, operation, message, ip);
         operationLogMapper.insertSelective(operationLog);
     }
 
     public static void log(User user, String resourceId, String resourceName, String resourceType, String operation, String message) {
-        String ip = SessionUtils.getRemoteAddress();
+        String ip = tokenService.getLoginUser().getIpAddr();
         OperationLog operationLog = createOperationLog(user, resourceId, resourceName, resourceType, operation, message, ip);
         operationLogMapper.insertSelective(operationLog);
     }

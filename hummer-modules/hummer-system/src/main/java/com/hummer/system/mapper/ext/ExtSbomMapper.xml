@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummer.system.mapper.ext.ExtSbomMapper">
+
+    <resultMap id="SbomMap" type="com.hummer.common.core.dto.SbomDTO"
+               extends="com.hummer.system.mapper.SbomMapper.BaseResultMap">
+        <result column="user" property="user"/>
+    </resultMap>
+
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.name != null and (${name} == null or ${name} == "")'>
+            and t.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test="${condition}.updateTime != null">
+            and t.update_time
+            <include refid="condition">
+                <property name="object" value="${condition}.updateTime"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+        <if test="${condition}.creator != null">
+            and user.id
+            <include refid="condition">
+                <property name="object" value="${condition}.creator"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="sbomList" resultMap="SbomMap">
+        select
+        t.*,
+        user.name as userName
+        from sbom as t
+        left join user on t.creator = user.id
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.description != null and request.description != ''">
+                and LOWER(t.description) like CONCAT('%', LOWER(#{request.description}),'%')
+            </if>
+            <if test="request.userName != null and request.userName != ''">
+                and LOWER(user.name) like CONCAT('%', LOWER(#{request.userName}),'%')
+            </if>
+        </where>
+        order by t.update_time desc
+    </select>
+
+    <select id="sbomVersionList" resultType="com.hummer.common.core.domain.SbomVersion">
+        select
+        t.*
+        from sbom_version as t
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and t.name like CONCAT('%', #{request.name},'%')
+            </if>
+        </where>
+        order by t.update_time desc
+    </select>
+
+    <resultMap id="ApplicationsMap" type="com.hummer.common.core.dto.ApplicationDTO"
+               extends="com.hummer.system.mapper.SbomMapper.BaseResultMap">
+        <collection property="sbomVersionList" ofType="com.hummer.common.core.dto.SbomVersionDTO" javaType="list" select="getSbomVersionList" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="applications" resultMap="ApplicationsMap">
+        select
+        t.*
+        from sbom as t
+        <where>
+            <if test="request.name != null and request.name != ''">
+                and t.name like CONCAT('%', #{request.name},'%')
+            </if>
+        </where>
+        order by t.update_time desc
+    </select>
+
+    <select id="getSbomVersionList" resultType="com.hummer.common.core.dto.SbomVersionDTO" parameterType="java.lang.String">
+        SELECT t.*,
+               t1.name as sbomName,
+               t1.description as sbomDesc
+        FROM sbom_version t
+        left join sbom t1 on t.sbom_id = t1.id
+        WHERE t.sbom_id = #{id}
+        order by t.update_time desc
+    </select>
+
+    <select id="codeMetricChart" resultType="com.hummer.common.core.dto.MetricChartDTO" parameterType="java.lang.String">
+        SELECT *
+        from (
+            (SELECT count(*) as critical FROM code_result_item t WHERE LOWER(t.severity) = 'critical' AND t.result_id = #{resultId}) as critical,
+            (SELECT count(*) as high FROM code_result_item t WHERE LOWER(t.severity) = 'high' AND t.result_id = #{resultId}) as high,
+            (SELECT count(*) as medium FROM code_result_item t WHERE LOWER(t.severity) = 'medium' AND t.result_id = #{resultId}) as medium,
+            (SELECT count(*) as low FROM code_result_item t WHERE LOWER(t.severity) = 'low' AND t.result_id = #{resultId}) as low,
+            (SELECT count(*) as unknown FROM code_result_item t WHERE LOWER(t.severity) = 'unknown' AND t.result_id = #{resultId}) as unknown,
+            (SELECT count(*) as total FROM code_result_item t WHERE t.result_id = #{resultId}) as total
+             )
+    </select>
+
+    <select id="imageMetricChart" resultType="com.hummer.common.core.dto.MetricChartDTO" parameterType="java.lang.String">
+        SELECT *
+        from (
+             (SELECT count(*) as critical FROM image_result_item t WHERE LOWER(t.severity) = 'critical' AND t.result_id = #{resultId}) as critical,
+             (SELECT count(*) as high FROM image_result_item t WHERE LOWER(t.severity) = 'high' AND t.result_id = #{resultId}) as high,
+             (SELECT count(*) as medium FROM image_result_item t WHERE LOWER(t.severity) = 'medium' AND t.result_id = #{resultId}) as medium,
+             (SELECT count(*) as low FROM image_result_item t WHERE LOWER(t.severity) = 'low' AND t.result_id = #{resultId}) as low,
+             (SELECT count(*) as unknown FROM image_result_item t WHERE LOWER(t.severity) = 'unknown' AND t.result_id = #{resultId}) as unknown,
+             (SELECT count(*) as total FROM image_result_item t WHERE t.result_id = #{resultId}) as total
+             )
+    </select>
+
+    <select id="fsMetricChart" resultType="com.hummer.common.core.dto.MetricChartDTO" parameterType="java.lang.String">
+        SELECT *
+        from (
+             (SELECT count(*) as critical FROM file_system_result_item t WHERE LOWER(t.severity) = 'critical' AND t.result_id = #{resultId}) as critical,
+             (SELECT count(*) as high FROM file_system_result_item t WHERE LOWER(t.severity) = 'high' AND t.result_id = #{resultId}) as high,
+             (SELECT count(*) as medium FROM file_system_result_item t WHERE LOWER(t.severity) = 'medium' AND t.result_id = #{resultId}) as medium,
+             (SELECT count(*) as low FROM file_system_result_item t WHERE LOWER(t.severity) = 'low' AND t.result_id = #{resultId}) as low,
+             (SELECT count(*) as unknown FROM file_system_result_item t WHERE LOWER(t.severity) = 'unknown' AND t.result_id = #{resultId}) as unknown,
+             (SELECT count(*) as total FROM file_system_result_item t WHERE t.result_id = #{resultId}) as total
+         )
+    </select>
+
+</mapper>

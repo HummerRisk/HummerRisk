@@ -2,15 +2,14 @@ package com.hummer.system.service;
 
 import com.hummer.common.core.constant.ResourceOperation;
 import com.hummer.common.core.constant.ResourceTypeConstants;
-import com.hummer.common.mapper.domain.Proxy;
-import com.hummer.common.mapper.domain.ProxyExample;
-import com.hummer.common.mapper.domain.request.proxy.ProxyRequest;
+import com.hummer.common.core.domain.Proxy;
+import com.hummer.common.core.domain.ProxyExample;
+import com.hummer.common.core.domain.request.proxy.ProxyRequest;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.mapper.mapper.ProxyMapper;
-import com.hummer.common.mapper.mapper.ext.ExtProxyMapper;
-import com.hummer.common.core.utils.SessionUtils;
-import com.hummer.common.mapper.service.OperationLogService;
+import com.hummer.common.security.service.TokenService;
+import com.hummer.system.mapper.ProxyMapper;
+import com.hummer.system.mapper.ext.ExtProxyMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +29,9 @@ public class ProxyService {
     @Resource
     private ExtProxyMapper extProxyMapper;
 
+    @Resource
+    private TokenService tokenService;
+
     public Proxy insert(Proxy proxy) throws Exception {
 
         Integer id = proxy.getId();
@@ -48,7 +50,7 @@ public class ProxyService {
         // 密码使用 MD5
         proxy.setProxyPassword(proxy.getProxyPassword());
         proxyMapper.insertSelective(proxy);
-        OperationLogService.log(SessionUtils.getUser(), proxy.getProxyIp(), proxy.getProxyIp(), ResourceTypeConstants.PROXY.name(), ResourceOperation.CREATE, "i18n_create_proxy");
+        OperationLogService.log(tokenService.getLoginUser().getUser(), proxy.getProxyIp(), proxy.getProxyIp(), ResourceTypeConstants.PROXY.name(), ResourceOperation.CREATE, "i18n_create_proxy");
     }
 
     public List<Proxy> getProxyList() {
@@ -64,13 +66,13 @@ public class ProxyService {
     public void deleteProxy(int proxyId) {
         Proxy proxy = proxyMapper.selectByPrimaryKey(proxyId);
         proxyMapper.deleteByPrimaryKey(proxyId);
-        OperationLogService.log(SessionUtils.getUser(), proxy.getProxyIp(), proxy.getProxyIp(), ResourceTypeConstants.PROXY.name(), ResourceOperation.DELETE, "i18n_delete_proxy");
+        OperationLogService.log(tokenService.getLoginUser().getUser(), proxy.getProxyIp(), proxy.getProxyIp(), ResourceTypeConstants.PROXY.name(), ResourceOperation.DELETE, "i18n_delete_proxy");
     }
 
     public void updateProxy(Proxy proxy) {
         proxy.setUpdateTime(System.currentTimeMillis());
         proxyMapper.updateByPrimaryKeySelective(proxy);
-        OperationLogService.log(SessionUtils.getUser(), proxy.getProxyIp(), proxy.getProxyIp(), ResourceTypeConstants.PROXY.name(), ResourceOperation.UPDATE, "i18n_update_proxy");
+        OperationLogService.log(tokenService.getLoginUser().getUser(), proxy.getProxyIp(), proxy.getProxyIp(), ResourceTypeConstants.PROXY.name(), ResourceOperation.UPDATE, "i18n_update_proxy");
     }
 
 }

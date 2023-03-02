@@ -1,11 +1,11 @@
 package com.hummer.system.service;
 
-import com.hummer.common.mapper.domain.WebMsg;
-import com.hummer.common.mapper.domain.WebMsgExample;
-import com.hummer.common.mapper.domain.request.webMsg.WebMsgRequest;
-import com.hummer.common.mapper.mapper.WebMsgMapper;
-import com.hummer.common.mapper.mapper.ext.ExtWebMsgMapper;
-import com.hummer.common.core.utils.SessionUtils;
+import com.hummer.common.core.domain.WebMsg;
+import com.hummer.common.core.domain.WebMsgExample;
+import com.hummer.common.core.domain.request.webMsg.WebMsgRequest;
+import com.hummer.common.security.service.TokenService;
+import com.hummer.system.mapper.WebMsgMapper;
+import com.hummer.system.mapper.ext.ExtWebMsgMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,6 +18,8 @@ public class WebMsgService {
     private WebMsgMapper webMsgMapper;
     @Resource
     private ExtWebMsgMapper extWebMsgMapper;
+    @Resource
+    private TokenService tokenService;
 
     public List<WebMsg> query(WebMsg webMsg) {
         String orderClause = " create_time desc";
@@ -47,13 +49,13 @@ public class WebMsgService {
         WebMsg msg = new WebMsg();
         msg.setId(msgId);
         msg.setStatus(true);
-        msg.setUserId(SessionUtils.getUserId());
+        msg.setUserId(tokenService.getLoginUser().getUserId());
         msg.setReadTime(System.currentTimeMillis());
         webMsgMapper.updateByPrimaryKeySelective(msg);
     }
 
     public void setBatchReaded(List<Long> msgIds) {
-        extWebMsgMapper.batchStatus(msgIds, System.currentTimeMillis(), SessionUtils.getUserId());
+        extWebMsgMapper.batchStatus(msgIds, System.currentTimeMillis(), tokenService.getLoginUser().getUserId());
     }
 
     public void batchDelete(List<Long> msgIds) {
@@ -61,7 +63,7 @@ public class WebMsgService {
     }
 
     public void save(WebMsg webMsg) {
-        webMsg.setUserId(SessionUtils.getUserId());
+        webMsg.setUserId(tokenService.getLoginUser().getUserId());
         webMsgMapper.insertSelective(webMsg);
     }
 

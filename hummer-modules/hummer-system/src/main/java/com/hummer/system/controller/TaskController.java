@@ -3,22 +3,20 @@ package com.hummer.system.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummer.common.core.constant.RoleConstants;
-import com.hummer.common.mapper.domain.Favorite;
-import com.hummer.common.mapper.domain.Task;
-import com.hummer.common.mapper.domain.TaskItem;
-import com.hummer.common.mapper.domain.request.task.RuleVo;
-import com.hummer.common.mapper.domain.request.task.TaskLogVo;
-import com.hummer.common.mapper.domain.request.task.TaskRequest;
-import com.hummer.common.mapper.domain.request.task.TaskVo;
+import com.hummer.common.core.domain.Favorite;
+import com.hummer.common.core.domain.Task;
+import com.hummer.common.core.domain.TaskItem;
+import com.hummer.common.core.domain.request.task.RuleVo;
+import com.hummer.common.core.domain.request.task.TaskLogVo;
+import com.hummer.common.core.domain.request.task.TaskRequest;
+import com.hummer.common.core.domain.request.task.TaskVo;
 import com.hummer.common.core.dto.*;
+import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
-import com.hummer.common.mapper.dto.*;
-import com.hummer.common.mapper.handler.annotation.I18n;
-import com.hummer.common.mapper.service.TaskService;
+import com.hummer.system.service.TaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -143,7 +141,6 @@ public class TaskController {
 
     @ApiOperation(value = "删除任务")
     @GetMapping("/deleteTask/{taskId}")
-    @RequiresRoles(RoleConstants.ADMIN)
     public void deleteTask(@PathVariable String taskId) throws Exception {
         taskService.deleteTask(taskId);
     }

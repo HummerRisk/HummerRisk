@@ -1,8 +1,8 @@
 package com.hummer.system.service;
 
 import com.hummer.common.core.domain.Role;
-import com.hummer.common.mapper.mapper.RoleMapper;
-import com.hummer.common.mapper.mapper.ext.ExtRoleMapper;
+import com.hummer.system.mapper.RoleMapper;
+import com.hummer.system.mapper.ext.ExtRoleMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

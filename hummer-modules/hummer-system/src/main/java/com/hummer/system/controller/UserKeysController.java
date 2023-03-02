@@ -3,20 +3,18 @@ package com.hummer.system.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummer.common.core.constant.RoleConstants;
+import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
-import com.hummer.common.core.utils.SessionUtils;
-import com.hummer.common.mapper.domain.UserKey;
-import com.hummer.common.mapper.domain.request.user.UserKeyRequest;
-import com.hummer.common.mapper.handler.annotation.I18n;
-import com.hummer.common.mapper.service.UserKeyService;
+import com.hummer.common.core.domain.UserKey;
+import com.hummer.common.core.domain.request.user.UserKeyRequest;
+import com.hummer.common.security.service.TokenService;
 import com.hummer.system.service.ApiKeyHandler;
+import com.hummer.system.service.UserKeyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -27,11 +25,12 @@ import java.util.Objects;
 @Api(tags = "API Keys")
 @RestController
 @RequestMapping("user/key")
-@RequiresRoles(value = {RoleConstants.ADMIN}, logical = Logical.OR)
 public class UserKeysController {
 
     @Resource
     private UserKeyService userKeyService;
+    @Resource
+    private TokenService tokenService;
 
     @I18n
     @ApiOperation(value = "API Keys信息")
@@ -50,8 +49,8 @@ public class UserKeysController {
 
     @ApiOperation(value = "生成API Keys")
     @GetMapping("generate")
-    public void generateUserKey() {
-        String userId = Objects.requireNonNull(SessionUtils.getUser()).getId();
+    public void generateUserKey() throws Exception {
+        String userId = Objects.requireNonNull(tokenService.getLoginUser().getUser()).getId();
         userKeyService.generateUserKey(userId);
     }
 
