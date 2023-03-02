@@ -20,7 +20,6 @@
         <spring-boot.version>3.0.0</spring-boot.version>
         <spring-cloud.version>2022.0.1</spring-cloud.version>
         <spring-cloud-alibaba.version>2022.0.0.0-RC1</spring-cloud-alibaba.version>
-        <swagger.fox.version>3.0.0</swagger.fox.version>
         <tobato.version>1.27.2</tobato.version>
         <pagehelper.version>5.3.0</pagehelper.version>
         <druid.version>1.2.15</druid.version>
@@ -89,13 +88,13 @@
             <!-- SpringBoot 依赖配置 -->
 
             <!-- jdk 17 构建打包需额外引入 tools.jar -->
-<!--            <dependency>-->
-<!--                <groupId>jdk.tools</groupId>-->
-<!--                <artifactId>jdk.tools</artifactId>-->
-<!--                <version>17</version>-->
-<!--                <scope>system</scope>-->
-<!--                <systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>jdk.tools</groupId>
+                <artifactId>jdk.tools</artifactId>
+                <version>17</version>
+                <scope>system</scope>
+                <systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>
+            </dependency>
             <!-- 本地启动可注释 -->
 
         </dependencies>
@@ -108,7 +107,7 @@
         <module>hummer-gateway</module>
         <module>hummer-visual</module>
         <module>hummer-modules</module>
-        <module>hummer-api</module>
+        <module>hummer-dubbo-api</module>
         <module>hummer-common</module>
         <module>hummer-dubbo-api</module>
     </modules>

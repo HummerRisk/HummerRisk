@@ -48,9 +48,9 @@ public class TokenService {
         String userId = loginUser.getUser().getId();
         String userName = loginUser.getUser().getName();
         loginUser.setToken(token);
-        loginUser.setUserid(userId);
-        loginUser.setUsername(userName);
-        loginUser.setIpaddr(IpUtils.getIpAddr());
+        loginUser.setUserId(userId);
+        loginUser.setUserName(userName);
+        loginUser.setIpAddr(IpUtils.getIpAddr());
         refreshToken(loginUser);
 
         // Jwt存储信息
