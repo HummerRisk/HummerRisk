@@ -1,6 +1,6 @@
 import {Message, MessageBox} from "element-ui";
 import axios from "axios";
-import i18n from "../../i18n/i18n"
+import i18n from "../../i18n/i18n";
 
 
 export default {
@@ -112,6 +112,14 @@ export default {
     };
 
     Vue.prototype.$request = function (axiosRequestConfig, success, failure) {
+      console.log(111, axiosRequestConfig);
+      // 是否需要设置 token
+      const isToken = (axiosRequestConfig.headers || {}).isToken === false;
+      // 是否需要防止数据重复提交
+      const isRepeatSubmit = (axiosRequestConfig.headers || {}).repeatSubmit === false;
+      if (getToken() && !isToken) {
+        axiosRequestConfig.headers['Authorization'] = 'Bearer ' + getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
+      }
       let result = {loading: true};
       if (!success) {
         return axios.request(axiosRequestConfig);

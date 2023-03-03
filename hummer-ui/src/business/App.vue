@@ -63,7 +63,7 @@ export default {
       }
     },
     beforeCreate() {
-      this.$get("/isLogin").then(response => {
+      this.$get("/auth/isLogin").then(response => {
         if (response.data.success) {
           this.$setLang(response.data.data.language);
           saveLocalStorage(response.data);
