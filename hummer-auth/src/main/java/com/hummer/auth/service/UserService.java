@@ -8,6 +8,7 @@ import com.hummer.common.core.domain.UserExample;
 import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.system.api.model.LoginUser;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,10 +22,10 @@ import java.util.List;
 @Transactional(rollbackFor = Exception.class)
 public class UserService {
 
-    @Resource
+    @Autowired
     private UserMapper userMapper;
 
-    @Resource
+    @Autowired
     private OperationLogMapper operationLogMapper;
 
     public LoginUser getLoginUserByName(String userName) throws Exception {
