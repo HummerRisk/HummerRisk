@@ -328,7 +328,7 @@ public class ResourceCreateService {
         FileSystemResultExample.Criteria fsCriteria = fileSystemResultExample.createCriteria();
         fsCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
-            codeCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+            fsCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
         }
         fileSystemResultExample.setOrderByClause("create_time limit 10");
         List<FileSystemResult> fileSystemResults = fileSystemResultMapper.selectByExampleWithBLOBs(fileSystemResultExample);
