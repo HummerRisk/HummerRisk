@@ -1,7 +1,6 @@
 package com.hummer.auth.service;
 
 import com.hummer.common.core.constant.CacheConstants;
-import com.hummer.common.core.constant.Constants;
 import com.hummer.common.core.exception.ServiceException;
 import com.hummer.common.redis.service.RedisService;
 import com.hummer.common.security.utils.SecurityUtils;

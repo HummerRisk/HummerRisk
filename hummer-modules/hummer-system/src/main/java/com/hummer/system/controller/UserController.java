@@ -183,4 +183,10 @@ public class UserController {
         return userService.searchUser(condition);
     }
 
+    /*Get default language*/
+    @GetMapping(value = "/language")
+    public String getDefaultLanguage() {
+        return userService.getDefaultLanguage();
+    }
+
 }

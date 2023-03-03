@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.hummer.common.core.user.SessionUser;
 import jakarta.servlet.http.HttpServletRequest;
 
 import com.hummer.system.api.model.LoginUser;

@@ -1,6 +1,8 @@
 package com.hummer.auth.service;
 
 import com.hummer.common.core.constant.CacheConstants;
+import com.hummer.common.core.constant.ResourceOperation;
+import com.hummer.common.core.constant.ResourceTypeConstants;
 import com.hummer.common.core.constant.UserConstants;
 import com.hummer.common.core.exception.ServiceException;
 import com.hummer.common.core.text.Convert;
@@ -11,6 +13,8 @@ import com.hummer.system.api.domain.User;
 import com.hummer.system.api.model.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 /**
  * 登录校验方法
@@ -63,12 +67,31 @@ public class SysLoginService {
             throw new ServiceException("对不起，您的账号：" + username + " 已停用");
         }
         passwordService.validate(user, password);
+        userService.createOperationLog(user, Objects.requireNonNull(user).getId(), user.getName(), ResourceTypeConstants.USER.name(), ResourceOperation.LOGIN, "用户登录", userInfo.getIpAddr());
         return userInfo;
     }
 
     public void logout(String loginName) {
     }
 
+    class SystemUserConstants extends User {
+
+        private static User user = new User();
+
+        static {
+            user.setId("system");
+            user.setName("SYSTEM");
+        }
+
+        public static User getUser() {
+            return user;
+        }
+
+        public static String getUserId() {
+            return user.getId();
+        }
+
+    }
 
 
 }
