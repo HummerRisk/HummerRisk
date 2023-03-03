@@ -14,6 +14,7 @@ import com.hummer.common.core.dto.QuartzTaskDTO;
 import com.hummer.common.core.dto.RuleDTO;
 import com.hummer.cloud.api.ICloudProviderService;
 import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.context.annotation.Lazy;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -48,6 +49,32 @@ public class CloudProviderService implements ICloudProviderService {
     private ExtCloudTaskMapper extCloudTaskMapper;
     @Resource
     private RuleTagMapper ruleTagMapper;
+    @Resource
+    private CloudTaskItemMapper cloudTaskItemMapper;
+    @Resource
+    private ResourceService resourceService;
+    @Resource
+    private CloudTaskItemResourceMapper cloudTaskItemResourceMapper;
+    @Resource
+    private ResourceMapper resourceMapper;
+    @Resource @Lazy
+    private OrderService orderService;
+    @Resource
+    private ProxyMapper proxyMapper;
+    @Resource
+    private NucleiService nucleiService;
+    @Resource
+    private ProwlerService prowlerService;
+    @Resource
+    private XrayService xrayService;
+    @Resource
+    private CloudResourceSyncItemMapper cloudResourceSyncItemMapper;
+    @Resource
+    private CloudResourceSyncMapper cloudResourceSyncMapper;
+    @Resource
+    private OssService ossService;
+    @Resource
+    private OssMapper ossMapper;
 
     @Override
     public List<CloudTask> selectCloudTaskList(CloudTaskExample example) {

@@ -50,3 +50,15 @@ dubbo:
   application:
     name: ${spring.application.name}
     qos-port: 22223
+
+#xxl-job 配置
+xxl:
+  job:
+    admin:
+      addresses: http://${HR_NACOS_SERVER_ADDR}:8084/xxl-job-admin/
+    accessToken: default_token
+  executor:
+    port: 9201
+    appName: hummer-system
+    logpath: ./data/applogs/xxl-job/jobhandler
+    logretentiondays: 30
