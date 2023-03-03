@@ -53,6 +53,7 @@ public class SystemProviderService implements ISystemProviderService {
     @Resource
     private HistoryServerResultMapper historyServerResultMapper;
 
+
     @Override
     public Integer insertScanHistory(Object obj) throws Exception {
         return historyService.insertScanHistory(obj);

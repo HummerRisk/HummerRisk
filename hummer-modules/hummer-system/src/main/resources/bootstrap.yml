@@ -54,11 +54,11 @@ dubbo:
   xxl:
     job:
       admin:
-        addresses: http://localhost:9094/xxl-job-admin/
+        addresses: http://${HR_NACOS_SERVER_ADDR}:8084/xxl-job-admin/
       accessToken: default_token
     executor:
-      port: 9008
-      appName: project-b-job
+      port: 9201
+      appName: hummer-system
       logpath: ./data/applogs/xxl-job/jobhandler
       logretentiondays: 30
 
