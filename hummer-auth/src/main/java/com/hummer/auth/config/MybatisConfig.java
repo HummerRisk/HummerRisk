@@ -1,6 +1,8 @@
 package com.hummer.auth.config;
 
 import com.github.pagehelper.PageInterceptor;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -9,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Properties;
 
 @Configuration
-@MapperScan(basePackages = {"com.hummerrisk.auth.mapper"}, sqlSessionFactoryRef = "sqlSessionFactory")
+@MapperScan(basePackages = {"com.hummer.auth.mapper"}, sqlSessionFactoryRef = "sqlSessionFactory")
 public class MybatisConfig {
 
     @Bean
