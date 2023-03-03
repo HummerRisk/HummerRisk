@@ -65,6 +65,7 @@ public class K8sProviderService implements IK8sProviderService {
     @Resource
     private ServerGroupMapper serverGroupMapper;
 
+
     @Override
     public List<CloudNativeResult> cloudNativeResults(CloudNativeResultExample example) {
         return cloudNativeResultMapper.selectByExample(example);
