@@ -547,6 +547,12 @@
             <groupId>com.jdcloud.sdk</groupId>
             <artifactId>iam</artifactId>
             <version>0.2.3</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>fastjson</artifactId>
+                    <groupId>com.alibaba</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- jd -->
 

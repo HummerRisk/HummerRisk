@@ -58,9 +58,9 @@ xxl:
       addresses: http://${HR_NACOS_SERVER_ADDR}:8084/xxl-job-admin/
     accessToken: default_token
     executor:
-      address: ${HR_NACOS_SERVER_ADDR}:9400
+      address: ${HR_NACOS_SERVER_ADDR}:9401
       ip: ${HR_NACOS_SERVER_ADDR}
-      port: 9400
+      port: 9401
       appName: hummer-cloud
-      logpath: ./data/applogs/xxl-job/jobhandler
+      logpath: /opt/hummerrisk/logs/xxl-job/hummer-cloud
       logretentiondays: 30
