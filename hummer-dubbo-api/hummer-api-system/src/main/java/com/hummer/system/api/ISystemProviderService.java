@@ -3,6 +3,7 @@ package com.hummer.system.api;
 
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.dashboard.DashboardTarget;
+import com.hummer.system.api.model.LoginUser;
 
 import java.util.List;
 import java.util.Map;
@@ -134,5 +135,7 @@ public interface ISystemProviderService {
     void deleteHistoryK8sResult(String id) throws Exception;
 
     void deleteHistoryServerResult(String id) throws Exception;
+
+    LoginUser getLoginUserByName(String id) throws Exception;
 
 }

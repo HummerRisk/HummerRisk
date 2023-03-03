@@ -14,6 +14,7 @@ import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.CodingUtil;
 import com.hummer.common.security.service.TokenService;
+import com.hummer.system.api.model.LoginUser;
 import com.hummer.system.mapper.RoleMapper;
 import com.hummer.system.mapper.UserMapper;
 import com.hummer.system.mapper.UserRoleMapper;
@@ -175,6 +176,17 @@ public class UserService {
             return null;
         }
         return getUserDTO(userId);
+    }
+
+    public LoginUser getLoginUserByName(String userName) throws Exception {
+        LoginUser loginUser = new LoginUser();
+        UserExample example = new UserExample();
+        example.createCriteria().andNameEqualTo(userName);
+        List<User> users = userMapper.selectByExample(example);
+        com.hummer.system.api.domain.User user = new com.hummer.system.api.domain.User();
+        BeanUtils.copyProperties(user, users.get(0));
+        loginUser.setUser(user);
+        return loginUser;
     }
 
     public UserDTO getUserDTOByEmail(String email, String... source) throws Exception {

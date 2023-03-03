@@ -6,6 +6,7 @@ import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.dashboard.DashboardTarget;
 import com.hummer.common.core.utils.BeanUtils;
 import com.hummer.system.api.ISystemProviderService;
+import com.hummer.system.api.model.LoginUser;
 import com.hummer.system.mapper.*;
 import com.hummer.system.mapper.ext.ExtVulnMapper;
 import org.apache.dubbo.config.annotation.DubboService;
@@ -52,6 +53,8 @@ public class SystemProviderService implements ISystemProviderService {
     private PluginMapper pluginMapper;
     @Resource
     private HistoryServerResultMapper historyServerResultMapper;
+    @Resource
+    private UserService userService;
 
 
     @Override
@@ -369,6 +372,12 @@ public class SystemProviderService implements ISystemProviderService {
     public void deleteHistoryServerResult(String id) throws Exception {
         historyServerResultMapper.deleteByPrimaryKey(id);
     }
+
+    @Override
+    public LoginUser getLoginUserByName(String id) throws Exception {
+        return userService.getLoginUserByName(id);
+    }
+
 
 
 }

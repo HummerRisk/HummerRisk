@@ -32,7 +32,7 @@ public class LoginController {
     }
 
     @PostMapping("login")
-    public R<?> login(@RequestBody LoginBody form) {
+    public R<?> login(@RequestBody LoginBody form) throws Exception {
         // 用户登录
         LoginUser userInfo = sysLoginService.login(form.getUsername(), form.getPassword());
         // 获取登录token
@@ -63,11 +63,5 @@ public class LoginController {
         return R.ok();
     }
 
-    @PostMapping("register")
-    public R<?> register(@RequestBody RegisterBody registerBody) {
-        // 用户注册
-        sysLoginService.register(registerBody.getUsername(), registerBody.getPassword());
-        return R.ok();
-    }
 
 }
