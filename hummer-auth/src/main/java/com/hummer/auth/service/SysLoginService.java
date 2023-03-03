@@ -1,19 +1,14 @@
 package com.hummer.auth.service;
 
 import com.hummer.common.core.constant.CacheConstants;
-import com.hummer.common.core.constant.SecurityConstants;
 import com.hummer.common.core.constant.UserConstants;
-import com.hummer.common.core.domain.R;
 import com.hummer.common.core.exception.ServiceException;
 import com.hummer.common.core.text.Convert;
 import com.hummer.common.core.utils.StringUtils;
 import com.hummer.common.core.utils.ip.IpUtils;
 import com.hummer.common.redis.service.RedisService;
-import com.hummer.common.security.utils.SecurityUtils;
-import com.hummer.system.api.ISystemProviderService;
 import com.hummer.system.api.domain.User;
 import com.hummer.system.api.model.LoginUser;
-import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,8 +25,9 @@ public class SysLoginService {
 
     @Autowired
     private RedisService redisService;
-    @DubboReference
-    private ISystemProviderService systemProviderService;
+
+    @Autowired
+    private UserService userService;
 
     /**
      * 登录
@@ -57,7 +53,7 @@ public class SysLoginService {
             throw new ServiceException("很遗憾，访问IP已被列入系统黑名单");
         }
         // 查询用户信息
-        LoginUser userInfo = systemProviderService.getLoginUserByName(username);
+        LoginUser userInfo = userService.getLoginUserByName(username);
 
         User user = userInfo.getUser();
         if (StringUtils.equals(user.getStatus(), "0")) {
@@ -72,5 +68,7 @@ public class SysLoginService {
 
     public void logout(String loginName) {
     }
+
+
 
 }

@@ -34,18 +34,3 @@ spring:
         # 共享配置
         shared-configs:
           - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
-
-dubbo:
-  protocol:
-    name: system
-    port: 8003
-    host: ${HR_NACOS_SERVER_ADDR}
-  registry:
-    # 由于使用的是spring-cloud，因此这里使用spring-cloud的
-    address: nacos://${HR_NACOS_SERVER_ADDR}:8848
-  scan:
-    # 配置需要扫描的注解包
-    base-packages: com.hummer.system
-  application:
-    name: ${spring.application.name}
-    qos-port: 22223
