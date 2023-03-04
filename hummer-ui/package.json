@@ -25,6 +25,7 @@
     "highlight.js": "^11.2.0",
     "html2canvas": "^1.4.1",
     "js-base64": "^3.4.4",
+    "js-cookie": "^3.0.1",
     "json-bigint": "^1.0.0",
     "jspdf": "^2.5.1",
     "less-loader": "^3.0.0",

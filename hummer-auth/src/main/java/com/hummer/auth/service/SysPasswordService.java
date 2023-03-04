@@ -35,7 +35,7 @@ public class SysPasswordService {
     }
 
     public void validate(User user, String password) {
-        String username = user.getName();
+        String username = user.getId();
 
         Integer retryCount = redisService.getCacheObject(getCacheKey(username));
 

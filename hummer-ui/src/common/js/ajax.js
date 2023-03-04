@@ -1,5 +1,6 @@
 import {Message, MessageBox} from "element-ui";
 import axios from "axios";
+import { getToken } from './auth';
 import i18n from "../../i18n/i18n";
 
 
@@ -61,6 +62,7 @@ export default {
     }
 
     function exception(error, result, url) {
+      console.log(111222, error, result, url)
       if (error.response && error.response.status === 401 && !unRedirectUrls.has(url) && error.response.data.message !== "用户名或密码不正确") {
         login();
         return;
@@ -95,6 +97,14 @@ export default {
     };
 
     Vue.prototype.$post = function (url, data, success, failure) {
+      console.log(222, data, getToken());
+      // 是否需要设置 token
+      const isToken = (data.headers || {}).isToken === false;
+      // 是否需要防止数据重复提交
+      const isRepeatSubmit = (data.headers || {}).repeatSubmit === false;
+      if (getToken() && !isToken) {
+        data.headers['Authorization'] = 'Bearer ' + getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
+      }
       let result = {loading: true};
       if (!success) {
         return axios.post(url, data);

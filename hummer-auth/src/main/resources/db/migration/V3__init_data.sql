@@ -1,5 +1,5 @@
 INSERT INTO `user` ( id, name, email, password, status, create_time, update_time, language, last_account_id, phone, source )
-VALUES ( 'admin', '管理员', 'admin@hummercloud.com', md5('hummer'), '1', unix_timestamp() * 1000, unix_timestamp() * 1000, 'zh-CN', NULL, '666666', 'LOCAL' );
+VALUES ( 'admin', '管理员', 'admin@hummercloud.com', '$2a$10$aTG8nCGRorFhGKgL8BHt9.pesax/ch2aDO/zZMX9U4eSqSgUVEGJ6', '1', unix_timestamp() * 1000, unix_timestamp() * 1000, 'zh-CN', NULL, '666666', 'LOCAL' );
 
 INSERT INTO user_role ( id, user_id, role_id, source_id, create_time, update_time )
 VALUES ( uuid(), 'admin', 'admin', '1', unix_timestamp() * 1000, unix_timestamp() * 1000 );
