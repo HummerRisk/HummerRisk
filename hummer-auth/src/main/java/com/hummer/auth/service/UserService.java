@@ -31,7 +31,7 @@ public class UserService {
     public LoginUser getLoginUserByName(String userName) throws Exception {
         LoginUser loginUser = new LoginUser();
         UserExample example = new UserExample();
-        example.createCriteria().andNameEqualTo(userName);
+        example.createCriteria().andIdEqualTo(userName);
         List<User> users = userMapper.selectByExample(example);
         com.hummer.system.api.domain.User user = new com.hummer.system.api.domain.User();
         BeanUtils.copyProperties(user, users.get(0));
