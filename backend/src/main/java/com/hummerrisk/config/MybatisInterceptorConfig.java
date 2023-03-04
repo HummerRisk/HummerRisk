@@ -1,5 +1,6 @@
-package com.hummerrisk.commons.utils;
+package com.hummerrisk.config;
 
+import com.hummerrisk.commons.utils.EncryptUtils;
 import lombok.Getter;
 import lombok.Setter;
 

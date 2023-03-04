@@ -1,7 +1,7 @@
 package com.hummerrisk.interceptor;
 
 import com.hummerrisk.commons.utils.BeanUtils;
-import com.hummerrisk.commons.utils.MybatisInterceptorConfig;
+import com.hummerrisk.config.MybatisInterceptorConfig;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.cache.CacheKey;
