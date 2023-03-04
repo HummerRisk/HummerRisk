@@ -21,5 +21,5 @@ RUN npm run build
 
 FROM nginx:alpine
 
-COPY --from=stage-build /data/dist /opt/hrs-ui/
+COPY --from=stage-build /data/dist /opt/hmr-ui/
 COPY nginx.conf /etc/nginx/conf.d/default.conf
