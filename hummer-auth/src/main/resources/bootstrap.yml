@@ -4,6 +4,11 @@ server:
 
 # Spring
 spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${HR_MYSQL_HOST}:${HR_MYSQL_PORT}/${HR_MYSQL_DB}?autoReconnect=false&useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: ${HR_MYSQL_USER}
+    password: ${HR_MYSQL_PASSWORD}
   application:
     # 应用名称
     name: hummer-auth
