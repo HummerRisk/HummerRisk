@@ -302,6 +302,16 @@ public class QcloudProvider implements OssProvider {
                 bucketObjectDTOS.add(object);
             }
         }
+
+        if (bucketObjectDTOS.size() > 0) {
+            bucket.setStorageClass(bucketObjectDTOS.get(0).getStorageClass());
+        bucket.setObjectNumber((long) bucketObjectDTOS.size());
+        }else{
+        bucket.setSize("0");
+        bucket.setObjectNumber(0L);
+    }
+
+
         return bucketObjectDTOS;
     }
 
@@ -358,9 +368,8 @@ public class QcloudProvider implements OssProvider {
                 objects.add(bucketObject);
             }
         }
-
+        Double size = 0D;
         for (COSObjectSummary cosObjectSummary : cosObjectSummaries) {
-
             if (!cosObjectSummary.getKey().endsWith("/")) {
                 BucketObjectDTO bucketObject = new BucketObjectDTO();
                 bucketObject.setBucketId(bucket.getId());
@@ -375,9 +384,11 @@ public class QcloudProvider implements OssProvider {
                 bucketObject.setLastModified(cosObjectSummary.getLastModified().getTime());
                 bucketObject.setObjectType(ObjectTypeConstants.FILE.name());
                 objects.add(bucketObject);
+                size+= cosObjectSummary.getSize();
             }
 
         }
+        bucket.setSize(SysListener.changeFlowFormat(size.longValue()));
         return objects;
     }
 
