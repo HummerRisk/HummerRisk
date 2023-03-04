@@ -31,6 +31,7 @@ export default {
     };
 
     axios.defaults.withCredentials = true;
+    axios.defaults.headers.common['Authorization'] = `Bearer `+ getToken() ;
 
     axios.interceptors.response.use(response => {
       if (response.headers["authentication-status"] === "invalid") {
