@@ -39,11 +39,11 @@ import axios from "axios";
             axios.get("/signout").then(response => {
               if (response.data.success) {
                 localStorage.clear();
-                window.location.href = "/auth/login";
+                window.location.href = "/login";
               }
             }).catch(error => {
               localStorage.clear();
-              window.location.href = "/auth/login";
+              window.location.href = "/login";
             });
             break;
           case "about":

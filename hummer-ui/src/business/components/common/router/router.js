@@ -64,7 +64,7 @@ router.beforeEach((to, from, next) => {
   if (!localStorage.getItem('Admin-Token')) {
     axios.get("/signout");
     localStorage.setItem('Admin-Token', "{}");
-    window.location.href = "/auth/login";
+    window.location.href = "/login";
     next();
   } else {
     next();

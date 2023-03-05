@@ -1,9 +1,9 @@
 import router from "./components/common/router/router";
 import {TokenKey} from "@/common/js/constants";
 import {hasRolePermissions, hasRoles} from "@/common/js/utils";
-
+import {getToken, removeToken} from "@/common/js/auth";
 /* eslint-disable */
-const whiteList = ["/auth/login"]; // no redirect whitelist
+const whiteList = ["/login"]; // no redirect whitelist
 
 export const permission = {
   inserted(el, binding) {
@@ -36,10 +36,9 @@ function checkRolePermission(el, binding, type) {
 router.beforeEach(async (to, from, next) => {
 
   // determine whether the user has logged in
-  const user = JSON.parse(localStorage.getItem(TokenKey));
-
-  if (user) {
-    if (to.path === "/auth/login") {
+  const token = getToken()
+  if (token) {
+    if (to.path === "/login") {
       next({path: "/"});
     } else {
       // const roles = user.roles.filter(r => r.id);
@@ -53,7 +52,7 @@ router.beforeEach(async (to, from, next) => {
       next()
     } else {
       // other pages that do not have permission to access are redirected to the login page.
-      next(`/auth/login`)
+      next(`/login`)
     }
   }
 });
