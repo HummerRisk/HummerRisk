@@ -69,10 +69,10 @@ export default {
           saveLocalStorage(response.data);
           this.auth = true;
         } else {
-          window.location.href = "/login"
+          window.location.href = "/auth/login"
         }
       }).catch(() => {
-        window.location.href = "/login"
+        window.location.href = "/auth/login"
       });
     },
     components: {Notification, HrLanguageSwitch, HrUser, HrView, HrTopMenus, LeftMenus, Help},

@@ -3,7 +3,7 @@ import {TokenKey} from "@/common/js/constants";
 import {hasRolePermissions, hasRoles} from "@/common/js/utils";
 
 /* eslint-disable */
-const whiteList = ["/login"]; // no redirect whitelist
+const whiteList = ["/auth/login"]; // no redirect whitelist
 
 export const permission = {
   inserted(el, binding) {
@@ -39,7 +39,7 @@ router.beforeEach(async (to, from, next) => {
   const user = JSON.parse(localStorage.getItem(TokenKey));
 
   if (user) {
-    if (to.path === "/login") {
+    if (to.path === "/auth/login") {
       next({path: "/"});
     } else {
       // const roles = user.roles.filter(r => r.id);
@@ -53,7 +53,7 @@ router.beforeEach(async (to, from, next) => {
       next()
     } else {
       // other pages that do not have permission to access are redirected to the login page.
-      next(`/login`)
+      next(`/auth/login`)
     }
   }
 });

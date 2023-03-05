@@ -25,7 +25,7 @@ export default {
         callback: () => {
           axios.get("/signout");
           localStorage.setItem("Admin-Token", "{}");
-          window.location.href = "/login"
+          window.location.href = "/auth/login"
         }
       });
     };
