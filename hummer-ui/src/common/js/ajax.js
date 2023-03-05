@@ -25,7 +25,7 @@ export default {
         callback: () => {
           axios.get("/signout");
           localStorage.setItem("Admin-Token", "{}");
-          window.location.href = "/auth/login"
+          window.location.href = "/login"
         }
       });
     };
@@ -103,9 +103,6 @@ export default {
       const isToken = (data.headers || {}).isToken === false;
       // 是否需要防止数据重复提交
       const isRepeatSubmit = (data.headers || {}).repeatSubmit === false;
-      if (getToken() && !isToken) {
-        data.headers['Authorization'] = 'Bearer ' + getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
-      }
       let result = {loading: true};
       if (!success) {
         return axios.post(url, data);
