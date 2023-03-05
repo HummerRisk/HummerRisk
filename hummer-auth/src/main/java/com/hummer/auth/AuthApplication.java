@@ -3,7 +3,6 @@ package com.hummer.auth;
 import com.hummer.common.security.annotation.EnableHrFeignClients;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 /**
  * 认证授权中心
