@@ -20,7 +20,7 @@
         <dependency>
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-starter-server</artifactId>
-            <version>${spring-boot-admin.version}</version>
+            <version>3.0.0</version>
         </dependency>
 
         <!-- SpringCloud Alibaba Nacos -->
