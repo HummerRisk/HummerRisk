@@ -32,10 +32,10 @@ module.exports = {
   devServer: {
     port: 8080,
     proxy: {
-      ['^(?!/login)']: {
+      ['^(?!/auth/login)']: {
         target: 'http://gateway:8088',
         ws: true,
-      }
+      },
     }
   },
   pages: {
