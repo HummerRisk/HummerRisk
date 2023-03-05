@@ -1,5 +1,10 @@
 # 基础镜像
 FROM  registry.cn-beijing.aliyuncs.com/hummerrisk/alpine:jre17
+
+RUN apt-get update -y && apt-get install --yes git bash libpcap-dev musl && \
+    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.36.1 && \
+    mkdir -p /opt/apps
+
 # author
 MAINTAINER Hummer
 ARG HR_VERSION=dev
