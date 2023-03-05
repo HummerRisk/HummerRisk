@@ -20,7 +20,7 @@
         <dependency>
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-starter-server</artifactId>
-            <version>3.0.0</version>
+            <version>${spring-boot-admin.version}</version>
         </dependency>
 
         <!-- SpringCloud Alibaba Nacos -->
@@ -41,6 +41,7 @@
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
         </dependency>
 
+        <!-- SpringCloud Starter -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>

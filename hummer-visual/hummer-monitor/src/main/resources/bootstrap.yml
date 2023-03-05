@@ -11,8 +11,6 @@ spring:
     # 环境配置
     active: prod
   cloud:
-    bootstrap:
-      enabled: true
     nacos:
       discovery:
         # 服务注册地址
