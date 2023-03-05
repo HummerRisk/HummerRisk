@@ -67,6 +67,7 @@
 import { saveLocalStorage } from '@/common/js/utils';
 import { DEFAULT_LANGUAGE } from "@/common/js/constants";
 import { signinUrl, isLoginUrl, ssoSigninUrl, languageUrl, ssoLoginUrl } from "@/api/auth/auth";
+import { setToken } from '@/common/js/auth';
 
 /* eslint-disable */
   export default {
@@ -146,8 +147,10 @@ import { signinUrl, isLoginUrl, ssoSigninUrl, languageUrl, ssoLoginUrl } from "@
       },
       doLogin() {
         this.result = this.$post(this.loginUrl, this.form, response => {
+          debugger
           saveLocalStorage(response);
           sessionStorage.setItem('loginSuccess', 'true');
+          setToken(response.data.token)
           this.getLanguage(response.data.language);
         });
       },

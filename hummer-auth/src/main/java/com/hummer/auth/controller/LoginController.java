@@ -2,6 +2,7 @@ package com.hummer.auth.controller;
 
 import com.hummer.auth.form.LoginBody;
 import com.hummer.auth.service.SysLoginService;
+import com.hummer.auth.service.UserService;
 import com.hummer.common.core.constant.SsoMode;
 import com.hummer.common.core.domain.R;
 import com.hummer.common.core.domain.request.LoginRequest;
@@ -20,6 +21,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.Map;
+
 @ApiIgnore
 @RestController
 @RequestMapping
@@ -29,10 +32,19 @@ public class LoginController {
     private TokenService tokenService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private SysLoginService sysLoginService;
 
     @Autowired
     private Environment env;
+
+    @GetMapping("test")
+    public String test() throws Exception {
+         userService.getLoginUserByName("test");
+         return "a";
+    }
 
     @GetMapping(value = "healthz")
     public String healthz() {
@@ -45,6 +57,8 @@ public class LoginController {
             // 用户登录
             LoginUser userInfo = sysLoginService.login(request.getUsername(), request.getPassword());
             // 获取登录token
+            Map<String, Object> tokenInfo = tokenService.createToken(userInfo);
+            userInfo.setToken((String) tokenInfo.get("access_token"));
             return ResultHolder.success(userInfo);
         }catch (Exception e) {
             return ResultHolder.error(e.getMessage());

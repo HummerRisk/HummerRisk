@@ -3,6 +3,7 @@ package com.hummer.common.security.utils;
 import com.hummer.common.core.constant.SecurityConstants;
 import com.hummer.common.core.constant.TokenConstants;
 import com.hummer.common.core.context.SecurityContextHolder;
+import com.hummer.common.core.utils.Md5Utils;
 import com.hummer.common.core.utils.ServletUtils;
 import com.hummer.common.core.utils.StringUtils;
 import com.hummer.system.api.model.LoginUser;
@@ -101,8 +102,9 @@ public class SecurityUtils {
      * @return 结果
      */
     public static boolean matchesPassword(String rawPassword, String encodedPassword) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        return passwordEncoder.matches(rawPassword, encodedPassword);
+
+       // BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return encodedPassword.equals(Md5Utils.hash(rawPassword));
     }
 
 }
