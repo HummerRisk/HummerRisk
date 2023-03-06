@@ -25,7 +25,12 @@
                     </el-image>
                   </el-col>
                   <el-col :span="21">
-                    <el-row class="plugin" v-if="checkedColumnNames.includes('pluginName')">{{ data.pluginName }}</el-row>
+                    <el-row class="plugin" v-if="checkedColumnNames.includes('pluginName')">
+                      <span class="plugin-name">{{ data.pluginName }}</span>
+                      <span class="plugin-type">
+                        <el-tag type="success" size="mini">{{ data.type }}</el-tag>
+                      </span>
+                    </el-row>
                     <el-row class="desc" v-if="checkedColumnNames.includes('description')">{{ data.description }}</el-row>
                   </el-col>
                 </el-row>
@@ -871,6 +876,12 @@ const columnOptions2 = [
   .plugin {
     color: #215d9a;
     font-size: 16px;
+  }
+  .plugin-name {
+    float: left;
+  }
+  .plugin-type {
+    float: right;
   }
   .desc {
     color: #888888;
