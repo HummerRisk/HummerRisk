@@ -629,7 +629,7 @@ export default {
       window.URL.revokeObjectURL(url);
     },
     getVersion() {
-      this.$get('/system/version', response => {
+      this.$get('/system/system/version', response => {
         this.version = response.data;
       });
     },

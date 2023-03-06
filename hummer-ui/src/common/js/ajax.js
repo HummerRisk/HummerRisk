@@ -1,6 +1,6 @@
 import {Message, MessageBox} from "element-ui";
 import axios from "axios";
-import { getToken } from './auth';
+import {getToken, removeToken} from './auth';
 import i18n from "../../i18n/i18n";
 
 
@@ -23,9 +23,10 @@ export default {
     let login = function () {
       MessageBox.alert(i18n.t("commons.tips"), i18n.t("commons.prompt"), {
         callback: () => {
-          axios.get("/signout");
-          localStorage.setItem("Admin-Token", "{}");
-          window.location.href = "/login"
+          axios.get("/auth/signout");
+          removeToken();
+          localStorage.clear();
+          window.location.href = "/login";
         }
       });
     };
@@ -63,7 +64,6 @@ export default {
     }
 
     function exception(error, result, url) {
-      console.log(111222, error, result, url)
       if (error.response && error.response.status === 401 && !unRedirectUrls.has(url) && error.response.data.message !== "用户名或密码不正确") {
         login();
         return;
@@ -98,7 +98,6 @@ export default {
     };
 
     Vue.prototype.$post = function (url, data, success, failure) {
-      console.log(222, data, getToken());
       // 是否需要设置 token
       const isToken = (data.headers || {}).isToken === false;
       // 是否需要防止数据重复提交
@@ -120,7 +119,6 @@ export default {
     };
 
     Vue.prototype.$request = function (axiosRequestConfig, success, failure) {
-      console.log(111, axiosRequestConfig);
       // 是否需要设置 token
       const isToken = (axiosRequestConfig.headers || {}).isToken === false;
       // 是否需要防止数据重复提交

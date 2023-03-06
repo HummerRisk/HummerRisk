@@ -292,10 +292,16 @@ import TablePagination from "../../common/pagination/TablePagination";
 import DialogFooter from "../../common/components/DialogFooter";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {severityOptions} from "@/common/js/constants";
-import { validateUrl } from "@/api/cloud/account/account";
-import { getRuleUrl, ruleTagsUrl } from "@/api/cloud/rule/rule";
-import { cloudPluginUrl } from "@/api/system/system";
-import { dashboardPointUrl } from "@/api/cloud/dashboard/dashboard";
+import {groupListUrl, regionsListUrl, resourceListUrl, tagListUrl} from "@/api/cloud/account/account";
+import {
+  getResourceTypesById,
+  getRuleUrl,
+  ruleGroupsUrl,
+  ruleInspectionReport,
+  ruleTagsUrl
+} from "@/api/cloud/rule/rule";
+import {cloudPluginUrl} from "@/api/system/system";
+import {dashboardPointUrl} from "@/api/cloud/dashboard/dashboard";
 
 /* eslint-disable */
   const assets = [
@@ -401,15 +407,13 @@ import { dashboardPointUrl } from "@/api/cloud/dashboard/dashboard";
         this.search();
       },
       tagLists() {
-        let url = ruleTagsUrl;
-        this.result = this.$get(url, response => {
+        this.result = this.$get(ruleTagsUrl, response => {
           this.tags = response.data;
         });
       },
       //查询插件
       activePlugin() {
-        let url = cloudPluginUrl;
-        this.result = this.$get(url, response => {
+        this.result = this.$get(cloudPluginUrl, response => {
           let data = response.data;
           this.plugins =  data;
         });
@@ -437,27 +441,27 @@ import { dashboardPointUrl } from "@/api/cloud/dashboard/dashboard";
             this.getAssets(data);
           }
         });
-        this.result = await this.$post("/account/group/list/" + this.currentPage + "/" + this.pageSize, {accountId: this.selectNodeIds[0]}, response => {
+        this.result = await this.$post(groupListUrl + this.currentPage + "/" + this.pageSize, {accountId: this.selectNodeIds[0]}, response => {
           let data = response.data;
           this.groupTotal = data.itemCount;
           this.groupData = data.listObject;
         });
-        this.result = await this.$post("/account/report/list/" + this.currentPage + "/" + this.pageSize, {accountId: this.selectNodeIds[0]}, response => {
+        this.result = await this.$post(reportListUrl + this.currentPage + "/" + this.pageSize, {accountId: this.selectNodeIds[0]}, response => {
           let data = response.data;
           this.reportTotal = data.itemCount;
           this.reportData = data.listObject;
         });
-        this.result = await this.$post("/account/tag/list/" + this.currentPage + "/" + this.pageSize, {accountId: this.selectNodeIds[0]}, response => {
+        this.result = await this.$post(tagListUrl + this.currentPage + "/" + this.pageSize, {accountId: this.selectNodeIds[0]}, response => {
           let data = response.data;
           this.tagTotal = data.itemCount;
           this.tagData = data.listObject;
         });
-        this.result = await this.$post("/account/regions/list/" + this.currentPage + "/" + this.pageSize, {accountId: this.selectNodeIds[0]}, response => {
+        this.result = await this.$post(regionsListUrl + this.currentPage + "/" + this.pageSize, {accountId: this.selectNodeIds[0]}, response => {
           let data = response.data;
           this.regionsTotal = data.itemCount;
           this.regionsData = data.listObject;
         });
-        this.result = await this.$post("/account/resource/list/" + this.currentPage + "/" + this.pageSize, {accountId: this.selectNodeIds[0]}, response => {
+        this.result = await this.$post(resourceListUrl + this.currentPage + "/" + this.pageSize, {accountId: this.selectNodeIds[0]}, response => {
           let data = response.data;
           this.resourceTotal = data.itemCount;
           this.resourceData = data.listObject;
@@ -490,7 +494,7 @@ import { dashboardPointUrl } from "@/api/cloud/dashboard/dashboard";
         }
       },
       async getAssets (item) {
-        await this.$get("rule/getResourceTypesById/" + item.id, response => {
+        await this.$get(getResourceTypesById + item.id, response => {
           item.assets = this.checkoutAssets(response.data);
         });
       },
@@ -506,12 +510,12 @@ import { dashboardPointUrl } from "@/api/cloud/dashboard/dashboard";
         this.severityOptions = severityOptions;
       },
       ruleSetOptionsFnc () {
-        this.$get("/rule/ruleGroups/" + null, res => {
+        this.$get(ruleGroupsUrl + null, res => {
           this.ruleSetOptions = res.data;
         });
       },
       inspectionSeportOptionsFnc () {
-        this.$get("/rule/all/ruleInspectionReport", res => {
+        this.$get(ruleInspectionReport, res => {
           this.inspectionSeportOptions = res.data;
         });
       },

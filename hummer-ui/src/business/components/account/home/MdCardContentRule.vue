@@ -44,6 +44,8 @@
 import {_filter, _sort} from "@/common/js/utils";
 import TablePagination from "../../common/pagination/TablePagination";
 import SeverityType from "@/business/components/common/components/SeverityType";
+import {getResourceTypesById, ruleTagsUrl} from "@/api/cloud/rule/rule";
+import {dashboardPointUrl} from "@/api/cloud/dashboard/dashboard";
 
 const assets = [
     {key: "ec2", value: "el-icon-s-platform"},
@@ -104,8 +106,7 @@ const assets = [
         this.search();
       },
       tagLists() {
-        let url = "/rule/ruleTags";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(ruleTagsUrl, response => {
           this.tags = response.data;
         });
       },
@@ -126,7 +127,7 @@ const assets = [
       },
       //查询列表
       async search() {
-        let url = "/dashboard/point/target/" + this.currentPage + "/" + this.pageSize;
+        let url = dashboardPointUrl + this.currentPage + "/" + this.pageSize;
         this.result = await this.$post(url, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;
@@ -160,7 +161,7 @@ const assets = [
         }
       },
       async getAssets (item) {
-        await this.$get("rule/getResourceTypesById/" + item.id, response => {
+        await this.$get(getResourceTypesById + item.id, response => {
           item.assets = this.checkoutAssets(response.data);
         });
       },

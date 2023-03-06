@@ -333,6 +333,14 @@ import QuartzTaskLog from "@/business/components/account/home/QuartzTaskLog";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {CLOUD_TASK_CONFIGS} from "../../common/components/search/search-components";
+import {
+  allListUrl,
+  quartzCreateUrl,
+  quartzDeleteUrl,
+  quartzListUrl, quartzPauseUrl, quartzRelaLogUrl,
+  quartzResumeUrl, showAccountUrl
+} from "@/api/cloud/account/account";
+import {listByAccountId} from "@/api/cloud/rule/rule";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -510,13 +518,13 @@ const columnOptions = [
       },
       //查询列表
       search() {
-        let url = "/cloud/task/quartz/list/" + this.currentPage + "/" + this.pageSize;
+        let url = quartzListUrl + this.currentPage + "/" + this.pageSize;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;
         });
-        this.$get("/account/allList", response => {
+        this.$get(allListUrl, response => {
           let data = response.data;
           this.accounts = data;
         });
@@ -572,7 +580,7 @@ const columnOptions = [
             return;
           }
         }
-        this.result = this.$post("/cloud/task/quartz/create", this.form, response => {
+        this.result = this.$post(quartzCreateUrl, this.form, response => {
           this.createVisible =  false;
           this.search();
         });
@@ -639,7 +647,7 @@ const columnOptions = [
         }
       },
       changeAccount(accountId) {
-        this.$get("/rule/listByAccountId/" + accountId, response => {
+        this.$get(listByAccountId + accountId, response => {
           let data = response.data;
           this.rules = data;
         });
@@ -649,7 +657,7 @@ const columnOptions = [
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get("/cloud/task/quartz/delete/" + obj.id, () => {
+              this.result = this.$get(quartzDeleteUrl + obj.id, () => {
                 this.$success(this.$t('commons.delete_success'));
                 this.search();
               });
@@ -663,20 +671,19 @@ const columnOptions = [
         }).catch(error => error);
       },
       handleResume(obj){
-        this.result = this.$get("/cloud/task/quartz/resume/" + obj.id, () => {
+        this.result = this.$get(quartzResumeUrl + obj.id, () => {
           this.$success(this.$t('account.resume_success'));
           this.search();
         });
       },
       handlePause(obj){
-        this.result = this.$get("/cloud/task/quartz/pause/" + obj.id, () => {
+        this.result = this.$get(quartzPauseUrl + obj.id, () => {
           this.$success(this.$t('account.pause_success'));
           this.search();
         });
       },
       showTaskLog (obj) {
-        let url = "/cloud/task/quartz/rela/log/";
-        this.$post(url + obj.id + "/" + this.goLogPage + "/" + this.pageLogSize, {},response => {
+        this.$post(quartzRelaLogUrl + obj.id + "/" + this.goLogPage + "/" + this.pageLogSize, {},response => {
           let data = response.data;
           this.logTotal = data.itemCount;
           this.logForm.data = data.listObject;
@@ -686,7 +693,7 @@ const columnOptions = [
         });
       },
       showAccount(row) {
-        let url = "/cloud/task/show/account/" + row.id;
+        let url = showAccountUrl + row.id;
         this.$get(url,response => {
           this.detailForm = response.data;
           this.detailVisible = true;

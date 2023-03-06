@@ -20,6 +20,7 @@
 import {getCurrentUser} from "../../../../common/js/utils";
 import AboutUs from "./AboutUs";
 import axios from "axios";
+import {removeToken} from "@/common/js/auth";
 /* eslint-disable */
   export default {
     name: "User",
@@ -36,8 +37,9 @@ import axios from "axios";
             this.$router.push('/setting/personsetting').catch(error => error);
             break;
           case "logout":
-            axios.get("/signout").then(response => {
+            axios.get("/auth/signout").then(response => {
               if (response.data.success) {
+                removeToken();
                 localStorage.clear();
                 window.location.href = "/login";
               }

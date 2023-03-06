@@ -72,7 +72,9 @@
 </template>
 <script>
 /* eslint-disable */
-  export default {
+  import {dashboardTotalPolicyUrl} from "@/api/cloud/dashboard/dashboard";
+
+export default {
     name: "MdCardContentTag",
     components: {
     },
@@ -88,7 +90,7 @@
     },
     methods: {
       init() {
-        this.$post('/dashboard/totalPolicy', {}, response => {
+        this.$post(dashboardTotalPolicyUrl, {}, response => {
           this.totalPolicy = response.data;
           for (let item of this.totalPolicy) {
             this.totalPolicy[item.xAxis] = item;

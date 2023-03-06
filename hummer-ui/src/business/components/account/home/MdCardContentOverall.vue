@@ -34,6 +34,7 @@
 <script>
 import DashboardPieChart from "@/business/components/common/chart/DashboardPieChart";
 import RuleGroupPieChart from "@/business/components/common/chart/RuleGroupPieChart";
+import {dashboardTotalPolicyUrl} from "@/api/cloud/dashboard/dashboard";
 /* eslint-disable */
   export default {
     name: "MdCardContentOverall",
@@ -52,7 +53,7 @@ import RuleGroupPieChart from "@/business/components/common/chart/RuleGroupPieCh
     },
     methods: {
       init() {
-        this.$post('/dashboard/totalPolicy', {}, response => {
+        this.$post(dashboardTotalPolicyUrl, {}, response => {
           this.totalPolicy = response.data;
           for (let item of this.totalPolicy) {
             this.totalPolicy[item.xAxis] = item;

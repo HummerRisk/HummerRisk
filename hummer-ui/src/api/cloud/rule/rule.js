@@ -1,12 +1,16 @@
 
-export const getRuleUrl = "/rule/get/";
+export const getRuleUrl = "/cloud/rule/get/";
 
-export const ruleTagsUrl = "/rule/ruleTags";
+export const ruleTagsUrl = "/cloud/rule/ruleTags";
 
-export const saveParameterUrl = "/account/save/parameter";
+export const getResourceTypesById = "/cloudrule/getResourceTypesById/";
 
-export const createManualTaskUrl = "/cloud/task/manual/create";
+export const ruleGroupsUrl = "/cloud/rule/ruleGroups/";
 
-export const ruleListUrl = "/account/rule/list/";
+export const ruleInspectionReport = "/cloud/rule/all/ruleInspectionReport";
 
-export const validateUrl = "/account/validate/";
+export const ruleScanUrl = "/cloud/rule/scan";
+
+export const groupsByAccountId = "/cloud/rule/groupsByAccountId/";
+
+export const listByAccountId = "/cloud/rule/listByAccountId/";

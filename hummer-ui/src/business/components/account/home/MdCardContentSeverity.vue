@@ -60,7 +60,9 @@
 </template>
 <script>
 /* eslint-disable */
-  export default {
+  import {dashboardSeverityUrl} from "@/api/cloud/dashboard/dashboard";
+
+export default {
     name: "MdCardContentSeverity",
     components: {
     },
@@ -73,7 +75,7 @@
       goResource () {
       },
       async init() {
-        await this.$post('/dashboard/point/severity', {}, response => {
+        await this.$post(dashboardSeverityUrl, {}, response => {
           for (let item of response.data) {
             this.severityList[item.severity] = item;
           }

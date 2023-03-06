@@ -1,7 +1,5 @@
 import router from "./components/common/router/router";
-import {TokenKey} from "@/common/js/constants";
-import {hasRolePermissions, hasRoles} from "@/common/js/utils";
-import {getToken, removeToken} from "@/common/js/auth";
+import {getToken} from "@/common/js/auth";
 /* eslint-disable */
 const whiteList = ["/login"]; // no redirect whitelist
 
@@ -23,9 +21,7 @@ function checkRolePermission(el, binding, type) {
     const permissionRoles = value;
     let hasPermission = false;
     if (type === "roles") {
-      hasPermission = hasRoles(...permissionRoles);
     } else if (type === "permission") {
-      hasPermission = hasRolePermissions(...permissionRoles);
     }
     if (!hasPermission) {
       el.parentNode && el.parentNode.removeChild(el)

@@ -23,6 +23,7 @@ import Log from "@/business/components/event/router";
 import Config from "@/business/components/config/router";
 import Cost from "@/business/components/cost/router";
 import Fs from "@/business/components/fs/router";
+import {removeToken} from "@/common/js/auth";
 
 Vue.use(VueRouter);
 /* eslint-disable */
@@ -62,8 +63,9 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   //解决localStorage清空，cookie没失效导致的卡死问题
   if (!localStorage.getItem('Admin-Token')) {
-    axios.get("/signout");
-    localStorage.setItem('Admin-Token', "{}");
+    axios.get("/auth/signout");
+    removeToken();
+    localStorage.clear();
     window.location.href = "/login";
     next();
   } else {

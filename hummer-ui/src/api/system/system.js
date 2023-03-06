@@ -1,12 +1,8 @@
 
-export const cloudPluginUrl = "/plugin/cloud";
+export const cloudPluginUrl = "/system/plugin/cloud";
 
-export const ssoSigninUrl = "/auth/sso/signin";
+export const addProxyUrl = "/system/proxy/add";
 
-export const ssoLoginUrl = "/auth/sso/login";
-
-export const languageUrl = "/auth/language";
-
-export const isLoginUrl = "/auth/isLogin";
+export const updateProxyUrl = "/system/proxy/update";
 
 

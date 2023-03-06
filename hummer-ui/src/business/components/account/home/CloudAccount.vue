@@ -326,6 +326,9 @@ import ProxyDialogCreateFooter from "@/business/components/common/components/Pro
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {accountListUrl, deleteAccountUrl, iamStrategyUrl, validateUrl} from "@/api/cloud/account/account";
+import {addProxyUrl, cloudPluginUrl, updateProxyUrl} from "@/api/system/system";
+import {groupsByAccountId, ruleScanUrl} from "@/api/cloud/rule/rule";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -539,7 +542,7 @@ const columnOptions = [
             if (action === 'confirm') {
               this.result = this.$request({
                 method: 'POST',
-                url: "/account/validate",
+                url: validateUrl,
                 data: Array.from(this.selectIds),
                 headers: {
                   'Content-Type': undefined
@@ -568,7 +571,7 @@ const columnOptions = [
       },
       //查询列表
       search() {
-        let url = "/account/list/" + this.currentPage + "/" + this.pageSize;
+        let url = accountListUrl + this.currentPage + "/" + this.pageSize;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;
@@ -596,7 +599,7 @@ const columnOptions = [
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$post("/account/delete/" + obj.id, {}, () => {
+              this.result = this.$post(deleteAccountUrl + obj.id, {}, () => {
                 this.$success(this.$t('commons.delete_success'));
                 this.search();
               });
@@ -609,7 +612,7 @@ const columnOptions = [
       },
       addAccountIam(form) {
         //点击需要的IAM策略按钮
-        this.$get("/account/iam/strategy/" + form.pluginId,res => {
+        this.$get(iamStrategyUrl + form.pluginId,res => {
           form.script = res.data;
           this.script = res.data;
           this.innerDrawer = true;
@@ -621,12 +624,12 @@ const columnOptions = [
       //调参云账号对应的规则
       handleScan(params) {
         this.$router.push({
-          path: '/account/accountscan/' + params.id,
+          path: accountScanUrl + params.id,
         }).catch(error => error);
       },
       //查询插件
       activePlugin() {
-        let url = "/plugin/cloud";
+        let url = cloudPluginUrl;
         this.result = this.$get(url, response => {
           let data = response.data;
           this.plugins =  data;
@@ -656,7 +659,7 @@ const columnOptions = [
       },
       //新增云账号选择插件查询云账号信息
       async changePluginForAdd (form){
-        this.$get("/account/iam/strategy/" + form.pluginId,res => {
+        this.$get(iamStrategyUrl + form.pluginId,res => {
           form.script = res.data;
           this.script = res.data;
         });
@@ -673,7 +676,7 @@ const columnOptions = [
       },
       //编辑云账号选择插件查询云账号信息
       async changePlugin (pluginId, type){
-        this.$get("/account/iam/strategy/" + pluginId,res => {
+        this.$get(iamStrategyUrl + pluginId,res => {
           this.script = res.data;
         });
         let url = "/plugin/";
@@ -715,7 +718,7 @@ const columnOptions = [
           if (item.isProxy) data["proxyId"] = item.proxyId;
 
           if (type === 'add') {
-            this.cloudResult = this.$post("/account/add", data,response => {
+            this.cloudResult = this.$post(addAccountUrl, data,response => {
               if (response.success) {
                 this.$success(this.$t('account.i18n_hr_create_success'));
                 this.search();
@@ -749,7 +752,7 @@ const columnOptions = [
             if (item.isProxy) data["proxyId"] = item.proxyId;
 
             if (type === 'add') {
-              this.cloudResult = this.$post("/account/add", data,response => {
+              this.cloudResult = this.$post(addAccountUrl, data,response => {
                 if (response.success) {
                   this.$success(this.$t('account.i18n_hr_create_success'));
                   this.search();
@@ -760,7 +763,7 @@ const columnOptions = [
               });
             } else {
               data["id"] = item.id;
-              this.cloudResult = this.$post("/account/update", data,response => {
+              this.cloudResult = this.$post(updateAccountUrl, data,response => {
                 if (response.success) {
                   this.$success(this.$t('account.i18n_hr_update_success'));
                   this.handleClose();
@@ -801,7 +804,7 @@ const columnOptions = [
                 accountId: this.accountWithGroup.id,
                 groups: this.checkedGroups
               }
-              this.groupResult = this.$post("/rule/scan", params, () => {
+              this.groupResult = this.$post(ruleScanUrl, params, () => {
                 this.$success(this.$t('account.i18n_hr_create_success'));
                 this.scanVisible = false;
                 this.$router.push({
@@ -815,7 +818,7 @@ const columnOptions = [
       createProxy(createProxyForm) {
         this.$refs[createProxyForm].validate(valid => {
           if (valid) {
-            this.result = this.$post('/proxy/add', this.proxyForm, () => {
+            this.result = this.$post(addProxyUrl, this.proxyForm, () => {
               this.$success(this.$t('commons.save_success'));
               this.innerDrawerProxy = false;
               this.activeProxy();
@@ -828,7 +831,7 @@ const columnOptions = [
       updateProxy(updateProxyForm) {
         this.$refs[updateProxyForm].validate(valid => {
           if (valid) {
-            this.result = this.$post('/proxy/update', this.proxyForm, () => {
+            this.result = this.$post(updateProxyUrl, this.proxyForm, () => {
               this.$success(this.$t('commons.modify_success'));
               this.innerDrawerProxy = false;
             });
@@ -838,7 +841,7 @@ const columnOptions = [
         })
       },
       initGroups(pluginId) {
-        this.result = this.$get("/rule/groupsByAccountId/" + pluginId,response => {
+        this.result = this.$get(groupsByAccountId + pluginId,response => {
           this.groups = response.data;
         });
       },

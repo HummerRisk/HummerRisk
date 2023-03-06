@@ -186,6 +186,9 @@ import DialogFooter from "../../common/components/DialogFooter";
 import TableOperators from "../../common/components/TableOperators";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import CodeDiff from 'vue-code-diff';
+import {cloudPluginUrl} from "@/api/system/system";
+import {dashboardHistoryUrl} from "@/api/cloud/dashboard/dashboard";
+import {accountHistoryDiffListUrl, accountHistoryListUrl} from "@/api/cloud/account/account";
 /* eslint-disable */
   const assets = [
     {key: "ec2", value: "el-icon-s-platform"},
@@ -311,7 +314,7 @@ import CodeDiff from 'vue-code-diff';
       },
       //查询插件
       activePlugin() {
-        let url = "/plugin/cloud";
+        let url = cloudPluginUrl;
         this.result = this.$get(url, response => {
           let data = response.data;
           this.plugins =  data;
@@ -319,7 +322,7 @@ import CodeDiff from 'vue-code-diff';
       },
       //查询列表
       async search() {
-        let url = "/dashboard/history/" + this.currentPage + "/" + this.pageSize;
+        let url = dashboardHistoryUrl + this.currentPage + "/" + this.pageSize;
         if (!!this.selectNodeIds) {
           this.condition.accountId = this.selectNodeIds[0];
         } else {
@@ -365,7 +368,7 @@ import CodeDiff from 'vue-code-diff';
       },
       async outputListDataSearch() {
         let item = this.outputListSearchData;
-        await this.$post("/account/historyList/" + this.outputListPage + "/" + this.outputListPageSize, item, response => {
+        await this.$post(accountHistoryListUrl + this.outputListPage + "/" + this.outputListPageSize, item, response => {
           let data = response.data;
           this.outputListTotal = data.itemCount;
           this.outputListData = data.listObject;
@@ -377,7 +380,7 @@ import CodeDiff from 'vue-code-diff';
       },
       async codeDiffListSearch() {
         let item = this.codeDiffData;
-        let url = "/account/historyDiffList/" + this.historyPage + "/" + this.historyPageSize;
+        let url = accountHistoryDiffListUrl + this.historyPage + "/" + this.historyPageSize;
         await this.$post(url, item, response => {
           let data = response.data;
           this.historyTotal = data.itemCount;

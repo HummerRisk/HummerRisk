@@ -22,6 +22,7 @@
 
 <script>
 import TablePagination from "@/business/components/common/pagination/TablePagination";
+import {quartzRelaLogUrl} from "@/api/cloud/account/account";
 /* eslint-disable */
   export default {
     name: "QuartzTaskLog",
@@ -53,8 +54,7 @@ import TablePagination from "@/business/components/common/pagination/TablePagina
         }
       },
       search(){
-        let url = "/cloud/task/quartz/rela/log/";
-        this.$post(url + this.row.id + "/" + this.currentPage + "/" + this.pageSize, {},response => {
+        this.$post(quartzRelaLogUrl + this.row.id + "/" + this.currentPage + "/" + this.pageSize, {},response => {
           let data = response.data;
           this.row.total = data.itemCount;
           this.row.data = data.listObject;

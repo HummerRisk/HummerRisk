@@ -33,6 +33,7 @@
 
 <script>
 import RegionsExpandChart from "@/business/components/common/chart/RegionsExpandChart";
+import {allListUrl} from "@/api/cloud/account/account";
 /* eslint-disable */
   export default {
     name: "RegionsListExpand",
@@ -50,8 +51,7 @@ import RegionsExpandChart from "@/business/components/common/chart/RegionsExpand
 
     methods: {
       list() {
-        let url = "/account/allList";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(allListUrl, response => {
           if (response.data != undefined && response.data != null) {
             this.accounts = response.data;
           }

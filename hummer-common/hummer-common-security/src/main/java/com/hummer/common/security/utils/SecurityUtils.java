@@ -90,8 +90,7 @@ public class SecurityUtils {
      * @return 加密字符串
      */
     public static String encryptPassword(String password) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        return passwordEncoder.encode(password);
+        return Md5Utils.hash(password);
     }
 
     /**
@@ -102,8 +101,6 @@ public class SecurityUtils {
      * @return 结果
      */
     public static boolean matchesPassword(String rawPassword, String encodedPassword) {
-
-       // BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         return encodedPassword.equals(Md5Utils.hash(rawPassword));
     }
 

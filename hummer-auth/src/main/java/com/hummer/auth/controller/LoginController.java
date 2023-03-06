@@ -40,12 +40,6 @@ public class LoginController {
     @Autowired
     private Environment env;
 
-    @GetMapping("test")
-    public String test() throws Exception {
-         userService.getLoginUserByName("test");
-         return "a";
-    }
-
     @GetMapping(value = "healthz")
     public String healthz() {
         return "SUCCESS";
@@ -60,7 +54,7 @@ public class LoginController {
             Map<String, Object> tokenInfo = tokenService.createToken(userInfo);
             userInfo.setToken((String) tokenInfo.get("access_token"));
             return ResultHolder.success(userInfo);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResultHolder.error(e.getMessage());
         }
     }
@@ -70,7 +64,7 @@ public class LoginController {
         String token = SecurityUtils.getToken();
         if (StringUtils.isNotEmpty(token)) {
             User user = tokenService.getLoginUser().getUser();
-            if ((user!= null) && StringUtils.isBlank(user.getLanguage()))
+            if ((user != null) && StringUtils.isBlank(user.getLanguage()))
                 user.setLanguage(LocaleContextHolder.getLocale().toString());
             return ResultHolder.success(user);
         }
