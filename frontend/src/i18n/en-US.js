@@ -661,6 +661,7 @@ export default {
     rule_group: 'Cloud detection rule group',
     suggestion: 'Optimization suggestion',
     rule_sum: '(Total {0} rules)',
+    group_type: 'rule group type',
   },
   resource: {
     have_risk: 'risk',
@@ -945,6 +946,7 @@ export default {
     create_certificate: 'Create credentials',
     update_certificate: 'Modify credentials',
     delete_certificate: 'Delete credentials',
+    server_rule_group: 'Host detection rule group',
     server_rule: 'Host scan rule',
     server_result: 'Host scan result',
     servers_setting: 'Host management',
@@ -1380,6 +1382,8 @@ export default {
     install_log: 'Installation log',
     reinstall_operator: 'Install Operator',
     reinstall_kubench: 'Install CIS Benchmark',
+    rule_group: 'K8s detection rule group',
+    k8s_rule: 'K8s detection rule',
   },
   config: {
     config_settings: 'Deployment configuration',

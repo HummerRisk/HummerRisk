@@ -661,6 +661,7 @@ export default {
     rule_group: '云检测规则组',
     suggestion: '优化建议',
     rule_sum: '(共 {0} 条规则)',
+    group_type: '规则组类型',
   },
   resource: {
     have_risk: '有风险',
@@ -945,6 +946,7 @@ export default {
     create_certificate: '创建凭据',
     update_certificate: '修改凭据',
     delete_certificate: '删除凭据',
+    server_rule_group: '主机检测规则组',
     server_rule: '主机检测规则',
     server_result: '主机检测结果',
     servers_setting: '主机管理',
@@ -1380,6 +1382,8 @@ export default {
     install_log: '安装日志',
     reinstall_operator: '安装 Operator',
     reinstall_kubench: '安装 CIS Benchmark',
+    rule_group: 'K8s 检测规则组',
+    k8s_rule: 'K8s 检测规则',
   },
   config: {
     config_settings: '部署配置',

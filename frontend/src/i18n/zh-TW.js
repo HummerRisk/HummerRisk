@@ -661,6 +661,7 @@ export default {
     rule_group: '雲檢測規則組',
     suggestion: '優化建議',
     rule_sum: '(共 {0} 條規則)',
+    group_type: '規則組類型',
   },
   resource: {
     have_risk: '有風險',
@@ -945,6 +946,7 @@ export default {
     create_certificate: '創建憑據',
     update_certificate: '修改憑據',
     delete_certificate: '刪除憑據',
+    server_rule_group: '主機檢測規則組',
     server_rule: '主機檢測規則',
     server_result: '主機檢測結果',
     servers_setting: '主機管理',
@@ -1380,6 +1382,8 @@ export default {
     install_log: '安裝日誌',
     reinstall_operator: '安裝 Operator',
     reinstall_kubench: '安裝 CIS Benchmark',
+    rule_group: 'K8s 檢測規則組',
+    k8s_rule: 'K8s 檢測規則',
   },
   config: {
     config_settings: '部署配置',
