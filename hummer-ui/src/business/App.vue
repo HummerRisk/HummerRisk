@@ -51,6 +51,7 @@ import Help from "./components/common/head/Help";
 import HrLanguageSwitch from "./components/common/head/LanguageSwitch";
 import {getIsCollapse, saveLocalStorage} from "@/common/js/utils";
 import Notification from "@/business/components/common/head/Notification";
+import { isLoginUrl } from "@/api/auth/auth";
 
 export default {
     name: "app",
@@ -63,7 +64,7 @@ export default {
       }
     },
     beforeCreate() {
-      this.$get("/auth/isLogin").then(response => {
+      this.$get(isLoginUrl).then(response => {
         if (response.data.success) {
           this.$setLang(response.data.data.language);
           saveLocalStorage(response.data);

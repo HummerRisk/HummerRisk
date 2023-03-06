@@ -147,7 +147,6 @@ import { setToken } from '@/common/js/auth';
       },
       doLogin() {
         this.result = this.$post(this.loginUrl, this.form, response => {
-          debugger
           saveLocalStorage(response);
           sessionStorage.setItem('loginSuccess', 'true');
           setToken(response.data.token)

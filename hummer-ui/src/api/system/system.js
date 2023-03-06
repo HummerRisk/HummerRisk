@@ -1,5 +1,5 @@
 
-export const signinUrl = "/auth/signin";
+export const cloudPluginUrl = "/plugin/cloud";
 
 export const ssoSigninUrl = "/auth/sso/signin";
 

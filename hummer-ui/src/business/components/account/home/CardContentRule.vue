@@ -292,6 +292,11 @@ import TablePagination from "../../common/pagination/TablePagination";
 import DialogFooter from "../../common/components/DialogFooter";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {severityOptions} from "@/common/js/constants";
+import { validateUrl } from "@/api/cloud/account/account";
+import { getRuleUrl, ruleTagsUrl } from "@/api/cloud/rule/rule";
+import { cloudPluginUrl } from "@/api/system/system";
+import { dashboardPointUrl } from "@/api/cloud/dashboard/dashboard";
+
 /* eslint-disable */
   const assets = [
     {key: "ec2", value: "el-icon-s-platform"},
@@ -396,21 +401,21 @@ import {severityOptions} from "@/common/js/constants";
         this.search();
       },
       tagLists() {
-        let url = "/rule/ruleTags";
+        let url = ruleTagsUrl;
         this.result = this.$get(url, response => {
           this.tags = response.data;
         });
       },
       //查询插件
       activePlugin() {
-        let url = "/plugin/cloud";
+        let url = cloudPluginUrl;
         this.result = this.$get(url, response => {
           let data = response.data;
           this.plugins =  data;
         });
       },
       async viewRule (item) {
-        await this.$get("/rule/get/" + item.id, response => {
+        await this.$get(getRuleUrl + item.id, response => {
           this.ruleForm = response.data;
           if (typeof(this.ruleForm.parameter) == 'string') this.ruleForm.parameter = JSON.parse(this.ruleForm.parameter);
           this.ruleForm.tagKey = this.ruleForm.tags[0];
@@ -424,7 +429,7 @@ import {severityOptions} from "@/common/js/constants";
         } else {
           this.condition.accountId = null;
         }
-        this.result = await this.$post("/dashboard/point/target/" + this.currentPage + "/" + this.pageSize, this.condition, response => {
+        this.result = await this.$post(dashboardPointUrl + this.currentPage + "/" + this.pageSize, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;

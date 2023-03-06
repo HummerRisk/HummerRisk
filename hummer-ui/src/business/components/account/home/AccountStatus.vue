@@ -13,6 +13,9 @@
 </template>
 
 <script>
+
+import { validateUrl } from "@/api/cloud/account/account";
+
   /* eslint-disable */
   export default {
     name: "AccountStatus",
@@ -27,7 +30,7 @@
           callback: (action) => {
             if (action === 'confirm') {
               const loadingInstance = this.$loading({ text: this.$t('commons.validing') });
-              this.$post("/account/validate/" + row.id, {}, response => {
+              this.$post(validateUrl + row.id, {}, response => {
                 let data = response.data;
                 if (data) {
                   if (data.flag) {

@@ -104,6 +104,7 @@ import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/DialogFooter";
 import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 import {_sort} from "@/common/js/utils";
+import { cleanParameterUrl, getAccountUrl, createManualTaskUrl, ruleListUrl, saveParameterUrl } from "@/api/cloud/account/account";
 
 /* eslint-disable */
   export default {
@@ -167,7 +168,7 @@ import {_sort} from "@/common/js/utils";
                 param.ruleId = item.id;
                 params.push(param);
               }
-              this.$post('/account/clean/parameter', params, response => {
+              this.$post(cleanParameterUrl, params, response => {
                 this.search();
                 this.$success(this.$t('commons.delete_success'));
               });
@@ -200,7 +201,7 @@ import {_sort} from "@/common/js/utils";
           }
           params.push(param);
         }
-        this.$post('/account/save/parameter', params, response => {
+        this.$post(saveParameterUrl, params, response => {
           this.search();
           this.$success(this.$t('commons.save_success'));
         });
@@ -229,7 +230,7 @@ import {_sort} from "@/common/js/utils";
           } else {
             param.parameter = JSON.stringify(param.parameter);
           }
-          this.$post('/cloud/task/manual/create', param, response => {
+          this.$post(createManualTaskUrl, param, response => {
             flag++;
             if (flag == this.ruleList.length) {
               this.$success(this.$t("resource.i18n_create_manual_task_success"));
@@ -305,13 +306,13 @@ import {_sort} from "@/common/js/utils";
         if (!this.accountId) {
           return;
         }
-        this.result = await this.$get("/account/getAccount/" + this.accountId, res => {
+        this.result = await this.$get(getAccountUrl + this.accountId, res => {
           this.accountName = res.data.name;
           this.regions = typeof(res.data.regions) == 'string'?JSON.parse(res.data.regions):res.data.regions;
           this.condition.pluginId = res.data.pluginId;
           this.condition.accountId = this.accountId;
           this.condition.status = true;
-          let url = "/account/rule/list/" + this.currentPage + "/" + this.pageSize;
+          let url = ruleListUrl + this.currentPage + "/" + this.pageSize;
           this.$post(url, this.condition, response => {
             let data = response.data;
             this.total = data.itemCount;
