@@ -12,6 +12,8 @@ public class RuleGroupRequest extends RuleGroup {
 
     private String accountId;
 
+    private String type;
+
     private Map<String, Object> combine;
 
     public Map<String, Object> getCombine() {
@@ -28,5 +30,15 @@ public class RuleGroupRequest extends RuleGroup {
 
     public void setAccountId(String accountId) {
         this.accountId = accountId;
+    }
+
+    @Override
+    public String getType() {
+        return type;
+    }
+
+    @Override
+    public void setType(String type) {
+        this.type = type;
     }
 }
