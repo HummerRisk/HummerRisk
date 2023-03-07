@@ -8,7 +8,7 @@ export default {
   install(Vue) {
 
     // 登入请求不重定向
-    let unRedirectUrls = new Set(["signin"]);
+    let unRedirectUrls = new Set(["auth/signin"]);
 
     if (!axios) {
       window.console.error("You have to install axios");
@@ -32,7 +32,7 @@ export default {
     };
 
     axios.defaults.withCredentials = true;
-    axios.defaults.headers.common['Authorization'] = `Bearer `+ getToken() ;
+    axios.defaults.headers.common['Authorization'] = `Bearer `+ getToken();
 
     axios.interceptors.response.use(response => {
       if (response.headers["authentication-status"] === "invalid") {
