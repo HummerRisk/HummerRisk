@@ -208,10 +208,10 @@
       <!--Info group-->
 
       <!--rule list-->
-      <el-drawer class="rtl" :title="$t('rule.rule_list')" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="rtl" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <table-header :condition.sync="ruleCondition" @search="handleListSearch"
-                      :title="$t('rule.rule_set_list')"
+                      :title="$t('rule.rule_list')"
                       :items="items2" :columnNames="columnNames2"
                       :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>

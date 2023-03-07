@@ -6,6 +6,7 @@ import com.hummerrisk.base.domain.*;
 import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
+import com.hummerrisk.controller.request.rule.BindRuleRequest;
 import com.hummerrisk.controller.request.server.ServerCertificateRequest;
 import com.hummerrisk.controller.request.server.ServerRequest;
 import com.hummerrisk.controller.request.server.ServerResultRequest;
@@ -14,7 +15,6 @@ import com.hummerrisk.dto.*;
 import com.hummerrisk.service.ServerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -321,6 +320,34 @@ public class ServerController {
                 e.printStackTrace();
             }
         }
+    }
+
+    @I18n
+    @ApiOperation(value = "所有已绑定规则组的规则")
+    @GetMapping("allBindList/{id}")
+    public List<ServerRule> allBindList(@PathVariable String id) {
+        return serverService.allBindList(id);
+    }
+
+    @I18n
+    @ApiOperation(value = "所有未绑定规则组的规则")
+    @GetMapping("unBindList/{id}")
+    public List<ServerRule> unBindList(@PathVariable String id) {
+        return serverService.unBindList(id);
+    }
+
+    @I18n
+    @ApiOperation(value = "规则组绑定规则")
+    @PostMapping(value = "bindRule")
+    public void bindRule(@RequestBody BindRuleRequest request) throws Exception {
+        serverService.bindRule(request);
+    }
+
+    @I18n
+    @ApiOperation(value = "按规则组检测主机规则")
+    @GetMapping("scanByGroup/{groupId}/{serverId}")
+    public void scanByGroup(@PathVariable String groupId, @PathVariable String serverId) {
+        serverService.scanByGroup(groupId, serverId);
     }
 
 }

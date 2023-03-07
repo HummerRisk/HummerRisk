@@ -12,6 +12,7 @@ import com.hummerrisk.base.mapper.ext.ExtServerRuleMapper;
 import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
+import com.hummerrisk.controller.request.rule.BindRuleRequest;
 import com.hummerrisk.controller.request.server.ServerCertificateRequest;
 import com.hummerrisk.controller.request.server.ServerRequest;
 import com.hummerrisk.controller.request.server.ServerResultRequest;
@@ -81,6 +82,10 @@ public class ServerService {
     private ExtServerCertificateMapper extServerCertificateMapper;
     @Resource
     private HistoryServerResultMapper historyServerResultMapper;
+    @Resource
+    private RuleGroupMappingMapper ruleGroupMappingMapper;
+    @Resource
+    private RuleGroupMapper ruleGroupMapper;
 
     private String messageOrderId = "";
 
@@ -270,7 +275,7 @@ public class ServerService {
             if (server.getIsProxy() != null && server.getIsProxy()) {
                 proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
             }
-            serverValidateDTO= validateAccount(server, proxy);
+            serverValidateDTO = validateAccount(server, proxy);
             return serverValidateDTO;
         } catch (Exception e) {
             LogUtil.error(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), e.getMessage()), e);
@@ -594,6 +599,7 @@ public class ServerService {
     public List<ServerListDTO> resultServerList(ServerRequest request) {
         return extServerResultMapper.resultServerList(request);
     }
+
     public ServerResultDTO getServerResult(String resultId) {
         ServerResultRequest request = new ServerResultRequest();
         request.setId(resultId);
@@ -707,22 +713,22 @@ public class ServerService {
     }
 
     public void insertExperts(MultipartFile excelFile, Server request) throws Exception {
-        if (excelFile==null|| excelFile.getSize()==0){
+        if (excelFile == null || excelFile.getSize() == 0) {
             LogUtil.error("文件上传错误，重新上传");
         }
         String filename = excelFile.getOriginalFilename();
-        if (!(filename.endsWith(".xls")|| filename.endsWith(".xlsx"))){
+        if (!(filename.endsWith(".xls") || filename.endsWith(".xlsx"))) {
             LogUtil.error("文件上传格式错误，请重新上传");
         }
 
         List<Server> list = new ArrayList<>();
         try {
-            if (filename.endsWith(".xls")){
+            if (filename.endsWith(".xls")) {
                 list = readXLS(excelFile);
-            }else {
+            } else {
                 list = readXLSX(excelFile);
             }
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             LogUtil.error("文件内容读取失败，请重试");
         }
@@ -741,7 +747,7 @@ public class ServerService {
                 return true;
             }
         }).collect(Collectors.toList());
-        if(!newExpertList.isEmpty()){
+        if (!newExpertList.isEmpty()) {
             for (Server server : newExpertList) {
                 server.setId(UUIDUtil.newUUID());
                 server.setCreateTime(System.currentTimeMillis());
@@ -759,7 +765,7 @@ public class ServerService {
     }
 
     public List<Server> readXLS(MultipartFile file) throws IOException {
-        List<Server> list =new ArrayList<>();
+        List<Server> list = new ArrayList<>();
 
         InputStream inputStream = file.getInputStream();
         POIFSFileSystem poifsFileSystem = new POIFSFileSystem(inputStream);
@@ -770,7 +776,7 @@ public class ServerService {
         //遍历每一行Excel获取内容
         for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
             HSSFRow row = sheet.getRow(rowNum);
-            if (row!=null){
+            if (row != null) {
                 Server expert = new Server();
                 // 名称
                 // Row.MissingCellPolicy.CREATE_NULL_AS_BLANK 获取的数据位null时 替换成""
@@ -786,7 +792,7 @@ public class ServerService {
                     expert.setIp(row.getCell(2).getStringCellValue());
                 }
                 // port
-                if(row.getCell(3) != null){
+                if (row.getCell(3) != null) {
                     int i = (int) row.getCell(3).getNumericCellValue();
                     expert.setPort(String.valueOf(i));
                 }
@@ -815,7 +821,7 @@ public class ServerService {
         int lastRowNum = sheet.getLastRowNum();
         for (int rowNum = 1; rowNum <= lastRowNum; rowNum++) {
             XSSFRow row = sheet.getRow(rowNum);
-            if (row!=null){
+            if (row != null) {
                 Server expert = new Server();
                 // 名称
                 if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
@@ -830,7 +836,7 @@ public class ServerService {
                     expert.setIp(row.getCell(2).getStringCellValue());
                 }
                 // port
-                if(row.getCell(3) != null){
+                if (row.getCell(3) != null) {
                     int i = (int) row.getCell(3).getNumericCellValue();
                     expert.setPort(String.valueOf(i));
                 }
@@ -846,6 +852,60 @@ public class ServerService {
             }
         }
         return list;
+    }
+
+    public List<ServerRule> allBindList(String id) {
+        List<String> ids = new ArrayList<>();
+        RuleGroupMappingExample example = new RuleGroupMappingExample();
+        example.createCriteria().andGroupIdEqualTo(id);
+        List<RuleGroupMapping> list = ruleGroupMappingMapper.selectByExample(example);
+        for (RuleGroupMapping groupMapping : list) {
+            ids.add(groupMapping.getRuleId());
+        }
+        ServerRuleExample ruleExample = new ServerRuleExample();
+        if (ids.size() > 0) {
+            ruleExample.createCriteria().andIdIn(ids);
+            ruleExample.setOrderByClause("name");
+            return serverRuleMapper.selectByExample(ruleExample);
+        }
+        return new ArrayList<>();
+    }
+
+    public List<ServerRule> unBindList(String id) {
+        ServerRuleExample ruleExample = new ServerRuleExample();
+        ruleExample.setOrderByClause("name");
+        return serverRuleMapper.selectByExample(ruleExample);
+    }
+
+    public void bindRule(BindRuleRequest request) throws Exception {
+        String groupId = request.getGroupId();
+        RuleGroupMappingExample example = new RuleGroupMappingExample();
+        example.createCriteria().andGroupIdEqualTo(groupId);
+        ruleGroupMappingMapper.deleteByExample(example);
+        for (String id : request.getCloudValue()) {
+            RuleGroupMapping record = new RuleGroupMapping();
+            record.setRuleId(id);
+            record.setGroupId(groupId);
+            ruleGroupMappingMapper.insertSelective(record);
+        }
+    }
+
+    public void scanByGroup(String groupId, String serverId){
+        scanGroups(serverId, null, groupId);
+    }
+
+    private void scanGroups(String serverId, Integer scanId, String groupId) {
+//        try {
+//            Server server = serverMapper.selectByPrimaryKey(serverId);
+//            String messageOrderId = noticeService.createMessageOrder(server);
+//
+//            List<RuleDTO> ruleDTOS = extRuleGroupMapper.getRules(accountId, groupId);
+//            for (RuleDTO rule : ruleDTOS) {
+//                this.dealTask(rule, account, scanId, messageOrderId);
+//            }
+//        } catch (Exception e) {
+//            LogUtil.error(e.getMessage());
+//        }
     }
 
 

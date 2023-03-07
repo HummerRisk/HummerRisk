@@ -136,18 +136,6 @@
           <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
             <el-input v-model="createForm.level" autocomplete="off" :placeholder="$t('resource.equal_guarantee_level')"/>
           </el-form-item>
-          <el-form-item :label="$t('account.cloud_platform')" prop="pluginId" :rules="{required: true, message: $t('account.cloud_platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="createForm.pluginId" :placeholder="$t('account.please_choose_plugin')">
-              <el-option
-                v-for="item in plugins"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-                <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                &nbsp;&nbsp; {{ item.name }}
-              </el-option>
-            </el-select>
-          </el-form-item>
         </el-form>
         <dialog-footer
           @cancel="createVisible = false"
@@ -167,18 +155,6 @@
           </el-form-item>
           <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
             <el-input v-model="infoForm.level" autocomplete="off" :placeholder="$t('resource.equal_guarantee_level')"/>
-          </el-form-item>
-          <el-form-item :label="$t('account.cloud_platform')" prop="pluginId" :rules="{required: true, message: $t('account.cloud_platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="infoForm.pluginId" :disabled="infoForm.flag" :placeholder="$t('account.please_choose_plugin')">
-              <el-option
-                v-for="item in plugins"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-                <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                &nbsp;&nbsp; {{ item.name }}
-              </el-option>
-            </el-select>
           </el-form-item>
         </el-form>
         <dialog-footer
@@ -200,7 +176,7 @@
           <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
             {{ infoForm.level }}
           </el-form-item>
-          <el-form-item :label="$t('account.cloud_platform')">
+          <el-form-item :label="$t('dashboard.scan_types')">
          &nbsp;&nbsp; {{ infoForm.pluginName }}
           </el-form-item>
         </el-form>
@@ -208,10 +184,10 @@
       <!--Info group-->
 
       <!--rule list-->
-      <el-drawer class="rtl" :title="$t('rule.rule_list')" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="rtl" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <table-header :condition.sync="ruleCondition" @search="handleListSearch"
-                      :title="$t('rule.rule_set_list')"
+                      :title="$t('rule.rule_list')"
                       :items="items2" :columnNames="columnNames2"
                       :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
@@ -223,34 +199,28 @@
           @select="select"
         >
           <el-table-column type="index" min-width="40"/>
-          <el-table-column prop="name" v-if="checkedColumnNames2.includes('name')" :label="$t('rule.rule_name')" min-width="150" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.resource_type')" v-if="checkedColumnNames2.includes('resourceType')" min-width="80" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <span v-for="(resourceType, index) in scope.row.types" :key="index">[{{ resourceType }}] </span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" v-if="checkedColumnNames2.includes('pluginName')" min-width="110" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.pluginName }}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column min-width="80" :label="$t('rule.severity')" v-if="checkedColumnNames2.includes('severity')" column-key="severity">
+          <el-table-column prop="name" v-if="checkedColumnNames2.includes('name')" :label="$t('package.rule_name')" min-width="150" show-overflow-tooltip></el-table-column>
+          <el-table-column min-width="70" v-if="checkedColumnNames2.includes('severity')" :label="$t('package.severity')" column-key="severity">
             <template v-slot:default="{row}">
-              <severity-type :row="row"></severity-type>
+              <rule-type :row="row"/>
             </template>
           </el-table-column>
-          <el-table-column prop="description" :label="$t('rule.description')" v-if="checkedColumnNames2.includes('description')" min-width="220" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.status')" min-width="70" show-overflow-tooltip>
+          <el-table-column prop="description" v-if="checkedColumnNames2.includes('description')" :label="$t('package.description')" min-width="250" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="type" v-if="checkedColumnNames2.includes('type')" :label="$t('commons.type')" min-width="70" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <span v-if="scope.row.type === 'linux'">Linux</span>
+              <span v-if="scope.row.type === 'windows'">Windows</span>
+              <span v-if="!scope.row.type">N/A</span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('package.status')" v-if="checkedColumnNames2.includes('status')" min-width="70" show-overflow-tooltip>
             <template v-slot:default="scope">
               <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
             </template>
           </el-table-column>
-          <el-table-column prop="lastModified" min-width="150" v-if="checkedColumnNames2.includes('lastModified')" :label="$t('rule.last_modified')" sortable>
+          <el-table-column prop="lastModified" v-if="checkedColumnNames2.includes('lastModified')" min-width="160" :label="$t('package.last_modified')" sortable>
             <template v-slot:default="scope">
-              <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
+              <span>{{ scope.row.lastModified | timestampFormatDate }}</span>
             </template>
           </el-table-column>
         </hide-table>
@@ -279,15 +249,15 @@
       <el-drawer class="rtl" :title="$t('account.scan_group_quick')" :visible.sync="scanVisible" size="60%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-form :model="scanForm" label-position="right" label-width="150px" size="small" ref="form">
-          <el-form-item :label="$t('account.cloud_account')" :rules="{required: true, message: $t('account.cloud_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" filterable :clearable="true" v-model="scanForm.id" :placeholder="$t('account.please_choose_account')">
+          <el-form-item :label="$t('server.server_setting')" :rules="{required: true, message: $t('server.server_setting') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="scanForm.id" :placeholder="$t('server.server_setting')">
               <el-option
                 v-for="item in accounts"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id">
                 <img :src="require(`@/assets/img/platform/${item.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                &nbsp;&nbsp; {{ item.name }}
+                &nbsp;&nbsp; {{ item.name + ' (' + item.ip + ':' + item.port + ')' }}
               </el-option>
             </el-select>
           </el-form-item>
@@ -315,8 +285,12 @@ import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import SeverityType from "@/business/components/common/components/SeverityType";
-import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
+import {
+  SERVER_RULE_CONFIGS,
+  SERVER_RULE_GROUP_CONFIGS
+} from "../../common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import RuleType from "./RuleType";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -349,32 +323,32 @@ const columnOptions = [
 
 const columnOptions2 = [
   {
-    label: 'rule.rule_name',
+    label: 'package.rule_name',
     props: 'name',
     disabled: false
   },
   {
-    label: 'rule.resource_type',
-    props: 'resourceType',
-    disabled: false
-  },
-  {
-    label: 'account.cloud_platform',
-    props: 'pluginName',
-    disabled: false
-  },
-  {
-    label: 'rule.severity',
+    label: 'package.severity',
     props: 'severity',
     disabled: false
   },
   {
-    label: 'commons.description',
+    label: 'package.description',
     props: 'description',
     disabled: false
   },
   {
-    label: 'rule.last_modified',
+    label: 'commons.type',
+    props: 'type',
+    disabled: false
+  },
+  {
+    label: 'package.status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'package.last_modified',
     props: 'lastModified',
     disabled: false
   },
@@ -394,17 +368,17 @@ const columnOptions2 = [
       SeverityType,
       TableHeader,
       HideTable,
+      RuleType,
     },
     data() {
       return {
         result: {},
         condition: {
-          components: RULE_GROUP_CONFIGS
+          components: SERVER_RULE_GROUP_CONFIGS
         },
         ruleCondition: {
-          components: RULE_CONFIGS
+          components: SERVER_RULE_CONFIGS
         },
-        plugins: [],
         tableData: [],
         ftableData: [],
         createForm: {},
@@ -579,7 +553,7 @@ const columnOptions2 = [
       },
       handleListSearch () {
         this.ruleCondition.combine = {group: {operator: 'in', value: this.itemId }};
-        let url = "/rule/list/" + this.ruleListPage + "/" + this.ruleListPageSize;
+        let url = "/server/ruleList/" + this.ruleListPage + "/" + this.ruleListPageSize;
         this.result = this.$post(url, this.ruleCondition, response => {
           let data = response.data;
           this.ruleListTotal = data.itemCount;
@@ -622,11 +596,6 @@ const columnOptions2 = [
           this.selectIds.add(s.id)
         })
       },
-      getPlugins () {
-        this.result = this.$get("/plugin/cloud", response => {
-          this.plugins = response.data;
-        });
-      },
       //查询列表
       search() {
         this.condition.type = "server";
@@ -648,7 +617,6 @@ const columnOptions2 = [
       },
       init() {
         this.search();
-        this.getPlugins();
       },
       sort(column) {
         _sort(column, this.condition);
@@ -664,6 +632,9 @@ const columnOptions2 = [
               let params = item;
               params.flag = item.flag ? item.flag : false;
               params.type = "server";
+              params.plugin_id = "hummer-server-plugin";
+              params.plugin_name = "主机检测";
+              params.plugin_icon = "server.png";
               let url = type == "createForm" ? "/rule/group/save" : "/rule/group/update";
               this.result = this.$post(url, params, response => {
                 this.search();
@@ -708,7 +679,7 @@ const columnOptions2 = [
       },
       handleBind(item) {
         this.groupId = item.id;
-        this.$get("/rule/unBindList/" + item.id,response => {
+        this.$get("/server/unBindList/" + item.id,response => {
           this.cloudData = [];
           for(let data of response.data) {
             this.cloudData.push({
@@ -718,7 +689,7 @@ const columnOptions2 = [
           }
           this.bindVisible = true;
         });
-        this.$get("/rule/allBindList/" + item.id,response => {
+        this.$get("/server/allBindList/" + item.id,response => {
           this.cloudValue = [];
           for(let data of response.data) {
             this.cloudValue.push(data.id);
@@ -730,7 +701,7 @@ const columnOptions2 = [
           cloudValue: this.cloudValue,
           groupId: this.groupId,
         };
-        this.$post("/rule/bindRule", params,response => {
+        this.$post("/server/bindRule", params,response => {
           this.$success(this.$t('organization.integration.successful_operation'));
           this.bindVisible = false;
           this.search();
@@ -740,7 +711,7 @@ const columnOptions2 = [
         return item.label.indexOf(query) > -1;
       },
       handleScan(item) {
-        let url = "/account/listByGroup/" + item.pluginId;
+        let url = "/server/allServerList";
         this.result = this.$get(url, response => {
           if (response.data != undefined && response.data != null) {
             this.accounts = response.data;
@@ -750,12 +721,12 @@ const columnOptions2 = [
         });
       },
       saveScan() {
-        let url = "/rule/scanByGroup/" + this.groupId + "/" + this.scanForm.id;
+        let url = "/server/scanByGroup/" + this.groupId + "/" + this.scanForm.id;
         this.result = this.$get(url, response => {
           this.scanVisible = false;
           this.$success(this.$t('account.i18n_hr_create_success'));
           this.$router.push({
-            path: '/account/result',
+            path: '/server/result',
           }).catch(error => error);
         });
       },
