@@ -86,8 +86,20 @@
         </if>
     </sql>
 
+    <resultMap id="BaseResultMap2" type="com.hummerrisk.dto.ServerRuleDTO"
+               extends="com.hummerrisk.base.mapper.ServerRuleMapper.BaseResultMap">
+        <result column="tagKey" property="tagKey" jdbcType="VARCHAR"/>
+        <result column="tagName" property="tagName" jdbcType="VARCHAR"/>
+        <collection property="tags" javaType="list" ofType="string" select="getTags" column="id">
+            <result column="tagKey" jdbcType="VARCHAR" property="tagKey"/>
+        </collection>
+        <collection property="groups" javaType="list" ofType="Integer" select="getRuleGroups" column="id">
+            <result column="groupId" jdbcType="VARCHAR" property="groupId"/>
+        </collection>
+    </resultMap>
+
     <select id="ruleList" parameterType="com.hummerrisk.controller.request.server.ServerRuleRequest"
-            resultType="com.hummerrisk.dto.ServerRuleDTO">
+            resultMap="BaseResultMap2">
         SELECT
         t.*,
         t1.tag_key as tagKey,
@@ -121,6 +133,20 @@
             </if>
         </where>
         ORDER BY t.last_modified desc
+    </select>
+
+    <select id="getTags" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT t.tag_key as tagKey
+        FROM rule_tag t
+        WHERE tag_key IN
+              (SELECT tag_key FROM rule_tag_mapping WHERE rule_id = #{id})
+    </select>
+
+    <select id="getRuleGroups" resultType="java.lang.Integer" parameterType="java.lang.String">
+        SELECT t.id as groupId
+        FROM rule_group t
+        WHERE t.id IN
+              (SELECT group_id FROM rule_group_mapping WHERE rule_id = #{id})
     </select>
 
 </mapper>

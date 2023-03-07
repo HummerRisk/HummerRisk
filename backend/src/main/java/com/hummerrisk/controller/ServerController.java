@@ -131,7 +131,7 @@ public class ServerController {
     @I18n
     @ApiOperation(value = "主机规则列表")
     @PostMapping(value = "ruleList/{goPage}/{pageSize}")
-    public Pager<List<ServerRuleDTO>> ruleList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerRuleRequest request) {
+    public Pager<List<ServerRuleDTO>> ruleList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerRuleRequest request) throws Exception {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, serverService.ruleList(request));
     }
@@ -348,6 +348,13 @@ public class ServerController {
     @GetMapping("scanByGroup/{groupId}/{serverId}")
     public void scanByGroup(@PathVariable String groupId, @PathVariable String serverId) {
         serverService.scanByGroup(groupId, serverId);
+    }
+
+    @I18n
+    @ApiOperation(value = "规则组")
+    @GetMapping(value = "ruleGroups")
+    public List<RuleGroup> getRuleGroups() {
+        return serverService.getRuleGroups();
     }
 
 }

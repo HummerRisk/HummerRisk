@@ -551,6 +551,7 @@ public class ServerService {
         record.setId(UUIDUtil.newUUID());
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
+        saveRuleGroupMapping(request.getId(), request.getGroups());
         return serverRuleMapper.insertSelective(record);
     }
 
@@ -561,6 +562,27 @@ public class ServerService {
             sfRulesTagMapping.setRuleId(ruleId);
             sfRulesTagMapping.setTagKey(tagKey);
             ruleTagMappingMapper.insert(sfRulesTagMapping);
+        }
+    }
+
+    public void saveRuleGroupMapping(String ruleId, List<String> ruleGroups) {
+        deleteRuleGroupMapping(ruleId);
+        if (ruleGroups.isEmpty()) {
+            return;
+        }
+        for (String ruleGroup : ruleGroups) {
+            RuleGroupMapping ruleGroupMapping = new RuleGroupMapping();
+            ruleGroupMapping.setRuleId(ruleId);
+            ruleGroupMapping.setGroupId(ruleGroup);
+            ruleGroupMappingMapper.insertSelective(ruleGroupMapping);
+        }
+    }
+
+    public void deleteRuleGroupMapping(String ruleId) {
+        if (StringUtils.isNotBlank(ruleId)) {
+            RuleGroupMappingExample example = new RuleGroupMappingExample();
+            example.createCriteria().andRuleIdEqualTo(ruleId);
+            ruleGroupMappingMapper.deleteByExample(example);
         }
     }
 
@@ -580,6 +602,7 @@ public class ServerService {
         BeanUtils.copyBean(record, request);
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
+        saveRuleGroupMapping(request.getId(), request.getGroups());
         return serverRuleMapper.updateByPrimaryKeySelective(record);
     }
 
@@ -906,6 +929,12 @@ public class ServerService {
 //        } catch (Exception e) {
 //            LogUtil.error(e.getMessage());
 //        }
+    }
+
+    public List<RuleGroup> getRuleGroups() {
+        RuleGroupExample example = new RuleGroupExample();
+        example.createCriteria().andPluginIdEqualTo("hummer-server-plugin").andTypeEqualTo("server");
+        return ruleGroupMapper.selectByExample(example);
     }
 
 

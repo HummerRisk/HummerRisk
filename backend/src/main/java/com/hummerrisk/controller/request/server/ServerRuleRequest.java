@@ -13,6 +13,8 @@ public class ServerRuleRequest extends ServerRule {
 
     private List<String> tags;
 
+    private List<String> groups;
+
     private String tagKey;
 
     private Map<String, Object> combine;
@@ -39,5 +41,13 @@ public class ServerRuleRequest extends ServerRule {
 
     public void setCombine(Map<String, Object> combine) {
         this.combine = combine;
+    }
+
+    public List<String> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<String> groups) {
+        this.groups = groups;
     }
 }
