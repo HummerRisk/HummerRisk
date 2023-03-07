@@ -3,7 +3,7 @@
 <mapper namespace="com.hummer.system.mapper.ext.ExtVulnMapper">
 
     <resultMap id="TargetMap" type="com.hummer.common.core.utils.DashboardTarget"
-               extends="com.hummer.cloud.mapper.RuleMapper.BaseResultMap">
+               extends="com.hummer.system.mapper.RuleMapper.BaseResultMap">
         <result column="ratio" jdbcType="VARCHAR" property="ratio"/>
         <result column="reSum" jdbcType="VARCHAR" property="reSum"/>
         <result column="ruSum" jdbcType="VARCHAR" property="ruSum"/>
