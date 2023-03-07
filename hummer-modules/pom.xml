@@ -12,8 +12,6 @@
         <module>hummer-cloud</module>
         <module>hummer-k8s</module>
         <module>hummer-system</module>
-        <module>dubbo-provider-demo</module>
-        <module>dubbo-customer-demo</module>
     </modules>
 
     <artifactId>hummer-modules</artifactId>

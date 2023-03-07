@@ -17,7 +17,6 @@
     </description>
 
     <modules>
-        <module>hummer-api-demo</module>
         <module>hummer-api-system</module>
         <module>hummer-api-cloud</module>
         <module>hummer-api-k8s</module>
