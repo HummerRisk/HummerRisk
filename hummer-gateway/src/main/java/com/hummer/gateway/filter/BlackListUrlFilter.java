@@ -15,16 +15,13 @@ import java.util.regex.Pattern;
  * @author harris1943
  */
 @Component
-public class BlackListUrlFilter extends AbstractGatewayFilterFactory<BlackListUrlFilter.Config>
-{
+public class BlackListUrlFilter extends AbstractGatewayFilterFactory<BlackListUrlFilter.Config> {
     @Override
-    public GatewayFilter apply(Config config)
-    {
+    public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
 
             String url = exchange.getRequest().getURI().getPath();
-            if (config.matchBlacklist(url))
-            {
+            if (config.matchBlacklist(url)) {
                 return ServletUtils.webFluxResponseWriter(exchange.getResponse(), "请求地址不允许访问");
             }
 
@@ -32,29 +29,24 @@ public class BlackListUrlFilter extends AbstractGatewayFilterFactory<BlackListUr
         };
     }
 
-    public BlackListUrlFilter()
-    {
+    public BlackListUrlFilter() {
         super(Config.class);
     }
 
-    public static class Config
-    {
+    public static class Config {
         private List<String> blacklistUrl;
 
         private List<Pattern> blacklistUrlPattern = new ArrayList<>();
 
-        public boolean matchBlacklist(String url)
-        {
+        public boolean matchBlacklist(String url) {
             return !blacklistUrlPattern.isEmpty() && blacklistUrlPattern.stream().anyMatch(p -> p.matcher(url).find());
         }
 
-        public List<String> getBlacklistUrl()
-        {
+        public List<String> getBlacklistUrl() {
             return blacklistUrl;
         }
 
-        public void setBlacklistUrl(List<String> blacklistUrl)
-        {
+        public void setBlacklistUrl(List<String> blacklistUrl) {
             this.blacklistUrl = blacklistUrl;
             this.blacklistUrlPattern.clear();
             this.blacklistUrl.forEach(url -> {

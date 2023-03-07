@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.hummer.common.core.user.SessionUser;
+import com.hummer.common.core.utils.LogUtil;
 import jakarta.servlet.http.HttpServletRequest;
 
 import com.hummer.system.api.model.LoginUser;
@@ -93,7 +94,7 @@ public class TokenService {
      * @return 用户信息
      */
     public LoginUser getLoginUser(String token) {
-        LoginUser user = null;
+        LoginUser user = new LoginUser();
         try {
             if (StringUtils.isNotEmpty(token)) {
                 String userkey = JwtUtils.getUserKey(token);
@@ -101,6 +102,7 @@ public class TokenService {
                 return user;
             }
         } catch (Exception e) {
+            LogUtil.warn(e.getMessage());
         }
         return user;
     }

@@ -63,7 +63,9 @@ public class LoginController {
     public ResultHolder isLogin() {
         String token = SecurityUtils.getToken();
         if (StringUtils.isNotEmpty(token)) {
-            User user = tokenService.getLoginUser().getUser();
+            LoginUser loginUser = tokenService.getLoginUser();
+            if (loginUser == null) return ResultHolder.error("");
+            User user = loginUser.getUser();
             if ((user != null) && StringUtils.isBlank(user.getLanguage()))
                 user.setLanguage(LocaleContextHolder.getLocale().toString());
             return ResultHolder.success(user);
