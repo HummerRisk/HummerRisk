@@ -4,7 +4,6 @@ import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.member.AddMemberRequest;
 import com.hummer.common.core.domain.request.member.EditPassWordRequest;
-import com.hummer.common.core.domain.request.member.QueryMemberRequest;
 import com.hummer.common.core.domain.request.member.UserRequest;
 import com.hummer.common.core.domain.request.organization.AddOrgMemberRequest;
 import com.hummer.common.core.domain.request.organization.QueryOrgMemberRequest;
@@ -19,7 +18,6 @@ import com.hummer.system.mapper.RoleMapper;
 import com.hummer.system.mapper.UserMapper;
 import com.hummer.system.mapper.UserRoleMapper;
 import com.hummer.system.mapper.ext.ExtUserMapper;
-import com.hummer.system.mapper.ext.ExtUserRoleMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -43,8 +41,6 @@ public class UserService {
     private RoleMapper roleMapper;
     @Resource
     private UserRoleMapper userRoleMapper;
-    @Resource
-    private ExtUserRoleMapper extUserRoleMapper;
     @Resource
     private ExtUserMapper extUserMapper;
     @Resource
@@ -289,10 +285,6 @@ public class UserService {
         return getUserDTO(userId);
     }
 
-    public List<User> getMemberList(QueryMemberRequest request) {
-        return extUserRoleMapper.getMemberList(request);
-    }
-
     public void addMember(AddMemberRequest request) {
         if (!CollectionUtils.isEmpty(request.getUserIds())) {
             for (String userId : request.getUserIds()) {
@@ -356,10 +348,6 @@ public class UserService {
         userRoleMapper.deleteByExample(userRoleExample);
     }
 
-    public List<User> getOrgMemberList(QueryOrgMemberRequest request) {
-        return extUserRoleMapper.getOrgMemberList(request);
-    }
-
     public boolean checkUserPassword(String userId, String password) throws Exception {
         if (StringUtils.isBlank(userId)) {
             HRException.throwException(Translator.get("user_name_is_null"));
@@ -370,13 +358,6 @@ public class UserService {
         UserExample example = new UserExample();
         example.createCriteria().andIdEqualTo(userId).andPasswordEqualTo(CodingUtil.md5(password));
         return userMapper.countByExample(example) > 0;
-    }
-
-    /**
-     * 查询该组织外的其他用户列表
-     */
-    public List<User> getBesideOrgMemberList(String orgId) {
-        return extUserRoleMapper.getBesideOrgMemberList(orgId);
     }
 
     public void setLanguage(String lang) {

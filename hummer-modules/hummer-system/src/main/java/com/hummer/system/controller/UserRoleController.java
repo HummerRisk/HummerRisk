@@ -14,24 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 @ApiIgnore
-@RequestMapping("userrole")
+@RequestMapping("user/role")
 @RestController
 public class UserRoleController {
 
     @Resource
     private UserRoleService userRoleService;
-
-    @I18n
-    @GetMapping("/list/org/{orgId}/{userId}")
-    public List<Role> getOrganizationMemberRoles(@PathVariable String orgId, @PathVariable String userId) {
-        return userRoleService.getOrganizationMemberRoles(orgId, userId);
-    }
-
-    @I18n
-    @GetMapping("/list/ws/{workspaceId}/{userId}")
-    public List<Role> getWorkspaceMemberRoles(@PathVariable String workspaceId, @PathVariable String userId) {
-        return userRoleService.getWorkspaceMemberRoles(workspaceId, userId);
-    }
 
     @I18n
     @GetMapping("/all/{userId}")

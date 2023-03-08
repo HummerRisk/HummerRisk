@@ -1,10 +1,8 @@
 package com.hummer.system.service;
 
-import com.hummer.common.core.domain.Role;
 import com.hummer.common.core.domain.UserRole;
 import com.hummer.common.core.domain.UserRoleExample;
 import com.hummer.system.mapper.UserRoleMapper;
-import com.hummer.system.mapper.ext.ExtUserRoleMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,17 +22,7 @@ import java.util.stream.Collectors;
 public class UserRoleService {
 
     @Resource
-    private ExtUserRoleMapper extUserRoleMapper;
-    @Resource
     private UserRoleMapper userRoleMapper;
-
-    public List<Role> getOrganizationMemberRoles(String orgId, String userId) {
-        return extUserRoleMapper.getOrganizationMemberRoles(orgId, userId);
-    }
-
-    public List<Role> getWorkspaceMemberRoles(String workspaceId, String userId) {
-        return extUserRoleMapper.getWorkspaceMemberRoles(workspaceId, userId);
-    }
 
     public List<Map<String, Object>> getUserRole(String userId) {
         List<Map<String, Object>> list = new ArrayList<>();

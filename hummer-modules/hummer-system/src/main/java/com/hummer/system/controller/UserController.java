@@ -76,21 +76,6 @@ public class UserController {
         userService.updateUser(user);
     }
 
-    @I18n
-    @ApiIgnore
-    @PostMapping("/special/ws/member/list/{goPage}/{pageSize}")
-    public Pager<List<User>> getMemberListByAdmin(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody QueryMemberRequest request) {
-        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, userService.getMemberList(request));
-    }
-
-    @I18n
-    @ApiIgnore
-    @PostMapping("/special/ws/member/list/all")
-    public List<User> getMemberListByAdmin(@RequestBody QueryMemberRequest request) {
-        return userService.getMemberList(request);
-    }
-
     @ApiIgnore
     @PostMapping("/special/ws/member/add")
     public void addMemberByAdmin(@RequestBody AddMemberRequest request) {
@@ -116,21 +101,6 @@ public class UserController {
     }
 
     @I18n
-    @ApiIgnore
-    @PostMapping("/special/org/member/list/{goPage}/{pageSize}")
-    public Pager<List<User>> getOrgMemberListByAdmin(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody QueryOrgMemberRequest request) {
-        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, userService.getOrgMemberList(request));
-    }
-
-    @I18n
-    @ApiIgnore
-    @PostMapping("/special/org/member/list/all")
-    public List<User> getOrgMemberListByAdmin(@RequestBody QueryOrgMemberRequest request) {
-        return userService.getOrgMemberList(request);
-    }
-
-    @I18n
     @ApiOperation(value = "所有用户")
     @GetMapping("/list/all")
     public List<User> getUserList() {
@@ -149,13 +119,6 @@ public class UserController {
     @GetMapping("/info/{userId}")
     public UserDTO getUserInfo(@PathVariable(value = "userId") String userId) throws Exception {
         return userService.getUserInfo(userId);
-    }
-
-    @I18n
-    @ApiIgnore
-    @GetMapping("/besideorg/list/{orgId}")
-    public List<User> getBesideOrgMemberList(@PathVariable String orgId) {
-        return userService.getBesideOrgMemberList(orgId);
     }
 
     /**
