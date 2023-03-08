@@ -44,6 +44,7 @@ import {removeToken} from "@/common/js/auth";
                 window.location.href = "/login";
               }
             }).catch(error => {
+              console.log(error);
               localStorage.clear();
               window.location.href = "/login";
             });

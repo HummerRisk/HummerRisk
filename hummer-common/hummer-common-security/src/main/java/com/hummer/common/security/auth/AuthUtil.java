@@ -1,5 +1,6 @@
 package com.hummer.common.security.auth;
 
+import com.hummer.common.core.utils.LogUtil;
 import com.hummer.common.security.annotation.RequiresPermissions;
 import com.hummer.common.security.annotation.RequiresRoles;
 import com.hummer.system.api.model.LoginUser;
@@ -29,7 +30,11 @@ public class AuthUtil {
      * @param token 指定token
      */
     public static void logoutByToken(String token) {
-        authLogic.logoutByToken(token);
+        try {
+            authLogic.logoutByToken(token);
+        } catch (Exception e) {
+            LogUtil.warn(e.getMessage());
+        }
     }
 
     /**

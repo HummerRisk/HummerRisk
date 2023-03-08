@@ -97,11 +97,7 @@ import { setToken } from '@/common/js/auth';
     beforeCreate() {
       this.$get(isLoginUrl).then(response => {
         if (!response.data.success) {
-          if (response.data.message === 'sso') {
-            window.location.href = ssoLoginUrl;
-          } else {
-            this.ready = true;
-          }
+          this.ready = true;
         } else {
           let user = response.data.data;
           saveLocalStorage(response.data);

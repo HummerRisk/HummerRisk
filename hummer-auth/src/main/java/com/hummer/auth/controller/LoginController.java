@@ -1,9 +1,6 @@
 package com.hummer.auth.controller;
 
-import com.hummer.auth.form.LoginBody;
 import com.hummer.auth.service.SysLoginService;
-import com.hummer.auth.service.UserService;
-import com.hummer.common.core.constant.SsoMode;
 import com.hummer.common.core.domain.R;
 import com.hummer.common.core.domain.request.LoginRequest;
 import com.hummer.common.core.text.ResultHolder;
@@ -17,7 +14,6 @@ import com.hummer.system.api.model.LoginUser;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -32,13 +28,7 @@ public class LoginController {
     private TokenService tokenService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private SysLoginService sysLoginService;
-
-    @Autowired
-    private Environment env;
 
     @GetMapping(value = "healthz")
     public String healthz() {
@@ -70,30 +60,20 @@ public class LoginController {
                 user.setLanguage(LocaleContextHolder.getLocale().toString());
             return ResultHolder.success(user);
         }
-        String ssoMode = env.getProperty("sso.mode");
-        if (ssoMode != null && org.apache.commons.lang3.StringUtils.equalsIgnoreCase(SsoMode.CAS.name(), ssoMode)) {
-            return ResultHolder.error("sso");
-        }
         return ResultHolder.error("");
     }
 
-    @GetMapping(value = "/currentUser")
-    public ResultHolder currentUser() {
-        User user = tokenService.getLoginUser().getUser();
-        return ResultHolder.success(user);
-    }
-
-    @DeleteMapping("signout")
-    public R<?> logout(HttpServletRequest request) {
+    @GetMapping("signout")
+    public ResultHolder logout(HttpServletRequest request) {
         String token = SecurityUtils.getToken(request);
         if (StringUtils.isNotEmpty(token)) {
-            String username = JwtUtils.getUserName(token);
+            String userId = JwtUtils.getUserId(token);
             // 删除用户缓存记录
             AuthUtil.logoutByToken(token);
             // 记录用户退出日志
-            sysLoginService.logout(username);
+            sysLoginService.logout(userId);
         }
-        return R.ok();
+        return ResultHolder.success("");
     }
 
 }
