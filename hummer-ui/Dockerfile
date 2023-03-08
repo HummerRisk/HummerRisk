@@ -17,7 +17,7 @@ RUN npm install
 COPY . /data
 RUN npm uninstall webpack
 RUN npm install webpack@^4.4.0 --save-dev
-RUN npm run build
+RUN npm run build:prod
 
 FROM nginx:alpine
 
