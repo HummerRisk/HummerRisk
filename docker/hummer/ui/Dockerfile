@@ -12,12 +12,14 @@ RUN apk update && \
     apk upgrade
 
 COPY ./package.json /data/package.json
-COPY ./package-lock.json /data/package-lock.json
+#COPY ./package-lock.json /data/package-lock.json
 RUN npm install
 COPY . /data
-RUN npm run-script build
+RUN npm uninstall webpack
+RUN npm install webpack@^4.4.0 --save-dev
+RUN npm run build:prod
 
 FROM nginx:alpine
 
-COPY --from=stage-build /data/dist /opt/neeko
+COPY --from=stage-build /data/dist /opt/hmr-ui/
 COPY nginx.conf /etc/nginx/conf.d/default.conf
