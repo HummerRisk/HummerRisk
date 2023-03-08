@@ -34,7 +34,7 @@ export default {
     axios.defaults.withCredentials = true;
     let token = getToken();
     if (token) axios.defaults.headers.common['Authorization'] = `Bearer `+ token;
-    axios.defaults.baseURL = process.env.VUE_APP_BASE_API;//本地开发可注释，不然会出现跨域问题
+    axios.defaults.baseURL = process.env.VUE_APP_BASE_API;
     axios.interceptors.response.use(response => {
       if (response.headers["authentication-status"] === "invalid") {
         login();
