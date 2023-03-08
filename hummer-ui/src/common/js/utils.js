@@ -10,46 +10,6 @@ import {
 } from "./constants";
 import axios from "axios";
 
-export function hasRole(role) {
-  let user = getCurrentUser();
-  let roles = user.roles.map(r => r.id);
-  return roles.indexOf(role) > -1;
-}
-
-// 是否含有某个角色
-export function hasRoles(...roles) {
-  let user = getCurrentUser();
-  let rs = user.roles.map(r => r.id);
-  for (let item of roles) {
-    if (rs.indexOf(item) > -1) {
-      return true;
-    }
-  }
-  return false;
-}
-
-export function hasRolePermission(role) {
-  let user = getCurrentUser();
-  for (let ur of user.userRoles) {
-    if (role === ur.roleId) {
-      if (ur.roleId === ROLE_ADMIN) {
-        return true;
-      }
-    }
-  }
-  return false
-}
-
-//是否含有对应组织或工作空间的角色
-export function hasRolePermissions(...roles) {
-  for (let role of roles) {
-    if (hasRolePermission(role)) {
-      return true;
-    }
-  }
-  return false;
-}
-
 export function getCurrentUser() {
   return JSON.parse(localStorage.getItem(TokenKey));
 }
@@ -82,12 +42,6 @@ export function getIsCollapse() {
 export function saveLocalStorage(response) {
   // 登录信息保存 cookie
   localStorage.setItem(TokenKey, JSON.stringify(response.data));
-  let rolesArray = response.data.roles;
-  if(!!rolesArray){
-    let roles = rolesArray.map(r => r.id);
-    // 保存角色
-    localStorage.setItem("roles", roles);
-  }
 }
 
 export function refreshSessionAndCookies(sign, sourceId) {
