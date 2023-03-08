@@ -6,6 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import {codeChartUrl} from "@/api/cloud/dashboard/dashboard";
 /* eslint-disable */
 export default {
   name: "CodeChart",
@@ -22,7 +23,7 @@ export default {
   },
   methods: {
     init() {
-      this.$post("/dashboard/codeChart", {}, response => {
+      this.$post(codeChartUrl, {}, response => {
         let data = response.data;
         this.options = {
           xAxis: {

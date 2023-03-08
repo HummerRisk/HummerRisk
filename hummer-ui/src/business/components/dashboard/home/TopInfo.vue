@@ -120,6 +120,7 @@
 import Container from "../.././common/components/Container";
 import CurrentUser from "@/business/components/settings/CurrentUser";
 import {getCurrentUser} from "@/common/js/utils";
+import {topInfoUrl, topScanInfoUrl} from "@/api/cloud/dashboard/dashboard";
 
 /* eslint-disable */
 export default {
@@ -137,11 +138,11 @@ export default {
   },
   methods: {
     init() {
-      this.result = this.$post("/dashboard/topInfo", {}, response => {
+      this.result = this.$post(topInfoUrl, {}, response => {
         let data = response.data;
         this.topInfo = data;
       });
-      this.result = this.$get("/dashboard/topScanInfo", response => {
+      this.result = this.$get(topScanInfoUrl, response => {
         let data = response.data;
         this.tableData = data;
       });

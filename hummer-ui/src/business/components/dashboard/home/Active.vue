@@ -61,6 +61,7 @@ import {_filter, _sort} from "@/common/js/utils";
 import TableHeader from "@/business/components/common/components/TableHeader";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {ACTIVE_CONFIGS} from "../../common/components/search/search-components";
+import {logOperationUrl} from "@/api/system/system";
 
 const columnOptions = [
   {
@@ -189,7 +190,7 @@ const columnOptions = [
       },
       //查询列表
       search() {
-        let url = "/log/operation/query/resource/" + this.currentPage + "/" + this.pageSize;
+        let url = logOperationUrl + this.currentPage + "/" + this.pageSize;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;

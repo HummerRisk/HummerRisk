@@ -96,6 +96,7 @@ import { setToken } from '@/common/js/auth';
     },
     beforeCreate() {
       this.$get(isLoginUrl).then(response => {
+        console.log(111, response.data);
         if (!response.data.success) {
           if (response.data.message === 'sso') {
             window.location.href = ssoLoginUrl;
@@ -103,10 +104,11 @@ import { setToken } from '@/common/js/auth';
             this.ready = true;
           }
         } else {
+          console.log(222, response.data.data);
           let user = response.data.data;
           saveLocalStorage(response.data);
           this.getLanguage(user.language);
-          window.location.href = "/"
+          window.location.href = "/";
         }
       });
     },

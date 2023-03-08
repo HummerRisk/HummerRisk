@@ -6,6 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import {analysisChartUrl} from "@/api/cloud/dashboard/dashboard";
 /* eslint-disable */
 export default {
   name: "AnalysisTopChart",
@@ -22,7 +23,7 @@ export default {
   },
   methods: {
     async init() {
-      this.$post("/dashboard/analysisChart", {}, response => {
+      this.$post(analysisChartUrl, {}, response => {
         let chartData = response.data;
         let ids = this.sizeForm.ids;
         if(!!chartData.xAxis && !!chartData.yAxis) {

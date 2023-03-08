@@ -33,7 +33,7 @@ module.exports = {
     port: 8080,
     proxy: {
       ['^(?!/login)']: {
-        target: process.env.VUE_APP_BASE_API,
+        target: 'http://localhost:8088',
         ws: true,
       },
     }

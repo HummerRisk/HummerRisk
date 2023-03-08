@@ -102,3 +102,7 @@ export const userUpdateCurrentUrl = "/system/user/update/current";
 export const userUpdatePasswordUrl = "/system/user/update/password";
 
 export const userInfoUrl = "/system/user/info/";
+
+export const logOperationUrl = "/system/log/operation/query/resource/";
+
+export const taskAccountListUrl = "/system/task/account/list";

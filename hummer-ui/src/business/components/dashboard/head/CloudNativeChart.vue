@@ -6,6 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import {cloudNativeChartUrl} from "@/api/cloud/dashboard/dashboard";
 /* eslint-disable */
 export default {
   name: "CloudNativeChart",
@@ -22,7 +23,7 @@ export default {
   },
   methods: {
     init() {
-      this.$post("/dashboard/cloudNativeChart", {}, response => {
+      this.$post(cloudNativeChartUrl, {}, response => {
         let data = response.data;
         this.options = {
           xAxis: {

@@ -58,6 +58,7 @@ import CloudChart from "@/business/components/dashboard/head/CloudChart";
 import VulnChart from "@/business/components/dashboard/head/VulnChart";
 import ServerChart from "@/business/components/dashboard/head/ServerChart";
 import CloudNativeChart from "@/business/components/dashboard/head/CloudNativeChart";
+import {taskCalendarUrl} from "@/api/cloud/dashboard/dashboard";
 
 /* eslint-disable */
 export default {
@@ -79,7 +80,7 @@ export default {
   methods: {
     /** 查询节假日管理 - 法定节假日列表 */
     getList() {
-      this.result = this.$get("/dashboard/taskCalendar", response => {
+      this.result = this.$get(taskCalendarUrl, response => {
         let data = response.data;
         for (let obj of data) {
           this.taskCalendar.push(obj.day);

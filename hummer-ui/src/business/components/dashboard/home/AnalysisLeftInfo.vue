@@ -160,6 +160,8 @@
 <script>
 import {_filter, _sort} from "@/common/js/utils";
 import TablePagination from "@/business/components/common/pagination/TablePagination";
+import {taskAccountListUrl, userAllListUrl} from "@/api/system/system";
+import {historyScanVoUrl} from "@/api/cloud/dashboard/dashboard";
 
 /* eslint-disable */
 export default {
@@ -263,8 +265,7 @@ export default {
       this.search();
     },
     initAccountTree() {
-      let url = "/task/account/list";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(taskAccountListUrl, response => {
         if (response.data != undefined && response.data != null) {
           let treeNodes = response.data;
           //资源信息树
@@ -296,11 +297,11 @@ export default {
       this.search();
     },
     search () {
-      this.result = this.$get("/user/list/all", response => {
+      this.result = this.$get(userAllListUrl, response => {
         let data = response.data;
         this.users =  data;
       });
-      let url = "/dashboard/historyScanVo/" + this.currentPage + "/" + this.pageSize;
+      let url = historyScanVoUrl + this.currentPage + "/" + this.pageSize;
       //在这里实现事件
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;

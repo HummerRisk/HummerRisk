@@ -51,4 +51,3 @@ export const quartzRelaLogUrl = "/cloud/cloud/task/quartz/rela/log/";
 
 export const showAccountUrl = "/cloud/cloud/task/show/account/";
 
-

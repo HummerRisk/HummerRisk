@@ -24,6 +24,7 @@ import AnalysisTopChart from "@/business/components/dashboard/head/AnalysisTopCh
 import AnalysisLeftInfo from "@/business/components/dashboard/home/AnalysisLeftInfo";
 import AnalysisRightContainer from "@/business/components/dashboard/home/AnalysisRightContainer";
 import MainContainer from "@/business/components/common/components/MainContainer";
+import {queryAnalysisUrl} from "@/api/cloud/dashboard/dashboard";
 
 /* eslint-disable */
 export default {
@@ -42,7 +43,7 @@ export default {
   },
   methods: {
     init() {
-      this.result = this.$get("/dashboard/queryAnalysis", response => {
+      this.result = this.$get(queryAnalysisUrl, response => {
         let data = response.data;
         this.sizeForm = data;
       });

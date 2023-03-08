@@ -45,6 +45,7 @@
 <script>
 import Container from "../.././common/components/Container";
 import ScorePieChart from "@/business/components/common/chart/ScorePieChart";
+import {logOperationUrl} from "@/api/system/system";
 
 /* eslint-disable */
 export default {
@@ -62,7 +63,7 @@ export default {
   },
   methods: {
     init() {
-      let url = "/log/operation/query/resource/1/10";
+      let url = logOperationUrl + "1/10";
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.tableData = data.listObject;

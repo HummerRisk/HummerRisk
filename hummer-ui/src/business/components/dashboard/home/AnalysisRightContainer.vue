@@ -84,7 +84,10 @@
 
 <script>
 /* eslint-disable */
-    export default {
+import {userAllListUrl} from "@/api/system/system";
+import {queryAnalysisUrl, saveAnalysisUrl} from "@/api/cloud/dashboard/dashboard";
+
+export default {
       name: "AsideContainer",
       props: {
         width: {
@@ -121,14 +124,13 @@
       },
       methods: {
         init() {
-          this.result = this.$get("/dashboard/queryAnalysis", response => {
+          this.result = this.$get(queryAnalysisUrl, response => {
             let data = response.data;
             this.sizeForm = data;
           });
         },
         initUsers() {
-          let url = "/user/list/all";
-          this.result = this.$get(url, response => {
+          this.result = this.$get(userAllListUrl, response => {
             let data = response.data;
             this.users =  data;
           });
@@ -150,7 +152,7 @@
           }
         },
         confirm() {
-          this.result = this.$post("/dashboard/saveAnalysis", this.sizeForm, response => {
+          this.result = this.$post(saveAnalysisUrl, this.sizeForm, response => {
             this.$success(this.$t('commons.save_success'));
             window.location.reload();
           });

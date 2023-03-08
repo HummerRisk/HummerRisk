@@ -65,15 +65,19 @@ export default {
     },
     beforeCreate() {
       this.$get(isLoginUrl).then(response => {
+        console.log(333, response.data);
         if (response.data.success) {
+          console.log(444, response.data.data);
           this.$setLang(response.data.data.language);
           saveLocalStorage(response.data);
           this.auth = true;
         } else {
-          window.location.href = "/login"
+          console.log(555);
+          window.location.href = "/login";
         }
-      }).catch(() => {
-        window.location.href = "/login"
+      }).catch(error => {
+        console.log(666, error);
+        window.location.href = "/login";
       });
     },
     components: {Notification, HrLanguageSwitch, HrUser, HrView, HrTopMenus, LeftMenus, Help},

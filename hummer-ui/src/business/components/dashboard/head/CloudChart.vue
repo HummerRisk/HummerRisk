@@ -6,6 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import {dashboardDistributionUrl} from "@/api/cloud/dashboard/dashboard";
 /* eslint-disable */
 export default {
   name: "CloudChart",
@@ -28,7 +29,7 @@ export default {
   },
   methods: {
     init() {
-      this.$post("/dashboard/distribution", {group: "accountList", limit: 10}, response => {
+      this.$post(dashboardDistributionUrl, {group: "accountList", limit: 10}, response => {
         let legendData = [];
         let seriesData = [];
         for (let obj of response.data) {
@@ -64,7 +65,6 @@ export default {
               radius: '55%',
               center: ['38%', '60%'],
               data: seriesData,
-              // data: this.sycData("seriesData"),
               emphasis: {
                 itemStyle: {
                   shadowBlur: 10,
