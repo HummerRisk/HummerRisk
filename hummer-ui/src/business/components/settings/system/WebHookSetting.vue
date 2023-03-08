@@ -102,6 +102,13 @@
 import TableOperators from "@/business/components/common/components/TableOperators";
 import TablePagination from "@/business/components/common/pagination/TablePagination";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
+import {
+  addWebhookUrl,
+  changeStatusWebhookUrl,
+  deleteWebhookUrl,
+  editWebhookUrl,
+  proxyListAllUrl
+} from "@/api/system/system";
 
 /* eslint-disable */
 export default {
@@ -172,13 +179,12 @@ export default {
     },
     //查询代理
     activeProxy() {
-      let url = "/proxy/list/all";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(proxyListAllUrl, response => {
         this.proxys = response.data;
       });
     },
     search () {
-      let url = "/system/webhookList/" + this.currentPage + "/" + this.pageSize;
+      let url = webhookListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, {}, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -193,7 +199,7 @@ export default {
       this.$refs['form'].validate(valid => {
         if (valid) {
           if (type === 'add') {
-            this.result = this.$post("/system/add/webhook", form,response => {
+            this.result = this.$post(addWebhookUrl, form,response => {
               if (response.success) {
                 this.$success(this.$t('commons.create_success'));
                 this.handleClose();
@@ -203,7 +209,7 @@ export default {
               }
             });
           } else {
-            this.result = this.$post("/system/edit/webhook", form,response => {
+            this.result = this.$post(editWebhookUrl, form,response => {
               if (response.success) {
                 this.$success(this.$t('commons.update_success'));
                 this.handleClose();
@@ -228,7 +234,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/system/delete/webhook/" + obj.id, () => {
+            this.result = this.$get(deleteWebhookUrl + obj.id, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -237,7 +243,7 @@ export default {
       });
     },
     changeStatus (item) {
-      this.result = this.$post('/system/changeStatus', {id: item.id, status: item.status?1:0}, response => {
+      this.result = this.$post(changeStatusWebhookUrl, {id: item.id, status: item.status?1:0}, response => {
         if (item.status == 1) {
           this.$success(this.$t('rule.change_status_on'));
         } else if (item.status == 0) {

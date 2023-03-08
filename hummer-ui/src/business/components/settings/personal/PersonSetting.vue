@@ -83,6 +83,7 @@ import {TokenKey} from "@/common/js/constants";
 import DialogFooter from "../../common/components/DialogFooter";
 import {getCurrentUser, listenGoBack, removeGoBackListener} from "@/common/js/utils";
 import TableOperatorButton from "../../common/components/TableOperatorButton";
+import {userInfoUrl, userUpdateCurrentUrl, userUpdatePasswordUrl} from "@/api/system/system";
 /* eslint-disable */
   export default {
     name: "PersonSetting",
@@ -93,8 +94,8 @@ import TableOperatorButton from "../../common/components/TableOperatorButton";
         updateVisible: false,
         editPasswordVisible: false,
         tableData: [],
-        updatePath: '/user/update/current',
-        updatePasswordPath: '/user/update/password',
+        updatePath: userUpdateCurrentUrl,
+        updatePasswordPath: userUpdatePasswordUrl,
         form: {},
         ruleForm: {},
         direction: 'rtl',
@@ -214,7 +215,7 @@ import TableOperatorButton from "../../common/components/TableOperatorButton";
         })
       },
       initTableData() {
-        this.result = this.$get("/user/info/" + encodeURIComponent(this.currentUser().id), response => {
+        this.result = this.$get(userInfoUrl + encodeURIComponent(this.currentUser().id), response => {
           let data = response.data;
           let dataList = [];
           dataList[0] = data;

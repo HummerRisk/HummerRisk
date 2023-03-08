@@ -82,6 +82,13 @@ import TableOperatorButton from "../../common/components/TableOperatorButton";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {USER_KEY_CONFIGS} from "../../common/components/search/search-components";
 import TableHeader from "@/business/components/common/components/TableHeader";
+import {
+  userKeyActiveUrl,
+  userKeyDeleteUrl,
+  userKeyDisableUrl,
+  userKeyGenerateUrl,
+  userKeyListUrl
+} from "@/api/system/system";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -187,7 +194,7 @@ export default {
       this.apiKeysVisible = false;
     },
     search() {
-      this.result = this.$post("/user/key/list/" + this.currentPage + "/" + this.pageSize, this.condition, response => {
+      this.result = this.$post(userKeyListUrl + this.currentPage + "/" + this.pageSize, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
         this.tableData = data.listObject;
@@ -200,7 +207,7 @@ export default {
         cancelButtonText: this.$t('commons.cancel'),
         type: 'warning'
       }).then(() => {
-        this.result = this.$get("/user/key/delete/" + row.id, response => {
+        this.result = this.$get(userKeyDeleteUrl + row.id, response => {
           this.$success(this.$t('commons.delete_success'));
           this.search();
         })
@@ -210,19 +217,19 @@ export default {
 
     },
     create() {
-      this.result = this.$get("/user/key/generate", response => {
+      this.result = this.$get(userKeyGenerateUrl, response => {
         this.$success(this.$t('commons.save_success'));
         this.search();
       })
     },
     changeSwitch(row) {
       if (row.status === 'ACTIVE') {
-        this.result = this.$get("/user/key/active/" + row.id, response => {
+        this.result = this.$get(userKeyActiveUrl + row.id, response => {
           this.$success(this.$t('commons.save_success'));
         });
       }
       if (row.status === 'DISABLED') {
-        this.result = this.$get("/user/key/disable/" + row.id, response => {
+        this.result = this.$get(userKeyDisableUrl + row.id, response => {
           this.$success(this.$t('commons.save_success'));
         });
       }

@@ -30,6 +30,8 @@
 
 <script>
 
+import {searchSystemUrl, updateSystemUrl} from "@/api/system/system";
+
 export default {
   name: "System",
   components: {
@@ -47,7 +49,7 @@ export default {
   },
   methods: {
     search(value) {
-      this.result = this.$get('/system/searchSystem', response => {
+      this.result = this.$get(searchSystemUrl, response => {
         this.datas = response.data;
         if(value) {
           let searchForValues = [];
@@ -61,7 +63,7 @@ export default {
       });
     },
     updateSystem() {
-      this.result = this.$get('/system/updateSystem', response => {
+      this.result = this.$get(updateSystemUrl, response => {
         this.$success(this.$t('organization.integration.successful_operation'));
         this.search();
       });

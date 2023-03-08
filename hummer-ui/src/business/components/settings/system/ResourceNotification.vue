@@ -78,6 +78,7 @@
 
 <script>
 import HrCodeEdit from "@/business/components/common/components/HrCodeEdit";
+import {noticeDeleteMessageUrl, noticeSaveMessageTaskUrl, noticeSearchMessageTypeUrl} from "@/api/system/system";
 
 /* eslint-disable */
 export default {
@@ -855,7 +856,7 @@ export default {
   },
   methods: {
     initForm() {
-      this.result = this.$get('/notice/search/message/type/' + "RESOURCE_TASK", response => {
+      this.result = this.$get(noticeSearchMessageTypeUrl + "RESOURCE_TASK", response => {
         this.resourceTask = response.data;
       })
     },
@@ -926,7 +927,7 @@ export default {
           data.template = this.content8;
           break;
       }
-      this.result = this.$post("/notice/save/message/task", data, () => {
+      this.result = this.$post(noticeSaveMessageTaskUrl, data, () => {
         this.initForm();
         this.$success(this.$t('commons.save_success'));
       })
@@ -939,7 +940,7 @@ export default {
       }
     },
     deleteRowTask(index, data) { //删除
-      this.result = this.$get("/notice/delete/message/" + data.identification, response => {
+      this.result = this.$get(noticeDeleteMessageUrl + data.identification, response => {
         this.$success(this.$t('commons.delete_success'));
         this.initForm();
       });

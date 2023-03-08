@@ -178,6 +178,13 @@ import {_filter, _sort, listenGoBack, removeGoBackListener} from "@/common/js/ut
 import RolesTag from "../../common/components/RolesTag";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {USER_CONFIGS} from "../../common/components/search/search-components";
+import {
+  roleAllUrl,
+  userRoleAllUrl, userSpecialAddUrl, userSpecialDeleteUrl,
+  userSpecialListUrl, userSpecialPasswordUrl,
+  userSpecialUpdateStatusUrl, userSpecialUpdateUrl,
+  userSpecialUserRoleUrl
+} from "@/api/system/system";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -248,11 +255,11 @@ const columnOptions = [
     },
     data() {
       return {
-        queryPath: '/user/special/list',
-        deletePath: '/user/special/delete/',
-        createPath: '/user/special/add',
-        updatePath: '/user/special/update',
-        editPasswordPath: '/user/special/password',
+        queryPath: userSpecialListUrl,
+        deletePath: userSpecialDeleteUrl,
+        createPath: userSpecialAddUrl,
+        updatePath: userSpecialUpdateUrl,
+        editPasswordPath: userSpecialPasswordUrl,
         result: {},
         createVisible: false,
         updateVisible: false,
@@ -399,7 +406,7 @@ const columnOptions = [
         this.updateVisible = true;
         this.form = Object.assign({roles: [{id: ''}]}, row);
         if (row.id) {
-          this.$get('/userrole/all/' + encodeURIComponent(row.id), response => {
+          this.$get(userRoleAllUrl + encodeURIComponent(row.id), response => {
             let data = response.data;
             this.$set(this.form, "roles", data);
           });
@@ -474,7 +481,7 @@ const columnOptions = [
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;
-          let url = "/user/special/user/role";
+          let url = userSpecialUserRoleUrl;
           for (let i = 0; i < this.tableData.length; i++) {
             if (this.tableData[i].id) {
               this.$get(url + '/' + encodeURIComponent(this.tableData[i].id), result => {
@@ -496,7 +503,7 @@ const columnOptions = [
         this.updateVisible =  false;
       },
       changeSwitch(row) {
-        this.$post('/user/special/update_status', row, () => {
+        this.$post(userSpecialUpdateStatusUrl, row, () => {
           this.$success(this.$t('commons.modify_success'));
         })
       },
@@ -507,7 +514,7 @@ const columnOptions = [
         this.multipleSelection = val;
       },
       getAllRole() {
-        this.$get("/role/all", response => {
+        this.$get(roleAllUrl, response => {
           this.userRole = response.data;
         })
       },

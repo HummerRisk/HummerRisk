@@ -98,6 +98,7 @@
 /* eslint-disable */
 import Upload from "@/business/components/settings/head/Upload";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
+import {scanSettingEditUrl, scanSettingInfoUrl, updateVulnDbOfflineUrl, updateVulnDbUrl} from "@/api/system/system";
 
 export default {
   name: "ScanSetting",
@@ -169,7 +170,7 @@ export default {
   },
   methods: {
     query() {
-      this.result = this.$get("/system/scanSetting/info", response => {
+      this.result = this.$get(scanSettingInfoUrl, response => {
         this.$set(this.formInline, "skipDbUpdate", response.data[0].paramValue);
         this.$set(this.formInline, "securityChecks", response.data[1].paramValue);
         this.$set(this.formInline, "ignoreUnfixed", response.data[2].paramValue);
@@ -209,7 +210,7 @@ export default {
 
       this.$refs[formInline].validate(valid => {
         if (valid) {
-          this.result = this.$post("/system/edit/scanSetting", param, response => {
+          this.result = this.$post(scanSettingEditUrl, param, response => {
             let flag = response.success;
             if (flag) {
               this.$success(this.$t('commons.save_success'));
@@ -230,7 +231,7 @@ export default {
       this.query();
     },
     updateVulnDb() {
-      this.result = this.$get("/system/updateVulnDb", response => {
+      this.result = this.$get(updateVulnDbUrl, response => {
         this.$success(this.$t('commons.success'));
       });
     },
@@ -253,7 +254,7 @@ export default {
       formData.append("request", new Blob([JSON.stringify(this.uploadForm)], {type: "application/json"}));
       let axiosRequestConfig = {
         method: "POST",
-        url: "/system/updateVulnDbOffline",
+        url: updateVulnDbOfflineUrl,
         data: formData,
         headers: {
           "Content-Type": 'multipart/form-data'
