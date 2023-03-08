@@ -155,10 +155,10 @@ import {DEFAULT_LANGUAGE} from "@/common/js/constants";
           this.$get("language", response => {
             language = response.data;
             localStorage.setItem(DEFAULT_LANGUAGE, language);
-            window.location.href = "/"
+            window.location.href = "/";
           })
         } else {
-          window.location.href = "/"
+          window.location.href = "/";
         }
       },
     }
