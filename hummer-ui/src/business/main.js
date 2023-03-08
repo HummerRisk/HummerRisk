@@ -7,10 +7,8 @@ import ajax from "../common/js/ajax";
 import App from "./App.vue";
 import message from "../common/js/message";
 import router from "./components/common/router/router";
-import "./permission" // permission control
 import i18n from "../i18n/i18n";
 import store from "./store";
-import {permission, roles} from "./permission"
 import chart from "../common/js/chart";
 import CalendarHeatmap from "../common/js/calendar-heatmap";
 import "../common/css/menu-header.css";
@@ -52,11 +50,6 @@ Vue.use(CalendarHeatmap);
 Vue.use(message);
 Vue.use(CKEditor);
 Vue.use(VueSelectImage);
-// v-permission
-Vue.directive("permission", permission);
-
-// v-roles
-Vue.directive("roles", roles);
 
 new Vue({
   el: "#app",

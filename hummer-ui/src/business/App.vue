@@ -65,7 +65,6 @@ export default {
     },
     beforeCreate() {
       this.$get(isLoginUrl).then(response => {
-        console.log("isLoginUrl", response.data);
         if (response.data.success) {
           this.$setLang(response.data.data.language);
           saveLocalStorage(response.data);
@@ -75,7 +74,7 @@ export default {
         }
       }).catch(error => {
         console.log("The user login is error", error);
-        // window.location.href = "/login";
+        window.location.href = "/login";
       });
     },
     components: {Notification, HrLanguageSwitch, HrUser, HrView, HrTopMenus, LeftMenus, Help},

@@ -11,17 +11,17 @@
            @close="handleClose"
            router>
 
-    <el-menu-item index="/dashboard" v-permission="['admin']">
+    <el-menu-item index="/dashboard">
       <i class="el-icon-menu"></i>
       <span slot="title">{{ $t('dashboard.dashboard') }}</span>
     </el-menu-item>
-    <el-menu-item index="/rule" v-permission="['admin']">
+    <el-menu-item index="/rule">
       {{ $t('rule.rule') }}
     </el-menu-item>
-    <el-menu-item index="/resource" onselectstart="return false" v-permission="['admin']">
+    <el-menu-item index="/resource" onselectstart="return false">
       {{ $t('resource.resource_result') }}
     </el-menu-item>
-    <el-menu-item index="/account" onselectstart="return false" v-permission="['admin']">
+    <el-menu-item index="/account" onselectstart="return false">
       {{ $t('account.cloud_account') }}
     </el-menu-item>
     <el-menu-item index="/setting" onselectstart="return false">
