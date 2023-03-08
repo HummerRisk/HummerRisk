@@ -72,7 +72,7 @@ public class CloudTaskConstants {
     public final static String[] QINGCLOUD_RESOURCE_TYPE = {"qingcloud.ecs","qingcloud.eip","qingcloud.mongodb","qingcloud.mysql"};
     public final static String[] UCLOUD_RESOURCE_TYPE = {"ucloud.eip","ucloud.securitygroup","ucloud.uhost","ucloud.ulb"};
 
-    public final static String[] K8S_RESOURCE_TYPE = {"k8s.namespace"};
+    public final static String[] K8S_RESOURCE_TYPE = {"k8s.namespace","k8s.config-map","k8s.daemon-set","k8s.deployment","k8s.node","k8s.pod","k8s.replica-set","k8s.replication-controller","k8s.secret","k8s.service","k8s.service-account","k8s.stateful-set","k8s.volume","k8s.volume-claim","k8s.controller-revision","k8s.endpoint"};
     public final static String[] QINIU_RESOURCE_TYPE = {"qiniu.kodo"};
     public final static String[] JDCLOUD_RESOURCE_TYPE = {"jdcloud.vm", "jdcloud.eip", "jdcloud.cdn","jdcloud.disk","jdcloud.lb","jdcloud.securitygroup","jdcloud.oss"};
     public final static String[] KSYUN_RESOURCE_TYPE = {"ksyun.kec","ksyun.slb","ksyun.eip"};
