@@ -60,11 +60,6 @@
           </template>
         </el-table-column>
 
-<!--        <el-table-column min-width="50" id="fixed" :label="$t('commons.operating')" prop="operating" type="operating" fixed="right">-->
-<!--          <template v-slot:default="scope">-->
-<!--            <table-operators :buttons="buttons" :row="scope.row"/>-->
-<!--          </template>-->
-<!--        </el-table-column>-->
       </hide-table>
       <table-pagination :change="search" :current-page.sync="paginationConfig.currentPage" :page-size.sync="paginationConfig.pageSize" :total="paginationConfig.total"/>
     </el-card>
@@ -80,6 +75,7 @@ import {MSG_CONFIGS} from "../../common/components/search/search-components";
 import TableHeader from "@/business/components/common/components/TableHeader";
 import {_filter, _sort} from "@/common/js/utils";
 import TableOperators from "@/business/components/common/components/TableOperators";
+import {webmsgBatchDeleteUrl, webmsgBatchReadUrl, webmsgListUrl, webmsgSetReadedUrl} from "@/api/system/system";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -203,7 +199,7 @@ export default {
       } else if(this.selectType === 0) {
         this.condition.status = false;
       }
-      this.result = this.$post('/webmsg/list/' + currentPage + '/' + pageSize, this.condition, response => {
+      this.result = this.$post(webmsgListUrl + currentPage + '/' + pageSize, this.condition, response => {
         this.tableData = response.data.listObject;
         this.paginationConfig.total = response.data.itemCount;
       });
@@ -220,7 +216,7 @@ export default {
     },
     // 设置已读
     setReaded(row) {
-      this.$get('/webmsg/setReaded/' + row.id, response => {
+      this.$get(webmsgSetReadedUrl + row.id, response => {
         bus.$emit('refresh-top-notification');
         this.selectIds = [];
         this.search();
@@ -232,7 +228,7 @@ export default {
         return;
       }
       const param = this.selectIds;
-      this.$post('/webmsg/batchRead', param, response => {
+      this.$post(webmsgBatchReadUrl, param, response => {
         this.selectIds = [];
         this.search();
       });
@@ -243,7 +239,7 @@ export default {
         return;
       }
       const param = this.selectIds;
-      this.$post('/webmsg/batchDelete', param, response => {
+      this.$post(webmsgBatchDeleteUrl, param, response => {
         this.selectIds = [];
         this.search();
       });

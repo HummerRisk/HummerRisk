@@ -60,6 +60,8 @@
 
 <script>
 /* eslint-disable */
+import {dingdingEditUrl, dingdingInfoUrl, dingdingTestConnectionUrl} from "@/api/system/system";
+
 export default {
   name: "DingSetting",
   data() {
@@ -108,7 +110,7 @@ export default {
       this.$refs.input = 'password'
     },
     query() {
-      this.result = this.$get("/system/dingding/info", response => {
+      this.result = this.$get(dingdingInfoUrl, response => {
         this.$set(this.formInline, "appKey", response.data[0].paramValue);
         this.$set(this.formInline, "agentId", response.data[1].paramValue);
         this.$set(this.formInline, "appSecret", response.data[2].paramValue);
@@ -136,7 +138,7 @@ export default {
       };
       this.$refs[formInline].validate((valid) => {
         if (valid) {
-          this.result = this.$post("/system/testConnection/dingding", param, response => {
+          this.result = this.$post(dingdingTestConnectionUrl, param, response => {
             this.$success(this.$t('commons.connection_successful'));
           })
         } else {
@@ -164,7 +166,7 @@ export default {
 
       this.$refs[formInline].validate(valid => {
         if (valid) {
-          this.result = this.$post("/system/edit/dingding", param, response => {
+          this.result = this.$post(dingdingEditUrl, param, response => {
             let flag = response.success;
             if (flag) {
               this.$success(this.$t('commons.save_success'));

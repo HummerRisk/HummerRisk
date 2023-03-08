@@ -55,6 +55,7 @@ import HideTable from "@/business/components/common/hideTable/HideTable";
 import {PLUGIN_CONFIGS} from "../../common/components/search/search-components";
 import TableHeader from "@/business/components/common/components/TableHeader";
 import {_filter, _sort} from "@/common/js/utils";
+import {pluginListUrl} from "@/api/system/system";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -102,7 +103,7 @@ const columnOptions = [
     },
     data() {
       return {
-        queryPath: '/plugin/list',
+        queryPath: pluginListUrl,
         result: {},
         createVisible: false,
         updateVisible: false,

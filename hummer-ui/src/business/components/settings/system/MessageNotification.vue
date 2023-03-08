@@ -17,6 +17,7 @@ import {getCurrentUser} from "@/common/js/utils";
 import ResourceNotification from "@/business/components/settings/system/ResourceNotification";
 import Container from "@/business/components/common/components/Container";
 import MainContainer from "@/business/components/common/components/MainContainer";
+import {userAllListUrl} from "@/api/system/system";
 /* eslint-disable */
 export default {
   name: "MessageNotification",
@@ -47,7 +48,7 @@ export default {
     },
 
     initUserList() {
-      this.result = this.$get('user/list/all', response => {
+      this.result = this.$get(userAllListUrl, response => {
         this.receiverOptions = response.data
       });
     }

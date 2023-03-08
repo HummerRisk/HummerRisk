@@ -125,6 +125,7 @@ import TableOperatorButton from "../../common/components/TableOperatorButton";
 import {_filter, _sort, listenGoBack, removeGoBackListener} from "@/common/js/utils";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {PROXY_CONFIGS} from "../../common/components/search/search-components";
+import {addProxyUrl, deleteProxyUrl, proxyListUrl, updateProxyUrl} from "@/api/system/system";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -174,10 +175,10 @@ const columnOptions = [
     },
     data() {
       return {
-        queryPath: '/proxy/list',
-        deletePath: '/proxy/delete/',
-        createPath: '/proxy/add',
-        updatePath: '/proxy/update',
+        queryPath: proxyListUrl,
+        deletePath: deleteProxyUrl,
+        createPath: addProxyUrl,
+        updatePath: updateProxyUrl,
         result: {},
         createVisible: false,
         updateVisible: false,

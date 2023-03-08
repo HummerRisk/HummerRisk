@@ -60,6 +60,8 @@
 
 <script>
 /* eslint-disable */
+import {wechatEditUrl, wechatInfoUrl, wechatTestConnectionUrl} from "@/api/system/system";
+
 export default {
   name: "WechatSetting",
   data() {
@@ -108,7 +110,7 @@ export default {
       this.$refs.input = 'password'
     },
     query() {
-      this.result = this.$get("/system/wechat/info", response => {
+      this.result = this.$get(wechatInfoUrl, response => {
         this.$set(this.formInline, "cropId", response.data[0].paramValue);
         this.$set(this.formInline, "agentId", response.data[1].paramValue);
         this.$set(this.formInline, "secret", response.data[2].paramValue);
@@ -136,7 +138,7 @@ export default {
       };
       this.$refs[formInline].validate((valid) => {
         if (valid) {
-          this.result = this.$post("/system/testConnection/wechat", param, response => {
+          this.result = this.$post(wechatTestConnectionUrl, param, response => {
             this.$success(this.$t('commons.connection_successful'));
           })
         } else {
@@ -164,7 +166,7 @@ export default {
 
       this.$refs[formInline].validate(valid => {
         if (valid) {
-          this.result = this.$post("/system/edit/wechat", param, response => {
+          this.result = this.$post(wechatEditUrl, param, response => {
             let flag = response.success;
             if (flag) {
               this.$success(this.$t('commons.save_success'));

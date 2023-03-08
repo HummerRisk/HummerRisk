@@ -64,6 +64,8 @@
 
 <script>
 /* eslint-disable */
+import {emailEditUrl, emailTestConnectionUrl, mailInfoUrl} from "@/api/system/system";
+
 export default {
   name: "EmailSetting",
   data() {
@@ -110,10 +112,10 @@ export default {
   },
   methods: {
     changeType() {
-      this.$refs.input = 'password'
+      this.$refs.input = 'password';
     },
     query() {
-      this.result = this.$get("/system/mail/info", response => {
+      this.result = this.$get(mailInfoUrl, response => {
         this.$set(this.formInline, "host", response.data[0].paramValue);
         this.$set(this.formInline, "port", response.data[1].paramValue);
         this.$set(this.formInline, "account", response.data[2].paramValue);
@@ -147,7 +149,7 @@ export default {
       };
       this.$refs[formInline].validate((valid) => {
         if (valid) {
-          this.result = this.$post("/system/testConnection/email", param, response => {
+          this.result = this.$post(emailTestConnectionUrl, param, response => {
             this.$success(this.$t('commons.connection_successful'));
           })
         } else {
@@ -178,7 +180,7 @@ export default {
 
       this.$refs[formInline].validate(valid => {
         if (valid) {
-          this.result = this.$post("/system/edit/email", param, response => {
+          this.result = this.$post(emailEditUrl, param, response => {
             let flag = response.success;
             if (flag) {
               this.$success(this.$t('commons.save_success'));

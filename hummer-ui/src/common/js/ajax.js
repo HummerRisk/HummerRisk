@@ -33,7 +33,7 @@ export default {
 
     axios.defaults.withCredentials = true;
     axios.defaults.headers.common['Authorization'] = `Bearer `+ getToken();
-    axios.defaults.baseURL = process.env.VUE_APP_BASE_API
+    axios.defaults.baseURL = process.env.VUE_APP_BASE_API;
     axios.interceptors.response.use(response => {
       if (response.headers["authentication-status"] === "invalid") {
         login();

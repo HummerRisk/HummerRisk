@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * 聚合系统接口
  *
- * @author ruoyi
+ * @author hummer
  */
 @Component
 public class SwaggerProvider implements SwaggerResourcesProvider, WebFluxConfigurer {
@@ -52,7 +52,7 @@ public class SwaggerProvider implements SwaggerResourcesProvider, WebFluxConfigu
                         .contains(routeDefinition.getId()))
                 .forEach(routeDefinition -> routeDefinition.getPredicates().stream()
                         .filter(predicateDefinition -> "Path".equalsIgnoreCase(predicateDefinition.getName()))
-                        .filter(predicateDefinition -> !"ruoyi-auth".equalsIgnoreCase(routeDefinition.getId()))
+                        .filter(predicateDefinition -> !"hummer-auth".equalsIgnoreCase(routeDefinition.getId()))
                         .forEach(predicateDefinition -> resourceList
                                 .add(swaggerResource(routeDefinition.getId(), predicateDefinition.getArgs()
                                         .get(NameUtils.GENERATED_NAME_PREFIX + "0").replace("/**", SWAGGER2URL)))));
