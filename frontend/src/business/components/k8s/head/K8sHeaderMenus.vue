@@ -12,14 +12,6 @@
             {{ $t("k8s.k8s_setting") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/k8s/rulegroup'">
-            {{ $t("k8s.rule_group") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/k8s/rule'">
-            {{ $t("k8s.k8s_rule") }}
-          </el-menu-item>
-
           <el-menu-item :index="'/k8s/result'">
             {{ $t("k8s.result") }}
           </el-menu-item>
