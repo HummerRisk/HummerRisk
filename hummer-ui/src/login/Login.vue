@@ -66,7 +66,7 @@
 <script>
 import { saveLocalStorage } from '@/common/js/utils';
 import { DEFAULT_LANGUAGE } from "@/common/js/constants";
-import { signinUrl, isLoginUrl, ssoSigninUrl, languageUrl } from "@/api/auth/auth";
+import { signinUrl, isLoginUrl, languageUrl } from "@/api/auth/auth";
 import { setToken } from '@/common/js/auth';
 
 /* eslint-disable */
