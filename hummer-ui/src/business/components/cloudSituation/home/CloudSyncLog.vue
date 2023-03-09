@@ -258,7 +258,7 @@ export default {
       let showLogTaskId = task.id;
       let url = "";
       if (showLogTaskId) {
-        url = "/cloud/sync/log/item/list/";
+        url = cloudSyncLogItemListUrl;
       }
       this.logForm.cloudTaskItemLogDTOs = [];
       this.logForm.showLogTaskId = showLogTaskId;
@@ -268,7 +268,7 @@ export default {
       });
     },
     initAccount() {
-      this.$get("/account/allList", response => {
+      this.$get(allListUrl, response => {
         this.accountList = response.data
         this.search()
       })
@@ -278,7 +278,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/cloud/sync/sync/" +  obj.accountId,response => {
+            this.result = this.$get(cloudSyncUrl +  obj.accountId,response => {
               this.search();
             });
           }
@@ -286,14 +286,14 @@ export default {
       });
     },
     saveSync() {
-      this.result = this.$get("/cloud/sync/sync/" + this.form.id,response => {
+      this.result = this.$get(cloudSyncUrl + this.form.id,response => {
         this.search();
         this.handleClose();
       });
     },
     //查询列表
     search() {
-      let url = "/cloud/sync/log/list/" + this.currentPage + "/" + this.pageSize;
+      let url = cloudSyncLogListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;

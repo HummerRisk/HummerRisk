@@ -34,6 +34,8 @@ import {getK8sID} from "@/common/js/utils";
 import NodeTree from "./NodeTree";
 import {buildNodePath} from "@/common/js/NodeTree";
 import DialogFooter from "../../common/components/DialogFooter";
+import {cloudPluginUrl} from "@/api/system/system";
+import {allListUrl} from "@/api/cloud/account/account";
 /* eslint-disable */
   export default {
     name: 'ScenarioModule',
@@ -103,15 +105,13 @@ import DialogFooter from "../../common/components/DialogFooter";
     methods: {
       //查询插件
       activePlugin() {
-        let url = "/plugin/cloud";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(cloudPluginUrl, response => {
           let data = response.data;
           this.plugins =  data;
         });
       },
       list() {
-        let url = "/account/allList";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(allListUrl, response => {
           if (response.data != undefined && response.data != null) {
             this.data = response.data;
             let moduleOptions = [];

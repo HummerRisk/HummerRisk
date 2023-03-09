@@ -52,6 +52,7 @@ import HrLanguageSwitch from "./components/common/head/LanguageSwitch";
 import {getIsCollapse, saveLocalStorage} from "@/common/js/utils";
 import Notification from "@/business/components/common/head/Notification";
 import { isLoginUrl } from "@/api/auth/auth";
+import { setToken } from '@/common/js/auth';
 
 export default {
     name: "app",
@@ -66,6 +67,7 @@ export default {
     beforeCreate() {
       this.$get(isLoginUrl).then(response => {
         if (response.data.success) {
+          setToken(response.data.token);
           this.$setLang(response.data.data.language);
           saveLocalStorage(response.data);
           this.auth = true;
@@ -73,7 +75,6 @@ export default {
           window.location.href = "/login";
         }
       }).catch(error => {
-        console.log("The user login is error", error);
         window.location.href = "/login";
       });
     },

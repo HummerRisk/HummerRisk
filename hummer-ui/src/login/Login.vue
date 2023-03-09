@@ -66,7 +66,7 @@
 <script>
 import { saveLocalStorage } from '@/common/js/utils';
 import { DEFAULT_LANGUAGE } from "@/common/js/constants";
-import { signinUrl, isLoginUrl, ssoSigninUrl, languageUrl, ssoLoginUrl } from "@/api/auth/auth";
+import { signinUrl, isLoginUrl, ssoSigninUrl, languageUrl } from "@/api/auth/auth";
 import { setToken } from '@/common/js/auth';
 
 /* eslint-disable */
@@ -100,6 +100,7 @@ import { setToken } from '@/common/js/auth';
           this.ready = true;
         } else {
           let user = response.data.data;
+          setToken(response.data.token);
           saveLocalStorage(response.data);
           this.getLanguage(user.language);
           window.location.href = "/";
@@ -145,7 +146,7 @@ import { setToken } from '@/common/js/auth';
         this.result = this.$post(this.loginUrl, this.form, response => {
           saveLocalStorage(response);
           sessionStorage.setItem('loginSuccess', 'true');
-          setToken(response.data.token)
+          setToken(response.data.token);
           this.getLanguage(response.data.language);
         });
       },

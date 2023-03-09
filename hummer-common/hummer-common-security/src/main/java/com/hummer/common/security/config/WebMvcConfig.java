@@ -1,8 +1,9 @@
 package com.hummer.common.security.config;
 
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.hummer.common.security.interceptor.HeaderInterceptor;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * 拦截器配置
@@ -29,4 +30,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public HeaderInterceptor getHeaderInterceptor() {
         return new HeaderInterceptor();
     }
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("redirect:/Login");
+        registry.addViewController("/login").setViewName("login");
+    }
+
 }

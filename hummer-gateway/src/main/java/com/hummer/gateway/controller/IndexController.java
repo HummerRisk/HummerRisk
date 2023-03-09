@@ -20,9 +20,7 @@ public class IndexController {
 
     @GetMapping(value = "/")
     public String index() {
-        String s;
-        s = "index.html";
-        return s;
+        return "index.html";
     }
 
     @GetMapping(value = "/login")
