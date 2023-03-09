@@ -1,6 +1,7 @@
 package com.hummer.auth.controller;
 
 import com.hummer.auth.service.SysLoginService;
+import com.hummer.auth.service.UserService;
 import com.hummer.common.core.domain.R;
 import com.hummer.common.core.domain.request.LoginRequest;
 import com.hummer.common.core.text.ResultHolder;
@@ -28,6 +29,9 @@ public class LoginController {
     private TokenService tokenService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private SysLoginService sysLoginService;
 
     @GetMapping(value = "healthz")
@@ -52,7 +56,7 @@ public class LoginController {
     @GetMapping(value = "isLogin")
     public ResultHolder isLogin() {
         String token = SecurityUtils.getToken();
-        if (StringUtils.isNotEmpty(token)) {
+        if (StringUtils.isNotEmpty(token) && !StringUtils.equalsIgnoreCase("undefined", token)) {
             LoginUser loginUser = tokenService.getLoginUser();
             if (loginUser == null) return ResultHolder.error("");
             User user = loginUser.getUser();
@@ -74,6 +78,11 @@ public class LoginController {
             sysLoginService.logout(userId);
         }
         return ResultHolder.success("");
+    }
+
+    @GetMapping(value = "/language")
+    public String getDefaultLanguage() {
+        return userService.getDefaultLanguage();
     }
 
 }
