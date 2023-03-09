@@ -4,51 +4,10 @@ import {
   IsCollapse,
   K8S_ID, K8S_NAME,
   REFRESH_SESSION_USER_URL,
-  ROLE_ADMIN,
   TokenKey,
   VULN_ID
 } from "./constants";
 import axios from "axios";
-
-export function hasRole(role) {
-  let user = getCurrentUser();
-  let roles = user.roles.map(r => r.id);
-  return roles.indexOf(role) > -1;
-}
-
-// 是否含有某个角色
-export function hasRoles(...roles) {
-  let user = getCurrentUser();
-  let rs = user.roles.map(r => r.id);
-  for (let item of roles) {
-    if (rs.indexOf(item) > -1) {
-      return true;
-    }
-  }
-  return false;
-}
-
-export function hasRolePermission(role) {
-  let user = getCurrentUser();
-  for (let ur of user.userRoles) {
-    if (role === ur.roleId) {
-      if (ur.roleId === ROLE_ADMIN) {
-        return true;
-      }
-    }
-  }
-  return false
-}
-
-//是否含有对应组织或工作空间的角色
-export function hasRolePermissions(...roles) {
-  for (let role of roles) {
-    if (hasRolePermission(role)) {
-      return true;
-    }
-  }
-  return false;
-}
 
 export function getCurrentUser() {
   return JSON.parse(localStorage.getItem(TokenKey));

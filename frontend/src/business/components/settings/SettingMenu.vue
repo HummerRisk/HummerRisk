@@ -1,6 +1,6 @@
 <template>
   <el-menu menu-trigger="click" :default-active="$route.path" router class="setting">
-    <el-submenu index="1" v-permission="['admin']">
+    <el-submenu index="1">
       <template v-slot:title>
         <font-awesome-icon class="icon account" :icon="['far', 'address-card']" size="lg"/>
         <span>{{ $t('commons.system') }}</span>
@@ -10,7 +10,7 @@
       </el-menu-item>
     </el-submenu>
 
-<!--    <el-submenu index="2" v-permission="['admin']">-->
+<!--    <el-submenu index="2">-->
 <!--      <template v-slot:title>-->
 <!--        <font-awesome-icon class="icon account" :icon="['fa', 'database']" size="lg"/>-->
 <!--        <span>{{ $t('oss.oss_setting') }}</span>-->

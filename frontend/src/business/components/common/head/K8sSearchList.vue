@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import {getK8sID, getK8sName, getCurrentUser, hasRoles, getCurrentAccountID} from "@/common/js/utils";
+import {getK8sID, getK8sName, getCurrentUser, getCurrentAccountID} from "@/common/js/utils";
 import {ACCOUNT, ACCOUNT_ID, ACCOUNT_NAME, K8S, K8S_ID, K8S_NAME, ROLE_ADMIN} from "@/common/js/constants";
 
 /* eslint-disable */
@@ -56,20 +56,18 @@ export default {
   },
   methods: {
     async init () {
-      if (hasRoles(ROLE_ADMIN)) {
-        await this.$get("/k8s/allCloudNativeList", response => {
-          this.items = response.data;
-          this.searchArray = response.data;
-          if(!this.k8sId) {
-            this.k8sId = this.items[0].id;
-            this.k8sName = this.items[0].name;
-          }
-          localStorage.setItem(K8S_ID, this.k8sId);
-          localStorage.setItem(K8S_NAME, this.k8sName);
-          localStorage.setItem(K8S, JSON.stringify(this.items[0]));
-          this.changecurrentAccount(this.k8sId);
-        });
-      }
+      await this.$get("/k8s/allCloudNativeList", response => {
+        this.items = response.data;
+        this.searchArray = response.data;
+        if(!this.k8sId) {
+          this.k8sId = this.items[0].id;
+          this.k8sName = this.items[0].name;
+        }
+        localStorage.setItem(K8S_ID, this.k8sId);
+        localStorage.setItem(K8S_NAME, this.k8sName);
+        localStorage.setItem(K8S, JSON.stringify(this.items[0]));
+        this.changecurrentAccount(this.k8sId);
+      });
     },
     query(queryString) {
       this.items = queryString ? this.searchArray.filter(this.createFilter(queryString)) : this.searchArray;

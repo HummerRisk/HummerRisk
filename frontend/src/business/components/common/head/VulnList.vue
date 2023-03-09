@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import {getCurrentUser, getVulnID, hasRoles} from "@/common/js/utils";
+import {getCurrentUser, getVulnID} from "@/common/js/utils";
 import {ROLE_ADMIN, VULN_ID, VULN_NAME} from "@/common/js/constants";
 
 /* eslint-disable */
@@ -59,35 +59,33 @@ export default {
   },
   methods: {
     init: function () {
-      if (hasRoles(ROLE_ADMIN)) {
-        this.result = this.$get("/account/vulnList", response => {
-          this.items = response.data;
-          this.searchArray = response.data;
-          if (!localStorage.getItem(VULN_ID)) {
-            let userLastAccountId = getCurrentUser().lastAccountId;
-            if (userLastAccountId) {
-              // id 是否存在
-              if (this.searchArray.length > 0 && this.searchArray.map(p => p.id).indexOf(userLastAccountId) !== -1) {
-                localStorage.setItem(VULN_ID, userLastAccountId);
-                let account = this.searchArray.filter(p => p.id === userLastAccountId);
-                if(account) localStorage.setItem(VULN_NAME, account[0].name);
-              }
+      this.result = this.$get("/account/vulnList", response => {
+        this.items = response.data;
+        this.searchArray = response.data;
+        if (!localStorage.getItem(VULN_ID)) {
+          let userLastAccountId = getCurrentUser().lastAccountId;
+          if (userLastAccountId) {
+            // id 是否存在
+            if (this.searchArray.length > 0 && this.searchArray.map(p => p.id).indexOf(userLastAccountId) !== -1) {
+              localStorage.setItem(VULN_ID, userLastAccountId);
+              let account = this.searchArray.filter(p => p.id === userLastAccountId);
+              if(account) localStorage.setItem(VULN_NAME, account[0].name);
             }
           }
-          let accountId = getVulnID();
-          if (accountId) {
-            // 保存的 accountId 在当前云张号列表是否存在; 切换工作空间后
-            if (this.searchArray.length > 0 && this.searchArray.map(p => p.id).indexOf(accountId) === -1) {
-              this.change(this.items[0].id);
-            }
-          } else {
-            if (this.items.length > 0) {
-              this.change(this.items[0].id);
-            }
+        }
+        let accountId = getVulnID();
+        if (accountId) {
+          // 保存的 accountId 在当前云张号列表是否存在; 切换工作空间后
+          if (this.searchArray.length > 0 && this.searchArray.map(p => p.id).indexOf(accountId) === -1) {
+            this.change(this.items[0].id);
           }
-          this.changeAccountName(accountId);
-        })
-      }
+        } else {
+          if (this.items.length > 0) {
+            this.change(this.items[0].id);
+          }
+        }
+        this.changeAccountName(accountId);
+      })
     },
     query(queryString) {
       this.items = queryString ? this.searchArray.filter(this.createFilter(queryString)) : this.searchArray;

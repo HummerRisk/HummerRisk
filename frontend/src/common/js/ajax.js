@@ -24,7 +24,7 @@ export default {
         callback: () => {
           axios.get("/signout");
           localStorage.setItem("Admin-Token", "{}");
-          window.location.href = "/login"
+          window.location.href = "/login";
         }
       });
     };
@@ -32,7 +32,7 @@ export default {
     axios.defaults.withCredentials = true;
 
     axios.interceptors.response.use(response => {
-      if (response.headers["authentication-status"] === "invalid") {
+      if (response.status === 401) {
         login();
       }
       return response;

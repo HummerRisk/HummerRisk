@@ -95,16 +95,11 @@ import {DEFAULT_LANGUAGE} from "@/common/js/constants";
     beforeCreate() {
       this.$get("/isLogin").then(response => {
         if (!response.data.success) {
-          if (response.data.message === 'sso') {
-            window.location.href = "/sso/login"
-          } else {
-            this.ready = true;
-          }
+          this.ready = true;
         } else {
           let user = response.data.data;
           saveLocalStorage(response.data);
           this.getLanguage(user.language);
-          window.location.href = "/"
         }
       });
     },

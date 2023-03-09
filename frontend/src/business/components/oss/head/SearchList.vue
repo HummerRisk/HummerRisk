@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import {getCurrentAccountID, getCurrentAccountName, getCurrentUser, hasRoles} from "@/common/js/utils";
+import {getCurrentAccountID, getCurrentAccountName, getCurrentUser} from "@/common/js/utils";
 import {ACCOUNT, ACCOUNT_ID, ACCOUNT_NAME, ROLE_ADMIN} from "@/common/js/constants";
 
 /* eslint-disable */
@@ -56,38 +56,36 @@ export default {
   },
   methods: {
     async init () {
-      if (hasRoles(ROLE_ADMIN)) {
-        await this.$get("/oss/allList", response => {
-          this.items = response.data;
-          this.searchArray = response.data;
-          if (this.currentAccountId) {
-            let account = this.searchArray.filter(p => p.id === this.currentAccountId);
-            this.accountName = account[0].name;
-            localStorage.setItem(ACCOUNT_NAME, this.accountName);
-            localStorage.setItem(ACCOUNT, JSON.stringify(account[0]));
-            this.changecurrentAccount(this.currentAccountId);
-          } else {
-            let userLastAccountId = getCurrentUser().lastAccountId;
-            if (userLastAccountId) {
-              // id 是否存在
-              if (this.searchArray.length > 0 && this.searchArray.map(p => p.id).indexOf(userLastAccountId) !== -1) {
-                localStorage.setItem(ACCOUNT_ID, userLastAccountId);
-                let account = this.searchArray.filter(p => p.id === userLastAccountId);
-                if(account) {
-                  this.accountName = account[0].name;
-                  localStorage.setItem(ACCOUNT_NAME, this.accountName);
-                  localStorage.setItem(ACCOUNT, JSON.stringify(account[0]));
-                  this.changecurrentAccount(this.currentAccountId);
-                }
-              }
-            } else {
-              if (this.items.length > 0) {
-                this.change(this.items[0].id);
+      await this.$get("/oss/allList", response => {
+        this.items = response.data;
+        this.searchArray = response.data;
+        if (this.currentAccountId) {
+          let account = this.searchArray.filter(p => p.id === this.currentAccountId);
+          this.accountName = account[0].name;
+          localStorage.setItem(ACCOUNT_NAME, this.accountName);
+          localStorage.setItem(ACCOUNT, JSON.stringify(account[0]));
+          this.changecurrentAccount(this.currentAccountId);
+        } else {
+          let userLastAccountId = getCurrentUser().lastAccountId;
+          if (userLastAccountId) {
+            // id 是否存在
+            if (this.searchArray.length > 0 && this.searchArray.map(p => p.id).indexOf(userLastAccountId) !== -1) {
+              localStorage.setItem(ACCOUNT_ID, userLastAccountId);
+              let account = this.searchArray.filter(p => p.id === userLastAccountId);
+              if(account) {
+                this.accountName = account[0].name;
+                localStorage.setItem(ACCOUNT_NAME, this.accountName);
+                localStorage.setItem(ACCOUNT, JSON.stringify(account[0]));
+                this.changecurrentAccount(this.currentAccountId);
               }
             }
+          } else {
+            if (this.items.length > 0) {
+              this.change(this.items[0].id);
+            }
           }
-        });
-      }
+        }
+      });
     },
     query(queryString) {
       this.items = queryString ? this.searchArray.filter(this.createFilter(queryString)) : this.searchArray;
