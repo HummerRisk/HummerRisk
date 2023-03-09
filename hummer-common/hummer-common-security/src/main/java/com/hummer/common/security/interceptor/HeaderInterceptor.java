@@ -1,5 +1,15 @@
 package com.hummer.common.security.interceptor;
 
+import com.hummer.common.core.constant.SecurityConstants;
+import com.hummer.common.core.context.SecurityContextHolder;
+import com.hummer.common.core.utils.ServletUtils;
+import com.hummer.common.core.utils.StringUtils;
+import com.hummer.common.security.auth.AuthUtil;
+import com.hummer.common.security.utils.SecurityUtils;
+import com.hummer.system.api.model.LoginUser;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
 /**
@@ -9,4 +19,32 @@ import org.springframework.web.servlet.AsyncHandlerInterceptor;
  * @author hummer
  */
 public class HeaderInterceptor implements AsyncHandlerInterceptor {
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        if (!(handler instanceof HandlerMethod)) {
+            return true;
+        }
+
+        SecurityContextHolder.setUserId(ServletUtils.getHeader(request, SecurityConstants.DETAILS_USER_ID));
+        SecurityContextHolder.setUserName(ServletUtils.getHeader(request, SecurityConstants.DETAILS_USERNAME));
+        SecurityContextHolder.setUserKey(ServletUtils.getHeader(request, SecurityConstants.USER_KEY));
+
+        String token = SecurityUtils.getToken();
+        if (StringUtils.isNotEmpty(token)) {
+            LoginUser loginUser = AuthUtil.getLoginUser(token);
+            if (StringUtils.isNotNull(loginUser)) {
+                AuthUtil.verifyLoginUserExpire(loginUser);
+                SecurityContextHolder.set(SecurityConstants.LOGIN_USER, loginUser);
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+            throws Exception {
+        SecurityContextHolder.remove();
+    }
+
 }
