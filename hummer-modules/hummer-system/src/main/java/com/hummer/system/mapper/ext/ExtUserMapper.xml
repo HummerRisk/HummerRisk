@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hummer.system.mapper.ext.ExtUserMapper">
+
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.name != null'>
+            and u.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test='${condition}.email != null'>
+            and u.email
+            <include refid="condition">
+                <property name="object" value="${condition}.email"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and u.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+        <if test="${condition}.updateTime != null">
+            and u.update_time
+            <include refid="condition">
+                <property name="object" value="${condition}.updateTime"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="getUserList" resultMap="com.hummerrisk.base.mapper.UserMapper.BaseResultMap">
+        select u.*
+        from `user` u
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                AND u.id like CONCAT('%', #{request.id},'%')
+            </if>
+            <if test="request.name != null and request.name != ''">
+                AND u.name like CONCAT('%', #{request.name},'%')
+            </if>
+            <if test="request.email != null and request.email != ''">
+                AND u.email like CONCAT('%', #{request.email},'%')
+            </if>
+            <if test="request.source != null and request.source != ''">
+                AND u.source like CONCAT('%', #{request.source},'%')
+            </if>
+            <if test="request.phone != null and request.phone != ''">
+                AND u.phone like CONCAT('%', #{request.phone},'%')
+            </if>
+            <if test="request.wechatAccount != null and request.wechatAccount != ''">
+                AND u.wechat_account like CONCAT('%', #{request.wechatAccount},'%')
+            </if>
+        </where>
+        order by u.update_time desc
+    </select>
+
+    <!--修改密码-->
+    <update id="updatePassword" parameterType="com.hummerrisk.base.domain.User">
+    update user
+    set
+       password=#{password,jdbcType=VARCHAR},
+       update_time = #{updateTime,jdbcType=BIGINT}
+    where  id=#{id,jdbcType=VARCHAR}
+   </update>
+    <select id="getDefaultLanguage" parameterType="java.lang.String" resultType="java.lang.String">
+    select param_value from system_parameter
+    where param_key=#{paramKey,jdbcType=VARCHAR}
+   </select>
+
+    <select id="searchUser" parameterType="java.lang.String" resultType="com.hummerrisk.base.domain.User">
+        select id, name, email, last_account_id from `user` where id like CONCAT('%', #{condition},'%') or email like CONCAT('%', #{condition},'%') limit 100;
+    </select>
+
+    <select id="queryTypeByIds" parameterType="java.lang.String" resultType="com.hummerrisk.base.domain.UserDetail">
+        SELECT
+        email,phone,wechat_account as wechatAccount
+        from user
+        WHERE id IN
+        <foreach collection="list" item="id" index="index"
+                 open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+
+    </select>
+
+</mapper>
