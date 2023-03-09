@@ -103,7 +103,6 @@ import { setToken } from '@/common/js/auth';
           setToken(response.data.token);
           saveLocalStorage(response.data);
           this.getLanguage(user.language);
-          window.location.href = "/";
         }
       });
     },
@@ -155,10 +154,10 @@ import { setToken } from '@/common/js/auth';
           this.$get(languageUrl, response => {
             language = response.data;
             localStorage.setItem(DEFAULT_LANGUAGE, language);
-            window.location.href = "/"
+            window.location.href = "/";
           })
         } else {
-          window.location.href = "/"
+          window.location.href = "/";
         }
       },
     }

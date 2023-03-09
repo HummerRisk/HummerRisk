@@ -24,21 +24,35 @@ public class IndexController {
     }
 
     @GetMapping(value = "/login")
-    public String login() {
-        String s;
-        RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
-        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) attributes;
-        // 从header获取token标识
-        String token = servletRequestAttributes.getRequest().getHeader(TokenConstants.AUTHENTICATION);
-        // 如果前端设置了令牌前缀，则裁剪掉前缀
-        if (StringUtils.isNotEmpty(token) && token.startsWith(TokenConstants.PREFIX)) {
-            token = token.replaceFirst(TokenConstants.PREFIX, "");
+    public String login() throws Exception {
+        try {
+            String s;
+            RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
+            if (attributes != null) {
+                ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) attributes;
+                if (servletRequestAttributes != null) {
+                    // 从header获取token标识
+                    String token = servletRequestAttributes.getRequest().getHeader(TokenConstants.AUTHENTICATION);
+                    // 如果前端设置了令牌前缀，则裁剪掉前缀
+                    if (StringUtils.isNotEmpty(token) && token.startsWith(TokenConstants.PREFIX)) {
+                        token = token.replaceFirst(TokenConstants.PREFIX, "");
+                    }
+                    if (StringUtils.isEmpty(token)) {
+                        s = "login.html";
+                    } else {
+                        s = "redirect:/";
+                    }
+                } else {
+                    s = "login.html";
+                }
+            } else {
+                s = "login.html";
+            }
+
+            return s;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
         }
-        if (StringUtils.isNotEmpty(token)) {
-            s = "login.html";
-        } else {
-            s = "redirect:/";
-        }
-        return s;
+
     }
 }
