@@ -74,11 +74,11 @@ export default {
           this.auth = true;
         } else {
           console.log(888)
-          window.location.href = process.env.VUE_APP_BASE_API + "/login";
+          window.location.href = "/login";
         }
       }).catch(error => {
         console.log(323)
-        window.location.href = process.env.VUE_APP_BASE_API + "/login";
+        window.location.href = "/login";
       });
     },
     components: {Notification, HrLanguageSwitch, HrUser, HrView, HrTopMenus, LeftMenus, Help},

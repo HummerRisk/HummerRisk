@@ -59,6 +59,7 @@
 
 <script>
 import Container from "../.././common/components/Container";
+import {codeTopInfoUrl} from "@/api/k8s/k8s";
 
 /* eslint-disable */
 export default {
@@ -73,7 +74,7 @@ export default {
   },
   methods: {
     init() {
-      this.result = this.$post("/code/topInfo", {}, response => {
+      this.result = this.$post(codeTopInfoUrl, {}, response => {
         let data = response.data;
         this.topInfo = data;
       });

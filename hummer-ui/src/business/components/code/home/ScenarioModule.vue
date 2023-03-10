@@ -27,6 +27,7 @@
 <script>
 import NodeTree from "@/business/components/code/head/NodeTree";
 import {buildNodePath} from "@/common/js/NodeTree";
+import {codeAllListUrl} from "@/api/k8s/k8s";
 
 /* eslint-disable */
   export default {
@@ -77,8 +78,7 @@ import {buildNodePath} from "@/common/js/NodeTree";
     },
     methods: {
       list() {
-        let url = "/code/allList";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(codeAllListUrl, response => {
           if (response.data != undefined && response.data != null) {
             this.data = response.data;
             let moduleOptions = [];
