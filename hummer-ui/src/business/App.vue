@@ -77,7 +77,8 @@ export default {
           // window.location.href = "/login";
         }
       }).catch(error => {
-        window.location.href = "/login";
+        console.log(323)
+        // window.location.href = "/login";
       });
     },
     components: {Notification, HrLanguageSwitch, HrUser, HrView, HrTopMenus, LeftMenus, Help},

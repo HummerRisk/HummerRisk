@@ -23,10 +23,11 @@ export default {
     let login = function () {
       MessageBox.alert(i18n.t("commons.tips"), i18n.t("commons.prompt"), {
         callback: () => {
+          console.log(123)
           axios.get("/auth/signout");
           removeToken();
           localStorage.clear();
-          window.location.href = "/login";
+          // window.location.href = "/login";
         }
       });
     };
@@ -70,7 +71,8 @@ export default {
         return;
       }
       if (error.response && error.response.status === 403 && !unRedirectUrls.has(url)) {
-        window.location.href = "/";
+        console.log(223)
+        // window.location.href = "/";
         return;
       }
       result.loading = false;

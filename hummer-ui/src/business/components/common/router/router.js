@@ -67,7 +67,8 @@ router.beforeEach((to, from, next) => {
     axios.get("/auth/signout");
     removeToken();
     localStorage.clear();
-    window.location.href = "/login";
+    console.log(723)
+    // window.location.href = "/login";
     next();
   } else {
     next();
