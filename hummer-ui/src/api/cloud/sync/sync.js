@@ -5,10 +5,10 @@ export const cloudSyncUrl = "/cloud/cloud/sync/sync/";
 
 export const cloudSyncLogListUrl = "/cloud/cloud/sync/log/list/";
 
-export const languageUrl = "/auth/language";
+export const cloudSyncDeleteUrl = "/cloud/cloud/sync/delete/";
 
-export const isLoginUrl = "/auth/isLogin";
+export const cloudTopologyUrl = "/cloud/cloud/sync/cloudTopology";
 
-export const currentUserUrl = "/auth/currentUser";
+export const syncResourceTypeListUrl = "/cloud/cloud/sync/resourceType/list/";
 
 

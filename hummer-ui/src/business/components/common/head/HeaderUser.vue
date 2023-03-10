@@ -42,12 +42,12 @@ import {removeToken} from "@/common/js/auth";
                 removeToken();
                 localStorage.clear();
                 console.log(523)
-                // window.location.href = "/login";
+                window.location.href = process.env.VUE_APP_BASE_API + "/login";
               }
             }).catch(error => {
               localStorage.clear();
               console.log(623)
-              // window.location.href = "/login";
+              window.location.href = process.env.VUE_APP_BASE_API + "/login";
             });
             break;
           case "about":

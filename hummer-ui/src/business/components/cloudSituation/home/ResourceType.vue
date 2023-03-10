@@ -18,6 +18,8 @@
 
 <script>
   /* eslint-disable */
+  import {syncResourceTypeListUrl} from "@/api/cloud/sync/sync";
+
   export default {
     name: "ResourceType",
     props: {
@@ -34,7 +36,7 @@
     },
     methods: {
       showRegions() {
-        this.result = this.$get("/cloud/sync/resourceType/list/" +  this.syncId,response => {
+        this.result = this.$get(syncResourceTypeListUrl +  this.syncId, response => {
           this.string2PrettyFormat = response.data
           this.regionsVisible =  true;
         });

@@ -159,11 +159,11 @@ import { setToken } from '@/common/js/auth';
             language = response.data;
             localStorage.setItem(DEFAULT_LANGUAGE, language);
             console.log(555, response)
-            // window.location.href = "/";
+            window.location.href = process.env.VUE_APP_BASE_API + "/";
           })
         } else {
           console.log(666)
-          // window.location.href = "/";
+          window.location.href = process.env.VUE_APP_BASE_API + "/";
         }
       },
     }

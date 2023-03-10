@@ -76,6 +76,8 @@ import {SITUATION_CONFIGS} from "../../common/components/search/search-component
 import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import ResourceRule from "@/business/components/cloudSituation/home/ResourceRule";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {cloudResourceListUrl, resourceSummaryReport} from "@/api/cloud/resource/resource";
+import {allListUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -193,7 +195,7 @@ export default {
       if (!!this.selectNodeIds[0]) {
        accountId = this.selectNodeIds[0];
       }
-      this.result = this.$get("/cloud/resource/summary/"+accountId, response => {
+      this.result = this.$get(resourceSummaryReport + accountId, response => {
         let data = response.data;
         this.resourceSummary = data;
       });
@@ -218,7 +220,7 @@ export default {
     },
 
     search() {
-      let url = "/cloud/resource/list/" + this.currentPage + "/" + this.pageSize;
+      let url = cloudResourceListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -241,7 +243,7 @@ export default {
       return result.length >0?result[0].name:"";
     },
     initAccount() {
-      this.$get("/account/allList", response => {
+      this.$get(allListUrl, response => {
         this.accountList = response.data;
         this.searchByAccount();
       })

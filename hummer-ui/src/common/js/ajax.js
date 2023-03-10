@@ -27,7 +27,7 @@ export default {
           axios.get("/auth/signout");
           removeToken();
           localStorage.clear();
-          // window.location.href = "/login";
+          window.location.href = process.env.VUE_APP_BASE_API + "/login";
         }
       });
     };
@@ -72,7 +72,7 @@ export default {
       }
       if (error.response && error.response.status === 403 && !unRedirectUrls.has(url)) {
         console.log(223)
-        // window.location.href = "/";
+        window.location.href = process.env.VUE_APP_BASE_API + "/";
         return;
       }
       result.loading = false;

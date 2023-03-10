@@ -68,7 +68,7 @@ router.beforeEach((to, from, next) => {
     removeToken();
     localStorage.clear();
     console.log(723)
-    // window.location.href = "/login";
+    window.location.href = process.env.VUE_APP_BASE_API + "/login";
     next();
   } else {
     next();

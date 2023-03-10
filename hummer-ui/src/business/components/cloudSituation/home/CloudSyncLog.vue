@@ -130,6 +130,8 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import ResultLog from "./ResultLog";
 import ResourceType from "./ResourceType";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {cloudSyncDeleteUrl, cloudSyncLogItemListUrl, cloudSyncLogListUrl, cloudSyncUrl} from "@/api/cloud/sync/sync";
+import {allListUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -309,7 +311,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/cloud/sync/delete/" + obj.id, () => {
+            this.result = this.$get(cloudSyncDeleteUrl + obj.id, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
