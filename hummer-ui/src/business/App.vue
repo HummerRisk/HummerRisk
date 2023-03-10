@@ -66,13 +66,15 @@ export default {
     },
     beforeCreate() {
       this.$get(isLoginUrl).then(response => {
+        console.log(777, response)
         if (response.data.success) {
           setToken(response.data.token);
           this.$setLang(response.data.data.language);
           saveLocalStorage(response.data);
           this.auth = true;
         } else {
-          window.location.href = "/login";
+          console.log(888)
+          // window.location.href = "/login";
         }
       }).catch(error => {
         window.location.href = "/login";
