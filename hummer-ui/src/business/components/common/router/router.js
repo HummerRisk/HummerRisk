@@ -21,7 +21,6 @@ import Code from "@/business/components/code/router";
 import Sbom from "@/business/components/sbom/router";
 import Log from "@/business/components/event/router";
 import Config from "@/business/components/config/router";
-import Cost from "@/business/components/cost/router";
 import Fs from "@/business/components/fs/router";
 import {getToken, removeToken} from '@/common/js/auth';
 
@@ -56,7 +55,6 @@ const router = new VueRouter({
     Log,
     Config,
     Fs,
-    Cost
   ]
 });
 
