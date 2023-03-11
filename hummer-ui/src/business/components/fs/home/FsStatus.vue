@@ -14,6 +14,8 @@
 
 <script>
   /* eslint-disable */
+  import {fsValidateByIdUrl} from "@/api/k8s/fs/fs";
+
   export default {
     name: "FsStatus",
     inject:['search'],
@@ -26,7 +28,7 @@
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.$post("/code/validate/" + row.id, {}, response => {
+              this.$post(fsValidateByIdUrl + row.id, {}, response => {
                 if (response.data) {
                   this.$success(this.$t('account.success'));
                   this.$emit('search');

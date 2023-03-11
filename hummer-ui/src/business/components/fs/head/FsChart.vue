@@ -6,6 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import {fsChartUrl} from "@/api/k8s/fs/fs";
 /* eslint-disable */
 export default {
   name: "FsChart",
@@ -22,7 +23,7 @@ export default {
   },
   methods: {
     init() {
-      this.$post("/dashboard/fsChart", {}, response => {
+      this.$post(fsChartUrl, {}, response => {
         let data = response.data;
         this.options = {
           xAxis: {
