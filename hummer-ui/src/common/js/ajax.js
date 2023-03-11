@@ -23,7 +23,6 @@ export default {
     let login = function () {
       MessageBox.alert(i18n.t("commons.tips"), i18n.t("commons.prompt"), {
         callback: () => {
-          console.log(123)
           axios.get("/auth/signout");
           removeToken();
           localStorage.clear();
@@ -71,7 +70,6 @@ export default {
         return;
       }
       if (error.response && error.response.status === 403 && !unRedirectUrls.has(url)) {
-        console.log(223)
         window.location.href = "/";
         return;
       }

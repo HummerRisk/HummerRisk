@@ -96,15 +96,12 @@ import { setToken } from '@/common/js/auth';
     },
     beforeCreate() {
       this.$get(isLoginUrl).then(response => {
-        console.log(111, response.data)
         if (response.data.success) {
-          console.log(333, response.data)
           let user = response.data.data;
           setToken(response.data.token);
           saveLocalStorage(response.data);
           this.getLanguage(user.language);
         } else {
-          console.log(222)
           this.ready = true;
         }
       });
@@ -153,16 +150,13 @@ import { setToken } from '@/common/js/auth';
         });
       },
       getLanguage(language) {
-        console.log(444, language)
         if (!language) {
           this.$get(languageUrl, response => {
             language = response.data;
             localStorage.setItem(DEFAULT_LANGUAGE, language);
-            console.log(555, response)
             window.location.href = "/";
           })
         } else {
-          console.log(666)
           window.location.href = "/";
         }
       },
