@@ -22,13 +22,14 @@ import Sbom from "@/business/components/sbom/router";
 import Log from "@/business/components/event/router";
 import Config from "@/business/components/config/router";
 import Fs from "@/business/components/fs/router";
-import {getToken, removeToken} from '@/common/js/auth';
+import {getToken} from '@/common/js/auth';
 
 Vue.use(VueRouter);
 /* eslint-disable */
 const router = new VueRouter({
   routes: [
     {path: "/", redirect: '/dashboard/panel'},
+    {path: "/login", redirect: '@/login/login'},
     {
       path: "/sidebar",
       components: {
