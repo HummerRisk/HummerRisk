@@ -16,4 +16,31 @@ export const scanConfigUrl = "/k8s/config/scan/";
 
 export const configValidateByIdUrl = "/k8s/config/validate/";
 
+export const historyConfigUrl = "/k8s/config/history/";
+
+export const deleteHistoryConfigResultUrl = "/k8s/config/deleteHistoryConfigResult/";
+
+export const historyResultItemListUrl = "/k8s/config/historyResultItemList";
+
+export const configMetricChartUrl = "/k8s/config/metricChart/";
+
+export const logConfigUrl = "/k8s/config/log/";
+
+export const getCloudNativeConfigResultUrl = "/k8s/config/getCloudNativeConfigResult/";
+
+export const configResultListUrl = "/k8s/config/resultList/";
+
+export const configReScanUrl = "/k8s/config/reScan/";
+
+export const deleteCloudNativeConfigResultUrl = "/k8s/config/deleteCloudNativeConfigResult/";
+
+export const configDownloadUrl = "/k8s/config/download";
+
+export const configResultItemListBySearchUrl = "/k8s/config/resultItemListBySearch/";
+
+export const configUploadYamlUrl = "/k8s/config/uploadYaml";
+
+export const configAllListUrl = "/k8s/config/allList";
+
+export const configTopInfoUrl = "/k8s/config/topInfo";
 

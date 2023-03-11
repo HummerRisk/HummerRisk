@@ -15,6 +15,8 @@
   </div>
 </template>
 <script>
+import {configUploadYamlUrl} from "@/api/k8s/config/config";
+
 export default {
   name: "YamlUpload",
   data(){
@@ -76,7 +78,7 @@ export default {
     },
     submit(file) {
       if(!this.uploadSuccess) return;
-      this.$fileUpload("/config/uploadYaml", file.file, null, {}, response => {
+      this.$fileUpload(configUploadYamlUrl, file.file, null, {}, response => {
         if(response.success) {
           this.$message({
             message: this.$t("commons.save_success"),
