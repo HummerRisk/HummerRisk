@@ -74,7 +74,7 @@ import {_filter, _sort} from "@/common/js/utils";
 import MetricChart from "@/business/components/common/chart/MetricChart";
 import { DETAIL_RESULT_CONFIGS } from "@/business/components/common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {codeMetricChartUrl, codeResultItemListBySearchUrl} from "@/api/k8s/k8s";
+import {codeMetricChartUrl, codeResultItemListBySearchUrl} from "@/api/k8s/code/code";
 
 //列表展示与隐藏
 const columnOptions = [

@@ -217,7 +217,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import {CODE_RULE_CONFIGS} from "../../common/components/search/search-components";
 import {severityOptions} from "@/common/js/constants";
-import {codeChangeStatusUrl, codeRuleListUrl, deleteCodeRuleUrl} from "@/api/k8s/k8s";
+import {codeChangeStatusUrl, codeRuleListUrl, deleteCodeRuleUrl} from "@/api/k8s/code/code";
 import {ruleTagsUrl} from "@/api/cloud/rule/rule";
 
 /* eslint-disable */

@@ -234,13 +234,12 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
   addCodeUrl,
-  allSbomListUrl,
-  allSbomVersionListUrl,
   codeListUrl,
   codePluginUrl,
   codeValidateUrl, scanCodeUrl, updateCodeUrl
-} from "@/api/k8s/k8s";
+} from "@/api/k8s/code/code";
 import {proxyListAllUrl} from "@/api/system/system";
+import {allSbomVersionListUrl} from "@/api/k8s/sbom/sbom";
 
 //列表展示与隐藏
 const columnOptions = [

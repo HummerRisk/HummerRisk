@@ -3,10 +3,6 @@ export const projectChartUrl = "/k8s/code/projectChart";
 
 export const codeSeverityChartUrl = "/k8s/code/severityChart";
 
-export const allSbomVersionListUrl = "/k8s/sbom/allSbomVersionList";
-
-export const allSbomListUrl = "/k8s/sbom/allSbomList";
-
 export const codeValidateUrl = "/k8s/code/validate";
 
 export const codeListUrl = "/k8s/code/list/";

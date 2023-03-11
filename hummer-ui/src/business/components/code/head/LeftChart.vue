@@ -6,7 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
-import {projectChartUrl} from "@/api/k8s/k8s";
+import {projectChartUrl} from "@/api/k8s/code/code";
 /* eslint-disable */
 export default {
   name: "LeftChart",

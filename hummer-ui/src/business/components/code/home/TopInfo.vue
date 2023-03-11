@@ -59,7 +59,7 @@
 
 <script>
 import Container from "../.././common/components/Container";
-import {codeTopInfoUrl} from "@/api/k8s/k8s";
+import {codeTopInfoUrl} from "@/api/k8s/code/code";
 
 /* eslint-disable */
 export default {

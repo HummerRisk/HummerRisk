@@ -27,7 +27,7 @@
 <script>
 import NodeTree from "@/business/components/code/head/NodeTree";
 import {buildNodePath} from "@/common/js/NodeTree";
-import {codeAllListUrl} from "@/api/k8s/k8s";
+import {codeAllListUrl} from "@/api/k8s/code/code";
 
 /* eslint-disable */
   export default {

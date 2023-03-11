@@ -14,7 +14,7 @@
 
 <script>
   /* eslint-disable */
-  import {codeValidateByIdUrl} from "@/api/k8s/k8s";
+  import {codeValidateByIdUrl} from "@/api/k8s/code/code";
 
   export default {
     name: "CodeStatus",

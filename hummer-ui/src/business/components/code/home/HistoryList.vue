@@ -229,7 +229,7 @@ import {
   historyCodeUrl,
   historyResultItemListUrl,
   logCodeUrl
-} from "@/api/k8s/k8s";
+} from "@/api/k8s/code/code";
 /* eslint-disable */
   export default {
     name: "HistoryList",

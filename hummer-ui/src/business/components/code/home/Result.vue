@@ -145,7 +145,7 @@ import {saveAs} from "@/common/js/FileSaver";
 import {severityOptions} from "@/common/js/constants";
 import LogForm from "@/business/components/code/home/LogForm";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {codeDownloadUrl, codeResultListUrl, deleteCodeResultUrl, getCodeResultUrl, logCodeUrl} from "@/api/k8s/k8s";
+import {codeDownloadUrl, codeResultListUrl, deleteCodeResultUrl, getCodeResultUrl, logCodeUrl} from "@/api/k8s/code/code";
 
 //列表展示与隐藏
 const columnOptions = [
