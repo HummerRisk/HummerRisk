@@ -73,7 +73,7 @@ export default {
   },
   methods: {
     init() {
-      this.result = this.$post("/cloud/event/topInfo", {}, response => {
+      this.result = this.$post(cloudEventTopInfoUrl, {}, response => {
         let data = response.data;
         this.topInfo = data;
       });

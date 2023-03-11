@@ -6,6 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import {cloudEventIpAccessChartUrl} from "@/api/cloud/event/event";
 /* eslint-disable */
 export default {
   name: "ButtomChart",
@@ -31,10 +32,10 @@ export default {
     },
 
     init() {
-      let now =  new Date().getTime()
-      let startDate = this.formatDate(now-(this.days-1)*24*60*60*1000)
+      let now = new Date().getTime()
+      let startDate = this.formatDate(now - (this.days - 1) * 24 * 60 * 60 * 1000)
       let endDate = this.formatDate(now)
-      this.$get("/cloud/event/ipAccessChart/"+this.ip+"/"+startDate+"/"+endDate, response => {
+      this.$get(cloudEventIpAccessChartUrl + this.ip + "/" + startDate + "/" + endDate, response => {
         let data = response.data;
         this.options = {
           title: {
@@ -54,7 +55,7 @@ export default {
               type: 'line'
             }
           ],
-          color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4', '#8B0000', '#FF4D4D', '#FF8000', '#336D9F']
+          color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff', '#0051a4', '#8B0000', '#FF4D4D', '#FF8000', '#336D9F']
         };
       });
     },

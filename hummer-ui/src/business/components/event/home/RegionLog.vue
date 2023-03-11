@@ -48,7 +48,9 @@
 
 <script>
 /* eslint-disable */
-  export default {
+  import {cloudEventSyncLogRegionListUrl} from "@/api/cloud/event/event";
+
+export default {
     name: "ResultLog",
     components: {
     },
@@ -84,8 +86,7 @@
           return;
         }
         let showLogTaskId = this.row.showLogTaskId;
-        let url = "/cloud/event/sync/log/region/list/" ;
-        this.post(url + showLogTaskId,{}, response => {
+        this.post(cloudEventSyncLogRegionListUrl + showLogTaskId,{}, response => {
           for (let obj of response.data) {
             for (let item of this.row.regionLogs) {
               if (obj.id === item.id) {

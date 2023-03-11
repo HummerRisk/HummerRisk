@@ -32,6 +32,8 @@
 
 <script>
   /* eslint-disable */
+  import {cloudEventSyncLogRegionListUrl} from "@/api/cloud/event/event";
+
   export default {
     name: "Regions",
     props: {
@@ -46,7 +48,7 @@
       }
     },
     created() {
-      let url = "/cloud/event/sync/log/region/list/" + this.logId;
+      let url = cloudEventSyncLogRegionListUrl + this.logId;
       this.result = this.$post(url, {}, response => {
         this.string2PrettyFormat = response.data
       })

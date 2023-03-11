@@ -18,7 +18,7 @@ export default {
     components: {LogHeaderMenus},
     data() {
       return {
-        baseUrl: "image"
+        baseUrl: "event"
       }
     }
   }

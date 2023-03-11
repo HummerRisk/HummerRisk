@@ -6,6 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import {cloudEventCloudChartUrl} from "@/api/cloud/event/event";
 /* eslint-disable */
 export default {
   name: "LeftChart",
@@ -22,7 +23,7 @@ export default {
   },
   methods: {
     init() {
-      this.$get("/cloud/event/cloudChart", response => {
+      this.$get(cloudEventCloudChartUrl, response => {
         let data = response.data;
         this.options = {
           title: {
@@ -52,7 +53,7 @@ export default {
               }
             }
           ],
-          color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4', '#8B0000', '#FF4D4D', '#FF8000', '#336D9F']
+          color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff', '#0051a4', '#8B0000', '#FF4D4D', '#FF8000', '#336D9F']
         };
       });
     },
@@ -66,10 +67,10 @@ export default {
 
 <style scoped>
 
-  .echarts {
-    margin: 0 auto;
-    min-width: 300px;
-    min-height: 200px;
-  }
+.echarts {
+  margin: 0 auto;
+  min-width: 300px;
+  min-height: 200px;
+}
 
 </style>

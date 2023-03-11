@@ -6,6 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import {cloudEventSeverityChartUrl} from "@/api/cloud/event/event";
 /* eslint-disable */
 export default {
   name: "ButtomChart",
@@ -22,7 +23,7 @@ export default {
   },
   methods: {
     init() {
-      this.$get("/cloud/event/severityChart", response => {
+      this.$get(cloudEventSeverityChartUrl, response => {
         let data = response.data;
         this.options = {
           legend: {},

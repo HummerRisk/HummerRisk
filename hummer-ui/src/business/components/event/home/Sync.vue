@@ -1,13 +1,14 @@
 <template>
   <main-container>
-    <el-card class="table-card" >
+    <el-card class="table-card">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('event.event_sync')" :show-create="true"
                       @create="create" :createTip="$t('event.sync')"
                       :items="items" :columnNames="columnNames"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll2" :isIndeterminate="isIndeterminate"
-                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange"
+                      @handleCheckAllChange="handleCheckAllChange"/>
       </template>
       <hide-table
         :table-data="tableData"
@@ -16,89 +17,108 @@
         @select-all="select"
         @select="select"
       >
-          <el-table-column type="index" min-width="50"/>
-          <el-table-column min-width="150" v-if="checkedColumnNames.includes('accountName')" :label="$t('event.cloud_account_name')">
-            <template v-slot:default="scope">
+        <el-table-column type="index" min-width="50"/>
+        <el-table-column min-width="150" v-if="checkedColumnNames.includes('accountName')"
+                         :label="$t('event.cloud_account_name')">
+          <template v-slot:default="scope">
               <span>
-                <img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.accountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                <img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.accountId)}`)"
+                     style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ getAccountName(scope.row.accountId) }}
               </span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="regionName" v-if="checkedColumnNames.includes('regionName')" :label="$t('event.region')" min-width="110">
-            <template v-slot:default="scope">
-              <regions :logId="scope.row.id" :accountId="scope.row.accountId"></regions>
-            </template>
-          </el-table-column>
-          <el-table-column prop="createTime" v-if="checkedColumnNames.includes('createTime')" :label="$t('event.sync_time')" min-width="160">
-            <template v-slot:default="scope">
-              <span>{{ scope.row.createTime | timestampFormatDate }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('event.sync_status')" min-width="120">
-            <el-button @click="showTaskLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.status === 0">
-              <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
-            </el-button>
-            <el-button @click="showTaskLog(scope.row)" plain size="mini" type="success" v-else-if="scope.row.status === 1">
-              <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
-            </el-button>
-            <el-button @click="showTaskLog(scope.row)" plain size="mini" type="danger" v-else-if="scope.row.status === 2">
-              <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
-            </el-button>
-            <el-button @click="showTaskLog(scope.row)" plain size="mini" type="warning" v-else-if="scope.row.status === 3">
-              <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
-            </el-button>
-          </el-table-column>
-          <el-table-column prop="dataCount" v-if="checkedColumnNames.includes('dataCount')" :label="$t('event.data_count')" min-width="90" v-slot:default="scope">
-            <el-link type="primary" :underline="false" class="md-primary text-click" @click="showEvents(scope.row)">
-              {{ scope.row.dataCount }}
-            </el-link>
-          </el-table-column>
-          <el-table-column :label="$t('event.sync_time_section')" v-if="checkedColumnNames.includes('syncTime')" min-width="300">
-            <template v-slot:default="scope">
-              <span>{{ scope.row.requestStartTime | timestampFormatDate }} - {{ scope.row.requestEndTime | timestampFormatDate }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('commons.operating')" fixed="right"  min-width="100">
-            <template v-slot:default="scope">
-              <table-operators :buttons="buttons" :row="scope.row"/>
-            </template>
-          </el-table-column>
-        </hide-table>
+          </template>
+        </el-table-column>
+        <el-table-column prop="regionName" v-if="checkedColumnNames.includes('regionName')" :label="$t('event.region')"
+                         min-width="110">
+          <template v-slot:default="scope">
+            <regions :logId="scope.row.id" :accountId="scope.row.accountId"></regions>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime" v-if="checkedColumnNames.includes('createTime')"
+                         :label="$t('event.sync_time')" min-width="160">
+          <template v-slot:default="scope">
+            <span>{{ scope.row.createTime | timestampFormatDate }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')"
+                         :label="$t('event.sync_status')" min-width="120">
+          <el-button @click="showTaskLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.status === 0">
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+          </el-button>
+          <el-button @click="showTaskLog(scope.row)" plain size="mini" type="success"
+                     v-else-if="scope.row.status === 1">
+            <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+          </el-button>
+          <el-button @click="showTaskLog(scope.row)" plain size="mini" type="danger" v-else-if="scope.row.status === 2">
+            <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+          </el-button>
+          <el-button @click="showTaskLog(scope.row)" plain size="mini" type="warning"
+                     v-else-if="scope.row.status === 3">
+            <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+          </el-button>
+        </el-table-column>
+        <el-table-column prop="dataCount" v-if="checkedColumnNames.includes('dataCount')"
+                         :label="$t('event.data_count')" min-width="90" v-slot:default="scope">
+          <el-link type="primary" :underline="false" class="md-primary text-click" @click="showEvents(scope.row)">
+            {{ scope.row.dataCount }}
+          </el-link>
+        </el-table-column>
+        <el-table-column :label="$t('event.sync_time_section')" v-if="checkedColumnNames.includes('syncTime')"
+                         min-width="300">
+          <template v-slot:default="scope">
+            <span>{{
+                scope.row.requestStartTime | timestampFormatDate
+              }} - {{ scope.row.requestEndTime | timestampFormatDate }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('commons.operating')" fixed="right" min-width="100">
+          <template v-slot:default="scope">
+            <table-operators :buttons="buttons" :row="scope.row"/>
+          </template>
+        </el-table-column>
+      </hide-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
     <!--sync log-->
-    <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="65%" :before-close="handleClose" direction="rtl"
+    <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="65%"
+               :before-close="handleClose" direction="rtl"
                :destroy-on-close="true">
       <region-log :row="logForm"></region-log>
     </el-drawer>
     <!--sync log-->
 
     <!--sync-->
-    <el-drawer class="rtl" :title="$t('event.event_sync')" :visible.sync="showSync" size="50%" :before-close="handleClose" direction="rtl"
+    <el-drawer class="rtl" :title="$t('event.event_sync')" :visible.sync="showSync" size="50%"
+               :before-close="handleClose" direction="rtl"
                :destroy-on-close="true">
-      <el-form :model="eventFrom" label-position="right" label-width="120px" size="small" >
-        <el-form-item :label="$t('event.cloud_account')"  ref="accountId" prop="accountId">
-          <el-select filterable :clearable="true"  style="width: 100%;" v-model="eventFrom.accountId" :placeholder="$t('event.cloud_account')" @change="changeFormRegion">
+      <el-form :model="eventFrom" label-position="right" label-width="120px" size="small">
+        <el-form-item :label="$t('event.cloud_account')" ref="accountId" prop="accountId">
+          <el-select filterable :clearable="true" style="width: 100%;" v-model="eventFrom.accountId"
+                     :placeholder="$t('event.cloud_account')" @change="changeFormRegion">
             <el-option
               v-for="item in accountList"
               :key="item.id"
               :label="item.name"
               :value="item.id">
-              <img :src="require(`@/assets/img/platform/${item.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/> &nbsp; {{ item.name }}
+              <img :src="require(`@/assets/img/platform/${item.pluginIcon}`)"
+                   style="width: 16px; height: 16px; vertical-align:middle" alt=""/> &nbsp; {{ item.name }}
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('event.region')" ref="regions" prop="regions" >
-          <el-select filterable :clearable="true"  multiple style="width: 100%;" v-model="eventFrom.regions" :placeholder="$t('event.region')">
-            <el-checkbox v-model="checkAll" @change="selectOnChangeAll(checkAll, null)">{{ $t('account.i18n_sync_all') }}</el-checkbox>
+        <el-form-item :label="$t('event.region')" ref="regions" prop="regions">
+          <el-select filterable :clearable="true" multiple style="width: 100%;" v-model="eventFrom.regions"
+                     :placeholder="$t('event.region')">
+            <el-checkbox v-model="checkAll" @change="selectOnChangeAll(checkAll, null)">{{
+                $t('account.i18n_sync_all')
+              }}
+            </el-checkbox>
             <el-option
               v-for="item in regionList"
               :key="item.regionId"
               :label="item.regionName"
               :value="item.regionId">
-               &nbsp; {{ item.regionName }}
+              &nbsp; {{ item.regionName }}
             </el-option>
           </el-select>
         </el-form-item>
@@ -120,7 +140,7 @@
         <dialog-footer
           @cancel="cancel"
           @confirm="confirm"/>
-       </el-form>
+      </el-form>
 
     </el-drawer>
     <!--sync-->
@@ -140,6 +160,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import Regions from "@/business/components/event/home/Regions";
 import {_filter, _sort} from "@/common/js/utils";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {cloudEventSyncLogDeleteUrl, cloudEventSyncUrl} from "@/api/cloud/event/event";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -191,20 +212,20 @@ export default {
   },
   data() {
     return {
-      pickerMinDate:"",
-      eventFrom:{
+      pickerMinDate: "",
+      eventFrom: {
         accountId: "",
         region: ""
       },
-      supportCloud:["hummer-aliyun-plugin","hummer-huawei-plugin","hummer-qcloud-plugin","hummer-aws-plugin","hummer-huoshan-plugin","hummer-ksyun-plugin"],
+      supportCloud: ["hummer-aliyun-plugin", "hummer-huawei-plugin", "hummer-qcloud-plugin", "hummer-aws-plugin", "hummer-huoshan-plugin", "hummer-ksyun-plugin"],
       checkAll: false,
       showSync: false,
       syncLog: '',
       logVisible: false,
       dateTime: [],
       currentAccount: '',
-      region:'',
-      accountList:[],
+      region: '',
+      accountList: [],
       tableData: [],
       regionList: [],
       currentPage: 1,
@@ -231,13 +252,13 @@ export default {
             picker.$emit('pick', [start, end]);
           }
         }, {
-            text: this.$t('event.two_week'),
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 14);
-              picker.$emit('pick', [start, end]);
-            }
+          text: this.$t('event.two_week'),
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 14);
+            picker.$emit('pick', [start, end]);
+          }
         }],
         onPick: obj => {
           this.pickerMinDate = new Date(obj.minDate).getTime();
@@ -272,7 +293,7 @@ export default {
     this.init()
   },
   activated() {
-    this.timer = setInterval(this.getStatus,10000);
+    this.timer = setInterval(this.getStatus, 10000);
   },
   beforeDestroy() {
     clearInterval(this.timer);
@@ -291,42 +312,41 @@ export default {
     },
     select(selection) {
     },
-    reset(){
-      this.dateTime=[]
-      this.eventFrom={
+    reset() {
+      this.dateTime = []
+      this.eventFrom = {
         accountId: "",
         region: "",
         startTime: "",
         endTime: "",
       }
     },
-    cancel(){
+    cancel() {
       this.showSync = false
     },
-    confirm(){
-      if(!!this.dateTime){
+    confirm() {
+      if (!!this.dateTime) {
         this.eventFrom.startTime = this.dateTime[0]
         this.eventFrom.endTime = this.dateTime[1]
-      }else{
+      } else {
         this.$error(this.$t('event.error'))
         return
       }
-      if(!!!this.eventFrom.accountId||!!!this.eventFrom.regions||this.eventFrom.regions.length===0||!!!this.eventFrom.startTime||!!!this.eventFrom.endTime){
+      if (!!!this.eventFrom.accountId || !!!this.eventFrom.regions || this.eventFrom.regions.length === 0 || !!!this.eventFrom.startTime || !!!this.eventFrom.endTime) {
         this.$error(this.$t('event.error'))
         return
       }
-      let url = "/cloud/event/sync";
-      this.result = this.$post(url, this.eventFrom, response => {
+      this.result = this.$post(cloudEventSyncUrl, this.eventFrom, response => {
         this.showSync = false
         this.search()
       })
     },
-    handleDelete(row){
+    handleDelete(row) {
       this.$alert(this.$t('account.delete_confirm') + " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$post("/cloud/event/sync/log/delete/"+row.id, {}, response => {
+            this.result = this.$post(cloudEventSyncLogDeleteUrl + row.id, {}, response => {
               this.$success(this.$t('commons.delete_success'));
               this.search()
             });
@@ -336,34 +356,34 @@ export default {
 
     },
     handleClose() {
-      this.logVisible=false;
-      this.showSync=false;
-      this.detailVisible=false;
+      this.logVisible = false;
+      this.showSync = false;
+      this.detailVisible = false;
     },
-    showEvents(row){
+    showEvents(row) {
       this.$router.push(
         {
-          path:"/log/event",
-          query:{
-            accountId:row.accountId,
-            region:row.region,
-            startTime:row.requestStartTime,
-            endTime:row.requestEndTime
+          path: "/log/event",
+          query: {
+            accountId: row.accountId,
+            region: row.region,
+            startTime: row.requestStartTime,
+            endTime: row.requestEndTime
           }
         }
       )
     },
-    getStatus () {
-      if(this.checkStatus(this.tableData)){
+    getStatus() {
+      if (this.checkStatus(this.tableData)) {
         this.search();
         clearInterval(this.timer);
-        this.timer = setInterval(this.getStatus,60000);
+        this.timer = setInterval(this.getStatus, 60000);
         return
       }
       this.search()
     },
     //是否是结束状态，返回false代表都在运行中，true代表已结束
-    checkStatus (tableData) {
+    checkStatus(tableData) {
       let sum = 0;
       for (let row of tableData) {
         if (row.status == 0) {
@@ -372,7 +392,7 @@ export default {
       }
       return sum == 0;
     },
-    create(){
+    create() {
       this.reset()
       this.checkAll = false
       this.showSync = true
@@ -385,40 +405,40 @@ export default {
         this.tableData = data.listObject;
       });
     },
-    cloudAccountSwitch(accountId){
+    cloudAccountSwitch(accountId) {
       this.currentAccount = accountId
       this.search()
     },
-    changeRegion(value){
+    changeRegion(value) {
       this.region = value
       this.search()
     },
-    changeFormRegion(){
-      let account = this.accountList.filter(item =>{
+    changeFormRegion() {
+      let account = this.accountList.filter(item => {
         return item.id === this.eventFrom.accountId
       })
-      if(account.length > 0){
+      if (account.length > 0) {
         this.regionList = JSON.parse(account[0].regions)
       }
     },
-    changeDateTime(value){
+    changeDateTime(value) {
       this.dateTime = value
     },
-    init(){
+    init() {
       this.$get("/account/allList", response => {
         let accountList = response.data
-        this.accountList = accountList.filter(item=>{
-          return this.supportCloud.includes(item.pluginId )
+        this.accountList = accountList.filter(item => {
+          return this.supportCloud.includes(item.pluginId)
         })
         //that.dateTime = [this.formatDate(new Date().getTime()-1000*60*60*24),this.formatDate(new Date().getTime())]
         this.search()
       })
     },
-    showTaskLog(row){
+    showTaskLog(row) {
       let logId = row.id
       this.logForm.regionLogs = []
       this.logForm.showLogTaskId = logId
-      let account = this.accountList.find(item=>{
+      let account = this.accountList.find(item => {
         return item.id === row.accountId
       })
       this.logForm.account = account
@@ -428,35 +448,35 @@ export default {
         this.logVisible = true
       });
     },
-    formatDate: function(value) {
+    formatDate: function (value) {
       let dt = new Date(value);
       let year = dt.getFullYear();
-      let month = (dt.getMonth() + 1).toString().padStart(2,'0');
-      let date = dt.getDate().toString().padStart(2,'0');
-      let hour = dt.getHours().toString().padStart(2,'0');
-      let minute = dt.getMinutes().toString().padStart(2,'0');
-      let second = dt.getSeconds().toString().padStart(2,'0');
+      let month = (dt.getMonth() + 1).toString().padStart(2, '0');
+      let date = dt.getDate().toString().padStart(2, '0');
+      let hour = dt.getHours().toString().padStart(2, '0');
+      let minute = dt.getMinutes().toString().padStart(2, '0');
+      let second = dt.getSeconds().toString().padStart(2, '0');
       return `${year}-${month}-${date} ${hour}:${minute}:${second}`;
     },
-    getAccountName(accountId){
-      let result =  this.accountList.filter(item =>{
+    getAccountName(accountId) {
+      let result = this.accountList.filter(item => {
         return item.id === accountId
       })
-      return result.length >0?result[0].name:""
+      return result.length > 0 ? result[0].name : ""
     },
-    getPluginName(accountId){
-      let result =  this.accountList.filter(item =>{
+    getPluginName(accountId) {
+      let result = this.accountList.filter(item => {
         return item.id === accountId
       })
-      return result.length >0?result[0].pluginName:""
+      return result.length > 0 ? result[0].pluginName : ""
     },
-    getAccountIcon(accountId){
-      let result =  this.accountList.filter(item =>{
+    getAccountIcon(accountId) {
+      let result = this.accountList.filter(item => {
         return item.id === accountId
       })
-      return result.length >0?result[0].pluginIcon:""
+      return result.length > 0 ? result[0].pluginIcon : ""
     },
-    selectOnChangeAll (checkAll, item) {
+    selectOnChangeAll(checkAll, item) {
       if (!!item) {
         item.regions = [];
         if (item.checkAll) {
@@ -490,15 +510,19 @@ export default {
   overflow-y: auto;
   padding: 20px;
 }
+
 .rtl >>> input {
   width: 100%;
 }
+
 .rtl >>> .el-select {
   width: 80%;
 }
+
 .rtl >>> .el-form-item__content {
   width: 75%;
 }
+
 .el-tag {
   margin: 2px;
   font-size: 5px;

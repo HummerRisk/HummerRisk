@@ -59,6 +59,8 @@ import TableOperators from "../../common/components/TableOperators";
 import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import {_filter, _sort} from "@/common/js/utils";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {cloudEventGroupListUrl} from "@/api/cloud/event/event";
+import {allListUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -194,7 +196,6 @@ export default {
       this.dateTime = [this.formatDate(startTime * 1), this.formatDate(endTime * 1)]
     } else {
       this.currentAccount = localStorage.getItem(ACCOUNT_ID)
-      // this.dateTime = [this.formatDate(new Date().getTime()-1000*60*60*24),this.formatDate(new Date().getTime())]
     }
     this.init()
   },
@@ -235,7 +236,7 @@ export default {
       }
     },
     search() {
-      let url = "/cloud/event/group/list/" + this.currentPage + "/" + this.pageSize;
+      let url = cloudEventGroupListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -251,7 +252,7 @@ export default {
       this.search()
     },
     init() {
-      this.$get("/account/allList", response => {
+      this.$get(allListUrl, response => {
         this.accountList = response.data
         this.search()
       })
