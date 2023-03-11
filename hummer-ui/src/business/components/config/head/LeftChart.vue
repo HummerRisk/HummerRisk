@@ -6,6 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import {configChartUrl} from "@/api/k8s/config/config";
 /* eslint-disable */
 export default {
   name: "LeftChart",
@@ -22,7 +23,7 @@ export default {
   },
   methods: {
     init() {
-      this.$get("/config/configChart", response => {
+      this.$get(configChartUrl, response => {
         let data = response.data;
         this.options = {
           title: {

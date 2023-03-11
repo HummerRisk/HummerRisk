@@ -29,7 +29,6 @@ Vue.use(VueRouter);
 const router = new VueRouter({
   routes: [
     {path: "/", redirect: '/dashboard/panel'},
-    {path: "/login", redirect: '@/login/login'},
     {
       path: "/sidebar",
       components: {
@@ -57,6 +56,16 @@ const router = new VueRouter({
     Config,
     Fs,
   ]
+});
+
+router.beforeEach((to, from, next) => {
+  let token = getToken();
+  if (!token) {
+    console.log(723)
+    window.location.href = "/login";
+  } else {
+    next();
+  }
 });
 
 export default router;

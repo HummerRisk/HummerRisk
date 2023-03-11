@@ -185,6 +185,9 @@ import ProxyDialogCreateFooter from "@/business/components/common/components/Pro
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import YamlUpload from "@/business/components/config/home/YamlUpload";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {proxyListAllUrl} from "@/api/system/system";
+import {allCloudNativeSource2YamlListUrl} from "@/api/k8s/k8s/k8s";
+import {addConfigUrl, configListUrl, deleteConfigUrl, scanConfigUrl, updateConfigUrl} from "@/api/k8s/config/config";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -360,15 +363,13 @@ export default {
     },
     //查询代理
     activeProxy() {
-      let url = "/proxy/list/all";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(proxyListAllUrl, response => {
         this.proxys = response.data;
       });
     },
     //查询k8s配置
     activeK8s() {
-      let url = "/k8s/allCloudNativeSource2YamlList";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(allCloudNativeSource2YamlListUrl, response => {
         this.k8s = response.data;
       });
     },
@@ -380,7 +381,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/config/list/" + this.currentPage + "/" + this.pageSize;
+      let url = configListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -417,7 +418,7 @@ export default {
     save(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
-          this.result = this.$post("/config/add", this.form, () => {
+          this.result = this.$post(addConfigUrl, this.form, () => {
             this.$success(this.$t('commons.save_success'));
             this.createVisible = false;
             this.search();
@@ -428,7 +429,7 @@ export default {
     update(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
-          this.result = this.$post("/config/update", this.form, () => {
+          this.result = this.$post(updateConfigUrl, this.form, () => {
             this.$success(this.$t('commons.update_success'));
             this.updateVisible = false;
             this.search();
@@ -441,7 +442,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/config/delete/" + obj.id, response => {
+            this.result = this.$get(deleteConfigUrl + obj.id, response => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -458,7 +459,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get("/config/scan/" + item.id,response => {
+            this.$get(scanConfigUrl + item.id,response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start'));
                 this.$router.push({

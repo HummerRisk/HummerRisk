@@ -299,7 +299,7 @@ import CodeDiff from 'vue-code-diff';
       },
       //查询列表
       async search() {
-        let url = "/config/history/" + this.currentPage + "/" + this.pageSize;
+        let url = "" + this.currentPage + "/" + this.pageSize;
         if (!!this.selectNodeIds) {
           this.condition.configId = this.selectNodeIds[0];
         } else {
