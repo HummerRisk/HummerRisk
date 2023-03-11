@@ -8,7 +8,7 @@ export default {
   install(Vue) {
 
     // 登入请求不重定向
-    let unRedirectUrls = new Set(["auth/signin"]);
+    let unRedirectUrls = new Set(["/auth/signin"]);
 
     if (!axios) {
       window.console.error("You have to install axios");

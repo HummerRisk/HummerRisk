@@ -50,12 +50,12 @@ module.exports = {
   pages: {
     business: {
       entry: "src/business/main.js",
-      template: "src/business/index.html",
+      template: "src/business/index_.html",
       filename: "index.html"
     },
     login: {
-      entry: "src/login/login.js",
-      template: "src/login/login.html",
+      entry: "src/login/login_.js",
+      template: "src/login/login_.html",
       filename: "login.html"
     }
   }
