@@ -5,7 +5,7 @@ INSERT INTO `plugin` ( `id`, `name`, `icon`, `update_time`, `scan_type`, `order_
 
 UPDATE `rule_group` SET `type` = 'cloud';
 
-INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('K8s 合规检测', '检测 K8s 资源是否合规', '安全合规', 'hummer-k8s-plugin', 1, 'k8s');
+INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('K8s 合规检测', '检测 K8s 资源是否合规', '安全合规', 'hummer-k8s-plugin', 1, 'cloud');
 
 SELECT @groupId := LAST_INSERT_ID();
 

@@ -5,9 +5,8 @@
           <table-header :condition.sync="condition" @search="search"
                         :title="$t('server.server_list')" class="table-header-l"
                         @create="create" :createTip="$t('server.server_create')"
-                        @scan="scan" :scanTip="$t('server.one_scan')"
                         @validate="validate" :validateTip="$t('server.one_validate')"
-                        :show-validate="true" :show-scan="true" :show-create="true" :show-filter="false"
+                        :show-validate="true" :show-scan="false" :show-create="true" :show-filter="false"
                         :items="items" :columnNames="columnNames" :show-open="false" :show-upload="true" @upload="upload"
                         :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                         @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
@@ -70,7 +69,7 @@
           </el-table-column>
           <el-table-column prop="groupName" v-if="checkedColumnNames.includes('groupName')" :label="$t('server.server_group')" min-width="110" show-overflow-tooltip/>
           <el-table-column prop="user" v-if="checkedColumnNames.includes('user')" :label="$t('account.creator')" min-width="100" show-overflow-tooltip/>
-          <el-table-column min-width="140" :label="$t('commons.operating')" fixed="right">
+          <el-table-column min-width="180" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
@@ -514,6 +513,34 @@
       </el-drawer>
       <!--Update excel-->
 
+      <!-- 一键检测选择规则组 -->
+      <el-dialog :close-on-click-modal="false"
+                 :modal-append-to-body="false"
+                 :title="$t('account.scan_group_quick')"
+                 :visible.sync="scanVisible"
+                 class="" width="70%">
+        <div v-loading="groupResult.loading">
+          <el-card class="box-card el-box-card">
+            <div slot="header" class="clearfix">
+              <span>
+                <img :src="require(`@/assets/img/platform/${serverWithGroup.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+             &nbsp;&nbsp; {{ serverWithGroup.pluginName }} {{ $t('server.server_rule_group') }}
+              </span>
+              <el-button style="float: right; padding: 3px 0" type="text"  @click="handleCheckAllByAccount">{{ $t('account.i18n_sync_all') }}</el-button>
+            </div>
+            <el-checkbox-group v-model="checkedGroups">
+              <el-checkbox v-for="(group, index) in ruleGroups" :label="group.id" :value="group.id" :key="index" border >
+                {{ group.name }}
+              </el-checkbox>
+            </el-checkbox-group>
+          </el-card>
+          <dialog-footer
+            @cancel="scanVisible = false"
+            @confirm="scanGroup()"/>
+        </div>
+      </el-dialog>
+      <!-- 一键检测选择检测组 -->
+
     </main-container>
 </template>
 
@@ -597,6 +624,7 @@ const columnOptions = [
       return {
         result: {},
         rstResult: {},
+        groupResult: {},
         servers: [],
         condition: {
           components: SERVER_CONFIGS
@@ -658,10 +686,14 @@ const columnOptions = [
         },
         buttons: [
           {
+            tip: this.$t('account.one_scan'), icon: "el-icon-s-promotion", type: "success",
+            exec: this.openScanGroup
+          },
+          {
             tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
             exec: this.handleEdit
           }, {
-            tip: this.$t('commons.copy'), icon: "el-icon-document-copy", type: "success",
+            tip: this.$t('commons.copy'), icon: "el-icon-document-copy", type: "warning",
             exec: this.handleCopy
           }, {
             tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
@@ -722,6 +754,10 @@ const columnOptions = [
         uploadExcelForm: {},
         fileList: [],
         excelFile: null,
+        ruleGroups: [],
+        scanVisible: false,
+        checkedGroups: [],
+        serverWithGroup: {pluginIcon: 'server.png'},
       }
     },
     props: {
@@ -899,44 +935,40 @@ const columnOptions = [
       filterStatus(value, row) {
         return row.status === value;
       },
-      scan (){
-        if (this.selectIds.size === 0) {
-          this.$warning(this.$t('server.please_choose_server'));
-          return;
-        }
-        for (let id of this.selectIds) {
-          for(let data of this.tableData) {
-            if (id === data.id) {
-              if(data.status === 'INVALID') {
-                this.$warning(this.$t('server.failed_server') + data.name);
-                return;
-              }
-            }
-          }
-        }
-        this.$alert(this.$t('server.one_scan') + this.$t('server.server_rule') + " ？", '', {
+      scanGroup () {
+        let account = this.$t('server.one_scan') + this.$t('server.server_rule_group');
+        this.$alert( account + " ？", '', {
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$request({
-                method: 'POST',
-                url: "/server/scan",
-                data: Array.from(this.selectIds),
-                headers: {
-                  'Content-Type': undefined
-                }
-              }, res => {
-                if (res.data) {
-                  this.$success(this.$t('schedule.event_start'));
-                } else {
-                  this.$error(this.$t('schedule.event_failed'));
-                }
+              if (this.checkedGroups.length === 0) {
+                this.$warning(this.$t('account.please_choose_rule_group'));
+                return;
+              }
+              let params = {
+                accountId: this.serverWithGroup.id,
+                groups: this.checkedGroups
+              }
+              this.groupResult = this.$post("/server/scan", params, () => {
+                this.$success(this.$t('schedule.event_start'));
+                this.scanVisible = false;
                 this.$router.push({
                   path: '/server/result',
                 }).catch(error => error);
               });
             }
           }
+        });
+      },
+      openScanGroup(data) {
+        if (data.status === 'INVALID') {
+          this.$warning(this.$t('server.failed_server') + data.name);
+          return;
+        }
+        this.serverWithGroup = data;
+        this.result = this.$get("/server/ruleGroups",response => {
+          this.ruleGroups = response.data;
+          this.scanVisible = true;
         });
       },
       rowClass() {
@@ -1195,6 +1227,19 @@ const columnOptions = [
           console.log("导出报错", error);
         });
       },
+      handleCheckAllByAccount() {
+        if (this.checkedGroups.length === this.ruleGroups.length) {
+          this.checkedGroups = [];
+        } else {
+          let arr = [];
+          this.checkedGroups = [];
+          for (let group of this.ruleGroups) {
+            arr.push(group.id);
+          }
+          let concatArr = this.checkedGroups.concat(arr);
+          this.checkedGroups = Array.from(concatArr);
+        }
+      },
     },
     activated () {
       this.init();
@@ -1255,10 +1300,10 @@ const columnOptions = [
     margin: 10px 0;
   }
   .table-card >>> .search {
-    width: 290px !important;
+    width: 350px !important;
   }
   .table-card >>> .search .el-input {
-    width: 90px !important;
+    width: 110px !important;
   }
   .table-card >>> .search .el-input-group__append {
     padding: 0 15px;

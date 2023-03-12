@@ -17,6 +17,8 @@ public class ServerRuleRequest extends ServerRule {
 
     private String tagKey;
 
+    private String ruleGroupId;
+
     private Map<String, Object> combine;
 
     public List<String> getTags() {
@@ -49,5 +51,13 @@ public class ServerRuleRequest extends ServerRule {
 
     public void setGroups(List<String> groups) {
         this.groups = groups;
+    }
+
+    public String getRuleGroupId() {
+        return ruleGroupId;
+    }
+
+    public void setRuleGroupId(String ruleGroupId) {
+        this.ruleGroupId = ruleGroupId;
     }
 }

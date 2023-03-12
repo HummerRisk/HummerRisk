@@ -7,6 +7,7 @@ import com.hummerrisk.commons.utils.PageUtils;
 import com.hummerrisk.commons.utils.Pager;
 import com.hummerrisk.controller.handler.annotation.I18n;
 import com.hummerrisk.controller.request.rule.BindRuleRequest;
+import com.hummerrisk.controller.request.rule.ScanGroupRequest;
 import com.hummerrisk.controller.request.server.ServerCertificateRequest;
 import com.hummerrisk.controller.request.server.ServerRequest;
 import com.hummerrisk.controller.request.server.ServerResultRequest;
@@ -79,8 +80,8 @@ public class ServerController {
 
     @ApiOperation(value = "一键检测主机规则")
     @PostMapping("scan")
-    public Boolean scan(@RequestBody List<String> selectIds) {
-        return serverService.scan(selectIds);
+    public void scan(@RequestBody ScanGroupRequest request) throws Exception {
+        serverService.scan(request);
     }
 
     @ApiOperation(value = "添加主机分组")
@@ -341,13 +342,6 @@ public class ServerController {
     @PostMapping(value = "bindRule")
     public void bindRule(@RequestBody BindRuleRequest request) throws Exception {
         serverService.bindRule(request);
-    }
-
-    @I18n
-    @ApiOperation(value = "按规则组检测主机规则")
-    @GetMapping("scanByGroup/{groupId}/{serverId}")
-    public void scanByGroup(@PathVariable String groupId, @PathVariable String serverId) {
-        serverService.scanByGroup(groupId, serverId);
     }
 
     @I18n

@@ -632,9 +632,9 @@ const columnOptions2 = [
               let params = item;
               params.flag = item.flag ? item.flag : false;
               params.type = "server";
-              params.plugin_id = "hummer-server-plugin";
-              params.plugin_name = "主机检测";
-              params.plugin_icon = "server.png";
+              params.pluginId = "hummer-server-plugin";
+              params.pluginName = "主机检测";
+              params.pluginIcon = "server.png";
               let url = type == "createForm" ? "/rule/group/save" : "/rule/group/update";
               this.result = this.$post(url, params, response => {
                 this.search();

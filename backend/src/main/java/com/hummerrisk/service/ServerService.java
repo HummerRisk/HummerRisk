@@ -13,6 +13,7 @@ import com.hummerrisk.commons.constants.*;
 import com.hummerrisk.commons.exception.HRException;
 import com.hummerrisk.commons.utils.*;
 import com.hummerrisk.controller.request.rule.BindRuleRequest;
+import com.hummerrisk.controller.request.rule.ScanGroupRequest;
 import com.hummerrisk.controller.request.server.ServerCertificateRequest;
 import com.hummerrisk.controller.request.server.ServerRequest;
 import com.hummerrisk.controller.request.server.ServerResultRequest;
@@ -117,64 +118,12 @@ public class ServerService {
         return valid;
     }
 
-    public Boolean scan(List<String> ids) {
-        ids.forEach(id -> {
-            try {
-                scan(id);
-            } catch (Exception e) {
-                throw new HRException(e.getMessage());
-            }
-        });
-        return true;
-    }
-
-    public Boolean scan(String id) throws Exception {
-        ServerRequest request = new ServerRequest();
-        request.setId(id);//serverId
-        Server server = BeanUtils.copyBean(new Server(), getServerList(request).get(0));
-        if (StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.UNLINK.name())) {
-            //检验主机的有效性
-            BeanUtils.copyBean(server, validateAccount(server).getServer());
-            serverMapper.updateByPrimaryKeySelective(server);
-        }
+    public void scan(ScanGroupRequest request) throws Exception {
+        Server server = serverMapper.selectByPrimaryKey(request.getAccountId());
         Integer scanId = historyService.insertScanHistory(server);
-        this.messageOrderId = noticeService.createServerMessageOrder(server);
-        if (StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.VALID.name())) {
-            deleteServerResultById(id);
-            ServerRuleRequest serverRuleRequest = new ServerRuleRequest();
-            serverRuleRequest.setStatus(true);
-            serverRuleRequest.setType(server.getType());
-            List<ServerRuleDTO> ruleList = ruleList(serverRuleRequest);
-            ServerResult result = new ServerResult();
-            String serverGroupName = serverGroupMapper.selectByPrimaryKey(server.getServerGroupId()).getName();
-            for (ServerRuleDTO dto : ruleList) {
-                BeanUtils.copyBean(result, server);
-                result.setId(UUIDUtil.newUUID());
-                result.setServerId(id);
-                result.setServerGroupId(server.getServerGroupId());
-                result.setServerGroupName(serverGroupName);
-                result.setApplyUser(SessionUtils.getUserId());
-                result.setCreateTime(System.currentTimeMillis());
-                result.setUpdateTime(System.currentTimeMillis());
-                result.setServerName(server.getName());
-                result.setRuleId(dto.getId());
-                result.setRuleName(dto.getName());
-                result.setRuleDesc(dto.getDescription());
-                result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-                result.setSeverity(dto.getSeverity());
-                result.setType(dto.getType());
-                serverResultMapper.insertSelective(result);
-
-                saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
-
-                OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.SCAN, "i18n_start_server_result");
-
-                historyService.insertScanTaskHistory(result, scanId, server.getId(), TaskEnum.serverAccount.getType());
-
-                historyService.insertHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
-            }
+        for (Integer groupId : request.getGroups()) {
+            this.scanGroups(server, scanId, groupId.toString());
         }
-        return true;
     }
 
     public void createScan(ServerResult result) throws Exception {
@@ -913,22 +862,54 @@ public class ServerService {
         }
     }
 
-    public void scanByGroup(String groupId, String serverId){
-        scanGroups(serverId, null, groupId);
-    }
+    private void scanGroups(Server server, Integer scanId, String groupId) {
+        try {
+            this.messageOrderId = noticeService.createServerMessageOrder(server);
 
-    private void scanGroups(String serverId, Integer scanId, String groupId) {
-//        try {
-//            Server server = serverMapper.selectByPrimaryKey(serverId);
-//            String messageOrderId = noticeService.createMessageOrder(server);
-//
-//            List<RuleDTO> ruleDTOS = extRuleGroupMapper.getRules(accountId, groupId);
-//            for (RuleDTO rule : ruleDTOS) {
-//                this.dealTask(rule, account, scanId, messageOrderId);
-//            }
-//        } catch (Exception e) {
-//            LogUtil.error(e.getMessage());
-//        }
+            if (StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.UNLINK.name())) {
+                //检验主机的有效性
+                BeanUtils.copyBean(server, validateAccount(server).getServer());
+                serverMapper.updateByPrimaryKeySelective(server);
+            }
+            if (StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.VALID.name())) {
+                deleteServerResultById(server.getId());
+                ServerRuleRequest serverRuleRequest = new ServerRuleRequest();
+                serverRuleRequest.setStatus(true);
+                serverRuleRequest.setType(server.getType());
+                serverRuleRequest.setRuleGroupId(groupId);
+                List<ServerRuleDTO> ruleList = ruleList(serverRuleRequest);
+                ServerResult result = new ServerResult();
+                String serverGroupName = serverGroupMapper.selectByPrimaryKey(server.getServerGroupId()).getName();
+                for (ServerRuleDTO dto : ruleList) {
+                    BeanUtils.copyBean(result, server);
+                    result.setId(UUIDUtil.newUUID());
+                    result.setServerId(server.getId());
+                    result.setServerGroupId(server.getServerGroupId());
+                    result.setServerGroupName(serverGroupName);
+                    result.setApplyUser(SessionUtils.getUserId());
+                    result.setCreateTime(System.currentTimeMillis());
+                    result.setUpdateTime(System.currentTimeMillis());
+                    result.setServerName(server.getName());
+                    result.setRuleId(dto.getId());
+                    result.setRuleName(dto.getName());
+                    result.setRuleDesc(dto.getDescription());
+                    result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+                    result.setSeverity(dto.getSeverity());
+                    result.setType(dto.getType());
+                    serverResultMapper.insertSelective(result);
+
+                    saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
+
+                    OperationLogService.log(SessionUtils.getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.SCAN, "i18n_start_server_result");
+
+                    historyService.insertScanTaskHistory(result, scanId, server.getId(), TaskEnum.serverAccount.getType());
+
+                    historyService.insertHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
+                }
+            }
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
+        }
     }
 
     public List<RuleGroup> getRuleGroups() {

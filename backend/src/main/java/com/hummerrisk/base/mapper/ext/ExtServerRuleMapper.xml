@@ -107,6 +107,7 @@
         FROM server_rule t
         left join rule_tag_mapping t1 on t1.rule_id = t.id
         left join rule_tag t2 on t1.tag_key = t2.tag_key
+        left join rule_group_mapping t3 on t.id = t3.rule_id
 
         <where>
             <if test="request.combine != null">
@@ -130,6 +131,9 @@
             </if>
             <if test="request.description != null and request.description != ''">
                 and LOWER(t.description) like CONCAT('%',LOWER(#{request.description}),'%')
+            </if>
+            <if test="request.ruleGroupId != null and request.ruleGroupId != ''">
+                and t3.group_id = #{request.ruleGroupId}
             </if>
         </where>
         ORDER BY t.last_modified desc
