@@ -26,7 +26,7 @@
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.$post("/code/validate/" + row.id, {}, response => {
+              this.$post("/fs/validate/" + row.id, {}, response => {
                 if (response.data) {
                   this.$success(this.$t('account.success'));
                   this.$emit('search');
