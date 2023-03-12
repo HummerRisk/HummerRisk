@@ -5,6 +5,7 @@ export default {
     help_documentation: '幫助文檔',
     notification: '通知',
     api_help_documentation: 'API文檔',
+    advisory: '問題諮詢',
     delete_cancelled: '已取消刪除',
     workspace: '工作空間',
     organization: '組織',

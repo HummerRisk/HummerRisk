@@ -5,6 +5,7 @@ export default {
     help_documentation:'Help Documentation',
     notification:'Notification',
     api_help_documentation:'API Documentation',
+    advisory: 'Consultation',
     delete_cancelled:'Canceled delete',
     workspace:'Workspace',
     organization:'Organization',
