@@ -1,10 +1,10 @@
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/nuclei:v0.9 as nuclei-env
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/nuclei:v0.10 as nuclei-env
 
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/prowler:v0.9 as prowler-env
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/prowler:v0.10 as prowler-env
 
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/xray:v0.9 as xray-env
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/xray:v0.10 as xray-env
 
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/cloud-custodian:v0.9.1
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/cloud-custodian:v0.10.0
 
 WORKDIR /usr
 
