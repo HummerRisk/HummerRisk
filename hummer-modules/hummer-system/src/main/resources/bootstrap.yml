@@ -54,11 +54,11 @@ dubbo:
 xxl:
   job:
     admin:
-      addresses: http://${HMR_NACOS_SERVER_ADDR}:8084/xxl-job-admin/
+      addresses: http://${HMR_XXL_JOB_ADDR}:8084/xxl-job-admin/
     accessToken: default_token
     executor:
-      address: ${HMR_NACOS_SERVER_ADDR}:9210
-      ip: ${HMR_NACOS_SERVER_ADDR}
+      address: ${HMR_XXL_JOB_ADDR}:9210
+      ip: ${HMR_XXL_JOB_ADDR}
       port: 9210
       appName: hummer-system
       logpath: /opt/hummerrisk/logs/xxl-job/hummer-system
