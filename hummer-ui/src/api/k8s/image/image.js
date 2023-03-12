@@ -35,8 +35,6 @@ export const scanImagesRepoUrl = "/k8s/image/scanImagesRepo/";
 
 export const imageRepoSettingUrl = "/k8s/image/repo/setting/";
 
-export const repoItemListUrl = "/k8s/image/repoItemList/";
-
 export const repoSyncListUrl = "/k8s/image/repoSyncList/";
 
 export const syncImageUrl = "/k8s/image/syncImage/";
