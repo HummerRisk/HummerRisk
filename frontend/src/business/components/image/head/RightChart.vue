@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     init() {
-      this.$get("/fs/severityChart", response => {
+      this.$get("/image/severityChart", response => {
         let data = response.data;
         this.options = {
           legend: {},
