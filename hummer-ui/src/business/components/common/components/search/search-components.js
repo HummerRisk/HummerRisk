@@ -561,7 +561,7 @@ export const RULE_TAG = {
     options: [OPERATORS.IN, OPERATORS.NOT_IN]
   },
   options: { // 异步获取候选项
-    url: "/rule/ruleTags",
+    url: "/cloud/rule/ruleTags",
     labelKey: "tagName",
     valueKey: "tagKey",
     showLabel: option => {

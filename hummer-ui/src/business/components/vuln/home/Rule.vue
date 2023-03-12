@@ -412,6 +412,7 @@ import {VULN_RULE_CONFIGS} from "../../common/components/search/search-component
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {severityOptions} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {ruleTagsUrl} from "@/api/cloud/rule/rule";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -645,8 +646,7 @@ export default {
       });
     },
     tagLists() {
-      let url = "/rule/ruleTags";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(ruleTagsUrl, response => {
         this.tags = response.data;
       });
     },

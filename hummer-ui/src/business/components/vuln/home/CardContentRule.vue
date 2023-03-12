@@ -259,6 +259,7 @@ import TablePagination from "../../common/pagination/TablePagination";
 import DialogFooter from "../../common/components/DialogFooter";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {severityOptions} from "@/common/js/constants";
+import {ruleTagsUrl} from "@/api/cloud/rule/rule";
 /* eslint-disable */
   export default {
     name: "CardContentRule",
@@ -330,8 +331,7 @@ import {severityOptions} from "@/common/js/constants";
         this.search();
       },
       tagLists() {
-        let url = "/rule/ruleTags";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(ruleTagsUrl, response => {
           this.tags = response.data;
         });
       },

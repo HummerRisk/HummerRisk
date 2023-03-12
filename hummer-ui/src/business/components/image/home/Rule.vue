@@ -218,6 +218,14 @@ import {_filter, _sort} from "@/common/js/utils";
 import {IMAGE_RULE_CONFIGS} from "../../common/components/search/search-components";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {severityOptions} from "@/common/js/constants";
+import {
+  addImageRuleUrl,
+  deleteImageRuleUrl,
+  imageChangeStatusUrl,
+  imageRuleListUrl,
+  updateImageRuleUrl
+} from "@/api/k8s/image/image";
+import {ruleTagsUrl} from "@/api/cloud/rule/rule";
 
 /* eslint-disable */
 export default {
@@ -317,7 +325,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/image/deleteImageRule/" + item.id, () => {
+            this.result = this.$get(deleteImageRuleUrl + item.id, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -327,7 +335,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/image/ruleList/" + this.currentPage + "/" + this.pageSize;
+      let url = imageRuleListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -335,8 +343,7 @@ export default {
       });
     },
     tagLists() {
-      let url = "/rule/ruleTags";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(ruleTagsUrl, response => {
         this.tags = response.data;
       });
     },
@@ -389,10 +396,10 @@ export default {
       let url = '';
       let form = '';
       if (type === 'add') {
-        url = '/image/addImageRule';
+        url = addImageRuleUrl;
         form = 'createRuleForm';
       } else if (type === 'edit') {
-        url = '/image/updateImageRule';
+        url = updateImageRuleUrl;
         form = 'updateRuleForm';
         if (mdObj.flag == 1) {
           this.$warning(this.$t('rule.rule_flag'));
@@ -448,7 +455,7 @@ export default {
       }
     },
     changeStatus (item) {
-      this.result = this.$post('/image/changeStatus', {id: item.id, status: item.status?1:0}, response => {
+      this.result = this.$post(imageChangeStatusUrl, {id: item.id, status: item.status?1:0}, response => {
         if (item.status == 1) {
           this.$success(this.$t('rule.change_status_on'));
         } else if (item.status == 0) {

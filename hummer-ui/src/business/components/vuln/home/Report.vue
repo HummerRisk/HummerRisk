@@ -326,6 +326,7 @@ import {_filter, _sort, getVulnID} from "@/common/js/utils";
 import {severityOptions, VULN_ID} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver.js";
 import VulnSwitch from "@/business/components/common/head/VulnSwitch";
+import {ruleTagsUrl} from "@/api/cloud/rule/rule";
 
 /* eslint-disable */
   export default {
@@ -449,8 +450,7 @@ import VulnSwitch from "@/business/components/common/head/VulnSwitch";
         }).catch(error => error);
       },
       tagLists() {
-        let url = "/rule/ruleTags";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(ruleTagsUrl, response => {
           this.tags = response.data;
         });
         if (!!getVulnID()) {

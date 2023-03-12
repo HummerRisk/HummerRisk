@@ -530,6 +530,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {saveAs} from "@/common/js/FileSaver";
+import {proxyListAllUrl} from "@/api/system/system";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -752,8 +753,7 @@ const columnOptions = [
       },
       //查询代理
       activeProxy() {
-        let url = "/proxy/list/all";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(proxyListAllUrl, response => {
           this.proxys = response.data;
         });
       },

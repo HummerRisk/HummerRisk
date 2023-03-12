@@ -196,6 +196,7 @@ import ProxyDialogCreateFooter from "@/business/components/common/components/Pro
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {VULN_ID, VULN_NAME} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {proxyListAllUrl} from "@/api/system/system";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -491,8 +492,7 @@ export default {
     },
     //查询代理
     activeProxy() {
-      let url = "/proxy/list/all";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(proxyListAllUrl, response => {
         this.proxys = response.data;
       });
     },

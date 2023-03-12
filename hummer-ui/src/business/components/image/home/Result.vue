@@ -149,6 +149,13 @@ import {saveAs} from "@/common/js/FileSaver";
 import {severityOptions} from "@/common/js/constants";
 import LogForm from "@/business/components/image/home/LogForm";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {
+  getImageResultUrl,
+  getImageResultWithBLOBsUrl,
+  imageDownloadUrl,
+  imageLogUrl,
+  imageResultListUrl
+} from "@/api/k8s/image/image";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -277,7 +284,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/image/resultList/" + this.currentPage + "/" + this.pageSize;
+      let url = imageResultListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -291,8 +298,7 @@ export default {
         this.timer = setInterval(this.getStatus,60000);
       } else {
         for (let data of this.tableData) {
-          let url = "/image/getImageResult/";
-          this.$get(url + data.id, response => {
+          this.$get(getImageResultUrl + data.id, response => {
             let result = response.data;
             if (data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
@@ -333,12 +339,10 @@ export default {
       this.init();
     },
     showResultLog (result) {
-      let logUrl = "/image/log/";
-      this.result = this.$get(logUrl + result.id, response => {
+      this.result = this.$get(imageLogUrl + result.id, response => {
         this.logData = response.data;
       });
-      let resultUrl = "/image/getImageResultWithBLOBs/";
-      this.result = this.$get(resultUrl + result.id, response => {
+      this.result = this.$get(getImageResultWithBLOBsUrl + result.id, response => {
         this.logForm = response.data;
         this.logForm.resultJson = JSON.parse(this.logForm.resultJson);
       });
@@ -353,7 +357,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get("/image/reScan/" + item.id, response => {
+            this.$get(imageReScanUrl + item.id, response => {
               if (response.success) {
                 this.search();
               }
@@ -367,7 +371,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/image/deleteImageResult/" + obj.id,  res => {
+            this.result = this.$get(deleteImageResultUrl + obj.id,  res => {
               setTimeout(function () {window.location.reload()}, 2000);
               this.$success(this.$t('commons.delete_success'));
             });
@@ -394,7 +398,7 @@ export default {
       }
     },
     handleDownload(item) {
-      this.$post("/image/download", {
+      this.$post(imageDownloadUrl, {
         id: item.id
       }, response => {
         if (response.success) {

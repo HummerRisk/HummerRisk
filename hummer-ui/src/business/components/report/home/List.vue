@@ -536,6 +536,7 @@ import HrChart from "@/business/components/common/chart/HrChart";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import ResultReadOnly from "@/business/components/report/head/ResultReadOnly";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {ruleTagsUrl} from "@/api/cloud/rule/rule";
 
 //列表展示与隐藏
 const columnOptions2 = [
@@ -970,8 +971,7 @@ const columnOptions3 = [
         }).catch(error => error);
       },
       tagLists() {
-        let url = "/rule/ruleTags";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(ruleTagsUrl, response => {
           this.tags = response.data;
         });
         if (!!getCurrentAccountID()) {

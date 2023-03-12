@@ -303,6 +303,7 @@ import ProxyDialogCreateFooter from "@/business/components/common/components/Pro
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import HrCodeEdit from "@/business/components/common/components/HrCodeEdit";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {proxyListAllUrl} from "@/api/system/system";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -515,8 +516,7 @@ export default {
     },
     //查询代理
     activeProxy() {
-      let url = "/proxy/list/all";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(proxyListAllUrl, response => {
         this.proxys = response.data;
       });
     },

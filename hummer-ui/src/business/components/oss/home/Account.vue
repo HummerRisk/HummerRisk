@@ -368,6 +368,7 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver";
 import Regions from "@/business/components/account/home/Regions";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {proxyListAllUrl} from "@/api/system/system";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -659,8 +660,7 @@ export default {
     },
     //查询代理
     activeProxy() {
-      let url = "/proxy/list/all";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(proxyListAllUrl, response => {
         this.proxys = response.data;
       });
     },

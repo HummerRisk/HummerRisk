@@ -27,6 +27,7 @@
 <script>
 import NodeTree from "@/business/components/image/head/NodeTree";
 import {buildNodePath} from "@/common/js/NodeTree";
+import {allImageUrl} from "@/api/k8s/image/image";
 
 /* eslint-disable */
   export default {
@@ -77,8 +78,7 @@ import {buildNodePath} from "@/common/js/NodeTree";
     },
     methods: {
       list() {
-        let url = "/image/allList";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(allImageUrl, response => {
           if (response.data != undefined && response.data != null) {
             this.data = response.data;
             let moduleOptions = [];

@@ -326,6 +326,7 @@ import {_filter, _sort, getCurrentAccountID} from "@/common/js/utils";
 import {ACCOUNT_ID, severityOptions} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver.js";
 import AccountChange from "@/business/components/common/head/AccountSwitch";
+import {ruleTagsUrl} from "@/api/cloud/rule/rule";
 
 /* eslint-disable */
   export default {
@@ -464,8 +465,7 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
         }).catch(error => error);
       },
       tagLists() {
-        let url = "/rule/ruleTags";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(ruleTagsUrl, response => {
           this.tags = response.data;
         });
         if (!!getCurrentAccountID()) {

@@ -344,6 +344,15 @@ import {
   IMAGE_REPO_IMAGE_CONFIGS
 } from "@/business/components/common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {
+  deleteImageRepoUrl,
+  editImageRepoUrl,
+  imageRepoListUrl, imageRepoSettingUrl, repoItemListUrl, repoSyncListUrl,
+  scanImageRepoUrl,
+  scanImagesRepoUrl, syncImageUrl
+} from "@/api/k8s/image/image";
+import {allSbomListUrl, allSbomVersionListUrl} from "@/api/k8s/sbom/sbom";
+import {proxyListAllUrl} from "@/api/system/system";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -426,12 +435,12 @@ export default {
   },
   data() {
     return {
-      queryPath: '/image/imageRepoList/',
-      deletePath: '/image/deleteImageRepo/',
-      createPath: '/image/addImageRepo/',
-      updatePath: '/image/editImageRepo/',
-      scanPath: '/image/scanImageRepo/',
-      scanAllPath: '/image/scanImagesRepo/',
+      queryPath: imageRepoListUrl,
+      deletePath: deleteImageRepoUrl,
+      createPath: addImageRepoUrl,
+      updatePath: editImageRepoUrl,
+      scanPath: scanImageRepoUrl,
+      scanAllPath: scanImagesRepoUrl,
       result: {},
       createVisible: false,
       updateVisible: false,
@@ -603,7 +612,7 @@ export default {
       this.$forceUpdate();
     },
     setting() {
-      this.$get('/image/repo/setting/' + this.handleItem.id, response => {
+      this.$get(imageRepoSettingUrl + this.handleItem.id, response => {
         let repoOld = response.data?response.data.repoOld:this.imageData[0].path.split('/')[0];
         let repo = response.data?response.data.repo:'';
         this.settingForm.repoId = this.handleItem.id;
@@ -694,7 +703,7 @@ export default {
         this.handleItem = item;
       }
       this.imageCondition.repoId = this.handleItem.id;
-      this.$post("/image/repoItemList/" + this.imagePage + "/" + this.imageSize, this.imageCondition, response => {
+      this.$post(repoItemListUrl + this.imagePage + "/" + this.imageSize, this.imageCondition, response => {
         let data = response.data;
         this.imageTotal = data.itemCount;
         this.imageData = data.listObject;
@@ -703,15 +712,15 @@ export default {
     },
     handleSync(item) {
       this.repoId = item.id;
-      this.$get("/image/repoSyncList/" + item.id, response => {
+      this.$get(repoSyncListUrl + item.id, response => {
         this.syncData = response.data;
         this.syncVisible = true;
       });
     },
     sync() {
-      this.$get("/image/syncImage/" + this.repoId, response => {
+      this.$get(syncImageUrl + this.repoId, response => {
         this.$success(this.$t('commons.success'));
-        this.$get("/image/repoSyncList/" + this.repoId, response => {
+        this.$get(repoSyncListUrl + this.repoId, response => {
           this.syncData = response.data;
         });
       });
@@ -722,7 +731,7 @@ export default {
       this.settingVisible = false;
     },
     initSboms() {
-      this.result = this.$post("/sbom/allSbomList", {},response => {
+      this.result = this.$post(allSbomListUrl, {},response => {
         this.sboms = response.data;
       });
     },
@@ -730,14 +739,13 @@ export default {
       let params = {
         sbomId: item.sbomId
       };
-      await this.$post("/sbom/allSbomVersionList", params,response => {
+      await this.$post(allSbomVersionListUrl, params,response => {
         this.versions = response.data;
       });
     },
     //查询代理
     activeProxy() {
-      let url = "/proxy/list/all";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(proxyListAllUrl, response => {
         this.proxys = response.data;
       });
     },
@@ -752,7 +760,7 @@ export default {
       this.innerAdd = true;
     },
     async initSbom(params) {
-      await this.$post("/sbom/allSbomVersionList", params,response => {
+      await this.$post(allSbomVersionListUrl, params,response => {
         this.versions = response.data;
         if(this.versions && this.versions.length > 0) this.addForm.sbomVersionId = this.versions[0].id;
       });
@@ -760,7 +768,7 @@ export default {
     saveSetting() {
       this.$refs['settingForm'].validate(valid => {
         if (valid) {
-          this.result = this.$post('/image/repo/setting', this.settingForm, response => {
+          this.result = this.$post(imageRepoSettingUrl, this.settingForm, response => {
             if (response.success) {
               this.$success(this.$t('commons.success'));
               this.settingVisible = false;

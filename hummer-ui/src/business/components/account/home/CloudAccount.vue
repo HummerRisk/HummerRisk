@@ -327,7 +327,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {accountListUrl, deleteAccountUrl, iamStrategyUrl, validateUrl} from "@/api/cloud/account/account";
-import {addProxyUrl, cloudPluginUrl, updateProxyUrl} from "@/api/system/system";
+import {addProxyUrl, cloudPluginUrl, proxyListAllUrl, updateProxyUrl} from "@/api/system/system";
 import {groupsByAccountId, ruleScanUrl} from "@/api/cloud/rule/rule";
 
 //列表展示与隐藏
@@ -637,8 +637,7 @@ const columnOptions = [
       },
       //查询代理
       activeProxy() {
-        let url = "/proxy/list/all";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(proxyListAllUrl, response => {
           this.proxys = response.data;
         });
       },
