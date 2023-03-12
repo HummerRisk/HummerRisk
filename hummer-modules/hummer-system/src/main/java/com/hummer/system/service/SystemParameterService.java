@@ -248,7 +248,7 @@ public class SystemParameterService {
     }
 
     public String getVersion() {
-        return env.getProperty("HR_VERSION");
+        return env.getProperty("HMR_VERSION");
     }
 
     public List<SystemParameter> info(String type) {

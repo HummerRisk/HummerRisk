@@ -32,6 +32,6 @@ spring:
     # metadata 版本控制信息表 默认 flyway_schema_history
     table: hummer_version
     # 数据库配置
-    url: jdbc:mysql://${HR_MYSQL_HOST}:${HR_MYSQL_PORT}/${HR_MYSQL_DB_NACOS}?autoReconnect=false&useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false
-    user: ${HR_MYSQL_USER}
-    password: ${HR_MYSQL_PASSWORD}
+    url: jdbc:mysql://${HMR_MYSQL_HOST}:${HMR_MYSQL_PORT}/${HMR_MYSQL_DB_NACOS}?autoReconnect=false&useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    user: ${HMR_MYSQL_USER}
+    password: ${HMR_MYSQL_PASSWORD}

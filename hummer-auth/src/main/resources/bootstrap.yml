@@ -6,9 +6,9 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${HR_MYSQL_HOST}:${HR_MYSQL_PORT}/${HR_MYSQL_DB}?autoReconnect=false&useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false
-    username: ${HR_MYSQL_USER}
-    password: ${HR_MYSQL_PASSWORD}
+    url: jdbc:mysql://${HMR_MYSQL_HOST}:${HMR_MYSQL_PORT}/${HMR_MYSQL_DB}?autoReconnect=false&useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: ${HMR_MYSQL_USER}
+    password: ${HMR_MYSQL_PASSWORD}
   application:
     # 应用名称
     name: hummer-auth
@@ -21,10 +21,10 @@ spring:
     nacos:
       discovery:
         # 服务注册地址
-        server-addr: ${HR_NACOS_SERVER_ADDR}:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
+        server-addr: ${HMR_NACOS_SERVER_ADDR}:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
       config:
         # 配置中心地址
-        server-addr: ${HR_NACOS_SERVER_ADDR}:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
+        server-addr: ${HMR_NACOS_SERVER_ADDR}:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
         # 配置文件格式
         file-extension: yml
         # 共享配置

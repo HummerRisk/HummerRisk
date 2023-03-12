@@ -25,10 +25,10 @@ spring:
     nacos:
       discovery:
         # 服务注册地址
-        server-addr: ${HR_NACOS_SERVER_ADDR}:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
+        server-addr: ${HMR_NACOS_SERVER_ADDR}:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
       config:
         # 配置中心地址
-        server-addr: ${HR_NACOS_SERVER_ADDR}:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
+        server-addr: ${HMR_NACOS_SERVER_ADDR}:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
         # 配置文件格式
         file-extension: yml
         # 共享配置
@@ -40,10 +40,10 @@ dubbo:
     name: k8s
     # 这个dubbo的协议端口在一台服务器上的时候，每个项目的必须配置成不一样的（否则将启动失败），或者配置为-1，使用随机端口
     port: 8001
-    host: ${HR_NACOS_SERVER_ADDR}
+    host: ${HMR_NACOS_SERVER_ADDR}
   registry:
     # 由于使用的是spring-cloud，因此这里使用spring-cloud的
-    address: nacos://${HR_NACOS_SERVER_ADDR}:8848
+    address: nacos://${HMR_NACOS_SERVER_ADDR}:8848
   scan:
     # 配置需要扫描的注解包
     base-packages: com.hummer.k8s
@@ -55,11 +55,11 @@ dubbo:
 xxl:
   job:
     admin:
-      addresses: http://${HR_NACOS_SERVER_ADDR}:8084/xxl-job-admin/
+      addresses: http://${HMR_NACOS_SERVER_ADDR}:8084/xxl-job-admin/
     accessToken: default_token
     executor:
-      address: ${HR_NACOS_SERVER_ADDR}:9501
-      ip: ${HR_NACOS_SERVER_ADDR}
+      address: ${HMR_NACOS_SERVER_ADDR}:9501
+      ip: ${HMR_NACOS_SERVER_ADDR}
       port: 9501
       appName: hummer-k8s
       logpath: /opt/hummerrisk/logs/xxl-job/hummer-k8s
