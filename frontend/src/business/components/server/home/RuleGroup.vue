@@ -26,7 +26,7 @@
                   </el-col>
                   <el-col :span="21">
                     <el-row class="plugin" v-if="checkedColumnNames.includes('pluginName')">
-                      <span class="plugin-name">{{ data.pluginName }}</span>
+                      <span class="plugin-name">{{ data.name }}</span>
                       <span class="plugin-type">
                         <el-tag type="success" size="mini">{{ data.type }}</el-tag>
                       </span>
@@ -39,7 +39,7 @@
               <div style="padding: 0 14px 14px 14px;">
                 <el-row>
                   <el-col :span="19">
-                    <span class="da-na" v-if="checkedColumnNames.includes('name')">{{ data.name }}</span>
+                    <span class="da-na" v-if="checkedColumnNames.includes('name')">{{ data.pluginName }}</span>
                   </el-col>
                   <el-col :span="5" v-if="checkedColumnNames.includes('flag')">
                     <el-button size="medium" type="danger" class="round" round v-if="data.flag === true">
