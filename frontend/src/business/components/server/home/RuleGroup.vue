@@ -53,10 +53,9 @@
                 <span class="button time pa-na">
               </span>
                 <div class="bottom clearfix">
-                  <time class="time">
-                    <span class="pa-time">{{ data.level }}&nbsp;</span>
-                    <span class="pa-time2">{{ $t('rule.rule_sum', [data.ruleSum]) }}</span>
-                  </time>
+                  <div class="time time2">
+                    <span class="pa-time">{{ data.level }}&nbsp;<span class="pa-time2">{{ $t('rule.rule_sum', [data.ruleSum]) }}</span></span>
+                  </div>
                   <el-dropdown class="button button-drop" @command="(command)=>{handleCommand(command, data)}">
                     <span class="el-dropdown-link">
                       {{ $t('package.operate') }}
@@ -749,6 +748,13 @@ const columnOptions2 = [
     font-size: 13px;
     color: #999;
   }
+  .time2 {
+    width: 70%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    float: left;
+  }
   .round {
     font-size: 13px;
     margin: 0 0 0 5px;
@@ -782,23 +788,17 @@ const columnOptions2 = [
     overflow:hidden;
   }
   .pa-time {
-    display:inline-block;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
     color: #1e6427;
-    float: left;
   }
   .pa-time2 {
-    display:inline-block;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
     color: red;
-    float: left;
   }
   .button-drop {
     float: right;
+    width: 28%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .el-dropdown-link {
     cursor: pointer;
@@ -852,9 +852,17 @@ const columnOptions2 = [
   }
   .plugin-name {
     float: left;
+    width: 75%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .plugin-type {
     float: right;
+    width: 25%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .desc {
     color: #888888;
