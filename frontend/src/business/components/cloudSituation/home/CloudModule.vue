@@ -113,7 +113,7 @@ import DialogFooter from "../../common/components/DialogFooter";
         let url = "/account/allList";
         this.result = this.$get(url, response => {
           if (response.data != undefined && response.data != null) {
-            this.data = response.data;
+            this.data = response.data.filter(item => item.pluginId !== 'hummer-k8s-plugin');
             let moduleOptions = [];
             this.data.forEach(node => {
               buildNodePath(node, {path: ''}, moduleOptions);
