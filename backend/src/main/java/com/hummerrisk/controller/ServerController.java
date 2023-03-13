@@ -351,4 +351,11 @@ public class ServerController {
         return serverService.getRuleGroups();
     }
 
+    @I18n
+    @ApiOperation(value = "按规则组检测主机规则")
+    @GetMapping("scanByGroup/{groupId}/{serverId}")
+    public void scanByGroup(@PathVariable String groupId, @PathVariable String serverId) throws Exception {
+        serverService.scanByGroup(groupId, serverId);
+    }
+
 }

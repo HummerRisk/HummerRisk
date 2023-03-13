@@ -33,6 +33,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -918,5 +919,10 @@ public class ServerService {
         return ruleGroupMapper.selectByExample(example);
     }
 
+    public void scanByGroup(String groupId, String serverId) throws Exception {
+        Server server = serverMapper.selectByPrimaryKey(serverId);
+        Integer scanId = historyService.insertScanHistory(server);
+        this.scanGroups(server, scanId, groupId);
+    }
 
 }
