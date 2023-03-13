@@ -1315,4 +1315,10 @@ const columnOptions = [
     text-align: center;
     font-size: 12px;
   }
+  .el-box-card {
+    margin: 10px 0;
+  }
+  .el-box-card >>> .el-checkbox {
+    margin: 5px 0;
+  }
 </style>
