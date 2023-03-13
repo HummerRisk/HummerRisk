@@ -181,6 +181,16 @@ public class PlatformUtils {
     }
 
     /**
+     * 是否同步资源
+     * @param source
+     * @return
+     */
+    public static boolean isSyncResource(String source){
+        List<String> notSyncResource = Arrays.asList(k8s);
+        return !notSyncResource.contains(source);
+    }
+
+    /**
      * 是否支持漏洞检测插件
      */
     public static boolean isSupportVuln(String source) {
