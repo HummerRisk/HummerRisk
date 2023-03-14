@@ -4,16 +4,6 @@ server:
 
 # Spring
 spring:
-  data:
-    redis:
-      host: ${HMR_REDIS_HOST}
-      port: ${HMR_REDIS_PORT}
-      password: ${HMR_REDIS_PASSWORD}
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${HMR_MYSQL_HOST}:${HMR_MYSQL_PORT}/${HMR_MYSQL_DB}?autoReconnect=false&useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false
-    username: ${HMR_MYSQL_USER}
-    password: ${HMR_MYSQL_PASSWORD}
   application:
     # 应用名称
     name: hummer-auth
@@ -35,4 +25,8 @@ spring:
         # 共享配置
         shared-configs:
           - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
-
+  data:
+    redis:
+      host: ${HMR_REDIS_HOST}
+      port: ${HMR_REDIS_PORT}
+      password: ${HMR_REDIS_PASSWORD}

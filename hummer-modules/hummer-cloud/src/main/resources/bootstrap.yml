@@ -25,7 +25,13 @@ spring:
         # 共享配置
         shared-configs:
           - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+  data:
+    redis:
+      host: ${HMR_REDIS_HOST}
+      port: ${HMR_REDIS_PORT}
+      password: ${HMR_REDIS_PASSWORD}
 
+#dubbo 配置
 dubbo:
   protocol:
     name: cloud
