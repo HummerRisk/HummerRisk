@@ -440,33 +440,34 @@ public class NoticeCreateService {
                 ImageResultExample example = new ImageResultExample();
                 example.createCriteria().andIdEqualTo(imageResultItems.get(0).getResultId());
                 List<ImageResult> imageResults = imageResultMapper.selectByExample(example);
+                if (imageResults.size() != 0) {
+                    subject = Translator.get("i18n_image_messageorder");
+                    returnSum = extNoticeMapper.imageSum(messageOrder);
+                    details = "i18n_resource_manage " + returnSum;
+                    name = imageMapper.selectByPrimaryKey(imageResults.get(0).getImageId()).getName();
+                    String event = NoticeConstants.Event.EXECUTE_IMAGE;
 
-                subject = Translator.get("i18n_image_messageorder");
-                returnSum = extNoticeMapper.imageSum(messageOrder);
-                details = "i18n_resource_manage " + returnSum;
-                name = imageMapper.selectByPrimaryKey(imageResults.get(0).getImageId()).getName();
-                String event = NoticeConstants.Event.EXECUTE_IMAGE;
-
-                Map<String, Object> paramMap = new HashMap<>();
-                paramMap.put("resources", imageResultItems);
-                paramMap.put("returnSum", returnSum);
-                paramMap.put("name", name);
-                paramMap.put("critical", metricChartDTO.getCritical());
-                paramMap.put("high", metricChartDTO.getHigh());
-                paramMap.put("medium", metricChartDTO.getMedium());
-                paramMap.put("low", metricChartDTO.getLow());
-                paramMap.put("unknown", metricChartDTO.getUnknown());
-                NoticeModel noticeModel = NoticeModel.builder()
-                        .successContext(successContext)
-                        .successMailTemplate("SuccessfulNotification")
-                        .failedContext(failedContext)
-                        .failedMailTemplate("FailedNotification")
-                        .event(event)
-                        .subject(subject)
-                        .paramMap(paramMap)
-                        .webhookUrls(webhookUrls)
-                        .build();
-                noticeSendService.send(noticeModel);
+                    Map<String, Object> paramMap = new HashMap<>();
+                    paramMap.put("resources", imageResultItems);
+                    paramMap.put("returnSum", returnSum);
+                    paramMap.put("name", name);
+                    paramMap.put("critical", metricChartDTO.getCritical());
+                    paramMap.put("high", metricChartDTO.getHigh());
+                    paramMap.put("medium", metricChartDTO.getMedium());
+                    paramMap.put("low", metricChartDTO.getLow());
+                    paramMap.put("unknown", metricChartDTO.getUnknown());
+                    NoticeModel noticeModel = NoticeModel.builder()
+                            .successContext(successContext)
+                            .successMailTemplate("SuccessfulNotification")
+                            .failedContext(failedContext)
+                            .failedMailTemplate("FailedNotification")
+                            .event(event)
+                            .subject(subject)
+                            .paramMap(paramMap)
+                            .webhookUrls(webhookUrls)
+                            .build();
+                    noticeSendService.send(noticeModel);
+                }
             }
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CODE.name(), messageOrder.getScanType())) {
             List<CodeResultItem> codeResultItems = extNoticeMapper.getTopCodeTasksForEmail(messageOrder);
@@ -476,32 +477,35 @@ public class NoticeCreateService {
                 example.createCriteria().andIdEqualTo(codeResultItems.get(0).getResultId());
                 List<CodeResult> codeResults = codeResultMapper.selectByExample(example);
 
-                subject = Translator.get("i18n_code_messageorder");
-                returnSum = extNoticeMapper.codeSum(messageOrder);
-                details = "i18n_resource_manage " + returnSum;
-                name = codeMapper.selectByPrimaryKey(codeResults.get(0).getCodeId()).getName();
-                String event = NoticeConstants.Event.EXECUTE_CODE;
+                if (codeResults.size() != 0) {
+                    subject = Translator.get("i18n_code_messageorder");
+                    returnSum = extNoticeMapper.codeSum(messageOrder);
+                    details = "i18n_resource_manage " + returnSum;
+                    name = codeMapper.selectByPrimaryKey(codeResults.get(0).getCodeId()).getName();
+                    String event = NoticeConstants.Event.EXECUTE_CODE;
 
-                Map<String, Object> paramMap = new HashMap<>();
-                paramMap.put("resources", codeResultItems);
-                paramMap.put("returnSum", returnSum);
-                paramMap.put("name", name);
-                paramMap.put("critical", metricChartDTO.getCritical());
-                paramMap.put("high", metricChartDTO.getHigh());
-                paramMap.put("medium", metricChartDTO.getMedium());
-                paramMap.put("low", metricChartDTO.getLow());
-                paramMap.put("unknown", metricChartDTO.getUnknown());
-                NoticeModel noticeModel = NoticeModel.builder()
-                        .successContext(successContext)
-                        .successMailTemplate("SuccessfulNotification")
-                        .failedContext(failedContext)
-                        .failedMailTemplate("FailedNotification")
-                        .event(event)
-                        .subject(subject)
-                        .paramMap(paramMap)
-                        .webhookUrls(webhookUrls)
-                        .build();
-                noticeSendService.send(noticeModel);
+                    Map<String, Object> paramMap = new HashMap<>();
+                    paramMap.put("resources", codeResultItems);
+                    paramMap.put("returnSum", returnSum);
+                    paramMap.put("name", name);
+                    paramMap.put("critical", metricChartDTO.getCritical());
+                    paramMap.put("high", metricChartDTO.getHigh());
+                    paramMap.put("medium", metricChartDTO.getMedium());
+                    paramMap.put("low", metricChartDTO.getLow());
+                    paramMap.put("unknown", metricChartDTO.getUnknown());
+                    NoticeModel noticeModel = NoticeModel.builder()
+                            .successContext(successContext)
+                            .successMailTemplate("SuccessfulNotification")
+                            .failedContext(failedContext)
+                            .failedMailTemplate("FailedNotification")
+                            .event(event)
+                            .subject(subject)
+                            .paramMap(paramMap)
+                            .webhookUrls(webhookUrls)
+                            .build();
+                    noticeSendService.send(noticeModel);
+                }
+
             }
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CONFIG.name(), messageOrder.getScanType())) {
             List<CloudNativeConfigResultItem> configResultItems = extNoticeMapper.getTopConfigTasksForEmail(messageOrder);
@@ -511,33 +515,35 @@ public class NoticeCreateService {
                 example.createCriteria().andIdEqualTo(configResultItems.get(0).getResultId());
                 List<CloudNativeConfigResult> cloudNativeConfigResults = cloudNativeConfigResultMapper.selectByExample(example);
 
+                if (cloudNativeConfigResults.size() != 0) {
+                    subject = Translator.get("i18n_config_messageorder");
+                    returnSum = extNoticeMapper.configSum(messageOrder);
+                    details = "i18n_resource_manage " + returnSum;
+                    name = cloudNativeConfigMapper.selectByPrimaryKey(cloudNativeConfigResults.get(0).getConfigId()).getName();
+                    String event = NoticeConstants.Event.EXECUTE_CONFIG;
 
-                subject = Translator.get("i18n_config_messageorder");
-                returnSum = extNoticeMapper.configSum(messageOrder);
-                details = "i18n_resource_manage " + returnSum;
-                name = cloudNativeConfigMapper.selectByPrimaryKey(cloudNativeConfigResults.get(0).getConfigId()).getName();
-                String event = NoticeConstants.Event.EXECUTE_CONFIG;
+                    Map<String, Object> paramMap = new HashMap<>();
+                    paramMap.put("resources", configResultItems);
+                    paramMap.put("returnSum", returnSum);
+                    paramMap.put("name", name);
+                    paramMap.put("critical", metricChartDTO.getCritical());
+                    paramMap.put("high", metricChartDTO.getHigh());
+                    paramMap.put("medium", metricChartDTO.getMedium());
+                    paramMap.put("low", metricChartDTO.getLow());
+                    paramMap.put("unknown", metricChartDTO.getUnknown());
+                    NoticeModel noticeModel = NoticeModel.builder()
+                            .successContext(successContext)
+                            .successMailTemplate("SuccessfulNotification")
+                            .failedContext(failedContext)
+                            .failedMailTemplate("FailedNotification")
+                            .event(event)
+                            .subject(subject)
+                            .paramMap(paramMap)
+                            .webhookUrls(webhookUrls)
+                            .build();
+                    noticeSendService.send(noticeModel);
+                }
 
-                Map<String, Object> paramMap = new HashMap<>();
-                paramMap.put("resources", configResultItems);
-                paramMap.put("returnSum", returnSum);
-                paramMap.put("name", name);
-                paramMap.put("critical", metricChartDTO.getCritical());
-                paramMap.put("high", metricChartDTO.getHigh());
-                paramMap.put("medium", metricChartDTO.getMedium());
-                paramMap.put("low", metricChartDTO.getLow());
-                paramMap.put("unknown", metricChartDTO.getUnknown());
-                NoticeModel noticeModel = NoticeModel.builder()
-                        .successContext(successContext)
-                        .successMailTemplate("SuccessfulNotification")
-                        .failedContext(failedContext)
-                        .failedMailTemplate("FailedNotification")
-                        .event(event)
-                        .subject(subject)
-                        .paramMap(paramMap)
-                        .webhookUrls(webhookUrls)
-                        .build();
-                noticeSendService.send(noticeModel);
             }
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.K8S.name(), messageOrder.getScanType())) {
             List<CloudNativeResultItem> k8sResultItems = extNoticeMapper.getTopK8sTasksForEmail(messageOrder);
@@ -546,33 +552,34 @@ public class NoticeCreateService {
                 CloudNativeResultExample example = new CloudNativeResultExample();
                 example.createCriteria().andIdEqualTo(k8sResultItems.get(0).getResultId());
                 List<CloudNativeResult> cloudNativeResults = cloudNativeResultMapper.selectByExample(example);
+                if (cloudNativeResults.size() != 0) {
+                    subject = Translator.get("i18n_k8s_messageorder");
+                    returnSum = extNoticeMapper.k8sSum(messageOrder);
+                    details = "i18n_resource_manage " + returnSum;
+                    name = cloudNativeMapper.selectByPrimaryKey(cloudNativeResults.get(0).getCloudNativeId()).getName();
+                    String event = NoticeConstants.Event.EXECUTE_K8S;
 
-                subject = Translator.get("i18n_k8s_messageorder");
-                returnSum = extNoticeMapper.k8sSum(messageOrder);
-                details = "i18n_resource_manage " + returnSum;
-                name = cloudNativeMapper.selectByPrimaryKey(cloudNativeResults.get(0).getCloudNativeId()).getName();
-                String event = NoticeConstants.Event.EXECUTE_K8S;
-
-                Map<String, Object> paramMap = new HashMap<>();
-                paramMap.put("resources", k8sResultItems);
-                paramMap.put("returnSum", returnSum);
-                paramMap.put("name", name);
-                paramMap.put("critical", metricChartDTO.getCritical());
-                paramMap.put("high", metricChartDTO.getHigh());
-                paramMap.put("medium", metricChartDTO.getMedium());
-                paramMap.put("low", metricChartDTO.getLow());
-                paramMap.put("unknown", metricChartDTO.getUnknown());
-                NoticeModel noticeModel = NoticeModel.builder()
-                        .successContext(successContext)
-                        .successMailTemplate("SuccessfulNotification")
-                        .failedContext(failedContext)
-                        .failedMailTemplate("FailedNotification")
-                        .event(event)
-                        .subject(subject)
-                        .paramMap(paramMap)
-                        .webhookUrls(webhookUrls)
-                        .build();
-                noticeSendService.send(noticeModel);
+                    Map<String, Object> paramMap = new HashMap<>();
+                    paramMap.put("resources", k8sResultItems);
+                    paramMap.put("returnSum", returnSum);
+                    paramMap.put("name", name);
+                    paramMap.put("critical", metricChartDTO.getCritical());
+                    paramMap.put("high", metricChartDTO.getHigh());
+                    paramMap.put("medium", metricChartDTO.getMedium());
+                    paramMap.put("low", metricChartDTO.getLow());
+                    paramMap.put("unknown", metricChartDTO.getUnknown());
+                    NoticeModel noticeModel = NoticeModel.builder()
+                            .successContext(successContext)
+                            .successMailTemplate("SuccessfulNotification")
+                            .failedContext(failedContext)
+                            .failedMailTemplate("FailedNotification")
+                            .event(event)
+                            .subject(subject)
+                            .paramMap(paramMap)
+                            .webhookUrls(webhookUrls)
+                            .build();
+                    noticeSendService.send(noticeModel);
+                }
             }
         } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.FS.name(), messageOrder.getScanType())) {
             List<FileSystemResultItem> fsResultItems = extNoticeMapper.getTopFsTasksForEmail(messageOrder);
@@ -581,33 +588,34 @@ public class NoticeCreateService {
                 FileSystemResultExample example = new FileSystemResultExample();
                 example.createCriteria().andIdEqualTo(fsResultItems.get(0).getResultId());
                 List<FileSystemResult> fileSystemResults = fileSystemResultMapper.selectByExample(example);
+                if (fileSystemResults.size() != 0) {
+                    subject = Translator.get("i18n_fs_messageorder");
+                    returnSum = extNoticeMapper.fsSum(messageOrder);
+                    details = "i18n_resource_manage " + returnSum;
+                    name = fileSystemMapper.selectByPrimaryKey(fileSystemResults.get(0).getFsId()).getName();
+                    String event = NoticeConstants.Event.EXECUTE_FS;
 
-                subject = Translator.get("i18n_fs_messageorder");
-                returnSum = extNoticeMapper.fsSum(messageOrder);
-                details = "i18n_resource_manage " + returnSum;
-                name = fileSystemMapper.selectByPrimaryKey(fileSystemResults.get(0).getFsId()).getName();
-                String event = NoticeConstants.Event.EXECUTE_FS;
-
-                Map<String, Object> paramMap = new HashMap<>();
-                paramMap.put("resources", fsResultItems);
-                paramMap.put("returnSum", returnSum);
-                paramMap.put("name", name);
-                paramMap.put("critical", metricChartDTO.getCritical());
-                paramMap.put("high", metricChartDTO.getHigh());
-                paramMap.put("medium", metricChartDTO.getMedium());
-                paramMap.put("low", metricChartDTO.getLow());
-                paramMap.put("unknown", metricChartDTO.getUnknown());
-                NoticeModel noticeModel = NoticeModel.builder()
-                        .successContext(successContext)
-                        .successMailTemplate("SuccessfulNotification")
-                        .failedContext(failedContext)
-                        .failedMailTemplate("FailedNotification")
-                        .event(event)
-                        .subject(subject)
-                        .paramMap(paramMap)
-                        .webhookUrls(webhookUrls)
-                        .build();
-                noticeSendService.send(noticeModel);
+                    Map<String, Object> paramMap = new HashMap<>();
+                    paramMap.put("resources", fsResultItems);
+                    paramMap.put("returnSum", returnSum);
+                    paramMap.put("name", name);
+                    paramMap.put("critical", metricChartDTO.getCritical());
+                    paramMap.put("high", metricChartDTO.getHigh());
+                    paramMap.put("medium", metricChartDTO.getMedium());
+                    paramMap.put("low", metricChartDTO.getLow());
+                    paramMap.put("unknown", metricChartDTO.getUnknown());
+                    NoticeModel noticeModel = NoticeModel.builder()
+                            .successContext(successContext)
+                            .successMailTemplate("SuccessfulNotification")
+                            .failedContext(failedContext)
+                            .failedMailTemplate("FailedNotification")
+                            .event(event)
+                            .subject(subject)
+                            .paramMap(paramMap)
+                            .webhookUrls(webhookUrls)
+                            .build();
+                    noticeSendService.send(noticeModel);
+                }
             }
 
         }
