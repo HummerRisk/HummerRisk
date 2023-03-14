@@ -139,8 +139,10 @@ public class NoticeCreateService {
                     successCount++;
                 }
             }
-            if (!messageOrderItemList.isEmpty() && successCount == 0)
-                throw new Exception("Faild to handle all messageOrderItemList, messageOrderId: " + messageOrderId);
+            if (!messageOrderItemList.isEmpty() && successCount == 0) {
+                LogUtil.error("Faild to handle all messageOrderItemList, messageOrderId: " + messageOrderId);
+                return;
+            }
 
             if (successCount != messageOrderItemList.size()) {
                 return;
