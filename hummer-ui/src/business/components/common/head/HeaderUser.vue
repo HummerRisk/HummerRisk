@@ -41,12 +41,10 @@ import {removeToken} from "@/common/js/auth";
               if (response.data.success) {
                 removeToken();
                 localStorage.clear();
-                console.log(523)
                 window.location.href = "/login";
               }
             }).catch(error => {
               localStorage.clear();
-              console.log(623)
               window.location.href = "/login";
             });
             break;

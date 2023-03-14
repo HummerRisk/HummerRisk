@@ -11,12 +11,9 @@ export const K8S_NAME = "k8s_name";
 export const K8S = "k8s";
 export const ROLE_ADMIN = "admin";
 export const IsCollapse = "IsCollapse";
-
 export const CURRENT_ACCOUNT = "current_account";
-
 export const REFRESH_SESSION_USER_URL = "user/refresh";
 export const DEFAULT = "default";
-
 export const ZH_CN = "zh-CN";
 export const ZH_TW = "zh-TW";
 export const EN_US = "en-US";

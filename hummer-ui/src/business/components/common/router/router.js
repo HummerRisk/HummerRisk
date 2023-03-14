@@ -61,7 +61,6 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   let token = getToken();
   if (!token) {
-    console.log(723)
     window.location.href = "/login";
   } else {
     next();
