@@ -138,10 +138,6 @@ public class K8sRequest extends Request {
 
     public void createOperatorChart() throws Exception {
         try {
-//            ClassPathResource classPathResource = new ClassPathResource("file/values.yaml");
-//            InputStream inputStream = classPathResource.getInputStream();
-//            Reader reader = new InputStreamReader(inputStream);
-//            String values = CharStreams.toString(reader);
 
             JsonObject jsonObjectBuilder = new JsonObjectBuilder()
                     .set("apiVersion", "app.alauda.io/v1alpha1")
@@ -151,18 +147,18 @@ public class K8sRequest extends Request {
                     .set("image.repository", "registry.cn-beijing.aliyuncs.com/hummerrisk/trivy-operator")
                     .set("trivy.ignoreUnfixed", true)
                     .set("trivy.repository", "registry.cn-beijing.aliyuncs.com/hummerrisk/trivy")
+                    .set("nodeCollector.repository", "registry.cn-beijing.aliyuncs.com/hummerrisk/node-collector")
                     .set("metadata", new JsonObjectBuilder().set("name", name).build())
                     .set("spec", new JsonObjectBuilder()
                             .set("chart", chart)
                             .set("namespace", namespace)
                             .set("releaseName", name)
-//                            .set("values", values)
                             .set("version", version)
                     ).build();
 
             ApiClient apiClient = getK8sClient(null);
             CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
-            Object result = customObjectsApi.createNamespacedCustomObject("app.alauda.io", "v1alpha1", namespace, "helmrequests", jsonObjectBuilder, "true", null, null);
+            customObjectsApi.createNamespacedCustomObject("app.alauda.io", "v1alpha1", namespace, "helmrequests", jsonObjectBuilder, "true", null, null);
 
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
