@@ -10,15 +10,6 @@ spring:
   profiles:
     # 环境配置
     active: prod
-  freemarker.content-type: text/html
-  thymeleaf:
-    cache: false
-    mode: HTML
-  mvc:
-    throw-exception-if-no-handler-found: true
-  web:
-    resources:
-      static-locations=classpath: /templates/
   cloud:
     bootstrap:
       enabled: true
