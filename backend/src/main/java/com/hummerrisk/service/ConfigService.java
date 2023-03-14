@@ -356,7 +356,7 @@ public class ConfigService {
         if(resultJsons != null) {
             for (Object obj : resultJsons) {
                 JSONObject jsonObject = (JSONObject) obj;
-                JSONArray misconfigurations = JSONArray.parseArray(jsonObject.getString("Misconfigurations"));
+                JSONArray misconfigurations = JSONArray.parseArray(jsonObject.getString("Misconfigurations")!=null?jsonObject.getString("Misconfigurations"):"[]");
                 for (Object o : misconfigurations) {
                     JSONObject resultObject = (JSONObject) o;
                     CloudNativeConfigResultItemWithBLOBs cloudNativeConfigResultItem = new CloudNativeConfigResultItemWithBLOBs();
@@ -368,7 +368,6 @@ public class ConfigService {
                     cloudNativeConfigResultItem.setDescription(resultObject.getString("Description"));
                     cloudNativeConfigResultItem.setMessage(resultObject.getString("Message"));
                     cloudNativeConfigResultItem.setNamespace(resultObject.getString("Namespace"));
-                    cloudNativeConfigResultItem.setLayer(resultObject.getString("Layer"));
                     cloudNativeConfigResultItem.setQuery(resultObject.getString("Query"));
                     cloudNativeConfigResultItem.setPrimaryUrl(resultObject.getString("PrimaryURL"));
                     cloudNativeConfigResultItem.setResolution(resultObject.getString("Resolution"));
@@ -380,7 +379,6 @@ public class ConfigService {
                     cloudNativeConfigResultItemMapper.insertSelective(cloudNativeConfigResultItem);
                     i++;
                 }
-
             }
         }
 
