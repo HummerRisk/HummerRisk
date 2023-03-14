@@ -1,6 +1,4 @@
 
-export const fsChartUrl = "/system/dashboard/fsChart";
-
 export const imageRepoChartUrl = "/k8s/image/imageRepoChart";
 
 export const imageSeverityChartUrl = "/k8s/image/severityChart";

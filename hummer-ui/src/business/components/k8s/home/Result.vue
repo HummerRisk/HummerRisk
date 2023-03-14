@@ -160,6 +160,7 @@ import {K8S_RESULT_CONFIGS} from "../../common/components/search/search-componen
 import LogForm from "@/business/components/k8s/home/LogForm";
 import {saveAs} from "@/common/js/FileSaver";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {getCloudNativeResultUrl, getCloudNativeResultWithBLOBsUrl, logK8sUrl} from "@/api/k8s/k8s/k8s";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -292,7 +293,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/k8s/resultList/" + this.currentPage + "/" + this.pageSize;
+      let url = k8sResultListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -306,8 +307,7 @@ export default {
         this.timer = setInterval(this.getStatus,60000);
       } else {
         for (let data of this.tableData) {
-          let url = "/k8s/getCloudNativeResult/";
-          this.$get(url + data.id, response => {
+          this.$get(getCloudNativeResultUrl + data.id, response => {
             let result = response.data;
             if (data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
@@ -352,7 +352,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get("/k8s/reScan/" + item.id, response => {
+            this.$get(k8sReScanUrl + item.id, response => {
               if (response.success) {
                 this.search();
               }
@@ -366,7 +366,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/k8s/deleteCloudNativeResult/" + obj.id,  res => {
+            this.result = this.$get(deleteCloudNativeResultUrl + obj.id,  res => {
               setTimeout(function () {window.location.reload()}, 2000);
               this.$success(this.$t('commons.delete_success'));
             });
@@ -429,12 +429,10 @@ export default {
       }
     },
     async showResultLog (result) {
-      let logUrl = "/k8s/log/";
-      this.result = this.$get(logUrl + result.id, response => {
+      this.result = this.$get(logK8sUrl + result.id, response => {
         this.logData = response.data;
       });
-      let resultUrl = "/k8s/getCloudNativeResultWithBLOBs/";
-      await this.$get(resultUrl + result.id, response => {
+      await this.$get(getCloudNativeResultWithBLOBsUrl + result.id, response => {
         this.logForm = response.data;
         this.logForm.vulnerabilityReport = JSON.parse(this.logForm.vulnerabilityReport);
         this.logForm.configAuditReport = JSON.parse(this.logForm.configAuditReport);
@@ -445,7 +443,7 @@ export default {
       this.logVisible = false;
     },
     handleDownload(item) {
-      this.$post("/k8s/download", {
+      this.$post(k8sDownloadUrl, {
         id: item.id
       }, response => {
         if (response.success) {
