@@ -140,6 +140,7 @@ import {_filter, _sort} from "@/common/js/utils";
 import {SERVER_CERTIFICATE_CONFIGS} from "../../common/components/search/search-components";
 import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {addCertificateUrl, certificateListUrl, deleteCertificateUrl, editCertificateUrl} from "@/api/k8s/server/server";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -299,7 +300,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/server/deleteCertificate/" + item.id, () => {
+            this.result = this.$get(deleteCertificateUrl + item.id, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -309,7 +310,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/server/certificateList/" + this.currentPage + "/" + this.pageSize;
+      let url = certificateListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -344,7 +345,7 @@ export default {
             formData.append("request", new Blob([JSON.stringify(form)], {type: "application/json"}));
             let axiosRequestConfig = {
               method: "POST",
-              url: "/server/addCertificate",
+              url: addCertificateUrl,
               data: formData,
               headers: {
                 "Content-Type": 'multipart/form-data'
@@ -368,7 +369,7 @@ export default {
             formData.append("request", new Blob([JSON.stringify(form)], {type: "application/json"}));
             let axiosRequestConfig = {
               method: "POST",
-              url: "/server/editCertificate",
+              url: editCertificateUrl,
               data: formData,
               headers: {
                 "Content-Type": 'multipart/form-data'

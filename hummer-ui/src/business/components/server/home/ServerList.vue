@@ -531,6 +531,13 @@ import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {saveAs} from "@/common/js/FileSaver";
 import {proxyListAllUrl} from "@/api/system/system";
+import {
+  allCertificateListUrl,
+  serverGroupListUrl,
+  serverValidatesUrl,
+  serverValidateUrl,
+  deleteServerUrl, addServerUrl, editServerUrl, copyServerUrl, serverExcelInsertExpertsUrl, serverDownloadExcelUrl,
+} from "@/api/k8s/server/server";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -759,8 +766,7 @@ const columnOptions = [
       },
       //查询证书下拉列表
       activeCertificates() {
-        let url = "/server/allCertificateList";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(allCertificateListUrl, response => {
           this.certificates = response.data;
         });
       },
@@ -781,7 +787,7 @@ const columnOptions = [
             if (action === 'confirm') {
               this.result = this.$request({
                 method: 'POST',
-                url: "/server/validate",
+                url: serverValidatesUrl,
                 data: Array.from(this.selectIds),
                 headers: {
                   'Content-Type': undefined
@@ -813,7 +819,7 @@ const columnOptions = [
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$post("/server/validate/" + row.id, {}, response => {
+              this.result = this.$post(serverValidateUrl + row.id, {}, response => {
                 let data = response.data;
                 if (data) {
                   if (data.flag) {
@@ -838,7 +844,7 @@ const columnOptions = [
         } else {
           this.condition.serverGroupId = "";
         }
-        let url = "/server/serverList/" + this.currentPage + "/" + this.pageSize;
+        let url = serverListUrl + this.currentPage + "/" + this.pageSize;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;
@@ -846,8 +852,7 @@ const columnOptions = [
         });
       },
       initGroup() {
-        let url = "/server/serverGroupList";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(serverGroupListUrl, response => {
           if (response.data != undefined && response.data != null) {
             this.groups = response.data;
           }
@@ -872,7 +877,7 @@ const columnOptions = [
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get("/server/deleteServer/" + obj.id, response => {
+              this.result = this.$get(deleteServerUrl + obj.id, response => {
                 this.$success(this.$t('commons.delete_success'));
                 this.search();
               });
@@ -920,7 +925,7 @@ const columnOptions = [
             if (action === 'confirm') {
               this.result = this.$request({
                 method: 'POST',
-                url: "/server/scan",
+                url: serverScanUrl,
                 data: Array.from(this.selectIds),
                 headers: {
                   'Content-Type': undefined
@@ -1010,7 +1015,7 @@ const columnOptions = [
             formData.append("request", new Blob([JSON.stringify(server)], {type: "application/json"}));
             let axiosRequestConfig = {
               method: "POST",
-              url: "/server/addServer",
+              url: addServerUrl,
               data: formData,
               headers: {
                 "Content-Type": 'multipart/form-data'
@@ -1035,7 +1040,7 @@ const columnOptions = [
         formData.append("request", new Blob([JSON.stringify(server)], {type: "application/json"}));
         let axiosRequestConfig = {
           method: "POST",
-          url: "/server/editServer",
+          url: editServerUrl,
           data: formData,
           headers: {
             "Content-Type": 'multipart/form-data'
@@ -1060,7 +1065,7 @@ const columnOptions = [
         formData.append("request", new Blob([JSON.stringify(server)], {type: "application/json"}));
         let axiosRequestConfig = {
           method: "POST",
-          url: "/server/copyServer",
+          url: copyServerUrl,
           data: formData,
           headers: {
             "Content-Type": 'multipart/form-data'
@@ -1167,7 +1172,7 @@ const columnOptions = [
 
         let axiosRequestConfig = {
           method: "POST",
-          url: "/server/ExcelInsertExperts",
+          url: serverExcelInsertExpertsUrl,
           data: formData,
           headers: {
             "Content-Type": "multipart/form-data"
@@ -1188,7 +1193,7 @@ const columnOptions = [
         }
       },
       downloadExcel() {
-        this.$fileDownload("/server/downloadExcel", response => {
+        this.$fileDownload(serverDownloadExcelUrl, response => {
           let blob = new Blob([response.data], {type: "'application/octet-stream'"});
           saveAs(blob, "template.xlsx");
         }, error => {

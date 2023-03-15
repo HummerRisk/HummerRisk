@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     init() {
-      this.$get("/server/serverChart", response => {
+      this.$get(serverChartUrl, response => {
         let data = response.data;
         this.options = {
           title: {

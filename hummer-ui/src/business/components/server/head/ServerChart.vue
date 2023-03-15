@@ -6,6 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import {serverLineChartUrl} from "@/api/k8s/server/server";
 /* eslint-disable */
 export default {
   name: "ServerChart",
@@ -22,7 +23,7 @@ export default {
   },
   methods: {
     init() {
-      this.$post("/server/serverLineChart", {}, response => {
+      this.$post(serverLineChartUrl, {}, response => {
         let data = response.data;
         this.options = {
           xAxis: {
