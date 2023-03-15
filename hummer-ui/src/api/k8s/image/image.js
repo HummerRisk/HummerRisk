@@ -74,3 +74,10 @@ export const updateImageRuleUrl = "/k8s/image/updateImageRule";
 export const imageChangeStatusUrl = "/k8s/image/changeStatus";
 
 export const imageTopInfoUrl = "/k8s/image/topInfo";
+
+export const imageResultItemListUrl = "/k8s/image/resultItemList/";
+
+export const imageUnBindListUrl = "/k8s/image/unBindList";
+
+export const imageAllBindListUrl = "/k8s/image/allBindList/";
+

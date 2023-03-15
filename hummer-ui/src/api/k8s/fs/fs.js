@@ -40,3 +40,9 @@ export const fsDownloadUrl = "/k8s/fs/download";
 export const fsResultItemListBySearchUrl = "/k8s/fs/resultItemListBySearch/";
 
 export const fsTopInfoUrl = "/k8s/fs/topInfo";
+
+export const fsResultItemListUrl = "/k8s/fs/resultItemList/";
+
+export const fsUnBindListUrl = "/k8s/fs/unBindList";
+
+export const fsAllBindListUrl = "/k8s/fs/allBindList/";

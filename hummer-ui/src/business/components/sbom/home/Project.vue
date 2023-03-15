@@ -245,6 +245,18 @@ import {SBOM_CONFIGS} from "../../common/components/search/search-components";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import VersionTableHeader from "../head/VersionTableHeader";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {
+  addSbomUrl,
+  addSbomVersionUrl,
+  deleteSbomUrl, deleteSbomVersionUrl, sbomListUrl,
+  sbomScanUrl,
+  sbomVersionListUrl,
+  settingVersionUrl, updateSbomUrl,
+  updateSbomVersionUrl
+} from "@/api/k8s/sbom/sbom";
+import {codeAllBindListUrl, codeUnBindListUrl} from "@/api/k8s/code/code";
+import {fsAllBindListUrl, fsUnBindListUrl} from "@/api/k8s/fs/fs";
+import {imageAllBindListUrl, imageUnBindListUrl} from "@/api/k8s/image/image";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -420,7 +432,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/sbom/list/" + this.currentPage + "/" + this.pageSize;
+      let url = sbomListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -445,7 +457,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/sbom/deleteSbom/" + obj.id, () => {
+            this.result = this.$get(deleteSbomUrl + obj.id, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -458,7 +470,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/sbom/deleteSbomVersion/" + obj.id, () => {
+            this.result = this.$get(deleteSbomVersionUrl + obj.id, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -481,7 +493,7 @@ export default {
     save(){
       this.$refs['addForm'].validate(valid => {
         if (valid) {
-          this.result = this.$post("/sbom/addSbom", this.addForm, response => {
+          this.result = this.$post(addSbomUrl, this.addForm, response => {
             if (response.success) {
               this.$success(this.$t('commons.create_success'));
               this.search();
@@ -497,7 +509,7 @@ export default {
     edit(){
       this.$refs['form'].validate(valid => {
         if (valid) {
-          this.result = this.$post("/sbom/updateSbom", this.form, response => {
+          this.result = this.$post(updateSbomUrl, this.form, response => {
             if (response.success) {
               this.$success(this.$t('commons.update_success'));
               this.search();
@@ -514,7 +526,7 @@ export default {
       this.$refs['addVersionForm'].validate(valid => {
         if (valid) {
           this.addVersionForm.sbomId = this.sbomId;
-          this.result = this.$post("/sbom/addSbomVersion", this.addVersionForm, response => {
+          this.result = this.$post(addSbomVersionUrl, this.addVersionForm, response => {
             if (response.success) {
               this.$success(this.$t('commons.create_success'));
               this.searchVersion();
@@ -530,7 +542,7 @@ export default {
     editVersion(){
       this.$refs['editVersionForm'].validate(valid => {
         if (valid) {
-          this.result = this.$post("/sbom/updateSbomVersion", this.editVersionForm, response => {
+          this.result = this.$post(updateSbomVersionUrl, this.editVersionForm, response => {
             if (response.success) {
               this.$success(this.$t('commons.update_success'));
               this.searchVersion();
@@ -543,7 +555,7 @@ export default {
       });
     },
     searchVersion() {
-      let url = "/sbom/sbomVersionList/" + this.versionPage + "/" + this.versionPageSize;
+      let url = sbomVersionListUrl + this.versionPage + "/" + this.versionPageSize;
       let params = {sbomId: this.sbomId};
       this.result = this.$post(url, params, response => {
         let data = response.data;
@@ -561,7 +573,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get("/sbom/scan/" + item.id,response => {
+            this.$get(sbomScanUrl + item.id,response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start') + this.$t('sbom.event_start'));
               } else {
@@ -579,7 +591,7 @@ export default {
     },
     handleSetting(item) {
       this.sbomVersionId = item.id;
-      this.$get("/code/unBindList",response => {
+      this.$get(codeUnBindListUrl,response => {
         this.codeData = [];
         for(let data of response.data) {
           this.codeData.push({
@@ -588,7 +600,7 @@ export default {
           });
         }
       });
-      this.$get("/image/unBindList",response => {
+      this.$get(imageUnBindListUrl,response => {
         this.imageData = [];
         for(let data of response.data) {
           this.imageData.push({
@@ -597,7 +609,7 @@ export default {
           });
         }
       });
-      this.$get("/fs/unBindList",response => {
+      this.$get(fsUnBindListUrl,response => {
         this.fsData = [];
         for(let data of response.data) {
           this.fsData.push({
@@ -606,19 +618,19 @@ export default {
           });
         }
       });
-      this.$get("/code/allBindList/" + item.id,response => {
+      this.$get(codeAllBindListUrl + item.id,response => {
         this.codeValue = [];
         for(let data of response.data) {
           this.codeValue.push(data.id);
         }
       });
-      this.$get("/image/allBindList/" + item.id,response => {
+      this.$get(imageAllBindListUrl + item.id,response => {
         this.imageValue = [];
         for(let data of response.data) {
           this.imageValue.push(data.id);
         }
       });
-      this.$get("/fs/allBindList/" + item.id,response => {
+      this.$get(fsAllBindListUrl + item.id,response => {
         this.fsValue = [];
         for(let data of response.data) {
           this.fsValue.push(data.id);
@@ -633,7 +645,7 @@ export default {
         sbomId: this.sbomId,
         sbomVersionId: this.sbomVersionId,
       };
-      this.$post("/sbom/settingVersion", params,response => {
+      this.$post(settingVersionUrl, params,response => {
         this.$success(this.$t('organization.integration.successful_operation'));
         this.innerSettingVersion = false;
         this.searchVersion();
