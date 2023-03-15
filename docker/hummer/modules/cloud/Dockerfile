@@ -4,8 +4,10 @@ FROM registry.cn-beijing.aliyuncs.com/hummerrisk/prowler:v0.9 as prowler-env
 
 FROM registry.cn-beijing.aliyuncs.com/hummerrisk/xray:v0.9 as xray-env
 
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/cloud-custodian:v0.9.1 as custodian-env
 # 基础镜像
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/cloud-custodian:v0.9.1
+FROM  registry.cn-beijing.aliyuncs.com/hummerrisk/alpine:jre17
+
 # author
 MAINTAINER Hummer
 
@@ -19,8 +21,14 @@ COPY --from=prowler-env /prowler /prowler
 
 COPY --from=xray-env /opt/hummerrisk/xray/ /opt/hummerrisk/xray/
 
-RUN apt-get update -y && apt-get install --yes git bash libpcap-dev musl && \
-    pip3 install detect-secrets==1.0.3 && \
+# custodian
+COPY --from=custodian-env /src /src
+
+COPY --from=custodian-env /usr/local /usr/local
+
+COPY --from=custodian-env /output /output
+
+RUN apk update && apk add git bash libpcap-dev musl && \
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip && \
     ./aws/install -i /usr/local/aws-cli -b /usr/local/bin && \
