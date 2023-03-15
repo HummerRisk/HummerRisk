@@ -15,6 +15,8 @@ export const kubenchStatusValidateUrl = "/k8s/k8s/kubenchStatusValidate/";
 
 export const allK8sUrl = "/k8s/k8s/allList";
 
+export const allCloudNativeListUrl = "/k8s/k8s/allCloudNativeList";
+
 export const k8sListUrl = "/k8s/k8s/list/";
 
 export const deleteK8sUrl = "/k8s/k8s/delete/";
@@ -66,3 +68,31 @@ export const resultKubenchItemListBySearchUrl = "/k8s/k8s/resultKubenchItemListB
 export const kubenchChartUrl = "/k8s/k8s/kubenchChart/";
 
 export const k8sTopInfoUrl = "/k8s/k8s/topInfo";
+
+export const rbacChartUrl = "/k8s/k8s/rbacChart/";
+
+export const syncK8sSourceUrl = "/k8s/k8s/syncSource/";
+
+export const syncK8sListUrl = "/k8s/k8s/syncList/";
+
+export const deleteK8sSyncLogUrl = "/k8s/k8s/deleteSyncLog/";
+
+export const nodeTopologyUrl = "/k8s/k8s/nodeTopology";
+
+export const namespaceTopologyUrl = "/k8s/k8s/namespaceTopology";
+
+export const k8sTopologyUrl = "/k8s/k8s/k8sTopology";
+
+export const k8sRiskTopologyUrl = "/k8s/k8s/riskTopology";
+
+export const getK8sImageUrl = "/k8s/k8s/getImage";
+
+export const k8sLogTopoUrl = "/k8s/k8s/log/topo/";
+
+export const getCloudNativeResultWithBLOBsTopoUrl = "/k8s/k8s/getCloudNativeResultWithBLOBs/topo/";
+
+export const k8sSituationUrl = "/k8s/k8s/situation";
+
+export const cloudNativeSourceListUrl = "/k8s/k8s/cloudNativeSourceList/";
+
+export const k8sSourceImagesUrl = "/k8s/k8s/sourceImages/";
