@@ -11,7 +11,7 @@ FROM  registry.cn-beijing.aliyuncs.com/hummerrisk/alpine:jre17
 # author
 MAINTAINER Hummer
 
-ARG HR_VERSION=dev
+ARG HMR_VERSION=dev
 
 WORKDIR /usr
 
@@ -38,8 +38,8 @@ COPY ./jar/hummer-modules-cloud.jar /opt/apps/hummer-modules-cloud.jar
 
 ENV JAVA_APP_JAR=/opt/apps/hummer-modules-cloud.jar \
     AB_OFF=true \
-    HR_VERSION=${HR_VERSION} \
-    JAVA_OPTIONS="-Dfile.encoding=utf-8 -Djava.awt.headless=true -DHR_NACOS_SERVER_ADDR=127.0.0.1 -DHR_MYSQL_HOST=127.0.0.1 -DHR_MYSQL_PORT=3306 -DHR_MYSQL_DB=hummer_risk -DHR_MYSQL_USER=root -DHR_MYSQL_PASSWORD=root"
+    HMR_VERSION=${HMR_VERSION} \
+    JAVA_OPTIONS="-Dfile.encoding=utf-8 -Djava.awt.headless=true -DHMR_NACOS_SERVER_ADDR=127.0.0.1 -DHMR_MYSQL_HOST=127.0.0.1 -DHMR_MYSQL_PORT=3306 -DHMR_MYSQL_DB=hummer_risk -DHMR_MYSQL_USER=root -DHMR_MYSQL_PASSWORD=root"
 
 HEALTHCHECK --interval=15s --timeout=5s --retries=20 --start-period=30s CMD curl -f 127.0.0.1:9203
 

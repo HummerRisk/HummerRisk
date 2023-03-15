@@ -1,6 +1,10 @@
 
 export const cloudPluginUrl = "/system/plugin/cloud";
 
+export const nativePluginUrl = "/system/plugin/native";
+
+export const pluginByIdUrl = "/system/plugin/";
+
 export const addProxyUrl = "/system/proxy/add";
 
 export const proxyListUrl = "/system/proxy/list";

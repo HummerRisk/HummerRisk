@@ -10,15 +10,6 @@ spring:
   profiles:
     # 环境配置
     active: prod
-  freemarker.content-type: text/html
-  thymeleaf:
-    cache: false
-    mode: HTML
-  mvc:
-    throw-exception-if-no-handler-found: true
-  web:
-    resources:
-      static-locations=classpath: /templates/
   cloud:
     bootstrap:
       enabled: true
@@ -34,7 +25,13 @@ spring:
         # 共享配置
         shared-configs:
           - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+  data:
+    redis:
+      host: ${HMR_REDIS_HOST}
+      port: ${HMR_REDIS_PORT}
+      password: ${HMR_REDIS_PASSWORD}
 
+#dubbo 配置
 dubbo:
   protocol:
     name: cloud
@@ -55,11 +52,11 @@ dubbo:
 xxl:
   job:
     admin:
-      addresses: http://${HMR_NACOS_SERVER_ADDR}:8084/xxl-job-admin/
+      addresses: http://${HMR_XXL_JOB_ADDR}:8084/xxl-job-admin/
     accessToken: default_token
     executor:
-      address: ${HMR_NACOS_SERVER_ADDR}:9401
-      ip: ${HMR_NACOS_SERVER_ADDR}
+      address: ${HMR_XXL_CLOUD_ADDR}:9401
+      ip: ${HMR_XXL_CLOUD_ADDR}
       port: 9401
       appName: hummer-cloud
       logpath: /opt/hummerrisk/logs/xxl-job/hummer-cloud

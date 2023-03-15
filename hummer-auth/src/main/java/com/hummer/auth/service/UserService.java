@@ -29,6 +29,11 @@ public class UserService {
     @Autowired
     private OperationLogMapper operationLogMapper;
 
+    public User getUserById(String id) throws Exception {
+        User user = userMapper.selectByPrimaryKey(id);
+        return user;
+    }
+
     public LoginUser getLoginUserByName(String userName) throws Exception {
         LoginUser loginUser = new LoginUser();
         UserExample example = new UserExample();

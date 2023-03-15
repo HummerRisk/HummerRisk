@@ -193,7 +193,6 @@ export default {
         return;
       }
       let tip =  '确定删除节点 ' + data.label + ' 及其子节点下所有资源' + '？';
-      // let info =  this.$t("test_track.module.delete_confirm") + data.label + "，" + this.$t("test_track.module.delete_all_resource") + "？";
       this.$alert(tip, "", {
           confirmButtonText: this.$t("commons.confirm"),
           callback: action => {

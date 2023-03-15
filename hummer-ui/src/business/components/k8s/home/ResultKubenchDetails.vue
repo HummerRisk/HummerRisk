@@ -60,6 +60,7 @@ import {_filter, _sort} from "@/common/js/utils";
 import BenchChart from "../head/BenchChart";
 import { K8S_KUBENCH_RESULT_CONFIGS } from "@/business/components/common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {kubenchChartUrl, resultKubenchItemListBySearchUrl} from "@/api/k8s/k8s/k8s";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -181,14 +182,14 @@ const columnOptions = [
         this.init();
       },
       search () {
-        let url = "/k8s/resultKubenchItemListBySearch/" + this.currentPage + "/" + this.pageSize;
+        let url = resultKubenchItemListBySearchUrl + this.currentPage + "/" + this.pageSize;
         this.condition.resultId = this.resultId;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;
         });
-        this.result = this.$get("/k8s/kubenchChart/"+ this.resultId, response => {
+        this.result = this.$get(kubenchChartUrl + this.resultId, response => {
           this.content = response.data;
         });
       },

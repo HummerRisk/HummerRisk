@@ -68,7 +68,7 @@ public class LoginController {
     }
 
     @GetMapping("signout")
-    public ResultHolder logout(HttpServletRequest request) {
+    public ResultHolder logout(HttpServletRequest request) throws Exception {
         String token = SecurityUtils.getToken(request);
         if (StringUtils.isNotEmpty(token)) {
             String userId = JwtUtils.getUserId(token);
@@ -76,6 +76,7 @@ public class LoginController {
             AuthUtil.logoutByToken(token);
             // 记录用户退出日志
             sysLoginService.logout(userId);
+            return ResultHolder.success("");
         }
         return ResultHolder.success("");
     }
