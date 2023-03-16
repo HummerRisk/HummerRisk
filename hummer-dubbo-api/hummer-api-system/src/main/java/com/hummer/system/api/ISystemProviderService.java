@@ -12,18 +12,6 @@ public interface ISystemProviderService {
 
     Integer insertScanHistory(Object obj) throws Exception;
 
-    void insertHistoryVulnTaskItem(HistoryVulnTaskItemWithBLOBs historyVulnTaskItem) throws Exception;
-
-    void insertHistoryVulnTaskResource(HistoryVulnTaskResourceWithBLOBs historyVulnTaskItem) throws Exception;
-
-    void updateHistoryVulnTaskItem(HistoryVulnTaskItemWithBLOBs historyVulnTaskItem) throws Exception;
-
-    void insertHistoryVulnTask(HistoryVulnTask historyVulnTask) throws Exception;
-
-    void updateHistoryVulnTask(HistoryVulnTask historyVulnTask) throws Exception;
-
-    void updateHistoryVulnTaskResource(HistoryVulnTaskResourceWithBLOBs historyVulnTaskResource) throws Exception;
-
     String createMessageOrder(AccountWithBLOBs account) throws Exception;
 
     void createMessageOrderItem(String messageOrderId, CloudTask cloudTask) throws Exception;
@@ -46,8 +34,6 @@ public interface ISystemProviderService {
 
     List<Map<String, Object>> historyDiffList(Map<String, Object> params);
 
-    HistoryVulnTask historyVulnTask(String id);
-
     void insertHistoryCloudTaskResource(HistoryCloudTaskResourceWithBLOBs historyCloudTaskResource) throws Exception;
 
     void updateHistoryCloudTaskResource(HistoryCloudTaskResourceWithBLOBs historyCloudTaskResource) throws Exception;
@@ -63,8 +49,6 @@ public interface ISystemProviderService {
     HistoryCloudTask historyCloudTask(String id);
 
     void insertHistoryCloudTaskLog(HistoryCloudTaskLogWithBLOBs historyCloudTaskLog) throws Exception;
-
-    void insertHistoryVulnTaskLog(HistoryVulnTaskLogWithBLOBs historyVulnTaskLog) throws Exception;
 
     void deleteHistoryScanTask(HistoryScanTaskExample historyScanTaskExample);
 

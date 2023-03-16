@@ -152,12 +152,7 @@ public class NoticeService {
         messageOrder.setAccountName(account.getName());
         messageOrder.setCreateTime(System.currentTimeMillis());
         messageOrder.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
-
-        if (PlatformUtils.isSupportVuln(account.getPluginId())) {
-            messageOrder.setScanType(ScanConstants.SCAN_TYPE.VULN.name());
-        } else {
-            messageOrder.setScanType(ScanConstants.SCAN_TYPE.CLOUD.name());
-        }
+        messageOrder.setScanType(ScanConstants.SCAN_TYPE.CLOUD.name());
         messageOrderMapper.insertSelective(messageOrder);
         return uuid;
     }

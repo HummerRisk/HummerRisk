@@ -43,14 +43,6 @@ public class HistoryService {
     @Resource
     private HistoryCloudTaskResourceMapper historyCloudTaskResourceMapper;
     @Resource
-    private HistoryVulnTaskMapper historyVulnTaskMapper;
-    @Resource
-    private HistoryVulnTaskItemMapper historyVulnTaskItemMapper;
-    @Resource
-    private HistoryVulnTaskLogMapper historyVulnTaskLogMapper;
-    @Resource
-    private HistoryVulnTaskResourceMapper historyVulnTaskResourceMapper;
-    @Resource
     private HistoryServerResultMapper historyServerResultMapper;
     @Resource
     private HistoryImageResultMapper historyImageResultMapper;
@@ -324,24 +316,6 @@ public class HistoryService {
             long sum = 5 * high + 3 * mediuml + 2 * low;
             score = 100 - (int) Math.ceil(highResultPercent * (5 * high / (sum == 0 ? 1 : sum) ) * 100 + mediumlResultPercent * (3 * mediuml / (sum == 0 ? 1 : sum) ) * 100 + lowResultPercent * (2 * low / (sum == 0 ? 1 : sum) ) * 100);
 
-        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.vulnAccount.getType())) {
-            CloudTask historyVulnTask = (CloudTask) task;
-            Double highResultPercent = Double.valueOf(extResourceMapper.resultPercentByVuln(accountId, "HighRisk", historyVulnTask ==null?null: historyVulnTask.getId())!=null?extResourceMapper.resultPercentByVuln(accountId, "HighRisk", historyVulnTask ==null?null: historyVulnTask.getId()):"0.0");
-            Double mediumlResultPercent = Double.valueOf(extResourceMapper.resultPercentByVuln(accountId, "MediumRisk", historyVulnTask ==null?null: historyVulnTask.getId())!=null?extResourceMapper.resultPercentByVuln(accountId, "MediumRisk", historyVulnTask ==null?null: historyVulnTask.getId()): "0.0");
-            Double lowResultPercent = Double.valueOf(extResourceMapper.resultPercentByVuln(accountId, "LowRisk", historyVulnTask ==null?null: historyVulnTask.getId())!=null?extResourceMapper.resultPercentByVuln(accountId, "LowRisk", historyVulnTask ==null?null: historyVulnTask.getId()):"0.0");
-
-            HistoryVulnTaskExample example = new HistoryVulnTaskExample();
-            HistoryVulnTaskExample.Criteria criteria = example.createCriteria();
-            criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("HighRisk");
-            long high = historyVulnTaskMapper.countByExample(example);
-            criteria.andSeverityEqualTo("MediumRisk");
-            long mediuml = historyVulnTaskMapper.countByExample(example);
-            criteria.andSeverityEqualTo("LowRisk");
-            long low = historyVulnTaskMapper.countByExample(example);
-
-            long sum = 5 * high + 3 * mediuml + 2 * low;
-            score = 100 - (int) Math.ceil(highResultPercent * (5 * high / (sum == 0 ? 1 : sum) ) * 100 + mediumlResultPercent * (3 * mediuml / (sum == 0 ? 1 : sum) ) * 100 + lowResultPercent * (2 * low / (sum == 0 ? 1 : sum) ) * 100);
-
         } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.serverAccount.getType())) {
             ServerResult serverResult = (ServerResult) task;
             if (StringUtils.equalsIgnoreCase(serverResult.getSeverity(), TaskConstants.Severity.HighRisk.name())) {
@@ -483,63 +457,6 @@ public class HistoryService {
     public void updateHistoryCloudTaskResource(HistoryCloudTaskResourceWithBLOBs historyCloudTaskResource) throws Exception {
         try {
             historyCloudTaskResourceMapper.updateByPrimaryKeySelective(historyCloudTaskResource);
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-    }
-
-    public void insertHistoryVulnTask(HistoryVulnTask historyVulnTask) throws Exception {
-        try {
-            historyVulnTaskMapper.insertSelective(historyVulnTask);
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-    }
-
-    public void updateHistoryVulnTask(HistoryVulnTask historyVulnTask) throws Exception {
-        try {
-            historyVulnTaskMapper.updateByPrimaryKeySelective(historyVulnTask);
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-    }
-
-    public void insertHistoryVulnTaskItem(HistoryVulnTaskItemWithBLOBs historyVulnTaskItem) throws Exception {
-        try {
-            historyVulnTaskItemMapper.insertSelective(historyVulnTaskItem);
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-    }
-
-    public void updateHistoryVulnTaskItem(HistoryVulnTaskItemWithBLOBs historyVulnTaskItemWithBLOBs) throws Exception {
-        try {
-            historyVulnTaskItemMapper.updateByPrimaryKeySelective(historyVulnTaskItemWithBLOBs);
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-    }
-
-    public void insertHistoryVulnTaskLog(HistoryVulnTaskLogWithBLOBs historyVulnTaskLog) throws Exception {
-        try {
-            historyVulnTaskLogMapper.insertSelective(historyVulnTaskLog);
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-    }
-
-    public void insertHistoryVulnTaskResource(HistoryVulnTaskResourceWithBLOBs historyVulnTaskResource) throws Exception {
-        try {
-            historyVulnTaskResource.setId(UUIDUtil.newUUID());
-            historyVulnTaskResourceMapper.insertSelective(historyVulnTaskResource);
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-    }
-
-    public void updateHistoryVulnTaskResource(HistoryVulnTaskResourceWithBLOBs historyVulnTaskResource) throws Exception {
-        try {
-            historyVulnTaskResourceMapper.updateByPrimaryKeySelective(historyVulnTaskResource);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

@@ -86,13 +86,10 @@ public class CloudTaskConstants {
     public final static String CUSTODIAN_RUN_RESULT_FILE = "custodian-run.log";
     public final static String METADATA_RESULT_FILE = "metadata.json";
     public final static String RESOURCES_RESULT_FILE = "resources.json";
-    public final static String NUCLEI_RUN_RESULT_FILE = "result.txt";
     public final static String PROWLER_RUN_RESULT_FILE = "result.txt";
-    public final static String XRAY_RUN_RESULT_FILE = "result.json";
 
     public final static String RESULT_FILE_PATH = "/tmp/{task_id}/policy.yml";
     public final static String RESULT_FILE_PATH_PREFIX = "/tmp/";
     public final static String PROWLER_RESULT_FILE_PATH = "/prowler";//本地启动用 /tmp
     public final static String PROWLER_CONFIG_FILE_PATH = "/root/.aws";//本地启动用 ~/.aws
-    public final static String XRAY_RESULT_FILE_PATH = "/opt/hummerrisk/xray/";//本地启动用 /tmp
 }

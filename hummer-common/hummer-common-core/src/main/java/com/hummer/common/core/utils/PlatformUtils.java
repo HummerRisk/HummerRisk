@@ -63,7 +63,6 @@ import com.hummer.common.core.proxy.k8s.K8sCredential;
 import com.hummer.common.core.proxy.k8s.K8sRequest;
 import com.hummer.common.core.proxy.ksyun.KsyunCredential;
 import com.hummer.common.core.proxy.ksyun.KsyunRequest;
-import com.hummer.common.core.proxy.nuclei.NucleiCredential;
 import com.hummer.common.core.proxy.openshift.OpenShiftRequest;
 import com.hummer.common.core.proxy.openstack.OpenStackCredential;
 import com.hummer.common.core.proxy.openstack.OpenStackRequest;
@@ -76,7 +75,6 @@ import com.hummer.common.core.proxy.vsphere.VsphereBaseRequest;
 import com.hummer.common.core.proxy.vsphere.VsphereClient;
 import com.hummer.common.core.proxy.vsphere.VsphereCredential;
 import com.hummer.common.core.proxy.vsphere.VsphereRegion;
-import com.hummer.common.core.proxy.xray.XrayCredential;
 import com.jdcloud.sdk.service.iam.model.DescribeGroupsRequest;
 import com.jdcloud.sdk.service.iam.model.DescribeGroupsResponse;
 import com.qingcloud.sdk.config.EnvContext;
@@ -130,9 +128,6 @@ public class PlatformUtils {
     public final static String ucloud = "hummer-ucloud-plugin";
     public final static String jdcloud = "hummer-jdcloud-plugin";
     public final static String ksyun = "hummer-ksyun-plugin";
-    //漏洞检测插件
-    public final static String nuclei = "hummer-nuclei-plugin";
-    public final static String xray = "hummer-xray-plugin";
     //主机插件
     public final static String server = "hummer-server-plugin";
     //云原生检测插件
@@ -141,20 +136,18 @@ public class PlatformUtils {
     public final static String rancher = "hummer-rancher-plugin";
     public final static String kubesphere = "hummer-kubesphere-plugin";
     public final static String[] userForbiddenArr = {"The IAM user is forbidden"};
-    // 插件类型: 多云、漏洞、云原生
+    // 插件类型: 混合云、云原生
     public final static String cloud_ = "cloud";
-    public final static String vuln_ = "vuln";
     public final static String native_ = "native";
 
     /**
      * 支持的插件
      * 云平台插件: aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud
-     * 漏洞检测插件: xray, nuclei
      * 云原生检测插件: k8s, openshift, rancher, kubesphere
      */
     public final static List<String> getPlugin() {
         return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud,
-                nuclei, xray, k8s, openshift, rancher, kubesphere,jdcloud,ksyun);
+                k8s, openshift, rancher, kubesphere,jdcloud,ksyun);
     }
 
     /**
@@ -170,24 +163,6 @@ public class PlatformUtils {
     public static boolean isSupportCloudAccount(String source) {
         // 云平台插件
         List<String> tempList = Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, k8s,jdcloud,ksyun);
-
-        // 利用list的包含方法,进行判断
-        return tempList.contains(source);
-    }
-
-    /**
-     * 支持漏洞检测插件
-     */
-    public final static List<String> getVulnPlugin() {
-        return Arrays.asList(nuclei, xray);
-    }
-
-    /**
-     * 是否支持漏洞检测插件
-     */
-    public static boolean isSupportVuln(String source) {
-        // 漏洞检测插件
-        List<String> tempList = Arrays.asList(xray, nuclei);
 
         // 利用list的包含方法,进行判断
         return tempList.contains(source);
@@ -391,41 +366,6 @@ public class PlatformUtils {
                         "KSYUN_SECRETKEY="+ksyunSecretAccessKey+" "+
                         "KSYUN_DEFAULT_REGION="+ region +" ";
                 break;
-            case nuclei:
-                try {
-                    String nucleiCredential = params.get("nucleiCredential");
-                    CommandUtils.saveAsFile(nucleiCredential, dirPath, "urls.txt", false);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (behavior.equals("validate")) {
-                    return proxy + "split nuclei -t " + dirPath + "/" + fileName + " -validate";
-                }
-                return proxy + "split nuclei -l " + dirPath + "/urls.txt -t " + dirPath + "/" + fileName + " -o " + dirPath + "/result.txt";
-            case xray:
-                try {
-                    String xrayCredential = params.get("xrayCredential");
-                    CommandUtils.saveAsFile(xrayCredential, dirPath, "urls.txt", false);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (behavior.equals("validate")) {
-                    return "";
-                }
-                //操作系统（本地开发使用的命令和组件不一样）
-                //linux: xray_linux_amd64
-                //window: xray_darwin_amd64
-                //mac: xray_windows_amd64
-                String osInfo = OSinfoUtil.getOSname().toString();
-                String xray = "xray_linux_amd64";
-                if (StringUtils.equalsIgnoreCase(osInfo, EPlatform.Mac_OS.toString())||StringUtils.equalsIgnoreCase(osInfo, EPlatform.Mac_OS_X.toString())) {
-                    xray = "xray_darwin_amd64";
-                } else if (StringUtils.equalsIgnoreCase(osInfo, EPlatform.Linux.toString())) {
-                    xray = "xray_linux_amd64";
-                } else if (StringUtils.equalsIgnoreCase(osInfo, EPlatform.Windows.toString())) {
-                    xray = "xray_windows_amd64";
-                }
-                return proxy + "./" + xray + " webscan --plugins " + (StringUtils.isNotEmpty(fileName) ? fileName : "xss") + " --url-file " + dirPath + "/urls.txt  --json-output " + dirPath + "/" + CloudTaskConstants.XRAY_RUN_RESULT_FILE;
         }
         switch (behavior) {
             case "run":
@@ -517,18 +457,6 @@ public class PlatformUtils {
                 map.put("type", gcp);
                 GcpCredential gcpCredential = new Gson().fromJson(account.getCredential(), GcpCredential.class);
                 map.put("credential", gcpCredential.getCredentials());
-                map.put("region", region);
-                break;
-            case nuclei:
-                map.put("type", nuclei);
-                NucleiCredential nucleiCredential = new Gson().fromJson(account.getCredential(), NucleiCredential.class);
-                map.put("nucleiCredential", nucleiCredential.getTargetAddress());
-                map.put("region", region);
-                break;
-            case xray:
-                map.put("type", xray);
-                XrayCredential xrayCredential = new Gson().fromJson(account.getCredential(), XrayCredential.class);
-                map.put("xrayCredential", xrayCredential.getTargetAddress());
                 map.put("region", region);
                 break;
             case huoshan:
@@ -827,18 +755,6 @@ public class PlatformUtils {
                         if (!jsonArray.contains(jsonObject)) jsonArray.add(jsonObject);
                     }
                     break;
-                case nuclei:
-                    JSONObject nucleiJsonObject = new JSONObject();
-                    nucleiJsonObject.put("regionId", "ALL");
-                    nucleiJsonObject.put("regionName", "Nuclei 漏洞检测");
-                    if (!jsonArray.contains(nucleiJsonObject)) jsonArray.add(nucleiJsonObject);
-                    break;
-                case xray:
-                    JSONObject xrayJsonObject = new JSONObject();
-                    xrayJsonObject.put("regionId", "ALL");
-                    xrayJsonObject.put("regionName", "Xray 漏洞检测");
-                    if (!jsonArray.contains(xrayJsonObject)) jsonArray.add(xrayJsonObject);
-                    break;
                 case huoshan:
                     try {
                         JSONObject jsonObject = new JSONObject();
@@ -1068,10 +984,6 @@ public class PlatformUtils {
                 } catch (Exception e) {
                     throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
-            case nuclei:
-                return true;
-            case xray:
-                return true;
             case huoshan:
                 IIamService iamService = IamServiceImpl.getInstance();
                 HuoshanCredential huoshanCredential = new Gson().fromJson(account.getCredential(), HuoshanCredential.class);
@@ -1266,12 +1178,6 @@ public class PlatformUtils {
             case gcp:
                 strCn = RegionsConstants.GcpMap.get(strEn);
                 break;
-            case nuclei:
-                strCn = strEn;
-                break;
-            case xray:
-                strCn = strEn;
-                break;
             case huoshan:
                 strCn = strEn;
                 break;
@@ -1415,10 +1321,6 @@ public class PlatformUtils {
             case openstack:
                 break;
             case gcp:
-                break;
-            case nuclei:
-                break;
-            case xray:
                 break;
             case huoshan:
                 break;

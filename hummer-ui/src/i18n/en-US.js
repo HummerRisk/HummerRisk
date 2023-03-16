@@ -363,7 +363,7 @@ export default {
       trigger_action:'Trigger action',
       email_notification:'Email notification',
       end_scan:'Scan end',
-      notes: 'Note: Multi-cloud detection, vulnerability detection, and host detection can only receive security compliance detection notifications for account overall detection! Single rule detections or partial detections do not send notifications. K8s detection, deployment detection, image detection, source code detection, and file detection will send a notification after the detection is completed, and no rules are involved. ',
+      notes: 'Note: Multi-cloud detection, host detection can only receive security compliance detection notifications for account overall detection! Single rule detections or partial detections do not send notifications. K8s detection, deployment detection, image detection, source code detection, and file detection will send a notification after the detection is completed, and no rules are involved. ',
       task_notification: 'Safety detection result notification',
       create_new_notification:'Create a new notification',
       mail_template_example:'Mail template',

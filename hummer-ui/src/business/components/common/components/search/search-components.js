@@ -124,27 +124,6 @@ export const PLUGIN_NAME = {
   }
 }
 
-//漏洞检测插件
-export const VULN_PLUGIN_NAME = {
-  key: "pluginId",
-  name: 'TableSearchSelect',
-  label: 'commons.adv_search.plugin',
-  operator: {
-    options: [OPERATORS.IN, OPERATORS.NOT_IN]
-  },
-  options: { // 异步获取候选项
-    url: "/plugin/vuln",
-    labelKey: "name",
-    valueKey: "id",
-    showLabel: option => {
-      return option.label + " (" + option.value + ") ";
-    }
-  },
-  props: { // 尾部控件的props，一般为element ui控件的props
-    multiple: true
-  }
-}
-
 //K8s检测插件
 export const K8S_PLUGIN_NAME = {
   key: "pluginId",
@@ -822,8 +801,6 @@ export const SCAN_TYPE = {
   options: [
     {label: 'custodian', value: 'custodian'},
     {label: 'native', value: 'native'},
-    {label: 'xray', value: 'xray'},
-    {label: 'nuclei', value: 'nuclei'},
   ],
   props: { // 尾部控件的props，一般为element ui控件的props
     multiple: true
@@ -1125,8 +1102,6 @@ export const ACCOUNT_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACC
 export const CLOUD_TASK_CONFIGS = [NAME, APPLY_USER, CLOUD_QUARTZ_STATUS, CLOUD_QUARTZ_TYPE, PREV_FIRE_TIME, LAST_FIRE_TIME, CREATE_TIME];
 export const OSS_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, RESULT_STATUS, CREATOR];
 export const OSS_BUCKET_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME];
-export const VULN_CONFIGS = [NAME, VULN_PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
-export const VULN_RULE_CONFIGS = [RULE_NAME, VULN_PLUGIN_NAME, RULE_SEVERITY, VULN_RULE_RESOURCE_TYPE, VULN_RULE_GROUP];
 export const RULE_TAG_CONFIGS = [TAG_KEY, TAG_NAME, TAG_FLAG, TAG_INDEX];
 export const RULE_GROUP_CONFIGS = [NAME, DESCRIPTION, TAG_FLAG, RULE_PLUGIN_NAME];
 export const RULE_CONFIGS = [RULE_NAME, RULE_PLUGIN_NAME, RULE_SEVERITY, RULE_RESOURCE_TYPE, RULE_GROUP];

@@ -1,18 +1,13 @@
 package com.hummer.common.core.utils.file;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
+import com.hummer.common.core.utils.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.ArrayUtils;
-import com.hummer.common.core.utils.StringUtils;
+
+import java.io.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 文件处理工具类

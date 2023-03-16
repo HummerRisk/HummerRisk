@@ -54,14 +54,6 @@ public class PluginService {
         return pluginMapper.selectByExample(example);
     }
 
-    public List<Plugin> getVulnPlugin() {
-        PluginExample example = new PluginExample();
-        example.setOrderByClause("order_");
-        PluginExample.Criteria criteria = example.createCriteria();
-        criteria.andTypeEqualTo(PlatformUtils.vuln_);
-        return pluginMapper.selectByExample(example);
-    }
-
     public List<Plugin> getNativePlugin() {
         PluginExample example = new PluginExample();
         example.setOrderByClause("order_");

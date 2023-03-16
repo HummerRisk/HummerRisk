@@ -125,10 +125,6 @@ public class RuleService {
         return extRuleGroupMapper.allCloudRuleGroups(request);
     }
 
-    public List<RuleGroupDTO> allVulnRuleGroups(RuleGroupRequest request) {
-        return extRuleGroupMapper.allVulnRuleGroups(request);
-    }
-
     public Rule saveRules(CreateRuleRequest ruleRequest) {
         try {
             if (StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.custodian.toString())) {
@@ -202,29 +198,6 @@ public class RuleService {
                             ruleTypeMapper.insertSelective(ruleType);
                         }
                     }
-                }
-            } else if (StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.nuclei.name())) {
-                String resourceType = "nuclei";
-                example.createCriteria().andRuleIdEqualTo(ruleRequest.getId()).andResourceTypeEqualTo(resourceType);
-                List<RuleType> ruleTypes = ruleTypeMapper.selectByExample(example);
-                if (ruleTypes.isEmpty()) {
-                    ruleType.setId(UUIDUtil.newUUID());
-                    ruleType.setResourceType(resourceType);
-                    ruleTypeMapper.insertSelective(ruleType);
-                }
-            } else if (StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.xray.name())) {
-                String groupName = "xss";
-                JSONArray jsonArray = JSON.parseArray(ruleRequest.getParameter());
-                for (Object o : jsonArray) {
-                    JSONObject jsonObject = (JSONObject) o;
-                    groupName = jsonObject.getString("defaultValue");
-                }
-                example.createCriteria().andRuleIdEqualTo(ruleRequest.getId()).andResourceTypeEqualTo(groupName);
-                List<RuleType> ruleTypes = ruleTypeMapper.selectByExample(example);
-                if (ruleTypes.isEmpty()) {
-                    ruleType.setId(UUIDUtil.newUUID());
-                    ruleType.setResourceType(groupName);
-                    ruleTypeMapper.insertSelective(ruleType);
                 }
             } else if (StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.prowler.name())) {
                 String resourceType = "prowler";
@@ -533,10 +506,6 @@ public class RuleService {
         return extRuleTypeMapper.cloudResourceTypes();
     }
 
-    public List<Map<String, String>> vulnResourceTypes() {
-        return extRuleTypeMapper.vulnResourceTypes();
-    }
-
     public List<RuleGroup> getRuleGroups(String pluginId) {
         RuleGroupExample example = new RuleGroupExample();
         example.createCriteria().andPluginIdEqualTo(pluginId);
@@ -649,8 +618,6 @@ public class RuleService {
                 if(scanId!=null) {
                     if (PlatformUtils.isSupportCloudAccount(cloudTask.getPluginId())) {
                         systemProviderService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.cloudAccount.getType());
-                    } else {
-                        systemProviderService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.vulnAccount.getType());
                     }
                 }
                 return cloudTask.getId();

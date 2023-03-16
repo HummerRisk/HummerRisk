@@ -10,8 +10,6 @@ public class TopInfoDTO {
 
     private String cloudAccounts;
 
-    private String vulnAccounts;
-
     private String serverAccounts;
 
     private String imageAccounts;
@@ -28,8 +26,6 @@ public class TopInfoDTO {
 
     private String cloudRules;
 
-    private String vulnRules;
-
     private String serverRules;
 
     private String k8sRules;
@@ -45,8 +41,6 @@ public class TopInfoDTO {
     private String results;
 
     private String cloudResults;
-
-    private String vulnResults;
 
     private String serverResults;
 
@@ -92,14 +86,6 @@ public class TopInfoDTO {
         this.cloudAccounts = cloudAccounts;
     }
 
-    public String getVulnAccounts() {
-        return vulnAccounts;
-    }
-
-    public void setVulnAccounts(String vulnAccounts) {
-        this.vulnAccounts = vulnAccounts;
-    }
-
     public String getServerAccounts() {
         return serverAccounts;
     }
@@ -132,14 +118,6 @@ public class TopInfoDTO {
         this.cloudRules = cloudRules;
     }
 
-    public String getVulnRules() {
-        return vulnRules;
-    }
-
-    public void setVulnRules(String vulnRules) {
-        this.vulnRules = vulnRules;
-    }
-
     public String getServerRules() {
         return serverRules;
     }
@@ -170,14 +148,6 @@ public class TopInfoDTO {
 
     public void setCloudResults(String cloudResults) {
         this.cloudResults = cloudResults;
-    }
-
-    public String getVulnResults() {
-        return vulnResults;
-    }
-
-    public void setVulnResults(String vulnResults) {
-        this.vulnResults = vulnResults;
     }
 
     public String getServerResults() {

@@ -494,7 +494,7 @@ export default {
       proxys: [],
       tmpList: [],
       item: {},
-      iamStrategyNotSupport: ['hummer-openstack-plugin', 'hummer-vsphere-plugin', 'hummer-nuclei-plugin', 'hummer-server-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin'],
+      iamStrategyNotSupport: ['hummer-openstack-plugin', 'hummer-vsphere-plugin', 'hummer-server-plugin'],
       proxyForm: {},
       proxyType: [
         {id: 'Http', value: "Http"},

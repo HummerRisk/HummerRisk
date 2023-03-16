@@ -19,16 +19,6 @@
         GROUP BY t.resource_type
     </select>
 
-    <select id="vulnResourceTypes" resultType="map">
-        SELECT
-            DISTINCT(t.resource_type) as name
-        FROM rule_type t
-        LEFT JOIN rule t1 on t.rule_id = t1.id
-        LEFT JOIN plugin p on t1.plugin_id = p.id
-        WHERE p.type = 'vuln'
-        GROUP BY t.resource_type
-    </select>
-
     <select id="getResourceTypesById" resultType="java.lang.String">
         SELECT DISTINCT(resource_type)
         FROM rule_type

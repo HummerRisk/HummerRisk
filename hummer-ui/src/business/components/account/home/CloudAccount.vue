@@ -485,7 +485,7 @@ const columnOptions = [
         accountWithGroup: {pluginIcon: 'aliyun.png'},
         checkedGroups: [],
         groups: [],
-        iamStrategyNotSupport: ['hummer-openstack-plugin', 'hummer-vsphere-plugin', 'hummer-nuclei-plugin', 'hummer-server-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin'],
+        iamStrategyNotSupport: ['hummer-openstack-plugin', 'hummer-vsphere-plugin', 'hummer-server-plugin'],
         checkedColumnNames: columnOptions.map((ele) => ele.props),
         columnNames: columnOptions,
         //名称搜索

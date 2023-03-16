@@ -100,10 +100,6 @@ public class ResourceService {
         return extResourceMapper.source(accountId);
     }
 
-    public SourceDTO vulnSource (String accountId) {
-        return extResourceMapper.vulnSource(accountId);
-    }
-
     public List<ResourceDTO> search(ResourceRequest request) {
         List<ResourceDTO> resourceDTOListTmp = new ArrayList<>();
         try {
@@ -380,15 +376,6 @@ public class ResourceService {
                 case "custodian":
                     createCustodianResource(finalScript, resourceWithBLOBs, map, taskItem, cloudTaskItemResource, operation);
                     break;
-                case "nuclei":
-                    createNucleiResource(resourceWithBLOBs, taskItem, operation);
-                    break;
-                case "xray":
-                    createXrayResource(resourceWithBLOBs, taskItem, operation);
-                    break;
-                case "tsunami":
-                    createTsunamiResource(resourceWithBLOBs, taskItem, operation);
-                    break;
                 case "prowler":
                     createProwlerResource(resourceWithBLOBs, taskItem, cloudTask, operation);
                     break;
@@ -423,91 +410,6 @@ public class ResourceService {
             JSONArray jsonArray = parseArray(resourceWithBLOBs.getResources());
             resourceWithBLOBs.setReturnSum((long) jsonArray.size());
             resourceWithBLOBs = calculateTotal(resourceWithBLOBs);
-
-            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
-                    + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
-                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(),
-                    true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
-        } catch (Exception e) {
-            HRException.throwException(e.getMessage());
-        }
-    }
-
-    private void createNucleiResource (ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemWithBLOBs taskItem, String operation) {
-        try {
-            String dirPath = CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskItem.getTaskId() + "/" + taskItem.getRegionId();
-            AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
-            Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
-            String command = PlatformUtils.fixedCommand(CommandEnum.nuclei.getCommand(), CommandEnum.run.getCommand(), dirPath, "nuclei.yaml", map);
-            if(taskItem.getDetails().contains("workflows:")) {
-                command = command.replace("-t", "-w");
-            }
-            LogUtil.info(taskItem.getTaskId() + " {}[command]: " + command);
-            CommandUtils.saveAsFile(taskItem.getDetails(), dirPath, "nuclei.yaml", false);//重启服务后容器内文件在/tmp目录下会丢失
-            String resultStr = CommandUtils.commonExecCmdWithResultByNuclei(command, dirPath);
-
-            String nucleiRun = resultStr;
-            String metadata = resultStr;
-            String resources = ReadFileUtils.readToBuffer(dirPath + "/" + CloudTaskConstants.NUCLEI_RUN_RESULT_FILE);
-
-            resourceWithBLOBs.setCustodianRunLog(nucleiRun);
-            resourceWithBLOBs.setMetadata(metadata);
-            resourceWithBLOBs.setResources(resources);
-
-            resourceWithBLOBs.setResourcesSum((long) 1);
-            if (StringUtils.isNotEmpty(resourceWithBLOBs.getResources())) {
-                resourceWithBLOBs.setReturnSum((long) 1);
-            } else {
-                resourceWithBLOBs.setReturnSum((long) 0);
-            }
-
-            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
-                    + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
-                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(),
-                    true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
-        } catch (Exception e) {
-            HRException.throwException(e.getMessage());
-        }
-    }
-
-    private void createXrayResource (ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemWithBLOBs taskItem, String operation) {
-        try {
-            CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskItem.getTaskId());
-            String fileName = cloudTask.getResourceTypes() == null ? "" : cloudTask.getResourceTypes().replace("[", "").replace("]", "");
-            String dirPath = CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskItem.getTaskId() + "/" + taskItem.getRegionId();
-            AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
-            Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
-            String command = PlatformUtils.fixedCommand(CommandEnum.xray.getCommand(), CommandEnum.run.getCommand(), dirPath, fileName, map);
-
-            LogUtil.info(taskItem.getTaskId() + " {}[command]: " + command);
-            String resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
-
-            String xrayRun = command;
-            String metadata = resultStr;
-            String resources = ReadFileUtils.readToBufferByXray(dirPath + "/" + CloudTaskConstants.XRAY_RUN_RESULT_FILE, resultStr);
-
-            resourceWithBLOBs.setCustodianRunLog(xrayRun);
-            resourceWithBLOBs.setMetadata(metadata);
-            resourceWithBLOBs.setResources(resources);
-
-            resourceWithBLOBs.setResourcesSum((long) 1);
-            if (StringUtils.isNotEmpty(resourceWithBLOBs.getResources())) {
-                resourceWithBLOBs.setReturnSum((long) 1);
-            } else {
-                resourceWithBLOBs.setReturnSum((long) 0);
-            }
-
-            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
-                    + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
-                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(),
-                    true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
-        } catch (Exception e) {
-            HRException.throwException(e.getMessage());
-        }
-    }
-
-    private void createTsunamiResource (ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemWithBLOBs taskItem, String operation) {
-        try {
 
             orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
                     + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "

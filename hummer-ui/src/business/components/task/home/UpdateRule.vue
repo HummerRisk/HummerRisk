@@ -11,11 +11,6 @@
                   <img :src="require(`@/assets/img/platform/${account.icon?account.icon:account.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                   <span> {{ account.name }} <i class="el-icon-time"></i> {{ account.createTime | timestampFormatDate }}</span>
                 </span>
-                <span v-if="account.type==='vulnAccount'">
-                  <span style="color: red;">{{ $t('task.task_vuln') }} : </span>
-                  <img :src="require(`@/assets/img/platform/${account.icon?account.icon:account.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                  <span>{{ account.name }} <i class="el-icon-time"></i> {{ account.createTime | timestampFormatDate }}</span>
-                </span>
                 <span v-if="account.type==='serverAccount'">
                   <span style="color: red;">{{ $t('task.task_server') }} : </span>
                   <img :src="require(`@/assets/img/platform/server.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -336,8 +331,6 @@ import SeverityType from "@/business/components/common/components/SeverityType";
             if (response.success) {
               let data = response.data;
               if (item.accountType === 'cloudAccount') {
-                this.detailForm = data.ruleDTO;
-              } else if(item.accountType === 'vulnAccount') {
                 this.detailForm = data.ruleDTO;
               } else if(item.accountType === 'serverAccount') {
                 this.detailForm = data.serverRuleDTO;

@@ -185,39 +185,6 @@
         ORDER BY t.plugin_id, t.last_modified desc
     </select>
 
-    <select id="vulnList" parameterType="com.hummer.common.core.domain.request.rule.CreateRuleRequest"
-            resultMap="BaseResultMap2">
-        SELECT
-        t.*,
-        (select tag_key from rule_tag_mapping where rule_id = t.id limit 1) as tagKey
-        FROM rule t
-        LEFT JOIN plugin p on t.plugin_id = p.id
-        <where>
-            <if test="id != null">
-                AND t.id = #{id}
-            </if>
-            <if test="combine != null">
-                <include refid="combine">
-                    <property name="condition" value="combine"/>
-                </include>
-            </if>
-            <if test="name != null">
-                AND LOWER(t.name) like CONCAT('%',LOWER(#{name}),'%')
-            </if>
-            <if test="pluginId != null">
-                AND t.plugin_id = #{pluginId}
-            </if>
-            <if test="pluginName != null">
-                AND LOWER(t.plugin_name) like CONCAT('%',LOWER(#{pluginName}),'%')
-            </if>
-            <if test="description != null">
-                AND LOWER(t.description) like CONCAT('%',LOWER(#{description}),'%')
-            </if>
-            AND p.type = 'vuln'
-        </where>
-        ORDER BY t.last_modified desc
-    </select>
-
     <select id="getTags" resultType="java.lang.String" parameterType="java.lang.String">
         SELECT t.tag_key as tagKey
         FROM rule_tag t

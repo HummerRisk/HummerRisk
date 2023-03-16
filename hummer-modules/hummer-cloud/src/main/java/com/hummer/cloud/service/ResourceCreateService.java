@@ -58,11 +58,7 @@ public class ResourceCreateService {
     @Resource
     private ProxyMapper proxyMapper;
     @Resource
-    private NucleiService nucleiService;
-    @Resource
     private ProwlerService prowlerService;
-    @Resource
-    private XrayService xrayService;
     @Resource
     private CloudResourceSyncMapper cloudResourceSyncMapper;
     @Resource
@@ -72,10 +68,10 @@ public class ResourceCreateService {
     @DubboReference
     private ISystemProviderService systemProviderService;
 
-    //云资源检测、漏洞检测
+    //云资源检测
     @XxlJob("cloudTasksJobHandler")
     public void cloudTasksJobHandler() throws Exception {
-        //云资源检测、漏洞检测
+        //云资源检测
         final CloudTaskExample cloudTaskExample = new CloudTaskExample();
         CloudTaskExample.Criteria criteria = cloudTaskExample.createCriteria();
         criteria.andStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
@@ -232,10 +228,6 @@ public class ResourceCreateService {
             HistoryCloudTask historyCloudTask = BeanUtils.copyBean(new HistoryCloudTask(), cloudTask);
             historyCloudTask.setStatus(taskStatus);
             systemProviderService.updateHistoryCloudTask(historyCloudTask);
-            HistoryVulnTask historyVulnTask = BeanUtils.copyBean(new HistoryVulnTask(), cloudTask);
-            historyVulnTask.setStatus(taskStatus);
-            systemProviderService.updateHistoryVulnTask(historyVulnTask);
-            //更新历史数据状态
 
         } catch (Exception e) {
             orderService.updateTaskStatus(taskId, null, CloudTaskConstants.TASK_STATUS.ERROR.name());
@@ -244,10 +236,6 @@ public class ResourceCreateService {
             HistoryCloudTask historyCloudTask = BeanUtils.copyBean(new HistoryCloudTask(), cloudTask);
             historyCloudTask.setStatus(CloudTaskConstants.TASK_STATUS.ERROR.name());
             systemProviderService.updateHistoryCloudTask(historyCloudTask);
-            HistoryVulnTask historyVulnTask = BeanUtils.copyBean(new HistoryVulnTask(), cloudTask);
-            historyVulnTask.setStatus(CloudTaskConstants.TASK_STATUS.ERROR.name());
-            systemProviderService.updateHistoryVulnTask(historyVulnTask);
-            //更新历史数据状态
 
             LogUtil.error("handleTask, taskId: " + taskId, e);
         }
@@ -265,10 +253,6 @@ public class ResourceCreateService {
             HistoryCloudTaskItemWithBLOBs historyCloudTaskItemWithBLOBs = BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItem);
             historyCloudTaskItemWithBLOBs.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());
             systemProviderService.updateHistoryCloudTaskItem(historyCloudTaskItemWithBLOBs);
-            HistoryVulnTaskItemWithBLOBs historyVulnTaskItemWithBLOBs = BeanUtils.copyBean(new HistoryVulnTaskItemWithBLOBs(), taskItem);
-            historyVulnTaskItemWithBLOBs.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());
-            systemProviderService.updateHistoryVulnTaskItem(historyVulnTaskItemWithBLOBs);
-            //更新历史数据状态
 
             return true;
         } catch (Exception e) {
@@ -278,10 +262,6 @@ public class ResourceCreateService {
             HistoryCloudTaskItemWithBLOBs historyCloudTaskItemWithBLOBs = BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItem);
             historyCloudTaskItemWithBLOBs.setStatus(CloudTaskConstants.TASK_STATUS.ERROR.name());
             systemProviderService.updateHistoryCloudTaskItem(historyCloudTaskItemWithBLOBs);
-            HistoryVulnTaskItemWithBLOBs historyVulnTaskItemWithBLOBs = BeanUtils.copyBean(new HistoryVulnTaskItemWithBLOBs(), taskItem);
-            historyVulnTaskItemWithBLOBs.setStatus(CloudTaskConstants.TASK_STATUS.ERROR.name());
-            systemProviderService.updateHistoryVulnTaskItem(historyVulnTaskItemWithBLOBs);
-            //更新历史数据状态
 
             LogUtil.error("handleTaskItem, taskItemId: " + taskItem.getId(), e);
             return false;
@@ -293,14 +273,6 @@ public class ResourceCreateService {
             case "custodian":
                 createCustodianResource(taskItem, cloudTask);//云账号检测
                 break;
-            case "nuclei":
-                nucleiService.createNucleiResource(taskItem, cloudTask);//漏洞检测
-                break;
-            case "xray":
-                xrayService.createXrayResource(taskItem, cloudTask);//漏洞检测
-                break;
-            case "tsunami":
-                break;//漏洞检测
             case "prowler":
                 prowlerService.createProwlerResource(taskItem, cloudTask);//云账号检测
                 break;

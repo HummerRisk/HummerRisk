@@ -48,8 +48,6 @@ public class ResourceCreateService {
     @Resource
     private HistoryCloudTaskMapper historyCloudTaskMapper;
     @Resource
-    private HistoryVulnTaskMapper historyVulnTaskMapper;
-    @Resource
     private HistoryServerResultMapper historyServerResultMapper;
     @Resource
     private HistoryImageResultMapper historyImageResultMapper;
@@ -273,11 +271,6 @@ public class ResourceCreateService {
                         HistoryCloudTaskExample example = new HistoryCloudTaskExample();
                         example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andStatusIn(status);
                         n = historyCloudTaskMapper.countByExample(example);
-                        i = i + n;
-                    } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.vulnAccount.getType())) {
-                        HistoryVulnTaskExample example = new HistoryVulnTaskExample();
-                        example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andStatusIn(status);
-                        n = historyVulnTaskMapper.countByExample(example);
                         i = i + n;
                     } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.serverAccount.getType())) {
                         HistoryServerResultExample example = new HistoryServerResultExample();

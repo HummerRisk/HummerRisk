@@ -13,10 +13,6 @@ public class TaskReportDTO extends Task {
 
     private List<HistoryResourceReportDTO> historyCloudResourceReportDTOList;//云账号检测结果details
 
-    private List<HistoryVulnTaskDTO> historyVulnTaskDTOList;//漏洞检测结果details
-
-    private List<HistoryResourceReportDTO> historyVulnResourceReportDTOList;//漏洞检测结果details
-
     private List<HistoryServerResult> historyServerResultList;//主机检测结果details
 
     private List<HistoryImageReportDTO> historyImageReportDTOList;//镜像检测结果details
@@ -37,28 +33,12 @@ public class TaskReportDTO extends Task {
         this.historyCloudTaskDTOList = historyCloudTaskDTOList;
     }
 
-    public List<HistoryVulnTaskDTO> getHistoryVulnTaskDTOList() {
-        return historyVulnTaskDTOList;
-    }
-
-    public void setHistoryVulnTaskDTOList(List<HistoryVulnTaskDTO> historyVulnTaskDTOList) {
-        this.historyVulnTaskDTOList = historyVulnTaskDTOList;
-    }
-
     public List<HistoryResourceReportDTO> getHistoryCloudResourceReportDTOList() {
         return historyCloudResourceReportDTOList;
     }
 
     public void setHistoryCloudResourceReportDTOList(List<HistoryResourceReportDTO> historyCloudResourceReportDTOList) {
         this.historyCloudResourceReportDTOList = historyCloudResourceReportDTOList;
-    }
-
-    public List<HistoryResourceReportDTO> getHistoryVulnResourceReportDTOList() {
-        return historyVulnResourceReportDTOList;
-    }
-
-    public void setHistoryVulnResourceReportDTOList(List<HistoryResourceReportDTO> historyVulnResourceReportDTOList) {
-        this.historyVulnResourceReportDTOList = historyVulnResourceReportDTOList;
     }
 
     public List<HistoryServerResult> getHistoryServerResultList() {

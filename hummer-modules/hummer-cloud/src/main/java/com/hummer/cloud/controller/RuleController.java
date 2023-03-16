@@ -77,13 +77,6 @@ public class RuleController {
     }
 
     @I18n
-    @ApiOperation(value = "所有漏洞检测规则组")
-    @GetMapping(value = "allVulnRuleGroups")
-    public List<RuleGroupDTO> allVulnRuleGroups() {
-        return ruleService.allVulnRuleGroups(new RuleGroupRequest());
-    }
-
-    @I18n
     @ApiOperation(value = "规则标签")
     @GetMapping(value = "ruleTags")
     public List<RuleTagDTO> getRuleTags() throws Exception {
@@ -161,12 +154,6 @@ public class RuleController {
     @GetMapping(value = "all/cloudResourceTypes")
     public List<Map<String, String>> cloudResourceTypes() {
         return ruleService.cloudResourceTypes();
-    }
-
-    @ApiOperation(value = "漏洞检测规则类型")
-    @GetMapping(value = "all/vulnResourceTypes")
-    public List<Map<String, String>> vulnResourceTypes() {
-        return ruleService.vulnResourceTypes();
     }
 
     @I18n

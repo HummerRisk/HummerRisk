@@ -15,6 +15,3 @@ UPDATE plugin SET order_ = 11 WHERE id = 'hummer-qingcloud-plugin';
 UPDATE plugin SET order_ = 12 WHERE id = 'hummer-ucloud-plugin';
 UPDATE plugin SET order_ = 13 WHERE id = 'hummer-qiniu-plugin';
 UPDATE plugin SET order_ = 14 WHERE id = 'hummer-k8s-plugin';
-UPDATE plugin SET order_ = 15 WHERE id = 'hummer-xray-plugin';
-UPDATE plugin SET order_ = 16 WHERE id = 'hummer-nuclei-plugin';
-UPDATE plugin SET order_ = 17 WHERE id = 'hummer-tsunami-plugin';

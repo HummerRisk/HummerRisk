@@ -308,8 +308,6 @@ public class OrderService {
 
         if (StringUtils.equalsIgnoreCase(historyType, CloudTaskConstants.HISTORY_TYPE.Cloud.name())) {
             systemProviderService.insertHistoryCloudTaskLog(BeanUtils.copyBean(new HistoryCloudTaskLogWithBLOBs(), cloudTaskItemLog));
-        } else if (StringUtils.equalsIgnoreCase(historyType, CloudTaskConstants.HISTORY_TYPE.Vuln.name())) {
-            systemProviderService.insertHistoryVulnTaskLog(BeanUtils.copyBean(new HistoryVulnTaskLogWithBLOBs(), cloudTaskItemLog));
         }
 
     }

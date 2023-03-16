@@ -14,8 +14,6 @@ public interface ExtAccountMapper {
 
     List<AccountDTO> getCloudAccountList(@Param("request") CloudAccountRequest request);
 
-    List<AccountDTO> getVulnList(@Param("request") CloudAccountRequest request);
-
     List<RuleDTO> ruleList(QuartzTaskDTO dto);
 
     List<Map<String, Object>> groupList(Map<String, Object> params);

@@ -1,8 +1,5 @@
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/nuclei:v0.9 as nuclei-env
 
 FROM registry.cn-beijing.aliyuncs.com/hummerrisk/prowler:v0.9 as prowler-env
-
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/xray:v0.9 as xray-env
 
 FROM registry.cn-beijing.aliyuncs.com/hummerrisk/cloud-custodian:v0.9.1 as custodian-env
 # 基础镜像
@@ -15,11 +12,7 @@ ARG HMR_VERSION=dev
 
 WORKDIR /usr
 
-COPY --from=nuclei-env /usr/local/bin/nuclei /usr/local/bin/nuclei
-
 COPY --from=prowler-env /prowler /prowler
-
-COPY --from=xray-env /opt/hummerrisk/xray/ /opt/hummerrisk/xray/
 
 # custodian
 COPY --from=custodian-env /src /src

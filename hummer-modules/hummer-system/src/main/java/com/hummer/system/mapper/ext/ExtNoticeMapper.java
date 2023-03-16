@@ -37,8 +37,6 @@ public interface ExtNoticeMapper {
 
     MetricChartDTO metricChartCloud(@Param("request") MessageOrder request);
 
-    MetricChartDTO metricChartVuln(@Param("request") MessageOrder request);
-
     MetricChartDTO metricChartServer(@Param("request") MessageOrder request);
 
     MetricChartDTO metricChartK8s(@Param("request") MessageOrder request);

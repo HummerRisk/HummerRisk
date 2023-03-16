@@ -188,11 +188,7 @@ public class DashboardService {
         cloudTaskExample.createCriteria().andStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
         List<CloudTask> cloudTasks = cloudProviderService.selectCloudTaskList(cloudTaskExample);
         for (CloudTask cloudTask : cloudTasks) {
-            if (PlatformUtils.isSupportVuln(cloudTask.getPluginId())) {
-                sum = sum + historyService.calculateScore(cloudTask.getId(), cloudTask, TaskEnum.vulnAccount.getType());
-            } else {
-                sum = sum + historyService.calculateScore(cloudTask.getId(), cloudTask, TaskEnum.cloudAccount.getType());
-            }
+            sum = sum + historyService.calculateScore(cloudTask.getId(), cloudTask, TaskEnum.cloudAccount.getType());
         }
 
         CloudNativeResultExample cloudNativeResultExample = new CloudNativeResultExample();

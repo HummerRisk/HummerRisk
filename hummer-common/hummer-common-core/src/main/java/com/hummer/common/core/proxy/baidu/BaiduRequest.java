@@ -23,9 +23,9 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.hummer.common.core.domain.OssRegion;
 import com.hummer.common.core.exception.PluginException;
+import com.hummer.common.core.proxy.Request;
 import com.hummer.common.core.utils.LogUtil;
 import com.hummer.common.core.utils.ReadFileUtils;
-import com.hummer.common.core.proxy.Request;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;

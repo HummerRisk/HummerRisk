@@ -157,11 +157,4 @@ public class CloudTaskController {
         return cloudTaskService.showAccount(taskId);
     }
 
-    @I18n
-    @PostMapping("vuln/list/{goPage}/{pageSize}")
-    public Pager<List<CloudTask>> getVulnTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> param) {
-        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        param.put("type", "manual");
-        return PageUtils.setPageInfo(page, cloudTaskService.getVulnTasks(param));
-    }
 }

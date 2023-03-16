@@ -9,8 +9,6 @@ public class AccountTreeDTO {
 
     private List<AccountVo> cloudAccount;
 
-    private List<AccountVo> vulnAccount;
-
     private List<ServerVo> serverAccount;
 
     private List<ImageVo> imageAccount;
@@ -29,14 +27,6 @@ public class AccountTreeDTO {
 
     public void setCloudAccount(List<AccountVo> cloudAccount) {
         this.cloudAccount = cloudAccount;
-    }
-
-    public List<AccountVo> getVulnAccount() {
-        return vulnAccount;
-    }
-
-    public void setVulnAccount(List<AccountVo> vulnAccount) {
-        this.vulnAccount = vulnAccount;
     }
 
     public List<ServerVo> getServerAccount() {

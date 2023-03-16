@@ -363,7 +363,7 @@ export default {
       trigger_action: '觸發操作',
       email_notification: '郵件通知',
       end_scan: '檢測結束',
-      notes: '注：多雲檢測、漏洞檢測、主機檢測只有賬號整體檢測可以收到安全合規檢測通知！單個規則檢測或部分檢測不發送通知。 K8s 檢測、部署檢測、鏡像檢測、源碼檢測、文件檢測執行檢測完畢即可發送通知，不涉及規則。 ',
+      notes: '注：多雲檢測、主機檢測只有賬號整體檢測可以收到安全合規檢測通知！單個規則檢測或部分檢測不發送通知。 K8s 檢測、部署檢測、鏡像檢測、源碼檢測、文件檢測執行檢測完畢即可發送通知，不涉及規則。 ',
       task_notification: '安全檢測結果通知',
       create_new_notification: '創建新通知',
       mail_template_example: '郵件模版',

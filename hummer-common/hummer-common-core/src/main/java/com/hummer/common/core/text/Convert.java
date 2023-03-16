@@ -1,13 +1,13 @@
 package com.hummer.common.core.text;
 
+import com.hummer.common.core.utils.StringUtils;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.text.NumberFormat;
 import java.util.Set;
-
-import com.hummer.common.core.utils.StringUtils;
 
 /**
  * 类型转换器

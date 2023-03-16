@@ -1,7 +1,7 @@
 package com.hummer.common.core.user;
 
-import org.springframework.beans.BeanUtils;
 import com.hummer.common.core.dto.UserDTO;
+import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 

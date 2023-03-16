@@ -378,8 +378,6 @@ import RuleType from "@/business/components/task/home/RuleType";
               let data = response.data;
               if (item.accountType === 'cloudAccount') {
                 this.detailForm = data.ruleDTO;
-              } else if(item.accountType === 'vulnAccount') {
-                this.detailForm = data.ruleDTO;
               } else if(item.accountType === 'serverAccount') {
                 this.detailForm = data.serverRuleDTO;
               } else if(item.accountType === 'imageAccount') {

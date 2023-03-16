@@ -168,8 +168,6 @@ ALTER TABLE `task_item_resource_log` MODIFY column `operation` mediumtext DEFAUL
 
 ALTER TABLE `history_cloud_task_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
 
-ALTER TABLE `history_vuln_task_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
-
 ALTER TABLE `cloud_native_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
 
 ALTER TABLE `cloud_native_config_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';

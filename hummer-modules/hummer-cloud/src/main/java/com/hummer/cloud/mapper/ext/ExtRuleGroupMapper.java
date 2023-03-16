@@ -13,8 +13,6 @@ public interface ExtRuleGroupMapper {
 
     List<RuleGroupDTO> allCloudRuleGroups(@Param("request") RuleGroupRequest request);
 
-    List<RuleGroupDTO> allVulnRuleGroups(@Param("request") RuleGroupRequest request);
-
     List<RuleDTO> getRules(@Param("accountId") String accountId, @Param("groupId") String groupId);
 
     List<String> getRuleGroup(@Param("accountId") String accountId);

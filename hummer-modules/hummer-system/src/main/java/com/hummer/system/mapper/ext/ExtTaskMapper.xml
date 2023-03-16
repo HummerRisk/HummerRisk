@@ -115,18 +115,6 @@
         </if>
     </select>
 
-    <select id="selectVulnByExample" parameterType="com.hummer.common.core.domain.AccountExample" resultMap="AccountBaseResultMap">
-        select t.*, (f.id is null) as favour, 'vulnAccount' as type
-        from cloud_account t
-        left join favorite f on t.id = f.source_id
-        <if test="_parameter != null">
-            <include refid="Example_Where_Clause" />
-        </if>
-        <if test="orderByClause != null">
-            order by ${orderByClause}
-        </if>
-    </select>
-
     <resultMap id="ServerBaseResultMap" type="com.hummer.common.core.domain.request.task.ServerVo">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
@@ -322,32 +310,6 @@
         order by t.last_modified desc
     </select>
 
-    <select id="vulnRuleList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
-        select
-        t.id as sourceId,
-        'rule' as ruleType,
-        t.name as ruleName,
-        t.description as ruleDesc,
-        t.plugin_icon as icon,
-        t.severity,
-        t1.id as accountId,
-        t1.name as accountName,
-        'vulnAccount' as accountType
-        from rule t
-        left join cloud_account t1 on t.plugin_id = t1.plugin_id
-        LEFT JOIN plugin p on t.plugin_id = p.id
-        <where>
-            <if test="accountId != null">
-                AND t1.id = #{accountId}
-            </if>
-            <if test="ruleName != null">
-                AND t.name like CONCAT('%', #{ruleName},'%')
-            </if>
-            and p.type = 'vuln'
-        </where>
-        order by t.last_modified desc
-    </select>
-
     <select id="serverRuleList" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultType="com.hummer.common.core.domain.request.task.RuleVo">
         select
         t.id as sourceId,
@@ -479,9 +441,6 @@
             <if test="accountType != null and accountType == 'cloudAccount'">
                 select id from cloud_account where id = #{accountId}
             </if>
-            <if test="accountType != null and accountType == 'vulnAccount'">
-                select id from cloud_account where id = #{accountId}
-            </if>
             <if test="accountType != null and accountType == 'serverAccount'">
                 select id from server where id = #{accountId}
             </if>
@@ -505,9 +464,6 @@
         <if test="accountType != null">
             (
             <if test="accountType != null and accountType == 'cloudAccount'">
-                select name from cloud_account where id = #{accountId}
-            </if>
-            <if test="accountType != null and accountType == 'vulnAccount'">
                 select name from cloud_account where id = #{accountId}
             </if>
             <if test="accountType != null and accountType == 'serverAccount'">
@@ -534,9 +490,6 @@
             (
             <if test="accountType != null and accountType == 'cloudAccount'">
                 'cloudAccount'
-            </if>
-            <if test="accountType != null and accountType == 'vulnAccount'">
-                'vulnAccount'
             </if>
             <if test="accountType != null and accountType == 'serverAccount'">
                 'serverAccount'
@@ -579,9 +532,6 @@
             <if test="accountType != null and accountType == 'cloudAccount'">
                 select id from cloud_account where id = #{accountId}
             </if>
-            <if test="accountType != null and accountType == 'vulnAccount'">
-                select id from cloud_account where id = #{accountId}
-            </if>
             <if test="accountType != null and accountType == 'serverAccount'">
                 select id from server where id = #{accountId}
             </if>
@@ -605,9 +555,6 @@
         <if test="accountType != null">
             (
             <if test="accountType != null and accountType == 'cloudAccount'">
-                select name from cloud_account where id = #{accountId}
-            </if>
-            <if test="accountType != null and accountType == 'vulnAccount'">
                 select name from cloud_account where id = #{accountId}
             </if>
             <if test="accountType != null and accountType == 'serverAccount'">
@@ -634,9 +581,6 @@
             (
             <if test="accountType != null and accountType == 'cloudAccount'">
                 'cloudAccount'
-            </if>
-            <if test="accountType != null and accountType == 'vulnAccount'">
-                'vulnAccount'
             </if>
             <if test="accountType != null and accountType == 'serverAccount'">
                 'serverAccount'
@@ -701,22 +645,6 @@
                 AND t.id = #{sourceId}
             </if>
             and p.type = 'cloud'
-        </where>
-        ORDER BY t.last_modified desc
-    </select>
-
-    <select id="vulnDetailRule" parameterType="com.hummer.common.core.domain.request.task.RuleVo" resultMap="CloudDetailRule">
-        SELECT
-        t.*,
-        (select tag_key from rule_tag_mapping where rule_id = t.id limit 1) as tagKey,
-        (select tag_name from rule_tag_mapping m left join rule_tag g on m.tag_key = g.tag_key where rule_id = t.id limit 1) as tagName
-        FROM rule t
-        LEFT JOIN plugin p on t.plugin_id = p.id
-        <where>
-            <if test="sourceId != null">
-                AND t.id = #{sourceId}
-            </if>
-            and p.type = 'vuln'
         </where>
         ORDER BY t.last_modified desc
     </select>

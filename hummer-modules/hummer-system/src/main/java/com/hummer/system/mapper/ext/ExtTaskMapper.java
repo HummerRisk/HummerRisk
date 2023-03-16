@@ -11,8 +11,6 @@ public interface ExtTaskMapper {
 
     List<AccountVo> selectAccountByExample(AccountExample example);
 
-    List<AccountVo> selectVulnByExample(AccountExample example);
-
     List<ServerVo> selectServerByExample(ServerExample example);
 
     List<ImageVo> selectImageByExample(ImageExample example);
@@ -28,8 +26,6 @@ public interface ExtTaskMapper {
     List<RuleVo> ruleList(RuleVo ruleVo);
 
     List<RuleVo> cloudRuleList(RuleVo ruleVo);
-
-    List<RuleVo> vulnRuleList(RuleVo ruleVo);
 
     List<RuleVo> serverRuleList(RuleVo ruleVo);
 
@@ -48,8 +44,6 @@ public interface ExtTaskMapper {
     List<RuleVo> ruleGroupList(RuleVo ruleVo);
 
     RuleDTO cloudDetailRule(RuleVo ruleVo);
-
-    RuleDTO vulnDetailRule(RuleVo ruleVo);
 
     ServerRuleDTO serverDetailRule(RuleVo ruleVo);
 

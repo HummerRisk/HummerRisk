@@ -663,8 +663,6 @@ export default {
             let data = response.data;
             if (item.accountType === 'cloudAccount') {
               this.ruleDetailForm = data.ruleDTO;
-            } else if(item.accountType === 'vulnAccount') {
-              this.ruleDetailForm = data.ruleDTO;
             } else if(item.accountType === 'serverAccount') {
               this.ruleDetailForm = data.serverRuleDTO;
             } else if(item.accountType === 'imageAccount') {
@@ -813,10 +811,6 @@ export default {
             if (item.accountType === 'cloudAccount') {
               this.$router.push({
                 path: '/resource/result',
-              }).catch(error => error);
-            } else if(item.accountType === 'vulnAccount') {
-              this.$router.push({
-                path: '/resource/vulnResult',
               }).catch(error => error);
             } else if(item.accountType === 'serverAccount') {
               this.$router.push({

@@ -30,13 +30,6 @@ public class PluginController {
     }
 
     @I18n
-    @ApiOperation(value = "所有漏洞插件")
-    @GetMapping("vuln")
-    public List<Plugin> getVulnPlugin() {
-        return pluginService.getVulnPlugin();
-    }
-
-    @I18n
     @ApiOperation(value = "所有云原生插件")
     @GetMapping("native")
     public List<Plugin> getNativePlugin() {

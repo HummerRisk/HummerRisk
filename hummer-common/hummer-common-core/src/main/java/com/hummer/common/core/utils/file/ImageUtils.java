@@ -1,13 +1,14 @@
 package com.hummer.common.core.utils.file;
 
+import org.apache.poi.util.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
-import org.apache.poi.util.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 图片处理工具类
@@ -53,7 +54,7 @@ public class ImageUtils
 
     /**
      * 读取文件为字节数据
-     * 
+     *
      * @param url 地址
      * @return 字节数据
      */

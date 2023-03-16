@@ -73,11 +73,7 @@ public class CloudTaskService {
     @Resource
     private CloudAccountQuartzTaskRelaLogMapper quartzTaskRelaLogMapper;
     @Resource
-    private NucleiService nucleiService;
-    @Resource
     private ProwlerService prowlerService;
-    @Resource
-    private XrayService xrayService;
     @Resource
     private TokenService tokenService;
 
@@ -86,12 +82,8 @@ public class CloudTaskService {
             if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.custodian.name())) {
                 this.validateYaml(quartzTaskDTO);
                 return orderService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId);
-            } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.nuclei.name())) {
-                return nucleiService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId);
             } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.prowler.name())) {
                 return prowlerService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId);
-            } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.xray.name())) {
-                return xrayService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId);
             } else {
                 return orderService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId);
             }
@@ -210,12 +202,7 @@ public class CloudTaskService {
                 HRException.throwException(Translator.get("i18n_ex_plugin_validate"));
                 return null;
             });
-            //  获得区域 -- nuclei的区域为all 因为当前方法是判断当前规则是否正确,所以任意取一个区域只要执行没有问题则证明规则没有问题
-            JSONObject regionObj = quartzTaskDTO.getScanType().equals(ScanTypeConstants.nuclei.name())
-                    || quartzTaskDTO.getScanType().equals(ScanTypeConstants.xray.name())
-                    ? new JSONObject() {{
-                put("regionId", "ALL");
-            }} : Optional.ofNullable(PlatformUtils._getRegions(account, proxy, true)).filter(s -> {
+            JSONObject regionObj = Optional.ofNullable(PlatformUtils._getRegions(account, proxy, true)).filter(s -> {
                 return !s.isEmpty();
             }).map(jsonArr -> {
                 return (JSONObject) jsonArr.get(0);
@@ -230,12 +217,6 @@ public class CloudTaskService {
             if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.custodian.name())) {
                 fileName = "policy.yml";
                 commandEnum = CommandEnum.custodian.getCommand();
-            } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.nuclei.name())) {
-                fileName = "nuclei.yaml";
-                commandEnum = CommandEnum.nuclei.getCommand();
-            } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.xray.name())) {
-                fileName = groupName;
-                commandEnum = CommandEnum.xray.getCommand();
             } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.prowler.name())) {
                 JSONArray objects = JSONObject.parseArray(quartzTaskDTO.getParameter());
                 if (objects.isEmpty()) HRException.throwException(Translator.get("error_lang_invalid"));
@@ -247,11 +228,11 @@ public class CloudTaskService {
 
             String command = PlatformUtils.fixedCommand(commandEnum, CommandEnum.validate.getCommand(), dirPath, fileName, map);
 
-            String resultStr = quartzTaskDTO.getScanType().equals(ScanTypeConstants.nuclei.name()) ? CommandUtils.commonExecCmdWithResultByNuclei(command, dirPath) : CommandUtils.commonExecCmdWithResult(command, dirPath);
+            String resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
             // 检查结果
             checkResultStr(resultStr, quartzTaskDTO.getScanType());
             String command2 = PlatformUtils.fixedCommand(commandEnum, CommandEnum.dryrun.getCommand(), dirPath, fileName, map);
-            String resultStr2 = quartzTaskDTO.getScanType().equals(ScanTypeConstants.nuclei.name()) ? CommandUtils.commonExecCmdWithResultByNuclei(command2, dirPath) : CommandUtils.commonExecCmdWithResult(command2, dirPath);
+            String resultStr2 = CommandUtils.commonExecCmdWithResult(command2, dirPath);
             // 结果
             checkResultStr(resultStr2, quartzTaskDTO.getScanType());
         } catch (Exception e) {
@@ -268,15 +249,7 @@ public class CloudTaskService {
      * @param type      检测类型
      */
     public void checkResultStr(String resultStr, String type) {
-        if (type.equals(ScanTypeConstants.nuclei.name())) {
-            if (resultStr.contains("ERR") || resultStr.contains("error")) {
-                HRException.throwException(Translator.get("i18n_has_resource_failed"));
-            }
-        } else if (type.equals(ScanTypeConstants.xray.name())) {
-            if (resultStr.contains("ERR") || resultStr.contains("error")) {
-                HRException.throwException(Translator.get("i18n_has_resource_failed"));
-            }
-        } else if (type.equals(ScanTypeConstants.custodian.name())) {
+        if (type.equals(ScanTypeConstants.custodian.name())) {
             if (!resultStr.isEmpty() && !resultStr.contains("INFO")) {
                 LogUtil.error(Translator.get("i18n_has_resource_failed") + " {validate}:" + resultStr);
                 HRException.throwException(Translator.get("i18n_has_resource_failed"));
@@ -621,42 +594,6 @@ public class CloudTaskService {
         } catch (Exception e) {
             throw new HRException(e.getMessage());
         }
-    }
-
-    public List<CloudTask> getVulnTasks(Map<String, Object> params) {
-
-        CloudTaskExample example = new CloudTaskExample();
-        CloudTaskExample.Criteria criteria = example.createCriteria();
-        if (params.get("name") != null && StringUtils.isNotEmpty(params.get("name").toString())) {
-            criteria.andTaskNameLike("%" + params.get("name").toString() + "%");
-        }
-        if (params.get("type") != null && StringUtils.isNotEmpty(params.get("type").toString())) {
-            criteria.andTypeEqualTo(params.get("type").toString());
-        }
-        if (params.get("accountId") != null && StringUtils.isNotEmpty(params.get("accountId").toString())) {
-            criteria.andAccountIdEqualTo(params.get("accountId").toString());
-        }
-        if (params.get("cron") != null && StringUtils.isNotEmpty(params.get("cron").toString())) {
-            criteria.andCronLike(params.get("cron").toString());
-        }
-        if (params.get("status") != null && StringUtils.isNotEmpty(params.get("status").toString())) {
-            criteria.andStatusEqualTo(params.get("status").toString());
-        }
-        if (params.get("severity") != null && StringUtils.isNotEmpty(params.get("severity").toString())) {
-            criteria.andSeverityEqualTo(params.get("severity").toString());
-        }
-        if (params.get("pluginName") != null && StringUtils.isNotEmpty(params.get("pluginName").toString())) {
-            criteria.andPluginNameEqualTo(params.get("pluginName").toString());
-        }
-        if (params.get("ruleTag") != null && StringUtils.isNotEmpty(params.get("ruleTag").toString())) {
-            criteria.andRuleTagsLike("%" + params.get("ruleTag").toString() + "%");
-        }
-        if (params.get("resourceType") != null && StringUtils.isNotEmpty(params.get("resourceType").toString())) {
-            criteria.andResourceTypesLike("%" + params.get("resourceType").toString() + "%");
-        }
-        criteria.andPluginIdIn(PlatformUtils.getVulnPlugin());
-        example.setOrderByClause("FIELD(`status`, 'PROCESSING', 'APPROVED', 'FINISHED', 'WARNING', 'ERROR'), return_sum desc, create_time desc, FIELD(`severity`, 'HighRisk', 'MediumRisk', 'LowRisk')");
-        return cloudTaskMapper.selectByExample(example);
     }
 
 }

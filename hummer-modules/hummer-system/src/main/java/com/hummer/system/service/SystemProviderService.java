@@ -28,8 +28,6 @@ public class SystemProviderService implements ISystemProviderService {
     @Resource
     private ExtVulnMapper extVulnMapper;
     @Resource
-    private HistoryVulnTaskMapper historyVulnTaskMapper;
-    @Resource
     private HistoryCloudTaskMapper historyCloudTaskMapper;
     @Resource
     private HistoryScanMapper historyScanMapper;
@@ -60,37 +58,6 @@ public class SystemProviderService implements ISystemProviderService {
     @Override
     public Integer insertScanHistory(Object obj) throws Exception {
         return historyService.insertScanHistory(obj);
-    }
-
-    @Override
-    public void insertHistoryVulnTaskItem(HistoryVulnTaskItemWithBLOBs historyVulnTaskItem) throws Exception {
-        historyService.insertHistoryVulnTaskItem(historyVulnTaskItem);
-    }
-
-    @Override
-    public void insertHistoryVulnTaskResource(HistoryVulnTaskResourceWithBLOBs historyVulnTaskItem) throws Exception {
-        historyService.insertHistoryVulnTaskResource(historyVulnTaskItem);
-    }
-
-
-    @Override
-    public void updateHistoryVulnTaskItem(HistoryVulnTaskItemWithBLOBs historyVulnTaskItem) throws Exception {
-        historyService.updateHistoryVulnTaskItem(historyVulnTaskItem);
-    }
-
-    @Override
-    public void insertHistoryVulnTask(HistoryVulnTask historyVulnTask) throws Exception {
-        historyService.insertHistoryVulnTask(historyVulnTask);
-    }
-
-    @Override
-    public void updateHistoryVulnTask(HistoryVulnTask historyVulnTask) throws Exception {
-        historyService.updateHistoryVulnTask(historyVulnTask);
-    }
-
-    @Override
-    public void updateHistoryVulnTaskResource(HistoryVulnTaskResourceWithBLOBs historyVulnTaskResource) throws Exception {
-        historyService.updateHistoryVulnTaskResource(historyVulnTaskResource);
     }
 
     @Override
@@ -149,11 +116,6 @@ public class SystemProviderService implements ISystemProviderService {
     }
 
     @Override
-    public HistoryVulnTask historyVulnTask(String id) {
-        return historyVulnTaskMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
     public void insertHistoryCloudTaskResource(HistoryCloudTaskResourceWithBLOBs historyCloudTaskResource) throws Exception {
         historyService.insertHistoryCloudTaskResource(historyCloudTaskResource);
     }
@@ -191,11 +153,6 @@ public class SystemProviderService implements ISystemProviderService {
     @Override
     public void insertHistoryCloudTaskLog(HistoryCloudTaskLogWithBLOBs historyCloudTaskLog) throws Exception {
         historyService.insertHistoryCloudTaskLog(historyCloudTaskLog);
-    }
-
-    @Override
-    public void insertHistoryVulnTaskLog(HistoryVulnTaskLogWithBLOBs historyVulnTaskLog) throws Exception {
-        historyService.insertHistoryVulnTaskLog(historyVulnTaskLog);
     }
 
     @Override

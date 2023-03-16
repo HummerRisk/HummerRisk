@@ -27,10 +27,6 @@
             <i class="iconfont icon-gongyouyunzengzhifuwushenqingliucheng-06"></i>
             <span slot="title">{{ $t('commons.cloud_scan') }}</span>
           </el-menu-item>
-          <el-menu-item index="/vuln" onselectstart="return false">
-            <i class="iconfont icon-erji-loudongsaomiaoguanli"></i>
-            <span slot="title">{{ $t('vuln.vuln_setting') }}</span>
-          </el-menu-item>
           <el-menu-item index="/report" onselectstart="return false">
             <i class="iconfont icon-xitonganquanheguibaobiao"></i>
             <span slot="title">{{ $t('resource.statistics') }}</span>
