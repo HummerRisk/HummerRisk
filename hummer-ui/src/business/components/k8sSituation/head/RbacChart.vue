@@ -6,6 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import {rbacChartUrl} from "@/api/k8s/k8s/k8s";
 /* eslint-disable */
 export default {
   name: "RbacChart",
@@ -28,7 +29,7 @@ export default {
   methods: {
     init() {
       if(!this.accountId) return;
-      this.$get("/k8s/rbacChart/" + this.accountId, response => {
+      this.$get(rbacChartUrl + this.accountId, response => {
         let nodes = response.data.nodes;
         for (let obj of nodes) {
           if(!!obj.symbol) {

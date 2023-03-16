@@ -44,6 +44,7 @@ import TableHeader from "@/business/components/common/components/DetailTableHead
 import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import {_filter, _sort} from "@/common/js/utils";
+import {codeResultItemListUrl} from "@/api/k8s/code/code";
 /* eslint-disable */
   export default {
     name: "ResultDetails",
@@ -90,7 +91,7 @@ import {_filter, _sort} from "@/common/js/utils";
         this.init();
       },
       async search () {
-        let url = "/code/resultItemList/" + this.currentPage + "/" + this.pageSize;
+        let url = codeResultItemListUrl + this.currentPage + "/" + this.pageSize;
         this.condition.resultId = this.id;
         await this.$post(url, this.condition, response => {
           let data = response.data;

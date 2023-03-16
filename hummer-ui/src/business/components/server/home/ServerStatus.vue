@@ -14,6 +14,8 @@
 
 <script>
   /* eslint-disable */
+  import {serverValidateUrl} from "@/api/k8s/server/server";
+
   export default {
     name: "ServerStatus",
     props: {
@@ -25,7 +27,7 @@
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.$post("/server/validate/" + row.id, {}, response => {
+              this.$post(serverValidateUrl + row.id, {}, response => {
                 let data = response.data;
                 if (data) {
                   if (data.flag) {

@@ -249,6 +249,12 @@ import DialogFooter from "../../common/components/DialogFooter";
 import TableOperators from "../../common/components/TableOperators";
 import RuleType from "./RuleType";
 import CodeDiff from 'vue-code-diff';
+import {
+  deleteHistoryServerResultUrl,
+  getServerResultUrl,
+  serverHistoryUrl,
+  serverLogUrl
+} from "@/api/k8s/server/server";
 /* eslint-disable */
   export default {
     name: "HistoryList",
@@ -325,7 +331,7 @@ import CodeDiff from 'vue-code-diff';
       },
       //查询列表
       async search() {
-        let url = "/server/history/" + this.currentPage + "/" + this.pageSize;
+        let url = serverHistoryUrl + this.currentPage + "/" + this.pageSize;
         if (!!this.selectNodeIds) {
           this.condition.serverId = this.selectNodeIds[0];
         } else {
@@ -359,7 +365,7 @@ import CodeDiff from 'vue-code-diff';
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get("/server/deleteHistoryServerResult/" + obj.id,  res => {
+              this.result = this.$get(deleteHistoryServerResultUrl + obj.id,  res => {
                 setTimeout(function () {window.location.reload()}, 2000);
                 this.$success(this.$t('commons.delete_success'));
               });
@@ -369,7 +375,7 @@ import CodeDiff from 'vue-code-diff';
       },
       async outputListDataSearch() {
         let item = this.outputListSearchData;
-        await this.$post("/server/history/" + this.outputListPage + "/" + this.outputListPageSize, {serverId: item.serverId}, response => {
+        await this.$post(serverHistoryUrl + this.outputListPage + "/" + this.outputListPageSize, {serverId: item.serverId}, response => {
           let data = response.data;
           this.outputListTotal = data.itemCount;
           this.outputListData = data.listObject;
@@ -391,13 +397,12 @@ import CodeDiff from 'vue-code-diff';
         this.innerDrawer = true;
       },
       showResultLog (result) {
-        let url = "/server/log/";
         this.logForm = result;
-        this.$get(url + result.id, response => {
+        this.$get(serverLogUrl + result.id, response => {
           this.logData = response.data;
           this.logVisible = true;
         });
-        this.$get("/server/getServerResult/" + result.id, response => {
+        this.$get(getServerResultUrl + result.id, response => {
           this.logForm = response.data;
         });
       },

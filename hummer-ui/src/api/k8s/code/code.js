@@ -50,3 +50,9 @@ export const codeChangeStatusUrl = "/k8s/code/changeStatus";
 export const codeAllListUrl = "/k8s/code/allList";
 
 export const codeTopInfoUrl = "/k8s/code/topInfo";
+
+export const codeResultItemListUrl = "/k8s/code/resultItemList/";
+
+export const codeUnBindListUrl = "/k8s/code/unBindList";
+
+export const codeAllBindListUrl = "/k8s/code/allBindList/";

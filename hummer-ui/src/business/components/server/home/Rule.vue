@@ -255,6 +255,13 @@ import {SERVER_RULE_CONFIGS} from "../../common/components/search/search-compone
 import {severityOptions} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {ruleTagsUrl} from "@/api/cloud/rule/rule";
+import {
+  addServerRuleUrl,
+  serverchangeStatusUrl,
+  deleteServerRuleUrl,
+  serverRuleListUrl,
+  updateServerRuleUrl
+} from "@/api/k8s/server/server";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -424,7 +431,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/server/deleteServerRule/" + item.id, () => {
+            this.result = this.$get(deleteServerRuleUrl + item.id, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -434,7 +441,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/server/ruleList/" + this.currentPage + "/" + this.pageSize;
+      let url = serverRuleListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -495,10 +502,10 @@ export default {
       let url = '';
       let form = '';
       if (type === 'add') {
-        url = '/server/addServerRule';
+        url = addServerRuleUrl;
         form = 'createRuleForm';
       } else if (type === 'edit') {
-        url = '/server/updateServerRule';
+        url = updateServerRuleUrl;
         form = 'updateRuleForm';
         if (mdObj.flag == 1) {
           this.$warning(this.$t('rule.rule_flag'));
@@ -544,7 +551,7 @@ export default {
       });
     },
     changeStatus (item) {
-      this.result = this.$post('/server/changeStatus', {id: item.id, status: item.status?1:0}, response => {
+      this.result = this.$post(serverchangeStatusUrl, {id: item.id, status: item.status?1:0}, response => {
         if (item.status == 1) {
           this.$success(this.$t('rule.change_status_on'));
         } else if (item.status == 0) {

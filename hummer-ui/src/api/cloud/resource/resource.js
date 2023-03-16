@@ -10,3 +10,5 @@ export const resourceLogUrl = "/cloud/resource/resourceLog";
 export const resourceSummaryReport = "/cloud/cloud/resource/summary/";
 
 export const cloudResourceListUrl = "/cloud/cloud/resource/list/";
+
+export const string2PrettyFormatUrl = "/cloud/resource/string2PrettyFormat";
