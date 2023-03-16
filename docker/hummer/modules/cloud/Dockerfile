@@ -28,7 +28,7 @@ COPY --from=custodian-env /usr/local /usr/local
 
 COPY --from=custodian-env /output /output
 
-RUN apk update && apk add git bash libpcap-dev musl && \
+RUN apk update && apk add git bash python3 libpcap-dev musl && \
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip && \
     ./aws/install -i /usr/local/aws-cli -b /usr/local/bin && \
