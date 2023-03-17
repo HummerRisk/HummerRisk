@@ -223,6 +223,7 @@ import {_filter} from "@/common/js/utils";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {severityOptions} from "@/common/js/constants";
 import RuleType from "@/business/components/task/home/RuleType";
+import {addTaskUrl, taskDetailRuleUrl} from "@/api/system/task";
 
 /* eslint-disable */
   export default {
@@ -359,7 +360,7 @@ import RuleType from "@/business/components/task/home/RuleType";
           return;
         }
         this.form.taskItemList = this.tableData;
-        this.result = this.$post("/task/addTask",this.form, response => {
+        this.result = this.$post(addTaskUrl,this.form, response => {
           if (response.success) {
             this.$router.push({
               path: '/task/list',
@@ -373,7 +374,7 @@ import RuleType from "@/business/components/task/home/RuleType";
       showTaskDetail(item) {
         if (item.ruleType === 'rule') {
           this.detailForm = {};
-          this.result = this.$post("/task/detailRule",item, response => {
+          this.result = this.$post(taskDetailRuleUrl,item, response => {
             if (response.success) {
               let data = response.data;
               if (item.accountType === 'cloudAccount') {

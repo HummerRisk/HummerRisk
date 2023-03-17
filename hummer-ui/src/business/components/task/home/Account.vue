@@ -33,6 +33,12 @@
 import FavouriteTree from "@/business/components/task/head/FavouriteTree";
 import AccountTree from "@/business/components/task/head/AccountTree";
 import MainContainer from "../../common/components/MainContainer";
+import {
+  taskAccountListUrl,
+  taskAddFavoriteUrl,
+  taskDelFavoriteUrl,
+  taskFavoriteListUrl
+} from "@/api/system/task";
 
 /* eslint-disable */
 export default {
@@ -65,14 +71,13 @@ export default {
   methods: {
     list() {
       //收藏夹
-      this.result = this.$get("/task/favorite/list", response => {
+      this.result = this.$get(taskFavoriteListUrl, response => {
         if (response.data != undefined && response.data != null) {
           this.favouriteData = response.data;
         }
       });
       //资源信息
-      let url = "/task/account/list";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(taskAccountListUrl, response => {
         if (response.data != undefined && response.data != null) {
           this.data = response.data;
         }
@@ -91,13 +96,12 @@ export default {
       let param = {};
       param = data;
       param.icon = param.pluginIcon;
-      let url = "/task/addOrDelFavorite";
-      this.result = this.$post(url, param, response => {
+      this.result = this.$post(taskAddFavoriteUrl, param, response => {
         this.list();
       });
     },
     delFavourite(data) {
-      let url = "/task/favorite/delete/" + data.id;
+      let url = taskDelFavoriteUrl + data.id;
       this.result = this.$get(url, response => {
         this.list();
       });

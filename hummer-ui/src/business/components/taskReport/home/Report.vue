@@ -327,7 +327,12 @@ import FsLogForm from "@/business/components/fs/home/LogForm";
 import K8sLogForm from "@/business/components/k8s/home/LogForm";
 import ConfigLogForm from "@/business/components/config/home/LogForm";
 import htmlToPdf from "@/common/js/htmlToPdf";
-
+import {
+  allTaskListUrl,
+  taskTagRuleListUrl,
+  taskReportUrl,
+} from "@/api/system/task";
+import {resourceTypesUrl} from "@/api/cloud/rule/rule";
 
 /* eslint-disable */
 export default {
@@ -364,18 +369,18 @@ export default {
   },
   methods: {
     init() {
-      this.result = this.$get("/task/allTaskList", response => {
+      this.result = this.$get(allTaskListUrl, response => {
         this.tasks = response.data;
       });
       this.initSelect();
     },
     async initSelect () {
       this.tagSelect = [];
-      await this.$get("/tag/rule/list", response => {
+      await this.$get(taskTagRuleListUrl, response => {
         this.tagSelect = response.data;
       });
       this.resourceTypes = [];
-      await this.$get("/rule/all/resourceTypes", response => {
+      await this.$get(resourceTypesUrl, response => {
         for (let item of response.data) {
           let typeItem = {};
           typeItem.value = item.name;
@@ -386,7 +391,7 @@ export default {
     },
     search() {
       if (this.selectedTask) {
-        this.result = this.$get("/task/report/" + this.selectedTask.id, response => {
+        this.result = this.$get(taskReportUrl + this.selectedTask.id, response => {
           this.report = response.data;
         });
       }
@@ -480,9 +485,7 @@ export default {
       window.URL.revokeObjectURL(url);
     },
     getVersion() {
-      this.$get('/system/system/version', response => {
-        this.version = response.data;
-      });
+      this.version = "v1.0.0";
     },
     filterJsonKeyAndValue(json) {
       //json is json object , not array -- harris

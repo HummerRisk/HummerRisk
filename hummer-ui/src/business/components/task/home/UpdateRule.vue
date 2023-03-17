@@ -206,6 +206,14 @@ import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter} from "@/common/js/utils";
 import SeverityType from "@/business/components/common/components/SeverityType";
+import {
+  taskAllListUrl,
+  taskDetailGroupUrl,
+  taskDetailRuleUrl,
+  taskDetailTagUrl,
+  taskRuleGroupListUrl, taskRuleListUrl,
+  taskRuleTagListUrl
+} from "@/api/system/task";
 
 /* eslint-disable */
   export default {
@@ -273,15 +281,15 @@ import SeverityType from "@/business/components/common/components/SeverityType";
     methods: {
       //查询列表
       search() {
-        let url = "/task/allList/" + this.currentPage + "/" + this.pageSize;
+        let url = taskAllListUrl + this.currentPage + "/" + this.pageSize;
         if(this.key === 'all') {
-          url = "/task/allList/" + this.currentPage + "/" + this.pageSize;
+          url = taskAllListUrl + this.currentPage + "/" + this.pageSize;
         } else if (this.key === 'rule') {
-          url = "/task/ruleList/" + this.currentPage + "/" + this.pageSize;
+          url = taskRuleListUrl + this.currentPage + "/" + this.pageSize;
         } else if (this.key === 'tag') {
-          url = "/task/ruleTagList/" + this.currentPage + "/" + this.pageSize;
+          url = taskRuleTagListUrl + this.currentPage + "/" + this.pageSize;
         } else if (this.key === 'group') {
-          url = "/task/ruleGroupList/" + this.currentPage + "/" + this.pageSize;
+          url = taskRuleGroupListUrl + this.currentPage + "/" + this.pageSize;
         }
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
@@ -290,14 +298,14 @@ import SeverityType from "@/business/components/common/components/SeverityType";
         });
       },
       searchTag(item) {
-        this.result = this.$post("/task/detailTag",item, response => {
+        this.result = this.$post(taskDetailTagUrl,item, response => {
           if (response.success) {
             this.tagDetailTable = response.data;
           }
         });
       },
       searchGroup(item) {
-        this.result = this.$post("/task/detailGroup",item, response => {
+        this.result = this.$post(taskDetailGroupUrl,item, response => {
           if (response.success) {
             this.groupDetailTable = response.data;
           }
@@ -327,7 +335,7 @@ import SeverityType from "@/business/components/common/components/SeverityType";
       showTaskDetail(item) {
         if (item.ruleType === 'rule') {
           this.detailForm = {};
-          this.result = this.$post("/task/detailRule",item, response => {
+          this.result = this.$post(taskDetailRuleUrl,item, response => {
             if (response.success) {
               let data = response.data;
               if (item.accountType === 'cloudAccount') {
