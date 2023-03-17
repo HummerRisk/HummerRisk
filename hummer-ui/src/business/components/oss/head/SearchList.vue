@@ -29,6 +29,8 @@
 <script>
 import {getCurrentAccountID, getCurrentAccountName, getCurrentUser, hasRoles} from "@/common/js/utils";
 import {ACCOUNT, ACCOUNT_ID, ACCOUNT_NAME, ROLE_ADMIN} from "@/common/js/constants";
+import {ossAllListUrl} from "@/api/cloud/oss/oss";
+import {userUpdateCurrentUrl} from "@/api/system/system";
 
 /* eslint-disable */
 export default {
@@ -57,7 +59,7 @@ export default {
   methods: {
     async init () {
       if (hasRoles(ROLE_ADMIN)) {
-        await this.$get("/oss/allList", response => {
+        await this.$get(ossAllListUrl, response => {
           this.items = response.data;
           this.searchArray = response.data;
           if (this.currentAccountId) {
@@ -102,7 +104,7 @@ export default {
       if (accountId === currentAccountId) {
         return;
       }
-      this.$post("/user/update/current", {id: this.userId, lastAccountId: accountId}, () => {
+      this.$post(userUpdateCurrentUrl, {id: this.userId, lastAccountId: accountId}, () => {
         localStorage.setItem(ACCOUNT_ID, accountId);
         let account = this.searchArray.filter(p => p.id === accountId);
         if(account) {

@@ -6,7 +6,6 @@ import Setting from "@/business/components/settings/router";
 import Account from "@/business/components/account/router";
 import Server from "@/business/components/server/router";
 import Image from "@/business/components/image/router";
-import Vuln from "@/business/components/vuln/router";
 import Rule from "@/business/components/rule/router";
 import Resource from "@/business/components/resource/router";
 import Dashboard from "@/business/components/dashboard/router";
@@ -39,7 +38,6 @@ const router = new VueRouter({
     Account,
     Server,
     Image,
-    Vuln,
     Rule,
     Resource,
     Task,

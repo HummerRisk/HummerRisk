@@ -18,16 +18,6 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/resource/home/ResultDetails"),
     },
     {
-      path: "VulnResult",
-      name: "VulnResourceResult",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/vuln/home/Result'),
-    },
-    {
-      path: "VulnResultdetails/:id",
-      name: "VulnResourceResultDetails",
-      component: () => import(/* webpackChunkName: "api" */ "@/business/components/vuln/home/ResultDetails"),
-    },
-    {
       path: "ServerResult",
       name: "ServerResourceResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Result'),

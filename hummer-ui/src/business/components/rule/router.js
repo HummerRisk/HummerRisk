@@ -13,11 +13,6 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/rule/home/Rule"),
     },
     {
-      path: "vulnRule",
-      name: "vulnRuleToRule",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/vuln/home/Rule'),
-    },
-    {
       path: "serverRule",
       name: "serverRuleToRule",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Rule'),

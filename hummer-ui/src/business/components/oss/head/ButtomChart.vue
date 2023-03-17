@@ -6,6 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import {ossSeverityChartUrl} from "@/api/cloud/oss/oss";
 /* eslint-disable */
 export default {
   name: "RightChart",
@@ -22,7 +23,7 @@ export default {
   },
   methods: {
     init() {
-      this.$get("/oss/severityChart", response => {
+      this.$get(ossSeverityChartUrl, response => {
         let data = response.data;
         this.options = {
           legend: {},

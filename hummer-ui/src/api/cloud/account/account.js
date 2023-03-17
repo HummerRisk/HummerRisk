@@ -45,9 +45,12 @@ export const quartzDeleteUrl = "/cloud/cloud/task/quartz/delete/";
 
 export const quartzResumeUrl = "/cloud/cloud/task/quartz/resume/";
 
-export const quartzPauseUrl = "/cloud//cloud/task/quartz/pause/";
+export const quartzPauseUrl = "/cloud/cloud/task/quartz/pause/";
 
 export const quartzRelaLogUrl = "/cloud/cloud/task/quartz/rela/log/";
 
 export const showAccountUrl = "/cloud/cloud/task/show/account/";
 
+export const cloudTaskLogByIdUrl = "/cloud/cloud/task/log/taskId/";
+
+export const cloudTaskDetailUrl = "/cloud/cloud/task/detail/";

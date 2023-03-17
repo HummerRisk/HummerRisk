@@ -59,6 +59,7 @@
 
 <script>
 import Container from "../.././common/components/Container";
+import {ossTopInfoUrl} from "@/api/cloud/oss/oss";
 
 /* eslint-disable */
 export default {
@@ -73,7 +74,7 @@ export default {
   },
   methods: {
     init() {
-      this.result = this.$post("/oss/topInfo", {}, response => {
+      this.result = this.$post(ossTopInfoUrl, {}, response => {
         let data = response.data;
         this.topInfo = data;
       });
