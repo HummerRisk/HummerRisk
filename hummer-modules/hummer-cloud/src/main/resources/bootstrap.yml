@@ -36,7 +36,7 @@ dubbo:
   protocol:
     name: cloud
     # 这个dubbo的协议端口在一台服务器上的时候，每个项目的必须配置成不一样的（否则将启动失败），或者配置为-1，使用随机端口
-    port: 8000
+    port: 8002
     host: ${HMR_NACOS_SERVER_ADDR}
   registry:
     # 由于使用的是spring-cloud，因此这里使用spring-cloud的
@@ -55,9 +55,9 @@ xxl:
       addresses: http://${HMR_XXL_JOB_ADDR}:8084/xxl-job-admin/
     accessToken: default_token
     executor:
-      address: ${HMR_XXL_CLOUD_ADDR}:9401
+      address: ${HMR_XXL_CLOUD_ADDR}:9400
       ip: ${HMR_XXL_CLOUD_ADDR}
-      port: 9401
+      port: 9400
       appName: hummer-cloud
       logpath: /opt/hummerrisk/logs/xxl-job/hummer-cloud
       logretentiondays: 30

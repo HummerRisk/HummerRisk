@@ -35,7 +35,7 @@ dubbo:
   protocol:
     name: k8s
     # 这个dubbo的协议端口在一台服务器上的时候，每个项目的必须配置成不一样的（否则将启动失败），或者配置为-1，使用随机端口
-    port: 8001
+    port: 8002
     host: ${HMR_NACOS_SERVER_ADDR}
   registry:
     # 由于使用的是spring-cloud，因此这里使用spring-cloud的
@@ -54,9 +54,9 @@ xxl:
       addresses: http://${HMR_XXL_JOB_ADDR}:8084/xxl-job-admin/
     accessToken: default_token
     executor:
-      address: ${HMR_XXL_K8S_ADDR}:9501
+      address: ${HMR_XXL_K8S_ADDR}:9500
       ip: ${HMR_XXL_K8S_ADDR}
-      port: 9501
+      port: 9500
       appName: hummer-k8s
       logpath: /opt/hummerrisk/logs/xxl-job/hummer-k8s
       logretentiondays: 30

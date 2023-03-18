@@ -1,6 +1,6 @@
 # Tomcat
 server:
-  port: 9201
+  port: 9300
 
 # Spring
 spring:
@@ -35,7 +35,7 @@ spring:
 dubbo:
   protocol:
     name: system
-    port: 8002
+    port: 8001
     host: ${HMR_NACOS_SERVER_ADDR}
   registry:
     # 由于使用的是spring-cloud，因此这里使用spring-cloud的
@@ -54,9 +54,9 @@ xxl:
       addresses: http://${HMR_XXL_JOB_ADDR}:8084/xxl-job-admin/
     accessToken: default_token
     executor:
-      address: ${HMR_XXL_SYSTEM_ADDR}:9210
+      address: ${HMR_XXL_SYSTEM_ADDR}:9300
       ip: ${HMR_XXL_SYSTEM_ADDR}
-      port: 9210
+      port: 9300
       appName: hummer-system
       logpath: /opt/hummerrisk/logs/xxl-job/hummer-system
       logretentiondays: 30

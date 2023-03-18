@@ -34,11 +34,11 @@ module.exports = {
   },
   devServer: {
     host: '0.0.0.0',
-    port: 8080,
+    port: 80,
     open: true,
     proxy: {
       [process.env.VUE_APP_BASE_API]: {
-        target: `http://localhost:8088`,
+        target: `http://localhost:8080`,
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''

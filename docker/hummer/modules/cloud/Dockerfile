@@ -34,8 +34,8 @@ ENV JAVA_APP_JAR=/opt/apps/hummer-modules-cloud.jar \
     HMR_VERSION=${HMR_VERSION} \
     JAVA_OPTIONS="-Dfile.encoding=utf-8 -Djava.awt.headless=true -DHMR_NACOS_SERVER_ADDR=127.0.0.1 -DHMR_MYSQL_HOST=127.0.0.1 -DHMR_MYSQL_PORT=3306 -DHMR_MYSQL_DB=hummer_risk -DHMR_MYSQL_USER=root -DHMR_MYSQL_PASSWORD=root"
 
-HEALTHCHECK --interval=15s --timeout=5s --retries=20 --start-period=30s CMD curl -f 127.0.0.1:9203
+HEALTHCHECK --interval=15s --timeout=5s --retries=20 --start-period=30s CMD curl -f 127.0.0.1:9400
 
 CMD ["/deployments/run-java.sh"]
 
-EXPOSE 9203
+EXPOSE 9400

@@ -4,7 +4,7 @@
 com.hummer     
 ├── hummer-ui                                          // 前端框架 [80]
 ├── hummer-flyway                                      // 数据迁移 [9000]
-├── hummer-gateway                                     // 网关模块 [8088]
+├── hummer-gateway                                     // 网关模块 [8080]
 ├── hummer-auth                                        // 认证中心 [9200]
 ├── hummer-dubbo-api                                   // 接口模块
 │       └── hummer-api-system                          // 系统接口
@@ -15,12 +15,11 @@ com.hummer
 │       └── hummer-common-security                     // 安全模块
 │       └── hummer-common-swagger                      // 系统接口
 ├── hummer-modules                                     // 业务模块
-│       └── hummer-system                              // 系统模块 [9201]
-│       └── hummer-job                                 // 定时任务 [9202]
-│       └── hummer-cloud                               // 混合云服务 [9203]
-│       └── hummer-k8s                                 // 云原生服务 [9204]
+│       └── hummer-system                              // 系统模块 [9300]
+│       └── hummer-cloud                               // 混合云服务 [9400]
+│       └── hummer-k8s                                 // 云原生服务 [9500]
 ├── hummer-visual                                      // 图形化管理模块
-│       └── hummer-visual-monitor                      // 监控中心 [9100]
+│       └── hummer-monitor                             // 监控中心 [9100]
 ├──pom.xml                                             // 公共依赖
 ~~~
 
@@ -60,3 +59,18 @@ com.hummer
 - Vue 2.6.x
 - Axios 0.21.0
 - Element 2.15.x
+
+## 系统端口
+
+- hmr-ui [80]
+- hmr-flyway [9000]
+- hmr-gateway [8080]
+- hmr-auth [9200]
+- hmr-system [9300, 8001]
+- hmr-cloud [9400, 8002]
+- hmr-k8s [9500, 8003]
+- hmr-monitor [9100]
+- hmr-mysql [3306]
+- hmr-nacos [8848, 9848]
+- hmr-rdis [6379]
+- hmr-job [8084]
