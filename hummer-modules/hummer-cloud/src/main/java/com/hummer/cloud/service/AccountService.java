@@ -27,11 +27,11 @@ import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,19 +47,19 @@ import static com.alibaba.fastjson.JSON.parseObject;
 @Transactional(rollbackFor = Exception.class)
 public class AccountService {
 
-    @Resource
+    @Autowired
     private ExtAccountMapper extAccountMapper;
-    @Resource
+    @Autowired
     private AccountMapper accountMapper;
-    @Resource
+    @Autowired
     private PluginMapper pluginMapper;
-    @Resource
+    @Autowired
     private RuleAccountParameterMapper ruleAccountParameterMapper;
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
-    @Resource
+    @Autowired
     private TokenService tokenService;
-    @Resource
+    @Autowired
     private CloudSyncService cloudSyncService;
 
     public List<AccountDTO> getCloudAccountList(CloudAccountRequest request) {

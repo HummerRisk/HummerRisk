@@ -10,9 +10,9 @@ import com.hummer.common.core.utils.Pager;
 import com.hummer.system.service.WebMsgService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Api(tags = "站内消息管理")
@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 public class WebMsgController {
 
-    @Resource
+    @Autowired
     private WebMsgService webMsgService;
 
     @I18n

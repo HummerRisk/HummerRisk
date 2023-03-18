@@ -3,15 +3,15 @@ package com.hummer.system.message;
 import com.hummer.common.core.utils.LogUtil;
 import com.hummer.system.service.DingtalkService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Component
 public class DingNoticeSender extends AbstractNoticeSender {
 
-    @Resource
+    @Autowired
     private DingtalkService dingtalkService;
 
     public void sendNailRobot(MessageDetail messageDetail, String context) {

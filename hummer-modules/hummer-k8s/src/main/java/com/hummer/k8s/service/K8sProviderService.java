@@ -4,8 +4,8 @@ import com.hummer.common.core.domain.*;
 import com.hummer.k8s.api.IK8sProviderService;
 import com.hummer.k8s.mapper.*;
 import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -14,55 +14,55 @@ import java.util.List;
 @DubboService
 public class K8sProviderService implements IK8sProviderService {
 
-    @Resource
+    @Autowired
     private ServerResultMapper serverResultMapper;
-    @Resource
+    @Autowired
     private CloudNativeResultMapper cloudNativeResultMapper;
-    @Resource
+    @Autowired
     private CloudNativeConfigResultMapper cloudNativeConfigResultMapper;
-    @Resource
+    @Autowired
     private ImageResultMapper imageResultMapper;
-    @Resource
+    @Autowired
     private CodeResultMapper codeResultMapper;
-    @Resource
+    @Autowired
     private FileSystemResultMapper fileSystemResultMapper;
-    @Resource
+    @Autowired
     private ServerRuleMapper serverRuleMapper;
-    @Resource
+    @Autowired
     private CloudNativeRuleMapper cloudNativeRuleMapper;
-    @Resource
+    @Autowired
     private CloudNativeConfigRuleMapper configRuleMapper;
-    @Resource
+    @Autowired
     private ImageRuleMapper imageRuleMapper;
-    @Resource
+    @Autowired
     private CodeRuleMapper codeRuleMapper;
-    @Resource
+    @Autowired
     private FileSystemRuleMapper fileSystemRuleMapper;
-    @Resource
+    @Autowired
     private ServerMapper serverMapper;
-    @Resource
+    @Autowired
     private ImageMapper imageMapper;
-    @Resource
+    @Autowired
     private CloudNativeConfigMapper configMapper;
-    @Resource
+    @Autowired
     private CloudNativeMapper cloudNativeMapper;
-    @Resource
+    @Autowired
     private CodeMapper codeMapper;
-    @Resource
+    @Autowired
     private FileSystemMapper fileSystemMapper;
-    @Resource
+    @Autowired
     private ServerService serverService;
-    @Resource
+    @Autowired
     private CodeService codeService;
-    @Resource
+    @Autowired
     private ImageService imageService;
-    @Resource
+    @Autowired
     private K8sService k8sService;
-    @Resource
+    @Autowired
     private ConfigService configService;
-    @Resource
+    @Autowired
     private FileSystemService fileSystemService;
-    @Resource
+    @Autowired
     private ServerGroupMapper serverGroupMapper;
 
 

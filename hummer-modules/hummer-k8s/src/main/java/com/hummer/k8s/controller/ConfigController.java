@@ -20,11 +20,11 @@ import com.hummer.k8s.service.ConfigService;
 import io.kubernetes.client.openapi.ApiException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +33,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "config")
 public class ConfigController {
-    @Resource
+    @Autowired
     private ConfigService configService;
 
     @I18n

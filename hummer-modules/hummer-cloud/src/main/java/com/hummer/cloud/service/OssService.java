@@ -16,6 +16,10 @@ import com.hummer.common.core.constant.CloudTaskConstants;
 import com.hummer.common.core.constant.ResourceOperation;
 import com.hummer.common.core.constant.ResourceTypeConstants;
 import com.hummer.common.core.domain.*;
+import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
+import com.hummer.common.core.domain.request.excel.ExcelExportRequest;
+import com.hummer.common.core.domain.request.resource.ResourceRequest;
+import com.hummer.common.core.domain.request.rule.RuleGroupRequest;
 import com.hummer.common.core.dto.ExportDTO;
 import com.hummer.common.core.dto.ResourceDTO;
 import com.hummer.common.core.dto.RuleGroupDTO;
@@ -24,21 +28,17 @@ import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.text.ResultHolder;
 import com.hummer.common.core.utils.*;
-import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
-import com.hummer.common.core.domain.request.excel.ExcelExportRequest;
-import com.hummer.common.core.domain.request.resource.ResourceRequest;
-import com.hummer.common.core.domain.request.rule.RuleGroupRequest;
 import com.hummer.common.security.service.TokenService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilterInputStream;
@@ -56,29 +56,29 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 public class OssService {
 
-    @Resource
+    @Autowired
     private OssMapper ossMapper;
-    @Resource
+    @Autowired
     private AccountService accountService;
-    @Resource
+    @Autowired
     private AccountMapper accountMapper;
-    @Resource
+    @Autowired
     private ExtOssMapper extOssMapper;
-    @Resource
+    @Autowired
     private OssBucketMapper ossBucketMapper;
-    @Resource
+    @Autowired
     private CommonThreadPool commonThreadPool;
-    @Resource
+    @Autowired
     private OssLogMapper ossLogMapper;
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
-    @Resource
+    @Autowired
     private RuleGroupMapper ruleGroupMapper;
-    @Resource
+    @Autowired
     private CloudTaskMapper cloudTaskMapper;
-    @Resource
+    @Autowired
     private ExtCloudTaskMapper extCloudTaskMapper;
-    @Resource
+    @Autowired
     private TokenService tokenService;
 
     private static final String BASE_CANNED_ACL_TYPE = "cannedACL";

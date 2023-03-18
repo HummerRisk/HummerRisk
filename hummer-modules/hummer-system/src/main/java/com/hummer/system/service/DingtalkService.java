@@ -9,21 +9,21 @@ import com.dingtalk.api.response.OapiGettokenResponse;
 import com.dingtalk.api.response.OapiMessageCorpconversationAsyncsendV2Response;
 import com.dingtalk.api.response.OapiUserGetByMobileResponse;
 import com.hummer.common.core.constant.ParamConstants;
+import com.hummer.common.core.domain.SystemParameter;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.utils.EncryptUtils;
-import com.hummer.common.core.domain.SystemParameter;
 import com.hummer.system.mapper.SystemParameterMapper;
 import com.hummer.system.message.NotificationBasicResponse;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Service
 public class DingtalkService {
 
-    @Resource
+    @Autowired
     private SystemParameterMapper systemParameterMapper;
     private static final String ACCESS_TOKEN_URL = "https://oapi.dingtalk.com/gettoken";
     private static final String MOBILE_URL = "https://oapi.dingtalk.com/user/get_by_mobile";

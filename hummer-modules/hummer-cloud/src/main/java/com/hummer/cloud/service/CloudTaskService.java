@@ -8,12 +8,12 @@ import com.hummer.cloud.mapper.ext.ExtCloudTaskMapper;
 import com.hummer.cloud.mapper.ext.ExtQuartzTaskMapper;
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
+import com.hummer.common.core.domain.request.cloudTask.CloudQuartzRequest;
+import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
-import com.hummer.common.core.domain.request.cloudTask.CloudQuartzRequest;
-import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.quartz.service.QuartzManageService;
 import org.apache.commons.lang3.StringUtils;
@@ -21,10 +21,10 @@ import org.quartz.CronScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
 
-import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,45 +36,45 @@ import static com.alibaba.fastjson.JSON.parseArray;
 @Service
 public class CloudTaskService {
 
-    @Resource
+    @Autowired
     private CloudTaskMapper cloudTaskMapper;
-    @Resource
+    @Autowired
     private CloudTaskItemMapper cloudTaskItemMapper;
-    @Resource
+    @Autowired
     private ExtCloudTaskMapper extCloudTaskMapper;
-    @Resource
+    @Autowired
     private CloudTaskItemLogMapper cloudTaskItemLogMapper;
-    @Resource
+    @Autowired
     private CloudTaskItemResourceMapper cloudTaskItemResourceMapper;
-    @Resource
+    @Autowired
     private AccountMapper accountMapper;
-    @Resource
+    @Autowired
     private QuartzManageService quartzManageService;
-    @Resource
+    @Autowired
     private AccountService accountService;
-    @Resource
+    @Autowired
     private ResourceRuleMapper resourceRuleMapper;
-    @Resource
+    @Autowired
     private ResourceMapper resourceMapper;
-    @Resource
+    @Autowired
     private OrderService orderService;
-    @Resource
+    @Autowired
     private ResourceItemMapper resourceItemMapper;
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
-    @Resource
+    @Autowired
     private CloudAccountQuartzTaskMapper quartzTaskMapper;
-    @Resource
+    @Autowired
     private ExtQuartzTaskMapper extQuartzTaskMapper;
-    @Resource
+    @Autowired
     private CloudAccountQuartzTaskRelationMapper quartzTaskRelationMapper;
-    @Resource
+    @Autowired
     private RuleMapper ruleMapper;
-    @Resource
+    @Autowired
     private CloudAccountQuartzTaskRelaLogMapper quartzTaskRelaLogMapper;
-    @Resource
+    @Autowired
     private ProwlerService prowlerService;
-    @Resource
+    @Autowired
     private TokenService tokenService;
 
     public CloudTask saveManualTask(QuartzTaskDTO quartzTaskDTO, String messageOrderId) {

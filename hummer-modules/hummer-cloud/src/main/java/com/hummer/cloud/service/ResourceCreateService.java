@@ -16,9 +16,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,36 +34,35 @@ import static com.alibaba.fastjson2.JSON.toJSONString;
 public class ResourceCreateService {
     // 只有一个任务在处理，防止超配
     private static ConcurrentHashMap<String, String> processingGroupIdMap = new ConcurrentHashMap<>();
-    private static ConcurrentHashMap<Integer, Integer> historyIdMap = new ConcurrentHashMap<>();
-    @Resource
+    @Autowired
     private CloudTaskMapper cloudTaskMapper;
-    @Resource
+    @Autowired
     private OssMapper ossMapper;
-    @Resource
+    @Autowired
     private OssService ossService;
-    @Resource
+    @Autowired
     private OrderService orderService;
-    @Resource
+    @Autowired
     private CloudTaskItemMapper cloudTaskItemMapper;
-    @Resource
+    @Autowired
     private ResourceService resourceService;
-    @Resource
+    @Autowired
     private RuleMapper ruleMapper;
-    @Resource
+    @Autowired
     private CloudTaskItemResourceMapper cloudTaskItemResourceMapper;
-    @Resource
+    @Autowired
     private AccountMapper accountMapper;
-    @Resource
+    @Autowired
     private ResourceMapper resourceMapper;
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
-    @Resource
+    @Autowired
     private ProwlerService prowlerService;
-    @Resource
+    @Autowired
     private CloudResourceSyncMapper cloudResourceSyncMapper;
-    @Resource
+    @Autowired
     private CloudResourceSyncItemMapper cloudResourceSyncItemMapper;
-    @Resource
+    @Autowired
     private CommonThreadPool commonThreadPool;
     @DubboReference
     private ISystemProviderService systemProviderService;

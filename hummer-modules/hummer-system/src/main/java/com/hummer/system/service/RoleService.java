@@ -3,10 +3,10 @@ package com.hummer.system.service;
 import com.hummer.common.core.domain.Role;
 import com.hummer.system.mapper.RoleMapper;
 import com.hummer.system.mapper.ext.ExtRoleMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -16,9 +16,9 @@ import java.util.List;
 @Transactional(rollbackFor = Exception.class)
 public class RoleService {
 
-    @Resource
+    @Autowired
     private ExtRoleMapper extRoleMapper;
-    @Resource
+    @Autowired
     private RoleMapper roleMapper;
 
     public List<Role> getRoleList(String sign) {

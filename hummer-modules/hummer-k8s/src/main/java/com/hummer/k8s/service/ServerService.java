@@ -6,16 +6,16 @@ import com.alibaba.fastjson.JSONObject;
 import com.hummer.cloud.api.ICloudProviderService;
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
-import com.hummer.common.core.dto.*;
-import com.hummer.common.core.exception.HRException;
-import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.utils.*;
 import com.hummer.common.core.domain.request.server.ServerCertificateRequest;
 import com.hummer.common.core.domain.request.server.ServerRequest;
 import com.hummer.common.core.domain.request.server.ServerResultRequest;
 import com.hummer.common.core.domain.request.server.ServerRuleRequest;
+import com.hummer.common.core.dto.*;
+import com.hummer.common.core.exception.HRException;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.proxy.server.SshUtil;
 import com.hummer.common.core.proxy.server.WinRMHelper;
+import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.mapper.*;
 import com.hummer.k8s.mapper.ext.ExtServerCertificateMapper;
@@ -34,11 +34,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -54,31 +54,31 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 public class ServerService {
 
-    @Resource
+    @Autowired
     private ExtServerMapper extServerMapper;
-    @Resource
+    @Autowired
     private ServerMapper serverMapper;
-    @Resource
+    @Autowired
     private ServerGroupMapper serverGroupMapper;
-    @Resource
+    @Autowired
     private ServerRuleMapper serverRuleMapper;
-    @Resource
+    @Autowired
     private ExtServerRuleMapper extServerRuleMapper;
-    @Resource
+    @Autowired
     private ExtServerResultMapper extServerResultMapper;
-    @Resource
+    @Autowired
     private ServerResultMapper serverResultMapper;
-    @Resource
+    @Autowired
     private ServerResultLogMapper serverResultLogMapper;
-    @Resource
+    @Autowired
     private ServerCertificateMapper serverCertificateMapper;
-    @Resource
+    @Autowired
     private ExtServerCertificateMapper extServerCertificateMapper;
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
-    @Resource
+    @Autowired
     private PluginMapper pluginMapper;
-    @Resource
+    @Autowired
     private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;

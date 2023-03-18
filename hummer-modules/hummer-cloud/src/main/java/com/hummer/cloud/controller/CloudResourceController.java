@@ -7,13 +7,13 @@ import com.hummer.common.core.domain.CloudResourceSummary;
 import com.hummer.common.core.domain.CloudTask;
 import com.hummer.common.core.domain.request.cloudResource.CloudResourceItemRequest;
 import com.hummer.common.core.dto.CloudResourceItemDTO;
+import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
-import com.hummer.common.core.handler.annotation.I18n;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @ApiIgnore
@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping(value = "cloud/resource")
 public class CloudResourceController {
 
-    @Resource
+    @Autowired
     private CloudResourceService cloudResourceService;
 
     @I18n

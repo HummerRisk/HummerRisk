@@ -3,10 +3,6 @@ package com.hummer.cloud.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummer.cloud.service.ResourceService;
-import com.hummer.common.core.dto.*;
-import com.hummer.common.core.handler.annotation.I18n;
-import com.hummer.common.core.utils.PageUtils;
-import com.hummer.common.core.utils.Pager;
 import com.hummer.common.core.domain.CloudTaskItem;
 import com.hummer.common.core.domain.ResourceWithBLOBs;
 import com.hummer.common.core.domain.RuleInspectionReport;
@@ -14,8 +10,13 @@ import com.hummer.common.core.domain.request.excel.ExcelExportRequest;
 import com.hummer.common.core.domain.request.resource.JsonRequest;
 import com.hummer.common.core.domain.request.resource.ResourceRequest;
 import com.hummer.common.core.domain.request.rule.RuleGroupRequest;
+import com.hummer.common.core.dto.*;
+import com.hummer.common.core.handler.annotation.I18n;
+import com.hummer.common.core.utils.PageUtils;
+import com.hummer.common.core.utils.Pager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,7 +24,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +34,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("resource")
 public class ResourceController {
-    @Resource
+    @Autowired
     private ResourceService resourceService;
 
     @I18n

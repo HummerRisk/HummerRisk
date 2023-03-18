@@ -4,25 +4,25 @@ package com.hummer.cloud.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.hummer.cloud.mapper.*;
+import com.hummer.cloud.mapper.ext.ExtCloudResourceSyncItemMapper;
+import com.hummer.cloud.mapper.ext.ExtCloudResourceSyncMapper;
 import com.hummer.common.core.constant.CloudTaskConstants;
 import com.hummer.common.core.constant.CommandEnum;
 import com.hummer.common.core.constant.ResourceOperation;
 import com.hummer.common.core.constant.ResourceTypeConstants;
 import com.hummer.common.core.domain.*;
+import com.hummer.common.core.domain.request.cloudResource.CloudResourceSyncRequest;
+import com.hummer.common.core.domain.request.sync.CloudTopology;
 import com.hummer.common.core.dto.CloudResourceSyncItemDTO;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
-import com.hummer.common.core.domain.request.cloudResource.CloudResourceSyncRequest;
-import com.hummer.common.core.domain.request.sync.CloudTopology;
-import com.hummer.cloud.mapper.*;
-import com.hummer.cloud.mapper.ext.ExtCloudResourceSyncItemMapper;
-import com.hummer.cloud.mapper.ext.ExtCloudResourceSyncMapper;
 import com.hummer.common.security.service.TokenService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -35,27 +35,27 @@ import static com.alibaba.fastjson.JSON.parseObject;
 @Transactional(rollbackFor = Exception.class)
 public class CloudSyncService {
 
-    @Resource
+    @Autowired
     private AccountMapper accountMapper;
-    @Resource
+    @Autowired
     private CloudResourceSyncMapper cloudResourceSyncMapper;
-    @Resource
+    @Autowired
     private ExtCloudResourceSyncMapper extCloudResourceSyncMapper;
-    @Resource
+    @Autowired
     private CloudResourceSyncItemMapper cloudResourceSyncItemMapper;
-    @Resource
+    @Autowired
     private CloudResourceSyncItemLogMapper cloudResourceSyncItemLogMapper;
-    @Resource
+    @Autowired
     private CloudResourceMapper cloudResourceMapper;
-    @Resource
+    @Autowired
     private CloudResourceItemMapper cloudResourceItemMapper;
-    @Resource
+    @Autowired
     private CommonThreadPool commonThreadPool;
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
-    @Resource
+    @Autowired
     private ExtCloudResourceSyncItemMapper extCloudResourceSyncItemMapper;
-    @Resource
+    @Autowired
     private TokenService tokenService;
     /**
      * 获取同步日志

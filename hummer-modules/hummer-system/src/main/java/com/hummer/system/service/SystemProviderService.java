@@ -1,17 +1,15 @@
 package com.hummer.system.service;
 
 
-import com.hummer.common.core.constant.ParamConstants;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.dashboard.DashboardTarget;
-import com.hummer.common.core.utils.BeanUtils;
 import com.hummer.system.api.ISystemProviderService;
 import com.hummer.system.api.model.LoginUser;
 import com.hummer.system.mapper.*;
 import com.hummer.system.mapper.ext.ExtVulnMapper;
 import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -21,37 +19,37 @@ import java.util.Map;
 @DubboService
 public class SystemProviderService implements ISystemProviderService {
 
-    @Resource
+    @Autowired
     private NoticeService noticeService;
-    @Resource
+    @Autowired
     private HistoryService historyService;
-    @Resource
+    @Autowired
     private ExtVulnMapper extVulnMapper;
-    @Resource
+    @Autowired
     private HistoryCloudTaskMapper historyCloudTaskMapper;
-    @Resource
+    @Autowired
     private HistoryScanMapper historyScanMapper;
-    @Resource
+    @Autowired
     private HistoryScanTaskMapper historyScanTaskMapper;
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
-    @Resource
+    @Autowired
     private HistoryCodeResultMapper historyCodeResultMapper;
-    @Resource
+    @Autowired
     private SystemParameterService systemParameterService;
-    @Resource
+    @Autowired
     private HistoryCloudNativeResultMapper historyCloudNativeResultMapper;
-    @Resource
+    @Autowired
     private HistoryCloudNativeConfigResultMapper historyCloudNativeConfigResultMapper;
-    @Resource
+    @Autowired
     private HistoryFileSystemResultMapper historyFileSystemResultMapper;
-    @Resource
+    @Autowired
     private HistoryImageResultMapper historyImageResultMapper;
-    @Resource
+    @Autowired
     private PluginMapper pluginMapper;
-    @Resource
+    @Autowired
     private HistoryServerResultMapper historyServerResultMapper;
-    @Resource
+    @Autowired
     private UserService userService;
 
 

@@ -17,10 +17,10 @@ import com.hummer.system.mapper.*;
 import com.hummer.system.mapper.ext.ExtTaskMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,23 +34,23 @@ import static com.alibaba.fastjson.JSON.parseArray;
 @Transactional(rollbackFor = Exception.class)
 public class TaskService {
 
-    @Resource
+    @Autowired
     private FavoriteMapper favoriteMapper;
-    @Resource
+    @Autowired
     private ExtTaskMapper extTaskMapper;
-    @Resource
+    @Autowired
     private TaskMapper taskMapper;
-    @Resource
+    @Autowired
     private TaskItemMapper taskItemMapper;
-    @Resource
+    @Autowired
     private TaskItemResourceMapper taskItemResourceMapper;
-    @Resource
+    @Autowired
     private TaskItemResourceLogMapper taskItemResourceLogMapper;
-    @Resource
+    @Autowired
     private HistoryService historyService;
-    @Resource
+    @Autowired
     private TokenService tokenService;
-    @Resource
+    @Autowired
     private OperationLogService operationLogService;
     @DubboReference
     private ICloudProviderService cloudProviderService;

@@ -1,29 +1,29 @@
 package com.hummer.system.service;
 
 import com.hummer.common.core.constant.ParamConstants;
-import com.hummer.common.core.utils.LogUtil;
 import com.hummer.common.core.domain.MailAttachmentInfo;
 import com.hummer.common.core.domain.SystemParameter;
+import com.hummer.common.core.utils.LogUtil;
 import com.hummer.system.mapper.SystemParameterMapper;
 import jakarta.mail.internet.MimeMessage;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.*;
 
 @Service
 public class MailService {
 
-    @Resource
+    @Autowired
     private SystemParameterMapper systemParameterMapper;
-    @Resource
+    @Autowired
     private SystemParameterService systemParameterService;
 
     public JavaMailSenderImpl getMailSender() {

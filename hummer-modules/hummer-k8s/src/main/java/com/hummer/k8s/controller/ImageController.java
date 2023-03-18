@@ -11,11 +11,11 @@ import com.hummer.common.core.utils.Pager;
 import com.hummer.k8s.service.ImageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +24,7 @@ import java.util.Map;
 @RequestMapping(value = "image")
 public class ImageController {
 
-    @Resource
+    @Autowired
     private ImageService imageService;
 
     @I18n

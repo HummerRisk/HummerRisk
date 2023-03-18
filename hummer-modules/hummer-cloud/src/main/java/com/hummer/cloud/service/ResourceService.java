@@ -10,13 +10,13 @@ import com.hummer.cloud.mapper.ext.ExtHistoryScanMapper;
 import com.hummer.cloud.mapper.ext.ExtResourceMapper;
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
+import com.hummer.common.core.domain.request.excel.ExcelExportRequest;
+import com.hummer.common.core.domain.request.resource.ResourceRequest;
+import com.hummer.common.core.domain.request.rule.RuleGroupRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
-import com.hummer.common.core.domain.request.excel.ExcelExportRequest;
-import com.hummer.common.core.domain.request.resource.ResourceRequest;
-import com.hummer.common.core.domain.request.rule.RuleGroupRequest;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.quartz.service.QuartzManageService;
 import com.hummer.system.api.ISystemProviderService;
@@ -27,13 +27,13 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,45 +52,46 @@ import static com.alibaba.fastjson.JSON.parseObject;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class ResourceService {
-    @Resource @Lazy
+    @Autowired
+    @Lazy
     private ExtResourceMapper extResourceMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ResourceMapper resourceMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ResourceRuleMapper resourceRuleMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudTaskItemMapper cloudTaskItemMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudTaskItemResourceMapper cloudTaskItemResourceMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudTaskMapper cloudTaskMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private AccountMapper accountMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ExtCloudTaskMapper extCloudTaskMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudTaskItemLogMapper cloudTaskItemLogMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudTaskService cloudTaskService;
-    @Resource @Lazy
+    @Autowired @Lazy
     private OrderService orderService;
-    @Resource @Lazy
+    @Autowired @Lazy
     private RuleMapper ruleMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ResourceItemMapper resourceItemMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ExtHistoryScanMapper extHistoryScanMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ProxyMapper proxyMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudAccountQuartzTaskMapper quartzTaskMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudAccountQuartzTaskRelationMapper quartzTaskRelationMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudAccountQuartzTaskRelaLogMapper quartzTaskRelaLogMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private QuartzManageService quartzManageService;
-    @Resource
+    @Autowired
     private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;

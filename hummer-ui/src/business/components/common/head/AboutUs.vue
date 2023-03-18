@@ -34,7 +34,7 @@
         dialogVisible: false,
         githubUrl: 'https://github.com/HummerRisk/HummerRisk',
         websiteUrl: 'https://docs.hummerrisk.com',
-        version: 'v1.0.0',
+        version: process.env.HR_VERSION,
         items: [
           {img: require(`@/assets/img/about/docs.png`), url: 'https://docs.hummerrisk.com'},
           {img: require(`@/assets/img/about/github.png`), url: 'https://github.com/HummerRisk/HummerRisk'},
@@ -46,17 +46,11 @@
       }
     },
     created() {
-      this.getVersion();
     },
     methods: {
       open() {
         this.dialogVisible = true;
       },
-      getVersion() {
-        this.$get('/system/system/version', response => {
-          this.version = response.data;
-        });
-      }
     }
   }
 </script>

@@ -3,25 +3,25 @@ package com.hummer.k8s.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummer.common.core.domain.*;
-import com.hummer.common.core.dto.*;
-import com.hummer.common.core.handler.annotation.I18n;
-import com.hummer.common.core.utils.PageUtils;
-import com.hummer.common.core.utils.Pager;
 import com.hummer.common.core.domain.request.server.ServerCertificateRequest;
 import com.hummer.common.core.domain.request.server.ServerRequest;
 import com.hummer.common.core.domain.request.server.ServerResultRequest;
 import com.hummer.common.core.domain.request.server.ServerRuleRequest;
+import com.hummer.common.core.dto.*;
+import com.hummer.common.core.handler.annotation.I18n;
+import com.hummer.common.core.utils.PageUtils;
+import com.hummer.common.core.utils.Pager;
 import com.hummer.k8s.service.ServerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +33,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "server")
 public class ServerController {
-    @Resource
+    @Autowired
     private ServerService serverService;
 
     @ApiOperation(value = "所有主机分组")

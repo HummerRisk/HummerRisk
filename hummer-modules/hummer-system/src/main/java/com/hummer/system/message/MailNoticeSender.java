@@ -3,18 +3,18 @@ package com.hummer.system.message;
 import com.hummer.common.core.utils.LogUtil;
 import com.hummer.system.service.MailService;
 import jakarta.mail.internet.MimeMessage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import java.util.List;
 import java.util.Objects;
 
 @Component
 public class MailNoticeSender extends AbstractNoticeSender {
-    @Resource
+    @Autowired
     private MailService mailService;
 
     private void sendMail(MessageDetail messageDetail, String context, NoticeModel noticeModel) throws MessagingException, jakarta.mail.MessagingException {

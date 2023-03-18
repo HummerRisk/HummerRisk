@@ -2,28 +2,22 @@ package com.hummer.system.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummer.common.core.constant.RoleConstants;
 import com.hummer.common.core.domain.User;
-import com.hummer.common.core.domain.request.member.AddMemberRequest;
 import com.hummer.common.core.domain.request.member.EditPassWordRequest;
-import com.hummer.common.core.domain.request.member.QueryMemberRequest;
 import com.hummer.common.core.domain.request.member.UserRequest;
-import com.hummer.common.core.domain.request.organization.AddOrgMemberRequest;
-import com.hummer.common.core.domain.request.organization.QueryOrgMemberRequest;
 import com.hummer.common.core.dto.UserDTO;
 import com.hummer.common.core.dto.UserRoleDTO;
 import com.hummer.common.core.handler.annotation.I18n;
-import com.hummer.common.core.user.SessionUser;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Api(tags = "用户")
@@ -31,9 +25,9 @@ import java.util.List;
 @RestController
 public class UserController {
 
-    @Resource
+    @Autowired
     private UserService userService;
-    @Resource
+    @Autowired
     private TokenService tokenService;
 
     @I18n
@@ -74,30 +68,6 @@ public class UserController {
     @PostMapping("/special/update_status")
     public void updateStatus(@RequestBody User user) {
         userService.updateUser(user);
-    }
-
-    @ApiIgnore
-    @PostMapping("/special/ws/member/add")
-    public void addMemberByAdmin(@RequestBody AddMemberRequest request) {
-        userService.addMember(request);
-    }
-
-    @ApiIgnore
-    @GetMapping("/special/ws/member/delete/{workspaceId}/{userId}")
-    public void deleteMemberByAdmin(@PathVariable String workspaceId, @PathVariable String userId) {
-        userService.deleteMember(workspaceId, userId);
-    }
-
-    @ApiIgnore
-    @PostMapping("/special/org/member/add")
-    public void addOrganizationMemberByAdmin(@RequestBody AddOrgMemberRequest request) {
-        userService.addOrganizationMember(request);
-    }
-
-    @ApiIgnore
-    @GetMapping("/special/org/member/delete/{organizationId}/{userId}")
-    public void delOrganizationMemberByAdmin(@PathVariable String organizationId, @PathVariable String userId) {
-        userService.delOrganizationMember(organizationId, userId);
     }
 
     @I18n

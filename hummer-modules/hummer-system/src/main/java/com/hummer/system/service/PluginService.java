@@ -12,9 +12,9 @@ import com.hummer.common.core.utils.ReadFileUtils;
 import com.hummer.system.mapper.PluginMapper;
 import com.hummer.system.mapper.ext.ExtPluginMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -26,10 +26,10 @@ public class PluginService {
     private static final String BASE_CREDENTIAL_DIC = "support/credential/";
     private static final String JSON_EXTENSION = ".json";
 
-    @Resource
+    @Autowired
     private PluginMapper pluginMapper;
 
-    @Resource
+    @Autowired
     private ExtPluginMapper extPluginMapper;
 
     public List<Plugin> getAllPlugin(String scanType) {

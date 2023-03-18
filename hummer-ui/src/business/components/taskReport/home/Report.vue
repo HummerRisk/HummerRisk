@@ -327,11 +327,7 @@ import FsLogForm from "@/business/components/fs/home/LogForm";
 import K8sLogForm from "@/business/components/k8s/home/LogForm";
 import ConfigLogForm from "@/business/components/config/home/LogForm";
 import htmlToPdf from "@/common/js/htmlToPdf";
-import {
-  allTaskListUrl,
-  taskTagRuleListUrl,
-  taskReportUrl,
-} from "@/api/system/task";
+import {allTaskListUrl, taskReportUrl, taskTagRuleListUrl,} from "@/api/system/task";
 import {resourceTypesUrl} from "@/api/cloud/rule/rule";
 
 /* eslint-disable */
@@ -354,7 +350,7 @@ export default {
       tasks: [],
       selectedTask: null,
       activeNames: ['1','2','3','4','5','6','7','8','9', '10', '11', '12', '13'],
-      version: 'v1.0.0',
+      version: process.env.HR_VERSION,
       report: {},
       tagSelect: [],
       resourceTypes: [],
@@ -485,7 +481,7 @@ export default {
       window.URL.revokeObjectURL(url);
     },
     getVersion() {
-      this.version = "v1.0.0";
+      this.version = process.env.HR_VERSION;
     },
     filterJsonKeyAndValue(json) {
       //json is json object , not array -- harris

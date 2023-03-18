@@ -1,5 +1,6 @@
 package com.hummer.system.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,13 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.annotation.Resource;
-
 @ApiIgnore
 @RestController
 @RequestMapping("anonymous")
 public class HelloController {
-    @Resource
+    @Autowired
     MessageSource messageSource;
 
     @GetMapping("hello")

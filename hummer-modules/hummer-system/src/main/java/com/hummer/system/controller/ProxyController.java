@@ -2,7 +2,6 @@ package com.hummer.system.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummer.common.core.constant.RoleConstants;
 import com.hummer.common.core.domain.Proxy;
 import com.hummer.common.core.domain.request.proxy.ProxyRequest;
 import com.hummer.common.core.handler.annotation.I18n;
@@ -11,9 +10,9 @@ import com.hummer.common.core.utils.Pager;
 import com.hummer.system.service.ProxyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Api(tags = "代理")
@@ -21,7 +20,7 @@ import java.util.List;
 @RestController
 public class ProxyController {
 
-    @Resource
+    @Autowired
     private ProxyService proxyService;
 
     @I18n

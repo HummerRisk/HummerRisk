@@ -9,10 +9,10 @@ import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.domain.User;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Service
@@ -21,10 +21,10 @@ public class OperationLogService {
 
     private static OperationLogMapper operationLogMapper;
 
-    @Resource
+    @Autowired
     private ExtOperationLogMapper extOperationLogMapper;
 
-    @Resource
+    @Autowired
     private static TokenService tokenService;
 
     public static void log(String resourceId, String resourceName, String resourceType, String operation, String message) {
@@ -67,7 +67,7 @@ public class OperationLogService {
         return operationLog;
     }
 
-    @Resource
+    @Autowired
     public void setOperationLogMapper(OperationLogMapper operationLogMapper) {
         OperationLogService.operationLogMapper = operationLogMapper;
     }

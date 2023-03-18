@@ -2,7 +2,6 @@ package com.hummer.auth.controller;
 
 import com.hummer.auth.service.SysLoginService;
 import com.hummer.auth.service.UserService;
-import com.hummer.common.core.domain.R;
 import com.hummer.common.core.domain.request.LoginRequest;
 import com.hummer.common.core.text.ResultHolder;
 import com.hummer.common.core.utils.JwtUtils;

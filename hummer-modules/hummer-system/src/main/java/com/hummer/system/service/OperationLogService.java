@@ -1,9 +1,9 @@
 package com.hummer.system.service;
 
-import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.common.core.domain.OperationLog;
 import com.hummer.common.core.domain.OperationLogExample;
 import com.hummer.common.core.domain.request.log.OperatorLogRequest;
+import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.domain.User;
@@ -11,22 +11,22 @@ import com.hummer.system.mapper.OperationLogMapper;
 import com.hummer.system.mapper.ext.ExtOperationLogMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboService;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @DubboService
 @Transactional(rollbackFor = Exception.class)
 public class OperationLogService implements IOperationLogService {
 
+    @Autowired
     private OperationLogMapper operationLogMapper;
 
-    @Resource
+    @Autowired
     private ExtOperationLogMapper extOperationLogMapper;
 
-    @Resource
+    @Autowired
     private TokenService tokenService;
 
     @Override

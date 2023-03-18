@@ -8,9 +8,9 @@ import com.hummer.common.core.utils.LogUtil;
 import com.hummer.k8s.mapper.*;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,32 +22,31 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ResourceCreateService {
     // 只有一个任务在处理，防止超配
     private static ConcurrentHashMap<String, String> processingGroupIdMap = new ConcurrentHashMap<>();
-    private static ConcurrentHashMap<Integer, Integer> historyIdMap = new ConcurrentHashMap<>();
-    @Resource
+    @Autowired
     private CommonThreadPool commonThreadPool;
-    @Resource
+    @Autowired
     private ServerResultMapper serverResultMapper;
-    @Resource
+    @Autowired
     private ServerService serverService;
-    @Resource
+    @Autowired
     private ImageService imageService;
-    @Resource
+    @Autowired
     private ImageResultMapper imageResultMapper;
-    @Resource
+    @Autowired
     private CloudNativeResultMapper cloudNativeResultMapper;
-    @Resource
+    @Autowired
     private CloudNativeConfigResultMapper cloudNativeConfigResultMapper;
-    @Resource
+    @Autowired
     private K8sService k8sService;
-    @Resource
+    @Autowired
     private ConfigService configService;
-    @Resource
+    @Autowired
     private CodeResultMapper codeResultMapper;
-    @Resource
+    @Autowired
     private CodeService codeService;
-    @Resource
+    @Autowired
     private FileSystemResultMapper fileSystemResultMapper;
-    @Resource
+    @Autowired
     private FileSystemService fileSystemService;
 
     //主机检测

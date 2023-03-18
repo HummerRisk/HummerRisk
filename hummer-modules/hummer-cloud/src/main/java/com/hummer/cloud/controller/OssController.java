@@ -2,6 +2,8 @@ package com.hummer.cloud.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.hummer.cloud.oss.controller.request.OssBucketRequest;
+import com.hummer.cloud.oss.controller.request.OssRequest;
 import com.hummer.cloud.oss.dto.*;
 import com.hummer.cloud.service.OssService;
 import com.hummer.common.core.domain.*;
@@ -12,8 +14,6 @@ import com.hummer.common.core.domain.request.rule.RuleGroupRequest;
 import com.hummer.common.core.dto.ResourceDTO;
 import com.hummer.common.core.dto.RuleGroupDTO;
 import com.hummer.common.core.dto.ValidateDTO;
-import com.hummer.cloud.oss.controller.request.OssBucketRequest;
-import com.hummer.cloud.oss.controller.request.OssRequest;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.text.ResultHolder;
 import com.hummer.common.core.utils.PageUtils;
@@ -21,6 +21,7 @@ import com.hummer.common.core.utils.Pager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,7 +30,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.annotation.Resource;
 import java.io.BufferedOutputStream;
 import java.io.FilterInputStream;
 import java.net.URLEncoder;
@@ -41,7 +41,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "oss")
 public class OssController {
-    @Resource
+    @Autowired
     private OssService ossService;
 
     @I18n

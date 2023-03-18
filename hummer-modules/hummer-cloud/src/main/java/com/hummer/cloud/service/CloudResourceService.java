@@ -7,16 +7,16 @@ import com.hummer.common.core.domain.CloudTask;
 import com.hummer.common.core.domain.request.cloudResource.CloudResourceItemRequest;
 import com.hummer.common.core.dto.CloudResourceItemDTO;
 import com.hummer.common.core.dto.ResourceRuleDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Service
 public class CloudResourceService {
-    @Resource
+    @Autowired
     private ExtCloudResourceItemMapper extCloudResourceItemMapper;
-    @Resource
+    @Autowired
     private ExtCloudTaskMapper extCloudTaskMapper;
 
     public List<CloudResourceSummary> getSummary(String accountId){

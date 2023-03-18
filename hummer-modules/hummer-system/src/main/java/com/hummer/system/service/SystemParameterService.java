@@ -13,13 +13,16 @@ import com.hummer.common.core.constant.ParamConstants;
 import com.hummer.common.core.constant.ResourceOperation;
 import com.hummer.common.core.constant.ResourceTypeConstants;
 import com.hummer.common.core.constant.TrivyConstants;
-import com.hummer.common.core.exception.HRException;
-import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.utils.*;
 import com.hummer.common.core.domain.SystemParameter;
 import com.hummer.common.core.domain.SystemParameterExample;
 import com.hummer.common.core.domain.Webhook;
 import com.hummer.common.core.domain.WebhookExample;
+import com.hummer.common.core.exception.HRException;
+import com.hummer.common.core.i18n.Translator;
+import com.hummer.common.core.utils.CommandUtils;
+import com.hummer.common.core.utils.FileUploadUtils;
+import com.hummer.common.core.utils.LogUtil;
+import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.mapper.SystemParameterMapper;
 import com.hummer.system.mapper.WebhookMapper;
@@ -27,7 +30,7 @@ import com.hummer.system.message.NotificationBasicResponse;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -37,7 +40,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -49,24 +51,21 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class SystemParameterService {
 
-    @Resource
+    @Autowired
     private SystemParameterMapper systemParameterMapper;
-    @Resource
+    @Autowired
     private RestTemplate restTemplate;
 
-    @Resource
-    private Environment env;
-
-    @Resource
+    @Autowired
     private SysListener sysListener;
 
-    @Resource
+    @Autowired
     private WebhookMapper webhookMapper;
 
-    @Resource
+    @Autowired
     private TokenService tokenService;
 
-    @Resource
+    @Autowired
     private OperationLogService operationLogService;
 
     public String getSystemLanguage() {
@@ -245,10 +244,6 @@ public class SystemParameterService {
         if (execute1.getErrcode() != 0) {
             HRException.throwException(execute1.getErrmsg());
         }
-    }
-
-    public String getVersion() {
-        return env.getProperty("HMR_VERSION");
     }
 
     public List<SystemParameter> info(String type) {

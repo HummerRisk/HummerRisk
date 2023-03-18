@@ -6,19 +6,19 @@ import com.hummer.common.core.domain.request.webMsg.WebMsgRequest;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.mapper.WebMsgMapper;
 import com.hummer.system.mapper.ext.ExtWebMsgMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Service
 public class WebMsgService {
 
-    @Resource
+    @Autowired
     private WebMsgMapper webMsgMapper;
-    @Resource
+    @Autowired
     private ExtWebMsgMapper extWebMsgMapper;
-    @Resource
+    @Autowired
     private TokenService tokenService;
 
     public List<WebMsg> query(WebMsg webMsg) {

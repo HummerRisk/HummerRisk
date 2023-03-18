@@ -1,6 +1,7 @@
 package com.hummer.system;
 
 import com.hummer.common.security.annotation.EnableHrFeignClients;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -11,6 +12,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
  * @author harris1943
  */
 @EnableHrFeignClients
+@MapperScan("com.hummer.system.mapper")
 @SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
 public class SystemApplication {
     public static void main(String[] args) {

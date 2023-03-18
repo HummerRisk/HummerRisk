@@ -18,10 +18,10 @@ import com.hummer.k8s.service.CodeService;
 import io.kubernetes.client.openapi.ApiException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +31,7 @@ import java.util.Map;
 @RequestMapping(value = "code")
 public class CodeController {
 
-    @Resource
+    @Autowired
     private CodeService codeService;
 
     @I18n

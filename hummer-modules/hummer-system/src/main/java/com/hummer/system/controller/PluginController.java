@@ -10,16 +10,16 @@ import com.hummer.common.core.utils.Pager;
 import com.hummer.system.service.PluginService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Api(tags = "插件")
 @RestController
 @RequestMapping(value = "plugin")
 public class PluginController {
-    @Resource
+    @Autowired
     private PluginService pluginService;
 
     @I18n

@@ -17,10 +17,10 @@ import com.hummer.system.api.ISystemProviderService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,33 +36,34 @@ import static com.alibaba.fastjson2.JSON.toJSONString;
 @Service
 public class ProwlerService {
 
-    @Resource @Lazy
+    @Autowired
+    @Lazy
     private CloudTaskMapper cloudTaskMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudTaskItemMapper cloudTaskItemMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudTaskItemLogMapper cloudTaskItemLogMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CommonThreadPool commonThreadPool;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudTaskItemResourceMapper cloudTaskItemResourceMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ResourceMapper resourceMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private AccountMapper accountMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ResourceRuleMapper resourceRuleMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ProxyMapper proxyMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private OrderService orderService;
-    @Resource @Lazy
+    @Autowired @Lazy
     private RuleMapper ruleMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ResourceItemMapper resourceItemMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ExtCloudTaskMapper extCloudTaskMapper;
-    @Resource
+    @Autowired
     private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;

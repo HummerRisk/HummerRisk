@@ -10,9 +10,9 @@ import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
 import com.hummer.common.core.dto.QuartzTaskDTO;
 import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -21,51 +21,51 @@ import java.util.List;
 @DubboService
 public class CloudProviderService implements ICloudProviderService {
 
-    @Resource
+    @Autowired
     private CloudTaskMapper cloudTaskMapper;
-    @Resource
+    @Autowired
     private AccountMapper accountMapper;
-    @Resource
+    @Autowired
     private ExtResourceMapper extResourceMapper;
-    @Resource
+    @Autowired
     private RuleMapper ruleMapper;
-    @Resource
+    @Autowired
     private RuleTagMappingMapper ruleTagMappingMapper;
-    @Resource
+    @Autowired
     private RuleGroupMappingMapper ruleGroupMappingMapper;
-    @Resource
+    @Autowired
     private RuleService ruleService;
-    @Resource
+    @Autowired
     private CloudTaskService cloudTaskService;
-    @Resource
+    @Autowired
     private ExtAccountMapper extAccountMapper;
-    @Resource
+    @Autowired
     private ExtRuleMapper extRuleMapper;
-    @Resource
+    @Autowired
     private ExtCloudTaskMapper extCloudTaskMapper;
-    @Resource
+    @Autowired
     private RuleTagMapper ruleTagMapper;
-    @Resource
+    @Autowired
     private CloudTaskItemMapper cloudTaskItemMapper;
-    @Resource
+    @Autowired
     private ResourceService resourceService;
-    @Resource
+    @Autowired
     private CloudTaskItemResourceMapper cloudTaskItemResourceMapper;
-    @Resource
+    @Autowired
     private ResourceMapper resourceMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private OrderService orderService;
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
-    @Resource
+    @Autowired
     private ProwlerService prowlerService;
-    @Resource
+    @Autowired
     private CloudResourceSyncItemMapper cloudResourceSyncItemMapper;
-    @Resource
+    @Autowired
     private CloudResourceSyncMapper cloudResourceSyncMapper;
-    @Resource
+    @Autowired
     private OssService ossService;
-    @Resource
+    @Autowired
     private OssMapper ossMapper;
 
     @Override

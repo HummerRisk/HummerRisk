@@ -64,10 +64,10 @@
 </template>
 
 <script>
-import { saveLocalStorage } from '@/common/js/utils';
-import { DEFAULT_LANGUAGE } from "@/common/js/constants";
-import { signinUrl, isLoginUrl, languageUrl } from "@/api/auth/auth";
-import { setToken } from '@/common/js/auth';
+import {saveLocalStorage} from '@/common/js/utils';
+import {DEFAULT_LANGUAGE} from "@/common/js/constants";
+import {isLoginUrl, languageUrl, signinUrl} from "@/api/auth/auth";
+import {setToken} from '@/common/js/auth';
 
 /* eslint-disable */
   export default {
@@ -133,7 +133,7 @@ import { setToken } from '@/common/js/auth';
                 this.doLogin();
                 break;
               default:
-                this.loginUrl = ssoSigninUrl;
+                this.loginUrl = signinUrl;
                 this.doLogin();
             }
           } else {

@@ -55,6 +55,7 @@ import com.volcengine.service.cloudtrail.impl.CloudTrailServiceImpl;
 import common.utils.HttpClientUtils;
 import common.utils.SignUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -63,7 +64,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -72,30 +72,30 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 public class CloudEventService {
 
-    @Resource
+    @Autowired
     private AccountService accountService;
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
-    @Resource
+    @Autowired
     private CloudEventMapper cloudEventMapper;
-    @Resource
+    @Autowired
     private ExtCloudEventMapper extCloudEventMapper;
-    @Resource
+    @Autowired
     private CloudEventSyncLogMapper cloudEventSyncLogMapper;
 
-    @Resource
+    @Autowired
     private ExtCloudEventSyncLogMapper extCloudEventSyncLogMapper;
 
-    @Resource
+    @Autowired
     private CloudEventRegionLogMapper cloudEventRegionLogMapper;
-    @Resource
+    @Autowired
     @Lazy
     private CommonThreadPool commonThreadPool;
     private static final int MAX_PAGE_NUM = 1000;
     private static final int MAX_INSERT_SIZE = 30;
 
     private static final String[] LOW_RISK_ARR = {"GET","查","获取","LOGIN","LOGOUT","登陆","登出"};
-    @Resource
+    @Autowired
     private PlatformTransactionManager transactionManager;
 
     public List<CloudEventRegionLog> getCloudEventRegionLog(int logId) {

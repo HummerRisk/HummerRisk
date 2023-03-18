@@ -4,10 +4,10 @@ import com.hummer.common.core.domain.UserRole;
 import com.hummer.common.core.domain.UserRoleExample;
 import com.hummer.system.mapper.UserRoleMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 public class UserRoleService {
 
-    @Resource
+    @Autowired
     private UserRoleMapper userRoleMapper;
 
     public List<Map<String, Object>> getUserRole(String userId) {

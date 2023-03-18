@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import javax.annotation.Resource;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,7 +24,7 @@ public class Translator {
 
     private static final HashSet<String> IGNORE_KEYS = new HashSet<>(Arrays.asList("id", "password", "passwd"));
 
-    @Resource
+    @Autowired
     public void setMessageSource(MessageSource messageSource) {
         Translator.messageSource = messageSource;
     }

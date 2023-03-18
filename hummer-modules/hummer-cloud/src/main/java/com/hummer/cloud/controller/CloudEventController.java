@@ -10,14 +10,14 @@ import com.hummer.common.core.domain.request.cloudEvent.CloudEventRequest;
 import com.hummer.common.core.dto.ChartDTO;
 import com.hummer.common.core.dto.CloudEventGroupDTO;
 import com.hummer.common.core.dto.CloudEventSourceIpInsightDto;
+import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
-import com.hummer.common.core.handler.annotation.I18n;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +25,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("cloud/event")
 public class CloudEventController {
-    @Resource
+    @Autowired
     private CloudEventService cloudEventService;
 
     @ApiOperation(value = "同步任务列表")

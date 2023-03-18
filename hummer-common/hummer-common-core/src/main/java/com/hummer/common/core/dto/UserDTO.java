@@ -14,6 +14,8 @@ public class UserDTO extends User {
 
     private List<UserRole> userRoles = new ArrayList<>();
 
+    private String token;
+
     private static final long serialVersionUID = 1L;
 
     public List<Role> getRoles() {
@@ -30,5 +32,13 @@ public class UserDTO extends User {
 
     public void setUserRoles(List<UserRole> userRoles) {
         this.userRoles = userRoles;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

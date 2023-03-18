@@ -3,17 +3,17 @@ package com.hummer.system.controller;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.system.message.MessageDetail;
 import com.hummer.system.service.NoticeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @ApiIgnore
 @RestController
 @RequestMapping("notice")
 public class NoticeController {
-    @Resource
+    @Autowired
     private NoticeService noticeService;
 
     @PostMapping("save/message/task")

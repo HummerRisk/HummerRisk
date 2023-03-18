@@ -4,18 +4,18 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummer.cloud.service.CloudTaskService;
 import com.hummer.cloud.service.OrderService;
-import com.hummer.common.core.dto.*;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.cloudTask.CloudQuartzRequest;
 import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
+import com.hummer.common.core.dto.*;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import org.apache.logging.log4j.core.util.CronExpression;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -23,9 +23,9 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "cloud/task")
 public class CloudTaskController {
-    @Resource
+    @Autowired
     private CloudTaskService cloudTaskService;
-    @Resource
+    @Autowired
     private OrderService orderService;
 
     @I18n

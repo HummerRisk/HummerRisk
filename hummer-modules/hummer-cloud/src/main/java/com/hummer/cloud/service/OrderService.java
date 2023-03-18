@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -32,7 +33,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.yaml.snakeyaml.Yaml;
 
-import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -44,39 +44,40 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
-    @Resource @Lazy
+    @Autowired
+    @Lazy
     private CloudTaskMapper cloudTaskMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudTaskItemMapper cloudTaskItemMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ExtCloudTaskMapper extCloudTaskMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudTaskItemLogMapper cloudTaskItemLogMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudResourceItemMapper cloudResourceItemMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CommonThreadPool commonThreadPool;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudTaskItemResourceMapper cloudTaskItemResourceMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ResourceMapper resourceMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private AccountMapper accountMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private QuartzManageService quartzManageService;
-    @Resource @Lazy
+    @Autowired @Lazy
     private RuleMapper ruleMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ResourceRuleMapper resourceRuleMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private RuleTagMappingMapper ruleTagMappingMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudAccountQuartzTaskMapper quartzTaskMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudAccountQuartzTaskRelationMapper quartzTaskRelationMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudAccountQuartzTaskRelaLogMapper quartzTaskRelaLogMapper;
-    @Resource
+    @Autowired
     private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;

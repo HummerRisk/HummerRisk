@@ -13,9 +13,9 @@ import com.xxl.job.core.handler.annotation.XxlJob;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,33 +29,33 @@ public class ResourceCreateService {
     // 只有一个任务在处理，防止超配
     private static ConcurrentHashMap<String, String> processingGroupIdMap = new ConcurrentHashMap<>();
     private static ConcurrentHashMap<Integer, Integer> historyIdMap = new ConcurrentHashMap<>();
-    @Resource
+    @Autowired
     private CommonThreadPool commonThreadPool;
-    @Resource
+    @Autowired
     private TaskMapper taskMapper;
-    @Resource
+    @Autowired
     private TaskItemMapper taskItemMapper;
-    @Resource
+    @Autowired
     private TaskItemResourceMapper taskItemResourceMapper;
-    @Resource
+    @Autowired
     private TaskService taskService;
-    @Resource
+    @Autowired
     private HistoryService historyService;
-    @Resource
+    @Autowired
     private HistoryScanMapper historyScanMapper;
-    @Resource
+    @Autowired
     private HistoryScanTaskMapper historyScanTaskMapper;
-    @Resource
+    @Autowired
     private HistoryCloudTaskMapper historyCloudTaskMapper;
-    @Resource
+    @Autowired
     private HistoryServerResultMapper historyServerResultMapper;
-    @Resource
+    @Autowired
     private HistoryImageResultMapper historyImageResultMapper;
-    @Resource
+    @Autowired
     private TaskItemResourceLogMapper taskItemResourceLogMapper;
-    @Resource
+    @Autowired
     private HistoryCodeResultMapper historyCodeResultMapper;
-    @Resource
+    @Autowired
     private HistoryFileSystemResultMapper historyFileSystemResultMapper;
     @DubboReference
     private ICloudProviderService cloudProviderService;
