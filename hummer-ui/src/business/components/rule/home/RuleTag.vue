@@ -155,6 +155,8 @@ import {_filter, _sort} from "@/common/js/utils";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {RULE_CONFIGS, RULE_TAG_CONFIGS} from "../../common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {cloudTagRuleDeleteUrl} from "@/api/cloud/account/account";
+import {ruleListUrl} from "@/api/cloud/rule/rule";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -318,7 +320,7 @@ const columnOptions = [
           components: RULE_CONFIGS
         };
         condition.combine = {ruleTag: {operator: 'in', value: item.tagKey }};
-        let url = "/rule/list/" + this.ruleListPage + "/" + this.ruleListPageSize;
+        let url = ruleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
         this.result = this.$post(url, condition, response => {
           let data = response.data;
           this.ruleListTotal = data.itemCount;
@@ -351,7 +353,7 @@ const columnOptions = [
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get("/tag/rule/delete/" + item.tagKey, () => {
+              this.result = this.$get(cloudTagRuleDeleteUrl + item.tagKey, () => {
                 this.$success(this.$t('commons.delete_success'));
                 this.search();
               });
@@ -367,7 +369,7 @@ const columnOptions = [
       },
       //查询列表
       search() {
-        let url = "/rule/ruleTag/list/" + this.currentPage + "/" + this.pageSize;
+        let url = ruleTagListUrl + this.currentPage + "/" + this.pageSize;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;
@@ -390,7 +392,7 @@ const columnOptions = [
             if (valid) {
               let params = item;
               params.flag = item.flag ? item.flag : false;
-              let url = type == "createForm" ? "/tag/rule/save" : "/tag/rule/update";
+              let url = type == "createForm" ? cloudTagRuleSaveUrl : cloudTagRuleUpdateUrl;
               this.result = this.$post(url, params, response => {
                 this.search();
                 this.createVisible =  false;

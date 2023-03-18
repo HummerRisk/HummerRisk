@@ -416,7 +416,14 @@ import {RULE_CONFIGS} from "../../common/components/search/search-components";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {severityOptions} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {ruleTagsUrl} from "@/api/cloud/rule/rule";
+import {
+  getRuleByNameUrl,
+  ruleChangeStatusUrl,
+  ruleDryRunUrl,
+  ruleGroupsUrl,
+  ruleInspectionReport,
+  ruleTagsUrl
+} from "@/api/cloud/rule/rule";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -629,7 +636,7 @@ const columnOptions = [
                 this.$warning(this.$t('rule.rule_group_flag'));
                 return;
               }
-              this.result = this.$get("/rule/delete/" + item.id, () => {
+              this.result = this.$get(ruleDeleteUrl + item.id, () => {
                 this.$success(this.$t('commons.delete_success'));
                 this.search();
               });
@@ -645,7 +652,7 @@ const columnOptions = [
       },
       //查询插件
       activePlugin(scanType) {
-        let url = "/plugin/scan/" + scanType;
+        let url = pluginScanUrl + scanType;
         this.result = this.$get(url, response => {
           let data = response.data;
           this.plugins =  data;
@@ -654,7 +661,7 @@ const columnOptions = [
       //查询列表
       search() {
         this.filterRules(this.tagKey)
-        let url = "/rule/list/" + this.currentPage + "/" + this.pageSize;
+        let url = ruleListUrl + this.currentPage + "/" + this.pageSize;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;
@@ -691,12 +698,12 @@ const columnOptions = [
         this.severityOptions = severityOptions;
       },
       ruleSetOptionsFnc (pluginId) {
-        this.$get("/rule/ruleGroups/" + pluginId, res => {
+        this.$get(ruleGroupsUrl + pluginId, res => {
           this.ruleSetOptions = res.data;
         });
       },
       inspectionSeportOptionsFnc () {
-        this.$get("/rule/all/ruleInspectionReport", res => {
+        this.$get(ruleInspectionReport, res => {
           this.inspectionSeportOptions = res.data;
         });
       },
@@ -730,10 +737,10 @@ const columnOptions = [
         let url = '';
         let form = '';
         if (type === 'add') {
-          url = '/rule/add';
+          url = ruleAddUrl;
           form = 'createRuleForm';
         } else if (type === 'edit') {
-          url = '/rule/update';
+          url = ruleUpdateUrl;
           form = 'updateRuleForm';
           if (mdObj.flag == 1) {
             this.$warning(this.$t('rule.rule_flag'));
@@ -741,7 +748,7 @@ const columnOptions = [
           }
         } else if (type === 'copy') {
           form = 'copyRuleForm';
-          url = '/rule/copy';
+          url = ruleCopyUrl;
         }
         this.$refs[form].validate(valid => {
           if (valid) {
@@ -771,7 +778,7 @@ const columnOptions = [
             if (url === '') {
               this.$error(this.$t('rule.ex_request_parameter_error'));
             }
-            this.result = this.$post("/rule/getRuleByName", param, response => {
+            this.result = this.$post(getRuleByNameUrl, param, response => {
               if (!response.data) {
                 this.$error(this.$t('rule.rule_name_validate'));
                 return;
@@ -792,14 +799,14 @@ const columnOptions = [
         let param = Object.assign({}, mdObj);
         param.parameter = JSON.stringify(param.parameter);
         param.tags = [];
-        this.result = this.$post('/rule/dryRun', param, response => {
+        this.result = this.$post(ruleDryRunUrl, param, response => {
           this.$success(this.$t('rule.opt_success'));
         }, error => {
           this.$warning(error);
         });
       },
       changeStatus (item) {
-        this.result = this.$post('/rule/changeStatus', {id: item.id, status: item.status?1:0}, response => {
+        this.result = this.$post(ruleChangeStatusUrl, {id: item.id, status: item.status?1:0}, response => {
           if (item.status == 1) {
             this.$success(this.$t('rule.change_status_on'));
           } else if (item.status == 0) {
@@ -811,7 +818,7 @@ const columnOptions = [
     },
     computed: {
       codemirror() {
-        return this.$refs.cmEditor.codemirror
+        return this.$refs.cmEditor.codemirror;
       }
     },
     created() {

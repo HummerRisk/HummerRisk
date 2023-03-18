@@ -312,6 +312,8 @@ import {_filter, _sort} from "@/common/js/utils";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {scanByGroupUrl} from "@/api/cloud/rule/rule";
+import {cloudListByGroupUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -574,7 +576,7 @@ const columnOptions2 = [
       },
       handleListSearch () {
         this.ruleCondition.combine = {group: {operator: 'in', value: this.itemId }};
-        let url = "/rule/list/" + this.ruleListPage + "/" + this.ruleListPageSize;
+        let url = ruleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
         this.result = this.$post(url, this.ruleCondition, response => {
           let data = response.data;
           this.ruleListTotal = data.itemCount;
@@ -603,7 +605,7 @@ const columnOptions2 = [
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get("/rule/group/delete/" + item.id, () => {
+              this.result = this.$get(ruleGroupDeleteUrl + item.id, () => {
                 this.$success(this.$t('commons.delete_success'));
                 this.search();
               });
@@ -618,21 +620,21 @@ const columnOptions2 = [
         })
       },
       getPlugins () {
-        this.result = this.$get("/plugin/cloud", response => {
+        this.result = this.$get(cloudPluginUrl, response => {
           this.plugins = response.data;
         });
       },
       //查询列表
       search() {
         if (this.listStatus === 1) {
-          let url = "/rule/ruleGroup/list/" + this.currentPage + "/" + this.pageSize;
+          let url = ruleGroupListUrl + this.currentPage + "/" + this.pageSize;
           this.result = this.$post(url, this.condition, response => {
             let data = response.data;
             this.total = data.itemCount;
             this.tableData = data.listObject;
           });
         } else {
-          let url = "/rule/ruleGroup/list/" + this.fcurrentPage + "/" + this.fpageSize;
+          let url = ruleGroupListUrl + this.fcurrentPage + "/" + this.fpageSize;
           this.result = this.$post(url, this.condition, response => {
             let data = response.data;
             this.ftotal = data.itemCount;
@@ -657,7 +659,7 @@ const columnOptions2 = [
             if (valid) {
               let params = item;
               params.flag = item.flag ? item.flag : false;
-              let url = type == "createForm" ? "/rule/group/save" : "/rule/group/update";
+              let url = type == "createForm" ? ruleGroupSaveUrl : ruleGroupUpdateUrl;
               this.result = this.$post(url, params, response => {
                 this.search();
                 this.createVisible =  false;
@@ -701,7 +703,7 @@ const columnOptions2 = [
       },
       handleBind(item) {
         this.groupId = item.id;
-        this.$get("/rule/unBindList/" + item.id,response => {
+        this.$get(ruleUnBindListUrl + item.id,response => {
           this.cloudData = [];
           for(let data of response.data) {
             this.cloudData.push({
@@ -711,7 +713,7 @@ const columnOptions2 = [
           }
           this.bindVisible = true;
         });
-        this.$get("/rule/allBindList/" + item.id,response => {
+        this.$get(ruleAllBindListUrl + item.id,response => {
           this.cloudValue = [];
           for(let data of response.data) {
             this.cloudValue.push(data.id);
@@ -723,7 +725,7 @@ const columnOptions2 = [
           cloudValue: this.cloudValue,
           groupId: this.groupId,
         };
-        this.$post("/rule/bindRule", params,response => {
+        this.$post(bindRuleUrl, params,response => {
           this.$success(this.$t('organization.integration.successful_operation'));
           this.bindVisible = false;
           this.search();
@@ -733,7 +735,7 @@ const columnOptions2 = [
         return item.label.indexOf(query) > -1;
       },
       handleScan(item) {
-        let url = "/account/listByGroup/" + item.pluginId;
+        let url = cloudListByGroupUrl + item.pluginId;
         this.result = this.$get(url, response => {
           if (response.data != undefined && response.data != null) {
             this.accounts = response.data;
@@ -743,7 +745,7 @@ const columnOptions2 = [
         });
       },
       saveScan() {
-        let url = "/rule/scanByGroup/" + this.groupId + "/" + this.scanForm.id;
+        let url = scanByGroupUrl + this.groupId + "/" + this.scanForm.id;
         this.result = this.$get(url, response => {
           this.scanVisible = false;
           this.$success(this.$t('account.i18n_hr_create_success'));

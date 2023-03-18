@@ -58,3 +58,11 @@ export const cloudTaskDetailUrl = "/cloud/cloud/task/detail/";
 export const cloudTaskManualListUrl = "/cloud/cloud/task/manual/list/";
 
 export const cloudTagRuleListUrl = "/cloud/tag/rule/list";
+
+export const cloudTagRuleDeleteUrl = "/cloud/tag/rule/delete/";
+
+export const cloudTagRuleSaveUrl = "/cloud/tag/rule/save";
+
+export const cloudTagRuleUpdateUrl = "/cloud/tag/rule/update";
+
+export const cloudListByGroupUrl = "/cloud/account/listByGroup/";
