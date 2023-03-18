@@ -26,3 +26,5 @@ export const ruleInspectionReportUrl = "/cloud/rule/all/ruleInspectionReport";
 export const ruleListUrl = "/cloud/rule/list/";
 
 export const ruleReScanUrl = "/cloud/rule/reScan/";
+
+export const ruleReScansUrl = "/cloud/rule/reScans/";

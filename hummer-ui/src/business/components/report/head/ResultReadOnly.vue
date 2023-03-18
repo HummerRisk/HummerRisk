@@ -26,7 +26,9 @@
 
 <script>
 /* eslint-disable */
-  export default {
+  import {string2PrettyFormatUrl} from "@/api/cloud/resource/resource";
+
+export default {
     name: "ResultReadOnly",
     props: {
       row: Object
@@ -78,7 +80,7 @@
       showJson (element) {
         this.string2Key = element.key;
         this.string2PrettyFormat = "";
-        this.$post("/resource/string2PrettyFormat", {json: JSON.stringify(element.value)}, res => {
+        this.$post(string2PrettyFormatUrl, {json: JSON.stringify(element.value)}, res => {
           this.string2PrettyFormat = res.data;
         });
         this.visible =  true;

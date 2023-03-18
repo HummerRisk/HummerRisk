@@ -54,3 +54,7 @@ export const showAccountUrl = "/cloud/cloud/task/show/account/";
 export const cloudTaskLogByIdUrl = "/cloud/cloud/task/log/taskId/";
 
 export const cloudTaskDetailUrl = "/cloud/cloud/task/detail/";
+
+export const cloudTaskManualListUrl = "/cloud/cloud/task/manual/list/";
+
+export const cloudTagRuleListUrl = "/cloud/tag/rule/list";

@@ -859,7 +859,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/resource/account/delete/" + obj.id, res => {
+            this.result = this.$get(resourceAccountDeleteUrl + obj.id, res => {
               setTimeout(function () {
                 window.location.reload()
               }, 2000);
@@ -878,11 +878,11 @@ export default {
       this.severityDataSearch();
     },
     async search() {
-      await this.$get("/resource/source/" + this.accountId, response => {
+      await this.$get(resourceSourceUrl + this.accountId, response => {
         this.source = response.data;
       });
 
-      let url = "/cloud/task/manual/list/" + this.currentPage + "/" + this.pageSize;
+      let url = cloudTaskManualListUrl + this.currentPage + "/" + this.pageSize;
       //在这里实现事件
       this.condition.accountId = this.accountId;
       this.result = await this.$post(url, this.condition, response => {
@@ -892,7 +892,7 @@ export default {
       });
     },
     resourceSearch() {
-      let url = "/resource/list/" + this.resourcePage + "/" + this.resourceSize;
+      let url = cloudResourceListUrl + this.resourcePage + "/" + this.resourceSize;
       this.resourceCondition.accountId = this.accountId;
       this.result = this.$post(url, this.resourceCondition, response => {
         let data = response.data;
@@ -902,11 +902,11 @@ export default {
     },
     async initSelect() {
       this.tagSelect = [];
-      await this.$get("/tag/rule/list", response => {
+      await this.$get(cloudTagRuleListUrl, response => {
         this.tagSelect = response.data;
       });
       this.resourceTypes = [];
-      await this.$get("/rule/all/resourceTypes", response => {
+      await this.$get(resourceTypesUrl, response => {
         for (let item of response.data) {
           let typeItem = {};
           typeItem.value = item.name;
@@ -959,7 +959,7 @@ export default {
         clearInterval(this.timer);
         this.timer = setInterval(this.getStatus, 60000);
       }
-      this.$get("/resource/source/" + this.accountId, response => {
+      this.$get(resourceSourceUrl + this.accountId, response => {
         let data = response.data;
         if (!data) {
           return;
@@ -971,7 +971,7 @@ export default {
         this.source.overRules = data.overRules;
         this.source.allRules = data.allRules;
         this.progressResult = parseFloat((this.source.overRules/this.source.allRules * 100).toFixed(2)?(this.source.overRules/this.source.allRules * 100).toFixed(2):0.0);
-        let url = "/cloud/task/manual/list/" + this.currentPage + "/" + this.pageSize;
+        let url = cloudTaskManualListUrl + this.currentPage + "/" + this.pageSize;
         this.condition.accountId = this.accountId;
         //在这里实现事件
         this.$post(url, this.condition, response => {
@@ -1012,7 +1012,7 @@ export default {
       let showLogTaskId = cloudTask.id;
       let url = "";
       if (showLogTaskId) {
-        url = "/cloud/task/log/taskId/";
+        url = cloudTaskLogByIdUrl;
       }
       this.logForm.cloudTaskItemLogDTOs = [];
       this.logForm.showLogTaskId = showLogTaskId;
@@ -1023,7 +1023,7 @@ export default {
     },
     showTaskDetail(item) {
       this.detailForm = {};
-      this.$get("/cloud/task/detail/" + item.id, response => {
+      this.$get(cloudTaskDetailUrl + item.id, response => {
         if (response.success) {
           this.detailForm = response.data;
           this.detailVisible = true;
@@ -1041,7 +1041,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get("/rule/reScans/" + item.id, response => {
+            this.$get(ruleReScansUrl + item.id, response => {
               if (response.success) {
                 this.search();
               }
@@ -1055,7 +1055,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get("/rule/reScan/" + item.id + "/" + item.accountId, response => {
+            this.$get(ruleReScanUrl + item.id + "/" + item.accountId, response => {
               if (response.success) {
                 this.search();
               }
@@ -1088,7 +1088,7 @@ export default {
     },
     regionDataSearch() {
       this.regionCondition.id = this.accountId;
-      this.$post('/resource/regionData', this.regionCondition, response => {
+      this.$post(resourceRegionDataUrl, this.regionCondition, response => {
         let data = response.data;
         this.regionData = data;
       });
@@ -1098,7 +1098,7 @@ export default {
     },
     severityDataSearch() {
       this.severityCondition.id = this.accountId;
-      this.$post('/resource/severityData', this.severityCondition, response => {
+      this.$post(resourceSeverityDataUrl, this.severityCondition, response => {
         let data = response.data;
         this.severityData = data;
       });
@@ -1108,7 +1108,7 @@ export default {
     },
     resourceTypeDataSearch() {
       this.resourceTypeCondition.id = this.accountId;
-      this.$post('/resource/resourceTypeData', this.resourceTypeCondition, response => {
+      this.$post(resourceTypeDataUrl, this.resourceTypeCondition, response => {
         let data = response.data;
         this.resourceTypeData = data;
       });
@@ -1118,7 +1118,7 @@ export default {
     },
     ruleDataSearch() {
       this.ruleCondition.id = this.accountId;
-      this.$post('/resource/ruleData', this.ruleCondition, response => {
+      this.$post(resourceRuleDataUrl, this.ruleCondition, response => {
         let data = response.data;
         this.ruleData = data;
       });
@@ -1127,7 +1127,7 @@ export default {
       this.string2Key = title;
       this.string2PrettyFormat = "";
       if (row) {
-        this.$post("/resource/string2PrettyFormat", {json: details}, res => {
+        this.$post(string2PrettyFormatUrl, {json: details}, res => {
           this.string2PrettyFormat = res.data;
         });
       } else {
@@ -1177,7 +1177,7 @@ export default {
       this.resourceSearch();
     },
     showSeverityDetail(item) {
-      this.$get("/resource/regulation/" + item.ruleId, response => {
+      this.$get(resourceRegulationUrl + item.ruleId, response => {
         if (response.success) {
           this.regulationData = response.data;
           this.regulationVisible = true;
