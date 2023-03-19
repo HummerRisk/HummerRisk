@@ -25,7 +25,6 @@ public class UserService {
     private UserMapper userMapper;
     @Autowired
     private ExtUserMapper extUserMapper;
-
     @Autowired
     private OperationLogMapper operationLogMapper;
 
