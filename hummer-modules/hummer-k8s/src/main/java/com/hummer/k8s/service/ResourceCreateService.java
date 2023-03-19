@@ -3,7 +3,6 @@ package com.hummer.k8s.service;
 import com.hummer.common.core.constant.CloudTaskConstants;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.utils.BeanUtils;
-import com.hummer.common.core.utils.CommonThreadPool;
 import com.hummer.common.core.utils.LogUtil;
 import com.hummer.k8s.mapper.*;
 import com.xxl.job.core.handler.annotation.XxlJob;

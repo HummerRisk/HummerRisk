@@ -1,5 +1,6 @@
-package com.hummer.common.core.utils;
+package com.hummer.k8s.service;
 
+import com.hummer.common.core.utils.LogUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
