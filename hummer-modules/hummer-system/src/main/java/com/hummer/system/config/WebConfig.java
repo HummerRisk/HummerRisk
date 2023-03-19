@@ -6,7 +6,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
-import org.apache.hc.client5.http.classic.HttpClient;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurationSupport  {

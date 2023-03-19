@@ -54,9 +54,9 @@ xxl:
       addresses: http://${HMR_XXL_JOB_ADDR}:8084/xxl-job-admin/
     accessToken: default_token
     executor:
-      address: ${HMR_XXL_SYSTEM_ADDR}:9300
+      address: ${HMR_XXL_SYSTEM_ADDR}:9301
       ip: ${HMR_XXL_SYSTEM_ADDR}
-      port: 9300
+      port: 9301
       appName: hummer-system
       logpath: /opt/hummerrisk/logs/xxl-job/hummer-system
       logretentiondays: 30
