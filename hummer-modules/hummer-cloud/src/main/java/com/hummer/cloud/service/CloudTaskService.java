@@ -15,12 +15,8 @@ import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
-import com.hummer.quartz.service.QuartzManageService;
 import org.apache.commons.lang3.StringUtils;
-import org.quartz.CronScheduleBuilder;
 import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.quartz.TriggerKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
@@ -48,8 +44,6 @@ public class CloudTaskService {
     private CloudTaskItemResourceMapper cloudTaskItemResourceMapper;
     @Autowired
     private AccountMapper accountMapper;
-    @Autowired
-    private QuartzManageService quartzManageService;
     @Autowired
     private AccountService accountService;
     @Autowired
@@ -420,37 +414,15 @@ public class CloudTaskService {
     }
 
 
+    //添加定时任务
     private Trigger addQuartzTask(CloudAccountQuartzTask quartzTask) throws Exception {
-        Trigger trigger = TriggerBuilder.newTrigger()
-                .withIdentity("quartz-cloudTask" + quartzTask.getId())
-                .withSchedule(CronScheduleBuilder.cronSchedule(quartzTask.getCron()).withMisfireHandlingInstructionDoNothing())
-                .build();
-
-        quartzManageService.addJob("orderService", "createQuartzTask", trigger, quartzTask.getId());
-        if (quartzTask.getStatus().equalsIgnoreCase(QuartzTaskStatus.PAUSE)) {
-            quartzManageService.pauseJob(trigger.getJobKey());
-        }
-        return quartzManageService.getTrigger(trigger.getKey());
+        return null;
 
     }
 
 
+    //重启服务时重新添加定时任务
     public void reAddQuartzOnStart() {
-        List<CloudAccountQuartzTask> quartzTasks = quartzTaskMapper.selectByExample(null);
-        quartzTasks.forEach(quartzTask -> {
-            try {
-                if (quartzManageService.getTrigger(new TriggerKey(quartzTask.getTriggerId())) == null) {
-                    Trigger trigger = addQuartzTask(getResources(quartzTask.getId()));
-                    quartzTask.setLastFireTime(trigger.getNextFireTime().getTime());
-                    if (trigger.getPreviousFireTime() != null)
-                        quartzTask.setPrevFireTime(trigger.getPreviousFireTime().getTime());
-                    quartzTask.setTriggerId("quartz-cloudTask" + quartzTask.getId());
-                    quartzTaskMapper.updateByPrimaryKeySelective(quartzTask);
-                }
-            } catch (Exception e) {
-                HRException.throwException(e);
-            }
-        });
     }
 
     public CloudAccountQuartzTask getResources(String quartzTaskId) {
@@ -458,21 +430,6 @@ public class CloudTaskService {
     }
 
     public void syncTriggerTime() {
-        List<CloudAccountQuartzTask> quartzTasks = quartzTaskMapper.selectByExample(null);
-        quartzTasks.forEach(quartzTask -> {
-            Trigger trigger = null;
-            try {
-                trigger = quartzManageService.getTrigger(new TriggerKey(quartzTask.getTriggerId()));
-            } catch (Exception e) {
-                HRException.throwException(e);
-            }
-            quartzTask.setLastFireTime(trigger.getNextFireTime().getTime());
-            if (trigger.getPreviousFireTime() != null)
-                quartzTask.setPrevFireTime(trigger.getPreviousFireTime().getTime());
-            quartzTaskMapper.updateByPrimaryKeySelective(quartzTask);
-
-        });
-
     }
 
     public void syncTaskSum() {
@@ -491,74 +448,11 @@ public class CloudTaskService {
     }
 
     public boolean changeQuartzStatus(String quartzId, final String action) throws Exception {
-        try {
-            CloudAccountQuartzTask quartzTask = quartzTaskMapper.selectByPrimaryKey(quartzId);
-            String triggerId = quartzTask.getTriggerId();
-            Trigger trigger = quartzManageService.getTrigger(new TriggerKey(triggerId));
-            String status = null;
-            switch (action) {
-                case QuartzTaskAction.PAUSE:
-                    quartzManageService.pauseJob(trigger.getJobKey());
-                    status = QuartzTaskStatus.PAUSE;
-                    break;
-
-                case QuartzTaskAction.RESUME:
-                    quartzManageService.resumeJob(trigger.getJobKey());
-                    status = QuartzTaskStatus.RUNNING;
-                    break;
-                default:
-                    HRException.throwException("action is not invalid");
-            }
-            quartzTask.setStatus(status);
-            quartzTaskMapper.updateByPrimaryKeySelective(quartzTask);
-
-            CloudAccountQuartzTaskRelationExample example = new CloudAccountQuartzTaskRelationExample();
-            example.createCriteria().andQuartzTaskIdEqualTo(quartzId);
-            List<CloudAccountQuartzTaskRelation> list = quartzTaskRelationMapper.selectByExampleWithBLOBs(example);
-
-            for (CloudAccountQuartzTaskRelation quartzTaskRelation : list) {
-                CloudAccountQuartzTaskRelaLogWithBLOBs quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLogWithBLOBs();
-                quartzTaskRelaLog.setCreateTime(System.currentTimeMillis());
-                quartzTaskRelaLog.setQuartzTaskId(quartzId);
-                quartzTaskRelaLog.setQuartzTaskRelaId(quartzTaskRelation.getId());
-                quartzTaskRelaLog.setTaskIds(quartzTaskRelation.getTaskIds());
-                quartzTaskRelaLog.setSourceId(quartzTaskRelation.getSourceId());
-                quartzTaskRelaLog.setQzType(quartzTaskRelation.getQzType());
-                quartzTaskRelaLog.setOperator("System");
-                quartzTaskRelaLog.setOperation(action.equals(QuartzTaskAction.PAUSE) ? "i18n_pause_qrtz" : "i18n_start_qrtz");
-                quartzTaskRelaLogMapper.insertSelective(quartzTaskRelaLog);
-            }
-
-        } catch (Exception e) {
-            return false;
-        }
         return true;
     }
 
-
+    //删除定时任务
     public void deleteQuartzTask(String quartzTaskId) {
-        CloudAccountQuartzTask quartzTask = quartzTaskMapper.selectByPrimaryKey(quartzTaskId);
-        String triggerId = quartzTask.getTriggerId();
-        Trigger trigger;
-        try {
-            trigger = quartzManageService.getTrigger(new TriggerKey(triggerId));
-            quartzManageService.deleteJob(trigger.getJobKey());
-        } catch (Exception e) {
-            LogUtil.warn("Scheduled cloudTask not found！");
-        } finally {
-            //删除整个任务
-            CloudAccountQuartzTaskRelationExample example = new CloudAccountQuartzTaskRelationExample();
-            example.createCriteria().andQuartzTaskIdEqualTo(quartzTaskId);
-            List<CloudAccountQuartzTaskRelation> quartzTaskRelations = quartzTaskRelationMapper.selectByExample(example);
-            for (CloudAccountQuartzTaskRelation quartzTaskRelation : quartzTaskRelations) {
-                CloudAccountQuartzTaskRelaLogExample quartzTaskRelaLogExample = new CloudAccountQuartzTaskRelaLogExample();
-                quartzTaskRelaLogExample.createCriteria().andQuartzTaskRelaIdEqualTo(quartzTaskRelation.getId());
-                quartzTaskRelaLogMapper.deleteByExample(quartzTaskRelaLogExample);
-                quartzTaskRelationMapper.deleteByPrimaryKey(quartzTaskRelation.getId());
-            }
-            quartzTaskMapper.deleteByPrimaryKey(quartzTaskId);
-            OperationLogService.log(tokenService.getLoginUser().getUser(), quartzTaskId, quartzTask.getName(), ResourceTypeConstants.QUOTA.name(), ResourceOperation.DELETE, "i18n_delete_qrtz_cloud_task");
-        }
     }
 
     public ShowAccountQuartzTaskDTO showAccount(String taskId) {

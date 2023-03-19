@@ -14,6 +14,8 @@ import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.ISystemProviderService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,7 @@ import static com.alibaba.fastjson.JSON.parseArray;
  * @author harris
  */
 @Service
+@DubboService
 @Transactional(rollbackFor = Exception.class)
 public class RuleService {
 
@@ -99,7 +102,7 @@ public class RuleService {
     private CloudTaskMapper cloudTaskMapper;
     @Autowired
     private TokenService tokenService;
-    @Autowired
+    @DubboReference
     private ISystemProviderService systemProviderService;
 
     public List<RuleDTO> cloudList(CreateRuleRequest ruleRequest) {
