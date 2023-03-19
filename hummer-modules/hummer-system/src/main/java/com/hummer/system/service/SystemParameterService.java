@@ -55,16 +55,12 @@ public class SystemParameterService {
     private SystemParameterMapper systemParameterMapper;
     @Autowired
     private RestTemplate restTemplate;
-
     @Autowired
     private SysListener sysListener;
-
     @Autowired
     private WebhookMapper webhookMapper;
-
     @Autowired
     private TokenService tokenService;
-
     @Autowired
     private OperationLogService operationLogService;
 

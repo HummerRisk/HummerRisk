@@ -20,6 +20,7 @@ import java.util.List;
 @RequestMapping("log/operation")
 public class
 OperationLogController {
+
     @Autowired
     private OperationLogService operationLogService;
 

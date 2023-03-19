@@ -6,7 +6,6 @@ import com.hummer.common.core.constant.TaskConstants;
 import com.hummer.common.core.constant.TaskEnum;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.utils.BeanUtils;
-import com.hummer.common.core.utils.CommonThreadPool;
 import com.hummer.k8s.api.IK8sProviderService;
 import com.hummer.system.mapper.*;
 import com.xxl.job.core.handler.annotation.XxlJob;
