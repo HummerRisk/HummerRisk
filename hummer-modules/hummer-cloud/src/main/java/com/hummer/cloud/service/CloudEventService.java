@@ -34,6 +34,8 @@ import com.hummer.cloud.mapper.ext.ExtCloudEventMapper;
 import com.hummer.cloud.mapper.ext.ExtCloudEventSyncLogMapper;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.cloudEvent.CloudEventRequest;
+import com.hummer.common.core.domain.request.event.CloudEventSyncLogVo;
+import com.hummer.common.core.domain.request.event.CloudEventWithBLOBsVo;
 import com.hummer.common.core.dto.ChartDTO;
 import com.hummer.common.core.dto.CloudEventGroupDTO;
 import com.hummer.common.core.dto.CloudEventSourceIpInsightDto;
@@ -82,10 +84,8 @@ public class CloudEventService {
     private ExtCloudEventMapper extCloudEventMapper;
     @Autowired
     private CloudEventSyncLogMapper cloudEventSyncLogMapper;
-
     @Autowired
     private ExtCloudEventSyncLogMapper extCloudEventSyncLogMapper;
-
     @Autowired
     private CloudEventRegionLogMapper cloudEventRegionLogMapper;
     @Autowired
@@ -117,7 +117,7 @@ public class CloudEventService {
         return cloudEventSyncLogMapper.selectByExample(cloudEventSyncLogExample);
     }
 
-    public List<CloudEventSyncLog> getCloudEventSyncLog(CloudEventRequest cloudEventRequest) {
+    public List<CloudEventSyncLogVo> getCloudEventSyncLog(CloudEventRequest cloudEventRequest) {
         return extCloudEventSyncLogMapper.getCloudEventSyncLog(cloudEventRequest);
     }
 
@@ -138,7 +138,7 @@ public class CloudEventService {
         cloudEventMapper.deleteByExample(cloudEventExample);
     }
 
-    public List<CloudEventWithBLOBs> getCloudEvents(CloudEventRequest cloudEventRequest) {
+    public List<CloudEventWithBLOBsVo> getCloudEvents(CloudEventRequest cloudEventRequest) {
         return extCloudEventMapper.getCloudEventList(cloudEventRequest);
     }
 
@@ -298,7 +298,7 @@ public class CloudEventService {
     }
 
     public List<CloudEventWithBLOBs> getCloudEvents(AccountWithBLOBs account, Map<String, String> accountMap, String startTime, String endTime,
-                                           int pageNum, int maxResult) throws Exception {
+                                                    int pageNum, int maxResult) throws Exception {
         List<CloudEventWithBLOBs> result;
         switch (account.getPluginId()) {
             case PlatformUtils.aliyun:
@@ -341,7 +341,7 @@ public class CloudEventService {
         requestParams.put("SignatureMethod","HMAC-SHA256");
         requestParams.put("Region",accountMap.get("region"));
         requestParams.put("EventBeginDate",startTime.substring(0,10));
-        requestParams.put("EventEndDate",endTime.substring(0,10));
+        requestParams.put("EventEndDate",DateUtils.addDateStr("yyyy-MM-dd",endTime.substring(0,10),1));
         requestParams.put("PageSize",maxResult);
         if(nextToken!=null){
             requestParams.put("SearchAfter",nextToken);
@@ -368,14 +368,20 @@ public class CloudEventService {
                 if(eventName.contains("MODIFY")){
                     cloudEventWithBLOBs.setEventRating(1);
                 }
+                String region = item.getString("Region");
+                String regionName = item.getString("RegionCn");
+                if(StringUtils.isBlank(region)){
+                    region = "cn-beijing-6";
+                    regionName = "华北1（北京）";
+                }
                 cloudEventWithBLOBs.setEventId(item.getString("EventId"));
                 cloudEventWithBLOBs.setEventType(item.getString("EventType"));
                 cloudEventWithBLOBs.setRequestId(item.getString("RequestId"));
                 cloudEventWithBLOBs.setUserAgent(item.getString("UserAgent"));
                 cloudEventWithBLOBs.setSourceIpAddress(item.getString("SourceIpAddress"));
                 cloudEventWithBLOBs.setSyncRegion(accountMap.get("region"));
-                cloudEventWithBLOBs.setAcsRegion(item.getString("Region"));
-                cloudEventWithBLOBs.setRegionName(item.getString("RegionCn"));
+                cloudEventWithBLOBs.setAcsRegion(region);
+                cloudEventWithBLOBs.setRegionName(regionName);
                 String requestParameters =  item.getString("RequestParameters");
                 cloudEventWithBLOBs.setRequestParameters(requestParameters!=null && requestParameters.length()>500?requestParameters.substring(0,500):requestParameters);
                 cloudEventWithBLOBs.setEventSource(item.getString("EventSource"));
@@ -615,7 +621,7 @@ public class CloudEventService {
     }
 
     public List<CloudEventWithBLOBs> getAwsEvents(Map<String, String> accountMap, String startTime, String endTime,
-                                         int pageNum, int maxResult) {
+                                                  int pageNum, int maxResult) {
         AWSCredentials awsCredentials = new BasicAWSCredentials(accountMap.get("accessKey"), accountMap.get("secretKey"));
         AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials);
         AWSCloudTrail awsCloudTrail = AWSCloudTrailClient.builder().withRegion(accountMap.get("region")).withCredentials(awsCredentialsProvider).build();
@@ -668,7 +674,7 @@ public class CloudEventService {
     }
 
     public List<CloudEventWithBLOBs> getAliyunCloudEvents(Map<String, String> accountMap, String startTime, String endTime,
-                                                 int pageNum, int maxResult) throws Exception {
+                                                          int pageNum, int maxResult) throws Exception {
         startTime = DateUtils.localDateStrToUtcDateStr("yyyy-MM-dd HH:mm:ss", startTime).replace(" ", "T") + "Z";
         endTime = DateUtils.localDateStrToUtcDateStr("yyyy-MM-dd HH:mm:ss", endTime).replace(" ", "T") + "Z";
         Config config = new Config().setAccessKeyId(accountMap.get("accessKey")).setAccessKeySecret(accountMap.get("secretKey"));
@@ -761,7 +767,7 @@ public class CloudEventService {
         return false;
     }
 
-    public ChartDTO ipAccessChart(String ip, String startDate, String endDate){
+    public ChartDTO ipAccessChart(String ip,String startDate,String endDate){
         List<Map<String, Object>> ipAccessList = extCloudEventMapper.selectIpAccessTimesGroupByDate(ip, startDate, endDate);
         Map<String,Integer> ipAccessMap = ipAccessList.stream().collect(Collectors.toMap(item->{
             return (String)item.get("accessDate");

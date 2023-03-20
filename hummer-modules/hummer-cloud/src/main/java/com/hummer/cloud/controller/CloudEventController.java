@@ -7,6 +7,8 @@ import com.hummer.common.core.domain.CloudEventRegionLog;
 import com.hummer.common.core.domain.CloudEventSyncLog;
 import com.hummer.common.core.domain.CloudEventWithBLOBs;
 import com.hummer.common.core.domain.request.cloudEvent.CloudEventRequest;
+import com.hummer.common.core.domain.request.event.CloudEventSyncLogVo;
+import com.hummer.common.core.domain.request.event.CloudEventWithBLOBsVo;
 import com.hummer.common.core.dto.ChartDTO;
 import com.hummer.common.core.dto.CloudEventGroupDTO;
 import com.hummer.common.core.dto.CloudEventSourceIpInsightDto;
@@ -18,6 +20,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -25,12 +28,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("cloud/event")
 public class CloudEventController {
-    @Autowired
+    @Resource
     private CloudEventService cloudEventService;
 
     @ApiOperation(value = "同步任务列表")
     @PostMapping("sync/log/list/{goPage}/{pageSize}")
-    public Pager<List<CloudEventSyncLog>> listSyncLogs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest) {
+    public Pager<List<CloudEventSyncLogVo>> listSyncLogs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, cloudEventService.getCloudEventSyncLog(cloudEventRequest));
     }
@@ -69,7 +72,7 @@ public class CloudEventController {
 
     @ApiOperation(value = "云事件分析列表")
     @PostMapping("list/{goPage}/{pageSize}")
-    public Pager<List<CloudEventWithBLOBs>> listEvents(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest) {
+    public Pager<List<CloudEventWithBLOBsVo>> listEvents(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, cloudEventService.getCloudEvents(cloudEventRequest));
     }
@@ -118,7 +121,7 @@ public class CloudEventController {
     @I18n
     @ApiOperation(value = "IP 访问统计")
     @GetMapping("ipAccessChart/{ip}/{startDate}/{endDate}")
-    public ChartDTO ipAccessChart(@PathVariable String ip, @PathVariable String startDate, @PathVariable String endDate){
+    public ChartDTO ipAccessChart(@PathVariable String ip,@PathVariable String startDate,@PathVariable String endDate){
         return cloudEventService.ipAccessChart(ip,startDate,endDate);
     }
 

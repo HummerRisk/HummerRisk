@@ -11,6 +11,8 @@ public class CloudEventGroupDTO {
     private String sourceIpAddress;
     private String resourceName;
     private String eventSum;
+    private String accountName;
+    private String accountIcon;
 
     public String getEventDate() {
         return eventDate;
@@ -90,5 +92,21 @@ public class CloudEventGroupDTO {
 
     public void setEventSum(String eventSum) {
         this.eventSum = eventSum;
+    }
+
+    public String getAccountName() {
+        return accountName;
+    }
+
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
+    }
+
+    public String getAccountIcon() {
+        return accountIcon;
+    }
+
+    public void setAccountIcon(String accountIcon) {
+        this.accountIcon = accountIcon;
     }
 }

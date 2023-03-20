@@ -4,23 +4,23 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
-          <el-menu-item :index="'/log/overview'">
+          <el-menu-item :index="'/event/overview'">
             {{ $t("event.overview") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/log/sync'">
+          <el-menu-item :index="'/event/sync'">
             {{ $t("event.event_sync") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/log/event'">
+          <el-menu-item :index="'/event/event'">
             {{ $t("event.event_analysis") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/log/group'">
+          <el-menu-item :index="'/event/group'">
             {{ $t("event.group") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/log/ip'">
+          <el-menu-item :index="'/event/ip'">
             {{ $t("event.ip") }}
           </el-menu-item>
 

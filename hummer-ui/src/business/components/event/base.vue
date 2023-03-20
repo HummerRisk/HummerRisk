@@ -1,6 +1,6 @@
 <template>
   <el-col>
-    <log-header-menus/>
+    <event-header-menus/>
     <div>
       <transition>
         <keep-alive>
@@ -12,10 +12,10 @@
 </template>
 <script>
 
-import LogHeaderMenus from "./head/LogHeaderMenus";
+import EventHeaderMenus from "./head/EventHeaderMenus.vue";
 
 export default {
-    components: {LogHeaderMenus},
+    components: {EventHeaderMenus},
     data() {
       return {
         baseUrl: "event"

@@ -100,8 +100,8 @@
     </if>
   </sql>
 
-  <select id="getCloudEventList" resultType="com.hummer.common.core.domain.CloudEventWithBLOBs">
-    select t.*
+  <select id="getCloudEventList" resultType="com.hummer.common.core.domain.request.event.CloudEventWithBLOBsVo">
+    select t.*, t1.name as accountName, t1.plugin_icon as accountIcon
     from cloud_event t
     join cloud_account t1 on t.cloud_account_id = t1.id
     <where>
